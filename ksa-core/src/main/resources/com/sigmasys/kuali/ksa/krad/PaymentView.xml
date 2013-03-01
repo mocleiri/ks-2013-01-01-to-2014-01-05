@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2005-2012 The Kuali Foundation
+
+    Licensed under the Educational Community License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.opensource.org/licenses/ecl2.php
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <bean id="PaymentView" parent="Uif-KsaFormView" p:footer.render="false">
+        <property name="title" value=""/>
+        <property name="headerText" value="Payment"/>
+        <property name="entryPageId" value="AddPaymentPage"/>
+        <property name="navigation">
+            <bean parent="Uif-KsaPageNavigation">
+                <property name="items">
+                    <list merge="true">
+                        <!-- TODO Advanced Search -->
+                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AdvancedSearch"
+                              p:actionLabel="Advanced Search"/>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="items">
+            <list merge="true">
+                <bean parent="Uif-Page" p:id="AddPaymentPage" p:title="Account">
+                    <property name="headerText" value="Account"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Link" p:linkText="Quick View" p:target="_self"
+                                  p:href="quickView?methodToCall=get&amp;viewId=QuickView&amp;userId=@{account.id}"/>
+                            <ref bean="addPaymentSection"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+<!--
+        <property name="additionalCssFiles" ref=""/>
+        <property name="additionalJsFiles" ref=""/>
+        <property name="viewHelperServiceClassName" value=""/>
+        <property name="defaultBindingObjectPath" vaue=""/>
+-->
+        <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.PaymentForm"/>
+    </bean>
+
+    <!--
+    ********************************************************************************************************************
+                                        Add Payment section
+    A vertical section with a vertical disclosure subsection and horizontal sub section devoted to button controls
+    ********************************************************************************************************************
+    -->
+    <bean id="addPaymentSection" parent="Uif-VerticalBoxSection"
+          p:title="@{account.id}"
+          p:instructionalText="The following form will allow a payment to be applied to the account">
+        <property name="disclosure.render" value="false"/>
+        <property name="items">
+            <list>
+                <!-- Use a field to get/set the value  -->
+                <bean parent="Uif-InputField" p:propertyName="printReceipt" p:label="Print receipt"
+                      p:defaultValue="false" p:fieldLabel.renderColon="true">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"/>
+                    </property>
+                </bean>
+                <!-- Use a field to get/set the value  -->
+                <bean parent="Uif-InputField" p:propertyName="emailReceipt" p:label="Email receipt"
+                      p:defaultValue="false" p:fieldLabel.renderColon="true">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"/>
+                    </property>
+                </bean>
+                <!-- Use a field to get/set the value  -->
+                <bean parent="Uif-InputField" p:propertyName="estimatedCurrentBalance"
+                      p:label="Estimated Current Balance"
+                      p:instructionalText="An estimate of the current balance"
+                      p:fieldLabel.renderColon="true"
+                      p:maxLength="10"
+                      p:readOnly="true">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="11" />
+                    </property>
+                </bean>
+                <!-- Use a field to get/set the value  -->
+                <bean parent="Uif-InputField" p:propertyName="paymentTransactionTypeId"
+                      p:label="Payment Type"
+                      p:instructionalText="Payment type"
+                      p:fieldLabel.renderColon="true"
+                      p:labelPlacement="TOP"
+                      p:maxLength="10"
+                      p:required="true">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="11" />
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="payment.externalId"
+                      p:label="Authorization"
+                      p:instructionalText="Enter the authorization code"
+                      p:fieldLabel.renderColon="true"
+                      p:labelPlacement="TOP"
+                      p:maxLength="16"
+                      p:required="true">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="17"/>
+                    </property>
+                </bean>
+                <!-- Use the Payment instance to get/set the values -->
+                <bean parent="Uif-InputField" p:propertyName="payment.amount"
+                      p:label="Amount"
+                      p:instructionalText="Enter the amount of the payment"
+                      p:fieldLabel.renderColon="true"
+                      p:labelPlacement="TOP"
+                      p:maxLength="21"
+                      p:required="true">
+                    <property name="control">
+                        <bean parent="Uif-CurrencyTextControl" p:size="22"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="payment.effectiveDate"
+                      p:label="Effective Date"
+                      p:instructionalText="Enter the effective date of the payment"
+                      p:fieldLabel.renderColon="true"
+                      p:labelPlacement="TOP"
+                      p:maxLength="10"
+                      p:required="true">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11"/>
+                    </property>
+                </bean>
+                <!-- Use a field to get/set the value  -->
+                <bean parent="Uif-InputField" p:propertyName="estimatedPendingBalance"
+                      p:label="Estimated Pending Balance"
+                      p:instructionalText="An estimate of the pending balance"
+                      p:fieldLabel.renderColon="true"
+                      p:maxLength="10"
+                      p:readOnly="true">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="11" />
+                    </property>
+                </bean>
+                <ref bean="paymentControls"/>
+                <!--  Status message -->
+                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+    ********************************************************************************************************************
+                                        Controls and Links section
+    A horizontal sub section devoted to button controls or links
+    ********************************************************************************************************************
+    -->
+    <bean id="paymentControls" parent="Uif-HorizontalBoxSubSection">
+        <property name="items">
+            <list>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="submitAge" p:actionLabel="Submit and Apply Payments"
+                      p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);"/>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="submit" p:actionLabel="Submit"
+                      p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

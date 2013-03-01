@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2005-2012 The Kuali Foundation
+
+    Licensed under the Educational Community License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.opensource.org/licenses/ecl2.php
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <bean id="FlagView" parent="Uif-KsaFormView" p:footer.render="false">
+        <property name="title" value="Flags"/>
+        <property name="headerText" value="Flags"/>
+        <property name="entryPageId" value="FlagsPage"/>
+        <property name="navigation">
+            <bean parent="Uif-KsaPageNavigation">
+                <property name="items">
+                    <list merge="true">
+                        <!-- TODO Advanced Search -->
+                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AdvancedSearch"
+                              p:actionLabel="Advanced Search"/>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="items">
+            <list merge="true">
+                <bean parent="Uif-Page" p:id="FlagsPage" p:title="@{account.id}">
+                    <property name="headerText" value="Flag List"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Link" p:linkText="Quick View" p:target="_self"
+                                  p:href="quickView?methodToCall=get&amp;viewId=QuickView&amp;userId=@{account.id}"/>
+                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="refresh"
+                                  p:actionLabel="Refresh"
+                                  p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
+                            </bean>
+                            <ref bean="flagDateRangeSection"/>
+                            <ref bean="flagTableSection"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-Page" p:id="AddFlagPage" p:title="@{account.id}"
+                      p:instructionalText="Flags are freeform text items, which can be entered by system users to provide a history of when and why certain things have happened on the account.">
+                    <property name="headerText" value="Add Flag"/>
+                    <property name="items">
+                        <list>
+                            <ref bean="addFlagSection"/>
+                            <ref bean="addFlagControlsGroup"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-Page" p:id="ViewFlagPage" p:title="View a flag for @{account.id}">
+                    <property name="headerText" value="View Flag"/>
+                    <property name="items">
+                        <list>
+                            <ref bean="viewFlagSection"/>
+                            <ref bean="viewFlagControlsGroup"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-Page" p:id="EditFlagPage" p:title="Edit a flag for @{account.id}">
+                    <property name="headerText" value="Edit Flag"/>
+                    <property name="items">
+                        <list>
+                            <ref bean="viewFlagSection"/>
+                            <ref bean="addFlagSection"/>
+                            <ref bean="editFlagControlsGroup"/>
+                        </list>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+        <!--
+                <property name="additionalCssFiles" ref=""/>
+                <property name="additionalJsFiles" ref=""/>
+                <property name="viewHelperServiceClassName" value=""/>
+                <property name="defaultBindingObjectPath" vaue=""/>
+        -->
+        <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.FlagForm"/>
+    </bean>
+
+
+    <!--
+    *******************************************************************************************************************
+                                        Add Flag page section
+    A user definable date range from and to values
+    ********************************************************************************************************************
+    -->
+    <bean id="flagDateRangeSection" parent="Uif-HorizontalBoxSection"
+          p:title="Date Range">
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="fromDate"
+                      p:label="Show information from"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="10">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="toDate"
+                      p:label=" to "
+                      p:labelPlacement="LEFT"
+                      p:maxLength="10">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-Link" p:linkText="Add" p:target="_self"
+                      p:href="flagView?methodToCall=get&amp;viewId=FlagView&amp;pageId=AddFlagPage&amp;userId=@{account.id}"/>
+                <!--  Status message -->
+                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+    *******************************************************************************************************************
+                                        Flags table section
+    A flag list
+    ********************************************************************************************************************
+    -->
+    <bean id="flagTableSection" parent="Uif-Disclosure-TableCollectionSection"
+          p:layoutManager.numberOfColumns="4"
+          p:disclosure.render="false"
+          p:progressiveRenderViaAJAX="true"
+          p:instructionalText="The following is a list of flags for the selected account @{account.id}"
+          p:width="85%">
+        <property name="readOnly" value="true"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Flag"/>
+        <property name="propertyName" value="flagModels"/>
+        <property name="layoutManager.sequencePropertyName" value="id"/>
+        <property name="layoutManager.richTable.render" value="false"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="items">
+            <list>
+                <!-- TODO New flag field
+                                <bean parent="Uif-InputField" p:propertyName="status"
+                                      p:label="Status"
+                                      p:maxLength="10">
+                                    <property name="bindingInfo.bindToForm" value="true"/>
+                                    <property name="control">
+                                        <bean parent="Uif-TextControl" p:size="11"/>
+                                    </property>
+                                </bean>
+                -->
+                <bean parent="Uif-InputField" p:propertyName="effectiveDate"
+                      p:label="Effective Date"
+                      p:maxLength="10">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="text"
+                      p:label="Description">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"
+                              p:style="resize:none;"/>
+                    </property>
+                </bean>
+                <!-- using a button means the controller would need to redirect to the appropriate page -->
+                <bean parent="Uif-LinkField" p:linkText="View" p:target="_self" p:align="center"
+                      p:href="flagView?methodToCall=get&amp;viewId=FlagView&amp;pageId=ViewFlagPage&amp;userId=@{account.id}"/>
+                <bean parent="Uif-LinkField" p:linkText="Update" p:target="_self" p:align="center"
+                      p:href="flagView?methodToCall=get&amp;viewId=FlagView&amp;pageId=EditFlagPage&amp;userId=@{account.id}"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+    *******************************************************************************************************************
+                                        Add Flag section
+    Add a flag input
+    ********************************************************************************************************************
+    -->
+    <bean id="addFlagSection" parent="Uif-VerticalBoxSection"
+          p:layoutManager.orientation="VERTICAL">
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.effectiveDate"
+                      p:label="Effective Date"
+                      p:labelPlacement="TOP"
+                      p:maxLength="10"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11" />
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.expirationDate"
+                      p:label="Expiration Date"
+                      p:labelPlacement="TOP"
+                      p:maxLength="10"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11" />
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.accessLevelString"
+                      p:label="Level">
+                    <property name="control">
+                        <bean parent="Uif-HorizontalRadioControl">
+                            <property name="options">
+                                <list>
+                                    <bean parent="Uif-KeyLabelPair" p:key="0" p:value="0"/>
+                                    <bean parent="Uif-KeyLabelPair" p:key="1" p:value="1"/>
+                                    <bean parent="Uif-KeyLabelPair" p:key="2" p:value="2"/>
+                                    <bean parent="Uif-KeyLabelPair" p:key="3" p:value="3"/>
+                                    <bean parent="Uif-KeyLabelPair" p:key="4" p:value="4"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.text"
+                      p:label="Flag"
+                      p:labelPlacement="TOP">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"
+                              p:style="resize:none;"
+                              p:watermarkText="Type in information text here..."/>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+    *******************************************************************************************************************
+                                        Add Flag controls group
+    A group of controls to support the add of a flag
+    ********************************************************************************************************************
+    -->
+    <bean id="addFlagControlsGroup" parent="Uif-HorizontalBoxGroup">
+        <property name="items">
+            <list>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insertFlag"
+                      p:actionLabel="Submit"
+                      p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
+                </bean>
+                <!--  Status message -->
+                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+    *******************************************************************************************************************
+                                        Edit Flag controls group
+    A group of controls to support the update of a flag
+    ********************************************************************************************************************
+    -->
+    <bean id="editFlagControlsGroup" parent="Uif-HorizontalBoxGroup">
+        <property name="items">
+            <list>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="updateFlag"
+                      p:actionLabel="Submit"
+                      p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
+                </bean>
+                <!--  Status message -->
+                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+    *******************************************************************************************************************
+                                        View Flag section
+    View a flag input
+    ********************************************************************************************************************
+    -->
+    <bean id="viewFlagSection" parent="Uif-GridSection"
+          p:title="@{account.id}"
+          p:instructionalText="@{instructionalText}">
+        <property name="layoutManager">
+            <bean parent="Uif-GridLayoutBase" p:numberOfColumns="4"/>
+        </property>
+        <property name="disclosure.render" value="false"/>
+        <property name="readOnly" value="true"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.id"
+                      p:label="ID"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="21"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="22" />
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.creationDate"
+                      p:label="Creation Date"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="10"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11" />
+                    </property>
+                </bean>
+
+                <!--
+                                <bean parent="Uif-InputField" p:propertyName="flagModel.account.id"
+                                      p:label="Account ID"
+                                      p:labelPlacement="LEFT"
+                                      p:maxLength="21"
+                                      p:fieldLabel.renderColon="true">
+                                    <property name="control">
+                                        <bean parent="Uif-TextControl" p:size="22" />
+                                    </property>
+                                </bean>
+                                <bean parent="Uif-InputField" p:propertyName="flagModel.transaction.id"
+                                      p:label="Transaction ID"
+                                      p:labelPlacement="LEFT"
+                                      p:maxLength="21"
+                                      p:fieldLabel.renderColon="true">
+                                    <property name="control">
+                                        <bean parent="Uif-TextControl" p:size="22" />
+                                    </property>
+                                </bean>
+                -->
+
+                <!-- Activity Name -->
+                <!--                <bean parent="Uif-InputField" p:propertyName="flagModel.activity.id"
+                      p:label="Activity Name"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="21"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="22" />
+                    </property>
+                </bean>-->
+                <bean parent="Uif-InputField" p:propertyName="flagModel.creatorId"
+                      p:label="Creator ID"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="21"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="22" />
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.editorId"
+                      p:label="Editor ID"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="21"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="22" />
+                    </property>
+                </bean>
+
+                <bean parent="Uif-InputField" p:propertyName="flagModel.lastUpdate"
+                      p:label="Last Date"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="10"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11" />
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.effectiveDate"
+                      p:label="Effective Date"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="10"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11" />
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.expirationDate"
+                      p:label="Expiration Date"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="10"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11" />
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.accessLevel"
+                      p:label="Level"
+                      p:labelPlacement="LEFT"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl"/>
+                    </property>
+                </bean>
+<!--
+                &lt;!&ndash; TODO need the ID for these two &ndash;&gt;
+                <bean parent="Uif-InputField" p:propertyName="flagModel.previousFlag"
+                      p:label="Previous Flag ID"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="21"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="22" />
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="flagModel.nextFlag"
+                      p:label="Next Flag ID"
+                      p:labelPlacement="LEFT"
+                      p:maxLength="21"
+                      p:fieldLabel.renderColon="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="22" />
+                    </property>
+                </bean>
+-->
+                <bean parent="Uif-InputField" p:propertyName="flagModel.text"
+                      p:label="Description"
+                      p:fieldLabel.renderColon="true"
+                      p:labelPlacement="LEFT">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"
+                              p:style="resize:none;"/>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+    *******************************************************************************************************************
+                                        Flag controls group
+    A group of controls to support the view of a flag
+    ********************************************************************************************************************
+    -->
+    <bean id="viewFlagControlsGroup" parent="Uif-HorizontalBoxGroup">
+        <property name="items">
+            <list>
+                <!-- using a button means the controller would need to redirect to the appropriate page -->
+                <bean parent="Uif-Link" p:linkText="Add" p:target="_self"
+                      p:href="flagView?methodToCall=get&amp;viewId=FlagView&amp;pageId=AddFlagPage&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Update" p:target="_self"
+                      p:href="flagView?methodToCall=get&amp;viewId=FlagView&amp;pageId=EditFlagPage&amp;userId=@{account.id}"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2005-2012 The Kuali Foundation
+
+    Licensed under the Educational Community License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.opensource.org/licenses/ecl2.php
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <bean id="transactionTypeHelper" class="com.sigmasys.kuali.ksa.krad.helper.TransactionTypeHelper"/>
+
+    <bean id="TransactionTypeView" parent="Uif-KsaFormView" p:footer.render="false">
+        <property name="title" value="Transaction Types"/>
+        <property name="headerText" value="Transaction Types"/>
+        <property name="entryPageId" value="TransactionTypePage"/>
+        <property name="navigation" ref="settingsNavigation"/>
+        <property name="items">
+            <list merge="true">
+
+                <!--Begin Transaction Type Page-->
+
+                <bean parent="Uif-Page" p:id="TransactionTypePage" p:title="Transaction Types">
+                    <property name="headerText" value="Transaction Types"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HorizontalBoxSection">
+                            </bean>
+                            <bean parent="Uif-Link" p:linkText="Insert" p:target="_self"
+                                  p:href="transactionTypeView?methodToCall=create&amp;viewId=TransactionTypeView&amp;pageId=TransactionTypeCreatePage"/>
+                            <!--<ref bean="addSection"/>-->
+                            <ref bean="tableTransactionTypeSection"/>
+                        </list>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-Page" p:id="TransactionTypeDetailsPage" p:title="Transaction Type Details">
+                    <property name="headerText" value="Transaction Type Details"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HorizontalBoxSection">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-Link" p:linkText="Transaction Type Summary" p:target="_self"
+                                              p:href="transactionTypeView?methodToCall=get&amp;viewId=TransactionTypeView&amp;pageId=TransactionTypePage"/>
+                                    </list>
+                                </property>
+                            </bean>
+                            <ref bean="detailTransactionTypeSection"/>
+                        </list>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-Page" p:id="TransactionTypeCreatePage" p:title="Create Transaction Type">
+                    <property name="headerText" value="Create Transaction Type"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HorizontalBoxSection">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-Link" p:linkText="Transaction Type Summary" p:target="_self"
+                                              p:href="transactionTypeView?methodToCall=get&amp;viewId=TransactionTypeView&amp;pageId=TransactionTypePage"/>
+                                    </list>
+                                </property>
+                            </bean>
+                            <ref bean="createTransactionTypeSection"/>
+                            <ref bean="tagGroup"/>
+                            <ref bean="glBreakdownList"/>
+                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insert" p:actionLabel="Submit"/>
+                            <!--  Status message -->
+                            <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
+
+                        </list>
+                    </property>
+                </bean>
+                <!--End TransactionType Page-->
+
+            </list>
+        </property>
+        <!--
+                <property name="additionalCssFiles" ref=""/>
+                <property name="additionalJsFiles" ref=""/>
+                <property name="defaultBindingObjectPath" value=""/>
+        -->
+        <property name="viewHelperService" ref="transactionTypeHelper"/>
+        <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.SettingsForm"/>
+    </bean>
+
+    <!--
+    ********************************************************************************************************************
+					 transactionType List section
+    A table containing a list of transactionType used in the system
+    ********************************************************************************************************************
+    -->
+    <bean id="tableTransactionTypeSection" parent="Uif-Disclosure-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:width="85%">
+        <property name="title" value="View Transaction Types"/>
+        <property name="readOnly" value="true"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionTypeModel"/>
+        <property name="propertyName" value="transactionTypes"/>
+        <property name="layoutManager.sequencePropertyName" value="id.id"/>
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+        <property name="layoutManager.richTable.disableTableSort" value="false"/>
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="true"/>
+                <entry key="iDisplayLength" value="20"/>
+            </map>
+        </property>
+
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="ID" p:propertyName="transactionType.id.id" p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="Sub Code" p:propertyName="transactionType.id.subCode" p:width="5%"/>
+                <bean parent="Uif-InputField" p:label="Statement Text" p:propertyName="transactionType.description" p:width="55%"/>
+                <!--<bean parent="Uif-InputField" p:label="Type" p:propertyName="transactionType.type" p:width="10%"/>-->
+                <bean parent="Uif-InputField" p:label="Start Date" p:propertyName="transactionType.startDate" p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="End Date" p:propertyName="transactionType.endDate" p:width="10%"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="detailTransactionTypeSection" parent="Uif-VerticalBoxSection">
+        <property name="title" value="Transaction Type Details View"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField"
+                      p:propertyName="transactionType.id.id"
+                      p:labelPlacement="TOP"
+                      p:label="Symbol">
+                    <property name="readOnly" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl"
+                              p:size="11" p:maxLength="10"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField"
+                      p:propertyName="transactionType.id.subCode"
+                      p:label="Sub Code"
+                      p:labelPlacement="TOP"
+                      p:required="true">
+                    <property name="readOnly" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="20" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Description"
+                      p:propertyName="transactionType.transactionType.description" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="20" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="transactionType.transactionType.startDate"
+                      p:label="Start Date"
+                      p:instructionalText="Start date of the Transaction Type"
+                      p:fieldLabel.renderColon="true"
+                      p:labelPlacement="TOP"
+                      p:maxLength="10"
+                      p:required="true">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="transactionType.transactionType.endDate"
+                      p:label="End Date"
+                      p:instructionalText="End date of the Transaction Type"
+                      p:fieldLabel.renderColon="true"
+                      p:labelPlacement="TOP"
+                      p:maxLength="10"
+                      p:required="true">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11"/>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="update"
+                      p:actionLabel="Submit"
+                      p:onClickScript="writeHiddenToForm(&quot;actionParameters[entityId]&quot;, &quot;@{transactionType.id.id}&quot;);">
+                    <!--<property name="actionImage">
+                        <bean parent="Uif-ImageField"
+                              p:source="@{#ConfigProperties['krad.externalizable.images.url']}ks/icon_btn_add.png"/>
+                    </property>-->
+                </bean>
+                <!--  Status message -->
+                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="createTransactionTypeSection" parent="Uif-VerticalBoxSection">
+        <property name="title" value="Transaction Type Details View"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="type" p:labelPlacement="TOP"
+                      p:label="Transaction Type">
+                    <property name="control">
+                        <bean parent="Uif-DropdownControl"
+                              p:options-ref="TransactionTypeList"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="code" p:label="Transaction Code" p:labelPlacement="TOP" p:required="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="20" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="startDate"
+                      p:label="Start Date"
+                      p:instructionalText="Start date of the Transaction Type"
+                      p:fieldLabel.renderColon="true"
+                      p:labelPlacement="TOP"
+                      p:maxLength="10"
+                      p:required="true">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-CheckboxInputField">
+                    <property name="propertyName" value="showEndDate"/>
+                    <property name="label" value="Specify an End Date"/>
+                    <property name="defaultValue" value="false"/>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="endDate"
+                      p:label="End Date"
+                      p:instructionalText="Must be a date in the future"
+                      p:fieldLabel.renderColon="true"
+                      p:labelPlacement="TOP"
+                      p:maxLength="10"
+                      p:required="true"
+                      p:progressiveRender="@{showEndDate}">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Default Statement Text"
+                      p:propertyName="description" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="rollupId" p:labelPlacement="TOP" p:label="Roll-Up"
+                      p:fieldLabel.renderColon="false">
+                    <property name="control">
+                        <bean parent="Uif-DropdownControl" p:width="100%"/>
+                    </property>
+                    <property name="optionsFinder" value="@{getRollupOptionsFinder()}"/>
+                </bean>
+<!--
+                <bean parent="Uif-InputField" p:propertyName="priority" p:label="Priority" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="11" p:maxLength="10"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="clearPeriod" p:label="Clear Period" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="11" p:maxLength="10"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="authorizationText" p:label="Authorization Text" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="unallocatedGLAccount" p:label="Unallocated GL Account" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="unallocatedGLOperation" p:label="Unallocated GL Operation" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="1" p:maxLength="1"/>
+                    </property>
+                </bean>
+-->
+            </list>
+        </property>
+    </bean>
+
+    <util:list id="TransactionTypeList">
+        <bean parent="Uif-KeyLabelPair" p:key="C" p:value="Credit"/>
+        <bean parent="Uif-KeyLabelPair" p:key="D" p:value="Debit"/>
+    </util:list>
+
+
+    <bean id="glBreakdownList" parent="Uif-Disclosure-VerticalBoxSection" p:style="text-decoration:underline">
+        <property name="headerText" value="General Ledger Breakdown"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-Disclosure-TableCollectionSection"
+                      p:layoutManager.numberOfColumns="4"
+                      p:title=""
+                      p:instructionalText=""
+                      p:disclosure.render="false"
+                      p:progressiveRenderViaAJAX="true"
+                      p:renderAddLine="false"
+                      p:width="85%">
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.GlBreakdown"/>
+                    <property name="propertyName" value="glBreakdowns"/>
+                    <property name="readOnly" value="false"/>
+                    <property name="layoutManager.sequencePropertyName" value="id"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:label="GL Type" p:propertyName="generalLedgerType.glAccountId" p:readOnly="true">
+                                <!-- readOnly flag doesn't work in Rice 2.2.0 - https://jira.kuali.org/browse/KULRICE-8772 -->
+                                <property name="control">
+                                    <bean parent="Uif-TextControl" p:readOnly="true"/>
+                                </property>
+                            </bean>
+
+                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="generalLedgerType.description" p:readOnly="true">
+                                <!-- readOnly flag doesn't work in Rice 2.2.0 - https://jira.kuali.org/browse/KULRICE-8772 -->
+                                <property name="control">
+                                    <bean parent="Uif-TextControl" p:readOnly="true"/>
+                                </property>
+                            </bean>
+
+                            <bean parent="Uif-InputField" p:propertyName="glOperation.id" p:labelPlacement="TOP" p:label="Operation" p:readOnly="true">
+                                <property name="control">
+                                  <bean parent="Uif-DropdownControl" p:width="100%"/>
+                                </property>
+                                <property name="optionsFinder" value="@{getCreditDebitKeyValuesFinder()}"/>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="breakdown"
+                                  p:label="Breakdown"
+                                  p:maxLength="21"
+                                  p:labelPlacement="TOP"
+                                  p:fieldLabel.renderColon="true"
+                                  p:align="right">
+                                <property name="readOnly" value="true"/>
+                                <property name="control">
+                                    <bean parent="Uif-CurrencyTextControl" p:size="22"/>
+                                </property>
+                            </bean>
+
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="tagGroup" parent="Uif-Disclosure-VerticalBoxSection" >
+        <property name="headerText" value="Tags"/>
+        <property name="items">
+            <list>
+                <ref bean="tagList"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="tagList" parent="Uif-Disclosure-TableCollectionSection"
+          p:layoutManager.numberOfColumns="4"
+          p:title=""
+          p:instructionalText=""
+          p:disclosure.render="false"
+          p:progressiveRenderViaAJAX="true"
+          p:width="85%">
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Tag"/>
+        <property name="propertyName" value="tags"/>
+        <property name="readOnly" value="false"/>
+        <property name="layoutManager.sequencePropertyName" value="id"/>
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="Name" p:propertyName="name" p:readOnly="@{!#empty(#line.id)}">
+                    <property name="suggest">
+                        <bean parent="Uif-Suggest">
+                            <property name="sourcePropertyName" value="name"/>
+                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                            <property name="suggestQuery">
+                                <bean parent="Uif-AttributeQueryConfig">
+                                    <property name="queryMethodToCall" value="getTagsForSuggest"/>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Description" p:propertyName="description" p:readOnly="@{!#empty(#line.id)}"/>
+                <bean parent="Uif-InputField" p:label="Level" p:propertyName="accessLevel" p:readOnly="@{!#empty(#line.id)}"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

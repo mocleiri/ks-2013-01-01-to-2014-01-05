@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+       default-lazy-init="true">
+
+    <!-- Atomikos UserTransaction implementation -->
+    <bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp"/>
+
+    <!-- Atomikos JTA TransactionManager implementation -->
+    <bean id="atomikosTransactionManager"
+          class="com.sigmasys.kuali.ksa.service.jta.AtomikosTransactionManagerLookup"
+          factory-method="getTransactionManager"/>
+
+    <!--  Spring JTA TransactionManager -->
+    <bean id="transactionManager" class="com.sigmasys.kuali.ksa.service.jta.JtaTransactionManager">
+        <property name="userTransaction" ref="atomikosUserTransaction"/>
+        <property name="transactionManager" ref="atomikosTransactionManager"/>
+    </bean>
+
+
+    <!-- XA data source definitions -->
+    <bean id="xaDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" abstract="true">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="minPoolSize" value="10"/>
+        <property name="poolSize" value="10"/>
+        <property name="maxPoolSize" value="10"/>
+        <property name="testQuery" value="select 1 from dual"/>
+    </bean>
+
+    <bean id="ksaDataSource" class="com.sigmasys.kuali.ksa.service.jta.AtomikosDataSourceBean" parent="xaDataSource">
+        <property name="uniqueResourceName" value="ksaDataSource"/>
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+        <property name="user" value="ksa"/>
+        <property name="password" value="ksa123"/>
+    </bean>
+
+    <bean id="ksDataSource" class="com.sigmasys.kuali.ksa.service.jta.AtomikosDataSourceBean" parent="xaDataSource">
+        <property name="uniqueResourceName" value="ksDataSource"/>
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+        <property name="user" value="ks"/>
+        <property name="password" value="ks123"/>
+    </bean>
+
+    <bean id="riceDataSource" class="com.sigmasys.kuali.ksa.service.jta.AtomikosDataSourceBean" parent="xaDataSource">
+        <property name="uniqueResourceName" value="riceDataSource"/>
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+        <property name="user" value="rice"/>
+        <property name="password" value="rice123"/>
+    </bean>
+
+
+</beans>

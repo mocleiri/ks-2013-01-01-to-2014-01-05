@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="Ksa-TransactionAlerts" parent="Uif-HorizontalBoxGroup">
+        <property name="items">
+        <list>
+
+            <bean parent="Uif-ImageField" p:source="../images/alert.png"  p:style="margin-top: 15px; cursor:pointer;" p:altText="Alerts" p:title=""
+                  p:onClickScript="showLightboxComponent('alertLightbox');">
+                <property name="toolTip">
+                    <bean parent="Uif-Tooltip" p:tooltipContent="@{alertTooltip}"/>
+                </property>
+            </bean>
+            <bean id="alertLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                <property name="hidden" value="true"/>
+                <property name="items">
+                    <list>
+                        <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Alerts"/>
+                        <ref bean="alertLightboxTable"/>
+
+                    </list>
+                </property>
+            </bean>
+
+            <bean parent="Uif-Message" p:style="margin-top: 15px;">
+                <property name="messageText" value="(@{alerts.size()})" />
+            </bean>
+        </list>
+        </property>
+    </bean>
+
+    <bean id="alertLightboxTable" parent="Uif-Disclosure-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:width="85%">
+        <property name="readOnly" value="true"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Alert"/>
+        <property name="propertyName" value="alerts"/>
+        <property name="layoutManager.sequencePropertyName" value="id"/>
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+        <property name="layoutManager.richTable.disableTableSort" value="false"/>
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="false"/>
+                <entry key="bInfo" value="false"/>
+                <entry key="bFilter" value="false"/>
+            </map>
+        </property>
+
+        <property name="items">
+            <list>
+                <bean parent="Uif-ImageField" p:source="../images/alert.png" p:altText="Alerts" p:title="" />
+                <bean parent="Uif-InputField" p:label="Effective Date"
+                      p:propertyName="effectiveDate"
+                      p:width="10%">
+                    <property name="control">
+                        <bean parent="Uif-TextControl"
+                              p:size="11" p:maxLength="10"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Alert Text"
+                      p:propertyName="text"
+                      p:width="15%">
+                    <property name="control">
+                        <bean parent="Uif-TextControl"
+                              p:size="20" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <!--<bean parent="Uif-LinkField" p:label="Edit" p:linkText="Edit" p:target="_self" p:width="10%"
+                      p:href="settingsView?viewId=SettingsView&amp;pageId=@{simpleType}DetailsPage&amp;methodToCall=get&amp;entityId=@{#line.id}" />-->
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="Ksa-TransactionFlags" parent="Uif-HorizontalBoxGroup">
+        <property name="items">
+        <list>
+            <bean parent="Uif-ImageField" p:source="../images/flag.png" p:style="margin-top: 15px; cursor:pointer;" p:altText="" p:title=""
+                  p:onClickScript="showLightboxComponent('flagLightbox');">
+                <property name="toolTip">
+                    <bean parent="Uif-Tooltip" p:tooltipContent="@{flagTooltip}"/>
+                </property>
+            </bean>
+            <bean id="flagLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                <property name="hidden" value="true"/>
+                <property name="items">
+                    <list>
+                        <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Flags"/>
+                        <ref bean="flagLightboxTable"/>
+
+                    </list>
+                </property>
+            </bean>
+
+            <bean parent="Uif-Message"  p:style="margin-top: 15px;">
+                <property name="messageText" value="(@{flags.size()})"/>
+            </bean>
+        </list>
+        </property>
+    </bean>
+
+    <bean id="flagLightboxTable" parent="Uif-Disclosure-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:width="85%">
+        <property name="readOnly" value="true"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Flag"/>
+        <property name="propertyName" value="flags"/>
+        <property name="layoutManager.sequencePropertyName" value="id"/>
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+        <property name="layoutManager.richTable.disableTableSort" value="false"/>
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="false"/>
+                <entry key="bInfo" value="false"/>
+                <entry key="bFilter" value="false"/>
+            </map>
+        </property>
+
+        <property name="items">
+            <list>
+                <bean parent="Uif-ImageField" p:source="../images/flag.png" p:altText="Flags" p:title="" />
+                <bean parent="Uif-InputField" p:label="Effective Date"
+                      p:propertyName="effectiveDate"
+                      p:width="10%">
+                    <property name="control">
+                        <bean parent="Uif-TextControl"
+                              p:size="11" p:maxLength="10"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Flag Text"
+                      p:propertyName="text"
+                      p:width="15%">
+                    <property name="control">
+                        <bean parent="Uif-TextControl"
+                              p:size="20" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <!--<bean parent="Uif-LinkField" p:label="Edit" p:linkText="Edit" p:target="_self" p:width="10%"
+                      p:href="settingsView?viewId=SettingsView&amp;pageId=@{simpleType}DetailsPage&amp;methodToCall=get&amp;entityId=@{#line.id}" />-->
+            </list>
+        </property>
+    </bean>
+
+
+</beans>
