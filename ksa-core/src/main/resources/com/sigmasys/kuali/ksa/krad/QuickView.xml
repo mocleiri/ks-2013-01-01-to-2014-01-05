@@ -31,15 +31,7 @@
         <property name="headerText" value="Quick View"/>
         <property name="entryPageId" value="QuickViewPage"/>
         <property name="navigation">
-            <bean parent="Uif-KsaPageNavigation">
-                <property name="items">
-                    <list merge="true">
-                        <!-- TODO Advanced Search -->
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AdvancedSearch"
-                              p:actionLabel="Advanced Search"/>
-                    </list>
-                </property>
-            </bean>
+            <ref bean="KsaAccountNavigation"/>
         </property>
         <property name="items">
             <list merge="true">

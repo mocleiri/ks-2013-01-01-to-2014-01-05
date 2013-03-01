@@ -32,14 +32,7 @@
         <property name="headerText" value="Generate 1098T"/>
         <property name="entryPageId" value="Generate1098TViewPage"/>
         <property name="navigation">
-            <bean parent="Uif-KsaPageNavigation">
-                <property name="items">
-                    <list merge="true">
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AdvancedSearch"
-                              p:actionLabel="Advanced Search"/>
-                    </list>
-                </property>
-            </bean>
+            <ref bean="KsaAccountNavigation"/>
         </property>
 		<property name="items">
             <list merge="true">

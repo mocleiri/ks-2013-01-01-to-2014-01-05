@@ -124,11 +124,9 @@ public class TransactionController extends GenericSearchController {
         TransactionModel nonRolledUp = null;
 
         for (TransactionModel t : transactions) {
-            logger.info("TJB: " + t.getId() + " " + t.getTransactionType().getDescription());
             unGroupedTransactionModelList.add(new TransactionModel(t));
 
             Rollup tmRollup = t.getRollup();
-            logger.info("TJB: Rollup - " + tmRollup);
             if (tmRollup != null) {
                 // Check if this rollup is already in there.
                 boolean found = false;

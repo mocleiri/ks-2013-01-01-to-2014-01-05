@@ -31,15 +31,7 @@
         <property name="headerText" value="Deferments"/>
         <property name="entryPageId" value="DefermentOptionsPage"/>
         <property name="navigation">
-            <bean parent="Uif-KsaPageNavigation">
-                <property name="items">
-                    <list merge="true">
-                        <!-- TODO Advanced Search -->
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AdvancedSearch"
-                              p:actionLabel="Advanced Search"/>
-                    </list>
-                </property>
-            </bean>
+            <ref bean="KsaAccountNavigation"/>
         </property>
         <property name="items">
             <list merge="true">
@@ -47,8 +39,6 @@
                     <property name="headerText" value="Deferment Options"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-Link" p:linkText="Quick View" p:target="_self"
-                                  p:href="quickView?methodToCall=get&amp;viewId=QuickView&amp;userId=@{account.id}"/>
                             <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="get"
                                   p:actionLabel="Refresh">
                                   <!--p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">-->
