@@ -25,21 +25,7 @@ Then /^the activity offering clusters? and assigned AOs are copied over with the
 end
 
 Then /^I copy the course offering$/ do
-  @course_offering_copy = create CourseOffering, :term=>"202001", :create_by_copy=>@course_offering
-end
-
-When /^I create a new course offering in a subsequent term by copying the course offering$/ do
-  @source_term = "20122"
-  @target_term = "20142"
-  @catalogue_course_code = "ENGL110"
-#  set target term and course code
-  go_to_create_course_offerings
-  on CreateCourseOffering do |page|
-    page.target_term.set @target_term
-    page.catalogue_course_code.set @catalogue_course_code
-    page.show
-  end
-
+  @course_offering_copy = create CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :create_by_copy=>@course_offering
 end
 
 When /^I create a new course offering in a subsequent term by copying the catalog course offering$/ do

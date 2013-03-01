@@ -263,13 +263,22 @@ Given /^I have created the default registration groups for a course offering$/ d
 end
 
 Given /^I have created the default registration groups for a catalog course offering$/ do
-  @course_offering = make CourseOffering, :term=>"201212", :course=>"BSCI425"
+  @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"BSCI425"
   @course_offering.manage_registration_groups
 
   @ao_cluster = make ActivityOfferingCluster,  :is_constrained=>false
   @course_offering.add_ao_cluster(@ao_cluster)
   @ao_cluster.generate_unconstrained_reg_groups
   @ao_cluster.assigned_ao_list = @course_offering.ao_list.sort #TODO - should ao_cluster have ref to parent?
+end
+
+Given /^I have created an activity offering cluster and generated registration groups for a catalog course offering$/ do
+  @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"BSCI425"
+  @course_offering.manage_registration_groups
+  @ao_cluster = make ActivityOfferingCluster
+  @course_offering.add_ao_cluster(@ao_cluster)
+  @ao_cluster.add_unassigned_aos(["A"])
+  @ao_cluster.generate_reg_groups
 end
 
 
@@ -413,17 +422,13 @@ Given /^I have created two activity offering clusters for a course offering$/ do
   @course_offering.add_ao_cluster(@ao_cluster2)
 end
 
-Given /^I have created two activity offering clusters and generated registration groups for a course offering$/ do
-  @course_offering = create CourseOffering, :term=>"202001", :create_by_copy=>(make CourseOffering, :course=>"CHEM271")
+Given /^I have created an activity offering cluster and generated registration groups for a course offering$/ do
+  @course_offering = create CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :create_by_copy=>(make CourseOffering, :course=>"CHEM612")
   @course_offering.manage_registration_groups
   @ao_cluster = make ActivityOfferingCluster
   @course_offering.add_ao_cluster(@ao_cluster)
-  @ao_cluster.add_unassigned_aos(["A","B"])
+  @ao_cluster.add_unassigned_aos(["A"])
   @ao_cluster.generate_reg_groups
-  @ao_cluster2 = make ActivityOfferingCluster
-  @course_offering.add_ao_cluster(@ao_cluster2)
-  @ao_cluster2.add_unassigned_aos(["H","I"])
-  @ao_cluster2.generate_reg_groups
 end
 
 
