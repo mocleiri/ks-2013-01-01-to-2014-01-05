@@ -1,0 +1,6 @@
+NL_USAGE_ID,NM,NMSPC_CD,DESC_TXT,ACTV,VER_NBR
+"10000","kuali.krms.edit","KS-SYS","Kuali Rule Edit","Y","0"
+"10001","kuali.krms.composition","KS-SYS","Kuali Rule Composition","Y","0"
+"10002","kuali.krms.example","KS-SYS","Kuali Rule Example","Y","0"
+"10003","kuali.krms.preview","KS-SYS","Kuali Rule Preview","Y","0"
+"10004","kuali.krms.type.description","KS-SYS","Kuali Rule Type Description","Y","0"
