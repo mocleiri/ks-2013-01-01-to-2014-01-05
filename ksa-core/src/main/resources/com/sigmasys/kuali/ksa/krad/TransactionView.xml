@@ -235,17 +235,38 @@
                         </bean>
 
                         <bean parent="Uif-ImageField" p:source="../images/memo.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
-                              p:onClickScript="showLightboxComponent('flagLightbox');">
+                              p:onClickScript="showLightboxComponent('memoLightbox@{#lineSuffix}');" p:render="@{#line.memos.size() > 0}">
                             <property name="toolTip">
                                 <bean parent="Uif-Tooltip" p:tooltipContent="Memo: (@{#line.memos.size()}) Click icon to view"/>
                             </property>
                         </bean>
+                        <bean id="memoLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                            <property name="hidden" value="true"/>
+                            <property name="items">
+                                <list>
+                                    <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Memos"/>
+                                    <ref bean="memoLightboxTable"/>
+
+                                </list>
+                            </property>
+                        </bean>
+
                         <bean parent="Uif-ImageField" p:source="../images/document.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
-                              p:onClickScript="showLightboxComponent('flagLightbox');">
+                              p:onClickScript="showLightboxComponent('documentLightbox@{#lineSuffix}');">
                             <property name="toolTip">
                                 <bean parent="Uif-Tooltip" p:tooltipContent="Document: Click icon to view"/>
                             </property>
                         </bean>
+                        <bean id="documentLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                            <property name="hidden" value="true"/>
+                            <property name="items">
+                                <list>
+                                    <bean parent="Uif-Image" p:source="../images/sample-document.png"/>
+
+                                </list>
+                            </property>
+                        </bean>
+
                         <bean parent="Uif-ImageField" p:source="../images/tag.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
                               p:onClickScript="showLightboxComponent('tagLightbox@{#lineSuffix}');" p:render="@{#line.tags.size() > 0}">
                             <property name="toolTip">
