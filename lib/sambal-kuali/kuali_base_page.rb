@@ -46,7 +46,7 @@ class BasePage < PageFactory
     end
 
     def krms_frame_element
-      element(:frm) { |b| b.frame(:id=>/easyXDM_default\d+_provider/).frame(id: "iframeportlet") } #
+      element(:frm) { |b| b.frame(:id=>/easyXDM_default\d+_provider/).frame(id: "iframeportlet") }
     end
   end
 end
