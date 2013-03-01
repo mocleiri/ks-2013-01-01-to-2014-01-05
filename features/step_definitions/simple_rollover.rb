@@ -1,0 +1,92 @@
+When /^I initiate a rollover by specifying source and target terms$/ do
+  @rollover = make Rollover
+  @rollover.perform_rollover
+end
+
+When /^I initiate a rollover to create a term in open state$/ do
+  @rollover = make Rollover, :source_term => "201201", :target_term => "202001"
+  @rollover.perform_rollover
+end
+
+When /^I initiate a rollover to create a term in default state EC/ do
+  @rollover = make Rollover, :source_term => "201212", :target_term => "201812"
+  @rollover.perform_rollover
+end
+
+When /^I initiate a rollover to create a term in open state EC$/ do
+  @rollover = make Rollover, :source_term => "201212", :target_term => "201712"
+  @rollover.perform_rollover
+end
+
+When /^I initiate a rollover to create a term in final edits state EC$/ do
+  @rollover = make Rollover, :source_term => "201212", :target_term => "201612"
+  @rollover.perform_rollover
+end
+
+When /^I initiate a rollover to create a term in published state EC$/ do
+  @rollover = make Rollover, :source_term => "201212", :target_term => "201512"
+  @rollover.perform_rollover
+end
+
+When /^I initiate a rollover to create a term in default state WC/ do
+  @rollover = make Rollover, :source_term => "201205", :target_term => "201805"
+  @rollover.perform_rollover
+end
+
+When /^I initiate a rollover to create a term in open state WC$/ do
+  @rollover = make Rollover, :source_term => "201205", :target_term => "201705"
+  @rollover.perform_rollover
+end
+
+When /^I initiate a rollover to create a term in final edits state WC$/ do
+  @rollover = make Rollover, :source_term => "201205", :target_term => "201605"
+  @rollover.perform_rollover
+end
+
+When /^I initiate a rollover to create a term in published state WC$/ do
+  @rollover = make Rollover, :source_term => "201205", :target_term => "201505"
+  @rollover.perform_rollover
+end
+
+When /^I approve the "(.*)" subject code for scheduling in the target term$/ do |subject_code|
+  @course_offering = make CourseOffering, :term=>@rollover.target_term, :course=>subject_code
+  @course_offering.search_by_subjectcode
+  on ManageCourseOfferingList do |page|
+      page.approve_subject_code
+  end
+end
+
+And /^I manage SOC for the target term$/ do
+  @manageSoc = make ManageSoc, :term_code =>@rollover.target_term
+end
+
+Then /^the results of the rollover are available$/ do
+  @rollover.wait_for_rollover_to_complete
+  #TODO validation
+  #page.source_term.should ==
+  #page.date_initiated.should ==
+  #page.date_completed.should ==
+  #page.rollover_duration.should ==
+  #page.course_offerings_transitioned.should ==
+  #page.course_offerings_exceptions.should ==
+  #page.activity_offerings_transitioned.should ==
+  #page.activity_offerings_exceptions.should ==
+  #page.non_transitioned_courses_table.rows[1].cells[0].text #first exception
+end
+
+Then /^course offerings are copied to the target term$/ do
+  #TODO validation
+end
+
+Then /^the rollover can be released to departments$/ do
+  @rollover.release_to_depts
+  #TODO validation
+end
+
+When /^I am in working on a term in "Open" SOC state$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM
+end
+
+When /^I am in working on a term in "Final Edits" SOC state$/ do
+  @term_for_test = Rollover::FINAL_EDITS_SOC_TERM
+end
