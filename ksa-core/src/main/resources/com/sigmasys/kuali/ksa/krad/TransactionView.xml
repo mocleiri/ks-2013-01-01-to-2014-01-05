@@ -39,6 +39,30 @@
                         </list>
                     </property>
                 </bean>
+                <bean parent="Uif-Page" p:id="ViewAlerts" p:title="View Alerts">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HeaderTwo" p:headerText="Alerts"/>
+                            <ref bean="alertLightboxTable"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-Page" p:id="ViewFlags" p:title="View Flags">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HeaderTwo" p:headerText="Flags"/>
+                            <ref bean="flagLightboxTable"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-Page" p:id="ViewMemos" p:title="View Memos">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HeaderTwo" p:headerText="Memos"/>
+                            <ref bean="memoLightboxTable"/>
+                        </list>
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>
@@ -64,11 +88,11 @@
                 <bean parent="Uif-Link" p:linkText="Biographic Information" p:target="_self"
                       p:href="biographicView?methodToCall=get&amp;viewId=BiographicView&amp;pageId=BiographicPersonsPage&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Flags" p:target="_self"
-                      p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=FlagTypePage"/>
+                      p:href="transactionView?methodToCall=get&amp;pageId=ViewFlags&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Alerts" p:target="_self"
-                      p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=ActivityTypePage"/>
+                      p:href="transactionView?methodToCall=get&amp;pageId=ViewAlerts&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Memos" p:target="_self"
-                      p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=ActivityTypePage"/>
+                      p:href="transactionView?methodToCall=get&amp;pageId=ViewMemos&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Generate 1098T" p:target="_self"
                       p:href="generate1098T?methodToCall=display1098TForm&amp;viewId=Generate1098TView&amp;userId=@{account.id}"/>
             </list>

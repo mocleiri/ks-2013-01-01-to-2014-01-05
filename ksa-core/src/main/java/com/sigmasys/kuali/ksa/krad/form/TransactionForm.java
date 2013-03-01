@@ -14,6 +14,7 @@ public class TransactionForm extends AbstractViewModel {
 
     private List<Alert> alerts;
     private List<Flag> flags;
+    private List<Memo> memos;
 
     private List<TransactionModel> rollupTransactions;
     private List<TransactionModel> allTransactions;
@@ -377,5 +378,40 @@ public class TransactionForm extends AbstractViewModel {
 
     public void setAllTransactions(List<TransactionModel> allTransactions) {
         this.allTransactions = allTransactions;
+    }
+
+    public List<Memo> getMemos() {
+        return memos;
+    }
+
+    public String getMemoTooltip(){
+        int itemsPerPage = 4; //Integer.valueOf(configService.getParameter(Constants.QUICKVIEW_INFORMATION_COUNT));
+
+        String html = "<b>Memos (";
+
+        if(alerts == null || alerts.size() == 0){
+            html += "0/0)</b><br/><p>No memos</p>";
+            return html;
+        }
+
+        int size = memos.size();
+
+        if(size > itemsPerPage){
+            html += itemsPerPage + "/" + size + ")</b><br/>";
+        } else {
+            html += size + "/" + size + ")</b><br/>";
+        }
+
+        html += "<p>";
+        for ( int i = 0; i < memos.size() && i < itemsPerPage; i++){
+            html += memos.get(i).getDisplayValue() + "<br/>";
+        }
+        html += "</p>";
+
+        return html;
+    }
+
+    public void setMemos(List<Memo> memos) {
+        this.memos = memos;
     }
 }

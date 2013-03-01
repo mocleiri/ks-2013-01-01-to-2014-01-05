@@ -112,7 +112,14 @@ public class TransactionController extends GenericSearchController {
 
 
 
+        }else if ("ViewAlerts".equals(pageId)) {
+            form.setAlerts(informationService.getAlerts(userId));
+        }else if ("ViewFlags".equals(pageId)) {
+            form.setFlags(informationService.getFlags(userId));
+        }else if ("ViewMemos".equals(pageId)) {
+            form.setMemos(informationService.getMemos(userId));
         }
+
 
         return getUIFModelAndView(form);
     }
