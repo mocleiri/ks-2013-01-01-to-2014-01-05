@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,19 +60,31 @@ public class RulesController extends GenericSearchController {
                 brmPersistenceService.getRuleNames(ruleSetName) : brmPersistenceService.getRuleNames();
 
         rulesForm.initRuleNameFinder(ruleNames);
+
+        List<RuleType> ruleTypes = brmPersistenceService.getRuleTypes();
+        if (ruleTypes != null) {
+            List<String> ruleTypeNames = new ArrayList<String>(ruleTypes.size());
+            for (RuleType ruleType : ruleTypes) {
+                ruleTypeNames.add(ruleType.getName());
+            }
+            rulesForm.initRuleTypeFinder(ruleTypeNames);
+        }
+
         rulesForm.setRuleSetName(ruleSetName);
         rulesForm.setAddStatusMessage("");
         rulesForm.setEditStatusMessage("");
 
         return rulesForm;
+
     }
+
 
     /**
      * @param form RuleForm instance
      * @return ModelAndView instance
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
-    public ModelAndView get(@ModelAttribute("KualiForm") RulesForm form, HttpServletRequest request) {
+    public ModelAndView get(@ModelAttribute("KualiForm") RulesForm form) {
 
         logger.debug("Page ID = " + form.getPageId());
 
@@ -137,7 +150,15 @@ public class RulesController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=checkExistence")
     public ModelAndView checkExistence(@ModelAttribute("KualiForm") RulesForm form) {
 
-        String ruleName = form.getRuleName();
+        Rule rule = form.getNewRule();
+        if (rule == null) {
+            String errMsg = "Rule cannot be null";
+            logger.error(errMsg);
+            form.setAddStatusMessage(errMsg);
+            return getUIFModelAndView(form);
+        }
+
+        String ruleName = rule.getName();
 
         if (StringUtils.isBlank(ruleName)) {
             String errMsg = "Rule name cannot be empty";
@@ -157,31 +178,54 @@ public class RulesController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=add")
     public ModelAndView add(@ModelAttribute("KualiForm") RulesForm form) {
 
-        String ruleName = form.getRuleName();
+        Rule rule = form.getNewRule();
+        if (rule == null) {
+            String errMsg = "Rule cannot be null";
+            logger.error(errMsg);
+            form.setAddStatusMessage(errMsg);
+            return getUIFModelAndView(form);
+        }
+
+        String ruleName = rule.getName();
 
         if (StringUtils.isBlank(ruleName)) {
             String errMsg = "Rule name cannot be empty";
             logger.error(errMsg);
             form.setAddStatusMessage(errMsg);
+            return getUIFModelAndView(form);
+
         } else if (!ruleExists(ruleName)) {
 
-            // TODO
-            Rule rule = new Rule();
+            String ruleTypeName = form.getNewRuleType();
+            if (StringUtils.isBlank(ruleTypeName)) {
+                String errMsg = "Rule type is required";
+                logger.error(errMsg);
+                form.setAddStatusMessage(errMsg);
+                return getUIFModelAndView(form);
+            }
 
-            copyFormToRule(form, rule);
+            RuleType ruleType = brmPersistenceService.getRuleType(ruleTypeName);
+            if (ruleType == null) {
+                String errMsg = "Rule type '" + ruleTypeName + "' does not exist";
+                logger.error(errMsg);
+                form.setAddStatusMessage(errMsg);
+                return getUIFModelAndView(form);
+            }
+
+            rule.setType(ruleType);
 
             try {
                 brmPersistenceService.persistRule(rule);
                 brmService.reloadRuleSets();
                 form.setAddStatusMessage("A new Rule has been created");
+                logger.info("Added Rule => \n" + rule);
             } catch (InvalidRulesException ire) {
                 form.setAddStatusMessage(ire.getMessage());
+                return getUIFModelAndView(form);
             }
 
-            logger.info("Added Rule => \n" + rule);
-
         } else {
-            form.setAddStatusMessage("Rule with ID = '" + ruleName + "' already exists");
+            form.setAddStatusMessage("Rule with name = '" + ruleName + "' already exists");
         }
 
         return getUIFModelAndView(form);

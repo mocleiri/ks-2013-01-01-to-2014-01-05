@@ -71,8 +71,8 @@
                 <bean parent="Uif-HorizontalBoxSection" p:layoutManager.orientation="HORIZONTAL">
                     <property name="items">
                         <list>
-                            <bean parent="Uif-InputField" p:propertyName="ruleName"
-                                  p:label="Type in a new rule name"
+                            <bean parent="Uif-InputField" p:propertyName="newRule.name"
+                                  p:label="Rule name"
                                   p:labelPlacement="TOP"
                                   p:width="100"
                                   p:required="true"
@@ -94,7 +94,19 @@
                         </list>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="rulePriority"
+                <bean parent="Uif-InputField" p:propertyName="newRuleType"
+                      p:label="Select a rule type"
+                      p:labelPlacement="TOP"
+                      p:width="100"
+                      p:required="true"
+                      p:fieldLabel.renderColon="false">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-DropdownControl" p:size="5"/>
+                    </property>
+                    <property name="optionsFinder" value="@{getRuleTypeFinder()}"/>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="newRule.priority"
                       p:label="Rule Priority"
                       p:labelPlacement="TOP"
                       p:required="true"
@@ -104,24 +116,24 @@
                         <bean parent="Uif-TextControl" p:size="15" p:maxLength="14"/>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="ruleLhs"
+                <bean parent="Uif-InputField" p:propertyName="newRule.lhs"
                       p:label="Rule LHS"
                       p:labelPlacement="TOP"
                       p:required="true"
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="150"/>
+                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="100"/>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="ruleRhs"
+                <bean parent="Uif-InputField" p:propertyName="newRule.rhs"
                       p:label="Rule RHS"
                       p:labelPlacement="TOP"
                       p:required="true"
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="150"/>
+                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="100"/>
                     </property>
                 </bean>
                 <bean parent="Uif-PrimaryActionButton-Small" p:methodToCall="add"
@@ -145,7 +157,7 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-InputField" p:propertyName="ruleName"
-                                  p:label="Select a rule set for editing"
+                                  p:label="Select a rule for editing"
                                   p:labelPlacement="TOP"
                                   p:width="100"
                                   p:required="true"
@@ -167,6 +179,16 @@
                         </list>
                     </property>
                 </bean>
+                <bean parent="Uif-InputField" p:propertyName="ruleType"
+                      p:label="Rule Type"
+                      p:labelPlacement="TOP"
+                      p:required="true"
+                      p:fieldLabel.renderColon="false">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="15" p:maxLength="14"/>
+                    </property>
+                </bean>
                 <bean parent="Uif-InputField" p:propertyName="rulePriority"
                       p:label="Rule Priority"
                       p:labelPlacement="TOP"
@@ -184,7 +206,7 @@
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="150"/>
+                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="100"/>
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="ruleRhs"
@@ -194,7 +216,7 @@
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="150"/>
+                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="100"/>
                     </property>
                 </bean>
                 <bean parent="Uif-PrimaryActionButton-Small" p:methodToCall="update"

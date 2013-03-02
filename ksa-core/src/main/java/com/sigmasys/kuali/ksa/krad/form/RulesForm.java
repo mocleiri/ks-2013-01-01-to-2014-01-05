@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 
+import com.sigmasys.kuali.ksa.model.rule.Rule;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.krad.keyvalues.KeyValuesBase;
@@ -28,16 +29,20 @@ public class RulesForm extends AbstractViewModel {
     private String editStatusMessage;
     private String addStatusMessage;
 
-    private final RuleNameFinder ruleNameFinder = new RuleNameFinder();
+    private Rule newRule;
+    private String newRuleType;
 
-    private final static class RuleNameFinder extends KeyValuesBase {
+    private final StringValueFinder ruleNameFinder = new StringValueFinder();
+    private final StringValueFinder ruleTypeFinder = new StringValueFinder();
+
+    private final static class StringValueFinder extends KeyValuesBase {
 
         private List<KeyValue> keyValues = Collections.emptyList();
 
-        protected void initValues(List<String> ruleNames) {
-            keyValues = new ArrayList<KeyValue>(ruleNames.size());
-            for (String ruleName : ruleNames) {
-                keyValues.add(new ConcreteKeyValue(ruleName, ruleName));
+        protected void initValues(List<String> values) {
+            keyValues = new ArrayList<KeyValue>(values.size());
+            for (String value : values) {
+                keyValues.add(new ConcreteKeyValue(value, value));
             }
         }
 
@@ -51,6 +56,10 @@ public class RulesForm extends AbstractViewModel {
         public List<KeyValue> getKeyValues() {
             return Collections.unmodifiableList(keyValues);
         }
+    }
+
+    public RulesForm() {
+        newRule = new Rule();
     }
 
     public Long getRuleId() {
@@ -101,8 +110,12 @@ public class RulesForm extends AbstractViewModel {
         this.ruleType = ruleType;
     }
 
-    public void initRuleNameFinder(List<String> ruleSetNames) {
-        ruleNameFinder.initValues(ruleSetNames);
+    public void initRuleNameFinder(List<String> ruleNames) {
+        ruleNameFinder.initValues(ruleNames);
+    }
+
+    public void initRuleTypeFinder(List<String> ruleTypes) {
+        ruleTypeFinder.initValues(ruleTypes);
     }
 
     public String getEditStatusMessage() {
@@ -115,6 +128,10 @@ public class RulesForm extends AbstractViewModel {
 
     public KeyValuesFinder getRuleNameFinder() {
         return ruleNameFinder;
+    }
+
+    public KeyValuesFinder getRuleTypeFinder() {
+        return ruleTypeFinder;
     }
 
     public String getAddStatusMessage() {
@@ -131,5 +148,21 @@ public class RulesForm extends AbstractViewModel {
 
     public void setRuleSetName(String ruleSetName) {
         this.ruleSetName = ruleSetName;
+    }
+
+    public Rule getNewRule() {
+        return newRule;
+    }
+
+    public void setNewRule(Rule newRule) {
+        this.newRule = newRule;
+    }
+
+    public String getNewRuleType() {
+        return newRuleType;
+    }
+
+    public void setNewRuleType(String newRuleType) {
+        this.newRuleType = newRuleType;
     }
 }

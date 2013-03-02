@@ -17,9 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Michael Ivanov
  */
-
-//TODO: create a POC to check if this solution is viable
-
 public abstract class GenericSearchController extends UifControllerBase {
 
     private static final String ACCOUNT_SEARCH_PAGE_ID = "AccountSearchPage";
