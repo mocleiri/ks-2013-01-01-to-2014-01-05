@@ -140,7 +140,7 @@ public class TransactionController extends GenericSearchController {
                 for (TransactionModel m : rollUpTransactionModelList) {
                     Rollup r = m.getRollup();
                     if (r.getId().equals(tmRollup.getId())) {
-                        m.addSubTransaction(new TransactionModel(t));
+                        m.addSubTransaction(t);
                         found = true;
                         break;
                     }
