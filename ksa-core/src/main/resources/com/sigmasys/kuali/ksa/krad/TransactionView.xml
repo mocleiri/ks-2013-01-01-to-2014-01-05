@@ -154,12 +154,12 @@
                             </property>
                             <property name="items">
                                 <list>
-                                    <bean parent="Uif-InputField" p:label="Roll-up" p:propertyName="rollup.name" p:width="25%"/>
-                                    <bean parent="Uif-InputField" p:propertyName="chargeAmount" p:label="Charges" p:width="15%" p:labelPlacement="TOP" p:style="text-align: right;"/>
-                                    <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:width="15%" p:labelPlacement="TOP" p:style="text-align: right"/>
-                                    <bean parent="Uif-InputField" p:propertyName="defermentAmount" p:label="Deferments" p:width="15%" p:labelPlacement="TOP" p:style="text-align: right"/>
-                                    <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:width="15%" p:labelPlacement="TOP" p:style="text-align: right"/>
-                                    <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:width="15%" p:labelPlacement="TOP" p:style="text-align: right"/>
+                                    <bean parent="Uif-InputField" p:label="Roll-up" p:propertyName="rollup.name" p:width="40%"/>
+                                    <bean parent="Uif-InputField" p:propertyName="chargeAmount" p:label="Charges" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
+                                    <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
+                                    <bean parent="Uif-InputField" p:propertyName="defermentAmount" p:label="Deferments" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
+                                    <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
+                                    <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
                                 </list>
                             </property>
 
