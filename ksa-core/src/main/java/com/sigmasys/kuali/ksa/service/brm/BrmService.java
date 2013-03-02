@@ -39,7 +39,7 @@ public interface BrmService {
     /**
      * Reloads all rule sets and other BRM resources associated with them.
      */
-    void refresh();
+    void reloadRuleSets();
 
     /**
      * Reloads a single rule set (knowledge base) specified by name

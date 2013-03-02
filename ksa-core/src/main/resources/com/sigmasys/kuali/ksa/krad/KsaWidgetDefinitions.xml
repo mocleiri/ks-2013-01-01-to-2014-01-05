@@ -53,7 +53,7 @@
                       p:href="accountImportView?methodToCall=get&amp;viewId=AccountImportView"/>
                 <bean parent="Uif-Link" p:linkText="Settings"
                       p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage"/>
-                <bean parent="Uif-Link" p:linkText="FM-Admin"
+                <bean parent="Uif-Link" p:linkText="Business Rules"
                       p:href="rulesView?methodToCall=get&amp;viewId=RulesView"/>
             </list>
         </property>

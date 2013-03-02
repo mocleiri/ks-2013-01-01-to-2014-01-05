@@ -20,7 +20,7 @@ public class RulesForm extends AbstractViewModel {
     private Long ruleId;
     private String ruleName;
     private String ruleSetName;
-    private Integer rulePriority;
+    private String rulePriority;
     private String ruleLhs;
     private String ruleRhs;
     private String ruleType;
@@ -69,11 +69,11 @@ public class RulesForm extends AbstractViewModel {
         this.ruleName = ruleName;
     }
 
-    public Integer getRulePriority() {
+    public String getRulePriority() {
         return rulePriority;
     }
 
-    public void setRulePriority(Integer rulePriority) {
+    public void setRulePriority(String rulePriority) {
         this.rulePriority = rulePriority;
     }
 

@@ -32,6 +32,7 @@ public class RulesController extends GenericSearchController {
 
     private static final Log logger = LogFactory.getLog(RulesController.class);
 
+
     @Autowired
     private BrmService brmService;
 
@@ -70,7 +71,10 @@ public class RulesController extends GenericSearchController {
      * @return ModelAndView instance
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
-    public ModelAndView getEdit(@ModelAttribute("KualiForm") RulesForm form) {
+    public ModelAndView get(@ModelAttribute("KualiForm") RulesForm form, HttpServletRequest request) {
+
+        logger.debug("Page ID = " + form.getPageId());
+
         return getUIFModelAndView(form);
     }
 
@@ -87,7 +91,7 @@ public class RulesController extends GenericSearchController {
 
         try {
             brmPersistenceService.persistRule(rule);
-            brmService.refresh();
+            brmService.reloadRuleSets();
             form.setEditStatusMessage("Rule has been updated");
         } catch (InvalidRulesException ire) {
             form.setEditStatusMessage(ire.getMessage());
@@ -168,7 +172,7 @@ public class RulesController extends GenericSearchController {
 
             try {
                 brmPersistenceService.persistRule(rule);
-                brmService.refresh();
+                brmService.reloadRuleSets();
                 form.setAddStatusMessage("A new Rule has been created");
             } catch (InvalidRulesException ire) {
                 form.setAddStatusMessage(ire.getMessage());
@@ -186,7 +190,8 @@ public class RulesController extends GenericSearchController {
     private void copyRuleToForm(Rule rule, RulesForm form) {
         form.setRuleId(rule.getId());
         form.setRuleName(rule.getName());
-        form.setRulePriority(rule.getPriority());
+        Integer priority = rule.getPriority();
+        form.setRulePriority(priority != null ? priority.toString() : "0");
         form.setRuleLhs(rule.getLhs());
         form.setRuleRhs(rule.getRhs());
         form.setRuleType(rule.getType().getName());
@@ -195,7 +200,8 @@ public class RulesController extends GenericSearchController {
     private void copyFormToRule(RulesForm form, Rule rule) {
         rule.setId(form.getRuleId());
         rule.setName(form.getRuleName());
-        rule.setPriority(form.getRulePriority());
+        String priority = form.getRulePriority();
+        rule.setPriority(StringUtils.isNotBlank(priority) ? Integer.parseInt(priority.trim()) : 0);
         rule.setLhs(form.getRuleLhs());
         rule.setRhs(form.getRuleRhs());
         RuleType ruleType = brmPersistenceService.getRuleType(form.getRuleType());

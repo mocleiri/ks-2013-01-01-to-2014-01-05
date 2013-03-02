@@ -204,9 +204,12 @@ public class DroolsServiceImpl implements BrmService {
     }
 
     @Override
-    public void refresh() {
+    public void reloadRuleSets() {
         knowledgeBases.clear();
         postConstruct();
+        for (RuleSet ruleSet : brmPersistenceService.getRuleSets()) {
+            getKnowledgeBase(ruleSet);
+        }
     }
 
     @Override
