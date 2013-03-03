@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
  */
 public class DroolsRuleBuilder {
 
+    private static final Pattern whitespacePattern = Pattern.compile("\\s+");
+
     private DroolsRuleBuilder() {
     }
 
@@ -23,11 +25,10 @@ public class DroolsRuleBuilder {
         BufferedReader reader = new BufferedReader(new StringReader(dslrText));
         StringBuilder builder = new StringBuilder();
         try {
-            Pattern pattern = Pattern.compile("\\s+");
             String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.trim().isEmpty()) {
-                    builder.append(pattern.matcher(line).replaceAll(" "));
+                    builder.append(whitespacePattern.matcher(line).replaceAll(" ").replace(" ,", ","));
                 } else {
                     builder.append(line);
                 }

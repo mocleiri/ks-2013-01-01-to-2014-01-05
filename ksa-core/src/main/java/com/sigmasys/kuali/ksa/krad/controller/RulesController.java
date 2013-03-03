@@ -155,8 +155,8 @@ public class RulesController extends GenericSearchController {
      * @param form RulesForm
      * @return ModelAndView instance
      */
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=checkExistence")
-    public ModelAndView checkExistence(@ModelAttribute("KualiForm") RulesForm form) {
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=checkRuleNameExistence")
+    public ModelAndView checkRuleNameExistence(@ModelAttribute("KualiForm") RulesForm form) {
 
         Rule rule = form.getNewRule();
         if (rule == null) {
@@ -170,6 +170,8 @@ public class RulesController extends GenericSearchController {
         } else if (ruleExists(ruleName)) {
             return handleError(form, "Rule name '" + ruleName + "' already exists", true);
         }
+
+        form.setAddStatusMessage("Rule name '" + ruleName + "' is available");
 
         return getUIFModelAndView(form);
     }

@@ -124,7 +124,7 @@
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="100"/>
+                        <bean parent="Uif-TextAreaControl" p:rows="15" p:cols="100"/>
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="newRule.rhs"
@@ -134,7 +134,7 @@
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="100"/>
+                        <bean parent="Uif-TextAreaControl" p:rows="15" p:cols="100"/>
                     </property>
                 </bean>
                 <bean parent="Uif-PrimaryActionButton-Small" p:methodToCall="add"
@@ -209,7 +209,7 @@
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="100"/>
+                        <bean parent="Uif-TextAreaControl" p:rows="15" p:cols="100"/>
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="ruleRhs"
@@ -219,7 +219,7 @@
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="20" p:cols="100"/>
+                        <bean parent="Uif-TextAreaControl" p:rows="15" p:cols="100"/>
                     </property>
                 </bean>
                 <bean parent="Uif-PrimaryActionButton-Small" p:methodToCall="update"
