@@ -1,0 +1,5 @@
+RTE_NODE_INSTN_ID,DOC_HDR_ID,RTE_NODE_ID,BRCH_ID,PROC_RTE_NODE_INSTN_ID,ACTV_IND,CMPLT_IND,INIT_IND,VER_NBR
+"3011","3011","2987","3010","${mpx.null}","1","0","0","9"
+"3013","3012","2987","3012","${mpx.null}","1","0","0","7"
+"3015","3013","2978","3014","${mpx.null}","1","0","0","5"
+"3017","3014","2978","3016","${mpx.null}","1","0","0","5"
