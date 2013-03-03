@@ -60,7 +60,6 @@ public class RulesForm extends AbstractViewModel {
 
     public RulesForm() {
         newRule = new Rule();
-        rulePriority = "0";
     }
 
     public Long getRuleId() {
