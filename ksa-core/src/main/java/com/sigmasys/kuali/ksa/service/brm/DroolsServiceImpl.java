@@ -116,12 +116,12 @@ public class DroolsServiceImpl implements BrmService {
     private void handleErrors(KnowledgeBuilderErrors errors, String ruleSetName) {
         if (errors != null && !errors.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder();
-            errorMessage.append("There are problems in compiling the rules for '").append(ruleSetName).append("' \n");
+            errorMessage.append("There are problems with compiling the rules for '").append(ruleSetName).append("' rule set: \n");
             for (KnowledgeBuilderError error : errors) {
-                errorMessage.append(error).append("\n");
+                errorMessage.append(error).append(".\n");
             }
             logger.error(errorMessage);
-            throw new InvalidRulesException(errorMessage.toString());
+            throw new InvalidRulesException(errorMessage.toString().replaceAll("\\[\\d+\\] ", ""));
         }
     }
 

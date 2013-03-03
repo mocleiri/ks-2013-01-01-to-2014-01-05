@@ -68,6 +68,7 @@
         <property name="disclosure.render" value="false"/>
         <property name="items">
             <list>
+                <bean parent="Uif-MessageField" p:messageText="@{addStatusMessage}"/>
                 <bean parent="Uif-HorizontalBoxSection" p:layoutManager.orientation="HORIZONTAL">
                     <property name="items">
                         <list>
@@ -83,8 +84,8 @@
                                 </property>
                             </bean>
                             <bean parent="Uif-ActionLink"
-                                  p:methodToCall="checkExistence"
-                                  p:actionLabel="Check if the name exists">
+                                  p:methodToCall="checkRuleNameExistence"
+                                  p:actionLabel="Check if the rule name exists">
                                 <property name="cssClasses">
                                     <list merge="true">
                                         <value>ksa-form-button</value>
@@ -95,7 +96,7 @@
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="newRuleType"
-                      p:label="Select a rule type"
+                      p:label="Rule type"
                       p:labelPlacement="TOP"
                       p:width="100"
                       p:required="true"
@@ -107,9 +108,9 @@
                     <property name="optionsFinder" value="@{getRuleTypeFinder()}"/>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="newRule.priority"
-                      p:label="Rule Priority"
+                      p:label="Rule priority"
                       p:labelPlacement="TOP"
-                      p:required="true"
+                      p:required="false"
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
@@ -144,7 +145,6 @@
                         </list>
                     </property>
                 </bean>
-                <bean parent="Uif-MessageField" p:messageText="@{addStatusMessage}"/>
             </list>
         </property>
     </bean>
@@ -153,11 +153,12 @@
         <property name="disclosure.render" value="false"/>
         <property name="items">
             <list>
+                <bean parent="Uif-MessageField" p:messageText="@{editStatusMessage}"/>
                 <bean parent="Uif-HorizontalBoxSection" p:layoutManager.orientation="HORIZONTAL">
                     <property name="items">
                         <list>
                             <bean parent="Uif-InputField" p:propertyName="ruleName"
-                                  p:label="Select a rule for editing"
+                                  p:label="Rule name"
                                   p:labelPlacement="TOP"
                                   p:width="100"
                                   p:required="true"
@@ -180,19 +181,21 @@
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="ruleType"
-                      p:label="Rule Type"
+                      p:label="Rule type"
                       p:labelPlacement="TOP"
+                      p:width="100"
                       p:required="true"
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
-                        <bean parent="Uif-TextControl" p:size="15" p:maxLength="14"/>
+                        <bean parent="Uif-DropdownControl" p:size="5"/>
                     </property>
+                    <property name="optionsFinder" value="@{getRuleTypeFinder()}"/>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="rulePriority"
-                      p:label="Rule Priority"
+                      p:label="Rule priority"
                       p:labelPlacement="TOP"
-                      p:required="true"
+                      p:required="false"
                       p:fieldLabel.renderColon="false">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
@@ -227,7 +230,6 @@
                         </list>
                     </property>
                 </bean>
-                <bean parent="Uif-MessageField" p:messageText="@{editStatusMessage}"/>
             </list>
         </property>
     </bean>

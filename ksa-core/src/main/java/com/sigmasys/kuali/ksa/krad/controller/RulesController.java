@@ -1,6 +1,5 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
-import com.sigmasys.kuali.ksa.exception.InvalidRulesException;
 import com.sigmasys.kuali.ksa.krad.form.RulesForm;
 import com.sigmasys.kuali.ksa.model.rule.Rule;
 import com.sigmasys.kuali.ksa.model.rule.RuleType;
@@ -98,19 +97,28 @@ public class RulesController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=update")
     public ModelAndView update(@ModelAttribute("KualiForm") RulesForm form) {
 
-        Rule rule = new Rule();
+        if (StringUtils.isBlank(form.getRuleName())) {
+            return handleError(form, "Rule name cannot be empty", false);
+        }
 
-        copyFormToRule(form, rule);
+        if (StringUtils.isBlank(form.getRuleLhs())) {
+            return handleError(form, "Rule LHS cannot be empty", false);
+        }
+
+        if (StringUtils.isBlank(form.getRuleRhs())) {
+            return handleError(form, "Rule RHS cannot be empty", false);
+        }
 
         try {
+            Rule rule = new Rule();
+            copyFormToRule(form, rule);
             brmPersistenceService.persistRule(rule);
             brmService.reloadRuleSets();
             form.setEditStatusMessage("Rule has been updated");
-        } catch (InvalidRulesException ire) {
-            form.setEditStatusMessage(ire.getMessage());
+            logger.info("Updated Rule => \n" + rule);
+        } catch (Exception e) {
+            return handleError(form, e.getMessage(), false);
         }
-
-        logger.info("Updated Rule => \n" + rule);
 
         return getUIFModelAndView(form);
     }
@@ -152,20 +160,15 @@ public class RulesController extends GenericSearchController {
 
         Rule rule = form.getNewRule();
         if (rule == null) {
-            String errMsg = "Rule cannot be null";
-            logger.error(errMsg);
-            form.setAddStatusMessage(errMsg);
-            return getUIFModelAndView(form);
+            return handleError(form, "Rule cannot be null", true);
         }
 
         String ruleName = rule.getName();
 
         if (StringUtils.isBlank(ruleName)) {
-            String errMsg = "Rule name cannot be empty";
-            logger.error(errMsg);
-            form.setAddStatusMessage(errMsg);
+            return handleError(form, "Rule name cannot be empty", true);
         } else if (ruleExists(ruleName)) {
-            form.setAddStatusMessage("Rule with name '" + ruleName + "' already exists");
+            return handleError(form, "Rule name '" + ruleName + "' already exists", true);
         }
 
         return getUIFModelAndView(form);
@@ -180,36 +183,33 @@ public class RulesController extends GenericSearchController {
 
         Rule rule = form.getNewRule();
         if (rule == null) {
-            String errMsg = "Rule cannot be null";
-            logger.error(errMsg);
-            form.setAddStatusMessage(errMsg);
-            return getUIFModelAndView(form);
+            return handleError(form, "Rule cannot be null", true);
         }
 
         String ruleName = rule.getName();
 
         if (StringUtils.isBlank(ruleName)) {
-            String errMsg = "Rule name cannot be empty";
-            logger.error(errMsg);
-            form.setAddStatusMessage(errMsg);
-            return getUIFModelAndView(form);
+
+            return handleError(form, "Rule name cannot be empty", true);
 
         } else if (!ruleExists(ruleName)) {
 
+            if (StringUtils.isBlank(rule.getLhs())) {
+                return handleError(form, "Rule LHS cannot be empty", true);
+            }
+
+            if (StringUtils.isBlank(rule.getRhs())) {
+                return handleError(form, "Rule RHS cannot be empty", true);
+            }
+
             String ruleTypeName = form.getNewRuleType();
             if (StringUtils.isBlank(ruleTypeName)) {
-                String errMsg = "Rule type is required";
-                logger.error(errMsg);
-                form.setAddStatusMessage(errMsg);
-                return getUIFModelAndView(form);
+                return handleError(form, "Rule type is required", true);
             }
 
             RuleType ruleType = brmPersistenceService.getRuleType(ruleTypeName);
             if (ruleType == null) {
-                String errMsg = "Rule type '" + ruleTypeName + "' does not exist";
-                logger.error(errMsg);
-                form.setAddStatusMessage(errMsg);
-                return getUIFModelAndView(form);
+                return handleError(form, "Rule type '" + ruleTypeName + "' does not exist", true);
             }
 
             rule.setType(ruleType);
@@ -219,13 +219,12 @@ public class RulesController extends GenericSearchController {
                 brmService.reloadRuleSets();
                 form.setAddStatusMessage("A new Rule has been created");
                 logger.info("Added Rule => \n" + rule);
-            } catch (InvalidRulesException ire) {
-                form.setAddStatusMessage(ire.getMessage());
-                return getUIFModelAndView(form);
+            } catch (Exception e) {
+                return handleError(form, e.getMessage(), true);
             }
 
         } else {
-            form.setAddStatusMessage("Rule with name = '" + ruleName + "' already exists");
+            return handleError(form, "Rule with name = '" + ruleName + "' already exists", true);
         }
 
         return getUIFModelAndView(form);
@@ -250,9 +249,22 @@ public class RulesController extends GenericSearchController {
         rule.setRhs(form.getRuleRhs());
         RuleType ruleType = brmPersistenceService.getRuleType(form.getRuleType());
         if (ruleType == null) {
-            throw new IllegalStateException("Rule Type with name '" + form.getRuleType() + "' does not exist");
+            String errMsg = "Rule Type with name '" + form.getRuleType() + "' does not exist";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
         }
         rule.setType(ruleType);
+    }
+
+    private ModelAndView handleError(RulesForm form, String errorMessage, boolean isAddStatusMessage) {
+        logger.error(errorMessage);
+        String htmlErrorMessage = "<font color='red'>" + errorMessage + "</font>";
+        if (isAddStatusMessage) {
+            form.setAddStatusMessage(htmlErrorMessage);
+        } else {
+            form.setEditStatusMessage(htmlErrorMessage);
+        }
+        return getUIFModelAndView(form);
     }
 
 }
