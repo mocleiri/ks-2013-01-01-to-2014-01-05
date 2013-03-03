@@ -17,8 +17,13 @@ import java.util.regex.Pattern;
 public class DroolsRuleBuilder {
 
     private static final Pattern whitespacePattern = Pattern.compile("\\s+");
+    private static final Pattern commaPattern = Pattern.compile(" ,");
 
     private DroolsRuleBuilder() {
+    }
+
+    private static String removeExtraSpaces(String value) {
+        return commaPattern.matcher(whitespacePattern.matcher(value).replaceAll(" ")).replaceAll(",");
     }
 
     private static String normalize(String dslrText) {
@@ -28,7 +33,7 @@ public class DroolsRuleBuilder {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.trim().isEmpty()) {
-                    builder.append(whitespacePattern.matcher(line).replaceAll(" ").replace(" ,", ","));
+                    builder.append(removeExtraSpaces(line));
                 } else {
                     builder.append(line);
                 }

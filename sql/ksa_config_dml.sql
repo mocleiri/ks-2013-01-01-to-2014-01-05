@@ -133,7 +133,7 @@ Initialize list of GL transactions as "glTransactions"
 
 Get list of transactions from "01/01/2011" to "12/31/2012", store result in "transactions"
 
-Allocate reversals for "transactions", add result to "glTransactions"
+Allocate reversals for "transactions"  , add result to "glTransactions"
 
 Get payments from "transactions", store result in "allPayments"
 Get charges from "transactions", store result in "allCharges"
@@ -145,7 +145,7 @@ Get payments from "allPayments" for 2012 year, store result in "payments2012"
 Get charges from "allCharges" for 2011 year, store result in "charges2011"
 Sort "charges2011" by priority in ascending order
 
-Get charges from "allCharges" for 2012 year, store result in "charges2012"
+Get charges from "allCharges" for 2012 year    , store result in "charges2012"
 Sort "charges2012" by priority in ascending order
 
 Get payments with tag "FinAid" from "allPayments" for 2011 year,         store result in "finaidPayments2011"
