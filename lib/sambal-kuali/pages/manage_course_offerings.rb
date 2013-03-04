@@ -25,8 +25,8 @@ class ManageCourseOfferings < BasePage
   action(:show) { |b| b.frm.button(text: "Show").click; sleep 2; b.loading.wait_while_present(180) }
 
   value(:course_title) { |b| b.frm.div(id: "ActivityOfferingResultSection").text }
-  element(:edit_offering_element) { |b| b.frm.link(text: "Edit")}
-  action(:edit_offering) { |b| b.frm.link(text: "Edit").click; b.loading.wait_while_present(200) }
+  element(:edit_offering_element) { |b| b.frm.link(id: "edit_co")}
+  action(:edit_offering) { |b| b.edit_offering_element.click; b.loading.wait_while_present(200) }
 
   element(:format) { |b| b.frm.select(name: "formatIdForNewAO") }
   element(:activity_type) { |b| b.frm.select(name: "activityIdForNewAO") }

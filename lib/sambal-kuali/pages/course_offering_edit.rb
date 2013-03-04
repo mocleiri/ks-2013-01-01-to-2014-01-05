@@ -4,12 +4,13 @@ class CourseOfferingEdit < BasePage
   validation_elements
   frame_element
 
-  #expected_element :course_code_element
+  expected_element :term_label_div
 
   action(:submit) { |b| b.frm.button(text: "submit").click; b.loading.wait_while_present }
   action(:cancel) { |b| b.frm.link(text: "cancel").click; b.loading.wait_while_present }
+  element(:term_label_div) { |b| b.frm.div(data_label: "Term") }
 
-  element(:course_code_element) { |b| b.frm.div(data_label: "Course Code(Subject/Number)").span(index: 1) }
+  element(:course_code_element) { |b| b.frm.div(id: "u5") } #persistent id required
   value(:course_code) { |b| b.frm.course_code_element.text() }
   element(:suffix) { |b| b.frm.div(data_label: "Course Number Suffix").text_field }
 
