@@ -972,7 +972,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         // Calculating the prior balance and setting the unallocated amount for transactions within the date range
         for (Transaction transaction : transactions) {
             Date effectiveDate = transaction.getEffectiveDate();
-            BigDecimal unallocatedTransactionAmount = transactionService.getUnallocatedAmount(transaction);
+            BigDecimal unallocatedTransactionAmount = transaction.getUnallocatedAmount();
             if (startDate.after(effectiveDate)) {
                 if (transaction instanceof Debit) {
                     priorBalance = priorBalance.add(unallocatedTransactionAmount);
@@ -986,7 +986,6 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                     futureBalance = futureBalance.subtract(unallocatedTransactionAmount);
                 }
             } else {
-                transaction.setUnallocatedAmount(unallocatedTransactionAmount);
                 transactionWithinDateRange.add(transaction);
             }
         }
