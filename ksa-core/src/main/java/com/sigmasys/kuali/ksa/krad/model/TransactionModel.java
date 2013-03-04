@@ -438,7 +438,6 @@ public class TransactionModel extends Transaction {
         setPaymentAmount(add(getPaymentAmount(), transaction.getPaymentAmount()));
         setDefermentAmount(add(getDefermentAmount(), transaction.getDefermentAmount()));
         setAllocatedAmount(add(getAllocatedAmount(), transaction.getAllocatedAmount()));
-        setUnallocatedAmount(add(getUnallocatedAmount(), transaction.getUnallocatedAmount()));
     }
 
     public BigDecimal getChargeAmount() {
@@ -471,14 +470,6 @@ public class TransactionModel extends Transaction {
 
     public void setAllocatedAmount(BigDecimal allocatedAmount) {
         this.allocatedAmount = allocatedAmount;
-    }
-
-    public BigDecimal getUnallocatedAmount() {
-        return unallocatedAmount;
-    }
-
-    public void setUnallocatedAmount(BigDecimal unallocatedAmount) {
-        this.unallocatedAmount = unallocatedAmount;
     }
 
     // BigDecimal is not friendly to nulls

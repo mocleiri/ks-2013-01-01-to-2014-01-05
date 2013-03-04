@@ -98,11 +98,6 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
     protected BigDecimal allocatedAmount;
 
     /**
-     * This is an allocated amount = amount - allocatedAmount - lockedAllocatedAmount
-     */
-    protected BigDecimal unallocatedAmount;
-
-    /**
      * This value is set to a value (up to the maximum of localAmount) and is the value of the transaction that has been allocated, and may not be reallocated by the payment application routine. Most commonly, the entire transaction will be locked, by setting the lockedAllocationAmount to the localValue.
      * Schools will also likely lock their allocations of transactions before the current period of time (for example, if an allocation was made with a payment in a pervious year, it will not
      * be allowed to be de-allocated by the system.
@@ -490,7 +485,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
                 ", currency=" + currency +
                 ", internal=" + internal +
                 ", allocatedAmount=" + allocatedAmount +
-                ", unallocatedAmount=" + unallocatedAmount +
+                ", unallocatedAmount=" + getUnallocatedAmount() +
                 ", lockedAllocatedAmount=" + lockedAllocatedAmount +
                 ", creatorId='" + creatorId + '\'' +
                 ", statementText='" + statementText + '\'' +
