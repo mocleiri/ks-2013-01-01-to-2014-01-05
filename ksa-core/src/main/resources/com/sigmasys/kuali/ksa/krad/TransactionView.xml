@@ -130,53 +130,172 @@
                 </property>-->
             </bean>
             <bean parent="Uif-TabGroup"><property name="items"><list>
-            <bean parent="Uif-VerticalBoxSection" p:headerText="Roll-up">
-                <property name="items">
-                    <list>
-                        <bean id="rollupList" parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="7">
-                            <property name="title" value="Roll-Up"/>
-                            <property name="readOnly" value="true"/>
-                            <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionModel"/>
-                            <property name="propertyName" value="rollupTransactions"/>
-                            <property name="layoutManager.sequencePropertyName" value="id"/>
-                            <property name="layoutManager.richTable.render" value="true"/>
-                            <property name="layoutManager.renderSequenceField" value="false"/>
-                            <property name="renderAddBlankLineButton" value="false" />
-                            <property name="renderAddLine" value="false" />
-                            <property name="layoutManager.applyDefaultCellWidths" value="false"/>
-                            <property name="layoutManager.richTable.disableTableSort" value="false"/>
-                            <property name="layoutManager.richTable.templateOptions">
-                                <map merge="true">
-                                    <entry key="bPaginate" value="false"/>
-                                    <entry key="bInfo" value="false"/>
-                                    <entry key="bFilter" value="false"/>
-                                </map>
-                            </property>
-                            <property name="items">
-                                <list>
-                                    <bean parent="Uif-InputField" p:label="Roll-up" p:propertyName="rollup.name" p:width="40%"/>
-                                    <bean parent="Uif-InputField" p:propertyName="chargeAmount" p:label="Charges" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
-                                    <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
-                                    <bean parent="Uif-InputField" p:propertyName="defermentAmount" p:label="Deferments" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
-                                    <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
-                                    <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
-                                </list>
-                            </property>
+                <bean parent="Uif-VerticalBoxSection" p:headerText="Roll-up">
+                    <property name="items">
+                        <list>
+                            <bean id="rollupList" parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="7">
+                                <property name="title" value="Roll-Up"/>
+                                <property name="readOnly" value="true"/>
+                                <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionModel"/>
+                                <property name="propertyName" value="rollupTransactions"/>
+                                <property name="layoutManager.sequencePropertyName" value="id"/>
+                                <property name="layoutManager.richTable.render" value="true"/>
+                                <property name="layoutManager.renderSequenceField" value="false"/>
+                                <property name="renderAddBlankLineButton" value="false" />
+                                <property name="renderAddLine" value="false" />
+                                <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                                <property name="layoutManager.richTable.disableTableSort" value="false"/>
+                                <property name="layoutManager.richTable.templateOptions">
+                                    <map merge="true">
+                                        <entry key="bPaginate" value="false"/>
+                                        <entry key="bInfo" value="false"/>
+                                        <entry key="bFilter" value="false"/>
+                                    </map>
+                                </property>
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-InputField" p:label="Roll-up" p:propertyName="rollup.name" p:width="40%"/>
+                                        <bean parent="Uif-InputField" p:propertyName="chargeAmount" p:label="Charges" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="defermentAmount" p:label="Deferments" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
+                                    </list>
+                                </property>
 
-                            <!-- From what I can tell, this does nothing.  Refer to https://jira.kuali.org/browse/KULRICE-8747 -->
-                            <property name="layoutManager.rowDetailsSwapActionImage" value="true"/>
-                            <property name="layoutManager.rowDetailsGroup">
-                                <ref bean="rollupTransactionList"/>
-                            </property>
+                                <!-- From what I can tell, this does nothing.  Refer to https://jira.kuali.org/browse/KULRICE-8747 -->
+                                <property name="layoutManager.rowDetailsSwapActionImage" value="true"/>
+                                <property name="layoutManager.rowDetailsGroup">
+                                    <ref bean="rollupTransactionList"/>
+                                </property>
 
-                        </bean>
-                        <!--<bean parent="Uif-CollectionGroupBase" p:title="Roll-up"  p:propertyName="rollupTransactions"
-                                        p:collectionObjectClass="com.sigmasys.kuali.ksa.krad.model.TransactionModel">
+                            </bean>
+                            <!--<bean parent="Uif-CollectionGroupBase" p:title="Roll-up"  p:propertyName="rollupTransactions"
+                                            p:collectionObjectClass="com.sigmasys.kuali.ksa.krad.model.TransactionModel">
 
-                        </bean>-->
-                    </list>
-                </property>
-            </bean>
+                            </bean>-->
+                        </list>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-VerticalBoxSection" p:headerText="Running Balance">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="7">
+                                <property name="title" value="Transaction"/>
+                                <property name="readOnly" value="true"/>
+                                <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionModel"/>
+                                <property name="propertyName" value="allTransactions"/>
+                                <property name="layoutManager.sequencePropertyName" value="id"/>
+                                <property name="layoutManager.richTable.render" value="true"/>
+                                <property name="layoutManager.renderSequenceField" value="false"/>
+                                <property name="renderAddBlankLineButton" value="false" />
+                                <property name="renderAddLine" value="false" />
+                                <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                                <property name="layoutManager.richTable.disableTableSort" value="false"/>
+                                <property name="layoutManager.richTable.templateOptions">
+                                    <map merge="true">
+                                        <entry key="bPaginate" value="false"/>
+                                        <entry key="bInfo" value="false"/>
+                                        <entry key="bFilter" value="false"/>
+                                    </map>
+                                </property>
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective" p:style="width: 10%;"/>
+                                        <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
+                                            <property name="items">
+                                                <list>
+                                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" p:linkText="@{#line.transactionType.description}" />
+                                                    <bean id="transactionDetailLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                        <property name="hidden" value="true"/>
+                                                        <property name="items">
+                                                            <list>
+                                                                <bean parent="Uif-HeaderTwo" p:headerText="Transaction Details"/>
+                                                                <ref bean="transactionDetail"/>
+                                                            </list>
+                                                        </property>
+                                                    </bean>
+
+                                                    <bean parent="Uif-ImageField" p:source="../images/memo.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
+                                                          p:onClickScript="showLightboxComponent('memoLightboxRunningTotal@{#lineSuffix}');" p:render="@{#line.memos.size() > 0}">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Memo: (@{#line.memos.size()}) Click icon to view"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean id="memoLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                        <property name="hidden" value="true"/>
+                                                        <property name="items">
+                                                            <list>
+                                                                <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Memos"/>
+                                                                <ref bean="memoLightboxTable"/>
+
+                                                            </list>
+                                                        </property>
+                                                    </bean>
+
+                                                    <bean parent="Uif-ImageField" p:source="../images/document.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
+                                                          p:onClickScript="showLightboxComponent('documentLightboxRunningTotal@{#lineSuffix}');">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Document: Click icon to view"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean id="documentLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                        <property name="hidden" value="true"/>
+                                                        <property name="items">
+                                                            <list>
+                                                                <bean parent="Uif-Image" p:source="../images/sample-document.png"/>
+
+                                                            </list>
+                                                        </property>
+                                                    </bean>
+
+                                                    <bean parent="Uif-ImageField" p:source="../images/tag.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
+                                                          p:onClickScript="showLightboxComponent('tagLightboxRunningTotal@{#lineSuffix}');" p:render="@{#line.tags.size() > 0}">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Tags: @{#line.tagList}"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean id="tagLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                        <property name="hidden" value="true"/>
+                                                        <property name="items">
+                                                            <list>
+                                                                <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Tags"/>
+                                                                <ref bean="tagGroup"/>
+
+                                                            </list>
+                                                        </property>
+                                                    </bean>
+
+
+
+                                                </list>
+                                            </property>
+                                        </bean>
+                                        <bean parent="Uif-InputField" p:propertyName="chargeAmount" p:label="Charges" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="defermentAmount" p:label="Deferments" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="runningBalance" p:label="Balance" p:style="text-align: right; width: 10%;"/>
+
+                                    </list>
+                                </property>
+
+                                <!-- From what I can tell, this does nothing.  Refer to https://jira.kuali.org/browse/KULRICE-8747 -->
+                                <!-- <property name="layoutManager.rowDetailsSwapActionImage" value="true"/>
+                                <property name="layoutManager.rowDetailsGroup">
+                                    <ref bean="rollupTransactionList"/>
+                                </property>
+                                -->
+                            </bean>
+
+                        </list>
+                    </property>
+                </bean>
+
+
+
             </list></property></bean>
         </list>
         </property>

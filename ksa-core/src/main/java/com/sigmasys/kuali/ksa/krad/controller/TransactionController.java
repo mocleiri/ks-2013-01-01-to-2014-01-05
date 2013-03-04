@@ -9,6 +9,7 @@ import com.sigmasys.kuali.ksa.service.ActivityService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 
 import com.sigmasys.kuali.ksa.service.InformationService;
+import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Controller
@@ -82,8 +84,11 @@ public class TransactionController extends GenericSearchController {
             form.setAlerts(informationService.getAlerts(userId));
             form.setFlags(informationService.getFlags(userId));
 
+            Date startDate = null;
+            Date endDate = null;
+
             // All transactions
-            List<Transaction> transactions = transactionService.getTransactions(userId);
+            List<Transaction> transactions = TransactionUtils.orderByEffectiveDate(transactionService.getTransactions(userId, startDate, endDate), true);
             List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
             for (Transaction t : transactions) {
 
@@ -124,14 +129,24 @@ public class TransactionController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+
     private void populateRollups(TransactionForm form, List<TransactionModel> transactions) {
         List<TransactionModel> rollUpTransactionModelList = new ArrayList<TransactionModel>();
         List<TransactionModel> unGroupedTransactionModelList = new ArrayList<TransactionModel>();
 
         TransactionModel nonRolledUp = null;
 
+        BigDecimal balance = form.getStartingBalance();
+
+        // Assuming that transactions are already passed into this method sorted in the proper way for the running balance.
         for (TransactionModel t : transactions) {
-            unGroupedTransactionModelList.add(new TransactionModel(t));
+            if(t.getParentTransaction() instanceof Charge){
+                balance = balance.add(t.getAmount());
+            } else {
+                balance = balance.subtract(t.getAmount());
+            }
+            t.setRunningBalance(balance);
+            unGroupedTransactionModelList.add(t);
 
             Rollup tmRollup = t.getRollup();
             if (tmRollup != null) {
@@ -163,6 +178,7 @@ public class TransactionController extends GenericSearchController {
                 nonRolledUp.addSubTransaction(t);
             }
         }
+        form.setEndingBalance(balance);
 
         if (nonRolledUp != null) {
             rollUpTransactionModelList.add(nonRolledUp);

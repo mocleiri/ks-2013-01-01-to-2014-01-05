@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class TransactionForm extends AbstractViewModel {
 
     private List<TransactionModel> rollupTransactions;
     private List<TransactionModel> allTransactions;
+
+    private BigDecimal startingBalance;
+    private BigDecimal endingBalance;
 
     // Not sure if any of these below this line are still used.
 
@@ -413,5 +417,27 @@ public class TransactionForm extends AbstractViewModel {
 
     public void setMemos(List<Memo> memos) {
         this.memos = memos;
+    }
+
+    public BigDecimal getStartingBalance() {
+        if(this.startingBalance == null){
+            this.startingBalance = BigDecimal.ZERO;
+        }
+        return startingBalance;
+    }
+
+    public void setStartingBalance(BigDecimal startingBalance) {
+        this.startingBalance = startingBalance;
+    }
+
+    public BigDecimal getEndingBalance() {
+        if(this.endingBalance == null){
+            this.endingBalance = BigDecimal.ZERO;
+        }
+        return endingBalance;
+    }
+
+    public void setEndingBalance(BigDecimal endingBalance) {
+        this.endingBalance = endingBalance;
     }
 }

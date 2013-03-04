@@ -84,6 +84,8 @@ public class TransactionModel extends Transaction {
     private BigDecimal paymentAmount;
     private BigDecimal defermentAmount;
 
+    private BigDecimal runningBalance;
+
     // checkboxes
     private String paymentBilling;
 
@@ -596,4 +598,11 @@ public class TransactionModel extends Transaction {
         flags.add(f);
     }
 
+    public BigDecimal getRunningBalance() {
+        return runningBalance;
+    }
+
+    public void setRunningBalance(BigDecimal runningBalance) {
+        this.runningBalance = runningBalance;
+    }
 }
