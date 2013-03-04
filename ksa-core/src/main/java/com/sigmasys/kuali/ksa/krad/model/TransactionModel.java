@@ -433,7 +433,7 @@ public class TransactionModel extends Transaction {
         }
         subTransactions.add(transaction);
 
-        //this.setAmount(this.getAmount().add(transaction.getAmount()));
+        setAmount(add(getAmount(), transaction.getAmount()));
         setChargeAmount(add(getChargeAmount(), transaction.getChargeAmount()));
         setPaymentAmount(add(getPaymentAmount(), transaction.getPaymentAmount()));
         setDefermentAmount(add(getDefermentAmount(), transaction.getDefermentAmount()));
