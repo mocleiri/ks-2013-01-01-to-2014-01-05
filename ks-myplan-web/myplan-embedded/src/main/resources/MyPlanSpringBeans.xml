@@ -1,4 +1,4 @@
-    <!--
+<!--
 
     Copyright 2010 The Kuali Foundation Licensed under the
     Educational Community License, Version 2.0 (the "License"); you may
@@ -40,7 +40,7 @@
         <property name="dataDictionaryPackages">
             <list>
                 <!-- Import these data dictionaries to allow the UI to use them -->
-               <!-- <value>classpath:ks-PlanItemInfo-dictionary.xml</value> -->
+                <!-- <value>classpath:ks-PlanItemInfo-dictionary.xml</value> -->
                 <value>classpath:ks-AuditReportInfo-dictionary.xml</value>
 
                 <value>classpath:UifMyPlanDefinitions.xml</value>
@@ -49,11 +49,12 @@
                 <value>classpath:MyPlanDataObjects.xml</value>
                 <value>classpath:CourseSearchUI.xml</value>
                 <value>classpath:CourseDetailsUI.xml</value>
-                 <value>classpath:PlanItemsUI.xml</value>
+                <value>classpath:PlanItemsUI.xml</value>
                 <value>classpath:DegreeAuditUI.xml</value>
                 <value>classpath:DegreeAuditDetailsUI.xml</value>
                 <value>classpath:CommentUI.xml</value>
                 <value>classpath:QuickAddUI.xml</value>
+                <value>classpath:SingleQuarterUI.xml</value>
                 <!--
                 <value>classpath:org/kuali/student/myplan/mobile/MyPlanMobileUI.xml</value>
                 <value>classpath:org/kuali/student/myplan/mobile/UifMobileDefinitions.xml</value>
