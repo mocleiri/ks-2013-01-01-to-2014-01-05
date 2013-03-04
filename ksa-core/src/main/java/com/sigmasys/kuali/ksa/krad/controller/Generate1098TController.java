@@ -184,7 +184,7 @@ public class Generate1098TController extends DownloadController {
 
     private void initializeForm(Generate1098TForm form, String userId) {
         // Get the full Account if it has not been selected yet:
-        if (form.getAccount() == null) {
+        if (form.getAccount() == null && userId != null) {
             Account account = findAccount(userId);
 
             form.setAccount(account);
