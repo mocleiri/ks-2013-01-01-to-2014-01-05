@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.model;
 import com.sigmasys.kuali.ksa.annotation.Auditable;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
+import com.sigmasys.kuali.ksa.util.TransactionUtils;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -443,11 +444,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
 
     @Transient
     public BigDecimal getUnallocatedAmount() {
-        return unallocatedAmount;
-    }
-
-    public void setUnallocatedAmount(BigDecimal unallocatedAmount) {
-        this.unallocatedAmount = unallocatedAmount;
+        return TransactionUtils.getUnallocatedAmount(this);
     }
 
     @Transient

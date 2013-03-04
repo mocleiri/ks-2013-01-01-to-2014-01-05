@@ -50,10 +50,10 @@ public class TransactionModel extends Transaction {
     private List<Memo> memos;
 
     private List<Tag> tags;
-    private String      tagList;
+    private String tagList;
 
     private List<Alert> alerts;
-    private List<Flag>  flags;
+    private List<Flag> flags;
 
     // Document id as a string
     private String documentId;
@@ -83,8 +83,6 @@ public class TransactionModel extends Transaction {
     private BigDecimal chargeAmount;
     private BigDecimal paymentAmount;
     private BigDecimal defermentAmount;
-    private BigDecimal allocatedAmount;
-    private BigDecimal unallocatedAmount;
 
     // checkboxes
     private String paymentBilling;
@@ -94,15 +92,18 @@ public class TransactionModel extends Transaction {
     private String entryGenerated;
 
     private String allocationLocked;
+
     // Constructor
     public TransactionModel() {
     }
 
     public TransactionModel(Transaction transaction) {
-        this.parentTransaction = transaction;
+
+        parentTransaction = transaction;
+
         transactionTypeValue = transaction.getTransactionTypeValue();
 
-        this.setTags(transaction.getTags());
+        setTags(transaction.getTags());
 
         // populate TransactionModel's properties from Transaction instance
         setId(transaction.getId());
@@ -114,18 +115,11 @@ public class TransactionModel extends Transaction {
         setEffectiveDate(transaction.getEffectiveDate());
         setOriginationDate(transaction.getOriginationDate());
         setRecognitionDate(transaction.getRecognitionDate());
-        BigDecimal amt = transaction.getAmount();
-        setAmount(amt);
+        setAmount(transaction.getAmount());
         setNativeAmount(transaction.getNativeAmount());
         setCurrency(transaction.getCurrency());
         setInternal(transaction.isInternal());
-        BigDecimal alloc = transaction.getAllocatedAmount();
-        setAllocatedAmount(alloc);
-        if(alloc == null){
-            setUnallocatedAmount(amt);
-        } else {
-            setUnallocatedAmount(amt == null ? null : amt.subtract(alloc));
-        }
+        setAllocatedAmount(transaction.getAllocatedAmount());
         setLockedAllocatedAmount(transaction.getLockedAllocatedAmount());
         setStatementText(transaction.getStatementText());
         setDocument(transaction.getDocument());
@@ -136,11 +130,11 @@ public class TransactionModel extends Transaction {
 
         // charge, payment or deferment specific data members
         BigDecimal amount = transaction.getAmount();
-        if(transaction instanceof Charge){
+        if (transaction instanceof Charge) {
             setChargeAmount(amount);
-        } else if(transaction instanceof Payment){
+        } else if (transaction instanceof Payment) {
             setPaymentAmount(amount);
-        } else if(transaction instanceof Deferment){
+        } else if (transaction instanceof Deferment) {
             setDefermentAmount(amount);
         }
 
@@ -364,7 +358,6 @@ public class TransactionModel extends Transaction {
         this.allocationLocked = allocationLocked;
     }
 
-
     // aggregates
     public String getRollUpBalance() {
         return getFormattedAmount(rollUpBalance);
@@ -423,7 +416,7 @@ public class TransactionModel extends Transaction {
     }
 
     public List<TransactionModel> getSubTransactions() {
-        if(this.subTransactions == null){
+        if (this.subTransactions == null) {
             this.subTransactions = new ArrayList<TransactionModel>();
         }
         return subTransactions;
@@ -433,19 +426,19 @@ public class TransactionModel extends Transaction {
         this.subTransactions = subTransactions;
     }
 
-    public void addSubTransaction(TransactionModel transaction){
-        if(this.subTransactions == null){
-            this.subTransactions = new ArrayList<TransactionModel>();
+    public void addSubTransaction(TransactionModel transaction) {
+
+        if (subTransactions == null) {
+            subTransactions = new ArrayList<TransactionModel>();
         }
-        this.subTransactions.add(transaction);
+        subTransactions.add(transaction);
 
         //this.setAmount(this.getAmount().add(transaction.getAmount()));
-        this.setChargeAmount(this.add(this.getChargeAmount(), transaction.getChargeAmount()));
-        this.setPaymentAmount(this.add(this.getPaymentAmount(), transaction.getPaymentAmount()));
-        this.setDefermentAmount(this.add(this.getDefermentAmount(), transaction.getDefermentAmount()));
-        this.setAllocatedAmount(this.add(this.getAllocatedAmount(), transaction.getAllocatedAmount()));
-        this.setUnallocatedAmount(this.add(this.getUnallocatedAmount(), transaction.getUnallocatedAmount()));
-
+        setChargeAmount(add(getChargeAmount(), transaction.getChargeAmount()));
+        setPaymentAmount(add(getPaymentAmount(), transaction.getPaymentAmount()));
+        setDefermentAmount(add(getDefermentAmount(), transaction.getDefermentAmount()));
+        setAllocatedAmount(add(getAllocatedAmount(), transaction.getAllocatedAmount()));
+        setUnallocatedAmount(add(getUnallocatedAmount(), transaction.getUnallocatedAmount()));
     }
 
     public BigDecimal getChargeAmount() {
@@ -489,15 +482,19 @@ public class TransactionModel extends Transaction {
     }
 
     // BigDecimal is not friendly to nulls
-    private BigDecimal add(BigDecimal d1, BigDecimal d2){
-        if(d1 == null){ return d2; }
-        if(d2 == null){ return d1; }
+    private BigDecimal add(BigDecimal d1, BigDecimal d2) {
+        if (d1 == null) {
+            return d2;
+        }
+        if (d2 == null) {
+            return d1;
+        }
         return d1.add(d2);
     }
 
 
     public List<Memo> getMemos() {
-        if(memos == null){
+        if (memos == null) {
             this.memos = new ArrayList<Memo>();
         }
         return memos;
@@ -515,39 +512,40 @@ public class TransactionModel extends Transaction {
         this.parentTransaction = parentTransaction;
     }
 
-    public String getTransactionDisplayType(){
-        if(parentTransaction == null){
+    public String getTransactionDisplayType() {
+
+        if (parentTransaction == null) {
             return null;
         }
 
 
-        if(parentTransaction instanceof Payment){
+        if (parentTransaction instanceof Payment) {
             return "Credit (Payment)";
-        } else if(parentTransaction instanceof Deferment){
+        } else if (parentTransaction instanceof Deferment) {
             return "Credit (Deferment)";
-        } else if(parentTransaction instanceof Credit){
+        } else if (parentTransaction instanceof Credit) {
             return "Credit";
-        } else if(parentTransaction instanceof Charge){
+        } else if (parentTransaction instanceof Charge) {
             return "Debit (Charge)";
-        } else if(parentTransaction instanceof  Debit){
+        } else if (parentTransaction instanceof Debit) {
             return "Debit";
         }
         return "Generic";
     }
 
-    public String getGlEntryGenerated(){
+    public String getGlEntryGenerated() {
         return (parentTransaction.isGlEntryGenerated() ? "" : "Not ") + "Generated";
     }
 
-    public String getInternal(){
+    public String getInternal() {
         return parentTransaction.isInternal().toString();
     }
 
-    public String getGlOverridden(){
+    public String getGlOverridden() {
         return parentTransaction.isGlOverridden().toString();
     }
 
-    public String getTagList(){
+    public String getTagList() {
         return tagList;
     }
 
@@ -558,15 +556,15 @@ public class TransactionModel extends Transaction {
     public void setTags(List<Tag> tags) {
         this.tags = tags;
 
-        if(tags == null || tags.size() == 0){
+        if (tags == null || tags.size() == 0) {
             this.tagList = "None";
             return;
         }
 
         StringBuilder tagList = new StringBuilder();
         boolean first = true;
-        for(Tag tag : tags){
-            if(!first){
+        for (Tag tag : tags) {
+            if (!first) {
                 tagList.append(", ");
             } else {
                 first = false;
@@ -585,8 +583,8 @@ public class TransactionModel extends Transaction {
         this.alerts = alerts;
     }
 
-    public void addAlert(Alert a){
-        if(this.alerts == null){
+    public void addAlert(Alert a) {
+        if (this.alerts == null) {
             this.alerts = new ArrayList<Alert>();
         }
         this.alerts.add(a);
@@ -600,11 +598,11 @@ public class TransactionModel extends Transaction {
         this.flags = flags;
     }
 
-    public void addFlag(Flag f){
-        if(this.flags == null){
-            this.flags = new ArrayList<Flag>();
+    public void addFlag(Flag f) {
+        if (flags == null) {
+            flags = new ArrayList<Flag>();
         }
-        this.flags.add(f);
+        flags.add(f);
     }
 
 }
