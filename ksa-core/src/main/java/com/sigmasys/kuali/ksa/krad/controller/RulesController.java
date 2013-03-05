@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.model.rule.Rule;
 import com.sigmasys.kuali.ksa.model.rule.RuleType;
 import com.sigmasys.kuali.ksa.service.brm.BrmPersistenceService;
 import com.sigmasys.kuali.ksa.service.brm.BrmService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -113,7 +114,7 @@ public class RulesController extends GenericSearchController {
             Rule rule = new Rule();
             copyFormToRule(form, rule);
             brmPersistenceService.persistRule(rule);
-            brmService.reloadRuleSets();
+            reloadRuleSets(form, false);
             form.setEditStatusMessage("Rule has been updated");
             logger.info("Updated Rule => \n" + rule);
         } catch (Exception e) {
@@ -218,7 +219,7 @@ public class RulesController extends GenericSearchController {
 
             try {
                 brmPersistenceService.persistRule(rule);
-                brmService.reloadRuleSets();
+                reloadRuleSets(form, true);
                 form.setAddStatusMessage("A new Rule has been created");
                 logger.info("Added Rule => \n" + rule);
             } catch (Exception e) {
@@ -258,15 +259,28 @@ public class RulesController extends GenericSearchController {
         rule.setType(ruleType);
     }
 
-    private ModelAndView handleError(RulesForm form, String errorMessage, boolean isAddStatusMessage) {
+    private ModelAndView handleError(RulesForm form, String errorMessage, boolean isNewRule) {
         logger.error(errorMessage);
         String htmlErrorMessage = "<font color='red'>" + errorMessage + "</font>";
-        if (isAddStatusMessage) {
+        if (isNewRule) {
             form.setAddStatusMessage(htmlErrorMessage);
         } else {
             form.setEditStatusMessage(htmlErrorMessage);
         }
         return getUIFModelAndView(form);
+    }
+
+    private void reloadRuleSets(RulesForm form, boolean isNewRule) {
+        String ruleSetName = form.getRuleSetName();
+        if (StringUtils.isNotBlank(ruleSetName)) {
+            brmService.reloadRuleSets(ruleSetName);
+        } else {
+            String ruleName = isNewRule ? form.getNewRule().getName() : form.getRuleName();
+            List<String> ruleSetNames = brmPersistenceService.getRuleSetNamesByRuleNames(ruleName);
+            if (CollectionUtils.isNotEmpty(ruleSetNames)) {
+                brmService.reloadRuleSets(ruleSetNames.toArray(new String[ruleSetNames.size()]));
+            }
+        }
     }
 
 }

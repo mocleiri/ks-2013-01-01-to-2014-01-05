@@ -42,10 +42,10 @@ public interface BrmService {
     void reloadRuleSets();
 
     /**
-     * Reloads a single rule set (knowledge base) specified by name
+     * Reloads rule sets (knowledge base) specified by names
      *
-     * @param ruleSetName Rule Set name
+     * @param ruleSetNames Rule Set names
      */
-    void reloadRuleSet(String ruleSetName);
+    void reloadRuleSets(String... ruleSetNames);
 
 }

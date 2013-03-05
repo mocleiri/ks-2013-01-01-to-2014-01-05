@@ -30,9 +30,7 @@
         <property name="title" value="Write-Off Account"/>
         <property name="headerText" value="Write-Off Account"/>
         <property name="entryPageId" value="QuickViewPage"/>
-        <property name="navigation">
-            <ref bean="KsaAccountNavigation"/>
-        </property>
+        <property name="navigation" ref="KsaAccountNavigation"/>
         <property name="items">
             <list merge="true">
                 <bean parent="Uif-Page" p:id="QuickViewPage" p:title="Quick View">

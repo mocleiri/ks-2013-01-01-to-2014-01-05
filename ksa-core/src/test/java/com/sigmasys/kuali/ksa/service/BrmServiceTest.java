@@ -3,6 +3,8 @@ package com.sigmasys.kuali.ksa.service;
 
 import com.sigmasys.kuali.ksa.model.rule.Rule;
 import com.sigmasys.kuali.ksa.model.rule.RuleSet;
+import com.sigmasys.kuali.ksa.model.rule.RuleType;
+import com.sigmasys.kuali.ksa.model.rule.RuleTypeEnum;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmPersistenceService;
 import com.sigmasys.kuali.ksa.service.brm.BrmService;
@@ -173,6 +175,77 @@ public class BrmServiceTest extends AbstractServiceTest {
 
         Assert.isTrue("Test name 1".equals(rule.getName()));
         Assert.isTrue(9999 == rule.getPriority());
+    }
+
+
+    @Test
+    public void getRuleSetNamesByRuleNames() throws Exception {
+
+        String[] ruleNames = {"Rule 1", "Rule 2", "Rule 3", "Payment Application Rule"};
+
+        List<String> ruleSetNames = brmPersistenceService.getRuleSetNamesByRuleNames(ruleNames);
+
+        Assert.notNull(ruleSetNames);
+        Assert.notEmpty(ruleSetNames);
+        Assert.isTrue(ruleSetNames.size() > 1);
+
+        boolean hasPaymentApplication = false;
+        for (String ruleSetName : ruleSetNames) {
+            logger.debug("Rule set name = " + ruleSetName);
+            Assert.notNull(ruleSetName);
+            Assert.isTrue(ruleSetName.trim().length() > 0);
+            if ("Payment Application".equals(ruleSetName)) {
+                hasPaymentApplication = true;
+            }
+        }
+
+        Assert.isTrue(hasPaymentApplication);
+    }
+
+    @Test
+    public void getRuleTypes() throws Exception {
+
+        List<RuleType> ruleTypes = brmPersistenceService.getRuleTypes();
+
+        Assert.notNull(ruleTypes);
+        Assert.notEmpty(ruleTypes);
+        Assert.isTrue(ruleTypes.size() > 1);
+
+        boolean hasDslr = false;
+        for (RuleType ruleType : ruleTypes) {
+            logger.debug("Rule type = " + ruleType);
+            Assert.notNull(ruleType);
+            Assert.notNull(ruleType.getId());
+            Assert.notNull(ruleType.getName());
+            if (RuleTypeEnum.DSLR.getId().equals(ruleType.getName())) {
+                hasDslr = true;
+            }
+        }
+
+        Assert.isTrue(hasDslr);
+    }
+
+    @Test
+    public void getRuleNamesByRuleSetName() throws Exception {
+
+            String ruleSetName = "Payment Application";
+
+            List<String> ruleNames = brmPersistenceService.getRuleNames(ruleSetName);
+
+            Assert.notNull(ruleNames);
+            Assert.notEmpty(ruleNames);
+
+            boolean hasPaymentApplicationRule = false;
+            for (String ruleName : ruleNames) {
+                logger.debug("Rule name = " + ruleName);
+                Assert.notNull(ruleName);
+                Assert.isTrue(ruleName.trim().length() > 0);
+                if ("Payment Application Rule".equals(ruleName)) {
+                    hasPaymentApplicationRule = true;
+                }
+            }
+
+            Assert.isTrue(hasPaymentApplicationRule);
     }
 
 }

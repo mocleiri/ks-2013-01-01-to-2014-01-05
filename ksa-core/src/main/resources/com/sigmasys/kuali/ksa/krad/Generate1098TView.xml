@@ -31,9 +31,7 @@
         <property name="title" value="Generate 1098T"/>
         <property name="headerText" value="Generate 1098T"/>
         <property name="entryPageId" value="Generate1098TViewPage"/>
-        <property name="navigation">
-            <ref bean="KsaAccountNavigation"/>
-        </property>
+        <property name="navigation" ref="KsaAccountNavigation"/>
 		<property name="items">
             <list merge="true">
 				<!-- Generate 1098T page -->

@@ -30,9 +30,7 @@
         <property name="title" value="Quick View"/>
         <property name="headerText" value="Quick View"/>
         <property name="entryPageId" value="QuickViewPage"/>
-        <property name="navigation">
-            <ref bean="KsaAccountNavigation"/>
-        </property>
+        <property name="navigation" ref="KsaAccountNavigation"/>
         <property name="items">
             <list merge="true">
                 <bean parent="Uif-Page" p:id="QuickViewPage" p:title="Quick View">
@@ -128,7 +126,8 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-MessageField" p:messageText="Account Overview"/>
-                            <bean parent="Uif-Link" p:linkText="more" p:target="_self" p:style="font-size: .8em; float: right;"
+                            <bean parent="Uif-Link" p:linkText="more" p:target="_self"
+                                  p:style="font-size: .8em; float: right;"
                                   p:href="searchView?methodToCall=get&amp;viewId=SearchView&amp;pageId=AccountOVTransactionsPage&amp;userId=@{account.id}"/>
                         </list>
                     </property>
@@ -268,7 +267,8 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-MessageField" p:messageText="Biographic Information"/>
-                            <bean parent="Uif-Link" p:linkText="more" p:target="_self" p:style="font-size: .8em; float: right;"
+                            <bean parent="Uif-Link" p:linkText="more" p:target="_self"
+                                  p:style="font-size: .8em; float: right;"
                                   p:href="biographicView?methodToCall=get&amp;viewId=BiographicView&amp;pageId=BiographicPersonsPage&amp;userId=@{account.id}"/>
                         </list>
                     </property>
@@ -675,7 +675,8 @@
                 <bean parent="Uif-InputField" p:propertyName="text" p:width="90%">
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>  <!--p:style="resize:none;"-->
+                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
+                        <!--p:style="resize:none;"-->
                     </property>
                 </bean>
             </list>
@@ -726,7 +727,7 @@
                       p:maxLength="10"
                       p:fieldLabel.renderColon="true">
                     <property name="control">
-                        <bean parent="Uif-DateControl" p:size="11" />
+                        <bean parent="Uif-DateControl" p:size="11"/>
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="memoModel.expirationDate"
@@ -735,7 +736,7 @@
                       p:maxLength="10"
                       p:fieldLabel.renderColon="true">
                     <property name="control">
-                        <bean parent="Uif-DateControl" p:size="11" />
+                        <bean parent="Uif-DateControl" p:size="11"/>
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="memoModel.accessLevelString" p:label="Level">
@@ -854,8 +855,8 @@
         <property name="instructionalText"
                   value="This is a stacked layout of a collection - CollectionGroup" />-->
         <property name="collectionObjectClass"
-                  value="com.sigmasys.kuali.ksa.model.Flag" />
-        <property name="propertyName" value="flags" />
+                  value="com.sigmasys.kuali.ksa.model.Flag"/>
+        <property name="propertyName" value="flags"/>
         <!--<property name="layoutManager.summaryTitle" value="Line Summary" />
         <property name="layoutManager.summaryFields" value="field1" />-->
         <property name="items">
@@ -929,7 +930,6 @@
             </list>
         </property>
     </bean>
-
 
 
 </beans>

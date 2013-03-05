@@ -124,6 +124,7 @@ public class BrmPersistenceServiceImpl extends GenericPersistenceService impleme
     public List<RuleSet> getRuleSets() {
         Query query = em.createQuery("select rs from RuleSet rs " +
                 " left outer join fetch rs.type t " +
+                " left outer join fetch rs.rules r " +
                 " order by rs.name asc");
         return query.getResultList();
     }
@@ -242,6 +243,22 @@ public class BrmPersistenceServiceImpl extends GenericPersistenceService impleme
             return ruleNames;
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * Retrieves rule set names by names of rules contained in these rule sets.
+     *
+     * @param ruleNames Rule names
+     * @return a list of rule set names
+     */
+    @Override
+    public List<String> getRuleSetNamesByRuleNames(String... ruleNames) {
+        Query query = em.createQuery("select distinct rs.name from RuleSet rs " +
+                " left outer join rs.rules r " +
+                " where r.name in (:ruleNames) " +
+                " order by rs.name");
+        query.setParameter("ruleNames", Arrays.asList(ruleNames));
+        return query.getResultList();
     }
 
     /**

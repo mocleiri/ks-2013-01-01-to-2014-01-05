@@ -32,6 +32,7 @@
             <bean parent="Uif-KsaPageNavigation">
                 <property name="items">
                     <list>
+                        <bean parent="Uif-HeaderTwo" p:headerText="Business Rules"/>
                         <bean parent="Uif-NavigationActionLink"
                               p:navigateToPageId="EditRulePage"
                               p:actionLabel="Edit Rule"/>

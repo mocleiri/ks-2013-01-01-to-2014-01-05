@@ -30,9 +30,7 @@
         <property name="title" value=""/>
         <property name="headerText" value="Payment"/>
         <property name="entryPageId" value="AddPaymentPage"/>
-        <property name="navigation">
-            <ref bean="KsaAccountNavigation"/>
-        </property>
+        <property name="navigation" ref="KsaAccountNavigation"/>
         <property name="items">
             <list merge="true">
                 <bean parent="Uif-Page" p:id="AddPaymentPage" p:title="Account">

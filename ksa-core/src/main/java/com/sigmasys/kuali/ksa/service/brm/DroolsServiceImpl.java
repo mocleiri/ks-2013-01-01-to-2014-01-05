@@ -203,6 +203,9 @@ public class DroolsServiceImpl implements BrmService {
         buildKnowledgePackages(ruleSet);
     }
 
+    /**
+     * Reloads all rule sets and other BRM resources associated with them.
+     */
     @Override
     public void reloadRuleSets() {
         knowledgeBases.clear();
@@ -212,10 +215,17 @@ public class DroolsServiceImpl implements BrmService {
         }
     }
 
+    /**
+     * Reloads rule sets (knowledge base) specified by names
+     *
+     * @param ruleSetNames Rule Set names
+     */
     @Override
-    public void reloadRuleSet(String ruleSetName) {
-        knowledgeBases.remove(ruleSetName);
-        getKnowledgeBase(getRuleSet(ruleSetName));
+    public void reloadRuleSets(String... ruleSetNames) {
+        for (String ruleSetName : ruleSetNames) {
+            knowledgeBases.remove(ruleSetName);
+            getKnowledgeBase(getRuleSet(ruleSetName));
+        }
     }
 
 }

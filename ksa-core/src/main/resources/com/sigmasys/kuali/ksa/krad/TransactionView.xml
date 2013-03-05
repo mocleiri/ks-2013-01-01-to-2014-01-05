@@ -14,9 +14,7 @@
         <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.TransactionForm"/>
         <property name="theme" ref="Uif-KsaTheme"/>
         <property name="entryPageId" value="ViewTransactions"/>
-        <property name="navigation">
-            <ref bean="KsaAccountNavigation"/>
-        </property>
+        <property name="navigation" ref="KsaAccountNavigation"/>
         <property name="items">
             <list merge="true">
                 <bean parent="Uif-Page" p:id="ViewTransactions" p:title="View Transactions">

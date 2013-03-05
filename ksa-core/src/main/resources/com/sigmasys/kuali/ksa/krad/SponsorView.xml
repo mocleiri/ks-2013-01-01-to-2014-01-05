@@ -28,9 +28,7 @@
         <property name="title" value="Sponsor"/>
         <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.SponsorForm"/>
         <property name="entryPageId" value="SponsorQuickMenuOptionsPage"/>
-        <property name="navigation">
-            <ref bean="KSASponsorViewNav"/>
-        </property>
+        <property name="navigation" ref="KSASponsorViewNav"/>
         <property name="items">
             <list merge="true">
                 <bean parent="Uif-Page" p:id="SponsorQuickMenuOptionsPage" p:title="Quick Options">

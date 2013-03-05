@@ -27,9 +27,7 @@
         <property name="title" value="Settings"/>
         <property name="headerText" value="Settings"/>
         <property name="entryPageId" value="CurrencyPage"/>
-        <property name="navigation">
-            <ref bean="settingsNavigation"/>
-        </property>
+        <property name="navigation" ref="settingsNavigation"/>
         <property name="items">
             <list merge="true">
 
@@ -63,7 +61,7 @@
                             </bean>
                             <ref bean="addSection"/>
                             <ref bean="tableSection"/>
-                            </list>
+                        </list>
                     </property>
                 </bean>
 
@@ -381,7 +379,6 @@
                 <!--End Activity Types Page-->
 
 
-
             </list>
         </property>
         <!--
@@ -474,7 +471,8 @@
                               p:watermarkText="Paste or key in the description here..."/>
                     </property>
                 </bean>
-                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insertAuditableEntity" p:actionLabel="Add"/>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insertAuditableEntity"
+                      p:actionLabel="Add"/>
                 <!--  Status message -->
                 <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
 
@@ -582,7 +580,7 @@
                     </property>
                 </bean>
                 <bean parent="Uif-LinkField" p:label="Edit" p:linkText="Edit" p:target="_self" p:width="10%"
-                      p:href="settingsView?viewId=SettingsView&amp;pageId=@{simpleType}DetailsPage&amp;methodToCall=get&amp;entityId=@{#line.id}" />
+                      p:href="settingsView?viewId=SettingsView&amp;pageId=@{simpleType}DetailsPage&amp;methodToCall=get&amp;entityId=@{#line.id}"/>
             </list>
         </property>
     </bean>
@@ -610,11 +608,14 @@
             <list>
                 <bean parent="Uif-InputField" p:label="Name" p:propertyName="name" p:width="15%"/>
                 <bean parent="Uif-InputField" p:label="Description" p:propertyName="description" p:width="45%"/>
-                <bean parent="Uif-InputField" p:label="Days Late 1" p:propertyName="latePeriod.daysLate1" p:width="10%"/>
-                <bean parent="Uif-InputField" p:label="Days Late 2" p:propertyName="latePeriod.daysLate2" p:width="10%"/>
-                <bean parent="Uif-InputField" p:label="Days Late 3" p:propertyName="latePeriod.daysLate3" p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="Days Late 1" p:propertyName="latePeriod.daysLate1"
+                      p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="Days Late 2" p:propertyName="latePeriod.daysLate2"
+                      p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="Days Late 3" p:propertyName="latePeriod.daysLate3"
+                      p:width="10%"/>
                 <bean parent="Uif-LinkField" p:label="Edit" p:linkText="Edit" p:target="_self" p:width="10%"
-                      p:href="settingsView?viewId=SettingsView&amp;pageId=@{simpleType}DetailsPage&amp;methodToCall=get&amp;entityId=@{#line.id}" />
+                      p:href="settingsView?viewId=SettingsView&amp;pageId=@{simpleType}DetailsPage&amp;methodToCall=get&amp;entityId=@{#line.id}"/>
             </list>
         </property>
     </bean>

@@ -30,9 +30,7 @@
         <property name="title" value="Biographic Information"/>
         <property name="headerText" value="Biographic Information"/>
         <property name="entryPageId" value="BiographicPersonsPage"/>
-        <property name="navigation">
-            <ref bean="KsaAccountNavigation"/>
-        </property>
+        <property name="navigation" ref="KsaAccountNavigation"/>
         <property name="items">
             <list merge="true">
                 <bean parent="Uif-Page" p:id="BiographicPersonsPage" p:title="Biographic Information List">
