@@ -6,6 +6,7 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sigmasys.kuali.ksa.krad.util.Generated1098TFomCollectionLine;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +32,11 @@ public class Generate1098TController extends DownloadController {
      * The logger.
      */
     private static final Log logger = LogFactory.getLog(Generate1098TController.class);
+
+    /**
+     * IRS Form 1098T Comparator. Compares by Tax Year in the reverse chronological order.
+     */
+    private static final Comparator<Irs1098T> form1098TComparator = new Irs1098TComparator();
 
 
     @Autowired
@@ -119,11 +125,33 @@ public class Generate1098TController extends DownloadController {
     public ModelAndView viewGenerated1098TForms(@ModelAttribute("KualiForm") Generate1098TForm form) throws Exception {
 
         // Get all previously generated forms 1098T for the current account:
-
         List<Irs1098T> allForms = reportService.getIrs1098TReportsForAccount(form.getAccount().getId());
 
+        // Sort by tax year in the reverse chronological order:
+        Collections.sort(allForms, form1098TComparator);
+
+        // Create collection lines for the display:
+        List<Generated1098TFomCollectionLine> collectionLines = new ArrayList<Generated1098TFomCollectionLine>();
+        String currentFormYear = null;
+
+        for (Irs1098T form1098T : allForms) {
+            // Create a new collection line:
+            Generated1098TFomCollectionLine line = new Generated1098TFomCollectionLine();
+
+            line.setForm1098T(form1098T);
+            collectionLines.add(line);
+
+            // If the year has changed, mark the form as "final revision":
+            String formYear = form1098T.getFormYear();
+
+            if (!StringUtils.equals(currentFormYear, formYear)) {
+                line.setFinalRevision(true);
+                currentFormYear = formYear;
+            }
+        }
+
         // Set the 1098T forms on the form object:
-        form.setGeneratedForms1098T(allForms);
+        form.setGeneratedForms1098T(collectionLines);
 
         return getUIFModelAndView(form);
     }
@@ -253,5 +281,32 @@ public class Generate1098TController extends DownloadController {
             errorMessage = defaultMessage;
         }
         return errorMessage;
+    }
+
+
+    /**
+     * IRS Form 1098T comparator. Compares forms by their date of creation in the reverse chronological order,
+     * so the most recent versions come first.
+     */
+    private static class Irs1098TComparator implements Comparator<Irs1098T> {
+
+        @Override
+        public int compare(Irs1098T o1, Irs1098T o2) {
+            int result = 0;
+
+            if ((o1 != null) && (o2 != null)) {
+                // Compare by Tax Year first:
+                result =  StringUtils.isNotEmpty(o1.getFormYear())
+                        && StringUtils.isNotEmpty(o2.getFormYear())
+                        ? -o1.getFormYear().compareTo(o2.getFormYear()) : 0;
+
+                // Then compare by the Creation Date:
+                if (result == 0) {
+                    result = -o1.getCreationDate().compareTo(o2.getCreationDate());
+                }
+            }
+
+            return result;
+        }
     }
 }
