@@ -2,7 +2,7 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 import java.util.List;
 
-import com.sigmasys.kuali.ksa.krad.util.Generated1098TFomCollectionLine;
+import com.sigmasys.kuali.ksa.krad.util.Form1098TModel;
 import com.sigmasys.kuali.ksa.model.*;
 import org.apache.commons.lang.StringUtils;
 
@@ -32,7 +32,7 @@ public class Generate1098TForm extends AbstractViewModel {
 	/**
 	 * Generated Form 1098T collection lines for the search by account.
 	 */
-	private List<Generated1098TFomCollectionLine> generatedForms1098T;
+	private List<Form1098TModel> form1098TModels;
 	
 
 	/**
@@ -87,12 +87,12 @@ public class Generate1098TForm extends AbstractViewModel {
 		this.reportYears = reportYears;
 	}
 
-	public List<Generated1098TFomCollectionLine> getGeneratedForms1098T() {
-		return generatedForms1098T;
+	public List<Form1098TModel> getForm1098TModels() {
+		return form1098TModels;
 	}
 
-	public void setGeneratedForms1098T(List<Generated1098TFomCollectionLine> generatedForms1098T) {
-		this.generatedForms1098T = generatedForms1098T;
+	public void setForm1098TModels(List<Form1098TModel> form1098TModels) {
+		this.form1098TModels = form1098TModels;
 	}
 
     public AccountProtectedInfo getAccountProtectedInfo() {

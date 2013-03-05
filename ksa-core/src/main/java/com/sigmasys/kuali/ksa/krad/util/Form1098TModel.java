@@ -5,13 +5,11 @@ import com.sigmasys.kuali.ksa.model.Irs1098T;
 import java.io.Serializable;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sergey
- * Date: 3/5/13
- * Time: 8:03 AM
- * To change this template use File | Settings | File Templates.
+ * Form1098TModel is used by KRAD components.
+ *
+ * @author  Sergey
  */
-public class Generated1098TFomCollectionLine implements Serializable {
+public class Form1098TModel implements Serializable {
 
     /**
      * An instance of the <code>Irs1098T</code> class.

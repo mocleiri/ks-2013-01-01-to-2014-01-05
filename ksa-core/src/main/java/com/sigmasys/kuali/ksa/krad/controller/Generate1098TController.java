@@ -6,7 +6,7 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.sigmasys.kuali.ksa.krad.util.Generated1098TFomCollectionLine;
+import com.sigmasys.kuali.ksa.krad.util.Form1098TModel;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -131,12 +131,12 @@ public class Generate1098TController extends DownloadController {
         Collections.sort(allForms, form1098TComparator);
 
         // Create collection lines for the display:
-        List<Generated1098TFomCollectionLine> collectionLines = new ArrayList<Generated1098TFomCollectionLine>();
+        List<Form1098TModel> collectionLines = new ArrayList<Form1098TModel>();
         String currentFormYear = null;
 
         for (Irs1098T form1098T : allForms) {
             // Create a new collection line:
-            Generated1098TFomCollectionLine line = new Generated1098TFomCollectionLine();
+            Form1098TModel line = new Form1098TModel();
 
             line.setForm1098T(form1098T);
             collectionLines.add(line);
@@ -151,7 +151,7 @@ public class Generate1098TController extends DownloadController {
         }
 
         // Set the 1098T forms on the form object:
-        form.setGeneratedForms1098T(collectionLines);
+        form.setForm1098TModels(collectionLines);
 
         return getUIFModelAndView(form);
     }

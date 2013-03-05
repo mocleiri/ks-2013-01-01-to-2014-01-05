@@ -193,8 +193,8 @@
 					  p:instructionalText="Generated IRS Forms 1098T for @{account.defaultPersonName.displayValue}."
 					  p:width="85%">
 					<property name="readOnly" value="true"/>
-					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.util.Generated1098TFomCollectionLine"/>
-					<property name="propertyName" value="generatedForms1098T"/>
+					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.util.Form1098TModel"/>
+					<property name="propertyName" value="form1098TModels"/>
 					<property name="layoutManager.generateAutoSequence" value="false" />
 					<property name="layoutManager.renderSequenceField" value="false"/>
 					<property name="layoutManager.richTable.render" value="false"/>
