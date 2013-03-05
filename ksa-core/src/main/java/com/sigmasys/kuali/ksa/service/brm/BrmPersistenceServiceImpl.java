@@ -256,8 +256,19 @@ public class BrmPersistenceServiceImpl extends GenericPersistenceService impleme
         Query query = em.createQuery("select distinct rs.name from RuleSet rs " +
                 " left outer join rs.rules r " +
                 " where r.name in (:ruleNames) " +
-                " order by rs.name");
+                " order by rs.name asc");
         query.setParameter("ruleNames", Arrays.asList(ruleNames));
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves all existing rule set names.
+     *
+     * @return a list of rule set names
+     */
+    @Override
+    public List<String> getRuleSetNames() {
+        Query query = em.createQuery("select rs.name from RuleSet rs order by rs.name asc");
         return query.getResultList();
     }
 

@@ -1,5 +1,6 @@
-package com.sigmasys.kuali.ksa.krad.controller;
+package com.sigmasys.kuali.ksa.krad.controller.rules;
 
+import com.sigmasys.kuali.ksa.krad.controller.GenericSearchController;
 import com.sigmasys.kuali.ksa.krad.form.rules.RulesForm;
 import com.sigmasys.kuali.ksa.model.rule.Rule;
 import com.sigmasys.kuali.ksa.model.rule.RuleType;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A controller for editing KSA Drools rule sets
+ * A controller for managing KSA business rules.
  *
  * @author Michael Ivanov
  */
@@ -49,13 +51,23 @@ public class RulesController extends GenericSearchController {
      */
     @Override
     protected RulesForm createInitialForm(HttpServletRequest request) {
+        return createInitialForm(request.getParameter("ruleSetName"), request.getParameter("ruleName"));
+    }
 
-        String ruleSetName = request.getParameter("ruleSetName");
+    protected RulesForm createInitialForm(String ruleSetName, String ruleName) {
 
         RulesForm rulesForm = new RulesForm();
 
         List<String> ruleNames = StringUtils.isNotBlank(ruleSetName) ?
                 brmPersistenceService.getRuleNames(ruleSetName) : brmPersistenceService.getRuleNames();
+
+        if (StringUtils.isNotBlank(ruleName)) {
+            rulesForm.setRuleName(ruleName);
+        }
+
+        if (StringUtils.isNotBlank(ruleSetName)) {
+            rulesForm.setRuleSetName(ruleSetName);
+        }
 
         rulesForm.initNameFinder(ruleNames);
 
@@ -68,7 +80,6 @@ public class RulesController extends GenericSearchController {
             rulesForm.initRuleTypeFinder(ruleTypeNames);
         }
 
-        rulesForm.setRuleSetName(ruleSetName);
         rulesForm.setAddStatusMessage("");
         rulesForm.setEditStatusMessage("");
 
@@ -148,6 +159,18 @@ public class RulesController extends GenericSearchController {
         logger.info("Selected Rule => \n" + rule);
 
         return getUIFModelAndView(form);
+    }
+
+    /**
+     * @param form RulesForm
+     * @return ModelAndView instance
+     */
+    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=edit")
+    public ModelAndView edit(@ModelAttribute("KualiForm") RulesForm form,
+                             @RequestParam("ruleSetName") String ruleSetName,
+                             @RequestParam("ruleName") String ruleName) {
+        form = createInitialForm(ruleSetName, ruleName);
+        return select(form);
     }
 
     /**
@@ -234,6 +257,7 @@ public class RulesController extends GenericSearchController {
     private void copyRuleToForm(Rule rule, RulesForm form) {
         form.setRuleId(rule.getId());
         form.setRuleName(rule.getName());
+        form.setDescription(rule.getDescription());
         Integer priority = rule.getPriority();
         form.setRulePriority(priority != null ? priority.toString() : "0");
         form.setRuleLhs(rule.getLhs());
@@ -244,6 +268,7 @@ public class RulesController extends GenericSearchController {
     private void copyFormToRule(RulesForm form, Rule rule) {
         rule.setId(form.getRuleId());
         rule.setName(form.getRuleName());
+        rule.setDescription(form.getDescription());
         String priority = form.getRulePriority();
         rule.setPriority(StringUtils.isNotBlank(priority) ? Integer.parseInt(priority.trim()) : 0);
         rule.setLhs(form.getRuleLhs());

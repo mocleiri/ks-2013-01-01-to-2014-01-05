@@ -102,11 +102,18 @@ public interface BrmPersistenceService {
     List<String> getRuleNames(String ruleSetName);
 
     /**
-         * Retrieves rule set names by names of rules contained in these rule sets.
-         *
-         * @param ruleNames Rule names
-         * @return a list of rule set names
-         */
+     * Retrieves all existing rule set names.
+     *
+     * @return a list of rule set names
+     */
+    List<String> getRuleSetNames();
+
+    /**
+     * Retrieves rule set names by names of rules contained in these rule sets.
+     *
+     * @param ruleNames Rule names
+     * @return a list of rule set names
+     */
     List<String> getRuleSetNamesByRuleNames(String... ruleNames);
 
     /**
