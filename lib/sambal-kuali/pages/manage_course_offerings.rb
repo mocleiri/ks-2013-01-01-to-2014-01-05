@@ -157,6 +157,18 @@ class ManageCourseOfferings < BasePage
     end
   end
 
+  def select_ao(code)
+      if !target_row(code).nil?
+        target_row(code).checkbox.set
+      end
+  end
+
+  def deselect_ao(code)
+      if !target_row(code).nil?
+        target_row(code).checkbox.clear
+      end
+  end
+
   def ao_status(code, status)
     retVal = false
     row_text = target_row(code).text

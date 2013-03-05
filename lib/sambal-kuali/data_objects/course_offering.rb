@@ -371,6 +371,8 @@ class CourseOffering
         end
       else
         page.copy("A")
+        page.select_ao("B")
+        page.approve_activity
         page.select_ao_by_status(aostate)
         page.delete_aos
         on ActivityOfferingConfirmDelete do |page|
