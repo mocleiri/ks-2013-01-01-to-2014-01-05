@@ -80,63 +80,69 @@
                     </property>
                 </bean>
 				
-				<!-- Demographic information section -->
-				<bean parent="Uif-HorizontalBoxGroup">
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>ksa-group-content</value>
-                        </list>
-                    </property>
-                    <property name="readOnly" value="true"/>
-					<property name="items">
-						<list>
-							<!-- Name and ID section -->
-							<bean parent="Uif-VerticalBoxSection">
-								<property name="items">
-									<list>
-										<bean parent="Uif-MessageField" p:style="font-weight: bold; padding-top: 10px; padding-left: 5px; font-size: larger;" 
-											p:messageText="@{account.defaultPersonName.title} @{account.defaultPersonName.firstName} @{account.defaultPersonName.middleName} @{account.defaultPersonName.lastName} @{account.defaultPersonName.suffix}"/>
-										<bean parent="Uif-DataField" p:label="ID" p:shortLabel="ID" p:labelPlacement="LEFT"  p:propertyName="account.id" p:style="padding-left: 5px;"/>
-									</list>
-								</property>
-							</bean>
-							
-							<!-- Default Address -->
-							<bean parent="Uif-VerticalBoxGroup">
-								<property name="items">
-									<list>
-										<bean parent="Uif-MessageField" p:messageText="Default Address:" p:style="font-weight: bold; padding-top: 20px; padding-left: 20px;"/>
-										<bean parent="Uif-MessageField" p:messageText="@{account.defaultPostalAddress.streetAddress1}" p:style="padding-left: 20px;"/>
-										<bean parent="Uif-MessageField" p:messageText="@{account.defaultPostalAddress.streetAddress2}" p:style="padding-left: 20px; display: @{addressLine2DisplayStyle};"/>
-										<bean parent="Uif-MessageField" p:messageText="@{account.defaultPostalAddress.streetAddress3}" p:style="padding-left: 20px; display: @{addressLine3DisplayStyle};"/>
-										<bean parent="Uif-MessageField" p:messageText="@{account.defaultPostalAddress.city}, @{account.defaultPostalAddress.state} @{account.defaultPostalAddress.postalCode}" p:style="padding-left: 20px;"/>
-									</list>
-								</property>
-							</bean>
-							
-							<!-- Default Contact -->
-							<bean parent="Uif-VerticalBoxGroup">
-								<property name="items">
-									<list>
-										<bean parent="Uif-MessageField" p:messageText="Default Contact:" p:style="font-weight: bold; padding-top: 20px; padding-left: 20px;"/>
-										<bean parent="Uif-MessageField" p:messageText="Phone: @{account.defaultElectronicContact.phoneNumber}" p:style="padding-left: 20px;"/>
-										<bean parent="Uif-MessageField" p:messageText="Email: @{account.defaultElectronicContact.emailAddress}" p:style="padding-left: 20px;"/>
-									</list>
-								</property>
-							</bean>
-						</list>
-					</property>
-				</bean>
-				
+				<!-- Biographic Information section -->
+				<ref bean="biographicInformationContentSection"/>
+
 				<!-- Details link -->
-				<bean parent="Uif-LinkField" p:href="javascript: void(0);" p:linkText="Details" p:onClickScript="javascript:alert('Open account details')" p:style="padding-left: 5px;"/>
+				<bean parent="Uif-LinkField" p:href="javascript: void(0);" p:linkText="Details" p:onClickScript="showLightboxComponent('accountDetailsLightbox');" p:style="padding-left: 5px;"/>
+				
+				<!-- Account details lightbox -->
+				<ref bean="accountDetailsLightbox"/>
 				
 			</list>
 		</property>
 	</bean>
-	
-	
-	<!-- Generate 1098T Report section -->
+
+    <!-- Demographic information section -->
+    <bean id="biographicInformationContentSection" parent="Uif-HorizontalBoxGroup">
+        <property name="cssClasses">
+            <list merge="true">
+                <value>ksa-group-content</value>
+            </list>
+        </property>
+        <property name="readOnly" value="true"/>
+        <property name="items">
+            <list>
+                <!-- Name and ID section -->
+                <bean parent="Uif-VerticalBoxSection">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-MessageField" p:style="font-weight: bold; padding-top: 10px; padding-left: 5px; font-size: larger;"
+                                  p:messageText="@{account.defaultPersonName.title} @{account.defaultPersonName.firstName} @{account.defaultPersonName.middleName} @{account.defaultPersonName.lastName} @{account.defaultPersonName.suffix}"/>
+                            <bean parent="Uif-DataField" p:label="ID" p:shortLabel="ID" p:labelPlacement="LEFT"  p:propertyName="account.id" p:style="padding-left: 5px;"/>
+                        </list>
+                    </property>
+                </bean>
+
+                <!-- Default Address -->
+                <bean parent="Uif-VerticalBoxGroup">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-MessageField" p:messageText="Default Address:" p:style="font-weight: bold; padding-top: 20px; padding-left: 20px;"/>
+                            <bean parent="Uif-MessageField" p:messageText="@{account.defaultPostalAddress.streetAddress1}" p:style="padding-left: 20px;"/>
+                            <bean parent="Uif-MessageField" p:messageText="@{account.defaultPostalAddress.streetAddress2}" p:style="padding-left: 20px; display: @{addressLine2DisplayStyle};"/>
+                            <bean parent="Uif-MessageField" p:messageText="@{account.defaultPostalAddress.streetAddress3}" p:style="padding-left: 20px; display: @{addressLine3DisplayStyle};"/>
+                            <bean parent="Uif-MessageField" p:messageText="@{account.defaultPostalAddress.city}, @{account.defaultPostalAddress.state} @{account.defaultPostalAddress.postalCode}" p:style="padding-left: 20px;"/>
+                        </list>
+                    </property>
+                </bean>
+
+                <!-- Default Contact -->
+                <bean parent="Uif-VerticalBoxGroup">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-MessageField" p:messageText="Default Contact:" p:style="font-weight: bold; padding-top: 20px; padding-left: 20px;"/>
+                            <bean parent="Uif-MessageField" p:messageText="Phone: @{account.defaultElectronicContact.phoneNumber}" p:style="padding-left: 20px;"/>
+                            <bean parent="Uif-MessageField" p:messageText="Email: @{account.defaultElectronicContact.emailAddress}" p:style="padding-left: 20px;"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- Generate 1098T Report section -->
 	<bean id="generateReportSection" parent="Uif-VerticalBoxSection" p:title="Generate 1098T" p:width="100%">
 		<property name="headerText" value="Generate 1098T"/>
 		<property name="items">
@@ -220,6 +226,74 @@
 		</property>
 	</bean>
 	
+	
+	<!-- 
+	
+	*********************  Display Account Details Lightbox    ***********************
+	
+	-->
+	
+	<bean id="accountDetailsLightbox" parent="Uif-VerticalBoxGroup" p:title="Account Details">
+		<property name="hidden" value="true"/>
+		<property name="items">
+			<list>
+				<ref bean="biographicInformationContentSection"/>
+				<ref bean="accountInformationContentSection"/>
+			</list>
+		</property>
+	</bean>
+		
+	
+	<!-- Account Information section -->
+	<bean id="accountInformationContentSection" parent="Uif-VerticalBoxSection" p:title="Account Information">
+        <property name="cssClasses">
+            <list merge="true">
+                <value>ksa-group-content</value>
+            </list>
+        </property>
+		<property name="headerText" value="Account Information"/>
+		<property name="items">
+			<list>
+				<!-- Account information section -->
+				<bean parent="Uif-HorizontalBoxSection">
+                    <property name="readOnly" value="true"/>
+					<property name="items">
+						<list>
+							<!-- Account Info section -->
+							<bean parent="Uif-VerticalBoxSection">
+								<property name="items">
+									<list>
+										<bean parent="Uif-DataField" p:label="Status" p:shortLabel="STAT" p:labelPlacement="LEFT"  p:propertyName="account.statusType.name" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Account Type" p:shortLabel="TYP" p:labelPlacement="LEFT"  p:propertyName="accountType" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Date of Birth" p:shortLabel="DOB" p:labelPlacement="LEFT"  p:propertyName="account.dateOfBirth" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Credit Limit" p:shortLabel="CRLM" p:labelPlacement="LEFT"  p:propertyName="account.creditLimit" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Late Period" p:shortLabel="LTPR" p:labelPlacement="LEFT"  p:propertyName="account.latePeriod.name" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Can Authenticate" p:shortLabel="AUTH" p:labelPlacement="LEFT"  p:propertyName="account.ableToAuthenticate" p:style="padding-left: 5px;"/>
+									</list>
+								</property>
+							</bean>
+							
+							<!-- Bank Type, Tax Type and Identity Type section -->
+							<bean parent="Uif-VerticalBoxGroup">
+								<property name="items">
+									<list>
+										<bean parent="Uif-DataField" p:label="Bank Type" p:shortLabel="BT" p:labelPlacement="LEFT"  p:propertyName="accountProtectedInfo.bankType.name" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Bank Details" p:shortLabel="BD" p:labelPlacement="TOP"  p:propertyName="accountProtectedInfo.bankDetails" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Tax Type" p:shortLabel="TT" p:labelPlacement="LEFT"  p:propertyName="accountProtectedInfo.taxType.name" p:style="padding-left: 5px; padding-top: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Tax Details" p:shortLabel="TD" p:labelPlacement="TOP"  p:propertyName="accountProtectedInfo.taxReference" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Identity Type" p:shortLabel="IT" p:labelPlacement="LEFT"  p:propertyName="accountProtectedInfo.identityType.name" p:style="padding-left: 5px; padding-top: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Identity Serial" p:shortLabel="IS" p:labelPlacement="LEFT"  p:propertyName="accountProtectedInfo.identitySerial" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Identity Issuer" p:shortLabel="II" p:labelPlacement="LEFT"  p:propertyName="accountProtectedInfo.identityIssuer" p:style="padding-left: 5px;"/>
+									</list>
+								</property>
+							</bean>
+							
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
 	
 	
 </beans>
