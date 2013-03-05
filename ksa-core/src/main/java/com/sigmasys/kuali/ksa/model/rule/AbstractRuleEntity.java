@@ -25,6 +25,11 @@ public abstract class AbstractRuleEntity implements Identifiable {
     protected String name;
 
     /**
+        * Entity Name
+        */
+    protected String description;
+
+    /**
      * Rule Type
      */
     protected RuleType type;
@@ -49,6 +54,15 @@ public abstract class AbstractRuleEntity implements Identifiable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Column(name = "DESCRIPTION", length = 512)
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Column(name = "HEADER", length = 4000)
@@ -76,6 +90,7 @@ public abstract class AbstractRuleEntity implements Identifiable {
                 "id=" + id +
                 ", header='" + header + '\'' +
                 ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 ", type=" + type +
                 '}';
     }

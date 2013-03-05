@@ -26,7 +26,7 @@
     <bean id="RulesView" parent="Uif-KsaFormView" p:footer.render="false">
         <property name="title" value="KSA Rules Editor"/>
         <property name="headerText" value="KSA Rules Editor"/>
-        <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.RulesForm"/>
+        <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.rules.RulesForm"/>
         <property name="entryPageId" value="EditRulePage"/>
         <property name="navigation">
             <bean parent="Uif-KsaPageNavigation">
@@ -168,7 +168,7 @@
                                 <property name="control">
                                     <bean parent="Uif-DropdownControl"/>
                                 </property>
-                                <property name="optionsFinder" value="@{getRuleNameFinder()}"/>
+                                <property name="optionsFinder" value="@{getNameFinder()}"/>
                             </bean>
                             <bean parent="Uif-PrimaryActionButton-Small" p:methodToCall="select"
                                   p:actionLabel="Load Rule">

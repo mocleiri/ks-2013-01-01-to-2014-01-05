@@ -1,6 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
-import com.sigmasys.kuali.ksa.krad.form.RulesForm;
+import com.sigmasys.kuali.ksa.krad.form.rules.RulesForm;
 import com.sigmasys.kuali.ksa.model.rule.Rule;
 import com.sigmasys.kuali.ksa.model.rule.RuleType;
 import com.sigmasys.kuali.ksa.service.brm.BrmPersistenceService;
@@ -57,7 +57,7 @@ public class RulesController extends GenericSearchController {
         List<String> ruleNames = StringUtils.isNotBlank(ruleSetName) ?
                 brmPersistenceService.getRuleNames(ruleSetName) : brmPersistenceService.getRuleNames();
 
-        rulesForm.initRuleNameFinder(ruleNames);
+        rulesForm.initNameFinder(ruleNames);
 
         List<RuleType> ruleTypes = brmPersistenceService.getRuleTypes();
         if (ruleTypes != null) {
