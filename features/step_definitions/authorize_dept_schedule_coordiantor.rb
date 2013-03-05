@@ -162,7 +162,11 @@ When /^there is a draft course in my department/ do
 end
 
 When /^I have access delete an activity offering in a "([^"]*)" state for a course in my department$/ do |aostate|
+  if @newCO
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => @newCO
+  else
+    @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
+  end
   @course_offering.manage
   @course_offering.attempt_ao_delete_by_status(aostate).should == true
 end
