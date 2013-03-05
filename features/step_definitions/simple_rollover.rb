@@ -54,6 +54,9 @@ When /^I approve the "(.*)" subject code for scheduling in the target term$/ do 
   on ManageCourseOfferingList do |page|
       page.approve_subject_code
   end
+  on ManageCourseOfferingList do |page|
+    page.course_offering_results_table.rows[2].cells[ManageCourseOfferingList::CO_STATUS_COLUMN].text.should == "Planned"
+  end
 end
 
 And /^I manage SOC for the target term$/ do
