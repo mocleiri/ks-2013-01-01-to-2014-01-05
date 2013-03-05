@@ -4,27 +4,32 @@ When /^I initiate a rollover by specifying source and target terms$/ do
 end
 
 When /^I initiate a rollover to create a term in open state$/ do
-  @rollover = make Rollover, :source_term => "201201", :target_term => "202001"
+  @rollover = make Rollover, :source_term => Rollover::MAIN_TEST_TERM_SOURCE, :target_term => Rollover::MAIN_TEST_TERM_TARGET
   @rollover.perform_rollover
 end
 
 When /^I initiate a rollover to create a term in default state EC/ do
-  @rollover = make Rollover, :source_term => "201212", :target_term => "201812"
+  @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::DRAFT_SOC_TERM
   @rollover.perform_rollover
 end
 
 When /^I initiate a rollover to create a term in open state EC$/ do
-  @rollover = make Rollover, :source_term => "201212", :target_term => "201712"
+  @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::OPEN_SOC_TERM
   @rollover.perform_rollover
 end
 
 When /^I initiate a rollover to create a term in final edits state EC$/ do
-  @rollover = make Rollover, :source_term => "201212", :target_term => "201612"
+  @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::FINAL_EDITS_SOC_TERM
   @rollover.perform_rollover
 end
 
 When /^I initiate a rollover to create a term in published state EC$/ do
-  @rollover = make Rollover, :source_term => "201212", :target_term => "201512"
+  @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::PUBLISHED_SOC_TERM
+  @rollover.perform_rollover
+end
+
+When /^I initiate a rollover to create a term in locked state EC$/ do
+  @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::LOCKED_SOC_TERM
   @rollover.perform_rollover
 end
 
