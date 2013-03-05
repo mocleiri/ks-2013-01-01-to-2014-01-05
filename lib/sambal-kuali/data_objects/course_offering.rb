@@ -371,9 +371,12 @@ class CourseOffering
         end
       else
         page.copy("A")
-        page.select_ao("B")
+        @ao_list = page.codes_list
+        page.select_ao(@ao_list.first)
+        if aostate == "Approved"
         page.approve_activity
         page.select_ao_by_status(aostate)
+        end
         page.delete_aos
         on ActivityOfferingConfirmDelete do |page|
           @access = page.delete_activity_offering_button.present?
