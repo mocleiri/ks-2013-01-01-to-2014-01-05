@@ -19,6 +19,13 @@ class ManageCourseOfferingList < BasePage
   element(:delete_cos_button) { |b|b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-CO")}
   action(:delete_cos) { |b|b.delete_cos_button.click; b.loading.wait_while_present }
 
+  element(:approve_dialog){|b| b.frm.div(id:"approveCODialog")}
+  element(:approve_yes_element) { |b| b.approve_dialog.checkbox(index:0)}
+  action(:approve_yes) { |b| b.approve_yes_element.click;b.loading.wait_while_present(300)}
+
+  element(:no_button_element) { |b| b.approve_dialog.checkbox(index:1)}
+  action(:no) { |b| b.no_button_element.click;b.loading.wait_while_present(300)}
+
   SELECT_COLUMN = 0
   CO_CODE_COLUMN = 1
   CO_STATUS_COLUMN = 2
@@ -57,6 +64,17 @@ class ManageCourseOfferingList < BasePage
   def target_row(co_code)
     course_offering_results_table.wait_until_present(60)
     course_offering_results_table.row(text: /\b#{Regexp.escape(co_code)}\b/)
+  end
+
+  def row_by_status(costatus)
+    course_offering_results_table.row(text: /\b#{Regexp.escape(costatus)}\b/)
+  end
+
+  def select_co_by_status(costatus)
+    if row_by_status(costatus).exists? then
+      row_by_status(costatus).checkbox.set
+      return row_by_status(costatus).cells[CO_CODE_COLUMN].text
+    end
   end
 
   def copy(co_code)
@@ -100,5 +118,13 @@ class ManageCourseOfferingList < BasePage
     code_list.each do |code|
       target_row(code).checkbox.clear
     end
+  end
+
+  def select_co(code)
+    target_row(code).checkbox.set
+  end
+
+  def deselect_co(code)
+    target_row(code).checkbox.clear
   end
 end

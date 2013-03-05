@@ -99,7 +99,7 @@ class CourseOffering
   # creates course offering based on class attributes
   def create
     if @create_by_copy != nil
-      @course = create_co_copy(@create_by_copy.course)
+      @course = create_co_copy(@create_by_copy.course, @create_by_copy.term)
       #deep copy
       @activity_offering_cluster_list = @create_by_copy.activity_offering_cluster_list
       @ao_list = @create_by_copy.ao_list
@@ -314,6 +314,18 @@ class CourseOffering
     end
   end
 
+  def approve_course
+   on ManageCourseOfferingList do |page|
+      begin
+        page.select_co(@course.upcase)
+        page.approve_course_offering
+        page.approve_yes
+      rescue Timeout::Error => e
+      puts "rescued target_row edit"
+      end
+    end
+  end
+
   #navigate for the manage registration groups page for the course offering
   #
   #@param  opts [Hash] {:cleanup_existing_clusters => true/false}
@@ -347,6 +359,37 @@ class CourseOffering
     on ActivityOfferingConfirmDelete do |page|
       page.delete_activity_offering
     end
+  end
+
+  def attempt_ao_delete_by_status(aostate)
+    on ManageCourseOfferings do |page|
+      if page.row_by_status(aostate).exists?
+        page.select_ao_by_status(aostate)
+        page.delete_aos
+        on ActivityOfferingConfirmDelete do |page|
+         return  page.delete_activity_offering_button.present?
+        end
+      else
+        page.copy("A")
+        page.select_ao_by_status(aostate)
+        page.delete_aos
+        on ActivityOfferingConfirmDelete do |page|
+          @access = page.delete_activity_offering_button.present?
+          page.delete_activity_offering
+          return @access
+        end
+      end
+    end
+  end
+
+  def attempt_co_delete_by_status(aostate)
+      on ManageCourseOfferingList do |page|
+          page.select_co_by_status(aostate)
+          page.delete_cos
+          on DeleteCourseOffering do |page|
+            return  page.confirm_delete_button.present?
+          end
+      end
   end
 
   #copy the specified activity offering
@@ -460,13 +503,13 @@ class CourseOffering
   end
   private :create_from_existing_course
 
-  def create_co_copy(source_course_code)
+  def create_co_copy(source_course_code, term)
     pre_copy_co_list = []
     post_copy_co_list = []
 
     go_to_manage_course_offerings
     on ManageCourseOfferings do |page|
-      page.term.set @term
+      page.term.set term
       page.input_code.set source_course_code[0,4] #subject code
       page.show
     end

@@ -45,3 +45,29 @@ Feature: Department Schedule Coordinator Authorization
     When I attempt to create a course in my department
     Then I have access to create the course offering from catalog
     And I have access to create the course from an existing offering
+
+  @pending
+  Scenario: Department Schedule Coordinator Carol has limited access to delete AOs in a Final Edits State
+    Given I am in working on a term in "Final Edits" SOC state
+    Then I have access delete an activity offering in a "Draft" state for a course in my department
+    And  I have access delete an activity offering in a "Approved" state for a course in my department
+
+  @pending
+  Scenario: Department Schedule Coordinator Carol has limited access to delete AOs in a Published State
+    Given I am in working on a term in "Published" SOC state
+    And there is a draft course in my department
+    When I am logged in as a Department Schedule Coordinator
+    Then I have access delete an activity offering in a "Draft" state for a course in my department
+
+  @pending
+  Scenario: Department Schedule Coordinator Carol has limited access to delete AOs in a Open State
+    Given I am in working on a term in "Open" SOC state
+    Then I have access delete an activity offering in a "Draft" state for a course in my department
+    And  I have access delete an activity offering in a "Approved" state for a course in my department
+
+  @pending
+  Scenario: Department Schedule Coordinator Carol has limited access to delete Co's in an Open State
+    Given I am in working on a term in "Open" SOC state
+    And I copy and approve a course offering
+    Then I have access to delete a course offering in a "Draft" state for a course in my department
+    And I have access to delete a course offering in a "Planned" state for a course in my department

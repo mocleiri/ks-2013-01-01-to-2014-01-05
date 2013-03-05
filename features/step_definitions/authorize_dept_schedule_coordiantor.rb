@@ -153,3 +153,26 @@ When /^I have access to create the course from an existing offering$/ do
   end
 
 end
+
+When /^there is a draft course in my department/ do
+  step "I am logged in as a Schedule Coordinator"
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term=>@term_for_test, :course => "ENGL206")
+  @newCO = @course_offering.course
+  step "I am logged in as a Department Schedule Coordinator"
+end
+
+When /^I have access delete an activity offering in a "([^"]*)" state for a course in my department$/ do |aostate|
+  @course_offering = make CourseOffering, :term=> @term_for_test, :course => @newCO
+  @course_offering.manage
+  @course_offering.attempt_ao_delete_by_status(aostate).should == true
+end
+
+When /^I copy and approve a course offering$/ do
+  @course_offering = create CourseOffering, :term=>@term_for_test, :create_by_copy=>(make CourseOffering, :term=>@term_for_test, :course => "ENGL206")
+  @course_offering.approve_course
+end
+
+Then /^I have access to delete a course offering in a "([^"]*)" state for a course in my department$/ do |costate|
+  @course_offering.search_by_subjectcode
+  @course_offering.attempt_co_delete_by_status(costate).should == true
+end

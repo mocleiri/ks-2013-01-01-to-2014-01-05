@@ -107,6 +107,18 @@ class ManageCourseOfferings < BasePage
     target_row(code).cells[AO_STATUS].text
   end
 
+  def row_by_status(aostatus)
+    activity_offering_results_table.row(text: /\b#{Regexp.escape(aostatus)}\b/)
+  end
+
+
+  def select_ao_by_status(aostatus)
+    if row_by_status(aostatus).exists? then
+      row_by_status(aostatus).checkbox.set
+      return row_by_status(aostatus).cells[AO_CODE].text
+    end
+  end
+
   def copy_link(code)
     target_row(code).link(text: "Copy")
   end
