@@ -5,14 +5,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.sigmasys.kuali.ksa.krad.model.AccountSearchResultModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.sigmasys.kuali.ksa.gwt.client.view.widget.value.DateRangeValue;
 import com.sigmasys.kuali.ksa.krad.form.AdminForm;
-import com.sigmasys.kuali.ksa.krad.util.AccountSearchInformationHolder;
-import com.sigmasys.kuali.ksa.krad.util.AccountSearchResultCollectionLine;
+import com.sigmasys.kuali.ksa.krad.model.AccountSearchInformationHolder;
 import com.sigmasys.kuali.ksa.model.*;
 
 /**
@@ -54,7 +54,7 @@ public class AccountSearchController extends AccountManagementController {
 		List<Account> matchingAccounts = accountService.getFullAccounts();
 		
 		// TODO: Prepare the result:
-		List<AccountSearchResultCollectionLine> accountSearchResults = prepareDisplayLines(matchingAccounts);
+		List<AccountSearchResultModel> accountSearchResults = prepareDisplayLines(matchingAccounts);
 		
 		form.setAccountSearchResults(accountSearchResults);
 		
@@ -97,14 +97,14 @@ public class AccountSearchController extends AccountManagementController {
 	 * @param accounts	Accounts - search results to be converted to display elements.
 	 * @return A <code>List</code> of display elements.
 	 */
-	private List<AccountSearchResultCollectionLine> prepareDisplayLines(List<Account> accounts) {
+	private List<AccountSearchResultModel> prepareDisplayLines(List<Account> accounts) {
 		// Create the result collection:
-		List<AccountSearchResultCollectionLine> lines = new ArrayList<AccountSearchResultCollectionLine>();
+		List<AccountSearchResultModel> lines = new ArrayList<AccountSearchResultModel>();
 		
 		// Add elements to the resultant collection:
 		for (Account account : accounts) {
 			// Create a new line item:
-			AccountSearchResultCollectionLine line = new AccountSearchResultCollectionLine();
+			AccountSearchResultModel line = new AccountSearchResultModel();
 			AccountProtectedInfo accountProtectedInfo = accountService.getAccountProtectedInfo(account.getId());
 			
 			line.setAccount(account);

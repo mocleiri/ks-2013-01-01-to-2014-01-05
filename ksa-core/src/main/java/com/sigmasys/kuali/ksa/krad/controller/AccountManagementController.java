@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.sigmasys.kuali.ksa.krad.form.AdminForm;
-import com.sigmasys.kuali.ksa.krad.util.AccountInformationHolder;
+import com.sigmasys.kuali.ksa.krad.model.AccountInformationHolder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.util.RequestUtils;

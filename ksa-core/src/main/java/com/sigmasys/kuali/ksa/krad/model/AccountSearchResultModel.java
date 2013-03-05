@@ -1,4 +1,4 @@
-package com.sigmasys.kuali.ksa.krad.util;
+package com.sigmasys.kuali.ksa.krad.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,7 +12,7 @@ import com.sigmasys.kuali.ksa.model.*;
  *
  */
 @SuppressWarnings("serial")
-public class AccountSearchResultCollectionLine implements Serializable {
+public class AccountSearchResultModel implements Serializable {
 	
 	/**
 	 * Account instance.

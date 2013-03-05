@@ -42,7 +42,7 @@
 						<list>
 							<!-- Table of Account search results -->
 								<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:displayCollectionSize="10">
-									<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.util.AccountSearchResultCollectionLine"/>
+									<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.AccountSearchResultModel"/>
 									<property name="propertyName" value="accountSearchResults" />
 									<property name="layoutManager.generateAutoSequence" value="false" />
 									<property name="layoutManager.richTable.render" value="false"/>

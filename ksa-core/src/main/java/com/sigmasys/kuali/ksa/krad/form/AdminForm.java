@@ -2,7 +2,9 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 import java.util.List;
 
-import com.sigmasys.kuali.ksa.krad.util.*;
+import com.sigmasys.kuali.ksa.krad.model.AccountInformationHolder;
+import com.sigmasys.kuali.ksa.krad.model.AccountSearchInformationHolder;
+import com.sigmasys.kuali.ksa.krad.model.AccountSearchResultModel;
 import com.sigmasys.kuali.ksa.model.*;
 
 /**
@@ -29,7 +31,7 @@ public class AdminForm extends AbstractViewModel {
 	/**
 	 * Account search results.
 	 */
-	private List<AccountSearchResultCollectionLine> accountSearchResults;
+	private List<AccountSearchResultModel> accountSearchResults;
 	
 	/**
 	 * General Ledger Transactions.
@@ -87,12 +89,12 @@ public class AdminForm extends AbstractViewModel {
         this.glTransactions = glTransactions;
     }
 
-    public List<AccountSearchResultCollectionLine> getAccountSearchResults() {
+    public List<AccountSearchResultModel> getAccountSearchResults() {
 		return accountSearchResults;
 	}
 
 	public void setAccountSearchResults(
-			List<AccountSearchResultCollectionLine> accountSearchResults) {
+			List<AccountSearchResultModel> accountSearchResults) {
 		this.accountSearchResults = accountSearchResults;
 	}
 }

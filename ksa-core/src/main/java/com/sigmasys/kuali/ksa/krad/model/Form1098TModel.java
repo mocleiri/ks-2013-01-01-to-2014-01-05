@@ -1,4 +1,4 @@
-package com.sigmasys.kuali.ksa.krad.util;
+package com.sigmasys.kuali.ksa.krad.model;
 
 import com.sigmasys.kuali.ksa.model.Irs1098T;
 

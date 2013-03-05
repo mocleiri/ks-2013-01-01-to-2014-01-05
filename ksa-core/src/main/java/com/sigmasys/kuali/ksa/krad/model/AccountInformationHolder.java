@@ -1,4 +1,4 @@
-package com.sigmasys.kuali.ksa.krad.util;
+package com.sigmasys.kuali.ksa.krad.model;
 
 import java.io.Serializable;
 import java.util.Date;

@@ -2,7 +2,7 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 import java.util.List;
 
-import com.sigmasys.kuali.ksa.krad.util.Form1098TModel;
+import com.sigmasys.kuali.ksa.krad.model.Form1098TModel;
 import com.sigmasys.kuali.ksa.model.*;
 import org.apache.commons.lang.StringUtils;
 
