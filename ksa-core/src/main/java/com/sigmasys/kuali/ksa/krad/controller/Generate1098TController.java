@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -26,7 +25,6 @@ import com.sigmasys.kuali.ksa.util.ErrorUtils;
 
 @Controller
 @RequestMapping(value = "/generate1098T")
-@Transactional
 public class Generate1098TController extends DownloadController {
 
     /**

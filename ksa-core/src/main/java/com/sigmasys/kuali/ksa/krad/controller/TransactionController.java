@@ -1,20 +1,14 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
-import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.krad.form.TransactionForm;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.Currency;
-import com.sigmasys.kuali.ksa.service.ActivityService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,11 +21,6 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/transactionView")
 public class TransactionController extends GenericSearchController {
-
-    private Log logger = LogFactory.getLog(TransactionController.class);
-
-    //@Autowired
-    //private ActivityService activityService;
 
     @Autowired
     private AuditableEntityService auditableEntityService;
@@ -97,17 +86,17 @@ public class TransactionController extends GenericSearchController {
                 models.add(m);
 
                 // Add appropriate Alerts
-                for(Alert a : form.getAlerts()){
+                for (Alert a : form.getAlerts()) {
                     Transaction alertTransaction = a.getTransaction();
-                    if(alertTransaction != null && alertTransaction.getId().equals(t.getId())){
+                    if (alertTransaction != null && alertTransaction.getId().equals(t.getId())) {
                         m.addAlert(a);
                     }
                 }
 
                 // Add appropriate flags
-                for(Flag f : form.getFlags()){
+                for (Flag f : form.getFlags()) {
                     Transaction flagTransaction = f.getTransaction();
-                    if(flagTransaction != null && flagTransaction.getId().equals(t.getId())){
+                    if (flagTransaction != null && flagTransaction.getId().equals(t.getId())) {
                         m.addFlag(f);
                     }
                 }
@@ -116,12 +105,11 @@ public class TransactionController extends GenericSearchController {
             this.populateRollups(form, models);
 
 
-
-        }else if ("ViewAlerts".equals(pageId)) {
+        } else if ("ViewAlerts".equals(pageId)) {
             form.setAlerts(informationService.getAlerts(userId));
-        }else if ("ViewFlags".equals(pageId)) {
+        } else if ("ViewFlags".equals(pageId)) {
             form.setFlags(informationService.getFlags(userId));
-        }else if ("ViewMemos".equals(pageId)) {
+        } else if ("ViewMemos".equals(pageId)) {
             form.setMemos(informationService.getMemos(userId));
         }
 
@@ -140,7 +128,7 @@ public class TransactionController extends GenericSearchController {
 
         // Assuming that transactions are already passed into this method sorted in the proper way for the running balance.
         for (TransactionModel t : transactions) {
-            if(t.getParentTransaction() instanceof Charge){
+            if (t.getParentTransaction() instanceof Charge) {
                 balance = balance.add(t.getAmount());
             } else {
                 balance = balance.subtract(t.getAmount());

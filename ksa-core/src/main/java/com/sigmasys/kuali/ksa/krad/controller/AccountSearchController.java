@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,7 +22,6 @@ import com.sigmasys.kuali.ksa.model.*;
  */
 @Controller
 @RequestMapping(value = "/accountSearch")
-@Transactional
 public class AccountSearchController extends AccountManagementController {
 
 	

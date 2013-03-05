@@ -146,34 +146,6 @@ public class TransactionModel extends Transaction {
     public TransactionTypeValue getTransactionTypeValue() {
         return transactionTypeValue;
     }
-/*
-   @Transient
-   public String getFormattedUSDAmount(String value) {
-
-      String formattedNumber = "";
-
-      if (value != null) {
-         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
-         double doubleValue = Double.parseDouble(value);
-         String usdCurrency = numberFormat.format(doubleValue);
-         formattedNumber = usdCurrency.substring(1);
-      }
-      return formattedNumber;
-   }
-
-   @Transient
-   public String getFormattedUSDAmount(BigDecimal value) {
-
-      String formattedNumber = "";
-
-      if (value != null) {
-         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
-         String usdCurrency = numberFormat.format(value);
-         formattedNumber = usdCurrency.substring(1);
-      }
-      return formattedNumber;
-   }
-*/
 
     @Transient
     public String getFormattedAmount(BigDecimal value) {

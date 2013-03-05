@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Michael Ivanov
  */
+@Transactional
 public abstract class GenericSearchController extends UifControllerBase {
 
     private static final String ACCOUNT_SEARCH_PAGE_ID = "AccountSearchPage";
