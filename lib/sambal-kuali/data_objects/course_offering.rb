@@ -101,6 +101,7 @@ class CourseOffering
     if @create_by_copy != nil
       @course = create_co_copy(@create_by_copy.course, @create_by_copy.term)
       #deep copy
+      @term = @create_by_copy.term
       @activity_offering_cluster_list = @create_by_copy.activity_offering_cluster_list
       @ao_list = @create_by_copy.ao_list
     elsif @create_from_existing != nil

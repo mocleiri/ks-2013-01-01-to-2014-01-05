@@ -252,8 +252,7 @@ Then /^the quiz is not listed as an unassigned activity offering$/ do
 end
 
 Given /^I have created the default registration groups for a course offering$/ do
-  #@course_offering = create CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :create_by_copy=>(make CourseOffering, :course=>"BSCI215")
-  @course_offering = make CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :course=>"BSCI215"
+  @course_offering = create CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :create_by_copy=>(make CourseOffering, :course=>"BSCI215", :term=>Rollover::OPEN_SOC_TERM)
   @course_offering.manage_registration_groups
 
   @ao_cluster = make ActivityOfferingCluster,  :is_constrained=>false
@@ -288,14 +287,17 @@ Given /^I add two activity offerings to the course offering$/ do
   @activity_offering = create ActivityOffering, :requested_delivery_logistics_list => {},
                               :personnel_list => [],
                               :seat_pool_list => {},
-                              :format => "Lecture/Lab"
+                              :format => "Lecture Only",
+                              :activity_type => "Lecture"
   @activity_offering.save
 
   @course_offering.manage
   @activity_offering1 = create ActivityOffering, :requested_delivery_logistics_list => {},
                                :personnel_list => [],
                                :seat_pool_list => {},
-                               :format => "Lecture/Lab"
+                               :format => "Lecture Only",
+                               :activity_type => "Lecture"
+
   @activity_offering1.save
 end
 
@@ -314,7 +316,7 @@ Then /^additional registration groups are generated for the new activity offerin
     page.view_cluster_reg_groups(@ao_cluster.private_name)
   end
   on ViewRegistrationGroups do |page|
-    page.reg_group_list.length.should == 9
+    page.reg_group_list.length.should == 3
     page.close
   end
 end
@@ -423,7 +425,7 @@ Given /^I have created two activity offering clusters for a course offering$/ do
 end
 
 Given /^I have created an activity offering cluster and generated registration groups for a course offering$/ do
-  @course_offering = create CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :create_by_copy=>(make CourseOffering, :course=>"CHEM612")
+  @course_offering = create CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
   @course_offering.manage_registration_groups
   @ao_cluster = make ActivityOfferingCluster
   @course_offering.add_ao_cluster(@ao_cluster)
