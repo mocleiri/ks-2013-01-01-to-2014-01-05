@@ -90,7 +90,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   action(:add_seat_pool) { |b| b.seat_pools_table.rows[1].cells[SEATS_ACTION_COLUMN].button().click; b.loading.wait_while_present }
 
   def remove_seatpool(pop_name)
-    target_pool_row(pop_name).button(text: "remove").click
+    target_pool_row(pop_name).button(text: "delete").click
     loading.wait_while_present
   end
 
