@@ -379,7 +379,7 @@
           p:instructionalText=""
           p:disclosure.render="false"
           p:progressiveRenderViaAJAX="true"
-          p:width="85%">
+          p:width="50%">
         <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Tag"/>
         <property name="propertyName" value="tags"/>
         <property name="readOnly" value="false"/>
@@ -401,8 +401,8 @@
                         </bean>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:label="Description" p:propertyName="description" p:readOnly="@{!#empty(#line.id)}"/>
-                <bean parent="Uif-InputField" p:label="Level" p:propertyName="accessLevel" p:readOnly="@{!#empty(#line.id)}"/>
+                <!--<bean parent="Uif-InputField" p:label="Description" p:propertyName="description" p:readOnly="@{!#empty(#line.id)}"/>-->
+                <!--<bean parent="Uif-InputField" p:label="Level" p:propertyName="accessLevel" p:readOnly="@{!#empty(#line.id)}"/>-->
             </list>
         </property>
     </bean>

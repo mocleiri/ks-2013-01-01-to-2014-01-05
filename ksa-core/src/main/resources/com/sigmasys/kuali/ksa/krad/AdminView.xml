@@ -34,22 +34,7 @@
         <property name="headerText" value="Administration"/>
         <property name="entryPageId" value="AccountManagement"/>
         <property name="navigation">
-            <bean parent="Uif-KsaPageNavigation">
-                <property name="items">
-                    <list>
-                        <bean parent="Uif-HeaderTwo" p:headerText="Administration"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AccountManagement" p:actionLabel="Account Management"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="SystemActivity" p:actionLabel="System Activity"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="RegulatoryTracking" p:actionLabel="Regulatory Tracking"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="SystemRolesUsers" p:actionLabel="System Roles &amp; Users"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedger" p:actionLabel="General Ledger"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="Transactions" p:actionLabel="Transactions"/>
-                        <bean parent="Uif-Link" p:linkText="Transactions Export" p:target="_self"
-                              p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=TransactionsExport"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="Refunds" p:actionLabel="Refunds"/>
-                    </list>
-                </property>
-            </bean>
+            <ref bean="KsaAdministrationNavigation"/>
         </property>
         <property name="items">
             <list merge="true">

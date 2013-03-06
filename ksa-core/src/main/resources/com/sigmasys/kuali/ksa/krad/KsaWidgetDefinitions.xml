@@ -39,25 +39,69 @@
         </property>
         <property name="items">
             <list>
-                <bean parent="Uif-Link" p:linkText="Accounts"
-                      p:href="searchView?methodToCall=get&amp;viewId=SearchView"/>
-                <bean parent="Uif-Link" p:linkText="Administration"
-                      p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=AccountManagement"/>
-                <bean parent="Uif-Link" p:linkText="Reconciliation"
-                      p:href="reportReconciliationView?methodToCall=get&amp;viewId=ReportReconciliationView"/>
-                <bean parent="Uif-Link" p:linkText="Collections"
-                      p:href="collectionsView?methodToCall=get&amp;viewId=CollectionsView"/>
-                <bean parent="Uif-Link" p:linkText="Batch Transactions"
-                      p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView"/>
-                <bean parent="Uif-Link" p:linkText="Account Import"
-                      p:href="accountImportView?methodToCall=get&amp;viewId=AccountImportView"/>
-                <bean parent="Uif-Link" p:linkText="Settings"
-                      p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage"/>
-                <bean parent="Uif-Link" p:linkText="Business Rules"
-                      p:href="rulesView?methodToCall=get&amp;viewId=RulesView"/>
+                <bean parent="Uif-Link" p:linkText="Accounts"        p:href="searchView?methodToCall=get&amp;viewId=SearchView"/>
+                <bean parent="Uif-Link" p:linkText="Administration"  p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=AccountManagement"/>
+                <bean parent="Uif-Link" p:linkText="Reporting &amp; Reconciliation"  p:href="reportReconciliationView?methodToCall=get&amp;viewId=ReportReconciliationView"/>
+                <bean parent="Uif-Link" p:linkText="Collections"     p:href="collectionsView?methodToCall=get&amp;viewId=CollectionsView"/>
+                <bean parent="Uif-Link" p:linkText="Batch"           p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView"/>
+                <bean parent="Uif-Link" p:linkText="Third Party &amp; Payment Plans"        p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage"/>
+                <bean parent="Uif-Link" p:linkText="Settings"        p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage"/>
             </list>
         </property>
     </bean>
+
+    <bean name="KsaAccountNavigation" parent="Uif-KsaPageNavigation">
+        <property name="items">
+            <list>
+                <bean parent="Uif-HeaderTwo" p:headerText="Accounts"/>
+                <bean parent="Uif-Link" p:linkText="Advanced Search" p:target="_self"
+                      p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage"/>
+                <bean parent="Uif-Link" p:linkText="Quick View" p:target="_self"
+                      p:href="quickView?methodToCall=get&amp;viewId=QuickView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Transactions" p:target="_self"
+                      p:href="transactionView?methodToCall=get&amp;pageId=ViewTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Make a Payment" p:target="_self"
+                      p:href="paymentView?methodToCall=get&amp;viewId=PaymentView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Add a Charge" p:target="_self"
+                      p:href="chargeView?methodToCall=get&amp;viewId=ChargeView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Add a Deferment" p:target="_self"
+                      p:href="defermentView?methodToCall=get&amp;viewId=DefermentView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Write-Off Account" p:target="_self"
+                      p:href="writeOffView?methodToCall=get&amp;viewId=WriteOffView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Biographic Information" p:target="_self"
+                      p:href="biographicView?methodToCall=get&amp;viewId=BiographicView&amp;pageId=BiographicPersonsPage&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Flags" p:target="_self"
+                      p:href="transactionView?methodToCall=get&amp;pageId=ViewFlags&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Alerts" p:target="_self"
+                      p:href="transactionView?methodToCall=get&amp;pageId=ViewAlerts&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Memos" p:target="_self"
+                      p:href="transactionView?methodToCall=get&amp;pageId=ViewMemos&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Generate 1098T" p:target="_self"
+                      p:href="generate1098T?methodToCall=display1098TForm&amp;viewId=Generate1098TView&amp;userId=@{account.id}"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="KsaAdministrationNavigation" parent="Uif-KsaPageNavigation">
+        <property name="items">
+            <list>
+                <bean parent="Uif-HeaderTwo" p:headerText="Administration"/>
+                <!--<bean parent="Uif-NavigationActionLink" p:navigateToPageId="AccountManagement" p:actionLabel="Account Management"/>-->
+                <bean parent="Uif-Link" p:linkText="Account Management" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=AccountManagement"/>
+                <bean parent="Uif-Link" p:linkText="Account Import" p:href="accountImportView?methodToCall=get&amp;viewId=AccountImportView"/>
+                <bean parent="Uif-Link" p:linkText="System Activity" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=SystemActivity"/>
+                <bean parent="Uif-Link" p:linkText="Regulatory Tracking" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=RegulatoryTracking"/>
+                <bean parent="Uif-Link" p:linkText="System Roles &amp; Users" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=SystemRolesUsers"/>
+                <bean parent="Uif-Link" p:linkText="General Ledger" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=GeneralLedger"/>
+                <bean parent="Uif-Link" p:linkText="Transactions" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=Transactions"/>
+                <bean parent="Uif-Link" p:linkText="Transactions Export" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=TransactionsExport"/>
+                <bean parent="Uif-Link" p:linkText="Refunds" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=Refunds"/>
+                <bean parent="Uif-Link" p:linkText="Business Rules" p:href="rulesView?methodToCall=get&amp;viewId=RulesView"/>
+            </list>
+        </property>
+    </bean>
+
+
 
     <bean id="Uif-KsaPageNavigation" parent="Uif-MenuNavigationGroup" abstract="true" scope="prototype">
         <property name="items">

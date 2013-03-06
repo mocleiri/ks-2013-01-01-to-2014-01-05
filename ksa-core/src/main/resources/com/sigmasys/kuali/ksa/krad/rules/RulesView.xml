@@ -29,7 +29,8 @@
         <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.rules.RulesForm"/>
         <property name="entryPageId" value="EditRulePage"/>
         <property name="navigation">
-            <bean parent="Uif-KsaPageNavigation">
+            <ref bean="KsaAdministrationNavigation"/>
+            <!--<bean parent="Uif-KsaPageNavigation">
                 <property name="items">
                     <list>
                         <bean parent="Uif-HeaderTwo" p:headerText="Business Rules"/>
@@ -42,6 +43,7 @@
                     </list>
                 </property>
             </bean>
+            -->
         </property>
         <property name="items">
             <list merge="true">
@@ -155,6 +157,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-MessageField" p:messageText="@{editStatusMessage}"/>
+                <bean parent="Uif-Link" p:linkText="Add Business Rule" p:href="rulesView?methodToCall=get&amp;viewId=RulesView&amp;pageId=AddRulePage"/>
                 <bean parent="Uif-HorizontalBoxSection" p:layoutManager.orientation="HORIZONTAL">
                     <property name="items">
                         <list>
