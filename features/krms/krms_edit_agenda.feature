@@ -25,7 +25,7 @@ Feature: KRMS Edit Agenda
     And I select node "B" in the tree
     And I click the "Add Requisite" button
     And I select the "Must have successfully completed <course>" option from the node "2" rule dropdown
-    Then the course field in node "2" should be empty
+    Then the "course" field in node "2" should be empty
 
   #ELIG9.1.2.EB3
   Scenario: A new item with the selected rule and new node identifier should appear
@@ -33,10 +33,10 @@ Feature: KRMS Edit Agenda
     And I select node "B" in the tree
     And I click the "Add Requisite" button
     And I select the "Must have successfully completed <course>" option from the node "2" rule dropdown
-    And I enter "ENGL101" in the course field in node "2"
+    And I enter "ENGL101" in the "course" field in node "2"
     And I click the "Update" button
     Then there should be a new node with text "D. Must have successfully completed <course>"
-    And there should be a dropdown prefilled with "AND" before node "2"
+    And there should be a dropdown with value "AND" before node "2"
 
   #ELIG9.1.2.EB4
   Scenario: Changes should be viewable in the Edit with Logic tab
@@ -44,9 +44,63 @@ Feature: KRMS Edit Agenda
     And I select node "B" in the tree
     And I click the "Add Requisite" button
     And I select the "Must have successfully completed <course>" option from the node "2" rule dropdown
-    And I enter "ENGL101" in the course field in node "2"
+    And I enter "ENGL101" in the "course" field in node "2"
     And I click the "Update" button
     And I click the "Logic" tab
     Then the text "A(B AND D AND C)" should be present in the text area
     And the preview section should have the text "D. Must have successfully completed <course>"
     And the word "AND" should exist before node "D"
+
+  #KSENROLL-5818
+  #ELIG9.5.1.EB1
+  Scenario: UI must change to allow the user to fill in text
+    When I go to the Edit Agenda page for "ELIG9.5.1.EB1 (KSENROLL-5818)"
+    And I select node "B" in the tree
+    And I click the "Add Requisite" button
+    And I select the "Free Form Text" option from the node "2" rule dropdown
+    Then the "free form text" field in node "2" should be empty
+
+  #ELIG9.5.1.EB2
+  Scenario: A new item with the Free Form text description should appear
+    When I go to the Edit Agenda page for "ELIG9.5.1.EB2 (KSENROLL-5818)"
+    And I select node "B" in the tree
+    And I click the "Add Requisite" button
+    And I select the "Free Form Text" option from the node "2" rule dropdown
+    And I enter "xyz" in the "free form text" field in node "2"
+    And I click the "Update" button
+    Then there should be a new node with text "D. Free Form Text"
+    And there should be a dropdown with value "AND" before node "2"
+
+  #KSENROLL-5777
+  #ELIG9.7.1.EB1
+  Scenario: The droplist value should be able to be changed
+    When I go to the Edit Agenda page for "ELIG9.7.1.EB1 (KSENROLL-5777)"
+    And I select node "B" in the tree
+    And I click the "Add Requisite" button
+    And I select the "Must have successfully completed <course>" option from the node "2" rule dropdown
+    And I enter "ENGL101" in the "course" field in node "2"
+    And I click the "Update" button
+    And I click the "Add Requisite" button
+    And I select the "Free Form Text" option from the node "2" rule dropdown
+    And I enter "free form text input value" in the "free form text" field in node "2"
+    And I click the "Update" button
+    And I select "OR" from the dropdown before node "2"
+    And I click the "Update" button
+    Then there should be a dropdown with value "OR" before node "2"
+
+  #ELIG9.7.1.EB2
+  Scenario: The changes should be applied to the rule view on the Edit with Logic tab
+    When I go to the Edit Agenda page for "ELIG9.7.1.EB2 (KSENROLL-5777)"
+    And I select node "B" in the tree
+    And I click the "Add Requisite" button
+    And I select the "Must have successfully completed <course>" option from the node "2" rule dropdown
+    And I enter "ENGL101" in the "course" field in node "2"
+    And I click the "Update" button
+    And I click the "Add Requisite" button
+    And I select the "Free Form Text" option from the node "2" rule dropdown
+    And I enter "free form text input value" in the "free form text" field in node "2"
+    And I click the "Update" button
+    And I select "OR" from the dropdown before node "2"
+    And I click the "Update" button
+    And I click the "Logic" tab
+    Then the text "A(B OR E AND D AND C)" should be present in the text area

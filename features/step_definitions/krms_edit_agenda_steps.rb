@@ -37,20 +37,22 @@ When /^I select the "(.*)" option from the node "(.*)" rule dropdown$/ do |rule,
     id_val = @editAgenda.find_krms_element("edit_tree",'select',node)
     page.edit_tree_section.select(:id => id_val).select rule
   end
-  sleep 5
+  sleep 7
 end
 
-Then /^the course field in node "(.*)" should be empty$/ do |node|
+Then /^the "(.*)" field in node "(.*)" should be empty$/ do |field,node|
+  types = {"course"=>'input', "free form text"=>'textarea'}
   on EditAgenda do |page|
-    course_id = @editAgenda.find_krms_element("edit_tree",'input',node)
-    page.edit_tree_section.text_field(:id => course_id).text.should == ""
+    id = @editAgenda.find_krms_element("edit_tree",types[field],node)
+    page.edit_tree_section.text_field(:id => id).text.should == ""
   end
 end
 
-When /^I enter "(.*)" in the course field in node "(.*)"$/ do |cors, node|
+When /^I enter "(.*)" in the "(.*)" field in node "(.*)"$/ do |cors, field, node|
+  types = {"course"=>'input', "free form text"=>'textarea'}
   on EditAgenda do |page|
-    course_id = @editAgenda.find_krms_element("edit_tree",'input',node)
-    page.edit_tree_section.text_field(:id => course_id).set cors
+    id = @editAgenda.find_krms_element("edit_tree",types[field],node)
+    page.edit_tree_section.text_field(:id => id).set cors
   end
 end
 
@@ -61,9 +63,10 @@ Then /^there should be a new node with text "(.*)"$/ do |text|
   sleep 2
 end
 
-Then /^there should be a dropdown prefilled with "(.*)" before node "(.*)"$/ do |drop, node|
+Then /^there should be a dropdown with value "(.*)" before node "(.*)"$/ do |drop, node|
   on EditAgenda do |page|
-    @editAgenda.find_krms_before_element("edit_tree",'select',node).should == drop
+    id = @editAgenda.find_krms_before_element("edit_tree",'select',node)
+    page.edit_tree_section.select(:id => id).option(selected: "selected").text.should == drop
   end
 end
 
@@ -91,4 +94,12 @@ Then /^the word "(.*)" should exist before node "(.*)"$/ do |text, node|
   on EditAgenda do |page|
     page.preview_tree_section.text.should match /.*#{Regexp.escape(text)}\n#{Regexp.escape(node)}.*/
   end
+end
+
+When /^I select "(.*)" from the dropdown before node "(.*)"$/ do |cond, node|
+  on EditAgenda do |page|
+    id = @editAgenda.find_krms_before_element("edit_tree",'select',node)
+    page.edit_tree_section.select(:id => id).select cond
+  end
+  sleep 3
 end

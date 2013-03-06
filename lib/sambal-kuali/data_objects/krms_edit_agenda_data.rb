@@ -20,7 +20,7 @@ class EditAgendaData
     on EditAgenda do |page|
       node_i = node.to_i
       node_i -= 1
-      return page.send(sect[section]).element(:tag_name => tag, :id => /.*node_#{node_i}.*/).option(selected: "selected").text
+      return page.send(sect[section]).element(:tag_name => tag, :id => /.*node_#{node_i}.*/).id
     end
   end
 
@@ -35,6 +35,9 @@ class EditAgendaData
           type = elem.attribute_value "type"
           if tag == "input" && type == "text"
             return elem.id
+          else if tag == "textarea"
+                 return elem.id
+               end
           end
         end
       end
