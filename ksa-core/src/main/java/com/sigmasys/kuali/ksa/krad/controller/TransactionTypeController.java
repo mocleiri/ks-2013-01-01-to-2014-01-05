@@ -1,14 +1,18 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
+import com.sigmasys.kuali.ksa.exception.GeneralLedgerTypeNotFoundException;
 import com.sigmasys.kuali.ksa.krad.form.TransactionTypeForm;
+import com.sigmasys.kuali.ksa.krad.model.GlBreakdownModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionTypeModel;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.krad.util.CreditDebitKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.rice.core.api.exception.KualiException;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,6 +44,9 @@ public class TransactionTypeController extends GenericSearchController {
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private GeneralLedgerService glService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -103,14 +110,16 @@ public class TransactionTypeController extends GenericSearchController {
         form.reset();
         List<GeneralLedgerType> gltypes = auditableEntityService.getAuditableEntities(GeneralLedgerType.class);
 
-        List<GlBreakdown> breakdowns = new ArrayList<GlBreakdown>(gltypes.size());
+        List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>(gltypes.size());
 
         for (GeneralLedgerType type : gltypes) {
             GlBreakdown b = new GlBreakdown();
+            GlBreakdownModel breakdownModel = new GlBreakdownModel();
+            breakdownModel.setParentBreakdown(b);
             b.setGeneralLedgerType(type);
             b.setGlOperation(type.getGlOperationOnCharge());
             b.setBreakdown(new BigDecimal(0.0));
-            breakdowns.add(b);
+            breakdowns.add(breakdownModel);
         }
 
         form.setGlBreakdowns(breakdowns);
@@ -148,7 +157,6 @@ public class TransactionTypeController extends GenericSearchController {
                 if(transactionService == null){
                     throw new RuntimeException("transactionService is null");
                 }
-                logger.info("Create Credit Type: code: " + code + " startDate: " + startDate + " priority: " + priority + " description: " + description);
                 tt = transactionService.createCreditType(code, "", startDate, priority, description);
             } else {
                 tt = transactionService.createCreditSubType(code, startDate);
@@ -176,37 +184,42 @@ public class TransactionTypeController extends GenericSearchController {
             tt.setRollup(r);
         }
 
-        transactionService.persistTransactionType(tt);
-
+        TransactionTypeId ttId = transactionService.persistTransactionType(tt);
 
         if(tt instanceof DebitType){
             // Handle the GL Breakdown sections.
             BigDecimal total = new BigDecimal(0);
             List<GlBreakdown> breakdowns = new ArrayList<GlBreakdown>();
-            Long glTypeId = 0L;
 
-            for(GlBreakdown breakdown : form.getGlBreakdowns()){
+            for(GlBreakdownModel breakdownModel : form.getGlBreakdowns()){
+                GlBreakdown breakdown = breakdownModel.getParentBreakdown();
+
+                breakdown.setGlAccount(breakdown.getGeneralLedgerType().getGlAccountId());
+                if(!glService.isGlAccountValid(breakdown.getGlAccount())){
+                    throw new GeneralLedgerTypeNotFoundException("GL Account: '" + breakdown.getGlAccount() + "' is invalid");
+                }
 
                 breakdown.setDebitType((DebitType)tt);
                 BigDecimal b = breakdown.getBreakdown();
-                if(b.compareTo(new BigDecimal(0)) != 0){
+                if(b.compareTo(BigDecimal.ZERO) != 0){
                     // Don't save when the breakdown is 0
                     breakdowns.add(breakdown);
-                    glTypeId = breakdown.getId();
                 }
                 total.add(b);
 
 
-                if(total.compareTo(new BigDecimal(99.9)) == 1){
+                if(total.compareTo(BigDecimal.ONE) == 1){
                     // Error, the numbers exceed the allowable amount.
                 }
             }
 
-            transactionService.createGlBreakdowns(glTypeId, tt.getId(), breakdowns);
+            GeneralLedgerType defatulGlType = glService.getDefaultGeneralLedgerType();
+            if(defatulGlType == null || defatulGlType.getId() == null){
+                throw new GeneralLedgerTypeNotFoundException("No default GL Type configured");
+            }
+            transactionService.createGlBreakdowns(defatulGlType.getId(), ttId, breakdowns);
 
         }
-
-        logger.info("Transaction Type saved: " + tt.getId());
 
         form.setStatusMessage("Transaction Type added");
 

@@ -344,4 +344,10 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
         Assert.isTrue(transactions.size() >= 3);
     }
 
+
+    @Test
+    public void getDefaultGLTransaction() {
+        Assert.notNull(glService.getDefaultGeneralLedgerType());
+        Assert.notNull(glService.getDefaultGeneralLedgerMode());
+    }
 }

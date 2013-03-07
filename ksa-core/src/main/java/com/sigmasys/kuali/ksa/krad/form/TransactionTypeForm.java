@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.krad.model.GlBreakdownModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionTypeModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
@@ -47,7 +48,7 @@ public class TransactionTypeForm extends AbstractViewModel {
     private String authorizationText;
     private String unallocatedGLAccount;
     private String unallocatedGLOperation;
-    private List<GlBreakdown> glBreakdowns;
+    private List<GlBreakdownModel> glBreakdowns;
     private List<Tag> tags;
 
     // Debit types only
@@ -203,11 +204,11 @@ public class TransactionTypeForm extends AbstractViewModel {
         this.unallocatedGLOperation = unallocatedGLOperation;
     }
 
-    public List<GlBreakdown> getGlBreakdowns() {
+    public List<GlBreakdownModel> getGlBreakdowns() {
         return glBreakdowns;
     }
 
-    public void setGlBreakdowns(List<GlBreakdown> glBreakdowns) {
+    public void setGlBreakdowns(List<GlBreakdownModel> glBreakdowns) {
         this.glBreakdowns = glBreakdowns;
     }
 

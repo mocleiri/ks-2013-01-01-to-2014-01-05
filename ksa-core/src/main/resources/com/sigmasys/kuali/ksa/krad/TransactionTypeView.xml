@@ -81,12 +81,12 @@
                                     </list>
                                 </property>
                             </bean>
+                            <!--  Status message -->
+                            <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
                             <ref bean="createTransactionTypeSection"/>
                             <ref bean="tagGroup"/>
                             <ref bean="glBreakdownList"/>
                             <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insert" p:actionLabel="Submit"/>
-                            <!--  Status message -->
-                            <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
 
                         </list>
                     </property>
@@ -305,8 +305,8 @@
     </util:list>
 
 
-    <bean id="glBreakdownList" parent="Uif-Disclosure-VerticalBoxSection" p:style="text-decoration:underline">
-        <property name="headerText" value="General Ledger Breakdown"/>
+    <bean id="glBreakdownList" parent="Uif-Disclosure-VerticalBoxSection" p:style="text-decoration:underline" p:progressiveRender="@{#dp.type eq 'D'}">
+        <property name="headerText" value="Default General Ledger Breakdown"/>
         <property name="items">
             <list>
                 <bean parent="Uif-Disclosure-TableCollectionSection"
@@ -317,7 +317,7 @@
                       p:progressiveRenderViaAJAX="true"
                       p:renderAddLine="false"
                       p:width="85%">
-                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.GlBreakdown"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GlBreakdownModel"/>
                     <property name="propertyName" value="glBreakdowns"/>
                     <property name="readOnly" value="false"/>
                     <property name="layoutManager.sequencePropertyName" value="id"/>
@@ -325,27 +325,27 @@
                     <property name="layoutManager.renderSequenceField" value="false"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-InputField" p:label="GL Type" p:propertyName="generalLedgerType.glAccountId" p:readOnly="true">
+                            <bean parent="Uif-InputField" p:label="GL Type" p:propertyName="parentBreakdown.generalLedgerType.glAccountId" p:readOnly="true">
                                 <!-- readOnly flag doesn't work in Rice 2.2.0 - https://jira.kuali.org/browse/KULRICE-8772 -->
                                 <property name="control">
                                     <bean parent="Uif-TextControl" p:readOnly="true"/>
                                 </property>
                             </bean>
 
-                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="generalLedgerType.description" p:readOnly="true">
+                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="parentBreakdown.generalLedgerType.description" p:readOnly="true">
                                 <!-- readOnly flag doesn't work in Rice 2.2.0 - https://jira.kuali.org/browse/KULRICE-8772 -->
                                 <property name="control">
                                     <bean parent="Uif-TextControl" p:readOnly="true"/>
                                 </property>
                             </bean>
 
-                            <bean parent="Uif-InputField" p:propertyName="glOperation.id" p:labelPlacement="TOP" p:label="Operation" p:readOnly="true">
+                            <bean parent="Uif-InputField" p:propertyName="parentBreakdown.glOperation.id" p:labelPlacement="TOP" p:label="Operation" p:readOnly="true">
                                 <property name="control">
                                   <bean parent="Uif-DropdownControl" p:width="100%"/>
                                 </property>
                                 <property name="optionsFinder" value="@{getCreditDebitKeyValuesFinder()}"/>
                             </bean>
-                            <bean parent="Uif-InputField" p:propertyName="breakdown"
+                            <bean parent="Uif-InputField" p:propertyName="breakdownString"
                                   p:label="Breakdown"
                                   p:maxLength="21"
                                   p:labelPlacement="TOP"
