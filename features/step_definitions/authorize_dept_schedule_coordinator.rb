@@ -41,6 +41,21 @@ When /^I manage a course offering in my department$/ do
   @activity_offering = make ActivityOffering, :code=>"A"
 end
 
+When /^I manage course offerings for a subject code$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
+  @course_offering.search_by_subjectcode
+end
+
+When /^I manage a course offering$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
+  @course_offering.manage
+  @activity_offering = make ActivityOffering, :code=>"A"
+end
+
+
+
 Then /^I can view course offering details$/ do
   on ManageCourseOfferingList do |page|
     page.view_course_offering_link(@course_offering.course).present?.should be_true
@@ -125,11 +140,22 @@ end
 #  end
 #end
 
-Then /^I do not have access to create the course offering$/ do
-   on CreateCourseOffering do |page|
+Then /^I do not have access to manage the course offering$/ do
+  on ManageCourseOfferingList do |page|
+    page.target_row(@course_offering.course).link(text: "Manage").click
+    page.loading.wait_while_present
+  end
+   on ManageCourseOfferings do |page|
      page.auth_error.present?.should == true
    end
 end
+
+Then /^I do not have access to create the course offering$/ do
+  on CreateCourseOffering do |page|
+    page.auth_error.present?.should == true
+  end
+end
+
 
 When /^I attempt to create a course not in my department$/ do
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "CHEM132"
@@ -179,4 +205,25 @@ end
 Then /^I have access to delete a course offering in a "([^"]*)" state for a course in my department$/ do |costate|
   @course_offering.search_by_subjectcode
   @course_offering.attempt_co_delete_by_status(costate).should == true
+end
+
+Then /^I do not have access to view the activity offerings$/ do
+  on ManageCourseOfferings do |page|
+    page.auth_error.present?.should == true
+  end
+end
+
+When /^I edit a course offering in my department$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL206"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_offering
+  end
+end
+
+Then /^I can edit the grading options$/ do
+  on CourseOfferingEdit do |page|
+    page.grading_option_letter.present?.should be_true
+  end
 end

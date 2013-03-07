@@ -1,9 +1,10 @@
 class ManageCourseOfferings < BasePage
 
-  expected_title /Kuali :: Manage Course Offering/
+  #expected_title /Kuali :: Manage Course Offering/
 
   wrapper_elements
   frame_element
+  validation_elements
 
   expected_element :term
 

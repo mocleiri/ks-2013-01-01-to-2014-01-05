@@ -1,9 +1,10 @@
 class CreateCourseOffering < BasePage
 
-  expected_title /Kuali :: Create Course Offering/
+  #expected_title /Kuali :: Create Course Offering/
 
   wrapper_elements
   frame_element
+  validation_elements
 
   expected_element :target_term
 
@@ -36,7 +37,6 @@ class CreateCourseOffering < BasePage
   action(:create_from_existing_offering_copy_submit) { |b| b.create_from_existing_offering_copy_button.click; b.loading.wait_while_present }
 
   element(:growl_message) { |b| b.div(text: /Course offering .* has been successfully created/) }
-  element(:auth_error) { |b| b.div(text: /You are not authorized to create/) }
 
   element(:create_from_existing_offering_copy_button) { |b| b.frm.link(text: /Copy/) }
   element(:delivery_format_add_element) {|b| b.frm.delivery_formats_table.rows[1].cells[ACTIONS_COLUMN].button(text: "add")  }

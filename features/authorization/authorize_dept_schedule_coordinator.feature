@@ -51,22 +51,46 @@ Feature: Department Schedule Coordinator Authorization
     Then I have access delete an activity offering in a "Draft" state for a course in my department
     And  I have access delete an activity offering in a "Approved" state for a course in my department
 
-
   Scenario: Department Schedule Coordinator Carol has limited access to delete AOs in a Published State
     Given I am in working on a term in "Published" SOC state
     And there is a draft course in my department
     When I am logged in as a Department Schedule Coordinator
     Then I have access delete an activity offering in a "Draft" state for a course in my department
 
-
   Scenario: Department Schedule Coordinator Carol has limited access to delete AOs in a Open State
     Given I am in working on a term in "Open" SOC state
     Then I have access delete an activity offering in a "Draft" state for a course in my department
     And  I have access delete an activity offering in a "Approved" state for a course in my department
-
 
   Scenario: Department Schedule Coordinator Carol has limited access to delete Co's in an Open State
     Given I am in working on a term in "Open" SOC state
     And I copy and approve a course offering
     Then I have access to delete a course offering in a "Draft" state for a course in my department
     And I have access to delete a course offering in a "Planned" state for a course in my department
+    #not yet implemented - limited access to suspended and cancelled states
+
+  Scenario: Department Schedule Coordinator Carol has no access to manage course offerings for a term with SOC State Draft
+    Given I am in working on a term in "Draft" SOC state
+    When I manage course offerings for a subject code in my department
+    Then I do not have access to manage the course offering
+
+  Scenario: Department Schedule Coordinator Carol has no access to manage activity offerings for a term with SOC State Draft
+    Given I am in working on a term in "Draft" SOC state
+    When I manage a course offering in my department
+    Then I do not have access to view the activity offerings
+
+  Scenario: Department Schedule Coordinator Carol has access edit course offering grading option for a term with SOC State Open
+    Given I am in working on a term in "Open" SOC state
+    When I edit a course offering in my department
+    Then I can edit the grading options
+
+  Scenario: Department Schedule Coordinator Carol has access edit course offering grading option for a term with SOC State Final Edits
+    Given I am in working on a term in "Final Edits" SOC state
+    When I edit a course offering in my department
+    Then I can edit the grading options
+
+  Scenario: Department Schedule Coordinator Carol does not have access to edit course offering grading option for a term with SOC State Published
+    Given I am in working on a term in "Published" SOC state
+    When I edit a course offering in my department
+    Then I do not have access to edit the course offering
+
