@@ -1,16 +1,12 @@
 package com.sigmasys.kuali.ksa.krad.controller.rules;
 
-import com.sigmasys.kuali.ksa.krad.controller.GenericSearchController;
 import com.sigmasys.kuali.ksa.krad.form.rules.RulesForm;
 import com.sigmasys.kuali.ksa.model.rule.Rule;
 import com.sigmasys.kuali.ksa.model.rule.RuleType;
-import com.sigmasys.kuali.ksa.service.brm.BrmPersistenceService;
-import com.sigmasys.kuali.ksa.service.brm.BrmService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,22 +25,14 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/rulesView")
-public class RulesController extends GenericSearchController {
+public class RulesController extends AbstractRuleController {
 
     private static final Log logger = LogFactory.getLog(RulesController.class);
-
-
-    @Autowired
-    private BrmService brmService;
-
-    @Autowired
-    private BrmPersistenceService brmPersistenceService;
 
 
     private boolean ruleExists(String ruleName) {
         return StringUtils.isNotBlank(ruleName) && brmPersistenceService.getRule(ruleName) != null;
     }
-
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -76,9 +64,7 @@ public class RulesController extends GenericSearchController {
             rulesForm.initRuleTypeFinder(ruleTypeNames);
         }
 
-        rulesForm.setAddStatusMessage("");
-        rulesForm.setEditStatusMessage("");
-
+        clearMessages(rulesForm);
     }
 
 
@@ -100,6 +86,8 @@ public class RulesController extends GenericSearchController {
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=update")
     public ModelAndView update(@ModelAttribute("KualiForm") RulesForm form) {
+
+        clearMessages(form);
 
         if (form.getRuleId() == null) {
             return handleError(form, "Rule ID is null", false);
@@ -126,7 +114,7 @@ public class RulesController extends GenericSearchController {
             copyFormToRule(form, rule);
             brmPersistenceService.persistRule(rule);
             reloadRuleSets(form, false);
-            form.setEditStatusMessage("Rule has been updated");
+            setMessage(form, "Rule has been updated", false);
             logger.info("Updated Rule => \n" + rule);
         } catch (Exception e) {
             return handleError(form, e.getMessage(), false);
@@ -141,6 +129,8 @@ public class RulesController extends GenericSearchController {
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=select")
     public ModelAndView select(@ModelAttribute("KualiForm") RulesForm form) {
+
+        clearMessages(form);
 
         String ruleName = form.getRuleName();
         if (StringUtils.isBlank(ruleName)) {
@@ -182,6 +172,8 @@ public class RulesController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=checkRuleNameExistence")
     public ModelAndView checkRuleNameExistence(@ModelAttribute("KualiForm") RulesForm form) {
 
+        clearMessages(form);
+
         Rule rule = form.getNewRule();
         if (rule == null) {
             return handleError(form, "Rule cannot be null", true);
@@ -195,7 +187,7 @@ public class RulesController extends GenericSearchController {
             return handleError(form, "Rule name '" + ruleName + "' already exists", true);
         }
 
-        form.setAddStatusMessage("Rule name '" + ruleName + "' is available");
+        setMessage(form, "Rule name '" + ruleName + "' is available", true);
 
         return getUIFModelAndView(form);
     }
@@ -206,6 +198,8 @@ public class RulesController extends GenericSearchController {
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=add")
     public ModelAndView add(@ModelAttribute("KualiForm") RulesForm form) {
+
+        clearMessages(form);
 
         Rule rule = form.getNewRule();
         if (rule == null) {
@@ -243,7 +237,7 @@ public class RulesController extends GenericSearchController {
             try {
                 brmPersistenceService.persistRule(rule);
                 reloadRuleSets(form, true);
-                form.setAddStatusMessage("A new Rule has been created");
+                setMessage(form, "A new Rule has been created", true);
                 logger.info("Added Rule => \n" + rule);
             } catch (Exception e) {
                 return handleError(form, e.getMessage(), true);
@@ -282,17 +276,6 @@ public class RulesController extends GenericSearchController {
             throw new IllegalStateException(errMsg);
         }
         rule.setType(ruleType);
-    }
-
-    private ModelAndView handleError(RulesForm form, String errorMessage, boolean isNewRule) {
-        logger.error(errorMessage);
-        String htmlErrorMessage = "<font color='red'>" + errorMessage + "</font>";
-        if (isNewRule) {
-            form.setAddStatusMessage(htmlErrorMessage);
-        } else {
-            form.setEditStatusMessage(htmlErrorMessage);
-        }
-        return getUIFModelAndView(form);
     }
 
     private void reloadRuleSets(RulesForm form, boolean isNewRule) {
