@@ -96,7 +96,7 @@
                 <bean parent="Uif-Link" p:linkText="Transactions" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=Transactions"/>
                 <bean parent="Uif-Link" p:linkText="Transactions Export" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=TransactionsExport"/>
                 <bean parent="Uif-Link" p:linkText="Refunds" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=Refunds"/>
-                <bean parent="Uif-Link" p:linkText="Business Rules" p:href="ruleSetsView?methodToCall=get&amp;viewId=RuleSetsView"/>
+                <bean parent="Uif-Link" p:linkText="Rule Management" p:href="ruleSetsView?methodToCall=get&amp;viewId=RuleSetsView"/>
             </list>
         </property>
     </bean>

@@ -202,8 +202,8 @@ public class RuleSetsController extends AbstractRuleController {
                     brmPersistenceService.persistRuleSet(ruleSet);
                     brmService.reloadRuleSets(ruleSetName);
                     form.setRuleSetName(ruleSetName);
+                    select(form);
                     setMessage(form, "Rule '" + ruleName + "' has been removed from Rule Set '" + ruleSetName + "'", false);
-                    return select(form);
                 } else {
                     return handleError(form, "Rule '" + ruleName + "' has not been found in Rule Set '" + ruleSetName + "'", false);
                 }
