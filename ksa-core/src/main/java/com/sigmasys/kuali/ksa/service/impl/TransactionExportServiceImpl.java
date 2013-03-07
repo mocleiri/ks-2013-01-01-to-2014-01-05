@@ -153,6 +153,12 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
         final String originationCode = configService.getParameter(KFS_ORIGINATION_CODE_PARAM_NAME);
         final String glEntryDesc = configService.getParameter(KFS_TRANSACTION_GL_ENTRY_DESCRIPTION_PARAM_NAME);
 
+        final List<GeneralLedgerType> glTypes = glService.getGeneralLedgerTypes();
+        final Set<String> glTypeAccounts = new HashSet<String>(glTypes.size());
+        for (GeneralLedgerType glType : glTypes) {
+            glTypeAccounts.add(glType.getGlAccountId());
+        }
+
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (GlTransmission glTransmission : glTransmissions) {
 
@@ -208,37 +214,41 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
             glEntryType.setUniversityFiscalAccountingPeriod(recognitionPeriodCode);
             glEntryType.setUniversityFiscalYear(String.valueOf(fiscalYear));
 
-            // Creating DetailType instance
-            DetailType detailType = objectFactory.createDetailType();
-
-            detailType.setChartOfAccountsCode(parsedGlAccount.get(0));
-            detailType.setAccountNumber(parsedGlAccount.get(1));
-            detailType.setObjectCode(parsedGlAccount.get(2));
-
-            detailType.setAmount(glTransmission.getAmount());
-            detailType.setBalanceTypeCode(balanceTypeCode);
-            // TODO Mapping to what ?????
-            //detailType.setCollectorDetailSequenceNumber();
-            detailType.setCreateDate(currentXmlDate);
-            // TODO Mapping to what ?????
-            //detailType.setDetailText();
-            detailType.setObjectTypeCode(objectTypeCode);
-            detailType.setDocumentTypeCode(documentTypeCode);
-            detailType.setDocumentNumber(documentNumber);
-            // TODO Mapping to what ?????
-            //detailType.setSubObjectCode();
-            // TODO Mapping to what ?????
-            //detailType.setSubAccountNumber();
-            detailType.setOriginationCode(originationCode);
-
-            detailType.setUniversityFiscalAccountingPeriod(recognitionPeriodCode);
-            detailType.setUniversityFiscalYear(String.valueOf(fiscalYear));
-
             // Adding GLEntryType and DetailType instances to "glEntryAndDetail" list of BatchType
             batchType.getGlEntryAndDetail().add(glEntryType);
 
-            // TODO: figure out if we need DetailType here
-            //batchType.getGlEntryAndDetail().add(detailType);
+            if (!glTypeAccounts.contains(glTransmission.getGlAccountId())) {
+
+                // Creating DetailType instance
+                DetailType detailType = objectFactory.createDetailType();
+
+                detailType.setChartOfAccountsCode(parsedGlAccount.get(0));
+                detailType.setAccountNumber(parsedGlAccount.get(1));
+                detailType.setObjectCode(parsedGlAccount.get(2));
+
+                detailType.setAmount(glTransmission.getAmount());
+                detailType.setBalanceTypeCode(balanceTypeCode);
+                // TODO Mapping to what ?????
+                //detailType.setCollectorDetailSequenceNumber();
+                detailType.setCreateDate(currentXmlDate);
+                // TODO Mapping to what ?????
+                //detailType.setDetailText();
+                detailType.setObjectTypeCode(objectTypeCode);
+                detailType.setDocumentTypeCode(documentTypeCode);
+                detailType.setDocumentNumber(documentNumber);
+                // TODO Mapping to what ?????
+                //detailType.setSubObjectCode();
+                // TODO Mapping to what ?????
+                //detailType.setSubAccountNumber();
+                detailType.setOriginationCode(originationCode);
+
+                detailType.setUniversityFiscalAccountingPeriod(recognitionPeriodCode);
+                detailType.setUniversityFiscalYear(String.valueOf(fiscalYear));
+
+                // TODO: figure out if we need DetailType here
+                //batchType.getGlEntryAndDetail().add(detailType);
+
+            }
 
         }
 

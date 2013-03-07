@@ -28,9 +28,9 @@ public class GlTransaction extends AbstractGlEntity {
     private GlTransmission transmission;
 
     /**
-     * Generated text
+     * Generated statement text
      */
-    private String description;
+    private String statement;
 
     private GlTransactionStatus status;
 
@@ -92,13 +92,13 @@ public class GlTransaction extends AbstractGlEntity {
         return date;
     }
 
-    @Column(name = "GENERATED_TEXT", length = 1024)
-    public String getDescription() {
-        return description;
+    @Column(name = "STATEMENT", length = 1024)
+    public String getStatement() {
+        return statement;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setStatement(String statement) {
+        this.statement = statement;
     }
 
     @Override
@@ -122,7 +122,7 @@ public class GlTransaction extends AbstractGlEntity {
         return super.toString() +
                 ", {transactions=" + transactions +
                 ", transmission=" + transmission +
-                ", description='" + description + '\'' +
+                ", statement='" + statement + '\'' +
                 ", status=" + status +
                 "}\n";
     }

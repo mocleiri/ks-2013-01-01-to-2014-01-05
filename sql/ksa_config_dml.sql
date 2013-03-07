@@ -63,6 +63,8 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.payment.contest.type.id', 'ca
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.general.ledger.type', 'SAR');
 -- The GL mode can be Individual, Batch, BatchRollup
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.general.ledger.mode', 'Batch');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.general.ledger.payment.application.statement', 'PA Transaction');
+
 
 -- Combined Cash Limit Tracking Settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.system', 'On');

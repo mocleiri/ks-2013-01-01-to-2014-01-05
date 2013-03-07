@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.service;
 
 
+import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.model.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,9 @@ import java.util.List;
 public class GeneralLedgerServiceTest extends AbstractServiceTest {
 
     protected static final String GL_ACCOUNT_ID = "01-0-131120 1326";
+
+    @Autowired
+    protected ConfigService configService;
 
     @Autowired
     protected AccountService accountService;
@@ -62,7 +66,8 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
     }
 
     protected GlTransaction createGlTransaction(Transaction transaction) {
-        return glService.createGlTransaction(transaction.getId(), GL_ACCOUNT_ID, new BigDecimal(10e4), GlOperationType.DEBIT);
+        return glService.createGlTransaction(transaction.getId(), GL_ACCOUNT_ID, new BigDecimal(10e4),
+                GlOperationType.DEBIT, "GL transaction statement");
     }
 
     @Test
@@ -73,7 +78,7 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
         Assert.notNull(glTransaction);
         Assert.notNull(glTransaction.getId());
         Assert.notNull(glTransaction.getGlAccountId());
-        Assert.hasLength(glTransaction.getDescription());
+        Assert.hasLength(glTransaction.getStatement());
 
         Assert.isTrue(GlOperationType.DEBIT == glTransaction.getGlOperation());
 
@@ -346,8 +351,9 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
 
 
     @Test
-    public void getDefaultGLTransaction() {
+    public void getDefaultGLValues() {
         Assert.notNull(glService.getDefaultGeneralLedgerType());
         Assert.notNull(glService.getDefaultGeneralLedgerMode());
+        Assert.notNull(configService.getParameter(Constants.DEFAULT_GL_PA_STATEMENT));
     }
 }

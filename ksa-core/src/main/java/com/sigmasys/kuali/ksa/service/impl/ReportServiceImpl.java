@@ -145,7 +145,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                     glReportEntry.setGeneralLedgerAccount(glAccountId);
                     glReportEntry.setAmount(getFormattedAmount(glTransaction.getAmount()));
                     glReportEntry.setDate(CalendarUtils.toXmlGregorianCalendar(glTransaction.getDate()));
-                    glReportEntry.setSystem(glTransaction.getDescription());
+                    glReportEntry.setSystem(glTransaction.getStatement());
 
                     if (glTransaction.getStatus() != null) {
                         glReportEntry.setTransactionStatus(glTransaction.getStatus().getId());

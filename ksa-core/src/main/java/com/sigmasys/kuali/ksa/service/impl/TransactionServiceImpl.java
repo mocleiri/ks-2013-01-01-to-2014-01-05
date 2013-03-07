@@ -846,7 +846,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                     transaction2.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) ||
                     (transaction1.getTransactionTypeValue() == TransactionTypeValue.PAYMENT &&
                             transaction2.getTransactionTypeValue() == TransactionTypeValue.CHARGE)) {
-                Pair<GlTransaction, GlTransaction> pair = createGlTransactions(transaction1, transaction2, newAmount, isQueued);
+                String statement = configService.getParameter(Constants.DEFAULT_GL_PA_STATEMENT);
+                Pair<GlTransaction, GlTransaction> pair =
+                        createGlTransactions(transaction1, transaction2, newAmount, statement, isQueued);
                 compositeAllocation.setCreditGlTransaction(pair.getA());
                 compositeAllocation.setDebitGlTransaction(pair.getB());
             }
@@ -867,11 +869,15 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @param transaction1 First Transaction instance
      * @param transaction2 Second Transaction instance
      * @param amount       Allocation amount
+     * @param statement    GL transaction statement
      * @param isQueued     indicates whether the GL transaction should be in Q or W status
      * @return Pair instance with credit and debit GL transactions
      */
     protected Pair<GlTransaction, GlTransaction> createGlTransactions(Transaction transaction1,
-                                                                      Transaction transaction2, BigDecimal amount, boolean isQueued) {
+                                                                      Transaction transaction2,
+                                                                      BigDecimal amount,
+                                                                      String statement,
+                                                                      boolean isQueued) {
 
         TransactionType transactionType1 = transaction1.getTransactionType();
         TransactionType transactionType2 = transaction2.getTransactionType();
@@ -902,13 +908,15 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             // Creating GL transaction for credit
             GlTransaction creditGlTransaction = glService.createGlTransaction(creditTransaction.getId(),
-                    creditType.getUnallocatedGlAccount(), amount, operationType, isQueued);
+                    creditType.getUnallocatedGlAccount(), amount, operationType, statement, isQueued);
 
 
             pair.setA(creditGlTransaction);
 
             GeneralLedgerType glType = debitTransaction.getGeneralLedgerType();
+
             if (glType != null) {
+
                 // Getting the opposite GL operation for debit
                 operationType = (GlOperationType.CREDIT.equals(glType.getGlOperationOnCharge())) ?
                         GlOperationType.DEBIT :
@@ -916,7 +924,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
                 // Creating GL transaction for debit
                 GlTransaction debitGlTransaction = glService.createGlTransaction(debitTransaction.getId(),
-                        glType.getGlAccountId(), amount, operationType, isQueued);
+                        glType.getGlAccountId(), amount, operationType, statement, isQueued);
                 pair.setB(debitGlTransaction);
             }
 
@@ -1183,7 +1191,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                     transaction2.getTransactionTypeValue() != TransactionTypeValue.PAYMENT) ||
                     (transaction1.getTransactionTypeValue() == TransactionTypeValue.PAYMENT &&
                             transaction2.getTransactionTypeValue() != TransactionTypeValue.CHARGE)) {
-                Pair<GlTransaction, GlTransaction> pair = createGlTransactions(transaction1, transaction2, allocatedAmount, isQueued);
+                String statement = configService.getParameter(Constants.DEFAULT_GL_PA_STATEMENT);
+                Pair<GlTransaction, GlTransaction> pair =
+                        createGlTransactions(transaction1, transaction2, allocatedAmount, statement, isQueued);
                 glTransactions.add(pair.getA());
                 glTransactions.add(pair.getB());
             }
@@ -1345,8 +1355,16 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             glOperationType = glType.getGlOperationOnCharge();
         }
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_EXPORT);
+
+        final String statement = dateFormat.format(transaction.getEffectiveDate()) + ":" +
+                transaction.getAccount().getId() + ":" +
+                transaction.getTransactionType().getCode() + ":" +
+                transaction.getTransactionTypeValue() + ":" +
+                transaction.getStatementText();
+
         // Creating one GL transaction with the whole transaction amount
-        glService.createGlTransaction(transactionId, glAccount, transaction.getAmount(), glOperationType, true);
+        glService.createGlTransaction(transactionId, glAccount, transaction.getAmount(), glOperationType, statement, true);
 
         BigDecimal initialAmount = transaction.getAmount();
         BigDecimal remainingAmount = initialAmount;
@@ -1368,12 +1386,14 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
                 if (percentage.compareTo(BigDecimal.ZERO) > 0) {
                     BigDecimal amount = initialAmount.divide(new BigDecimal(100)).multiply(percentage);
-                    glService.createGlTransaction(transactionId, glBreakdown.getGlAccount(), amount, operationType, true);
+                    glService.createGlTransaction(transactionId, glBreakdown.getGlAccount(), amount, operationType,
+                            statement, true);
                     remainingAmount = remainingAmount.subtract(amount);
                 } else {
                     // If the remaining amount == 0 then apply it to the new GL transaction and exit
                     // considering that GL breakdowns are sorted by percentage in descendant order :)
-                    glService.createGlTransaction(transactionId, glAccount, remainingAmount, operationType, true);
+                    glService.createGlTransaction(transactionId, glAccount, remainingAmount, operationType,
+                            statement, true);
                     break;
                 }
             }

@@ -25,6 +25,7 @@ public interface Constants {
     String IMPORT_SINGLE_BATCH_FAILURE = "ksa.import.single.batch.failure";
     String DEFAULT_GL_TYPE = "ksa.general.ledger.type";
     String DEFAULT_GL_MODE = "ksa.general.ledger.mode";
+    String DEFAULT_GL_PA_STATEMENT = "ksa.general.ledger.payment.application.statement";
     String CONTEST_PAYMENT_TYPE = "ksa.payment.contest.type.id";
 
 

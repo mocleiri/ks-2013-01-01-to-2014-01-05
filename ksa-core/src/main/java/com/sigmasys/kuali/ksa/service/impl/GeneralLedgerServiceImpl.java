@@ -100,6 +100,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @param glAccountId   General ledger account ID
      * @param amount        Transaction amount
      * @param operationType GL operation type
+     * @param statement     GL transaction statement
      * @param isQueued      Set status to Q unless isQueued is passed and is false, in which case, set status to W
      * @return new GL Transaction instance
      */
@@ -107,7 +108,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
     public GlTransaction createGlTransaction(Long transactionId, String glAccountId, BigDecimal amount,
-                                             GlOperationType operationType, boolean isQueued) {
+                                             GlOperationType operationType, String statement, boolean isQueued) {
 
         if (!isGlAccountValid(glAccountId)) {
             String errMsg = "GL Account '" + glAccountId + "' is invalid";
@@ -127,7 +128,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         glTransaction.setAmount(amount != null ? amount : BigDecimal.ZERO);
         glTransaction.setGlAccountId(glAccountId);
         glTransaction.setGlOperation(operationType);
-        glTransaction.setDescription(operationType.toString());
+        glTransaction.setStatement(statement);
         glTransaction.setTransactions(new HashSet<Transaction>(Arrays.asList(transaction)));
         glTransaction.setStatus(isQueued ? GlTransactionStatus.QUEUED : GlTransactionStatus.WAITING);
 
@@ -158,14 +159,15 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @param glAccountId   General ledger account ID
      * @param amount        Transaction amount
      * @param operationType GL operation type
+     * @param statement     GL transaction statement
      * @return new GL Transaction instance
      */
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
     public GlTransaction createGlTransaction(Long transactionId, String glAccountId, BigDecimal amount,
-                                             GlOperationType operationType) {
-        return createGlTransaction(transactionId, glAccountId, amount, operationType, true);
+                                             GlOperationType operationType, String statement) {
+        return createGlTransaction(transactionId, glAccountId, amount, operationType, statement, true);
 
     }
 

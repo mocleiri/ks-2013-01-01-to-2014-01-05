@@ -4,7 +4,6 @@ import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.GlOperationType;
 import com.sigmasys.kuali.ksa.model.GlTransaction;
 import com.sigmasys.kuali.ksa.model.Transaction;
-import com.sigmasys.kuali.ksa.util.CommonUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +17,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.springframework.util.Assert.notNull;
 
 /**
  * TransactionExportServiceTest
@@ -67,22 +65,22 @@ public class TransactionExportServiceTest extends AbstractServiceTest {
     @Test
     public void exportTransactions() {
 
-        GlTransaction glTransaction1 =
-                glService.createGlTransaction(transaction1.getId(), GL_ACCOUNT_ID, new BigDecimal(10e4), GlOperationType.DEBIT);
+        GlTransaction glTransaction1 = glService.createGlTransaction(transaction1.getId(), GL_ACCOUNT_ID,
+                new BigDecimal(10e4), GlOperationType.DEBIT, "Statement 1");
 
         Assert.notNull(glTransaction1);
         Assert.notNull(glTransaction1.getId());
         Assert.notNull(glTransaction1.getGlAccountId());
 
-        GlTransaction glTransaction2 =
-                glService.createGlTransaction(transaction2.getId(), GL_ACCOUNT_ID, new BigDecimal(399.3333), GlOperationType.CREDIT);
+        GlTransaction glTransaction2 = glService.createGlTransaction(transaction2.getId(), GL_ACCOUNT_ID,
+                new BigDecimal(399.3333), GlOperationType.CREDIT, "Statement 2");
 
         Assert.notNull(glTransaction2);
         Assert.notNull(glTransaction2.getId());
         Assert.notNull(glTransaction2.getGlAccountId());
 
-        GlTransaction glTransaction3 =
-                glService.createGlTransaction(transaction3.getId(), GL_ACCOUNT_ID, new BigDecimal(50.01), GlOperationType.DEBIT);
+        GlTransaction glTransaction3 = glService.createGlTransaction(transaction3.getId(), GL_ACCOUNT_ID,
+                new BigDecimal(50.01), GlOperationType.DEBIT, "Statement 3");
 
         Assert.notNull(glTransaction3);
         Assert.notNull(glTransaction3.getId());
@@ -105,22 +103,22 @@ public class TransactionExportServiceTest extends AbstractServiceTest {
         Date startDate = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse("01/01/1990");
         Date endDate = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse("01/01/2015");
 
-        GlTransaction glTransaction1 =
-                glService.createGlTransaction(transaction1.getId(), GL_ACCOUNT_ID, new BigDecimal(10e4), GlOperationType.DEBIT);
+        GlTransaction glTransaction1 = glService.createGlTransaction(transaction1.getId(), GL_ACCOUNT_ID,
+                new BigDecimal(10e4), GlOperationType.DEBIT, "Statement 1");
 
         Assert.notNull(glTransaction1);
         Assert.notNull(glTransaction1.getId());
         Assert.notNull(glTransaction1.getGlAccountId());
 
-        GlTransaction glTransaction2 =
-                glService.createGlTransaction(transaction2.getId(), GL_ACCOUNT_ID, new BigDecimal(399.3333), GlOperationType.CREDIT);
+        GlTransaction glTransaction2 = glService.createGlTransaction(transaction2.getId(), GL_ACCOUNT_ID,
+                new BigDecimal(399.3333), GlOperationType.CREDIT, "Statement 2");
 
         Assert.notNull(glTransaction2);
         Assert.notNull(glTransaction2.getId());
         Assert.notNull(glTransaction2.getGlAccountId());
 
-        GlTransaction glTransaction3 =
-                glService.createGlTransaction(transaction3.getId(), GL_ACCOUNT_ID, new BigDecimal(50.01), GlOperationType.DEBIT);
+        GlTransaction glTransaction3 = glService.createGlTransaction(transaction3.getId(), GL_ACCOUNT_ID,
+                new BigDecimal(50.01), GlOperationType.DEBIT, "Statement 3");
 
         Assert.notNull(glTransaction3);
         Assert.notNull(glTransaction3.getId());
