@@ -29,8 +29,7 @@
         <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.rules.RulesForm"/>
         <property name="entryPageId" value="EditRulePage"/>
         <property name="navigation">
-            <ref bean="KsaAdministrationNavigation"/>
-            <!--<bean parent="Uif-KsaPageNavigation">
+            <bean parent="Uif-KsaPageNavigation">
                 <property name="items">
                     <list>
                         <bean parent="Uif-HeaderTwo" p:headerText="Business Rules"/>
@@ -43,7 +42,6 @@
                     </list>
                 </property>
             </bean>
-            -->
         </property>
         <property name="items">
             <list merge="true">
@@ -76,7 +74,7 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-InputField" p:propertyName="newRule.name"
-                                  p:label="Rule name"
+                                  p:label="Rule Name"
                                   p:labelPlacement="TOP"
                                   p:width="100"
                                   p:required="true"
@@ -99,7 +97,7 @@
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="newRuleType"
-                      p:label="Rule type"
+                      p:label="Rule Type"
                       p:labelPlacement="TOP"
                       p:width="100"
                       p:required="true"
@@ -110,8 +108,18 @@
                     </property>
                     <property name="optionsFinder" value="@{getRuleTypeFinder()}"/>
                 </bean>
+                <bean parent="Uif-InputField" p:propertyName="newRule.description"
+                      p:label="Rule Description"
+                      p:labelPlacement="TOP"
+                      p:required="false"
+                      p:fieldLabel.renderColon="false">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="70" p:maxLength="69"/>
+                    </property>
+                </bean>
                 <bean parent="Uif-InputField" p:propertyName="newRule.priority"
-                      p:label="Rule priority"
+                      p:label="Rule Priority"
                       p:labelPlacement="TOP"
                       p:required="false"
                       p:fieldLabel.renderColon="false">
@@ -156,13 +164,14 @@
         <property name="disclosure.render" value="false"/>
         <property name="items">
             <list>
+
                 <bean parent="Uif-MessageField" p:messageText="@{editStatusMessage}"/>
-                <bean parent="Uif-Link" p:linkText="Add Business Rule" p:href="rulesView?methodToCall=get&amp;viewId=RulesView&amp;pageId=AddRulePage"/>
+
                 <bean parent="Uif-HorizontalBoxSection" p:layoutManager.orientation="HORIZONTAL">
                     <property name="items">
                         <list>
                             <bean parent="Uif-InputField" p:propertyName="ruleName"
-                                  p:label="Rule name"
+                                  p:label="Rule Name"
                                   p:labelPlacement="TOP"
                                   p:width="100"
                                   p:required="true"
@@ -184,8 +193,9 @@
                         </list>
                     </property>
                 </bean>
+
                 <bean parent="Uif-InputField" p:propertyName="ruleType"
-                      p:label="Rule type"
+                      p:label="Rule Type"
                       p:labelPlacement="TOP"
                       p:width="100"
                       p:required="true"
@@ -196,8 +206,20 @@
                     </property>
                     <property name="optionsFinder" value="@{getRuleTypeFinder()}"/>
                 </bean>
+
+                <bean parent="Uif-InputField" p:propertyName="description"
+                      p:label="Rule Description"
+                      p:labelPlacement="TOP"
+                      p:required="false"
+                      p:fieldLabel.renderColon="false">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="70" p:maxLength="69"/>
+                    </property>
+                </bean>
+
                 <bean parent="Uif-InputField" p:propertyName="rulePriority"
-                      p:label="Rule priority"
+                      p:label="Rule Priority"
                       p:labelPlacement="TOP"
                       p:required="false"
                       p:fieldLabel.renderColon="false">
@@ -206,6 +228,7 @@
                         <bean parent="Uif-TextControl" p:size="15" p:maxLength="14"/>
                     </property>
                 </bean>
+
                 <bean parent="Uif-InputField" p:propertyName="ruleLhs"
                       p:label="Rule LHS"
                       p:labelPlacement="TOP"
@@ -216,6 +239,7 @@
                         <bean parent="Uif-TextAreaControl" p:rows="15" p:cols="100"/>
                     </property>
                 </bean>
+
                 <bean parent="Uif-InputField" p:propertyName="ruleRhs"
                       p:label="Rule RHS"
                       p:labelPlacement="TOP"
@@ -226,6 +250,7 @@
                         <bean parent="Uif-TextAreaControl" p:rows="15" p:cols="100"/>
                     </property>
                 </bean>
+
                 <bean parent="Uif-PrimaryActionButton-Small" p:methodToCall="update"
                       p:actionLabel="Update">
                     <property name="cssClasses">
@@ -234,6 +259,7 @@
                         </list>
                     </property>
                 </bean>
+
             </list>
         </property>
     </bean>

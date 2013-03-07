@@ -69,12 +69,14 @@
         <property name="disclosure.render" value="false"/>
         <property name="items">
             <list>
+
                 <bean parent="Uif-MessageField" p:messageText="@{addStatusMessage}"/>
+
                 <bean parent="Uif-HorizontalBoxSection" p:layoutManager.orientation="HORIZONTAL">
                     <property name="items">
                         <list>
                             <bean parent="Uif-InputField" p:propertyName="newRuleSet.name"
-                                  p:label="Rule set name"
+                                  p:label="Rule Set Name"
                                   p:labelPlacement="TOP"
                                   p:width="100"
                                   p:required="true"
@@ -96,8 +98,9 @@
                         </list>
                     </property>
                 </bean>
+
                 <bean parent="Uif-InputField" p:propertyName="newRuleType"
-                      p:label="Rule set type"
+                      p:label="Rule Set Type"
                       p:labelPlacement="TOP"
                       p:width="100"
                       p:required="true"
@@ -109,6 +112,27 @@
                     <property name="optionsFinder" value="@{getRuleTypeFinder()}"/>
                 </bean>
 
+                <bean parent="Uif-InputField" p:propertyName="newRuleSet.description"
+                      p:label="Rule Set Description"
+                      p:labelPlacement="TOP"
+                      p:required="false"
+                      p:fieldLabel.renderColon="false">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="70" p:maxLength="69"/>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-InputField" p:propertyName="newRuleSet.header"
+                      p:label="Rule Set Header"
+                      p:labelPlacement="TOP"
+                      p:required="true"
+                      p:fieldLabel.renderColon="false">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl" p:rows="10" p:cols="100"/>
+                    </property>
+                </bean>
 
                 <bean parent="Uif-PrimaryActionButton-Small" p:methodToCall="add"
                       p:actionLabel="Add">
@@ -118,6 +142,7 @@
                         </list>
                     </property>
                 </bean>
+
             </list>
         </property>
     </bean>
@@ -133,7 +158,7 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-InputField" p:propertyName="ruleSetName"
-                                  p:label="Rule Set name"
+                                  p:label="Rule Set Name"
                                   p:labelPlacement="TOP"
                                   p:width="100"
                                   p:required="true"
@@ -157,7 +182,7 @@
                 </bean>
 
                 <bean parent="Uif-InputField" p:propertyName="ruleType"
-                      p:label="Rule type"
+                      p:label="Rule Set Type"
                       p:labelPlacement="TOP"
                       p:width="100"
                       p:required="true"
@@ -167,6 +192,28 @@
                         <bean parent="Uif-DropdownControl" p:size="5"/>
                     </property>
                     <property name="optionsFinder" value="@{getRuleTypeFinder()}"/>
+                </bean>
+
+                <bean parent="Uif-InputField" p:propertyName="description"
+                      p:label="Rule Set Description"
+                      p:labelPlacement="TOP"
+                      p:required="false"
+                      p:fieldLabel.renderColon="false">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="70" p:maxLength="69"/>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-InputField" p:propertyName="ruleSetHeader"
+                      p:label="Rule Set Header"
+                      p:labelPlacement="TOP"
+                      p:required="true"
+                      p:fieldLabel.renderColon="false">
+                    <property name="bindingInfo.bindToForm" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl" p:rows="10" p:cols="100"/>
+                    </property>
                 </bean>
 
                 <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5"
@@ -182,12 +229,13 @@
                     <property name="lineActions">
                         <list>
                             <bean parent="Uif-ActionLink" p:actionLabel="Edit"
-                                  p:actionScript="window.location.href='rulesView?viewId=RulesView&amp;pageId=EditRulePage&amp;methodToCall=edit&amp;ruleSetName=@{ruleSetName}&amp;ruleName=@{#line.name}'"/>
+                                  p:actionScript="window.location.href='rulesView?viewId=RulesView&amp;methodToCall=edit&amp;ruleSetName=@{ruleSetName}&amp;ruleName=@{#line.name}'"/>
+                            <bean parent="Uif-ActionLink" p:actionLabel="Remove"
+                                  p:actionScript="window.location.href='ruleSetsView?viewId=RuleSetsView&amp;methodToCall=removeRule&amp;ruleSetName=@{ruleSetName}&amp;ruleName=@{#line.name}'"/>
                         </list>
                     </property>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-DataField" p:label="Rule ID" p:propertyName="id"/>
                             <bean parent="Uif-DataField" p:label="Rule Name" p:propertyName="name"/>
                             <bean parent="Uif-DataField" p:label="Rule Description" p:propertyName="description"/>
                             <bean parent="Uif-DataField" p:label="Rule Type" p:propertyName="type.name"/>

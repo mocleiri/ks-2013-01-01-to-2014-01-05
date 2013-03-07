@@ -15,6 +15,7 @@ import java.util.List;
 public class RuleSetsForm extends AbstractRuleViewModel {
 
     private Long ruleSetId;
+    private String ruleSetHeader;
 
     private RuleSet newRuleSet;
 
@@ -33,6 +34,14 @@ public class RuleSetsForm extends AbstractRuleViewModel {
         this.ruleSetId = ruleSetId;
     }
 
+    public String getRuleSetHeader() {
+        return ruleSetHeader;
+    }
+
+    public void setRuleSetHeader(String ruleSetHeader) {
+        this.ruleSetHeader = ruleSetHeader;
+    }
+
     public RuleSet getNewRuleSet() {
         return newRuleSet;
     }
@@ -48,4 +57,5 @@ public class RuleSetsForm extends AbstractRuleViewModel {
     public void setRules(List<Rule> rules) {
         this.rules = rules;
     }
+
 }

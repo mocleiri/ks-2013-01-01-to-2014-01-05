@@ -51,23 +51,19 @@ public class RulesController extends GenericSearchController {
      */
     @Override
     protected RulesForm createInitialForm(HttpServletRequest request) {
-        return createInitialForm(request.getParameter("ruleSetName"), request.getParameter("ruleName"));
+        RulesForm form = new RulesForm();
+        initForm(form, request.getParameter("ruleSetName"), request.getParameter("ruleName"));
+        return form;
     }
 
-    protected RulesForm createInitialForm(String ruleSetName, String ruleName) {
+    private void initForm(RulesForm rulesForm, String ruleSetName, String ruleName) {
 
-        RulesForm rulesForm = new RulesForm();
+        rulesForm.setRuleName(StringUtils.isNotBlank(ruleName) ? ruleName : null);
+
+        rulesForm.setRuleSetName(StringUtils.isNotBlank(ruleSetName) ? ruleSetName : null);
 
         List<String> ruleNames = StringUtils.isNotBlank(ruleSetName) ?
                 brmPersistenceService.getRuleNames(ruleSetName) : brmPersistenceService.getRuleNames();
-
-        if (StringUtils.isNotBlank(ruleName)) {
-            rulesForm.setRuleName(ruleName);
-        }
-
-        if (StringUtils.isNotBlank(ruleSetName)) {
-            rulesForm.setRuleSetName(ruleSetName);
-        }
 
         rulesForm.initNameFinder(ruleNames);
 
@@ -82,8 +78,6 @@ public class RulesController extends GenericSearchController {
 
         rulesForm.setAddStatusMessage("");
         rulesForm.setEditStatusMessage("");
-
-        return rulesForm;
 
     }
 
@@ -107,6 +101,10 @@ public class RulesController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=update")
     public ModelAndView update(@ModelAttribute("KualiForm") RulesForm form) {
 
+        if (form.getRuleId() == null) {
+            return handleError(form, "Rule ID is null", false);
+        }
+
         if (StringUtils.isBlank(form.getRuleName())) {
             return handleError(form, "Rule name cannot be empty", false);
         }
@@ -117,6 +115,10 @@ public class RulesController extends GenericSearchController {
 
         if (StringUtils.isBlank(form.getRuleRhs())) {
             return handleError(form, "Rule RHS cannot be empty", false);
+        }
+
+        if (StringUtils.isBlank(form.getRuleType())) {
+            return handleError(form, "Rule type is required", false);
         }
 
         try {
@@ -169,7 +171,7 @@ public class RulesController extends GenericSearchController {
     public ModelAndView edit(@ModelAttribute("KualiForm") RulesForm form,
                              @RequestParam("ruleSetName") String ruleSetName,
                              @RequestParam("ruleName") String ruleName) {
-        form = createInitialForm(ruleSetName, ruleName);
+        initForm(form, ruleSetName, ruleName);
         return select(form);
     }
 
