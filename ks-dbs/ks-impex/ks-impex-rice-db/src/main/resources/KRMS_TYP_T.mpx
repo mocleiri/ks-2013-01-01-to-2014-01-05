@@ -74,3 +74,5 @@ TYP_ID,NM,NMSPC_CD,SRVC_NM,ACTV,VER_NBR
 "10073","kuali.krms.proposition.type.course.offering.drop.instructor.permission.required","KS-SYS","simplePropositionTypeService","N","0"
 "10074","kuali.krms.proposition.type.test.score.between.values","KS-SYS","simplePropositionTypeService","Y","0"
 "10075","kuali.krms.proposition.type.test.score","KS-SYS","simplePropositionTypeService","Y","0"
+"10076","kuali.krms.proposition.type.compound.and","KS-SYS","compoundPropositionTypeService","Y","0"
+"10077","kuali.krms.proposition.type.compound.or","KS-SYS","compoundPropositionTypeService","Y","0"
