@@ -37,7 +37,6 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
 
         super.setUpWithinTransaction();
 
-        accountService.getOrCreateAccount("admin");
         accountService.getOrCreateAccount("user1");
         accountService.getOrCreateAccount("user2");
     }

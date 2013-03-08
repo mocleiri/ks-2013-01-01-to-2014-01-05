@@ -43,6 +43,16 @@ public interface AccountService {
     ChargeableAccount ageDebt(String userId, boolean ignoreDeferment);
 
     /**
+     * Aging debts for a chargeable account.
+     *
+     * @param userId          Account ID
+     * @param ageDebtMethod   Age Debt method
+     * @param ignoreDeferment boolean value
+     * @return a chargeable account being updated
+     */
+    ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, boolean ignoreDeferment);
+
+    /**
      * Returns the total balance due of all active transactions.
      *
      * @param userId          Account ID
@@ -176,7 +186,7 @@ public interface AccountService {
     /**
      * Updates the KSA account in both places - KSA and KIM
      *
-     * @param account Account instance to be updated
+     * @param account  Account instance to be updated
      * @param password User password
      */
     void updateAccount(Account account, String password);

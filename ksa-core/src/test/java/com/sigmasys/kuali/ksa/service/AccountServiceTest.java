@@ -19,21 +19,44 @@ import org.springframework.util.Assert;
 import javax.xml.namespace.QName;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
 public class AccountServiceTest extends AbstractServiceTest {
 
-
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private TransactionService transactionService;
+
+
+    protected Transaction transaction1;
+    protected Transaction transaction2;
+    protected Transaction transaction3;
+
+
     @Before
-    public void setUpWithinTransaction() {
+    public void setUpWithinTransaction() throws Exception {
         // set up test data within the transaction
         String userId = "admin";
+
         accountService.getOrCreateAccount(userId);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
+
+        Date date1 = dateFormat.parse("06/01/2012");
+        Date date2 = dateFormat.parse("10/16/2012");
+        Date date3 = dateFormat.parse("01/23/2013");
+
+        // Creating transactions with the test user ID
+        transaction1 = transactionService.createTransaction("1020", userId, date1, new BigDecimal(10e7));
+        transaction2 = transactionService.createTransaction("cash", userId, date2, new BigDecimal(300.99));
+        transaction3 = transactionService.createTransaction("chip", userId, date3, new BigDecimal(77777.980));
+
     }
 
     @Test
@@ -146,7 +169,7 @@ public class AccountServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void ageDebt() {
+    public void ageDebt1() {
 
         String userId = "admin";
 
@@ -172,13 +195,65 @@ public class AccountServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void ageDebt2() {
+
+        String userId = "admin";
+
+        ChargeableAccount account = (ChargeableAccount) accountService.getFullAccount(userId);
+
+        Assert.notNull(account);
+
+        logger.info("Amount Late1 Before = " + account.getAmountLate1());
+        logger.info("Amount Late2 Before = " + account.getAmountLate2());
+        logger.info("Amount Late3 Before = " + account.getAmountLate3());
+
+        account = accountService.ageDebt(userId, AgeDebtMethod.OPEN_ITEM, false);
+
+        Assert.notNull(account);
+        Assert.notNull(account.getAmountLate1());
+        Assert.notNull(account.getAmountLate2());
+        Assert.notNull(account.getAmountLate3());
+
+        logger.info("Amount Late1 After = " + account.getAmountLate1());
+        logger.info("Amount Late2 After = " + account.getAmountLate2());
+        logger.info("Amount Late3 After = " + account.getAmountLate3());
+
+    }
+
+    @Test
+    public void ageDebt3() {
+
+        String userId = "admin";
+
+        ChargeableAccount account = (ChargeableAccount) accountService.getFullAccount(userId);
+
+        Assert.notNull(account);
+
+        logger.info("Amount Late1 Before = " + account.getAmountLate1());
+        logger.info("Amount Late2 Before = " + account.getAmountLate2());
+        logger.info("Amount Late3 Before = " + account.getAmountLate3());
+
+        account = accountService.ageDebt(userId, AgeDebtMethod.BALANCE_FORWARD, true);
+
+        Assert.notNull(account);
+        Assert.notNull(account.getAmountLate1());
+        Assert.notNull(account.getAmountLate2());
+        Assert.notNull(account.getAmountLate3());
+
+        logger.info("Amount Late1 After = " + account.getAmountLate1());
+        logger.info("Amount Late2 After = " + account.getAmountLate2());
+        logger.info("Amount Late3 After = " + account.getAmountLate3());
+
+    }
+
+    @Test
     public void ageAllDebts() {
 
-            accountService.getFullAccount("admin");
-            accountService.getFullAccount("user1");
-            accountService.getFullAccount("dev1");
+        accountService.getFullAccount("admin");
+        accountService.getFullAccount("user1");
+        accountService.getFullAccount("dev1");
 
-            accountService.ageDebt(false);
+        accountService.ageDebt(false);
 
     }
 
@@ -295,7 +370,7 @@ public class AccountServiceTest extends AbstractServiceTest {
     public void getAch() {
 
         String userId = "user1";
-        Ach ach =   accountService.getAch(userId);
+        Ach ach = accountService.getAch(userId);
 
         Assert.notNull(ach);
 

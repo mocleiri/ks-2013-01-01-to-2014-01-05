@@ -50,7 +50,7 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
 
         dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
 
-        Date transactionDate = dateFormat.parse("12/12/2012");
+        Date transactionDate = dateFormat.parse("10/12/2012");
 
         accountService.getOrCreateAccount(userId);
 
@@ -186,7 +186,7 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
 
-        Date startDate = dateFormat.parse("01/01/2012");
+        Date startDate = dateFormat.parse("01/01/2010");
         Date endDate = dateFormat.parse("01/01/2015");
 
         glService.prepareGlTransmissionsForRecognitionDates(startDate, endDate);

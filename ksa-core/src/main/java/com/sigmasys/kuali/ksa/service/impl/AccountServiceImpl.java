@@ -146,15 +146,18 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public void ageDebt(boolean ignoreDeferment) {
+        String ageDebtMethodName = configService.getParameter(Constants.AGE_DEBT_METHOD);
+        AgeDebtMethod ageDebtMethod = AgeDebtMethod.valueOf(ageDebtMethodName);
         List<Account> accounts = getFullAccounts();
         for (Account account : accounts) {
             if (account instanceof ChargeableAccount) {
-                ageDebt((ChargeableAccount) account, ignoreDeferment);
+                ageDebt((ChargeableAccount) account, ageDebtMethod, ignoreDeferment);
             }
         }
     }
 
-    protected ChargeableAccount ageDebt(ChargeableAccount chargeableAccount, boolean ignoreDeferment) {
+    protected ChargeableAccount ageDebt(ChargeableAccount chargeableAccount, AgeDebtMethod ageDebtMethod,
+                                        boolean ignoreDeferment) {
 
         LatePeriod latePeriod = chargeableAccount.getLatePeriod();
 
@@ -167,19 +170,67 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         BigDecimal lateAmount2 = BigDecimal.ZERO;
         BigDecimal lateAmount3 = BigDecimal.ZERO;
 
-        List<Pair<Debit, BigDecimal>> balancedDebits = rebalance(chargeableAccount.getId(), ignoreDeferment);
-        for (Pair<Debit, BigDecimal> pair : balancedDebits) {
-            Debit debit = pair.getA();
-            BigDecimal amount = pair.getB();
-            if (debit.getEffectiveDate().compareTo(lateDate1) <= 0 &&
-                    debit.getEffectiveDate().compareTo(lateDate2) > 0) {
-                lateAmount1 = lateAmount1.add(amount);
-            } else if (debit.getEffectiveDate().compareTo(lateDate2) <= 0 &&
-                    debit.getEffectiveDate().compareTo(lateDate3) > 0) {
-                lateAmount2 = lateAmount2.add(amount);
-            } else if (debit.getEffectiveDate().compareTo(lateDate3) <= 0) {
-                lateAmount3 = lateAmount3.add(amount);
-            }
+        switch (ageDebtMethod) {
+            case BALANCE_FORWARD:
+                List<Pair<Debit, BigDecimal>> balancedDebits = rebalance(chargeableAccount.getId(), ignoreDeferment);
+                for (Pair<Debit, BigDecimal> pair : balancedDebits) {
+                    Debit debit = pair.getA();
+                    BigDecimal amount = pair.getB();
+                    Date effectiveDate = debit.getEffectiveDate();
+                    if (effectiveDate.compareTo(lateDate1) <= 0 && effectiveDate.compareTo(lateDate2) > 0) {
+                        lateAmount1 = lateAmount1.add(amount);
+                    } else if (effectiveDate.compareTo(lateDate2) <= 0 && effectiveDate.compareTo(lateDate3) > 0) {
+                        lateAmount2 = lateAmount2.add(amount);
+                    } else if (effectiveDate.compareTo(lateDate3) <= 0) {
+                        lateAmount3 = lateAmount3.add(amount);
+                    }
+                }
+                break;
+            case OPEN_ITEM:
+                for (Transaction transaction : transactionService.getTransactions(chargeableAccount.getId())) {
+                    Date effectiveDate = transaction.getEffectiveDate();
+                    BigDecimal amount = (transaction.getAmount() != null) ? transaction.getAmount() : BigDecimal.ZERO;
+                    switch (transaction.getTransactionTypeValue()) {
+                        case CHARGE:
+                            if (effectiveDate.compareTo(lateDate1) <= 0 && effectiveDate.compareTo(lateDate2) > 0) {
+                                lateAmount1 = lateAmount1.add(amount);
+                            } else if (effectiveDate.compareTo(lateDate2) <= 0 && effectiveDate.compareTo(lateDate3) > 0) {
+                                lateAmount2 = lateAmount2.add(amount);
+                            } else if (effectiveDate.compareTo(lateDate3) <= 0) {
+                                lateAmount3 = lateAmount3.add(amount);
+                            }
+                            break;
+                        case PAYMENT:
+                            if (effectiveDate.compareTo(lateDate1) <= 0 && effectiveDate.compareTo(lateDate2) > 0) {
+                                lateAmount1 = lateAmount1.subtract(amount);
+                            } else if (effectiveDate.compareTo(lateDate2) <= 0 && effectiveDate.compareTo(lateDate3) > 0) {
+                                lateAmount2 = lateAmount2.subtract(amount);
+                            } else if (effectiveDate.compareTo(lateDate3) <= 0) {
+                                lateAmount3 = lateAmount3.subtract(amount);
+                            }
+                            break;
+                        case DEFERMENT:
+                            if (!ignoreDeferment) {
+                                if (effectiveDate.compareTo(lateDate1) <= 0 && effectiveDate.compareTo(lateDate2) > 0) {
+                                    lateAmount1 = lateAmount1.subtract(amount);
+                                } else if (effectiveDate.compareTo(lateDate2) <= 0 && effectiveDate.compareTo(lateDate3) > 0) {
+                                    lateAmount2 = lateAmount2.subtract(amount);
+                                } else if (effectiveDate.compareTo(lateDate3) <= 0) {
+                                    lateAmount3 = lateAmount3.subtract(amount);
+                                }
+                            }
+                            break;
+                        default:
+                            String errMsg = "Transaction type '" + transaction.getTransactionTypeValue() + "' is not supported";
+                            logger.error(errMsg);
+                            throw new IllegalArgumentException(errMsg);
+                    }
+                }
+                break;
+            default:
+                String errMsg = "Age debt method '" + ageDebtMethod.name() + "' is not supported";
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
         }
 
         chargeableAccount.setAmountLate1(lateAmount1);
@@ -204,6 +255,24 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Transactional(readOnly = false)
     public ChargeableAccount ageDebt(String userId, boolean ignoreDeferment) {
 
+        String ageDebtMethodName = configService.getParameter(Constants.AGE_DEBT_METHOD);
+        AgeDebtMethod ageDebtMethod = AgeDebtMethod.valueOf(ageDebtMethodName);
+
+        return ageDebt(userId, ageDebtMethod, ignoreDeferment);
+    }
+
+    /**
+     * Aging debts for a chargeable account.
+     *
+     * @param userId          Account ID
+     * @param ageDebtMethod   Age Debt method
+     * @param ignoreDeferment boolean value
+     * @return a chargeable account being updated
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, boolean ignoreDeferment) {
+
         Account account = getFullAccount(userId);
         if (account == null) {
             String errMsg = "Account with ID '" + userId + "' does not exist";
@@ -217,7 +286,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             throw new IllegalStateException(errMsg);
         }
 
-        return ageDebt((ChargeableAccount) account, ignoreDeferment);
+        return ageDebt((ChargeableAccount) account, ageDebtMethod, ignoreDeferment);
     }
 
     /**
@@ -833,7 +902,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             // TODO: complete implementation
 
         }
-
 
     }
 

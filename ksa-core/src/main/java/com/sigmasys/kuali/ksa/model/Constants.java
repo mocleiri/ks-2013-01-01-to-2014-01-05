@@ -79,6 +79,9 @@ public interface Constants {
     String DEFAULT_REFUND_METHOD = "ksa.default.refund.method";
     String REFUND_SOURCE_TYPE = "ksa.refund.source.type";
 
+    // Account service constants
+    String AGE_DEBT_METHOD = "ksa.account.age.debt.method";
+
     // KFS constants (mostly used by Transaction XML export services)
     String KFS_CHART_OF_ACCOUNTS_CODE_PARAM_NAME = "kfs.coa.code";
     String KFS_ORGANIZATION_CODE_PARAM_NAME = "kfs.organization.code";
