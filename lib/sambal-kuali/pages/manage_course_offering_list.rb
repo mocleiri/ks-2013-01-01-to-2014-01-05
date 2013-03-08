@@ -95,9 +95,12 @@ class ManageCourseOfferingList < BasePage
     target_row(co_code).link(text: "Edit")
   end
 
+  def manage_link(co_code)
+    target_row(co_code).link(text: "Manage")
+  end
 
   def manage(co_code)
-    target_row(co_code).link(text: "Manage").click
+    manage_link(co_code).click
     loading.wait_while_present(120)
   end
 

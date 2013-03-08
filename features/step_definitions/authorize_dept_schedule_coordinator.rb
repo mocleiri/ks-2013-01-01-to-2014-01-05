@@ -23,9 +23,22 @@ Then /^I do not have access to edit the course offering$/ do
   end
 end
 
+Then /^an authorization error is displayed when I attempt to edit the course offering$/ do
+  on ManageCourseOfferings do |page|
+    page.auth_error.present?.should == true
+  end
+end
+
+
 When /^I manage course offerings for a course in my department$/ do
   @course_offering = make CourseOffering, :course=>"ENGL346", :term=>"201612"
   @course_offering.search_by_coursecode
+end
+
+When /^I manage course offerings for a subject code not in my department$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
+  @course_offering.search_by_subjectcode
 end
 
 When /^I manage course offerings for a subject code in my department$/ do
@@ -54,11 +67,15 @@ When /^I manage a course offering$/ do
   @activity_offering = make ActivityOffering, :code=>"A"
 end
 
-
-
 Then /^I can view course offering details$/ do
   on ManageCourseOfferingList do |page|
     page.view_course_offering_link(@course_offering.course).present?.should be_true
+  end
+end
+
+Then /^I can manage the course offering$/ do
+  on ManageCourseOfferingList do |page|
+    page.manage_link(@course_offering.course).present?.should be_true
   end
 end
 
@@ -141,10 +158,10 @@ end
 #end
 
 Then /^I do not have access to manage the course offering$/ do
-  on ManageCourseOfferingList do |page|
-    page.target_row(@course_offering.course).link(text: "Manage").click
-    page.loading.wait_while_present
-  end
+  #on ManageCourseOfferingList do |page|
+  #  page.target_row(@course_offering.course).link(text: "Manage").click
+  #  page.loading.wait_while_present
+  #end
    on ManageCourseOfferings do |page|
      page.auth_error.present?.should == true
    end
@@ -219,6 +236,15 @@ When /^I edit a course offering in my department$/ do
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.edit_offering
+  end
+end
+
+When /^I attempt to edit a course offering in my department$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL206"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_offering_element.present?.should be_false
   end
 end
 

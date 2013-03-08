@@ -45,17 +45,17 @@ Feature: Schedule Coordinator Authorization
     And I can edit course offerings
     And I can copy course offerings
 
-  Scenario: Schedule Coordinator has access to edit course offering grading option for a term with SOC State Open
+  Scenario: AZ 6.2 Schedule Coordinator has access to edit course offering grading option for a term with SOC State Open
     Given I am in working on a term in "Open" SOC state
     When I edit a course offering in my department
     Then I can edit the grading options
 
-  Scenario: Schedule Coordinator has access to edit course offering grading option for a term with SOC State Final Edits
+  Scenario: AZ 6.2 Schedule Coordinator has access to edit course offering grading option for a term with SOC State Final Edits
     Given I am in working on a term in "Final Edits" SOC state
     When I edit a course offering in my department
     Then I can edit the grading options
 
-  Scenario:Schedule Coordinator has access to edit course offering grading option for a term with SOC State Published
+  Scenario: AZ 6.2 Schedule Coordinator has access to edit course offering grading option for a term with SOC State Published
     Given I am in working on a term in "Published" SOC state
     When I edit a course offering in my department
     Then I can edit the grading options
