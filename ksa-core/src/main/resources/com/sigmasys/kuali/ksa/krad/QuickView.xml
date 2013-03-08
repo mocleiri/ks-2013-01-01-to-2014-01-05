@@ -34,16 +34,9 @@
         <property name="items">
             <list merge="true">
                 <bean parent="Uif-Page" p:id="QuickViewPage" p:title="Quick View">
-                    <property name="headerText" value="Quick View"/>
+                    <property name="headerText" value="@{account.compositeDefaultPersonName}"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="refresh"
-                                  p:actionLabel="Refresh"
-                                  p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
-                            </bean>
-                            <!--Temp Test-->
-                            <!--<ref bean="memoTest"/>-->
-                            <!--END Temp Test-->
                             <ref bean="quickViewSection"/>
                         </list>
                     </property>
@@ -71,33 +64,34 @@
     ********************************************************************************************************************
     -->
 
-    <bean id="quickViewSection"
-          parent="Uif-HorizontalBoxSection"
-          p:title="@{account.id}"
-          p:width="100%">
+    <bean id="quickViewSection" parent="Uif-VerticalBoxSection" p:width="80%">
         <property name="items">
             <list>
-                <bean parent="Uif-VerticalBoxSection">
+                <ref bean="biographicInformationGroup"/>
+                <bean parent="Uif-HorizontalBoxGroup">
                     <property name="items">
                         <list>
-                            <ref bean="accountOverviewGroup"/>
+                            <bean parent="Uif-VerticalBoxSection">
+                                <property name="items">
+                                    <list>
+                                        <ref bean="accountOverviewGroup"/>
+                                        <ref bean="agedAccountsGroup"/>
+
+                                    </list>
+                                </property>
+                            </bean>
+
+                            <bean parent="Uif-VerticalBoxGroup">
+                                <property name="items">
+                                    <list>
+                                        <ref bean="alertGroup"/>
+                                        <ref bean="memoGroup"/>
+                                    </list>
+                                </property>
+                            </bean>
                         </list>
                     </property>
                 </bean>
-
-                <bean parent="Uif-VerticalBoxGroup" p:width="60%">
-                    <property name="items">
-                        <list>
-                            <ref bean="biographicInformationGroup"/>
-                            <ref bean="alertGroup"/>
-                            <ref bean="flagGroup"/>
-                            <ref bean="agedAccountsGroup"/>
-                            <ref bean="memoGroup"/>
-                            <ref bean="controlsGroup"/>
-                        </list>
-                    </property>
-                </bean>
-
             </list>
         </property>
     </bean>
@@ -126,9 +120,6 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-MessageField" p:messageText="Account Overview"/>
-                            <bean parent="Uif-Link" p:linkText="more" p:target="_self"
-                                  p:style="font-size: .8em; float: right;"
-                                  p:href="searchView?methodToCall=get&amp;viewId=SearchView&amp;pageId=AccountOVTransactionsPage&amp;userId=@{account.id}"/>
                         </list>
                     </property>
                 </bean>
@@ -218,21 +209,13 @@
                                 </property>
                             </bean>
                             <bean parent="Uif-VerticalBoxGroup">
-                                <property name="cssClasses">
-                                    <list merge="true">
-                                        <value>ksa-text-align-right</value>
-                                    </list>
-                                </property>
                                 <property name="items">
                                     <list>
-                                        <bean parent="Uif-Link" p:linkText="Add Charge" p:target="_self"
-                                              p:href="chargeView?methodToCall=get&amp;viewId=ChargeView&amp;userId=@{account.id}"/>
-                                        <bean parent="Uif-Link" p:linkText="Add Payment" p:target="_self"
+                                        <bean parent="Uif-Link" p:linkText="Perform Payment Application" p:target="_self"
                                               p:href="paymentView?methodToCall=get&amp;viewId=PaymentView&amp;userId=@{account.id}"/>
-                                        <bean parent="Uif-Link" p:linkText="Add Deferment" p:target="_self"
-                                              p:href="defermentView?methodToCall=get&amp;viewId=DefermentView&amp;userId=@{account.id}"/>
-                                        <bean parent="Uif-Link" p:linkText="Write-Off Account" p:target="_self"
-                                              p:href="writeOffView?methodToCall=get&amp;viewId=WriteOffView&amp;userId=@{account.id}"/>
+                                        <bean parent="Uif-Link" p:linkText="Details"
+                                              p:href="searchView?methodToCall=get&amp;viewId=SearchView&amp;pageId=AccountOVTransactionsPage&amp;userId=@{account.id}"/>
+
                                     </list>
                                 </property>
                             </bean>
@@ -267,9 +250,6 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-MessageField" p:messageText="Biographic Information"/>
-                            <bean parent="Uif-Link" p:linkText="more" p:target="_self"
-                                  p:style="font-size: .8em; float: right;"
-                                  p:href="biographicView?methodToCall=get&amp;viewId=BiographicView&amp;pageId=BiographicPersonsPage&amp;userId=@{account.id}"/>
                         </list>
                     </property>
                 </bean>
@@ -282,22 +262,37 @@
                     <property name="readOnly" value="true"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-InputField" p:propertyName="compositeDefaultPersonName" p:maxLength="25"
-                                  p:style="font-weight: bold; padding-right:20px;">
-                                <!--p:label="Name" p:labelPlacement="TOP" p:fieldLabel.renderColon="true"-->
-                                <property name="control">
-                                    <bean parent="Uif-TextControl" p:size="26"/>
+                            <bean parent="Uif-VerticalBoxGroup">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-InputField" p:propertyName="account.compositeDefaultPersonName" p:style="font-weight: bold; padding-right:20px;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="account.id" p:label="ID" />
+                                        <bean parent="Uif-Link" p:linkText="Details"
+                                              p:href="biographicView?methodToCall=get&amp;viewId=BiographicView&amp;pageId=BiographicPersonsPage&amp;userId=@{account.id}"/>
+                                    </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-InputField" p:propertyName="compositeDefaultPostalAddress"
-                                  p:label="Address"
-                                  p:maxLength="25"
-                                  p:labelPlacement="TOP"
-                                  p:fieldLabel.renderColon="true">
-                                <property name="control">
-                                    <bean parent="Uif-TextControl" p:size="26"/>
+
+                            <bean parent="Uif-VerticalBoxGroup">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-Label" p:labelText="Default Contact" p:renderColon="true"/>
+                                        <bean parent="Uif-InputField" p:propertyName="account.compositeDefaultPostalAddress"/>
+                                    </list>
                                 </property>
                             </bean>
+                            <bean parent="Uif-VerticalBoxGroup">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-Label" p:labelText="Default Contact" p:renderColon="true"/>
+                                        <bean parent="Uif-GridSection"><property name="items"><list>
+                                            <bean parent="Uif-InputField" p:propertyName="account.defaultElectronicContact.phoneNumber" p:label="Phone"/>
+                                            <bean parent="Uif-InputField" p:propertyName="account.defaultElectronicContact.emailAddress" p:label="Email"/>
+                                        </list></property></bean>
+                                    </list>
+                                </property>
+                            </bean>
+
                         </list>
                     </property>
                 </bean>
@@ -328,7 +323,7 @@
                     </property>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-MessageField" p:messageText="Alerts"/>
+                            <bean parent="Uif-MessageField" p:messageText="Alerts / Flags (@{alertsFlags.size()})"/>
                         </list>
                     </property>
                 </bean>
@@ -341,7 +336,7 @@
                     <property name="readOnly" value="true"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-HorizontalBoxGroup">
+                            <bean parent="Uif-VerticalBoxGroup">
                                 <property name="cssClasses">
                                     <list merge="true">
                                         <value>ksa-margin-zero</value>
@@ -350,54 +345,16 @@
                                 <property name="items">
                                     <list>
                                         <ref bean="quickViewAlertsTable"/>
-                                    </list>
-                                </property>
-                            </bean>
-                        </list>
-                    </property>
-                </bean>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="flagGroup" parent="Uif-VerticalBoxGroup">
-        <property name="cssClasses">
-            <list merge="true">
-                <value>ksa-group-border</value>
-            </list>
-        </property>
-        <property name="items">
-            <list>
-                <bean parent="Uif-HorizontalBoxGroup">
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>ksa-quickview-section-header</value>
-                        </list>
-                    </property>
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-MessageField" p:messageText="Flags"/>
-                        </list>
-                    </property>
-                </bean>
-                <bean parent="Uif-VerticalBoxGroup">
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>ksa-group-content</value>
-                        </list>
-                    </property>
-                    <property name="readOnly" value="true"/>
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-HorizontalBoxGroup">
-                                <property name="cssClasses">
-                                    <list merge="true">
-                                        <value>ksa-margin-zero</value>
-                                    </list>
-                                </property>
-                                <property name="items">
-                                    <list>
-                                        <ref bean="quickViewFlagsTable"/>
+                                        <bean parent="Uif-HorizontalBoxGroup">
+                                            <property name="items">
+                                                <list>
+                                                <bean parent="Uif-Link" p:linkText="Alert Details"
+                                              p:href="transactionView?methodToCall=get&amp;viewId=TransactionView&amp;pageId=ViewAlerts&amp;userId=@{account.id}"/>
+                                                    <bean parent="Uif-Link" p:linkText="Flag Details"
+                                                          p:href="transactionView?methodToCall=get&amp;viewId=TransactionView&amp;pageId=ViewFlags&amp;userId=@{account.id}"/>
+                                                </list>
+                                            </property>
+                                        </bean>
                                     </list>
                                 </property>
                             </bean>
@@ -419,8 +376,8 @@
           p:disclosure.render="false"
           p:progressiveRenderViaAJAX="true">
         <property name="readOnly" value="true"/>
-        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Alert"/>
-        <property name="propertyName" value="alerts"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Information"/>
+        <property name="propertyName" value="alertsFlags"/>
         <property name="layoutManager.sequencePropertyName" value="id"/>
         <property name="layoutManager.renderSequenceField" value="false"/>
         <property name="layoutManager.richTable.render" value="false"/>
@@ -431,42 +388,9 @@
         </property>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="displayValue" p:maxLength="99">
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="100"/>
-                    </property>
-                </bean>
-            </list>
-        </property>
-    </bean>
-
-    <!--
-    *******************************************************************************************************************
-                                            Flag(s) table
-    A table of Flags
-    ********************************************************************************************************************
-    -->
-    <bean id="quickViewFlagsTable" parent="Uif-Disclosure-TableCollectionSection"
-          p:layoutManager.numberOfColumns="1"
-          p:disclosure.render="false"
-          p:progressiveRenderViaAJAX="true">
-        <property name="readOnly" value="true"/>
-        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Flag"/>
-        <property name="propertyName" value="flags"/>
-        <property name="layoutManager.sequencePropertyName" value="id"/>
-        <property name="layoutManager.richTable.render" value="false"/>
-        <property name="layoutManager.renderSequenceField" value="false"/>
-        <property name="cssClasses">
-            <list merge="true">
-                <value>ksa-quickview-table</value>
-            </list>
-        </property>
-        <property name="items">
-            <list>
-                <bean parent="Uif-InputField" p:propertyName="displayValue" p:maxLength="99">
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="100"/>
-                    </property>
+                <!-- @TODO - Once we move to Rice 2.2.1 this nasty mess of html should be rewritten to use messageComponentStructure -->
+                <bean parent="Uif-MessageField">
+                    <property name="messageText" value="&lt;img src='../images/@{getInfoType(#line)}.png'/&gt; &lt;b&gt;@{getFormattedDate(#line.effectiveDate)}&lt;/b&gt; - @{#line.text}"/>
                 </bean>
             </list>
         </property>
@@ -508,81 +432,36 @@
                     <property name="readOnly" value="true"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-HorizontalBoxGroup">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-InputField" p:propertyName="lastAgeDate"
-                                              p:label="Last Age Date"
-                                              p:labelPlacement="TOP"
-                                              p:maxLength="10">
-                                            <property name="readOnly" value="true"/>
-                                            <property name="control">
-                                                <bean parent="Uif-TextControl" p:size="11"/>
-                                            </property>
-                                        </bean>
-                                        <bean parent="Uif-SecondaryActionButton-Small"
-                                              p:methodToCall="ageDebt"
-                                              p:actionLabel="Age Transactions" p:style="float: right;"
-                                              p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
-                                        </bean>
-                                        <bean parent="Uif-SecondaryActionButton-Small"
-                                              p:methodToCall="assessFees"
-                                              p:actionLabel="Assess Fees" p:style="float: right;"
-                                              p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
-                                        </bean>
-                                    </list>
+                            <bean parent="Uif-InputField" p:propertyName="lastAgeDate" p:label="Last Age Date">
+                                <property name="readOnly" value="true"/>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="ignoreDeferment"
+                                  p:label="Ignore Deferment"
+                                  p:defaultValue="true"
+                                  p:labelPlacement="RIGHT">
+                                <property name="bindingInfo.bindToForm" value="true"/>
+                                <property name="readOnly" value="false"/>
+                                <property name="control">
+                                    <bean parent="Uif-CheckboxControl"/>
                                 </property>
                             </bean>
-                            <bean parent="Uif-HorizontalBoxGroup">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-InputField" p:propertyName="aged30"
-                                              p:label="@{daysLate1}"
-                                              p:labelPlacement="TOP"
-                                              p:maxLength="10">
-                                            <property name="readOnly" value="true"/>
-                                            <property name="control">
-                                                <bean parent="Uif-CurrencyTextControl" p:size="11"/>
-                                            </property>
-                                        </bean>
-                                        <bean parent="Uif-InputField" p:propertyName="aged60"
-                                              p:label="@{daysLate2}"
-                                              p:labelPlacement="TOP"
-                                              p:maxLength="10">
-                                            <property name="readOnly" value="true"/>
-                                            <property name="control">
-                                                <bean parent="Uif-CurrencyTextControl" p:size="11"/>
-                                            </property>
-                                        </bean>
-                                        <bean parent="Uif-InputField" p:propertyName="aged90"
-                                              p:label="@{daysLate3}"
-                                              p:labelPlacement="TOP"
-                                              p:maxLength="10">
-                                            <property name="readOnly" value="true"/>
-                                            <property name="control">
-                                                <bean parent="Uif-CurrencyTextControl" p:size="11"/>
-                                            </property>
-                                        </bean>
-                                        <bean parent="Uif-InputField" p:propertyName="agedTotal"
-                                              p:label="Total"
-                                              p:labelPlacement="TOP"
-                                              p:maxLength="10">
-                                            <property name="readOnly" value="true"/>
-                                            <property name="control">
-                                                <bean parent="Uif-CurrencyTextControl" p:size="11"/>
-                                            </property>
-                                        </bean>
-                                        <bean parent="Uif-InputField" p:propertyName="ignoreDeferment"
-                                              p:label="Ignore Deferment"
-                                              p:defaultValue="true">
-                                            <property name="bindingInfo.bindToForm" value="true"/>
-                                            <property name="readOnly" value="false"/>
-                                            <property name="control">
-                                                <bean parent="Uif-CheckboxControl"/>
-                                            </property>
-                                        </bean>
-                                    </list>
-                                </property>
+                            <bean parent="Uif-GridSection"><property name="items"><list>
+                                <bean parent="Uif-Label" p:labelText="Days" p:renderColon="false"/>
+                                <bean parent="Uif-Label" p:labelText="Amount" p:renderColon="false"/>
+                                <bean parent="Uif-InputField" p:propertyName="aged30" p:label="@{daysLate1}" p:fieldLabel.renderColon="false"/>
+                                <bean parent="Uif-InputField" p:propertyName="aged60" p:label="@{daysLate2}" p:fieldLabel.renderColon="false"/>
+                                <bean parent="Uif-InputField" p:propertyName="aged90" p:label="@{daysLate3}" p:fieldLabel.renderColon="false"/>
+                                <bean parent="Uif-InputField" p:propertyName="agedTotal" p:label="Total" p:fieldLabel.renderColon="false"/>
+                            </list></property></bean>
+                            <bean parent="Uif-SecondaryActionButton-Small"
+                                  p:methodToCall="ageDebt"
+                                  p:actionLabel="Age Transactions" p:style="float: right;"
+                                  p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
+                            </bean>
+                            <bean parent="Uif-SecondaryActionButton-Small"
+                                  p:methodToCall="assessFees"
+                                  p:actionLabel="Assess Fees" p:style="float: right;"
+                                  p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
                             </bean>
                         </list>
                     </property>
@@ -614,10 +493,7 @@
                     </property>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-MessageField" p:messageText="Memos"/>
-                            <bean parent="Uif-Link" p:linkText="more" p:target="_self"
-                                  p:style="font-size: .8em; float: right;"
-                                  p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=MemosPage&amp;userId=@{account.id}"/>
+                            <bean parent="Uif-MessageField" p:messageText="Memos (@{memoModels.size()})"/>
                         </list>
                     </property>
                 </bean>
@@ -631,6 +507,8 @@
                     <property name="items">
                         <list>
                             <ref bean="quickViewMemosTable"/>
+                            <bean parent="Uif-Link" p:linkText="Details"
+                                  p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=MemosPage&amp;userId=@{account.id}"/>
                         </list>
                     </property>
                 </bean>
@@ -664,48 +542,10 @@
         <property name="layoutManager.richTable.disableTableSort" value="false"/>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="creationDate"
-                      p:maxLength="10"
-                      p:width="10%">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-DateControl" p:size="11"/>
-                    </property>
+                <!-- @TODO - Once we move to Rice 2.2.1 this nasty mess of html should be rewritten to use messageComponentStructure -->
+                <bean parent="Uif-MessageField">
+                    <property name="messageText" value="&lt;img src='../images/@{getInfoType(#line)}.png'/&gt; &lt;b&gt;@{getFormattedDate(#line.effectiveDate)}&lt;/b&gt; - @{#line.text}"/>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="text" p:width="90%">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
-                        <!--p:style="resize:none;"-->
-                    </property>
-                </bean>
-            </list>
-        </property>
-    </bean>
-
-    <!--
-    *******************************************************************************************************************
-                                        Links group
-    A group of links to other views from this overview
-    ********************************************************************************************************************
-    -->
-
-    <bean id="controlsGroup" parent="Uif-LinkGroup">
-        <property name="cssClasses">
-            <list merge="true">
-                <value>ksa-text-align-right</value>
-            </list>
-        </property>
-        <property name="items">
-            <list>
-                <bean parent="Uif-LinkField" p:linkText="Add Biographic Information" p:target="_self"
-                      p:href="biographicView?methodToCall=get&amp;viewId=BiographicView&amp;userId=@{account.id}"/>
-                <bean parent="Uif-LinkField" p:linkText="Add an Alert" p:target="_self"
-                      p:href="alertView?methodToCall=get&amp;viewId=AlertView&amp;pageId=AddAlertPage&amp;userId=@{account.id}"/>
-                <bean parent="Uif-LinkField" p:linkText="Add a Flag" p:target="_self"
-                      p:href="flagView?methodToCall=get&amp;viewId=FlagView&amp;pageId=AddFlagPage&amp;userId=@{account.id}"/>
-                <bean parent="Uif-LinkField" p:linkText="Add Memo" p:target="_self"
-                      p:href="quickView?methodToCall=get&amp;viewId=QuickView&amp;pageId=QuickViewAddMemoPage&amp;userId=@{account.id}"/>
             </list>
         </property>
     </bean>
@@ -785,151 +625,5 @@
             </list>
         </property>
     </bean>
-
-    <!--
-    *******************************************************************************************************************
-                                            Memo Test
-    JET Test
-    ********************************************************************************************************************
-    -->
-
-    <bean id="memoTest" parent="Uif-VerticalBoxGroup">
-        <property name="cssClasses">
-            <list merge="true">
-                <value>ksa-group-border</value>
-            </list>
-        </property>
-        <property name="items">
-            <list>
-                <bean parent="Uif-HorizontalBoxGroup">
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>ksa-quickview-section-header</value>
-                        </list>
-                    </property>
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-MessageField" p:messageText="Memos"/>
-                            <bean parent="Uif-Link" p:linkText="more" p:target="_self"
-                                  p:style="font-size: .8em; float: right;"
-                                  p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=MemosPage&amp;userId=@{account.id}"/>
-                        </list>
-                    </property>
-                </bean>
-                <bean parent="Uif-VerticalBoxGroup">
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>ksa-group-content</value>
-                        </list>
-                    </property>
-                    <property name="readOnly" value="true"/>
-                </bean>
-            </list>
-        </property>
-    </bean>
-
-
-    <!--<bean id="memoTestStackedCollection" parent="Uif-StackedCollectionLayoutBase">
-        <property name="items">
-            <list>
-                <bean parent="Uif-StackedCollectionSection">
-                    <property name="readOnly" value="true"/>
-                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Flag"/>
-                    <property name="propertyName" value="flags"/>
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-InputField" p:propertyName="displayValue" p:maxLength="99">
-                                <property name="control">
-                                    <bean parent="Uif-TextControl" p:size="100"/>
-                                </property>
-                            </bean>
-                        </list>
-                    </property>
-                </bean>
-            </list>
-        </property>
-    </bean>-->
-
-    <bean id="memoTestStackedCollection" parent="Uif-Disclosure-StackedCollectionSection">
-        <!--<property name="title" value="Collection Group 3 - Stacked" />
-        <property name="instructionalText"
-                  value="This is a stacked layout of a collection - CollectionGroup" />-->
-        <property name="collectionObjectClass"
-                  value="com.sigmasys.kuali.ksa.model.Flag"/>
-        <property name="propertyName" value="flags"/>
-        <!--<property name="layoutManager.summaryTitle" value="Line Summary" />
-        <property name="layoutManager.summaryFields" value="field1" />-->
-        <property name="items">
-            <!--<list>
-                <bean parent="Uif-InputField" p:label="Field 1" p:propertyName="field1"
-                      p:required="true" p:constraintText="When this is A, Field 2 must be Alpha and maxLength 5.  When this is 1, Field 2 must be numeric and min 1 max 50">
-
-                </bean>
-                <bean parent="Uif-InputField" p:label="Field 2" p:propertyName="field2"
-                      p:required="true">
-                    <property name="caseConstraint">
-                        <bean parent="CaseConstraint">
-                            <property name="propertyName" value="field1" />
-                            <property name="whenConstraint">
-                                <list>
-                                    <bean parent="WhenConstraint">
-                                        <property name="values">
-                                            <list>
-                                                <value>A</value>
-                                                <value>a</value>
-                                            </list>
-                                        </property>
-                                        <property name="constraint">
-                                            <bean parent="AlphaPatternConstraint" />
-                                        </property>
-                                    </bean>
-                                    <bean parent="WhenConstraint">
-                                        <property name="values">
-                                            <list>
-                                                <value>A</value>
-                                                <value>a</value>
-                                            </list>
-                                        </property>
-                                        <property name="constraint">
-                                            <bean parent="SimpleConstraint">
-                                                <property name="maxLength" value="5" />
-                                            </bean>
-                                        </property>
-                                    </bean>
-                                    <bean parent="WhenConstraint">
-                                        <property name="value" value="1" />
-                                        <property name="constraint">
-                                            <bean parent="NumericPatternConstraint" />
-                                        </property>
-                                    </bean>
-                                    <bean parent="WhenConstraint">
-                                        <property name="value" value="1" />
-                                        <property name="constraint">
-                                            <bean parent="SimpleConstraint">
-                                                <property name="exclusiveMin" value="0" />
-                                                <property name="inclusiveMax" value="50" />
-                                            </bean>
-                                        </property>
-                                    </bean>
-                                </list>
-                            </property>
-                        </bean>
-                    </property>
-                </bean>
-                <bean parent="Uif-InputField" p:label="Field 3" p:propertyName="field3"
-                      p:required="true" />
-                <bean parent="Uif-InputField" p:label="Field 4" p:propertyName="field4"
-                      p:required="true" />
-            </list>-->
-            <list>
-                <bean parent="Uif-InputField" p:propertyName="displayValue" p:maxLength="99">
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="100"/>
-                    </property>
-                </bean>
-            </list>
-        </property>
-    </bean>
-
 
 </beans>

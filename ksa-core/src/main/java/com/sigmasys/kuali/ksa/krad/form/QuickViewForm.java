@@ -2,7 +2,9 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.model.*;
 
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -35,12 +37,7 @@ public class QuickViewForm extends AbstractViewModel {
 
     // Alert
 
-    private List<Alert> alerts;
-
-    // Flag
-
-    private List<Flag> flags;
-
+    private List<Information> alertsFlags;
     // Aging
 
     // the last aging date
@@ -137,23 +134,13 @@ public class QuickViewForm extends AbstractViewModel {
     }
 
 
-    public List<Alert> getAlerts() {
-        return alerts;
+    public List<Information> getAlertsFlags() {
+        return alertsFlags;
     }
 
-    public void setAlerts(List<Alert> alerts) {
-        this.alerts = alerts;
+    public void setAlertsFlags(List<Information> alertsFlags) {
+        this.alertsFlags = alertsFlags;
     }
-
-
-    public List<Flag> getFlags() {
-        return flags;
-    }
-
-    public void setFlags(List<Flag> flags) {
-        this.flags = flags;
-    }
-
 
     public Date getLastAgeDate() {
         return lastAgeDate;
@@ -270,5 +257,23 @@ public class QuickViewForm extends AbstractViewModel {
 
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
+    }
+
+    public String getInfoType(Information i){
+        if(i instanceof Alert){
+            return "alert";
+        } else if(i instanceof Flag){
+            return "flag";
+        } else if(i instanceof Memo){
+            return "memo";
+        }
+        return "unknown";
+
+    }
+
+    public String getFormattedDate(Date date){
+        DateFormat df;
+        df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+        return df.format(date);
     }
 }

@@ -7,6 +7,7 @@ import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.InformationService;
+import com.sigmasys.kuali.ksa.util.InformationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -331,29 +332,21 @@ public class QuickViewController extends GenericSearchController {
 
         int itemsPerPage = Integer.valueOf(configService.getParameter(Constants.QUICKVIEW_INFORMATION_COUNT));
 
+        List<Information> alertFlags = new ArrayList<Information>();
+
         List<Alert> alertsAll = informationService.getAlerts(userId);
-
-        //AlertDateComparatorAscending comparitor1 = new AlertDateComparatorAscending();
-        //Collections.sort(alertsAll, comparitor1);
-
-        List<Alert> alerts = new ArrayList<Alert>();
-        for (int i = 0; i < itemsPerPage && i < alertsAll.size(); i++) {
-            alerts.add(alertsAll.get(i));
-        }
-
-        form.setAlerts(alerts);
-
         List<Flag> flagAll = informationService.getFlags(userId);
+
+        alertFlags.addAll(alertsAll);
+        alertFlags.addAll(flagAll);
+
+        alertFlags = InformationUtils.orderByEffectiveDate(alertFlags, false);
+
+        form.setAlertsFlags(alertFlags);
+
 
         //FlagDateComparatorAscending comparitor2 = new FlagDateComparatorAscending();
         //Collections.sort(flagAll, comparitor2);
-
-        List<Flag> flags = new ArrayList<Flag>();
-        for (int i = 0; i < itemsPerPage && i < flagAll.size(); i++) {
-            flags.add(flagAll.get(i));
-        }
-
-        form.setFlags(flags);
 
 
         List<Memo> memos = informationService.getMemos(userId);
