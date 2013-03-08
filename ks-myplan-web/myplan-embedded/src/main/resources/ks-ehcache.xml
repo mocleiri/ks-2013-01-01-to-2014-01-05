@@ -31,11 +31,11 @@
            statistics="true"
         />
 	<cache name="orgCache"
-           maxElementsInMemory="100"
+           maxElementsInMemory="1000"
            eternal="false"
            overflowToDisk="true"
            timeToIdleSeconds="0"
-           timeToLiveSeconds="120"
+           timeToLiveSeconds="18000"
            statistics="true"
         />
 	<cache

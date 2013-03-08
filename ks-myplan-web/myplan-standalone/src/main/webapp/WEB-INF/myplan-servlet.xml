@@ -29,6 +29,9 @@
     <!-- Custom UW ATP Comparator bean -->
     <bean id="atpTypeComparator" class="edu.uw.kuali.student.myplan.util.TermInfoComparator"/>
 
+    <!-- UW's Implementation of Course Helper -->
+    <bean id="courseHelper" class="edu.uw.kuali.student.myplan.util.CourseHelperImpl"/>
+
     <!-- Search Strategy -->
     <bean id="courseSearchStrategy" class="org.kuali.student.myplan.course.controller.CourseSearchStrategy"/>
 
