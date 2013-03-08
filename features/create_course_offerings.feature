@@ -11,8 +11,6 @@ Background:
     When I create a Course Offering with selected lecture Formats
     Then the new Course Offering should contain only the selected delivery formats
 
-    @bug @KSENROLL-5113
   Scenario: Copy existing Course Offering
     When I copy a course offering from an existing offering
     Then the new Course Offering should be displayed in the list of available offerings.
-
