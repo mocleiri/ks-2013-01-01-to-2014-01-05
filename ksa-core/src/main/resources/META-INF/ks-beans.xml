@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-lazy-init="true">
 
     <bean id="ksEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
@@ -118,19 +114,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="dao" ref="enrollSearchableDao"/>
     </bean>
 
-    <bean id="ks.exp.atpService" class="org.kuali.rice.ksb.api.bus.support.ServiceBusExporter">
-        <property name="serviceDefinition">
-            <bean class="org.kuali.rice.ksb.api.bus.support.SoapServiceDefinition">
-                <property name="jaxWsService" value="true"/>
-                <property name="service" ref="atpService"/>
-                <property name="serviceInterface" value="org.kuali.student.r2.core.atp.service.AtpService"/>
-                <property name="localServiceName" value="AtpService"/>
-                <property name="serviceNameSpaceURI" value="http://student.kuali.org/wsdl/atp"/>
-                <property name="busSecurity" value="false"/>
-            </bean>
-        </property>
-    </bean>
-
     <bean id="enrollSearchableDao" class="org.kuali.student.r2.common.dao.impl.SearchableCrudDaoImpl">
         <property name="em" ref="ksEntityManager"/>
     </bean>
@@ -220,8 +203,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         </property>
     </bean>
 
-    <bean id="relationCriteriaLookupService"
-          class="org.kuali.student.r2.common.criteria.impl.CriteriaLookupServiceImpl">
+    <bean id="relationCriteriaLookupService" class="org.kuali.student.r2.common.criteria.impl.CriteriaLookupServiceImpl">
         <property name="criteriaLookupDao" ref="criteriaLookupDaoJpa"/>
         <property name="predicateTransforms">
             <list>
@@ -230,5 +212,23 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
             </list>
         </property>
     </bean>
+
+    <!-- /////////////////////////////////// HOLD Service Configuration /////////////////////////////////////////// -->
+
+    <!-- Hold Service -->
+    <bean id="holdService" class="org.kuali.student.enrollment.class1.hold.service.impl.HoldServiceImpl">
+        <property name="holdIssueDao" ref="holdIssueDao"/>
+        <property name="appliedHoldDao" ref="appliedHoldDao"/>
+        <property name="criteriaLookupService" ref="criteriaLookupService"/>
+    </bean>
+
+    <bean id="appliedHoldDao" class="org.kuali.student.enrollment.class1.hold.dao.AppliedHoldDao">
+        <property name="em" ref="ksEntityManager"/>
+    </bean>
+
+    <bean id="holdIssueDao" class="org.kuali.student.enrollment.class1.hold.dao.HoldIssueDao">
+        <property name="em" ref="ksEntityManager"/>
+    </bean>
+
 
 </beans>

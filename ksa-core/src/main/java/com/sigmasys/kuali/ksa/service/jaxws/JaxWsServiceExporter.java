@@ -90,6 +90,13 @@ public class JaxWsServiceExporter extends SimpleHttpServerJaxWsServiceExporter {
     }
 
     @Override
+    protected void publishEndpoint(Endpoint endpoint, WebService annotation) {
+        if (AnnotationUtils.getAnnotation(Url.class, endpoint.getImplementor()) != null) {
+            super.publishEndpoint(endpoint, annotation);
+        }
+    }
+
+    @Override
     protected String calculateEndpointPath(Endpoint endpoint, String serviceName) {
         if (baseServiceUrl != null) {
             String endpointUrl = contextPath;
@@ -99,10 +106,13 @@ public class JaxWsServiceExporter extends SimpleHttpServerJaxWsServiceExporter {
             // We have to find @Url annotation on one of the WS interfaces and
             // use it for constructing endpoint URL
             Url urlAnnotation = AnnotationUtils.getAnnotation(Url.class, endpoint.getImplementor());
-            String serviceUrl = urlAnnotation.value();
-            endpointUrl += (serviceUrl != null) ? serviceUrl : serviceName;
-            logger.debug("calculateEndpointPath(): endpoint URL = " + endpointUrl);
-            return endpointUrl;
+            logger.debug("calculateEndpointPath(): Url annotation = " + urlAnnotation);
+            if (urlAnnotation != null) {
+                String serviceUrl = urlAnnotation.value();
+                endpointUrl += (serviceUrl != null) ? serviceUrl : serviceName;
+                logger.debug("calculateEndpointPath(): endpoint URL = " + endpointUrl);
+                return endpointUrl;
+            }
         }
         return super.calculateEndpointPath(endpoint, serviceName);
     }

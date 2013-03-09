@@ -36,6 +36,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="packageNames">
             <list>
                 <value>org.kuali.student.r2.core.class1.atp.model</value>
+                <value>org.kuali.student.enrollment.class1.hold.model</value>
             </list>
         </property>
     </bean>

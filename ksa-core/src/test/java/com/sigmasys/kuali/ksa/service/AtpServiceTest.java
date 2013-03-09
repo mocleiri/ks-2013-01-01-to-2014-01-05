@@ -19,6 +19,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * KS ATP service tests.
+ *
+ * @author Michael Ivanov
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
 public class AtpServiceTest extends AbstractServiceTest {
