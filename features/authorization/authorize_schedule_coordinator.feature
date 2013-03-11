@@ -4,28 +4,28 @@ Feature: Schedule Coordinator Authorization
   Background:
     Given I am logged in as a Schedule Coordinator
 
-  Scenario:As a Schedule Coordinator I have access to delete Activity Offerings in a Final Edits state
+  Scenario: AZ 5.1C As a Schedule Coordinator I have access to delete Activity Offerings in a Final Edits state
     Given I am working on a term in "Final Edits" SOC state
     Then I have access delete an activity offering in a "Draft" state
     And  I have access delete an activity offering in a "Approved" state
 
-  Scenario: As a Schedule Coordinator I have access to delete Activity Offerings in a Published state
+  Scenario: AZ 5.1C As a Schedule Coordinator I have access to delete Activity Offerings in a Published state
     Given I am working on a term in "Published" SOC state before the first day of class
     And there is a "Draft" course present
     Then I have access delete an activity offering in a "Draft" state
 
-  Scenario:  As a Schedule Coordinator I have access to delete Activity Offerings in a Open state
+  Scenario: AZ 5.1C As a Schedule Coordinator I have access to delete Activity Offerings in a Open state
     Given I am working on a term in "Open" SOC state
     Then I have access delete an activity offering in a "Draft" state
     And  I have access delete an activity offering in a "Approved" state
 
-  Scenario:  As a Schedule Coordinator I have access to delete Course Offerings in a Open state
+  Scenario: AZ 5.1D As a Schedule Coordinator I have access to delete Course Offerings in a Open state
     Given I am working on a term in "Open" SOC state
     And there is a "Planned" course present
     Then I have access to delete a course offering in a "Draft" state
     And I have access to delete a course offering in a "Planned" state
 
-  Scenario:  As a Schedule Coordinator I have access to Activity Offerings for a term in Draft SOC state
+  Scenario: AZ 6.1 As a Schedule Coordinator I have access to Activity Offerings for a term in Draft SOC state
     Given I am in working on a term in "Draft" SOC state
     When I manage a course offering
     Then I can view the activity offering details
@@ -35,7 +35,7 @@ Feature: Schedule Coordinator Authorization
     And I can edit an activity offering
     And I can copy activity offering
 
-  Scenario:  As a Schedule Coordinator I have access to Course Offerings for a term in Draft SOC state
+  Scenario: AZ 6.1 As a Schedule Coordinator I have access to Course Offerings for a term in Draft SOC state
     Given I am in working on a term in "Draft" SOC state
     When I manage course offerings for a subject code
     Then I can view course offering details

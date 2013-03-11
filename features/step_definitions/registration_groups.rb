@@ -172,7 +172,7 @@ Then /registration groups? (?:are|is) generated$/ do
 end
 
 Given /^I manage registration groups for a course offering with multiple activity types where the total max enrolment for each type is not equal$/ do
-  @course_offering = create CourseOffering, :term => "202001", :create_by_copy=>(make CourseOffering, :course=>"BSCI283")
+  @course_offering = create CourseOffering, :term => "202001", :create_by_copy=>(make CourseOffering, :course=>"BSCI283", :term => "202001")
   @course_offering.manage
   @activity_offering = create ActivityOffering, :requested_delivery_logistics_list => {},
                               :personnel_list => [],

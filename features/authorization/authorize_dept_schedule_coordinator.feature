@@ -4,25 +4,31 @@ Feature: Department Schedule Coordinator Authorization
   Background:
     Given I am logged in as a Department Schedule Coordinator
 
-  Scenario: Department Schedule Coordinator has read only access to seat pools
+  Scenario: AZ 3.1/AZ 4.1B Department Schedule Coordinator has read only access to seat pools
     Given I am working on a term in "Final Edits" SOC state
     When I attempt to edit an activity offering for a course offering in my department
     Then I have access to revise delivery logistics
     And I do not have access to add or edit seat pools
+    #TODO - implement AZ 3.1 (seat pools) for other SOC states?
 
-  Scenario: Department Schedule Coordinator does not have edit access to courses not in their department
+  @bug @KSENROLL-5888
+  Scenario: AZ 4.1A Department Schedule Coordinator does not have edit access to a course not in their department (CO individual course)
     Given I am working on a term in "Open" SOC state
-    When I attempt to edit a course not in my department
-    Then an authorization error is displayed when I attempt to edit the course offering
+    When I manage a course offering for a subject code not in my department
+    Then I do not have access to edit the course offering
+    And I do not have access to manage registration groups
 
-  #to do inconsistent with other test
-  Scenario: AZ4.2 Department Schedule Coordinator has read access to course offerings not in their department
+  Scenario: AZ4.1A/4.2 Department Schedule Coordinator has read access to course offerings not in their department (CO subj list)
     Given I am working on a term in "Open" SOC state
     When I manage course offerings for a subject code not in my department
     Then I can view course offering details
-    And  I can manage the course offering
+    And I can manage course offerings
+    But I do not have access to edit the listed course offering
+    And I do not have access to delete the listed course offering
+    And I do not have access to approve the listed course offering
+    And I do not have access to copy the listed course offering
 
-  Scenario: Department Schedule Coordinator Carol can access the Manage CO set of pages for COs for her own admin org
+  Scenario: AZ 4.1A/4.2 Department Schedule Coordinator Carol can access the Manage CO set of pages for COs for her own admin org
     Given I am working on a term in "Open" SOC state
     When I manage course offerings for a subject code in my department
     Then I can view course offering details
@@ -32,7 +38,7 @@ Feature: Department Schedule Coordinator Authorization
     And I can edit course offerings
     And I can copy course offerings
 
-  Scenario: Department Schedule Coordinator Carol can access the Manage AO set of pages for COs for her own admin org
+  Scenario: AZ 4.1A/4.2 Department Schedule Coordinator Carol can access the Manage AO set of pages for COs for her own admin org
     Given I am working on a term in "Open" SOC state
     When I manage a course offering in my department
     Then I can view the activity offering details
@@ -41,40 +47,43 @@ Feature: Department Schedule Coordinator Authorization
     And I can delete an activity offering
     And I can edit an activity offering
     And I can copy activity offering
+    And I can manage registration groups
 
-  Scenario: Department Schedule Coordinator Carol does not have access to create CO's not in her admin org
+  Scenario: AZ 4.1C Department Schedule Coordinator Carol does not have access to create CO's not in her admin org
     Given I am working on a term in "Open" SOC state
     When I attempt to create a course not in my department
     Then I do not have access to create the course offering
 
-  Scenario: Department Schedule Coordinator Carol has access to create CO's in her admin org
+  Scenario: AZ 4.1C Department Schedule Coordinator Carol has access to create CO's in her admin org
     Given I am working on a term in "Open" SOC state
     When I attempt to create a course in my department
     Then I have access to create the course offering from catalog
     And I have access to create the course from an existing offering
 
-  Scenario: Department Schedule Coordinator Carol has limited access to delete AOs in a Final Edits SOC State
+  Scenario: AZ 5.1A Department Schedule Coordinator Carol has limited access to delete AOs in a Final Edits State
     Given I am working on a term in "Final Edits" SOC state
     Then I have access delete an activity offering in a "Draft" state for a course in my department
     And  I have access delete an activity offering in a "Approved" state for a course in my department
 
-  Scenario: Department Schedule Coordinator Carol has limited access to delete AOs in a Published State
+  Scenario: AZ 5.1A Department Schedule Coordinator Carol has limited access to delete AOs in a Published State
     Given I am working on a term in "Published" SOC state before the first day of class
     And there is a "Draft" course in my department
     When I am logged in as a Department Schedule Coordinator
     Then I have access delete an activity offering in a "Draft" state for a course in my department
 
-  Scenario: Department Schedule Coordinator Carol has limited access to delete AOs in a Open SOC State
+  Scenario: AZ 5.1A Department Schedule Coordinator Carol has limited access to delete AOs in a Open State
     Given I am working on a term in "Open" SOC state
     Then I have access delete an activity offering in a "Draft" state for a course in my department
     And  I have access delete an activity offering in a "Approved" state for a course in my department
 
-  Scenario: Department Schedule Coordinator Carol has limited access to delete Co's in an Open SOC State
+
+  Scenario: AZ 5.1B Department Schedule Coordinator Carol has limited access to delete Co's in an Open State
     Given I am working on a term in "Open" SOC state
     And there is a "Planned" course in my department
     Then I have access to delete a course offering in a "Draft" state for a course in my department
     And I have access to delete a course offering in a "Planned" state for a course in my department
     #not yet implemented - limited access to suspended and cancelled states
+    # TODO AZ 5.1B - there should be tests for 'Final Edits' and 'Published' SOC states
 
   Scenario: AZ 6.1 Department Schedule Coordinator Carol has no access to manage course offerings for a term with SOC State Draft
     Given I am in working on a term in "Draft" SOC state

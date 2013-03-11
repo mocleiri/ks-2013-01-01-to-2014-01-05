@@ -19,13 +19,54 @@ end
 
 Then /^I do not have access to edit the course offering$/ do
   on ManageCourseOfferings do |page|
+    page.ao_results_div.present?.should == true
     page.edit_offering_element.present?.should == false
+  end
+end
+
+Then /^I do not have access to delete the listed course offering$/ do
+  on ManageCourseOfferingList do |page|
+    page.select_cos([@course_offering.course])
+    page.delete_cos_button.enabled?.should be_false
+    page.deselect_cos([@course_offering.course])
+  end
+end
+
+Then /^I do not have access to approve the listed course offering$/ do
+  on ManageCourseOfferingList do |page|
+    page.select_cos([@course_offering.course])
+    page.approve_course_offering_button.enabled?.should be_false
+    page.deselect_cos([@course_offering.course])
+  end
+end
+
+Then /^I do not have access to edit the listed course offering$/ do
+  on ManageCourseOfferingList do |page|
+    page.edit_link(@course_offering.course).present?.should be_false
+  end
+end
+
+Then /^I do not have access to copy the listed course offering$/ do
+  on ManageCourseOfferingList do |page|
+    page.copy_link(@course_offering.course).present?.should be_false
+  end
+end
+
+Then /^I do not have access to add course offerings$/ do
+  on ManageCourseOfferingList do |page|
+    page.add_course_offering_button.present?.should be_false
+  end
+end
+
+Then /^I do not have access to manage registration groups$/ do
+  on ManageCourseOfferings do |page|
+    page.manage_registration_groups_button.present?.should be_false
   end
 end
 
 Then /^an authorization error is displayed when I attempt to edit the course offering$/ do
   on ManageCourseOfferings do |page|
-    page.auth_error.present?.should == true
+    page.auth_error.present?.should be_true
   end
 end
 
@@ -34,6 +75,16 @@ When /^I manage course offerings for a course in my department$/ do
   @course_offering = make CourseOffering, :course=>"ENGL346", :term=>"201612"
   @course_offering.search_by_coursecode
 end
+
+When /^I manage a course offering for a subject code not in my department$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
+  @course_offering.manage
+
+
+
+end
+
 
 When /^I manage course offerings for a subject code not in my department$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
@@ -73,7 +124,7 @@ Then /^I can view course offering details$/ do
   end
 end
 
-Then /^I can manage the course offering$/ do
+Then /^I can manage course offerings$/ do
   on ManageCourseOfferingList do |page|
     page.manage_link(@course_offering.course).present?.should be_true
   end
@@ -151,11 +202,11 @@ Then /^I can copy activity offering$/ do
   end
 end
 
-#Then /^$/ do
-#  on ManageCourseOfferings do |page|
-#    page.copy_link(@activity_offering.code).present?.should be_true
-#  end
-#end
+Then /^I can manage registration groups$/ do
+  on ManageCourseOfferings do |page|
+    page.manage_registration_groups_button.present?.should be_true
+  end
+end
 
 Then /^I do not have access to manage the course offering$/ do
   #on ManageCourseOfferingList do |page|
@@ -172,7 +223,6 @@ Then /^I do not have access to create the course offering$/ do
     page.auth_error.present?.should == true
   end
 end
-
 
 When /^I attempt to create a course not in my department$/ do
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "CHEM132"
