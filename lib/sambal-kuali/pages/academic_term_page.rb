@@ -39,6 +39,16 @@ class AcademicTermPage < BasePage
   action(:key_date_allday) { |term_index, key_date_group_index, key_date_index, b| b.frm.checkbox(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].allDay").checked?}
   action(:key_date_daterange) { |term_index, key_date_group_index, key_date_index, b| b.frm.checkbox(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].dateRange").checked?}
 
+  action(:key_date_start_date_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].startDate")}
+  action(:key_date_end_date_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].endDate")}
+  action(:key_date_starttime_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].startTime")}
+  action(:key_date_endtime_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].endTime")}
+  action(:key_date_starttimeampm_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.select(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].startTimeAmPm")}
+  action(:key_date_endtimeampm_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.select(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].endTimeAmPm")}
+  action(:key_date_allday_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.checkbox(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].allDay")}
+  action(:key_date_daterange_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.checkbox(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].dateRange")}
+
+
   action(:key_date_add) { |term_index, key_date_group_index, b| b.frm.button(id: "acal-term-keydates_line#{term_index}_line#{key_date_group_index}_add").click; b.loading.wait_while_present}
 
   action(:get_term_type) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].name").value }
@@ -47,7 +57,7 @@ class AcademicTermPage < BasePage
 
   action(:term_make_official_button) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").text}
   action(:term_make_official_enabled) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").enabled?}
-  action(:make_term_official) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").click; b.loading.wait_while_present}
+  action(:make_term_official) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").click; b.loading.wait_while_present(300)}
 
   action(:delete_term) { |term_index,b| b.frm.a(id: "term_delete_button_line#{term_index}").click; b.loading.wait_while_present};
 end

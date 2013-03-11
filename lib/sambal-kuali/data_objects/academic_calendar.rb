@@ -268,6 +268,62 @@ class KeyDate
 
   end
 
+  def edit options={}
+
+    if options[:start_date] != nil
+      on AcademicTermPage  do |page|
+        page.key_date_start_date_edit(1,1,3).set options[:start_date]
+      end
+    end
+
+    if options[:end_date] != nil
+      on AcademicTermPage  do |page|
+        page.key_date_end_date_edit(1,1,3).set options[:end_date]
+      end
+    end
+
+    if options[:all_day] != nil
+      on AcademicTermPage  do |page|
+        page.key_date_allday_edit(1,1,3).set options[:all_day]
+      end
+    end
+
+    if options[:date_range] != nil
+      on AcademicTermPage  do |page|
+        page.key_date_daterange_edit(1,1,3).set options[:date_range]
+      end
+    end
+
+    if options[:start_time] != nil
+      on AcademicTermPage  do |page|
+        page.key_start_time_edit(1,1,3).set options[:start_time]
+      end
+    end
+
+    if options[:end_time] != nil
+      on AcademicTermPage  do |page|
+        page.key_end_time_edit(1,1,3).set options[:end_time]
+      end
+    end
+
+    if options[:start_time_ampm] != nil
+      on AcademicTermPage  do |page|
+        page.key_start_time_ampm_edit(1,1,3).set options[:start_time_ampm]
+      end
+    end
+
+    if options[:end_time_ampm] != nil
+      on AcademicTermPage  do |page|
+        page.key_end_time_ampm_edit(1,1,3).set options[:end_time_ampm]
+      end
+    end
+
+    on AcademicTermPage  do |page|
+      page.make_term_official(1)
+    end
+
+    end
+
   def verify()
     on AcademicTermPage do |page|
       page.key_date_type(0,0,0).should == @key_date_type

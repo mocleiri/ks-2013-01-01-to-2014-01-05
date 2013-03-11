@@ -315,6 +315,20 @@ class CourseOffering
     end
   end
 
+  def check_for_course(costatus)
+   on ManageCourseOfferingList do |page|
+      newco = page.select_co_by_status(costatus)
+      if newco != nil
+        @course = newco
+      else
+        @course = create_co_copy(@course, @term)
+        if costatus == "Planned"
+           approve_course
+        end
+      end
+   end
+  end
+
   def approve_course
    on ManageCourseOfferingList do |page|
       begin

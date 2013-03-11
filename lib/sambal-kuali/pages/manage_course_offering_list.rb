@@ -74,6 +74,8 @@ class ManageCourseOfferingList < BasePage
     if row_by_status(costatus).exists? then
       row_by_status(costatus).checkbox.set
       return row_by_status(costatus).cells[CO_CODE_COLUMN].text
+    else
+      return nil
     end
   end
 

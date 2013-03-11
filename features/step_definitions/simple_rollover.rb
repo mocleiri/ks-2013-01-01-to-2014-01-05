@@ -91,15 +91,15 @@ Then /^the rollover can be released to departments$/ do
   #TODO validation
 end
 
-When /^I am in working on a term in "Open" SOC state$/ do
+When /^I am working on a term in "Open" SOC state$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM
 end
 
-When /^I am in working on a term in "Final Edits" SOC state$/ do
+When /^I am working on a term in "Final Edits" SOC state$/ do
   @term_for_test = Rollover::FINAL_EDITS_SOC_TERM
 end
 
-When /^I am in working on a term in "Published" SOC state$/ do
+When /^I am working on a term in "Published" SOC state before the first day of class$/ do
   @term_for_test = Rollover::PUBLISHED_SOC_TERM
 end
 
