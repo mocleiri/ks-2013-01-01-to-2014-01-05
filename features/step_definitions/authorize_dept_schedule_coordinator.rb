@@ -20,7 +20,7 @@ end
 Then /^I do not have access to edit the course offering$/ do
   on ManageCourseOfferings do |page|
     page.ao_results_div.present?.should == true
-    page.edit_offering_element.present?.should == false
+    page.edit_course_offering_link.present?.should == false
   end
 end
 
@@ -60,7 +60,7 @@ end
 
 Then /^I do not have access to manage registration groups$/ do
   on ManageCourseOfferings do |page|
-    page.manage_registration_groups_button.present?.should be_false
+    page.manage_registration_groups_link.present?.should be_false
   end
 end
 
@@ -118,51 +118,69 @@ When /^I manage a course offering$/ do
   @activity_offering = make ActivityOffering, :code=>"A"
 end
 
-Then /^I can view course offering details$/ do
+Then /^I have access to view course offering details$/ do
   on ManageCourseOfferingList do |page|
     page.view_course_offering_link(@course_offering.course).present?.should be_true
   end
 end
 
-Then /^I can manage course offerings$/ do
+Then /^I have access to manage course offerings$/ do
   on ManageCourseOfferingList do |page|
     page.manage_link(@course_offering.course).present?.should be_true
   end
 end
 
-Then /^I can add new course offerings$/ do
+Then /^I have access to add new course offerings$/ do
   on ManageCourseOfferingList do |page|
     page.create_course_offering_button.present?.should == true
   end
 end
 
-Then /^I can approve course offerings for scheduling$/ do
+Then /^I have access to approve course offerings for scheduling$/ do
   on ManageCourseOfferingList do |page|
     page.select_cos([@course_offering.course])
     page.approve_course_offering_button.present?.should == true
   end
 end
 
-Then /^I can delete course offerings$/ do
+Then /^I have access to delete course offerings$/ do
   on ManageCourseOfferingList do |page|
     page.select_cos([@course_offering.course])
     page.approve_course_offering_button.present?.should == true
   end
 end
 
-Then /^I can edit course offerings$/ do
+Then /^I have access to edit course offerings$/ do
   on ManageCourseOfferingList do |page|
     page.edit_link(@course_offering.course).present?.should be_true
   end
 end
 
-Then /^I can copy course offerings$/ do
+Then /^I have access to copy course offerings$/ do
   on ManageCourseOfferingList do |page|
     page.copy_link(@course_offering.course).present?.should be_true
   end
 end
 
-Then /^I can view the activity offering details$/ do
+Then /^I have access to delete the course offering$/ do
+  on ManageCourseOfferings do |page|
+    page.delete_course_offering_link.present?.should be_true
+  end
+end
+
+Then /^I have access to edit the course offering$/ do
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering_link.present?.should be_true
+  end
+end
+
+Then /^I have access to view the course offering details$/ do
+  on ManageCourseOfferings do |page|
+    page.view_co_details_link.present?.should be_true
+  end
+end
+
+Then /^I have access to view the activity offering details$/ do
   on ManageCourseOfferings do |page|
     page.view_activity_offering_link(@activity_offering.code).present?.should be_true
   end
@@ -176,13 +194,13 @@ Then /^the next, previous and list all course offering links are enabled$/ do
   end
 end
 
-Then /^I can add a new activity offering$/ do
+Then /^I have access to add a new activity offering$/ do
   on ManageCourseOfferings do |page|
     page.add_activity_button.present?.should be_true
   end
 end
 
-Then /^I can delete an activity offering$/ do
+Then /^I have access to delete an activity offering$/ do
   on ManageCourseOfferings do |page|
     page.select_aos([@activity_offering.code])
     page.delete_aos_button.present?.should be_true
@@ -190,21 +208,21 @@ Then /^I can delete an activity offering$/ do
   end
 end
 
-Then /^I can edit an activity offering$/ do
+Then /^I have access to edit an activity offering$/ do
   on ManageCourseOfferings do |page|
     page.edit_link(@activity_offering.code).present?.should be_true
   end
 end
 
-Then /^I can copy activity offering$/ do
+Then /^I have access to copy activity offering$/ do
   on ManageCourseOfferings do |page|
     page.copy_link(@activity_offering.code).present?.should be_true
   end
 end
 
-Then /^I can manage registration groups$/ do
+Then /^I have access to manage registration groups$/ do
   on ManageCourseOfferings do |page|
-    page.manage_registration_groups_button.present?.should be_true
+    page.manage_registration_groups_link.present?.should be_true
   end
 end
 
@@ -244,7 +262,6 @@ When /^I have access to create the course from an existing offering$/ do
     page.create_from_existing_offering_tab
     page.configure_course_offering_copy_element.present?.should == true
   end
-
 end
 
 When /^there is a "([^"]*)" course in my department/ do |costate|
@@ -264,7 +281,7 @@ When /^there is a "([^"]*)" course present/ do |costate|
   @newCO = @course_offering.course
 end
 
-When /^I have access delete an activity offering in a "([^"]*)" state for a course in my department$/ do |aostate|
+When /^I have access to delete an activity offering in a "([^"]*)" state for a course in my department$/ do |aostate|
   if @newCO
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => @newCO
   else
@@ -290,7 +307,7 @@ When /^I edit a course offering in my department$/ do
   @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL206"
   @course_offering.manage
   on ManageCourseOfferings do |page|
-    page.edit_offering
+    page.edit_course_offering
   end
 end
 
@@ -299,11 +316,11 @@ When /^I attempt to edit a course offering in my department$/ do
   @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL206"
   @course_offering.manage
   on ManageCourseOfferings do |page|
-    page.edit_offering_element.present?.should be_false
+    page.edit_course_offering_link.present?.should be_false
   end
 end
 
-Then /^I can edit the grading options$/ do
+Then /^I have access to edit the grading options$/ do
   on CourseOfferingEdit do |page|
     page.grading_option_letter.present?.should be_true
   end

@@ -1,4 +1,4 @@
-Then /^I have access delete an activity offering in a "([^"]*)" state$/ do |aostate|
+Then /^I have access to delete an activity offering in a "([^"]*)" state$/ do |aostate|
   if @newCO
     @course_offering = make CourseOffering, :term=> @term_for_test, :course => @newCO
   else
@@ -13,7 +13,7 @@ Then /^I have access to delete a course offering in a "([^"]*)" state$/ do |cost
   @course_offering.attempt_co_delete_by_status(costate).should == true
 end
 
-Then /^I do not have access delete an activity offering in a "([^"]*)" state$/ do |aostate|
+Then /^I do not have access to delete an activity offering in a "([^"]*)" state$/ do |aostate|
   if @newCO
     @course_offering = make CourseOffering, :term=> @term_for_test, :course => @newCO
   else

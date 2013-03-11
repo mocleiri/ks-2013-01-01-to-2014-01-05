@@ -44,7 +44,7 @@ And /^I edit the course offering to add alias$/ do
   @course_offering.search_by_subj=false
   @course_offering.manage
   on ManageCourseOfferings do |page|
-    page.edit_offering
+    page.edit_course_offering
   end
   on CourseOfferingEdit do |page|
     page.cross_listed_co_check_box.click
@@ -71,7 +71,7 @@ And /^I remove a cross-listed Course Offering$/ do
   @course_offering.search_by_subj=false
   @course_offering.manage
   on ManageCourseOfferings do |page|
-      page.edit_offering
+      page.edit_course_offering
   end
   on CourseOfferingEdit do |page|
     page.cross_listed_co_check_box.click

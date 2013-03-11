@@ -20,16 +20,19 @@ class ManageCourseOfferings < BasePage
   element(:input_code) { |b| b.frm.text_field(name: "inputCode") }
 
   element(:manage_offering_links_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-CourseOfferingLinks")}
-  action(:delete_offering) { |b| b.manage_offering_links_div.link(id: "ActivityOfferingResultSection-deleteOneCoWithLink").click; b.loading.wait_while_present }
-  element(:manage_registration_groups_button) { |b| b.manage_offering_links_div.link(id: "manage_reg_group") }
-  action(:manage_registration_groups) { |b| b.manage_registration_groups_button.click }
+  element(:view_co_details_link) { |b| b.manage_offering_links_div.link(text: "View") }
+  element(:edit_course_offering_link) { |b| b.frm.link(id: "edit_co")}
+  action(:edit_course_offering) { |b| b.edit_course_offering_link.click; b.loading.wait_while_present(200) }
+  action(:delete_course_offering_link) { |b| b.manage_offering_links_div.link(id: "ActivityOfferingResultSection-deleteOneCoWithLink") }
+  action(:delete_course_offering) { |b| b.delete_course_offering_link.click; b.loading.wait_while_present }
+  element(:manage_registration_groups_link) { |b| b.manage_offering_links_div.link(id: "manage_reg_group") }
+  action(:manage_registration_groups) { |b| b.manage_registration_groups_link.click }
 
   action(:show) { |b| b.frm.button(text: "Show").click; sleep 2; b.loading.wait_while_present(180) }
 
   element(:ao_results_div) { |b| b.frm.div(id: "ActivityOfferingResultSection") }
   value(:course_title) { |b| b.ao_results_div.h3.text }
-  element(:edit_offering_element) { |b| b.frm.link(id: "edit_co")}
-  action(:edit_offering) { |b| b.edit_offering_element.click; b.loading.wait_while_present(200) }
+
 
   element(:format) { |b| b.frm.select(name: "formatIdForNewAO") }
   element(:activity_type) { |b| b.frm.select(name: "activityIdForNewAO") }

@@ -595,7 +595,7 @@ class CourseOffering
     end
 
     on ManageCourseOfferings do |page|
-      page.delete_offering
+      page.delete_course_offering
     end
     on DeleteCourseOffering do |page|
       case should_confirm_delete

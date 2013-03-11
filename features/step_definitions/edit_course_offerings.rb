@@ -26,7 +26,7 @@ When /^I edit a course offering with multiple format types$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM132")
   @course_offering.manage
   on ManageCourseOfferings do |page|
-    page.edit_offering
+    page.edit_course_offering
   end
 end
 
@@ -63,7 +63,7 @@ When /^I edit a course offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM132")
   @course_offering.manage
   on ManageCourseOfferings do |page|
-    page.edit_offering
+    page.edit_course_offering
   end
 end
 
