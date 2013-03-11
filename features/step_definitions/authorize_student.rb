@@ -7,7 +7,6 @@ When /^I navigate to manage course offerings and I do not have access$/ do
 end
 
 When /^I navigate to create course offerings and I do not have access$/ do
-  @direct_navigation = make DirectNavigation
   go_to_create_course_offerings
   on ErrorPage do |page|
     page.error_401.should == true
@@ -58,4 +57,11 @@ When /^I do not have direct access to the create course offerings page$/ do
   on ErrorPage do |page|
     page.error_401.should == true
   end
+end
+
+Given /^There is direct access to edit a course offering$/ do
+  step "I am logged in as a Schedule Coordinator"
+  @direct_navigation = make DirectNavigation
+  @direct_navigation.setup_navigation
+  step "I am logged in as a Student"
 end

@@ -32,4 +32,12 @@ class DirectNavigation
     set_options(options)
   end
 
+  def setup_navigation
+    @course_offering = make CourseOffering, :term=>"201201", :course=>"CHEM132"
+    @course_offering.manage
+    on ManageCourseOfferings do |page|
+      page.edit('A')
+    end
+    @edit_activity_offering = @browser.url
+  end
 end
