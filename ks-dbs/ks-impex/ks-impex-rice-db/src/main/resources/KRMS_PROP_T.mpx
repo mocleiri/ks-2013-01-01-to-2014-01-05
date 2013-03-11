@@ -191,7 +191,7 @@ PROP_ID,DESC_TXT,TYP_ID,DSCRM_TYP_CD,CMPND_OP_CD,RULE_ID,VER_NBR,CMPND_SEQ_NO
 "10189","Must meet all of the following","10076","C","&","10140","1","${mpx.null}"
 "10190","Must have successfully completed all courses from <courses>","10018","S","${mpx.null}","10140","1","${mpx.null}"
 "10191","Must have successfully completed a minimum of <n> courses from <courses>","10019","S","${mpx.null}","10140","1","${mpx.null}"
-"10192","Must meet 1 of the following","10077","C","&","10065","1","${mpx.null}"
+"10192","Must meet all of the following","10076","C","&","10065","1","${mpx.null}"
 "10193","Must have successfully completed all courses from <courses>","10018","S","${mpx.null}","10065","1","${mpx.null}"
 "10194","Must have successfully completed a minimum of <n> courses from <courses>","10019","S","${mpx.null}","10065","1","${mpx.null}"
 "10195","Permission of <administering org> required","10035","S","${mpx.null}","10109","1","${mpx.null}"
