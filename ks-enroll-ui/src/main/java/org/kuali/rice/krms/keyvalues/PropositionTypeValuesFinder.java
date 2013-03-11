@@ -31,7 +31,6 @@ import org.kuali.rice.krms.api.repository.typerelation.TypeTypeRelation;
 import org.kuali.rice.krms.impl.repository.KrmsRepositoryServiceLocator;
 import org.kuali.student.enrollment.class1.krms.dto.RuleEditor;
 import org.kuali.student.krms.naturallanguage.util.KsKrmsConstants;
-import org.kuali.student.krms.naturallanguage.util.KsKrmsRepositoryServiceLocator;
 import org.kuali.student.enrollment.class2.courseoffering.service.decorators.PermissionServiceConstants;
 
 import javax.xml.namespace.QName;

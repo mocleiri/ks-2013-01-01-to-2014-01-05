@@ -147,7 +147,7 @@ public class PropositionEditor implements PropositionDefinitionContract, Seriali
 
     @Override
     public String getRuleId() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return this.ruleId;
     }
 
     public void setPropositionTypeCode(String propositionTypeCode) {
@@ -253,7 +253,7 @@ public class PropositionEditor implements PropositionDefinitionContract, Seriali
 
     @Override
     public Long getVersionNumber() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return this.versionNumber;
     }
 
     /**

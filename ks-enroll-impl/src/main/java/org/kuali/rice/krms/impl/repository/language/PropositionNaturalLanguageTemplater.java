@@ -52,6 +52,15 @@ public class PropositionNaturalLanguageTemplater implements NaturalLanguageTempl
     private TermBoService termBoService = new TermBoServiceImpl();
 
     /**
+     * Relational operator token.
+     */
+    public final static String OPERATOR_TOKEN = "relationalOperator";
+    /**
+     * An integer value token.
+     */
+    public final static String CONSTANT_VALUE_TOKEN = "intValue";
+
+    /**
      * Velocity template engine.
      */
     private VelocityTemplateEngine templateEngine = new VelocityTemplateEngine();
@@ -105,17 +114,20 @@ public class PropositionNaturalLanguageTemplater implements NaturalLanguageTempl
      */
     private Map<String, Object> buildContextMap(String nlTemplateTypeId, Map<String, Object> parametersMap) throws Exception {
 
+        Map<String, Object> contextMap = new HashMap<String, Object>();
+        //Add proposition constant to contextMap.
+        if(parametersMap.containsKey(PropositionParameterType.CONSTANT.getCode())){
+            contextMap.put(CONSTANT_VALUE_TOKEN,(String) parametersMap.get(PropositionParameterType.CONSTANT.getCode()));
+        }
+        //Add proposition operator to contextMap.
+        if(parametersMap.containsKey(PropositionParameterType.OPERATOR.getCode())){
+            contextMap.put(OPERATOR_TOKEN,(String) parametersMap.get(PropositionParameterType.OPERATOR.getCode()));
+        }
         //Access type service to retrieve type name.
         KrmsTypeDefinitionContract type = getKrmsTypeRepositoryService().getTypeById(nlTemplateTypeId);
         List<Context<TermDefinitionContract>> contextList = this.contextRegistry.get(type.getName());
         if(contextList == null || contextList.isEmpty()) {
-        	throw new Exception("Proposition context not found in registry for proposition type id: " + nlTemplateTypeId);
-        }
-        Map<String, Object> contextMap = new HashMap<String, Object>();
-
-        //Add proposition constant to contextMap.
-        if(parametersMap.containsKey(PropositionParameterType.CONSTANT.getCode())){
-            contextMap.put(TermParameterTypes.INTEGER_VALUE1_KEY.getId(),(String) parametersMap.get(PropositionParameterType.CONSTANT.getCode()));
+            return contextMap;
         }
         //Retrieve term id from proposition parameters and load.
         if(parametersMap.containsKey(PropositionParameterType.TERM.getCode())){

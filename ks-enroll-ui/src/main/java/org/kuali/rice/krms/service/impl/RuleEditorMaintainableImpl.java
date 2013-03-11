@@ -46,7 +46,6 @@ import org.kuali.rice.krms.service.TemplateRegistry;
 import org.kuali.rice.krms.tree.node.RuleEditorTreeNode;
 import org.kuali.rice.krms.service.RuleEditorMaintainable;
 import org.kuali.student.enrollment.class2.courseoffering.service.decorators.PermissionServiceConstants;
-import org.kuali.student.krms.naturallanguage.util.KsKrmsRepositoryServiceLocator;
 import org.kuali.rice.krms.util.PropositionTreeUtil;
 import org.kuali.student.enrollment.uif.service.impl.KSMaintainableImpl;
 import org.kuali.student.mock.utilities.TestHelper;

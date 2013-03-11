@@ -31,14 +31,6 @@ public class BasicContextImpl extends AbstractContext<TermDefinitionContract> {
 	 * e.g. '$NLHelper.getProperGrammer($intValue, "course", "courses")'
 	 */
 	public final static String NL_HELPER_TOKEN = "NLHelper";
-	/**
-	 * Relational operator token.
-	 */
-	public final static String OPERATOR_TOKEN = "relationalOperator";
-	/**
-	 * An integer value token.
-	 */
-	public final static String INTEGER_VALUE_TOKEN = "intValue";
 
 	/**
 	 * Constructor.
@@ -55,17 +47,8 @@ public class BasicContextImpl extends AbstractContext<TermDefinitionContract> {
      * @throws org.kuali.student.r2.common.exceptions.OperationFailedException Creating context map fails
      */
     public Map<String, Object> createContextMap(TermDefinitionContract term, ContextInfo contextInfo) throws OperationFailedException {
-    	String value = getTermParameterValue(term, TermParameterTypes.INTEGER_VALUE1_KEY.getId());
-    	String operator = getTermParameterValue(term, TermParameterTypes.OPERATOR_KEY.getId());
-    	
     	Map<String, Object> contextMap = super.createContextMap(term, contextInfo);
         contextMap.put(NL_HELPER_TOKEN, NLHelper.class);
-		if(operator != null) {
-	        contextMap.put(OPERATOR_TOKEN, operator);
-		}
-		if(value != null) {
-			contextMap.put(INTEGER_VALUE_TOKEN, Integer.valueOf(value));
-		}
 
         return contextMap;
     }

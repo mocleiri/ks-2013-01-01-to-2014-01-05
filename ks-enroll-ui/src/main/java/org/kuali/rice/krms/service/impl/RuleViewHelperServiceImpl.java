@@ -33,7 +33,6 @@ import org.kuali.rice.krms.util.PropositionTreeUtil;
 import org.kuali.rice.krms.dto.TemplateInfo;
 import org.kuali.rice.krms.service.RuleViewHelperService;
 import org.kuali.student.krms.naturallanguage.util.KsKrmsConstants;
-import org.kuali.student.krms.naturallanguage.util.KsKrmsRepositoryServiceLocator;
 import org.kuali.student.enrollment.class2.courseoffering.service.decorators.PermissionServiceConstants;
 import org.kuali.student.enrollment.uif.service.impl.KSViewHelperServiceImpl;
 import org.kuali.student.r2.common.dto.ContextInfo;
