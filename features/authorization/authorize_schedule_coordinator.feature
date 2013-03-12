@@ -25,6 +25,28 @@ Feature: Schedule Coordinator Authorization
     Then I have access to delete a course offering in a "Draft" state
     And I have access to delete a course offering in a "Planned" state
 
+  Scenario: AZ 6.1 As a Schedule Coordinator I have access to Course Offerings for a term in Draft SOC state (manage CO view)
+    Given I am in working on a term in "Draft" SOC state
+    When I manage a course offering
+    Then I have access to view the course offering details
+    And I have access to delete the course offering
+    And I have access to edit the course offering
+
+  Scenario: AZ 6.2 Schedule Coordinator has access to edit course offering grading option for a term with SOC State Open
+    Given I am working on a term in "Open" SOC state
+    When I edit an existing course offering
+    Then I have access to edit the grading options
+
+  Scenario: AZ 6.2 Schedule Coordinator has access to edit course offering grading option for a term with SOC State Final Edits
+    Given I am working on a term in "Final Edits" SOC state
+    When I edit an existing course offering
+    Then I have access to edit the grading options
+
+  Scenario: AZ 6.2 Schedule Coordinator has access to edit course offering grading option for a term with SOC State Published
+    Given I am working on a term in "Published" SOC state
+    When I edit an existing course offering
+    Then I have access to edit the grading options
+
   Scenario: AZ 6.1 As a Schedule Coordinator I have access to Activity Offerings for a term in Draft SOC state
     Given I am in working on a term in "Draft" SOC state
     When I manage a course offering
@@ -45,25 +67,65 @@ Feature: Schedule Coordinator Authorization
     And I have access to edit course offerings
     And I have access to copy course offerings
 
-  Scenario: AZ 6.1 As a Schedule Coordinator I have access to Course Offerings for a term in Draft SOC state (manage CO view)
-    Given I am in working on a term in "Draft" SOC state
-    When I manage a course offering
-    Then I have access to view the course offering details
-    And I have access to delete the course offering
-    And I have access to edit the course offering
-
-
-  Scenario: AZ 6.2 Schedule Coordinator has access to edit course offering grading option for a term with SOC State Open
+  Scenario: AZ FULL CONFIG Schedule Coordinator has full access the Manage CO set of pages (Open SOC)
     Given I am working on a term in "Open" SOC state
-    When I edit a course offering in my department
-    Then I have access to edit the grading options
+    When I manage course offerings for a subject code in my department
+    Then I have access to view course offering details
+    And I have access to add new course offerings
+    And I have access to approve course offerings for scheduling
+    And I have access to delete course offerings
+    And I have access to edit course offerings
+    And I have access to copy course offerings
 
-  Scenario: AZ 6.2 Schedule Coordinator has access to edit course offering grading option for a term with SOC State Final Edits
+  Scenario: AZ FULL CONFIG Schedule Coordinator Carol can access the Manage AO set of pages for COs (Open SOC)
+    Given I am working on a term in "Open" SOC state
+    When I manage a course offering in my department
+    Then I have access to view the activity offering details
+    And the next, previous and list all course offering links are enabled
+    And I have access to add a new activity offering
+    And I have access to delete an activity offering
+    And I have access to edit an activity offering
+    And I have access to copy activity offering
+    And I have access to manage registration groups
+
+  Scenario: AZ FULL CONFIG Schedule Coordinator has full access the Manage CO set of pages (Final Edits SOC)
     Given I am working on a term in "Final Edits" SOC state
-    When I edit a course offering in my department
-    Then I have access to edit the grading options
+    When I manage course offerings for a subject code in my department
+    Then I have access to view course offering details
+    And I have access to add new course offerings
+    And I have access to approve course offerings for scheduling
+    And I have access to delete course offerings
+    And I have access to edit course offerings
+    And I have access to copy course offerings
 
-  Scenario: AZ 6.2 Schedule Coordinator has access to edit course offering grading option for a term with SOC State Published
+  Scenario: AZ FULL CONFIG Schedule Coordinator Carol can access the Manage AO set of pages for COs (Final Edits SOC)
+    Given I am working on a term in "Final Edits" SOC state
+    When I manage a course offering in my department
+    Then I have access to view the activity offering details
+    And the next, previous and list all course offering links are enabled
+    And I have access to add a new activity offering
+    And I have access to delete an activity offering
+    And I have access to edit an activity offering
+    And I have access to copy activity offering
+    And I have access to manage registration groups
+
+  Scenario: AZ FULL CONFIG Schedule Coordinator has full access the Manage CO set of pages (Published SOC)
     Given I am working on a term in "Published" SOC state
-    When I edit a course offering in my department
-    Then I have access to edit the grading options
+    When I manage course offerings for a subject code in my department
+    Then I have access to view course offering details
+    And I have access to add new course offerings
+    And I have access to approve course offerings for scheduling
+    And I have access to delete course offerings
+    And I have access to edit course offerings
+    And I have access to copy course offerings
+
+  Scenario: AZ FULL CONFIG Schedule Coordinator Carol can access the Manage AO set of pages for COs (Published SOC)
+    Given I am working on a term in "Published" SOC state
+    When I manage a course offering in my department
+    Then I have access to view the activity offering details
+    And the next, previous and list all course offering links are enabled
+    And I have access to add a new activity offering
+    And I have access to delete an activity offering
+    And I have access to edit an activity offering
+    And I have access to copy activity offering
+    And I have access to manage registration groups

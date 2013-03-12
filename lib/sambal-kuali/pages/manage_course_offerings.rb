@@ -10,9 +10,9 @@ class ManageCourseOfferings < BasePage
 
   element(:error_message_course_not_found) { |b| b.frm.li(class: "uif-errorMessageItem") }
 
-  element(:previous_course_link){ |b| b.frm.link(id: "u186") } # Persistent ID needed!
-  element(:list_all_course_link){ |b| b.frm.link(id: "u189") } # Persistent ID needed!
-  element(:next_course_link){ |b| b.frm.link(id: "u192") }     # Persistent ID needed!
+  element(:previous_course_link){ |b| b.frm.link(id: "u366") } # Persistent ID needed!
+  element(:list_all_course_link){ |b| b.frm.link(id: "u369") } # Persistent ID needed!
+  element(:next_course_link){ |b| b.frm.link(id: "u372") }     # Persistent ID needed!
 
   element(:term) { |b| b.frm.text_field(name: "termCode") }
   element(:course_offering_code) { |b| b.frm.radio(value: "courseOfferingCode") }

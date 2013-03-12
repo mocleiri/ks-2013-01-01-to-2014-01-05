@@ -14,6 +14,7 @@ class CourseOfferingEdit < BasePage
   value(:course_code) { |b| b.frm.course_code_element.text() }
   element(:suffix) { |b| b.frm.div(data_label: "Course Number Suffix").text_field }
 
+  element(:grading_option_div) { |b| b.frm.div(id: "gradingOptionId") }
   element(:grading_option_letter) { |b| b.frm.radio(value: "kuali.resultComponent.grade.letter") }
   element(:credit_type_option_fixed) { |b| b.frm.radio(value: "kuali.result.values.group.type.fixed") }
   element(:credits) { |b| b.frm.div(data_label: "Credits").text_field() }
