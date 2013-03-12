@@ -39,7 +39,7 @@ import java.io.Serializable;
                 "id", "typeKey", "stateKey", "name", "descr", 
                 "formatOfferingId", "formatOfferingName",
                 "activityId", "termId", "termCode", "activityCode", 
-                "scheduleId", "schedulingStateKey",
+                "scheduleIds", "schedulingStateKey",
                 "isHonorsOffering", "gradingOptionKeys", "instructors",
                 "weeklyInclassContactHours", "weeklyOutofclassContactHours", 
                 "weeklyTotalContactHours",  "isEvaluated",

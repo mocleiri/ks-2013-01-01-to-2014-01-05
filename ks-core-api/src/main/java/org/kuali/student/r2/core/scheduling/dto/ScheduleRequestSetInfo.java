@@ -5,6 +5,7 @@ import org.kuali.student.r2.core.scheduling.infc.ScheduleRequestSet;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ScheduleInfo", propOrder = {"id", "typeKey", "stateKey", "name", "descr",
+@XmlType(name = "ScheduleRequestSetInfo", propOrder = {"id", "typeKey", "stateKey", "name", "descr",
         "refObjectIds", "refObjectTypeKey", "isMaxEnrollmentShared", "maximumEnrollment",
         "meta", "attributes", "_futureElements" })
 public class ScheduleRequestSetInfo extends IdEntityInfo implements ScheduleRequestSet, Serializable {
@@ -29,7 +30,8 @@ public class ScheduleRequestSetInfo extends IdEntityInfo implements ScheduleRequ
     private Boolean isMaxEnrollmentShared;
     @XmlElement
     private Integer maximumEnrollment;
-
+    @XmlAnyElement
+    private List<Object> _futureElements;
 
     @Override
     public List<String> getRefObjectIds() {
