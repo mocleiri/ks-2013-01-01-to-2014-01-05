@@ -209,6 +209,11 @@ public class PostalAddress implements Identifiable {
         this.isDefault = isDefault;
     }
 
+    @Transient
+    public Boolean getDefault() {
+        return isDefault;
+    }
+
     /**
      * Get Address line 1, state, postalCode, and country of the default PostalAddress Set record
      */

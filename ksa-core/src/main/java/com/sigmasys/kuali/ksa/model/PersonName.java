@@ -183,6 +183,11 @@ public class PersonName implements Identifiable {
         this.isDefault = isDefault;
     }
 
+    @Transient
+    public Boolean getDefault() {
+        return isDefault;
+    }
+
     /**
      * Get lastName, firstName of the default PersonName Set record
      */

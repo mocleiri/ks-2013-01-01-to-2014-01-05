@@ -215,19 +215,6 @@ public class Generate1098TController extends DownloadController {
             Account account = findAccount(userId);
 
             form.setAccount(account);
-
-            // Find and set the AccountProtectedInfo if exists:
-            AccountProtectedInfo accountProtectedInfo = accountService.getAccountProtectedInfo(userId);
-
-            // Create a default object if one does not exist:
-            if (accountProtectedInfo == null) {
-                accountProtectedInfo = new AccountProtectedInfo();
-                accountProtectedInfo.setBankType(new BankType());
-                accountProtectedInfo.setTaxType(new TaxType());
-                accountProtectedInfo.setIdentityType(new IdentityType());
-            }
-
-            form.setAccountProtectedInfo(accountProtectedInfo);
         }
 
         // Set the report year to the current year:

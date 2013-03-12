@@ -19,11 +19,6 @@ public class Generate1098TForm extends AbstractViewModel {
 	 */
 	private Account account;
 
-    /**
-     * AccountProtectedInfo object associated with the current account.
-     */
-    private AccountProtectedInfo accountProtectedInfo;
-	
 	/**
 	 * A List of reporting years. Multiple selection is allowed. 
 	 */
@@ -94,12 +89,4 @@ public class Generate1098TForm extends AbstractViewModel {
 	public void setForm1098TModels(List<Form1098TModel> form1098TModels) {
 		this.form1098TModels = form1098TModels;
 	}
-
-    public AccountProtectedInfo getAccountProtectedInfo() {
-        return accountProtectedInfo;
-    }
-
-    public void setAccountProtectedInfo(AccountProtectedInfo accountProtectedInfo) {
-        this.accountProtectedInfo = accountProtectedInfo;
-    }
 }

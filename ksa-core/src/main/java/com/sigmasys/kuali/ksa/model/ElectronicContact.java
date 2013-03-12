@@ -179,4 +179,9 @@ public class ElectronicContact implements Identifiable {
     public void setDefault(Boolean isDefault) {
         this.isDefault = isDefault;
     }
+
+    @Transient
+    public Boolean getDefault() {
+        return isDefault;
+    }
 }

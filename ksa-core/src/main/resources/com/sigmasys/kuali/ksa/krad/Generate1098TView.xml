@@ -239,7 +239,6 @@
 		<property name="hidden" value="true"/>
 		<property name="items">
 			<list>
-				<ref bean="biographicInformationContentSection"/>
 				<ref bean="accountInformationContentSection"/>
 			</list>
 		</property>
@@ -253,7 +252,7 @@
                 <value>ksa-group-content</value>
             </list>
         </property>
-		<property name="headerText" value="Account Information"/>
+		<property name="headerText" value="@{account.defaultPersonName.displayValue}"/>
 		<property name="items">
 			<list>
 				<!-- Account information section -->
@@ -261,41 +260,58 @@
                     <property name="readOnly" value="true"/>
 					<property name="items">
 						<list>
-							<!-- Account Info section -->
+							<!-- Name section -->
 							<bean parent="Uif-VerticalBoxSection">
 								<property name="items">
 									<list>
-										<bean parent="Uif-DataField" p:label="Status" p:shortLabel="STAT" p:labelPlacement="LEFT"  p:propertyName="account.statusType.name" p:style="padding-left: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Account Type" p:shortLabel="TYP" p:labelPlacement="LEFT"  p:propertyName="accountType" p:style="padding-left: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Date of Birth" p:shortLabel="DOB" p:labelPlacement="LEFT"  p:propertyName="account.dateOfBirth" p:style="padding-left: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Credit Limit" p:shortLabel="CRLM" p:labelPlacement="LEFT"  p:propertyName="account.creditLimit" p:style="padding-left: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Late Period" p:shortLabel="LTPR" p:labelPlacement="LEFT"  p:propertyName="account.latePeriod.name" p:style="padding-left: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Can Authenticate" p:shortLabel="AUTH" p:labelPlacement="LEFT"  p:propertyName="account.ableToAuthenticate" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="First Name" p:shortLabel="FN" p:labelPlacement="LEFT" p:propertyName="account.defaultPersonName.firstName" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Middle Name" p:shortLabel="MN" p:labelPlacement="LEFT" p:propertyName="account.defaultPersonName.middleName" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Last Name" p:shortLabel="LN" p:labelPlacement="LEFT" p:propertyName="account.defaultPersonName.lastName" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Suffix" p:shortLabel="SU" p:labelPlacement="LEFT" p:propertyName="account.defaultPersonName.suffix" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Title" p:shortLabel="TI" p:labelPlacement="LEFT" p:propertyName="account.defaultPersonName.title" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="KIM Type" p:shortLabel="NKT" p:labelPlacement="LEFT" p:propertyName="account.defaultPersonName.kimNameType" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-MessageField" p:messageText="Default: @{account.defaultPersonName.default ? 'Yes' : 'No'}" p:style="padding-left: 5px;"/>
 									</list>
 								</property>
 							</bean>
 							
-							<!-- Bank Type, Tax Type and Identity Type section -->
-							<bean parent="Uif-VerticalBoxGroup">
+							<!-- Postal Address section -->
+							<bean parent="Uif-VerticalBoxSection">
 								<property name="items">
 									<list>
-										<bean parent="Uif-DataField" p:label="Bank Type" p:shortLabel="BT" p:labelPlacement="LEFT"  p:propertyName="accountProtectedInfo.bankType.name" p:style="padding-left: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Bank Details" p:shortLabel="BD" p:labelPlacement="TOP"  p:propertyName="accountProtectedInfo.bankDetails" p:style="padding-left: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Tax Type" p:shortLabel="TT" p:labelPlacement="LEFT"  p:propertyName="accountProtectedInfo.taxType.name" p:style="padding-left: 5px; padding-top: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Tax Details" p:shortLabel="TD" p:labelPlacement="TOP"  p:propertyName="accountProtectedInfo.taxReference" p:style="padding-left: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Identity Type" p:shortLabel="IT" p:labelPlacement="LEFT"  p:propertyName="accountProtectedInfo.identityType.name" p:style="padding-left: 5px; padding-top: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Identity Serial" p:shortLabel="IS" p:labelPlacement="LEFT"  p:propertyName="accountProtectedInfo.identitySerial" p:style="padding-left: 5px;"/>
-										<bean parent="Uif-DataField" p:label="Identity Issuer" p:shortLabel="II" p:labelPlacement="LEFT"  p:propertyName="accountProtectedInfo.identityIssuer" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Address Line 1" p:shortLabel="AL1" p:labelPlacement="LEFT" p:propertyName="account.defaultPostalAddress.streetAddress1" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Address Line 2" p:shortLabel="AL2" p:labelPlacement="LEFT" p:propertyName="account.defaultPostalAddress.streetAddress2" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Address Line 3" p:shortLabel="AL3" p:labelPlacement="LEFT" p:propertyName="account.defaultPostalAddress.streetAddress3" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="City" p:shortLabel="CI" p:labelPlacement="LEFT" p:propertyName="account.defaultPostalAddress.city" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="State" p:shortLabel="ST" p:labelPlacement="LEFT" p:propertyName="account.defaultPostalAddress.state" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Postal Code" p:shortLabel="ZIP" p:labelPlacement="LEFT" p:propertyName="account.defaultPostalAddress.postalCode" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Country" p:shortLabel="CO" p:labelPlacement="LEFT" p:propertyName="account.defaultPostalAddress.country" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="KIM Type" p:shortLabel="AKT" p:labelPlacement="LEFT" p:propertyName="account.defaultPostalAddress.kimAddressType" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-MessageField" p:messageText="Default: @{account.defaultPostalAddress.default ? 'Yes' : 'No'}" p:style="padding-left: 5px;"/>
 									</list>
 								</property>
 							</bean>
 							
+							<!-- Electronic Contact section -->
+							<bean parent="Uif-VerticalBoxSection">
+								<property name="items">
+									<list>
+										<bean parent="Uif-DataField" p:label="Email" p:shortLabel="EM" p:labelPlacement="LEFT" p:propertyName="account.defaultElectronicContact.emailAddress" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="KIM Email Type" p:shortLabel="EKT" p:labelPlacement="LEFT" p:propertyName="account.defaultElectronicContact.kimEmailAddressType" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-MessageField" p:messageText="   "/>
+										<bean parent="Uif-DataField" p:label="Country Code" p:shortLabel="CC" p:labelPlacement="LEFT" p:propertyName="account.defaultElectronicContact.phoneCountry" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Phone Number" p:shortLabel="PH" p:labelPlacement="LEFT" p:propertyName="account.defaultElectronicContact.phoneNumber" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="Extension" p:shortLabel="" p:labelPlacement="LEFT" p:propertyName="account.defaultElectronicContact.phoneExtension" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-DataField" p:label="KIM Phone Type" p:shortLabel="PKT" p:labelPlacement="LEFT" p:propertyName="account.defaultElectronicContact.kimPhoneType" p:style="padding-left: 5px;"/>
+										<bean parent="Uif-MessageField" p:messageText="Default: @{account.defaultElectronicContact.default ? 'Yes' : 'No'}" p:style="padding-left: 5px;"/>
+									</list>
+								</property>
+							</bean>
 						</list>
 					</property>
 				</bean>
 			</list>
 		</property>
 	</bean>
-	
 	
 </beans>
