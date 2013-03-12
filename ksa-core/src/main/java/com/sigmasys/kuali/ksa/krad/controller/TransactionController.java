@@ -7,6 +7,8 @@ import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +23,8 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/transactionView")
 public class TransactionController extends GenericSearchController {
+
+    private static final Log logger = LogFactory.getLog(TransactionController.class);
 
     @Autowired
     private AuditableEntityService auditableEntityService;
@@ -131,7 +135,12 @@ public class TransactionController extends GenericSearchController {
             if (t.getParentTransaction() instanceof Charge) {
                 balance = balance.add(t.getAmount());
             } else {
-                balance = balance.subtract(t.getAllocatedAmount());
+                BigDecimal allocated = t.getAllocatedAmount();
+                if(allocated == null){
+                    allocated = BigDecimal.ZERO;
+                }
+
+                balance = balance.subtract(allocated);
             }
             t.setRunningBalance(balance);
             unGroupedTransactionModelList.add(t);
