@@ -1,15 +1,25 @@
 package org.kuali.student.r2.core.scheduling.dto;
 
+import org.kuali.student.r2.common.dto.IdEntityInfo;
 import org.kuali.student.r2.core.scheduling.infc.ScheduleRequestSet;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @Author Sri komandur@uw.edu
  */
-public class ScheduleRequestSetInfo implements ScheduleRequestSet {
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ScheduleInfo", propOrder = {"id", "typeKey", "stateKey", "name", "descr",
+        "refObjectIds", "refObjectTypeKey", "isMaxEnrollmentShared", "maximumEnrollment",
+        "meta", "attributes", "_futureElements" })
+public class ScheduleRequestSetInfo extends IdEntityInfo implements ScheduleRequestSet, Serializable {
 
     @XmlElement
     private List<String> refObjectIds;

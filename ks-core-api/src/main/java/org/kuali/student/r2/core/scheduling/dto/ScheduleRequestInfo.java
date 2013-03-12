@@ -35,7 +35,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ScheduleRequestInfo", propOrder = {"id", "typeKey", "stateKey", "name", "descr",
-        "refObjectId", "scheduleRequestSetId", "scheduleId", "refObjectTypeKey", "scheduleRequestComponents",
+        "scheduleRequestSetId", "scheduleId", "scheduleRequestComponents",
         "meta", "attributes", "_futureElements" }) 
 public class ScheduleRequestInfo extends IdEntityInfo implements ScheduleRequest, Serializable {
 
@@ -43,8 +43,6 @@ public class ScheduleRequestInfo extends IdEntityInfo implements ScheduleRequest
     private String scheduleRequestSetId;
     @XmlElement
     private String scheduleId;
-    @XmlElement
-    private String refObjectTypeKey;
     @XmlElement
     private List<ScheduleRequestComponentInfo> scheduleRequestComponents;
 

@@ -1794,7 +1794,7 @@ public interface SchedulingService {
             OperationFailedException,
             PermissionDeniedException;
     /**
-     * Retrieves a list of ScheduleRequestSet Ids by ScheduleRequestSet Type.
+     * Retrieves a list of ScheduleRequestSet Ids by RefObj Type.
      *
      * @param refObjectTypeKey an identifier for a refObject Type
      * @param contextInfo     Context information containing the principalId and
