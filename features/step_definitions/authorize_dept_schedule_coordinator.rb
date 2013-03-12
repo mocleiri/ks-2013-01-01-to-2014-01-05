@@ -320,8 +320,30 @@ When /^I attempt to edit a course offering in my department$/ do
   end
 end
 
+When /^I edit an existing course offering$/ do
+  @course_offering = make CourseOffering, :term => @term_for_test, :course=>"CHEM612"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+end
+
 Then /^I have access to edit the grading options$/ do
   on CourseOfferingEdit do |page|
-    page.grading_option_letter.present?.should be_true
+    page.grading_option_div.radio.present?.should be_true
+  end
+end
+
+Then /^I attempt to perform a rollover$/ do
+  go_to_perform_rollover
+end
+
+Then /^I attempt to view rollover details$/ do
+  go_to_rollover_details
+end
+
+When /^I do not have access to the page$/ do
+  on ErrorPage do |page|
+    page.error_401.should == true
   end
 end

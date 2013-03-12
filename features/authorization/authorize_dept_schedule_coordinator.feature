@@ -28,7 +28,7 @@ Feature: Department Schedule Coordinator Authorization
     And I do not have access to approve the listed course offering
     And I do not have access to copy the listed course offering
 
-  Scenario: AZ 4.1A/4.2 Department Schedule Coordinator Carol have access to access the Manage CO set of pages for COs for her own admin org
+  Scenario: AZ 4.1A/4.2 Department Schedule Coordinator Carol can access the Manage CO set of pages for COs for her own admin org (Open SOC)
     Given I am working on a term in "Open" SOC state
     When I manage course offerings for a subject code in my department
     Then I have access to view course offering details
@@ -38,7 +38,7 @@ Feature: Department Schedule Coordinator Authorization
     And I have access to edit course offerings
     And I have access to copy course offerings
 
-  Scenario: AZ 4.1A/4.2 Department Schedule Coordinator Carol can access the Manage AO set of pages for COs for her own admin org
+  Scenario: AZ 4.1A/4.2 Department Schedule Coordinator Carol can access the Manage AO set of pages for COs for her own admin org (Open SOC)
     Given I am working on a term in "Open" SOC state
     When I manage a course offering in my department
     Then I have access to view the activity offering details
@@ -76,7 +76,6 @@ Feature: Department Schedule Coordinator Authorization
     Then I have access to delete an activity offering in a "Draft" state for a course in my department
     And  I have access to delete an activity offering in a "Approved" state for a course in my department
 
-
   Scenario: AZ 5.1B Department Schedule Coordinator Carol has limited access to delete Co's in an Open State
     Given I am working on a term in "Open" SOC state
     And there is a "Planned" course in my department
@@ -110,3 +109,10 @@ Feature: Department Schedule Coordinator Authorization
     When I manage a course offering in my department
     Then I do not have access to edit the course offering
 
+  Scenario: AZ 10.1 Department Schedule Coordinator Carol does not have access to perform rollovers
+    When I attempt to perform a rollover
+    Then I do not have access to the page
+
+  Scenario: AZ 10.2 Department Schedule Coordinator Carol does not have access to view rollover details
+    When I attempt to view rollover details
+    Then I do not have access to the page
