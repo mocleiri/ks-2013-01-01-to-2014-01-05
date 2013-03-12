@@ -283,7 +283,7 @@ end
 
 When /^I have access to delete an activity offering in a "([^"]*)" state for a course in my department$/ do |aostate|
   if @newCO
-  @course_offering = make CourseOffering, :term=> @term_for_test, :course => @newCO
+    @course_offering = make CourseOffering, :term=> @term_for_test, :course => @newCO
   else
     @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
   end

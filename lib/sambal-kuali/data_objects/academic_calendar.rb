@@ -213,8 +213,11 @@ class KeyDateGroup
 
       page.key_date_group_add 0
 
-      @key_dates = Array.new(1){make KeyDate}
-      @key_dates[0].create
+      if @key_dates == {}
+        @key_dates = Array.new(1){make KeyDate}
+        else
+        @key_dates[0].create
+      end
     end
 
   end
@@ -264,6 +267,9 @@ class KeyDate
       page.key_date_daterange_addline(0,0).set @date_range
 
       page.key_date_add(0,0)
+
+      page.make_term_official(0)
+
     end
 
   end
@@ -272,54 +278,54 @@ class KeyDate
 
     if options[:start_date] != nil
       on AcademicTermPage  do |page|
-        page.key_date_start_date_edit(1,1,3).set options[:start_date]
+        page.key_date_start_date_edit(0,0,0).set options[:start_date]
       end
     end
 
     if options[:end_date] != nil
       on AcademicTermPage  do |page|
-        page.key_date_end_date_edit(1,1,3).set options[:end_date]
+        page.key_date_end_date_edit(0,0,0).set options[:end_date]
       end
     end
 
     if options[:all_day] != nil
       on AcademicTermPage  do |page|
-        page.key_date_allday_edit(1,1,3).set options[:all_day]
+        page.key_date_allday_edit(0,0,0).set options[:all_day]
       end
     end
 
     if options[:date_range] != nil
       on AcademicTermPage  do |page|
-        page.key_date_daterange_edit(1,1,3).set options[:date_range]
+        page.key_date_daterange_edit(0,0,0).set options[:date_range]
       end
     end
 
     if options[:start_time] != nil
       on AcademicTermPage  do |page|
-        page.key_start_time_edit(1,1,3).set options[:start_time]
+        page.key_start_time_edit(0,0,0).set options[:start_time]
       end
     end
 
     if options[:end_time] != nil
       on AcademicTermPage  do |page|
-        page.key_end_time_edit(1,1,3).set options[:end_time]
+        page.key_end_time_edit(0,0,0).set options[:end_time]
       end
     end
 
     if options[:start_time_ampm] != nil
       on AcademicTermPage  do |page|
-        page.key_start_time_ampm_edit(1,1,3).set options[:start_time_ampm]
+        page.key_start_time_ampm_edit(0,0,0).set options[:start_time_ampm]
       end
     end
 
     if options[:end_time_ampm] != nil
       on AcademicTermPage  do |page|
-        page.key_end_time_ampm_edit(1,1,3).set options[:end_time_ampm]
+        page.key_end_time_ampm_edit(0,0,0).set options[:end_time_ampm]
       end
     end
 
     on AcademicTermPage  do |page|
-      page.make_term_official(1)
+      page.make_term_official(0)
     end
 
     end

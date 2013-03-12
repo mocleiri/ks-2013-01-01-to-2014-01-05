@@ -379,10 +379,15 @@ class CourseOffering
   def attempt_ao_delete_by_status(aostate)
     on ManageCourseOfferings do |page|
       if page.row_by_status(aostate).exists?
-        page.select_ao_by_status(aostate)
-        page.delete_aos
-        on ActivityOfferingConfirmDelete do |page|
-         return  page.delete_activity_offering_button.present?
+        ao = page.select_ao_by_status(aostate)
+        if page.delete_aos_button.enabled?
+          page.delete_aos
+          on ActivityOfferingConfirmDelete do |page|
+            return  page.delete_activity_offering_button.present?
+          end
+        else
+          page.deselect_ao(ao)
+          return false
         end
       else
         page.copy("A")
@@ -390,13 +395,18 @@ class CourseOffering
         page.select_ao(@ao_list.first)
         if aostate == "Approved"
         page.approve_activity
-        page.select_ao_by_status(aostate)
+        ao = page.select_ao_by_status(aostate)
         end
-        page.delete_aos
-        on ActivityOfferingConfirmDelete do |page|
-          @access = page.delete_activity_offering_button.present?
-          page.delete_activity_offering
-          return @access
+        if page.delete_aos_button.enabled?
+          page.delete_aos
+          on ActivityOfferingConfirmDelete do |page|
+            @access = page.delete_activity_offering_button.present?
+            page.delete_activity_offering
+            return @access
+          end
+        else
+          page.deselect_ao(ao)
+          return false
         end
       end
     end
@@ -404,8 +414,13 @@ class CourseOffering
 
   def attempt_co_delete_by_status(aostate)
       on ManageCourseOfferingList do |page|
-          page.select_co_by_status(aostate)
-          page.delete_cos
+          @course = page.select_co_by_status(aostate)
+          if page.delete_cos_button.enabled?
+            page.delete_cos
+          else
+            page.deselect_co(@course)
+            return false
+          end
           on DeleteCourseOffering do |page|
             return  page.confirm_delete_button.present?
           end

@@ -61,7 +61,7 @@ class ManageCourseOfferings < BasePage
   element(:approve_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Approve-AO")}
   action(:approve_activity){ |b| b.approve_activity_button.click; b.loading.wait_while_present}
 
-  action(:delete_aos_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-AO") }
+  element(:delete_aos_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-AO") }
   action(:delete_aos) { |b| b.delete_aos_button.click; b.loading.wait_while_present }
 
   def approve_co_confirm

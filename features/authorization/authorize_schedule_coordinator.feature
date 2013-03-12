@@ -10,7 +10,7 @@ Feature: Schedule Coordinator Authorization
     And  I have access to delete an activity offering in a "Approved" state
 
   Scenario: AZ 5.1C As a Schedule Coordinator I have access to delete Activity Offerings in a Published state
-    Given I am working on a term in "Published" SOC state before the first day of class
+    Given I am working on a term in "Published" SOC state
     And there is a "Draft" course present
     Then I have access to delete an activity offering in a "Draft" state
 
@@ -64,6 +64,6 @@ Feature: Schedule Coordinator Authorization
     Then I have access to edit the grading options
 
   Scenario: AZ 6.2 Schedule Coordinator has access to edit course offering grading option for a term with SOC State Published
-    Given I am working on a term in "Published" SOC state before the first day of class
+    Given I am working on a term in "Published" SOC state
     When I edit a course offering in my department
     Then I have access to edit the grading options
