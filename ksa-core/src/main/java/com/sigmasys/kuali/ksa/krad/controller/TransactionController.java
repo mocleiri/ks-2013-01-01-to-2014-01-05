@@ -131,7 +131,7 @@ public class TransactionController extends GenericSearchController {
             if (t.getParentTransaction() instanceof Charge) {
                 balance = balance.add(t.getAmount());
             } else {
-                balance = balance.subtract(t.getAmount());
+                balance = balance.subtract(t.getAllocatedAmount());
             }
             t.setRunningBalance(balance);
             unGroupedTransactionModelList.add(t);
