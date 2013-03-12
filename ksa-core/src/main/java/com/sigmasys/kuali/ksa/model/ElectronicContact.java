@@ -173,7 +173,7 @@ public class ElectronicContact implements Identifiable {
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_DEFAULT")
     public Boolean isDefault() {
-        return isDefault;
+        return isDefault != null ? isDefault : false;
     }
 
     public void setDefault(Boolean isDefault) {
@@ -182,6 +182,6 @@ public class ElectronicContact implements Identifiable {
 
     @Transient
     public Boolean getDefault() {
-        return isDefault;
+        return isDefault();
     }
 }

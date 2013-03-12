@@ -11,7 +11,6 @@ import static com.sigmasys.kuali.ksa.util.CommonUtils.nvl;
  * <p/>
  *
  * @author Michael Ivanov
- *
  */
 @Entity
 @Table(name = "KSSA_POSTAL_ADDRESS")
@@ -202,7 +201,7 @@ public class PostalAddress implements Identifiable {
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_DEFAULT")
     public Boolean isDefault() {
-        return isDefault;
+        return isDefault != null ? isDefault : false;
     }
 
     public void setDefault(Boolean isDefault) {
@@ -211,7 +210,7 @@ public class PostalAddress implements Identifiable {
 
     @Transient
     public Boolean getDefault() {
-        return isDefault;
+        return isDefault();
     }
 
     /**
