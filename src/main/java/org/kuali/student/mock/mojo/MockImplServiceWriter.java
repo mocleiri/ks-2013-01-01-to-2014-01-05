@@ -116,6 +116,24 @@ public class MockImplServiceWriter extends JavaClassWriter {
         this.isR1 = isR1;
     }
 
+    public MockImplServiceWriter(ServiceContractModel model,
+                                 String directory,
+                                 String rootPackage,
+                                 String servKey,
+                                 List<ServiceMethod> methods,
+                                 boolean isR1,
+                                 String packageName,
+                                 String className) {
+        super(directory, packageName, className);
+        this.model = model;
+        this.finder = new ModelFinder(model);
+        this.directory = directory;
+        this.rootPackage = rootPackage;
+        this.servKey = servKey;
+        this.methods = methods;
+        this.isR1 = isR1;
+    }
+
     /////////////////////////
     // Functional Methods
     /////////////////////////

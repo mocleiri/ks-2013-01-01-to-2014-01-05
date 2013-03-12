@@ -22,8 +22,8 @@ import org.kuali.student.contract.model.ServiceMethod;
 import org.kuali.student.contract.model.util.ServicesFilter;
 import org.kuali.student.contract.writer.service.GetterSetterNameCalculator;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * This class will generate Conformance Tests for services.
@@ -54,7 +54,7 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
                                         String servKey,
                                         List<ServiceMethod> methods,
                                         boolean isR1) {
-        super(model, directory, rootPackage, servKey, methods, isR1);
+        super(model, directory, rootPackage, servKey, methods, isR1, calcPackage(servKey, rootPackage), calcClassName(servKey));
     }
 
     //////////////////////////
@@ -88,13 +88,12 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
     public void write() {
         indentPrint("public class " + calcClassName(servKey));
         println(" implements " + calcServiceInterfaceClassName(servKey));
-        importsAdd ("org.kuali.student.common.mock.MockService");
         Service serv = finder.findService(servKey);
         importsAdd(serv.getImplProject() + "." + serv.getName());
         openBrace();
 
         // get a list of all the DTOs managed by this class
-        Vector dtoObjectNames = new Vector();
+        List<String> dtoObjectNames = new ArrayList<String>();
         for (ServiceMethod method: methods) {
             // I am assuming all the DTOs will have a createXXX method.
             if (MethodType.CREATE.equals (calcMethodType(method))) {
@@ -104,13 +103,95 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
             }
         }
 
-
+        // for each DTO, write the testCRUD
+        for (String dtoObjectName : dtoObjectNames) {
+            writeTestCrud(dtoObjectName);
+            indentPrintln("");
+        }
 
         closeBrace ();
         println ("");
 
         this.writeJavaClassAndImportsOutToFile();
         this.getOut().close();
+    }
+
+    /**
+     * Write the CRUD test methods
+     */
+    public void writeTestCrud (String dtoObjectName) {
+        // start method open signature
+        indentPrintln("public void testCrud" + dtoObjectName);
+        incrementIndent();
+        indentPrintln("throws DataValidationErrorException,");
+        incrementIndent();
+        indentPrintln("DoesNotExistException,");
+        indentPrintln("InvalidParameterException,");
+        indentPrintln("MissingParameterException,");
+        indentPrintln("OperationFailedException,");
+        indentPrintln("PermissionDeniedException,");
+        indentPrintln("ReadOnlyException,");
+        indentPrintln("VersionMismatchException,");
+        indentPrintln("DependentObjectsExistException");
+        decrementIndent();
+        decrementIndent();
+        openBrace();
+        // end method open signature
+
+        writeTestCreate(dtoObjectName);
+
+        // end method
+        closeBrace();
+    }
+
+    /**
+     * Write the 'test create' portion.
+     */
+    public void writeTestCreate (String dtoObjectName) {
+        incrementIndent();
+        indentPrintDecoratedComment("test create");
+        indentPrintln(dtoObjectName + " expected = new " + dtoObjectName + " ()");
+        indentPrintln("expected.setName(\"Name01\");");
+        indentPrintln("expected.setDescr(new RichTextHelper().fromPlain(\"Description01\"));");
+        indentPrintln("");
+        indentPrintln("// INSERT CODE TO SET MORE DTO FIELDS HERE");
+        indentPrintln("");
+
+        indentPrintln("if (expected implements TypeStateEntityInfo)");
+        openBrace();
+        incrementIndent();
+        indentPrintln("expectedTS = (TypeStateEntityInfo) expected;");
+        indentPrintln("expectedTS.setTypeKey(\"Type01\");");
+        indentPrintln("expectedTS.setStateKey(\"State01\");");
+        decrementIndent();
+        closeBrace();
+        indentPrintln("new AttributeTester().add2ForCreate(expected.getAttributes());");
+
+        indentPrintln("");
+        indentPrintln("DTOInfo actual = // INSERT CODE TO CREATE actual HERE");
+        indentPrintln("");
+
+        indentPrintln("assertNotNull(actual.getId());");
+        indentPrintln("new IdEntityTester().check(expected, actual);");
+
+        indentPrintln("");
+        indentPrintln("// INSERT CODE FOR TESTING MORE DTO FIELDS HERE");
+        indentPrintln("");
+
+        indentPrintln("new AttributeTester().check(expected.getAttributes(), actual.getAttributes());");
+        indentPrintln("new MetaTester().checkAfterCreate(actual.getMeta());");
+
+        decrementIndent();
+    }
+
+
+    /**
+     * Writes out a decorated comment.
+     */
+    public void indentPrintDecoratedComment (String label) {
+        indentPrintln("// ----------------------");
+        indentPrintln("// " + label);
+        indentPrintln("// ----------------------");
     }
 
 }
