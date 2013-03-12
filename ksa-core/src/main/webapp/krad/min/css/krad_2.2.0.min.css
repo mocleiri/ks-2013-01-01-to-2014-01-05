@@ -4698,6 +4698,7 @@ fieldset[data-type="InputSet"] {
 .uif-navigation {
     position: absolute;
     width: 210px;
+    left: 0px;
 }
 
 .uif-collapseLink {
