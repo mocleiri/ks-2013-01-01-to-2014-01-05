@@ -48,6 +48,16 @@ And /^the cross\-listing is indicated for the "(.*?)" course$/ do |cross_listed_
 
 end
 
+And /^the copy\-link is not showing for the cross\-listing$/ do
+
+  @course_offering = make CourseOffering, :term=>@source_term, :course=>@cross_listed_co_code, :search_by_subj=>true
+  @course_offering.search_by_subjectcode
+  on ManageCourseOfferings do |page|
+    page.copy_link(@course_offering.course).present?.should be_false
+  end
+
+end
+
 And /^I create a Course Offering without selected cross\-listed Catalog Course Code$/ do
   on CreateCourseOffering do  |page|
     page.suffix.set @suffix_without_cl
