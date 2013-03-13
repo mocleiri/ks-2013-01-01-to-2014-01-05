@@ -186,7 +186,6 @@
                             </sourceDirs>
                         </configuration>
                     </execution>
-
                     <!-- generate only on the kuali student api -->
                     <execution>
                         <id>generate-validation-decorators</id>
