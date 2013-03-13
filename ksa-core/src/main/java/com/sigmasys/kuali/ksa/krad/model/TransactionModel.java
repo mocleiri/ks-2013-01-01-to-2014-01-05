@@ -2,6 +2,10 @@ package com.sigmasys.kuali.ksa.krad.model;
 
 
 import com.sigmasys.kuali.ksa.model.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.kuali.rice.core.api.util.tree.Node;
+import org.kuali.rice.core.api.util.tree.Tree;
 
 import javax.persistence.Transient;
 import java.math.BigDecimal;
@@ -16,11 +20,15 @@ import java.util.Locale;
  */
 public class TransactionModel extends Transaction {
 
+    private final Log logger = LogFactory.getLog(TransactionModel.class);
+
     private Transaction parentTransaction;
 
     private List<TransactionModel> subTransactions;
 
     private TransactionTypeValue transactionTypeValue;
+
+    private List<Allocation> allocations;
 
     private String transactionTypeId;
 
@@ -576,5 +584,30 @@ public class TransactionModel extends Transaction {
 
     public void setRunningBalance(BigDecimal runningBalance) {
         this.runningBalance = runningBalance;
+    }
+
+    public Tree<Memo, String> getMemoTree(){
+        logger.info("TJB: Returning MemoTree.  Memos size: " + memos.size());
+        Tree<Memo, String> memoTree = new Tree<Memo, String>();
+
+        Node<Memo, String> rootNode = new Node<Memo, String>(new Memo(), "Root");
+        memoTree.setRootElement(rootNode);
+
+        if(this.memos == null){ return memoTree; }
+
+        // Need to put the memos in order
+        for(Memo memo : memos){
+            rootNode.addChild(new Node<Memo, String>(memo, memo.getDisplayValue()));
+        }
+
+        return memoTree;
+    }
+
+    public List<Allocation> getAllocations() {
+        return allocations;
+    }
+
+    public void setAllocations(List<Allocation> allocations) {
+        this.allocations = allocations;
     }
 }

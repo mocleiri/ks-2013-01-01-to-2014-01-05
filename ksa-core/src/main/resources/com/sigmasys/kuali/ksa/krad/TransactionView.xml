@@ -69,8 +69,15 @@
         <property name="items">
         <list>
             <bean parent="Uif-HorizontalFieldGroup" p:label="Filter Transactions">
-                <!-- <property name="items">
+                <property name="items">
                     <list>
+                        <!--
+                        <bean parent="Uif-TreeGroup" p:instructionalText="Data Tree">
+                            <property name="title" value="Basic String Data tree"/>
+                            <property name="propertyName" value="memoTree"/>
+                        </bean>
+                        -->
+                        <!--
                         <bean parent="Uif-VerticalBoxSubSection">
                             <property name="items">
                             <list>
@@ -91,9 +98,9 @@
                             </list>
                             </property>
                         </bean>
-
+                        -->
                     </list>
-                </property>-->
+                </property>
             </bean>
             <bean parent="Uif-TabGroup"><property name="items"><list>
                 <bean parent="Uif-VerticalBoxSection" p:headerText="Roll-up">
@@ -129,8 +136,9 @@
                                     </list>
                                 </property>
 
-                                <!-- From what I can tell, this does nothing.  Refer to https://jira.kuali.org/browse/KULRICE-8747 -->
-                                <property name="layoutManager.rowDetailsSwapActionImage" value="true"/>
+                                <property name="layoutManager.expandDetailsActionPrototype">
+                                    <bean parent="Uif-ExpandDetailsImageAction"/>
+                                </property>
                                 <property name="layoutManager.rowDetailsGroup">
                                     <ref bean="rollupTransactionList"/>
                                 </property>
@@ -172,7 +180,7 @@
                                         <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
                                             <property name="items">
                                                 <list>
-                                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" p:linkText="@{#line.transactionType.description}" />
+                                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />
                                                     <bean id="transactionDetailLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                                                         <property name="hidden" value="true"/>
                                                         <property name="items">
@@ -248,12 +256,12 @@
                                     </list>
                                 </property>
 
-                                <!-- From what I can tell, this does nothing.  Refer to https://jira.kuali.org/browse/KULRICE-8747 -->
-                                <!-- <property name="layoutManager.rowDetailsSwapActionImage" value="true"/>
-                                <property name="layoutManager.rowDetailsGroup">
-                                    <ref bean="rollupTransactionList"/>
+                                <property name="layoutManager.expandDetailsActionPrototype">
+                                    <bean parent="Uif-ExpandDetailsImageAction" p:render="@{#line.allocations.size() > 0}"/>
                                 </property>
-                                -->
+                                <property name="layoutManager.rowDetailsGroup">
+                                    <ref bean="runningAllocationList"/>
+                                </property>
                             </bean>
 
                         </list>
@@ -379,6 +387,36 @@
                 <bean parent="Uif-InputField" p:propertyName="defermentAmount" p:label="Deferments" p:style="text-align: right; width: 10%;"/>
                 <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:style="text-align: right; width: 10%;"/>
                 <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="runningAllocationList" parent="Uif-TableSubCollection-WithinSection" p:layoutManager.numberOfColumns="3">
+        <property name="headerText" value="Allocations" />
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Allocation" />
+        <property name="propertyName" value="allocations" />
+        <property name="layoutManager.sequencePropertyName" value="id" />
+        <property name="layoutManager.richTable.render" value="true" />
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="style" value="width: 30%;"/>
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="false"/>
+                <entry key="bInfo" value="false"/>
+                <entry key="bFilter" value="false"/>
+            </map>
+        </property>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="secondTransaction.transactionType.description" p:label="Effective"/>
+                <bean parent="Uif-InputField" p:propertyName="amount" p:label="Amount" p:style="text-align: right;"/>
+                <bean parent="Uif-ImageField" p:label="Locked" p:source="../images/locked.png" p:altText="Locked Transaction" p:title="" p:render="@{#line.isLocked()}"/>
+<!--                <bean parent="Uif-ImageField" p:source="../images/unlocked.png" p:style="float: right;" p:altText="Unlocked Transaction" p:title="" p:render="@{!#line.isLocked()}">
+                    <property name="toolTip">
+                        <bean parent="Uif-Tooltip" p:tooltipContent="Transaction is unlocked"/>
+                    </property>
+                </bean>
+-->
             </list>
         </property>
     </bean>

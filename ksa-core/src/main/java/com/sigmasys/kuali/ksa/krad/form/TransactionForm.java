@@ -4,6 +4,8 @@ import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
+import org.kuali.rice.core.api.util.tree.Node;
+import org.kuali.rice.core.api.util.tree.Tree;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ public class TransactionForm extends AbstractViewModel {
     private List<Alert> alerts;
     private List<Flag> flags;
     private List<Memo> memos;
+    private Tree<Memo, String> memoTree = new Tree<Memo, String>();
 
     private List<TransactionModel> rollupTransactions;
     private List<TransactionModel> allTransactions;
@@ -466,4 +469,20 @@ public class TransactionForm extends AbstractViewModel {
         return Integer.valueOf(ContextUtils.getBean(ConfigService.class).getParameter(Constants.QUICKVIEW_INFORMATION_COUNT));
     }
 
+    public Tree<Memo, String> getMemoTree(){
+        logger.info("TJB: Returning MemoTree.");
+
+
+        Node<Memo, String> rootNode = new Node<Memo, String>(new Memo(), "Root");
+        memoTree.setRootElement(rootNode);
+
+        if(this.memos == null){ return memoTree; }
+
+        // Need to put the memos in order
+        for(Memo memo : memos){
+            rootNode.addChild(new Node<Memo, String>(memo, memo.getDisplayValue()));
+        }
+
+        return memoTree;
+    }
 }

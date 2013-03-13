@@ -173,6 +173,19 @@
         </property>
     </bean>
 
+<!--
+    <bean id="memoLightboxTable" parent="Uif-VerticalBoxGroup">
+        <property name="items">
+            <list>
+                <bean parent="Uif-TreeGroup" p:instructionalText="Data Tree">
+                    <property name="title" value="Basic String Data tree"/>
+                    <property name="propertyName" value="memoTree"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+-->
+
     <bean id="memoLightboxTable" parent="Uif-Disclosure-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:width="85%">
         <property name="readOnly" value="true"/>
         <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Memo"/>
@@ -209,11 +222,8 @@
                               p:size="20" p:maxLength="100"/>
                     </property>
                 </bean>
-                <!--<bean parent="Uif-LinkField" p:label="Edit" p:linkText="Edit" p:target="_self" p:width="10%"
-                      p:href="settingsView?viewId=SettingsView&amp;pageId=@{simpleType}DetailsPage&amp;methodToCall=get&amp;entityId=@{#line.id}" />-->
             </list>
         </property>
     </bean>
-
 
 </beans>

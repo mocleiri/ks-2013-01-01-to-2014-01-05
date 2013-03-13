@@ -86,6 +86,11 @@ public class TransactionController extends GenericSearchController {
             for (Transaction t : transactions) {
 
                 TransactionModel m = new TransactionModel(t);
+
+                // Set the list of allocations
+                m.setAllocations(transactionService.getAllocations(t.getId()));
+
+                // Add the memos
                 m.setMemos(informationService.getMemos(t.getId()));
                 models.add(m);
 
