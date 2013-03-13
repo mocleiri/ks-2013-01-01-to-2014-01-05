@@ -84,7 +84,7 @@
                                 </property>
                             </bean>
 
-                            <bean parent="Uif-VerticalBoxGroup" p:width="72%">
+                            <bean parent="Uif-VerticalBoxGroup" p:style="float: right; width: 72%; margin-right: 0px;">
                                 <property name="items">
                                     <list>
                                         <ref bean="alertGroup"/>
