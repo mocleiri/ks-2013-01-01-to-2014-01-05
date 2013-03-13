@@ -22,7 +22,7 @@ public interface ScheduleRequestSet extends IdEntity {
      *
      * @name Ref Object Type Key
      * @required
-     * @readonly
+     * @readOnly
      */
     public String getRefObjectTypeKey();
 
