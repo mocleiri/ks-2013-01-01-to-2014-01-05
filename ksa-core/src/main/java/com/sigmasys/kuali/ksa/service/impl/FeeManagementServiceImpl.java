@@ -997,12 +997,88 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         return numOfCredits;
     }
 
+    /**
+     * Retrieves FeeDetail instance from a persistence store by code.
+     *
+     * @param code FeeDetail code
+     * @return FeeDetail instance or null if it does not exist
+     */
+    @Override
+    public FeeDetail getFeeDetail(String code) {
+        Query query = em.createQuery("select fd from FeeDetail fd " +
+                " left outer join fetch fd.feeType ft " +
+                " where fd.code = :code");
+        query.setParameter("code", code);
+        List<FeeDetail> results = query.getResultList();
+        return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+    }
+
+    /**
+     * Creates and persists a new instance of FeeDetail object for the given parameters.
+     *
+     * @param code              FeeDetail code
+     * @param name              FeeDetail name
+     * @param description       FeeDetail description
+     * @param startDate         FeeDetail start date
+     * @param endDate           FeeDetail end date
+     * @param transactionTypeId Default transaction type ID
+     * @param transactionAmount Default transaction amount
+     * @param transactionDate   Default transaction date
+     * @param recognitionDate   Default recognition date
+     * @param dateType          FeeDetailDateType enum value
+     * @return a new persistent instance of FeeDetail
+     */
+    @Override
+    public FeeDetail createFeeDetail(String code, String name, String description, Date startDate, Date endDate,
+                                     String transactionTypeId, BigDecimal transactionAmount, Date transactionDate,
+                                     Date recognitionDate, FeeDetailDateType dateType) {
+
+        if (startDate == null) {
+            String errMsg = "Start Date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (endDate != null && startDate.after(endDate)) {
+            String errMsg = "Start Date cannot be greater than End Date: Start Date = " + startDate +
+                    ", End Date = " + endDate;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (!transactionService.transactionTypeExists(transactionTypeId)) {
+            String errMsg = "Transaction type with ID = " + transactionTypeId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        FeeDetail existingFeeDetail = getFeeDetail(code);
+
+        if (startDate.compareTo(existingFeeDetail.getStartDate()) >= 0 &&
+                ((existingFeeDetail.getEndDate() == null && endDate == null) ||
+                        ((endDate != null && existingFeeDetail.getEndDate() != null &&
+                                endDate.compareTo(existingFeeDetail.getEndDate()) <= 0)))) {
+
+            if (endDate != null) {
+
+                // TODO
+
+            }
+
+        }
+
+        // TODO
+
+        return null;
+
+    }
+
 
     /* ***********************************************************
-      *
-      * Utility methods.
-      *
-      * ***********************************************************/
+   *
+   * Utility methods.
+   *
+   * ***********************************************************/
 
     /**
      * Loads either of the KeyPair type or sub-type object associated with an account with the given ID.

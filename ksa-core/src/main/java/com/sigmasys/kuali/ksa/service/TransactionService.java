@@ -724,12 +724,24 @@ public interface TransactionService {
 
 
     /**
-     * Using the cancellationRule, calculates the appropriate amount that can be cancelled from a charge.
+     * Using the cancellationRule, calculates the appropriate amount that can be cancelled
+     * from a charge based on the current date.
      *
      * @param chargeId Charge ID
      * @return Cancellation amount
      */
+    @WebMethod(exclude = true)
     BigDecimal getCancellationAmount(Long chargeId);
+
+    /**
+     * Using the cancellationRule, calculates the appropriate amount that can be cancelled
+     * from a charge based on the given cancellation date.
+     *
+     * @param chargeId         Charge ID
+     * @param cancellationDate Cancellation date
+     * @return Cancellation amount
+     */
+    BigDecimal getCancellationAmount(Long chargeId, Date cancellationDate);
 
 
     /**

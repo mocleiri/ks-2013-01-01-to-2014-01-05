@@ -22,7 +22,7 @@ public interface FeeManagementService {
      * Performs all the necessary operations to calculate fees for the given account.
      * Most of this logic is usually performed by a rule engine (Drools).
      *
-     * @param accountId  Account ID
+     * @param accountId Account ID
      */
     void assessFees(String accountId);
 
@@ -363,11 +363,11 @@ public interface FeeManagementService {
      * Sets a course's status and add a <code>KeyPair</code> with the specified name and value to all LUs for
      * the given FeeBase and LU code.
      *
-     * @param feeBase          A <code>FeeBase</code> that contains a student's information.
-     * @param luCodePattern    A LU code or a regular expression
-     * @param status           The new course status.
-     * @param keyPairName      The name of a <code>KeyPair</code> to add.
-     * @param keyPairValue     The value of a <code>KeyPair</code> to add.
+     * @param feeBase       A <code>FeeBase</code> that contains a student's information.
+     * @param luCodePattern A LU code or a regular expression
+     * @param status        The new course status.
+     * @param keyPairName   The name of a <code>KeyPair</code> to add.
+     * @param keyPairValue  The value of a <code>KeyPair</code> to add.
      */
     void setCourseStatusForLearningUnits(FeeBase feeBase, String luCodePattern, String status, String keyPairName, String keyPairValue);
 
@@ -375,11 +375,11 @@ public interface FeeManagementService {
      * Sets a course's status and add a <code>KeyPair</code> with the specified name and value to all LUs for
      * the given FeeBase and section code.
      *
-     * @param feeBase      A <code>FeeBase</code> that contains a student's information.
-     * @param sectionPattern  A LU section code or a regular expression.
-     * @param status       The new course status.
-     * @param keyPairName  The name of a <code>KeyPair</code> to add.
-     * @param keyPairValue The value of a <code>KeyPair</code> to add.
+     * @param feeBase        A <code>FeeBase</code> that contains a student's information.
+     * @param sectionPattern A LU section code or a regular expression.
+     * @param status         The new course status.
+     * @param keyPairName    The name of a <code>KeyPair</code> to add.
+     * @param keyPairValue   The value of a <code>KeyPair</code> to add.
      */
     void setCourseStatusForSections(FeeBase feeBase, String sectionPattern, String status, String keyPairName, String keyPairValue);
 
@@ -472,4 +472,33 @@ public interface FeeManagementService {
                                                     BigDecimal amountPerCredit,
                                                     String sectionCodes,
                                                     String statuses);
+
+    /**
+     * Retrieves FeeDetail instance from a persistence store by code.
+     *
+     * @param code FeeDetail code
+     * @return FeeDetail instance or null if it does not exist
+     */
+    FeeDetail getFeeDetail(String code);
+
+    /**
+     * Creates and persists a new instance of FeeDetail object for the given parameters.
+     *
+     * @param code                FeeDetail code
+     * @param name                FeeDetail name
+     * @param description         FeeDetail description
+     * @param startDate           FeeDetail start date
+     * @param endDate             FeeDetail end date
+     * @param transactionTypeId   Default transaction type ID
+     * @param transactionAmount   Default transaction amount
+     * @param transactionDate     Default transaction date
+     * @param recognitionDate     Default recognition date
+     * @param dateType            FeeDetailDateType enum value
+     * @return a new persistent instance of FeeDetail
+     */
+    FeeDetail createFeeDetail(String code, String name, String description, Date startDate, Date endDate,
+                              String transactionTypeId, BigDecimal transactionAmount, Date transactionDate,
+                              Date recognitionDate, FeeDetailDateType dateType);
+
+
 }

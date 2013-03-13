@@ -2428,13 +2428,28 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Using the cancellationRule, calculates the appropriate amount that can be cancelled from a charge.
+     * Using the cancellationRule, calculates the appropriate amount that can be cancelled
+     * from a charge based on the current date.
      *
      * @param chargeId Charge ID
      * @return Cancellation amount
      */
     @Override
+    @WebMethod(exclude = true)
     public BigDecimal getCancellationAmount(Long chargeId) {
+        return getCancellationAmount(chargeId, new Date());
+    }
+
+    /**
+     * Using the cancellationRule, calculates the appropriate amount that can be cancelled
+     * from a charge based on the given cancellation date.
+     *
+     * @param chargeId         Charge ID
+     * @param cancellationDate Cancellation date
+     * @return Cancellation amount
+     */
+    @Override
+    public BigDecimal getCancellationAmount(Long chargeId, Date cancellationDate) {
 
         Charge charge = getCharge(chargeId);
         if (charge == null) {
@@ -2444,10 +2459,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         String cancellationRule = charge.getCancellationRule();
-        if (TransactionStatus.CANCELLED.equals(charge.getStatus()) ||
-                StringUtils.isBlank(cancellationRule) ||
-                charge.getAmount() == null ||
-                charge.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+        if (TransactionStatus.CANCELLED.equals(charge.getStatus()) || StringUtils.isBlank(cancellationRule) ||
+                charge.getAmount() == null || charge.getAmount().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
 
@@ -2455,15 +2468,13 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         if (!parsedRules.isEmpty()) {
 
-            final Date currentDate = new Date();
-
             Date paymentDate = parsedRules.firstKey();
-            if (paymentDate.before(currentDate)) {
+            if (paymentDate.before(cancellationDate)) {
                 return charge.getAmount();
             }
 
             for (Date date : parsedRules.keySet()) {
-                if (date.before(currentDate)) {
+                if (date.before(cancellationDate)) {
                     return getCancellationAmount(parsedRules.get(paymentDate), charge.getAmount());
                 }
                 paymentDate = date;
