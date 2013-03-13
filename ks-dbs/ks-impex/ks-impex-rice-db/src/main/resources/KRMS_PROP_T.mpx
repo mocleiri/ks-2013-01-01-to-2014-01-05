@@ -250,3 +250,6 @@ PROP_ID,DESC_TXT,TYP_ID,DSCRM_TYP_CD,CMPND_OP_CD,RULE_ID,VER_NBR,CMPND_SEQ_NO
 "10248","Must successfully complete a minimum of <n> courses from <courses> with a minimum grade of <grade>","10028","S","${mpx.null}","10087","1","${mpx.null}"
 "10249","Permission of <administering org> required","10035","S","${mpx.null}","10087","1","${mpx.null}"
 "10250","Must have been admitted to the <program> program","10048","S","${mpx.null}","10087","1","${mpx.null}"
+"10251","Must meet 1 of the following","10077","C","|","10065","1","${mpx.null}"
+"10252","Must have successfully completed <course>","10017","S","${mpx.null}","10065","1","${mpx.null}"
+"10253","Free form text","10031","S","${mpx.null}","10065","1","${mpx.null}"

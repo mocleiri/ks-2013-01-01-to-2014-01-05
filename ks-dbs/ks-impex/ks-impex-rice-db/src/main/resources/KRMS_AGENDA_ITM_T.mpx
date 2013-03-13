@@ -65,7 +65,7 @@ AGENDA_ITM_ID,RULE_ID,SUB_AGENDA_ID,AGENDA_ID,VER_NBR,WHEN_TRUE,WHEN_FALSE,ALWAY
 "10063","10063","${mpx.null}","10061","1","${mpx.null}","${mpx.null}","${mpx.null}"
 "10064","10064","${mpx.null}","10062","1","${mpx.null}","${mpx.null}","${mpx.null}"
 "10065","10065","${mpx.null}","10063","1","${mpx.null}","${mpx.null}","${mpx.null}"
-"10066","10066","${mpx.null}","10064","1","${mpx.null}","${mpx.null}","${mpx.null}"
+"10066","10066","${mpx.null}","10064","1","10067","${mpx.null}","${mpx.null}"
 "10067","10067","${mpx.null}","10064","1","${mpx.null}","${mpx.null}","${mpx.null}"
 "10068","10068","${mpx.null}","10065","1","${mpx.null}","${mpx.null}","${mpx.null}"
 "10069","10069","${mpx.null}","10066","1","${mpx.null}","${mpx.null}","${mpx.null}"

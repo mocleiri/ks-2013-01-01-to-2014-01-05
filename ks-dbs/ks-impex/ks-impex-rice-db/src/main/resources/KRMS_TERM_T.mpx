@@ -197,3 +197,6 @@ TERM_ID,TERM_SPEC_ID,VER_NBR,DESC_TXT
 "10195","10006","1","Successfully complete a minimum of number courses from list with a minimum grade of type mark."
 "10196","10009","1","Permission of organization."
 "10197","10011","1","Admitted to the list program."
+"10198","10002","1","Course List."
+"10199","10002","1","Course List."
+"10200","10012","1","Free text."
