@@ -404,7 +404,7 @@ public interface TransactionService {
      * Removes all allocations associated with the given transactions
      * <p/>
      *
-     * @param transactionId transaction1 ID
+     * @param transactionId transaction ID
      * @return list of generated GL transactions
      */
     List<GlTransaction> removeAllocations(Long transactionId);
@@ -413,7 +413,7 @@ public interface TransactionService {
      * Retrieves all allocations associated with the given transaction by ID.
      * <p/>
      *
-     * @param transactionId transaction1 ID
+     * @param transactionId Transaction ID
      * @return list of allocations
      */
     List<Allocation> getAllocations(Long transactionId);

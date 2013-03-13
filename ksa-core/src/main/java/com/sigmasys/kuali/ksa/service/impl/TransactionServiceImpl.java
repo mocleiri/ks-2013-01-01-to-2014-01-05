@@ -985,7 +985,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * Retrieves all allocations associated with the given transaction by ID.
      * <p/>
      *
-     * @param transactionId transaction1 ID
+     * @param transactionId Transaction ID
      * @return list of allocations
      */
     @Override
@@ -1005,7 +1005,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * Removes all allocations associated with the given transactions
      * <p/>
      *
-     * @param transactionId transaction1 ID
+     * @param transactionId Transaction ID
      * @return list of generated GL transactions
      */
     @Override
