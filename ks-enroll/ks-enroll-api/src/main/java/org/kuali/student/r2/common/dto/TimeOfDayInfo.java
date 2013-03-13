@@ -15,6 +15,8 @@
 
 package org.kuali.student.r2.common.dto;
 
+import java.io.Serializable;
+
 import org.kuali.student.r2.common.infc.TimeOfDay;
 
 import javax.xml.bind.Element;
