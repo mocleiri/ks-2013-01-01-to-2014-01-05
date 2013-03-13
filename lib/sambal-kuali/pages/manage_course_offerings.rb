@@ -222,27 +222,6 @@ class ManageCourseOfferings < BasePage
     retVal
   end
 
-  def click_toolbar_button(button)
-      case(button)
-        when 'Add Activity Offering'
-          add_activity
-        when 'Approve Activity Offering'
-          approve_activity
-        when 'Set as Draft'
-          draft_activity
-        when 'Delete Activity Offering'
-          delete_aos
-        when 'Add Course'
-          add_course
-        when 'Approve'
-          approve_cos
-        when 'Delete'
-          delete_cos
-        else
-          raise "undefined button."
-      end
-  end
-
   def check_aos_status(aoStatus, aos)
     retVal = true
     aos.each { |code|
