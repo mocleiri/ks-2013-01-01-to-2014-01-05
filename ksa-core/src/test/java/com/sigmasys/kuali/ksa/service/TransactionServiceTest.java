@@ -143,6 +143,43 @@ public class TransactionServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void getAllocation() throws Exception {
+
+        createAllocation(true);
+
+        Assert.notNull(transaction1);
+        Assert.notNull(transaction2);
+        Assert.notNull(transaction1.getId());
+        Assert.notNull(transaction2.getId());
+
+        List<Allocation> allocations = transactionService.getAllocations(transaction1.getId());
+
+        Assert.notNull(allocations);
+        Assert.notEmpty(allocations);
+
+        for (Allocation allocation : allocations) {
+
+            Assert.notNull(allocation.getId());
+            Assert.notNull(allocation.getFirstTransaction());
+            Assert.notNull(allocation.getSecondTransaction());
+
+            Long transactionId1 = allocation.getFirstTransaction().getId();
+            Long transactionId2 = allocation.getSecondTransaction().getId();
+
+            Assert.notNull(transactionId1);
+            Assert.notNull(transactionId2);
+
+            Assert.isTrue(allocation.isLocked());
+
+            Assert.isTrue(transactionId1.equals(transaction1.getId()) || transactionId1.equals(transaction2.getId()));
+            Assert.isTrue(transactionId2.equals(transaction1.getId()) || transactionId2.equals(transaction2.getId()));
+
+        }
+
+    }
+
+
+    @Test
     public void removeAllocation() throws Exception {
 
         createAllocation();

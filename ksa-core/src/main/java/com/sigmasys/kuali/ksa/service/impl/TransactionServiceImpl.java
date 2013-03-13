@@ -982,6 +982,26 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
+     * Retrieves all allocations associated with the given transaction by ID.
+     * <p/>
+     *
+     * @param transactionId transaction1 ID
+     * @return list of allocations
+     */
+    @Override
+    public List<Allocation> getAllocations(Long transactionId) {
+
+        Query query = em.createQuery("select distinct a from Allocation a " +
+                " left outer join fetch a.account ac " +
+                " left outer join fetch a.firstTransaction t1 " +
+                " left outer join fetch a.secondTransaction t2 " +
+                " where t1.id = :id or t2.id = :id " +
+                " order by a.id desc");
+        query.setParameter("id", transactionId);
+        return query.getResultList();
+    }
+
+    /**
      * Removes all allocations associated with the given transactions
      * <p/>
      *

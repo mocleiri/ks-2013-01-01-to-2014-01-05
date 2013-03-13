@@ -410,6 +410,15 @@ public interface TransactionService {
     List<GlTransaction> removeAllocations(Long transactionId);
 
     /**
+     * Retrieves all allocations associated with the given transaction by ID.
+     * <p/>
+     *
+     * @param transactionId transaction1 ID
+     * @return list of allocations
+     */
+    List<Allocation> getAllocations(Long transactionId);
+
+    /**
      * Removes all allocations associated with the given Account ID
      * <p/>
      *
