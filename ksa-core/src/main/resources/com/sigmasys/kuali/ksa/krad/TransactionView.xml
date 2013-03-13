@@ -248,7 +248,6 @@
                                         </bean>
                                         <bean parent="Uif-InputField" p:propertyName="chargeAmount" p:label="Charges" p:style="text-align: right; width: 10%;"/>
                                         <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;"/>
-                                        <bean parent="Uif-InputField" p:propertyName="defermentAmount" p:label="Deferments" p:style="text-align: right; width: 10%;"/>
                                         <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:style="text-align: right; width: 10%;"/>
                                         <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;"/>
                                         <bean parent="Uif-InputField" p:propertyName="runningBalance" p:label="Balance" p:style="text-align: right; width: 10%;"/>
@@ -408,15 +407,13 @@
         </property>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="secondTransaction.transactionType.description" p:label="Effective"/>
-                <bean parent="Uif-InputField" p:propertyName="amount" p:label="Amount" p:style="text-align: right;"/>
-                <bean parent="Uif-ImageField" p:label="Locked" p:source="../images/locked.png" p:altText="Locked Transaction" p:title="" p:render="@{#line.isLocked()}"/>
-<!--                <bean parent="Uif-ImageField" p:source="../images/unlocked.png" p:style="float: right;" p:altText="Unlocked Transaction" p:title="" p:render="@{!#line.isLocked()}">
+                <bean parent="Uif-InputField" p:propertyName="secondTransaction.transactionType.description" p:label="Description" p:style="width: 50%"/>
+                <bean parent="Uif-InputField" p:propertyName="amount" p:label="Amount" p:style="text-align: right; width: 30%"/>
+                <bean parent="Uif-MessageField" p:messageText="&lt;img src='../images/@{#line.isLocked() ? 'locked' : 'unlocked'}.png' alt='@{#line.isLocked() ? 'Locked' : 'Unlocked'}'&gt;" p:label="Locked" p:style="width: 20%">
                     <property name="toolTip">
-                        <bean parent="Uif-Tooltip" p:tooltipContent="Transaction is unlocked"/>
+                        <bean parent="Uif-Tooltip" p:tooltipContent="Transaction is @{#line.isLocked() ? 'locked' : 'unlocked'}"/>
                     </property>
                 </bean>
--->
             </list>
         </property>
     </bean>
