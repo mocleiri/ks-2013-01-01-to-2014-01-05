@@ -37,6 +37,9 @@
                     <property name="headerText" value="@{account.compositeDefaultPersonName}"/>
                     <property name="items">
                         <list>
+                            <!--  Status message -->
+                            <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
+
                             <ref bean="quickViewSection"/>
                         </list>
                     </property>
@@ -71,7 +74,7 @@
                 <bean parent="Uif-HorizontalBoxGroup">
                     <property name="items">
                         <list>
-                            <bean parent="Uif-VerticalBoxSection">
+                            <bean parent="Uif-VerticalBoxSection" p:width="25%">
                                 <property name="items">
                                     <list>
                                         <ref bean="accountOverviewGroup"/>
@@ -81,7 +84,7 @@
                                 </property>
                             </bean>
 
-                            <bean parent="Uif-VerticalBoxGroup">
+                            <bean parent="Uif-VerticalBoxGroup" p:width="72%">
                                 <property name="items">
                                     <list>
                                         <ref bean="alertGroup"/>
@@ -211,8 +214,12 @@
                             <bean parent="Uif-VerticalBoxGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="Uif-Link" p:linkText="Perform Payment Application" p:target="_self"
-                                              p:href="paymentView?methodToCall=get&amp;viewId=PaymentView&amp;userId=@{account.id}"/>
+                                        <bean parent="Uif-SecondaryActionButton-Small"
+                                              p:methodToCall="paymentApplication"
+                                              p:actionLabel="Perform Payment Application"
+                                              p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
+                                        </bean>
+
                                         <bean parent="Uif-Link" p:linkText="Details"
                                               p:href="searchView?methodToCall=get&amp;viewId=SearchView&amp;pageId=AccountOVTransactionsPage&amp;userId=@{account.id}"/>
 

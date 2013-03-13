@@ -7,6 +7,7 @@ import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.InformationService;
+import com.sigmasys.kuali.ksa.service.PaymentService;
 import com.sigmasys.kuali.ksa.util.InformationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,6 +42,9 @@ public class QuickViewController extends GenericSearchController {
 
     @Autowired
     private ConfigService configService;
+
+    @Autowired
+    private PaymentService paymentService;
 
 
     /**
@@ -188,6 +192,29 @@ public class QuickViewController extends GenericSearchController {
 
         return getUIFModelAndView(form);
     }
+
+    /**
+     * perform Payment Application.
+     *
+     * @param form Kuali form instance
+     * @return ModelandView
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=paymentApplication")
+    public ModelAndView paymentApplication(@ModelAttribute("KualiForm") QuickViewForm form) {
+
+        String accountId = form.getAccount().getId();
+
+        if (accountId != null && !accountId.trim().isEmpty()) {
+            paymentService.paymentApplication(accountId);
+
+            form.setStatusMessage("Payments successfully applied");
+            // populate the form using the id
+            populateForm(accountId, form);
+        }
+
+        return getUIFModelAndView(form);
+    }
+
 
     /**
      * @param form
