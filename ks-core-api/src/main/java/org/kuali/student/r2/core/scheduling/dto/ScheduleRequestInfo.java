@@ -69,9 +69,17 @@ public class ScheduleRequestInfo extends IdEntityInfo implements ScheduleRequest
         return this.scheduleRequestSetId;
     }
 
+    public void setScheduleRequestSetId(String scheduleRequestSetId)  {
+        this.scheduleRequestSetId = scheduleRequestSetId;
+    }
+
     @Override
     public String getScheduleId() {
         return this.scheduleId;
+    }
+
+    public void setScheduleId(String scheduleId) {
+        this.scheduleId = scheduleId;
     }
 
     @Override

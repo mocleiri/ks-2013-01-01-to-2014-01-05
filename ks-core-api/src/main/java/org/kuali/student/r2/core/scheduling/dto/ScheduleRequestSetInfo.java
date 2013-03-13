@@ -33,11 +33,26 @@ public class ScheduleRequestSetInfo extends IdEntityInfo implements ScheduleRequ
     @XmlAnyElement
     private List<Object> _futureElements;
 
+    public ScheduleRequestSetInfo() {
+    }
+
+    public ScheduleRequestSetInfo(ScheduleRequestSet scheduleRequestSet) {
+        super (scheduleRequestSet);
+        if (null != scheduleRequestSet) {
+            if (scheduleRequestSet.getRefObjectIds() != null) {
+                this.refObjectIds = new ArrayList<String>(scheduleRequestSet.getRefObjectIds());
+            }
+            this.refObjectTypeKey = scheduleRequestSet.getRefObjectTypeKey();
+            this.isMaxEnrollmentShared = scheduleRequestSet.getIsMaxEnrollmentShared();
+            this.maximumEnrollment = scheduleRequestSet.getMaximumEnrollment();
+        }
+    }
+
     @Override
     public List<String> getRefObjectIds() {
 
         if(refObjectIds == null) {
-            return new ArrayList<String>();
+            this.refObjectIds = new ArrayList<String>();
         }
         return this.refObjectIds;
     }

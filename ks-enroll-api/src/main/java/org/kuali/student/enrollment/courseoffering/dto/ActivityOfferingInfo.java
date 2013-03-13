@@ -286,7 +286,7 @@ public class ActivityOfferingInfo
     @Override
     public List<String> getScheduleIds() {
         if (this.scheduleIds == null) {
-            return new ArrayList<String>();
+            this.scheduleIds =  new ArrayList<String>();
         }
         return this.scheduleIds;
     }
