@@ -997,7 +997,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 " left outer join fetch a.secondTransaction t2 " +
                 " where t1.id = :id or t2.id = :id " +
                 " order by a.id desc");
+
         query.setParameter("id", transactionId);
+
         return query.getResultList();
     }
 
