@@ -41,12 +41,12 @@ class ScheduleOfClasses
 
     defaults = {
         :term=>"Spring 2012",
-        :course_search_parm=>"ENGL103",
+        :course_search_parm=>"ENGL101",
         :department_long_name=>"ENGL",
-        :instructor_principal_name=>"B.JOHND",
+        :instructor_principal_name=>"f.carolo",
         :keyword=>"WRITING FROM SOURCES" ,
         :type_of_search=>"Course",    #Course, Department, Instructor, Title & Description
-        :exp_course_list=>["ENGL103"]
+        :exp_course_list=>["ENGL101"]
     }
     options = defaults.merge(opts)
     set_options(options)
