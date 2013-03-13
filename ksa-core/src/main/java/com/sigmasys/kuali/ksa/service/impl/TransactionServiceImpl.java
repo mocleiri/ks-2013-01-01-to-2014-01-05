@@ -211,7 +211,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public DebitType createDebitType(String debitTypeId, String name, Date startDate, int priority, String description) {
-        return createTransactionType(debitTypeId, -1, name, startDate, priority, description, DebitType.class, true);
+        return createTransactionType(debitTypeId, 0, name, startDate, priority, description, DebitType.class, true);
     }
 
     /**
@@ -226,7 +226,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public CreditType createCreditType(String creditTypeId, String name, Date startDate, int priority, String description) {
-        return createTransactionType(creditTypeId, -1, name, startDate, priority, description, CreditType.class, true);
+        return createTransactionType(creditTypeId, 0, name, startDate, priority, description, CreditType.class, true);
     }
 
     /**
@@ -276,7 +276,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                                                                 Date startDate, int priority, String description,
                                                                 Class<T> entityType, boolean createNewType) {
 
-        if (subCode >= 0 && createNewType) {
+        if (subCode > 0 && createNewType) {
             String errMsg = "Transaction type with ID = " + transactionTypeId + " already exists";
             logger.error(errMsg);
             throw new InvalidTransactionTypeException(errMsg);
