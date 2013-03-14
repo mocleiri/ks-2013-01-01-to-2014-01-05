@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.krad.model;
 import com.sigmasys.kuali.ksa.model.GlTransmission;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,9 +23,14 @@ public class BatchTransmissionModel implements Serializable {
     private String batchId;
 
     /**
-     * All GL Transmissions in the batch.
+     * Batch transmission date.
      */
-    private List<GlTransmission> glTransmissions;
+    private Date transmissionDate;
+
+    /**
+     * Total Batch transmission amount.
+     */
+    private String formattedAmount;
 
 
     public String getBatchId() {
@@ -35,11 +41,19 @@ public class BatchTransmissionModel implements Serializable {
         this.batchId = batchId;
     }
 
-    public List<GlTransmission> getGlTransmissions() {
-        return glTransmissions;
+    public Date getTransmissionDate() {
+        return transmissionDate;
     }
 
-    public void setGlTransmissions(List<GlTransmission> glTransmissions) {
-        this.glTransmissions = glTransmissions;
+    public void setTransmissionDate(Date transmissionDate) {
+        this.transmissionDate = transmissionDate;
+    }
+
+    public String getFormattedAmount() {
+        return formattedAmount;
+    }
+
+    public void setFormattedAmount(String formattedAmount) {
+        this.formattedAmount = formattedAmount;
     }
 }

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2005-2012 The Kuali Foundation
+
+    Licensed under the Educational Community License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.opensource.org/licenses/ecl2.php
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+
+	<!-- The view -->
+	<bean id="GeneralLedgerView" parent="Uif-KsaFormView" p:footer.render="false">
+        <property name="title" value="General Ledger"/>
+        <property name="headerText" value="General Ledger"/>
+        <property name="entryPageId" value="GeneralLedgerMainPage"/>
+        <property name="navigation" ref="KsaAccountNavigation"/>
+		<property name="items">
+            <list merge="true">
+				<!-- The main page -->
+				<ref bean="GeneralLedgerMainPage"/>
+			</list>
+		</property>
+		<property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.GeneralLedgerForm"/>
+	</bean>
+	
+	
+	<!-- 
+	
+	*********************  The main page with the tabbed control    ***********************
+	
+	-->
+	
+	<bean id="GeneralLedgerMainPage" parent="Uif-Page" p:id="GeneralLedgerMainPage" p:title="General Ledger">
+		<property name="headerText" value="General Ledger"/>
+		<property name="items">
+			<list>
+				<!-- Export Pending Transaction action -->
+				
+				<!-- The tabbed Control -->
+				<bean parent="Uif-TabGroup">
+					<property name="items">
+						<list>
+							<!-- The Prior Batch tab -->
+							<ref bean="glPriorBatchSection"/>
+							
+							<!-- The Pending tag -->
+							<ref bean="glPendingTransactionSection"/>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<!-- 
+	
+	*********************  The Prior Batch section    ***********************
+	
+	-->
+	
+	<bean id="glPriorBatchSection" parent="Uif-VerticalBoxSection" p:headerText="Prior Batch">
+		<property name="items">
+			<list>
+				<!-- The "Refresh" button that will actually display the contents since we don't want to load the contents immediately -->
+				<bean parent="Uif-SecondaryActionButton" p:actionLabel="Refresh" p:methodToCall="searchForPriorBatches"/> 
+				
+				<!-- The table of Prior Batches -->
+				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:displayCollectionSize="10">
+					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.BatchTransmissionModel"/>
+					<property name="propertyName" value="priorBatchTransmissions" />
+					<property name="layoutManager.generateAutoSequence" value="false" />
+					<property name="layoutManager.richTable.render" value="false"/>
+					<property name="layoutManager.renderSequenceField" value="false"/>
+					<property name="renderAddBlankLineButton" value="false"/>
+					<property name="renderAddLine" value="false"/>
+					<property name="renderLineActions" value="true"/>
+					<property name="items">
+						<list>
+							<bean parent="Uif-DataField" p:label="Batch No." p:propertyName="batchId"/>
+							<bean parent="Uif-DataField" p:label="Date" p:propertyName="transmissionDate"/>
+							<bean parent="Uif-DataField" p:label="Total" p:propertyName="formattedAmount"/>
+							
+							<!-- Download XML action link -->
+							<bean parent="Uif-LinkField" p:linkText="Download XML" p:target="_self"
+								  p:align="center" p:width="10%"
+								  p:href="generalLedger?methodToCall=downloadPriorBatchTransactions&amp;viewId=GeneralLedgerView&amp;pageId=GeneralLedgerMainPage"/>
+						</list>
+					</property>
+				</bean>
+				
+				<!-- The total of all GL Accounts -->
+				<bean parent="Uif-DataField" p:label="Total" p:shortLabel="Total" p:labelPlacement="LEFT" p:propertyName="allPriorBatchTotal"/>
+			</list>
+		</property>
+	</bean>
+	
+	
+	
+	<!-- 
+	
+	*********************  The Pending Transaction section    ***********************
+	
+	-->
+	
+	<bean id="glPendingTransactionSection" parent="Uif-VerticalBoxSection" p:headerText="Pending">
+		<property name="items">
+			<list>
+				<!-- The "Refresh" button that will actually display the contents since we don't want to load the contents immediately -->
+				<bean parent="Uif-SecondaryActionButton" p:actionLabel="Refresh" p:methodToCall="searchForPendingTransactions"/> 
+				
+				<!-- The table of GL Accounts -->
+				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="3" p:displayCollectionSize="10">
+					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GlPendingTransactionModel"/>
+					<property name="propertyName" value="glAccountsPending" />
+					<property name="layoutManager.generateAutoSequence" value="false" />
+					<property name="layoutManager.richTable.render" value="false"/>
+					<property name="layoutManager.renderSequenceField" value="false"/>
+					<property name="renderAddBlankLineButton" value="false"/>
+					<property name="renderAddLine" value="false"/>
+					<property name="renderLineActions" value="true"/>
+					<property name="items">
+						<list>
+							<bean parent="Uif-DataField" p:label="General Ledger Account" p:propertyName="accountName"/>
+							<bean parent="Uif-DataField" p:label="Type" p:propertyName="accountType"/>
+							<bean parent="Uif-DataField" p:label="Amount" p:propertyName="formattedAmount"/>
+						</list>
+					</property>
+				</bean>
+				
+				<!-- The total of all GL Accounts -->
+				<bean parent="Uif-DataField" p:label="Total" p:shortLabel="Total" p:labelPlacement="LEFT" p:propertyName="allGlAccountsTotal"/>
+			</list>
+		</property>
+	</bean>
+	
+	
+</beans>
