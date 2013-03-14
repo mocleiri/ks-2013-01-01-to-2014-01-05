@@ -16,26 +16,33 @@ class CourseOfferingEdit < BasePage
 
   element(:grading_option_div) { |b| b.frm.div(id: "gradingOptionId") }
   element(:grading_option_letter) { |b| b.frm.radio(value: "kuali.resultComponent.grade.letter") }
+
+  element(:registration_opts_div) { |b| b.frm.div(data_label: "Student Registration Options").parent }
+  element(:pass_fail_checkbox) { |b| b.registration_opts_div.checkbox(name: "document.newMaintainableObject.dataObject.passFailStudentRegOpts") }
+  element(:audit_checkbox) { |b| b.registration_opts_div.checkbox(name: "document.newMaintainableObject.dataObject.passFailStudentRegOpts") }
+
   element(:credit_type_option_fixed) { |b| b.frm.radio(value: "kuali.result.values.group.type.fixed") }
   element(:credits) { |b| b.frm.div(data_label: "Credits").text_field() }
 
+  element(:final_exam_option_div) { |b| b.frm.div(id: "finalExamType") }
   action(:final_exam_option_standard) { |b| b.frm.radio(value: "STANDARD").set; b.loading.wait_while_present}
   action(:final_exam_option_alternate) { |b| b.frm.radio(value: "ALTERNATE").set; b.loading.wait_while_present }
   action(:final_exam_option_none) { |b| b.frm.radio(value: "NONE").set; b.loading.wait_while_present }
 
-  element(:delivery_formats_table) { |b| b.frm.div(id: "KS-CourseOfferingEdit-FormatOfferingSubSection").table }
-
   element(:cross_listed_co_check_boxes) { |b| b.frm.dvi(id:"KS-COEditListed-Checkbox-Group")}
   element(:cross_listed_co_check_box) { |b| b.checkbox(id: "KS-COEditListed-Checkbox-Group_control_0") }
 
+  element(:delivery_formats_table) { |b| b.frm.div(id: "KS-CourseOfferingEdit-FormatOfferingSubSection").table }
   FORMAT_COLUMN = 0
   GRADE_ROSTER_LEVEL_COLUMN = 1
   FINAL_EXAM_COLUMN = 2
   ACTIONS_COLUMN = 3
 
-  element(:select_format_type_add) {|b| b.frm.delivery_formats_table.rows[1].cells[FORMAT_COLUMN].select() }
-  element(:select_grade_roster_level_add) {|b| b.frm.delivery_formats_table.rows[1].cells[GRADE_ROSTER_LEVEL_COLUMN].select() }
-  element(:delivery_format_add_element) {|b| b.frm.delivery_formats_table.rows[1].cells[ACTIONS_COLUMN].button(text: "add")  }
+  element(:select_format_type_div) {|b| b.frm.div(id: "KS-CourseOfferingEdit-FormatOfferingSubSection") }
+  element(:select_format_type_add) {|b| b.select_format_type_div.select(index: 0) }
+  element(:select_grade_roster_level_add) {|b| b.select_format_type_div.select(index: 1) }
+  element(:select_final_exam_driver_add) {|b| b.select_format_type_div.select(index: 2) }
+  element(:delivery_format_add_element) {|b| b.select_format_type_div.button(text: "add")  }
   action(:delivery_format_add) {|b| b.delivery_format_add_element.click; b.loading.wait_while_present   }
 
   def edit_random_delivery_format
@@ -69,13 +76,14 @@ class CourseOfferingEdit < BasePage
     delivery_format_row(format).cells[FINAL_EXAM_COLUMN].select().select(format)
   end
 
-  element(:waitlist_checkbox) { |b| b.frm.div(data_label: "Waitlists").checkbox() }
-  value(:has_waitlist?) { |b| b.frm.waitlist_checkbox.value }
-  action(:waitlist_on )  { |b| b.frm.waitlist_checkbox.set; b.loading.wait_while_present }
-  action(:waitlist_off )  { |b| b.frm.waitlist_checkbox.clear; b.loading.wait_while_present }
-  action(:waitlist_option_course_offering) { |b| b.frm.div(data_label: "Waitlist Level").radio(index: 0).set }
-  action(:waitlist_option_activity_offering) { |b| b.frm.div(data_label: "Waitlist Level").radio(index: 1).set }
-  element(:waitlist_select) { |b| b.frm.div(data_label: "Waitlist Type").select() }
+  element(:waitlist_div)  { |b| b.frm.div(id: "KS-CourseOfferingEdit-Waitlist") }
+  element(:waitlist_checkbox) { |b| b.waitlist_div.checkbox() }
+  value(:has_waitlist?) { |b| b.waitlist_checkbox.value }
+  action(:waitlist_on )  { |b| b.waitlist_checkbox.set; b.loading.wait_while_present }
+  action(:waitlist_off )  { |b| b.waitlist_checkbox.clear; b.loading.wait_while_present }
+  action(:waitlist_option_course_offering) { |b| b.waitlist_div.radio(index: 0).set }
+  action(:waitlist_option_activity_offering) { |b| b.waitlist_div.radio(index: 1).set }
+  element(:waitlist_select) { |b| b.waitlist_div.select() }
 
   ID_COLUMN = 0
   NAME_COLUMN = 1
@@ -116,7 +124,8 @@ class CourseOfferingEdit < BasePage
 
   element(:add_org_id) { |b| b.admin_orgs_table.rows[1].cells[ORG_ID_COLUMN].text_field() }
   action(:lookup_org) { |b| b.admin_orgs_table.rows[1].cells[ORG_ID_COLUMN].button().click; b.loading.wait_while_present } # Need persistent ID!
-  action(:add_org) { |b| b.admin_orgs_table.rows[1].button(text: "add").click; b.adding.wait_while_present() } # Needs persistent ID value
+  action(:add_org_button) { |b| b.admin_orgs_table.rows[1].button(id: "KS-CourseOfferingEdit-OrganizationSection_add") }
+  action(:add_org) { |b| b.add_org_button.click; b.adding.wait_while_present() }
 
   def get_org_name(id)
     target_orgs_row(id).cells[NAME_COLUMN].text  #cell is hard-coded, getting this value was very problematic

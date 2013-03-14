@@ -57,7 +57,7 @@ When /^I approve the "(.*)" subject code for scheduling in the target term$/ do 
   @course_offering = make CourseOffering, :term=>@rollover.target_term, :course=>subject_code
   @course_offering.search_by_subjectcode
   on ManageCourseOfferingList do |page|
-      page.approve_subject_code
+    page.approve_subject_code
   end
   on ManageCourseOfferingList do |page|
     page.course_offering_results_table.rows[2].cells[ManageCourseOfferingList::CO_STATUS_COLUMN].text.should == "Planned"
@@ -103,10 +103,14 @@ When /^I am working on a term in "Published" SOC state$/ do
   @term_for_test = Rollover::PUBLISHED_SOC_TERM
 end
 
-When /^I am in working on a term in "Draft" SOC state$/ do
+When /^I am working on a term in "Draft" SOC state$/ do
   @term_for_test = Rollover::DRAFT_SOC_TERM
 end
 
-When /^I am in working on a term in "Locked" SOC state$/ do
+When /^I am working on a term in "Locked" SOC state$/ do
   @term_for_test = Rollover::LOCKED_SOC_TERM
+end
+
+When /^I am working on a term in "Closed" SOC state$/ do
+  @term_for_test = Rollover::CLOSED_SOC_TERM
 end
