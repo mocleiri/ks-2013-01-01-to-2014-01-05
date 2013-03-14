@@ -4,6 +4,17 @@ Feature: Department Schedule Coordinator Authorization
   Background:
     Given I am logged in as a Department Schedule Coordinator
 
+  Scenario: AZ 3.1/AZ 4.1B/Full.20 - Verify Department Schedule Coordinator edit activity offering access (within admin org) in SOC state Open
+    Given I am working on a term in "Open" SOC state
+    When I attempt to edit an activity offering for a course offering in my admin org
+    Then I have access to edit the activity code
+    And I have access to edit total maximum enrollment
+    And I have access to add or edit affiliated personnel
+    And I have access to revise delivery logistics
+    And I have access to edit the evaluation flag
+    And I have access to edit the honors flag
+    But I do not have access to add or edit seat pools
+
   Scenario: AZ 3.1/AZ 4.1B/Full.3 - Verify Department Schedule Coordinator edit activity offering access (within admin org) in SOC state Final Edits
     Given I am working on a term in "Final Edits" SOC state
     When I attempt to edit an activity offering for a course offering in my admin org
@@ -18,14 +29,14 @@ Feature: Department Schedule Coordinator Authorization
   Scenario: AZ 3.1/AZ 4.1B/Full.4 - Verify Department Schedule Coordinator edit activity offering access (within admin org) in SOC state Published
     Given I am working on a term in "Published" SOC state
     When I attempt to edit an activity offering for a course offering in my admin org
-    Then I have access to edit the activity code
     And I have access to edit total maximum enrollment
     And I have access to add or edit affiliated personnel
-    And I have access to revise delivery logistics
     And I have access to edit the course url
     And I have access to edit the evaluation flag
     And I have access to edit the honors flag
     But I do not have access to add or edit seat pools
+    And I do not have access to edit the activity code
+    And I do not have access to revise delivery logistics
 
   @bug @KSENROLL-5888
   Scenario: AZ 4.1A/Full.1A Department Schedule Coordinator does not have edit access to a course not in their department (CO individual course)
@@ -46,7 +57,7 @@ Feature: Department Schedule Coordinator Authorization
     And I do not have access to copy the listed course offering
 
 
-  Scenario: AZ 4.1A/4.2 Department Schedule Coordinator Carol can access the Manage CO set of pages for COs for her own admin org (Open SOC)
+  Scenario: AZ 4.1A/4.2/Full.19 Department Schedule Coordinator Carol can access the Manage CO set of pages for COs for her own admin org (Open SOC)
     Given I am working on a term in "Open" SOC state
     When I manage course offerings for a subject code in my admin org
     Then I have access to view course offering details
@@ -56,7 +67,7 @@ Feature: Department Schedule Coordinator Authorization
     And I have access to edit course offerings
     And I have access to copy course offerings
 
-  Scenario: AZ 4.1A/4.2 Department Schedule Coordinator Carol can access the Manage AO set of pages for COs for her own admin org (Open SOC)
+  Scenario: AZ 4.1A/4.2/Full.18 Department Schedule Coordinator Carol can access the Manage AO set of pages for COs for her own admin org (Open SOC)
     Given I am working on a term in "Open" SOC state
     When I manage a course offering in my admin org
     Then I have access to view the activity offering details
@@ -103,7 +114,7 @@ Feature: Department Schedule Coordinator Authorization
     # TODO AZ 5.1B - there should be tests for 'Final Edits' and 'Published' SOC states
 
   Scenario: AZ 6.1/Full.10 Department Schedule Coordinator Carol has no access to manage course offerings (in admin org) for a term with SOC State Draft
-    Given I am in working on a term in "Draft" SOC state
+    Given I am working on a term in "Draft" SOC state
     When I manage course offerings for a subject code in my admin org
     Then I do not have access to manage the course offering
 

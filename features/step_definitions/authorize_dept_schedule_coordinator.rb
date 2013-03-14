@@ -421,9 +421,21 @@ Then /^I have access to revise delivery logistics$/ do
   end
 end
 
+Then /^I do not have access to revise delivery logistics$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.revise_actual_delivery_logistics_button.present?.should be_false
+  end
+end
+
 Then /^I have access to edit the activity code$/ do
   on ActivityOfferingMaintenance do |page|
     page.activity_code.enabled?.should be_true
+  end
+end
+
+Then /^I do not have access to edit the activity code$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.activity_code.present?.should be_false
   end
 end
 
@@ -448,7 +460,7 @@ end
 
 Then /^I have access to edit the course url$/ do
   on ActivityOfferingMaintenance do |page|
-    page.course_url.editable?.should be_true
+    page.course_url.present?.should be_true
   end
 end
 
