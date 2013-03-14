@@ -36,9 +36,6 @@ class ManageCourseOfferings < BasePage
   value(:cross_listed_as_text) { |b| b.frm.span(text: /Crosslisted as/).text }
 
 
-  element(:format) { |b| b.frm.select(name: "formatIdForNewAO") }
-  element(:activity_type) { |b| b.frm.select(name: "activityIdForNewAO") }
-  element(:quantity) { |b| b.frm.text_field(name: "noOfActivityOfferings") }
   element(:create_co_button)   { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-CO") }
 
 
@@ -54,9 +51,15 @@ class ManageCourseOfferings < BasePage
   action(:approve_co_confirm_action) { |b| b.approve_co_popup_div.checkbox(index: 0).click; b.loading.wait_while_present(180) }
   action(:approve_co_cancel_action) { |b| b.approve_co_popup_div.checkbox(index: 1).click; b.loading.wait_while_present(180) }
 
-  action(:add) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-AO").click; b.loading.wait_while_present } #TODO duplicate
   element(:add_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-AO") }
   action(:add_activity){ |b| b.add_activity_button.click; b.loading.wait_while_present}
+
+  element(:add_activity_popup_div){ |b| b.frm.div(id: "KS-CourseOfferingManagement-AddActivityOfferingPopupForm") }
+  element(:format) { |b| b.add_activity_popup_div.select(name: "formatIdForNewAO") }
+  element(:activity_type) { |b| b.add_activity_popup_div.select(name: "activityIdForNewAO") }
+  element(:quantity) { |b| b.add_activity_popup_div.text_field(name: "noOfActivityOfferings") }
+  element(:add_button) { |b| b.add_activity_popup_div.button }
+  action(:complete_add_activity) { |b| b.add_button.click; b.loading.wait_while_present }
 
   action(:draft_activity){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Draft-AO").click; b.loading.wait_while_present}
 
@@ -143,6 +146,11 @@ class ManageCourseOfferings < BasePage
   def edit(code)
     begin
       edit_link(code).click
+
+      if browser.alert.exists?
+        browser.alert.ok
+      end
+
     rescue Timeout::Error => e
       puts "rescued target_row edit"
     end

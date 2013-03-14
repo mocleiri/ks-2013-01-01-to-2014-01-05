@@ -88,12 +88,13 @@ class ActivityOffering
         post_add_ao_list = []
         #if page.codes_list.length == 0
         sleep 2
+        page.add_activity
         page.format.select @format
         page.loading.wait_while_present
         sleep 2
         page.activity_type.select @activity_type
         page.quantity.set "1"
-        page.add
+        page.complete_add_activity
         post_add_ao_list = page.codes_list
         #end
         new_code =  post_add_ao_list - pre_add_ao_list
