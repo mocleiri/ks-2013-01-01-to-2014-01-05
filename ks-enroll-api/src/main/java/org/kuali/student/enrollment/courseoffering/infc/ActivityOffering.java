@@ -288,9 +288,12 @@ public interface ActivityOffering extends IdEntity {
     public TimeAmount getWaitlistCheckinFrequency();
 
     /**
-     * Indicates that the activity offering is part of a ColocatedOfferingSet.
+     * Indicates that the activity offering is either part of partial or full
+     * colocation.
+     *
+     * @name Is Colocated
      * @readOnly
      */
-    public Boolean getIsPartOfColocatedOfferingSet();
+    public Boolean getIsColocated();
 
 }

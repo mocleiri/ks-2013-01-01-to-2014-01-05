@@ -49,8 +49,7 @@ import java.io.Serializable;
                 "courseOfferingId", "courseOfferingTitle", 
                 "courseOfferingCode", "hasWaitlist", "waitlistTypeKey",
                 "waitlistMaximum", "isWaitlistCheckinRequired", 
-                "waitlistCheckinFrequency",
-                "isPartOfColocatedOfferingSet",
+                "waitlistCheckinFrequency", "isColocated",
                 "meta", "attributes", "_futureElements"})
 
 public class ActivityOfferingInfo
@@ -149,11 +148,11 @@ public class ActivityOfferingInfo
     @XmlElement
     private TimeAmountInfo waitlistCheckinFrequency;
 
+    @XmlElement
+    private Boolean isColocated;
+
     @XmlAnyElement
     private List<Element> _futureElements;
-
-    @XmlElement
-    private Boolean isPartOfColocatedOfferingSet;
 
     /**
      * Constructs a new ActivityOfferingInfo.
@@ -226,6 +225,7 @@ public class ActivityOfferingInfo
         this.waitlistCheckinFrequency = new TimeAmountInfo(offering.getWaitlistCheckinFrequency());
         this.waitlistMaximum = offering.getWaitlistMaximum();
         this.waitlistTypeKey = offering.getWaitlistTypeKey();
+        this.isColocated = offering.getIsColocated();
     }
 
     @Override
@@ -516,12 +516,12 @@ public class ActivityOfferingInfo
 	}
 
     @Override
-    public Boolean getIsPartOfColocatedOfferingSet() {
-        return isPartOfColocatedOfferingSet;
+    public Boolean getIsColocated() {
+        return this.isColocated;
     }
 
-    public void setIsPartOfColocatedOfferingSet(Boolean partOfColocatedOfferingSet) {
-        isPartOfColocatedOfferingSet = partOfColocatedOfferingSet;
+    public void setIsColocated(Boolean isColocated) {
+        this.isColocated = isColocated;
     }
 
     @Override
@@ -543,6 +543,8 @@ public class ActivityOfferingInfo
         builder.append(scheduleIds.toString());
         builder.append(", schedulingStateKey=");
         builder.append(schedulingStateKey);
+        builder.append(", isColocated=");
+        builder.append(this.isColocated);
         builder.append("]");
         return builder.toString();
     }
