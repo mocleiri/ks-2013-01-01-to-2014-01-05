@@ -32,6 +32,8 @@ class ManageCourseOfferings < BasePage
 
   element(:ao_results_div) { |b| b.frm.div(id: "ActivityOfferingResultSection") }
   value(:course_title) { |b| b.ao_results_div.h3.text }
+  #value(:cross_listed_as) { |b| b.frm.span(id: "u362_span").text }
+  value(:cross_listed_as_text) { |b| b.frm.span(text: /Crosslisted as/).text }
 
 
   element(:format) { |b| b.frm.select(name: "formatIdForNewAO") }
@@ -206,10 +208,10 @@ class ManageCourseOfferings < BasePage
     add
   end
 
-  def cross_listed_as(crossListedCoCode)
-
-    course_title
-  end
+  #def cross_listed_as(crossListedCoCode)
+  #
+  #  course_title
+  #end
 
   def check_all_ao_status(aoStatus)
     retVal = true

@@ -21,30 +21,31 @@ And /^I create a Course Offering with selected cross\-listed Catalog Course Code
 end
 
 Then /^the cross\-listing is indicated for the alias course$/ do
+
   @course_offering = make CourseOffering
   @course_offering.term=@source_term
   @course_offering.course=@course
   @course_offering.suffix=@suffix_with_cl
   @course_offering.manage
 
-  expect_result = "Crosslisted as: WMST255"
-  course_details = @course_offering.cross_listed_co_data(@course)
-  cross_listed_in_page = course_details.include? expect_result
-  cross_listed_in_page.should == true
+  expect_result = "Crosslisted as: WMST255AUTO"
+  on ManageCourseOfferings do |page|
+    page.cross_listed_as_text.should == expect_result
+  end
 
 end
 
 And /^the cross\-listing is indicated for the "(.*?)" course$/ do |cross_listed_as_owner|
+
   @course_offering = make CourseOffering
   @course_offering.term=@source_term
-  @course_offering.course=@cross_listed_co_code
-  @course_offering.suffix=""
+  @course_offering.course=@cross_listed_co_code + @suffix_with_cl
   @course_offering.manage
 
   expect_result = "Crosslisted as: ENGL250AUTO (Owner)"
-  course_details = @course_offering.cross_listed_co_data(@cross_listed_co_code)
-  cross_listed_in_page = course_details.include? expect_result
-  cross_listed_in_page.should == true
+  on ManageCourseOfferings do |page|
+    page.cross_listed_as_text.should == expect_result
+  end
 
 end
 
