@@ -10,7 +10,7 @@
     </bean>
 
     <!-- Atp Service Config -->
-    <bean id="atpService" class="com.sigmasys.kuali.ksa.service.atp.KsaAtpServiceImpl">
+    <bean id="atpService" class="com.sigmasys.kuali.ksa.service.atp.AtpServiceDecorator">
         <property name="atpDao" ref="atpEnrDao"/>
         <property name="atpRelDao" ref="atpAtpRelationDao"/>
         <!-- <property name="atpRelTypeDao" ref="atpAtpRelationTypeDao"/> -->
@@ -203,7 +203,8 @@
         </property>
     </bean>
 
-    <bean id="relationCriteriaLookupService" class="org.kuali.student.r2.common.criteria.impl.CriteriaLookupServiceImpl">
+    <bean id="relationCriteriaLookupService"
+          class="org.kuali.student.r2.common.criteria.impl.CriteriaLookupServiceImpl">
         <property name="criteriaLookupDao" ref="criteriaLookupDaoJpa"/>
         <property name="predicateTransforms">
             <list>

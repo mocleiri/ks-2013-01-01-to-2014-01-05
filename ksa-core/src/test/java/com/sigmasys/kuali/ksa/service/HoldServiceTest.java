@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.RichTextInfo;
+import org.kuali.student.r2.core.constants.HoldServiceConstants;
 import org.kuali.student.r2.core.hold.dto.AppliedHoldInfo;
 import org.kuali.student.r2.core.hold.dto.HoldIssueInfo;
 import org.kuali.student.r2.core.hold.service.HoldService;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,9 +29,8 @@ import java.util.List;
 public class HoldServiceTest extends AbstractServiceTest {
 
     private static final String[] holdIssueTypes = {
-            "kuali.hold.issue.type.library",
-            "kuali.hold.issue.type.financial",
-            "kuali.hold.issue.type.discipline"
+            HoldServiceConstants.FINANCIAL_ISSUE_TYPE_KEY,
+            HoldServiceConstants.DISCIPLINE_ISSUE_TYPE_KEY
     };
 
     @Autowired
@@ -147,7 +148,7 @@ public class HoldServiceTest extends AbstractServiceTest {
 
             HoldIssueInfo holdIssue = new HoldIssueInfo();
             holdIssue.setTypeKey(holdIssueType);
-            holdIssue.setStateKey("kuali.hold.issue.state.active");
+            holdIssue.setStateKey(HoldServiceConstants.ISSUE_ACTIVE_STATE_KEY);
             holdIssue.setName("Test issue");
             holdIssue.setOrganizationId("2");
             holdIssue.setDescr(new RichTextInfo("Plain description", "Formatted description"));
@@ -157,8 +158,9 @@ public class HoldServiceTest extends AbstractServiceTest {
 
     }
 
-    @Test
-    public void createAppliedHold() throws Exception {
+    private List<String> createAppliedHoldsInternal() throws Exception {
+
+        List<String> holdIds = new LinkedList<String>();
 
         for (String holdIssueType : holdIssueTypes) {
 
@@ -175,17 +177,132 @@ public class HoldServiceTest extends AbstractServiceTest {
                 hold.setHoldIssueId(holdIssueId);
                 hold.setPersonId("admin");
                 hold.setTypeKey(holdIssue.getTypeKey());
-                hold.setStateKey("kuali.hold.issue.state.active");
-                hold.setName("Test applied hold");
+                hold.setStateKey(HoldServiceConstants.HOLD_ACTIVE_STATE_KEY);
+                hold.setName("Test applied hold " + holdIssueId);
                 hold.setEffectiveDate(new Date());
                 hold.setReleasedDate(new Date(new Date().getTime() + 50 * 1000));
-                hold.setDescr(new RichTextInfo("Plain description", "Formatted description"));
+                hold.setDescr(new RichTextInfo("Plain description " + holdIssueId, "Formatted description " + holdIssueId));
 
-                holdService.createAppliedHold(hold.getPersonId(), hold.getHoldIssueId(),
+                hold = holdService.createAppliedHold(hold.getPersonId(), hold.getHoldIssueId(),
                         hold.getTypeKey(), hold, contextInfo);
+
+                Assert.notNull(hold);
+                Assert.notNull(hold.getId());
+                Assert.notNull(hold.getHoldIssueId());
+                Assert.notNull(hold.getPersonId());
+                Assert.notNull(hold.getName());
+                Assert.notNull(hold.getMeta());
+                Assert.notNull(hold.getMeta().getCreateTime());
+                Assert.notNull(hold.getMeta().getCreateId());
+                Assert.notNull(hold.getEffectiveDate());
+                Assert.notNull(hold.getDescr());
+
+                Assert.isTrue("admin".equals(hold.getPersonId()));
+                Assert.isTrue(("Test applied hold " + holdIssueId).equals(hold.getName()));
+                Assert.isTrue(("Plain description " + holdIssueId).equals(hold.getDescr().getPlain()));
+                Assert.isTrue(("Formatted description " + holdIssueId).equals(hold.getDescr().getFormatted()));
+
+                holdIds.add(hold.getId());
 
             }
         }
+
+        return holdIds;
+    }
+
+    @Test
+    public void createAppliedHolds() throws Exception {
+        createAppliedHoldsInternal();
+    }
+
+    @Test
+    public void getActiveAppliedHoldsByPerson() throws Exception {
+
+        createAppliedHoldsInternal();
+
+        List<AppliedHoldInfo> appliedHolds = holdService.getActiveAppliedHoldsByPerson("admin", contextInfo);
+
+        Assert.notNull(appliedHolds);
+        Assert.notEmpty(appliedHolds);
+
+        for (AppliedHoldInfo hold : appliedHolds) {
+
+            Assert.notNull(hold);
+            Assert.notNull(hold.getId());
+            Assert.notNull(hold.getHoldIssueId());
+            Assert.notNull(hold.getPersonId());
+            Assert.notNull(hold.getName());
+            Assert.notNull(hold.getMeta());
+            Assert.notNull(hold.getMeta().getCreateTime());
+            Assert.notNull(hold.getMeta().getCreateId());
+            Assert.notNull(hold.getEffectiveDate());
+            Assert.notNull(hold.getDescr());
+
+            Assert.isTrue("admin".equals(hold.getPersonId()));
+
+        }
+
+    }
+
+    @Test
+    public void getAppliedHoldsByIds() throws Exception {
+
+        List<String> holdIds = createAppliedHoldsInternal();
+
+        Assert.notNull(holdIds);
+        Assert.notEmpty(holdIds);
+
+        List<AppliedHoldInfo> appliedHolds = holdService.getAppliedHoldsByIds(holdIds, contextInfo);
+
+        Assert.notNull(appliedHolds);
+        Assert.notEmpty(appliedHolds);
+
+        for (AppliedHoldInfo hold : appliedHolds) {
+
+            Assert.notNull(hold);
+            Assert.notNull(hold.getId());
+            Assert.notNull(hold.getHoldIssueId());
+            Assert.notNull(hold.getPersonId());
+            Assert.notNull(hold.getName());
+            Assert.notNull(hold.getMeta());
+            Assert.notNull(hold.getMeta().getCreateTime());
+            Assert.notNull(hold.getMeta().getCreateId());
+            Assert.notNull(hold.getEffectiveDate());
+            Assert.notNull(hold.getDescr());
+
+            Assert.isTrue("admin".equals(hold.getPersonId()));
+
+        }
+
+    }
+
+    @Test
+    public void getAppliedHoldsByPerson() throws Exception {
+
+        createAppliedHoldsInternal();
+
+        List<AppliedHoldInfo> appliedHolds = holdService.getAppliedHoldsByPerson("admin", contextInfo);
+
+        Assert.notNull(appliedHolds);
+        Assert.notEmpty(appliedHolds);
+
+        for (AppliedHoldInfo hold : appliedHolds) {
+
+            Assert.notNull(hold);
+            Assert.notNull(hold.getId());
+            Assert.notNull(hold.getHoldIssueId());
+            Assert.notNull(hold.getPersonId());
+            Assert.notNull(hold.getName());
+            Assert.notNull(hold.getMeta());
+            Assert.notNull(hold.getMeta().getCreateTime());
+            Assert.notNull(hold.getMeta().getCreateId());
+            Assert.notNull(hold.getEffectiveDate());
+            Assert.notNull(hold.getDescr());
+
+            Assert.isTrue("admin".equals(hold.getPersonId()));
+
+        }
+
     }
 
 

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
  * KSA-specific ATP service implementation.
  */
 @Transactional
-public class KsaAtpServiceImpl extends AtpServiceImpl {
+public class AtpServiceDecorator extends AtpServiceImpl {
 
     @Override
     public AtpInfo updateAtp(String atpId, AtpInfo atpInfo, ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException {
