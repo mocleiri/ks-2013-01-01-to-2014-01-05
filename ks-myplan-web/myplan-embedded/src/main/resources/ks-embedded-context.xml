@@ -195,6 +195,8 @@
         <aop:aspect id="luCacheAroundSearch" ref="luMethodCacheAdvisor">
             <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.search(..))"
                         method="getFromCache"/>
+            <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.get*(..))"
+                        method="getFromCache"/>
         </aop:aspect>
 
         <aop:aspect id="academicCalendarCacheAroundSearch" ref="academicCalendarCacheAdvisor">

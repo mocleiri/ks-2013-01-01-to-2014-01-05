@@ -195,6 +195,8 @@
         <aop:aspect id="luCacheAroundSearch" ref="luMethodCacheAdvisor">
             <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.search(..))"
                         method="getFromCache"/>
+            <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.get*(..))"
+                        method="getFromCache"/>
         </aop:aspect>
 
         <aop:aspect id="academicCalendarCacheAroundSearch" ref="academicCalendarCacheAdvisor">
@@ -220,12 +222,11 @@
             <aop:around
                     pointcut="execution(*  edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl.getCourseOfferingIdsByTermAndSubjectArea(..))"
                     method="getFromCache"/>
-
             <aop:around
-                    pointcut="execution(*  edu.uw.kuali.student.lib.client.studentservice.StudentServiceClientImpl.getSections(..))"
+                    pointcut="execution(*  edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl.getCourseOfferingsByCourseAndTerm(..))"
                     method="getFromCache"/>
             <aop:around
-                    pointcut="execution(*  edu.uw.kuali.student.lib.client.studentservice.StudentServiceClientImpl.getSecondarySections(..))"
+                    pointcut="execution(*  edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl.getActivityOfferingDisplaysForCourseOffering(..))"
                     method="getFromCache"/>
         </aop:aspect>
 

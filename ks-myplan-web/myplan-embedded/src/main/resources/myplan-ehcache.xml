@@ -3,7 +3,7 @@
          monitoring="autodetect"
          updateCheck="false"
          name="myplanCacheManager"
-         dynamicConfig="true" >
+         dynamicConfig="true">
 
     <diskStore path="java.io.tmpdir"/>
 
@@ -13,22 +13,27 @@
             timeToIdleSeconds="120"
             timeToLiveSeconds="120"
             overflowToDisk="true"
-            statistics="true" />
+            statistics="true"/>
 
     <cache name="courseSearchCache"
            maxElementsInMemory="100"
            eternal="false"
            overflowToDisk="true"
            timeToIdleSeconds="0"
-           timeToLiveSeconds="120"
-           statistics="true" />
+           timeToLiveSeconds="900"
+           statistics="true"/>
 
+    <!-- 6 Hours -->
     <cache name="courseOfferingCache" maxElementsInMemory="5000" eternal="false" overflowToDisk="true"
-           timeToIdleSeconds="0" timeToLiveSeconds="3600" statistics="true"/>
-    <cache name="academicCalendarCache" maxElementsInMemory="5000" eternal="false" overflowToDisk="true"
            timeToIdleSeconds="0" timeToLiveSeconds="21600" statistics="true"/>
+
+    <!-- 12 Hours -->
+    <cache name="academicCalendarCache" maxElementsInMemory="5000" eternal="false" overflowToDisk="true"
+           timeToIdleSeconds="0" timeToLiveSeconds="43200" statistics="true"/>
+    <!-- 12 Hours -->
     <cache name="academicRecordCache" maxElementsInMemory="5000" eternal="false" overflowToDisk="true"
-           timeToIdleSeconds="0" timeToLiveSeconds="3600" statistics="true"/>
+           timeToIdleSeconds="0" timeToLiveSeconds="43200" statistics="true"/>
+
     <cache name="degreeAuditCache" maxElementsInMemory="5000" eternal="false" overflowToDisk="true"
            timeToIdleSeconds="0" timeToLiveSeconds="3600" statistics="true"/>
 </ehcache>
