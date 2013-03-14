@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
@@ -12,6 +13,8 @@ import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmService;
+import com.sigmasys.kuali.ksa.util.BeanUtils;
+import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -1001,16 +1004,90 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * Retrieves FeeDetail instance from a persistence store by code.
      *
      * @param code FeeDetail code
+     * @param date FeeDetail date. Can be null.
      * @return FeeDetail instance or null if it does not exist
      */
     @Override
-    public FeeDetail getFeeDetail(String code) {
-        Query query = em.createQuery("select fd from FeeDetail fd " +
+    public FeeDetail getFeeDetail(String code, Date date) {
+        if (date != null) {
+            date = CalendarUtils.removeTime(date);
+        }
+        StringBuilder builder = new StringBuilder("select fd from FeeDetail fd " +
                 " left outer join fetch fd.feeType ft " +
-                " where fd.code = :code");
+                " where fd.code = :code and ");
+        builder.append(
+                (date != null) ?
+                        ":date between fd.startDate and fd.endDate" :
+                        "(fd.startDate is null or fd.endDate is null)");
+        Query query = em.createQuery(builder.toString());
         query.setParameter("code", code);
+        if (date != null) {
+            query.setParameter("date", date, TemporalType.DATE);
+        }
         List<FeeDetail> results = query.getResultList();
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+    }
+
+    /**
+     * Retrieves FeeDetail instances from a persistence store by a date range
+     *
+     * @param startDate FeeDetail start date. Can be null.
+     * @param endDate   FeeDetail end date. Can be null.
+     * @return list of FeeDetail instances
+     */
+    @Override
+    public List<FeeDetail> getFeeDetails(Date startDate, Date endDate) {
+
+        if (startDate != null) {
+            startDate = CalendarUtils.removeTime(startDate);
+        }
+
+        if (endDate != null) {
+            endDate = CalendarUtils.removeTime(endDate);
+        }
+
+        StringBuilder builder = new StringBuilder("select fd from FeeDetail fd " +
+                " left outer join fetch fd.feeType ft ");
+
+        if (startDate != null || endDate != null) {
+            builder.append(" where ");
+        }
+
+        builder.append((startDate != null) ? " :startDate >= fd.startDate " : "");
+
+        if (startDate != null && endDate != null) {
+            builder.append(" and ");
+        }
+
+        builder.append((endDate != null) ? " :endDate <= fd.endDate " : "");
+
+        builder.append(" order by fd.id desc ");
+
+        Query query = em.createQuery(builder.toString());
+
+        if (startDate != null) {
+            query.setParameter("startDate", startDate, TemporalType.DATE);
+        }
+
+        if (endDate != null) {
+            query.setParameter("endDate", endDate, TemporalType.DATE);
+        }
+
+        return query.getResultList();
+    }
+
+    /**
+     * Checks if the FeeDetail exists.
+     *
+     * @param code FeeDetail code
+     * @return "true" if the FeeDetail exists, false - otherwise
+     */
+    @Override
+    public boolean feeDetailExists(String code) {
+        Query query = em.createQuery("select 1 from FeeDetail where code = :code");
+        query.setParameter("code", code);
+        query.setMaxResults(1);
+        return CollectionUtils.isNotEmpty(query.getResultList());
     }
 
     /**
@@ -1052,25 +1129,127 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             throw new IllegalArgumentException(errMsg);
         }
 
-        FeeDetail existingFeeDetail = getFeeDetail(code);
+        FeeDetail startFeeDetail = getFeeDetail(code, startDate);
+        FeeDetail endFeeDetail = getFeeDetail(code, endDate);
 
-        if (startDate.compareTo(existingFeeDetail.getStartDate()) >= 0 &&
-                ((existingFeeDetail.getEndDate() == null && endDate == null) ||
-                        ((endDate != null && existingFeeDetail.getEndDate() != null &&
-                                endDate.compareTo(existingFeeDetail.getEndDate()) <= 0)))) {
+        FeeDetail newFeeDetail;
+
+        if (match(startFeeDetail, endFeeDetail)) {
 
             if (endDate != null) {
 
-                // TODO
+                boolean noDatesMatch = false;
 
+                Date newStartDate = startDate;
+                Date newEndDate = endDate;
+
+                if (startDate.equals(startFeeDetail.getStartDate()) && endDate.equals(startFeeDetail.getEndDate())) {
+                    // Nothing should be done here
+                } else if (startDate.equals(startFeeDetail.getStartDate())) {
+                    newStartDate = CalendarUtils.addCalendarDays(endDate, 1);
+                } else if (endDate.equals(startFeeDetail.getEndDate())) {
+                    newEndDate = CalendarUtils.addCalendarDays(startDate, -1);
+                } else {
+                    newEndDate = CalendarUtils.addCalendarDays(startDate, -1);
+                    noDatesMatch = true;
+                }
+
+                newFeeDetail = populateFeeDetail(startFeeDetail, code, name, description, newStartDate, newEndDate,
+                        transactionTypeId, transactionAmount, transactionDate, recognitionDate, dateType);
+
+                if (noDatesMatch) {
+
+                    // Creating a new FeeDetail instance based on the existing one
+                    FeeDetail feeDetailCopy = BeanUtils.getDeepCopy(newFeeDetail);
+
+                    // Persisting a new JPA entity so we have to set the ID to null and increment the sub-code
+                    feeDetailCopy.setId(null);
+                    feeDetailCopy.setSubCode(getNextSubCode(code));
+
+                    newStartDate = CalendarUtils.addCalendarDays(endDate, 1);
+
+                    // We have to pass the new start date and original end date
+                    newFeeDetail = populateFeeDetail(startFeeDetail, code, name, description, newStartDate, endDate,
+                            transactionTypeId, transactionAmount, transactionDate, recognitionDate, dateType);
+                }
+
+                // When endDate is null
+            } else {
+                Date newEndDate = CalendarUtils.addCalendarDays(startDate, -1);
+                newFeeDetail = populateFeeDetail(startFeeDetail, code, name, description, startDate, newEndDate,
+                        transactionTypeId, transactionAmount, transactionDate, recognitionDate, dateType);
             }
+
+            // When startFeeDetail and endFeeDetail are different
+        } else {
+
+            List<FeeDetail> feeDetails = getFeeDetails(startDate, endDate);
+            if (CollectionUtils.isNotEmpty(feeDetails)) {
+                for (FeeDetail feeDetail : feeDetails) {
+                    deleteEntity(feeDetail.getId(), FeeDetail.class);
+                }
+            }
+
+            // TODO: Logic is not clear, clarify with Paul
+
+            newFeeDetail = null;
 
         }
 
-        // TODO
+        return newFeeDetail;
+    }
 
-        return null;
+    private int getNextSubCode(String feeCode) {
+        Query query = em.createQuery("select max(subCode) from FeeDetail where code = :code");
+        query.setParameter("code", feeCode);
+        query.setMaxResults(1);
+        List<Integer> results = query.getResultList();
+        return CollectionUtils.isNotEmpty(results) ? results.get(0) + 1 : 0;
+    }
 
+    private synchronized FeeDetail populateFeeDetail(FeeDetail feeDetail, String code, String name, String description,
+                                                     Date startDate, Date endDate, String transactionTypeId,
+                                                     BigDecimal transactionAmount, Date transactionDate,
+                                                     Date recognitionDate, FeeDetailDateType dateType) {
+        feeDetail.setCode(code);
+        if (feeDetail.getSubCode() == null) {
+            feeDetail.setSubCode(getNextSubCode(code));
+        }
+        feeDetail.setName(name);
+        feeDetail.setDescription(description);
+        feeDetail.setStartDate(startDate);
+        feeDetail.setEndDate(endDate);
+        feeDetail.setDefaultTransactionTypeId(transactionTypeId);
+        feeDetail.setDefaultTransactionDate(transactionDate);
+        feeDetail.setDefaultRecognitionDate(recognitionDate);
+        feeDetail.setDefaultTransactionAmount(transactionAmount);
+        // TODO set the fee type
+        //feeDetail.setFeeType();
+        feeDetail.setDateType(dateType);
+
+        return feeDetail;
+    }
+
+    private Date nvl(Date date) {
+        return (date != null) ? CalendarUtils.removeTime(date) : new Date(0);
+    }
+
+    private boolean match(FeeDetail feeDetail1, FeeDetail feeDetail2) {
+        if (feeDetail1.getId() != null && feeDetail2.getId() == null) {
+            return false;
+        } else if (feeDetail1.getId() == null && feeDetail2.getId() != null) {
+            return false;
+        } else if (!feeDetail1.getId().equals(feeDetail2.getId())) {
+            return false;
+        }
+        if (!feeDetail1.getCode().equals(feeDetail2.getCode())) {
+            return false;
+        }
+        Date startDate1 = nvl(feeDetail1.getStartDate());
+        Date endDate1 = nvl(feeDetail1.getEndDate());
+        Date startDate2 = nvl(feeDetail2.getStartDate());
+        Date endDate2 = nvl(feeDetail2.getEndDate());
+        return (startDate1.equals(startDate2) && endDate1.equals(endDate2));
     }
 
 

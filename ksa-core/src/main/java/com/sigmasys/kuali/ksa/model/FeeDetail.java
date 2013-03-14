@@ -26,7 +26,7 @@ public class FeeDetail extends AuditableEntity<Long> {
 
     private Date endDate;
 
-    private String defaultTransactionTypeCode;
+    private String defaultTransactionTypeId;
 
     private BigDecimal defaultTransactionAmount;
 
@@ -77,7 +77,7 @@ public class FeeDetail extends AuditableEntity<Long> {
         this.feeType = feeType;
     }
 
-    @Column(name = "START_CODE")
+    @Column(name = "START_DATE")
     @Temporal(TemporalType.DATE)
     public Date getStartDate() {
         return startDate;
@@ -87,7 +87,7 @@ public class FeeDetail extends AuditableEntity<Long> {
         this.startDate = (startDate != null) ? CalendarUtils.removeTime(startDate) : null;
     }
 
-    @Column(name = "END_CODE")
+    @Column(name = "END_DATE")
     @Temporal(TemporalType.DATE)
     public Date getEndDate() {
         return endDate;
@@ -98,12 +98,12 @@ public class FeeDetail extends AuditableEntity<Long> {
     }
 
     @Column(name = "DEFAULT_TRN_TYPE_ID", length = 45)
-    public String getDefaultTransactionTypeCode() {
-        return defaultTransactionTypeCode;
+    public String getDefaultTransactionTypeId() {
+        return defaultTransactionTypeId;
     }
 
-    public void setDefaultTransactionTypeCode(String defaultTransactionTypeCode) {
-        this.defaultTransactionTypeCode = defaultTransactionTypeCode;
+    public void setDefaultTransactionTypeId(String defaultTransactionTypeId) {
+        this.defaultTransactionTypeId = defaultTransactionTypeId;
     }
 
     @Column(name = "DEFAULT_TRN_AMNT")

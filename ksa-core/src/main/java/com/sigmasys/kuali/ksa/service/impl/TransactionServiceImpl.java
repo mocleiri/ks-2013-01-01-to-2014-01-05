@@ -310,7 +310,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     /**
      * Checks if the transaction type exists.
      *
-     * @param transactionTypeId Transaction Tyoe ID
+     * @param transactionTypeId Transaction Type ID
      * @return "true" if the transaction type exists, false - otherwise
      */
     @Override

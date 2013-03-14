@@ -6,6 +6,7 @@ import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -19,6 +20,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import com.sigmasys.kuali.ksa.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -28,14 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.sigmasys.kuali.ksa.model.Account;
-import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.KeyPair;
-import com.sigmasys.kuali.ksa.model.LearningPeriod;
-import com.sigmasys.kuali.ksa.model.LearningUnit;
-import com.sigmasys.kuali.ksa.model.PeriodKeyPair;
-import com.sigmasys.kuali.ksa.model.FeeBase;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
@@ -54,6 +48,24 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 	// Test objects:
 	private String accountId = "admin1";
 	private Account testAccount;
+
+
+    @Test
+    public void getFeeDetail() throws Exception {
+
+        String feeCode = "MT23";
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
+
+        String date = "01/23/2013";
+
+        FeeDetail feeDetail = feeManagementService.getFeeDetail(feeCode, dateFormat.parse(date));
+
+        feeDetail = feeManagementService.getFeeDetail(feeCode, null);
+
+        // TODO: provide assertions
+
+    }
 
 	
 	@Test

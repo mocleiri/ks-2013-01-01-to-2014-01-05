@@ -13,7 +13,8 @@ import com.sigmasys.kuali.ksa.model.*;
  * This interface includes a convenience method "getFeeBase" that creates a holder class that contains
  * all pertinent information in addition to individual data access methods.
  *
- * @author Sergey
+ * @author Sergey Godunov
+ * @author Michael Ivanov
  * @version 1.0
  */
 public interface FeeManagementService {
@@ -477,23 +478,41 @@ public interface FeeManagementService {
      * Retrieves FeeDetail instance from a persistence store by code.
      *
      * @param code FeeDetail code
+     * @param date FeeDetail date. Can be null.
      * @return FeeDetail instance or null if it does not exist
      */
-    FeeDetail getFeeDetail(String code);
+    FeeDetail getFeeDetail(String code, Date date);
+
+    /**
+     * Retrieves FeeDetail instances from a persistence store by a date range
+     *
+     * @param startDate FeeDetail start date. Can be null.
+     * @param endDate   FeeDetail end date. Can be null.
+     * @return list of FeeDetail instances
+     */
+    List<FeeDetail> getFeeDetails(Date startDate, Date endDate);
+
+    /**
+     * Checks if the FeeDetail exists.
+     *
+     * @param code FeeDetail code
+     * @return "true" if the FeeDetail exists, false - otherwise
+     */
+    boolean feeDetailExists(String code);
 
     /**
      * Creates and persists a new instance of FeeDetail object for the given parameters.
      *
-     * @param code                FeeDetail code
-     * @param name                FeeDetail name
-     * @param description         FeeDetail description
-     * @param startDate           FeeDetail start date
-     * @param endDate             FeeDetail end date
-     * @param transactionTypeId   Default transaction type ID
-     * @param transactionAmount   Default transaction amount
-     * @param transactionDate     Default transaction date
-     * @param recognitionDate     Default recognition date
-     * @param dateType            FeeDetailDateType enum value
+     * @param code              FeeDetail code
+     * @param name              FeeDetail name
+     * @param description       FeeDetail description
+     * @param startDate         FeeDetail start date
+     * @param endDate           FeeDetail end date
+     * @param transactionTypeId Default transaction type ID
+     * @param transactionAmount Default transaction amount
+     * @param transactionDate   Default transaction date
+     * @param recognitionDate   Default recognition date
+     * @param dateType          FeeDetailDateType enum value
      * @return a new persistent instance of FeeDetail
      */
     FeeDetail createFeeDetail(String code, String name, String description, Date startDate, Date endDate,
