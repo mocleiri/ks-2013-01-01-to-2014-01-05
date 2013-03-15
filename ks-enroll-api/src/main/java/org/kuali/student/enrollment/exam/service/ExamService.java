@@ -185,8 +185,8 @@ public interface ExamService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<ExamInfo> getExamByIds (@WebParam(name = "examIds") List<String> examIds,
-                                        @WebParam(name = "contextInfo") ContextInfo contextInfo)
+    public List<ExamInfo> getExamsByIds (@WebParam(name = "examIds") List<String> examIds,
+                                         @WebParam(name = "contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException,
             MissingParameterException,
