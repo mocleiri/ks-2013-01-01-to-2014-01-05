@@ -59,9 +59,11 @@ class AcademicTermPage < BasePage
   action(:term_make_official_enabled) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").enabled?}
   action(:make_term_official) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").click; b.loading.wait_while_present(300)}
 
+  action(:key_date_exist) { |term_index, key_date_group_index, key_date_index, b| b.frm.div(id: "key_date_type_line#{term_index}_line#{key_date_group_index}_line#{key_date_index}").span(index: 0).exists?}
+
   action(:delete_term) { |term_index,b| b.frm.a(id: "term_delete_button_line#{term_index}").click; b.loading.wait_while_present}
 
   action(:get_term_index) { |term_name, b| b.frm.text_field(value:"#{term_name}").name[/\d+/]}
-  #action(:get_key_date_group_index) { |group_name, b| b.frm.div(text:"#{group_name}").span(index:0).id}
+  action(:get_key_date_group_index) { |group_name, b| b.frm.div(text:"#{group_name}").span(index:0).id}
 end
 

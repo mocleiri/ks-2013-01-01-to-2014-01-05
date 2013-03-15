@@ -322,7 +322,7 @@ class CourseOffering
         @course = newco
       else
         @course = create_co_copy(@course, @term)
-        if costatus == "Planned"
+        if costatus == "Offered"
            approve_course
         end
       end
