@@ -211,5 +211,5 @@ TERM_PARM_ID,TERM_ID,NM,VAL,VER_NBR
 "10209","10196","kuali.term.parameter.type.org.id","55","1"
 "10210","10197","kuali.term.parameter.type.program.cluSet.id","7a7ae03e-9b11-4a77-af94-bb3744e11294","1"
 "10211","10198","kuali.term.parameter.type.course.cluSet.id","7a2da288-609f-488f-903f-489040a68325","1"
-"10212","10199","kuali.term.parameter.type.course.cluSet.id","7a2da288-609f-488f-903f-489040a68325","1"
+"10212","10199","kuali.term.parameter.type.course.clu.id","dc4d31fc-5356-43ac-8942-f45ffcf3262d","1"
 "10213","10200","kuali.term.parameter.type.free.text","Some free text goes here.","1"
