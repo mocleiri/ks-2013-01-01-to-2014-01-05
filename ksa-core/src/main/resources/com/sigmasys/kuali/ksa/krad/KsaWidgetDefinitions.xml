@@ -75,7 +75,7 @@
                 <bean parent="Uif-Link" p:linkText="Alerts" p:target="_self"
                       p:href="transactionView?methodToCall=get&amp;pageId=ViewAlerts&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Memos" p:target="_self"
-                      p:href="transactionView?methodToCall=get&amp;pageId=ViewMemos&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
+                      p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=MemosPage&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Generate 1098T" p:target="_self"
                       p:href="generate1098T?methodToCall=display1098TForm&amp;viewId=Generate1098TView&amp;userId=@{account.id}"/>
             </list>

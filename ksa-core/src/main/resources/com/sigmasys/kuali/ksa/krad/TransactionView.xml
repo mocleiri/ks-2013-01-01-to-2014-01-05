@@ -58,6 +58,8 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-HeaderTwo" p:headerText="Memos"/>
+                            <bean parent="Uif-Link" p:linkText="Add a Memo" p:target="_self"
+                                  p:href="memoView?methodToCall=get&amp;pageId=AddMemoPage&amp;viewId=MemoView&amp;userId=@{account.id}"/>
                             <ref bean="memoLightboxTable"/>
                         </list>
                     </property>
