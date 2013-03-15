@@ -30,17 +30,7 @@
         <property name="title" value="Memos"/>
         <property name="headerText" value="Memos"/>
         <property name="entryPageId" value="MemosPage"/>
-        <property name="navigation">
-            <bean parent="Uif-KsaPageNavigation">
-                <property name="items">
-                    <list merge="true">
-                        <!-- TODO Advanced Search -->
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AdvancedSearch"
-                              p:actionLabel="Advanced Search"/>
-                    </list>
-                </property>
-            </bean>
-        </property>
+        <property name="navigation" ref="KsaAccountNavigation"/>
         <property name="items">
             <list merge="true">
                 <bean parent="Uif-Page" p:id="MemosPage" p:title="@{account.id}">
