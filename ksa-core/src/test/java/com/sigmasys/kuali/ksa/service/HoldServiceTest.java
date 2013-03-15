@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.service;
 
 
+import com.sigmasys.kuali.ksa.model.Constants;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +31,10 @@ public class HoldServiceTest extends AbstractServiceTest {
 
     private static final String[] holdIssueTypes = {
             HoldServiceConstants.FINANCIAL_ISSUE_TYPE_KEY,
-            HoldServiceConstants.DISCIPLINE_ISSUE_TYPE_KEY
+            HoldServiceConstants.DISCIPLINE_ISSUE_TYPE_KEY,
+            Constants.HOLD_ISSUE_TYPE_FINANCIAL_OVERDUE_PERIOD1,
+            Constants.HOLD_ISSUE_TYPE_FINANCIAL_OVERDUE_PERIOD2,
+            Constants.HOLD_ISSUE_TYPE_FINANCIAL_OVERDUE_PERIOD3
     };
 
     @Autowired

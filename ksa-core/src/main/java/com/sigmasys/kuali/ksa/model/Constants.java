@@ -119,4 +119,9 @@ public interface Constants {
     // KSA Transaction constants
     String KSA_TRANSACTION_RECOGNITION_YEAR = "ksa.transaction.recognition.year";
 
+    // Hold constants
+    String HOLD_ISSUE_TYPE_FINANCIAL_OVERDUE_PERIOD1 = "kuali.hold.issue.type.financial.overdue.period1";
+    String HOLD_ISSUE_TYPE_FINANCIAL_OVERDUE_PERIOD2 = "kuali.hold.issue.type.financial.overdue.period2";
+    String HOLD_ISSUE_TYPE_FINANCIAL_OVERDUE_PERIOD3 = "kuali.hold.issue.type.financial.overdue.period3";
+
 }

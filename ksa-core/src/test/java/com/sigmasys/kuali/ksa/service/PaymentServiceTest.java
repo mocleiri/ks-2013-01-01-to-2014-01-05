@@ -1,7 +1,6 @@
 package com.sigmasys.kuali.ksa.service;
 
 
-import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.model.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,12 +19,6 @@ import java.util.*;
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
 @SuppressWarnings("unchecked")
 public class PaymentServiceTest extends AbstractServiceTest {
-
-    @Autowired
-    private ConfigService configService;
-
-    @Autowired
-    private GeneralLedgerService glService;
 
     @Autowired
     private TransactionService transactionService;
