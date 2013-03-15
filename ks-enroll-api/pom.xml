@@ -170,6 +170,7 @@
                         </configuration>
                     </execution>
                     <!-- This generates the conformance test java code-->
+<!--
                     <execution>
                         <id>generate-conformance-tests</id>
                         <phase>${ks.conftest.phase}</phase>
@@ -177,7 +178,7 @@
                             <goal>kscreateconftest</goal>
                         </goals>
                         <configuration>
-                            <!-- generate only on the kuali student api -->
+                            &lt;!&ndash; generate only on the kuali student api &ndash;&gt;
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/java</sourceDir>
                                 <sourceDir>${project.basedir}/../ks-core-api/src/main/java</sourceDir>
@@ -186,6 +187,7 @@
                             </sourceDirs>
                         </configuration>
                     </execution>
+-->
                     <!-- generate only on the kuali student api -->
                     <execution>
                         <id>generate-validation-decorators</id>
