@@ -22,24 +22,26 @@ end
 
 Then /^I do not have access to edit the course offering$/ do
   on ManageCourseOfferings do |page|
-    page.ao_results_div.present?.should == true
-    page.edit_course_offering_link.present?.should == false
+    page.ao_results_div.present?.should be_true
+    page.edit_course_offering_link.present?.should be_false
   end
 end
 
 Then /^I do not have access to delete the listed course offering$/ do
   on ManageCourseOfferingList do |page|
-    page.select_cos([@course_offering.course])
-    page.delete_cos_button.enabled?.should be_false
-    page.deselect_cos([@course_offering.course])
+    page.target_row(@course_offering.course).checkbox.present?.should be_false
+    #page.select_cos([@course_offering.course])
+    #page.delete_cos_button.enabled?.should be_false
+    #page.deselect_cos([@course_offering.course])
   end
 end
 
 Then /^I do not have access to approve the listed course offering$/ do
   on ManageCourseOfferingList do |page|
-    page.select_cos([@course_offering.course])
-    page.approve_course_offering_button.enabled?.should be_false
-    page.deselect_cos([@course_offering.course])
+    page.target_row(@course_offering.course).checkbox.present?.should be_false
+    #page.select_cos([@course_offering.course])
+    #page.approve_course_offering_button.enabled?.should be_false
+    #page.deselect_cos([@course_offering.course])
   end
 end
 
@@ -83,6 +85,7 @@ When /^I manage a course offering for a subject code not in my admin org$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
   @course_offering.manage
+  @activity_offering = make ActivityOffering, :code=>"A"
 end
 
 
@@ -183,6 +186,7 @@ end
 Then /^I have access to view the activity offering details$/ do
   on ManageCourseOfferings do |page|
     page.view_activity_offering_link(@activity_offering.code).present?.should be_true
+    page.view_activity_offering_link(@activity_offering.code).attribute_value("class").should_not match /disabled/
   end
 end
 
@@ -196,14 +200,22 @@ end
 
 Then /^I have access to add a new activity offering$/ do
   on ManageCourseOfferings do |page|
-    page.add_activity_button.present?.should be_true
+    page.add_activity_button.enabled?.should be_true
   end
 end
 
 Then /^I have access to delete an activity offering$/ do
   on ManageCourseOfferings do |page|
     page.select_aos([@activity_offering.code])
-    page.delete_aos_button.present?.should be_true
+    page.delete_aos_button.enabled?.should be_true
+    page.deselect_aos([@activity_offering.code])
+  end
+end
+
+Then /^I have access to approve an activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.select_aos([@activity_offering.code])
+    page.approve_activity_button.enabled?.should be_true
     page.deselect_aos([@activity_offering.code])
   end
 end
@@ -211,18 +223,21 @@ end
 Then /^I have access to edit an activity offering$/ do
   on ManageCourseOfferings do |page|
     page.edit_link(@activity_offering.code).present?.should be_true
+    page.view_activity_offering_link(@activity_offering.code).attribute_value("class").should_not match /disabled/
   end
 end
 
-Then /^I have access to copy activity offering$/ do
+Then /^I have access to copy an activity offering$/ do
   on ManageCourseOfferings do |page|
     page.copy_link(@activity_offering.code).present?.should be_true
+    page.copy_link(@activity_offering.code).attribute_value("class").should_not match /disabled/
   end
 end
 
 Then /^I have access to manage registration groups$/ do
   on ManageCourseOfferings do |page|
     page.manage_registration_groups_link.present?.should be_true
+    page.manage_registration_groups_link.attribute_value("class").should_not match /disabled/
   end
 end
 
@@ -257,6 +272,7 @@ Then /^I have access to create the course offering from catalog$/ do
     page.suffix.present?.should == true
   end
 end
+
 When /^I have access to create the course from an existing offering$/ do
   on CreateCourseOffering do |page|
     page.create_from_existing_offering_tab
@@ -264,12 +280,10 @@ When /^I have access to create the course from an existing offering$/ do
   end
 end
 
-When /^there is a "([^"]*)" course in my admin org/ do |costate|
+When /^there is a "([^"]*)" course offering in my admin org/ do |co_status|
   step "I am logged in as a Schedule Coordinator"
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
-  @course_offering.search_by_subjectcode
-  @course_offering.check_for_course(costate)
-  @newCO = @course_offering.course
+  @course_offering.check_course_in_status(co_status)
   step "I am logged in as a Department Schedule Coordinator"
 end
 
@@ -281,12 +295,12 @@ When /^there is a "([^"]*)" course present/ do |costate|
   @newCO = @course_offering.course
 end
 
-When /^I have access to delete an activity offering in a "([^"]*)" state for a course in my admin org$/ do |aostate|
-  if @newCO
-    @course_offering = make CourseOffering, :term=> @term_for_test, :course => @newCO
-  else
-    @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
-  end
+When /^I have access to delete an activity offering in "([^"]*)" status for the course offering$/ do |aostate|
+  #if @newCO
+  #  @course_offering = make CourseOffering, :term=> @term_for_test, :course => @newCO
+  #else
+  #  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
+  #end
   @course_offering.manage
   @course_offering.attempt_ao_delete_by_status(aostate).should == true
 end
@@ -297,6 +311,12 @@ Then /^I have access to delete a course offering in a "([^"]*)" state for a cour
 end
 
 Then /^I do not have access to view the activity offerings$/ do
+  on ManageCourseOfferings do |page|
+    page.auth_error.present?.should == true
+  end
+end
+
+Then /^I do not have access to view the course offering list$/ do
   on ManageCourseOfferings do |page|
     page.auth_error.present?.should == true
   end
@@ -467,5 +487,26 @@ end
 Then /^I have access to edit the honors flag$/ do
   on ActivityOfferingMaintenance do |page|
     page.honors_flag.enabled?.should be_true
+  end
+end
+
+Then /^I do not have access to edit activity offerings$/ do
+  on ManageCourseOfferings do |page|
+    page.codes_list.each do |ao_code|
+      page.edit_link(ao_code).present?.should be_false
+    end
+  end
+end
+
+
+Then /^I do not have access to select activity offerings for add, approve, delete$/ do
+  on ManageCourseOfferings do |page|
+    page.delete_aos_button.enabled?.should be_false
+    page.approve_activity_button.enabled?.should be_false
+    page.add_activity_button.enabled?.should be_false
+    page.draft_activity_button.enabled?.should be_false
+    page.codes_list.each do |ao_code|
+      page.target_row(ao_code).checkbox.present?.should be_false
+    end
   end
 end

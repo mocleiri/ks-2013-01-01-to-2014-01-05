@@ -35,21 +35,11 @@ class ManageCourseOfferings < BasePage
   #value(:cross_listed_as) { |b| b.frm.span(id: "u362_span").text }
   value(:cross_listed_as_text) { |b| b.frm.span(text: /Crosslisted as/).text }
 
-
-  element(:create_co_button)   { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-CO") }
-
-
-  action(:delete_cos) { b|b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-CO").click; b.loading.wait_while_present }
-  
   action(:select_all) { |b| b.frm.link(id: "KS-CourseOfferingManagement-SelectAll").click; b.loading.wait_while_present }
 
-  action(:add_course){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-CO").click; b.loading.wait_while_present}
-
-  action(:approve_cos){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Approve-CO").click; b.loading.wait_while_present}
-
-  element(:approve_co_popup_div) { |b| b.div(id: "approveCODialog") }
-  action(:approve_co_confirm_action) { |b| b.approve_co_popup_div.checkbox(index: 0).click; b.loading.wait_while_present(180) }
-  action(:approve_co_cancel_action) { |b| b.approve_co_popup_div.checkbox(index: 1).click; b.loading.wait_while_present(180) }
+  #NB - CO Toolbar is not on this page - this one element is listed here to allow nagivation to single CO when a CO List is
+  # not expected (ie search for ENGL206, returns ENGL206 and ENG206A)
+  action(:create_co_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-CO")}
 
   element(:add_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-AO") }
   action(:add_activity){ |b| b.add_activity_button.click; b.loading.wait_while_present}
@@ -61,7 +51,8 @@ class ManageCourseOfferings < BasePage
   element(:add_button) { |b| b.add_activity_popup_div.button }
   action(:complete_add_activity) { |b| b.add_button.click; b.loading.wait_while_present }
 
-  action(:draft_activity){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Draft-AO").click; b.loading.wait_while_present}
+  action(:draft_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Draft-AO") }
+  action(:draft_activity){ |b| b.draft_activity_button.click; b.loading.wait_while_present}
 
   element(:approve_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Approve-AO")}
   action(:approve_activity){ |b| b.approve_activity_button.click; b.loading.wait_while_present}

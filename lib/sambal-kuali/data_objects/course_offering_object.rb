@@ -315,18 +315,26 @@ class CourseOffering
     end
   end
 
-  def check_for_course(costatus)
-   on ManageCourseOfferingList do |page|
-      newco = page.select_co_by_status(costatus)
-      if newco != nil
-        @course = newco
+  # checks to see if course offering in the same is in specified state, otherwise creates a new course offering
+  # @example
+  #  @course_offering.check_course_in_state
+  # updates the course code
+  #
+  # @param co_status [String] "Offered", "Draft"
+  #TODO: use constants here for status
+  def check_course_in_status(co_status)
+    search_by_subjectcode
+    on ManageCourseOfferingList do |page|
+      existing_co = page.select_co_by_status(co_status)
+      if existing_co != nil
+        @course = existing_co
       else
         @course = create_co_copy(@course, @term)
-        if costatus == "Offered"
-           approve_course
+        if co_status == "Offered"
+          approve_course
         end
       end
-   end
+    end
   end
 
   def approve_course
