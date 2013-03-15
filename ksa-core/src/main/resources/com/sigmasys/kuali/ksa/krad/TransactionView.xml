@@ -390,7 +390,7 @@
 
     <bean id="runningAllocationList" parent="Uif-TableSubCollection-WithinSection" p:layoutManager.numberOfColumns="3">
         <property name="headerText" value="Allocations" />
-        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Allocation" />
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.AllocationModel" />
         <property name="propertyName" value="allocations" />
         <property name="layoutManager.sequencePropertyName" value="id" />
         <property name="layoutManager.richTable.render" value="true" />
@@ -405,11 +405,11 @@
         </property>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="secondTransaction.transactionType.description" p:label="Description" p:style="width: 50%"/>
-                <bean parent="Uif-InputField" p:propertyName="amount" p:label="Amount" p:style="text-align: right; width: 30%"/>
-                <bean parent="Uif-MessageField" p:messageText="&lt;img src='../images/@{#line.isLocked() ? 'locked' : 'unlocked'}.png' alt='@{#line.isLocked() ? 'Locked' : 'Unlocked'}'&gt;" p:label="Locked" p:style="width: 20%">
+                <bean parent="Uif-InputField" p:propertyName="allocatedTransaction.transactionType.description" p:label="Description" p:style="width: 50%"/>
+                <bean parent="Uif-InputField" p:propertyName="allocation.amount" p:label="Amount" p:style="text-align: right; width: 30%"/>
+                <bean parent="Uif-MessageField" p:messageText="&lt;img src='../images/@{#line.allocation.isLocked() ? 'locked' : 'unlocked'}.png' alt='@{#line.allocation.isLocked() ? 'Locked' : 'Unlocked'}'&gt;" p:label="Locked" p:style="width: 20%">
                     <property name="toolTip">
-                        <bean parent="Uif-Tooltip" p:tooltipContent="Transaction is @{#line.isLocked() ? 'locked' : 'unlocked'}"/>
+                        <bean parent="Uif-Tooltip" p:tooltipContent="Transaction is @{#line.allocation.isLocked() ? 'locked' : 'unlocked'}"/>
                     </property>
                 </bean>
             </list>

@@ -28,7 +28,7 @@ public class TransactionModel extends Transaction {
 
     private TransactionTypeValue transactionTypeValue;
 
-    private List<Allocation> allocations;
+    private List<AllocationModel> allocations;
 
     private String transactionTypeId;
 
@@ -603,11 +603,14 @@ public class TransactionModel extends Transaction {
         return memoTree;
     }
 
-    public List<Allocation> getAllocations() {
+    public List<AllocationModel> getAllocations() {
         return allocations;
     }
 
-    public void setAllocations(List<Allocation> allocations) {
-        this.allocations = allocations;
+    public void setAllocations(List<Allocation> alloc) {
+        this.allocations = new ArrayList<AllocationModel>(alloc.size());
+        for(Allocation a : alloc){
+            allocations.add(new AllocationModel(this.parentTransaction, a));
+        }
     }
 }
