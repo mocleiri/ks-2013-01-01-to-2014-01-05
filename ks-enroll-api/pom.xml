@@ -170,7 +170,7 @@
                         </configuration>
                     </execution>
                     <!-- This generates the conformance test java code-->
-<!--
+                    <!--
                     <execution>
                         <id>generate-conformance-tests</id>
                         <phase>${ks.conftest.phase}</phase>
