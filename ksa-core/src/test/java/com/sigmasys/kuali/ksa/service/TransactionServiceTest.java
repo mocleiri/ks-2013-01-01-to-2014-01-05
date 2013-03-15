@@ -147,15 +147,38 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         createAllocation(true);
 
-        Assert.notNull(transaction1);
-        Assert.notNull(transaction2);
-        Assert.notNull(transaction1.getId());
-        Assert.notNull(transaction2.getId());
+        Transaction transaction = transactionService.createTransaction("1020", "admin", new Date(), new BigDecimal(-10));
+
+        Assert.notNull(transaction);
+        Assert.notNull(transaction.getId());
+
+        CompositeAllocation compositeAllocation =
+                transactionService.createAllocation(transaction, transaction1, new BigDecimal(3.5), true, true);
+
+        Assert.notNull(compositeAllocation);
+        Assert.notNull(compositeAllocation.getAllocation());
+        Assert.notNull(compositeAllocation.getAllocation().getFirstTransaction());
+        Assert.notNull(compositeAllocation.getAllocation().getSecondTransaction());
+
+        transaction = transactionService.createTransaction("1020", "admin", new Date(), new BigDecimal(-5));
+
+        Assert.notNull(transaction);
+        Assert.notNull(transaction.getId());
+
+        compositeAllocation =
+                transactionService.createAllocation(transaction1, transaction, new BigDecimal(1), true, true);
+
+        Assert.notNull(compositeAllocation);
+        Assert.notNull(compositeAllocation.getAllocation());
+        Assert.notNull(compositeAllocation.getAllocation().getFirstTransaction());
+        Assert.notNull(compositeAllocation.getAllocation().getSecondTransaction());
 
         List<Allocation> allocations = transactionService.getAllocations(transaction1.getId());
 
         Assert.notNull(allocations);
         Assert.notEmpty(allocations);
+
+        logger.debug("Number of allocations = " + allocations.size());
 
         for (Allocation allocation : allocations) {
 
@@ -170,9 +193,6 @@ public class TransactionServiceTest extends AbstractServiceTest {
             Assert.notNull(transactionId2);
 
             Assert.isTrue(allocation.isLocked());
-
-            Assert.isTrue(transactionId1.equals(transaction1.getId()) || transactionId1.equals(transaction2.getId()));
-            Assert.isTrue(transactionId2.equals(transaction1.getId()) || transactionId2.equals(transaction2.getId()));
 
         }
 
