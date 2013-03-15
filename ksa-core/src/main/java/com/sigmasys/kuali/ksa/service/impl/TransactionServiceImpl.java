@@ -991,16 +991,33 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     public List<Allocation> getAllocations(Long transactionId) {
 
-        Query query = em.createQuery("select distinct a from Allocation a " +
+        Query query = em.createQuery("select a from Allocation a " +
                 " left outer join fetch a.account ac " +
-                " left outer join fetch a.firstTransaction t1 " +
-                " left outer join fetch a.secondTransaction t2 " +
+                " inner join fetch a.firstTransaction t1 " +
+                " inner join fetch a.secondTransaction t2 " +
+                " inner join fetch t1.transactionType tt1 " +
+                " inner join fetch t2.transactionType tt2 " +
                 " where t1.id = :id or t2.id = :id " +
                 " order by a.id desc");
 
         query.setParameter("id", transactionId);
 
-        return query.getResultList();
+        List<Allocation> allocations = query.getResultList();
+
+        Set<Long> allocationIds = new HashSet<Long>();
+        if (CollectionUtils.isNotEmpty(allocations)) {
+            Iterator<Allocation> iterator = allocations.iterator();
+            while (iterator.hasNext()) {
+                Allocation allocation = iterator.next();
+                if (allocationIds.contains(allocation.getId())) {
+                    allocations.remove(allocation);
+                } else {
+                    allocationIds.add(allocation.getId());
+                }
+            }
+        }
+
+        return allocations;
     }
 
     /**

@@ -143,7 +143,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void getAllocation() throws Exception {
+    public void getAllocations() throws Exception {
 
         createAllocation(true);
 
