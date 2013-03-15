@@ -11,11 +11,10 @@ public class AllocationModel {
     private Transaction parentTransaction;
     private Transaction allocatedTransaction;
 
-    public AllocationModel(){
-
+    public AllocationModel() {
     }
 
-    public AllocationModel(Transaction t, Allocation a){
+    public AllocationModel(Transaction t, Allocation a) {
         this.parentTransaction = t;
         this.allocation = a;
 
@@ -26,7 +25,7 @@ public class AllocationModel {
         return allocation;
     }
 
-    public void setAlocation(Allocation allocation) {
+    public void setAllocation(Allocation allocation) {
         this.allocation = allocation;
         this.setAllocatedTransaction();
     }
@@ -48,9 +47,9 @@ public class AllocationModel {
         this.allocatedTransaction = allocatedTransaction;
     }
 
-    private void setAllocatedTransaction(){
-        if(this.allocation != null && this.parentTransaction != null){
-            if(this.parentTransaction.equals(this.allocation.getFirstTransaction())){
+    private void setAllocatedTransaction() {
+        if (this.allocation != null && this.parentTransaction != null) {
+            if (this.parentTransaction.equals(this.allocation.getFirstTransaction())) {
                 this.allocatedTransaction = this.allocation.getSecondTransaction();
             } else {
                 this.allocatedTransaction = this.allocation.getFirstTransaction();
