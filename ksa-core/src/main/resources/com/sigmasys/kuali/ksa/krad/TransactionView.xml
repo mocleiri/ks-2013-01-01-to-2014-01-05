@@ -446,7 +446,7 @@
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.allocatedAmount" p:label="Allocated Amount"/>
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.lockedAllocatedAmount" p:label="Locked Allocated"/>
 
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.transactionType.description" p:label="Statement Text"/>
+                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.transactionType.description" p:label="Description"/>
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.rollup.description" p:label="Roll-up"/>
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.generalLedgerType.description" p:label="General Ledger Type"/>
                                 <bean parent="Uif-InputField" p:propertyName="glOverridden" p:label="Override GL Codes"/>

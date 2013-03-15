@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.krad.uif.service.impl.ViewHelperServiceImpl;
 import org.kuali.rice.krad.uif.view.View;
-import org.omg.CORBA.PRIVATE_MEMBER;
 
 import java.util.Collection;
 import java.util.List;
@@ -45,11 +44,11 @@ public class TransactionTypeHelper extends ViewHelperServiceImpl {
     }
 
     public List<CreditType> getPaymentsForSuggest(String suggest){
-        return getTransactionService().getTransactionTypeByName(suggest, CreditType.class);
+        return getTransactionService().getTransactionTypeByNamePattern(suggest, CreditType.class);
     }
 
     public List<DebitType> getChargesForSuggest(String suggest){
-        return getTransactionService().getTransactionTypeByName(suggest, DebitType.class);
+        return getTransactionService().getTransactionTypeByNamePattern(suggest, DebitType.class);
     }
 
     private TransactionService getTransactionService() {

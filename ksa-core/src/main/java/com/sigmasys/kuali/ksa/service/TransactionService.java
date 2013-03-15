@@ -96,13 +96,12 @@ public interface TransactionService {
     /**
      * Returns the list of transaction type instances for the given string
      *
-     * @param name String containing characters within the name
+     * @param pattern    String containing characters within the name
      * @param entityType Class instance of TransactionType subclass
      * @return List of TransactionType instances
      */
     @WebMethod(exclude = true)
-    <T extends TransactionType> List<T> getTransactionTypeByName(String name, Class<T> entityType);
-
+    <T extends TransactionType> List<T> getTransactionTypeByNamePattern(String pattern, Class<T> entityType);
 
 
     /**

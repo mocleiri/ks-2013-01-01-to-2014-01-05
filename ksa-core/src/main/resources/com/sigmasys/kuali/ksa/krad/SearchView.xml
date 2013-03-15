@@ -279,7 +279,7 @@
                 </bean>
                 <!-- listed as Type -->
                 <bean parent="Uif-InputField" p:propertyName="transactionModel.transactionTypeDesc"
-                      p:label="Statement Text"
+                      p:label="Description"
                       p:maxLength="25"
                       p:fieldLabel.renderColon="true">
                     <property name="bindingInfo.bindToForm" value="true"/>

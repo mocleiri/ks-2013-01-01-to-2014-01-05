@@ -3,21 +3,15 @@ package com.sigmasys.kuali.ksa.krad.form;
 import com.sigmasys.kuali.ksa.krad.model.GlBreakdownModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionTypeModel;
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class TransactionTypeForm extends AbstractViewModel {
-
-
-    @Autowired
-    private AuditableEntityService auditableEntityService;
 
 
     // Currency stuff
@@ -37,7 +31,7 @@ public class TransactionTypeForm extends AbstractViewModel {
     private String type;
     private String code;
     private String description;
-    private String defaultTransactionText;
+    private String defaultStatement;
     private Date startDate;
     private Date endDate;
     private Integer priority;
@@ -228,12 +222,12 @@ public class TransactionTypeForm extends AbstractViewModel {
         this.showEndDate = showEndDate;
     }
 
-    public String getDefaultTransactionText() {
-        return defaultTransactionText;
+    public String getDefaultStatement() {
+        return defaultStatement;
     }
 
-    public void setDefaultTransactionText(String defaultTransactionText) {
-        this.defaultTransactionText = defaultTransactionText;
+    public void setDefaultStatement(String defaultStatement) {
+        this.defaultStatement = defaultStatement;
     }
 
     public KeyValuesFinder getRollupOptionsFinder() {

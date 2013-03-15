@@ -202,16 +202,25 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     /**
      * Returns the list of transaction type instances for the given string
      *
-     * @param name       String containing characters within the name
+     * @param pattern    String containing characters within the name
      * @param entityType Class instance of TransactionType subclass
      * @return List of TransactionType instances
      */
     @Override
-    public <T extends TransactionType> List<T> getTransactionTypeByName(String name, Class<T> entityType) {
-        Query query = em.createQuery("select tt from " + entityType.getName() + " tt where upper(tt.id.id) like upper(:name) or upper(tt.description) like upper(:name)");
-        query.setParameter("name", "%" + name + "%");
+    @WebMethod(exclude = true)
+    public <T extends TransactionType> List<T> getTransactionTypeByNamePattern(String pattern, Class<T> entityType) {
+        if (StringUtils.isBlank(pattern)) {
+            String errMsg = "Name pattern cannot be empty";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+        Query query = em.createQuery("select tt from " + entityType.getName() +
+                " tt where upper(tt.id.id) like upper(:pattern) or " +
+                " upper(tt.code) like upper(:pattern) or " +
+                " upper(tt.name) like upper(:pattern) or " +
+                " upper(tt.description) like upper(:pattern)");
+        query.setParameter("pattern", "%" + pattern + "%");
         return query.getResultList();
-
     }
 
     /**

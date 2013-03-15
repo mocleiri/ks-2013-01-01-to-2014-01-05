@@ -1353,37 +1353,36 @@ public class TransactionServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void queryTransactionTypesByName() throws Exception {
+    public void getTransactionTypesByNamePattern() throws Exception {
 
         // Search on the id
         String search = "cc";
         Class type = CreditType.class;
 
-        List<CreditType> cTypes = transactionService.getTransactionTypeByName(search, type);
+        List<CreditType> cTypes = transactionService.getTransactionTypeByNamePattern(search, type);
 
         Assert.notNull(cTypes);
-        Assert.isTrue(cTypes.size() == 3);
+        Assert.notEmpty(cTypes);
 
         // Search on the description
         search = "Credit Card payment";
-        cTypes = transactionService.getTransactionTypeByName(search, type);
+        cTypes = transactionService.getTransactionTypeByNamePattern(search, type);
 
         Assert.notNull(cTypes);
-        Assert.isTrue(cTypes.size() == 3);
+        Assert.notEmpty(cTypes);
 
         // Search on the same string but as Debit Type should give 0 results
         type = DebitType.class;
-        List<DebitType> dTypes = transactionService.getTransactionTypeByName(search, type);
+        List<DebitType> dTypes = transactionService.getTransactionTypeByNamePattern(search, type);
 
         Assert.notNull(dTypes);
-        Assert.isTrue(dTypes.size() == 0);
+        Assert.isTrue(dTypes.isEmpty());
 
         search = "LAB FEE";
-        dTypes = transactionService.getTransactionTypeByName(search, type);
+        dTypes = transactionService.getTransactionTypeByNamePattern(search, type);
 
         Assert.notNull(dTypes);
-        Assert.isTrue(dTypes.size() == 13, "Searching for '" + search + "' should have returned 13 items but returned " + dTypes.size());
-
+        Assert.notEmpty(cTypes);
     }
 
 
