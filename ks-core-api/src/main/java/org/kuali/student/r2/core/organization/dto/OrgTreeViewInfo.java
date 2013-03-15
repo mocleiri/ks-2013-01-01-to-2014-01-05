@@ -93,6 +93,9 @@ public class OrgTreeViewInfo
 
     @Override
     public List<OrgTreeViewInfo> getParents() {
+        if(parents == null) {
+            parents = new ArrayList<OrgTreeViewInfo>();
+        }
         return parents;
     }
 
@@ -102,6 +105,9 @@ public class OrgTreeViewInfo
 
     @Override
     public List<OrgTreeViewInfo> getChildren() {
+        if(children == null) {
+            children = new ArrayList<OrgTreeViewInfo>();
+        }
         return children;
     }
 

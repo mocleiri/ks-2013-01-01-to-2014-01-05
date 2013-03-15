@@ -65,7 +65,7 @@ public class OrgPositionRestrictionInfo extends HasAttributesAndMetaInfo
     @XmlElement
     private Integer minNumRelations;
     @XmlElement
-    private String maxNumRelations;
+    private Integer maxNumRelations;
     @XmlAnyElement
     private List<Object> _futureElements;  
 
@@ -164,11 +164,11 @@ public class OrgPositionRestrictionInfo extends HasAttributesAndMetaInfo
     }
 
     @Override
-    public String getMaxNumRelations() {
+    public Integer getMaxNumRelations() {
         return maxNumRelations;
     }
 
-    public void setMaxNumRelations(String maxNumRelations) {
+    public void setMaxNumRelations(Integer maxNumRelations) {
         this.maxNumRelations = maxNumRelations;
     }
 }

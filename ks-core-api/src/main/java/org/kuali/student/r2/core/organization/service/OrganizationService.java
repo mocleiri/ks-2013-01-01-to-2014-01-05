@@ -1680,7 +1680,7 @@ public interface OrganizationService extends SearchService {
 
     /**
      * Retrieves a list of OrgPositionRestrictions by
-     * OrgPositionRestriction Type.
+     * OrgPersonRelation Type.
      * 
      * @param orgPersonRelationTypeKey an identifier for the OrgPositionRestriction
      *        type

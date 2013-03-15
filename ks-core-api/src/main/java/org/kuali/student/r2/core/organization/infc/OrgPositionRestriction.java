@@ -98,5 +98,5 @@ public interface OrgPositionRestriction
      *
      * @name Maximum Number of Relations
      */
-    public String getMaxNumRelations();
+    public Integer getMaxNumRelations();
 }
