@@ -200,6 +200,21 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
+     * Returns the list of transaction type instances for the given string
+     *
+     * @param name       String containing characters within the name
+     * @param entityType Class instance of TransactionType subclass
+     * @return List of TransactionType instances
+     */
+    @Override
+    public <T extends TransactionType> List<T> getTransactionTypeByName(String name, Class<T> entityType) {
+        Query query = em.createQuery("select tt from " + entityType.getName() + " tt where upper(tt.id.id) like upper(:name) or upper(tt.description) like upper(:name)");
+        query.setParameter("name", "%" + name + "%");
+        return query.getResultList();
+
+    }
+
+    /**
      * Creates a new debit type based on the given parameters.
      *
      * @param debitTypeId Transaction Type ID

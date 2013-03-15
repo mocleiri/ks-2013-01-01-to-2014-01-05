@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.model.CreditType;
 import com.sigmasys.kuali.ksa.model.Payment;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ public class PaymentForm extends AbstractViewModel {
    private Payment payment;
 
    private String paymentTransactionTypeId;
+    private CreditType transactionType = new CreditType();
 
    private String printReceipt;
 
@@ -94,4 +96,12 @@ public class PaymentForm extends AbstractViewModel {
    public void setStatusMessage(String statusMessage) {
       this.statusMessage = statusMessage;
    }
+
+    public CreditType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(CreditType transactionType) {
+        this.transactionType = transactionType;
+    }
 }

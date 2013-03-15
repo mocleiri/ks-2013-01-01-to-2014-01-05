@@ -1,13 +1,17 @@
 package com.sigmasys.kuali.ksa.krad.helper;
 
 import com.sigmasys.kuali.ksa.krad.form.TransactionTypeForm;
+import com.sigmasys.kuali.ksa.model.CreditType;
+import com.sigmasys.kuali.ksa.model.DebitType;
 import com.sigmasys.kuali.ksa.model.Tag;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.krad.uif.service.impl.ViewHelperServiceImpl;
 import org.kuali.rice.krad.uif.view.View;
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +27,8 @@ public class TransactionTypeHelper extends ViewHelperServiceImpl {
 
     private AuditableEntityService auditableEntityService;
 
+    private TransactionService transactionService;
+
     private TransactionTypeForm form;
     private List<Tag> searchTags;
 
@@ -37,6 +43,22 @@ public class TransactionTypeHelper extends ViewHelperServiceImpl {
         }
         return auditableEntityService;
     }
+
+    public List<CreditType> getPaymentsForSuggest(String suggest){
+        return getTransactionService().getTransactionTypeByName(suggest, CreditType.class);
+    }
+
+    public List<DebitType> getChargesForSuggest(String suggest){
+        return getTransactionService().getTransactionTypeByName(suggest, DebitType.class);
+    }
+
+    private TransactionService getTransactionService() {
+        if (transactionService == null) {
+            transactionService = ContextUtils.getBean(TransactionService.class);
+        }
+        return transactionService;
+    }
+
 
     /**
      * @see org.kuali.rice.krad.uif.service.ViewHelperService#processCollectionAddLine(org.kuali.rice.krad.uif.view.View,

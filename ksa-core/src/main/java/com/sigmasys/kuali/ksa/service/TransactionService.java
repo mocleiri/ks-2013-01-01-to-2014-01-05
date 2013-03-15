@@ -94,6 +94,18 @@ public interface TransactionService {
     TransactionType getTransactionType(TransactionTypeId transactionTypeId);
 
     /**
+     * Returns the list of transaction type instances for the given string
+     *
+     * @param name String containing characters within the name
+     * @param entityType Class instance of TransactionType subclass
+     * @return List of TransactionType instances
+     */
+    @WebMethod(exclude = true)
+    <T extends TransactionType> List<T> getTransactionTypeByName(String name, Class<T> entityType);
+
+
+
+    /**
      * Creates a new debit type based on the given parameters.
      *
      * @param creditTypeId Transaction Type ID

@@ -26,6 +26,8 @@
     http://www.springframework.org/schema/util
     http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+    <bean id="transactionTypeHelper" class="com.sigmasys.kuali.ksa.krad.helper.TransactionTypeHelper"/>
+
     <bean id="ChargeView" parent="Uif-KsaFormView" p:footer.render="false">
         <property name="title" value="Charge"/>
         <property name="headerText" value="Charges"/>
@@ -49,6 +51,7 @@
         <property name="viewHelperServiceClassName" value=""/>
         <property name="defaultBindingObjectPath" value=""/>
 -->
+        <property name="viewHelperService" ref="transactionTypeHelper"/>
         <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.ChargeForm"/>
     </bean>
 
@@ -87,6 +90,17 @@
                     <property name="bindingInfo.bindToForm" value="true"/>
                     <property name="control">
                         <bean parent="Uif-TextControl" p:size="11" />
+                    </property>
+                    <property name="suggest">
+                        <bean parent="Uif-Suggest">
+                            <property name="sourcePropertyName" value="id.id"/>
+                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                            <property name="suggestQuery">
+                                <bean parent="Uif-AttributeQueryConfig">
+                                    <property name="queryMethodToCall" value="getChargesForSuggest"/>
+                                </bean>
+                            </property>
+                        </bean>
                     </property>
                 </bean>
                 <!-- Use the Charge instance to get/set the values -->

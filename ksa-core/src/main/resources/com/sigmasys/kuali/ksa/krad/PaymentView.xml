@@ -26,6 +26,8 @@
     http://www.springframework.org/schema/util
     http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+    <bean id="transactionTypeHelper" class="com.sigmasys.kuali.ksa.krad.helper.TransactionTypeHelper"/>
+
     <bean id="PaymentView" parent="Uif-KsaFormView" p:footer.render="false">
         <property name="title" value=""/>
         <property name="headerText" value="Payment"/>
@@ -49,6 +51,7 @@
         <property name="viewHelperServiceClassName" value=""/>
         <property name="defaultBindingObjectPath" vaue=""/>
 -->
+        <property name="viewHelperService" ref="transactionTypeHelper"/>
         <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.PaymentForm"/>
     </bean>
 
@@ -95,7 +98,6 @@
                 <!-- Use a field to get/set the value  -->
                 <bean parent="Uif-InputField" p:propertyName="paymentTransactionTypeId"
                       p:label="Payment Type"
-                      p:instructionalText="Payment type"
                       p:fieldLabel.renderColon="true"
                       p:labelPlacement="TOP"
                       p:maxLength="10"
@@ -104,6 +106,18 @@
                     <property name="control">
                         <bean parent="Uif-TextControl" p:size="11" />
                     </property>
+                    <property name="suggest">
+                        <bean parent="Uif-Suggest">
+                            <property name="sourcePropertyName" value="id.id"/>
+                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                            <property name="suggestQuery">
+                                <bean parent="Uif-AttributeQueryConfig">
+                                    <property name="queryMethodToCall" value="getPaymentsForSuggest"/>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="payment.externalId"
                       p:label="Authorization"
