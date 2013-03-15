@@ -58,7 +58,7 @@ public class TransactionController extends GenericSearchController {
      * @param request
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
     public ModelAndView get(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
         // just for the transactions by person page
@@ -68,8 +68,14 @@ public class TransactionController extends GenericSearchController {
         }
 
         String userId = request.getParameter("userId");
+        //if(userId == null){
+        //    userId = request.getParameter("actionParameters[userId]");
+        //}
+
         if (userId == null) {
             // Error out here
+            form.setStatusMessage("No userId passed to method");
+            return getUIFModelAndView(form);
         }
         form.setAccount(accountService.getFullAccount(userId));
 
@@ -77,8 +83,8 @@ public class TransactionController extends GenericSearchController {
             form.setAlerts(informationService.getAlerts(userId));
             form.setFlags(informationService.getFlags(userId));
 
-            Date startDate = null;
-            Date endDate = null;
+            Date startDate = form.getStartingDate();
+            Date endDate = form.getEndingDate();
 
             // All transactions
             List<Transaction> transactions = TransactionUtils.orderByEffectiveDate(transactionService.getTransactions(userId, startDate, endDate), true);

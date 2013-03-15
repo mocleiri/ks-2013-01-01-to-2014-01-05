@@ -9,11 +9,15 @@ import org.kuali.rice.core.api.util.tree.Tree;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TransactionForm extends AbstractViewModel {
 
     private Account account;
+
+    private String statusMessage;
+
 
     private List<Alert> alerts;
     private List<Flag> flags;
@@ -23,7 +27,9 @@ public class TransactionForm extends AbstractViewModel {
     private List<TransactionModel> rollupTransactions;
     private List<TransactionModel> allTransactions;
 
+    private Date       startingDate;
     private BigDecimal startingBalance;
+    private Date       endingDate;
     private BigDecimal endingBalance;
 
     // Not sure if any of these below this line are still used.
@@ -484,5 +490,29 @@ public class TransactionForm extends AbstractViewModel {
         }
 
         return memoTree;
+    }
+
+    public Date getStartingDate() {
+        return startingDate;
+    }
+
+    public void setStartingDate(Date startingDate) {
+        this.startingDate = startingDate;
+    }
+
+    public Date getEndingDate() {
+        return endingDate;
+    }
+
+    public void setEndingDate(Date endingDate) {
+        this.endingDate = endingDate;
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
 }

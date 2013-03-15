@@ -32,6 +32,7 @@
                                 </list>
                                 </property>
                             </bean>
+                            <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
                             <ref bean="transactionDisplay"/>
 
                         </list>
@@ -71,32 +72,28 @@
             <bean parent="Uif-HorizontalFieldGroup" p:label="Filter Transactions">
                 <property name="items">
                     <list>
+                        <bean parent="Uif-InputField" p:propertyName="startingDate" p:labelPlacement="LEFT" p:label="From"
+                              p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
+                            <property name="control">
+                                <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                            </property>
+                        </bean>
+                        <bean parent="Uif-InputField" p:propertyName="endingDate" p:labelPlacement="LEFT" p:label="to"
+                              p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
+                            <property name="control">
+                                <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                            </property>
+                        </bean>
+
+                        <bean parent="Uif-SecondaryActionButton-Small"
+                              p:methodToCall="get"
+                              p:actionLabel="Filter"
+                              p:onClickScript="writeHiddenToForm(&quot;userId&quot;, &quot;@{account.id}&quot;);">
+                        </bean>
                         <!--
                         <bean parent="Uif-TreeGroup" p:instructionalText="Data Tree">
                             <property name="title" value="Basic String Data tree"/>
                             <property name="propertyName" value="memoTree"/>
-                        </bean>
-                        -->
-                        <!--
-                        <bean parent="Uif-VerticalBoxSubSection">
-                            <property name="items">
-                            <list>
-                                <bean parent="Uif-InputField" p:propertyName="account.compositeDefaultPersonName" p:readOnly="@{true}"/>
-                                <bean parent="Uif-InputField" p:propertyName="account.compositeDefaultPersonName" p:readOnly="@{true}"/>
-                                <bean parent="Uif-InputField" p:propertyName="account.compositeDefaultPersonName" p:readOnly="@{true}"/>
-                                <bean parent="Uif-InputField" p:propertyName="account.compositeDefaultPersonName" p:readOnly="@{true}"/>
-                            </list>
-                            </property>
-                        </bean>
-                        <bean parent="Uif-HorizontalBoxSubSection">
-                            <property name="items">
-                            <list>
-                                <bean parent="Uif-InputField" p:propertyName="account.id" p:readOnly="@{true}"/>
-                                <bean parent="Uif-InputField" p:propertyName="account.id" p:readOnly="@{true}"/>
-                                <bean parent="Uif-InputField" p:propertyName="account.id" p:readOnly="@{true}"/>
-                                <bean parent="Uif-InputField" p:propertyName="account.id" p:readOnly="@{true}"/>
-                            </list>
-                            </property>
                         </bean>
                         -->
                     </list>
@@ -155,8 +152,9 @@
                 <bean parent="Uif-VerticalBoxSection" p:headerText="Running Balance">
                     <property name="items">
                         <list>
+                            <bean parent="Uif-Message" p:messageText="Starting Balance@{!#empty(startingDate) ? ' on ' + startingDate : ''}: &lt;b&gt;@{startingBalance}&lt;/b&gt;" p:style="float: right;"/>
+
                             <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="7">
-                                <property name="title" value="Transaction"/>
                                 <property name="readOnly" value="true"/>
                                 <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionModel"/>
                                 <property name="propertyName" value="allTransactions"/>
