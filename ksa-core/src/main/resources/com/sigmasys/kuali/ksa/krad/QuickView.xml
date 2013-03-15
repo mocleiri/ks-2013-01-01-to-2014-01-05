@@ -221,7 +221,7 @@
                                         </bean>
 
                                         <bean parent="Uif-Link" p:linkText="Details"
-                                              p:href="searchView?methodToCall=get&amp;viewId=SearchView&amp;pageId=AccountOVTransactionsPage&amp;userId=@{account.id}"/>
+                                              p:href="transactionView?methodToCall=get&amp;pageId=ViewTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
 
                                     </list>
                                 </property>
