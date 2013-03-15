@@ -716,6 +716,22 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return createAllocation(transaction1, transaction2, newAmount, isQueued, locked);
     }
 
+    private void addAllocatedAmount(Transaction transaction, BigDecimal newAmount, boolean locked) {
+        if (newAmount == null) {
+            newAmount = BigDecimal.ZERO;
+        }
+        BigDecimal oldAmount = locked ? transaction.getLockedAllocatedAmount() : transaction.getAllocatedAmount();
+        if (oldAmount == null) {
+            oldAmount = BigDecimal.ZERO;
+        }
+        BigDecimal totalAmount = oldAmount.add(newAmount);
+        if (locked) {
+            transaction.setLockedAllocatedAmount(totalAmount);
+        } else {
+            transaction.setAllocatedAmount(totalAmount);
+        }
+    }
+
     /**
      * Creates an allocation between two transactions with the specified parameters.
      *
@@ -785,8 +801,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 BigDecimal newAllocatedAmount2 = (allocatedAmount2.compareTo(BigDecimal.ZERO) >= 0) ?
                         allocatedAmount2.subtract(allocation.getAmount()) :
                         allocatedAmount2.add(allocation.getAmount());
-                transaction1.setAllocatedAmount(newAllocatedAmount1);
-                transaction2.setAllocatedAmount(newAllocatedAmount2);
+                addAllocatedAmount(transaction1, newAllocatedAmount1, false);
+                addAllocatedAmount(transaction2, newAllocatedAmount2, false);
                 deleteEntity(allocation.getId(), Allocation.class);
             }
         }
@@ -827,13 +843,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             persistEntity(allocation);
 
-            if (locked) {
-                transaction1.setLockedAllocatedAmount(newAmount);
-                transaction2.setLockedAllocatedAmount(newAmount);
-            } else {
-                transaction1.setAllocatedAmount(newAmount);
-                transaction2.setAllocatedAmount(newAmount);
-            }
+            addAllocatedAmount(transaction1, newAmount, locked);
+            addAllocatedAmount(transaction2, newAmount, locked);
 
             persistTransaction(transaction1);
             persistTransaction(transaction2);
