@@ -150,6 +150,11 @@ public class TransactionModel extends Transaction {
 
     }
 
+    public String getIdString(){
+        // Krad tries to put commas in things.
+        return parentTransaction.getId().toString();
+    }
+
     @Override
     public TransactionTypeValue getTransactionTypeValue() {
         return transactionTypeValue;
@@ -506,6 +511,10 @@ public class TransactionModel extends Transaction {
         return "Generic";
     }
 
+    public boolean isPayment() {
+        return parentTransaction instanceof Payment;
+    }
+
     public String getGlEntryGenerated() {
         return (parentTransaction.isGlEntryGenerated() ? "" : "Not ") + "Generated";
     }
@@ -612,5 +621,12 @@ public class TransactionModel extends Transaction {
         for(Allocation a : alloc){
             allocations.add(new AllocationModel(this.parentTransaction, a));
         }
+    }
+
+    public Date getClearDate(){
+        if(parentTransaction instanceof Payment){
+            return ((Payment)parentTransaction).getClearDate();
+        }
+        return null;
     }
 }
