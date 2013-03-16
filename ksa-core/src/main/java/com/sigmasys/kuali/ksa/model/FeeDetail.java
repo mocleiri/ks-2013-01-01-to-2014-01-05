@@ -40,9 +40,14 @@ public class FeeDetail extends AuditableEntity<Long> {
 
     private String dateTypeCode;
 
+    private FeeDetailAmountType amountType;
+
+    private String amountTypeCode;
+
     @PostLoad
     protected void populateTransientFields() {
         dateType = (dateTypeCode != null) ? EnumUtils.findById(FeeDetailDateType.class, dateTypeCode) : null;
+        amountType = (amountTypeCode != null) ? EnumUtils.findById(FeeDetailAmountType.class, amountTypeCode) : null;
     }
 
     @Id
@@ -106,7 +111,7 @@ public class FeeDetail extends AuditableEntity<Long> {
         this.defaultTransactionTypeId = defaultTransactionTypeId;
     }
 
-    @Column(name = "DEFAULT_TRN_AMNT")
+    @Column(name = "DEFAULT_TRN_AMOUNT")
     public BigDecimal getDefaultTransactionAmount() {
         return defaultTransactionAmount;
     }
@@ -154,7 +159,6 @@ public class FeeDetail extends AuditableEntity<Long> {
         this.keyPairs = keyPairs;
     }
 
-
     @Transient
     public FeeDetailDateType getDateType() {
         return dateType;
@@ -168,5 +172,20 @@ public class FeeDetail extends AuditableEntity<Long> {
     protected void setDateTypeCode(String dateTypeCode) {
         this.dateTypeCode = dateTypeCode;
         dateType = EnumUtils.findById(FeeDetailDateType.class, dateTypeCode);
+    }
+
+    @Transient
+    public FeeDetailAmountType getAmountType() {
+        return amountType;
+    }
+
+    public void setAmountType(FeeDetailAmountType amountType) {
+        this.amountType = amountType;
+        amountTypeCode = amountType.getId();
+    }
+
+    protected void setAmountTypeCode(String amountTypeCode) {
+        this.amountTypeCode = amountTypeCode;
+        amountType = EnumUtils.findById(FeeDetailAmountType.class, amountTypeCode);
     }
 }

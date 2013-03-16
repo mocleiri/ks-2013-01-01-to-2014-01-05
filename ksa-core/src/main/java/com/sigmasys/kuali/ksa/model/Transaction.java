@@ -242,7 +242,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
         this.recognitionDate = recognitionDate;
     }
 
-    @Column(name = "NATIVE_AMNT")
+    @Column(name = "NATIVE_AMOUNT")
     public BigDecimal getNativeAmount() {
         return nativeAmount;
     }
@@ -322,7 +322,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
     }
 
 
-    @Column(name = "AMNT")
+    @Column(name = "AMOUNT")
     public BigDecimal getAmount() {
         return amount;
     }

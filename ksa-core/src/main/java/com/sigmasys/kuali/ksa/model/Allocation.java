@@ -93,7 +93,7 @@ public class Allocation extends AccountIdAware implements Identifiable {
         this.account = account;
     }
 
-    @Column(name = "AMNT")
+    @Column(name = "AMOUNT")
     public BigDecimal getAmount() {
         return amount;
     }

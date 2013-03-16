@@ -29,6 +29,7 @@ alter table KSA.KSSA_EXTERNAL_STATEMENT add constraint FK818A3B0498518DD2 foreig
 alter table KSA.KSSA_FD_KYPR add constraint FKDD4CD1485C970A06 foreign key (KYPR_ID_FK) references KSA.KSSA_KYPR;
 alter table KSA.KSSA_FD_KYPR add constraint FKDD4CD148C0260932 foreign key (FD_ID_FK) references KSA.KSSA_FEE_DETAIL;
 alter table KSA.KSSA_FEE_DETAIL add constraint FKF349E9739BE8AA30 foreign key (FEE_TYPE_ID_FK) references KSA.KSSA_FEE_TYPE;
+alter table KSA.KSSA_FEE_DETAIL_AMOUNT add constraint FK295260A4309F229E foreign key (FEE_DETAIL_ID_FK) references KSA.KSSA_FEE_DETAIL;
 alter table KSA.KSSA_GL_BREAKDOWN add constraint FKF48BE710AE27AC92 foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSA.KSSA_TRANSACTION_TYPE;
 alter table KSA.KSSA_GL_BREAKDOWN add constraint FKF48BE710FA70171C foreign key (GL_TYPE_ID_FK) references KSA.KSSA_GL_TYPE;
 alter table KSA.KSSA_GL_BREAKDOWN_OVERRIDE add constraint FKD521481BD61AFDF9 foreign key (TRANSACTION_ID_FK) references KSA.KSSA_TRANSACTION;
