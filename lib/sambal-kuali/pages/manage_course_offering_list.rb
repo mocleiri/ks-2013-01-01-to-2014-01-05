@@ -8,7 +8,7 @@ class ManageCourseOfferingList < BasePage
   element(:co_results_div) { |b| b.frm.div(id: "searchResultSection") }
   element(:subject_code) { |b| b.frm.co_results_div.h3.span() }
 
-  action(:approve_subject_code_for_scheduling) { |b| b.frm.co_results_div.link(id: "KS-CourseOfferingManagement-ApproveSubj").click}
+  element(:approve_subject_code_for_scheduling_link) { |b| b.frm.co_results_div.link(id: "KS-CourseOfferingManagement-ApproveSubj") }
 
   element(:approve_course_offering_button) { |b| b.frm.co_results_div.button(id: "KS-CourseOfferingManagement-ToolBar-Approve-CO") }
   action(:approve_course_offering) { |b| b.approve_course_offering_button.click; b.loading.wait_while_present }
@@ -47,7 +47,7 @@ class ManageCourseOfferingList < BasePage
   end
 
   def approve_subject_code
-    approve_subject_code_for_scheduling
+    approve_subject_code_for_scheduling_link.click
     @browser.alert.ok
     loading.wait_while_present(600)
   end

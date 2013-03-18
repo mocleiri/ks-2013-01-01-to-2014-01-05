@@ -33,6 +33,11 @@ When /^I initiate a rollover to create a term in locked state EC$/ do
   @rollover.perform_rollover
 end
 
+When /^I initiate a rollover to create a term in closed state EC$/ do
+  @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::CLOSED_SOC_TERM
+  @rollover.perform_rollover
+end
+
 When /^I initiate a rollover to create a term in default state WC/ do
   @rollover = make Rollover, :source_term => "201205", :target_term => "201805"
   @rollover.perform_rollover

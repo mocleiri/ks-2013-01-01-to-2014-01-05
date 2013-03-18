@@ -317,7 +317,7 @@ class CourseOffering
 
   # checks to see if course offering in the same is in specified state, otherwise creates a new course offering
   # @example
-  #  @course_offering.check_course_in_state
+  #  @course_offering.check_course_in_status
   # updates the course code
   #
   # @param co_status [String] "Offered", "Draft"
@@ -330,7 +330,7 @@ class CourseOffering
         @course = existing_co
       else
         @course = create_co_copy(@course, @term)
-        if co_status == "Offered"
+        if co_status == "Offered" or co_status == "Planned"
           approve_course
         end
       end
@@ -391,7 +391,9 @@ class CourseOffering
         if page.delete_aos_button.enabled?
           page.delete_aos
           on ActivityOfferingConfirmDelete do |page|
-            return  page.delete_activity_offering_button.present?
+            delete_present = page.delete_activity_offering_button.present?
+            page.cancel
+            return delete_present
           end
         else
           page.deselect_ao(ao)

@@ -132,10 +132,24 @@ Then /^I have access to approve course offerings for scheduling$/ do
   end
 end
 
+Then /^I have access to approve the subject code for scheduling$/ do
+  on ManageCourseOfferingList do |page|
+    page.approve_subject_code_for_scheduling_link.present?.should be_true
+    page.approve_subject_code_for_scheduling_link.attribute_value("class").should_not match /disabled/
+  end
+end
+
+Then /^I do not have access to approve the subject code for scheduling$/ do
+  on ManageCourseOfferingList do |page|
+    page.approve_subject_code_for_scheduling_link.present?.should be_false
+  end
+end
+
 Then /^I have access to delete course offerings$/ do
   on ManageCourseOfferingList do |page|
     page.select_cos([@course_offering.course])
     page.approve_course_offering_button.present?.should == true
+    page.deselect_cos([@course_offering.course])
   end
 end
 
@@ -415,16 +429,6 @@ When /^I do not have access to the page$/ do
   end
 end
 
-Then /^I have access to revise delivery logistics$/ do
-  on ActivityOfferingMaintenance do |page|
-    page.revise_actual_delivery_logistics
-  end
-  on ActivityOfferingLogistics do |page|
-    page.cancel_element.present?.should == true
-    page.cancel
-  end
-end
-
 Then /^I do not have access to revise delivery logistics$/ do
   on ActivityOfferingMaintenance do |page|
     page.revise_actual_delivery_logistics_button.present?.should be_false
@@ -478,6 +482,14 @@ Then /^I do not have access to edit activity offerings$/ do
   on ManageCourseOfferings do |page|
     page.codes_list.each do |ao_code|
       page.edit_link(ao_code).present?.should be_false
+    end
+  end
+end
+
+Then /^I have access to edit activity offerings$/ do
+  on ManageCourseOfferings do |page|
+    page.codes_list.each do |ao_code|
+      page.edit_link(ao_code).present?.should be_true
     end
   end
 end

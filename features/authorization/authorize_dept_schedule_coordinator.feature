@@ -60,6 +60,7 @@ Feature: Department Schedule Coordinator Authorization
     And I do not have access to delete the listed course offering
     And I do not have access to approve the listed course offering
     And I do not have access to copy the listed course offering
+    And I do not have access to approve the subject code for scheduling
 
   Scenario: AZ 4.1A/4.2/Full.19 Department Schedule Coordinator Carol can access the Manage CO set of pages for COs for her own admin org (Open SOC)
     Given I am working on a term in "Open" SOC state
@@ -67,6 +68,7 @@ Feature: Department Schedule Coordinator Authorization
     Then I have access to view course offering details
     And I have access to add new course offerings
     And I have access to approve course offerings for scheduling
+    And I have access to approve the subject code for scheduling
     And I have access to delete course offerings
     And I have access to edit course offerings
     And I have access to copy course offerings
@@ -94,7 +96,9 @@ Feature: Department Schedule Coordinator Authorization
     Then I have access to create the course offering from catalog
     And I have access to create the course from an existing offering
 
+  @bug
   Scenario: AZ 5.1A/Full.6 Department Schedule Coordinator Carol has limited access to delete AOs in a SOC state Final Edits
+  #can't approve AO -is that correct?
     Given I am working on a term in "Final Edits" SOC state
     And there is a "Draft" course offering in my admin org
     Then I have access to delete an activity offering in "Draft" status for the course offering
@@ -179,8 +183,9 @@ Feature: Department Schedule Coordinator Authorization
     Given I am working on a term in "Published" SOC state
     When I manage a course offering in my admin org
     Then I do not have access to edit the course offering
-    And I do not have access to edit activity offerings
+    But I have access to edit activity offerings
 
+  @wip
   Scenario: AZ 6.2/Full.15 Verify Department Schedule Coordinator Carol edit course offering access (in admin org) for a term with SOC State Closed (single CO view)
     Given I am working on a term in "Closed" SOC state
     When I manage a course offering in my admin org
