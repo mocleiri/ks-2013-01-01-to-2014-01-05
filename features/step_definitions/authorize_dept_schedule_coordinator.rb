@@ -287,12 +287,10 @@ When /^there is a "([^"]*)" course offering in my admin org/ do |co_status|
   step "I am logged in as a Department Schedule Coordinator"
 end
 
-When /^there is a "([^"]*)" course present/ do |costate|
+When /^there is a "([^"]*)" course offering present/ do |co_state|
   step "I am logged in as a Schedule Coordinator"
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
-  @course_offering.search_by_subjectcode
-  @course_offering.check_for_course(costate)
-  @newCO = @course_offering.course
+  @course_offering.check_course_in_status(co_status)
 end
 
 When /^I have access to delete an activity offering in "([^"]*)" status for the course offering$/ do |aostate|
@@ -302,12 +300,12 @@ When /^I have access to delete an activity offering in "([^"]*)" status for the 
   #  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
   #end
   @course_offering.manage
-  @course_offering.attempt_ao_delete_by_status(aostate).should == true
+  @course_offering.attempt_ao_delete_by_status(aostate).should be_true
 end
 
 Then /^I have access to delete a course offering in a "([^"]*)" state for a course in my admin org$/ do |costate|
   @course_offering.search_by_subjectcode
-  @course_offering.attempt_co_delete_by_status(costate).should == true
+  @course_offering.attempt_co_delete_by_status(costate).should be_true
 end
 
 Then /^I do not have access to view the activity offerings$/ do
