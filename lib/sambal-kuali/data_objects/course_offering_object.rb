@@ -46,7 +46,7 @@ class CourseOffering
 
   # provides default data:
   #  defaults = {
-  #    :term=>"201201",
+  #    :term=>Rollover::MAIN_TEST_TERM_SOURCE,
   #    :course=>"ENGL211",
   #    :suffix=>"",
   #    :activity_offering_cluster_list=>[],
@@ -71,7 +71,7 @@ class CourseOffering
     @browser = browser
 
     defaults = {
-        :term=>"201201",
+        :term=>Rollover::MAIN_TEST_TERM_SOURCE,
         :course=>"ENGL211",
         :suffix=>"",
         :activity_offering_cluster_list=>[],

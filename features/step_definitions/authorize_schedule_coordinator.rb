@@ -1,3 +1,16 @@
+When /^I manage course offerings for a subject code$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
+  @course_offering.search_by_subjectcode
+end
+
+When /^I manage a course offering$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
+  @course_offering.manage
+  @activity_offering = make ActivityOffering, :code=>"A"
+end
+
 Then /^I have access to delete an activity offering in a "([^"]*)" state$/ do |aostate|
   @course_offering.manage
   @course_offering.attempt_ao_delete_by_status(aostate).should == true

@@ -75,9 +75,8 @@ Then /^an authorization error is displayed when I attempt to edit the course off
   end
 end
 
-
-When /^I manage course offerings for a course in my admin org$/ do
-  @course_offering = make CourseOffering, :course=>"ENGL346", :term=>"201612"
+When /^I manage course offerings for a subject in my admin org$/ do
+  @course_offering = make CourseOffering, :course=>"ENGL346", :term=>Rollover::FINAL_EDITS_SOC_TERM
   @course_offering.search_by_coursecode
 end
 
@@ -104,19 +103,6 @@ end
 When /^I manage a course offering in my admin org$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = make CourseOffering, :course=>"ENGL222", :term=>@term_for_test
-  @course_offering.manage
-  @activity_offering = make ActivityOffering, :code=>"A"
-end
-
-When /^I manage course offerings for a subject code$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
-  @course_offering.search_by_subjectcode
-end
-
-When /^I manage a course offering$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
   @course_offering.manage
   @activity_offering = make ActivityOffering, :code=>"A"
 end
@@ -257,12 +243,12 @@ Then /^I do not have access to create the course offering$/ do
   end
 end
 
-When /^I attempt to create a course not in my admin org$/ do
+When /^I attempt to create a course offering for a subject not in my admin org$/ do
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "CHEM132"
   @course_offering.start_create_by_search
 end
 
-When /^I attempt to create a course in my admin org$/ do
+When /^I attempt to create a course offering for a subject in my admin org$/ do
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL310"
   @course_offering.start_create_by_search
 end

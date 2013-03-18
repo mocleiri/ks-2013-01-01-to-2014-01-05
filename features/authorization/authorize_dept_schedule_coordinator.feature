@@ -85,12 +85,12 @@ Feature: Department Schedule Coordinator Authorization
 
   Scenario: AZ 4.1C/Full.5A Department Schedule Coordinator Carol does not have access to create CO's not in her admin org
     Given I am working on a term in "Open" SOC state
-    When I attempt to create a course not in my admin org
+    When I attempt to create a course offering for a subject not in my admin org
     Then I do not have access to create the course offering
 
   Scenario: AZ 4.1C/Full.5 Department Schedule Coordinator Carol has access to create CO's in her admin org
     Given I am working on a term in "Open" SOC state
-    When I attempt to create a course in my admin org
+    When I attempt to create a course offering for a subject in my admin org
     Then I have access to create the course offering from catalog
     And I have access to create the course from an existing offering
 

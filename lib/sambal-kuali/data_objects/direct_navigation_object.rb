@@ -33,7 +33,7 @@ class DirectNavigation
   end
 
   def setup_navigation
-    @course_offering = make CourseOffering, :term=>"201201", :course=>"CHEM132"
+    @course_offering = make CourseOffering, :term=>Rollover::MAIN_TEST_TERM_SOURCE, :course=>"CHEM132"
     @course_offering.manage
     on ManageCourseOfferings do |page|
       page.edit('A')

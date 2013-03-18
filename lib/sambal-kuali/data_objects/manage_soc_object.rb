@@ -27,7 +27,7 @@ class ManageSoc
     @browser = browser
 
     defaults = {
-        :term_code=>"201201" ,
+        :term_code=>Rollover::MAIN_TEST_TERM_SOURCE ,
         :co_code=>"ENGL206"
     }
     options = defaults.merge(opts)
