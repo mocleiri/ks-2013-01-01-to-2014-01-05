@@ -52,16 +52,32 @@ And /^I edit the course offering to add alias$/ do
   end
 end
 
-
-And /^I manage the alias Course Offering$/ do
-  @course_offering = make CourseOffering
+And /^I delete the alias Course Offering$/ do
+  @course = make CourseOffering
   @course_offering.go_to_manage_course_offerings
 
   on ManageCourseOfferings do |page|
     page.term.set @source_term
     page.input_code.set "#{@cross_listed_co_code}#{@suffix_with_cl}"
     page.show
+    page.delete_course_offering
   end
+
+  on DeleteCourseOffering do |page|
+    page.confirm_delete
+  end
+
+end
+
+Then /^the deleted alias does not appear on the list of available Course Offerings$/ do
+  on ManageCourseOfferings do |page|
+    page.term.set @source_term
+    page.input_code.set "#{@cross_listed_co_code}#{@suffix_with_cl}"
+    page.show
+
+  end
+  puts 'and now where?!?'
+  sleep 30
 end
 
 And /^I remove a cross-listed Course Offering$/ do
@@ -79,14 +95,27 @@ And /^I remove a cross-listed Course Offering$/ do
   end
 end
 
-And /^I manage the owner Course Offering$/ do
-  @course_offering = make CourseOffering
-  @course_offering.go_to_manage_course_offerings
+
+And /^I manage the (owner|alias) Course Offering$/ do |cluType|
+
+  if cluType == 'alias'
+    @input_code_value = "#{@cross_listed_co_code}"
+  else
+    @input_code_value = "#{@catalogue_course_code}"
+  end
+  @input_code_value << "#{@suffix_with_cl}"
 
   on ManageCourseOfferings do |page|
     page.term.set @source_term
-    page.input_code = "#{@catalogue_course_code}#{@suffix_with_cl}"
+    page.input_code.set @input_code_value
     page.show
+  end
+
+end
+
+Then /^the 'course not found' message is displayed$/ do
+  on ManageCourseOfferings do |page|
+    page.error_message_course_not_found.should be_present
   end
 end
 
