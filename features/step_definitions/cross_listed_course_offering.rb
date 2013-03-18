@@ -19,7 +19,7 @@ When /^I create a cross-listed Course Offering$/ do
 end
 
 When /^I create a Course Offering$/ do
-  @suffix_with_cl = "AFT#{random_alphanums(2)}"
+  @suffix_with_cl = "AFT#{random_alphanums(2)}".upcase
   @suffix_without_cl = "NOCL"
   @source_term = "201201"
   @catalogue_course_code = "ENGL250"
@@ -143,20 +143,28 @@ end
 
 Then /^the alias is indicated as cross-listed with the owner CO$/ do
   expect_result = "Crosslisted as: #{@catalogue_course_code}#{@suffix_with_cl} (Owner)"
-  course_details = @course_offering.cross_listed_co_data(@cross_listed_co_code)
-  cross_listed_in_page = course_details.include? expect_result
-  cross_listed_in_page.should == true
+
+  @course_offering.go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set @source_term
+    page.input_code.set "#{@cross_listed_co_code}#{@suffix_with_cl}"
+    page.show
+  end
+
+  on(ManageCourseOfferings).cross_listed_as_text.should == expect_result
+
 end
 
 Then /^the owner course offering is indicated as cross-listed with the alias CO$/ do
-  @course_offering = make CourseOffering
-  @course_offering.term=@source_term
-  @course_offering.course="#{@catalogue_course_code}#{@suffix_with_cl}"
-  @course_offering.search_by_subj=false
-  @course_offering.manage
 
   expect_result = "Crosslisted as: #{@cross_listed_co_code}#{@suffix_with_cl}"
-  course_details = @course_offering.cross_listed_co_data(@course)
-  cross_listed_in_page = course_details.include? expect_result
-  cross_listed_in_page.should == true
+
+  @course_offering.go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set @source_term
+    page.input_code.set "#{@catalogue_course_code}#{@suffix_with_cl}"
+    page.show
+  end
+
+  on(ManageCourseOfferings).cross_listed_as_text.should == expect_result
 end
