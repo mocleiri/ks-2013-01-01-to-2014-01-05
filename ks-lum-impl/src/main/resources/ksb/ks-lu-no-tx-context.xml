@@ -33,13 +33,6 @@
         be defined
     -->
 
-    <tx:annotation-driven transaction-manager="transactionManager"/>
-    <bean id="transactionManager" class="org.kuali.rice.krad.config.GlobalResourceLoaderServiceFactoryBean">
-        <property name="serviceName" value="transactionManager" />
-    </bean>
-
-    <import resource="classpath:statement-context.xml"/>
-    <import resource="classpath:program-context.xml"/>
 
 <!-- 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
