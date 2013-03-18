@@ -54,8 +54,8 @@ end
 
 And /^I delete the alias Course Offering$/ do
   @course = make CourseOffering
-  @course_offering.go_to_manage_course_offerings
 
+  @course_offering.go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set @source_term
     page.input_code.set "#{@cross_listed_co_code}#{@suffix_with_cl}"
@@ -70,14 +70,15 @@ And /^I delete the alias Course Offering$/ do
 end
 
 Then /^the deleted alias does not appear on the list of available Course Offerings$/ do
+
+  @course_offering.go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set @source_term
     page.input_code.set "#{@cross_listed_co_code}#{@suffix_with_cl}"
     page.show
 
   end
-  puts 'and now where?!?'
-  sleep 30
+
 end
 
 And /^I remove a cross-listed Course Offering$/ do
