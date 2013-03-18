@@ -1,5 +1,5 @@
-When /^I designate a valid term and cross\-listed Catalog Course Code$/ do
-  @suffix_with_cl = "AUTO"
+When /^I designate a valid term and cross-listed Catalog Course Code$/ do
+  @suffix_with_cl = "AFT#{random_alphanums(2)}".upcase
   @suffix_without_cl = "NOCL"
   @source_term = "201201"
   @cross_listed_co_code = "WMST255"
@@ -9,7 +9,7 @@ When /^I designate a valid term and cross\-listed Catalog Course Code$/ do
   @course_offering.start_create_by_search
 end
 
-And /^I create a Course Offering with selected cross\-listed Catalog Course Code$/ do
+And /^I create a Course Offering with selected cross-listed Catalog Course Code$/ do
   on CreateCourseOffering do  |page|
     page.suffix.set @suffix_with_cl
     @course = "#{@catalogue_course_code}#{@suffix_with_cl}"
@@ -20,46 +20,40 @@ And /^I create a Course Offering with selected cross\-listed Catalog Course Code
   end
 end
 
-Then /^the cross\-listing is indicated for the alias course$/ do
+And /^the cross-listing is indicated for the (owner|alias) Course Offering$/ do |cluType|
 
-  @course_offering = make CourseOffering
-  @course_offering.term=@source_term
-  @course_offering.course=@course
-  @course_offering.suffix=@suffix_with_cl
-  @course_offering.manage
-
-  expect_result = "Crosslisted as: WMST255AUTO"
-  on ManageCourseOfferings do |page|
-    page.cross_listed_as_text.should == expect_result
+  # build the appropriate CLU data-object (either owner or alias)
+  @course_offering = make CourseOffering, :term => @source_term, :suffix => @suffix_with_cl
+  if cluType == 'alias'
+    @course_offering.course = @cross_listed_co_code
+    @cross_listed_infoText_targetValue = @catalogue_course_code + @suffix_with_cl + " (Owner)"
+  else #owner
+    @course_offering.course = @catalogue_course_code
+    @cross_listed_infoText_targetValue = @cross_listed_co_code + @suffix_with_cl
   end
+
+  # navigate to the CLU-view
+  @course_offering.go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set @course_offering.term
+    page.input_code.set "#{@course_offering.course}#{@course_offering.suffix}"
+    page.show
+  end
+
+  # validate cross-listing info-text (ie: "Crosslisted as: WMST255AUTO")
+  on(ManageCourseOfferings).cross_listed_as_text.should == 'Crosslisted as: ' << @cross_listed_infoText_targetValue
 
 end
 
-And /^the cross\-listing is indicated for the "(.*?)" course$/ do |cross_listed_as_owner|
-
-  @course_offering = make CourseOffering
-  @course_offering.term=@source_term
-  @course_offering.course=@cross_listed_co_code + @suffix_with_cl
-  @course_offering.manage
-
-  expect_result = "Crosslisted as: ENGL250AUTO (Owner)"
-  on ManageCourseOfferings do |page|
-    page.cross_listed_as_text.should == expect_result
-  end
-
-end
-
-And /^the copy\-link is not showing for the cross\-listing$/ do
+And /^the copy-link is not showing for the alias$/ do
 
   @course_offering = make CourseOffering, :term=>@source_term, :course=>@cross_listed_co_code, :search_by_subj=>true
   @course_offering.search_by_subjectcode
-  on ManageCourseOfferings do |page|
-    page.copy_link(@course_offering.course).present?.should be_false
-  end
+  on(ManageCourseOfferings).copy_link(@course_offering.course).should_not be_present
 
 end
 
-And /^I create a Course Offering without selected cross\-listed Catalog Course Code$/ do
+And /^I create a Course Offering without selected cross-listed Catalog Course Code$/ do
   on CreateCourseOffering do  |page|
     page.suffix.set @suffix_without_cl
     @course = "#{@catalogue_course_code}#{@suffix_without_cl}"
@@ -87,7 +81,7 @@ Then /^the alias course does not exist$/ do
 end
 
 
-And /^no cross\-listing is indicated for the "(.*?)" course$/ do |cross_listed_as_owner|
+And /^no cross-listing is indicated for the (.*?) course$/ do |cross_listed_as_owner|
   @course_offering = make CourseOffering
   @course_offering.term=@source_term
   @course_offering.course=@cross_listed_co_code

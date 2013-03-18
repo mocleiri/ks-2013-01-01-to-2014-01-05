@@ -11,13 +11,13 @@ Background:
   Scenario: Create a cross-listed Course Offering
     When I designate a valid term and cross-listed Catalog Course Code
     And I create a Course Offering with selected cross-listed Catalog Course Code
-    Then the cross-listing is indicated for the alias course
-    And the cross-listing is indicated for the "owner" course
-    And the copy-link is not showing for the cross-listing
+    And the cross-listing is indicated for the alias Course Offering
+    And the cross-listing is indicated for the owner Course Offering
+    And the copy-link is not showing for the alias
 
   Scenario: Remove a cross-listed Course Offering
     When I designate a valid term and cross-listed Catalog Course Code
     And I create a Course Offering without selected cross-listed Catalog Course Code
     Then the alias course does not exist
-    And no cross-listing is indicated for the "owner" course
+    And no cross-listing is indicated for the owner course
 
