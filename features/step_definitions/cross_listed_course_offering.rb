@@ -105,6 +105,7 @@ And /^I manage the (owner|alias) Course Offering$/ do |cluType|
   end
   @input_code_value << "#{@suffix_with_cl}"
 
+  @course_offering.go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set @source_term
     page.input_code.set @input_code_value
