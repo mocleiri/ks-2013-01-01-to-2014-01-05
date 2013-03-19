@@ -36,6 +36,8 @@ public class FeeDetail extends AuditableEntity<Long> {
 
     private Set<KeyPair> keyPairs;
 
+    private Set<FeeDetailAmount> amounts;
+
     private FeeDetailDateType dateType;
 
     private String dateTypeCode;
@@ -157,6 +159,16 @@ public class FeeDetail extends AuditableEntity<Long> {
 
     public void setKeyPairs(Set<KeyPair> keyPairs) {
         this.keyPairs = keyPairs;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "FEE_DETAIL_ID_FK")
+    public Set<FeeDetailAmount> getAmounts() {
+        return amounts;
+    }
+
+    public void setAmounts(Set<FeeDetailAmount> amounts) {
+        this.amounts = amounts;
     }
 
     @Transient

@@ -1031,12 +1031,13 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Retrieves FeeDetail instances from a persistence store by a date range
      *
+     * @param code      FeeDetail code
      * @param startDate FeeDetail start date. Can be null.
      * @param endDate   FeeDetail end date. Can be null.
      * @return list of FeeDetail instances
      */
     @Override
-    public List<FeeDetail> getFeeDetails(Date startDate, Date endDate) {
+    public List<FeeDetail> getFeeDetails(String code, Date startDate, Date endDate) {
 
         if (startDate != null) {
             startDate = CalendarUtils.removeTime(startDate);
@@ -1047,10 +1048,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
 
         StringBuilder builder = new StringBuilder("select fd from FeeDetail fd " +
-                " left outer join fetch fd.feeType ft ");
+                " left outer join fetch fd.feeType ft where fd.code = :code");
 
         if (startDate != null || endDate != null) {
-            builder.append(" where ");
+            builder.append(" and ");
         }
 
         builder.append((startDate != null) ? " :startDate >= fd.startDate " : "");
@@ -1065,6 +1066,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         Query query = em.createQuery(builder.toString());
 
+        query.setParameter("code", code);
+
         if (startDate != null) {
             query.setParameter("startDate", startDate, TemporalType.DATE);
         }
@@ -1074,6 +1077,21 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
 
         return query.getResultList();
+    }
+
+    /**
+     * Retrieves FeeType entity by code.
+     *
+     * @param code FeeType code
+     * @return FeeType instance
+     */
+    @Override
+    public FeeType getFeeTypeByCode(String code) {
+        Query query = em.createQuery("select ft from FeeType ft where ft.code = :code");
+        query.setParameter("code", code);
+        query.setMaxResults(1);
+        List<FeeType> feeTypes = query.getResultList();
+        return CollectionUtils.isNotEmpty(feeTypes) ? feeTypes.get(0) : null;
     }
 
     /**
@@ -1093,6 +1111,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Creates and persists a new instance of FeeDetail object for the given parameters.
      *
+     * @param feeTypeCode       FeeType code
      * @param code              FeeDetail code
      * @param name              FeeDetail name
      * @param description       FeeDetail description
@@ -1103,12 +1122,15 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param transactionDate   Default transaction date
      * @param recognitionDate   Default recognition date
      * @param dateType          FeeDetailDateType enum value
+     * @param amountType        FeeDetailAmountType enum value
+     * @param amounts           List of FeeDetailAmount instances
      * @return a new persistent instance of FeeDetail
      */
     @Override
-    public FeeDetail createFeeDetail(String code, String name, String description, Date startDate, Date endDate,
+    public FeeDetail createFeeDetail(String feeTypeCode, String code, String name, String description, Date startDate, Date endDate,
                                      String transactionTypeId, BigDecimal transactionAmount, Date transactionDate,
-                                     Date recognitionDate, FeeDetailDateType dateType) {
+                                     Date recognitionDate, FeeDetailDateType dateType, FeeDetailAmountType amountType,
+                                     List<FeeDetailAmount> amounts) {
 
         if (startDate == null) {
             String errMsg = "Start Date cannot be null";
@@ -1129,10 +1151,32 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             throw new IllegalArgumentException(errMsg);
         }
 
+        FeeType feeType = getFeeTypeByCode(feeTypeCode);
+        if (feeType == null) {
+            String errMsg = "Fee type '" + feeTypeCode + "' does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        for (FeeDetailAmount amount : amounts) {
+            if (amount.getCode() == null) {
+                String errMsg = "FeeDetailAmount code cannot be null";
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+            if (amount.getAmount() == null) {
+                String errMsg = "FeeDetailAmount amount cannot be null";
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+            // We have to make sure that a new JPA entity is created, hence ID should be null
+            amount.setId(null);
+        }
+
         FeeDetail startFeeDetail = getFeeDetail(code, startDate);
         FeeDetail endFeeDetail = getFeeDetail(code, endDate);
 
-        FeeDetail newFeeDetail;
+        boolean createNewFeeDetail = true;
 
         if (match(startFeeDetail, endFeeDetail)) {
 
@@ -1140,11 +1184,11 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
                 boolean noDatesMatch = false;
 
-                Date newStartDate = startDate;
-                Date newEndDate = endDate;
+                Date newStartDate = startFeeDetail.getStartDate();
+                Date newEndDate = startFeeDetail.getEndDate();
 
                 if (startDate.equals(startFeeDetail.getStartDate()) && endDate.equals(startFeeDetail.getEndDate())) {
-                    // Nothing should be done here
+                    createNewFeeDetail = false;
                 } else if (startDate.equals(startFeeDetail.getStartDate())) {
                     newStartDate = CalendarUtils.addCalendarDays(endDate, 1);
                 } else if (endDate.equals(startFeeDetail.getEndDate())) {
@@ -1154,46 +1198,105 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                     noDatesMatch = true;
                 }
 
-                newFeeDetail = populateFeeDetail(startFeeDetail, code, name, description, newStartDate, newEndDate,
-                        transactionTypeId, transactionAmount, transactionDate, recognitionDate, dateType);
+                startFeeDetail.setStartDate(newStartDate);
+                startFeeDetail.setEndDate(newEndDate);
+
+                persistEntity(startFeeDetail);
 
                 if (noDatesMatch) {
 
                     // Creating a new FeeDetail instance based on the existing one
-                    FeeDetail feeDetailCopy = BeanUtils.getDeepCopy(newFeeDetail);
+                    FeeDetail feeDetailCopy = BeanUtils.getDeepCopy(startFeeDetail);
 
                     // Persisting a new JPA entity so we have to set the ID to null and increment the sub-code
                     feeDetailCopy.setId(null);
                     feeDetailCopy.setSubCode(getNextSubCode(code));
+                    feeDetailCopy.setStartDate(CalendarUtils.addCalendarDays(endDate, 1));
+                    feeDetailCopy.setEndDate(startFeeDetail.getEndDate());
 
-                    newStartDate = CalendarUtils.addCalendarDays(endDate, 1);
+                    persistEntity(feeDetailCopy);
 
-                    // We have to pass the new start date and original end date
-                    newFeeDetail = populateFeeDetail(startFeeDetail, code, name, description, newStartDate, endDate,
-                            transactionTypeId, transactionAmount, transactionDate, recognitionDate, dateType);
+                    // Copying fee detail amounts if there are any
+                    Set<FeeDetailAmount> feeDetailAmounts = startFeeDetail.getAmounts();
+                    if (CollectionUtils.isNotEmpty(feeDetailAmounts)) {
+                        Set<FeeDetailAmount> newAmounts = new HashSet<FeeDetailAmount>(feeDetailAmounts.size());
+                        for (FeeDetailAmount amount : feeDetailAmounts) {
+                            FeeDetailAmount amountCopy = BeanUtils.getDeepCopy(amount);
+                            // Persisting a new JPA entity so we have to set the ID to null
+                            amountCopy.setId(null);
+                            amountCopy.setFeeDetail(feeDetailCopy);
+                            persistEntity(amountCopy);
+                            newAmounts.add(amountCopy);
+                        }
+                        feeDetailCopy.setAmounts(newAmounts);
+                    }
+
                 }
 
                 // When endDate is null
             } else {
-                Date newEndDate = CalendarUtils.addCalendarDays(startDate, -1);
-                newFeeDetail = populateFeeDetail(startFeeDetail, code, name, description, startDate, newEndDate,
-                        transactionTypeId, transactionAmount, transactionDate, recognitionDate, dateType);
+                startFeeDetail.setEndDate(CalendarUtils.addCalendarDays(startDate, -1));
+                persistEntity(startFeeDetail);
             }
 
             // When startFeeDetail and endFeeDetail are different
         } else {
 
-            List<FeeDetail> feeDetails = getFeeDetails(startDate, endDate);
+            boolean startFeeDetailIsRemoved = false;
+            boolean endFeeDetailIsRemoved = false;
+
+            List<FeeDetail> feeDetails = getFeeDetails(code, startDate, endDate);
+
             if (CollectionUtils.isNotEmpty(feeDetails)) {
-                for (FeeDetail feeDetail : feeDetails) {
+                for (Iterator<FeeDetail> iterator = feeDetails.iterator(); iterator.hasNext(); ) {
+                    FeeDetail feeDetail = iterator.next();
                     deleteEntity(feeDetail.getId(), FeeDetail.class);
+                    feeDetails.remove(feeDetail);
+                    if (!startFeeDetailIsRemoved && match(startFeeDetail, feeDetail)) {
+                        startFeeDetailIsRemoved = true;
+                    } else if (!endFeeDetailIsRemoved && match(endFeeDetail, feeDetail)) {
+                        endFeeDetailIsRemoved = true;
+                    }
                 }
             }
 
-            // TODO: Logic is not clear, clarify with Paul
+            if (!startFeeDetailIsRemoved) {
+                startFeeDetail.setEndDate(CalendarUtils.addCalendarDays(startDate, -1));
+                persistEntity(startFeeDetail);
+            }
 
-            newFeeDetail = null;
+            if (!endFeeDetailIsRemoved) {
+                endFeeDetail.setStartDate(CalendarUtils.addCalendarDays(endDate, 1));
+                persistEntity(endFeeDetail);
+            }
 
+        }
+
+        FeeDetail newFeeDetail = createNewFeeDetail ? new FeeDetail() : startFeeDetail;
+
+        newFeeDetail.setCode(code);
+        if (newFeeDetail.getSubCode() == null) {
+            newFeeDetail.setSubCode(getNextSubCode(code));
+        }
+        newFeeDetail.setName(name);
+        newFeeDetail.setDescription(description);
+        newFeeDetail.setStartDate(startDate);
+        newFeeDetail.setEndDate(endDate);
+        newFeeDetail.setDefaultTransactionTypeId(transactionTypeId);
+        newFeeDetail.setDefaultTransactionDate(transactionDate);
+        newFeeDetail.setDefaultRecognitionDate(recognitionDate);
+        newFeeDetail.setDefaultTransactionAmount(transactionAmount);
+        newFeeDetail.setFeeType(feeType);
+        newFeeDetail.setDateType(dateType);
+
+        persistEntity(newFeeDetail);
+
+        if (CollectionUtils.isNotEmpty(amounts)) {
+            for (FeeDetailAmount amount : amounts) {
+                amount.setFeeDetail(newFeeDetail);
+                persistEntity(amount);
+            }
+            newFeeDetail.setAmounts(new HashSet<FeeDetailAmount>(amounts));
         }
 
         return newFeeDetail;
@@ -1205,29 +1308,6 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         query.setMaxResults(1);
         List<Integer> results = query.getResultList();
         return CollectionUtils.isNotEmpty(results) ? results.get(0) + 1 : 0;
-    }
-
-    private synchronized FeeDetail populateFeeDetail(FeeDetail feeDetail, String code, String name, String description,
-                                                     Date startDate, Date endDate, String transactionTypeId,
-                                                     BigDecimal transactionAmount, Date transactionDate,
-                                                     Date recognitionDate, FeeDetailDateType dateType) {
-        feeDetail.setCode(code);
-        if (feeDetail.getSubCode() == null) {
-            feeDetail.setSubCode(getNextSubCode(code));
-        }
-        feeDetail.setName(name);
-        feeDetail.setDescription(description);
-        feeDetail.setStartDate(startDate);
-        feeDetail.setEndDate(endDate);
-        feeDetail.setDefaultTransactionTypeId(transactionTypeId);
-        feeDetail.setDefaultTransactionDate(transactionDate);
-        feeDetail.setDefaultRecognitionDate(recognitionDate);
-        feeDetail.setDefaultTransactionAmount(transactionAmount);
-        // TODO set the fee type
-        //feeDetail.setFeeType();
-        feeDetail.setDateType(dateType);
-
-        return feeDetail;
     }
 
     private Date nvl(Date date) {

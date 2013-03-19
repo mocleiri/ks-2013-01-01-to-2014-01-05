@@ -15,7 +15,9 @@ public class FeeDetailAmount implements Identifiable {
 
     private Long id;
 
-    private Integer lookup;
+    private Integer code;
+
+    private Integer subCode;
 
     private BigDecimal amount;
 
@@ -38,13 +40,22 @@ public class FeeDetailAmount implements Identifiable {
         this.id = id;
     }
 
-    @Column(name = "LOOKUP")
-    public Integer getLookup() {
-        return lookup;
+    @Column(name = "CODE")
+    public Integer getCode() {
+        return code;
     }
 
-    public void setLookup(Integer lookup) {
-        this.lookup = lookup;
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    @Column(name = "SUB_CODE")
+    public Integer getSubCode() {
+        return subCode;
+    }
+
+    public void setSubCode(Integer subCode) {
+        this.subCode = subCode;
     }
 
     @Column(name = "AMOUNT")

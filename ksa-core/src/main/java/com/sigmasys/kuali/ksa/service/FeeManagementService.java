@@ -486,11 +486,20 @@ public interface FeeManagementService {
     /**
      * Retrieves FeeDetail instances from a persistence store by a date range
      *
+     * @param code      FeeDetail code
      * @param startDate FeeDetail start date. Can be null.
      * @param endDate   FeeDetail end date. Can be null.
      * @return list of FeeDetail instances
      */
-    List<FeeDetail> getFeeDetails(Date startDate, Date endDate);
+    List<FeeDetail> getFeeDetails(String code, Date startDate, Date endDate);
+
+    /**
+     * Retrieves FeeType entity by code.
+     *
+     * @param code FeeType code
+     * @return FeeType instance
+     */
+    FeeType getFeeTypeByCode(String code);
 
     /**
      * Checks if the FeeDetail exists.
@@ -503,6 +512,7 @@ public interface FeeManagementService {
     /**
      * Creates and persists a new instance of FeeDetail object for the given parameters.
      *
+     * @param feeTypeCode       FeeType code
      * @param code              FeeDetail code
      * @param name              FeeDetail name
      * @param description       FeeDetail description
@@ -513,11 +523,14 @@ public interface FeeManagementService {
      * @param transactionDate   Default transaction date
      * @param recognitionDate   Default recognition date
      * @param dateType          FeeDetailDateType enum value
+     * @param amountType        FeeDetailAmountType enum value
+     * @param amounts           List of FeeDetailAmount instances
      * @return a new persistent instance of FeeDetail
      */
-    FeeDetail createFeeDetail(String code, String name, String description, Date startDate, Date endDate,
+    FeeDetail createFeeDetail(String feeTypeCode, String code, String name, String description, Date startDate, Date endDate,
                               String transactionTypeId, BigDecimal transactionAmount, Date transactionDate,
-                              Date recognitionDate, FeeDetailDateType dateType);
+                              Date recognitionDate, FeeDetailDateType dateType, FeeDetailAmountType amountType,
+                              List<FeeDetailAmount> amounts);
 
 
 }
