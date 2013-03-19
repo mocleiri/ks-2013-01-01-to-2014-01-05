@@ -617,6 +617,20 @@ class CourseOffering
 
   end
 
+  def delete_co_warning_message(args={})
+
+    co_code_list = args[:code_list]
+    on ManageCourseOfferingList do |page|
+      page.select_cos(co_code_list)
+      page.delete_cos
+    end
+    on DeleteCourseOffering do |page|
+      delete_warning = page.delete_warning_message
+      page.cancel_delete
+      return delete_warning
+    end
+  end
+
   def delete_co_with_link(args={})
     should_confirm_delete = false
     case args[:should_confirm_delete]
