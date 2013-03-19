@@ -149,9 +149,10 @@ Then /^the alias is indicated as cross-listed with the owner CO$/ do
     page.term.set @source_term
     page.input_code.set "#{@cross_listed_co_code}#{@suffix_with_cl}"
     page.show
-  end
 
-  on(ManageCourseOfferings).cross_listed_as_text.should == expect_result
+    page.cross_listed_as_text.should == expect_result
+    page.has_cross_listed_message("#{@catalogue_course_code}#{@suffix_with_cl} (Owner)").should == true
+  end
 
 end
 
@@ -164,7 +165,8 @@ Then /^the owner course offering is indicated as cross-listed with the alias CO$
     page.term.set @source_term
     page.input_code.set "#{@catalogue_course_code}#{@suffix_with_cl}"
     page.show
-  end
 
-  on(ManageCourseOfferings).cross_listed_as_text.should == expect_result
+    page.cross_listed_as_text.should == expect_result
+    page.cross_listed_message_div.should_not be_present
+  end
 end

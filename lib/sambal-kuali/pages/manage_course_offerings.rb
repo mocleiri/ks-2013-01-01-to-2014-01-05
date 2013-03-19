@@ -35,6 +35,9 @@ class ManageCourseOfferings < BasePage
   #value(:cross_listed_as) { |b| b.frm.span(id: "u362_span").text }
   value(:cross_listed_as_text) { |b| b.frm.span(text: /Crosslisted as/).text }
 
+  element(:cross_listed_message_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AliasMessageSection") }
+  value(:cross_listed_message) { |b| b.cross_listed_message_div.span.text }
+
   action(:select_all) { |b| b.frm.link(id: "KS-CourseOfferingManagement-SelectAll").click; b.loading.wait_while_present }
 
   #NB - CO Toolbar is not on this page - this one element is listed here to allow nagivation to single CO when a CO List is
@@ -234,4 +237,11 @@ class ManageCourseOfferings < BasePage
     retVal
   end
 
+  def has_cross_listed_message(co_code)
+    retVal = nil
+    cross_listed_message_div.present?.should == true
+    retVal = cross_listed_message.include? co_code
+
+    retVal
+  end
 end
