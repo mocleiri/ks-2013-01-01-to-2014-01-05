@@ -5,7 +5,7 @@ Feature: Department Schedule Coordinator Authorization SOC state Open
     Given I am logged in as a Department Schedule Coordinator
     And I am working on a term in "Open" SOC state
 
-   Scenario: AZ 6.2/Full_open.3 Verify Department Schedule Coordinator Carol edit course offering details(in admin org) for a term with SOC State Open
+   Scenario: AZ 6.2/Full_open.8 Verify Department Schedule Coordinator Carol edit course offering details(in admin org) for a term with SOC State Open
     When I edit a course offering in my admin org
     Then I have access to edit the course code suffix
     And I have access to edit the grading options
@@ -36,6 +36,7 @@ Feature: Department Schedule Coordinator Authorization SOC state Open
     And I do not have access to manage registration groups
     And I do not have access to select activity offerings for add, approve, delete
     And I do not have access to edit activity offerings
+    And I do not have access to copy activity offerings
     And I do not have access to add a new activity offering
 
   Scenario: AZ 4.1A/4.2/Full_open.2 Department Schedule Coordinator Carol can access the Manage CO set of pages for COs for her own admin org (CO list view)

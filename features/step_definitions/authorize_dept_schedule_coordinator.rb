@@ -59,7 +59,7 @@ end
 
 Then /^I do not have access to add course offerings$/ do
   on ManageCourseOfferingList do |page|
-    page.add_course_offering_button.present?.should be_false
+    page.create_course_offering_button.enabled?.should be_false
   end
 end
 
@@ -128,14 +128,21 @@ end
 
 Then /^I have access to add new course offerings$/ do
   on ManageCourseOfferingList do |page|
-    page.create_course_offering_button.present?.should == true
+    page.create_course_offering_button.enabled?.should == true
   end
 end
 
 Then /^I have access to approve course offerings for scheduling$/ do
   on ManageCourseOfferingList do |page|
     page.select_cos([@course_offering.course])
-    page.approve_course_offering_button.present?.should == true
+    page.approve_course_offering_button.enabled?.should == true
+  end
+end
+
+Then /^I do not have access to approve course offerings for scheduling$/ do
+  on ManageCourseOfferingList do |page|
+    page.select_cos([@course_offering.course])
+    page.approve_course_offering_button.enabled?.should == true
   end
 end
 
@@ -155,7 +162,7 @@ end
 Then /^I have access to delete the listed course offerings?$/ do
   on ManageCourseOfferingList do |page|
     page.select_cos([@course_offering.course])
-    page.approve_course_offering_button.present?.should == true
+    page.approve_course_offering_button.enabled?.should == true
     page.deselect_cos([@course_offering.course])
   end
 end
@@ -517,6 +524,15 @@ Then /^I do not have access to edit activity offerings$/ do
     end
   end
 end
+
+Then /^I do not have access to copy activity offerings$/ do
+  on ManageCourseOfferings do |page|
+    page.codes_list.each do |ao_code|
+      page.copy_link(ao_code).present?.should be_false
+    end
+  end
+end
+
 
 Then /^I have access to edit activity offerings$/ do
   on ManageCourseOfferings do |page|
