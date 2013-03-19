@@ -1,3 +1,6 @@
+# note: this test has been code-reviewed here: https://fisheye.kuali.org/cru/ks-370
+# additional notes about future-refactoring were left in this jira: https://jira.kuali.org/browse/KSENROLL-5895
+
 When /^I designate a valid term and cross-listed Catalog Course Code$/ do
   @suffix_with_cl = "AFT#{random_alphanums(2)}".upcase
   @suffix_without_cl = "NOCL"

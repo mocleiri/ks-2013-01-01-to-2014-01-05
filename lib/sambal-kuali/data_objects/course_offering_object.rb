@@ -1,3 +1,8 @@
+# note: this test has been code-reviewed here: https://fisheye.kuali.org/cru/ks-370
+# additional notes about future-refactoring were left in this jira: https://jira.kuali.org/browse/KSENROLL-5895
+
+
+
 # stores test data for creating/editing and validating course offerings and provides convenience methods for navigation and data entry
 #
 # CourseOffering objects contain ActivityOfferings, ActivityOfferingClusters, DeliveryFormats....
