@@ -10,6 +10,7 @@ import javax.persistence.TemporalType;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AccountService;
+import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmService;
@@ -27,7 +28,7 @@ import com.sigmasys.kuali.ksa.service.FeeManagementService;
 
 
 @Service("feeManagementService")
-@Transactional
+@Transactional(timeout = 600)
 @SuppressWarnings("unchecked")
 public class FeeManagementServiceImpl extends GenericPersistenceService implements FeeManagementService {
 
@@ -46,6 +47,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     private static final ThreadLocal<LearningPeriod> currentPeriod = new ThreadLocal<LearningPeriod>();
 
+
+    @Autowired
+    private AuditableEntityService entityService;
 
     @Autowired
     private AccountService accountService;
@@ -1014,6 +1018,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
         StringBuilder builder = new StringBuilder("select fd from FeeDetail fd " +
                 " left outer join fetch fd.feeType ft " +
+                " left outer join fetch fd.amounts fa " +
                 " where fd.code = :code and ");
         builder.append(
                 (date != null) ?
@@ -1026,6 +1031,20 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
         List<FeeDetail> results = query.getResultList();
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+    }
+
+    /**
+     * Creates and persists FeeType instance based on the given parameters.
+     *
+     * @param code        FeeType code
+     * @param name        FeeType name
+     * @param description FeeType description
+     * @return FeeType instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public FeeType createFeeType(String code, String name, String description) {
+        return entityService.createAuditableEntity(code, name, description, FeeType.class);
     }
 
     /**
@@ -1178,7 +1197,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         boolean createNewFeeDetail = true;
 
-        if (match(startFeeDetail, endFeeDetail)) {
+        if (startFeeDetail != null && endFeeDetail != null && match(startFeeDetail, endFeeDetail)) {
 
             if (endDate != null) {
 
@@ -1210,6 +1229,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
                     // Persisting a new JPA entity so we have to set the ID to null and increment the sub-code
                     feeDetailCopy.setId(null);
+                    feeDetailCopy.setAmounts(null);
                     feeDetailCopy.setSubCode(getNextSubCode(code));
                     feeDetailCopy.setStartDate(CalendarUtils.addCalendarDays(endDate, 1));
                     feeDetailCopy.setEndDate(startFeeDetail.getEndDate());
@@ -1252,24 +1272,23 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                     FeeDetail feeDetail = iterator.next();
                     deleteEntity(feeDetail.getId(), FeeDetail.class);
                     feeDetails.remove(feeDetail);
-                    if (!startFeeDetailIsRemoved && match(startFeeDetail, feeDetail)) {
+                    if (startFeeDetail != null && !startFeeDetailIsRemoved && match(startFeeDetail, feeDetail)) {
                         startFeeDetailIsRemoved = true;
-                    } else if (!endFeeDetailIsRemoved && match(endFeeDetail, feeDetail)) {
+                    } else if (endFeeDetail != null && !endFeeDetailIsRemoved && match(endFeeDetail, feeDetail)) {
                         endFeeDetailIsRemoved = true;
                     }
                 }
             }
 
-            if (!startFeeDetailIsRemoved) {
+            if (startFeeDetail != null && !startFeeDetailIsRemoved) {
                 startFeeDetail.setEndDate(CalendarUtils.addCalendarDays(startDate, -1));
                 persistEntity(startFeeDetail);
             }
 
-            if (!endFeeDetailIsRemoved) {
+            if (endFeeDetail != null && !endFeeDetailIsRemoved) {
                 endFeeDetail.setStartDate(CalendarUtils.addCalendarDays(endDate, 1));
                 persistEntity(endFeeDetail);
             }
-
         }
 
         FeeDetail newFeeDetail = createNewFeeDetail ? new FeeDetail() : startFeeDetail;
@@ -1288,6 +1307,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         newFeeDetail.setDefaultTransactionAmount(transactionAmount);
         newFeeDetail.setFeeType(feeType);
         newFeeDetail.setDateType(dateType);
+        newFeeDetail.setAmountType(amountType);
 
         persistEntity(newFeeDetail);
 
@@ -1305,9 +1325,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     private int getNextSubCode(String feeCode) {
         Query query = em.createQuery("select max(subCode) from FeeDetail where code = :code");
         query.setParameter("code", feeCode);
-        query.setMaxResults(1);
         List<Integer> results = query.getResultList();
-        return CollectionUtils.isNotEmpty(results) ? results.get(0) + 1 : 0;
+        Integer currentSubCode = CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+        return (currentSubCode != null) ? ++currentSubCode : 1;
     }
 
     private Date nvl(Date date) {

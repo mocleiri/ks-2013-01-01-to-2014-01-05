@@ -493,6 +493,17 @@ public interface FeeManagementService {
      */
     List<FeeDetail> getFeeDetails(String code, Date startDate, Date endDate);
 
+
+    /**
+     * Creates and persists FeeType instance based on the given parameters.
+     *
+     * @param code        FeeType code
+     * @param name        FeeType name
+     * @param description FeeType description
+     * @return FeeType instance
+     */
+    FeeType createFeeType(String code, String name, String description);
+
     /**
      * Retrieves FeeType entity by code.
      *
