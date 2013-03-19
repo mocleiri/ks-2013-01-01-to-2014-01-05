@@ -12,7 +12,6 @@ import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.kuali.rice.core.api.exception.KualiException;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,7 +36,6 @@ public class TransactionTypeController extends GenericSearchController {
 
     private static final Log logger = LogFactory.getLog(TransactionTypeController.class);
     private volatile KeyValuesFinder creditDebitTypeOptionsFinder;
-    private volatile KeyValuesFinder rollupTypeOptionsFinder;
 
     @Autowired
     private AuditableEntityService auditableEntityService;
@@ -141,7 +139,7 @@ public class TransactionTypeController extends GenericSearchController {
         String code = form.getCode();
         Date startDate = form.getStartDate();
         Integer priority = form.getPriority();
-        if(priority == null){
+        if (priority == null) {
             priority = new Integer(1);
         }
         String description = form.getDescription();
@@ -154,7 +152,7 @@ public class TransactionTypeController extends GenericSearchController {
 
         if ("C".equalsIgnoreCase(type)) {
             if (!typeExists) {
-                if(transactionService == null){
+                if (transactionService == null) {
                     throw new RuntimeException("transactionService is null");
                 }
                 tt = transactionService.createCreditType(code, "", startDate, priority, description);
@@ -179,42 +177,42 @@ public class TransactionTypeController extends GenericSearchController {
         this.persistTags(tags);
         tt.setTags(tags);
 
-        if(rollupId != null){
+        if (rollupId != null) {
             Rollup r = auditableEntityService.getAuditableEntity(rollupId, Rollup.class);
             tt.setRollup(r);
         }
 
         TransactionTypeId ttId = transactionService.persistTransactionType(tt);
 
-        if(tt instanceof DebitType){
+        if (tt instanceof DebitType) {
             // Handle the GL Breakdown sections.
             BigDecimal total = new BigDecimal(0);
             List<GlBreakdown> breakdowns = new ArrayList<GlBreakdown>();
 
-            for(GlBreakdownModel breakdownModel : form.getGlBreakdowns()){
+            for (GlBreakdownModel breakdownModel : form.getGlBreakdowns()) {
                 GlBreakdown breakdown = breakdownModel.getParentBreakdown();
 
                 breakdown.setGlAccount(breakdown.getGeneralLedgerType().getGlAccountId());
-                if(!glService.isGlAccountValid(breakdown.getGlAccount())){
+                if (!glService.isGlAccountValid(breakdown.getGlAccount())) {
                     throw new GeneralLedgerTypeNotFoundException("GL Account: '" + breakdown.getGlAccount() + "' is invalid");
                 }
 
-                breakdown.setDebitType((DebitType)tt);
+                breakdown.setDebitType((DebitType) tt);
                 BigDecimal b = breakdown.getBreakdown();
-                if(b.compareTo(BigDecimal.ZERO) != 0){
+                if (b.compareTo(BigDecimal.ZERO) != 0) {
                     // Don't save when the breakdown is 0
                     breakdowns.add(breakdown);
                 }
                 total.add(b);
 
 
-                if(total.compareTo(BigDecimal.ONE) == 1){
+                if (total.compareTo(BigDecimal.ONE) == 1) {
                     // Error, the numbers exceed the allowable amount.
                 }
             }
 
             GeneralLedgerType defatulGlType = glService.getDefaultGeneralLedgerType();
-            if(defatulGlType == null || defatulGlType.getId() == null){
+            if (defatulGlType == null || defatulGlType.getId() == null) {
                 throw new GeneralLedgerTypeNotFoundException("No default GL Type configured");
             }
             transactionService.createGlBreakdowns(defatulGlType.getId(), ttId, breakdowns);
@@ -278,13 +276,14 @@ public class TransactionTypeController extends GenericSearchController {
 
     /**
      * Loop through all tags in the collection and make sure that they're saved to the database and the ID is updated
+     *
      * @param tags
      */
-    private void persistTags(List<Tag> tags){
+    private void persistTags(List<Tag> tags) {
         //If the tag already has an id then it has been previously persisted.
-        for(Tag tag : tags){
-            if(tag.getId() <= 0){
-                Long id =auditableEntityService.persistAuditableEntity(tag);
+        for (Tag tag : tags) {
+            if (tag.getId() <= 0) {
+                Long id = auditableEntityService.persistAuditableEntity(tag);
                 tag.setId(id);
             }
         }
