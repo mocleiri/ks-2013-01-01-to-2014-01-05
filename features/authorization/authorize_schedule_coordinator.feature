@@ -65,9 +65,9 @@ Feature: Schedule Coordinator Authorization
     Then I have access to view course offering details
     And I have access to add new course offerings
     And I have access to approve course offerings for scheduling
-    And I have access to delete course offerings
-    And I have access to edit course offerings
-    And I have access to copy course offerings
+    And I have access to delete the listed course offerings
+    And I have access to edit the listed course offerings
+    And I have access to copy the listed course offerings
 
   Scenario: AZ FULL CONFIG Schedule Coordinator has full access the Manage CO set of pages (Open SOC)
     Given I am working on a term in "Open" SOC state
@@ -75,9 +75,9 @@ Feature: Schedule Coordinator Authorization
     Then I have access to view course offering details
     And I have access to add new course offerings
     And I have access to approve course offerings for scheduling
-    And I have access to delete course offerings
-    And I have access to edit course offerings
-    And I have access to copy course offerings
+    And I have access to delete the listed course offerings
+    And I have access to edit the listed course offerings
+    And I have access to copy the listed course offerings
 
   Scenario: AZ FULL CONFIG Schedule Coordinator Carol can access the Manage AO set of pages for COs (Open SOC)
     Given I am working on a term in "Open" SOC state
@@ -96,9 +96,9 @@ Feature: Schedule Coordinator Authorization
     Then I have access to view course offering details
     And I have access to add new course offerings
     And I have access to approve course offerings for scheduling
-    And I have access to delete course offerings
-    And I have access to edit course offerings
-    And I have access to copy course offerings
+    And I have access to delete the listed course offerings
+    And I have access to edit the listed course offerings
+    And I have access to copy the listed course offerings
 
   Scenario: AZ FULL CONFIG Schedule Coordinator Carol can access the Manage AO set of pages for COs (Final Edits SOC)
     Given I am working on a term in "Final Edits" SOC state
@@ -117,9 +117,9 @@ Feature: Schedule Coordinator Authorization
     Then I have access to view course offering details
     And I have access to add new course offerings
     And I have access to approve course offerings for scheduling
-    And I have access to delete course offerings
-    And I have access to edit course offerings
-    And I have access to copy course offerings
+    And I have access to delete the listed course offerings
+    And I have access to edit the listed course offerings
+    And I have access to copy the listed course offerings
 
   Scenario: AZ FULL CONFIG Schedule Coordinator Carol can access the Manage AO set of pages for COs (Published SOC)
     Given I am working on a term in "Published" SOC state

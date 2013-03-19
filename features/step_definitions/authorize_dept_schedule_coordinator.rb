@@ -87,6 +87,13 @@ When /^I manage a course offering for a subject code not in my admin org$/ do
   @activity_offering = make ActivityOffering, :code=>"A"
 end
 
+When /^I manage the course offering$/ do
+     @course_offering.manage
+end
+
+When /^I list the course offerings for that subject code$/ do
+  @course_offering.search_by_subjectcode
+end
 
 When /^I manage course offerings for a subject code not in my admin org$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
@@ -145,7 +152,7 @@ Then /^I do not have access to approve the subject code for scheduling$/ do
   end
 end
 
-Then /^I have access to delete course offerings$/ do
+Then /^I have access to delete the listed course offerings?$/ do
   on ManageCourseOfferingList do |page|
     page.select_cos([@course_offering.course])
     page.approve_course_offering_button.present?.should == true
@@ -153,13 +160,13 @@ Then /^I have access to delete course offerings$/ do
   end
 end
 
-Then /^I have access to edit course offerings$/ do
+Then /^I have access to edit the listed course offerings?$/ do
   on ManageCourseOfferingList do |page|
     page.edit_link(@course_offering.course).present?.should be_true
   end
 end
 
-Then /^I have access to copy course offerings$/ do
+Then /^I have access to copy the listed course offerings?$/ do
   on ManageCourseOfferingList do |page|
     page.copy_link(@course_offering.course).present?.should be_true
   end
@@ -168,18 +175,29 @@ end
 Then /^I have access to delete the course offering$/ do
   on ManageCourseOfferings do |page|
     page.delete_course_offering_link.present?.should be_true
+    page.delete_course_offering_link.attribute_value("class").should_not match /disabled/
+  end
+end
+
+
+Then /^I do not have access to delete the course offering$/ do
+  on ManageCourseOfferings do |page|
+    page.delete_course_offering_link.present?.should be_false
+    #page.delete_course_offering_link.attribute_value("class").should_not match /disabled/
   end
 end
 
 Then /^I have access to edit the course offering$/ do
   on ManageCourseOfferings do |page|
     page.edit_course_offering_link.present?.should be_true
+    page.edit_course_offering_link.attribute_value("class").should_not match /disabled/
   end
 end
 
 Then /^I have access to view the course offering details$/ do
   on ManageCourseOfferings do |page|
     page.view_co_details_link.present?.should be_true
+    page.view_co_details_link.attribute_value("class").should_not match /disabled/
   end
 end
 
@@ -201,6 +219,12 @@ end
 Then /^I have access to add a new activity offering$/ do
   on ManageCourseOfferings do |page|
     page.add_activity_button.enabled?.should be_true
+  end
+end
+
+Then /^I do not have access to add a new activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.add_activity_button.enabled?.should be_false
   end
 end
 
@@ -286,6 +310,14 @@ When /^there is a "([^"]*)" course offering in my admin org/ do |co_status|
   @course_offering.check_course_in_status(co_status)
   step "I am logged in as a Department Schedule Coordinator"
 end
+
+When /^there is a "([^"]*)" course offering not in my admin org/ do |co_status|
+  step "I am logged in as a Schedule Coordinator"
+  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "CHEM612"
+  @course_offering.check_course_in_status(co_status)
+  step "I am logged in as a Department Schedule Coordinator"
+end
+
 
 When /^there is a "([^"]*)" course offering present/ do |co_state|
   step "I am logged in as a Schedule Coordinator"
@@ -503,6 +535,15 @@ Then /^I do not have access to select activity offerings for add, approve, delet
     page.draft_activity_button.enabled?.should be_false
     page.codes_list.each do |ao_code|
       page.target_row(ao_code).checkbox.present?.should be_false
+    end
+  end
+end
+
+Then /^I have access to select activity offerings for add, approve, delete$/ do
+  on ManageCourseOfferings do |page|
+    page.add_activity_button.enabled?.should be_true
+    page.codes_list.each do |ao_code|
+      page.target_row(ao_code).checkbox.present?.should be_true
     end
   end
 end
