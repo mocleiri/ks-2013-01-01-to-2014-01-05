@@ -29,10 +29,7 @@ Then /^The AOs are Successfully deleted$/ do
 end
 
 When /^I designate a valid term and cross\-listed Course Offering Code$/ do
-  @source_term = "201201"
-  @cross_listed_co_code = "WMST255"
-  @catalogue_course_code = "ENGL250"
-  @course_offering = make CourseOffering, :course => @catalogue_course_code
+  @course_offering = make CourseOffering, :course => "ENGL250"
   @course_offering.manage
 end
 
@@ -49,8 +46,8 @@ And /^I delete the AO with Draft state$/ do
   message_text = confirm_message.text
   cross_listed_in_page = message_text.include? expect_result
   cross_listed_in_page.should == true
-  @course_offering.delete_ao :ao_code =>  @course_offering.ao_list[0]
-
+  @course_offering.manage
+  @course_offering.delete_ao_list :code_list =>  @ao_code_list
 end
 
 Then /^The AO is Successfully deleted$/ do
