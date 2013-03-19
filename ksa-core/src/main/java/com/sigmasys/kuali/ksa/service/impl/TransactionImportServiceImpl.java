@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.jaxb.*;
 
@@ -114,7 +115,6 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
         BatchReceiptStatus batchReceiptStatus = BatchReceiptStatus.IN_PROCESS;
         String batchIdentifier = null;
-        int batchSize = 0;
 
         BigDecimal totalValue = BigDecimal.ZERO;
         BigDecimal acceptedValue = BigDecimal.ZERO;
@@ -124,7 +124,6 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
         int numberOfAccepted = 0;
         int numberOfFailed = 0;
         XMLGregorianCalendar creationDate;
-        com.sigmasys.kuali.ksa.model.Account firstAccount = null;
 
         ObjectFactory objectFactory = ObjectFactory.getInstance();
         KsaBatchTransactionResponse.Accepted accepted = objectFactory.createKsaBatchTransactionResponseAccepted();
@@ -156,6 +155,9 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
         boolean batchIsQualified = false;
 
+        final String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        final Account currentAccount = accountService.getFullAccount(currentUserId);
+
         // the unmarshaled list
         List<KsaTransaction> ksaTransactions = ksaBatchTransaction.getKsaTransaction();
 
@@ -176,9 +178,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
             }
 
             ksaBatchTransactionResponse.setResponseToBatchIdentifier(batchIdentifier);
-            batchSize = ksaTransactions.size();
-
-            String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+            ksaBatchTransactionResponse.setResponseIdentifier(UUID.randomUUID().toString());
 
             for (KsaTransaction ksaTransaction : ksaTransactions) {
 
@@ -219,11 +219,6 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                     acceptedKsaTransactionList.add(ksaTransaction);
                 }
 
-                // the KsaTransaction might not have an account which will be created later
-                if (firstAccount == null) {
-                    firstAccount = accountService.getOrCreateAccount(ksaTransaction.getAccountIdentifier());
-                    ksaBatchTransactionResponse.setResponseIdentifier(UUID.randomUUID().toString());
-                }
             }
 
             batchIsQualified = CollectionUtils.isEmpty(failed.getKsaTransactionAndReason());
@@ -299,6 +294,8 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
         // fill in the response
 
+        int batchSize = ksaTransactions.size();
+
         batchSummary.setTransactionsInBatch(batchSize);
         batchSummary.setValueOfBatch(totalValue);
         batchSummary.setTransactionsAccepted(numberOfAccepted);
@@ -315,7 +312,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
             // Create a new BatchReceipt and persist
             BatchReceipt batchReceipt = new BatchReceipt();
-            batchReceipt.setAccount(firstAccount);
+            batchReceipt.setAccount(currentAccount);
             batchReceipt.setBatchDate(new Date());
             batchReceipt.setCreditOfAcceptedTransactions(totalValueCredit);
             batchReceipt.setDebitOfAcceptedTransactions(totalValueDebits);
