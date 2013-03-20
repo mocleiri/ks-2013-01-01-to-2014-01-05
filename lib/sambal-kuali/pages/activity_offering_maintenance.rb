@@ -43,9 +43,6 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   action(:add_personnel_element) { |b| b.personnel_table.rows[1].cells[PERS_ACTION_COLUMN].button() }
   action(:add_personnel) { |b| b.add_personnel_element.click; b.loading.wait_while_present }
 
-  # requested delivery logistics table
-  element(:requested_delivery_logistics_table) { |b| b.frm.table(class: "uif-tableCollectionLayout") }
-
   TBA = 0
   DAYS = 1
   START_TIME = 2
@@ -56,16 +53,16 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   ACTIONS = 7
 
   def edit_requested_delivery_logistics_row(row_num)
-    requested_delivery_logistics_table[row_num][7].link(text: "Edit").click
+    requested_logistics_table[row_num][7].link(text: "Edit").click
   end
 
   def days_for_requested_delivery_logistics_row(row_num)
-    requested_delivery_logistics_table[row_num][1].text_field.value
+    requested_logistics_table[row_num][1].text_field.value
   end
 
 
   def days_for_actual_delivery_logistics_row(row_num)
-    actual_delivery_logistics.table[row_num][1].span.text
+    actual_logistics_table[row_num][1].span.text
   end
 
   def get_inst_effort(id)
