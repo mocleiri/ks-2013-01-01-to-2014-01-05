@@ -326,7 +326,7 @@ When /^there is a "([^"]*)" course offering not in my admin org/ do |co_status|
 end
 
 
-When /^there is a "([^"]*)" course offering present/ do |co_state|
+When /^there is a "([^"]*)" course offering present/ do |co_status|
   step "I am logged in as a Schedule Coordinator"
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
   @course_offering.check_course_in_status(co_status)
@@ -468,9 +468,9 @@ When /^I do not have access to the page$/ do
   end
 end
 
-Then /^I do not have access to revise delivery logistics$/ do
+Then /^I do not have access to add new delivery logistics$/ do
   on ActivityOfferingMaintenance do |page|
-    page.revise_actual_delivery_logistics_button.present?.should be_false
+    page.add_new_delivery_logistics_button.present?.should be_false
   end
 end
 

@@ -41,7 +41,7 @@ When /^I do not have access to copy an activity offering$/ do
     end
 end
 Then /^I edit an activity offering in my department$/ do
-  step "I manage a course offering in my department"
+  step "I manage a course offering in my admin org"
   on ManageCourseOfferings do |page|
     page.edit("A")
   end

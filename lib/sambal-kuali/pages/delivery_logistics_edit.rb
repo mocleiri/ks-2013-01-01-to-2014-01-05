@@ -1,5 +1,5 @@
 class DeliveryLogisticsEdit < ActivityOfferingMaintenanceBase
-
+#TODO: this page is defunct?
   expected_element :logistics_div_actual
 
   element(:add_tba){ |b|b.frm.div(data_label: "TBA").checkbox()}

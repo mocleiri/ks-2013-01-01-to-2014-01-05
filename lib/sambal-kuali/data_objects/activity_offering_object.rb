@@ -140,9 +140,7 @@ class ActivityOffering
       #TODO: comparison could be more robust
       if opts[:requested_delivery_logistics_list] != nil
         if opts[:requested_delivery_logistics_list].length > 0
-          on ActivityOfferingMaintenance do |page|
-            page.revise_logistics
-          end
+
           #'save' vs 'save and process' determined by first rdl
           first_rdl = opts[:requested_delivery_logistics_list].values[0]
           #list of requests added with updated keys
@@ -151,14 +149,6 @@ class ActivityOffering
           opts[:requested_delivery_logistics_list].values.each do |request|
             request.create
             requests_added["#{request.days}#{request.start_time}#{request.start_time_ampm.upcase}".delete(' ')] = request
-          end
-
-          if first_rdl.process
-            @actual_delivery_logistics_list.merge!(requests_added)
-            first_rdl.save_and_process()
-          else
-            @requested_delivery_logistics_list.merge(requests_added)
-            first_rdl.save()
           end
         end
       end
@@ -592,7 +582,7 @@ class ActivityOffering
     #
     # generally called from ActivityOffering class
     def create
-      on DeliveryLogisticsEdit do |page|
+      on ActivityOfferingMaintenance do |page|
         if @tba
           page.add_tba.set
         else
@@ -607,7 +597,7 @@ class ActivityOffering
         page.add_facility.set @facility
         page.add_room.set @room
         #page.facility_features TODO: later, facility features persistence not implemented yet
-        page.add
+        page.add_new_delivery_logistics
       end
 
     end

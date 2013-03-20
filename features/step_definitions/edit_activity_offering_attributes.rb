@@ -31,6 +31,7 @@ end
 
 #Scenario: Edit Activity Offering Requested Delivery Logistics
 When /^I change Requested Delivery Logistics$/ do
+  #TODO - there is an ActivityOffering data object method that does this
 #  Facility code: ccc and room 1105  or CHM  and 124
   @requested_delivery_logistics = make DeliveryLogistics
   @requested_delivery_logistics.days =           "WF"

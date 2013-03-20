@@ -354,10 +354,9 @@ class ActivityOfferingMaintenanceBase < BasePage
   validation_elements
   frame_element
 
-  element(:logistics_div_actual) { |b| b.frm.div(id: /^ActivityOffering-DeliveryLogistic.*-Actuals$/) }
-  action(:revise_logistics) { |b| b.logistics_div_actual.link(text: "Revise").click; b.loading.wait_while_present }
 
-  element(:actual_logistics_table) { |b| b.logistics_div_actual.table() }
+  element(:actual_logistics_div) { |b| b.frm.div(id: /^ActivityOffering-DeliveryLogistic.*-Actuals$/) }
+  element(:actual_logistics_table) { |b| b.actual_logistics_div.table() }
 
   TBA_COLUMN = 0
   DAYS_COLUMN = 1
@@ -366,6 +365,10 @@ class ActivityOfferingMaintenanceBase < BasePage
   FACILITY_COLUMN = 4
   ROOM_COLUMN = 5
   FEATURES_COLUMN = 6
+  LOGISTICS_ACTION_COLUMN = 7
+
+  element(:requested_logistics_div) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-Requested") }
+  element(:requested_logistics_table) { |b| b.requested_logistics_div.table() }
 
   def self.adl_table_accessor_maker(method_name, column)
     define_method method_name.to_s do |row|
@@ -380,9 +383,6 @@ class ActivityOfferingMaintenanceBase < BasePage
   adl_table_accessor_maker :get_actual_logistics_facility, FACILITY_COLUMN
   adl_table_accessor_maker :get_actual_logistics_room, ROOM_COLUMN
   adl_table_accessor_maker :get_actual_logistics_features, FEATURES_COLUMN
-
-  element(:logistics_div_requested) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-SchedulePage-Requested") }
-  element(:requested_logistics_table) { |b| b.logistics_div_requested.table() }
 
   def self.rdl_table_accessor_maker(method_name, column)
     define_method method_name.to_s do |row|

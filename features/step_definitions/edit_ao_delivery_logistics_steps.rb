@@ -36,12 +36,21 @@ Then /^the AO's delivery logistics shows the new schedule$/ do
   end
 end
 
-Then /^I have access to revise delivery logistics$/ do
+Then /^I have access to add new delivery logistics$/ do
   on ActivityOfferingMaintenance do |page|
-    page.revise_actual_delivery_logistics
+    page.add_new_delivery_logistics_button.enabled?.should be_true
   end
-  on ActivityOfferingLogistics do |page|
-    page.cancel_element.present?.should == true
-    page.cancel
+end
+
+Then /^I have access to view requested delivery logistics$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.view_requested_delivery_logistics_link.present?.should be_true
+  end
+end
+
+
+Then /^I have access to delete requested delivery logistics$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.delete_requested_delivery_logistics_button.enabled?.should be_true
   end
 end

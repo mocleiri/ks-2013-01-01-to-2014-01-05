@@ -84,7 +84,8 @@ Feature: Department Schedule Coordinator Authorization SOC state Published
     And I have access to edit the evaluation flag
     And I have access to edit the honors flag
     But I do not have access to add or edit seat pools
-    And I do not have access to revise delivery logistics
+    And I do not have access to add new delivery logistics
+    And I have access to view requested delivery logistics
     And I do not have access to edit the activity code
 
   Scenario: AZ 4.1A/4.2/Full_published.6 Department Schedule Coordinator Carol can access the Manage AO set of pages for COs for her own admin org

@@ -6,7 +6,7 @@ Feature: Edit an AO to allow changing of it's actual delivery logistics
 
   Scenario: I am able to access the ActivityOfferingEdit-SchedulePage after the mass scheduling event in order to revise delivery logistics
     When I navigate to the edit activity offering for a course offering for a term in "final edits"
-    Then I have access to revise delivery logistics
+    Then I have access to add new delivery logistics
 
 
   #@pending

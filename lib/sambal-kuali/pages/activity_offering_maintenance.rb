@@ -11,10 +11,27 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   element(:total_maximum_enrollment) { |b| b.frm.text_field(id: "maximumEnrollment_control") }
 
   element(:mainpage_section){|b| b.frm.div(id:"ActivityOfferingEdit-MainPage")}
-  element(:actual_delivery_logistics) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-Actuals") }
-  element(:revise_actual_delivery_logistics_button) { |b| b.actual_delivery_logistics.link(text: "Revise") }
-  action(:revise_actual_delivery_logistics) { |b| b.revise_actual_delivery_logistics_button.click; b.loading.wait_while_present }
 
+  element(:add_logistics_div) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-New") }
+  element(:add_tba){ |b|b.add_logistics_div.div(data_label: "TBA").checkbox()}
+  element(:add_days) { |b| b.add_logistics_div.div(data_label: "Days").text_field() }
+  element(:add_start_time) { |b| b.add_logistics_div.div(data_label: "Start Time").text_field() }
+  element(:add_start_time_ampm) { |b| b.add_logistics_div.select(name: "document.newMaintainableObject.dataObject.newScheduleRequest.startTimeAMPM") }
+  element(:add_end_time) { |b| b.add_logistics_div.div(data_label: "End Time").text_field() }
+  element(:add_end_time_ampm) { |b| b.add_logistics_div.select(name: "document.newMaintainableObject.dataObject.newScheduleRequest.endTimeAMPM") }
+  element(:add_facility) { |b| b.add_logistics_div.div(data_label: "Facility").text_field() }
+  action(:lookup_facility) { |b| b.add_logistics_div.div(data_label: "Facility").button().click; b.loading.wait_while_present }
+  element(:add_room) { |b| b.add_logistics_div.div(data_label: "Room").text_field() }
+  action(:lookup_room) { |b| b.add_logistics_div.div(data_label: "Room").button().click; b.loading.wait_while_present }
+
+  action(:facility_features) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-New-Features-Section_toggle").click; b.loading.wait_while_present }
+  element(:feature_list){ |b|b.frm.select(id: "featuresList_control")}
+
+  element(:add_new_delivery_logistics_button) { |b| b.add_logistics_div.button(text: "Add") }
+  action(:add_new_delivery_logistics) { |b| b.add_new_delivery_logistics_button.click; b.loading.wait_while_present }
+
+  element(:view_requested_delivery_logistics_link) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-Requested_toggle") }
+  element(:delete_requested_delivery_logistics_button) { |b| b.actual_logistics_table.button(text: "delete") } #TODO: identify button by row (days + start_time)
 
   PERS_ACTION_COLUMN = 4
 
@@ -46,11 +63,6 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
     requested_delivery_logistics_table[row_num][1].text_field.value
   end
 
-  action(:save_and_process_requested_delivery_logistics) { |b| b.frm.button(text: "Save and Process Request").click; b.loading.wait_while_present }
-
-  # submit new request form
-  element(:new_request_delivery_logistics_days_field) { |b| b.frm.text_field(name: "document.newMaintainableObject.dataObject.newScheduleRequest.days" ) }
-  action(:update_new_request) { |b| b.frm.button(text: "Update Request").click; b.loading.wait_while_present }
 
   def days_for_actual_delivery_logistics_row(row_num)
     actual_delivery_logistics.table[row_num][1].span.text
