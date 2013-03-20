@@ -50,6 +50,14 @@ insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('FEE_DETAIL_SEQ', 
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('FEE_DETAIL_AMOUNT_SEQ', 1001);
 
 
+-- KS and Rice DB connection parameters
+insert into KSSA_EXTERNAL_DB_CONFIG (NAME, VALUE) values ('ks.user', 'ks');
+insert into KSSA_EXTERNAL_DB_CONFIG (NAME, VALUE) values ('ks.password', 'ks123');
+insert into KSSA_EXTERNAL_DB_CONFIG (NAME, VALUE) values ('ks.url', 'jdbc:oracle:thin:@localhost:1521:XE');
+insert into KSSA_EXTERNAL_DB_CONFIG (NAME, VALUE) values ('rice.user', 'rice');
+insert into KSSA_EXTERNAL_DB_CONFIG (NAME, VALUE) values ('rice.password', 'rice123');
+insert into KSSA_EXTERNAL_DB_CONFIG (NAME, VALUE) values ('rice.url', 'jdbc:oracle:thin:@localhost:1521:XE');
+
 --  SYSTEM CONFIGURATION PARAMETERS --
 -- Rice-specific parameters --
 insert into KSSA_CONFIG (NAME, VALUE) values ('application.host', 'localhost');

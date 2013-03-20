@@ -1,9 +1,11 @@
 package com.sigmasys.kuali.ksa.config;
 
+import com.sigmasys.kuali.ksa.exception.ConfigurationException;
 import com.sigmasys.kuali.ksa.model.ConfigParameter;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.util.CommonUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.config.property.Config;
@@ -34,23 +36,26 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
 
     private static final Log logger = LogFactory.getLog(InitialParameterConfigurer.class);
 
-    public static final String CONFIG_TABLE_NAME = "KSSA_CONFIG";
-
     private final List<ConfigParameter> databaseParameters = new LinkedList<ConfigParameter>();
     private final Properties readOnlyProperties = new Properties();
 
-    private String schemaPrefix;
+    private String configTableName;
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     private Config riceConfig;
 
 
-    public InitialParameterConfigurer(String schemaName) {
-        this(schemaName, Ordered.LOWEST_PRECEDENCE);
+    public InitialParameterConfigurer(String configTableName) {
+        this(configTableName, Ordered.LOWEST_PRECEDENCE);
     }
 
-    public InitialParameterConfigurer(String schemaName, int order) {
-        schemaPrefix = (schemaName != null && !schemaName.isEmpty()) ? schemaName + "." : "";
+    public InitialParameterConfigurer(String configTableName, int order) {
+        if ( StringUtils.isBlank(configTableName) ) {
+            String errMsg = "Configuration table name is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+        setConfigTableName(configTableName);
         setOrder(order);
     }
 
@@ -66,7 +71,7 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
     private void validateJdbcTemplate() {
         if (jdbcTemplate == null) {
             logger.error("jdbcTemplate is null");
-            throw new IllegalStateException("jdbcTemplate is null");
+            throw new ConfigurationException("jdbcTemplate is null");
         }
     }
 
@@ -77,8 +82,7 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
         databaseParameters.clear();
 
         StringBuilder queryBuilder = new StringBuilder("select NAME as name, VALUE as value, LOCKED as locked from ");
-        queryBuilder.append(schemaPrefix);
-        queryBuilder.append(CONFIG_TABLE_NAME);
+        queryBuilder.append(getConfigTableName());
 
         jdbcTemplate.query(queryBuilder.toString(), new HashMap<String, Object>(), new RowCallbackHandler() {
             public void processRow(ResultSet rs) throws SQLException {
@@ -200,13 +204,12 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
 
         List<String> paramNameList = new ArrayList<String>(paramNames);
 
-        logger.debug("Deleting the following properties from " + CONFIG_TABLE_NAME + " : " + paramNameList);
+        logger.debug("Deleting the following properties from " + getConfigTableName() + " : " + paramNameList);
 
         if (!paramNameList.isEmpty()) {
 
             StringBuilder queryBuilder = new StringBuilder("delete from ");
-            queryBuilder.append(schemaPrefix);
-            queryBuilder.append(CONFIG_TABLE_NAME);
+            queryBuilder.append(getConfigTableName());
             queryBuilder.append(" where NAME in (");
 
             Map<String, String> parameterMap = new HashMap<String, String>(paramNameList.size());
@@ -238,7 +241,7 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
 
         validateJdbcTemplate();
 
-        logger.debug("Deleting the following parameters from " + CONFIG_TABLE_NAME + " : " + params);
+        logger.debug("Deleting the following parameters from " + getConfigTableName() + " : " + params);
 
         // Deleting the old parameters within the same transaction
         Set<String> paramNames = new HashSet<String>(params.size());
@@ -249,7 +252,7 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
         deleteInitialParameters(paramNames);
 
         // Assembling the batch parameters for insert statements
-        List<Map<String, String>> batchParams = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> batchParams = new LinkedList<Map<String, String>>();
         for (ConfigParameter param : params) {
             if (!param.isReadOnly()) {
                 Map<String, String> map = new HashMap<String, String>();
@@ -262,11 +265,10 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
 
         if (!batchParams.isEmpty()) {
 
-            logger.debug("Inserting the following properties into " + CONFIG_TABLE_NAME + " : " + batchParams);
+            logger.debug("Inserting the following properties into " + getConfigTableName() + " : " + batchParams);
 
             StringBuilder queryBuilder = new StringBuilder("insert into ");
-            queryBuilder.append(schemaPrefix);
-            queryBuilder.append(CONFIG_TABLE_NAME);
+            queryBuilder.append(getConfigTableName());
             queryBuilder.append(" (NAME, VALUE, LOCKED) values (:name, :value, :locked)");
 
             Map<String, ?>[] batchParamArray = new Map[batchParams.size()];
@@ -284,7 +286,11 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
         return 0;
     }
 
-    public String getSchemaPrefix() {
-        return schemaPrefix;
+    public void setConfigTableName(String configTableName) {
+        this.configTableName = configTableName;
+    }
+
+    public String getConfigTableName() {
+        return configTableName;
     }
 }

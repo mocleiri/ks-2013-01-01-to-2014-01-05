@@ -30,6 +30,7 @@ import java.util.*;
 public class ConfigServiceImpl implements ConfigService, InitializingBean {
 
     @Autowired
+    @Qualifier("initialParameterConfigurer")
     private InitialParameterConfigurer parameterConfigurer;
 
     @Autowired

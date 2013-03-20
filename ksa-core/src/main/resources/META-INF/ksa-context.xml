@@ -6,11 +6,20 @@
        default-lazy-init="true">
 
     <bean id="initialParameterConfigurer" class="com.sigmasys.kuali.ksa.config.InitialParameterConfigurer">
-        <constructor-arg index="0" value="KSA"/>
+        <constructor-arg index="0" value="KSA.KSSA_CONFIG"/>
         <constructor-arg index="1" value="0"/>
         <property name="location" value="classpath:/ksa.properties"/>
         <property name="dataSource" ref="ksaDataSource"/>
         <property name="riceConfig" ref="riceConfig"/>
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
+
+    <bean id="databaseParameterConfigurer" class="com.sigmasys.kuali.ksa.config.InitialParameterConfigurer">
+        <constructor-arg index="0" value="KSA.KSSA_EXTERNAL_DB_CONFIG"/>
+        <constructor-arg index="1" value="10"/>
+        <property name="location" value="classpath:/ksa.properties"/>
+        <property name="dataSource" ref="ksaDataSource"/>
         <property name="ignoreResourceNotFound" value="true"/>
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
     </bean>

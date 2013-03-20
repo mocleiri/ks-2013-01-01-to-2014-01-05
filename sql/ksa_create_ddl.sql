@@ -9,6 +9,10 @@ create table KSA.KSSA_SEQUENCE_TABLE ( SEQ_NAME varchar2(255 char) not null,  SE
 
 create table KSA.KSSA_CONFIG ( NAME varchar2(512) not null,  VALUE varchar2(1024), LOCKED varchar2(1), primary key (NAME) ) ;
 
+-- External database config table
+
+create table KSA.KSSA_EXTERNAL_DB_CONFIG ( NAME varchar2(512) not null,  VALUE varchar2(1024), LOCKED varchar2(1), primary key (NAME) ) ;
+
 -- KSA association tables for non-annotated associations
 
 create table KSA.KSSA_ACNT_KYPR ( ACNT_ID_FK varchar2(45 char) not null, KYPR_ID_FK number(19,0) not null, primary key (ACNT_ID_FK, KYPR_ID_FK) );
