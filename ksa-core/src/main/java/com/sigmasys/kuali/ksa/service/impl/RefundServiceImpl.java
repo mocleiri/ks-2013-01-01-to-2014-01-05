@@ -1,17 +1,13 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import javax.persistence.Query;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.sigmasys.kuali.ksa.exception.*;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -24,14 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import com.sigmasys.kuali.ksa.exception.InvalidAchAmountException;
-import com.sigmasys.kuali.ksa.exception.InvalidRefundTypeException;
-import com.sigmasys.kuali.ksa.exception.NoAchInformationException;
-import com.sigmasys.kuali.ksa.exception.RefundCancelledException;
-import com.sigmasys.kuali.ksa.exception.RefundFailedException;
-import com.sigmasys.kuali.ksa.exception.RefundNotFoundException;
-import com.sigmasys.kuali.ksa.exception.RefundNotVerifiedException;
-import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Activity;
 import com.sigmasys.kuali.ksa.model.Allocation;
@@ -69,6 +57,7 @@ import com.sigmasys.kuali.ksa.util.TransactionUtils;
  * <p/>
  *
  * @author Sergey Godunov
+ * @author Michael Ivanov
  * @version 1.0
  */
 @Service("refundService")
@@ -94,6 +83,44 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     private ActivityService activityService;
 
 
+    protected Refund checkForRefund(Payment payment, Date refundRequestDate, Account refundRequestedBy) {
+
+        // Get the refund rule:
+        String refundRule = StringUtils.isNotBlank(payment.getRefundRule()) ?
+                payment.getRefundRule() : ((CreditType) payment.getTransactionType()).getRefundRule();
+
+        boolean processAsCash = StringUtils.isBlank(refundRule);
+
+        if (isRefundRuleValid(refundRule)) {
+
+            // Check the clearing period from the refund rule.
+            // Add it to the effectiveDate of the transaction and compare to the current date:
+            String clearingPeriodStr = StringUtils.substringBetween(refundRule, "(", ")");
+            int clearingPeriod = Integer.parseInt(clearingPeriodStr);
+
+            if (clearingPeriod != 0) {
+                Calendar effectiveDate = Calendar.getInstance();
+
+                effectiveDate.setTime(payment.getEffectiveDate());
+                effectiveDate.add(Calendar.DAY_OF_YEAR, clearingPeriod);
+
+                // Uncleared payments can only be credited to the same source:
+                if (effectiveDate.getTimeInMillis() < System.currentTimeMillis()) {
+                    processAsCash = true;
+                }
+            }
+
+            // Create a new Refund:
+            return processAsCash ?
+                    createCashRefund(payment, refundRequestDate, refundRequestedBy) :
+                    createSourceRefund(payment, refundRequestDate, refundRequestedBy, refundRule);
+        }
+
+        String errMsg = "Refund rule '" + refundRule + "'' is invalid, Payment ID = " + payment.getId();
+        logger.error(errMsg);
+        throw new RefundFailedException(errMsg);
+    }
+
     /**
      * Creates a list of unverified Refunds in the specified date range.
      * <p/>
@@ -112,67 +139,64 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = false)
     public List<Refund> checkForRefund(String accountId, Date dateFrom, Date dateTo) {
+
         // Get all payment transactions on account accountId, where effectiveDate > dateFrom and < dateTo:
-        boolean isRefundable = true;
-        BigDecimal amountThreshold = new BigDecimal(0);
-        String sql = "select p from Payment p where p.effectiveDate between :dateFrom and :dateTo and p.refundable = :isRefundable and p.clearDate <= current_date() and "
+        BigDecimal amountThreshold = BigDecimal.ZERO;
+        String sql = "select p from Payment p where p.effectiveDate between :dateFrom and :dateTo and p.refundable = true and p.clearDate <= current_date() and "
                 + "(p.amount - p.lockedAllocatedAmount - p.allocatedAmount <= :amountThreshold) and (p.refundRule is not null or p.transactionType.refundRule is not null)";
         Query query = em.createQuery(sql)
                 .setParameter("dateFrom", dateFrom)
                 .setParameter("dateTo", dateTo)
-                .setParameter("isRefundable", isRefundable)
                 .setParameter("amountThreshold", amountThreshold);
         List<Payment> payments = query.getResultList();
         List<Refund> allRefunds = new ArrayList<Refund>();
-        Date refundRequestDate = null;
-        Account refundRequestedBy = null;
+
+        Date refundRequestDate = new Date();
+
+        String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        Account refundRequestedBy = accountService.getOrCreateAccount(currentUserId);
 
         // Iterate through the Payments:
         for (Payment payment : payments) {
-            // Get the refund rule:
-            String refundRule = StringUtils.isNotBlank(payment.getRefundRule()) ? payment.getRefundRule() : ((CreditType) payment.getTransactionType()).getRefundRule();
-            boolean processAsCash = false;
-
-            if (StringUtils.isBlank(refundRule)) {
-                processAsCash = true;
-            } else if (isRefundRuleValid(refundRule)) {
-                // Check the clearing period from the refund rule. Add it to the effectiveDate of the transaction and compare to current date:
-                String clearingPeriodStr = StringUtils.substringBetween(refundRule, "(", ")");
-                int clearingPeriod = Integer.parseInt(clearingPeriodStr);
-
-                if (clearingPeriod != 0) {
-                    Calendar effectiveDate = Calendar.getInstance();
-
-                    effectiveDate.setTime(payment.getEffectiveDate());
-                    effectiveDate.add(Calendar.DAY_OF_YEAR, clearingPeriod);
-
-                    // Uncleared payments can only be credited to the same source:
-                    if (effectiveDate.getTimeInMillis() < System.currentTimeMillis()) {
-                        processAsCash = true;
-                    }
-                }
-            } else {
-                // Invalid refund rule. Get next Payment:
-                continue;
-            }
-
-            // Lazily initialize the values required to create Refunds:
-            if (refundRequestDate == null) {
-                String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
-
-                refundRequestDate = new Date();
-                refundRequestedBy = accountService.getOrCreateAccount(currentUserId);
-            }
-
-            // Create a new Refund:
-            Refund refund = processAsCash
-                    ? createCashRefund(payment, refundRequestDate, refundRequestedBy)
-                    : createSourceRefund(payment, refundRequestDate, refundRequestedBy, refundRule);
-
-            allRefunds.add(refund);
+            allRefunds.add(checkForRefund(payment, refundRequestDate, refundRequestedBy));
         }
 
         return allRefunds;
+    }
+
+    /**
+     * Creates on refund for a single payment.
+     *
+     * @param paymentId Payment ID
+     * @return a new Refund instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Refund checkForRefund(Long paymentId) {
+
+        Payment payment = transactionService.getPayment(paymentId);
+        if (payment == null) {
+            String errMsg = "Payment with ID = " + paymentId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        if (!payment.isRefundable()) {
+            String errMsg = "Payment '" + paymentId + "' is not refundable";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        if (payment.getRefundRule() == null) {
+            String errMsg = "Refund rule (Payment ID = " + paymentId + ") is required";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        Account refundRequestedBy = accountService.getOrCreateAccount(currentUserId);
+
+        return checkForRefund(payment, new Date(), refundRequestedBy);
     }
 
     /**
@@ -186,11 +210,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = false)
     public List<Refund> checkForRefund(List<String> accountIds, Date dateFrom, Date dateTo) {
-        List<Refund> allRefunds = new ArrayList<Refund>();
+
+        List<Refund> allRefunds = new LinkedList<Refund>();
 
         for (String accountId : accountIds) {
             List<Refund> refunds = checkForRefund(accountId, dateFrom, dateTo);
-
             allRefunds.addAll(refunds);
         }
 
@@ -207,10 +231,12 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = false)
     public List<Refund> checkForRefunds(Date dateFrom, Date dateTo) {
+
         // Get all Accounts and IDs:
         Query query = em.createQuery("select a from Account a");
+
         List<Account> allAccounts = query.getResultList();
-        List<String> allAccountIds = new ArrayList<String>();
+        List<String> allAccountIds = new ArrayList<String>(allAccounts.size());
 
         for (Account account : allAccounts) {
             allAccountIds.add(account.getId());
@@ -592,6 +618,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = true)
     public boolean isRefundRuleValid(String refundRule) {
+
         if (StringUtils.isBlank(refundRule)) {
             return true;
         }
@@ -701,17 +728,21 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = false)
     public RefundType getOrCreateRefundType(String debitTypeId, String creditTypeId) {
+
         // Validate the parameters:
         if (StringUtils.isBlank(debitTypeId) || StringUtils.isBlank(creditTypeId)) {
-            throw new IllegalArgumentException("Debit and Credit types cannot be null when requesting RefundTypes.");
+            String errMsg = "Debit and Credit types are required when requesting refund types";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
         }
 
         // Create a query:
         String sql = "select rt from RefundType rt where rt.debitTypeId = :debitTypeId and rt.creditTypeId = :creditTypeId";
-        Query query = em.createQuery(sql)
-                .setParameter("debitTypeId", debitTypeId)
-                .setParameter("creditTypeId", creditTypeId)
-                .setMaxResults(1);
+        Query query = em.createQuery(sql);
+        query.setParameter("debitTypeId", debitTypeId);
+        query.setParameter("creditTypeId", creditTypeId);
+        query.setMaxResults(1);
+
         List<RefundType> result = query.getResultList();
         RefundType refundType;
 
@@ -1105,16 +1136,18 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return A newly created <code>Refund</code>.
      */
     private Refund createCashRefund(Payment payment, Date requestDate, Account requestedBy) {
-        // Figure out the refund type method. Get the overriden value first:
-        String refundTypeMethod = configService.getParameter(Constants.OVERRIDE_REFUND_METHOD);
+
+        // Figure out the refund type method. Get the overridden value first:
+        String refundTypeMethod = configService.getParameter(Constants.REFUND_METHOD_OVERRIDE);
 
         if (StringUtils.isBlank(refundTypeMethod)) {
-            // If there is no overriden value, get the configured value:
+
+            // If there is no overridden value, get the configured value:
             refundTypeMethod = configService.getParameter(Constants.REFUND_METHOD);
 
             // If there is still no value, use the User preference:
             if (StringUtils.isBlank(refundTypeMethod)) {
-                refundTypeMethod = userPreferenceService.getUserPreferenceValue(requestedBy.getId(), Constants.DEFAULT_REFUND_METHOD);
+                refundTypeMethod = userPreferenceService.getUserPreferenceValue(requestedBy.getId(), Constants.REFUND_METHOD);
             }
         }
 
@@ -1148,9 +1181,16 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return A newly created <code>Refund</code>.
      */
     private Refund createSourceRefund(Payment payment, Date requestDate, Account requestedBy, String refundRule) {
+
         // Create a new Refund:
-        String refundTypeMethod = configService.getParameter(Constants.REFUND_SOURCE_TYPE);
-        RefundType refundType = getOrCreateRefundType(refundTypeMethod, refundTypeMethod);
+        String refundSourceType = configService.getParameter(Constants.REFUND_SOURCE_TYPE);
+        if (StringUtils.isBlank(refundSourceType)) {
+            String errMsg = "Configuration parameter '" + Constants.REFUND_SOURCE_TYPE + "' is required";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        RefundType refundType = getOrCreateRefundType(refundSourceType, refundSourceType);
         BigDecimal refundAmount = TransactionUtils.getUnallocatedAmount(payment);
         Refund refund = new Refund();
 
@@ -1163,7 +1203,6 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         // If an Account refund, set the "attribute" to the Account ID:
         if (StringUtils.startsWith(refundRule, "A")) {
             String refundAccountId = StringUtils.substringsBetween(refundRule, "(", ")")[1];
-
             refund.setAttribute(refundAccountId);
         }
 

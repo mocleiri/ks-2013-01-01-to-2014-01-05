@@ -92,7 +92,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 " where t.id = :id ");
         query.setParameter("id", id);
         List<T> transactions = query.getResultList();
-        return (transactions != null && !transactions.isEmpty()) ? transactions.get(0) : null;
+        return CollectionUtils.isNotEmpty(transactions) ? transactions.get(0) : null;
     }
 
     /**
@@ -171,7 +171,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         query.setParameter("transactionTypeId", transactionTypeId);
         query.setParameter("effectiveDate", effectiveDate);
         List<TransactionType> transactionTypes = query.getResultList();
-        if (transactionTypes != null && !transactionTypes.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(transactionTypes)) {
             return transactionTypes.get(0);
         }
         String errMsg = "Cannot find TransactionType for ID = " + transactionTypeId + " and date = " + effectiveDate;
@@ -191,7 +191,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         Query query = em.createQuery("select t from TransactionType t where t.id = :transactionTypeId");
         query.setParameter("transactionTypeId", transactionTypeId);
         List<TransactionType> transactionTypes = query.getResultList();
-        if (transactionTypes != null && !transactionTypes.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(transactionTypes)) {
             return transactionTypes.get(0);
         }
         String errMsg = "Cannot find TransactionType with ID = " + transactionTypeId;

@@ -75,8 +75,7 @@ public interface Constants {
     String REFUND_ACH_BANK_TYPE = "ksa.refund.ach.bank.type";
     String REFUND_ACH_GROUP_ROLLUP = "ksa.refund.ach.group.rollup";
     String REFUND_METHOD = "ksa.refund.method";
-    String OVERRIDE_REFUND_METHOD = "ksa.override.refund.method";
-    String DEFAULT_REFUND_METHOD = "ksa.default.refund.method";
+    String REFUND_METHOD_OVERRIDE = "ksa.refund.override.method";
     String REFUND_SOURCE_TYPE = "ksa.refund.source.type";
 
     // Account service constants
