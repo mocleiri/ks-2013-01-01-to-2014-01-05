@@ -90,6 +90,8 @@
     <!-- MyPlan properties file containing Error Messages -->
     <param name="rice.struts.message.resources" override="true">${rice.struts.message.resources},org.kuali.student.myplan.KSMyPlan-ApplicationResources</param>
 
+    <param name="resourceBundleNames" override="true">org.kuali.rice.krad.KRADApplicationResources,org.kuali.rice.krad.ApplicationResources,org.kuali.student.myplan.KSMyPlan-ApplicationResources</param>
+
     <!-- used to show KS links in Rice Portal -->
     <param name="portal.show.sample.app">true</param>
 

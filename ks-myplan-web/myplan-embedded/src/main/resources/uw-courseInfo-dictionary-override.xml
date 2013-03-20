@@ -222,17 +222,17 @@
 
     <bean id="uw.cluInfo.richTextInfo.formatted" parent="richTextInfo.formatted-parent">
         <property name="validChars" ref="uw.cluInfo.multiLineText"/>
-        <property name="labelKey" value="uw.formatted"/>
+        <property name="messageKey" value="uw.formatted"/>
     </bean>
 
     <bean id="uw.cluInfo.richTextInfo.plain" parent="richTextInfo.plain-parent">
         <property name="validChars" ref="uw.cluInfo.multiLineText"/>
-        <property name="labelKey" value="uw.plain"/>
+        <property name="messageKey" value="uw.plain"/>
     </bean>
 
     <bean id="uw.cluInfo.multiLineText" parent="ValidCharDefinition">
         <property name="value" value="regex:[a-zA-Z0-9.,&gt;&lt;_\\/\-\?\+=()\[\];:'&quot;&amp;%$\^~\*#@!\t\n\r ]*"/>
-        <property name="labelKey" value="uw.regex"/>
+        <property name="messageKey" value="uw.regex"/>
     </bean>
 
     <bean id="courseInfo.courseTitle" parent="courseInfo.courseTitle-parent">
