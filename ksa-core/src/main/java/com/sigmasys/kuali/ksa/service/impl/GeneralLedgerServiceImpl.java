@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.exception.ConfigurationException;
 import com.sigmasys.kuali.ksa.exception.InvalidGeneralLedgerAccountException;
 import com.sigmasys.kuali.ksa.exception.InvalidGeneralLedgerTypeException;
 import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
@@ -322,7 +323,13 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     public GeneralLedgerType getDefaultGeneralLedgerType() {
-        return getGeneralLedgerType(configService.getParameter(DEFAULT_GL_TYPE));
+        String defaultGlTypeCode = configService.getParameter(DEFAULT_GL_TYPE);
+        if (org.apache.commons.lang.StringUtils.isBlank(defaultGlTypeCode)) {
+            String errMsg = "Configuration parameter '" + DEFAULT_GL_TYPE + "' is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+        return getGeneralLedgerType(defaultGlTypeCode);
     }
 
     /**
@@ -333,12 +340,12 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     public GeneralLedgerMode getDefaultGeneralLedgerMode() {
         String glMode = configService.getParameter(DEFAULT_GL_MODE);
-        if (glMode != null) {
-            return EnumUtils.findById(GeneralLedgerMode.class, glMode);
+        if (org.apache.commons.lang.StringUtils.isBlank(glMode)) {
+            String errMsg = "Configuration parameter '" + DEFAULT_GL_MODE + "' is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
         }
-        String errMsg = "ksa.general.ledger.mode' parameter must be set in the KSA configuration";
-        logger.error(errMsg);
-        throw new IllegalStateException(errMsg);
+        return EnumUtils.findById(GeneralLedgerMode.class, glMode);
     }
 
     private GlTransmission createGlTransmission(String glAccountId, Date earliestDate, Date latestDate,
@@ -400,6 +407,12 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         }
 
         String glModeCode = configService.getParameter(DEFAULT_GL_MODE);
+        if (org.apache.commons.lang.StringUtils.isBlank(glModeCode)) {
+            String errMsg = "Configuration parameter '" + Constants.DEFAULT_GL_MODE + "' is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+
         GeneralLedgerMode glMode = EnumUtils.findById(GeneralLedgerMode.class, glModeCode);
         if (glMode == null) {
             String errMsg = "General Ledger mode must be specified";

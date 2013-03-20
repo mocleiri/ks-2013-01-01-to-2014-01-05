@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
 import com.sigmasys.kuali.ksa.exception.AccountTypeNotFoundException;
+import com.sigmasys.kuali.ksa.exception.ConfigurationException;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AccountService;
@@ -147,6 +148,11 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Transactional(readOnly = false)
     public void ageDebt(boolean ignoreDeferment) {
         String ageDebtMethodName = configService.getParameter(Constants.AGE_DEBT_METHOD);
+        if (StringUtils.isBlank(ageDebtMethodName)) {
+            String errMsg = "Configuration parameter '" + Constants.AGE_DEBT_METHOD + "' is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
         AgeDebtMethod ageDebtMethod = AgeDebtMethod.valueOf(ageDebtMethodName);
         List<Account> accounts = getFullAccounts();
         for (Account account : accounts) {
@@ -256,6 +262,12 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     public ChargeableAccount ageDebt(String userId, boolean ignoreDeferment) {
 
         String ageDebtMethodName = configService.getParameter(Constants.AGE_DEBT_METHOD);
+        if (StringUtils.isBlank(ageDebtMethodName)) {
+            String errMsg = "Configuration parameter '" + Constants.AGE_DEBT_METHOD + "' is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+
         AgeDebtMethod ageDebtMethod = AgeDebtMethod.valueOf(ageDebtMethodName);
 
         return ageDebt(userId, ageDebtMethod, ignoreDeferment);
@@ -736,9 +748,10 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         }
 
         String achBankType = configService.getParameter(Constants.REFUND_ACH_BANK_TYPE);
-        if (achBankType == null) {
-            errMsg = "Refund ACH Bank Type '" + achBankType + "' does not exist";
-            throw new IllegalArgumentException(errMsg);
+        if (StringUtils.isBlank(achBankType)) {
+            errMsg = "Configuration parameter '" + Constants.REFUND_ACH_BANK_TYPE + "' is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
         }
 
         String details = account.getBankDetails();

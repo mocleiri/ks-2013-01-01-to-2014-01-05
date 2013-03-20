@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.exception.ConfigurationException;
 import com.sigmasys.kuali.ksa.exception.InformationNotFoundException;
 import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
@@ -9,6 +10,7 @@ import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -507,7 +509,13 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public Integer getDefaultMemoLevel() {
-        return Integer.valueOf(configService.getParameter(Constants.DEFAULT_MEMO_LEVEL));
+        String defaultMemoLevel = configService.getParameter(Constants.DEFAULT_MEMO_LEVEL);
+        if (StringUtils.isBlank(defaultMemoLevel)) {
+            String errMsg = "Configuration parameter '" + Constants.DEFAULT_MEMO_LEVEL + "' is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+        return Integer.valueOf(defaultMemoLevel);
     }
 
     /**

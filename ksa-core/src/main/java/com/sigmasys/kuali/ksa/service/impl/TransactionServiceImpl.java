@@ -2066,12 +2066,16 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         if (statementPrefix != null && !statementPrefix.isEmpty()) {
             statementText = statementPrefix + " " + statementText;
         }
+
         writeOffTransaction.setStatementText(statementText);
 
         String rollupCode = configService.getParameter(Constants.DEFAULT_WRITE_OFF_ROLLUP);
-        Rollup rollup = getRollupByCode(rollupCode);
-        if (rollup != null) {
-            writeOffTransaction.setRollup(rollup);
+
+        if (StringUtils.isNotBlank(rollupCode)) {
+            Rollup rollup = getRollupByCode(rollupCode);
+            if (rollup != null) {
+                writeOffTransaction.setRollup(rollup);
+            }
         }
 
         writeOffTransaction.setStatus(TransactionStatus.WRITTEN_OFF);
@@ -2631,11 +2635,10 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         // Getting the default contest payment type ID
         String contestPaymentTypeId = configService.getParameter(Constants.CONTEST_PAYMENT_TYPE);
-        if (contestPaymentTypeId == null) {
-            String errMsg = "The default contest payment type '" + Constants.CONTEST_PAYMENT_TYPE +
-                    "' has not been set";
+        if (StringUtils.isBlank(contestPaymentTypeId)) {
+            String errMsg = "Configuration parameter '" + Constants.CONTEST_PAYMENT_TYPE + "' is required";
             logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
+            throw new ConfigurationException(errMsg);
         }
 
         // Creating a deferment

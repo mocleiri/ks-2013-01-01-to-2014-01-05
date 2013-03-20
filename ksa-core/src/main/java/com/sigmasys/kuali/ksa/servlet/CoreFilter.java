@@ -73,7 +73,7 @@ public class CoreFilter implements Filter {
     private void initTrustedUrls() {
         ConfigService configService = ContextUtils.getBean(ConfigService.class);
         String trustedUrls = configService.getParameter(TRUSTED_URLS_PARAM_NAME);
-        if (trustedUrls != null && !trustedUrls.isEmpty()) {
+        if (StringUtils.isNotBlank(trustedUrls)) {
             String[] patterns = trustedUrls.split(",");
             for (String pattern : patterns) {
                 pattern = pattern.trim();

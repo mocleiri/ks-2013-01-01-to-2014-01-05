@@ -1,6 +1,5 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
-import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.krad.form.QuickViewForm;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.Currency;
@@ -39,9 +38,6 @@ public class QuickViewController extends GenericSearchController {
 
     @Autowired
     private FeeManagementService feeManagementService;
-
-    @Autowired
-    private ConfigService configService;
 
     @Autowired
     private PaymentService paymentService;
@@ -357,8 +353,6 @@ public class QuickViewController extends GenericSearchController {
             form.setDefermentAmount(deferment.toString());
         }
 
-        int itemsPerPage = Integer.valueOf(configService.getParameter(Constants.QUICKVIEW_INFORMATION_COUNT));
-
         List<Information> alertFlags = new ArrayList<Information>();
 
         List<Alert> alertsAll = informationService.getAlerts(userId);
@@ -371,18 +365,13 @@ public class QuickViewController extends GenericSearchController {
 
         form.setAlertsFlags(alertFlags);
 
-
-        //FlagDateComparatorAscending comparitor2 = new FlagDateComparatorAscending();
-        //Collections.sort(flagAll, comparitor2);
-
-
         List<Memo> memos = informationService.getMemos(userId);
 
         Iterator<Memo> iter = memos.iterator();
         Date today = new Date();
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             Date expire = iter.next().getExpirationDate();
-            if(expire != null && expire.before(today)){
+            if (expire != null && expire.before(today)) {
                 iter.remove();
             }
         }

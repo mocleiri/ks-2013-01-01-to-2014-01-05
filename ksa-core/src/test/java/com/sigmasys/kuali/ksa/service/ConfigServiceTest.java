@@ -34,7 +34,7 @@ public class ConfigServiceTest extends AbstractServiceTest {
 
 
     @Test
-    public void getInitialParameters() throws Exception {
+    public void getConfigParameters() throws Exception {
 
         Map<String, String> params = configService.getParameterMap();
 
