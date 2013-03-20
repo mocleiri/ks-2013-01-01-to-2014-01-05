@@ -12,7 +12,7 @@ import org.kuali.rice.krad.uif.container.CollectionGroup;
 import org.kuali.rice.krad.uif.view.View;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.web.form.MaintenanceForm;
+import org.kuali.rice.krad.web.form.MaintenanceDocumentForm;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
 import org.kuali.student.enrollment.class2.courseoffering.dto.ActivityOfferingWrapper;
@@ -349,7 +349,7 @@ public class ActivityOfferingMaintainableImpl extends MaintainableImpl implement
             OfferingInstructorWrapper instructor = (OfferingInstructorWrapper) addLine;
 
             //check duplication
-            MaintenanceForm form = (MaintenanceForm)model;
+            MaintenanceDocumentForm form = (MaintenanceDocumentForm)model;
             ActivityOfferingWrapper activityOfferingWrapper = (ActivityOfferingWrapper)form.getDocument().getNewMaintainableObject().getDataObject();
             List<OfferingInstructorWrapper> instructors = activityOfferingWrapper.getInstructors();
             if(instructors != null && !instructors.isEmpty()){
@@ -371,7 +371,7 @@ public class ActivityOfferingMaintainableImpl extends MaintainableImpl implement
         else if (addLine instanceof SeatPoolWrapper){   //Seat Pool
             SeatPoolWrapper seatPool = (SeatPoolWrapper) addLine;
             //check duplication
-            MaintenanceForm form = (MaintenanceForm)model;
+            MaintenanceDocumentForm form = (MaintenanceDocumentForm)model;
             ActivityOfferingWrapper activityOfferingWrapper = (ActivityOfferingWrapper)form.getDocument().getNewMaintainableObject().getDataObject();
             List<SeatPoolWrapper> pools = activityOfferingWrapper.getSeatpools();
             if(pools != null && !pools.isEmpty()){

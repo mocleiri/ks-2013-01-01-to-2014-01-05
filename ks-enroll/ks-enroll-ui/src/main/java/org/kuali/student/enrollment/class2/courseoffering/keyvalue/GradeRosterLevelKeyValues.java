@@ -21,7 +21,7 @@ import org.kuali.rice.krad.uif.control.UifKeyValuesFinderBase;
 import org.kuali.rice.krad.uif.view.ViewModel;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.form.InquiryForm;
-import org.kuali.rice.krad.web.form.MaintenanceForm;
+import org.kuali.rice.krad.web.form.MaintenanceDocumentForm;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingCreateWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.util.CourseOfferingConstants;
@@ -51,8 +51,8 @@ public class GradeRosterLevelKeyValues extends UifKeyValuesFinderBase implements
     @Override
     public List<KeyValue> getKeyValues(ViewModel model) {
         Object dataObject = null;
-        if (model instanceof MaintenanceForm) {
-            MaintenanceForm form = (MaintenanceForm)model;
+        if (model instanceof MaintenanceDocumentForm) {
+            MaintenanceDocumentForm form = (MaintenanceDocumentForm)model;
             dataObject = form.getDocument().getNewMaintainableObject().getDataObject();
         } else if (model instanceof InquiryForm) {
             InquiryForm form = (InquiryForm)model;

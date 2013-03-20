@@ -22,7 +22,7 @@
     <bean id="KS-PopulationWrapper-MaintenanceView" parent="KSMaintenanceView">
         <property name="headerText" value="@{#dp.pageTitle}"/>
         <property name="dataObjectClassName" value="org.kuali.student.enrollment.class2.population.dto.PopulationWrapper"/>
-        <property name="formClass" value="org.kuali.rice.krad.web.form.MaintenanceForm"/>
+        <property name="formClass" value="org.kuali.rice.krad.web.form.MaintenanceDocumentForm"/>
         <property name="singlePageView" value="true"/>
         <property name="items">
             <list>

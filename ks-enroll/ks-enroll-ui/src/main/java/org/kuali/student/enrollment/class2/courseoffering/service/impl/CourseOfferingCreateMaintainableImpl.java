@@ -7,7 +7,7 @@ import org.kuali.rice.krad.uif.container.CollectionGroup;
 import org.kuali.rice.krad.uif.view.View;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krad.web.form.MaintenanceForm;
+import org.kuali.rice.krad.web.form.MaintenanceDocumentForm;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingCreateWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.util.CourseOfferingResourceLoader;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
@@ -92,7 +92,7 @@ public class CourseOfferingCreateMaintainableImpl extends MaintainableImpl {
     protected void processBeforeAddLine(View view, CollectionGroup collectionGroup, Object model, Object addLine) {
         if (addLine instanceof FormatOfferingInfo){
           FormatOfferingInfo formatOfferingInfo = (FormatOfferingInfo)addLine;
-            CourseOfferingCreateWrapper coCreateWrapper = (CourseOfferingCreateWrapper)((MaintenanceForm)model).getDocument().getNewMaintainableObject().getDataObject();
+            CourseOfferingCreateWrapper coCreateWrapper = (CourseOfferingCreateWrapper)((MaintenanceDocumentForm)model).getDocument().getNewMaintainableObject().getDataObject();
             for( FormatInfo formatInfo : coCreateWrapper.getCourse().getFormats()){
                 if (StringUtils.equals(formatInfo.getId(), formatOfferingInfo.getFormatId())){
                     formatOfferingInfo.setName(formatInfo.getName());

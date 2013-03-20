@@ -16,7 +16,7 @@
  */
 package org.kuali.student.enrollment.class2.population.service;
 
-import org.kuali.rice.krad.web.form.MaintenanceForm;
+import org.kuali.rice.krad.web.form.MaintenanceDocumentForm;
 import org.kuali.student.r2.core.population.dto.PopulationInfo;
 
 import java.util.List;
@@ -28,6 +28,6 @@ import java.util.List;
  */
 public interface PopulationManagementViewHelperService {
 
-    public List<PopulationInfo> findPopulationsByNameAndType (String name, String typeKey, MaintenanceForm form);
+    public List<PopulationInfo> findPopulationsByNameAndType (String name, String typeKey, MaintenanceDocumentForm form);
 
 }

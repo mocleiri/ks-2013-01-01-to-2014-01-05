@@ -8,17 +8,17 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BaseConstraint {
     @XmlElement
-    protected String labelKey; // Label key will map to a message... for a field
+    protected String messageKey; // Label key will map to a message... for a field
 								// there can be multiple contexts for the
 								// label... a help context, a description
 								// context, and a field label context for
 								// example
 
-	public String getLabelKey() {
-		return labelKey;
-	}
+    public String getMessageKey() {
+        return messageKey;
+    }
 
-	public void setLabelKey(String labelKey) {
-		this.labelKey = labelKey;
-	}
+    public void setMessageKey(String messageKey) {
+        this.messageKey = messageKey;
+    }
 }

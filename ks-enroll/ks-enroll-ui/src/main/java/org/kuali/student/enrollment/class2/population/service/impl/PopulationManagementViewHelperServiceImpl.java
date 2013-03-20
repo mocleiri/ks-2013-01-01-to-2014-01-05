@@ -22,7 +22,7 @@ import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.krad.uif.service.impl.ViewHelperServiceImpl;
 import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.web.form.MaintenanceForm;
+import org.kuali.rice.krad.web.form.MaintenanceDocumentForm;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.class2.courseoffering.util.CourseOfferingConstants;
 import org.kuali.student.enrollment.class2.population.dto.PopulationWrapper;
@@ -47,7 +47,7 @@ public class PopulationManagementViewHelperServiceImpl extends ViewHelperService
 
     private PopulationService populationService;
 
-    public List<PopulationInfo> findPopulationsByNameAndType (String name, String typeKey, MaintenanceForm form) {
+    public List<PopulationInfo> findPopulationsByNameAndType (String name, String typeKey, MaintenanceDocumentForm form) {
         List<PopulationInfo> populations = new ArrayList<PopulationInfo>();
 
         try {

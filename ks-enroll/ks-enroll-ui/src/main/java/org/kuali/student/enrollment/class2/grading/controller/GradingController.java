@@ -138,8 +138,6 @@ public class GradingController extends UifControllerBase {
             //FIXME: Not sure how to set a global error instead of for a field. If no fields mentioned, KRAD throwing error
             GlobalVariables.getMessageMap().putInfo("firstName", GradingConstants.INFO_GRADE_ROSTER_SAVED);
         }
-        // only refreshing page
-        gradingForm.setRenderFullView(false);
 
         return getUIFModelAndView(gradingForm, GradingConstants.GRADE_ROSTER_PAGE);
     }

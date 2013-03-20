@@ -528,6 +528,18 @@ public class RoleServiceMockImpl implements RoleService {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public RoleResponsibilityAction updateRoleResponsibilityAction(@WebParam(name = "roleResponsibilityAction") RoleResponsibilityAction roleResponsibilityAction) throws RiceIllegalArgumentException {
+        return null;  //To change body of implemented met
+        // hods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void deleteRoleResponsibilityAction(@WebParam(name = "roleResponsibilityActionId") String s) throws RiceIllegalArgumentException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    //    @Override
 //    @Override
     public void saveDelegationMemberForRole(String delegationMemberId,
             String roleMemberId, String memberId,

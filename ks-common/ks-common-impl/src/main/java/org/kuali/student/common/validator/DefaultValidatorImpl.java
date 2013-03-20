@@ -487,8 +487,8 @@ public class DefaultValidatorImpl extends BaseAbstractValidator {
         if ("regex".equalsIgnoreCase(processorType)) {
             if (fieldValue == null || !fieldValue.toString().matches(validChars)) {
             	val = new ValidationResultInfo(element, fieldValue);
-                if(vcConstraint.getLabelKey()!=null){
-                	val.setError(getMessage(vcConstraint.getLabelKey()));
+                if(vcConstraint.getMessageKey()!=null){
+                	val.setError(getMessage(vcConstraint.getMessageKey()));
                 }else{
                 	val.setError(getMessage("validation.validCharsFailed"));
                 }

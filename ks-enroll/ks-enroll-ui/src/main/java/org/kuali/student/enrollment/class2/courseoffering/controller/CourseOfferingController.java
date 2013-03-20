@@ -10,7 +10,7 @@ import org.kuali.rice.krad.uif.util.ObjectPropertyUtils;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.web.controller.MaintenanceDocumentController;
-import org.kuali.rice.krad.web.form.MaintenanceForm;
+import org.kuali.rice.krad.web.form.MaintenanceDocumentForm;
 import org.kuali.student.common.search.dto.*;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
@@ -61,7 +61,7 @@ public class CourseOfferingController extends MaintenanceDocumentController {
     private transient LRCService lrcService;
 
     @RequestMapping(params = "methodToCall=loadCourseCatalog")
-    public ModelAndView loadCourseCatalog(@ModelAttribute("KualiForm") MaintenanceForm form, BindingResult result,
+    public ModelAndView loadCourseCatalog(@ModelAttribute("KualiForm") MaintenanceDocumentForm form, BindingResult result,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         CourseOfferingCreateWrapper coWrapper = ((CourseOfferingCreateWrapper)form.getDocument().getNewMaintainableObject().getDataObject());
@@ -146,7 +146,7 @@ public class CourseOfferingController extends MaintenanceDocumentController {
     }
 
     @RequestMapping(params = "methodToCall=createFromCatalog")
-    public ModelAndView createFromCatalog(@ModelAttribute("KualiForm") MaintenanceForm form, BindingResult result,
+    public ModelAndView createFromCatalog(@ModelAttribute("KualiForm") MaintenanceDocumentForm form, BindingResult result,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         CourseOfferingCreateWrapper wrapper = (CourseOfferingCreateWrapper)form.getDocument().getNewMaintainableObject().getDataObject();
@@ -158,7 +158,7 @@ public class CourseOfferingController extends MaintenanceDocumentController {
     }
 
     @RequestMapping(params = "methodToCall=copyExistingCourseOffering")
-    public ModelAndView copyExistingCourseOffering(@ModelAttribute("KualiForm") MaintenanceForm form, BindingResult result,
+    public ModelAndView copyExistingCourseOffering(@ModelAttribute("KualiForm") MaintenanceDocumentForm form, BindingResult result,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         CourseOfferingInfo existingCO = ((ExistingCourseOffering)getSelectedObject(form)).getCourseOfferingInfo();
@@ -192,7 +192,7 @@ public class CourseOfferingController extends MaintenanceDocumentController {
     }
 
     @RequestMapping(params = "methodToCall=createFromTermOffering")
-    public ModelAndView createFromTermOffering(@ModelAttribute("KualiForm") MaintenanceForm form, BindingResult result,
+    public ModelAndView createFromTermOffering(@ModelAttribute("KualiForm") MaintenanceDocumentForm form, BindingResult result,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         CourseOfferingCreateWrapper wrapper = (CourseOfferingCreateWrapper)form.getDocument().getNewMaintainableObject().getDataObject();
@@ -230,7 +230,7 @@ public class CourseOfferingController extends MaintenanceDocumentController {
 
     }
 
-    private Object getSelectedObject(MaintenanceForm theForm){
+    private Object getSelectedObject(MaintenanceDocumentForm theForm){
         String selectedCollectionPath = theForm.getActionParamaterValue(UifParameters.SELLECTED_COLLECTION_PATH);
         if (StringUtils.isBlank(selectedCollectionPath)) {
             throw new RuntimeException("Selected collection was not set");
