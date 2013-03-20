@@ -62,9 +62,11 @@ When /^I approve the "(.*)" subject code for scheduling in the target term$/ do 
   @course_offering = make CourseOffering, :term=>@rollover.target_term, :course=>subject_code
   @course_offering.search_by_subjectcode
   on ManageCourseOfferingList do |page|
+    sleep 1
     page.approve_subject_code
   end
   on ManageCourseOfferingList do |page|
+    sleep 1
     page.course_offering_results_table.rows[2].cells[ManageCourseOfferingList::CO_STATUS_COLUMN].text.should == "Planned"
   end
 end
