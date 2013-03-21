@@ -79,7 +79,7 @@ public class BatchTransactionsController extends GenericSearchController {
 
                 int index = xmlContent.indexOf("<");
                 if (index > 0) {
-                    xmlContent = xmlContent.substring(index + 1);
+                    xmlContent = xmlContent.substring(index);
                 } else if (index < 0) {
                     return handleError(form, "XML declaration is invalid");
                 }
