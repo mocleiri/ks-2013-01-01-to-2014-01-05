@@ -182,7 +182,7 @@
         </exclusion>
         <exclusion>
           <groupId>com.oracle</groupId>
-          <artifactId>ojdbc6</artifactId>
+          <artifactId>ojdbc14</artifactId>
         </exclusion>
         <exclusion>
           <groupId>opensymphony</groupId>

@@ -99,7 +99,7 @@
                 </dependency>
                 <dependency>
                     <groupId>com.oracle</groupId>
-                    <artifactId>ojdbc6</artifactId>
+                    <artifactId>ojdbc14</artifactId>
                     <version>${oracle.ojdbc.version}</version>
                 </dependency>
                 <dependency>
