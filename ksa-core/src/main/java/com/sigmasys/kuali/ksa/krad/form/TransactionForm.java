@@ -27,6 +27,8 @@ public class TransactionForm extends AbstractViewModel {
     private List<TransactionModel> rollupTransactions;
     private List<TransactionModel> allTransactions;
 
+    private List<TransactionModel> deferments;
+
     private Date       startingDate;
     private BigDecimal startingBalance;
     private Date       endingDate;
@@ -514,5 +516,16 @@ public class TransactionForm extends AbstractViewModel {
 
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
+    }
+
+    public List<TransactionModel> getDeferments() {
+        if(deferments == null){
+            return new ArrayList<TransactionModel>();
+        }
+        return deferments;
+    }
+
+    public void setDeferments(List<TransactionModel> deferments) {
+        this.deferments = deferments;
     }
 }

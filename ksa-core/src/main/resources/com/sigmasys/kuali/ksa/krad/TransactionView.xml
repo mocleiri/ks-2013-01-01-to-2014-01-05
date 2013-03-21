@@ -92,12 +92,6 @@
                               p:actionLabel="Filter"
                               p:onClickScript="writeHiddenToForm(&quot;userId&quot;, &quot;@{account.id}&quot;);">
                         </bean>
-                        <!--
-                        <bean parent="Uif-TreeGroup" p:instructionalText="Data Tree">
-                            <property name="title" value="Basic String Data tree"/>
-                            <property name="propertyName" value="memoTree"/>
-                        </bean>
-                        -->
                     </list>
                 </property>
             </bean>
@@ -124,13 +118,21 @@
                                         <entry key="bFilter" value="false"/>
                                     </map>
                                 </property>
+                                <property name="layoutManager.columnCalculations">
+                                    <list>
+                                        <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="chargeAmount"/>
+                                        <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="paymentAmount"/>
+                                        <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="allocatedLockedAllocated"/>
+                                        <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="unallocatedAmount"/>
+                                    </list>
+                                </property>
                                 <property name="items">
                                     <list>
                                         <bean parent="Uif-InputField" p:label="Roll-up" p:propertyName="rollup.name" p:width="40%"/>
                                         <bean parent="Uif-InputField" p:propertyName="chargeAmount" p:label="Charges" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
                                         <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
                                         <bean parent="Uif-InputField" p:propertyName="defermentAmount" p:label="Deferments" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
-                                        <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="allocatedLockedAllocated" p:label="Allocated" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
                                         <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:labelPlacement="TOP" p:style="text-align: right; width: 10%;"/>
                                     </list>
                                 </property>
@@ -143,20 +145,15 @@
                                 </property>
 
                             </bean>
-                            <!--<bean parent="Uif-CollectionGroupBase" p:title="Roll-up"  p:propertyName="rollupTransactions"
-                                            p:collectionObjectClass="com.sigmasys.kuali.ksa.krad.model.TransactionModel">
-
-                            </bean>-->
                         </list>
                     </property>
                 </bean>
-
                 <bean parent="Uif-VerticalBoxSection" p:headerText="Running Balance">
                     <property name="items">
                         <list>
                             <bean parent="Uif-Message" p:messageText="Starting Balance@{!#empty(startingDate) ? ' on ' + startingDate : ''}: &lt;b&gt;@{startingBalance}&lt;/b&gt;" p:style="float: right;"/>
 
-                            <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="7">
+                            <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="6">
                                 <property name="readOnly" value="true"/>
                                 <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionModel"/>
                                 <property name="propertyName" value="allTransactions"/>
@@ -172,8 +169,18 @@
                                         <entry key="bPaginate" value="false"/>
                                         <entry key="bInfo" value="false"/>
                                         <entry key="bFilter" value="false"/>
+                                        <entry key="bSort" value="false" />
                                     </map>
                                 </property>
+                                <property name="layoutManager.columnCalculations">
+                                    <list>
+                                        <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="chargeAmount"/>
+                                        <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="paymentAmount"/>
+                                        <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="allocatedLockedAllocated"/>
+                                        <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="unallocatedAmount"/>
+                                    </list>
+                                </property>
+
                                 <property name="items">
                                     <list>
                                         <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective" p:style="width: 10%;"/>
@@ -248,13 +255,12 @@
                                         </bean>
                                         <bean parent="Uif-InputField" p:propertyName="chargeAmount" p:label="Charges" p:style="text-align: right; width: 10%;"/>
                                         <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;"/>
-                                        <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;"/>
                                         <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;"/>
                                         <bean parent="Uif-InputField" p:propertyName="runningBalance" p:label="Balance" p:style="text-align: right; width: 10%;"/>
 
                                     </list>
                                 </property>
-
                                 <property name="layoutManager.expandDetailsActionPrototype">
                                     <bean parent="Uif-ExpandDetailsImageAction" p:render="@{#line.allocations.size() > 0}"/>
                                 </property>
@@ -263,10 +269,110 @@
                                 </property>
                             </bean>
 
+                            <bean parent="Uif-Message" p:messageText="No Deferments" p:render="@{deferments.size() == 0}"/>
+                            <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="7">
+                                <property name="readOnly" value="true"/>
+                                <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionModel"/>
+                                <property name="propertyName" value="deferments"/>
+                                <property name="layoutManager.sequencePropertyName" value="id"/>
+                                <property name="layoutManager.richTable.render" value="true"/>
+                                <property name="layoutManager.renderSequenceField" value="false"/>
+                                <property name="renderAddBlankLineButton" value="false" />
+                                <property name="renderAddLine" value="false" />
+                                <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                                <property name="layoutManager.richTable.disableTableSort" value="false"/>
+                                <property name="layoutManager.richTable.templateOptions">
+                                    <map merge="true">
+                                        <entry key="bPaginate" value="false"/>
+                                        <entry key="bInfo" value="false"/>
+                                        <entry key="bFilter" value="false"/>
+                                        <entry key="bSort" value="false" />
+                                    </map>
+                                </property>
+
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective" p:style="width: 10%;"/>
+                                        <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
+                                            <property name="items">
+                                                <list>
+                                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotalDeferment@{#lineSuffix}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />
+                                                    <bean id="transactionDetailLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                        <property name="hidden" value="true"/>
+                                                        <property name="items">
+                                                            <list>
+                                                                <bean parent="Uif-HeaderTwo" p:headerText="Transaction Details"/>
+                                                                <ref bean="transactionDetail"/>
+                                                            </list>
+                                                        </property>
+                                                    </bean>
+
+                                                    <bean parent="Uif-ImageField" p:source="../images/memo.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
+                                                          p:onClickScript="showLightboxComponent('memoLightboxRunningTotalDeferment@{#lineSuffix}');" p:render="@{#line.memos.size() > 0}">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Memo: (@{#line.memos.size()}) Click icon to view"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean id="memoLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                        <property name="hidden" value="true"/>
+                                                        <property name="items">
+                                                            <list>
+                                                                <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Memos"/>
+                                                                <ref bean="memoLightboxTable"/>
+
+                                                            </list>
+                                                        </property>
+                                                    </bean>
+
+                                                    <bean parent="Uif-ImageField" p:source="../images/document.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
+                                                          p:onClickScript="showLightboxComponent('documentLightboxRunningTotalDeferment@{#lineSuffix}');">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Document: Click icon to view"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean id="documentLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                        <property name="hidden" value="true"/>
+                                                        <property name="items">
+                                                            <list>
+                                                                <bean parent="Uif-Image" p:source="../images/sample-document.png"/>
+
+                                                            </list>
+                                                        </property>
+                                                    </bean>
+
+                                                    <bean parent="Uif-ImageField" p:source="../images/tag.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
+                                                          p:onClickScript="showLightboxComponent('tagLightboxRunningTotalDeferment@{#lineSuffix}');" p:render="@{#line.tags.size() > 0}">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Tags: @{#line.tagList}"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean id="tagLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                        <property name="hidden" value="true"/>
+                                                        <property name="items">
+                                                            <list>
+                                                                <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Tags"/>
+                                                                <ref bean="tagGroup"/>
+
+                                                            </list>
+                                                        </property>
+                                                    </bean>
+
+
+
+                                                </list>
+                                            </property>
+                                        </bean>
+                                        <bean parent="Uif-InputField" p:propertyName="defermentAmount" p:label="Charges" p:style="text-align: right; width: 10%;"/>
+                                        <bean parent="Uif-InputField" p:propertyName="runningBalance" p:label="Balance" p:style="text-align: right; width: 10%;"/>
+
+                                    </list>
+                                </property>
+
+                            </bean>
+
                         </list>
                     </property>
                 </bean>
-
 
 
             </list></property></bean>
@@ -315,6 +421,9 @@
                 <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
                     <property name="items">
                     <list>
+                        <!-- TJB
+                        <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');" p:linkText="@{#line.transactionType.description}" />
+                        TJB -->
                         <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');" p:linkText="@{#line.transactionType.description}" />
                         <bean id="transactionDetailLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                             <property name="hidden" value="true"/>
@@ -325,7 +434,6 @@
                                 </list>
                             </property>
                         </bean>
-
                         <bean parent="Uif-ImageField" p:source="../images/memo.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
                               p:onClickScript="showLightboxComponent('memoLightbox@{#lineSuffix}');" p:render="@{#line.memos.size() > 0}">
                             <property name="toolTip">
@@ -384,7 +492,7 @@
                 <bean parent="Uif-InputField" p:propertyName="chargeAmount" p:label="Charges" p:style="text-align: right; width: 10%;"/>
                 <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;"/>
                 <bean parent="Uif-InputField" p:propertyName="defermentAmount" p:label="Deferments" p:style="text-align: right; width: 10%;"/>
-                <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:style="text-align: right; width: 10%;"/>
+                <bean parent="Uif-InputField" p:propertyName="allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;"/>
                 <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;"/>
             </list>
         </property>
@@ -394,8 +502,8 @@
         <property name="headerText" value="Allocations" />
         <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.AllocationModel" />
         <property name="propertyName" value="allocations" />
-        <property name="layoutManager.sequencePropertyName" value="id" />
         <property name="layoutManager.richTable.render" value="true" />
+        <property name="layoutManager.generateAutoSequence" value="true"/>
         <property name="layoutManager.renderSequenceField" value="false"/>
         <property name="style" value="width: 30%;"/>
         <property name="layoutManager.richTable.templateOptions">
@@ -405,6 +513,13 @@
                 <entry key="bFilter" value="false"/>
             </map>
         </property>
+        <!--
+        <property name="layoutManager.columnCalculations">
+            <list>
+                <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="allocation.amount" p:showTotal="true"/>
+            </list>
+        </property>
+        -->
         <property name="items">
             <list>
                 <bean parent="Uif-InputField" p:propertyName="allocatedTransaction.transactionType.description" p:label="Description" p:style="width: 50%"/>

@@ -61,6 +61,7 @@ public class TransactionController extends GenericSearchController {
     @RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
     public ModelAndView get(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
+        logger.debug("TJB Start: " + new Date());
         // just for the transactions by person page
         String pageId = request.getParameter("pageId");
         if (pageId == null) {
@@ -129,13 +130,17 @@ public class TransactionController extends GenericSearchController {
         }
 
 
-        return getUIFModelAndView(form);
+        ModelAndView mv = getUIFModelAndView(form);
+        logger.debug("TJB End: " + new Date());
+
+        return mv;
     }
 
 
     private void populateRollups(TransactionForm form, List<TransactionModel> transactions) {
         List<TransactionModel> rollUpTransactionModelList = new ArrayList<TransactionModel>();
         List<TransactionModel> unGroupedTransactionModelList = new ArrayList<TransactionModel>();
+        List<TransactionModel> defermentModelList = new ArrayList<TransactionModel>();
 
         TransactionModel nonRolledUp = null;
 
@@ -185,6 +190,10 @@ public class TransactionController extends GenericSearchController {
                 }
                 nonRolledUp.addSubTransaction(t);
             }
+
+            if(t.getParentTransaction() instanceof Deferment){
+                defermentModelList.add(t);
+            }
         }
         form.setEndingBalance(balance);
 
@@ -194,7 +203,7 @@ public class TransactionController extends GenericSearchController {
 
         form.setRollupTransactions(rollUpTransactionModelList);
         form.setAllTransactions(unGroupedTransactionModelList);
-
+        form.setDeferments(defermentModelList);
     }
 
 }
