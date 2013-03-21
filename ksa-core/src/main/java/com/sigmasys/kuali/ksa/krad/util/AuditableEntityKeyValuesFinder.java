@@ -19,6 +19,7 @@ public class AuditableEntityKeyValuesFinder<T extends AuditableEntity> extends G
 	
 	public AuditableEntityKeyValuesFinder(Class<T> type) {
 		this.type = type;
+        this.setBlankOption(true);
 	}
 
 	@Override
