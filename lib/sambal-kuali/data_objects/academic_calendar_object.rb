@@ -191,14 +191,15 @@ class KeyDateGroup
   include StringFactory
   include Workflows
 
-  attr_accessor :key_date_group_type, :key_dates
+  attr_accessor :key_date_group_type, :key_dates, :term_index
 
   def initialize(browser,opts = {})
     @browser = browser
 
     defaults = {
         :key_date_group_type=>"Instructional",
-        :key_dates=>{}
+        :key_dates=>{},
+        :term_index=>0
     }
 
     options = defaults.merge(opts)
@@ -209,9 +210,9 @@ class KeyDateGroup
 
     on AcademicTermPage do |page|
       sleep 3
-      page.key_date_group_dropdown(0).select @key_date_group_type
+      page.key_date_group_dropdown(@term_index).select @key_date_group_type
 
-      page.key_date_group_add 0
+      page.key_date_group_add @term_index
 
       if @key_dates == {}
         @key_dates = Array.new(1){make KeyDate}
@@ -236,7 +237,7 @@ class KeyDate
   include Workflows
 
   attr_accessor :key_date_type, :start_date, :end_date, :start_time, :end_time, :start_time_ampm, :end_time_ampm,
-                :all_day, :date_range
+                :all_day, :date_range, :term_index
 
   def initialize(browser,opts = {})
     @browser = browser
@@ -250,7 +251,9 @@ class KeyDate
         start_time_ampm: "am",
         end_time_ampm: "pm",
         all_day: false,
-        date_range: true
+        date_range: true,
+        term_index: 0,
+        key_date_group: 0
     }
 
     options = defaults.merge(opts)
@@ -260,15 +263,15 @@ class KeyDate
   def create(opts = {})
     sleep 3;
     on AcademicTermPage do |page|
-      page.key_date_dropdown_addline(0,0).select @key_date_type
-      page.key_date_start_date_addline(0,0).set @start_date
-      page.key_date_end_date_addline(0,0).set @end_date
-      page.key_date_allday_addline(0,0).set @all_day
-      page.key_date_daterange_addline(0,0).set @date_range
+      page.key_date_dropdown_addline(@term_index,0).select @key_date_type
+      page.key_date_start_date_addline(@term_index,0).set @start_date
+      page.key_date_end_date_addline(@term_index,0).set @end_date
+      page.key_date_allday_addline(@term_index,0).set @all_day
+      page.key_date_daterange_addline(@term_index,0).set @date_range
 
-      page.key_date_add(0,0)
+      page.key_date_add(@term_index,0)
 
-      page.make_term_official(0)
+      page.make_term_official(@term_index)
 
     end
 
@@ -276,56 +279,72 @@ class KeyDate
 
   def edit options={}
 
+    if options[:term_index] != nil
+       @term_index = options[:term_index]
+    end
+
+    if options[:key_date_group] !=nil
+      @key_date_group = options[:key_date_group]
+    end
+
     if options[:start_date] != nil
       on AcademicTermPage  do |page|
-        page.key_date_start_date_edit(0,0,0).set options[:start_date]
+        page.key_date_start_date_edit(@term_index,@key_date_group,0).set options[:start_date]
+        @start_date =  options[:start_date]
       end
     end
 
     if options[:end_date] != nil
       on AcademicTermPage  do |page|
-        page.key_date_end_date_edit(0,0,0).set options[:end_date]
+        page.key_date_end_date_edit(@term_index,@key_date_group,0).set options[:end_date]
+        @end_date = options[:end_date]
       end
     end
 
     if options[:all_day] != nil
       on AcademicTermPage  do |page|
-        page.key_date_allday_edit(0,0,0).set options[:all_day]
+        page.key_date_allday_edit(@term_index,@key_date_group,0).set options[:all_day]
+        @all_day = options[:all_day]
       end
     end
 
     if options[:date_range] != nil
       on AcademicTermPage  do |page|
-        page.key_date_daterange_edit(0,0,0).set options[:date_range]
+        page.key_date_daterange_edit(@term_index,@key_date_group,0).set options[:date_range]
+        @date_range = options[:date_range]
       end
     end
 
     if options[:start_time] != nil
       on AcademicTermPage  do |page|
-        page.key_start_time_edit(0,0,0).set options[:start_time]
+        page.key_start_time_edit(@term_index,@key_date_group,0).set options[:start_time]
+        @start_time = options[:start_time]
       end
     end
 
     if options[:end_time] != nil
       on AcademicTermPage  do |page|
-        page.key_end_time_edit(0,0,0).set options[:end_time]
+        page.key_end_time_edit(@term_index,@key_date_group,0).set options[:end_time]
+        @end_time = options[:end_time]
       end
     end
 
     if options[:start_time_ampm] != nil
       on AcademicTermPage  do |page|
-        page.key_start_time_ampm_edit(0,0,0).set options[:start_time_ampm]
+        page.key_start_time_ampm_edit(@term_index,@key_date_group,0).set options[:start_time_ampm]
+        @start_time_ampm = options[:start_time_ampm]
       end
     end
 
     if options[:end_time_ampm] != nil
       on AcademicTermPage  do |page|
-        page.key_end_time_ampm_edit(0,0,0).set options[:end_time_ampm]
+        page.key_end_time_ampm_edit(@term_index,@key_date_group,0).set options[:end_time_ampm]
+        @end_time_ampm = options[:end_time_ampm]
       end
     end
 
     on AcademicTermPage  do |page|
-      page.make_term_official(0)
+      page.make_term_official(@term_index)
     end
 
     end
