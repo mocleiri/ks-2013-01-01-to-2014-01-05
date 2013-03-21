@@ -18,7 +18,9 @@ Feature: Schedule of Classes
     Then a list of course offerings with that course offering code is displayed
     And the course offering details for a particular offering can be shown
 
+  @wip
   Scenario: Successfully display schedule of classes for a particular instructor and display course details
+    #this scenario hangs test execution
     When I search for course offerings by instructor
     Then a list of course offerings with activity offerings with that instructor is displayed
 
