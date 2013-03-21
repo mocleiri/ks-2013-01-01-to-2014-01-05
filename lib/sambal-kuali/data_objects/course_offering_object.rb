@@ -579,18 +579,13 @@ class CourseOffering
   private :create_co_copy
 
   def total_co_list(course_code)
-    co_list = []
-
     go_to_manage_course_offerings
     on ManageCourseOfferings do |page|
       page.term.set @term
       page.input_code.set course_code
       page.show
     end
-    on ManageCourseOfferingList do |page|
-      co_list = page.co_list
-    end
-    co_list
+    on(ManageCourseOfferingList).co_list
   end
 
   def delete_co(args={})
