@@ -18,7 +18,7 @@
   </parent>
   <groupId>org.kuali.student</groupId>
   <artifactId>student</artifactId>
-  <version>1.3.0-myplan-SNAPSHOT</version>
+  <version>1.3.0-myplan-r45304</version>
   <packaging>pom</packaging>
   <name>Kuali Student</name>
   <description>
@@ -99,9 +99,9 @@
   </profiles>
 
   <scm>
-    <connection>scm:svn:https://svn.kuali.org/repos/student/branches/ks-1.3-myplan</connection>
-    <developerConnection>scm:svn:https://svn.kuali.org/repos/student/branches/ks-1.3-myplan</developerConnection>
-    <url>https://svn.kuali.org/repos/student/branches/ks-1.3-myplan</url>
+    <connection>scm:svn:https://svn.kuali.org/repos/student/tags/builds/student-1.3/1.3.0-myplan/20130321-r45304</connection>
+    <developerConnection>scm:svn:https://svn.kuali.org/repos/student/tags/builds/student-1.3/1.3.0-myplan/20130321-r45304</developerConnection>
+    <url>https://svn.kuali.org/repos/student/tags/builds/student-1.3/1.3.0-myplan/20130321-r45304</url>
   </scm>
 
   <properties>
