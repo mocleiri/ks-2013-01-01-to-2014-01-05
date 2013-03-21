@@ -35,7 +35,7 @@ ROLE_ID,OBJ_ID,VER_NBR,ROLE_NM,NMSPC_CD,DESC_TXT,KIM_TYP_ID,ACTV_IND,LAST_UPDT_D
 "10032","D2F07FCB2E96FFC9E040760A4A45207E","1","KS Department Schedule Coordinator - Org View Only","KS-ENR","Department Schedule Coordinator -  restricted by CO administering organization - for the Course Offering Process","1","Y","2012-11-26T00:00:00.000+0000"
 "10033","D2F07FCB2E97FFC9E040760A4A45207E","1","KS Department Schedule Coordinator - Org","KS-ENR","Department Schedule Coordinator -  restricted by CO administering organization - for the Course Offering Process","114","Y","2012-11-26T00:00:00.000+0000"
 "10034","D2F07FCB2E98FFC9E040760A4A45207E","1","KS Department Schedule Coordinator - Subj","KS-ENR","Department Schedule Coordinator - restricted by CO subject code - for the Course Offering Process","10027","Y","2012-11-26T00:00:00.000+0000"
-"10035","D8759B1EE2D53C5AE040760A4A45185F","1","KS Student","KS-SYS","A student ","1","Y","2012-11-26T00:00:00.000+0000"
+"10035","D876A5F038181D02E040760A4A452C59","1","KS Student","KS-SYS","A student ","1","Y","2012-11-26T00:00:00.000+0000"
 "59","5BABFACC4F62A8EEE0404F8189D8770F","1","Approve Request Recipient","KR-WKFLW","This role derives its members from users with that have received an action request for a given document.","42","Y","2008-11-14T14:10:17.000+0000"
 "60","5BABFACC4F63A8EEE0404F8189D8770F","1","Initiator","KR-WKFLW","This role derives its members from the initiator listed within the route log of a given document.","43","Y","2008-11-14T14:10:17.000+0000"
 "61","5BABFACC4F64A8EEE0404F8189D8770F","1","Initiator or Reviewer","KR-WKFLW","This role derives its members from the initiator and action request recipients listed within the route log of a given document.","43","Y","2008-11-14T14:10:17.000+0000"
