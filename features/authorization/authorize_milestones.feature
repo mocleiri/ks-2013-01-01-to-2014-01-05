@@ -68,8 +68,18 @@ Feature: Authorize Milestones Feature
     Then I attempt to perform a rollover
     Then I do not have access to the page
 
-  @draft
   Scenario: Department Schedule Coordinator Carol Access Verification for Edit Activity Offerings
     Given I am working on a term in "Published" SOC state
-    And It is "Before" the first day of classes and "Before" the first day to add classes
-    #Then I edit an activity offering in my department
+    And It is "Before" the first day of classes and "After" the first day to add classes
+    Then I manage course offerings for a subject code in my admin org
+    And I have access to manage course offerings
+    And I edit an activity offering in my department
+    Then I do not have access to edit the activity code
+    And I do not have access to edit maximum enrollment
+    And I have access to add or edit affiliated personnel
+    And I do not have access to add or edit seat pools
+    And I do not have access to add new delivery logistics
+    And I have access to edit the honors flag
+    And I have access to edit the course url
+    And I have access to edit the evaluation flag
+

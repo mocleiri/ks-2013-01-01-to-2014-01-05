@@ -11,7 +11,7 @@ end
 
 Then /^I do not have access to add or edit seat pools$/ do
   on ActivityOfferingMaintenance do |page|
-    page.add_pool_element.present?.should == false
+    page.seat_pools_table.present?.should == false
   end
 end
 
