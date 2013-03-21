@@ -35,7 +35,7 @@ public class ErrorUtils {
 
     private static void addMessage(StringBuilder buffer, String message) {
         if (message != null && !message.isEmpty()) {
-            if (buffer.toString().contains(message)) {
+            if (!buffer.toString().contains(message)) {
                 buffer.append(message);
                 if (!message.trim().endsWith(".")) {
                     buffer.append(".");

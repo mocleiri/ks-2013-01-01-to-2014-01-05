@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -72,6 +73,14 @@ public class XmlSchemaValidator {
     }
 
     public boolean validateXml(Reader reader) {
+        return validateXmlAndGetErrorMessage(reader) == null;
+    }
+
+    public String validateXmlAndGetErrorMessage(String xml) {
+        return validateXmlAndGetErrorMessage(new StringReader(xml));
+    }
+
+    public String validateXmlAndGetErrorMessage(Reader reader) {
 
         // Get a validator from the schema.
         Validator validator = schema.newValidator();
@@ -83,10 +92,10 @@ public class XmlSchemaValidator {
         try {
             validator.validate(source);
             logger.info("XML is valid");
-            return true;
+            return null;
         } catch (Throwable t) {
-            logger.info("XML is invalid", t);
-            return false;
+            logger.info("XML is invalid: " + t.getMessage(), t);
+            return StringUtils.isNotBlank(t.getMessage()) ? t.getMessage() : "XML is invalid";
         }
 
     }

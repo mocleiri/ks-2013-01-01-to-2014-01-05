@@ -17,6 +17,11 @@ public enum BatchReceiptStatus implements Identifiable {
     public static final String PARTIALLY_ACCEPTED_CODE = "P";
     public static final String ACCEPTED_CODE = "E";
 
+    public static final String IN_PROCESS_NAME = "In Process";
+    public static final String FAILED_NAME = "Failed";
+    public static final String PARTIALLY_ACCEPTED_NAME = "Partially Accepted";
+    public static final String ACCEPTED_NAME = "Accepted";
+
     private String id;
 
     private BatchReceiptStatus(String id) {
@@ -32,13 +37,13 @@ public enum BatchReceiptStatus implements Identifiable {
     public String toString() {
         switch (this) {
             case IN_PROCESS:
-                return "In Process";
+                return IN_PROCESS_NAME;
             case FAILED:
-                return "Failed";
+                return FAILED_NAME;
             case PARTIALLY_ACCEPTED:
-                return "Partially Accepted";
+                return PARTIALLY_ACCEPTED_NAME;
             case ACCEPTED:
-                return "Accepted";
+                return ACCEPTED_NAME;
         }
         throw new IllegalStateException("No batch receipt status found for " + name() + " value");
     }

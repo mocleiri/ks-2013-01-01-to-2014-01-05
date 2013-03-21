@@ -4,6 +4,9 @@ import com.sigmasys.kuali.ksa.krad.form.AbstractViewModel;
 import com.sigmasys.kuali.ksa.model.SearchTypeValue;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
+import com.sigmasys.kuali.ksa.util.ErrorUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,8 @@ public abstract class GenericSearchController extends UifControllerBase {
 
     private static final String ACCOUNT_SEARCH_PAGE_ID = "AccountSearchPage";
     private static final String TRANSACTION_SEARCH_PAGE_ID = "TransactionSearchPage";
+
+    protected Log logger = LogFactory.getLog(getClass());
 
 
     @Autowired
@@ -68,5 +73,20 @@ public abstract class GenericSearchController extends UifControllerBase {
         return getUIFModelAndView(form);
     }
 
+    protected ModelAndView handleError(AbstractViewModel viewModel, String errorMessage) {
+        logger.error(errorMessage);
+        String htmlErrorMessage = "<font color='red'>" + errorMessage + "</font>";
+        viewModel.setMessage(htmlErrorMessage);
+        return getUIFModelAndView(viewModel);
+    }
+
+    protected ModelAndView handleError(AbstractViewModel viewModel, Throwable t) {
+       return handleError(viewModel, ErrorUtils.getMessage(t));
+    }
+
+    protected void setMessage(AbstractViewModel viewModel, String message) {
+        String htmlMessage = "<font color='green'>" + message + "</font>";
+        viewModel.setMessage(htmlMessage);
+    }
 
 }

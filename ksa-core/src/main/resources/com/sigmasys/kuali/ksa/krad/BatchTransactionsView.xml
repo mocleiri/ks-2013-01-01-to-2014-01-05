@@ -121,7 +121,7 @@
                                           p:source="@{#ConfigProperties['krad.externalizable.images.url']}ks/icon_btn_add.png"/>
                                 </property>-->
                             </bean>
-                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="ageAccounts"
+                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="ageDebts"
                                   p:actionLabel="Age All Accounts">
                                 <!--<property name="actionImage">
                                     <bean parent="Uif-ImageField"
@@ -132,7 +132,7 @@
                                   p:actionLabel="Make Transactions Effective">
                             </bean>
                             <!--  Status message -->
-                            <bean parent="Uif-MessageField" p:messageText="@{uploadProcessState}"/>
+                            <bean parent="Uif-MessageField" p:messageText="@{message}"/>
                         </list>
                     </property>
                 </bean>

@@ -1,11 +1,14 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
+import com.sigmasys.kuali.ksa.jaxb.KsaBatchTransactionResponse;
 import com.sigmasys.kuali.ksa.krad.form.FileUploadForm;
+import com.sigmasys.kuali.ksa.model.BatchReceiptStatus;
 import com.sigmasys.kuali.ksa.model.Transaction;
 import com.sigmasys.kuali.ksa.service.TransactionImportService;
-import com.sigmasys.kuali.ksa.util.CommonUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.sigmasys.kuali.ksa.util.ErrorUtils;
+import com.sigmasys.kuali.ksa.util.JaxbUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,8 +31,6 @@ import java.util.List;
 @Transactional(timeout = 300, propagation = Propagation.REQUIRES_NEW)
 public class BatchTransactionsController extends GenericSearchController {
 
-    private static final Log logger = LogFactory.getLog(BatchTransactionsController.class);
-
 
     @Autowired
     private TransactionImportService transactionImportService;
@@ -41,104 +42,105 @@ public class BatchTransactionsController extends GenericSearchController {
     @Override
     protected FileUploadForm createInitialForm(HttpServletRequest request) {
         FileUploadForm form = new FileUploadForm();
+        form.setMessage("");
         form.setUploadProcessState("");
         return form;
     }
 
-    /**
-     * @param form
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
     public ModelAndView get(@ModelAttribute("KualiForm") FileUploadForm form) {
         return getUIFModelAndView(form);
     }
 
 
-    /**
-     * @param form
-     * @return
-     */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=submit")
+    @Transactional(readOnly = false)
     public ModelAndView submit(@ModelAttribute("KualiForm") FileUploadForm form) {
 
+        // do submit stuff...
         // org.springframework.web.multipart.MaxUploadSizeExceededException:
         // Maximum upload size of 500000 bytes exceeded; nested exception is
         // org.apache.commons.fileupload.FileUploadBase$SizeLimitExceededException:
         // the request was rejected because its size (992410) exceeds the configured maximum (500000)
-        String processMsg = "";
+
         try {
-            MultipartFile uploadFile = form.getUploadFile();
-            String contentType = uploadFile.getContentType();
+
+            MultipartFile xmlFile = form.getUploadFile();
+            String contentType = xmlFile.getContentType();
+
+            if (StringUtils.isBlank(contentType)) {
+                return handleError(form, "Please select an XML file to upload");
+            }
+
             if (contentType.endsWith("xml")) {
 
-                try {
+                String xmlContent = new String(xmlFile.getBytes(), "UTF-8");
 
-                    String xmlContent = CommonUtils.getStreamAsString(uploadFile.getInputStream());
-
-                    processMsg = "Processing Transaction(s)";
-                    form.setUploadProcessState(processMsg);
-                    String processResponse = transactionImportService.processTransactions(xmlContent);
-
-                    logger.info("Response: \n" + processResponse);
-                    String begValue = "<batch-status>";
-                    String endValue = "</batch-status>";
-                    int begIndex = processResponse.indexOf(begValue) + begValue.length();
-                    int endIndex = processResponse.indexOf(endValue);
-                    String batchStatus = processResponse.substring(begIndex, endIndex);
-                    processMsg = "Transaction(s) Processing " + batchStatus;
-
-                    form.setUploadProcessState(processMsg);
-                } catch (Exception exp) {
-                    String expMsg = exp.getMessage();
-                    logger.error(expMsg);
-                    processMsg = "Transaction(s) Processing Failed";
-                    form.setUploadProcessState(processMsg);
+                int index = xmlContent.indexOf("<");
+                if (index > 0) {
+                    xmlContent = xmlContent.substring(index + 1);
+                } else if (index < 0) {
+                    return handleError(form, "XML declaration is invalid");
                 }
+
+                String processResponse = transactionImportService.processTransactions(xmlContent);
+
+                KsaBatchTransactionResponse responseObject =
+                        JaxbUtils.fromXml(processResponse, KsaBatchTransactionResponse.class);
+
+                logger.info("Response: \n" + processResponse);
+
+                String batchStatus = responseObject.getBatchStatus();
+
+                if (BatchReceiptStatus.FAILED_NAME.equals(batchStatus)) {
+                    String errMsg = "";
+                    KsaBatchTransactionResponse.Failed failed = responseObject.getFailed();
+                    if (failed != null) {
+                        List<Object> reasons = failed.getKsaTransactionAndReason();
+                        if (CollectionUtils.isNotEmpty(reasons)) {
+                            for (Object item : reasons) {
+                                if ((item != null) && (item instanceof String)) {
+                                    String reason = (String) item;
+                                    if (StringUtils.isNotBlank(reason)) {
+                                        errMsg += reason.trim() + ". ";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return handleError(form, "Transaction(s) Processing Failed. " + errMsg);
+                } else {
+                    setMessage(form, "Transaction(s) Processing status: " + batchStatus);
+                }
+
             } else {
-                processMsg = "Only XML files are allowed. Please try again.";
-                form.setUploadProcessState(processMsg);
-                logger.error(processMsg);
+                return handleError(form, "Only XML files are allowed. Please try again.");
             }
-        } catch (Exception exp) {
-            String expMsg = exp.getMessage();
-            logger.error(expMsg);
-            form.setUploadProcessState(expMsg);
+
+        } catch (Exception e) {
+            String errMsg = "Transaction(s) Processing Failed. " + ErrorUtils.getMessage(e);
+            logger.error(errMsg, e);
+            return handleError(form, errMsg);
         }
 
         return getUIFModelAndView(form);
     }
 
-    /**
-     * @param form
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=save")
-    public ModelAndView save(@ModelAttribute("KualiForm") FileUploadForm form) {
-        return getUIFModelAndView(form);
-    }
-
-    /**
-     * @param form
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=ageAccounts")
-    public ModelAndView ageAccounts(@ModelAttribute("KualiForm") FileUploadForm form) {
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=ageDebts")
+    public ModelAndView ageDebts(@ModelAttribute("KualiForm") FileUploadForm form) {
 
         try {
             accountService.ageDebt(true);
-            form.setUploadProcessState("Debts successfully aged.");
+            setMessage(form, "Debts were successfully aged");
         } catch (Exception e) {
-            form.setUploadProcessState(e.getLocalizedMessage());
+            return handleError(form, e);
         }
 
         return getUIFModelAndView(form);
     }
 
-    /**
-     * @param form
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=makeEffective")
     public ModelAndView makeEffective(@ModelAttribute("KualiForm") FileUploadForm form) {
 
@@ -155,7 +157,7 @@ public class BatchTransactionsController extends GenericSearchController {
             }
 
         } catch (Exception e) {
-            form.setUploadProcessState(e.getLocalizedMessage());
+            return handleError(form, e);
         }
 
         return getUIFModelAndView(form);

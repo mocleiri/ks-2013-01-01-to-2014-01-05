@@ -39,6 +39,8 @@ public abstract class AbstractViewModel extends UifFormBase {
     private List<Transaction> transactions;
     private List<Activity> activity;
 
+    private String message;
+
     private static final KeyValuesBase searchTypeValuesFinder = new KeyValuesBase() {
         /**
          * This is an implementation of a key value finder, normally this would make a request to
@@ -181,5 +183,13 @@ public abstract class AbstractViewModel extends UifFormBase {
 
     public void setActivity(List<Activity> activity) {
         this.activity = activity;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

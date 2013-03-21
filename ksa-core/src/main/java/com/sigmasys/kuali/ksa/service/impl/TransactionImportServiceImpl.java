@@ -95,12 +95,13 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
     @Transactional(readOnly = false)
     public String processTransactions(String xml) {
         // Validate XML against the schema
-        if (schemaValidator.validateXml(xml)) {
+        String errorMessage = schemaValidator.validateXmlAndGetErrorMessage(xml);
+        if (errorMessage == null) {
             return parseTransactions(xml);
         }
-        String errMsg = "XML content is invalid:\n" + xml;
-        logger.error(errMsg);
-        throw new RuntimeException(errMsg);
+        errorMessage = "XML validation error: " + errorMessage;
+        logger.error(errorMessage + ":\n" + xml);
+        throw new RuntimeException(errorMessage);
     }
 
     /**
@@ -186,7 +187,8 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                 Date effectiveDate = CalendarUtils.toDate(ksaTransaction.getEffectiveDate());
                 String errMsg = "";
                 if (!verifyRequiredValues(ksaTransaction)) {
-                    errMsg = "Required values are missing from transaction";
+                    errMsg = "Required values are missing from transaction, External ID = " +
+                            ksaTransaction.getIncomingIdentifier();
                 } else if (!accountService.accountExists(ksaTransaction.getAccountIdentifier())) {
                     errMsg = "Account '" + ksaTransaction.getAccountIdentifier() + "' does not exist";
                 } else if (!transactionService.isTransactionAllowed(currentUserId,
