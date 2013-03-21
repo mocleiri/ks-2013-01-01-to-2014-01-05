@@ -52,14 +52,11 @@ end
 
 
 When /^I create multiple Course Offerings with Draft Activity Offerings$/ do
-  source_co_code_list = ["ENGL250", "ENGL222", "ENGL211"]
-
-  @course_offering_ENGL250 = create CourseOffering, :create_by_copy=>(make CourseOffering, :course => "ENGL250" )
-  @course_offering_ENGL222 = create CourseOffering, :create_by_copy=>(make CourseOffering, :course => "ENGL222" )
-  @course_offering_ENGL211 = create CourseOffering, :create_by_copy=>(make CourseOffering, :course => "ENGL211" )
+  ['ENGL250','ENGL222','ENGL211'].each do |course_code|
+    instance_variable_set("@course_offering_#{course_code}", (create CourseOffering, :create_by_copy=>(make CourseOffering, :course=> course_code)))
+  end
 
   @co_code_list = [@course_offering_ENGL250.course, @course_offering_ENGL222.course, @course_offering_ENGL211.course]
-
 end
 
 And /^I cancel the deletion of the Course Offerings in Course Offering Code view$/ do
@@ -68,13 +65,7 @@ And /^I cancel the deletion of the Course Offerings in Course Offering Code view
 end
 
 And /^the Course Offerings are not deleted$/ do
-  @co_list = @course_offering_ENGL250.total_co_list "ENGL2"
-  co_exist = @co_list.include? @co_code_list[0]
-  co_exist.should == true
-  co_exist = @co_list.include? @co_code_list[1]
-  co_exist.should == true
-  co_exist = @co_list.include? @co_code_list[2]
-  co_exist.should == true
+  @co_code_list.each { |co_code| @course_offering_ENGL250.total_co_list('ENGL2').should include co_code }
 end
 
 And /^I delete these Course Offerings$/ do
@@ -84,11 +75,5 @@ end
 
 
 Then /^the deleted course offerings do not appear on the list of available Course Offerings$/ do
-  @co_list = @course_offering_ENGL250.total_co_list  "ENGL"
-  co_exist = @co_list.include? @co_code_list[0]
-  co_exist.should == false
-  co_exist = @co_list.include? @co_code_list[1]
-  co_exist.should == false
-  co_exist = @co_list.include? @co_code_list[2]
-  co_exist.should == false
+  @co_code_list.each { |co_code| @course_offering_ENGL250.total_co_list('ENGL2').should_not include co_code }
 end

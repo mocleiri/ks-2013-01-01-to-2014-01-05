@@ -17,7 +17,7 @@ class ManageCourseOfferingList < BasePage
   action(:create_course_offering) { |b| b.create_course_offering_element.click; b.loading.wait_while_present }
 
   element(:delete_cos_button) { |b|b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-CO")}
-  action(:delete_cos) { |b|b.delete_cos_button.click; b.loading.wait_while_present }
+  action(:delete_cos) { |b|b.delete_cos_button.click; b.loading.wait_while_present(300) }
 
   element(:approve_dialog){|b| b.frm.div(id:"approveCODialog")}
   element(:approve_yes_element) { |b| b.approve_dialog.checkbox(index:0)}

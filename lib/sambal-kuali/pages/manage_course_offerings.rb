@@ -28,7 +28,7 @@ class ManageCourseOfferings < BasePage
   element(:manage_registration_groups_link) { |b| b.manage_offering_links_div.link(id: "manage_reg_group") }
   action(:manage_registration_groups) { |b| b.manage_registration_groups_link.click }
 
-  action(:show) { |b| b.frm.button(text: "Show").click; sleep 2; b.loading.wait_while_present(180) }
+  action(:show) { |b| b.frm.button(text: "Show").click; sleep 2; b.loading.wait_while_present(600) }
 
   element(:ao_results_div) { |b| b.frm.div(id: "ActivityOfferingResultSection") }
   value(:course_title) { |b| b.ao_results_div.h3.text }
