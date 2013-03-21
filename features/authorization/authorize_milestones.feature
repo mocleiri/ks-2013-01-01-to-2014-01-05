@@ -67,6 +67,9 @@ Feature: Authorize Milestones Feature
     Given It is "Before" the first day of classes and "Before" the first day to add classes
     Then I attempt to perform a rollover
     Then I do not have access to the page
+    Given It is "Before" the first day of classes and "After" the first day to add classes
+    Then I attempt to perform a rollover
+    Then I do not have access to the page
 
   Scenario: Department Schedule Coordinator Carol Access Verification for Edit Activity Offerings
     Given I am working on a term in "Published" SOC state
