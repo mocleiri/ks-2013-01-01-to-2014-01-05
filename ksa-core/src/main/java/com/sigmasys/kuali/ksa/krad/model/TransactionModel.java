@@ -140,12 +140,16 @@ public class TransactionModel extends Transaction {
 
         // charge, payment or deferment specific data members
         BigDecimal amount = transaction.getAmount();
-        if (transaction instanceof Charge) {
-            setChargeAmount(amount);
-        } else if (transaction instanceof Payment) {
-            setPaymentAmount(amount);
-        } else if (transaction instanceof Deferment) {
-            setDefermentAmount(amount);
+
+        switch (transaction.getTransactionTypeValue()) {
+            case CHARGE:
+                setChargeAmount(amount);
+                break;
+            case PAYMENT:
+                setPaymentAmount(amount);
+                break;
+            case DEFERMENT:
+                setDefermentAmount(amount);
         }
 
     }
@@ -522,7 +526,7 @@ public class TransactionModel extends Transaction {
     }
 
     public boolean isPayment() {
-        return parentTransaction instanceof Payment;
+        return parentTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT;
     }
 
     public String getGlEntryGenerated() {
@@ -636,7 +640,7 @@ public class TransactionModel extends Transaction {
     }
 
     public Date getClearDate() {
-        if (parentTransaction instanceof Payment) {
+        if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
             return ((Payment) parentTransaction).getClearDate();
         }
         return null;
