@@ -69,7 +69,10 @@ public class BatchTransactionsController extends GenericSearchController {
             MultipartFile xmlFile = form.getUploadFile();
             String contentType = xmlFile.getContentType();
 
-            if (StringUtils.isBlank(contentType)) {
+            logger.info("File name: " + xmlFile.getOriginalFilename());
+            logger.info("Content type: " + contentType);
+
+            if (xmlFile.isEmpty()) {
                 return handleError(form, "Please select an XML file to upload");
             }
 
