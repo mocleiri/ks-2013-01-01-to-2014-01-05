@@ -150,7 +150,7 @@ public class TransactionModel extends Transaction {
 
     }
 
-    public String getIdString(){
+    public String getIdString() {
         // Krad tries to put commas in things.
         return parentTransaction.getId().toString();
     }
@@ -460,13 +460,13 @@ public class TransactionModel extends Transaction {
         this.allocatedAmount = allocatedAmount;
     }
 
-    public BigDecimal getAllocatedLockedAllocated(){
+    public BigDecimal getAllocatedLockedAllocated() {
         BigDecimal alloc = this.getAllocatedAmount();
-        if(alloc == null){
+        if (alloc == null) {
             alloc = BigDecimal.ZERO;
         }
         BigDecimal locked = this.getLockedAllocatedAmount();
-        if(locked == null){
+        if (locked == null) {
             locked = BigDecimal.ZERO;
         }
         return alloc.add(locked);
@@ -509,19 +509,16 @@ public class TransactionModel extends Transaction {
             return null;
         }
 
-
-        if (parentTransaction instanceof Payment) {
-            return "Credit (Payment)";
-        } else if (parentTransaction instanceof Deferment) {
-            return "Credit (Deferment)";
-        } else if (parentTransaction instanceof Credit) {
-            return "Credit";
-        } else if (parentTransaction instanceof Charge) {
-            return "Debit (Charge)";
-        } else if (parentTransaction instanceof Debit) {
-            return "Debit";
+        switch (parentTransaction.getTransactionTypeValue()) {
+            case PAYMENT:
+                return "Credit (Payment)";
+            case DEFERMENT:
+                return "Credit (Deferment)";
+            case CHARGE:
+                return "Debit (Charge)";
+            default:
+                return "Generic";
         }
-        return "Generic";
     }
 
     public boolean isPayment() {
@@ -608,17 +605,19 @@ public class TransactionModel extends Transaction {
         this.runningBalance = runningBalance;
     }
 
-    public Tree<Memo, String> getMemoTree(){
+    public Tree<Memo, String> getMemoTree() {
         logger.info("TJB: Returning MemoTree.  Memos size: " + memos.size());
         Tree<Memo, String> memoTree = new Tree<Memo, String>();
 
         Node<Memo, String> rootNode = new Node<Memo, String>(new Memo(), "Root");
         memoTree.setRootElement(rootNode);
 
-        if(this.memos == null){ return memoTree; }
+        if (this.memos == null) {
+            return memoTree;
+        }
 
         // Need to put the memos in order
-        for(Memo memo : memos){
+        for (Memo memo : memos) {
             rootNode.addChild(new Node<Memo, String>(memo, memo.getDisplayValue()));
         }
 
@@ -631,14 +630,14 @@ public class TransactionModel extends Transaction {
 
     public void setAllocations(List<Allocation> alloc) {
         this.allocations = new ArrayList<AllocationModel>(alloc.size());
-        for(Allocation a : alloc){
+        for (Allocation a : alloc) {
             allocations.add(new AllocationModel(this.parentTransaction, a));
         }
     }
 
-    public Date getClearDate(){
-        if(parentTransaction instanceof Payment){
-            return ((Payment)parentTransaction).getClearDate();
+    public Date getClearDate() {
+        if (parentTransaction instanceof Payment) {
+            return ((Payment) parentTransaction).getClearDate();
         }
         return null;
     }

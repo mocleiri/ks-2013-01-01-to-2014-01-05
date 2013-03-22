@@ -35,7 +35,8 @@ import java.util.List;
 public class TransactionTypeController extends GenericSearchController {
 
     private static final Log logger = LogFactory.getLog(TransactionTypeController.class);
-    private volatile KeyValuesFinder creditDebitTypeOptionsFinder;
+
+    private KeyValuesFinder creditDebitTypeOptionsFinder;
 
     @Autowired
     private AuditableEntityService auditableEntityService;
@@ -254,13 +255,9 @@ public class TransactionTypeController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
-    public KeyValuesFinder getCreditDebitTypeOptionsFinder() {
+    public synchronized KeyValuesFinder getCreditDebitTypeOptionsFinder() {
         if (creditDebitTypeOptionsFinder == null) {
-            synchronized (this) {
-                if (creditDebitTypeOptionsFinder == null) {
-                    creditDebitTypeOptionsFinder = new CreditDebitKeyValuesFinder(true);
-                }
-            }
+            creditDebitTypeOptionsFinder = new CreditDebitKeyValuesFinder(true);
         }
         return creditDebitTypeOptionsFinder;
     }
