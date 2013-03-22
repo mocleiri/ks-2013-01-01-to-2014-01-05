@@ -1,6 +1,6 @@
 @nightly
 Feature: Department Schedule Coordinator Authorization SOC state Final Edits
-#TODO - cover list vs single CO view
+
   Background:
     Given I am logged in as a Department Schedule Coordinator
     Given I am working on a term in "Final Edits" SOC state
@@ -43,8 +43,8 @@ Feature: Department Schedule Coordinator Authorization SOC state Final Edits
     When I manage course offerings for a subject code in my admin org
     Then I have access to view course offering details
     And I have access to add new course offerings
-    And I have access to approve course offerings for scheduling
-    And I have access to approve the subject code for scheduling
+    And I do not have access to approve course offerings for scheduling
+    And I do not have access to approve the subject code for scheduling
     And I have access to delete the listed course offerings
     And I have access to edit the listed course offerings
     And I have access to copy the listed course offerings
@@ -104,7 +104,7 @@ Feature: Department Schedule Coordinator Authorization SOC state Final Edits
     And I have access to delete an activity offering
     And I have access to edit an activity offering
     And I have access to copy an activity offering
-    And I have access to approve an activity offering
+    But I do not have access to approve an activity offering
 
   Scenario: AZ 5.1A/Full_final_edits.7 Department Schedule Coordinator Carol has limited access to delete AOs
     Given there is a "Draft" course offering in my admin org

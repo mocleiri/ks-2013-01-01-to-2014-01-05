@@ -354,6 +354,30 @@ class CourseOffering
     end
   end
 
+  def approve_subject_code
+    @course_offering.search_by_subjectcode
+    on ManageCourseOfferingList do |page|
+      sleep 1
+      page.approve_subject_code
+    end
+    approved = false
+    on ManageCourseOfferingList do |page|
+      sleep 1
+      approved = page.course_offering_results_table.rows[2].cells[ManageCourseOfferingList::CO_STATUS_COLUMN].text == "Planned"
+    end
+    #to avoid data setup failure retry approve subject
+    if !approved then
+      @course_offering.search_by_subjectcode
+      on ManageCourseOfferingList do |page|
+        sleep 1
+        page.approve_subject_code
+      end
+    end
+  end
+
+
+
+
   #navigate for the manage registration groups page for the course offering
   #
   #@param  opts [Hash] {:cleanup_existing_clusters => true/false}

@@ -11,8 +11,8 @@ Feature: Department Schedule Coordinator Authorization SOC state Published
     And I have access to view the activity offering details
     And I do not have access to edit the course offering
     And I do not have access to delete the course offering
-    And I do not have access to manage registration groups
-    And I do not have access to select activity offerings for add, approve, delete
+    #And I do not have access to manage registration groups TODO: AZ not implemented yet
+
 
   Scenario: AZ 4.1A/Full_published.1A Validate Department Schedule Coordinator access to a course offering not in their admin org (single CO view)
     When I manage a course offering for a subject code not in my admin org
@@ -57,12 +57,12 @@ Feature: Department Schedule Coordinator Authorization SOC state Published
   Scenario: AZ 5.1B/Full_published.4 Department Schedule Coordinator Carol has limited access to delete Co's (in admin org)
     Given there is a "Draft" course offering in my admin org
     When I list the course offerings for that subject code
-    Then I do not have access to delete the listed course offering
+    Then I have access to delete the listed course offering
     When I manage the course offering
-    Then I do not have access to delete the course offering
+    Then I have access to delete the course offering
 
-  Scenario: AZ 5.1B/Full_published.4 Department Schedule Coordinator Carol has limited access to delete Co's (in admin org)
-    And there is a "Planned" course offering in my admin org
+  Scenario: AZ 5.1B/Full_published.4B Department Schedule Coordinator Carol has limited access to delete Co's (in admin org)
+    And there is a "Offered" course offering in my admin org
     When I list the course offerings for that subject code
     Then I do not have access to delete the listed course offering
     When I manage the course offering
@@ -70,9 +70,9 @@ Feature: Department Schedule Coordinator Authorization SOC state Published
 #TODO not yet implemented - access to offered suspended and cancelled states
 
   Scenario: AZ 5.1B/Full_published.4A Department Schedule Coordinator Carol has access to delete Co's (not in admin org)
-    Given there is a "Planned" course offering not in my admin org
+    Given there is a "Offered" course offering not in my admin org
     When I list the course offerings for that subject code
-    Then I do not have access to delete the listed course offering
+    Then I do not have access to select course offerings for add, approve, delete
     When I manage the course offering
     Then I do not have access to delete the course offering
 
@@ -93,14 +93,16 @@ Feature: Department Schedule Coordinator Authorization SOC state Published
     Then I have access to view the activity offering details
     And the next, previous and list all course offering links are enabled
     And I have access to edit an activity offering
-    And I have access to approve an activity offering
+    And I do not have access to approve an activity offering
     But I do not have access to add a new activity offering
     And I do not have access to copy an activity offering
 
   Scenario: AZ 5.1A/Full_published.7 Department Schedule Coordinator Carol has limited access to delete AOs
     Given there is a "Draft" course offering in my admin org
     Then I have access to delete an activity offering in "Draft" status for the course offering
-    And I have access to delete an activity offering in "Approved" status for the course offering
-#TODO - tests for offered, suspended, cancelled
+#TODO - tests for  suspended, cancelled
 
+  Scenario: AZ 5.1A/Full_published.7B Department Schedule Coordinator Carol has limited access to delete AOs
+    Given there is a "Offered" course offering in my admin org
+    Then I do not have access to delete an activity offering in a "Offered" state
 

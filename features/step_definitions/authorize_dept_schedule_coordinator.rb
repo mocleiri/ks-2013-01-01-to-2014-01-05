@@ -11,7 +11,7 @@ end
 
 Then /^I do not have access to add or edit seat pools$/ do
   on ActivityOfferingMaintenance do |page|
-    page.seat_pools_table.present?.should == false
+    page.add_pool_element.present?.should be_false
   end
 end
 
@@ -27,21 +27,23 @@ Then /^I do not have access to edit the course offering$/ do
   end
 end
 
+#means checkbox is present, button disabled
 Then /^I do not have access to delete the listed course offering$/ do
   on ManageCourseOfferingList do |page|
-    page.target_row(@course_offering.course).checkbox.present?.should be_false
-    #page.select_cos([@course_offering.course])
-    #page.delete_cos_button.enabled?.should be_false
-    #page.deselect_cos([@course_offering.course])
+    #page.target_row(@course_offering.course).checkbox.present?.should be_false
+    page.select_cos([@course_offering.course])
+    page.delete_cos_button.enabled?.should be_false
+    page.deselect_cos([@course_offering.course])
   end
 end
 
+#means checkbox is present, button disabled
 Then /^I do not have access to approve the listed course offering$/ do
   on ManageCourseOfferingList do |page|
-    page.target_row(@course_offering.course).checkbox.present?.should be_false
-    #page.select_cos([@course_offering.course])
-    #page.approve_course_offering_button.enabled?.should be_false
-    #page.deselect_cos([@course_offering.course])
+    #page.target_row(@course_offering.course).checkbox.present?.should be_false
+    page.select_cos([@course_offering.course])
+    page.approve_course_offering_button.enabled?.should be_false
+    page.deselect_cos([@course_offering.course])
   end
 end
 
@@ -142,7 +144,7 @@ end
 Then /^I do not have access to approve course offerings for scheduling$/ do
   on ManageCourseOfferingList do |page|
     page.select_cos([@course_offering.course])
-    page.approve_course_offering_button.enabled?.should == true
+    page.approve_course_offering_button.enabled?.should == false
   end
 end
 
@@ -162,7 +164,7 @@ end
 Then /^I have access to delete the listed course offerings?$/ do
   on ManageCourseOfferingList do |page|
     page.select_cos([@course_offering.course])
-    page.approve_course_offering_button.enabled?.should == true
+    page.delete_cos_button.enabled?.should == true
     page.deselect_cos([@course_offering.course])
   end
 end
@@ -243,10 +245,26 @@ Then /^I have access to delete an activity offering$/ do
   end
 end
 
+Then /^I do not have access to delete an activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.select_aos([@activity_offering.code])
+    page.delete_aos_button.enabled?.should be_false
+    page.deselect_aos([@activity_offering.code])
+  end
+end
+
 Then /^I have access to approve an activity offering$/ do
   on ManageCourseOfferings do |page|
     page.select_aos([@activity_offering.code])
     page.approve_activity_button.enabled?.should be_true
+    page.deselect_aos([@activity_offering.code])
+  end
+end
+
+Then /^I do not have access to approve an activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.select_aos([@activity_offering.code])
+    page.approve_activity_button.enabled?.should be_false
     page.deselect_aos([@activity_offering.code])
   end
 end
@@ -333,11 +351,6 @@ When /^there is a "([^"]*)" course offering present/ do |co_status|
 end
 
 When /^I have access to delete an activity offering in "([^"]*)" status for the course offering$/ do |aostate|
-  #if @newCO
-  #  @course_offering = make CourseOffering, :term=> @term_for_test, :course => @newCO
-  #else
-  #  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
-  #end
   @course_offering.manage
   @course_offering.attempt_ao_delete_by_status(aostate).should be_true
 end
@@ -554,6 +567,19 @@ Then /^I do not have access to select activity offerings for add, approve, delet
     end
   end
 end
+
+Then /^I do not have access to select course offerings for add, approve, delete$/ do
+  on ManageCourseOfferingList do |page|
+    page.delete_cos_button.enabled?.should be_false
+    page.approve_course_offering_button.enabled?.should be_false
+    page.create_course_offering_button.enabled?.should be_false
+    #page.draft_activity_button.enabled?.should be_false
+    page.co_list.each do |co_code|
+      page.target_row(co_code).checkbox.present?.should be_false
+    end
+  end
+end
+
 
 Then /^I have access to select activity offerings for add, approve, delete$/ do
   on ManageCourseOfferings do |page|

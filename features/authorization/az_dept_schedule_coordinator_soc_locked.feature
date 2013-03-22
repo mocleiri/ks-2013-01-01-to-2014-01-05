@@ -1,6 +1,6 @@
 @nightly
 Feature: Department Schedule Coordinator Authorization SOC state Locked
-#TODO - cover list vs single CO view
+
   Background:
     Given I am logged in as a Department Schedule Coordinator
     And I am working on a term in "Locked" SOC state
@@ -10,10 +10,13 @@ Feature: Department Schedule Coordinator Authorization SOC state Locked
     Then I have access to view the course offering details
     And I have access to view the activity offering details
     But I do not have access to edit the course offering
-    And I do not have access to manage registration groups
-    And I do not have access to select activity offerings for add, approve, delete
+    # And I do not have access to manage registration groups - TODO not implemented yet in app
+    #And I do not have access to select activity offerings for add, approve, delete
+    And I do not have access to delete the course offering
     And I do not have access to edit activity offerings
     And I do not have access to copy activity offerings
+    And I do not have access to delete an activity offering
+    And I do not have access to approve an activity offering
     And I do not have access to add a new activity offering
 
   Scenario: AZ 4.1A/Full_locked.1A Validate Department Schedule Coordinator access to a course offering not in their admin org (single CO view)
