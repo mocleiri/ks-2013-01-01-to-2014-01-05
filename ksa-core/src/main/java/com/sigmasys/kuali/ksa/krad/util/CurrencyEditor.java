@@ -28,7 +28,7 @@ import java.text.ParseException;
 
 /**
  * Class is used to format
- * <code>org.kuali.rice.core.api.util.type.KualiDecimal</code> in the local
+ * <code>java.math.BigDecimal</code> in the local
  * currency
  *
  * @author Kuali Rice Team (rice.collab@kuali.org)

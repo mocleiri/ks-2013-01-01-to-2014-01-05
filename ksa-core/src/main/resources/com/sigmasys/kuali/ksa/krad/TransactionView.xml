@@ -151,7 +151,7 @@
                 <bean parent="Uif-VerticalBoxSection" p:headerText="Running Balance">
                     <property name="items">
                         <list>
-                            <bean parent="Uif-Message" p:messageText="Starting Balance@{!#empty(startingDate) ? ' on ' + startingDate : ''}: &lt;b&gt;@{startingBalance}&lt;/b&gt;" p:style="float: right;"/>
+                            <bean parent="Uif-Message" p:messageText="Starting Balance on @{getFormattedDate(startingDate)}: &lt;b&gt;@{startingBalance}&lt;/b&gt;" p:style="float: right;"/>
 
                             <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="6">
                                 <property name="readOnly" value="true"/>
@@ -368,6 +368,31 @@
                                     </list>
                                 </property>
 
+                            </bean>
+                            <bean parent="Uif-Disclosure-VerticalBoxSection" >
+                                <property name="headerText" value="Summary"/>
+                                <property name="readOnly" value="true" />
+                                <!-- disclosure fixed in Rice 2.2.1, disabling for now: https://jira.kuali.org/browse/KULRICE-8938 -->
+                                <!--<property name="disclosure.defaultOpen" value="false" />-->
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-Disclosure-GridSection" p:style="width: 60%;"><property name="items"><list>
+                                            <bean parent="Uif-MessageField" p:label="Date Range" p:messageText="@{getFormattedDate(startingDate)} to @{getFormattedDate(endingDate)}"/>
+                                            <bean parent="Uif-InputField" p:label="Starting balance on @{getFormattedDate(startingDate)}" p:propertyName="startingBalance"/>
+                                            <bean parent="Uif-InputField" p:label="Sum of Charges" p:propertyName="chargeTotal"/>
+                                            <bean parent="Uif-InputField" p:label="Sum of Payments" p:propertyName="paymentTotal"/>
+                                            <bean parent="Uif-InputField" p:label="Sum of Deferments" p:propertyName="defermentTotal"/>
+                                            <bean parent="Uif-InputField" p:label="Sum of Charges" p:propertyName="chargeTotal"/>
+                                            <bean parent="Uif-InputField" p:label="Sum of Allocated" p:propertyName="allocatedTotal"/>
+                                            <bean parent="Uif-InputField" p:label="Sum of Unallocated" p:propertyName="unallocatedTotal"/>
+
+                                            <bean parent="Uif-InputField" p:label="Amount Due on @{getFormattedDate(endingDate)}" p:propertyName="endingBalance"/>
+
+
+
+                                        </list></property></bean>
+                                    </list>
+                                </property>
                             </bean>
 
                         </list>

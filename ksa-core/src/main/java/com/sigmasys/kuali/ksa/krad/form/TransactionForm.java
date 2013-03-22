@@ -34,6 +34,13 @@ public class TransactionForm extends AbstractViewModel {
     private Date       endingDate;
     private BigDecimal endingBalance;
 
+    private BigDecimal chargeTotal;
+    private BigDecimal paymentTotal;
+    private BigDecimal defermentTotal;
+    private BigDecimal allocatedTotal;
+    private BigDecimal unallocatedTotal;
+
+
     // Not sure if any of these below this line are still used.
 
 
@@ -527,5 +534,88 @@ public class TransactionForm extends AbstractViewModel {
 
     public void setDeferments(List<TransactionModel> deferments) {
         this.deferments = deferments;
+    }
+
+    public BigDecimal getChargeTotal() {
+        if(this.chargeTotal == null){
+            this.chargeTotal = BigDecimal.ZERO;
+        }
+        return chargeTotal;
+    }
+
+    public void setChargeTotal(BigDecimal chargeTotal) {
+        this.chargeTotal = chargeTotal;
+    }
+
+    public void addChargeTotal(BigDecimal chargeTotal){
+        this.chargeTotal = this.getChargeTotal().add(chargeTotal);
+    }
+
+    public BigDecimal getPaymentTotal() {
+        if(this.paymentTotal == null){
+            this.paymentTotal = BigDecimal.ZERO;
+        }
+        return paymentTotal;
+    }
+
+    public void setPaymentTotal(BigDecimal paymentTotal) {
+        this.paymentTotal = paymentTotal;
+    }
+
+    public void addPaymentTotal(BigDecimal paymentTotal){
+        this.paymentTotal = this.getPaymentTotal().add(paymentTotal);
+    }
+
+    public BigDecimal getDefermentTotal() {
+        if(defermentTotal == null){
+            defermentTotal = BigDecimal.ZERO;
+        }
+        return defermentTotal;
+    }
+
+    public void setDefermentTotal(BigDecimal defermentTotal) {
+        this.defermentTotal = defermentTotal;
+    }
+
+    public void addDefermentTotal(BigDecimal defermentTotal){
+        this.defermentTotal = this.getDefermentTotal().add(defermentTotal);
+    }
+
+    public BigDecimal getAllocatedTotal() {
+        if(allocatedTotal == null){
+            allocatedTotal = BigDecimal.ZERO;
+        }
+        return allocatedTotal;
+    }
+
+    public void setAllocatedTotal(BigDecimal allocatedTotal) {
+        this.allocatedTotal = allocatedTotal;
+    }
+
+    public void addAllocatedTotal(BigDecimal allocatedTotal){
+        this.allocatedTotal = this.getAllocatedTotal().add(allocatedTotal);
+    }
+
+    public void subtractAllocatedTotal(BigDecimal allocatedTotal){
+        this.allocatedTotal = this.getAllocatedTotal().subtract(allocatedTotal);
+    }
+
+    public BigDecimal getUnallocatedTotal() {
+        if(unallocatedTotal == null){
+            unallocatedTotal = BigDecimal.ZERO;
+        }
+        return unallocatedTotal;
+    }
+
+    public void setUnallocatedTotal(BigDecimal unallocatedTotal) {
+        this.unallocatedTotal = unallocatedTotal;
+    }
+
+    public void addUnallocatedTotal(BigDecimal unallocatedTotal){
+        this.unallocatedTotal = this.getUnallocatedTotal().add(unallocatedTotal);
+    }
+
+    public void subtractUnallocatedTotal(BigDecimal unallocatedTotal){
+        this.unallocatedTotal = this.getUnallocatedTotal().subtract(unallocatedTotal);
     }
 }

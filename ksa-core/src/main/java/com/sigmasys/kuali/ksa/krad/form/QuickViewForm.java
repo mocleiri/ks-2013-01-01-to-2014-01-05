@@ -270,10 +270,4 @@ public class QuickViewForm extends AbstractViewModel {
         return "unknown";
 
     }
-
-    public String getFormattedDate(Date date){
-        DateFormat df;
-        df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-        return df.format(date);
-    }
 }

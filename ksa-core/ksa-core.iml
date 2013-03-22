@@ -70,6 +70,7 @@
           <file>file://$MODULE_DIR$/src/main/resources/META-INF/rice-beans.xml</file>
           <file>file://$MODULE_DIR$/src/test/resources/META-INF/test-context.xml</file>
           <file>file://$MODULE_DIR$/src/test/resources/META-INF/ws-context.xml</file>
+          <file>file://$MODULE_DIR$/src/main/resources/com/sigmasys/kuali/ksa/krad/Lightboxes.xml</file>
         </fileset>
       </configuration>
     </facet>
@@ -85,6 +86,9 @@
       <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/test-annotations" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/target/ksa" />
+      <excludeFolder url="file://$MODULE_DIR$/target/maven-archiver" />
+      <excludeFolder url="file://$MODULE_DIR$/target/surefire-reports" />
       <excludeFolder url="file://$MODULE_DIR$/target/test-classes" />
     </content>
     <orderEntry type="inheritedJdk" />

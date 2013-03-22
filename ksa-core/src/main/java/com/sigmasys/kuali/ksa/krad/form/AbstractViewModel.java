@@ -16,6 +16,7 @@ import org.kuali.rice.krad.web.form.UifFormBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.text.DateFormat;
 import java.util.*;
 
 /**
@@ -192,4 +193,11 @@ public abstract class AbstractViewModel extends UifFormBase {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public String getFormattedDate(Date date){
+        DateFormat df;
+        df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+        return df.format(date);
+    }
+
 }

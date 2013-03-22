@@ -473,6 +473,7 @@ public class TransactionModel extends Transaction {
         if (locked == null) {
             locked = BigDecimal.ZERO;
         }
+
         return alloc.add(locked);
     }
 

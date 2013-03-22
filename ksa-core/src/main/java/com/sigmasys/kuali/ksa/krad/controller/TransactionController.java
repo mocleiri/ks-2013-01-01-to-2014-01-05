@@ -61,7 +61,6 @@ public class TransactionController extends GenericSearchController {
     @RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
     public ModelAndView get(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
-        logger.debug("TJB Start: " + new Date());
         // just for the transactions by person page
         String pageId = request.getParameter("pageId");
         if (pageId == null) {
@@ -87,10 +86,20 @@ public class TransactionController extends GenericSearchController {
             Date startDate = form.getStartingDate();
             Date endDate = form.getEndingDate();
 
+            Date actualStartDate = startDate;
+            Date actualEndDate = endDate;
+
             // All transactions
             List<Transaction> transactions = TransactionUtils.orderByEffectiveDate(transactionService.getTransactions(userId, startDate, endDate), true);
             List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
             for (Transaction t : transactions) {
+                Date effectiveDate = t.getEffectiveDate();
+                if(actualStartDate == null || (effectiveDate.before(actualStartDate))){
+                    actualStartDate = effectiveDate;
+                }
+                if(actualEndDate == null || (effectiveDate.after(actualEndDate))){
+                    actualEndDate = effectiveDate;
+                }
 
                 TransactionModel m = new TransactionModel(t);
 
@@ -118,6 +127,12 @@ public class TransactionController extends GenericSearchController {
                 }
             }
 
+            if(startDate == null){
+                form.setStartingDate(actualStartDate);
+            }
+            if(endDate == null){
+                form.setEndingDate(actualEndDate);
+            }
             this.populateRollups(form, models);
 
 
@@ -131,7 +146,6 @@ public class TransactionController extends GenericSearchController {
 
 
         ModelAndView mv = getUIFModelAndView(form);
-        logger.debug("TJB End: " + new Date());
 
         return mv;
     }
@@ -148,15 +162,43 @@ public class TransactionController extends GenericSearchController {
 
         // Assuming that transactions are already passed into this method sorted in the proper way for the running balance.
         for (TransactionModel t : transactions) {
-            if (t.getParentTransaction() instanceof Charge) {
-                balance = balance.add(t.getAmount());
-            } else {
-                BigDecimal allocated = t.getAllocatedAmount();
-                if(allocated == null){
-                    allocated = BigDecimal.ZERO;
-                }
+            Transaction parentTransaction = t.getParentTransaction();
+            BigDecimal amount = parentTransaction.getAmount();
+            BigDecimal allocated = parentTransaction.getAllocatedAmount();
+            if(allocated == null){
+                allocated = BigDecimal.ZERO;
+            }
 
-                balance = balance.subtract(allocated);
+            BigDecimal unallocated = parentTransaction.getUnallocatedAmount();
+
+            if(parentTransaction instanceof Deferment){
+                defermentModelList.add(t);
+                form.addDefermentTotal(amount);
+                continue;
+            }
+
+            BigDecimal locked = parentTransaction.getLockedAllocatedAmount();
+            if(locked == null){
+                locked = BigDecimal.ZERO;
+            }
+
+            if (t.getParentTransaction() instanceof Charge) {
+                form.addChargeTotal(amount);
+                balance = balance.add(amount);
+                form.addAllocatedTotal(allocated);
+                form.addAllocatedTotal(locked);
+                form.addUnallocatedTotal(unallocated);
+            } else {
+                parentTransaction.setAllocatedAmount(BigDecimal.ZERO.subtract(allocated));
+                parentTransaction.setLockedAllocatedAmount(BigDecimal.ZERO.subtract(locked));
+
+                form.addPaymentTotal(amount);
+                form.subtractAllocatedTotal(allocated);
+                form.subtractAllocatedTotal(locked);
+                form.subtractUnallocatedTotal(unallocated);
+
+                balance = balance.subtract(allocated).subtract(locked);
+
             }
             t.setRunningBalance(balance);
             unGroupedTransactionModelList.add(t);
@@ -191,9 +233,6 @@ public class TransactionController extends GenericSearchController {
                 nonRolledUp.addSubTransaction(t);
             }
 
-            if(t.getParentTransaction() instanceof Deferment){
-                defermentModelList.add(t);
-            }
         }
         form.setEndingBalance(balance);
 
