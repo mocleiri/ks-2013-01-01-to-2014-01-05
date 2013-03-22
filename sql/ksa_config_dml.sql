@@ -148,8 +148,11 @@ Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) va
 (99, 'Payment Application Rule', 3, 0, null, '(Context is initialized)',
 '
 Initialize list of GL transactions as "glTransactions"
+Initialize list of GL transactions as "glTransactionsForRemovedAllocations"
 
 Get list of transactions from "01/01/2011" to "12/31/2012", store result in "transactions"
+
+Remove allocations from "transactions", add result to "glTransactionsForRemovedAllocations"
 
 Allocate reversals for "transactions"  , add result to "glTransactions"
 
