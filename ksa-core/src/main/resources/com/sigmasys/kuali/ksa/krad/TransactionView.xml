@@ -198,6 +198,12 @@
                                                         </property>
                                                     </bean>
 
+                                                    <bean parent="Uif-ImageField" p:source="../images/locked.png" p:style="float: right;" p:altText="" p:title=""
+                                                           p:render="@{!#empty(#line.lockedAllocatedAmount) and #line.lockedAllocatedAmount != 0}">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="This transaction contains one or more locked allocations"/>
+                                                        </property>
+                                                    </bean>
                                                     <bean parent="Uif-ImageField" p:source="../images/memo.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
                                                           p:onClickScript="showLightboxComponent('memoLightboxRunningTotal@{#lineSuffix}');" p:render="@{#line.memos.size() > 0}">
                                                         <property name="toolTip">
