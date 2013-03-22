@@ -194,10 +194,8 @@ public abstract class AbstractViewModel extends UifFormBase {
         this.message = message;
     }
 
-    public String getFormattedDate(Date date){
-        DateFormat df;
-        df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-        return df.format(date);
+    public String getFormattedDate(Date date) {
+        return DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()).format(date);
     }
 
 }
