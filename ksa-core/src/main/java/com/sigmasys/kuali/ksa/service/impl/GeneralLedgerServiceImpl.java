@@ -129,7 +129,9 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         glTransaction.setAmount(amount != null ? amount : BigDecimal.ZERO);
         glTransaction.setGlAccountId(glAccountId);
         glTransaction.setGlOperation(operationType);
-        glTransaction.setStatement(statement);
+        if (StringUtils.hasText(statement)) {
+            glTransaction.setStatement(statement);
+        }
         glTransaction.setTransactions(new HashSet<Transaction>(Arrays.asList(transaction)));
         glTransaction.setStatus(isQueued ? GlTransactionStatus.QUEUED : GlTransactionStatus.WAITING);
 
