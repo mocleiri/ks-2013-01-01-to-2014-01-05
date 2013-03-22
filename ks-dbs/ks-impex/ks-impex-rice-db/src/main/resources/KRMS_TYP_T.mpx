@@ -46,8 +46,6 @@ TYP_ID,NM,NMSPC_CD,SRVC_NM,ACTV,VER_NBR
 "10045","kuali.krms.proposition.type.time.conflict.start.end","KS-SYS","simplePropositionTypeService","Y","0"
 "10046","kuali.krms.proposition.type.max.limit.courses.for.program","KS-SYS","simplePropositionTypeService","Y","0"
 "10047","kuali.krms.proposition.type.max.limit.credits.for.program","KS-SYS","simplePropositionTypeService","Y","0"
-"10048","kuali.krms.proposition.type.max.limit.courses.at.org.for.program","KS-SYS","simplePropositionTypeService","Y","0"
-"10049","kuali.krms.proposition.type.max.limit.courses.at.org.duration.for.program","KS-SYS","simplePropositionTypeService","Y","0"
 "10050","kuali.krms.proposition.type.max.limit.courses.for.campus.duration","KS-SYS","simplePropositionTypeService","Y","0"
 "10051","kuali.krms.proposition.type.max.limit.credits.for.campus.duration","KS-SYS","simplePropositionTypeService","Y","0"
 "10052","kuali.krms.proposition.type.admitted.to.program","KS-SYS","simplePropositionTypeService","Y","0"
