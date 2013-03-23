@@ -180,7 +180,7 @@ public class BiographicController extends GenericSearchController {
         personName.setLastName(form.getLastName());
         personName.setSuffix(form.getSuffix());
         personName.setTitle(form.getTitle());
-        personName.setDefault(new Boolean(form.getPersonDefault()));
+        personName.setDefault(Boolean.parseBoolean(form.getPersonDefault()));
 
        //accountService.persist(personName);
 

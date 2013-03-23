@@ -379,4 +379,36 @@ public class AccountServiceTest extends AbstractServiceTest {
         Assert.isTrue("20100020101".equals(ach.getAccountNumber()));
     }
 
+    @Test
+    public void updateAccount() {
+
+        String userId = "admin";
+
+        Account account = accountService.getFullAccount(userId);
+
+        Assert.notNull(account);
+
+        PersonName name = account.getDefaultPersonName();
+
+        Assert.notNull(name);
+
+        name.setFirstName("Mario");
+
+        ElectronicContact contact = account.getDefaultElectronicContact();
+
+        Assert.notNull(contact);
+
+        contact.setPhoneNumber("1-202-800-9999");
+        contact.setEmailAddress("admin@test.edu");
+
+        PostalAddress address = account.getDefaultPostalAddress();
+
+        Assert.notNull(address);
+
+        address.setCity("Paris");
+
+        accountService.updateAccount(account, "admin123");
+
+    }
+
 }

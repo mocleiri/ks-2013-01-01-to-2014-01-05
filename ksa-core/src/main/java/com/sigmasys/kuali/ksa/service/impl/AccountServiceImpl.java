@@ -19,9 +19,13 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.kim.impl.identity.address.EntityAddressBo;
+import org.kuali.rice.kim.impl.identity.email.EntityEmailBo;
 import org.kuali.rice.kim.impl.identity.entity.EntityBo;
 import org.kuali.rice.kim.impl.identity.name.EntityNameBo;
+import org.kuali.rice.kim.impl.identity.phone.EntityPhoneBo;
 import org.kuali.rice.kim.impl.identity.principal.PrincipalBo;
+import org.kuali.rice.kim.impl.identity.type.EntityTypeContactInfoBo;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.KRADServiceLocator;
 import org.springframework.beans.factory.BeanFactory;
@@ -847,11 +851,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
 
-    private PrincipalBo getPrincipalBo(String principalId) {
-        BusinessObjectService boService = KRADServiceLocator.getBusinessObjectService();
-        return boService.findByPrimaryKey(PrincipalBo.class, Collections.singletonMap("principalId", principalId));
-    }
-
     private EntityBo getEntityBo(String entityId) {
         BusinessObjectService boService = KRADServiceLocator.getBusinessObjectService();
         return boService.findByPrimaryKey(EntityBo.class, Collections.singletonMap("id", entityId));
@@ -874,6 +873,10 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             throw new IllegalStateException(errMsg);
         }
 
+
+        final Date currentDate = new Date();
+        final Timestamp timestamp = new Timestamp(currentDate.getTime());
+
         if (account.isKimAccount()) {
 
             IdentityService identityService = KimApiServiceLocator.getIdentityService();
@@ -886,36 +889,93 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
                 throw new IllegalStateException(errMsg);
             }
 
-            PrincipalBo principalBo = getPrincipalBo(principal.getPrincipalId());
+            PrincipalBo principalBo = PrincipalBo.from(principal);
             principalBo.setPassword(password);
 
             // Persisting PrincipalBo
             boService.save(principalBo);
 
-            final Date currentDate = new Date();
-            final Timestamp timestamp = new Timestamp(currentDate.getTime());
-
             EntityBo entity = getEntityBo(principal.getEntityId());
 
             // TODO: Saving only default ones? if not, how to merge their lists and our sets?
+
             PersonName personName = account.getDefaultPersonName();
             if (personName != null) {
                 List<EntityNameBo> names = entity.getNames();
                 if (CollectionUtils.isNotEmpty(names)) {
-                    EntityNameBo name = names.get(0);
-                    name.setDefaultValue(personName.isDefault());
-                    name.setFirstName(personName.getFirstName());
-                    name.setMiddleName(personName.getMiddleName());
-                    name.setLastName(personName.getLastName());
-                    name.setNameChangedDate(timestamp);
-                    name.setNameTitle(personName.getTitle());
+                    for (EntityNameBo name : names) {
+                        if (name.isActive()) {
+                            name.setDefaultValue(personName.isDefault());
+                            name.setFirstName(personName.getFirstName());
+                            name.setMiddleName(personName.getMiddleName());
+                            name.setLastName(personName.getLastName());
+                            name.setNameChangedDate(timestamp);
+                            name.setNameTitle(personName.getTitle());
+                            name.setNameSuffix(personName.getSuffix());
+                            // Persisting EntityNameBo
+                            boService.save(name);
+                            personName.setKimNameType(name.getNameCode());
+                            persistEntity(personName);
+                            break;
+                        }
+                    }
                 }
             }
 
-            // TODO: complete implementation
-
+            List<EntityTypeContactInfoBo> contactInfos = entity.getEntityTypeContactInfos();
+            if (CollectionUtils.isNotEmpty(contactInfos)) {
+                for (EntityTypeContactInfoBo contactInfo : contactInfos) {
+                    if (contactInfo.isActive()) {
+                        EntityAddressBo address = contactInfo.getDefaultAddress();
+                        if (address != null) {
+                            PostalAddress postalAddress = account.getDefaultPostalAddress();
+                            if (postalAddress != null) {
+                                address.setPostalCode(postalAddress.getPostalCode());
+                                address.setCountryCode(postalAddress.getCountry());
+                                address.setStateProvinceCode(postalAddress.getState());
+                                address.setCity(postalAddress.getCity());
+                                address.setLine1(postalAddress.getStreetAddress1());
+                                address.setLine2(postalAddress.getStreetAddress2());
+                                address.setLine3(postalAddress.getStreetAddress3());
+                                address.setDefaultValue(postalAddress.isDefault());
+                                address.setModifiedDate(timestamp);
+                                // Saving EntityAddressBo
+                                boService.save(address);
+                                postalAddress.setKimAddressType(address.getAddressTypeCode());
+                                persistEntity(postalAddress);
+                            }
+                        }
+                        ElectronicContact contact = account.getDefaultElectronicContact();
+                        if (contact != null) {
+                            EntityPhoneBo phone = contactInfo.getDefaultPhoneNumber();
+                            if (phone != null) {
+                                phone.setCountryCode(contact.getPhoneCountry());
+                                phone.setPhoneNumber(contact.getPhoneNumber());
+                                phone.setExtensionNumber(contact.getPhoneExtension());
+                                phone.setDefaultValue(contact.isDefault());
+                                // Saving EntityPhoneBo
+                                boService.save(phone);
+                                contact.setKimPhoneType(phone.getPhoneTypeCode());
+                            }
+                            EntityEmailBo email = contactInfo.getDefaultEmailAddress();
+                            if (email != null) {
+                                email.setEmailAddress(contact.getEmailAddress());
+                                email.setDefaultValue(contact.isDefault());
+                                // Saving  EntityEmailBo
+                                boService.save(email);
+                                contact.setKimEmailAddressType(email.getEmailTypeCode());
+                            }
+                            if (phone != null || email != null) {
+                                persistEntity(contact);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
         }
 
+        persistEntity(account);
     }
 
 
