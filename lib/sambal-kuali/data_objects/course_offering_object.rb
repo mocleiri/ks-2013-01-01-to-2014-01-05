@@ -355,7 +355,7 @@ class CourseOffering
   end
 
   def approve_subject_code
-    @course_offering.search_by_subjectcode
+    search_by_subjectcode
     on ManageCourseOfferingList do |page|
       sleep 1
       page.approve_subject_code
@@ -367,7 +367,7 @@ class CourseOffering
     end
     #to avoid data setup failure retry approve subject
     if !approved then
-      @course_offering.search_by_subjectcode
+      search_by_subjectcode
       on ManageCourseOfferingList do |page|
         sleep 1
         page.approve_subject_code
