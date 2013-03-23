@@ -53,10 +53,8 @@ Feature: Department Schedule Coordinator Authorization SOC state Final Edits
     When I manage course offerings for a subject code not in my admin org
     Then I have access to view course offering details
     And I have access to manage course offerings
+    And I do not have access to select course offerings for approve, delete
     But I do not have access to edit the listed course offering
-    And I do not have access to delete the listed course offering
-    And I do not have access to approve the listed course offering
-    And I do not have access to copy the listed course offering
     And I do not have access to approve the subject code for scheduling
 
   Scenario: AZ 4.1C/Full_final_edits.3 Department Schedule Coordinator Carol has access to create CO's in her admin org
@@ -79,7 +77,7 @@ Feature: Department Schedule Coordinator Authorization SOC state Final Edits
   Scenario: AZ 5.1B/Full_final_edits.4A Department Schedule Coordinator Carol has access to delete Co's (not in admin org)
     Given there is a "Planned" course offering not in my admin org
     When I list the course offerings for that subject code
-    Then I do not have access to delete the listed course offering
+    And I do not have access to select course offerings for approve, delete
     When I manage the course offering
     Then I do not have access to delete the course offering
 
@@ -109,5 +107,8 @@ Feature: Department Schedule Coordinator Authorization SOC state Final Edits
   Scenario: AZ 5.1A/Full_final_edits.7 Department Schedule Coordinator Carol has limited access to delete AOs
     Given there is a "Draft" course offering in my admin org
     Then I have access to delete an activity offering in "Draft" status for the course offering
-    And I have access to delete an activity offering in "Approved" status for the course offering
+
+  Scenario: AZ 5.1A/Full_final_edits.7B Department Schedule Coordinator Carol has limited access to delete AOs
+    Given there is a "Planned" course offering in my admin org
+    Then I have access to delete an activity offering in "Approved" status for the course offering
 #TODO - tests for offered, suspended, cancelled

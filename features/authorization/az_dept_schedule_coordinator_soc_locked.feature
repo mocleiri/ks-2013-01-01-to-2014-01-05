@@ -44,10 +44,9 @@ Feature: Department Schedule Coordinator Authorization SOC state Locked
     Then I have access to view course offering details
     And I have access to manage course offerings
     But I do not have access to edit the listed course offering
-    And I do not have access to delete the listed course offering
-    And I do not have access to approve the listed course offering
     And I do not have access to copy the listed course offering
     And I do not have access to approve the subject code for scheduling
+    And I do not have access to select course offerings for approve, delete
 
   Scenario: AZ 4.1C/Full_locked.3 Department Schedule Coordinator Carol has access to create CO's in her admin org
     When I attempt to create a course offering for a subject in my admin org
@@ -65,10 +64,10 @@ Feature: Department Schedule Coordinator Authorization SOC state Locked
     Then I do not have access to delete the course offering
 #TODO not yet implemented - access to offered suspended and cancelled states
 
-  Scenario: AZ 5.1B/Full_locked.4A Department Schedule Coordinator Carol has access to delete Co's (not in admin org)
+  Scenario: AZ 5.1B/Full_locked.4A Department Schedule Coordinator Carol does not have access to delete Co's (not in admin org)
     Given there is a "Planned" course offering not in my admin org
     When I list the course offerings for that subject code
-    Then I do not have access to delete the listed course offering
+    Then I do not have access to select course offerings for approve, delete
     When I manage the course offering
     Then I do not have access to delete the course offering
 

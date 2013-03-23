@@ -136,15 +136,17 @@ end
 
 Then /^I have access to approve course offerings for scheduling$/ do
   on ManageCourseOfferingList do |page|
-    page.select_cos([@course_offering.course])
-    page.approve_course_offering_button.enabled?.should == true
+    @course_offering.check_course_in_status("Draft")
+    page.approve_course_offering_button.enabled?.should be_true
+    page.deselect_cos([@course_offering.course])
   end
 end
 
 Then /^I do not have access to approve course offerings for scheduling$/ do
   on ManageCourseOfferingList do |page|
     page.select_cos([@course_offering.course])
-    page.approve_course_offering_button.enabled?.should == false
+    page.approve_course_offering_button.enabled?.should be_false
+    page.deselect_cos([@course_offering.course])
   end
 end
 
@@ -568,11 +570,11 @@ Then /^I do not have access to select activity offerings for add, approve, delet
   end
 end
 
-Then /^I do not have access to select course offerings for add, approve, delete$/ do
+Then /^I do not have access to select course offerings for approve, delete$/ do
   on ManageCourseOfferingList do |page|
     page.delete_cos_button.enabled?.should be_false
     page.approve_course_offering_button.enabled?.should be_false
-    page.create_course_offering_button.enabled?.should be_false
+    #page.create_course_offering_button.enabled?.should be_false
     #page.draft_activity_button.enabled?.should be_false
     page.co_list.each do |co_code|
       page.target_row(co_code).checkbox.present?.should be_false
