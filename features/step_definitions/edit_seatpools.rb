@@ -24,9 +24,11 @@ When /^I edit an existing activity offering with (\d+) seat pools?$/ do |number|
                             :personnel_list => []
 
   @activity_offering.save
-  on ActivityOfferingMaintenanceView do |page|
-    page.home
-  end
+
+  #TODO - uncomment this code when KSENROLL-5974 is fixed
+  #on ActivityOfferingMaintenanceView do |page|
+  #  page.home
+  #end
   #now reopen course offering for ao edit
   @course_offering.manage
 
