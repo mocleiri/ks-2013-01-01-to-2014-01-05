@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.SettingsForm;
 import com.sigmasys.kuali.ksa.krad.form.TransactionTypeForm;
+import com.sigmasys.kuali.ksa.krad.model.TransactionTypeGroupModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
 import org.junit.Before;
@@ -78,7 +79,14 @@ public class TransactionTypeControllerTest extends AbstractServiceTest {
         Assert.notNull(form);
 
         Assert.notNull(form.getTransactionTypes());
-        Assert.isTrue(form.getTransactionTypes().size() == types.size());
+
+        // All of the transaction types are grouped by ID.
+        // Sum them up to compare to the whole list.
+        int count = 0;
+        for(TransactionTypeGroupModel group : form.getTransactionTypes()){
+            count += group.getTransactionTypes().size();
+        }
+        Assert.isTrue(count == types.size());
         Assert.isTrue(form.getTransactionTypes().size() > 0);
     }
 

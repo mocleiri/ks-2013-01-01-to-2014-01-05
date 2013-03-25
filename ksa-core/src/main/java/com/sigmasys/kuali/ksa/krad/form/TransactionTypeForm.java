@@ -1,26 +1,24 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.krad.model.GlBreakdownModel;
+import com.sigmasys.kuali.ksa.krad.model.TransactionTypeGroupModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionTypeModel;
 import com.sigmasys.kuali.ksa.model.*;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class TransactionTypeForm extends AbstractViewModel {
 
 
-    // Currency stuff
-
     private Account account;
 
-    private List<TransactionTypeModel> entities;
-
     private TransactionTypeModel transactionType;
+
+    private Map<String, TransactionTypeGroupModel> transactionTypeGroups = new HashMap<String, TransactionTypeGroupModel>();
+
 
     private String statusMessage;
 
@@ -64,24 +62,8 @@ public class TransactionTypeForm extends AbstractViewModel {
         this.account = account;
     }
 
-    public List<TransactionTypeModel> getTransactionTypes() {
-        return entities;
-    }
-
-    public <T extends AuditableEntity> void setTransactionTypes(List<T> entities) {
-        List<TransactionTypeModel> list = new ArrayList<TransactionTypeModel>(entities.size());
-
-        for (AuditableEntity entity : entities) {
-            TransactionTypeModel m;
-            if (entity instanceof TransactionType) {
-                m = new TransactionTypeModel((TransactionType) entity);
-            } else {
-                m = (TransactionTypeModel) entity;
-            }
-            list.add(m);
-        }
-
-        this.entities = list;
+    public List<TransactionTypeGroupModel> getTransactionTypes() {
+        return new ArrayList<TransactionTypeGroupModel>(transactionTypeGroups.values());
     }
 
     public TransactionTypeModel getTransactionType() {
@@ -263,5 +245,13 @@ public class TransactionTypeForm extends AbstractViewModel {
 
     public void setTagSearch(Tag tagSearch) {
         this.tagSearch = tagSearch;
+    }
+
+    public Map<String, TransactionTypeGroupModel> getTransactionTypeGroups() {
+        return transactionTypeGroups;
+    }
+
+    public void setTransactionTypeGroups(Map<String, TransactionTypeGroupModel> transactionTypeGroups) {
+        this.transactionTypeGroups = transactionTypeGroups;
     }
 }

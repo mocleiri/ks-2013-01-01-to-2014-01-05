@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.krad.controller;
 import com.sigmasys.kuali.ksa.exception.GeneralLedgerTypeNotFoundException;
 import com.sigmasys.kuali.ksa.krad.form.TransactionTypeForm;
 import com.sigmasys.kuali.ksa.krad.model.GlBreakdownModel;
+import com.sigmasys.kuali.ksa.krad.model.TransactionTypeGroupModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionTypeModel;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.krad.util.CreditDebitKeyValuesFinder;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -74,7 +76,21 @@ public class TransactionTypeController extends GenericSearchController {
         if ("TransactionTypePage".equals(pageId)) {
             List<TransactionType> entities = auditableEntityService.getAuditableEntities(TransactionType.class);
             logger.info("Transaction Type Count: " + entities.size());
-            form.setTransactionTypes(entities);
+
+            Map<String, TransactionTypeGroupModel> map = form.getTransactionTypeGroups();
+
+            for(TransactionType tt : entities){
+                String id = tt.getId().getId();
+                TransactionTypeGroupModel group = map.get(id);
+                if(group == null){
+                    group = new TransactionTypeGroupModel();
+                    map.put(id, group);
+                }
+
+                group.addTransactionType(tt);
+            }
+
+            //form.setTransactionTypes(entities);
         } else if ("TransactionTypeDetailsPage".equals(pageId)) {
             String entityId = request.getParameter("entityId");
             String subCode = request.getParameter("subCode");

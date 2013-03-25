@@ -2,6 +2,9 @@ package com.sigmasys.kuali.ksa.krad.model;
 
 import com.sigmasys.kuali.ksa.model.*;
 
+import java.security.PrivateKey;
+import java.util.Date;
+
 /**
  * User: timb
  * Date: 11/29/12
@@ -10,6 +13,12 @@ import com.sigmasys.kuali.ksa.model.*;
 public class TransactionTypeModel extends TransactionType {
 
     private TransactionType parentEntity;
+
+    private String rollupText;
+
+    private String glBreakdownType;
+
+    private String glBreakdownTooltip;
 
     public TransactionTypeModel() {
     }
@@ -20,20 +29,22 @@ public class TransactionTypeModel extends TransactionType {
 
     public void setTransactionType(TransactionType entity) {
         parentEntity = entity;
+
+        Rollup r = parentEntity.getRollup();
+        if(r == null){
+            setRollupText("");
+        } else {
+            setRollupText(r.getDescription());
+        }
+
+        this.setGlBreakdownType("Default");
+        this.setGlBreakdownTooltip("I don't know how to do this yet");
+
+
     }
 
     public TransactionType getTransactionType() {
         return parentEntity;
-    }
-/*
-    @Override
-    public Long getId() {
-        return parentEntity.getId();
-    }
-
-    @Override
-    public void setId(Long id) {
-        parentEntity.setId(id);
     }
 
     @Override
@@ -118,10 +129,43 @@ public class TransactionTypeModel extends TransactionType {
             return str + parentEntity.toString();
         }
     }
-    */
 
     @Override
     public TransactionTypeId getId() {
         return parentEntity.getId();
+    }
+
+    public String getType(){
+        if(parentEntity instanceof CreditType){
+            return "Credit";
+        } else if(parentEntity instanceof DebitType){
+            return "Debit";
+        } else {
+            return "Unknown";
+        }
+    }
+
+    public String getRollupText() {
+        return rollupText;
+    }
+
+    public void setRollupText(String rollupText) {
+        this.rollupText = rollupText;
+    }
+
+    public String getGlBreakdownType() {
+        return glBreakdownType;
+    }
+
+    public void setGlBreakdownType(String glBreakdownType) {
+        this.glBreakdownType = glBreakdownType;
+    }
+
+    public String getGlBreakdownTooltip() {
+        return glBreakdownTooltip;
+    }
+
+    public void setGlBreakdownTooltip(String glBreakdownTooltip) {
+        this.glBreakdownTooltip = glBreakdownTooltip;
     }
 }

@@ -113,9 +113,9 @@
     <bean id="tableTransactionTypeSection" parent="Uif-Disclosure-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:width="85%">
         <property name="title" value="View Transaction Types"/>
         <property name="readOnly" value="true"/>
-        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionTypeModel"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionTypeGroupModel"/>
         <property name="propertyName" value="transactionTypes"/>
-        <property name="layoutManager.sequencePropertyName" value="id.id"/>
+        <property name="layoutManager.sequencePropertyName" value="currentTransactionType.id.id"/>
         <property name="layoutManager.richTable.render" value="true"/>
         <property name="layoutManager.renderSequenceField" value="false"/>
         <property name="layoutManager.applyDefaultCellWidths" value="false"/>
@@ -124,17 +124,66 @@
             <map merge="true">
                 <entry key="bPaginate" value="true"/>
                 <entry key="iDisplayLength" value="20"/>
+                <entry key="bSort" value="true" />
             </map>
         </property>
-
+        <!--<property name="layoutManager.groupingPropertyNames"> <list> <value>transactionType.id.id</value> </list> </property>-->
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:label="ID" p:propertyName="transactionType.id.id" p:width="10%"/>
-                <bean parent="Uif-InputField" p:label="Sub Code" p:propertyName="transactionType.id.subCode" p:width="5%"/>
-                <bean parent="Uif-InputField" p:label="Statement Text" p:propertyName="transactionType.description" p:width="55%"/>
-                <!--<bean parent="Uif-InputField" p:label="Type" p:propertyName="transactionType.type" p:width="10%"/>-->
-                <bean parent="Uif-InputField" p:label="Start Date" p:propertyName="transactionType.startDate" p:width="10%"/>
-                <bean parent="Uif-InputField" p:label="End Date" p:propertyName="transactionType.endDate" p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="ID" p:propertyName="currentTransactionType.id.id" p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="Statement Text" p:propertyName="currentTransactionType.description" p:width="55%"/>
+                <bean parent="Uif-InputField" p:label="Type" p:propertyName="currentTransactionType.type" p:width="10%"/>
+                <bean parent="Uif-LinkField"  p:linkText="Add new from model"
+                      p:href="transactionTypeView?methodToCall=create&amp;viewId=TransactionTypeView&amp;pageId=TransactionTypeCreatePage&amp;model=@{#line.currentTransactionType.id.id}"/>
+            </list>
+        </property>
+        <property name="layoutManager.expandDetailsActionPrototype">
+            <bean parent="Uif-ExpandDetailsImageAction"/>
+        </property>
+        <property name="layoutManager.rowDetailsGroup">
+            <ref bean="transactionTypeSubList"/>
+        </property>
+    </bean>
+
+    <bean id="transactionTypeSubList" parent="Uif-TableSubCollection-WithinSection" p:layoutManager.numberOfColumns="7">
+        <property name="headerText" value="History" />
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionModel" />
+        <property name="propertyName" value="transactionTypes" />
+        <property name="layoutManager.sequencePropertyName" value="id.id" />
+        <property name="layoutManager.richTable.render" value="true" />
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="style" value="width: 100%;"/>
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="false"/>
+                <entry key="bInfo" value="false"/>
+                <entry key="bFilter" value="false"/>
+            </map>
+        </property>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="transactionType.startDate" p:label="Start Date" p:style="width: 10%;"/>
+                <bean parent="Uif-HorizontalFieldGroup" p:label="End Date" p:style="width: 10%;">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:propertyName="transactionType.endDate" p:render="@{!#empty(#line.transactionType.endDate)}" p:style="width: 10%;"/>
+                            <bean parent="Uif-MessageField" p:messageText="Current" p:render="@{#empty(#line.transactionType.endDate)}"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 35%;">
+                    <property name="items">
+                    <list>
+                        <bean parent="Uif-InputField" p:propertyName="transactionType.description"/>
+                    </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="rollupText" p:label="Roll-up" p:style="width: 35%"/>
+                <bean parent="Uif-InputField" p:propertyName="glBreakdownType" p:label="GL Breakdown" p:style="width: 10%">
+                    <property name="toolTip">
+                        <bean parent="Uif-Tooltip" p:tooltipContent="@{#line.glBreakdownTooltip}"/>
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>
