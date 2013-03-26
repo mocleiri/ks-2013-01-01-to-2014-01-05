@@ -1,7 +1,7 @@
 When /^I revise an AO's actual delivery logistics$/ do
 
   # setup - create a test CO and place it into "Planned"-status
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term=>"201201")
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term=>Rollover::MAIN_TEST_TERM_SOURCE)
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.select_all

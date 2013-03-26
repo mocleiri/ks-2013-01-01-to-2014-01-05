@@ -31,7 +31,7 @@ class Rollover
   DRAFT_SOC_TERM = "201912"
 
   MAIN_TEST_TERM_SOURCE = "201201"
-  MAIN_TEST_TERM_TARGET = "202001"
+  MAIN_TEST_TERM_TARGET = "201301"
 
   # provides default data:
   #  defaults = {
