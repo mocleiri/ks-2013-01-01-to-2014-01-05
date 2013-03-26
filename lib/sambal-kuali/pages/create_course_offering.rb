@@ -98,7 +98,7 @@ class CreateCourseOffering < BasePage
 
   def select_copy_for_existing_course(term, course)
     existing_co_target_row(term, course).cells[ACTIONS_COLUMN_CO].link(text: "Copy").click
-    loading.wait_while_present
+    loading.wait_while_present(120)
   end
 
 end

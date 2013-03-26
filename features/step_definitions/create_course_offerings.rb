@@ -1,5 +1,5 @@
 When /^I create a Course Offering with selected lecture Formats$/ do
-  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "ENGL310", :grade_format => "Quiz", :delivery_format => "Lecture/Quiz"
+  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "ENGL222", :grade_format => "Quiz", :delivery_format => "Lecture/Quiz"
 end
 
 And /^I create a Course Offering with selected Delivery Formats$/ do
@@ -18,7 +18,7 @@ Then /^the new Course Offering should contain only the selected delivery formats
 end
 
 And /^I copy a course offering from an existing offering$/ do
-  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "CHEM132", :create_from_existing=>(make CourseOffering, :term=> "201201", :course => "CHEM132")
+  @course_offering = create CourseOffering, :term=> Rollover::FINAL_EDITS_SOC_TERM, :course => "CHEM132", :create_from_existing=>(make CourseOffering, :term=> "201201", :course => "CHEM132")
 end
 
 Then /^the new Course Offering should be displayed in the list of available offerings\.$/ do
