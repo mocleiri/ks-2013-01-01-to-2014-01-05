@@ -811,4 +811,12 @@ public interface TransactionService {
      */
     TransactionType addTagsToTransactionType(TransactionTypeId typeId, List<Tag> tags);
 
+
+    /**
+     * Retrieve a list of all GL Breakdowns for a given transaction type
+     * @param transactionType Transaction Type to search
+     * @return list of GlBreakdown
+     */
+    List<AbstractGlBreakdown> getGlBreakdowns(DebitType transactionType);
+
 }
