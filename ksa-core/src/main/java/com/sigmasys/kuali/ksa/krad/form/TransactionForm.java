@@ -30,9 +30,9 @@ public class TransactionForm extends AbstractViewModel {
     private List<TransactionModel> deferments;
 
     private Date       startingDate;
-    private BigDecimal startingBalance;
+    private BigDecimal startingBalance = BigDecimal.ZERO;
     private Date       endingDate;
-    private BigDecimal endingBalance;
+    private BigDecimal endingBalance = BigDecimal.ZERO;
 
     private BigDecimal chargeTotal;
     private BigDecimal paymentTotal;
