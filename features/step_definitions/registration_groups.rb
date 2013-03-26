@@ -487,3 +487,15 @@ Then /^a cluster status message appears stating "([^"]*)"$/ do |status_msg|
     page.get_cluster_status_msg(@ao_cluster.private_name).strip.should  match /.*#{Regexp.escape(status_msg)}.*/
   end
 end
+When /^I add all activity offerings to the activity offering cluster$/ do
+  @ao_cluster.add_unassigned_aos(["A","B","C","D"])
+end
+
+When /^the correct number of registration groups are created$/ do
+  on ManageRegistrationGroups do |page|
+    page.view_cluster_reg_groups(@ao_cluster.private_name)
+  end
+  on ViewRegistrationGroups do |page|
+    page.reg_group_list.length.should == 3
+  end
+end
