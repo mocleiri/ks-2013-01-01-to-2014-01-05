@@ -817,6 +817,6 @@ public interface TransactionService {
      * @param transactionType Transaction Type to search
      * @return list of GlBreakdown
      */
-    List<AbstractGlBreakdown> getGlBreakdowns(DebitType transactionType);
+    List<GlBreakdown> getGlBreakdowns(DebitType transactionType);
 
 }

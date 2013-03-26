@@ -21,10 +21,10 @@ public class TransactionTypeGroupModel {
     public <T extends AuditableEntity> void addTransactionType(T entity) {
 
         TransactionTypeModel m;
-        if (entity instanceof TransactionType) {
-            m = new TransactionTypeModel((TransactionType) entity);
-        } else if(entity instanceof  TransactionTypeModel) {
+        if(entity instanceof  TransactionTypeModel) {
             m = (TransactionTypeModel) entity;
+        } else if (entity instanceof TransactionType) {
+            m = new TransactionTypeModel((TransactionType) entity);
         } else {
             throw new RuntimeException("Unexpected type passed to addTransactionType: " + entity.getClass().getName());
         }

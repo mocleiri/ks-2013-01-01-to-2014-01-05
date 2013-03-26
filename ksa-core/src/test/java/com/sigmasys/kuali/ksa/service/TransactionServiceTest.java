@@ -1397,7 +1397,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         Assert.isTrue(tt instanceof DebitType, "Transaction Type must be a DebitType");
 
-        List<AbstractGlBreakdown> breakdowns = transactionService.getGlBreakdowns((DebitType)tt);
+        List<GlBreakdown> breakdowns = transactionService.getGlBreakdowns((DebitType)tt);
 
         Assert.notNull(breakdowns);
         Assert.notEmpty(breakdowns);

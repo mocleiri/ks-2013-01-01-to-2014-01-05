@@ -1,9 +1,12 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
+import com.sigmasys.kuali.ksa.krad.util.HighPrecisionPercentageFormatter;
 import com.sigmasys.kuali.ksa.model.*;
 
+import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.util.Date;
+import java.util.List;
 
 /**
  * User: timb
@@ -16,6 +19,7 @@ public class TransactionTypeModel extends TransactionType {
 
     private String rollupText;
 
+    private List<GlBreakdown> glBreakdowns;
     private String glBreakdownType;
 
     private String glBreakdownTooltip;
@@ -38,7 +42,11 @@ public class TransactionTypeModel extends TransactionType {
         }
 
         this.setGlBreakdownType("Default");
-        this.setGlBreakdownTooltip("I don't know how to do this yet");
+        this.setGlBreakdownTooltip("No GL Breakdown");
+
+        if(entity instanceof CreditType){
+            this.setGlBreakdownType("None");
+        }
 
 
     }
@@ -167,5 +175,47 @@ public class TransactionTypeModel extends TransactionType {
 
     public void setGlBreakdownTooltip(String glBreakdownTooltip) {
         this.glBreakdownTooltip = glBreakdownTooltip;
+    }
+
+    public List<GlBreakdown> getGlBreakdowns() {
+        return glBreakdowns;
+    }
+
+    public void setGlBreakdowns(List<GlBreakdown> glBreakdowns) {
+        this.glBreakdowns = glBreakdowns;
+
+        HighPrecisionPercentageFormatter percentageFormatter = new HighPrecisionPercentageFormatter();
+
+        this.setGlBreakdownType("Default");
+        String firstType = null;
+
+        String tooltip = "";
+
+        for(GlBreakdown breakdown : glBreakdowns){
+            String type = breakdown.getGeneralLedgerType().getDescription();
+            if(firstType == null){
+                firstType = type;
+                tooltip += "<h4>" + type + "</h4>";
+            } else if(! firstType.equals(type)){
+                this.setGlBreakdownType("Complex");
+                tooltip += "<h4>" + type + "</h4>";
+            }
+            String account = breakdown.getGlAccount();
+            String operation = breakdown.getGlOperation().name();
+
+            String percent = null;
+            BigDecimal amount = breakdown.getBreakdown();
+            if(amount.equals(BigDecimal.ZERO)){
+                percent = "Remainder";
+            }else {
+                percent = (String)percentageFormatter.format(amount);
+            }
+
+            tooltip += account + ", " + operation + ", " + percent + "<br/>";
+
+
+        }
+
+        this.setGlBreakdownTooltip(tooltip);
     }
 }

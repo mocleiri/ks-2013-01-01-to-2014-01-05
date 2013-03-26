@@ -80,6 +80,7 @@ public class TransactionTypeController extends GenericSearchController {
             Map<String, TransactionTypeGroupModel> map = form.getTransactionTypeGroups();
 
             for(TransactionType tt : entities){
+                TransactionTypeModel ttModel = new TransactionTypeModel(tt);
                 String id = tt.getId().getId();
                 TransactionTypeGroupModel group = map.get(id);
                 if(group == null){
@@ -87,7 +88,12 @@ public class TransactionTypeController extends GenericSearchController {
                     map.put(id, group);
                 }
 
-                group.addTransactionType(tt);
+
+                group.addTransactionType(ttModel);
+
+                if(tt instanceof DebitType){
+                    ttModel.setGlBreakdowns(transactionService.getGlBreakdowns((DebitType)tt));
+                }
             }
 
             //form.setTransactionTypes(entities);
