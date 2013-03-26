@@ -94,7 +94,6 @@ Feature: Schedule Coordinator Authorization
     And I have access to copy an activity offering
     And I have access to manage registration groups
 
-  @bug @KSENROLL-6003
   Scenario: AZ FULL CONFIG Schedule Coordinator has full access the Manage CO set of pages (Final Edits SOC)
     Given I am working on a term in "Final Edits" SOC state
     When I manage course offerings for a subject code
@@ -103,8 +102,8 @@ Feature: Schedule Coordinator Authorization
     And I have access to delete the listed course offerings
     And I have access to edit the listed course offerings
     And I have access to copy the listed course offerings
-    And I have access to approve course offerings for scheduling
-    And I have access to approve the subject code for scheduling
+    But I do not have access to approve course offerings for scheduling
+    And I do not have access to approve the subject code for scheduling
 
   Scenario: AZ FULL CONFIG Schedule Coordinator can access the Manage AO set of pages for COs (Final Edits SOC)
     Given I am working on a term in "Final Edits" SOC state
@@ -117,7 +116,6 @@ Feature: Schedule Coordinator Authorization
     And I have access to copy an activity offering
     And I have access to manage registration groups
 
-  @bug @KSENROLL-6003
   Scenario: AZ FULL CONFIG Schedule Coordinator has full access the Manage CO set of pages (Published SOC)
     Given I am working on a term in "Published" SOC state
     When I manage course offerings for a subject code
@@ -126,8 +124,8 @@ Feature: Schedule Coordinator Authorization
     And I have access to delete the listed course offerings
     And I have access to edit the listed course offerings
     And I have access to copy the listed course offerings
-    And I have access to approve the subject code for scheduling
-    And I have access to approve course offerings for scheduling
+    But I do not have access to approve course offerings for scheduling
+    And I do not have access to approve the subject code for scheduling
 
   Scenario: AZ FULL CONFIG Schedule Coordinator can access the Manage AO set of pages for COs (Published SOC)
     Given I am working on a term in "Published" SOC state
