@@ -9,8 +9,12 @@ Feature: Simple Rollover
     Given I am logged in as a Schedule Coordinator
 
   Scenario: Successfully rollover courses to target term
+    Given I have created an activity offering cluster and generated registration groups for a course offering
     When I initiate a rollover by specifying source and target terms
     Then the results of the rollover are available
-    And course offerings are copied to the target term
     And the rollover can be released to departments
+    And course offerings are copied to the target term
+    And the activity offering clusters, assigned AOs and reg groups are rolled over with the course offering
+
+
 

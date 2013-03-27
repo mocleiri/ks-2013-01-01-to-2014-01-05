@@ -32,6 +32,7 @@ class Rollover
 
   MAIN_TEST_TERM_SOURCE = "201201"
   MAIN_TEST_TERM_TARGET = "201301"
+  ROLLOVER_TEST_TERM_TARGET = "202012"
 
   # provides default data:
   #  defaults = {

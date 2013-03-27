@@ -1,5 +1,5 @@
 When /^I initiate a rollover by specifying source and target terms$/ do
-  @rollover = make Rollover
+  @rollover = make Rollover, :target_term => Rollover::ROLLOVER_TEST_TERM_TARGET , :source_term => Rollover::OPEN_SOC_TERM
   @rollover.perform_rollover
 end
 

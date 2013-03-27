@@ -425,7 +425,7 @@ Given /^I have created two activity offering clusters for a course offering$/ do
 end
 
 Given /^I have created an activity offering cluster and generated registration groups for a course offering$/ do
-  @course_offering = create CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
   @course_offering.manage_registration_groups
   @ao_cluster = make ActivityOfferingCluster
   @course_offering.add_ao_cluster(@ao_cluster)

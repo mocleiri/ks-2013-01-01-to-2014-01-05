@@ -36,17 +36,19 @@ class PerformRollover < BasePage
   value(:status) { |b| b.frm.div(data_label: "Status").span(index: 2).text } #status shows after rollover initiated
 
 
-# looks for next available target term in the one specified is used - returns actual target term code used
-  def select_terms(m_target_term,m_source_term)
+# looks for next available target term in the one specified is used (if select_next_available_term = true, default is false) - returns actual target term code used
+  def select_terms(m_target_term,m_source_term,select_next_available_term = false)
     actual_target_term = m_target_term
-    select_target_term(actual_target_term)
+    set_target_term(actual_target_term)
     source_term.set m_source_term
     retry_ctr = 0
 
-    while source_term_go_element.disabled? and retry_ctr < 30
-      actual_target_term = increment_term_code_year(target_term.value)
-      select_target_term(actual_target_term)
-      retry_ctr = retry_ctr + 1
+    if select_next_available_term then
+      while source_term_go_element.disabled? and retry_ctr < 30
+        actual_target_term = increment_term_code_year(target_term.value)
+        set_target_term(actual_target_term)
+        retry_ctr = retry_ctr + 1
+      end
     end
 
     source_term_go
@@ -56,7 +58,7 @@ class PerformRollover < BasePage
 
   private
 
-  def select_target_term(term)
+  def set_target_term(term)
     target_term.set term
     target_term_go
     loading.wait_while_present
