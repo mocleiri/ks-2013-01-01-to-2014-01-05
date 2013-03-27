@@ -23,6 +23,11 @@ When /^I initiate a rollover to create a term in final edits state EC$/ do
   @rollover.perform_rollover
 end
 
+When /^I initiate a rollover to create a term in published state for milestones testing$/ do
+  @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::PUBLISHED_MILESTONES_SOC_TERM
+  @rollover.perform_rollover
+end
+
 When /^I initiate a rollover to create a term in published state EC$/ do
   @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::PUBLISHED_SOC_TERM
   @rollover.perform_rollover
@@ -104,6 +109,10 @@ end
 
 When /^I am working on a term in "Published" SOC state$/ do
   @term_for_test = Rollover::PUBLISHED_SOC_TERM
+end
+
+When /^I am working on a term in "Published" SOC state for milestones testing$/ do
+  @term_for_test = Rollover::PUBLISHED_MILESTONES_SOC_TERM
 end
 
 When /^I am working on a term in "Draft" SOC state$/ do

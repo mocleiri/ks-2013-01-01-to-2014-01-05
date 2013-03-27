@@ -1,8 +1,8 @@
 Given /^It is "After" the first day of classes$/ do
-  @term = make AcademicTerm, :term_name=>"Winter 2016"
+  @term = make AcademicTerm, :term_name=>Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME
   @term.search
   on CalendarSearch do |page|
-     page.edit @term.term_name
+    page.edit @term.term_name
   end
 
   on AcademicTermPage do |page|
@@ -16,11 +16,11 @@ Given /^It is "After" the first day of classes$/ do
       @keydategroup = make KeyDateGroup, :key_dates=>Array.new(1){@keydate}, :term_index=> @tindex
       @keydategroup.create
     end
-    end
+  end
 end
 
 Given /^It is "Before" the first day of classes and "Before" the first day to add classes/ do
-  @term = make AcademicTerm, :term_name=>"Winter 2016"
+  @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME
   @term.search
   on CalendarSearch do |page|
     page.edit @term.term_name
@@ -50,7 +50,7 @@ Given /^It is "Before" the first day of classes and "Before" the first day to ad
 end
 
 Given /^It is "Before" the first day of classes and "After" the first day to add classes/ do
-  @term = make AcademicTerm, :term_name=>"Winter 2016"
+  @term = make AcademicTerm, :term_name=>Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME
   @term.search
   on CalendarSearch do |page|
     page.edit @term.term_name
@@ -80,9 +80,9 @@ Given /^It is "Before" the first day of classes and "After" the first day to add
 end
 
 When /^I do not have access to copy an activity offering$/ do
-    on ManageCourseOfferings do |page|
-      page.copy_link("A").present?.should == false
-    end
+  on ManageCourseOfferings do |page|
+    page.copy_link("A").present?.should == false
+  end
 end
 Then /^I edit an activity offering in my department$/ do
   step "I manage a course offering in my admin org"
@@ -92,7 +92,7 @@ Then /^I edit an activity offering in my department$/ do
 end
 
 Given /^It is "After" the first day to add classes$/ do
-  @term = make AcademicTerm, :term_name=>"Winter 2016"
+  @term = make AcademicTerm, :term_name=>Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME
   @term.search
   on CalendarSearch do |page|
     page.edit @term.term_name
