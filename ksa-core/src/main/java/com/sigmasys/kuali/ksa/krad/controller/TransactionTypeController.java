@@ -92,7 +92,7 @@ public class TransactionTypeController extends GenericSearchController {
                 group.addTransactionType(ttModel);
 
                 if(tt instanceof DebitType){
-                    ttModel.setGlBreakdowns(transactionService.getGlBreakdowns((DebitType)tt));
+                    ttModel.setGlBreakdowns(transactionService.getGlBreakdowns((DebitType) tt));
                 }
             }
 
@@ -126,9 +126,34 @@ public class TransactionTypeController extends GenericSearchController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=create")
-    public ModelAndView create(@ModelAttribute("KualiForm") TransactionTypeForm form) {
+    public ModelAndView create(@ModelAttribute("KualiForm") TransactionTypeForm form, HttpServletRequest request) {
 
         form.reset();
+
+        String modelToCopy = request.getParameter("model");
+        if(modelToCopy != null){
+            TransactionType ttSource = transactionService.getTransactionType(modelToCopy, new Date());
+
+            if(ttSource != null){
+                form.setType((ttSource instanceof CreditType ? "C" : "D"));
+                form.setCode(ttSource.getId().getId());
+                form.setStartDate(new Date());
+                form.setDescription(ttSource.getDescription());
+                if(ttSource.getRollup() != null){
+                    form.setRollupId(ttSource.getRollup().getId().toString());
+                }
+                ArrayList<Tag> tags = new ArrayList<Tag>();
+                for(Tag t: ttSource.getTags()){
+                    tags.add(t);
+                }
+
+                form.setTags(tags);
+                //form.setGlBreakdowns(ttSource.get);
+
+            }
+        }
+
+
         List<GeneralLedgerType> gltypes = auditableEntityService.getAuditableEntities(GeneralLedgerType.class);
 
         List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>(gltypes.size());
@@ -163,11 +188,9 @@ public class TransactionTypeController extends GenericSearchController {
         Date startDate = form.getStartDate();
         Integer priority = form.getPriority();
         if (priority == null) {
-            priority = new Integer(1);
+            priority = 1;
         }
         String description = form.getDescription();
-
-        Long rollupId = form.getRollupId();
 
         boolean typeExists = transactionService.transactionTypeExists(code);
 
@@ -175,9 +198,6 @@ public class TransactionTypeController extends GenericSearchController {
 
         if ("C".equalsIgnoreCase(type)) {
             if (!typeExists) {
-                if (transactionService == null) {
-                    throw new RuntimeException("transactionService is null");
-                }
                 tt = transactionService.createCreditType(code, "", startDate, priority, description);
             } else {
                 tt = transactionService.createCreditSubType(code, startDate);
@@ -199,6 +219,13 @@ public class TransactionTypeController extends GenericSearchController {
         List<Tag> tags = form.getTags();
         this.persistTags(tags);
         tt.setTags(tags);
+
+        Long rollupId;
+        try{
+            rollupId= new Long(form.getRollupId());
+        } catch(NumberFormatException e){
+            rollupId = null;
+        }
 
         if (rollupId != null) {
             Rollup r = auditableEntityService.getAuditableEntity(rollupId, Rollup.class);

@@ -131,7 +131,13 @@
         <property name="items">
             <list>
                 <bean parent="Uif-InputField" p:label="ID" p:propertyName="currentTransactionType.id.id" p:width="10%"/>
-                <bean parent="Uif-InputField" p:label="Statement Text" p:propertyName="currentTransactionType.description" p:width="55%"/>
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Statement Text" p:style="width: 55%;">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-MessageField" p:messageText="@{#line.currentTransactionType.description} (@{#line.transactionTypes.size()})"/>
+                        </list>
+                    </property>
+                </bean>
                 <bean parent="Uif-InputField" p:label="Type" p:propertyName="currentTransactionType.type" p:width="10%"/>
                 <bean parent="Uif-LinkField"  p:linkText="Add new from model"
                       p:href="transactionTypeView?methodToCall=create&amp;viewId=TransactionTypeView&amp;pageId=TransactionTypeCreatePage&amp;model=@{#line.currentTransactionType.id.id}"/>

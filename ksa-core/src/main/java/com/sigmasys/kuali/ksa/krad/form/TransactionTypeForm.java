@@ -33,7 +33,7 @@ public class TransactionTypeForm extends AbstractViewModel {
     private Date startDate;
     private Date endDate;
     private Integer priority;
-    private Long rollupId;
+    private String rollupId;
 
     // Credit types only
     private Integer clearPeriod;
@@ -220,11 +220,11 @@ public class TransactionTypeForm extends AbstractViewModel {
         this.rollupOptionsFinder = rollupOptionsFinder;
     }
 
-    public Long getRollupId() {
+    public String getRollupId() {
         return rollupId;
     }
 
-    public void setRollupId(Long rollupId) {
+    public void setRollupId(String rollupId) {
         this.rollupId = rollupId;
     }
 

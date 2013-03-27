@@ -128,7 +128,7 @@ public class TransactionTypeControllerTest extends AbstractServiceTest {
 
         List<GeneralLedgerType> gltypes = auditableEntityService.getAuditableEntities(GeneralLedgerType.class);
 
-        ModelAndView modelAndView = transactionTypeController.create(form);
+        ModelAndView modelAndView = transactionTypeController.create(form, request);
 
         // Checking assertions
         Assert.notNull(modelAndView);
