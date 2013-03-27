@@ -6,6 +6,15 @@ When /^the registration groups are not copied$/ do
    end
 end
 
+Then /^the registration groups are automatically generated$/ do
+  @course_offering_copy.activity_offering_cluster_list.each do |cluster|
+    on ManageRegistrationGroups do |page|
+      page.get_cluster_status_msg(cluster.private_name).strip.should  match /.*All Registration Groups Generated.*/
+    end
+  end
+end
+
+
 Then /^the activity offering clusters? and assigned AOs are copied over with the course offering$/ do
   @course_offering_copy.manage_registration_groups({:cleanup_existing_clusters => false})
 
