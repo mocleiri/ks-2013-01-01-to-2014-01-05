@@ -246,6 +246,8 @@
 
     <param name="myplan.getting.started.page">https://depts.washington.edu/myplan/welcome-to-myplan/</param>
 
+    <!-- KULRICE-9221 Workaround -->
+    <param name="rice.kim.additionalSpringFiles">classpath:uw-kim-override-config.xml</param>
 
 
 </config>
