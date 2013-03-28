@@ -39,8 +39,9 @@
 [then][]Set global variable "{globalVariable}" to "{attributeValue}" = context.getBrmPaymentService().setGlobalVariableToAttributeValue("{globalVariable}", "{attributeValue}", context);
 [then][]Initialize list of transactions as "{transactions}" = context.getAttributes().put("{transactions}", TransactionUtils.newTransactionList());
 [then][]Initialize list of GL transactions as "{glTransactions}" = context.getAttributes().put("{glTransactions}", TransactionUtils.newGlTransactionList());
-[then][]Get list of transactions from "{startDate}" to "{endDate}", store result in "{transactions}" = context.getBrmPaymentService().getTransactions("{startDate}", "{endDate}", "{transactions}", context);
+[then][]Get list of transactions from "{startDate}" to "{endDate}", store result in "{transactions}" = context.getBrmPaymentService().getActiveTransactions("{startDate}", "{endDate}", "{transactions}", context);
 [then][]Remove allocations from "{transactions}", add result to "{glTransactions}" = context.getBrmPaymentService().removeAllocations("{transactions}", "{glTransactions}", context);
+[then][]Remove "{entries}" from "{transactions}" = context.getBrmPaymentService().removeTransactions("{entries}", "{transactions}", context);
 [then][]Allocate reversals for "{transactions}", add result to "{glTransactions}" = context.getBrmPaymentService().allocateReversals("{transactions}", "{glTransactions}", context);
 [then][]Apply payments for "{transactions}", add result to "{glTransactions}" = context.getBrmPaymentService().applyPayments("{transactions}", "{glTransactions}", context);
 [then][]Apply payments with maximum amount ${amount} for "{transactions}", add result to "{glTransactions}" = context.getBrmPaymentService().applyPayments(new BigDecimal({amount}), "{transactions}", "{glTransactions}", context);

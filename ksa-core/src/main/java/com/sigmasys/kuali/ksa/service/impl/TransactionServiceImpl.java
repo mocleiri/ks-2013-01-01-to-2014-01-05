@@ -1232,7 +1232,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         if (CollectionUtils.isNotEmpty(allocations)) {
 
-            for (Allocation allocation : allocations) {
+            for (Allocation allocation : new HashSet<Allocation>(allocations)) {
 
                 BigDecimal allocatedAmount = (allocation.getAmount() != null) ?
                         allocation.getAmount() : BigDecimal.ZERO;

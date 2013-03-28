@@ -44,6 +44,15 @@ public interface BrmPaymentService {
     void removeAllocations(String inTransactionLists, String outTransactionList, BrmContext context);
 
     /**
+     * Removes specified transaction list(s) from "outTransactionList" list.
+     *
+     * @param inTransactionLists The name(s) of the input transaction list stored in the BRM context
+     * @param outTransactionList The name of the output transaction list stored in the BRM context
+     * @param context            BRM context
+     */
+    void removeTransactions(String inTransactionLists, String outTransactionList, BrmContext context);
+
+    /**
      * Allocates reversals for the given transaction list(s) and stores the result in "outTransactionList" list.
      *
      * @param inTransactionLists The name(s) of the input transaction list stored in the BRM context
@@ -141,13 +150,13 @@ public interface BrmPaymentService {
     void setGlobalVariableToAttributeValue(String globalVariableName, String attributeName, BrmContext context);
 
     /**
-     * Gets the transaction list for the given parameters and stores the result in "outTransactionList" list.
+     * Gets the list of active transactions for the given parameters and stores the result in "outTransactionList" list.
      *
      * @param startDate          Start date
      * @param endDate            End date
      * @param outTransactionList The name of the output transaction list stored in the BRM context
      * @param context            BRM context
      */
-    void getTransactions(String startDate, String endDate, String outTransactionList, BrmContext context);
+    void getActiveTransactions(String startDate, String endDate, String outTransactionList, BrmContext context);
 
 }

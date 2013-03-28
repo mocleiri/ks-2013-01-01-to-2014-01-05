@@ -177,6 +177,8 @@ Apply payments for "finaidPayments2012, charges2012", add result to "glTransacti
 Apply payments with maximum amount $200 for "finaidPayments2012, allCharges", add result to "glTransactions"
 Apply payments with maximum amount $200 for "finaidPayments2011,allCharges", add result to "glTransactions"
 
+Remove "finaidPayments2011, finaidPayments2012" from "transactions"
+
 Calculate matrix scores for "transactions"
 Sort "transactions" by matrix score in ascending order
 

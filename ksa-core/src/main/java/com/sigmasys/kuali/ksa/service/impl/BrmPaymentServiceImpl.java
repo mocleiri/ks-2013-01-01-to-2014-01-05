@@ -1,9 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
-import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.GlTransaction;
-import com.sigmasys.kuali.ksa.model.Transaction;
-import com.sigmasys.kuali.ksa.model.TransactionTypeValue;
+import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.BrmPaymentService;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
@@ -124,7 +121,7 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
                 }
             }
             if (listNamesArray.length == 1) {
-               return items;
+                return items;
             }
             resultList.addAll(items);
         }
@@ -174,6 +171,24 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
         List<Transaction> transactions = toList(inTransactionLists, context, false);
         List<GlTransaction> glTransactions = transactionService.removeAllAllocations(transactions);
         toList(outTransactionList, context, true).addAll(glTransactions);
+    }
+
+    /**
+     * Removes specified transaction list(s) from "outTransactionList" list.
+     *
+     * @param inTransactionLists The name(s) of the input transaction list stored in the BRM context
+     * @param outTransactionList The name of the output transaction list stored in the BRM context
+     * @param context            BRM context
+     */
+    @Override
+    public void removeTransactions(String inTransactionLists, String outTransactionList, BrmContext context) {
+        List<Transaction> inTransactions = toList(inTransactionLists, context, false);
+        List<Transaction> outTransactions = toList(outTransactionList, context, false);
+        logger.debug("Number of transactions before removal " + outTransactions.size());
+        logger.debug("Removing " + inTransactions.size() + " transactions...");
+        outTransactions = TransactionUtils.subtract(outTransactions, inTransactions);
+        logger.debug("Number of transactions after removal " + outTransactions.size());
+        context.getAttributes().put(outTransactionList, outTransactions);
     }
 
     /**
@@ -320,7 +335,7 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
     }
 
     /**
-     * Gets the transaction list for the given parameters and stores the result in "outTransactionList" list.
+     * Gets the list of active transactions for the given parameters and stores the result in "outTransactionList" list.
      *
      * @param startDate          Start date
      * @param endDate            End date
@@ -328,13 +343,21 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
      * @param context            BRM context
      */
     @Override
-    public void getTransactions(String startDate, String endDate, String outTransactionList, BrmContext context) {
+    public void getActiveTransactions(String startDate, String endDate, String outTransactionList, BrmContext context) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
             Date fromDate = dateFormat.parse(startDate);
             Date toDate = dateFormat.parse(endDate);
             String userId = context.getAccount().getId();
             List<Transaction> transactions = transactionService.getTransactions(userId, fromDate, toDate);
+            if (CollectionUtils.isNotEmpty(transactions)) {
+                for (Iterator<Transaction> iterator = transactions.iterator(); iterator.hasNext(); ) {
+                    Transaction transaction = iterator.next();
+                    if (transaction.getStatus() != TransactionStatus.ACTIVE) {
+                        transactions.remove(transaction);
+                    }
+                }
+            }
             context.getAttributes().put(outTransactionList, transactions);
         } catch (ParseException pe) {
             logger.error("Date format is incorrect: " + pe.getMessage(), pe);
