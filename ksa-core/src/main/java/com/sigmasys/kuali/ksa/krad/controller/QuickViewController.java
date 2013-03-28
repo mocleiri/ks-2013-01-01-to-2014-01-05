@@ -190,29 +190,6 @@ public class QuickViewController extends GenericSearchController {
     }
 
     /**
-     * perform Payment Application.
-     *
-     * @param form Kuali form instance
-     * @return ModelandView
-     */
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=paymentApplication")
-    public ModelAndView paymentApplication(@ModelAttribute("KualiForm") QuickViewForm form) {
-
-        String accountId = form.getAccount().getId();
-
-        if (accountId != null && !accountId.trim().isEmpty()) {
-            paymentService.paymentApplication(accountId);
-
-            form.setStatusMessage("Payments successfully applied");
-            // populate the form using the id
-            populateForm(accountId, form);
-        }
-
-        return getUIFModelAndView(form);
-    }
-
-
-    /**
      * @param form
      * @param request
      * @return

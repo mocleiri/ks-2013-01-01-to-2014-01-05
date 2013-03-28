@@ -1,11 +1,13 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
+import com.sigmasys.kuali.ksa.krad.form.QuickViewForm;
 import com.sigmasys.kuali.ksa.krad.form.TransactionForm;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 
 import com.sigmasys.kuali.ksa.service.InformationService;
+import com.sigmasys.kuali.ksa.service.PaymentService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +33,9 @@ public class TransactionController extends GenericSearchController {
 
     @Autowired
     private InformationService informationService;
+
+    @Autowired
+    private PaymentService paymentService;
 
 
     /**
@@ -149,6 +154,46 @@ public class TransactionController extends GenericSearchController {
 
         return mv;
     }
+
+    /**
+     * perform Payment Application.
+     *
+     * @param form Kuali form instance
+     * @return ModelandView
+     */
+    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=paymentApplication")
+    public ModelAndView paymentApplication(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+
+        String accountId = request.getParameter("userId");
+
+        if (accountId != null && !accountId.trim().isEmpty()) {
+            paymentService.paymentApplication(accountId);
+
+            form.setStatusMessage("Payments successfully applied");
+
+        }
+
+        ModelAndView mv = getUIFModelAndView(form);
+        Properties props = new Properties();
+        String refreshLocation = request.getParameter("refresh");
+        if(refreshLocation == null){
+            refreshLocation = "transactionView";
+        }
+
+        if(refreshLocation.equals("quickView")){
+            props.put("viewId", "QuickView");
+
+        } else {
+            props.put("pageId", "ViewTransactions");
+            props.put("viewId", "TransactionView");
+        }
+        props.put("methodToCall", "get");
+        props.put("userId", accountId);
+
+        return performRedirect(form, refreshLocation, props);
+    }
+
+
 
 
     private void populateRollups(TransactionForm form, List<TransactionModel> transactions) {

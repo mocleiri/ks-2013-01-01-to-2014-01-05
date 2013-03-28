@@ -71,27 +71,44 @@
     <bean name="transactionDisplay" parent="Uif-VerticalBoxSection">
         <property name="items">
         <list>
-            <bean parent="Uif-HorizontalFieldGroup" p:label="Filter Transactions">
+            <bean parent="Uif-Disclosure-VerticalBoxSection">
+                <property name="headerText" value="Optional Actions"/>
                 <property name="items">
                     <list>
-                        <bean parent="Uif-InputField" p:propertyName="startingDate" p:labelPlacement="LEFT" p:label="From"
-                              p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
-                            <property name="control">
-                                <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
-                            </property>
-                        </bean>
-                        <bean parent="Uif-InputField" p:propertyName="endingDate" p:labelPlacement="LEFT" p:label="to"
-                              p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
-                            <property name="control">
-                                <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
-                            </property>
-                        </bean>
+                        <bean parent="Uif-Link" p:linkText="Run Payment Application"
+                              p:href="transactionView?methodToCall=paymentApplication&amp;pageId=ViewTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
 
-                        <bean parent="Uif-SecondaryActionButton-Small"
-                              p:methodToCall="get"
-                              p:actionLabel="Filter"
-                              p:onClickScript="writeHiddenToForm(&quot;userId&quot;, &quot;@{account.id}&quot;);">
-                        </bean>
+                    </list>
+                </property>
+            </bean>
+            <bean parent="Uif-Disclosure-VerticalBoxSection">
+                <property name="headerText" value="Filter Transactions"/>
+                <property name="items">
+                    <list>
+                    <bean parent="Uif-HorizontalFieldGroup" >
+                        <property name="items">
+                            <list>
+                                <bean parent="Uif-InputField" p:propertyName="startingDate" p:labelPlacement="LEFT" p:label="From"
+                                      p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
+                                    <property name="control">
+                                        <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                                    </property>
+                                </bean>
+                                <bean parent="Uif-InputField" p:propertyName="endingDate" p:labelPlacement="LEFT" p:label="to"
+                                      p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
+                                    <property name="control">
+                                        <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                                    </property>
+                                </bean>
+
+                                <bean parent="Uif-SecondaryActionButton-Small"
+                                      p:methodToCall="get"
+                                      p:actionLabel="Filter"
+                                      p:onClickScript="writeHiddenToForm(&quot;userId&quot;, &quot;@{account.id}&quot;);">
+                                </bean>
+                            </list>
+                        </property>
+                    </bean>
                     </list>
                 </property>
             </bean>

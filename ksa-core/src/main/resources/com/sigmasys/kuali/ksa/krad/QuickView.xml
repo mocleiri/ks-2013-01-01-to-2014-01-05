@@ -214,11 +214,8 @@
                             <bean parent="Uif-VerticalBoxGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="Uif-SecondaryActionButton-Small"
-                                              p:methodToCall="paymentApplication"
-                                              p:actionLabel="Perform Payment Application"
-                                              p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
-                                        </bean>
+                                        <bean parent="Uif-Link" p:linkText="Run Payment Application"
+                                              p:href="transactionView?methodToCall=paymentApplication&amp;pageId=ViewTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}&amp;refresh=quickView"/>
 
                                         <bean parent="Uif-Link" p:linkText="Details"
                                               p:href="transactionView?methodToCall=get&amp;pageId=ViewTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
