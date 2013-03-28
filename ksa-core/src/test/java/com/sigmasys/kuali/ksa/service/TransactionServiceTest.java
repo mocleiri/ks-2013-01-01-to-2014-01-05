@@ -1388,16 +1388,17 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
     @Test
     public void getGlBreakdowns() throws Exception {
-        String id = "1001";
-        Integer subcode = 1;
 
-        TransactionTypeId ttId = new TransactionTypeId(id, subcode);
+        String id = "1001";
+        Integer subCode = 1;
+
+        TransactionTypeId ttId = new TransactionTypeId(id, subCode);
 
         TransactionType tt = transactionService.getTransactionType(ttId);
 
         Assert.isTrue(tt instanceof DebitType, "Transaction Type must be a DebitType");
 
-        List<GlBreakdown> breakdowns = transactionService.getGlBreakdowns((DebitType)tt);
+        List<GlBreakdown> breakdowns = transactionService.getGlBreakdowns((DebitType) tt);
 
         Assert.notNull(breakdowns);
         Assert.notEmpty(breakdowns);

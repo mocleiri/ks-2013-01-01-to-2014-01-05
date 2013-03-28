@@ -2701,22 +2701,20 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
     /**
      * Retrieve a list of all GL Breakdowns for a given transaction type
+     *
      * @param transactionType Transaction Type to search
      * @return list of GlBreakdown
      */
     @Override
-    public List<GlBreakdown> getGlBreakdowns(DebitType transactionType){
+    public List<GlBreakdown> getGlBreakdowns(DebitType transactionType) {
 
-        Query query = em.createQuery("select g from GlBreakdown g where " +
-                                    " g.debitType =  :debitType " +
-                                    " order by g.breakdown desc");
+        Query query = em.createQuery("select g from GlBreakdown g " +
+                " left outer join fetch g.generalLedgerType glt " +
+                " where g.debitType =  :debitType " +
+                " order by g.breakdown desc");
 
         query.setParameter("debitType", transactionType);
-
-        List<GlBreakdown> breakdowns = query.getResultList();
-
-        return breakdowns;
-
+        return query.getResultList();
     }
 
 
