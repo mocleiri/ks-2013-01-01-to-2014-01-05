@@ -172,7 +172,7 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
     @Override
     public void removeAllocations(String inTransactionLists, String outTransactionList, BrmContext context) {
         List<Transaction> transactions = toList(inTransactionLists, context, false);
-        List<GlTransaction> glTransactions = transactionService.removeAllocations(transactions);
+        List<GlTransaction> glTransactions = transactionService.removeAllAllocations(transactions);
         toList(outTransactionList, context, true).addAll(glTransactions);
     }
 

@@ -222,7 +222,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         createAllocation();
 
-        transactionService.removeAllocations(transaction2.getId());
+        transactionService.removeAllAllocations(transaction2.getId());
 
     }
 

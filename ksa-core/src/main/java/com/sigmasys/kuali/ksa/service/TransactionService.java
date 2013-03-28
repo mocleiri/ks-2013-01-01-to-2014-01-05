@@ -412,13 +412,13 @@ public interface TransactionService {
     CompositeAllocation createLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount, boolean isQueued);
 
     /**
-     * Removes all allocations associated with the given transactions
+     * Removes all allocations (locked and non-locked) associated with the given transactions
      * <p/>
      *
      * @param transactionId transaction ID
      * @return list of generated GL transactions
      */
-    List<GlTransaction> removeAllocations(Long transactionId);
+    List<GlTransaction> removeAllAllocations(Long transactionId);
 
     /**
      * Retrieves all allocations associated with the given transaction by ID.
@@ -430,24 +430,24 @@ public interface TransactionService {
     List<Allocation> getAllocations(Long transactionId);
 
     /**
-     * Removes all allocations associated with the given Account ID
+     * Removes all allocations (locked and non-locked) associated with the given Account ID
      * <p/>
      *
      * @param userId Account ID
      * @return list of generated GL transactions
      */
     @WebMethod(exclude = true)
-    List<GlTransaction> removeAllocations(String userId);
+    List<GlTransaction> removeAllAllocations(String userId);
 
     /**
-     * Removes all allocations associated with the given transaction list.
+     * Removes all allocations (locked and non-locked) associated with the given transaction list.
      * <p/>
      *
      * @param transactions list of transactions for which allocations have to be removed
      * @return list of generated GL transactions
      */
     @WebMethod(exclude = true)
-    List<GlTransaction> removeAllocations(List<Transaction> transactions);
+    List<GlTransaction> removeAllAllocations(List<Transaction> transactions);
 
     /**
      * Removes allocation between two given transactions
