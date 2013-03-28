@@ -17,12 +17,17 @@ public class TransactionTypeModel extends TransactionType {
 
     private TransactionType parentEntity;
 
+    private List<Tag> tags;
+    private String tagList;
+
     private String rollupText;
 
     private List<GlBreakdown> glBreakdowns;
     private String glBreakdownType;
 
     private String glBreakdownTooltip;
+
+    private String auditTooltip;
 
     public TransactionTypeModel() {
     }
@@ -48,11 +53,42 @@ public class TransactionTypeModel extends TransactionType {
             this.setGlBreakdownType("None");
         }
 
+        this.setTags(parentEntity.getTags());
 
     }
 
     public TransactionType getTransactionType() {
         return parentEntity;
+    }
+
+    public String getTagList() {
+        return tagList;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+
+        if (tags == null || tags.size() == 0) {
+            this.tagList = "None";
+            return;
+        }
+
+        StringBuilder tagList = new StringBuilder();
+        boolean first = true;
+        for (Tag tag : tags) {
+            if (!first) {
+                tagList.append(", ");
+            } else {
+                first = false;
+            }
+            tagList.append(tag.getCode());
+        }
+
+        this.tagList = tagList.toString();
     }
 
     @Override

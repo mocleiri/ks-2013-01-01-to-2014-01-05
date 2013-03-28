@@ -42,9 +42,9 @@
                     <property name="headerText" value="Transaction Types"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-HorizontalBoxSection">
-                            </bean>
-                            <bean parent="Uif-Link" p:linkText="Insert" p:target="_self"
+                            <bean parent="Uif-HeaderFour" p:headerText="View Transaction Types"/>
+                            <bean parent="Uif-Message" p:style="width: 80%" p:messageText="The transaction type is a very important type in the KSA system.  Transactions contain the fundamental information that is used to support a number of complex operations.  Once a transaction is saved to the KSA ledger, few parts of it can be altered."/>
+                            <bean parent="Uif-Link" p:linkText="Create New Transaction Type" p:target="_self"
                                   p:href="transactionTypeView?methodToCall=create&amp;viewId=TransactionTypeView&amp;pageId=TransactionTypeCreatePage"/>
                             <!--<ref bean="addSection"/>-->
                             <ref bean="tableTransactionTypeSection"/>
@@ -181,6 +181,25 @@
                     <property name="items">
                     <list>
                         <bean parent="Uif-InputField" p:propertyName="transactionType.description"/>
+                        <bean parent="Uif-ImageField" p:source="../images/tag.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
+                              p:render="@{#line.tags.size() > 0}">
+                            <property name="toolTip">
+                                <bean parent="Uif-Tooltip" p:tooltipContent="Tags: @{#line.tagList}"/>
+                            </property>
+                        </bean>
+                        <!--
+                        p:onClickScript="showLightboxComponent('tagLightboxTransactionType@{#lineSuffix}');"
+                        <bean id="tagLightboxTransactionType" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                            <property name="hidden" value="true"/>
+                            <property name="items">
+                                <list>
+                                    <bean parent="Uif-HeaderTwo" p:headerText="Transaction Type Tags"/>
+                                    <ref bean="tagGroup"/>
+
+                                </list>
+                            </property>
+                        </bean>
+                        -->
                     </list>
                     </property>
                 </bean>

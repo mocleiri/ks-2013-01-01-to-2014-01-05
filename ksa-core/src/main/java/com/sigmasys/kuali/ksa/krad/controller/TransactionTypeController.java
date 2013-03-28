@@ -14,6 +14,9 @@ import com.sigmasys.kuali.ksa.service.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
+import org.kuali.rice.krad.messages.providers.ResourceMessageProvider;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -271,6 +274,12 @@ public class TransactionTypeController extends GenericSearchController {
 
         form.setStatusMessage("Transaction Type added");
 
+        MessageMap messages = GlobalVariables.getMessageMap();
+        //ResourceMessageProvider p;
+        if(messages != null){
+            GlobalVariables.getMessageMap().putInfo("TransactionTypeView", "tjb", "Course Title");
+            //messages.addGrowlMessage("Success", "Transaction Type added");
+        }
         return getUIFModelAndView(form);
     }
 
