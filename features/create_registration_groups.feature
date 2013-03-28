@@ -179,7 +179,6 @@ As an Administrator, I want to create registration groups for a Course Offering
 #    When I set an course offering to '???' #how change course offering status
 #    And I generate unconstrained registration groups
 #    Then registration groups are not generated for the course offering in '???' status
-   @draft
    Scenario: Validate Registration group numbers
      Given I manage registration groups for a course offering with multiple activity types
      When I create an activity offering cluster

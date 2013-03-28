@@ -86,6 +86,18 @@ class ManageCourseOfferings < BasePage
 
   action(:go) { |b| b.frm.button(text: "Go").click; b.loading.wait_while_present }
 
+  def ao_type(code)
+    target_row(code).cells[AO_TYPE].text
+  end
+
+  def ao_format(code)
+    target_row(code).cells[AO_FORMAT].text
+  end
+
+  def ao_max_enr(code)
+    target_row(code).cells[AO_MAX_ENR].text
+  end
+
   def view_activity_offering(code)
     view_activity_offering_link(code).click
     loading.wait_while_present

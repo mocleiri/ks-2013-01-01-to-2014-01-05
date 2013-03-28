@@ -496,6 +496,6 @@ When /^the correct number of registration groups are created$/ do
     page.view_cluster_reg_groups(@ao_cluster.private_name)
   end
   on ViewRegistrationGroups do |page|
-    page.reg_group_list.length.should == 3
+    page.reg_group_list.length.should ==  @course_offering.ao_obj_list.count{|x| x.activity_type == "Lab"} * @course_offering.ao_obj_list.count{|x| x.activity_type == "Lecture"}
   end
 end

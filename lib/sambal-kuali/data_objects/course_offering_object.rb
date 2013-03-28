@@ -16,7 +16,6 @@
 #  @course_offering = create CourseOffering, [:course => "CHEM317",...]
 # Note the use of the ruby options hash pattern re: setting attribute values
 class CourseOffering
-
   include Foundry
   include DataFactory
   include DateFactory
@@ -31,6 +30,7 @@ class CourseOffering
   #generally set using options hash
   attr_accessor :activity_offering_cluster_list,
                 :ao_list,
+                :ao_obj_list,
                 :affiliated_person_list,
                 :affiliated_org_list
   #generally set using options hash
@@ -81,6 +81,7 @@ class CourseOffering
         :suffix=>"",
         :activity_offering_cluster_list=>[],
         :ao_list => [],
+        :ao_obj_list => [],
         :final_exam_type => "STANDARD",
         :wait_list => "YES",
         :wait_list_level => "Course Offering",
@@ -277,10 +278,13 @@ class CourseOffering
     on ManageCourseOfferings do |page|
       begin
         @ao_list = page.codes_list
+        @ao_list.each do |ao|
+        ao_obj_temp = make ActivityOffering, :code => ao, :activity_type => page.ao_type(ao), :format => page.ao_format(ao),:max_enrollment => page.ao_max_enr(ao)
+        @ao_obj_list.push(ao_obj_temp)
+        end
       rescue
         @ao_list = []
       end
-
     end
   end
 
