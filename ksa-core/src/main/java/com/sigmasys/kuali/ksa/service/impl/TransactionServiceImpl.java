@@ -1074,23 +1074,20 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         Query query = em.createQuery("select distinct a from Allocation a " +
-                " left outer join fetch a.firstTransaction t1 " +
-                " left outer join fetch a.secondTransaction t2 " +
-                " where t1.id = :id or t2.id = :id");
+                " where a.firstTransaction.id = :id or a.secondTransaction.id = :id");
 
         query.setParameter("id", transactionId);
 
         List<Allocation> allocations = query.getResultList();
 
         List<GlTransaction> glTransactions = new LinkedList<GlTransaction>();
-        for (Allocation allocation : allocations) {
-            Long transactionId1 = allocation.getFirstTransaction().getId();
-            Long transactionId2 = allocation.getSecondTransaction().getId();
-            glTransactions.addAll(removeAllocation(transactionId1, transactionId2, true, allocation.isLocked()));
+        if (CollectionUtils.isNotEmpty(allocations)) {
+            for (Allocation allocation : new HashSet<Allocation>(allocations)) {
+                glTransactions.addAll(removeAllocation(allocation, true));
+            }
         }
 
         return glTransactions;
-
     }
 
     /**
@@ -1201,6 +1198,60 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return removeAllocation(transactionId1, transactionId2, isQueued, true);
     }
 
+    protected List<GlTransaction> removeAllocation(Allocation allocation, boolean isQueued) {
+
+        List<GlTransaction> glTransactions = new LinkedList<GlTransaction>();
+
+        boolean locked = allocation.isLocked();
+
+        Transaction transaction1 = allocation.getFirstTransaction();
+        Transaction transaction2 = allocation.getSecondTransaction();
+
+        BigDecimal allocatedAmount = (allocation.getAmount() != null) ? allocation.getAmount() : BigDecimal.ZERO;
+
+        BigDecimal allocatedAmount1 = locked ? transaction1.getLockedAllocatedAmount() :
+                transaction1.getAllocatedAmount();
+
+        BigDecimal allocatedAmount2 = locked ? transaction2.getLockedAllocatedAmount() :
+                transaction2.getAllocatedAmount();
+
+        if (allocatedAmount1 == null) {
+            allocatedAmount1 = BigDecimal.ZERO;
+        }
+
+        if (allocatedAmount2 == null) {
+            allocatedAmount2 = BigDecimal.ZERO;
+        }
+
+        BigDecimal newAmount1 = allocatedAmount1.subtract(allocatedAmount);
+        BigDecimal newAmount2 = allocatedAmount2.subtract(allocatedAmount);
+
+        if (locked) {
+            transaction1.setLockedAllocatedAmount(newAmount1);
+            transaction2.setLockedAllocatedAmount(newAmount2);
+        } else {
+            transaction1.setAllocatedAmount(newAmount1);
+            transaction2.setAllocatedAmount(newAmount2);
+        }
+
+        deleteEntity(allocation.getId(), Allocation.class);
+
+        // Creating GL transactions for charge+payment or payment+charge only
+        if ((transaction1.getTransactionTypeValue() == TransactionTypeValue.CHARGE &&
+                transaction2.getTransactionTypeValue() != TransactionTypeValue.PAYMENT) ||
+                (transaction1.getTransactionTypeValue() == TransactionTypeValue.PAYMENT &&
+                        transaction2.getTransactionTypeValue() != TransactionTypeValue.CHARGE)) {
+            String statement = configService.getParameter(Constants.DEFAULT_GL_PA_STATEMENT);
+            Pair<GlTransaction, GlTransaction> pair =
+                    createGlTransactions(transaction1, transaction2, allocatedAmount, statement, isQueued);
+            glTransactions.add(pair.getA());
+            glTransactions.add(pair.getB());
+        }
+
+        return glTransactions;
+
+    }
+
     protected List<GlTransaction> removeAllocation(Long transactionId1, Long transactionId2,
                                                    boolean isQueued, boolean locked) {
 
@@ -1233,50 +1284,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         if (CollectionUtils.isNotEmpty(allocations)) {
 
             for (Allocation allocation : new HashSet<Allocation>(allocations)) {
-
-                BigDecimal allocatedAmount = (allocation.getAmount() != null) ?
-                        allocation.getAmount() : BigDecimal.ZERO;
-
-                BigDecimal allocatedAmount1 = locked ? transaction1.getLockedAllocatedAmount() :
-                        transaction1.getAllocatedAmount();
-
-                BigDecimal allocatedAmount2 = locked ? transaction2.getLockedAllocatedAmount() :
-                        transaction2.getAllocatedAmount();
-
-                if (allocatedAmount1 == null) {
-                    allocatedAmount1 = BigDecimal.ZERO;
-                }
-
-                if (allocatedAmount2 == null) {
-                    allocatedAmount2 = BigDecimal.ZERO;
-                }
-
-                BigDecimal newAmount1 = allocatedAmount1.subtract(allocatedAmount);
-                BigDecimal newAmount2 = allocatedAmount2.subtract(allocatedAmount);
-
-                if (locked) {
-                    transaction1.setLockedAllocatedAmount(newAmount1);
-                    transaction2.setLockedAllocatedAmount(newAmount2);
-                } else {
-                    transaction1.setAllocatedAmount(newAmount1);
-                    transaction2.setAllocatedAmount(newAmount2);
-                }
-
-                deleteEntity(allocation.getId(), Allocation.class);
-
-                // Creating GL transactions for charge+payment or payment+charge only
-                if ((transaction1.getTransactionTypeValue() == TransactionTypeValue.CHARGE &&
-                        transaction2.getTransactionTypeValue() != TransactionTypeValue.PAYMENT) ||
-                        (transaction1.getTransactionTypeValue() == TransactionTypeValue.PAYMENT &&
-                                transaction2.getTransactionTypeValue() != TransactionTypeValue.CHARGE)) {
-                    String statement = configService.getParameter(Constants.DEFAULT_GL_PA_STATEMENT);
-                    Pair<GlTransaction, GlTransaction> pair =
-                            createGlTransactions(transaction1, transaction2, allocatedAmount, statement, isQueued);
-                    glTransactions.add(pair.getA());
-                    glTransactions.add(pair.getB());
-                }
-
+                glTransactions.addAll(removeAllocation(allocation, isQueued));
             }
+
         } else {
             logger.warn("Allocation does not exist for transactions: '" + transactionId1 +
                     "' and '" + transactionId2 + "'");
