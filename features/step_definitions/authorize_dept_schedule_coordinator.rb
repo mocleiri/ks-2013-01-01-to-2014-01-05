@@ -15,6 +15,12 @@ Then /^I do not have access to add or edit seat pools$/ do
   end
 end
 
+Then /^I do not have access to seat pools$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.seat_pools_table.present?.should be_false
+  end
+end
+
 When /^I attempt to edit a course not in my admin org$/ do
   @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
   @course_offering.search_by_coursecode

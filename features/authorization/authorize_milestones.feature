@@ -74,7 +74,7 @@ Feature: Authorize Milestones Feature
     Then I do not have access to edit the activity code
     And I do not have access to edit maximum enrollment
     And I have access to add or edit affiliated personnel
-    And I do not have access to add or edit seat pools
+    And I do not have access to seat pools
     And I do not have access to add new delivery logistics
     And I have access to edit the honors flag
     And I have access to edit the course url
