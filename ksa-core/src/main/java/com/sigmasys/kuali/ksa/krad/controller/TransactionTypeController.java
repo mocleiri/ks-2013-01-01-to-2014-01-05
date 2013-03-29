@@ -13,6 +13,7 @@ import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 import org.kuali.rice.krad.messages.providers.ResourceMessageProvider;
 import org.kuali.rice.krad.util.GlobalVariables;
@@ -132,8 +133,11 @@ public class TransactionTypeController extends GenericSearchController {
     public ModelAndView create(@ModelAttribute("KualiForm") TransactionTypeForm form, HttpServletRequest request) {
 
         form.reset();
+        form.setType("C");
 
         String modelToCopy = request.getParameter("model");
+        List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>();
+
         if(modelToCopy != null){
             TransactionType ttSource = transactionService.getTransactionType(modelToCopy, new Date());
 
@@ -153,22 +157,16 @@ public class TransactionTypeController extends GenericSearchController {
                 form.setTags(tags);
                 //form.setGlBreakdowns(ttSource.get);
 
+                List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns((DebitType)ttSource);
+
+                for (GlBreakdown sourceBreakdown : sourceBreakdowns) {
+                    GlBreakdownModel breakdownModel = new GlBreakdownModel();
+                    breakdownModel.setOperation(sourceBreakdown.getGlOperation().getId());
+                    breakdownModel.setBreakdown(sourceBreakdown.getBreakdown());
+                    breakdowns.add(breakdownModel);
+                }
+
             }
-        }
-
-
-        List<GeneralLedgerType> gltypes = auditableEntityService.getAuditableEntities(GeneralLedgerType.class);
-
-        List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>(gltypes.size());
-
-        for (GeneralLedgerType type : gltypes) {
-            GlBreakdown b = new GlBreakdown();
-            GlBreakdownModel breakdownModel = new GlBreakdownModel();
-            breakdownModel.setParentBreakdown(b);
-            b.setGeneralLedgerType(type);
-            b.setGlOperation(type.getGlOperationOnCharge());
-            b.setBreakdown(new BigDecimal(0.0));
-            breakdowns.add(breakdownModel);
         }
 
         form.setGlBreakdowns(breakdowns);
@@ -242,26 +240,41 @@ public class TransactionTypeController extends GenericSearchController {
             BigDecimal total = new BigDecimal(0);
             List<GlBreakdown> breakdowns = new ArrayList<GlBreakdown>();
 
-            for (GlBreakdownModel breakdownModel : form.getGlBreakdowns()) {
-                GlBreakdown breakdown = breakdownModel.getParentBreakdown();
+            // For now, all breakdowns use the default GL Account
+            GeneralLedgerType defaultGlType = glService.getDefaultGeneralLedgerType();
 
-                breakdown.setGlAccount(breakdown.getGeneralLedgerType().getGlAccountId());
+            boolean zeroRow = false;
+
+            for (GlBreakdownModel breakdownModel : form.getGlBreakdowns()) {
+                GlBreakdown breakdown = new GlBreakdown();
+
+                breakdown.setGeneralLedgerType(defaultGlType);
+
+                breakdown.setGlAccount(breakdownModel.getGlAccount());
                 if (!glService.isGlAccountValid(breakdown.getGlAccount())) {
-                    throw new GeneralLedgerTypeNotFoundException("GL Account: '" + breakdown.getGlAccount() + "' is invalid");
+                    GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, "GL Account '" + breakdown.getGlAccount() + "' is not valid");
+                    return getUIFModelAndView(form);
                 }
+
+                GlOperationType operationType = (GlOperationType.CREDIT.getId().equals(breakdownModel.getOperation())) ?
+                                                GlOperationType.CREDIT : GlOperationType.DEBIT;
+
+                breakdown.setGlOperation(operationType);
 
                 breakdown.setDebitType((DebitType) tt);
                 BigDecimal b = breakdown.getBreakdown();
-                if (b.compareTo(BigDecimal.ZERO) != 0) {
-                    // Don't save when the breakdown is 0
-                    breakdowns.add(breakdown);
-                }
                 total.add(b);
 
-
+                if(BigDecimal.ZERO.equals(b)){
+                    zeroRow = true;
+                }
                 if (total.compareTo(BigDecimal.ONE) == 1) {
                     // Error, the numbers exceed the allowable amount.
                 }
+            }
+
+            if(!zeroRow){
+                // Tell the user here that there needs to be a row with a 0 amount
             }
 
             GeneralLedgerType defatulGlType = glService.getDefaultGeneralLedgerType();
@@ -270,9 +283,14 @@ public class TransactionTypeController extends GenericSearchController {
             }
             transactionService.createGlBreakdowns(defatulGlType.getId(), ttId, breakdowns);
 
+        } else {
+            String unAllocatedGlOperation = form.getUnallocatedGLOperation();
+            GlOperationType unallocatedGlOperationType = (GlOperationType.CREDIT.getId().equals(unAllocatedGlOperation)) ?
+                    GlOperationType.CREDIT : GlOperationType.DEBIT;
+            ((CreditType)tt).setUnallocatedGlOperation(unallocatedGlOperationType);
         }
 
-        form.setStatusMessage("Transaction Type added");
+        GlobalVariables.getMessageMap().putInfo("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, "Transaction Type added");
 
         /*
         MessageMap messages = GlobalVariables.getMessageMap();

@@ -30,6 +30,7 @@ public class HighPrecisionPercentageFormatter extends Formatter {
     public Object convertToObject(String target) {
 
         try {
+
             NumberFormat percentFormat = NumberFormat.getPercentInstance();
             percentFormat.setMaximumFractionDigits(PERCENTAGE_SCALE);
 
@@ -42,8 +43,20 @@ public class HighPrecisionPercentageFormatter extends Formatter {
             throw new FormatException("parsing", RiceKeyConstants.ERROR_PERCENTAGE, target, e);
         }
         catch (ParseException e) {
-            logger.error("ParseException: ", e);
-            throw new FormatException("parsing", RiceKeyConstants.ERROR_PERCENTAGE, target, e);
+            // If they didn't include the % then try it as a number
+            NumberFormat decimalFormat = NumberFormat.getNumberInstance();
+            decimalFormat.setMaximumFractionDigits(PERCENTAGE_SCALE);
+
+
+            try{
+                Number parsedNumber = decimalFormat.parse(target.trim());
+                // Percent Format will already divide by 100
+                return new BigDecimal(parsedNumber.doubleValue() / 100);
+            } catch(Exception e2){
+                // ParseException would have already been caught, safe to ignore here
+                logger.error("NumberFormatException: ", e2);
+                throw new FormatException("parsing", RiceKeyConstants.ERROR_PERCENTAGE, target, e2);
+            }
         }
     }
 

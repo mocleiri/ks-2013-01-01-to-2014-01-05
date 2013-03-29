@@ -1,14 +1,11 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
 import com.sigmasys.kuali.ksa.krad.util.HighPrecisionPercentageFormatter;
-import com.sigmasys.kuali.ksa.model.GlBreakdown;
 
 import java.math.BigDecimal;
 
 
 public class GlBreakdownModel {
-
-    private GlBreakdown parentBreakdown;
 
     // Theoretically it is possible to get KRAD to validate the breakdown without
     // converting it to a string here and to use this formatter directly in the XML view
@@ -16,27 +13,44 @@ public class GlBreakdownModel {
     // that this whole class can go away and use the facilities of KRAD directly.
     private HighPrecisionPercentageFormatter formatter = new HighPrecisionPercentageFormatter();
 
-    public GlBreakdown getParentBreakdown() {
-        return parentBreakdown;
-    }
+    private String operation;
 
-    public void setParentBreakdown(GlBreakdown parentBreakdown) {
-        this.parentBreakdown = parentBreakdown;
-    }
+    private String glAccount;
+
+    private BigDecimal breakdown;
 
     public String getBreakdownString(){
-        if(parentBreakdown == null){
-            return null;
-        }
-        return (String)formatter.format(parentBreakdown.getBreakdown());
+        return (String)formatter.format(getBreakdown());
     }
 
     public void setBreakdownString(String str){
-        if(parentBreakdown == null){
-            //Ack!
-        } else {
-            BigDecimal dec = (BigDecimal)formatter.convertToObject(str);
-            parentBreakdown.setBreakdown(dec);
+            setBreakdown((BigDecimal)formatter.convertToObject(str));
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getGlAccount() {
+        return glAccount;
+    }
+
+    public void setGlAccount(String glAccount) {
+        this.glAccount = glAccount;
+    }
+
+    public BigDecimal getBreakdown() {
+        if(breakdown == null){
+            breakdown = BigDecimal.ZERO;
         }
+        return breakdown;
+    }
+
+    public void setBreakdown(BigDecimal breakdown) {
+        this.breakdown = breakdown;
     }
 }

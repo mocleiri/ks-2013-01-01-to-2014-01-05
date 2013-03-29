@@ -287,11 +287,9 @@
         <property name="title" value="Transaction Type Details View"/>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="type" p:labelPlacement="TOP"
-                      p:label="Transaction Type">
+                <bean parent="Uif-InputField" p:propertyName="type" p:labelPlacement="TOP" p:label="Transaction Type">
                     <property name="control">
-                        <bean parent="Uif-DropdownControl"
-                              p:options-ref="TransactionTypeList"/>
+                        <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeList"/>
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="code" p:label="Transaction Code" p:labelPlacement="TOP" p:required="true">
@@ -342,6 +340,13 @@
                     </property>
                     <property name="optionsFinder" value="@{getRollupOptionsFinder()}"/>
                 </bean>
+
+                <bean parent="Uif-InputField" p:label="Unallocated GL Operation" p:propertyName="unallocatedGLOperation" p:progressiveRender="@{#dp.type eq 'C'}">
+                    <property name="control">
+                        <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeList"/>
+                    </property>
+
+                </bean>
 <!--
                 <bean parent="Uif-InputField" p:propertyName="priority" p:label="Priority" p:labelPlacement="TOP">
                     <property name="control">
@@ -389,7 +394,7 @@
                       p:instructionalText=""
                       p:disclosure.render="false"
                       p:progressiveRenderViaAJAX="true"
-                      p:renderAddLine="false"
+                      p:renderAddLine="true"
                       p:width="85%">
                     <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GlBreakdownModel"/>
                     <property name="propertyName" value="glBreakdowns"/>
@@ -399,21 +404,15 @@
                     <property name="layoutManager.renderSequenceField" value="false"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-InputField" p:label="GL Type" p:propertyName="parentBreakdown.generalLedgerType.glAccountId" p:readOnly="true">
-                                <!-- readOnly flag doesn't work in Rice 2.2.0 - https://jira.kuali.org/browse/KULRICE-8772 -->
+                            <bean parent="Uif-InputField" p:label="GL Account" p:propertyName="glAccount">
+                                <!--
                                 <property name="control">
                                     <bean parent="Uif-TextControl" p:readOnly="true"/>
                                 </property>
+                                -->
                             </bean>
 
-                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="parentBreakdown.generalLedgerType.description" p:readOnly="true">
-                                <!-- readOnly flag doesn't work in Rice 2.2.0 - https://jira.kuali.org/browse/KULRICE-8772 -->
-                                <property name="control">
-                                    <bean parent="Uif-TextControl" p:readOnly="true"/>
-                                </property>
-                            </bean>
-
-                            <bean parent="Uif-InputField" p:propertyName="parentBreakdown.glOperation.id" p:labelPlacement="TOP" p:label="Operation" p:readOnly="true">
+                            <bean parent="Uif-InputField" p:propertyName="operation" p:labelPlacement="TOP" p:label="Operation" p:readOnly="true">
                                 <property name="control">
                                   <bean parent="Uif-DropdownControl" p:width="100%"/>
                                 </property>
