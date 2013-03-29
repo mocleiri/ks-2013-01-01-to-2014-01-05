@@ -274,12 +274,14 @@ public class TransactionTypeController extends GenericSearchController {
 
         form.setStatusMessage("Transaction Type added");
 
+        /*
         MessageMap messages = GlobalVariables.getMessageMap();
         //ResourceMessageProvider p;
         if(messages != null){
             GlobalVariables.getMessageMap().putInfo("TransactionTypeView", "tjb", "Course Title");
             //messages.addGrowlMessage("Success", "Transaction Type added");
         }
+        */
         return getUIFModelAndView(form);
     }
 
