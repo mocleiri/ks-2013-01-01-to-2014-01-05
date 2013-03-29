@@ -597,7 +597,6 @@
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.effectiveDate" p:label="Effective Date"/>
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.originationDate" p:label="Origination Date"/>
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.recognitionDate" p:label="Recognition Date"/>
-                                <bean parent="Uif-InputField" p:propertyName="clearDate" p:label="Clear Date" p:render="@{#line.isPayment()}"/>
 
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.amount" p:label="Amount"/>
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.currency.code" p:label="Currency"/>
@@ -614,6 +613,19 @@
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.generalLedgerType.description" p:label="General Ledger Type"/>
                                 <bean parent="Uif-InputField" p:propertyName="glOverridden" p:label="Override GL Codes"/>
                                 <bean parent="Uif-InputField" p:propertyName="parentTransaction.transactionType.id.id" p:label="@{#line.transactionDisplayType} Type"/>
+
+                                <!-- Payment specific fields -->
+                                <bean parent="Uif-InputField" p:propertyName="clearDate" p:label="Clear Date" p:render="@{#line.isPayment()}"/>
+                                <bean parent="Uif-InputField" p:propertyName="paymentRefundable" p:label="Payment is Refundable" p:render="@{#line.isPayment()}"/>
+                                <bean parent="Uif-InputField" p:propertyName="paymentRefundRule" p:label="Payment Refund Rule" p:render="@{#line.isPayment()}"/>
+
+                                <!-- Deferment specific fields -->
+                                <bean parent="Uif-InputField" p:propertyName="originalAmount" p:label="Deferment Original Amount" p:render="@{#line.isDeferment()}"/>
+                                <bean parent="Uif-InputField" p:propertyName="defermentExpirationDate" p:label="Deferment Expiration Date" p:render="@{#line.isDeferment()}"/>
+
+                                <!-- Charge specific fields -->
+                                <bean parent="Uif-InputField" p:propertyName="chargeCancellationRule" p:label="Charge Cancellation Rule" p:render="@{#line.isCharge()}"/>
+
                             </list></property></bean>
                         </list>
                     </property>

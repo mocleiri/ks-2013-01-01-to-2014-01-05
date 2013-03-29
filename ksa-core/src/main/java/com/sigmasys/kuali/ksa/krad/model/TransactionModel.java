@@ -47,9 +47,6 @@ public class TransactionModel extends Transaction {
 
     private String deferredId;
 
-    // Date for a deferment, otherwise null
-    private Date defermentExpirationDate;
-
     // Date for a Payment, otherwise null
     private Date paymentClearDate;
 
@@ -267,14 +264,6 @@ public class TransactionModel extends Transaction {
 
     public void setDeferredId(String deferredId) {
         this.deferredId = deferredId;
-    }
-
-    public Date getDefermentExpirationDate() {
-        return defermentExpirationDate;
-    }
-
-    public void setDefermentExpirationDate(Date defermentExpirationDate) {
-        this.defermentExpirationDate = defermentExpirationDate;
     }
 
     public Date getPaymentClearDate() {
@@ -530,6 +519,14 @@ public class TransactionModel extends Transaction {
         return parentTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT;
     }
 
+    public boolean isDeferment() {
+        return parentTransaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT;
+    }
+
+    public boolean isCharge() {
+        return parentTransaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE;
+    }
+
     public String getGlEntryGenerated() {
         return (parentTransaction.isGlEntryGenerated() ? "" : "Not ") + "Generated";
     }
@@ -646,4 +643,40 @@ public class TransactionModel extends Transaction {
         }
         return null;
     }
+
+    public String getPaymentRefundable() {
+        if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
+            return ((Payment) parentTransaction).isRefundable().toString();
+        }
+        return null;
+    }
+
+    public String getPaymentRefundRule() {
+        if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
+            return ((Payment) parentTransaction).getRefundRule();
+        }
+        return null;
+    }
+
+    public String getOriginalAmount(){
+        if(parentTransaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT){
+            //return ((Deferment) parentTransaction).???
+        }
+        return null;
+    }
+
+    public Date getDefermentExpirationDate(){
+        if(parentTransaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT){
+            return ((Deferment) parentTransaction).getExpirationDate();
+        }
+        return null;
+    }
+
+    public String getChargeCancellationRule(){
+        if(parentTransaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE){
+            return ((Charge) parentTransaction).getCancellationRule();
+        }
+        return null;
+    }
+
 }

@@ -207,7 +207,6 @@ public class SearchController extends GenericSearchController {
             if (t instanceof Deferment) {
                 Deferment def = (Deferment) t;
                 transactionModel.setDeferredId(def.getId().toString());
-                transactionModel.setDefermentExpirationDate(def.getExpirationDate());
             } else if (t instanceof Payment) {
                 Payment payment = (Payment) t;
                 transactionModel.setPaymentClearDate(payment.getClearDate());
