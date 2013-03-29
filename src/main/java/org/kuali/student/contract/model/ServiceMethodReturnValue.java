@@ -48,4 +48,13 @@ public class ServiceMethodReturnValue {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    @Override
+    public String toString() {
+        return "ServiceMethodReturnValue{" +
+                "type='" + type + '\'' +
+                ", description='" + description + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }

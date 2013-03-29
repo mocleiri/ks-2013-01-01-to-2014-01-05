@@ -15,42 +15,18 @@
  */
 package org.kuali.student.contract.model.impl;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.bind.annotation.XmlEnum;
-
-import org.kuali.student.contract.model.Lookup;
-import org.kuali.student.contract.model.MessageStructure;
-import org.kuali.student.contract.model.Service;
-import org.kuali.student.contract.model.ServiceContractModel;
-import org.kuali.student.contract.model.ServiceMethod;
-import org.kuali.student.contract.model.ServiceMethodError;
-import org.kuali.student.contract.model.ServiceMethodParameter;
-import org.kuali.student.contract.model.ServiceMethodReturnValue;
-import org.kuali.student.contract.model.XmlType;
+import com.thoughtworks.qdox.JavaDocBuilder;
+import com.thoughtworks.qdox.model.*;
+import com.thoughtworks.qdox.model.Type;
+import com.thoughtworks.qdox.model.annotation.AnnotationValue;
+import org.kuali.student.contract.model.*;
 import org.kuali.student.contract.model.util.JavaClassAnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thoughtworks.qdox.JavaDocBuilder;
-import com.thoughtworks.qdox.model.Annotation;
-import com.thoughtworks.qdox.model.DefaultDocletTagFactory;
-import com.thoughtworks.qdox.model.DocletTag;
-import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaField;
-import com.thoughtworks.qdox.model.JavaMethod;
-import com.thoughtworks.qdox.model.JavaParameter;
-import com.thoughtworks.qdox.model.Type;
-import com.thoughtworks.qdox.model.annotation.AnnotationValue;
+import javax.xml.bind.annotation.XmlEnum;
+import java.io.File;
+import java.util.*;
 
 /**
  *
@@ -1918,5 +1894,17 @@ public class ServiceContractModelQDoxLoader implements
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceContractModelQDoxLoader{" +
+                "sourceDirectories=" + sourceDirectories +
+                ", services=" + services +
+                ", serviceMethods=" + serviceMethods +
+                ", xmlTypeMap=" + xmlTypeMap +
+                ", messageStructures=" + messageStructures +
+                ", validateKualiStudent=" + validateKualiStudent +
+                '}';
     }
 }

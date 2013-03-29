@@ -15,17 +15,18 @@
  */
 package org.kuali.student.contract.writer;
 
+import org.kuali.student.contract.exception.DictionaryExecutionException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.Calendar;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.kuali.student.contract.exception.DictionaryExecutionException;
 
 /**
  *
@@ -88,16 +89,17 @@ public abstract class JavaClassWriter extends XmlWriter {
 
     public void writeHeader() {
         indentPrintln("/*");
-        indentPrintln(" * Copyright 2011 The Kuali Foundation");
+        indentPrintln(" * Copyright " + Calendar.getInstance().get(Calendar.YEAR)  + " The Kuali Foundation");
         indentPrintln(" *");
         indentPrintln(" * Licensed under the Educational Community License, Version 2.0 (the \"License\");");
         indentPrintln(" * you may not use this file except in compliance with the License.");
-        indentPrintln(" * You may	obtain a copy of the License at");
+        indentPrintln(" * You may obtain a copy of the License at");
         indentPrintln(" *");
         indentPrintln(" * 	http://www.osedu.org/licenses/ECL-2.0");
         indentPrintln(" *");
         indentPrintln(" * Unless required by applicable law or agreed to in writing, software");
-        indentPrintln(" * distributed under the License is distributed on an \"AS IS\" BASIS,");
+        indentPrintln(" * distributed under the Lic" +
+                "+ense is distributed on an \"AS IS\" BASIS,");
         indentPrintln(" * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
         indentPrintln(" * See the License for the specific language governing permissions and");
         indentPrintln(" * limitations under the License.");

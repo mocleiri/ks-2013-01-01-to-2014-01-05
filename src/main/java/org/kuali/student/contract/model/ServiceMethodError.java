@@ -57,4 +57,14 @@ public class ServiceMethodError {
     public void setClassName(String className) {
         this.className = className;
     }
+
+    @Override
+    public String toString() {
+        return "ServiceMethodError{" +
+                "packageName='" + packageName + '\'' +
+                ", className='" + className + '\'' +
+                ", description='" + description + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
 }

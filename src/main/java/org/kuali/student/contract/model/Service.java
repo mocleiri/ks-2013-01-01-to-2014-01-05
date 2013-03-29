@@ -104,4 +104,18 @@ public class Service {
     public void setIncludedServices(List<String> includedServices) {
         this.includedServices = includedServices;
     }
+
+    @Override
+    public String toString() {
+        return "Service{" +
+                "key='" + key + '\'' +
+                ", name='" + name + '\'' +
+                ", implProject='" + implProject + '\'' +
+                ", status='" + status + '\'' +
+                ", comments='" + comments + '\'' +
+                ", version='" + version + '\'' +
+                ", url='" + url + '\'' +
+                ", includedServices=" + includedServices +
+                '}';
+    }
 }

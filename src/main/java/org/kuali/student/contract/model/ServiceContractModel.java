@@ -49,4 +49,9 @@ public interface ServiceContractModel {
      * @return
      */
     public List<MessageStructure> getMessageStructures();
+
+    /**
+     * Gets the structure of this object as a String.
+     */
+    public String toString ();
 }

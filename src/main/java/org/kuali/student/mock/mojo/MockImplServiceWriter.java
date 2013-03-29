@@ -472,7 +472,7 @@ public class MockImplServiceWriter extends JavaClassWriter {
         indentPrintln("throw new " + this.getOperationFailedException() + " (\"" + method.getName() + " has not been implemented\");");
     }
 
-    private String initLower(String str) {
+    protected String initLower(String str) {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 

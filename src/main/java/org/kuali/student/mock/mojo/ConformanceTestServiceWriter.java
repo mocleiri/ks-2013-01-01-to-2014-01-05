@@ -16,12 +16,15 @@
  */
 package org.kuali.student.mock.mojo;
 
+import org.kuali.student.contract.model.MessageStructure;
 import org.kuali.student.contract.model.Service;
 import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.ServiceMethod;
+import org.kuali.student.contract.model.ServiceMethodParameter;
 import org.kuali.student.contract.model.util.ServicesFilter;
 import org.kuali.student.contract.writer.service.GetterSetterNameCalculator;
 
+import javax.management.OperationsException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +74,7 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
      * Given the service key (name), returns a calculated class name for the conformance tester.
      */
     public static String calcClassName(String servKey) {
-        return "Test" + GetterSetterNameCalculator.calcInitUpper(fixServKey(servKey) + "ServiceImplConformance");
+        return "Test" + GetterSetterNameCalculator.calcInitUpper(fixServKey(servKey) + "ServiceImplBaseConformance");
     }
 
     public static List<Service> filterServices(ServiceContractModel model, ServicesFilter filter) {
@@ -99,7 +102,6 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
             if (MethodType.CREATE.equals (calcMethodType(method))) {
                 String objectName = calcObjectName(method);
                 dtoObjectNames.add(objectName);
-                System.out.println("Object Name = " + objectName);
             }
         }
 
@@ -120,8 +122,17 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
      * Write the CRUD test methods
      */
     public void writeTestCrud (String dtoObjectName) {
+
+        // get the message structures of the dto
+        List<MessageStructure> messageStructures = null;
+        try {
+            messageStructures = finder.findMessageStructures(dtoObjectName + "Info");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // start method open signature
-        indentPrintln("public void testCrud" + dtoObjectName);
+        indentPrintln("public void testCrud" + dtoObjectName + "() ");
         incrementIndent();
         indentPrintln("throws DataValidationErrorException,");
         incrementIndent();
@@ -140,10 +151,10 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
 
         // write the test portions
         incrementIndent();
-        writeTestCreate(dtoObjectName);
-        writeTestUpdate(dtoObjectName);
-        writeTestReadAfterUpdate(dtoObjectName);
-        writeTestDelete(dtoObjectName);
+        writeTestCreate(dtoObjectName, messageStructures);
+        writeTestUpdate(dtoObjectName, messageStructures);
+        writeTestReadAfterUpdate(dtoObjectName, messageStructures);
+        writeTestDelete(dtoObjectName, messageStructures);
         decrementIndent();
 
         // end method
@@ -153,9 +164,9 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
     /**
      * Write the 'test create' portion.
      */
-    public void writeTestCreate (String dtoObjectName) {
+    public void writeTestCreate (String dtoObjectName, List<MessageStructure> messageStructures) {
         indentPrintDecoratedComment("test create");
-        indentPrintln(dtoObjectName + " expected = new " + dtoObjectName + " ()");
+        indentPrintln(dtoObjectName + " expected = new " + dtoObjectName + "Info ();");
         indentPrintln("expected.setName(\"Name01\");");
         indentPrintln("expected.setDescr(new RichTextHelper().fromPlain(\"Description01\"));");
         indentPrintln("");
@@ -173,7 +184,8 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("new AttributeTester().add2ForCreate(expected.getAttributes());");
 
         indentPrintln("");
-        indentPrintln(dtoObjectName + " actual = // INSERT CODE TO CREATE actual HERE");
+        indentPrintln("// code to create actual");
+        indentPrintln("actual = " + getMethodCallAsString ("create" + dtoObjectName, "// INSERT CODE TO CREATE actual HERE", MethodType.CREATE, dtoObjectName, "expected"));
         indentPrintln("");
 
         indentPrintln("assertNotNull(actual.getId());");
@@ -185,12 +197,27 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
 
         indentPrintln("new AttributeTester().check(expected.getAttributes(), actual.getAttributes());");
         indentPrintln("new MetaTester().checkAfterCreate(actual.getMeta());");
+        indentPrintln("");
+
+        indentPrintDecoratedComment("test read");
+        indentPrintln("expected = actual;");
+        indentPrintln("actual = " + getMethodCallAsString ("get" + dtoObjectName, "// INSERT CODE TO GET actual HERE BY CALLING SERVICE OP", MethodType.GET_BY_ID, dtoObjectName, "actual"));
+        indentPrintln("assertEquals(expected.getId(), actual.getId());");
+        indentPrintln("new IdEntityTester().check(expected, actual);");
+        indentPrintln("");
+
+        indentPrintln("// INSERT CODE FOR TESTING MORE DTO FIELDS HERE");
+        indentPrintln("");
+
+        indentPrintln("new AttributeTester().check(expected.getAttributes(), actual.getAttributes());");
+        indentPrintln("new MetaTester().checkAfterGet(expected.getMeta(), actual.getMeta());");
+        indentPrintln("");
     }
 
     /**
      * Write the 'test update' portion.
      */
-    public void writeTestUpdate (String dtoObjectName) {
+    public void writeTestUpdate (String dtoObjectName, List<MessageStructure> messageStructures) {
         indentPrintDecoratedComment("test update");
         indentPrintln("expected = actual;");
         indentPrintln("expected.setName(expected.getName() + \" updated\");");
@@ -207,7 +234,11 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("// INSERT CODE TO UPDATE MORE DTO FIELDS HERE");
         indentPrintln("");
         indentPrintln("new AttributeTester().delete1Update1Add1ForUpdate(expected.getAttributes());");
-        indentPrintln("actual = // INSERT CODE TO CALL UPDATE SERVICE OP HERE");
+
+        indentPrintln("// code to update");
+        indentPrintln("actual = " + getMethodCallAsString ("update" + dtoObjectName, "// INSERT CODE TO CALL UPDATE SERVICE OP HERE", MethodType.UPDATE, dtoObjectName, "expected"));
+        indentPrintln("");
+
         indentPrintln("assertEquals(expected.getId(), actual.getId());");
         indentPrintln("new IdEntityTester().check(expected, actual);");
         indentPrintln("");
@@ -221,11 +252,15 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
     /**
      * Write the 'read after update' portion.
      */
-    public void writeTestReadAfterUpdate (String dtoObjectName) {
+    public void writeTestReadAfterUpdate (String dtoObjectName, List<MessageStructure> messageStructures) {
         indentPrintDecoratedComment("test read after update");
         indentPrintln("");
         indentPrintln("expected = actual;");
-        indentPrintln("actual = // INSERT CODE TO GET actual HERE BY CALLING SERVICE OP");
+
+        indentPrintln("// code to get actual");
+        indentPrintln("actual = " + getMethodCallAsString ("get" + dtoObjectName, "// INSERT CODE TO GET actual HERE BY CALLING SERVICE OP", MethodType.GET_BY_ID, dtoObjectName, "actual"));
+        indentPrintln("");
+
         indentPrintln("assertEquals(expected.getId(), actual.getId());");
         indentPrintln("new IdEntityTester().check(expected, actual);");
         indentPrintln("");
@@ -237,7 +272,7 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln(dtoObjectName + " alphaDTO = actual;");
         indentPrintln("");
         indentPrintln("// create a 2nd DTO");
-        indentPrintln(dtoObjectName + " betaDTO = new " + dtoObjectName + "();");
+        indentPrintln(dtoObjectName + " betaDTO = new " + dtoObjectName + "Info ();");
         indentPrintln("betaDTO.setName(\"Beta entity name\");");
         indentPrintln("betaDTO.setDescr(new RichTextHelper().fromPlain(\"Beta entity description\"));");
         indentPrintln("");
@@ -251,25 +286,34 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("betaDTOTS.setStateKey(\"StateBeta\");");
         decrementIndent();
         closeBrace();
-        indentPrintln("betaDTO = // INSERT CODE TO CREATE betaDTO");
+        indentPrintln("betaDTO = " + getMethodCallAsString("create" + dtoObjectName, "// INSERT CODE TO CREATE betaDTO", MethodType.CREATE, dtoObjectName, "betaDTO"));
+
         indentPrintln("");
         indentPrintDecoratedComment("test bulk get with no ids supplied");
         indentPrintln("");
-        indentPrintln("List<String> ids = new ArrayList<String>();");
-        indentPrintln("List<" + dtoObjectName + "> records = // INSERT CODE TO GET DTO BY IDS");
-        indentPrintln("assertEquals(ids.size(), records.size());");
-        indentPrintln("assertEquals(0, ids.size());");
+        indentPrintln("List<String> " + initLower(dtoObjectName) + "Ids = new ArrayList<String>();");
+
+        indentPrintln("// code to get DTO by Ids");
+        indentPrintln("List<" + dtoObjectName + "> records = " + getMethodCallAsString ("get" + dtoObjectName + "sByIds", "// INSERT CODE TO GET DTO BY IDS", MethodType.GET_BY_IDS));
+        indentPrintln("");
+
+        indentPrintln("assertEquals(" + initLower(dtoObjectName) + "Ids.size(), records.size());");
+        indentPrintln("assertEquals(0, " + initLower(dtoObjectName) + "Ids.size());");
         indentPrintln("");
         indentPrintDecoratedComment("test bulk get");
-        indentPrintln("ids = new ArrayList<String>();");
-        indentPrintln("ids.add(alphaDTO.getId());");
-        indentPrintln("ids.add(betaDTO.getId());");
-        indentPrintln("records = // INSERT CODE TO GET DTO BY IDS");
-        indentPrintln("assertEquals(ids.size(), records.size());");
+        indentPrintln(initLower(dtoObjectName) + "Ids = new ArrayList<String>();");
+        indentPrintln(initLower(dtoObjectName) + "Ids.add(alphaDTO.getId());");
+        indentPrintln(initLower(dtoObjectName) + "Ids.add(betaDTO.getId());");
+
+        indentPrintln("// code to get DTO by Ids");
+        indentPrintln("records = " + getMethodCallAsString ("get" + dtoObjectName + "sByIds", "// INSERT CODE TO GET DTO BY IDS", MethodType.GET_BY_IDS));
+        indentPrintln("");
+
+        indentPrintln("assertEquals(" + initLower(dtoObjectName) + "Ids.size(), records.size());");
         indentPrintln("for (" + dtoObjectName + " record : records)");
         openBrace();
         incrementIndent();
-        indentPrintln("if (!ids.remove(record.getId()))");
+        indentPrintln("if (!" + initLower(dtoObjectName) + "Ids.remove(record.getId()))");
         openBrace();
         incrementIndent();
         indentPrintln("fail(record.getId());");
@@ -277,33 +321,44 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         closeBrace();
         decrementIndent();
         closeBrace();
-        indentPrintln("assertEquals(0, ids.size());");
+        indentPrintln("assertEquals(0, " + initLower(dtoObjectName) + "Ids.size());");
         indentPrintln("");
         indentPrintDecoratedComment("test get by type");
-        indentPrintln("ids = // INSERT CODE TO GET BY SPECIFIC TYPE \"Type01\" HERE");
-        indentPrintln("assertEquals(1, ids.size());");
-        indentPrintln("assertEquals(alphaDTO.getId(), ids.get(0));");
+
+        indentPrintln("// code to get by specific type \"Type01\" ");
+        indentPrintln(initLower(dtoObjectName) + "Ids = " + getMethodCallAsString ("get" + dtoObjectName + "IdsByType", "// INSERT CODE TO GET BY SPECIFIC TYPE \"Type01\" HERE", MethodType.GET_IDS_BY_TYPE));
+        indentPrintln("");
+
+        indentPrintln("assertEquals(1, " + initLower(dtoObjectName) + "Ids.size());");
+        indentPrintln("assertEquals(alphaDTO.getId(), " + initLower(dtoObjectName) + "Ids.get(0));");
         indentPrintln("");
         indentPrintln("// test get by other type");
-        indentPrintln("ids = // INSERT CODE TO GET BY SPECIFIC TYPE \"TypeBeta\" HERE");
-        indentPrintln("assertEquals(1, ids.size());");
-        indentPrintln("assertEquals(betaDTO.getId(), ids.get(0));");
+
+        indentPrintln("// code to get by specific type \"TypeBeta\" ");
+        indentPrintln(initLower(dtoObjectName) + "Ids = " + getMethodCallAsString ("get" + dtoObjectName + "IdsByType", "// INSERT CODE TO GET BY SPECIFIC TYPE \"TypeBeta\" HERE", MethodType.GET_IDS_BY_TYPE));
+        indentPrintln("");
+
+        indentPrintln("assertEquals(1, " + initLower(dtoObjectName) + "Ids.size());");
+        indentPrintln("assertEquals(betaDTO.getId(), " + initLower(dtoObjectName) + "Ids.get(0));");
         indentPrintln("");
     }
 
     /**
      * Write the 'read after update' portion.
      */
-    public void writeTestDelete (String dtoObjectName) {
+    public void writeTestDelete (String dtoObjectName, List<MessageStructure> messageStructures) {
         indentPrintDecoratedComment("test delete");
         indentPrintln("");
-        indentPrintln("StatusInfo status = // INSERT CODE TO DELETE RECORD");
+
+        indentPrintln("StatusInfo status = " + getMethodCallAsString ("delete" + dtoObjectName, "// INSERT CODE TO DELETE RECORD", MethodType.DELETE, dtoObjectName, "actual"));
+        indentPrintln("");
+
         indentPrintln("assertNotNull(status);");
         indentPrintln("assertTrue(status.getIsSuccess());");
         indentPrintln("try");
         openBrace();
         incrementIndent();
-        indentPrintln("record = // INSERT CODE TO RETRIEVE RECENTLY DELETED RECORD");
+        indentPrintln("record = " + getMethodCallAsString ("get" + dtoObjectName, "// INSERT CODE TO RETRIEVE RECENTLY DELETED RECORD", MethodType.GET_BY_ID));
         indentPrintln("fail(\"Did not receive DoesNotExistException when attempting to get already-deleted entity\");");
         decrementIndent();
         closeBrace();
@@ -325,4 +380,58 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("// -------------------------------------");
     }
 
+    /**
+     * Gets the method with the name.
+     */
+    private ServiceMethod getServiceMethod (String methodName) throws OperationsException {
+        for (ServiceMethod method : methods) {
+            if (method.getName().equals(methodName)) return method;
+        }
+        throw new OperationsException("Method " + methodName + " not found!");
+    }
+
+    /**
+     * Gets the string to print to call a method with the given name.
+     */
+    private String getMethodCallAsString (String builtUpMethodName, String errorCode, MethodType methodType) {
+        return getMethodCallAsString (builtUpMethodName, errorCode, methodType, null, null);
+    }
+
+    /**
+     * Gets the string to print to call a method with the given name.
+     */
+    private String getMethodCallAsString (String builtUpMethodName, String errorCode, MethodType methodType, String dtoName, String dtoNameReplacement) {
+        try {
+            ServiceMethod method = getServiceMethod(builtUpMethodName);
+            String methodCallStr = "";
+            methodCallStr += method.getName() + " (";
+            String comma = " ";
+            for (ServiceMethodParameter param : method.getParameters()) {
+                methodCallStr += comma;
+                if (dtoName!=null && dtoNameReplacement!=null) {
+                    if ((dtoName + "Info").toLowerCase().equals(param.getName().toLowerCase())) {
+                        methodCallStr += dtoNameReplacement;
+                    }
+                    else if (param.getName().endsWith("TypeKey")) {
+                        methodCallStr += dtoNameReplacement + ".getTypeKey()";
+                    }
+                    else if (param.getName().endsWith("Id")) {
+                        methodCallStr += dtoNameReplacement + ".getId()";
+                    }
+                    else {
+                        methodCallStr += param.getName();
+                    }
+                } else {
+                    methodCallStr += param.getName();
+                }
+                comma = ", ";
+            }
+            methodCallStr += ");";
+            return methodCallStr;
+        } catch (Exception e) {
+            System.out.println("methodName = " + builtUpMethodName + ", errorCode = " + errorCode);
+            return errorCode;
+        }
+
+    }
 }

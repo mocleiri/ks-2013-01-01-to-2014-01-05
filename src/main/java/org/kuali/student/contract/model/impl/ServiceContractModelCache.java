@@ -15,13 +15,13 @@
  */
 package org.kuali.student.contract.model.impl;
 
-import java.util.List;
-
 import org.kuali.student.contract.model.MessageStructure;
 import org.kuali.student.contract.model.Service;
 import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.ServiceMethod;
 import org.kuali.student.contract.model.XmlType;
+
+import java.util.List;
 
 /**
  * This reads the supplied spreadsheet but then caches it so it doesn't have to
@@ -75,5 +75,16 @@ public class ServiceContractModelCache implements ServiceContractModel {
     @Override
     public List<String> getSourceNames() {
         return model.getSourceNames();
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceContractModelCache{" +
+                "model=" + model +
+                ", serviceMethods=" + serviceMethods +
+                ", xmlTypes=" + xmlTypes +
+                ", messageStructures=" + messageStructures +
+                ", services=" + services +
+                '}';
     }
 }

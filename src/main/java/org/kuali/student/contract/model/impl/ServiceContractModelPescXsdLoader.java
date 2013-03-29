@@ -15,31 +15,13 @@
  */
 package org.kuali.student.contract.model.impl;
 
-import com.sun.xml.xsom.XSAnnotation;
-import com.sun.xml.xsom.XSComplexType;
-import com.sun.xml.xsom.XSContentType;
-import com.sun.xml.xsom.XSElementDecl;
-import com.sun.xml.xsom.XSFacet;
-import com.sun.xml.xsom.XSModelGroup;
-import com.sun.xml.xsom.XSParticle;
-import com.sun.xml.xsom.XSSchema;
-import com.sun.xml.xsom.XSSchemaSet;
-import com.sun.xml.xsom.XSSimpleType;
-import com.sun.xml.xsom.XSTerm;
-import com.sun.xml.xsom.XSType;
+import com.sun.xml.xsom.*;
 import com.sun.xml.xsom.parser.AnnotationContext;
 import com.sun.xml.xsom.parser.AnnotationParser;
 import com.sun.xml.xsom.parser.AnnotationParserFactory;
 import com.sun.xml.xsom.parser.SchemaDocument;
 import com.sun.xml.xsom.parser.XSOMParser;
 import com.sun.xml.xsom.util.DomAnnotationParserFactory;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.kuali.student.contract.model.MessageStructure;
 import org.kuali.student.contract.model.Service;
 import org.kuali.student.contract.model.ServiceContractModel;
@@ -52,6 +34,14 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -529,5 +519,16 @@ public class ServiceContractModelPescXsdLoader implements
         public void startPrefixMapping(String prefix, String uri) throws SAXException {
             // do nothing
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceContractModelPescXsdLoader{" +
+                "xsdFileNames=" + xsdFileNames +
+                ", services=" + services +
+                ", serviceMethods=" + serviceMethods +
+                ", xmlTypeMap=" + xmlTypeMap +
+                ", messageStructures=" + messageStructures +
+                '}';
     }
 }

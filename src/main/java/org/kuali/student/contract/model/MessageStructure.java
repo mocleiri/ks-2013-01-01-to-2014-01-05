@@ -173,12 +173,32 @@ public class MessageStructure {
 
     public void setPrimaryKey(boolean primaryKey) {
         this.primaryKey = primaryKey;
-    }  
-    
-	@Override
-	public String toString() {
-		return "MessageStructure [xmlObject=" + xmlObject + "]";
-	}
-   
-    
+    }
+
+    @Override
+    public String toString() {
+        return "MessageStructure [xmlObject=" + xmlObject + "]";
+    }
+
+    public String toExpandedString() {
+        return "MessageStructure{" +
+                "id='" + id + '\'' +
+                ", xmlObject='" + xmlObject + '\'' +
+                ", shortName='" + shortName + '\'' +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", url='" + url + '\'' +
+                // ", description='" + description + '\'' +
+                ", required='" + required + '\'' +
+                ", readOnly='" + readOnly + '\'' +
+                ", cardinality='" + cardinality + '\'' +
+                ", status='" + status + '\'' +
+                ", xmlAttribute='" + xmlAttribute + '\'' +
+                ", implNotes='" + implNotes + '\'' +
+                ", overriden=" + overriden +
+                ", deprecated=" + deprecated +
+                ", lookup=" + lookup +
+                ", primaryKey=" + primaryKey +
+                '}';
+    }
 }
