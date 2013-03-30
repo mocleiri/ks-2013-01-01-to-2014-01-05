@@ -83,7 +83,7 @@
                             </bean>
                             <!--  Status message -->
                             <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
-                            <ref bean="createTransactionTypeSection"/>
+                            <ref bean="editTransactionTypeSection"/>
                             <ref bean="tagGroup"/>
                             <ref bean="glBreakdownList"/>
                             <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insert" p:actionLabel="Submit"/>
@@ -180,7 +180,8 @@
                 <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 35%;">
                     <property name="items">
                     <list>
-                        <bean parent="Uif-InputField" p:propertyName="transactionType.description"/>
+                        <bean parent="Uif-LinkField" p:linkText="@{#line.transactionType.description}"
+                              p:href="transactionTypeView?methodToCall=edit&amp;viewId=TransactionTypeView&amp;pageId=TransactionTypeCreatePage&amp;model=@{#line.transactionType.id.id}&amp;subCode=@{#line.transactionType.id.subCode}"/>
                         <bean parent="Uif-ImageField" p:source="../images/tag.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
                               p:render="@{#line.tags.size() > 0}">
                             <property name="toolTip">
@@ -283,7 +284,7 @@
         </property>
     </bean>
 
-    <bean id="createTransactionTypeSection" parent="Uif-VerticalBoxSection">
+    <bean id="editTransactionTypeSection" parent="Uif-VerticalBoxSection">
         <property name="title" value="Transaction Type Details View"/>
         <property name="items">
             <list>
@@ -295,6 +296,11 @@
                 <bean parent="Uif-InputField" p:propertyName="code" p:label="Transaction Code" p:labelPlacement="TOP" p:required="true">
                     <property name="control">
                         <bean parent="Uif-TextControl" p:size="20" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="subCode">
+                    <property name="control">
+                        <bean parent="Uif-HiddenControl"/>
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="startDate"

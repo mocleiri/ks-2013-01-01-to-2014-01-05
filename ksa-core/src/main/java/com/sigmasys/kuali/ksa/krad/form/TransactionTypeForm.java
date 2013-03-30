@@ -28,6 +28,7 @@ public class TransactionTypeForm extends AbstractViewModel {
     // Fields used for creating a new transaction type
     private String type;
     private String code;
+    private Integer subCode = -1;
     private String description;
     private String defaultStatement;
     private Date startDate;
@@ -253,5 +254,13 @@ public class TransactionTypeForm extends AbstractViewModel {
 
     public void setTransactionTypeGroups(Map<String, TransactionTypeGroupModel> transactionTypeGroups) {
         this.transactionTypeGroups = transactionTypeGroups;
+    }
+
+    public Integer getSubCode() {
+        return subCode;
+    }
+
+    public void setSubCode(Integer subCode) {
+        this.subCode = subCode;
     }
 }

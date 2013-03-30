@@ -136,40 +136,14 @@ public class TransactionTypeController extends GenericSearchController {
         form.setType("C");
 
         String modelToCopy = request.getParameter("model");
-        List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>();
 
         if(modelToCopy != null){
             TransactionType ttSource = transactionService.getTransactionType(modelToCopy, new Date());
 
             if(ttSource != null){
-                form.setType((ttSource instanceof CreditType ? "C" : "D"));
-                form.setCode(ttSource.getId().getId());
-                form.setStartDate(new Date());
-                form.setDescription(ttSource.getDescription());
-                if(ttSource.getRollup() != null){
-                    form.setRollupId(ttSource.getRollup().getId().toString());
-                }
-                ArrayList<Tag> tags = new ArrayList<Tag>();
-                for(Tag t: ttSource.getTags()){
-                    tags.add(t);
-                }
-
-                form.setTags(tags);
-                //form.setGlBreakdowns(ttSource.get);
-
-                List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns((DebitType)ttSource);
-
-                for (GlBreakdown sourceBreakdown : sourceBreakdowns) {
-                    GlBreakdownModel breakdownModel = new GlBreakdownModel();
-                    breakdownModel.setOperation(sourceBreakdown.getGlOperation().getId());
-                    breakdownModel.setBreakdown(sourceBreakdown.getBreakdown());
-                    breakdowns.add(breakdownModel);
-                }
-
+                this.loadFormFromTransactionType(form, ttSource);
             }
         }
-
-        form.setGlBreakdowns(breakdowns);
 
         form.setCreditDebitKeyValuesFinder(this.getCreditDebitTypeOptionsFinder());
         form.setRollupOptionsFinder(this.getRollupOptionsFinder());
@@ -186,6 +160,8 @@ public class TransactionTypeController extends GenericSearchController {
 
         String type = form.getType();
         String code = form.getCode();
+        // If the subcode is anything other than -1 then this is an edit.
+        Integer subCode = form.getSubCode();
         Date startDate = form.getStartDate();
         Integer priority = form.getPriority();
         if (priority == null) {
@@ -197,25 +173,36 @@ public class TransactionTypeController extends GenericSearchController {
 
         TransactionType tt;
 
-        if ("C".equalsIgnoreCase(type)) {
-            if (!typeExists) {
-                tt = transactionService.createCreditType(code, "", startDate, priority, description);
-            } else {
-                tt = transactionService.createCreditSubType(code, startDate);
-            }
+        if(subCode == null || subCode == -1){
+            if ("C".equalsIgnoreCase(type)) {
+                if (!typeExists) {
+                    tt = transactionService.createCreditType(code, "", startDate, priority, description);
+                } else {
+                    tt = transactionService.createCreditSubType(code, startDate);
+                }
 
-        } else if ("D".equalsIgnoreCase(type)) {
-            if (!typeExists) {
-                tt = transactionService.createDebitType(code, "", startDate, priority, description);
-            } else {
-                tt = transactionService.createDebitSubType(code, startDate);
-            }
+            } else if ("D".equalsIgnoreCase(type)) {
+                if (!typeExists) {
+                    tt = transactionService.createDebitType(code, "", startDate, priority, description);
+                } else {
+                    tt = transactionService.createDebitSubType(code, startDate);
+                }
 
+            } else {
+                String errMsg = "Invalid transaction type '" + type + "'";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
         } else {
-            String errMsg = "Invalid transaction type '" + type + "'";
-            logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
+            TransactionTypeId ttId = new TransactionTypeId(code, subCode);
+            tt = transactionService.getTransactionType(ttId);
+
+            tt.setStartDate(startDate);
+            tt.setPriority(priority);
+            tt.setDescription(description);
         }
+
+
 
         List<Tag> tags = form.getTags();
         this.persistTags(tags);
@@ -263,7 +250,9 @@ public class TransactionTypeController extends GenericSearchController {
 
                 breakdown.setDebitType((DebitType) tt);
                 BigDecimal b = breakdown.getBreakdown();
-                total.add(b);
+                if(b != null){
+                    total.add(b);
+                }
 
                 if(BigDecimal.ZERO.equals(b)){
                     zeroRow = true;
@@ -302,6 +291,39 @@ public class TransactionTypeController extends GenericSearchController {
         */
         return getUIFModelAndView(form);
     }
+
+    /**
+     * @param form
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=edit")
+    public ModelAndView edit(@ModelAttribute("KualiForm") TransactionTypeForm form, HttpServletRequest request) {
+
+        form.reset();
+        form.setType("C");
+
+        String modelToCopy = request.getParameter("model");
+        Integer subCode = new Integer(request.getParameter("subCode"));
+
+        TransactionTypeId ttId = new TransactionTypeId(modelToCopy, subCode);
+
+
+        if(modelToCopy != null){
+            TransactionType ttSource = transactionService.getTransactionType(ttId);
+
+            if(ttSource != null){
+                form.setSubCode(ttSource.getId().getSubCode());
+                this.loadFormFromTransactionType(form, ttSource);
+            }
+        }
+
+
+        form.setCreditDebitKeyValuesFinder(this.getCreditDebitTypeOptionsFinder());
+        form.setRollupOptionsFinder(this.getRollupOptionsFinder());
+
+        return getUIFModelAndView(form);
+    }
+
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=update")
     public <T extends AuditableEntity> ModelAndView update(@ModelAttribute("KualiForm") TransactionTypeForm form) {
@@ -363,4 +385,37 @@ public class TransactionTypeController extends GenericSearchController {
             }
         }
     }
+
+    private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType ttSource){
+        List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>();
+        form.setType((ttSource instanceof CreditType ? "C" : "D"));
+        form.setCode(ttSource.getId().getId());
+        form.setStartDate(new Date());
+        form.setDescription(ttSource.getDescription());
+        if(ttSource.getRollup() != null){
+            form.setRollupId(ttSource.getRollup().getId().toString());
+        }
+        ArrayList<Tag> tags = new ArrayList<Tag>();
+        for(Tag t: ttSource.getTags()){
+            tags.add(t);
+        }
+
+        form.setTags(tags);
+        //form.setGlBreakdowns(ttSource.get);
+
+        List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns((DebitType)ttSource);
+
+        for (GlBreakdown sourceBreakdown : sourceBreakdowns) {
+            GlBreakdownModel breakdownModel = new GlBreakdownModel();
+            breakdownModel.setOperation(sourceBreakdown.getGlOperation().getId());
+            breakdownModel.setBreakdown(sourceBreakdown.getBreakdown());
+            breakdowns.add(breakdownModel);
+        }
+        form.setGlBreakdowns(breakdowns);
+
+
+    }
+
+
+
 }
