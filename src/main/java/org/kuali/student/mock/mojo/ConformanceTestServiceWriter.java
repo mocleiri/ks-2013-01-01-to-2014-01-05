@@ -40,6 +40,8 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
     /////////////////////////
 
     public static final String ROOT_PACKAGE = "org.kuali.student";
+    protected static final String H1_COMMENT_CHAR = "=";
+    protected static final int H1_COMMENT_MARK_LENGTH = 20;
 
     ////////////////////////////
     // Data Variables
@@ -90,13 +92,25 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
      */
     public void write() {
         indentPrintln("@RunWith(SpringJUnit4ClassRunner.class)");
+        indentPrintln("@ContextConfiguration(locations = {\"classpath:" + servKey + "-test-with-mock-context.xml\"})");
         indentPrint("public class " + calcClassName(servKey));
-        println(" implements " + calcServiceInterfaceClassName(servKey));
+        // println(" implements " + calcServiceInterfaceClassName(servKey));
         Service serv = finder.findService(servKey);
         importsAdd(serv.getImplProject() + "." + serv.getName());
         importsAdd("org.kuali.student.r2.common.dto.IdEntityInfo");
         importsAdd("org.kuali.student.r2.common.dto.TypeStateEntityInfo");
         openBrace();
+
+        indentPrintln("");
+        indentPrintDecoratedComment("SETUP", H1_COMMENT_CHAR, H1_COMMENT_MARK_LENGTH);
+        indentPrintln("");
+
+        // test service setup
+        indentPrintln("@Resource");
+        indentPrintln("public " + calcServiceInterfaceClassName(servKey) + " testService;");
+        indentPrintln("public " + calcServiceInterfaceClassName(servKey) + " get" + calcServiceInterfaceClassName(servKey) + "() { return testService; }");
+        indentPrintln("public void set" + calcServiceInterfaceClassName(servKey) + "(" + calcServiceInterfaceClassName(servKey) + " service) { testService = service; }");
+        indentPrintln("");
 
         // context info setup
         indentPrintln("public ContextInfo contextInfo = null;");
@@ -109,6 +123,9 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("contextInfo = new ContextInfo();");
         indentPrintln("contextInfo.setPrincipalId(principalId);");
         closeBrace();
+        indentPrintln("");
+
+        indentPrintDecoratedComment("TESTING", H1_COMMENT_CHAR, H1_COMMENT_MARK_LENGTH);
         indentPrintln("");
 
         // get a list of all the DTOs managed by this class
@@ -418,9 +435,23 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
      * Writes out a decorated comment.
      */
     public void indentPrintDecoratedComment (String label) {
+        indentPrintDecoratedComment(label, "-", 37);
+/*
         indentPrintln("// -------------------------------------");
         indentPrintln("// " + label);
         indentPrintln("// -------------------------------------");
+*/
+    }
+
+    /**
+     * Writes out a decorated comment, with the decoration string passed in.
+     */
+    public void indentPrintDecoratedComment (String label, String decorChar, int decorLength) {
+        String decorPattern = "";
+        for (int i=0; i<decorLength; i++) { decorPattern += decorChar; }
+        indentPrintln("// " + decorPattern);
+        indentPrintln("// " + label);
+        indentPrintln("// " + decorPattern);
     }
 
     /**
@@ -470,7 +501,7 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
                 comma = ", ";
             }
             methodCallStr += ");";
-            return methodCallStr;
+            return "testService." + methodCallStr;
         } catch (Exception e) {
             System.out.println("methodName = " + builtUpMethodName + ", errorCode = " + errorCode);
             return errorCode;
