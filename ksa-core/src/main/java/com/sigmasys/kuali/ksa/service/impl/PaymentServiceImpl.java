@@ -129,6 +129,12 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
                     currentPriority = creditPermissions.get(i++).getPriority();
                 }
                 for (Transaction transaction1 : transactions) {
+
+                    if (remainingAmount != null && remainingAmount.compareTo(BigDecimal.ZERO) <= 0) {
+                        // We have exceeded the limit and just need to return the result
+                        return glTransactions;
+                    }
+
                     Long transactionId1 = transaction1.getId();
                     // We have to exclude the same transaction
                     if (!transactionId.equals(transactionId1)) {
@@ -166,10 +172,6 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
                                     if (remainingAmount != null) {
                                         remainingAmount = remainingAmount.subtract(minAmount);
                                     }
-                                }
-                                if (remainingAmount != null && remainingAmount.compareTo(BigDecimal.ZERO) <= 0) {
-                                    // We have exceeded the limit and just need to return the result
-                                    return glTransactions;
                                 }
                             }
                         }
