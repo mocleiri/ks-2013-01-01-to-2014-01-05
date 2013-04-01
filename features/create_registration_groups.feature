@@ -100,7 +100,7 @@ As an Administrator, I want to create registration groups for a Course Offering
     And I assign the new activity offerings to the default activity offering cluster
     Then a cluster status message appears stating "Only Some Registration Groups Generated"
     And I generate registration groups
-    Then additional registration groups are generated for the new activity offerings
+    Then the correct number of registration groups are created
     And the new activity offerings are not listed as an unassigned activity offerings
 
   Scenario: RG 3.1C: assign an AO to an AOC with RGs and generate only the new RG for that new AO leaving the existing RGs unchanged

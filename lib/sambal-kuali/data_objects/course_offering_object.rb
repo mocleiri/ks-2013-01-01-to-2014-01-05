@@ -277,6 +277,7 @@ class CourseOffering
 
     on ManageCourseOfferings do |page|
       begin
+        @ao_obj_list= []
         @ao_list = page.codes_list
         @ao_list.each do |ao|
         ao_obj_temp = make ActivityOffering, :code => ao, :activity_type => page.ao_type(ao), :format => page.ao_format(ao),:max_enrollment => page.ao_max_enr(ao)

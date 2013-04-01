@@ -492,10 +492,13 @@ When /^I add all activity offerings to the activity offering cluster$/ do
 end
 
 When /^the correct number of registration groups are created$/ do
+
   on ManageRegistrationGroups do |page|
     page.view_cluster_reg_groups(@ao_cluster.private_name)
   end
+
   on ViewRegistrationGroups do |page|
-    page.reg_group_list.length.should ==  @course_offering.ao_obj_list.count{|x| x.activity_type == "Lab"} * @course_offering.ao_obj_list.count{|x| x.activity_type == "Lecture"}
+    page.reg_group_list.length.should == [1,@course_offering.ao_obj_list.count{|x| x.activity_type == "Lecture"}].max * [1,@course_offering.ao_obj_list.count{|x| x.activity_type == "Lab"}].max
+    page.close
   end
 end
