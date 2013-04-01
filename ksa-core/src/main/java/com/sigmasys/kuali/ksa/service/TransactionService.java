@@ -223,6 +223,18 @@ public interface TransactionService {
     List<Transaction> getTransactions(String userId, Date fromDate, Date toDate);
 
     /**
+     * Returns all transactions by account ID, date range and statuses
+     *
+     * @param userId   Account ID
+     * @param fromDate Start date
+     * @param toDate   End date
+     * @param statuses Array of transaction statuses
+     * @return List of transactions
+     */
+    @WebMethod(exclude = true)
+    List<Transaction> getTransactions(String userId, Date fromDate, Date toDate, TransactionStatus... statuses);
+
+    /**
      * Returns all charges by account ID
      *
      * @param userId Account ID

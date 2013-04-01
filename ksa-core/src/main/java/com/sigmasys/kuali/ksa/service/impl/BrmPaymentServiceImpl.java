@@ -349,15 +349,8 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
             Date fromDate = dateFormat.parse(startDate);
             Date toDate = dateFormat.parse(endDate);
             String userId = context.getAccount().getId();
-            List<Transaction> transactions = transactionService.getTransactions(userId, fromDate, toDate);
-            if (CollectionUtils.isNotEmpty(transactions)) {
-                for (Iterator<Transaction> iterator = transactions.iterator(); iterator.hasNext(); ) {
-                    Transaction transaction = iterator.next();
-                    if (transaction.getStatus() != TransactionStatus.ACTIVE) {
-                        transactions.remove(transaction);
-                    }
-                }
-            }
+            List<Transaction> transactions = transactionService.getTransactions(userId, fromDate, toDate,
+                    TransactionStatus.ACTIVE);
             context.getAttributes().put(outTransactionList, transactions);
         } catch (ParseException pe) {
             logger.error("Date format is incorrect: " + pe.getMessage(), pe);

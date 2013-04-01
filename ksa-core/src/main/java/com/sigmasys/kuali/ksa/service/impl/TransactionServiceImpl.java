@@ -645,6 +645,45 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
 
     /**
+     * Returns all transactions by account ID, date range and statuses
+     *
+     * @param userId   Account ID
+     * @param fromDate Start date
+     * @param toDate   End date
+     * @param statuses Array of transaction statuses
+     * @return List of transactions
+     */
+    @Override
+    @WebMethod(exclude = true)
+    public List<Transaction> getTransactions(String userId, Date fromDate, Date toDate, TransactionStatus... statuses) {
+
+        List<String> statusCodes = new ArrayList<String>(statuses.length);
+        for (TransactionStatus status : statuses) {
+            statusCodes.add(status.getId());
+        }
+
+        Query query = em.createQuery("select t from Transaction t " + GET_TRANSACTION_JOIN +
+                " where t.account.id = :userId and t.statusCode in (:statusCodes) " +
+                (fromDate != null ? " and t.effectiveDate >= :fromDate " : "") +
+                (toDate != null ? " and t.effectiveDate <= :toDate " : "") +
+                " order by t.id desc");
+
+        if (fromDate != null) {
+            query.setParameter("fromDate", CalendarUtils.removeTime(fromDate), TemporalType.DATE);
+        }
+
+        if (toDate != null) {
+            query.setParameter("toDate", CalendarUtils.removeTime(toDate), TemporalType.DATE);
+        }
+
+        query.setParameter("userId", userId);
+        query.setParameter("statusCodes", statusCodes);
+
+        return query.getResultList();
+    }
+
+
+    /**
      * Persists the transaction in the database.
      * Creates a new entity when ID is null and updates the existing one otherwise.
      *
