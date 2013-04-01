@@ -48,6 +48,7 @@ insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('IRS_1098T_SEQ', 1
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('FEE_TYPE_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('FEE_DETAIL_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('FEE_DETAIL_AMOUNT_SEQ', 1001);
+insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('ALLOWABLE_GL_ACCOUNT_SEQ', 1001);
 
 
 -- KS and Rice DB connection parameters
@@ -138,13 +139,16 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.method', 'RefundMethod
 insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (1, 'DSL', 'Drools DSL');
 insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (2, 'DRL', 'Drools Rule Language');
 insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (3, 'DSLR', 'Drools DSL Rule');
-insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (4, 'XDRL', 'Drools XML Rule Language"');
+insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (4, 'XDRL', 'Drools XML Rule Language');
+
+-- Allowable GL account values --
+insert into KSSA_ALLOWABLE_GL_ACCOUNT (ID, PATTERN) values (1, '.*');
 
 --- INSERTING RULE SETS ---
 set sqlblanklines on
 set sqlterminator '!'
 
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values
+insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values
 (99, 'Payment Application Rule', 3, 0, null, '(Context is initialized)',
 '
 Initialize list of GL transactions as "glTransactions"
@@ -189,7 +193,7 @@ Summarize GL transactions "glTransactions"
 Set global variable "resultList" to "glTransactions"
 ')!
 
-Insert into KSSA_RULE_SET (ID, NAME, RULE_TYPE_ID_FK, HEADER) values (99, 'Payment Application', 3,
+insert into KSSA_RULE_SET (ID, NAME, RULE_TYPE_ID_FK, HEADER) values (99, 'Payment Application', 3,
 '
 import java.util.*;
 import java.math.*;
@@ -204,7 +208,7 @@ global List resultList;
 
 ')!
 
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (99, 99)!
+insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (99, 99)!
 
 set sqlterminator ';'
 

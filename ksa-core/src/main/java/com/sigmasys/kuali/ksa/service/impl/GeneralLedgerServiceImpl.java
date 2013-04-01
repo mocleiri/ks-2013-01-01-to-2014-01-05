@@ -20,6 +20,7 @@ import javax.jws.WebService;
 import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.sigmasys.kuali.ksa.model.Constants.*;
 
@@ -684,14 +685,17 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
             return false;
         }
 
-        glAccount = StringUtils.deleteAny(glAccount, " \n\t\r-");
-
-        if (glAccount.length() != 13) {
-            logger.warn("GL Account '" + glAccount + "' is invalid, the length must be 12");
-            return false;
+        Query query = em.createQuery("select pattern from AllowableGlAccount");
+        List<String> patterns = query.getResultList();
+        if (!CollectionUtils.isEmpty(patterns)) {
+            for (String pattern : patterns) {
+                if (Pattern.compile(pattern).matcher(glAccount).matches()) {
+                    return true;
+                }
+            }
         }
 
-        return true;
+        return false;
     }
 
     /**
