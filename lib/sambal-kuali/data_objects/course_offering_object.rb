@@ -761,6 +761,8 @@ class DeliveryFormat
          @format = "Lab Only"
       elsif selected_options[:del_format] == "Lecture"
          @format = "Lecture Only"
+      elsif selected_options[:del_format] == "Discussion/Lecture"
+        @format = "Lecture/Discussion"
       else
          @format = selected_options[:del_format]
       end
