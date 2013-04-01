@@ -160,7 +160,7 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
     }
 
     /**
-     * Removes all allocations for the given transaction list(s) and stores the result in "outTransactionList" list.
+     * Removes non-locked allocations for the given transaction list(s) and stores the result in "outTransactionList" list.
      *
      * @param inTransactionLists The name(s) of the input transaction list stored in the BRM context
      * @param outTransactionList The name of the output GL transaction list stored in the BRM context
@@ -169,7 +169,7 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
     @Override
     public void removeAllocations(String inTransactionLists, String outTransactionList, BrmContext context) {
         List<Transaction> transactions = toList(inTransactionLists, context, false);
-        List<GlTransaction> glTransactions = transactionService.removeAllAllocations(transactions);
+        List<GlTransaction> glTransactions = transactionService.removeAllocations(transactions);
         toList(outTransactionList, context, true).addAll(glTransactions);
     }
 

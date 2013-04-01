@@ -35,7 +35,7 @@ public interface BrmPaymentService {
     void applyPayments(String inTransactionLists, String outTransactionList, BrmContext context);
 
     /**
-     * Removes all allocations for the given transaction list(s) and stores the result in "outTransactionList" list.
+     * Removes non-locked allocations for the given transaction list(s) and stores the result in "outTransactionList" list.
      *
      * @param inTransactionLists The name(s) of the input transaction list stored in the BRM context
      * @param outTransactionList The name of the output GL transaction list stored in the BRM context

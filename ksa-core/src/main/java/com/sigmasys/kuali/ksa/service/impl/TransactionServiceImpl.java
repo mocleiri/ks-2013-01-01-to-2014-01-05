@@ -1056,7 +1056,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Removes all allocations (locked and non-locked) associated with the given transactions
+     * Removes all allocations (locked and non-locked) associated with the given transaction.
      * <p/>
      *
      * @param transactionId Transaction ID
@@ -1065,6 +1065,24 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @Transactional(readOnly = false)
     public List<GlTransaction> removeAllAllocations(Long transactionId) {
+        return removeAllocations(transactionId, false);
+    }
+
+    /**
+     * Removes non-locked allocations associated with the given transaction.
+     * <p/>
+     *
+     * @param transactionId transaction ID
+     * @return list of generated GL transactions
+     */
+    @Override
+    @Transactional(readOnly = false)
+    @WebMethod(exclude = true)
+    public List<GlTransaction> removeAllocations(Long transactionId) {
+        return removeAllocations(transactionId, true);
+    }
+
+    private List<GlTransaction> removeAllocations(Long transactionId, boolean excludeLockAllocations) {
 
         Transaction transaction = getTransaction(transactionId);
         if (transaction == null) {
@@ -1073,8 +1091,14 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new TransactionNotFoundException(errMsg);
         }
 
-        Query query = em.createQuery("select distinct a from Allocation a " +
+        StringBuilder builder = new StringBuilder("select distinct a from Allocation a " +
                 " where a.firstTransaction.id = :id or a.secondTransaction.id = :id");
+
+        if (excludeLockAllocations) {
+            builder.append(" and a.locked <> true)");
+        }
+
+        Query query = em.createQuery(builder.toString());
 
         query.setParameter("id", transactionId);
 
@@ -1089,6 +1113,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         return glTransactions;
     }
+
 
     /**
      * Removes all allocations (locked and non-locked) associated with the given Account ID
@@ -1132,6 +1157,26 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         List<GlTransaction> glTransactions = new LinkedList<GlTransaction>();
         for (Transaction transaction : transactions) {
             glTransactions.addAll(removeAllAllocations(transaction.getId()));
+        }
+
+        return glTransactions;
+    }
+
+    /**
+     * Removes non-locked allocations associated with the given transaction list.
+     * <p/>
+     *
+     * @param transactions list of transactions for which allocations have to be removed
+     * @return list of generated GL transactions
+     */
+    @Override
+    @WebMethod(exclude = true)
+    @Transactional(readOnly = false)
+    public List<GlTransaction> removeAllocations(List<Transaction> transactions) {
+
+        List<GlTransaction> glTransactions = new LinkedList<GlTransaction>();
+        for (Transaction transaction : transactions) {
+            glTransactions.addAll(removeAllocations(transaction.getId()));
         }
 
         return glTransactions;
