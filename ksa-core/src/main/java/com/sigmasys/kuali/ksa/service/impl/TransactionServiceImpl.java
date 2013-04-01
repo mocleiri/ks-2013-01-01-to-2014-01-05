@@ -779,19 +779,14 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return createAllocation(transaction1, transaction2, newAmount, isQueued, locked);
     }
 
-    private void addAllocatedAmount(Transaction transaction, BigDecimal newAmount, boolean locked) {
+    private void setAllocatedAmount(Transaction transaction, BigDecimal newAmount, boolean locked) {
         if (newAmount == null) {
             newAmount = BigDecimal.ZERO;
         }
-        BigDecimal oldAmount = locked ? transaction.getLockedAllocatedAmount() : transaction.getAllocatedAmount();
-        if (oldAmount == null) {
-            oldAmount = BigDecimal.ZERO;
-        }
-        BigDecimal totalAmount = oldAmount.add(newAmount);
         if (locked) {
-            transaction.setLockedAllocatedAmount(totalAmount);
+            transaction.setLockedAllocatedAmount(newAmount);
         } else {
-            transaction.setAllocatedAmount(totalAmount);
+            transaction.setAllocatedAmount(newAmount);
         }
     }
 
@@ -843,31 +838,43 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         Query query = em.createQuery("select a from Allocation a " +
-                " join fetch a.firstTransaction t1 " +
-                " join fetch a.secondTransaction t2 " +
-                " where a.account.id = :userId");
+                " where a.account.id = :userId and ((a.firstTransaction.id = :id1 and a.secondTransaction.id = :id2) or " +
+                " (a.firstTransaction.id = :id2 and a.secondTransaction.id = :id1)) and a.locked = :locked");
+
         query.setParameter("userId", userId);
+        query.setParameter("id1", transactionId1);
+        query.setParameter("id2", transactionId2);
+        query.setParameter("locked", locked);
 
         List<Allocation> allocations = query.getResultList();
         for (Allocation allocation : allocations) {
-            Long id1 = allocation.getFirstTransaction().getId();
-            Long id2 = allocation.getSecondTransaction().getId();
-            if ((id1.equals(transactionId1) && id2.equals(transactionId2)) ||
-                    (id1.equals(transactionId2) && id2.equals(transactionId1))) {
-                BigDecimal allocatedAmount1 = transaction1.getAllocatedAmount() != null ?
-                        transaction1.getAllocatedAmount() : BigDecimal.ZERO;
-                BigDecimal allocatedAmount2 = transaction2.getAllocatedAmount() != null ?
-                        transaction2.getAllocatedAmount() : BigDecimal.ZERO;
-                BigDecimal newAllocatedAmount1 = (allocatedAmount1.compareTo(BigDecimal.ZERO) >= 0) ?
-                        allocatedAmount1.subtract(allocation.getAmount()) :
-                        allocatedAmount1.add(allocation.getAmount());
-                BigDecimal newAllocatedAmount2 = (allocatedAmount2.compareTo(BigDecimal.ZERO) >= 0) ?
-                        allocatedAmount2.subtract(allocation.getAmount()) :
-                        allocatedAmount2.add(allocation.getAmount());
-                addAllocatedAmount(transaction1, newAllocatedAmount1, false);
-                addAllocatedAmount(transaction2, newAllocatedAmount2, false);
-                deleteEntity(allocation.getId(), Allocation.class);
+
+            BigDecimal allocatedAmount1 = locked ? transaction1.getLockedAllocatedAmount() :
+                    transaction1.getAllocatedAmount();
+
+            BigDecimal allocatedAmount2 = locked ? transaction2.getLockedAllocatedAmount() :
+                    transaction2.getAllocatedAmount();
+
+            if (allocatedAmount1 == null) {
+                allocatedAmount1 = BigDecimal.ZERO;
             }
+
+            if (allocatedAmount2 == null) {
+                allocatedAmount2 = BigDecimal.ZERO;
+            }
+
+            BigDecimal newAllocatedAmount1 = (allocatedAmount1.compareTo(BigDecimal.ZERO) >= 0) ?
+                    allocatedAmount1.subtract(allocation.getAmount()) :
+                    allocatedAmount1.add(allocation.getAmount());
+
+            BigDecimal newAllocatedAmount2 = (allocatedAmount2.compareTo(BigDecimal.ZERO) >= 0) ?
+                    allocatedAmount2.subtract(allocation.getAmount()) :
+                    allocatedAmount2.add(allocation.getAmount());
+
+            setAllocatedAmount(transaction1, newAllocatedAmount1, false);
+            setAllocatedAmount(transaction2, newAllocatedAmount2, false);
+
+            deleteEntity(allocation.getId(), Allocation.class);
         }
 
         BigDecimal unallocatedAmount1 = getUnallocatedAmount(transaction1);
@@ -906,8 +913,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             persistEntity(allocation);
 
-            addAllocatedAmount(transaction1, newAmount, locked);
-            addAllocatedAmount(transaction2, newAmount, locked);
+            setAllocatedAmount(transaction1, newAmount, locked);
+            setAllocatedAmount(transaction2, newAmount, locked);
 
             persistTransaction(transaction1);
             persistTransaction(transaction2);
@@ -1354,8 +1361,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         Query query = em.createQuery("select distinct a from Allocation a " +
-                " where (a.firstTransaction.id = :id1 and a.secondTransaction.id = :id2) or " +
-                " (a.firstTransaction.id = :id2 and a.secondTransaction.id = :id1) and a.locked = :locked");
+                " where ((a.firstTransaction.id = :id1 and a.secondTransaction.id = :id2) or " +
+                " (a.firstTransaction.id = :id2 and a.secondTransaction.id = :id1)) and a.locked = :locked");
 
         query.setParameter("id1", transactionId1);
         query.setParameter("id2", transactionId2);
@@ -2138,8 +2145,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         Query query = em.createQuery("select a from Allocation a " +
                 " join fetch a.firstTransaction t1 " +
                 " join fetch a.secondTransaction t2 " +
-                " where a.firstTransaction.id = :transactionId or " +
-                " a.secondTransaction.id = :transactionId and a.locked = true");
+                " where (a.firstTransaction.id = :transactionId or " +
+                " a.secondTransaction.id = :transactionId) and a.locked = true");
         query.setParameter("transactionId", transactionId);
         List<Allocation> lockedAllocations = query.getResultList();
         if (lockedAllocations != null) {
