@@ -1,4 +1,4 @@
-@pending
+@nightly
 Feature: delete activity offerings
 
   CO 24.12, As a user, I want to Delete Activity Offerings from the Manage Course Offerings process
