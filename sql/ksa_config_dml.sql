@@ -132,7 +132,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.1098.us.ssn.display.digits', 
 
 -- Refund constants
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.ach.bank.type', 'ACH');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.source.type', 'RefundSrcTypeId1');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.source.type', 'cash');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.method', 'RefundMethod1');
 
 -- BRM (Drools) rule types

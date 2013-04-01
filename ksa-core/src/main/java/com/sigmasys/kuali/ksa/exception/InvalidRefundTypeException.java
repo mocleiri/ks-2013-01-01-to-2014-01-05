@@ -1,7 +1,7 @@
 package com.sigmasys.kuali.ksa.exception;
 
 /**
- * This exception is thrown when a transaction is invalid.
+ * This exception is thrown when a refund type is invalid.
  *
  * @author Michael Ivanov
  */

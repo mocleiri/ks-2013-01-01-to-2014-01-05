@@ -8,6 +8,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.sigmasys.kuali.ksa.exception.*;
+import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -20,19 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import com.sigmasys.kuali.ksa.model.Account;
-import com.sigmasys.kuali.ksa.model.Activity;
-import com.sigmasys.kuali.ksa.model.Allocation;
-import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.CreditType;
-import com.sigmasys.kuali.ksa.model.Payment;
-import com.sigmasys.kuali.ksa.model.PostalAddress;
-import com.sigmasys.kuali.ksa.model.Refund;
-import com.sigmasys.kuali.ksa.model.RefundManifest;
-import com.sigmasys.kuali.ksa.model.RefundStatus;
-import com.sigmasys.kuali.ksa.model.RefundType;
-import com.sigmasys.kuali.ksa.model.Rollup;
-import com.sigmasys.kuali.ksa.model.Transaction;
 import com.sigmasys.kuali.ksa.jaxb.Ach;
 import com.sigmasys.kuali.ksa.jaxb.BatchAch;
 import com.sigmasys.kuali.ksa.jaxb.BatchCheck;
@@ -110,7 +98,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
                 }
             }
 
-            // Create a new Refund:
+            // Create a new Refund instance
             return processAsCash ?
                     createCashRefund(payment, refundRequestDate, refundRequestedBy) :
                     createSourceRefund(payment, refundRequestDate, refundRequestedBy, refundRule);
@@ -291,6 +279,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     public Refund validateRefund(Long refundId) {
+
         // Get the Refund object by its identifier:
         Refund refund = getRefund(refundId, false);
 
@@ -676,6 +665,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = false)
     public Refund cancelRefund(Long refundId, String memo) {
+
         // Get the Refund object:
         Refund refund = getRefund(refundId, false);
         RefundStatus status = refund.getStatus();
@@ -696,18 +686,25 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             refundsToCancel.add(refund);
 
             if (StringUtils.isNotBlank(refundGroup)) {
+
                 // Get all Refunds with the same group ID:
-                String sql = "select r from Refund r where r.refundGroup = :refundGroup and r.id <> :id";
-                Query query = em.createQuery(sql).setParameter("refundGroup", refundGroup).setParameter("id", refund.getId());
+                String sql = "select r from Refund r " +
+                        " inner join fetch r.transaction rt " +
+                        " inner join fetch r.refundTransaction rrt " +
+                        " where r.refundGroup = :refundGroup and r.id <> :id";
+
+                Query query = em.createQuery(sql).setParameter("refundGroup", refundGroup);
+                query.setParameter("id", refund.getId());
 
                 refundsToCancel.addAll(query.getResultList());
             }
 
             // Cancel all Refunds and reverse their Transactions:
             for (Refund refundToCancel : refundsToCancel) {
+                Transaction transaction = refundToCancel.getTransaction();
+                transaction.setStatus(TransactionStatus.ACTIVE);
                 Transaction refundTransaction = refundToCancel.getRefundTransaction();
                 BigDecimal amount = refund.getAmount();
-
                 transactionService.reverseTransaction(refundTransaction.getId(), memo, amount, "Refund Cancellation");
                 refundToCancel.setStatus(RefundStatus.CANCELED);
                 persistEntity(refundToCancel);
@@ -918,6 +915,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return Refund check as a JAXB object.
      */
     private Check doCheckRefundInternal(Long refundId, String batch, Date checkDate, String checkMemo, boolean consolidateSameAccountRefunds) {
+
         // Get the Refund object:
         Refund refund = getRefund(refundId, true);
 
@@ -954,8 +952,9 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             amount = new BigDecimal(0);
 
             // Get the new Rollup:
-            String checkRoolupCode = configService.getParameter(Constants.REFUND_CHECK_GROUP_ROLLUP);
-            Rollup checkRollup = getAuditableEntityByCode(checkRoolupCode, Rollup.class);
+            String checkRollupCode = configService.getParameter(Constants.REFUND_CHECK_GROUP_ROLLUP);
+
+            Rollup checkRollup = getAuditableEntityByCode(checkRollupCode, Rollup.class);
 
             // Sum all due Refunds into one check and perform refund:
             for (Refund dueRefund : allDueRefunds) {
@@ -1090,17 +1089,20 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return The Refund object.
      */
     private Refund performRefundInternal(Long refundId, String batch, String accountId) {
+
         // Get the Refund object and check that it's in the VERIFIED status:
         Refund refund = getRefund(refundId, true);
 
         // Create a charge transaction on the account referenced through the original transaction
         // Of type referenced in the refundType, of the amount of the refund:
         Transaction originalTransaction = refund.getTransaction();
+
         Account account = originalTransaction.getAccount();
         String userId = StringUtils.isNotBlank(accountId) ? accountId : account.getId();
         String refundTransactionTypeId = refund.getRefundType().getDebitTypeId();
         Date effectiveDate = new Date();
         BigDecimal amount = refund.getAmount();
+
         Transaction refundTransaction = transactionService.createTransaction(refundTransactionTypeId, userId, effectiveDate, amount);
 
         // Create a lockedAllocation between the refund and the original transaction in the amount of the refund:
@@ -1117,6 +1119,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         refund.setRefundDate(effectiveDate);
         refund.setRefundTransaction(refundTransaction);
         refund.setStatus(RefundStatus.REFUNDED);
+
+        originalTransaction.setStatus(TransactionStatus.REFUNDED);
 
         if (StringUtils.isNotBlank(batch)) {
             refund.setBatchId(batch);
@@ -1153,6 +1157,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         // If there is a valid Refund type, create a new Refund:
         if (StringUtils.isNotBlank(refundTypeMethod)) {
+
             // Create a new Refund:
             Refund refund = new Refund();
             RefundType refundType = getOrCreateRefundType(refundTypeMethod, refundTypeMethod);
@@ -1167,7 +1172,9 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
             return refund;
         } else {
-            throw new InvalidRefundTypeException("No default Refund Type in system configuration or User Preferences.");
+            String errMsg = "No default Refund Method found in system configuration or User Preferences.";
+            logger.error(errMsg);
+            throw new InvalidRefundMethodException(errMsg);
         }
     }
 
@@ -1191,7 +1198,9 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         }
 
         RefundType refundType = getOrCreateRefundType(refundSourceType, refundSourceType);
+
         BigDecimal refundAmount = TransactionUtils.getUnallocatedAmount(payment);
+
         Refund refund = new Refund();
 
         refund.setAmount(refundAmount);

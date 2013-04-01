@@ -238,5 +238,54 @@ public class RefundServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void cancelRefund() throws Exception {
+
+        Transaction transaction = transactionService.createTransaction("cash", "admin", new Date(), new BigDecimal(30.56));
+
+        notNull(transaction);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+
+        isTrue(transaction instanceof Payment);
+
+        Payment payment = (Payment) transaction;
+
+        payment.setRefundable(true);
+        payment.setRefundRule("A(9)(admin)");
+
+        Refund refund = refundService.checkForRefund(payment.getId());
+
+        notNull(refund);
+        notNull(refund.getId());
+        notNull(refund.getRequestedBy());
+        notNull(refund.getRequestDate());
+        notNull(refund.getAmount());
+
+        refund = refundService.validateRefund(refund.getId());
+
+        notNull(refund);
+        notNull(refund.getId());
+
+        refund = refundService.performRefund(refund.getId());
+
+        notNull(refund);
+        notNull(refund.getId());
+        notNull(refund.getTransaction());
+        notNull(refund.getRefundTransaction());
+
+        isTrue(TransactionStatus.REFUNDED.equals(refund.getTransaction().getStatus()));
+
+        refund = refundService.cancelRefund(refund.getId(), "Refund for payment 'cash' has been cancelled");
+
+        notNull(refund);
+        notNull(refund.getId());
+        isTrue(TransactionStatus.ACTIVE.equals(refund.getTransaction().getStatus()));
+
+    }
+
 
 }
