@@ -89,11 +89,27 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
      * Write out the entire file
      */
     public void write() {
+        indentPrintln("@RunWith(SpringJUnit4ClassRunner.class)");
         indentPrint("public class " + calcClassName(servKey));
         println(" implements " + calcServiceInterfaceClassName(servKey));
         Service serv = finder.findService(servKey);
         importsAdd(serv.getImplProject() + "." + serv.getName());
+        importsAdd("org.kuali.student.r2.common.dto.IdEntityInfo");
+        importsAdd("org.kuali.student.r2.common.dto.TypeStateEntityInfo");
         openBrace();
+
+        // context info setup
+        indentPrintln("public ContextInfo contextInfo = null;");
+        indentPrintln("public static String principalId = \"123\";");
+        indentPrintln("");
+        indentPrintln("@Before");
+        indentPrintln("public void setUp()");
+        openBrace();
+        indentPrintln("principalId = \"123\";");
+        indentPrintln("contextInfo = new ContextInfo();");
+        indentPrintln("contextInfo.setPrincipalId(principalId);");
+        closeBrace();
+        indentPrintln("");
 
         // get a list of all the DTOs managed by this class
         List<String> dtoObjectNames = new ArrayList<String>();
@@ -132,6 +148,10 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         }
 
         // start method open signature
+        indentPrintln("// ****************************************************");
+        indentPrintln("//           " + dtoObjectName + "Info");
+        indentPrintln("// ****************************************************");
+        indentPrintln("@Test");
         indentPrintln("public void testCrud" + dtoObjectName + "() ");
         incrementIndent();
         indentPrintln("throws DataValidationErrorException,");
@@ -159,6 +179,14 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
 
         // end method
         closeBrace();
+        indentPrintln("");
+
+        // methods that will be overwritten
+        writetestCrudXXX_setDTOFieldsForTestCreate(dtoObjectName, messageStructures);
+        writetestCrudXXX_testDTOFieldsForTestCreateUpdate(dtoObjectName, messageStructures);
+        writetestCrudXXX_setDTOFieldsForTestUpdate(dtoObjectName, messageStructures);
+        writetestCrudXXX_testDTOFieldsForTestReadAfterUpdate(dtoObjectName, messageStructures);
+        writetestCrudXXX_setDTOFieldsForTestReadAfterUpdate(dtoObjectName, messageStructures);
     }
 
     /**
@@ -166,33 +194,41 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
      */
     public void writeTestCreate (String dtoObjectName, List<MessageStructure> messageStructures) {
         indentPrintDecoratedComment("test create");
-        indentPrintln(dtoObjectName + " expected = new " + dtoObjectName + "Info ();");
-        indentPrintln("expected.setName(\"Name01\");");
+        indentPrintln(dtoObjectName + "Info expected = new " + dtoObjectName + "Info ();");
+        // indentPrintln("expected.setName(\"Name01\");");
         indentPrintln("expected.setDescr(new RichTextHelper().fromPlain(\"Description01\"));");
         indentPrintln("");
-        indentPrintln("// INSERT CODE TO SET MORE DTO FIELDS HERE");
+        indentPrintln("// METHOD TO SET DTO FIELDS HERE FOR TEST CREATE");
+        indentPrintln("testCrud" + dtoObjectName + "_setDTOFieldsForTestCreate (expected);");
         indentPrintln("");
 
-        indentPrintln("if (expected implements TypeStateEntityInfo)");
+        indentPrintln("if (expected instanceof TypeStateEntityInfo)");
         openBrace();
         incrementIndent();
         indentPrintln("expectedTS = (TypeStateEntityInfo) expected;");
-        indentPrintln("expectedTS.setTypeKey(\"Type01\");");
-        indentPrintln("expectedTS.setStateKey(\"State01\");");
+        indentPrintln("expectedTS.setTypeKey(\"typeKey01\");");
+        indentPrintln("expectedTS.setStateKey(\"stateKey01\");");
         decrementIndent();
         closeBrace();
+
         indentPrintln("new AttributeTester().add2ForCreate(expected.getAttributes());");
 
         indentPrintln("");
         indentPrintln("// code to create actual");
-        indentPrintln("actual = " + getMethodCallAsString ("create" + dtoObjectName, "// INSERT CODE TO CREATE actual HERE", MethodType.CREATE, dtoObjectName, "expected"));
+        indentPrintln(dtoObjectName + "Info actual = " + getMethodCallAsString ("create" + dtoObjectName, "// INSERT CODE TO CREATE actual HERE", MethodType.CREATE, dtoObjectName, "expected"));
         indentPrintln("");
 
+        indentPrintln("if (actual instanceof IdEntityInfo)");
+        openBrace();
+        incrementIndent();
         indentPrintln("assertNotNull(actual.getId());");
         indentPrintln("new IdEntityTester().check(expected, actual);");
+        decrementIndent();
+        closeBrace();
 
         indentPrintln("");
-        indentPrintln("// INSERT CODE FOR TESTING MORE DTO FIELDS HERE");
+        indentPrintln("// METHOD TO TEST DTO FIELDS HERE FOR TEST CREATE");
+        indentPrintln("testCrud" + dtoObjectName + "_testDTOFieldsForTestCreateUpdate (expected, actual);");
         indentPrintln("");
 
         indentPrintln("new AttributeTester().check(expected.getAttributes(), actual.getAttributes());");
@@ -207,6 +243,7 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("");
 
         indentPrintln("// INSERT CODE FOR TESTING MORE DTO FIELDS HERE");
+        indentPrintln("testCrud" + dtoObjectName + "_testDTOFieldsForTestCreateUpdate (expected, actual);");
         indentPrintln("");
 
         indentPrintln("new AttributeTester().check(expected.getAttributes(), actual.getAttributes());");
@@ -220,18 +257,19 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
     public void writeTestUpdate (String dtoObjectName, List<MessageStructure> messageStructures) {
         indentPrintDecoratedComment("test update");
         indentPrintln("expected = actual;");
-        indentPrintln("expected.setName(expected.getName() + \" updated\");");
-        indentPrintln("expected.setDescr(new RichTextHelper().fromPlain(expected.getDescr().getPlain() + \" updated\"));");
+        // indentPrintln("expected.setName(expected.getName() + \" updated\");");
+        indentPrintln("expected.setDescr(new RichTextHelper().fromPlain(expected.getDescr().getPlain() + \"_Updated\"));");
         indentPrintln("");
         indentPrintln("if (expected implements TypeStateEntityInfo)");
         openBrace();
         incrementIndent();
         indentPrintln("expectedTS = (TypeStateEntityInfo) expected;");
-        indentPrintln("expectedTS.setStateKey(expected.getState() + \" updated\");");
+        indentPrintln("expectedTS.setStateKey(expected.getState() + \"_Updated\");");
         decrementIndent();
         closeBrace();
         indentPrintln("");
-        indentPrintln("// INSERT CODE TO UPDATE MORE DTO FIELDS HERE");
+        indentPrintln("// METHOD TO INSERT CODE TO UPDATE DTO FIELDS HERE");
+        indentPrintln("testCrud" + dtoObjectName + "_setDTOFieldsForTestUpdate (expected);");
         indentPrintln("");
         indentPrintln("new AttributeTester().delete1Update1Add1ForUpdate(expected.getAttributes());");
 
@@ -242,7 +280,8 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("assertEquals(expected.getId(), actual.getId());");
         indentPrintln("new IdEntityTester().check(expected, actual);");
         indentPrintln("");
-        indentPrintln("// INSERT CODE FOR TESTING MORE DTO FIELDS HERE");
+        indentPrintln("// METHOD TO INSERT CODE FOR TESTING DTO FIELDS HERE");
+        indentPrintln("testCrud" + dtoObjectName + "_testDTOFieldsForTestCreateUpdate (expected, actual);");
         indentPrintln("");
         indentPrintln("new AttributeTester().check(expected.getAttributes(), actual.getAttributes());");
         indentPrintln("new MetaTester().checkAfterUpdate(expected.getMeta(), actual.getMeta());");
@@ -264,26 +303,28 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("assertEquals(expected.getId(), actual.getId());");
         indentPrintln("new IdEntityTester().check(expected, actual);");
         indentPrintln("");
-        indentPrintln("// INSERT CODE FOR TESTING MORE DTO FIELDS HERE");
+        indentPrintln("// INSERT METHOD CODE FOR TESTING DTO FIELDS HERE");
+        indentPrintln("testCrud" + dtoObjectName + "_testDTOFieldsForTestReadAfterUpdate (expected, actual);");
         indentPrintln("");
         indentPrintln("new AttributeTester().check(expected.getAttributes(), actual.getAttributes());");
         indentPrintln("new MetaTester().checkAfterGet(expected.getMeta(), actual.getMeta());");
         indentPrintln("");
-        indentPrintln(dtoObjectName + " alphaDTO = actual;");
+        indentPrintln(dtoObjectName + "Info alphaDTO = actual;");
         indentPrintln("");
         indentPrintln("// create a 2nd DTO");
-        indentPrintln(dtoObjectName + " betaDTO = new " + dtoObjectName + "Info ();");
-        indentPrintln("betaDTO.setName(\"Beta entity name\");");
+        indentPrintln(dtoObjectName + "Info betaDTO = new " + dtoObjectName + "Info ();");
+        // indentPrintln("betaDTO.setName(\"Beta entity name\");");
         indentPrintln("betaDTO.setDescr(new RichTextHelper().fromPlain(\"Beta entity description\"));");
         indentPrintln("");
-        indentPrintln("// INSERT CODE TO SET MORE DTO FIELDS HERE");
+        indentPrintln("// METHOD TO INSERT CODE TO SET MORE DTO FIELDS HERE");
+        indentPrintln("testCrud" + dtoObjectName + "_setDTOFieldsForTestReadAfterUpdate (betaDTO, actual);");
         indentPrintln("");
         indentPrintln("if (betaDTO implements TypeStateEntityInfo)");
         openBrace();
         incrementIndent();
         indentPrintln("betaDTOTS = (TypeStateEntityInfo) betaDTO;");
-        indentPrintln("betaDTOTS.setTypeKey(\"TypeBeta\");");
-        indentPrintln("betaDTOTS.setStateKey(\"StateBeta\");");
+        indentPrintln("betaDTOTS.setTypeKey(\"typeKeyBeta\");");
+        indentPrintln("betaDTOTS.setStateKey(\"stateKeyBeta\");");
         decrementIndent();
         closeBrace();
         indentPrintln("betaDTO = " + getMethodCallAsString("create" + dtoObjectName, "// INSERT CODE TO CREATE betaDTO", MethodType.CREATE, dtoObjectName, "betaDTO"));
@@ -325,8 +366,9 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("");
         indentPrintDecoratedComment("test get by type");
 
-        indentPrintln("// code to get by specific type \"Type01\" ");
-        indentPrintln(initLower(dtoObjectName) + "Ids = " + getMethodCallAsString ("get" + dtoObjectName + "IdsByType", "// INSERT CODE TO GET BY SPECIFIC TYPE \"Type01\" HERE", MethodType.GET_IDS_BY_TYPE));
+        indentPrintln("// code to get by specific type \"typeKey01\" ");
+        indentPrintln(initLower(dtoObjectName) + "Ids = get" + dtoObjectName + "IdsByType (\"typeKey01\", contextInfo);");
+        // indentPrintln(initLower(dtoObjectName) + "Ids = " + getMethodCallAsString ("get" + dtoObjectName + "IdsByType", "// INSERT CODE TO GET BY SPECIFIC TYPE \"typeKey01\" HERE", MethodType.GET_IDS_BY_TYPE));
         indentPrintln("");
 
         indentPrintln("assertEquals(1, " + initLower(dtoObjectName) + "Ids.size());");
@@ -334,8 +376,9 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("");
         indentPrintln("// test get by other type");
 
-        indentPrintln("// code to get by specific type \"TypeBeta\" ");
-        indentPrintln(initLower(dtoObjectName) + "Ids = " + getMethodCallAsString ("get" + dtoObjectName + "IdsByType", "// INSERT CODE TO GET BY SPECIFIC TYPE \"TypeBeta\" HERE", MethodType.GET_IDS_BY_TYPE));
+        indentPrintln("// code to get by specific type \"typeKeyBeta\" ");
+        indentPrintln(initLower(dtoObjectName) + "Ids = get" + dtoObjectName + "IdsByType (\"typeKeyBeta\", contextInfo);");
+        // indentPrintln(initLower(dtoObjectName) + "Ids = " + getMethodCallAsString ("get" + dtoObjectName + "IdsByType", "// INSERT CODE TO GET BY SPECIFIC TYPE \"typeKeyBeta\" HERE", MethodType.GET_IDS_BY_TYPE));
         indentPrintln("");
 
         indentPrintln("assertEquals(1, " + initLower(dtoObjectName) + "Ids.size());");
@@ -344,7 +387,7 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
     }
 
     /**
-     * Write the 'read after update' portion.
+     * Write the 'delete' portion.
      */
     public void writeTestDelete (String dtoObjectName, List<MessageStructure> messageStructures) {
         indentPrintDecoratedComment("test delete");
@@ -358,7 +401,7 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         indentPrintln("try");
         openBrace();
         incrementIndent();
-        indentPrintln("record = " + getMethodCallAsString ("get" + dtoObjectName, "// INSERT CODE TO RETRIEVE RECENTLY DELETED RECORD", MethodType.GET_BY_ID));
+        indentPrintln("record = " + getMethodCallAsString ("get" + dtoObjectName, "// INSERT CODE TO RETRIEVE RECENTLY DELETED RECORD", MethodType.GET_BY_ID, dtoObjectName, "actual"));
         indentPrintln("fail(\"Did not receive DoesNotExistException when attempting to get already-deleted entity\");");
         decrementIndent();
         closeBrace();
@@ -434,4 +477,112 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         }
 
     }
+
+    /**
+     * Writes the section to set fields specific to this dto for testCreate section.
+     */
+    public void writetestCrudXXX_setDTOFieldsForTestCreate(String dtoObjectName, List<MessageStructure> messageStructures) {
+        indentPrintln("public void testCrud" + dtoObjectName + "_setDTOFieldsForTestCreate(" + dtoObjectName + "Info expected) ");
+        openBrace();
+        for (MessageStructure ms: messageStructures) {
+            if (ms.getShortName().equals("id")) continue;
+            if (ms.getShortName().equals("meta")) continue;
+            if (ms.getShortName().equals("descr")) continue;
+            if (ms.getShortName().equals("attributes")) continue;
+            if (ms.getType().equals("String")) {
+                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\")");
+            } else {
+                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\")");
+            }
+        }
+        closeBrace();
+        indentPrintln("");
+    }
+
+    /**
+     * Writes the section to test fields specific to this dto for testCreate and testUpdate sections.
+     */
+    public void writetestCrudXXX_testDTOFieldsForTestCreateUpdate(String dtoObjectName, List<MessageStructure> messageStructures) {
+        indentPrintln("public void testCrud" + dtoObjectName + "_testDTOFieldsForTestCreateUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual) ");
+        openBrace();
+        for (MessageStructure ms: messageStructures) {
+            if (ms.getShortName().equals("id")) continue;
+            if (ms.getShortName().equals("meta")) continue;
+            //if (ms.getShortName().equals("descr")) continue;
+            if (ms.getShortName().equals("attributes")) continue;
+            if (ms.getType().equals("String")) {
+                indentPrintln("assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
+            } else {
+                indentPrintln("//TODO *TYPE = " + ms.getType() + "* assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
+            }
+        }
+        closeBrace();
+        indentPrintln("");
+    }
+
+
+    /**
+     * Writes the section to set fields specific to this dto for testUpdate sections.
+     */
+    public void writetestCrudXXX_setDTOFieldsForTestUpdate(String dtoObjectName, List<MessageStructure> messageStructures) {
+        indentPrintln("public void testCrud" + dtoObjectName + "_setDTOFieldsForTestUpdate(" + dtoObjectName + "Info expected) ");
+        openBrace();
+        for (MessageStructure ms: messageStructures) {
+            if (ms.getShortName().equals("id")) continue;
+            if (ms.getShortName().equals("meta")) continue;
+            if (ms.getShortName().equals("descr")) continue;
+            if (ms.getShortName().equals("attributes")) continue;
+            if (ms.getType().equals("String")) {
+                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
+            } else {
+                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
+            }
+        }
+        closeBrace();
+        indentPrintln("");
+    }
+
+    /**
+     * Writes the section to test fields specific to this dto for testReadAfterUpdate sections.
+     */
+    public void writetestCrudXXX_testDTOFieldsForTestReadAfterUpdate(String dtoObjectName, List<MessageStructure> messageStructures) {
+        indentPrintln("public void testCrud" + dtoObjectName + "_testDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual) ");
+        openBrace();
+        for (MessageStructure ms: messageStructures) {
+            if (ms.getShortName().equals("meta")) continue;
+            // if (ms.getShortName().equals("descr")) continue;
+            if (ms.getShortName().equals("attributes")) continue;
+            if (ms.getType().equals("String")) {
+                indentPrintln("assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
+            } else {
+                indentPrintln("//TODO *TYPE = " + ms.getType() + "* assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
+            }
+        }
+        closeBrace();
+        indentPrintln("");
+    }
+
+    /**
+     * Writes the section to set fields specific to this dto for testReadAfterUpdate sections.
+     */
+    public void writetestCrudXXX_setDTOFieldsForTestReadAfterUpdate(String dtoObjectName, List<MessageStructure> messageStructures) {
+        indentPrintln("public void testCrud" + dtoObjectName + "_setDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected) ");
+        openBrace();
+        for (MessageStructure ms: messageStructures) {
+            if (ms.getShortName().equals("id")) continue;
+            if (ms.getShortName().equals("typeKey")) continue;
+            if (ms.getShortName().equals("stateKey")) continue;
+            if (ms.getShortName().equals("meta")) continue;
+            if (ms.getShortName().equals("descr")) continue;
+            if (ms.getShortName().equals("attributes")) continue;
+            if (ms.getType().equals("String")) {
+                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
+            } else {
+                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
+            }
+        }
+        closeBrace();
+        indentPrintln("");
+    }
+
 }
