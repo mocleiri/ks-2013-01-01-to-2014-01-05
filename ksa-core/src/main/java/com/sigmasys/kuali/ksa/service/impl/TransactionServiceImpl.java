@@ -894,9 +894,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 transaction2.setAllocatedAmount(newAllocatedAmount2);
             }
 
-            addAllocatedAmount(transaction1, newAllocatedAmount1, false);
-            addAllocatedAmount(transaction2, newAllocatedAmount2, false);
-
             deleteEntity(allocation.getId(), Allocation.class);
         }
 
