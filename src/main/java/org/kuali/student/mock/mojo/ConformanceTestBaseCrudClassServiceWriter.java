@@ -116,43 +116,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         Service serv = finder.findService(servKey);
         importsAdd(serv.getImplProject() + "." + serv.getName());
 
-        // kuali imports
-        importsAdd("org.kuali.student.common.test.util.IdEntityTester");
-        importsAdd("org.kuali.student.r2.common.dto.ContextInfo");
-        importsAdd("org.kuali.student.r2.common.dto.IdEntityInfo");
-        importsAdd("org.kuali.student.r2.common.dto.StatusInfo");
-        importsAdd("org.kuali.student.r2.common.dto.TypeStateEntityInfo");
-        importsAdd("org.kuali.student.r2.common.util.RichTextHelper");
-        importsAdd("org.kuali.student.r2.core.organization.service.impl.lib.AttributeTester");
-        importsAdd("org.kuali.student.r2.core.organization.service.impl.lib.MetaTester");
-
-        // exceptions
-        importsAdd("org.kuali.student.r2.common.exceptions.DataValidationErrorException");
-        importsAdd("org.kuali.student.r2.common.exceptions.DependentObjectsExistException");
-        importsAdd("org.kuali.student.r2.common.exceptions.DoesNotExistException");
-        importsAdd("org.kuali.student.r2.common.exceptions.InvalidParameterException");
-        importsAdd("org.kuali.student.r2.common.exceptions.MissingParameterException");
-        importsAdd("org.kuali.student.r2.common.exceptions.OperationFailedException");
-        importsAdd("org.kuali.student.r2.common.exceptions.PermissionDeniedException");
-        importsAdd("org.kuali.student.r2.common.exceptions.ReadOnlyException");
-        importsAdd("org.kuali.student.r2.common.exceptions.VersionMismatchException");
-
-        // java imports
-        importsAdd("org.springframework.test.context.ContextConfiguration");
-        importsAdd("org.springframework.test.context.junit4.SpringJUnit4ClassRunner");
-        importsAdd("org.junit.Assert");
-        importsAdd("org.junit.Before");
-        importsAdd("org.junit.Test");
-        importsAdd("org.junit.runner.RunWith");
-        importsAdd("static org.junit.Assert.assertEquals");
-        importsAdd("static org.junit.Assert.assertFalse");
-        importsAdd("static org.junit.Assert.assertNotNull");
-        importsAdd("static org.junit.Assert.assertNull");
-        importsAdd("static org.junit.Assert.assertTrue");
-        importsAdd("static org.junit.Assert.fail");
-        importsAdd("javax.annotation.Resource");
-        importsAdd("java.util.ArrayList");
-        importsAdd("java.util.List");
+        doTestImportsAdd();
 
         // begin main class
         openBrace();
@@ -631,23 +595,6 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("*/");
         indentPrintln("public abstract void testCrud" + dtoObjectName + "_setDTOFieldsForTestCreate(" + dtoObjectName + "Info expected);");
         indentPrintln("");
-/*
-        indentPrintln("public void testCrud" + dtoObjectName + "_setDTOFieldsForTestCreate(" + dtoObjectName + "Info expected) ");
-        openBrace();
-        for (MessageStructure ms: messageStructures) {
-            if (ms.getShortName().equals("id")) continue;
-            if (ms.getShortName().equals("meta")) continue;
-            if (ms.getShortName().equals("descr")) continue;
-            if (ms.getShortName().equals("attributes")) continue;
-            if (ms.getType().equals("String")) {
-                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\")");
-            } else {
-                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\")");
-            }
-        }
-        closeBrace();
-        indentPrintln("");
-*/
     }
 
     /**
@@ -664,23 +611,6 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("*/");
         indentPrintln("public abstract void testCrud" + dtoObjectName + "_testDTOFieldsForTestCreateUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual);");
         indentPrintln("");
-/*
-        indentPrintln("public void testCrud" + dtoObjectName + "_testDTOFieldsForTestCreateUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual) ");
-        openBrace();
-        for (MessageStructure ms: messageStructures) {
-            if (ms.getShortName().equals("id")) continue;
-            if (ms.getShortName().equals("meta")) continue;
-            //if (ms.getShortName().equals("descr")) continue;
-            if (ms.getShortName().equals("attributes")) continue;
-            if (ms.getType().equals("String")) {
-                indentPrintln("assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
-            } else {
-                indentPrintln("//TODO *TYPE = " + ms.getType() + "* assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
-            }
-        }
-        closeBrace();
-        indentPrintln("");
-*/
     }
 
 
@@ -695,23 +625,6 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("*/");
         indentPrintln("public abstract void testCrud" + dtoObjectName + "_setDTOFieldsForTestUpdate(" + dtoObjectName + "Info expected);");
         indentPrintln("");
-/*
-        indentPrintln("public void testCrud" + dtoObjectName + "_setDTOFieldsForTestUpdate(" + dtoObjectName + "Info expected) ");
-        openBrace();
-        for (MessageStructure ms: messageStructures) {
-            if (ms.getShortName().equals("id")) continue;
-            if (ms.getShortName().equals("meta")) continue;
-            if (ms.getShortName().equals("descr")) continue;
-            if (ms.getShortName().equals("attributes")) continue;
-            if (ms.getType().equals("String")) {
-                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
-            } else {
-                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
-            }
-        }
-        closeBrace();
-        indentPrintln("");
-*/
     }
 
     /**
@@ -726,22 +639,6 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("*/");
         indentPrintln("public abstract void testCrud" + dtoObjectName + "_testDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual);");
         indentPrintln("");
-/*
-        indentPrintln("public void testCrud" + dtoObjectName + "_testDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual) ");
-        openBrace();
-        for (MessageStructure ms: messageStructures) {
-            if (ms.getShortName().equals("meta")) continue;
-            // if (ms.getShortName().equals("descr")) continue;
-            if (ms.getShortName().equals("attributes")) continue;
-            if (ms.getType().equals("String")) {
-                indentPrintln("assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
-            } else {
-                indentPrintln("//TODO *TYPE = " + ms.getType() + "* assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
-            }
-        }
-        closeBrace();
-        indentPrintln("");
-*/
     }
 
     /**
@@ -756,25 +653,6 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("*/");
         indentPrintln("public abstract void testCrud" + dtoObjectName + "_setDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected);");
         indentPrintln("");
-/*
-        indentPrintln("public void testCrud" + dtoObjectName + "_setDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected) ");
-        openBrace();
-        for (MessageStructure ms: messageStructures) {
-            if (ms.getShortName().equals("id")) continue;
-            if (ms.getShortName().equals("typeKey")) continue;
-            if (ms.getShortName().equals("stateKey")) continue;
-            if (ms.getShortName().equals("meta")) continue;
-            if (ms.getShortName().equals("descr")) continue;
-            if (ms.getShortName().equals("attributes")) continue;
-            if (ms.getType().equals("String")) {
-                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
-            } else {
-                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
-            }
-        }
-        closeBrace();
-        indentPrintln("");
-*/
     }
 
     /**
@@ -815,5 +693,43 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         return dtoObjectNames;
     }
 
+    protected void doTestImportsAdd() {
+        // kuali imports
+        importsAdd("org.kuali.student.common.test.util.IdEntityTester");
+        importsAdd("org.kuali.student.r2.common.dto.ContextInfo");
+        importsAdd("org.kuali.student.r2.common.dto.IdEntityInfo");
+        importsAdd("org.kuali.student.r2.common.dto.StatusInfo");
+        importsAdd("org.kuali.student.r2.common.dto.TypeStateEntityInfo");
+        importsAdd("org.kuali.student.r2.common.util.RichTextHelper");
+        importsAdd("org.kuali.student.r2.core.organization.service.impl.lib.AttributeTester");
+        importsAdd("org.kuali.student.r2.core.organization.service.impl.lib.MetaTester");
 
+        // exceptions
+        importsAdd("org.kuali.student.r2.common.exceptions.DataValidationErrorException");
+        importsAdd("org.kuali.student.r2.common.exceptions.DependentObjectsExistException");
+        importsAdd("org.kuali.student.r2.common.exceptions.DoesNotExistException");
+        importsAdd("org.kuali.student.r2.common.exceptions.InvalidParameterException");
+        importsAdd("org.kuali.student.r2.common.exceptions.MissingParameterException");
+        importsAdd("org.kuali.student.r2.common.exceptions.OperationFailedException");
+        importsAdd("org.kuali.student.r2.common.exceptions.PermissionDeniedException");
+        importsAdd("org.kuali.student.r2.common.exceptions.ReadOnlyException");
+        importsAdd("org.kuali.student.r2.common.exceptions.VersionMismatchException");
+
+        // java imports
+        importsAdd("org.springframework.test.context.ContextConfiguration");
+        importsAdd("org.springframework.test.context.junit4.SpringJUnit4ClassRunner");
+        importsAdd("org.junit.Assert");
+        importsAdd("org.junit.Before");
+        importsAdd("org.junit.Test");
+        importsAdd("org.junit.runner.RunWith");
+        importsAdd("static org.junit.Assert.assertEquals");
+        importsAdd("static org.junit.Assert.assertFalse");
+        importsAdd("static org.junit.Assert.assertNotNull");
+        importsAdd("static org.junit.Assert.assertNull");
+        importsAdd("static org.junit.Assert.assertTrue");
+        importsAdd("static org.junit.Assert.fail");
+        importsAdd("javax.annotation.Resource");
+        importsAdd("java.util.ArrayList");
+        importsAdd("java.util.List");
+    }
 }

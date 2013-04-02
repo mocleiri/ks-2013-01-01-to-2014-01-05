@@ -70,8 +70,7 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         println(" extends " + super.calcClassName(servKey));
         Service serv = finder.findService(servKey);
         importsAdd(serv.getImplProject() + "." + serv.getName());
-        importsAdd("org.kuali.student.r2.common.dto.IdEntityInfo");
-        importsAdd("org.kuali.student.r2.common.dto.TypeStateEntityInfo");
+        doTestImportsAdd();
         openBrace();
 
         indentPrintln("");
@@ -111,7 +110,7 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
             if (!isServiceMethodTestedAsPartofCrudInBaseConformanceTest (method)) {
                 indentPrintln("/* Method Name: " + method.getName() + " */");
                 indentPrintln("@Test");
-                indentPrintln("public test_" + method.getName() + "() ");
+                indentPrintln("public void test_" + method.getName() + "() ");
                 if (method.getErrors().size()>0) {
                     indentPrint("throws ");
                     String comma = "";
@@ -154,9 +153,9 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
             // if (ms.getShortName().equals("descr")) continue;
             if (ms.getShortName().equals("attributes")) continue;
             if (ms.getType().equals("String")) {
-                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\")");
+                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\");");
             } else {
-                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\")");
+                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\");");
             }
         }
         closeBrace();
@@ -210,9 +209,9 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
             // if (ms.getShortName().equals("descr")) continue;
             if (ms.getShortName().equals("attributes")) continue;
             if (ms.getType().equals("String")) {
-                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
+                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\");");
             } else {
-                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
+                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\");");
             }
         }
         closeBrace();
@@ -228,6 +227,7 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         indentPrintln("A method to test the fields for a " + dtoObjectName  + " after an update operation, followed by a read operation,");
         indentPrintln("where actual is the DTO returned by the read operation, and expected is the dto returned by the update operation.");
         decrementIndent();
+        indentPrintln("*/");
         indentPrintln("public void testCrud" + dtoObjectName + "_testDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual) ");
         openBrace();
         for (MessageStructure ms: messageStructures) {
@@ -253,6 +253,7 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         indentPrintln("A method to set the fields for a " + dtoObjectName  + " in the 'test read after update' section.");
         indentPrintln("This dto is another (second) dto object being created for other tests.");
         decrementIndent();
+        indentPrintln("*/");
         indentPrintln("public void testCrud" + dtoObjectName + "_setDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected) ");
         openBrace();
         for (MessageStructure ms: messageStructures) {
@@ -263,9 +264,9 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
             if (ms.getShortName().equals("descr")) continue;
             if (ms.getShortName().equals("attributes")) continue;
             if (ms.getType().equals("String")) {
-                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
+                indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\");");
             } else {
-                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
+                indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\");");
             }
         }
         closeBrace();
