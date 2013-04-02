@@ -8,6 +8,7 @@ import org.kuali.rice.core.api.util.tree.Node;
 import org.kuali.rice.core.api.util.tree.Tree;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -463,6 +464,11 @@ public class TransactionForm extends AbstractViewModel {
             this.startingBalance = BigDecimal.ZERO;
         }
         return startingBalance;
+    }
+
+    public String getFormattedStartingBalance() {
+        NumberFormat percentFormat = NumberFormat.getCurrencyInstance();
+        return percentFormat.format(this.getStartingBalance());
     }
 
     public void setStartingBalance(BigDecimal startingBalance) {

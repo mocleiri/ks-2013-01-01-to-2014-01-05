@@ -94,6 +94,8 @@ public class TransactionController extends GenericSearchController {
             Date actualStartDate = startDate;
             Date actualEndDate = endDate;
 
+            form.setStartingBalance(transactionService.getBalance(userId, startDate));
+
             // All transactions
             List<Transaction> transactions = TransactionUtils.orderByEffectiveDate(transactionService.getTransactions(userId, startDate, endDate), true);
             List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());

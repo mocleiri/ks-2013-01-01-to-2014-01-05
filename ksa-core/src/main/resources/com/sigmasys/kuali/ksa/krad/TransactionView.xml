@@ -168,7 +168,7 @@
                 <bean parent="Uif-VerticalBoxSection" p:headerText="Running Balance">
                     <property name="items">
                         <list>
-                            <bean parent="Uif-Message" p:messageText="Starting Balance on @{getFormattedDate(startingDate)}: &lt;b&gt;@{startingBalance}&lt;/b&gt;" p:style="float: right;"/>
+                            <bean parent="Uif-Message" p:messageText="Starting Balance on @{getFormattedDate(startingDate)}: &lt;b&gt;@{formattedStartingBalance}&lt;/b&gt;" p:style="float: right;"/>
 
                             <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="6">
                                 <property name="readOnly" value="true"/>
