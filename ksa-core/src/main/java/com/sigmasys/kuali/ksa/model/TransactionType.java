@@ -1,5 +1,7 @@
 package com.sigmasys.kuali.ksa.model;
 
+import com.sigmasys.kuali.ksa.annotation.Auditable;
+
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +14,7 @@ import javax.persistence.*;
  *
  * @author Michael Ivanov
  */
+@Auditable
 @Entity
 @Table(name = "KSSA_TRANSACTION_TYPE")
 @DiscriminatorColumn(name = "TYPE")
