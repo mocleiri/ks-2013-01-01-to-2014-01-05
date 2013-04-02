@@ -353,33 +353,11 @@
                     </property>
 
                 </bean>
-<!--
-                <bean parent="Uif-InputField" p:propertyName="priority" p:label="Priority" p:labelPlacement="TOP">
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="11" p:maxLength="10"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-InputField" p:propertyName="clearPeriod" p:label="Clear Period" p:labelPlacement="TOP">
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="11" p:maxLength="10"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-InputField" p:propertyName="authorizationText" p:label="Authorization Text" p:labelPlacement="TOP">
+                <bean parent="Uif-InputField" p:propertyName="unallocatedGLAccount" p:label="Unallocated GL Account" p:progressiveRender="@{#dp.type eq 'C'}">
                     <property name="control">
                         <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="unallocatedGLAccount" p:label="Unallocated GL Account" p:labelPlacement="TOP">
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-InputField" p:propertyName="unallocatedGLOperation" p:label="Unallocated GL Operation" p:labelPlacement="TOP">
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="1" p:maxLength="1"/>
-                    </property>
-                </bean>
--->
             </list>
         </property>
     </bean>
