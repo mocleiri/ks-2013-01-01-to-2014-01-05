@@ -788,14 +788,19 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return createAllocation(transaction1, transaction2, newAmount, isQueued, locked);
     }
 
-    private void setAllocatedAmount(Transaction transaction, BigDecimal newAmount, boolean locked) {
+    private void addAllocatedAmount(Transaction transaction, BigDecimal newAmount, boolean locked) {
         if (newAmount == null) {
             newAmount = BigDecimal.ZERO;
         }
+        BigDecimal oldAmount = locked ? transaction.getLockedAllocatedAmount() : transaction.getAllocatedAmount();
+        if (oldAmount == null) {
+            oldAmount = BigDecimal.ZERO;
+        }
+        BigDecimal totalAmount = oldAmount.add(newAmount);
         if (locked) {
-            transaction.setLockedAllocatedAmount(newAmount);
+            transaction.setLockedAllocatedAmount(totalAmount);
         } else {
-            transaction.setAllocatedAmount(newAmount);
+            transaction.setAllocatedAmount(totalAmount);
         }
     }
 
@@ -846,7 +851,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new IllegalStateException(errMsg);
         }
 
-        Query query = em.createQuery("select a from Allocation a " +
+        Query query = em.createQuery("select distinct a from Allocation a " +
                 " where a.account.id = :userId and ((a.firstTransaction.id = :id1 and a.secondTransaction.id = :id2) or " +
                 " (a.firstTransaction.id = :id2 and a.secondTransaction.id = :id1)) and a.locked = :locked");
 
@@ -856,6 +861,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         query.setParameter("locked", locked);
 
         List<Allocation> allocations = query.getResultList();
+
         for (Allocation allocation : allocations) {
 
             BigDecimal allocatedAmount1 = locked ? transaction1.getLockedAllocatedAmount() :
@@ -880,8 +886,16 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                     allocatedAmount2.subtract(allocation.getAmount()) :
                     allocatedAmount2.add(allocation.getAmount());
 
-            setAllocatedAmount(transaction1, newAllocatedAmount1, false);
-            setAllocatedAmount(transaction2, newAllocatedAmount2, false);
+            if (locked) {
+                transaction1.setLockedAllocatedAmount(newAllocatedAmount1);
+                transaction2.setLockedAllocatedAmount(newAllocatedAmount2);
+            } else {
+                transaction1.setAllocatedAmount(newAllocatedAmount1);
+                transaction2.setAllocatedAmount(newAllocatedAmount2);
+            }
+
+            addAllocatedAmount(transaction1, newAllocatedAmount1, false);
+            addAllocatedAmount(transaction2, newAllocatedAmount2, false);
 
             deleteEntity(allocation.getId(), Allocation.class);
         }
@@ -922,8 +936,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             persistEntity(allocation);
 
-            setAllocatedAmount(transaction1, newAmount, locked);
-            setAllocatedAmount(transaction2, newAmount, locked);
+            addAllocatedAmount(transaction1, newAmount, locked);
+            addAllocatedAmount(transaction2, newAmount, locked);
 
             persistTransaction(transaction1);
             persistTransaction(transaction2);
@@ -1087,27 +1101,31 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 " inner join fetch a.secondTransaction t2 " +
                 " inner join fetch t1.transactionType tt1 " +
                 " inner join fetch t2.transactionType tt2 " +
-                " where t1.id = :id or t2.id = :id " +
-                " order by a.id desc");
+                " where t1.id = :id or t2.id = :id");
 
         query.setParameter("id", transactionId);
 
         List<Allocation> allocations = query.getResultList();
 
-        Set<Long> allocationIds = new HashSet<Long>();
+        Set<Allocation> allocationSet = new HashSet<Allocation>();
         if (CollectionUtils.isNotEmpty(allocations)) {
-            Iterator<Allocation> iterator = allocations.iterator();
-            while (iterator.hasNext()) {
-                Allocation allocation = iterator.next();
-                if (allocationIds.contains(allocation.getId())) {
-                    allocations.remove(allocation);
-                } else {
-                    allocationIds.add(allocation.getId());
+            for (Allocation allocation : allocations) {
+                if (!allocationSet.contains(allocation)) {
+                    allocationSet.add(allocation);
                 }
             }
         }
 
-        return allocations;
+        ArrayList<Allocation> sortedAllocations = new ArrayList<Allocation>(allocationSet);
+
+        Collections.sort(sortedAllocations, new Comparator<Allocation>() {
+            @Override
+            public int compare(Allocation o1, Allocation o2) {
+                return o2.getId().compareTo(o1.getId());
+            }
+        });
+
+        return sortedAllocations;
     }
 
     /**
@@ -1147,7 +1165,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         StringBuilder builder = new StringBuilder("select distinct a from Allocation a " +
-                " where a.firstTransaction.id = :id or a.secondTransaction.id = :id");
+                " where (a.firstTransaction.id = :id or a.secondTransaction.id = :id)");
 
         if (excludeLockAllocations) {
             builder.append(" and a.locked <> true)");
