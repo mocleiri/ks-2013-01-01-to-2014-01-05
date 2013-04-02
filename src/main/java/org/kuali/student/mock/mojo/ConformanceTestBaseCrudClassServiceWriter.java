@@ -148,7 +148,9 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("");
 
         // get a list of all the DTOs managed by this class
-        List<String> dtoObjectNames = new ArrayList<String>();
+        List<String> dtoObjectNames = getNamesOfDTOsManagedByService();
+/*
+                new ArrayList<String>();
         for (ServiceMethod method: methods) {
             // I am assuming all the DTOs will have a createXXX method.
             if (MethodType.CREATE.equals (calcMethodType(method))) {
@@ -156,7 +158,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
                 dtoObjectNames.add(objectName);
             }
         }
-
+*/
         // for each DTO, write the testCRUD
         for (String dtoObjectName : dtoObjectNames) {
             writeTestCrud(dtoObjectName);
@@ -759,5 +761,21 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         }
 
     }
+
+    /**
+     * Gets a list of all the DTO names that are part of this service.
+     */
+    public List<String> getNamesOfDTOsManagedByService () {
+        List<String> dtoObjectNames = new ArrayList<String>();
+        for (ServiceMethod method: methods) {
+            // I am assuming all the DTOs will have a createXXX method.
+            if (MethodType.CREATE.equals (calcMethodType(method))) {
+                String objectName = calcObjectName(method);
+                dtoObjectNames.add(objectName);
+            }
+        }
+        return dtoObjectNames;
+    }
+
 
 }

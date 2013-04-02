@@ -80,6 +80,28 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         indentPrintDecoratedComment("DTO FIELD SPECIFIC METHODS", H1_COMMENT_CHAR, H1_COMMENT_MARK_LENGTH*2);
         indentPrintln("");
 
+        // for each DTO, write the DOT field management methods that were left abstract in base class
+        for (String dtoObjectName : getNamesOfDTOsManagedByService()) {
+            indentPrintln("// ****************************************************");
+            indentPrintln("//           " + dtoObjectName + "Info");
+            indentPrintln("// ****************************************************");
+            indentPrintln("");
+
+            // get the message structures of the dto
+            List<MessageStructure> messageStructures = null;
+            try {
+                messageStructures = finder.findMessageStructures(dtoObjectName + "Info");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            writetestCrudXXX_setDTOFieldsForTestCreate(dtoObjectName, messageStructures);
+            writetestCrudXXX_testDTOFieldsForTestCreateUpdate(dtoObjectName, messageStructures);
+            writetestCrudXXX_setDTOFieldsForTestUpdate(dtoObjectName, messageStructures);
+            writetestCrudXXX_testDTOFieldsForTestReadAfterUpdate(dtoObjectName, messageStructures);
+            writetestCrudXXX_setDTOFieldsForTestReadAfterUpdate(dtoObjectName, messageStructures);
+            indentPrintln("");
+        }
+
         // print out list of service operations that are not tested as abstract test methods
         indentPrintDecoratedComment("SERVICE OPS NOT TESTED IN BASE TEST CLASS", H1_COMMENT_CHAR, H1_COMMENT_MARK_LENGTH*2);
         indentPrintln("");
