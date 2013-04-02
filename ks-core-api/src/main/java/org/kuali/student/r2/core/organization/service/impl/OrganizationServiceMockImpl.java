@@ -17,6 +17,7 @@ package org.kuali.student.r2.core.organization.service.impl;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +30,8 @@ import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.student.common.UUIDHelper;
 import org.kuali.student.common.mock.MockService;
 import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.dto.IdEntityInfo;
+import org.kuali.student.r2.common.dto.IdNamelessEntityInfo;
 import org.kuali.student.r2.common.dto.MetaInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
@@ -41,6 +44,7 @@ import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.exceptions.ReadOnlyException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
+import org.kuali.student.r2.common.infc.HasId;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.kuali.student.r2.core.organization.dto.OrgHierarchyInfo;
 import org.kuali.student.r2.core.organization.dto.OrgInfo;
@@ -49,6 +53,7 @@ import org.kuali.student.r2.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.r2.core.organization.dto.OrgTreeViewInfo;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
+import org.kuali.student.r2.core.organization.service.impl.lib.CriteriaMatcherInMemory;
 import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 
@@ -156,7 +161,7 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
     {
-        throw new OperationFailedException ("not implemented because search isn't conveniently mockable");
+        return searchForInfoIds(criteria, orgHierarchyMap.values());
     }
 
     @Override
@@ -166,7 +171,14 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
     {
-        throw new OperationFailedException ("\"not implemented because search isn't conveniently mockable");
+        Collection<OrgHierarchyInfo> matches = searchForInfoObjects(criteria, orgHierarchyMap.values());
+
+        List<OrgHierarchyInfo> matchList = new ArrayList<OrgHierarchyInfo>();
+        for(OrgHierarchyInfo info : matches) {
+            matchList.add(new OrgHierarchyInfo(info));
+        }
+
+        return matchList;
     }
 
     @Override
@@ -305,7 +317,7 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
     {
-        throw new OperationFailedException ("not implemented because search isn't conveniently mockable");
+        return searchForInfoIds(criteria, orgMap.values());
     }
 
     @Override
@@ -315,7 +327,14 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
     {
-        throw new OperationFailedException ("not implemented because search isn't conveniently mockable");
+        Collection<OrgInfo> matches = searchForInfoObjects(criteria, orgMap.values());
+
+        List<OrgInfo> matchList = new ArrayList<OrgInfo>();
+        for(OrgInfo info : matches) {
+            matchList.add(new OrgInfo(info));
+        }
+
+        return matchList;
     }
 
     @Override
@@ -560,7 +579,7 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
     {
-        throw new OperationFailedException ("not implemented because search isn't conveniently mockable");
+        return searchForInfoIds(criteria, orgOrgRelationMap.values());
     }
 
     @Override
@@ -570,7 +589,14 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
     {
-        throw new OperationFailedException ("not implemented because search isn't conveniently mockable");
+        Collection<OrgOrgRelationInfo> matches = searchForInfoObjects(criteria, orgOrgRelationMap.values());
+
+        List<OrgOrgRelationInfo> matchList = new ArrayList<OrgOrgRelationInfo>();
+        for(OrgOrgRelationInfo info : matches) {
+            matchList.add(new OrgOrgRelationInfo(info));
+        }
+
+        return matchList;
     }
 
     @Override
@@ -637,7 +663,7 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             throw new VersionMismatchException(old.getMeta().getVersionInd());
         }
         copy.setMeta(updateMeta(copy.getMeta(), contextInfo));
-        this.orgOrgRelationMap .put(orgOrgRelationInfo.getId(), copy);
+        this.orgOrgRelationMap.put(orgOrgRelationInfo.getId(), copy);
         return new OrgOrgRelationInfo(copy);
     }
 
@@ -843,7 +869,7 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
     {
-        throw new OperationFailedException ("not implemented because search isn't conveniently mockable");
+        return searchForInfoIds(criteria, orgPersonRelationMap.values());
     }
 
     @Override
@@ -853,7 +879,14 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
     {
-        throw new OperationFailedException ("not implemented because search isn't conveniently mockable");
+        Collection<OrgPersonRelationInfo> matches = searchForInfoObjects(criteria, orgPersonRelationMap.values());
+
+        List<OrgPersonRelationInfo> matchList = new ArrayList<OrgPersonRelationInfo>();
+        for(OrgPersonRelationInfo info : matches) {
+            matchList.add(new OrgPersonRelationInfo(info));
+        }
+
+        return matchList;
     }
 
     @Override
@@ -1007,7 +1040,7 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
     {
-        throw new OperationFailedException ("not implemented because search isn't conveniently mockable");
+        return searchForInfoIds(criteria, orgPositionRestrictionMap.values());
     }
 
     @Override
@@ -1017,7 +1050,14 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
     {
-        throw new OperationFailedException ("not implemented because search isn't conveniently mockable");
+        Collection<OrgPositionRestrictionInfo> matches = searchForInfoObjects(criteria, orgPositionRestrictionMap.values());
+
+        List<OrgPositionRestrictionInfo> matchList = new ArrayList<OrgPositionRestrictionInfo>();
+        for(OrgPositionRestrictionInfo info : matches) {
+            matchList.add(new OrgPositionRestrictionInfo(info));
+        }
+
+        return matchList;
     }
 
     @Override
@@ -1102,50 +1142,35 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             , MissingParameterException
             , OperationFailedException
             , PermissionDeniedException {
-        OrgHierarchyInfo orgHierarchyInfo = null;
         try {
-            orgHierarchyInfo = getOrgHierarchy(orgHierarchyId, contextInfo);
-        } catch (DoesNotExistException e) {
-            throw new InvalidParameterException("orgHierarchy with given orgHierarchyId does not exist.");
-        }
-
-        for (String type : orgHierarchyInfo.getOrgOrgRelationTypes()) {
-            for (OrgOrgRelationInfo info : orgOrgRelationMap.values()) {
-                if (info.getTypeKey().equals(type)) {
-                    if (isDescendant(orgId, descendantOrgId, info.getOrgId(), new HashSet<String>(), contextInfo)) {
-                        return true;
-                    }
-                }
+            OrgTreeViewInfo orgTree = getOrgTree(orgId, orgHierarchyId, Integer.MAX_VALUE, contextInfo);
+            if(searchTree(orgTree, descendantOrgId, new HashSet<String>())) {
+                return true;
             }
+        } catch (DoesNotExistException e) {
+            throw new OperationFailedException("unable to determine if " + descendantOrgId + " is a descendant of " + orgId + " using hierarchy " + orgHierarchyId, e);
         }
 
         return false;
     }
 
     /*
-     * Determines if descendantOrgId is a descendent of orgId using the given currentOrgId.
+     * Recursively search the given orgTree for the given orgId.
      */
-    private boolean isDescendant(String orgId, String descendantOrgId, String currentOrgId, Set<String> visitedOrgIds, ContextInfo contextInfo)
-            throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
-        for (OrgOrgRelationInfo relationInfo : getOrgOrgRelationsByOrg(currentOrgId, contextInfo)) {
-            //don't visit an org if we have already visited it.
-            if (visitedOrgIds.add(relationInfo.getRelatedOrgId())) {
-                if (relationInfo.getOrgId().equals(orgId)) {
-                    //we found the parent in the tree.  Now find the descendant in the tree.
-                    if (relationInfo.getRelatedOrgId().equals(descendantOrgId) ||
-                            isDescendant(descendantOrgId, null, relationInfo.getRelatedOrgId(), visitedOrgIds, contextInfo)) {
-                        return true;
-                    }
-                } else {
-                    //Either the descendant is null and the next relation has orgId or we need to keep going down the tree.
-                    //This makes the assumption that a null descendant indicates that we have already found the parent.
-                    if ((descendantOrgId == null && relationInfo.getRelatedOrgId().equals(orgId)) ||
-                            isDescendant(orgId, descendantOrgId, relationInfo.getRelatedOrgId(), visitedOrgIds, contextInfo)) {
-                        return true;
-                    }
+    private boolean searchTree(OrgTreeViewInfo orgTree, String orgId, Set<String> visitedOrgs) {
+        for(OrgTreeViewInfo child : orgTree.getChildren()) {
+            String childOrgId = child.getOrg().getId();
+            if(childOrgId.equals(orgId)) {
+                return true;
+            }
+            //only recurse if we have not already been there
+            if(visitedOrgs.add(childOrgId)) {
+                if(searchTree(child, orgId, visitedOrgs)) {
+                    return true;
                 }
             }
         }
+
         return false;
     }
 
@@ -1172,132 +1197,96 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
     }
 
     @Override
-    public OrgTreeViewInfo getOrgTree(String rootOrgId, String orgHierarchyId, int maxLevels, ContextInfo contextInfo)
+    public OrgTreeViewInfo getOrgTree(String startingOrgId, String orgHierarchyId, int maxLevels, ContextInfo contextInfo)
             throws DoesNotExistException
             , InvalidParameterException
             , MissingParameterException
             , OperationFailedException
             , PermissionDeniedException {
 
-        OrgHierarchyInfo orgHierarchyInfo = null;
-        try {
-            orgHierarchyInfo = getOrgHierarchy(orgHierarchyId, contextInfo);
-        } catch (DoesNotExistException e) {
-            throw new InvalidParameterException("orgHierarchy with given orgHierarchyId does not exist.");
-        }
+        OrgHierarchyInfo orgHierarchyInfo = getOrgHierarchy(orgHierarchyId, contextInfo);
+
+        OrgTreeViewInfo orgTree = new OrgTreeViewInfo();
+
+        OrgInfo org = getOrg(startingOrgId, contextInfo);
+        orgTree.setOrg(org);
 
         Map<String, OrgTreeViewInfo> visitedNodes = new HashMap<String, OrgTreeViewInfo>();
-        OrgTreeViewInfo orgTreeViewInfo = null;
-        for (String type : orgHierarchyInfo.getOrgOrgRelationTypes()) {
-            for (OrgOrgRelationInfo info : orgOrgRelationMap.values()) {
-                if (info.getTypeKey().equals(type)) {
-                    OrgTreeViewInfo currTree = buildOrgTree(rootOrgId, info.getOrgId(), maxLevels, null, visitedNodes, contextInfo);
-                    if (orgTreeViewInfo == null) {
-                        orgTreeViewInfo = currTree;
-                    }
-                }
-            }
+        if(maxLevels >= 0) {
+            buildOrgTreeDown(orgTree, maxLevels, 0, orgHierarchyInfo.getOrgOrgRelationTypes(), visitedNodes, contextInfo);
         }
 
-        return orgTreeViewInfo;
+        if(maxLevels <= 0) {
+            buildOrgTreeUp(orgTree, maxLevels, 0, orgHierarchyInfo.getOrgOrgRelationTypes(), visitedNodes, contextInfo);
+        }
+
+        return orgTree;
     }
 
     /*
-     * First find rootOrg in the tree.  Then build the tree from that org down.
-     * After that is complete, build the portion of tree above rootOrg.
+     * Build the OrgTree from the given Org tree going up (pulling the parent of the given OrgTree) recursively
      */
-    private OrgTreeViewInfo buildOrgTree(String rootOrgId, String currentOrgId, int maxLevels, OrgTreeViewInfo parent, Map<String, OrgTreeViewInfo> visitedNodes, ContextInfo contextInfo)
+    private void buildOrgTreeUp(OrgTreeViewInfo orgTree, int maxLevels, int currentLevel, List<String> validRelationTypes, Map<String, OrgTreeViewInfo> visitedNodes, ContextInfo contextInfo)
             throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
-        OrgTreeViewInfo orgTree = visitedNodes.get(currentOrgId);
-        if(orgTree == null) {
-            orgTree = new OrgTreeViewInfo();
-            orgTree.setOrg(getOrg(currentOrgId, contextInfo));
-        }
-
-        if (currentOrgId.equals(rootOrgId)) {
-            //we found the rootOrgId.  Now build from the root, assuming that maxLevels is greater than zero.
-            if (maxLevels >= 0) {
-                buildOrgTreeFromRoot(orgTree, maxLevels, 1, visitedNodes, contextInfo);
-            }
-            if(maxLevels <= 0 && parent != null) {
-                addToOrgTree(parent, orgTree);
-            }
-
-            return orgTree;
-        } else {
-            OrgTreeViewInfo foundChild = null;
-            for (OrgOrgRelationInfo relationInfo : getOrgOrgRelationsByOrg(currentOrgId, contextInfo)) {
-                visitedNodes.put(currentOrgId, orgTree);
-                int depth = -1;
-                OrgTreeViewInfo child = visitedNodes.get(relationInfo.getRelatedOrgId());
-                if(child == null) {
-                    child = buildOrgTree(rootOrgId, relationInfo.getRelatedOrgId(), maxLevels, orgTree, visitedNodes, contextInfo);
-                    if(child != null) {
-                        depth = getOrgDepth(child, rootOrgId, new HashSet<String>());
-                    }
-                } else {
-                    //if we have already been to child and it contains the rootOrg then see if
-                    //we need to add ourselves.
-                    depth = getOrgDepth(child, rootOrgId, new HashSet<String>());
-                    if(depth >= 0 && (maxLevels == 0 || (maxLevels < 0 && depth >= maxLevels))) {
-                        addToOrgTree(orgTree, child);
-                    }
-                }
-
-                if(depth >= 0) {
-                    if(child.getOrg().getId().equals(rootOrgId)) {
-                        foundChild = child;
-                    }
-                    if (parent != null && (maxLevels == 0 || (maxLevels < 0 && depth > maxLevels))) {
-                        addToOrgTree(parent, orgTree);
-                    }
-                }
-            }
-            return foundChild;
-        }
-    }
-
-    /*
-     * Determine how far down the given orgTree we need to traverse before
-     * finding the given orgId.
-     */
-    private int getOrgDepth(OrgTreeViewInfo orgTree, String orgId, Set<String> visitedNodes) {
-        if(orgTree.getOrg().getId().equals(orgId)) {
-            return 0;
-        }
-
-        if(visitedNodes.add(orgTree.getOrg().getId())) {
-            for(OrgTreeViewInfo child : orgTree.getChildren()) {
-                int depth = getOrgDepth(child, orgId, visitedNodes);
-                if(depth >= 0) {
-                    return depth + 1;
-                }
-            }
-        }
-        return -1;
-    }
-
-    /*
-     * Using the given orgTreeRoot descend down the tree, while currentLevel is less than maxLevels, building the tree.
-     */
-    private void buildOrgTreeFromRoot(OrgTreeViewInfo orgTree, int maxLevels, int currentLevel, Map<String, OrgTreeViewInfo> visitedNodes, ContextInfo contextInfo)
-            throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
-        if(maxLevels == 0 || currentLevel <= maxLevels) {
+        if (maxLevels == 0 || currentLevel > maxLevels) {
             visitedNodes.put(orgTree.getOrg().getId(), orgTree);
-            for (OrgOrgRelationInfo relationInfo : getOrgOrgRelationsByOrg(orgTree.getOrg().getId(), contextInfo)) {
-                OrgTreeViewInfo childTree = visitedNodes.get(relationInfo.getRelatedOrgId());
-                if(childTree == null) {
-                    childTree = new OrgTreeViewInfo();
-                    childTree.setOrg(getOrg(relationInfo.getRelatedOrgId(), contextInfo));
+
+            List<OrgOrgRelationInfo> relations = pullParentRelations(validRelationTypes, orgTree.getOrg().getId(), contextInfo);
+            for (OrgOrgRelationInfo relation : relations) {
+                OrgTreeViewInfo parent = visitedNodes.get(relation.getOrgId());
+                if (parent == null) {
+                    parent = new OrgTreeViewInfo();
+                    parent.setOrg(getOrg(relation.getOrgId(), contextInfo));
                 }
-                addToOrgTree(orgTree, childTree);
-                if(maxLevels == 0 || currentLevel < maxLevels) {
-                    if(visitedNodes.get(relationInfo.getRelatedOrgId()) == null) {
-                        buildOrgTreeFromRoot(childTree, maxLevels, currentLevel + 1, visitedNodes, contextInfo);
-                    }
+                addToOrgTree(parent, orgTree);
+
+                if (!visitedNodes.containsKey(parent.getOrg().getId())) {
+                    buildOrgTreeUp(parent, maxLevels, currentLevel - 1, validRelationTypes, visitedNodes, contextInfo);
                 }
             }
         }
+    }
+
+    /*
+     * Build the OrgTree from the given Org tree going down (pulling the children of the given OrgTree) recursively
+     */
+    private void buildOrgTreeDown(OrgTreeViewInfo orgTree, int maxLevels, int currentLevel, List<String> validRelationTypes, Map<String, OrgTreeViewInfo> visitedNodes, ContextInfo contextInfo)
+            throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
+        if (maxLevels == 0 || currentLevel < maxLevels) {
+            visitedNodes.put(orgTree.getOrg().getId(), orgTree);
+
+            List<OrgOrgRelationInfo> relations = pullChildRelations(validRelationTypes, orgTree.getOrg().getId(), contextInfo);
+            for (OrgOrgRelationInfo relation : relations) {
+                OrgTreeViewInfo child = visitedNodes.get(relation.getRelatedOrgId());
+                if (child == null) {
+                    child = new OrgTreeViewInfo();
+                    child.setOrg(getOrg(relation.getRelatedOrgId(), contextInfo));
+                }
+                addToOrgTree(orgTree, child);
+
+                if (!visitedNodes.containsKey(child.getOrg().getId())) {
+                    buildOrgTreeDown(child, maxLevels, currentLevel + 1, validRelationTypes, visitedNodes, contextInfo);
+                }
+            }
+        }
+    }
+
+    private List<OrgOrgRelationInfo> pullChildRelations(List<String> validRelationTypes, String orgId, ContextInfo contextInfo) throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
+        List<OrgOrgRelationInfo> relations = new ArrayList<OrgOrgRelationInfo>();
+        for(String relationType : validRelationTypes) {
+            relations.addAll(getOrgOrgRelationsByTypeAndOrg(orgId, relationType, contextInfo));
+        }
+
+        return relations;
+    }
+
+    private List<OrgOrgRelationInfo> pullParentRelations(List<String> validRelationTypes, String orgId, ContextInfo contextInfo) throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
+        List<OrgOrgRelationInfo> relations = new ArrayList<OrgOrgRelationInfo>();
+        for(String relationType : validRelationTypes) {
+            relations.addAll(getOrgOrgRelationsByTypeAndRelatedOrg(orgId, relationType, contextInfo));
+        }
+
+        return relations;
     }
 
     private void addToOrgTree(OrgTreeViewInfo parent, OrgTreeViewInfo child) {
@@ -1337,6 +1326,30 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
         meta.setUpdateTime(new Date());
         meta.setVersionInd((Integer.parseInt(meta.getVersionInd()) + 1) + "");
         return meta;
+    }
+
+    private <T extends HasId> List<String> searchForInfoIds(QueryByCriteria criteria, Collection<T> collection)
+            throws InvalidParameterException
+            ,MissingParameterException
+            ,OperationFailedException
+            ,PermissionDeniedException {
+        Collection<T> matches = searchForInfoObjects(criteria, collection);
+        List<String> matchingIds = new ArrayList<String>();
+
+        for(T info : matches) {
+            matchingIds.add(info.getId());
+        }
+        return matchingIds;
+    }
+
+    public <T> Collection<T> searchForInfoObjects(QueryByCriteria criteria, Collection<T> collection)
+            throws InvalidParameterException
+            ,MissingParameterException
+            ,OperationFailedException
+            ,PermissionDeniedException {
+        CriteriaMatcherInMemory<T> matcher = new CriteriaMatcherInMemory<T>();
+        matcher.setCriteria(criteria);
+        return matcher.findMatching(collection);
     }
 
     @Override

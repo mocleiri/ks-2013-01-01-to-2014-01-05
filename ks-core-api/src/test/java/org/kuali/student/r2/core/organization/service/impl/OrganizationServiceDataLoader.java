@@ -59,10 +59,8 @@ public class OrganizationServiceDataLoader extends AbstractMockServicesAwareData
 
     public static final String ACTIVE_STATE = "kuali.org.active";
 
-    public static final String ORG_RELATION_ACAD_CHILD_TYPE = "kuali.organization.relation.type.acad.child";
     public static final String ORG_RELATION_ACAD_PARENT_TYPE = "kuali.organization.relation.type.acad.parent";
     public static final String ORG_RELATION_ACAD_COLABORATES_WITH_TYPE = "kuali.organization.relation.type.acad.colaborates";
-    public static final String ORG_RELATION_FIN_CHILD_TYPE = "kuali.organization.relation.type.fin.child";
     public static final String ORG_RELATION_FIN_PARENT_TYPE = "kuali.organization.relation.type.fin.parent";
 
     public static final String ORG_PERSON_RELATION_PRESIDENT_TYPE = "kuali.organization.personrelation.type.president";
@@ -114,7 +112,7 @@ public class OrganizationServiceDataLoader extends AbstractMockServicesAwareData
 
     private void createOrgHierarchies() throws ParseException, DataValidationErrorException, PermissionDeniedException, OperationFailedException, InvalidParameterException, ReadOnlyException, MissingParameterException, DoesNotExistException {
         createOrgHierarchy('A', "1", OrganizationServiceConstants.ORGANIZATION_CAMPUS_TYPE_KEY,
-                ORG_RELATION_ACAD_PARENT_TYPE);
+                ORG_RELATION_ACAD_PARENT_TYPE, ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
         createOrgHierarchy('B', "11", OrganizationServiceConstants.ORGANIZATION_CAMPUS_TYPE_KEY,
                 ORG_RELATION_FIN_PARENT_TYPE);
     }
@@ -126,7 +124,7 @@ public class OrganizationServiceDataLoader extends AbstractMockServicesAwareData
         hierarchyInfo.setExpirationDate(dateFormat.parse("21001231"));
         RichTextInfo descr = new RichTextInfo();
         descr.setPlain("hierarchy " + hierarchyId);
-        descr.setFormatted("Loooooooooong description for new OrgInfo " + hierarchyId);
+        descr.setFormatted("Loooooooooong description for new OrgHierarchyInfo " + hierarchyId);
         hierarchyInfo.setDescr(descr);
         hierarchyInfo.setStateKey(ACTIVE_STATE);
         hierarchyInfo.setAttributes(new ArrayList<AttributeInfo>());
@@ -156,8 +154,6 @@ public class OrganizationServiceDataLoader extends AbstractMockServicesAwareData
         createOrgOrgRelation("7", "9", ORG_RELATION_ACAD_PARENT_TYPE);
         createOrgOrgRelation("7", "10", ORG_RELATION_ACAD_PARENT_TYPE);
 
-        createOrgOrgRelation("2", "1", ORG_RELATION_ACAD_CHILD_TYPE);
-
         createOrgOrgRelation("4", "10", ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
         createOrgOrgRelation("4", "12", ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
         createOrgOrgRelation("8", "9", ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
@@ -169,6 +165,10 @@ public class OrganizationServiceDataLoader extends AbstractMockServicesAwareData
         createOrgOrgRelation("4", "10", ORG_RELATION_FIN_PARENT_TYPE);
 
         createOrgOrgRelation("13", "13", ORG_RELATION_FIN_PARENT_TYPE);
+        createOrgOrgRelation("13", "14", ORG_RELATION_FIN_PARENT_TYPE);
+        createOrgOrgRelation("13", "15", ORG_RELATION_FIN_PARENT_TYPE);
+        createOrgOrgRelation("14", "16", ORG_RELATION_FIN_PARENT_TYPE);
+        createOrgOrgRelation("15", "16", ORG_RELATION_FIN_PARENT_TYPE);
     }
 
     private void createOrgOrgRelation(String orgId, String relatedOrgId, String relationType) throws ParseException, PermissionDeniedException, DataValidationErrorException, InvalidParameterException, ReadOnlyException, OperationFailedException, MissingParameterException, DoesNotExistException {
