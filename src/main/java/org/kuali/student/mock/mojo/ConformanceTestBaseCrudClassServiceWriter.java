@@ -20,6 +20,7 @@ import org.kuali.student.contract.model.MessageStructure;
 import org.kuali.student.contract.model.Service;
 import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.ServiceMethod;
+import org.kuali.student.contract.model.ServiceMethodError;
 import org.kuali.student.contract.model.ServiceMethodParameter;
 import org.kuali.student.contract.model.util.ServicesFilter;
 import org.kuali.student.contract.writer.service.GetterSetterNameCalculator;
@@ -29,11 +30,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class will generate Conformance Tests for services.
+ * This class will generate the base class that does CRUD tests as
+ * part of the Conformance Tests for services. The generated class will
+ * need to be extended (and abstract methods filled in) to be complete.
+ * This class is meant to be generated again and again, and developers
+ * should customize tests in the extended class by extending or overwriting
+ * methods of this class as needed.
  *
  * @author Mezba Mahtab (mezba.mahtab@utoronto.ca)
  */
-public class ConformanceTestServiceWriter extends MockImplServiceWriter {
+public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWriter {
 
     /////////////////////////
     // CONSTANTS
@@ -53,13 +59,24 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
     // CONSTRUCTOR
     ////////////////////////////
 
-    public ConformanceTestServiceWriter(ServiceContractModel model,
-                                        String directory,
-                                        String rootPackage,
-                                        String servKey,
-                                        List<ServiceMethod> methods,
-                                        boolean isR1) {
+    public ConformanceTestBaseCrudClassServiceWriter(ServiceContractModel model,
+                                                     String directory,
+                                                     String rootPackage,
+                                                     String servKey,
+                                                     List<ServiceMethod> methods,
+                                                     boolean isR1) {
         super(model, directory, rootPackage, servKey, methods, isR1, calcPackage(servKey, rootPackage), calcClassName(servKey));
+    }
+
+    public ConformanceTestBaseCrudClassServiceWriter(ServiceContractModel model,
+                                                     String directory,
+                                                     String rootPackage,
+                                                     String servKey,
+                                                     List<ServiceMethod> methods,
+                                                     boolean isR1,
+                                                     String packageName,
+                                                     String className) {
+        super(model, directory, rootPackage, servKey, methods, isR1, packageName, className);
     }
 
     //////////////////////////
@@ -76,7 +93,7 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
      * Given the service key (name), returns a calculated class name for the conformance tester.
      */
     public static String calcClassName(String servKey) {
-        return "Test" + GetterSetterNameCalculator.calcInitUpper(fixServKey(servKey) + "ServiceImplBaseConformance");
+        return "Test" + GetterSetterNameCalculator.calcInitUpper(fixServKey(servKey) + "ServiceImplConformanceBaseCrud");
     }
 
     public static List<Service> filterServices(ServiceContractModel model, ServicesFilter filter) {
@@ -91,9 +108,10 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
      * Write out the entire file
      */
     public void write() {
+        // begin file
         indentPrintln("@RunWith(SpringJUnit4ClassRunner.class)");
         indentPrintln("@ContextConfiguration(locations = {\"classpath:" + servKey + "-test-with-mock-context.xml\"})");
-        indentPrint("public class " + calcClassName(servKey));
+        indentPrint("public abstract class " + calcClassName(servKey));
         // println(" implements " + calcServiceInterfaceClassName(servKey));
         Service serv = finder.findService(servKey);
         importsAdd(serv.getImplProject() + "." + serv.getName());
@@ -125,6 +143,7 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         closeBrace();
         indentPrintln("");
 
+        // testing starts
         indentPrintDecoratedComment("TESTING", H1_COMMENT_CHAR, H1_COMMENT_MARK_LENGTH);
         indentPrintln("");
 
@@ -144,9 +163,61 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
             indentPrintln("");
         }
 
+        // print out list of service operations that were tested
+        indentPrintDecoratedComment("SERVICE OPS TESTED IN BASE TEST CLASS", H1_COMMENT_CHAR, H1_COMMENT_MARK_LENGTH*2);
+        indentPrintln("");
+
+        // separate out crud and non-crud methods
+        List<ServiceMethod> methodsTestedAsCrud = new ArrayList<ServiceMethod>();
+        List<ServiceMethod> methodsNotTested = new ArrayList<ServiceMethod>();
+
+        for (ServiceMethod method : methods) {
+            if (isServiceMethodTestedAsPartofCrudInBaseConformanceTest (method)) {
+                methodsTestedAsCrud.add(method);
+            } else {
+                methodsNotTested.add(method);
+            }
+        }
+
+        // print out crud methods
+        indentPrintln("/*");
+        incrementIndent();
+        indentPrintln("The following methods are tested as part of CRUD operations for this service's DTOs:");
+        incrementIndent();
+        for (ServiceMethod method: methodsTestedAsCrud) {
+            indentPrintln(method.getName());
+        }
+        decrementIndent();
+        decrementIndent();
+        indentPrintln("*/");
+        indentPrintln("");
+
+        // print out list of service operations that are not tested as abstract test methods
+        indentPrintDecoratedComment("SERVICE OPS NOT TESTED IN BASE TEST CLASS", H1_COMMENT_CHAR, H1_COMMENT_MARK_LENGTH*2);
+        indentPrintln("");
+
+        // for each method, create an abstract method to test that and print it out
+        for (ServiceMethod method: methodsNotTested) {
+            indentPrintln("/* Method Name: " + method.getName() + " */");
+            indentPrintln("@Test");
+            indentPrintln("public abstract test_" + method.getName() + "() ");
+            if (method.getErrors().size()>0) {
+                indentPrint("throws ");
+                String comma = "";
+                for (ServiceMethodError error: method.getErrors()) {
+                    indentPrint(comma + error.getClassName().trim());
+                    comma = ",";
+                }
+            }
+            indentPrintln(";");
+            indentPrintln("");
+        }
+
+        // end file print out
         closeBrace ();
         println ("");
 
+        // close and print file
         this.writeJavaClassAndImportsOutToFile();
         this.getOut().close();
     }
@@ -513,6 +584,14 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
      * Writes the section to set fields specific to this dto for testCreate section.
      */
     public void writetestCrudXXX_setDTOFieldsForTestCreate(String dtoObjectName, List<MessageStructure> messageStructures) {
+        indentPrintln("/*");
+        incrementIndent();
+        indentPrintln("A method to set the fields for a " + dtoObjectName  + " in a 'test create' section prior to calling the 'create' operation.");
+        decrementIndent();
+        indentPrintln("*/");
+        indentPrintln("public abstract void testCrud" + dtoObjectName + "_setDTOFieldsForTestCreate(" + dtoObjectName + "Info expected);");
+        indentPrintln("");
+/*
         indentPrintln("public void testCrud" + dtoObjectName + "_setDTOFieldsForTestCreate(" + dtoObjectName + "Info expected) ");
         openBrace();
         for (MessageStructure ms: messageStructures) {
@@ -528,12 +607,24 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         }
         closeBrace();
         indentPrintln("");
+*/
     }
 
     /**
      * Writes the section to test fields specific to this dto for testCreate and testUpdate sections.
      */
     public void writetestCrudXXX_testDTOFieldsForTestCreateUpdate(String dtoObjectName, List<MessageStructure> messageStructures) {
+        indentPrintln("/*");
+        incrementIndent();
+        indentPrintln("A method to test the fields for a " + dtoObjectName  + ". This is called after:");
+        indentPrintln("- creating a DTO, where actual is the DTO returned by the create operation, and expected is the dto passed in to the create operation");
+        indentPrintln("- reading a DTO after creating it, and actual is the read DTO, and expected is the dto that was created");
+        indentPrintln("- updating a DTO, where actual is DTO returned by the update operation, and expected is the dto that was passed in to the update operation");
+        decrementIndent();
+        indentPrintln("*/");
+        indentPrintln("public abstract void testCrud" + dtoObjectName + "_testDTOFieldsForTestCreateUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual);");
+        indentPrintln("");
+/*
         indentPrintln("public void testCrud" + dtoObjectName + "_testDTOFieldsForTestCreateUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual) ");
         openBrace();
         for (MessageStructure ms: messageStructures) {
@@ -549,6 +640,7 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         }
         closeBrace();
         indentPrintln("");
+*/
     }
 
 
@@ -556,6 +648,14 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
      * Writes the section to set fields specific to this dto for testUpdate sections.
      */
     public void writetestCrudXXX_setDTOFieldsForTestUpdate(String dtoObjectName, List<MessageStructure> messageStructures) {
+        indentPrintln("/*");
+        incrementIndent();
+        indentPrintln("A method to set the fields for a " + dtoObjectName + " in a 'test update' section prior to calling the 'update' operation.");
+        decrementIndent();
+        indentPrintln("*/");
+        indentPrintln("public abstract void testCrud" + dtoObjectName + "_setDTOFieldsForTestUpdate(" + dtoObjectName + "Info expected);");
+        indentPrintln("");
+/*
         indentPrintln("public void testCrud" + dtoObjectName + "_setDTOFieldsForTestUpdate(" + dtoObjectName + "Info expected) ");
         openBrace();
         for (MessageStructure ms: messageStructures) {
@@ -571,12 +671,22 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         }
         closeBrace();
         indentPrintln("");
+*/
     }
 
     /**
      * Writes the section to test fields specific to this dto for testReadAfterUpdate sections.
      */
     public void writetestCrudXXX_testDTOFieldsForTestReadAfterUpdate(String dtoObjectName, List<MessageStructure> messageStructures) {
+        indentPrintln("/*");
+        incrementIndent();
+        indentPrintln("A method to test the fields for a " + dtoObjectName  + " after an update operation, followed by a read operation,");
+        indentPrintln("where actual is the DTO returned by the read operation, and expected is the dto returned by the update operation.");
+        decrementIndent();
+        indentPrintln("*/");
+        indentPrintln("public abstract void testCrud" + dtoObjectName + "_testDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual);");
+        indentPrintln("");
+/*
         indentPrintln("public void testCrud" + dtoObjectName + "_testDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected, " + dtoObjectName + "Info actual) ");
         openBrace();
         for (MessageStructure ms: messageStructures) {
@@ -591,12 +701,22 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         }
         closeBrace();
         indentPrintln("");
+*/
     }
 
     /**
      * Writes the section to set fields specific to this dto for testReadAfterUpdate sections.
      */
     public void writetestCrudXXX_setDTOFieldsForTestReadAfterUpdate(String dtoObjectName, List<MessageStructure> messageStructures) {
+        indentPrintln("/*");
+        incrementIndent();
+        indentPrintln("A method to set the fields for a " + dtoObjectName  + " in the 'test read after update' section.");
+        indentPrintln("This dto is another (second) dto object being created for other tests.");
+        decrementIndent();
+        indentPrintln("*/");
+        indentPrintln("public abstract void testCrud" + dtoObjectName + "_setDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected);");
+        indentPrintln("");
+/*
         indentPrintln("public void testCrud" + dtoObjectName + "_setDTOFieldsForTestReadAfterUpdate(" + dtoObjectName + "Info expected) ");
         openBrace();
         for (MessageStructure ms: messageStructures) {
@@ -614,6 +734,30 @@ public class ConformanceTestServiceWriter extends MockImplServiceWriter {
         }
         closeBrace();
         indentPrintln("");
+*/
+    }
+
+    /**
+     * Given a method type, returns true if this method is tested as part of CRUD operations
+     * tested by the base test conformance class.
+     */
+        protected boolean isServiceMethodTestedAsPartofCrudInBaseConformanceTest (ServiceMethod method) {
+            MethodType methodType = calcMethodType(method);
+            if ((MethodType.CREATE.equals(methodType))
+                || (MethodType.UPDATE.equals(methodType))
+                || (MethodType.DELETE.equals(methodType))
+                || (MethodType.GET_BY_ID.equals(methodType))
+                || (MethodType.GET_BY_IDS.equals(methodType))
+                || (MethodType.GET_IDS_BY_TYPE.equals(methodType))
+                || (MethodType.GET_TYPE.equals(methodType))
+                || (MethodType.GET_TYPES.equals(methodType))
+                || (MethodType.GET_IDS_BY_TYPE.equals(methodType))
+                ) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
 }

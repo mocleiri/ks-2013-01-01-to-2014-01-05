@@ -57,6 +57,7 @@ public class ConformanceTestWriterForOneService extends MockImplWriterForOneServ
 
         // the main servKey
         System.out.println("Generating Conformance Tests for " + servKey);
-        new ConformanceTestServiceWriter(model, directory, rootPackage, servKey, methods, isR1).write();
+        new ConformanceTestBaseCrudClassServiceWriter(model, directory, rootPackage, servKey, methods, isR1).write();
+        new ConformanceTestExtendedCrudClassServiceWriter(model, directory, rootPackage, servKey, methods, isR1).write();
     }
 }
