@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
-import static com.sigmasys.kuali.ksa.util.TransactionUtils.*;
-
 /**
  * TransactionUtils
  *
@@ -179,37 +177,6 @@ public class TransactionUtils {
      */
     public static BigDecimal getRestrictedUnallocatedDefermentAmount(List<Transaction> transactions) {
         return getTransactionService().getUnallocatedAmount(transactions, TransactionTypeValue.DEFERMENT, true);
-    }
-
-    public static BigDecimal getBalance(String userId, Date toDate){
-
-        if(toDate == null){
-            return BigDecimal.ZERO;
-        }
-
-        // getTransactions is <= end date, for this it needs to be < end date
-        toDate = DateUtils.addDays(toDate, -1);
-        List<Transaction> transactions = getTransactionService().getTransactions(userId, null, toDate);
-
-        BigDecimal balance = BigDecimal.ZERO;
-        for(Transaction t : transactions){
-            if(t instanceof Charge){
-                BigDecimal amount = t.getAmount();
-                if(amount != null){
-                    balance = balance.add(t.getAmount());
-                }
-            } else {
-                BigDecimal allocated = t.getAllocatedAmount();
-                BigDecimal locked = t.getLockedAllocatedAmount();
-                if(allocated != null){
-                    balance = balance.subtract(allocated);
-                }
-                if(locked != null){
-                    balance = balance.subtract(locked);
-                }
-            }
-        }
-        return balance;
     }
 
     /**

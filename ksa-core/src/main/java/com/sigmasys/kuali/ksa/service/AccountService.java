@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.jaxb.Ach;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,6 +61,15 @@ public interface AccountService {
      * @return total amount of balance due
      */
     BigDecimal getDueBalance(String userId, boolean ignoreDeferment);
+
+    /**
+     * Returns the total balance to date for the given user ID.
+     *
+     * @param userId Account ID
+     * @param toDate To Date
+     * @return Amount
+     */
+    BigDecimal getBalance(String userId, Date toDate);
 
     /**
      * Returns the outstanding balance for the given account

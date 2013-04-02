@@ -683,19 +683,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Returns the balance on a given date.
-     *
-     * @param userId Account ID
-     * @param toDate   Balance is computed from the beginning of an account to this date
-     * @return BigDecimal with the balance on the given date
-     */
-    @Override
-    public BigDecimal getBalance(String userId, Date toDate) {
-
-        return TransactionUtils.getBalance(userId, toDate);
-    }
-
-    /**
      * Persists the transaction in the database.
      * Creates a new entity when ID is null and updates the existing one otherwise.
      *

@@ -1,6 +1,5 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
-import com.sigmasys.kuali.ksa.krad.form.QuickViewForm;
 import com.sigmasys.kuali.ksa.krad.form.TransactionForm;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
@@ -9,8 +8,6 @@ import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,8 +22,6 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/transactionView")
 public class TransactionController extends GenericSearchController {
-
-    private static final Log logger = LogFactory.getLog(TransactionController.class);
 
     @Autowired
     private AuditableEntityService auditableEntityService;
@@ -63,7 +58,7 @@ public class TransactionController extends GenericSearchController {
      * @param request
      * @return
      */
-    @RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView get(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
         // just for the transactions by person page
@@ -94,7 +89,7 @@ public class TransactionController extends GenericSearchController {
             Date actualStartDate = startDate;
             Date actualEndDate = endDate;
 
-            form.setStartingBalance(transactionService.getBalance(userId, startDate));
+            form.setStartingBalance(accountService.getBalance(userId, startDate));
 
             form.setChargeTotal(BigDecimal.ZERO);
             form.setPaymentTotal(BigDecimal.ZERO);
@@ -107,10 +102,10 @@ public class TransactionController extends GenericSearchController {
             List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
             for (Transaction t : transactions) {
                 Date effectiveDate = t.getEffectiveDate();
-                if(actualStartDate == null || (effectiveDate.before(actualStartDate))){
+                if (actualStartDate == null || (effectiveDate.before(actualStartDate))) {
                     actualStartDate = effectiveDate;
                 }
-                if(actualEndDate == null || (effectiveDate.after(actualEndDate))){
+                if (actualEndDate == null || (effectiveDate.after(actualEndDate))) {
                     actualEndDate = effectiveDate;
                 }
 
@@ -140,10 +135,10 @@ public class TransactionController extends GenericSearchController {
                 }
             }
 
-            if(startDate == null){
+            if (startDate == null) {
                 form.setStartingDate(actualStartDate);
             }
-            if(endDate == null){
+            if (endDate == null) {
                 form.setEndingDate(actualEndDate);
             }
             this.populateRollups(form, models);
@@ -184,11 +179,11 @@ public class TransactionController extends GenericSearchController {
         ModelAndView mv = getUIFModelAndView(form);
         Properties props = new Properties();
         String refreshLocation = request.getParameter("refresh");
-        if(refreshLocation == null){
+        if (refreshLocation == null) {
             refreshLocation = "transactionView";
         }
 
-        if(refreshLocation.equals("quickView")){
+        if (refreshLocation.equals("quickView")) {
             props.put("viewId", "QuickView");
 
         } else {
@@ -200,8 +195,6 @@ public class TransactionController extends GenericSearchController {
 
         return performRedirect(form, refreshLocation, props);
     }
-
-
 
 
     private void populateRollups(TransactionForm form, List<TransactionModel> transactions) {
@@ -218,20 +211,20 @@ public class TransactionController extends GenericSearchController {
             Transaction parentTransaction = t.getParentTransaction();
             BigDecimal amount = parentTransaction.getAmount();
             BigDecimal allocated = parentTransaction.getAllocatedAmount();
-            if(allocated == null){
+            if (allocated == null) {
                 allocated = BigDecimal.ZERO;
             }
 
             BigDecimal unallocated = parentTransaction.getUnallocatedAmount();
 
-            if(parentTransaction instanceof Deferment){
+            if (parentTransaction instanceof Deferment) {
                 defermentModelList.add(t);
                 form.addDefermentTotal(amount);
                 continue;
             }
 
             BigDecimal locked = parentTransaction.getLockedAllocatedAmount();
-            if(locked == null){
+            if (locked == null) {
                 locked = BigDecimal.ZERO;
             }
 

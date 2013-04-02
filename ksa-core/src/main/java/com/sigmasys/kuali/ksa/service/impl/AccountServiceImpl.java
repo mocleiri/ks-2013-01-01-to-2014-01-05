@@ -12,6 +12,7 @@ import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.kim.api.identity.IdentityService;
@@ -315,6 +316,46 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public BigDecimal getDueBalance(String userId, boolean ignoreDeferment) {
         return getBalance(userId, ignoreDeferment, false);
+    }
+
+    /**
+     * Returns the total balance to date for the given user ID.
+     *
+     * @param userId Account ID
+     * @param toDate To Date
+     * @return Amount
+     */
+    @Override
+    public BigDecimal getBalance(String userId, Date toDate) {
+
+        if (toDate == null) {
+            return BigDecimal.ZERO;
+        }
+
+        // getTransactions is <= end date, for this it needs to be < end date
+        toDate = DateUtils.addDays(toDate, -1);
+
+        List<Transaction> transactions = transactionService.getTransactions(userId, null, toDate);
+
+        BigDecimal balance = BigDecimal.ZERO;
+        for (Transaction t : transactions) {
+            if (t instanceof Charge) {
+                BigDecimal amount = t.getAmount();
+                if (amount != null) {
+                    balance = balance.add(t.getAmount());
+                }
+            } else {
+                BigDecimal allocated = t.getAllocatedAmount();
+                BigDecimal locked = t.getLockedAllocatedAmount();
+                if (allocated != null) {
+                    balance = balance.subtract(allocated);
+                }
+                if (locked != null) {
+                    balance = balance.subtract(locked);
+                }
+            }
+        }
+        return balance;
     }
 
     /**

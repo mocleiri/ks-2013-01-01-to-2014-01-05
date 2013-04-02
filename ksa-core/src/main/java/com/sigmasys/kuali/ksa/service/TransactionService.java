@@ -283,15 +283,6 @@ public interface TransactionService {
     List<Deferment> getDeferments(String userId);
 
     /**
-     * Returns the balance on a given date.
-     *
-     * @param userId Account ID
-     * @param date Balance is computed from the beginning of an account to this date
-     * @return BigDecimal with the balance on the given date
-     */
-    BigDecimal getBalance(String userId, Date date);
-
-    /**
      * Persists the transaction in the database.
      * Creates a new entity when ID is null and updates the existing one otherwise.
      *
