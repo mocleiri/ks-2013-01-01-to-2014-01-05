@@ -158,6 +158,8 @@ public class TransactionTypeController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insert")
     public ModelAndView insert(@ModelAttribute("KualiForm") TransactionTypeForm form) {
 
+        boolean errors = false;
+
         String type = form.getType();
         String code = form.getCode();
         // If the subcode is anything other than -1 then this is an edit.
@@ -168,6 +170,19 @@ public class TransactionTypeController extends GenericSearchController {
             priority = 1;
         }
         String description = form.getDescription();
+
+        List<GlBreakdown> breakdowns = new ArrayList<GlBreakdown>();
+        // For now, all breakdowns use the default GL Account
+        GeneralLedgerType defaultGlType = glService.getDefaultGeneralLedgerType();
+
+        /*
+            validate as much as we can before we save anything.
+         */
+        errors = this.validateBreakdowns(breakdowns, form, defaultGlType);
+
+        if(errors){
+            return getUIFModelAndView(form);
+        }
 
         boolean typeExists = transactionService.transactionTypeExists(code);
 
@@ -191,7 +206,9 @@ public class TransactionTypeController extends GenericSearchController {
             } else {
                 String errMsg = "Invalid transaction type '" + type + "'";
                 logger.error(errMsg);
-                throw new IllegalStateException(errMsg);
+                errors = true;
+                GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, errMsg);
+                return getUIFModelAndView(form);
             }
         } else {
             TransactionTypeId ttId = new TransactionTypeId(code, subCode);
@@ -202,6 +219,8 @@ public class TransactionTypeController extends GenericSearchController {
             tt.setDescription(description);
         }
 
+        // If there are errors further on and they want to resubmit things, make sure they're modifying the same tt, not creating a new subcode.
+        form.setSubCode(tt.getId().getSubCode());
 
 
         List<Tag> tags = form.getTags();
@@ -221,57 +240,11 @@ public class TransactionTypeController extends GenericSearchController {
         }
 
         TransactionTypeId ttId = transactionService.persistTransactionType(tt);
-
         if (tt instanceof DebitType) {
-            // Handle the GL Breakdown sections.
-            BigDecimal total = new BigDecimal(0);
-            List<GlBreakdown> breakdowns = new ArrayList<GlBreakdown>();
-
-            // For now, all breakdowns use the default GL Account
-            GeneralLedgerType defaultGlType = glService.getDefaultGeneralLedgerType();
-
-            boolean zeroRow = false;
-
-            for (GlBreakdownModel breakdownModel : form.getGlBreakdowns()) {
-                GlBreakdown breakdown = new GlBreakdown();
-
-                breakdown.setGeneralLedgerType(defaultGlType);
-
-                breakdown.setGlAccount(breakdownModel.getGlAccount());
-                if (!glService.isGlAccountValid(breakdown.getGlAccount())) {
-                    GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, "GL Account '" + breakdown.getGlAccount() + "' is not valid");
-                    return getUIFModelAndView(form);
-                }
-
-                GlOperationType operationType = (GlOperationType.CREDIT.getId().equals(breakdownModel.getOperation())) ?
-                                                GlOperationType.CREDIT : GlOperationType.DEBIT;
-
-                breakdown.setGlOperation(operationType);
-
+            for(GlBreakdown breakdown : breakdowns){
                 breakdown.setDebitType((DebitType) tt);
-                BigDecimal b = breakdown.getBreakdown();
-                if(b != null){
-                    total.add(b);
-                }
-
-                if(BigDecimal.ZERO.equals(b)){
-                    zeroRow = true;
-                }
-                if (total.compareTo(BigDecimal.ONE) == 1) {
-                    // Error, the numbers exceed the allowable amount.
-                }
             }
-
-            if(!zeroRow){
-                // Tell the user here that there needs to be a row with a 0 amount
-            }
-
-            GeneralLedgerType defatulGlType = glService.getDefaultGeneralLedgerType();
-            if (defatulGlType == null || defatulGlType.getId() == null) {
-                throw new GeneralLedgerTypeNotFoundException("No default GL Type configured");
-            }
-            transactionService.createGlBreakdowns(defatulGlType.getId(), ttId, breakdowns);
-
+            transactionService.createGlBreakdowns(defaultGlType.getId(), ttId, breakdowns);
         } else {
             String unAllocatedGlOperation = form.getUnallocatedGLOperation();
             GlOperationType unallocatedGlOperationType = (GlOperationType.CREDIT.getId().equals(unAllocatedGlOperation)) ?
@@ -283,14 +256,6 @@ public class TransactionTypeController extends GenericSearchController {
 
         GlobalVariables.getMessageMap().putInfo("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, "Transaction Type added");
 
-        /*
-        MessageMap messages = GlobalVariables.getMessageMap();
-        //ResourceMessageProvider p;
-        if(messages != null){
-            GlobalVariables.getMessageMap().putInfo("TransactionTypeView", "tjb", "Course Title");
-            //messages.addGrowlMessage("Success", "Transaction Type added");
-        }
-        */
         return getUIFModelAndView(form);
     }
 
@@ -418,6 +383,76 @@ public class TransactionTypeController extends GenericSearchController {
 
     }
 
+    public boolean validateBreakdowns(List<GlBreakdown> breakdowns, TransactionTypeForm form, GeneralLedgerType defaultGlType){
+        boolean errors = false;
+        String type = form.getType();
+        if(!"D".equals(type)){
+            // Breakdowns only apply to Debit types
+            return errors;
+        }
+
+        // Handle the GL Breakdown sections.
+        BigDecimal total = new BigDecimal(0);
+
+        boolean zeroRow = false;
+
+        for (GlBreakdownModel breakdownModel : form.getGlBreakdowns()) {
+            GlBreakdown breakdown = new GlBreakdown();
+            breakdowns.add(breakdown);
+
+            breakdown.setGeneralLedgerType(defaultGlType);
+
+            breakdown.setGlAccount(breakdownModel.getGlAccount());
+            if (!glService.isGlAccountValid(breakdown.getGlAccount())) {
+                GlobalVariables.getMessageMap().putError("glBreakdownList", RiceKeyConstants.ERROR_CUSTOM, "GL Account '" + breakdown.getGlAccount() + "' is not valid");
+                errors = true;
+            }
+
+            String operation = breakdownModel.getOperation();
+            if(operation == null || "".equals(operation)){
+                GlobalVariables.getMessageMap().putError("glBreakdownList", RiceKeyConstants.ERROR_CUSTOM, "Operation is required");
+                errors = true;
+            }
+            GlOperationType operationType = (GlOperationType.CREDIT.getId().equals(operation)) ? GlOperationType.CREDIT : GlOperationType.DEBIT;
+
+            breakdown.setGlOperation(operationType);
+
+            BigDecimal b = breakdownModel.getBreakdown();
+            if(b == null){
+                b = BigDecimal.ZERO;
+            }
+            total = total.add(b);
+
+            if(BigDecimal.ZERO.equals(b)){
+                if(!zeroRow){
+                    zeroRow = true;
+                } else {
+                    // There can be only one
+                    GlobalVariables.getMessageMap().putError("glBreakdownList", RiceKeyConstants.ERROR_CUSTOM, "Only one row may have a breakdown amount of 0%");
+                    errors = true;
+                }
+            }
+            if (total.compareTo(BigDecimal.ONE) >= 0) {
+                // Error, the numbers exceed the allowable amount.  It must be less than 100%
+                GlobalVariables.getMessageMap().putError("glBreakdownList", RiceKeyConstants.ERROR_CUSTOM, "Breakdowns must be less than 100%");
+                errors = true;
+            }
 
 
+        }
+
+        if(!zeroRow){
+            // Tell the user here that there needs to be a row with a 0 amount
+            GlobalVariables.getMessageMap().putError("glBreakdownList", RiceKeyConstants.ERROR_CUSTOM, "One row must have a breakdown of 0%");
+            errors = true;
+        }
+
+        GeneralLedgerType defatulGlType = glService.getDefaultGeneralLedgerType();
+        if (defatulGlType == null || defatulGlType.getId() == null) {
+            GlobalVariables.getMessageMap().putError("glBreakdownList", RiceKeyConstants.ERROR_CUSTOM, "No default GL Type configured");
+            errors = true;
+        }
+
+        return errors;
+    }
 }
