@@ -20,6 +20,11 @@ CREATE INDEX co_to_new_clu_I3
   (CO_ID,NEWCLU_ID)
 /
 
+CREATE INDEX co_to_new_clu_I4
+  ON co_to_new_clu
+  (NEWCLU_ID,CO_ID)
+/
+
 INSERT INTO co_to_new_clu (CO_ID, NEWCLU_ID)
           SELECT
                   co.ID CO_ID,
