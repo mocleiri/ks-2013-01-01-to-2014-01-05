@@ -447,7 +447,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("// METHOD TO INSERT CODE TO SET MORE DTO FIELDS HERE");
         indentPrintln("testCrud" + dtoObjectName + "_setDTOFieldsForTestReadAfterUpdate (betaDTO);");
         indentPrintln("");
-        indentPrintln("if (betaDTO implements TypeStateEntityInfo)");
+        indentPrintln("if (betaDTO instanceof TypeStateEntityInfo)");
         openBrace();
         incrementIndent();
         indentPrintln("TypeStateEntityInfo betaDTOTS = (TypeStateEntityInfo) betaDTO;");
@@ -479,7 +479,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("");
 
         indentPrintln("assertEquals(" + initLower(dtoObjectName) + "Ids.size(), records.size());");
-        indentPrintln("for (" + dtoObjectName + " record : records)");
+        indentPrintln("for (" + dtoObjectName + "Info record : records)");
         openBrace();
         incrementIndent();
         indentPrintln("if (!" + initLower(dtoObjectName) + "Ids.remove(record.getId()))");
