@@ -33,8 +33,8 @@ public class PaymentServiceTest extends AbstractServiceTest {
     @Before
     public void setUpWithinTransaction() {
         // set up test data within the transaction
-        String userId = "admin";
-        accountService.getOrCreateAccount(userId);
+        accountService.getOrCreateAccount("admin");
+        accountService.getOrCreateAccount("user1");
     }
 
     @Test
@@ -113,6 +113,41 @@ public class PaymentServiceTest extends AbstractServiceTest {
         transactionService.createTransaction("chip", userId, transactionDate, new BigDecimal(100111.34));
         transactionService.createTransaction("finaid", userId, transactionDate, new BigDecimal(20000.88));
         transactionService.createTransaction("finaid2", userId, transactionDate, new BigDecimal(5500));
+
+        List<GlTransaction> glTransactions = paymentService.paymentApplication(userId);
+
+        logger.info("The number of generated GL transactions is " + glTransactions.size());
+        logger.info("Generated GL transactions: \n" + glTransactions);
+
+        Assert.notNull(glTransactions);
+        Assert.notEmpty(glTransactions);
+    }
+
+    @Test
+    public void paymentApplication2() throws Exception {
+
+        String userId = "user1";
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
+
+        transactionService.createTransaction("cash", userId, dateFormat.parse("06/06/2012"), new BigDecimal(1000));
+        transactionService.createTransaction("1001", userId, dateFormat.parse("06/06/2012"), new BigDecimal(20000));
+        transactionService.createTransaction("1001", userId, dateFormat.parse("05/05/2012"), new BigDecimal(5000));
+        transactionService.createTransaction("finaid", userId, dateFormat.parse("06/01/2012"), new BigDecimal(10000));
+        transactionService.createTransaction("cash", userId, dateFormat.parse("06/02/2012"), new BigDecimal(14000));
+
+        Transaction transaction1 =
+                transactionService.createTransaction("1206", userId, dateFormat.parse("04/03/2012"), new BigDecimal(50));
+        Transaction transaction2 =
+                transactionService.createTransaction("cash", userId, dateFormat.parse("04/03/2012"), new BigDecimal(50));
+
+        CompositeAllocation allocation =
+                transactionService.createLockedAllocation(transaction1.getId(), transaction2.getId(), new BigDecimal(50));
+
+        Assert.notNull(allocation);
+        Assert.notNull(allocation.getAllocation());
+        Assert.notNull(allocation.getCreditGlTransaction());
+        Assert.notNull(allocation.getDebitGlTransaction());
 
         List<GlTransaction> glTransactions = paymentService.paymentApplication(userId);
 
