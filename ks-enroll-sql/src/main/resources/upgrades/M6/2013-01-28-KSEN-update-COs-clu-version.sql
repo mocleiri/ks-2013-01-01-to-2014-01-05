@@ -10,12 +10,12 @@ CREATE INDEX co_to_new_clu_I1
   (CO_ID)
 /
 
-CREATE INDEX co_to_new_clu_I1
+CREATE INDEX co_to_new_clu_I2
   ON co_to_new_clu
   (NEWCLU_ID)
 /
 
-CREATE INDEX co_to_new_clu_I1
+CREATE INDEX co_to_new_clu_I3
   ON co_to_new_clu
   (CO_ID,NEWCLU_ID)
 /
