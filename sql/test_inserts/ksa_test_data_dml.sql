@@ -140,7 +140,7 @@ Insert Into KSSA_TRANSACTION_TAG (TRANSACTION_ID_FK, TAG_ID_FK) VALUES (8, 3);
 ---------------------------------------------------
 REM INSERTING into KSSA_TAX_TYPE
 Insert into KSSA_TAX_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (1,'pheald','US Social Security Number',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'US Social SecurityNumber','SSN');
-Insert into KSSA_TAX_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (2,'pheald','UK National Insurance Number',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'US NI Number','UKNIN');
+Insert into KSSA_TAX_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (2,'pheald','UK National Insurance Number',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'UK NI Number','UKNIN');
 Insert into KSSA_TAX_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (3,'pheald','French tax identifier (numéro fiscal)',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'French Numéro Fiscal','FRNF');
 
 
