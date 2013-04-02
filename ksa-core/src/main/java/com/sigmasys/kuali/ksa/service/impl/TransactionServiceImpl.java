@@ -165,15 +165,21 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public TransactionType getTransactionType(String transactionTypeId, Date effectiveDate) {
+
+        effectiveDate = CalendarUtils.removeTime(effectiveDate);
+
         Query query = em.createQuery("select t from TransactionType t " +
                 " where t.id.id = :transactionTypeId and :effectiveDate >= t.startDate and " +
-                " (t.endDate is null or t.endDate > :effectiveDate)");
+                " (t.endDate is null or t.endDate >= :effectiveDate)");
+
         query.setParameter("transactionTypeId", transactionTypeId);
-        query.setParameter("effectiveDate", effectiveDate);
+        query.setParameter("effectiveDate", effectiveDate, TemporalType.DATE);
+
         List<TransactionType> transactionTypes = query.getResultList();
         if (CollectionUtils.isNotEmpty(transactionTypes)) {
             return transactionTypes.get(0);
         }
+
         String errMsg = "Cannot find TransactionType for ID = " + transactionTypeId + " and date = " + effectiveDate;
         logger.error(errMsg);
         throw new InvalidTransactionTypeException(errMsg);
@@ -289,6 +295,10 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new InvalidTransactionTypeException(errMsg);
         }
 
+        startDate = CalendarUtils.removeTime(startDate);
+
+        transactionType.setEndDate(CalendarUtils.addCalendarDays(startDate, -1));
+
         int nextSubCode = transactionType.getId().getSubCode() + 1;
 
         return createTransactionType(transactionTypeId, nextSubCode, transactionType.getName(), startDate,
@@ -313,7 +323,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         transactionType.setId(typeId);
         transactionType.setCode(transactionTypeId);
         transactionType.setName(name);
-        transactionType.setStartDate(startDate);
+        transactionType.setStartDate(CalendarUtils.removeTime(startDate));
         transactionType.setPriority(priority);
         transactionType.setDescription(description);
 

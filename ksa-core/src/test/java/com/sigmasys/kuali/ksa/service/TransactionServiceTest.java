@@ -2,12 +2,15 @@ package com.sigmasys.kuali.ksa.service;
 
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -1404,5 +1407,48 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Assert.notEmpty(breakdowns);
         Assert.isTrue(breakdowns.size() == 1);
 
+    }
+
+    @Test
+    public void createDebitSubType() throws Exception {
+
+        String transactionTypeCode = "1020";
+
+        DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
+
+        TransactionType transactionType1 =
+                transactionService.createDebitSubType(transactionTypeCode, dateFormat.parse("03/27/2012"));
+
+        Assert.notNull(transactionType1);
+        Assert.notNull(transactionType1.getCode());
+        Assert.notNull(transactionType1.getId());
+        Assert.notNull(transactionType1.getId().getSubCode());
+        Assert.isTrue(transactionType1.getId().getSubCode() > 0);
+        Assert.notNull(transactionType1.getStartDate());
+        Assert.isNull(transactionType1.getEndDate());
+
+        TransactionType transactionType2 =
+                transactionService.createDebitSubType(transactionTypeCode, dateFormat.parse("07/02/2012"));
+
+        transactionType1 = transactionService.getTransactionType(transactionType1.getId());
+
+        Assert.notNull(transactionType1);
+        Assert.notNull(transactionType1.getCode());
+        Assert.notNull(transactionType1.getEndDate());
+
+
+        Assert.notNull(transactionType2);
+        Assert.notNull(transactionType2.getCode());
+        Assert.notNull(transactionType2.getId());
+        Assert.notNull(transactionType2.getId().getSubCode());
+        Assert.isTrue(transactionType2.getId().getSubCode() > 0);
+        Assert.isTrue(transactionType2.getId().getSubCode() > transactionType1.getId().getSubCode());
+        Assert.isNull(transactionType2.getEndDate());
+        Assert.notNull(transactionType2.getStartDate());
+
+        Date startDate = transactionType2.getStartDate();
+        Date endDate = transactionType1.getEndDate();
+
+        Assert.isTrue(endDate.equals(CalendarUtils.addCalendarDays(startDate, -1)));
     }
 }

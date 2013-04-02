@@ -49,6 +49,7 @@ public abstract class TransactionType extends AuditableEntity<TransactionTypeId>
         return id;
     }
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "START_DATE")
     public Date getStartDate() {
         return startDate;
@@ -58,6 +59,7 @@ public abstract class TransactionType extends AuditableEntity<TransactionTypeId>
         this.startDate = startDate;
     }
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "END_DATE")
     public Date getEndDate() {
         return endDate;

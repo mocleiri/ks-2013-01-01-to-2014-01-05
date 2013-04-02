@@ -17,8 +17,8 @@ public class DirectChargeAccount extends ChargeableAccount {
      */
     private Date dateOfBirth;
 
-    @Column(name = "DATE_OF_BIRTH")
     @Temporal(TemporalType.DATE)
+    @Column(name = "DATE_OF_BIRTH")
     public Date getDateOfBirth() {
         return dateOfBirth;
     }
