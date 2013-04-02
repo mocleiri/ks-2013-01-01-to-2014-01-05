@@ -115,8 +115,46 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         // println(" implements " + calcServiceInterfaceClassName(servKey));
         Service serv = finder.findService(servKey);
         importsAdd(serv.getImplProject() + "." + serv.getName());
+
+        // kuali imports
+        importsAdd("org.kuali.student.common.test.util.IdEntityTester");
+        importsAdd("org.kuali.student.r2.common.dto.ContextInfo");
         importsAdd("org.kuali.student.r2.common.dto.IdEntityInfo");
+        importsAdd("org.kuali.student.r2.common.dto.StatusInfo");
         importsAdd("org.kuali.student.r2.common.dto.TypeStateEntityInfo");
+        importsAdd("org.kuali.student.r2.common.util.RichTextHelper");
+        importsAdd("org.kuali.student.r2.core.organization.service.impl.lib.AttributeTester");
+        importsAdd("org.kuali.student.r2.core.organization.service.impl.lib.MetaTester");
+
+        // exceptions
+        importsAdd("org.kuali.student.r2.common.exceptions.DataValidationErrorException");
+        importsAdd("org.kuali.student.r2.common.exceptions.DependentObjectsExistException");
+        importsAdd("org.kuali.student.r2.common.exceptions.DoesNotExistException");
+        importsAdd("org.kuali.student.r2.common.exceptions.InvalidParameterException");
+        importsAdd("org.kuali.student.r2.common.exceptions.MissingParameterException");
+        importsAdd("org.kuali.student.r2.common.exceptions.OperationFailedException");
+        importsAdd("org.kuali.student.r2.common.exceptions.PermissionDeniedException");
+        importsAdd("org.kuali.student.r2.common.exceptions.ReadOnlyException");
+        importsAdd("org.kuali.student.r2.common.exceptions.VersionMismatchException");
+
+        // java imports
+        importsAdd("org.springframework.test.context.ContextConfiguration");
+        importsAdd("org.springframework.test.context.junit4.SpringJUnit4ClassRunner");
+        importsAdd("org.junit.Assert");
+        importsAdd("org.junit.Before");
+        importsAdd("org.junit.Test");
+        importsAdd("org.junit.runner.RunWith");
+        importsAdd("static org.junit.Assert.assertEquals");
+        importsAdd("static org.junit.Assert.assertFalse");
+        importsAdd("static org.junit.Assert.assertNotNull");
+        importsAdd("static org.junit.Assert.assertNull");
+        importsAdd("static org.junit.Assert.assertTrue");
+        importsAdd("static org.junit.Assert.fail");
+        importsAdd("javax.annotation.Resource");
+        importsAdd("java.util.ArrayList");
+        importsAdd("java.util.List");
+
+        // begin main class
         openBrace();
 
         indentPrintln("");
@@ -286,7 +324,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintDecoratedComment("test create");
         indentPrintln(dtoObjectName + "Info expected = new " + dtoObjectName + "Info ();");
         // indentPrintln("expected.setName(\"Name01\");");
-        indentPrintln("expected.setDescr(new RichTextHelper().fromPlain(\"Description01\"));");
+        // indentPrintln("expected.setDescr(new RichTextHelper().fromPlain(\"Description01\"));");
         indentPrintln("");
         indentPrintln("// METHOD TO SET DTO FIELDS HERE FOR TEST CREATE");
         indentPrintln("testCrud" + dtoObjectName + "_setDTOFieldsForTestCreate (expected);");
@@ -295,7 +333,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("if (expected instanceof TypeStateEntityInfo)");
         openBrace();
         incrementIndent();
-        indentPrintln("expectedTS = (TypeStateEntityInfo) expected;");
+        indentPrintln("TypeStateEntityInfo expectedTS = (TypeStateEntityInfo) expected;");
         indentPrintln("expectedTS.setTypeKey(\"typeKey01\");");
         indentPrintln("expectedTS.setStateKey(\"stateKey01\");");
         decrementIndent();
@@ -305,7 +343,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
 
         indentPrintln("");
         indentPrintln("// code to create actual");
-        indentPrintln(dtoObjectName + "Info actual = " + getMethodCallAsString ("create" + dtoObjectName, "// INSERT CODE TO CREATE actual HERE", MethodType.CREATE, dtoObjectName, "expected"));
+        indentPrintln(dtoObjectName + "Info actual = " + getMethodCallAsString ("create" + dtoObjectName, "= null; // TODO INSERT CODE TO CREATE actual HERE", MethodType.CREATE, dtoObjectName, "expected"));
         indentPrintln("");
 
         indentPrintln("if (actual instanceof IdEntityInfo)");
@@ -327,7 +365,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
 
         indentPrintDecoratedComment("test read");
         indentPrintln("expected = actual;");
-        indentPrintln("actual = " + getMethodCallAsString ("get" + dtoObjectName, "// INSERT CODE TO GET actual HERE BY CALLING SERVICE OP", MethodType.GET_BY_ID, dtoObjectName, "actual"));
+        indentPrintln("actual = " + getMethodCallAsString ("get" + dtoObjectName, "null; // TODO INSERT CODE TO GET actual HERE BY CALLING SERVICE OP", MethodType.GET_BY_ID, dtoObjectName, "actual"));
         indentPrintln("assertEquals(expected.getId(), actual.getId());");
         indentPrintln("new IdEntityTester().check(expected, actual);");
         indentPrintln("");
@@ -348,12 +386,12 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintDecoratedComment("test update");
         indentPrintln("expected = actual;");
         // indentPrintln("expected.setName(expected.getName() + \" updated\");");
-        indentPrintln("expected.setDescr(new RichTextHelper().fromPlain(expected.getDescr().getPlain() + \"_Updated\"));");
+        // indentPrintln("expected.setDescr(new RichTextHelper().fromPlain(expected.getDescr().getPlain() + \"_Updated\"));");
         indentPrintln("");
-        indentPrintln("if (expected implements TypeStateEntityInfo)");
+        indentPrintln("if (expected instanceof TypeStateEntityInfo)");
         openBrace();
         incrementIndent();
-        indentPrintln("expectedTS = (TypeStateEntityInfo) expected;");
+        indentPrintln("TypeStateEntityInfo expectedTS = (TypeStateEntityInfo) expected;");
         indentPrintln("expectedTS.setStateKey(expected.getState() + \"_Updated\");");
         decrementIndent();
         closeBrace();
@@ -364,7 +402,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("new AttributeTester().delete1Update1Add1ForUpdate(expected.getAttributes());");
 
         indentPrintln("// code to update");
-        indentPrintln("actual = " + getMethodCallAsString ("update" + dtoObjectName, "// INSERT CODE TO CALL UPDATE SERVICE OP HERE", MethodType.UPDATE, dtoObjectName, "expected"));
+        indentPrintln("actual = " + getMethodCallAsString ("update" + dtoObjectName, "= null; // TODO INSERT CODE TO CALL UPDATE SERVICE OP HERE", MethodType.UPDATE, dtoObjectName, "expected"));
         indentPrintln("");
 
         indentPrintln("assertEquals(expected.getId(), actual.getId());");
@@ -387,7 +425,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("expected = actual;");
 
         indentPrintln("// code to get actual");
-        indentPrintln("actual = " + getMethodCallAsString ("get" + dtoObjectName, "// INSERT CODE TO GET actual HERE BY CALLING SERVICE OP", MethodType.GET_BY_ID, dtoObjectName, "actual"));
+        indentPrintln("actual = " + getMethodCallAsString ("get" + dtoObjectName, "null; // TODO INSERT CODE TO GET actual HERE BY CALLING SERVICE OP", MethodType.GET_BY_ID, dtoObjectName, "actual"));
         indentPrintln("");
 
         indentPrintln("assertEquals(expected.getId(), actual.getId());");
@@ -404,20 +442,20 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("// create a 2nd DTO");
         indentPrintln(dtoObjectName + "Info betaDTO = new " + dtoObjectName + "Info ();");
         // indentPrintln("betaDTO.setName(\"Beta entity name\");");
-        indentPrintln("betaDTO.setDescr(new RichTextHelper().fromPlain(\"Beta entity description\"));");
+        // indentPrintln("betaDTO.setDescr(new RichTextHelper().fromPlain(\"Beta entity description\"));");
         indentPrintln("");
         indentPrintln("// METHOD TO INSERT CODE TO SET MORE DTO FIELDS HERE");
-        indentPrintln("testCrud" + dtoObjectName + "_setDTOFieldsForTestReadAfterUpdate (betaDTO, actual);");
+        indentPrintln("testCrud" + dtoObjectName + "_setDTOFieldsForTestReadAfterUpdate (betaDTO);");
         indentPrintln("");
         indentPrintln("if (betaDTO implements TypeStateEntityInfo)");
         openBrace();
         incrementIndent();
-        indentPrintln("betaDTOTS = (TypeStateEntityInfo) betaDTO;");
+        indentPrintln("TypeStateEntityInfo betaDTOTS = (TypeStateEntityInfo) betaDTO;");
         indentPrintln("betaDTOTS.setTypeKey(\"typeKeyBeta\");");
         indentPrintln("betaDTOTS.setStateKey(\"stateKeyBeta\");");
         decrementIndent();
         closeBrace();
-        indentPrintln("betaDTO = " + getMethodCallAsString("create" + dtoObjectName, "// INSERT CODE TO CREATE betaDTO", MethodType.CREATE, dtoObjectName, "betaDTO"));
+        indentPrintln("betaDTO = " + getMethodCallAsString("create" + dtoObjectName, "null; // TODO INSERT CODE TO CREATE betaDTO", MethodType.CREATE, dtoObjectName, "betaDTO"));
 
         indentPrintln("");
         indentPrintDecoratedComment("test bulk get with no ids supplied");
@@ -425,7 +463,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("List<String> " + initLower(dtoObjectName) + "Ids = new ArrayList<String>();");
 
         indentPrintln("// code to get DTO by Ids");
-        indentPrintln("List<" + dtoObjectName + "> records = " + getMethodCallAsString ("get" + dtoObjectName + "sByIds", "// INSERT CODE TO GET DTO BY IDS", MethodType.GET_BY_IDS));
+        indentPrintln("List<" + dtoObjectName + "Info> records = " + getMethodCallAsString ("get" + dtoObjectName + "sByIds", "null; // TODO INSERT CODE TO GET DTO BY IDS", MethodType.GET_BY_IDS));
         indentPrintln("");
 
         indentPrintln("assertEquals(" + initLower(dtoObjectName) + "Ids.size(), records.size());");
@@ -437,7 +475,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln(initLower(dtoObjectName) + "Ids.add(betaDTO.getId());");
 
         indentPrintln("// code to get DTO by Ids");
-        indentPrintln("records = " + getMethodCallAsString ("get" + dtoObjectName + "sByIds", "// INSERT CODE TO GET DTO BY IDS", MethodType.GET_BY_IDS));
+        indentPrintln("records = " + getMethodCallAsString ("get" + dtoObjectName + "sByIds", "null; // TODO INSERT CODE TO GET DTO BY IDS", MethodType.GET_BY_IDS));
         indentPrintln("");
 
         indentPrintln("assertEquals(" + initLower(dtoObjectName) + "Ids.size(), records.size());");
@@ -457,7 +495,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintDecoratedComment("test get by type");
 
         indentPrintln("// code to get by specific type \"typeKey01\" ");
-        indentPrintln(initLower(dtoObjectName) + "Ids = get" + dtoObjectName + "IdsByType (\"typeKey01\", contextInfo);");
+        indentPrintln(initLower(dtoObjectName) + "Ids = testService.get" + dtoObjectName + "IdsByType (\"typeKey01\", contextInfo);");
         // indentPrintln(initLower(dtoObjectName) + "Ids = " + getMethodCallAsString ("get" + dtoObjectName + "IdsByType", "// INSERT CODE TO GET BY SPECIFIC TYPE \"typeKey01\" HERE", MethodType.GET_IDS_BY_TYPE));
         indentPrintln("");
 
@@ -467,7 +505,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("// test get by other type");
 
         indentPrintln("// code to get by specific type \"typeKeyBeta\" ");
-        indentPrintln(initLower(dtoObjectName) + "Ids = get" + dtoObjectName + "IdsByType (\"typeKeyBeta\", contextInfo);");
+        indentPrintln(initLower(dtoObjectName) + "Ids = testService.get" + dtoObjectName + "IdsByType (\"typeKeyBeta\", contextInfo);");
         // indentPrintln(initLower(dtoObjectName) + "Ids = " + getMethodCallAsString ("get" + dtoObjectName + "IdsByType", "// INSERT CODE TO GET BY SPECIFIC TYPE \"typeKeyBeta\" HERE", MethodType.GET_IDS_BY_TYPE));
         indentPrintln("");
 
@@ -483,7 +521,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintDecoratedComment("test delete");
         indentPrintln("");
 
-        indentPrintln("StatusInfo status = " + getMethodCallAsString ("delete" + dtoObjectName, "// INSERT CODE TO DELETE RECORD", MethodType.DELETE, dtoObjectName, "actual"));
+        indentPrintln("StatusInfo status = " + getMethodCallAsString ("delete" + dtoObjectName, "null; // TODO INSERT CODE TO DELETE RECORD", MethodType.DELETE, dtoObjectName, "actual"));
         indentPrintln("");
 
         indentPrintln("assertNotNull(status);");
@@ -491,7 +529,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintln("try");
         openBrace();
         incrementIndent();
-        indentPrintln("record = " + getMethodCallAsString ("get" + dtoObjectName, "// INSERT CODE TO RETRIEVE RECENTLY DELETED RECORD", MethodType.GET_BY_ID, dtoObjectName, "actual"));
+        indentPrintln(dtoObjectName + "Info record = " + getMethodCallAsString ("get" + dtoObjectName, "null; // TODO INSERT CODE TO RETRIEVE RECENTLY DELETED RECORD", MethodType.GET_BY_ID, dtoObjectName, "actual"));
         indentPrintln("fail(\"Did not receive DoesNotExistException when attempting to get already-deleted entity\");");
         decrementIndent();
         closeBrace();

@@ -151,7 +151,7 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         for (MessageStructure ms: messageStructures) {
             if (ms.getShortName().equals("id")) continue;
             if (ms.getShortName().equals("meta")) continue;
-            if (ms.getShortName().equals("descr")) continue;
+            // if (ms.getShortName().equals("descr")) continue;
             if (ms.getShortName().equals("attributes")) continue;
             if (ms.getType().equals("String")) {
                 indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\")");
@@ -207,7 +207,7 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         for (MessageStructure ms: messageStructures) {
             if (ms.getShortName().equals("id")) continue;
             if (ms.getShortName().equals("meta")) continue;
-            if (ms.getShortName().equals("descr")) continue;
+            // if (ms.getShortName().equals("descr")) continue;
             if (ms.getShortName().equals("attributes")) continue;
             if (ms.getType().equals("String")) {
                 indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\")");
