@@ -235,8 +235,10 @@ public class TransactionController extends GenericSearchController {
                 form.addAllocatedTotal(locked);
                 form.addUnallocatedTotal(unallocated);
             } else {
-                parentTransaction.setAllocatedAmount(BigDecimal.ZERO.subtract(allocated));
-                parentTransaction.setLockedAllocatedAmount(BigDecimal.ZERO.subtract(locked));
+
+                // TODO: ??????
+                //parentTransaction.setAllocatedAmount(BigDecimal.ZERO.subtract(allocated));
+                //parentTransaction.setLockedAllocatedAmount(BigDecimal.ZERO.subtract(locked));
 
                 form.addPaymentTotal(amount);
                 form.subtractAllocatedTotal(allocated);
