@@ -96,6 +96,12 @@ public class TransactionController extends GenericSearchController {
 
             form.setStartingBalance(transactionService.getBalance(userId, startDate));
 
+            form.setChargeTotal(BigDecimal.ZERO);
+            form.setPaymentTotal(BigDecimal.ZERO);
+            form.setDefermentTotal(BigDecimal.ZERO);
+            form.setAllocatedTotal(BigDecimal.ZERO);
+            form.setUnallocatedTotal(BigDecimal.ZERO);
+
             // All transactions
             List<Transaction> transactions = TransactionUtils.orderByEffectiveDate(transactionService.getTransactions(userId, startDate, endDate), true);
             List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
