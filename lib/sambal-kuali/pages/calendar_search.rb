@@ -9,6 +9,7 @@ class CalendarSearch < BasePage
   CALENDAR_START_DATE = 1
   CALENDAR_END_DATE = 2
   CALENDAR_STATUS = 3
+  CALENDAR_ACTION = 4
 
   element(:search_for_select)  { |b| b.frm.select(name: "calendarType") }
   element(:name) { |b| b.frm.text_field(name: "name") }
@@ -56,6 +57,10 @@ class CalendarSearch < BasePage
 
   def calendar_status calendar
     results_table.row(text: /#{calendar}/)[CALENDAR_STATUS].text
+  end
+
+  def calendar_action_text calendar
+    results_table.row(text: /#{calendar}/)[CALENDAR_ACTION].text
   end
 
   def results_list

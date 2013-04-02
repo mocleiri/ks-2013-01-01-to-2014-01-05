@@ -55,9 +55,11 @@ end
 Then /^the calendar (.*) be set to Official$/ do |arg|
   on CalendarSearch do |page|
     if arg == "should"
-      page.calendar_status(@calendar.name).should == "Official"
+      is_official = page.calendar_action_text(@calendar.name).include? "Delete"
+      is_official.should == false
     else
-      page.calendar_status(@calendar.name).should_not == "Official"
+      is_official = page.calendar_status(@calendar.name).include? "Delete"
+      is_official.should == true
     end
   end
 end

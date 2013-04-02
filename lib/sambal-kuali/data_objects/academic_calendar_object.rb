@@ -159,7 +159,12 @@ class AcademicTerm
       page.term_end_date_add.set @end_date
 
       page.acal_term_add
-
+      sleep 5
+      if (@term_type == "Spring Term")
+         page.term_type_add.select "Winter Term"
+      else
+         page.term_type_add.select "Spring Term"
+      end
       @keyDateGroup = Array.new(1){make KeyDateGroup}
       @keyDateGroup[0].create
     end
