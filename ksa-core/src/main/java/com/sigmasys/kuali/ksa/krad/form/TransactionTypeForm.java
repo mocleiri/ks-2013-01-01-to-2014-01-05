@@ -182,6 +182,9 @@ public class TransactionTypeForm extends AbstractViewModel {
     }
 
     public List<GlBreakdownModel> getGlBreakdowns() {
+        if(glBreakdowns == null){
+            glBreakdowns = new ArrayList<GlBreakdownModel>();
+        }
         return glBreakdowns;
     }
 
