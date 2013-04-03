@@ -1,6 +1,5 @@
-package com.sigmasys.kuali.ksa.gwt.client.model;
+package com.sigmasys.kuali.ksa.service.search;
 
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,22 +9,23 @@ import java.util.List;
  *
  * @author Michael Ivanov
  */
-public class PagingLoadResultImpl<T extends Serializable> implements PagingLoadResult<T>, Serializable {
+public class PagingLoadResult<T extends Serializable> implements Serializable {
 
     private int offset;
     private int totalLength;
     private List<T> data;
 
-    public PagingLoadResultImpl() {}
+    public PagingLoadResult() {
+    }
 
-    public PagingLoadResultImpl(List<T> data) {
+    public PagingLoadResult(List<T> data) {
         this(data, 0, data.size());
     }
 
-    public PagingLoadResultImpl(List<T> data, int offset, int totalLength) {
-       this.data = data;
-       this.offset = offset;
-       this.totalLength = totalLength;
+    public PagingLoadResult(List<T> data, int offset, int totalLength) {
+        this.data = data;
+        this.offset = offset;
+        this.totalLength = totalLength;
     }
 
     public int getOffset() {
@@ -47,7 +47,7 @@ public class PagingLoadResultImpl<T extends Serializable> implements PagingLoadR
     public List<T> getData() {
         return data;
     }
-    
+
     public void setData(List<T> data) {
         this.data = data;
     }

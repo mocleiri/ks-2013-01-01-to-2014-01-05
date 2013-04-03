@@ -25,9 +25,6 @@
         <jta.version>1.1</jta.version>
         <atomikos.version>3.8.0</atomikos.version>
         <drools.version>5.4.0.Final</drools.version>
-        <gwt.version>2.4.0</gwt.version>
-        <gxt.version>2.2.5-gwt22</gxt.version>
-        <gwt-log.version>3.1.7</gwt-log.version>
         <kuali.rice.version>2.2.0</kuali.rice.version>
         <kuali.student.version>1.2.1</kuali.student.version>
         <kuali.student.enrollment.version>1.0.0-M5</kuali.student.enrollment.version>
@@ -390,37 +387,6 @@
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
             <version>2.5.16</version>
-        </dependency>
-
-        <!-- GXT and GWT dependencies -->
-        <dependency>
-            <groupId>com.extjs</groupId>
-            <artifactId>gxt</artifactId>
-            <version>${gxt.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.allen-sauer.gwt.log</groupId>
-            <artifactId>gwt-log</artifactId>
-            <version>${gwt-log.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>gwt-user</artifactId>
-                    <groupId>com.google.gwt</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-servlet</artifactId>
-            <version>${gwt.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>junit</artifactId>
-                    <groupId>com.google.gwt</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- JAX-WS stuff -->

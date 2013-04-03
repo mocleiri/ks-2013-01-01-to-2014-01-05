@@ -100,9 +100,6 @@
           <element id="library" level="project" name="Maven: org.drools:drools-templates:5.4.0.Final" />
           <element id="library" level="project" name="Maven: net.sourceforge.jexcelapi:jxl:2.6.10" />
           <element id="library" level="project" name="Maven: org.codehaus.janino:janino:2.5.16" />
-          <element id="library" level="project" name="Maven: com.extjs:gxt:2.2.5-gwt22" />
-          <element id="library" level="project" name="Maven: com.allen-sauer.gwt.log:gwt-log:3.1.7" />
-          <element id="library" level="project" name="Maven: com.google.gwt:gwt-servlet:2.4.0" />
           <element id="library" level="project" name="Maven: com.sun.xml.ws:jaxws-rt:2.2.6" />
           <element id="library" level="project" name="Maven: javax.xml.ws:jaxws-api:2.2.8" />
           <element id="library" level="project" name="Maven: javax.xml.bind:jaxb-api:2.2.4" />

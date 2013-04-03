@@ -9,11 +9,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src/main/java" />
-          <root url="file://$MODULE_DIR$/src/main/resources" />
-          <root url="file://$MODULE_DIR$/target/generated-sources/annotations" />
-        </sourceRoots>
       </configuration>
       <facet type="struts" name="Struts">
         <configuration>
@@ -185,9 +180,6 @@
     <orderEntry type="library" name="Maven: org.drools:drools-templates:5.4.0.Final" level="project" />
     <orderEntry type="library" name="Maven: net.sourceforge.jexcelapi:jxl:2.6.10" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.janino:janino:2.5.16" level="project" />
-    <orderEntry type="library" name="Maven: com.extjs:gxt:2.2.5-gwt22" level="project" />
-    <orderEntry type="library" name="Maven: com.allen-sauer.gwt.log:gwt-log:3.1.7" level="project" />
-    <orderEntry type="library" name="Maven: com.google.gwt:gwt-servlet:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: com.sun.xml.ws:jaxws-rt:2.2.6" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.ws:jaxws-api:2.2.8" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.2.4" level="project" />

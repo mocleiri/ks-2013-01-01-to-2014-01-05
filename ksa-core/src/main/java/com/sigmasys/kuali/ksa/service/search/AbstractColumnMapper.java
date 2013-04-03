@@ -1,4 +1,4 @@
-package com.sigmasys.kuali.ksa.gwt.server;
+package com.sigmasys.kuali.ksa.service.search;
 
 import java.util.Collections;
 import java.util.HashMap;

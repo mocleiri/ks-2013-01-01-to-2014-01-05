@@ -66,26 +66,6 @@
                     <test>ServiceTestSuite</test>
                 </configuration>
             </plugin>
-            <!--plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <version>2.4.0</version>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
-                            <extraJvmArgs>${jvm.args}</extraJvmArgs>
-                            <modules>
-                                <module>com.sigmasys.kuali.ksa.gwt.Ksa</module>
-                            </modules>
-                            <style>OBFUSCATED</style>
-                        </configuration>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

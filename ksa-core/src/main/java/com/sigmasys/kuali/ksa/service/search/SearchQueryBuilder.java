@@ -1,16 +1,12 @@
-package com.sigmasys.kuali.ksa.gwt.server;
+package com.sigmasys.kuali.ksa.service.search;
 
-import com.sigmasys.kuali.ksa.gwt.client.model.GwtError;
-import com.sigmasys.kuali.ksa.gwt.client.model.PropertyModelData;
-import com.sigmasys.kuali.ksa.gwt.client.model.SearchCriteria;
-import com.sigmasys.kuali.ksa.gwt.client.model.StringModelData;
-import com.sigmasys.kuali.ksa.gwt.client.view.widget.value.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Collections;
 
 /**
  * SearchQueryBuilder
@@ -97,19 +93,20 @@ public class SearchQueryBuilder {
         this.predicates = predicates;
     }
 
-    public String buildCountQuery(SearchCriteria searchCriteria) throws GwtError {
+    public String buildCountQuery(SearchCriteria searchCriteria) {
         return buildQuery(searchCriteria, null, null, true);
     }
 
-    public String buildQuery(SearchCriteria searchCriteria) throws GwtError {
+    public String buildQuery(SearchCriteria searchCriteria) {
         return buildQuery(searchCriteria, null, null);
     }
 
-    public String buildQuery(SearchCriteria searchCriteria, String sortDir, String sortField) throws GwtError {
+    public String buildQuery(SearchCriteria searchCriteria, String sortDir, String sortField) {
         return buildQuery(searchCriteria, sortDir, sortField, false);
     }
 
-    protected String buildQuery(SearchCriteria searchCriteria, String sortDir, String sortField, boolean isCountQuery) throws GwtError {
+    protected String buildQuery(SearchCriteria searchCriteria, String sortDir, String sortField, boolean isCountQuery) {
+
         StringBuilder sb = new StringBuilder();
 
         if (isCountQuery) {
@@ -150,13 +147,13 @@ public class SearchQueryBuilder {
         return sb.toString();
     }
 
-    public String buildWhereClause(SearchCriteria searchCriteria) throws GwtError {
+    public String buildWhereClause(SearchCriteria searchCriteria) {
         return buildWhereClause(searchCriteria, true);
     }
 
-    public String buildWhereClause(SearchCriteria searchCriteria, boolean addWhere) throws GwtError {
+    public String buildWhereClause(SearchCriteria searchCriteria, boolean addWhere) {
 
-        List<String> where = new ArrayList<String>();
+        List<String> where = new LinkedList<String>();
 
         // where predicate(s) from constructor
         if (whereClause != null && !whereClause.equals("")) {
@@ -164,7 +161,6 @@ public class SearchQueryBuilder {
         }
 
         // where predicates from mappings
-        // TODO
         if (searchCriteria != null) {
             for (Map.Entry<String, Serializable> entry : searchCriteria.entrySet()) {
                 String attribute = entry.getKey();
@@ -256,21 +252,10 @@ public class SearchQueryBuilder {
         // INFO all different types go here.
         if (value instanceof String) {
             return "upper(" + hqlExpression + ") = upper('" + value + "')";
-        } else if (value instanceof PropertyModelData) {
-            String v = ((PropertyModelData) value).getKey();
-            if (v == null) {
-                return "";
-            }
-            return hqlExpression + " = '" + v + "'";
-        } else if (value instanceof StringModelData) {
-            String v = ((StringModelData) value).getValue();
-            if (v == null) {
-                return "";
-            }
-            return hqlExpression + " = '" + v + "'";
         } else if (value instanceof Number) {
             return hqlExpression + " = " + value.toString();
         } else if (value instanceof Collection<?>) {
+
             Collection<?> values = (Collection<?>) value;
             if (values.isEmpty()) {
                 return "";
@@ -295,12 +280,6 @@ public class SearchQueryBuilder {
             for (Object item : items) {
                 if (item instanceof String) {
                     result.append("'").append(item.toString()).append("'");
-                } else if (item instanceof PropertyModelData) {
-                    String v = ((PropertyModelData) item).getKey();
-                    result.append("'").append(v).append("'");
-                } else if (item instanceof StringModelData) {
-                    String v = ((StringModelData) item).getValue();
-                    result.append("'").append(v).append("'");
                 } else {
                     result.append(item.toString());
                 }
@@ -316,103 +295,6 @@ public class SearchQueryBuilder {
             result.append(")");
             return result.toString();
 
-        } else if (value instanceof EntityRefName) {
-            String values = ((EntityRefName) value).getValue();
-            if (values == null) {
-                return "";
-            }
-            String[] parts = values.split(",");
-            StringBuilder sb = new StringBuilder();
-            for (String part : parts) {
-                String transformedPart = part.trim().replace('*', '%');
-                if (transformedPart == null || transformedPart.trim().length() == 0) {
-                    return "";
-                }
-                if (sb.length() > 0) {
-                    sb.append("or ");
-                }
-                sb.append("upper(" + hqlExpression + ") like upper('" + transformedPart + "') ");
-            }
-            return sb.toString();
-        } else if (value instanceof DateRangeValue) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-            StringBuilder sb = new StringBuilder();
-            Date fromDate = ((DateRangeValue) value).getFrom();
-            boolean first = true;
-            if (fromDate != null) {
-                first = false;
-                String dateString = dateFormat.format(fromDate);
-                sb.append(hqlExpression + " is not null and trunc(" + hqlExpression + ", 'DD') >= to_date('" + dateString + "', 'mm/dd/yyyy') ");
-            }
-
-            Date toDate = ((DateRangeValue) value).getTo();
-            if (toDate != null) {
-                String dateString = dateFormat.format(toDate);
-                if (!first) {
-                    sb.append("and ");
-                }
-                sb.append(hqlExpression + " is not null and trunc(" + hqlExpression + ", 'DD') <= to_date('" + dateString + "', 'mm/dd/yyyy') ");
-            }
-
-            return sb.toString();
-        } else if (value instanceof LongRangeValue) {
-
-
-            Long from = ((LongRangeValue) value).getFrom();
-            Long to = ((LongRangeValue) value).getTo();
-            if (from == null && to == null) {
-                return "";
-            }
-            StringBuilder sb = new StringBuilder();
-            if (from != null) {
-                sb.append(" >= " + from.toString());
-            }
-            if (to != null) {
-                if (from != null) {
-                    sb.append(" and " + hqlExpression);
-                }
-                sb.append(" <= " + to.toString());
-            }
-            return hqlExpression + sb.toString();
-
-        } else if (value instanceof DoubleRangeValue) {
-            Double from = ((DoubleRangeValue) value).getFrom();
-            Double to = ((DoubleRangeValue) value).getTo();
-            if (from == null && to == null) {
-                return "";
-            }
-            StringBuilder sb = new StringBuilder();
-            if (from != null) {
-                sb.append(" >= " + from.toString());
-            }
-            if (to != null) {
-                if (from != null) {
-                    sb.append(" and " + hqlExpression);
-                }
-                sb.append(" <= " + to.toString());
-            }
-            return hqlExpression + sb.toString();
-
-        } else if (value instanceof TimeRangeValue) {
-            StringBuilder sb = new StringBuilder();
-            TimeValue fromTime = ((TimeRangeValue) value).getFrom();
-            boolean first = true;
-            if (fromTime != null && fromTime.getValue() != null && !fromTime.getValue().equals("")) {
-                first = false;
-                String data = fromTime.getValue();
-                sb.append(hqlExpression + " >= to_timestamp(to_char(trunc(" + hqlExpression + ", 'DD'), 'DD-MM-YYYY')||' '||'" + data + "', 'DD-MM-YYYY HH24:MI:SS.FF') ");
-            }
-
-            TimeValue toTime = ((TimeRangeValue) value).getTo();
-            if (toTime != null && toTime.getValue() != null && !toTime.getValue().equals("")) {
-                if (!first) {
-                    sb.append("and ");
-                }
-                String data = toTime.getValue();
-                sb.append(hqlExpression + " <= to_timestamp(to_char(trunc(" + hqlExpression + ", 'DD'), 'DD-MM-YYYY')||' '||'" + data + "', 'DD-MM-YYYY HH24:MI:SS.FF') ");
-            }
-
-            return sb.toString();
         } else if (value instanceof Date) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
             Date theDate = (Date) value;
@@ -425,7 +307,8 @@ public class SearchQueryBuilder {
     }
 
     protected String buildOrderByClause(String sortDir, String sortField) {
-        List<String> orderByEntries = new ArrayList<String>();
+
+        List<String> orderByEntries = new LinkedList<String>();
 
         String orderByPrefix = "order by ";
         String relevantOrderBy = buildOrderByClauseInternal(sortDir, sortField);
