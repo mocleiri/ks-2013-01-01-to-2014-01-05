@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 import org.kuali.student.contract.model.MessageStructure;
 import org.kuali.student.contract.model.Service;
@@ -48,7 +49,7 @@ import org.kuali.student.contract.model.validation.ServiceContractModelValidator
  *
  * @author nwright
  */
-//@Ignore
+@Ignore
 public class M6M7ServiceContractComparisonTest {
 
     public M6M7ServiceContractComparisonTest() {
