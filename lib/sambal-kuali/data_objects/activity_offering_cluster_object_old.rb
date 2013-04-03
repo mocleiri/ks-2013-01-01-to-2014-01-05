@@ -12,7 +12,7 @@
 # OR alternatively 2 steps together as
 #  @cluster = create ActivityOfferingCluster, [:is_constrained=>true,:private_name=>"test1_pri",:published_name=>"test1_pub"...]
 # Note the use of the ruby options hash pattern re: setting attribute values
-class ActivityOfferingCluster
+class ActivityOfferingClusterOld
 
   include Foundry
   include DataFactory
@@ -63,11 +63,11 @@ class ActivityOfferingCluster
   def create
     if @is_constrained
       on ManageRegistrationGroups do |page|
-        page.add_cluster
-        #page.format_aoc_select -- use default format
-        page.private_name_add.set @private_name
-        page.published_name_add.set @published_name
-        page.complete_add_aoc
+        page.create_new_cluster
+        page.private_name.set @private_name
+        page.published_name.set @published_name
+        page.create_cluster
+        page.cluster_list_div.span(text: /#{Regexp.escape("#{private_name}")}/).wait_until_present(120)
       end
     else
       @private_name = "Default Cluster"
@@ -141,9 +141,10 @@ class ActivityOfferingCluster
     on ManageRegistrationGroups do |page|
       row = page.get_cluster_ao_row(@private_name,ao_code)
       row.cells[0].checkbox.set
-      page.move_aos
-      page.select_cluster.select(target_cluster.private_name)
-      page.complete_move_ao
+      page.select_cluster_for_ao_move(@private_name,target_cluster.private_name)
+      page.move_ao_from_cluster_submit(@private_name)
+      @assigned_ao_list.delete(ao_code)
+      target_cluster.assigned_ao_list << ao_code
     end
   end
 

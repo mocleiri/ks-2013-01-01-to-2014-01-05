@@ -1,4 +1,4 @@
-@nightly
+@wip
 Feature: Create registration groups
 
 As an Administrator, I want to create registration groups for a Course Offering
@@ -164,6 +164,14 @@ As an Administrator, I want to create registration groups for a Course Offering
     Then the registration groups are deleted
     And the associated activity offerings are now listed as unassigned
 
+
+  Scenario: Validate Registration group numbers
+    Given I manage registration groups for a course offering with multiple activity types
+    When I create an activity offering cluster
+    And I add all activity offerings to the activity offering cluster
+    And I generate registration groups
+    And the correct number of registration groups are created
+
 #suspend AO functionality in M6?
 #  Scenario: Generate registration groups - suspended or cancelled activity offerings are excluded
 #    I am logged in as a Schedule Coordinator
@@ -179,9 +187,4 @@ As an Administrator, I want to create registration groups for a Course Offering
 #    When I set an course offering to '???' #how change course offering status
 #    And I generate unconstrained registration groups
 #    Then registration groups are not generated for the course offering in '???' status
-   Scenario: Validate Registration group numbers
-     Given I manage registration groups for a course offering with multiple activity types
-     When I create an activity offering cluster
-     And I add all activity offerings to the activity offering cluster
-     And I generate registration groups
-     And the correct number of registration groups are created
+

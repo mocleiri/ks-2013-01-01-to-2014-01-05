@@ -15,8 +15,7 @@
 # OR alternatively 2 steps together as
 #  @course_offering = create CourseOffering, [:course => "CHEM317",...]
 # Note the use of the ruby options hash pattern re: setting attribute values
-class CourseOffering
-
+class CourseOfferingOld
   include Foundry
   include DataFactory
   include DateFactory
@@ -30,8 +29,8 @@ class CourseOffering
                 :final_exam_type
   #generally set using options hash
   attr_accessor :activity_offering_cluster_list,
-                :ao_obj_list,
                 :ao_list,
+                :ao_obj_list,
                 :affiliated_person_list,
                 :affiliated_org_list
   #generally set using options hash
@@ -46,7 +45,7 @@ class CourseOffering
                 :reg_options,
                 :search_by_subj
   #generally set using options hash - course offering object to copy
-  :create_by_copy
+                :create_by_copy
 
 
 
@@ -82,6 +81,7 @@ class CourseOffering
         :suffix=>"",
         :activity_offering_cluster_list=>[],
         :ao_list => [],
+        :ao_obj_list => [],
         :final_exam_type => "STANDARD",
         :wait_list => "YES",
         :wait_list_level => "Course Offering",
@@ -276,30 +276,16 @@ class CourseOffering
     end
 
     on ManageCourseOfferings do |page|
-      cluster_divs = page.cluster_div_list
-      if  cluster_divs.length == 0
+      begin
         @ao_obj_list= []
+        @ao_list = page.codes_list
+        @ao_list.each do |ao|
+        ao_obj_temp = make ActivityOffering, :code => ao, :activity_type => page.ao_type(ao), :format => page.ao_format(ao),:max_enrollment => page.ao_max_enr(ao)
+        @ao_obj_list.push(ao_obj_temp)
+        end
+      rescue
         @ao_list = []
-        @activity_offering_cluster_list = []
-      else
-        @activity_offering_cluster_list = []
-        cluster_divs.each do |cluster_div|
-          temp_aoc = make ActivityOfferingCluster, :private_name => page.cluster_div_private_name(cluster_div)
-          temp_aoc.assigned_ao_list = page.get_cluster_assigned_ao_list(temp_aoc.private_name)
-          @activity_offering_cluster_list.push(temp_aoc)
-          @ao_list << temp_aoc.assigned_ao_list
-          #TODO
-          #@ao_list.each do |ao|
-          #  ao_obj_temp = make ActivityOffering, :code => ao, :activity_type => page.ao_type(ao), :format => page.ao_format(ao),:max_enrollment => page.ao_max_enr(ao)
-          #  @ao_obj_list.push(ao_obj_temp)
-          #end
-        end
-        puts "ao list #{@ao_list}"
-        @activity_offering_cluster_list.each do |cluster|
-          puts "cluster name: #{cluster.private_name}"
-        end
       end
-
     end
   end
 
@@ -362,13 +348,13 @@ class CourseOffering
   end
 
   def approve_course
-    on ManageCourseOfferingList do |page|
+   on ManageCourseOfferingList do |page|
       begin
         page.select_co(@course.upcase)
         page.approve_course_offering
         page.approve_yes
       rescue Timeout::Error => e
-        puts "rescued target_row edit"
+      puts "rescued target_row edit"
       end
     end
   end
@@ -452,8 +438,8 @@ class CourseOffering
         @ao_list = page.codes_list
         page.select_ao(@ao_list.first)
         if aostate == "Approved"
-          page.approve_activity
-          ao = page.select_ao_by_status(aostate)
+        page.approve_activity
+        ao = page.select_ao_by_status(aostate)
         end
         if page.delete_aos_button.enabled?
           page.delete_aos
@@ -471,18 +457,18 @@ class CourseOffering
   end
 
   def attempt_co_delete_by_status(aostate)
-    on ManageCourseOfferingList do |page|
-      @course = page.select_co_by_status(aostate)
-      if page.delete_cos_button.enabled?
-        page.delete_cos
-      else
-        page.deselect_co(@course)
-        return false
+      on ManageCourseOfferingList do |page|
+          @course = page.select_co_by_status(aostate)
+          if page.delete_cos_button.enabled?
+            page.delete_cos
+          else
+            page.deselect_co(@course)
+            return false
+          end
+          on DeleteCourseOffering do |page|
+            return  page.confirm_delete_button.present?
+          end
       end
-      on DeleteCourseOffering do |page|
-        return  page.confirm_delete_button.present?
-      end
-    end
   end
 
   #copy the specified activity offering
@@ -773,13 +759,13 @@ class DeliveryFormat
     on CreateCourseOffering do  |page|
       selected_options = page.add_random_delivery_format
       if selected_options[:del_format] == "Lab"
-        @format = "Lab Only"
+         @format = "Lab Only"
       elsif selected_options[:del_format] == "Lecture"
-        @format = "Lecture Only"
+         @format = "Lecture Only"
       elsif selected_options[:del_format] == "Discussion/Lecture"
         @format = "Lecture/Discussion"
       else
-        @format = selected_options[:del_format]
+         @format = selected_options[:del_format]
       end
 
       if selected_options[:grade_format] == "Course"
