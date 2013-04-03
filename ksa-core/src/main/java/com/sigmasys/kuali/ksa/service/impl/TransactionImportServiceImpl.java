@@ -225,7 +225,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
             batchIsQualified = CollectionUtils.isEmpty(failed.getKsaTransactionAndReason());
 
-            if (batchIsQualified || !singleBatchFailure) {
+            if (batchReceiptStatus != BatchReceiptStatus.FAILED && (batchIsQualified || !singleBatchFailure)) {
 
                 for (KsaTransaction ksaTransaction : acceptedKsaTransactionList) {
 
@@ -236,7 +236,8 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                         totalValue = totalValue.add(ksaTransaction.getAmount());
 
                         // refund applies to credit type only
-                        if (transaction instanceof Payment) {
+                        if (transaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT ||
+                                transaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT) {
                             totalValueCredit = totalValueCredit.add(transaction.getAmount());
                         } else {
                             totalValueDebits = totalValueDebits.add(transaction.getAmount());
