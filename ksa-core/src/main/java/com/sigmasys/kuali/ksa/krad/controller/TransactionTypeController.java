@@ -252,6 +252,7 @@ public class TransactionTypeController extends GenericSearchController {
             ((CreditType)tt).setUnallocatedGlOperation(unallocatedGlOperationType);
             String unallocatedGLAccount = form.getUnallocatedGLAccount();
             ((CreditType)tt).setUnallocatedGlAccount(unallocatedGLAccount);
+            transactionService.persistTransactionType(tt);
         }
 
         GlobalVariables.getMessageMap().putInfo("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, "Transaction Type added");
