@@ -240,6 +240,44 @@ public class TransactionServiceTest extends AbstractServiceTest {
         // Add more assertions when we have some test data
     }
 
+    /*
+     * KSA-131 - Transaction View filter "from" date problem
+     *
+    @Test
+    public void getTransactionsByDateRange(){
+        Date startDate = null;
+        Date endDate = null;
+        String userId = "user1";
+
+        List<Transaction> all = transactionService.getTransactions(userId, startDate, endDate);
+        Assert.notNull(all);
+
+        for(Transaction t : all){
+            Date effective = t.getEffectiveDate();
+
+            if(startDate == null){
+                startDate = effective;
+            }
+            if(endDate == null){
+                endDate = effective;
+            }
+            if(effective.before(startDate)){
+                startDate = effective;
+            }
+            if(effective.after(endDate)){
+                endDate = effective;
+            }
+
+        }
+        List<Transaction> filtered = transactionService.getTransactions(userId, startDate, endDate);
+
+        Assert.notNull(filtered);
+        Assert.isTrue(all.size() == filtered.size(), "All transactions size: " + all.size() + " does not match filtered size: " + filtered.size());
+
+    }
+
+    */
+
     @Test
     public void getCharges() throws Exception {
 
