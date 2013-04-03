@@ -54,7 +54,6 @@ public class M6M7ServiceContractComparisonTest {
     public M6M7ServiceContractComparisonTest() {
     }
 
-    
     @BeforeClass
     public static void setUpClass() throws Exception {
     }
@@ -62,17 +61,24 @@ public class M6M7ServiceContractComparisonTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-
     private ByteArrayOutputStream baos;
     private PrintStream out;
+
     @Before
     public void setUp() {
-        baos = new ByteArrayOutputStream ();
-        out = new PrintStream (baos);
+        baos = new ByteArrayOutputStream();
+        out = new PrintStream(baos);
 
         out.println("This section was created by programmatically comparing the message structures.");
         out.println("Run on: " + new Date());
         out.println("See [M6M7ServiceContractComparisonTest.java|https://test.kuali.org/svn/student/tools/maven-kscontractdoc-plugin/trunk/src/test/java/org/kuali/student/contract/model/impl/M6M7ServiceContractComparisonTest.java]");
+        out.println("");
+        out.println("Legend:");
+        out.println("* (-) Removed or dropped from contract");
+        out.println("* (+) Added to contract");
+        out.println("* (/) Renamed in contract");
+        out.println("* (*y) Change to contract");
+        out.println("* (!) Deprecated");
         out.println("");
         out.println("*TABLE OF CONTENTS*");
         out.println("{toc}");
@@ -89,7 +95,7 @@ public class M6M7ServiceContractComparisonTest {
         loadKnownFieldRenames();
         loadKnownFieldIssues();
         loadKnownMethodRenames();
-        loadKnownMethodIssues ();
+        loadKnownMethodIssues();
     }
 
     @After
@@ -113,14 +119,14 @@ public class M6M7ServiceContractComparisonTest {
     private static final String M7_ENROLL_API_DIRECTORY = M7_PROJECT_API_DIRECTORY + "/ks-enroll-api/src/main/java";
     private static ServiceContractModel modelM6 = null;
     private static ServiceContractModel modelM7 = null;
-
     private Map<String, String> knownMethodRenames = null;
     private Map<String, String> knownFieldRenames = null;
     private Map<String, String> knownMethodIssues = null;
     private Map<String, String> knownUnconvertedObjects = null;
 
     /**
-     * Test of getServiceMethods method, of class ServiceContractModelQDoxLoader.
+     * Test of getServiceMethods method, of class
+     * ServiceContractModelQDoxLoader.
      */
     @Test
     public void testCompareModels() {
@@ -143,11 +149,11 @@ public class M6M7ServiceContractComparisonTest {
         srcDirs.add(M6_CORE_API_DIRECTORY);
         srcDirs.add(M6_LUM_API_DIRECTORY);
         srcDirs.add(M6_ENROLL_API_DIRECTORY);
-        out.println ("Reading as input:");
+        out.println("Reading as input:");
         for (String directory : srcDirs) {
-            out.println ("* " + directory);
+            out.println("* " + directory);
         }
-        out.println ("");
+        out.println("");
         boolean validateKualiStudent = false;
         ServiceContractModel instance = new ServiceContractModelQDoxLoader(srcDirs, validateKualiStudent);
 
@@ -168,11 +174,11 @@ public class M6M7ServiceContractComparisonTest {
         srcDirs.add(M7_CORE_API_DIRECTORY);
         srcDirs.add(M7_LUM_API_DIRECTORY);
         srcDirs.add(M7_ENROLL_API_DIRECTORY);
-        out.println ("Reading as input:");
+        out.println("Reading as input:");
         for (String directory : srcDirs) {
-            out.println ("* " + directory);
+            out.println("* " + directory);
         }
-        out.println ("");     
+        out.println("");
         boolean validateKualiStudent = true;
         ServiceContractModel instance = new ServiceContractModelQDoxLoader(srcDirs, validateKualiStudent);
 
@@ -233,7 +239,7 @@ public class M6M7ServiceContractComparisonTest {
 
     private void compareTypes() {
         for (Service service : modelM6.getServices()) {
-            Set<String> found = new LinkedHashSet<String> ();
+            Set<String> found = new LinkedHashSet<String>();
             out.println("");
             out.println("h2. " + service.getName() + " Structures");
             for (XmlType xmlTypeM6 : finderM6.findAllComplexTypesInService(service.getKey())) {
@@ -243,8 +249,8 @@ public class M6M7ServiceContractComparisonTest {
                 }
             }
             for (XmlType xmlTypeM7 : finderM7.findAllComplexTypesInService(service.getKey())) {
-                if (! found.contains(xmlTypeM7.getName())) {
-                  out.println("# (+) " + xmlTypeM7.getName() + ": was added in M7");
+                if (!found.contains(xmlTypeM7.getName())) {
+                    out.println("# (+) " + xmlTypeM7.getName() + ": was added in M7");
                 }
             }
         }
@@ -327,10 +333,10 @@ public class M6M7ServiceContractComparisonTest {
         knownObjectRenames = renames;
         return;
     }
-    
+
     private void loadKnownFieldRenames() {
         Map<String, String> renames = new HashMap<String, String>();
-//        renames.put("id", "key"); // not all the time but when it happens want to catch if id not found
+        renames.put("OrgCodeInfo.key", "OrgCodeInfo.typeKey"); // not all the time but when it happens want to catch if id not found
 //        renames.put("desc", "descr");
 //        renames.put("state", "stateKey");
 //        renames.put("type", "typeKey");
@@ -465,8 +471,7 @@ public class M6M7ServiceContractComparisonTest {
         knownMethodRenames = renames;
         return;
     }
-    
-    
+
     private void loadKnownMethodIssues() {
         Map<String, String> issues = new HashMap<String, String>();
 //        issues.put("AtpService.validateDateRange", "Dropped because DateRange objects were merged in with milestones");
@@ -513,7 +518,6 @@ public class M6M7ServiceContractComparisonTest {
         knownMethodIssues = issues;
         return;
     }
-    
 
     private XmlType findType(XmlType m6) {
         XmlType m7 = finderM7.findXmlType(m6.getName());
@@ -529,11 +533,11 @@ public class M6M7ServiceContractComparisonTest {
                 return m7;
             }
         }
-        if (m7 == null) {
-            if (m6.getName().endsWith("TypeInfo")) {
-                m7 = finderM7.findXmlType("TypeInfo");
-            }
-        }
+//        if (m7 == null) {
+//            if (m6.getName().endsWith("TypeInfo")) {
+//                m7 = finderM7.findXmlType("TypeInfo");
+//            }
+//        }
         return m7;
     }
 
@@ -546,12 +550,12 @@ public class M6M7ServiceContractComparisonTest {
             if (message.isEmpty()) {
                 return null;
             }
-            out.println("# (/) " + m6.getName() + ":" + message);
+            out.println("# (-) " + m6.getName() + ":" + message);
             return null;
         }
         XmlType m7 = findType(m6);
         if (m7 == null) {
-            out.println("# " + m6.getName() + ": has no corresponding object in M7");
+            out.println("# (-) " + m6.getName() + ": has no corresponding object in M7");
             return m7;
         }
         Set<MessageStructure> usedInM7 = new HashSet<MessageStructure>();
@@ -569,15 +573,16 @@ public class M6M7ServiceContractComparisonTest {
         String issue = this.knownFieldIssues.get(m6.getXmlObject() + "." + m6.getShortName());
         if (issue != null) {
             if (!issue.isEmpty()) {
-                out.println("# (*g) " + m6.getXmlObject() + "." + m6.getShortName() + ": " + issue);
+                out.println("# (*y) " + m6.getXmlObject() + "." + m6.getShortName() + ": " + issue);
             }
             return m7;
         }
         if (m7 == null) {
-            out.println("# (-) " + m6.getXmlObject() + "." + m6.getShortName() + " not found in M7: renamed to one of these? " + calcFieldNames(xmlTypeM7));
+            out.println("# (-) " + m6.getXmlObject() + "." + m6.getShortName() + " not found in M7: perhaps it was renamed to one of these? " + calcFieldNames(xmlTypeM7));
             return null;
         }
         compareType(m6, m7);
+        compareDeprecation(m6, m7);
         return m7;
     }
 
@@ -585,7 +590,26 @@ public class M6M7ServiceContractComparisonTest {
         if (m6.getType().equalsIgnoreCase(m7.getType())) {
             return;
         }
-        out.println("# (!) " + m6.getXmlObject() + "." + m6.getShortName() + ": the type was changed from " + m6.getType() + " to " + m7.getType());
+        out.println("# (*y) " + m6.getXmlObject() + "." + m6.getShortName() + ": the type was changed from " + m6.getType() + " to " + m7.getType());
+    }
+
+    private void compareDeprecation(MessageStructure m6, MessageStructure m7) {
+        if (m6.isDeprecated() && m7.isDeprecated()) {
+            return;
+        }
+        if (!m6.isDeprecated() && !m7.isDeprecated()) {
+            return;
+        }
+        if (!m6.isDeprecated() && m7.isDeprecated()) {
+            out.println("# (!) " + m6.getXmlObject() + "." + m6.getShortName() + " has been deprecated and may be removed in future releases");
+            return;
+        }
+
+        if (m6.isDeprecated() && !m7.isDeprecated()) {
+            out.println("# (!) " + m6.getXmlObject() + "." + m6.getShortName() + " had been dedprecated but is no longer marked as such");
+            return;
+        }
+        throw new RuntimeException("should never reach here");
     }
 
     private MessageStructure findMessageStructure(MessageStructure m6, XmlType xmlTypeM7) {
@@ -600,7 +624,7 @@ public class M6M7ServiceContractComparisonTest {
                             + " BUT IT STILL DIDN'T EXIST IN M7");
                     return null;
                 }
-                out.println("# (*g) " + m6.getXmlObject() + "." + m6.getShortName()
+                out.println("# (*y) " + m6.getXmlObject() + "." + m6.getShortName()
                         + " was renamed to " + xmlTypeM7.getName() + "." + renamed);
             }
         }
@@ -609,29 +633,29 @@ public class M6M7ServiceContractComparisonTest {
 
     private void compareMethods() {
         for (Service service : modelM6.getServices()) {
-            Set<String> found = new LinkedHashSet<String> ();
+            Set<String> found = new LinkedHashSet<String>();
             out.println("");
             out.println("h2. " + service.getName() + " Methods");
             List<ServiceMethod> methodsInService = finderM6.findServiceMethods(service.getKey());
             for (ServiceMethod method : methodsInService) {
                 ServiceMethod methodM7 = findCompareMethod(method);
-                 if (methodM7 != null) {
+                if (methodM7 != null) {
                     found.add(methodM7.getName());
                 }
             }
             for (ServiceMethod methodM7 : finderM7.findServiceMethods(service.getKey())) {
-                if (! found.contains(methodM7.getName())) {
-                  out.println("# (+) " + methodM7.getName() + ": was added in M7");
+                if (!found.contains(methodM7.getName())) {
+                    out.println("# (+) " + methodM7.getName() + ": was added in M7");
                 }
             }
         }
     }
 
     private ServiceMethod findCompareMethod(ServiceMethod methodM6) {
-        String issue = knownMethodIssues.get (methodM6.getService() + "Service." + methodM6.getName());
+        String issue = knownMethodIssues.get(methodM6.getService() + "Service." + methodM6.getName());
         if (issue != null) {
             if (!issue.isEmpty()) {
-                out.println("# (*g) " + methodM6.getService() + "Service." + methodM6.getName()
+                out.println("# (*y) " + methodM6.getService() + "Service." + methodM6.getName()
                         + ": " + issue);
             }
             return null;
@@ -643,17 +667,59 @@ public class M6M7ServiceContractComparisonTest {
                 out.println("# (-) " + methodM6.getService() + "Service." + methodM6.getName()
                         + " could not be found in M7");
             } else {
-                out.println("# (!) " + methodM6.getService() + "Service." + methodM6.getName()
-                        + " might have been renamed to one of these: "
+                out.println("# (-) " + methodM6.getService() + "Service." + methodM6.getName()
+                        + " does not exist in M7.  It might have been renamed to one of these: "
                         + possibleMethods);
             }
             return null;
         }
         if (!methodM6.getName().equals(methodM7.getName())) {
-            out.println("# (*g) " + methodM6.getService() + "Service." + methodM6.getName()
+            out.println("# (*y) " + methodM6.getService() + "Service." + methodM6.getName()
                     + " was renamed to " + methodM7.getService() + "Service." + methodM7.getName());
         }
+        if (!doAllParametersMatch(methodM6, methodM7)) {
+           out.print("# (*y) " + methodM6.getService() + "Service." + methodM6.getName()
+                    + " parameters changed from (");
+           String comma = "";
+           for (ServiceMethodParameter param : methodM6.getParameters()) {
+               out.print (comma);
+               comma = ", ";
+               out.print (param.getType() + " " + param.getName());
+           } 
+           out.print (") to (");
+           comma = "";
+           for (ServiceMethodParameter param : methodM7.getParameters()) {
+               out.print (comma);
+               comma = ", ";
+               out.print (param.getType() +  " " + param.getName());
+           }
+           out.println (")");
+        }
         return methodM7;
+    }
+
+    private boolean doAllParametersMatch(ServiceMethod methodM6, ServiceMethod methodM7) {
+        if (methodM6.getParameters().size() != methodM7.getParameters().size()) {
+            return false;
+        }
+        for (int i = 0; i < methodM6.getParameters().size(); i++) {
+            ServiceMethodParameter paramM6 = methodM6.getParameters().get(i);
+            ServiceMethodParameter paramM7 = methodM7.getParameters().get(i);
+            if (!doParametersMatch(paramM6, paramM7)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean doParametersMatch(ServiceMethodParameter paramM6, ServiceMethodParameter paramM7) {
+        if (!paramM6.getName().equals(paramM7.getName())) {
+            return false;
+        }
+        if (!paramM6.getType().equals(paramM7.getType())) {
+            return false;
+        }
+        return true;
     }
 
     private ServiceMethod findMethod(ServiceMethod method1) {
@@ -663,7 +729,7 @@ public class M6M7ServiceContractComparisonTest {
             if (methodRename != null) {
                 method2 = findMethod2(method1.getService(), methodRename);
                 if (method2 == null) {
-                    out.println("# (x) " + method1.getService() + "Service." + method1.getName() 
+                    out.println("# (-) " + method1.getService() + "Service." + method1.getName()
                             + " could not be found even after being renamed to " + methodRename);
                     return null;
                 }
@@ -672,7 +738,6 @@ public class M6M7ServiceContractComparisonTest {
         return method2;
     }
 
-    
     private ServiceMethod findMethod2(String serviceKey, String methodName) {
         ServiceMethod method2 = finderM7.findServiceMethod(serviceKey, methodName);
         if (method2 == null) {
@@ -711,12 +776,12 @@ public class M6M7ServiceContractComparisonTest {
     private List<ServiceMethod> findPossibleMethods(ServiceMethod method1) {
         List<ServiceMethod> methods = new ArrayList<ServiceMethod>();
         List<ServiceMethod> wideNet = null;
-        if (method1.getService().equals("Lu")) {
-            wideNet = finderM7.findServiceMethods("Clu");
-            wideNet.addAll(finderM7.findServiceMethods("Lui"));
-        } else {
-            wideNet = finderM7.findServiceMethods(method1.getService());
-        }
+//        if (method1.getService().equals("Lu")) {
+//            wideNet = finderM7.findServiceMethods("Clu");
+//            wideNet.addAll(finderM7.findServiceMethods("Lui"));
+//        } else {
+        wideNet = finderM7.findServiceMethods(method1.getService());
+//        }
         for (ServiceMethod method2 : wideNet) {
             if (isPossibleMatch(method1, method2)) {
                 methods.add(method2);
@@ -726,7 +791,7 @@ public class M6M7ServiceContractComparisonTest {
     }
 
     private boolean isPossibleMatch(ServiceMethod method1, ServiceMethod method2) {
-         if (method1.getName().contains(method2.getName())) {
+        if (method1.getName().contains(method2.getName())) {
             return true;
         }
         if (method2.getName().contains(method1.getName())) {
@@ -755,5 +820,4 @@ public class M6M7ServiceContractComparisonTest {
         }
         return false;
     }
-
 }
