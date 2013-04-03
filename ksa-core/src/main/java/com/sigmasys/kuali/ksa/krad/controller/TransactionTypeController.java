@@ -421,6 +421,7 @@ public class TransactionTypeController extends GenericSearchController {
             if(b == null){
                 b = BigDecimal.ZERO;
             }
+            breakdown.setBreakdown(b);
             total = total.add(b);
 
             if(BigDecimal.ZERO.equals(b)){
