@@ -38,7 +38,6 @@ import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.r2.core.organization.dto.OrgTreeViewInfo;
 import org.kuali.student.r2.core.organization.infc.OrgHierarchy;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
-import org.kuali.student.r2.core.organization.service.impl.util.constants.OrganizationServiceConstants;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -46,7 +45,6 @@ import javax.annotation.Resource;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -116,14 +114,14 @@ public class TestOrganizationService {
         //org with multiple relations of different types.
         orgRelations = orgService.getOrgOrgRelationsByOrg("4", callContext);
         assertEquals(4, orgRelations.size());
-        info = getOrgOrgRelationInfoByRelatedOrgIdAndType("12", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLABORATES_WITH_TYPE, orgRelations);
-        validateOrgOrgRelation(info, "4", "12", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
+        info = getOrgOrgRelationInfoByRelatedOrgIdAndType("12", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE, orgRelations);
+        validateOrgOrgRelation(info, "4", "12", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE);
         info = getOrgOrgRelationInfoByRelatedOrgIdAndType("7", OrganizationServiceDataLoader.ORG_RELATION_FIN_PARENT_TYPE, orgRelations);
         validateOrgOrgRelation(info, "4", "7", OrganizationServiceDataLoader.ORG_RELATION_FIN_PARENT_TYPE);
         info = getOrgOrgRelationInfoByRelatedOrgIdAndType("10", OrganizationServiceDataLoader.ORG_RELATION_FIN_PARENT_TYPE, orgRelations);
         validateOrgOrgRelation(info, "4", "10", OrganizationServiceDataLoader.ORG_RELATION_FIN_PARENT_TYPE);
-        info = getOrgOrgRelationInfoByRelatedOrgIdAndType("10", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLABORATES_WITH_TYPE, orgRelations);
-        validateOrgOrgRelation(info, "4", "10", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
+        info = getOrgOrgRelationInfoByRelatedOrgIdAndType("10", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE, orgRelations);
+        validateOrgOrgRelation(info, "4", "10", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE);
     }
 
     @Test
@@ -146,8 +144,8 @@ public class TestOrganizationService {
         assertEquals(2, orgRelations.size());
         info = getOrgOrgRelationInfoByRelatedOrgIdAndType("10", OrganizationServiceDataLoader.ORG_RELATION_FIN_PARENT_TYPE, orgRelations);
         validateOrgOrgRelation(info, "4", "10", OrganizationServiceDataLoader.ORG_RELATION_FIN_PARENT_TYPE);
-        info = getOrgOrgRelationInfoByRelatedOrgIdAndType("10", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLABORATES_WITH_TYPE, orgRelations);
-        validateOrgOrgRelation(info, "4", "10", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
+        info = getOrgOrgRelationInfoByRelatedOrgIdAndType("10", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE, orgRelations);
+        validateOrgOrgRelation(info, "4", "10", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE);
 
 
     }

@@ -1213,77 +1213,57 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
 
         Map<String, OrgTreeViewInfo> visitedNodes = new HashMap<String, OrgTreeViewInfo>();
         if(maxLevels >= 0) {
-            buildOrgTreeDown(orgTree, maxLevels, 0, orgHierarchyInfo.getOrgOrgRelationTypes(), visitedNodes, contextInfo);
+            buildOrgTree(orgTree, maxLevels, 0, orgHierarchyInfo.getOrgOrgRelationTypes(), visitedNodes, false, contextInfo);
         }
 
         if(maxLevels <= 0) {
-            buildOrgTreeUp(orgTree, maxLevels, 0, orgHierarchyInfo.getOrgOrgRelationTypes(), visitedNodes, contextInfo);
+            buildOrgTree(orgTree, maxLevels, 0, orgHierarchyInfo.getOrgOrgRelationTypes(), visitedNodes, true, contextInfo);
         }
 
         return orgTree;
     }
 
     /*
-     * Build the OrgTree from the given Org tree going up (pulling the parent of the given OrgTree) recursively
-     */
-    private void buildOrgTreeUp(OrgTreeViewInfo orgTree, int maxLevels, int currentLevel, List<String> validRelationTypes, Map<String, OrgTreeViewInfo> visitedNodes, ContextInfo contextInfo)
+    * Build the OrgTree from the given Org tree going up or down (pulling the parent/child of the given OrgTree) recursively
+    */
+    private void buildOrgTree(OrgTreeViewInfo orgTree, int maxLevels, int currentLevel, List<String> validRelationTypes, Map<String, OrgTreeViewInfo> visitedNodes, boolean up, ContextInfo contextInfo)
             throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
-        if (maxLevels == 0 || currentLevel > maxLevels) {
+        //only continue if we still need to go up/down the tree
+        if (maxLevels == 0 || Math.abs(currentLevel) < Math.abs(maxLevels)) {
             visitedNodes.put(orgTree.getOrg().getId(), orgTree);
 
-            List<OrgOrgRelationInfo> relations = pullParentRelations(validRelationTypes, orgTree.getOrg().getId(), contextInfo);
+            List<OrgOrgRelationInfo> relations = pullRelations(validRelationTypes, orgTree.getOrg().getId(), up, contextInfo);
             for (OrgOrgRelationInfo relation : relations) {
-                OrgTreeViewInfo parent = visitedNodes.get(relation.getOrgId());
-                if (parent == null) {
-                    parent = new OrgTreeViewInfo();
-                    parent.setOrg(getOrg(relation.getOrgId(), contextInfo));
-                }
-                addToOrgTree(parent, orgTree);
+                String nextOrgId = (up ? relation.getOrgId() : relation.getRelatedOrgId());
+                OrgTreeViewInfo nextOrg = visitedNodes.get(nextOrgId);
 
-                if (!visitedNodes.containsKey(parent.getOrg().getId())) {
-                    buildOrgTreeUp(parent, maxLevels, currentLevel - 1, validRelationTypes, visitedNodes, contextInfo);
+                if (nextOrg == null) {
+                    nextOrg = new OrgTreeViewInfo();
+                    nextOrg.setOrg(getOrg(nextOrgId, contextInfo));
+                }
+                if(up) {
+                    addToOrgTree(nextOrg, orgTree);
+                } else {
+                    addToOrgTree(orgTree, nextOrg);
+                }
+                //don't recurse on a node that we have already visited.
+                if (!visitedNodes.containsKey(nextOrgId)) {
+                    int nextLevel = currentLevel + (up ? -1 : 1);
+                    buildOrgTree(nextOrg, maxLevels, nextLevel, validRelationTypes, visitedNodes, up, contextInfo);
                 }
             }
         }
     }
 
-    /*
-     * Build the OrgTree from the given Org tree going down (pulling the children of the given OrgTree) recursively
-     */
-    private void buildOrgTreeDown(OrgTreeViewInfo orgTree, int maxLevels, int currentLevel, List<String> validRelationTypes, Map<String, OrgTreeViewInfo> visitedNodes, ContextInfo contextInfo)
-            throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
-        if (maxLevels == 0 || currentLevel < maxLevels) {
-            visitedNodes.put(orgTree.getOrg().getId(), orgTree);
+    private List<OrgOrgRelationInfo> pullRelations(List<String> validRelationTypes, String orgId, boolean up, ContextInfo contextInfo) throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
+        List<OrgOrgRelationInfo> relations = new ArrayList<OrgOrgRelationInfo>();
+        for(String relationType : validRelationTypes) {
+            if(up) {
+                relations.addAll(getOrgOrgRelationsByTypeAndRelatedOrg(orgId, relationType, contextInfo));
 
-            List<OrgOrgRelationInfo> relations = pullChildRelations(validRelationTypes, orgTree.getOrg().getId(), contextInfo);
-            for (OrgOrgRelationInfo relation : relations) {
-                OrgTreeViewInfo child = visitedNodes.get(relation.getRelatedOrgId());
-                if (child == null) {
-                    child = new OrgTreeViewInfo();
-                    child.setOrg(getOrg(relation.getRelatedOrgId(), contextInfo));
-                }
-                addToOrgTree(orgTree, child);
-
-                if (!visitedNodes.containsKey(child.getOrg().getId())) {
-                    buildOrgTreeDown(child, maxLevels, currentLevel + 1, validRelationTypes, visitedNodes, contextInfo);
-                }
+            } else {
+                relations.addAll(getOrgOrgRelationsByTypeAndOrg(orgId, relationType, contextInfo));
             }
-        }
-    }
-
-    private List<OrgOrgRelationInfo> pullChildRelations(List<String> validRelationTypes, String orgId, ContextInfo contextInfo) throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
-        List<OrgOrgRelationInfo> relations = new ArrayList<OrgOrgRelationInfo>();
-        for(String relationType : validRelationTypes) {
-            relations.addAll(getOrgOrgRelationsByTypeAndOrg(orgId, relationType, contextInfo));
-        }
-
-        return relations;
-    }
-
-    private List<OrgOrgRelationInfo> pullParentRelations(List<String> validRelationTypes, String orgId, ContextInfo contextInfo) throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
-        List<OrgOrgRelationInfo> relations = new ArrayList<OrgOrgRelationInfo>();
-        for(String relationType : validRelationTypes) {
-            relations.addAll(getOrgOrgRelationsByTypeAndRelatedOrg(orgId, relationType, contextInfo));
         }
 
         return relations;

@@ -38,7 +38,6 @@ import org.kuali.student.r2.core.organization.service.impl.lib.AttributeTester;
 import org.kuali.student.r2.core.organization.service.impl.lib.KSLog4JConfigurer;
 import org.kuali.student.r2.core.organization.service.impl.util.constants.OrganizationServiceConstants;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
@@ -60,7 +59,7 @@ public class OrganizationServiceDataLoader extends AbstractMockServicesAwareData
     public static final String ACTIVE_STATE = "kuali.org.active";
 
     public static final String ORG_RELATION_ACAD_PARENT_TYPE = "kuali.organization.relation.type.acad.parent";
-    public static final String ORG_RELATION_ACAD_COLABORATES_WITH_TYPE = "kuali.organization.relation.type.acad.colaborates";
+    public static final String ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE = "kuali.organization.relation.type.acad.collaborates";
     public static final String ORG_RELATION_FIN_PARENT_TYPE = "kuali.organization.relation.type.fin.parent";
 
     public static final String ORG_PERSON_RELATION_PRESIDENT_TYPE = "kuali.organization.personrelation.type.president";
@@ -112,7 +111,7 @@ public class OrganizationServiceDataLoader extends AbstractMockServicesAwareData
 
     private void createOrgHierarchies() throws ParseException, DataValidationErrorException, PermissionDeniedException, OperationFailedException, InvalidParameterException, ReadOnlyException, MissingParameterException, DoesNotExistException {
         createOrgHierarchy('A', "1", OrganizationServiceConstants.ORGANIZATION_CAMPUS_TYPE_KEY,
-                ORG_RELATION_ACAD_PARENT_TYPE, ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
+                ORG_RELATION_ACAD_PARENT_TYPE, ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE);
         createOrgHierarchy('B', "11", OrganizationServiceConstants.ORGANIZATION_CAMPUS_TYPE_KEY,
                 ORG_RELATION_FIN_PARENT_TYPE);
     }
@@ -154,10 +153,10 @@ public class OrganizationServiceDataLoader extends AbstractMockServicesAwareData
         createOrgOrgRelation("7", "9", ORG_RELATION_ACAD_PARENT_TYPE);
         createOrgOrgRelation("7", "10", ORG_RELATION_ACAD_PARENT_TYPE);
 
-        createOrgOrgRelation("4", "10", ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
-        createOrgOrgRelation("4", "12", ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
-        createOrgOrgRelation("8", "9", ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
-        createOrgOrgRelation("9", "8", ORG_RELATION_ACAD_COLABORATES_WITH_TYPE);
+        createOrgOrgRelation("4", "10", ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE);
+        createOrgOrgRelation("4", "12", ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE);
+        createOrgOrgRelation("8", "9", ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE);
+        createOrgOrgRelation("9", "8", ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE);
 
 
         createOrgOrgRelation("11", "4", ORG_RELATION_FIN_PARENT_TYPE);

@@ -46,7 +46,7 @@ public interface OrgPositionRestriction
      * Organization to person relationship type the restriction
      * applies to.
      *
-     * @name Organization Person Relation Type Key
+     * @name Org Person Relation Type Key
      * @required
      * @readOnly
      */
