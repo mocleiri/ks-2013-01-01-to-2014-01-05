@@ -114,10 +114,6 @@ class ManageCourseOfferings < BasePage
   AO_INSTRUCTOR = 10
   AO_ACTIONS = 11
 
-
-
-
-
   action(:go) { |b| b.frm.button(text: "Go").click; b.loading.wait_while_present }
 
   def view_activity_offering(code)

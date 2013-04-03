@@ -1,6 +1,6 @@
 Given /^I manage a course offering$/ do
   #@course_offering = create CourseOfferingARG, :create_by_copy=>(make CourseOffering, :course=>"ENGL211", :term => Rollover::MAIN_TEST_TERM_TARGET)
-  @course_offering = make CourseOfferingARG, :course=>"CHEM237", :term => Rollover::MAIN_TEST_TERM_TARGET
+  @course_offering = make CourseOffering, :course=>"CHEM237", :term => Rollover::MAIN_TEST_TERM_TARGET
   @course_offering.manage
   #puts "ao_list #{@course_offering.ao_list}"
 end
@@ -17,9 +17,9 @@ When /^I assign an activity offering to the cluster$/ do
 end
 
 When /^I move a lab activity offering from the first activity offering cluster to the second activity offering cluster$/ do
-  @ao_cluster = make ActivityOfferingClusterARG, :private_name => "CL 1019"
+  @ao_cluster = make ActivityOfferingCluster, :private_name => "CL 1019"
   @course_offering.activity_offering_cluster_list << @ao_cluster
-  @ao_cluster2 = make ActivityOfferingClusterARG, :private_name => "new cluster"
+  @ao_cluster2 = make ActivityOfferingCluster, :private_name => "new cluster"
   @course_offering.activity_offering_cluster_list << @ao_cluster2
   @ao_cluster.assigned_ao_list = ["A","B","D","E"]
   @ao_cluster2.assigned_ao_list = []
@@ -29,7 +29,7 @@ end
 Then /^the activity offering is shown as part of the cluster$/ do
   #validate all ao_clusters
   @course_offering.activity_offering_cluster_list.each do |cluster|
-    on ManageCourseOfferingsARG do |page|
+    on ManageCourseOfferings do |page|
       actual_aos = page.get_cluster_assigned_ao_list(cluster.private_name)
       actual_aos.sort.should == cluster.assigned_ao_list.sort
     end
@@ -38,19 +38,19 @@ end
 
 
 When /^I create a(?:n| new) activity offering cluster$/ do
-  @ao_cluster = make ActivityOfferingClusterARG
+  @ao_cluster = make ActivityOfferingCluster
   @course_offering.add_ao_cluster(@ao_cluster)
 end
 
 Given /^the default activity offering cluster is present$/ do
-   on ManageCourseOfferingsARG do |page|
+   on ManageCourseOfferings do |page|
      #page.view_by_clusters
      page.cluster_div_list.length.should == 3
    end
 end
 
 Given /^all activity offerings are assigned to the ARG cluster$/ do
-  on ManageCourseOfferingsARG do |page|
+  on ManageCourseOfferings do |page|
     page.cluster_div_list.each do |cluster|
       private_name = page.cluster_div_private_name(cluster)
       puts "private name: #{private_name}"
