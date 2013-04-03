@@ -374,6 +374,7 @@ public class TransactionTypeController extends GenericSearchController {
 
         for (GlBreakdown sourceBreakdown : sourceBreakdowns) {
             GlBreakdownModel breakdownModel = new GlBreakdownModel();
+            breakdownModel.setGlAccount(sourceBreakdown.getGlAccount());
             breakdownModel.setOperation(sourceBreakdown.getGlOperation().getId());
             breakdownModel.setBreakdown(sourceBreakdown.getBreakdown());
             breakdowns.add(breakdownModel);
