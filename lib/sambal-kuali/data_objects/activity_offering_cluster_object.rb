@@ -27,7 +27,8 @@ class ActivityOfferingCluster
                 :is_valid,
                 :expected_msg,
                 :to_assign_ao_list,
-                :assigned_ao_list
+                :assigned_ao_list,
+                :ao_list
 
   alias_method :constrained?, :is_constrained
   alias_method :valid?, :is_valid
@@ -53,7 +54,8 @@ class ActivityOfferingCluster
         :is_valid=>true,
         :expected_msg=>"",
         :assigned_ao_list=>[],
-        :to_assign_ao_list=>["A"]
+        :to_assign_ao_list=>["A"],
+        :ao_list =>[]
     }
     options = defaults.merge(opts)
     set_options(options)
