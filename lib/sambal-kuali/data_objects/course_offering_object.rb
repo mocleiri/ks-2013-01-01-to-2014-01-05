@@ -286,17 +286,21 @@ class CourseOffering
         cluster_divs.each do |cluster_div|
           temp_aoc = make ActivityOfferingCluster, :private_name => page.cluster_div_private_name(cluster_div)
           temp_aoc.assigned_ao_list = page.get_cluster_assigned_ao_list(temp_aoc.private_name)
-          @activity_offering_cluster_list.push(temp_aoc)
+
           @ao_list << temp_aoc.assigned_ao_list
-          #TODO
-          #@ao_list.each do |ao|
-          #  ao_obj_temp = make ActivityOffering, :code => ao, :activity_type => page.ao_type(ao), :format => page.ao_format(ao),:max_enrollment => page.ao_max_enr(ao)
-          #  @ao_obj_list.push(ao_obj_temp)
-          #end
+
+          temp_aoc.assigned_ao_list.each do |ao|
+            ao_obj_temp = make ActivityOffering, :code => ao, :activity_type => page.get_ao_type(temp_aoc.private_name, ao), :max_enrollment => page.get_max_enr(temp_aoc.private_name, ao)
+            temp_aoc.ao_list.push(ao_obj_temp)
+          end
+          @activity_offering_cluster_list.push(temp_aoc)
         end
         puts "ao list #{@ao_list}"
         @activity_offering_cluster_list.each do |cluster|
           puts "cluster name: #{cluster.private_name}"
+          cluster.ao_list.each do |ao|
+            puts "Assigned AOs: #{ao.code}"
+          end
         end
       end
 

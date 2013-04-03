@@ -8,7 +8,7 @@ end
 Given /^I manage registration groups for (?:a|the) course offering$/ do
   #@course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"BSCI283", :term => Rollover::MAIN_TEST_TERM_TARGET)
   #@course_offering.manage_registration_groups
-  @course_offering = make CourseOfferingARG, :course=>"CHEM237", :term => Rollover::MAIN_TEST_TERM_TARGET
+  @course_offering = make CourseOffering, :course=>"CHEM237", :term => Rollover::MAIN_TEST_TERM_TARGET
   @course_offering.manage
 end
 

@@ -101,19 +101,22 @@ class ManageCourseOfferings < BasePage
   element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-ARGCourseOfferingManagement-ActivityOfferingListSection") }
   element(:activity_offering_results_table) { |b| b.activity_offering_results_div.table }
 
+  AO_SELECT = 0
   AO_CODE = 1
-  AO_FORMAT = 2
-  AO_CLUSTER = 3
-  AO_STATUS = 4
-  AO_TYPE = 5
-  AO_MAX_ENR = 6
-  AO_DAYS = 7
-  AO_ST_TIME = 8
-  AO_END_TIME = 9
-  AO_BLDG = 10
-  AO_ROOM = 11
-  AO_INSTRUCTOR = 12
-  AO_ACTIONS = 13
+  AO_STATUS = 2
+  AO_TYPE = 3
+  AO_MAX_ENR = 4
+  AO_DAYS = 5
+  AO_ST_TIME = 6
+  AO_END_TIME = 7
+  AO_BLDG = 8
+  AO_ROOM = 9
+  AO_INSTRUCTOR = 10
+  AO_ACTIONS = 11
+
+
+
+
 
   action(:go) { |b| b.frm.button(text: "Go").click; b.loading.wait_while_present }
 
@@ -368,7 +371,7 @@ class ManageCourseOfferings < BasePage
     cluster_ao_table = cluster_list_item_div(private_name).table
     if cluster_ao_table.exists? then
       cluster_ao_table.rows[1..-1].each do |row|
-        assigned_ao_list << row.cells[1].text
+        assigned_ao_list << row.cells[AO_CODE].text
       end
       assigned_ao_list.delete_if{|ao| ao == "" }
     else
@@ -379,6 +382,14 @@ class ManageCourseOfferings < BasePage
 
   def select_cluster_for_ao_move(source_private_name,target_private_name)
     cluster_list_item_div(source_private_name).select().select(target_private_name)
+  end
+
+  def get_ao_type(private_name, ao_code)
+    cluster_list_item_div(private_name).table.row(text: /\b#{Regexp.escape(ao_code)}\b/).cells[AO_TYPE].text
+  end
+
+  def get_max_enr(private_name, ao_code)
+    cluster_list_item_div(private_name).table.row(text: /\b#{Regexp.escape(ao_code)}\b/).cells[AO_MAX_ENR].text
   end
 
   def move_ao_from_cluster_submit(private_name)
