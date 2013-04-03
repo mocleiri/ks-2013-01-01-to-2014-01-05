@@ -67,7 +67,7 @@ class ManageCourseOfferings < BasePage
   element(:delete_aos_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-AO-ARG") }
   action(:delete_aos) { |b| b.delete_aos_button.click}
 
-  element(:add_cluster_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-AddCluster-AO-ARG-ClusterTab") }
+  element(:add_cluster_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-AddCluster-AO-ClusterTab") }
   action(:add_cluster) { |b| b.add_cluster_button.click; b.loading.wait_while_present }
 
   element(:add_cluster_popup_div){ |b| b.frm.div(id: "KS-CourseOfferingManagement-AddAOCPopupForm") }
@@ -77,7 +77,7 @@ class ManageCourseOfferings < BasePage
   element(:add_button_aoc) { |b| b.add_cluster_popup_div.button(text: "Add") }
   action(:complete_add_aoc) { |b| b.add_button_aoc.click; b.loading.wait_while_present }
 
-  element(:move_aos_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-MoveTo-AO-ARG-ClusterTab") }
+  element(:move_aos_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-MoveTo-AO-ClusterTab") }
   action(:move_aos) { |b| b.move_aos_button.click; b.loading.wait_while_present }
 
   element(:move_ao_cluster_popup_div){ |b| b.frm.div(id: "KS-CourseOfferingManagement-MoveAOCPopupForm") }

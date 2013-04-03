@@ -277,7 +277,7 @@ class CourseOffering
 
     on ManageCourseOfferings do |page|
       cluster_divs = page.cluster_div_list
-      if  cluster_divs.length == 0
+      if cluster_divs.length == 0
         @ao_obj_list= []
         @ao_list = []
         @activity_offering_cluster_list = []
@@ -395,22 +395,6 @@ class CourseOffering
         sleep 1
         page.approve_subject_code
       end
-    end
-  end
-
-
-
-
-  #navigate for the manage registration groups page for the course offering
-  #
-  #@param  opts [Hash] {:cleanup_existing_clusters => true/false}
-  def manage_registration_groups(opts = {:cleanup_existing_clusters => true})
-    manage
-    on ManageCourseOfferings do |page|
-      page.manage_registration_groups
-    end
-    if opts[:cleanup_existing_clusters]
-      cleanup_all_ao_clusters
     end
   end
 

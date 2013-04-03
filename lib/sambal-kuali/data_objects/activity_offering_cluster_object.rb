@@ -64,7 +64,7 @@ class ActivityOfferingCluster
   # while on manage reg groups page, sets up activity offering cluster based on class attributes
   def create
     if @is_constrained
-      on ManageRegistrationGroups do |page|
+      on ManageCourseOfferings do |page|
         page.add_cluster
         #page.format_aoc_select -- use default format
         page.private_name_add.set @private_name
@@ -140,13 +140,16 @@ class ActivityOfferingCluster
   # @param ao_code [String] activity offering code
   # @param target cluster [ActivityOfferingCluster] target cluster object
   def move_ao_to_another_cluster(ao_code, target_cluster)
-    on ManageRegistrationGroups do |page|
+    on ManageCourseOfferings do |page|
       row = page.get_cluster_ao_row(@private_name,ao_code)
       row.cells[0].checkbox.set
       page.move_aos
       page.select_cluster.select(target_cluster.private_name)
       page.complete_move_ao
     end
+    #TODO: update ao_list for each cluster
+    #target_cluster.ao_list << ao_code
+    #ao_list.delete(ao_code)
   end
 
   # removes activity offering from cluster (ao becomes unassigned)
