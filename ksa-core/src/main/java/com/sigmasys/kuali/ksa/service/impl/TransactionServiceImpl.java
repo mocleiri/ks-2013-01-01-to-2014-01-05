@@ -69,8 +69,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         Query query = em.createQuery("select t from " + entityType.getName() + " t " + GET_TRANSACTION_JOIN +
                 ((userIds != null && userIds.length > 0) ? " where t.account.id in (:userIds) " : "") +
-                (fromDate != null ? " and t.effectiveDate >= :fromDate " : "") +
-                (toDate != null ? " and t.effectiveDate <= :toDate " : "") +
+                (fromDate != null ? " and to_date(t.effectiveDate) >= :fromDate " : "") +
+                (toDate != null ? " and to_date(t.effectiveDate) <= :toDate " : "") +
                 " order by t.id desc");
 
         if (fromDate != null) {
