@@ -29,6 +29,7 @@ class CourseOfferingEdit < BasePage
   action(:final_exam_option_alternate) { |b| b.frm.radio(value: "ALTERNATE").set; b.loading.wait_while_present }
   action(:final_exam_option_none) { |b| b.frm.radio(value: "NONE").set; b.loading.wait_while_present }
 
+  element(:cross_listed_as_label) { |b| b.frm.span(text:/Crosslisted as:/)}
   element(:cross_listed_co_check_boxes) { |b| b.frm.dvi(id:"KS-COEditListed-Checkbox-Group")}
   element(:cross_listed_co_check_box) { |b| b.checkbox(id: "KS-COEditListed-Checkbox-Group_control_0") }
 

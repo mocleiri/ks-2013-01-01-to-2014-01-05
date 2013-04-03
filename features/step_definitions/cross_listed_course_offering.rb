@@ -170,3 +170,15 @@ Then /^the owner course offering is indicated as cross-listed with the alias CO$
     page.cross_listed_message_div.should_not be_present
   end
 end
+
+Then /^the edit confirmation view (should|should not) indicate that a cross-listing exists$/ do |isCrosslisted|
+
+  on CourseOfferingEdit do |page|
+    if( isCrosslisted == 'should not')
+      page.cross_listed_as_label.should_not be_present
+    else
+      page.cross_listed_as_label.should be_present
+    end
+  end
+
+end
