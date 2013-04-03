@@ -215,6 +215,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
         this.creationDate = creationDate;
     }
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "EFFECTIVE_DATE")
     public Date getEffectiveDate() {
         return effectiveDate;
@@ -224,6 +225,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
         this.effectiveDate = effectiveDate;
     }
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "ORIG_DATE")
     public Date getOriginationDate() {
         return originationDate;
@@ -233,6 +235,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
         this.originationDate = originationDate;
     }
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "RECOGNITION_DATE")
     public Date getRecognitionDate() {
         return recognitionDate;

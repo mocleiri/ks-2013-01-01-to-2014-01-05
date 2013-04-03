@@ -66,6 +66,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
     private <T extends Transaction> List<T> getTransactions(Class<T> entityType, Date fromDate, Date toDate,
                                                             String... userIds) {
+
         Query query = em.createQuery("select t from " + entityType.getName() + " t " + GET_TRANSACTION_JOIN +
                 ((userIds != null && userIds.length > 0) ? " where t.account.id in (:userIds) " : "") +
                 (fromDate != null ? " and t.effectiveDate >= :fromDate " : "") +
