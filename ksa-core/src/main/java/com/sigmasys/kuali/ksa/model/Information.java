@@ -139,6 +139,7 @@ public class Information extends AccountIdAware implements Identifiable {
         this.creationDate = creationDate;
     }
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "EFFECTIVE_DATE")
     public Date getEffectiveDate() {
         return effectiveDate;
@@ -148,6 +149,7 @@ public class Information extends AccountIdAware implements Identifiable {
         this.effectiveDate = effectiveDate;
     }
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "EXPIRATION_DATE")
     public Date getExpirationDate() {
         return expirationDate;

@@ -11,6 +11,7 @@ public enum TransactionStatus implements Identifiable {
     ACTIVE,
     BOUNCED,
     REFUNDED,
+    REFUND_REQUESTED,
     EXPIRED,
     CANCELLED,
     WRITTEN_OFF;
@@ -18,7 +19,7 @@ public enum TransactionStatus implements Identifiable {
 
     @Override
     public String getId() {
-       return name();
+        return name();
     }
 
     @Override
@@ -30,6 +31,8 @@ public enum TransactionStatus implements Identifiable {
                 return "Bounced";
             case REFUNDED:
                 return "Refunded";
+            case REFUND_REQUESTED:
+                return "Refund Requested";
             case EXPIRED:
                 return "Expired";
             case CANCELLED:

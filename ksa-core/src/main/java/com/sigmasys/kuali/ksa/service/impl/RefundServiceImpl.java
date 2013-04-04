@@ -10,6 +10,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import com.sigmasys.kuali.ksa.exception.*;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
+import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -98,6 +99,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
                 }
             }
 
+            payment.setStatus(TransactionStatus.REFUND_REQUESTED);
+
             // Create a new Refund instance
             return processAsCash ?
                     createCashRefund(payment, refundRequestDate, refundRequestedBy) :
@@ -130,14 +133,23 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         // Get all payment transactions on account accountId, where effectiveDate > dateFrom and < dateTo:
         BigDecimal amountThreshold = BigDecimal.ZERO;
-        String sql = "select p from Payment p where p.effectiveDate between :dateFrom and :dateTo and p.refundable = true and p.clearDate <= current_date() and "
-                + "(p.amount - p.lockedAllocatedAmount - p.allocatedAmount <= :amountThreshold) and (p.refundRule is not null or p.transactionType.refundRule is not null)";
-        Query query = em.createQuery(sql)
-                .setParameter("dateFrom", dateFrom)
-                .setParameter("dateTo", dateTo)
-                .setParameter("amountThreshold", amountThreshold);
+
+        String sql =
+                "select p from Payment p where to_date(p.effectiveDate) between :dateFrom and :dateTo " +
+                        " and p.refundable = true and to_date(p.clearDate) <= current_date() " +
+                        " and p.statusCode = :statusCode " +
+                        " and (p.amount - p.lockedAllocatedAmount - p.allocatedAmount <= :amountThreshold) " +
+                        " and (p.refundRule is not null or p.transactionType.refundRule is not null)";
+
+        Query query = em.createQuery(sql);
+        query.setParameter("dateFrom", CalendarUtils.removeTime(dateFrom));
+        query.setParameter("dateTo", CalendarUtils.removeTime(dateTo));
+        query.setParameter("statusCode", TransactionStatus.ACTIVE);
+        query.setParameter("amountThreshold", amountThreshold);
+
         List<Payment> payments = query.getResultList();
-        List<Refund> allRefunds = new ArrayList<Refund>();
+
+        List<Refund> allRefunds = new ArrayList<Refund>(payments.size());
 
         Date refundRequestDate = new Date();
 
@@ -181,6 +193,12 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             throw new IllegalStateException(errMsg);
         }
 
+        if (payment.getStatus() != TransactionStatus.ACTIVE) {
+            String errMsg = "Payment '" + paymentId + "' must be ACTIVE";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
         String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
         Account refundRequestedBy = accountService.getOrCreateAccount(currentUserId);
 
@@ -202,8 +220,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         List<Refund> allRefunds = new LinkedList<Refund>();
 
         for (String accountId : accountIds) {
-            List<Refund> refunds = checkForRefund(accountId, dateFrom, dateTo);
-            allRefunds.addAll(refunds);
+            allRefunds.addAll(checkForRefund(accountId, dateFrom, dateTo));
         }
 
         return allRefunds;
@@ -221,17 +238,12 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     public List<Refund> checkForRefunds(Date dateFrom, Date dateTo) {
 
         // Get all Accounts and IDs:
-        Query query = em.createQuery("select a from Account a");
+        Query query = em.createQuery("select a.id from Account a");
 
-        List<Account> allAccounts = query.getResultList();
-        List<String> allAccountIds = new ArrayList<String>(allAccounts.size());
-
-        for (Account account : allAccounts) {
-            allAccountIds.add(account.getId());
-        }
+        List<String> accountIds = query.getResultList();
 
         // Get all Refunds:
-        return checkForRefund(allAccountIds, dateFrom, dateTo);
+        return checkForRefund(accountIds, dateFrom, dateTo);
     }
 
     /**
@@ -1158,10 +1170,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         // If there is a valid Refund type, create a new Refund:
         if (StringUtils.isNotBlank(refundTypeMethod)) {
 
-            // Create a new Refund:
-            Refund refund = new Refund();
             RefundType refundType = getOrCreateRefundType(refundTypeMethod, refundTypeMethod);
             BigDecimal refundAmount = TransactionUtils.getUnallocatedAmount(payment);
+
+            // Creating a new Refund:
+            Refund refund = new Refund();
 
             refund.setAmount(refundAmount);
             refund.setRequestDate(requestDate);
@@ -1171,6 +1184,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             persistEntity(refund);
 
             return refund;
+
         } else {
             String errMsg = "No default Refund Method found in system configuration or User Preferences.";
             logger.error(errMsg);
@@ -1201,6 +1215,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         BigDecimal refundAmount = TransactionUtils.getUnallocatedAmount(payment);
 
+         // Creating a new Refund:
         Refund refund = new Refund();
 
         refund.setAmount(refundAmount);

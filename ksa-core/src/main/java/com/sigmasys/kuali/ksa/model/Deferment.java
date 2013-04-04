@@ -2,10 +2,7 @@ package com.sigmasys.kuali.ksa.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Entity
 @DiscriminatorValue(TransactionTypeValue.DEFERMENT_CODE)
@@ -23,7 +20,7 @@ public class Deferment extends Credit {
         return TransactionTypeValue.DEFERMENT;
     }
 
-
+    @Temporal(TemporalType.DATE)
     @Column(name = "EXPIRATION_DATE")
     public Date getExpirationDate() {
         return expirationDate;

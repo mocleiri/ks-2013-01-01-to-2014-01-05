@@ -2,10 +2,7 @@ package com.sigmasys.kuali.ksa.model;
 
 import java.util.Date;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Column;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 /**
  * Payment entity.
@@ -59,7 +56,7 @@ public class Payment extends Credit {
         this.refundRule = refundRule;
     }
 
-
+    @Temporal(TemporalType.DATE)
     @Column(name = "CLEAR_DATE")
     public Date getClearDate() {
         return clearDate;
