@@ -101,3 +101,27 @@ Then /^I remove the newly created cluster$/ do
    end
   end
 end
+
+Then /^the edit Activity Offering page is displayed$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.mainpage_section.present?.should be_true
+  end
+end
+
+When /^I return from the edit Activity Offering page$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.cancel
+  end
+end
+
+And /^I submit the Activity Offering changes$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.submit
+  end
+end
+
+Then /^the Manage Course Offerings page is displayed$/ do
+  on ManageCourseOfferings do |page|
+    page.term.present?.should be_true
+  end
+end

@@ -133,8 +133,8 @@ Given /^I manage a given Course Offering$/ do
 end
 
 Given /^I edit an Activity Offering$/ do
-  @total_number = @course_offering.ao_list.count
-  @orig_ao_code = @course_offering.ao_list[@total_number-1]
+  @total_number = @course_offering.ao_list[0].count
+  @orig_ao_code = @course_offering.ao_list[0][@total_number-1]
   @added_person_id = "admin"
   @effort_num = 30
   @misc_url = "www.google.com"

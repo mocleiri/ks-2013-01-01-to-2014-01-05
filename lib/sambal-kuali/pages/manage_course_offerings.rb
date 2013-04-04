@@ -174,7 +174,7 @@ class ManageCourseOfferings < BasePage
   end
 
   def edit_link(code)
-    target_row(code).link(text: "Edit")
+    target_row(code).link(text: /\b#{Regexp.escape("Edit")}\b/)
   end
 
   def edit(code)

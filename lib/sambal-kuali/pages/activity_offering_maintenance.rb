@@ -10,7 +10,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   element(:activity_code) { |b| b.frm.text_field(name: "document.newMaintainableObject.dataObject.aoInfo.activityCode") }
   element(:total_maximum_enrollment) { |b| b.frm.text_field(id: "maximumEnrollment_control") }
 
-  element(:mainpage_section){|b| b.frm.div(id:"ActivityOfferingEdit-MainPage")}
+  element(:mainpage_section){|b| b.frm.div(id:"ActivityOffering-MaintenanceView")}
 
   element(:add_logistics_div) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-New") }
   element(:add_tba){ |b|b.add_logistics_div.div(data_label: "TBA").checkbox()}
@@ -26,6 +26,8 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   action(:facility_features) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-New-Features-Section_toggle").click; b.loading.wait_while_present }
   element(:feature_list){ |b|b.frm.select(id: "featuresList_control")}
+
+  action(:cancel) { |b| b.frm.link(text: "cancel").click; b.loading.wait_while_present }
 
   element(:add_new_delivery_logistics_button) { |b| b.add_logistics_div.button(text: "Add") }
   action(:add_new_delivery_logistics) { |b| b.add_new_delivery_logistics_button.click; b.loading.wait_while_present }
