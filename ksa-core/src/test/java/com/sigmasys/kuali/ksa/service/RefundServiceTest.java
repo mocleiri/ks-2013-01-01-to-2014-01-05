@@ -236,6 +236,11 @@ public class RefundServiceTest extends AbstractServiceTest {
         notNull(refund.getRequestDate());
         notNull(refund.getAmount());
 
+        notNull(refund.getTransaction());
+        notNull(refund.getTransaction().getStatus());
+
+        isTrue(payment.getStatus() == TransactionStatus.REFUND_REQUESTED);
+
     }
 
     @Test
@@ -264,6 +269,10 @@ public class RefundServiceTest extends AbstractServiceTest {
         notNull(refund.getRequestedBy());
         notNull(refund.getRequestDate());
         notNull(refund.getAmount());
+        notNull(refund.getTransaction());
+        notNull(refund.getTransaction().getStatus());
+
+        isTrue(payment.getStatus() == TransactionStatus.REFUND_REQUESTED);
 
         refund = refundService.validateRefund(refund.getId());
 
@@ -276,14 +285,18 @@ public class RefundServiceTest extends AbstractServiceTest {
         notNull(refund.getId());
         notNull(refund.getTransaction());
         notNull(refund.getRefundTransaction());
+        notNull(refund.getTransaction().getStatus());
 
-        isTrue(TransactionStatus.REFUNDED.equals(refund.getTransaction().getStatus()));
+        isTrue(refund.getTransaction().getStatus() == TransactionStatus.REFUNDED);
 
         refund = refundService.cancelRefund(refund.getId(), "Refund for payment 'cash' has been cancelled");
 
         notNull(refund);
         notNull(refund.getId());
-        isTrue(TransactionStatus.ACTIVE.equals(refund.getTransaction().getStatus()));
+        notNull(refund.getTransaction());
+        notNull(refund.getTransaction().getStatus());
+
+        isTrue(refund.getTransaction().getStatus() == TransactionStatus.ACTIVE);
 
     }
 
