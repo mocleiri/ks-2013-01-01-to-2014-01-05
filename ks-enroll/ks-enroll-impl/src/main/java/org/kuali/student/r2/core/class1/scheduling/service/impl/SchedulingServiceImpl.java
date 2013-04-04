@@ -16,6 +16,7 @@
 package org.kuali.student.r2.core.class1.scheduling.service.impl;
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.student.enrollment.courseoffering.dto.ScheduleDisplayInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.TimeOfDayInfo;
@@ -431,5 +432,10 @@ public class SchedulingServiceImpl implements SchedulingService {
         else {
             throw new InvalidParameterException("No defined valid days of week for type: " + timeSlotTypeKey);
         }
+    }
+
+    @Override
+    public ScheduleDisplayInfo getScheduleDisplay(@WebParam(name = "scheduleId") String scheduleId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        throw new UnsupportedOperationException();
     }
 }

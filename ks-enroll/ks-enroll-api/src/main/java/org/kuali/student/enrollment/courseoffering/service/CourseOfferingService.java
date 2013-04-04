@@ -785,6 +785,30 @@ public interface CourseOfferingService extends CourseOfferingServiceBusinessLogi
     public ActivityOfferingInfo getActivityOffering(@WebParam(name = "activityOfferingId") String activityOfferingId, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
+     * Retrieves a single ActivityOfferingDisplay by a ActivityOffering Id.
+     *
+     * @param activityOfferingId an identifier for an ActivityOffering
+     * @param contextInfo        information containing the principalId and
+     *                           locale information about the caller of service
+     *                           operation
+     * @return the ActivityOfferingDisplay requested
+     * @throws DoesNotExistException     activityOfferingId does not exist
+     * @throws InvalidParameterException contextInfo is not valid
+     * @throws MissingParameterException activityOfferingId or contextInfo is
+     *                                   missing or null
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
+     */
+    public ActivityOfferingDisplayInfo getActivityOfferingDisplay(@WebParam(name = "activityOfferingId") String activityOfferingId,
+                                                                  @WebParam(name = "contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException,
+            InvalidParameterException,
+            MissingParameterException,
+            OperationFailedException,
+            PermissionDeniedException;
+
+
+    /**
      * Retrieves a list of activity offerings by id list.
      *
      * @param activityOfferingIds List of unique Ids of ActivityCourseOffering
@@ -1615,4 +1639,6 @@ public interface CourseOfferingService extends CourseOfferingServiceBusinessLogi
             MissingParameterException,
             OperationFailedException,
             PermissionDeniedException;
+
+
 }

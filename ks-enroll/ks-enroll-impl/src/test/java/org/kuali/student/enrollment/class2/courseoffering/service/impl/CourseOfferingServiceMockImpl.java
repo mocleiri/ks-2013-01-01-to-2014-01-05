@@ -62,6 +62,9 @@ import org.kuali.student.r2.common.util.constants.CourseOfferingSetServiceConsta
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
 import org.kuali.student.r2.common.util.constants.TypeServiceConstants;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.scheduling.service.SchedulingService;
+import org.kuali.student.r2.core.state.dto.StateInfo;
+import org.kuali.student.r2.core.state.service.StateService;
 import org.kuali.student.r2.core.type.dto.TypeInfo;
 import org.kuali.student.r2.core.type.service.TypeService;
 
@@ -78,16 +81,19 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 
 	@Resource
 	private CourseService courseService;
-	
+
 	@Resource
 	private AcademicCalendarService acalService;
-	
+
+    @Resource
+    private StateService stateService;
+
 	@Resource(name="coBusinessLogic")
 	private CourseOfferingServiceBusinessLogic businessLogic;
 
 	@Resource
 	private TypeService typeService;
-	
+
 	@Override
 	public void clear() {
 
@@ -96,10 +102,21 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 		this.formatOfferingMap.clear();
 		this.registrationGroupMap.clear();
 		this.seatPoolDefinitionMap.clear();
-		
+
 		activityOfferingToSeatPoolMap.clear();
-		
+
 	}
+
+    @Resource
+    private SchedulingService schedulingService;
+
+    public SchedulingService getSchedulingService() {
+        return schedulingService;
+    }
+
+    public void setSchedulingService(SchedulingService schedulingService) {
+        this.schedulingService = schedulingService;
+    }
 
 	public void setTypeService(TypeService typeService) {
 		this.typeService = typeService;
@@ -113,6 +130,14 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 			CourseOfferingServiceBusinessLogic businessLogic) {
 		this.businessLogic = businessLogic;
 	}
+
+    public StateService getStateService() {
+        return stateService;
+    }
+
+    public void setStateService(StateService stateService) {
+        this.stateService = stateService;
+    }
 
 	public CourseService getCourseService() {
 		return courseService;
@@ -160,24 +185,24 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException, PermissionDeniedException {
 
-		
+
 		List<FormatOfferingInfo> fos = getFormatOfferingsByCourseOffering(courseOfferingId, context);
 
 		for (FormatOfferingInfo formatOfferingInfo : fos) {
-			
+
 			StatusInfo status = deleteFormatOfferingCascaded(formatOfferingInfo.getId(), context);
-		
+
 			if (!status.getIsSuccess())
 				throw new OperationFailedException("deleteFormatOfferingCascaded(): failed for id = " + formatOfferingInfo.getId());
 		}
-		
+
 		StatusInfo status;
 		try {
 			status = deleteCourseOffering(courseOfferingId, context);
 		} catch (DependentObjectsExistException e) {
 			throw new OperationFailedException("deleteFormatOfferingCascaded(): failed because dependant objects still exist for courseOfferingId = " + courseOfferingId, e);
 		}
-		
+
 		return status;
 	}
 
@@ -186,22 +211,22 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 			ContextInfo context) throws DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException, PermissionDeniedException {
-		
+
 		List<ActivityOfferingInfo> aos = getActivityOfferingsByFormatOffering(formatOfferingId, context);
-		
+
 		for (ActivityOfferingInfo activityOfferingInfo : aos) {
-			
+
 			deleteActivityOfferingCascaded(activityOfferingInfo.getId(), context);
 		}
-		
-		
+
+
 		try {
 			deleteFormatOffering(formatOfferingId, context);
 		} catch (DependentObjectsExistException e) {
 			// should never fire since we deleted the dependencies
 			throw new OperationFailedException("failed to delete format offering for id = " + formatOfferingId, e);
 		}
-		
+
 		return successStatus();
 	}
 
@@ -239,6 +264,41 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 		}
 		return this.courseOfferingMap.get(courseOfferingId);
 	}
+
+    @Override
+    public ActivityOfferingDisplayInfo getActivityOfferingDisplay(String activityOfferingId,
+           ContextInfo contextInfo) throws DoesNotExistException,
+           InvalidParameterException, MissingParameterException,
+            OperationFailedException, PermissionDeniedException {
+        ActivityOfferingInfo ao = this.getActivityOffering(activityOfferingId, contextInfo);
+        ActivityOfferingDisplayInfo info = new ActivityOfferingDisplayInfo();
+        info.setId(ao.getId());
+        info.setTypeKey(ao.getTypeKey());
+        info.setStateKey(ao.getStateKey());
+        info.setName(ao.getName());
+        info.setDescr(ao.getDescr());
+        TypeInfo type = typeService.getType(ao.getTypeKey(), contextInfo);
+        info.setTypeName(type.getName());
+        StateInfo state = stateService.getState(ao.getStateKey(), contextInfo);
+        info.setStateName(state.getName());
+        info.setCourseOfferingTitle(ao.getCourseOfferingTitle());
+        info.setCourseOfferingCode(ao.getCourseOfferingCode());
+        info.setFormatOfferingId(ao.getFormatOfferingId());
+        info.setFormatOfferingName(ao.getFormatOfferingName());
+        info.setActivityOfferingCode(ao.getActivityCode());
+
+        info.setInstructorId(ao.getInstructors().get(0).getPersonId());
+        info.setInstructorName(ao.getInstructors().get(0).getPersonName());
+
+        info.setIsHonorsOffering(ao.getIsHonorsOffering());
+        info.setMaximumEnrollment(ao.getMaximumEnrollment());
+        if (ao.getScheduleId() != null) {
+            info.setScheduleDisplay(schedulingService.getScheduleDisplay(ao.getScheduleId(), contextInfo));
+        }
+        info.setMeta(ao.getMeta());
+        info.setAttributes(ao.getAttributes());
+        return info;
+    }
 
 	@Override
 	public List<CourseOfferingInfo> getCourseOfferingsByIds(
@@ -428,7 +488,7 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 			ContextInfo context) throws DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException, PermissionDeniedException, DependentObjectsExistException {
-		
+
 		if (this.courseOfferingMap.remove(courseOfferingId) == null) {
 			throw new DoesNotExistException(courseOfferingId);
 		}
@@ -772,55 +832,55 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 			ContextInfo context) throws DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException, PermissionDeniedException, DependentObjectsExistException {
-		
+
 		for (RegistrationGroupInfo rg : this.registrationGroupMap.values()) {
-			
+
 			if (rg.getActivityOfferingIds().contains(activityOfferingId))
 				throw new DependentObjectsExistException("Registration Groups Exist for Activity id = " + activityOfferingId);
 		}
-		
+
 		if (this.activityOfferingMap.remove(activityOfferingId) == null) {
 			throw new DoesNotExistException(activityOfferingId);
 		}
 		return successStatus();
 	}
-	
-	
+
+
 
 	@Override
 	public StatusInfo deleteActivityOfferingCascaded(String activityOfferingId,
 			ContextInfo context) throws DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException, PermissionDeniedException {
-		
+
 		// delete seat pool registrations
-		
+
 		List<SeatPoolDefinitionInfo> spls = getSeatPoolDefinitionsForActivityOffering(activityOfferingId, context);
-		
+
 		for (SeatPoolDefinitionInfo spl : spls) {
-			
+
 			StatusInfo status = deleteSeatPoolDefinition(spl.getId(), context);
-			
+
 			if (!status.getIsSuccess())
 				throw new OperationFailedException(status.getMessage());
-			
+
 		}
 		// delete registration groups
-		
+
 		// intentionally separated to avoid a concurrent modification exception on delete.
 		ArrayList<RegistrationGroupInfo> rgs = new ArrayList<RegistrationGroupInfo>(this.registrationGroupMap.values());
-		
-		for (RegistrationGroupInfo rg : rgs) {	
-			
+
+		for (RegistrationGroupInfo rg : rgs) {
+
 			if (rg.getActivityOfferingIds().contains(activityOfferingId)) {
 				StatusInfo status = deleteRegistrationGroup(rg.getId(), context);
-				
+
 				if (!status.getIsSuccess()) {
 					throw new OperationFailedException(status.getMessage());
 				}
 			}
 		}
-		
+
 		// delete activity offering
 		try {
 			return deleteActivityOffering(activityOfferingId, context);
@@ -952,7 +1012,7 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 	// The LinkedHashMap is just so the values come back in a predictable order
 	private Map<String, RegistrationGroupInfo> registrationGroupMap = new LinkedHashMap<String, RegistrationGroupInfo>();
 
-	
+
 
 	@Override
 	public List<RegistrationGroupInfo> generateRegistrationGroupsForTemplate(
@@ -1006,27 +1066,27 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 			String formatOfferingId, ContextInfo context)
 			throws InvalidParameterException, MissingParameterException,
 			OperationFailedException, PermissionDeniedException {
-		
+
 		List<RegistrationGroupInfo> rgs;
 		try {
 			rgs = getRegistrationGroupsByFormatOffering(formatOfferingId, context);
-			
+
 			for (RegistrationGroupInfo rg : rgs) {
-				
+
 				try {
 					deleteRegistrationGroup(rg.getId(), context);
 				} catch (DoesNotExistException e) {
 					return failStatus();
 				}
-				
+
 			}
-			
+
 		} catch (DoesNotExistException e1) {
 			return failStatus();
 		}
-		
-	
-		
+
+
+
 		return successStatus();
 	}
 
@@ -1035,11 +1095,11 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 			String formatOfferingId, ContextInfo context)
 			throws InvalidParameterException, MissingParameterException,
 			OperationFailedException, PermissionDeniedException {
-		
+
 		List<RegistrationGroupInfo> rgs;
 		try {
 			rgs = getRegistrationGroupsByFormatOffering(formatOfferingId, context);
-			
+
 			for (RegistrationGroupInfo rg : rgs) {
 
 				if (rg.getIsGenerated()) {
@@ -1051,13 +1111,13 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 				}
 
 			}
-			
+
 		} catch (DoesNotExistException e1) {
 			return failStatus();
 		}
-		
-	
-		
+
+
+
 		return successStatus();
 	}
 
@@ -1156,27 +1216,27 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
-		
+
 		// will throw does not exist exception if there is no matching activity id
 		ActivityOfferingInfo ao = getActivityOffering(activityOfferingId, context);
-	
+
 		List<String>seatPoolIds = activityOfferingToSeatPoolMap.get(activityOfferingId);
-		
+
 		if (seatPoolIds == null)
 			return new ArrayList<SeatPoolDefinitionInfo>();
-		
+
 		List<SeatPoolDefinitionInfo>seatPoolInfos = new ArrayList <SeatPoolDefinitionInfo>(seatPoolIds.size());
-		
+
 		for (String spId : seatPoolIds) {
-			
+
 			SeatPoolDefinitionInfo sp = getSeatPoolDefinition(spId, context);
-		
+
 			seatPoolInfos.add(sp);
 		}
-		
+
 		return seatPoolInfos;
-		
-		
+
+
 	}
 
 	// cache variable
@@ -1425,7 +1485,7 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 		status.setSuccess(Boolean.TRUE);
 		return status;
 	}
-	
+
 	private StatusInfo failStatus() {
 		StatusInfo status = new StatusInfo();
 		status.setMessage("Operation Failed");
@@ -1506,7 +1566,7 @@ public class CourseOfferingServiceMockImpl implements CourseOfferingService,
 
 		return businessLogic.generateRegistrationGroupsForFormatOffering(formatOfferingId, context);
 	}
-	
+
 
 
 

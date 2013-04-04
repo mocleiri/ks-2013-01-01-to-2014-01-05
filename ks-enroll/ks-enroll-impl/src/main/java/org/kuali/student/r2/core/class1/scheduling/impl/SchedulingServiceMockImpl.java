@@ -17,11 +17,13 @@ package org.kuali.student.r2.core.class1.scheduling.impl;
 
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.student.enrollment.courseoffering.dto.ScheduleDisplayInfo;
 import org.kuali.student.r2.common.dto.*;
 import org.kuali.student.r2.common.exceptions.*;
 import org.kuali.student.r2.core.scheduling.dto.*;
 import org.kuali.student.r2.core.scheduling.service.SchedulingService;
 
+import javax.jws.WebParam;
 import java.util.*;
 
 
@@ -940,7 +942,12 @@ public class SchedulingServiceMockImpl implements SchedulingService
 		return days;
 	}
 
-	private MetaInfo newMeta(ContextInfo context) {
+    @Override
+    public ScheduleDisplayInfo getScheduleDisplay(@WebParam(name = "scheduleId") String scheduleId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        throw new OperationFailedException ("has not been implemented");
+    }
+
+    private MetaInfo newMeta(ContextInfo context) {
 	     MetaInfo meta = new MetaInfo();
 	     meta.setCreateId(context.getPrincipalId());
 	     meta.setCreateTime(new Date());
