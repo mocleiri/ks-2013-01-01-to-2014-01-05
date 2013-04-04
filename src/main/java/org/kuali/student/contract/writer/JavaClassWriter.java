@@ -79,6 +79,10 @@ public abstract class JavaClassWriter extends XmlWriter {
         return packageName;
     }
 
+    protected void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
     public String getRootDirectory() {
         return rootDirectory;
     }

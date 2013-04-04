@@ -67,9 +67,10 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         indentPrintln("@RunWith(SpringJUnit4ClassRunner.class)");
         indentPrintln("@ContextConfiguration(locations = {\"classpath:" + servKey + "-test-with-mock-context.xml\"})");
         indentPrint("public class " + calcClassName(servKey));
-        println(" extends " + super.calcClassName(servKey));
+        println(" extends " + super.calcClassName(servKey) + " ");
         Service serv = finder.findService(servKey);
-        importsAdd(serv.getImplProject() + "." + serv.getName());
+        setPackageName(serv.getImplProject() + ".impl"); // change the package name
+        importsAdd(serv.getImplProject() + "." + serv.getName()); // import for the service
         doTestImportsAdd();
         openBrace();
 
@@ -80,19 +81,15 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         indentPrintln("");
 
         // for each DTO, write the DOT field management methods that were left abstract in base class
-        for (String dtoObjectName : getNamesOfDTOsManagedByService()) {
+        for (String dtoObjectName : calcNamesOfDTOsWithCrudManagedByService()) {
             indentPrintln("// ****************************************************");
             indentPrintln("//           " + dtoObjectName + "Info");
             indentPrintln("// ****************************************************");
             indentPrintln("");
 
             // get the message structures of the dto
-            List<MessageStructure> messageStructures = null;
-            try {
-                messageStructures = finder.findMessageStructures(dtoObjectName + "Info");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            List<MessageStructure> messageStructures = finder.findMessageStructures(dtoObjectName + "Info");
+
             writetestCrudXXX_setDTOFieldsForTestCreate(dtoObjectName, messageStructures);
             writetestCrudXXX_testDTOFieldsForTestCreateUpdate(dtoObjectName, messageStructures);
             writetestCrudXXX_setDTOFieldsForTestUpdate(dtoObjectName, messageStructures);

@@ -55,6 +55,12 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
 
     private ServicesFilter filter;
 
+    List<String> dtoObjectNamesWithCrud = null; // a list of all the DTOs managed by this class that has CRUDs
+
+    protected List<String> getDtoObjectNamesWithCrud() {
+        return dtoObjectNamesWithCrud;
+    }
+
     ////////////////////////////
     // CONSTRUCTOR
     ////////////////////////////
@@ -66,6 +72,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
                                                      List<ServiceMethod> methods,
                                                      boolean isR1) {
         super(model, directory, rootPackage, servKey, methods, isR1, calcPackage(servKey, rootPackage), calcClassName(servKey));
+        dtoObjectNamesWithCrud = calcNamesOfDTOsWithCrudManagedByService();
     }
 
     public ConformanceTestBaseCrudClassServiceWriter(ServiceContractModel model,
@@ -77,6 +84,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
                                                      String packageName,
                                                      String className) {
         super(model, directory, rootPackage, servKey, methods, isR1, packageName, className);
+        dtoObjectNamesWithCrud = calcNamesOfDTOsWithCrudManagedByService();
     }
 
     //////////////////////////
@@ -111,10 +119,11 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         // begin file
         indentPrintln("@RunWith(SpringJUnit4ClassRunner.class)");
         indentPrintln("@ContextConfiguration(locations = {\"classpath:" + servKey + "-test-with-mock-context.xml\"})");
-        indentPrint("public abstract class " + calcClassName(servKey));
+        indentPrint("public abstract class " + calcClassName(servKey) + " ");
         // println(" implements " + calcServiceInterfaceClassName(servKey));
         Service serv = finder.findService(servKey);
-        importsAdd(serv.getImplProject() + "." + serv.getName());
+        setPackageName(serv.getImplProject() + ".impl"); // change the package name
+        importsAdd(serv.getImplProject() + "." + serv.getName()); // import for the service
 
         doTestImportsAdd();
 
@@ -148,9 +157,6 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         // testing starts
         indentPrintDecoratedComment("TESTING", H1_COMMENT_CHAR, H1_COMMENT_MARK_LENGTH);
         indentPrintln("");
-
-        // get a list of all the DTOs managed by this class
-        List<String> dtoObjectNames = getNamesOfDTOsManagedByService();
 /*
                 new ArrayList<String>();
         for (ServiceMethod method: methods) {
@@ -162,7 +168,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         }
 */
         // for each DTO, write the testCRUD
-        for (String dtoObjectName : dtoObjectNames) {
+        for (String dtoObjectName : dtoObjectNamesWithCrud) {
             writeTestCrud(dtoObjectName);
             indentPrintln("");
         }
@@ -204,7 +210,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         for (ServiceMethod method: methodsNotTested) {
             indentPrintln("/* Method Name: " + method.getName() + " */");
             indentPrintln("@Test");
-            indentPrintln("public abstract test_" + method.getName() + "() ");
+            indentPrintln("public abstract void test_" + method.getName() + "() ");
             if (method.getErrors().size()>0) {
                 indentPrint("throws ");
                 String comma = "";
@@ -232,12 +238,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
     public void writeTestCrud (String dtoObjectName) {
 
         // get the message structures of the dto
-        List<MessageStructure> messageStructures = null;
-        try {
-            messageStructures = finder.findMessageStructures(dtoObjectName + "Info");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        List<MessageStructure> messageStructures = finder.findMessageStructures(dtoObjectName + "Info");
 
         // start method open signature
         indentPrintln("// ****************************************************");
@@ -681,18 +682,32 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
     /**
      * Gets a list of all the DTO names that are part of this service.
      */
-    public List<String> getNamesOfDTOsManagedByService () {
+    protected List<String> calcNamesOfDTOsWithCrudManagedByService() {
         List<String> dtoObjectNames = new ArrayList<String>();
         for (ServiceMethod method: methods) {
             // I am assuming all the DTOs will have a createXXX method.
             if (MethodType.CREATE.equals (calcMethodType(method))) {
                 String objectName = calcObjectName(method);
-                dtoObjectNames.add(objectName);
+                // check if this is a valid info object
+                if (finder.findXmlType(objectName + "Info")!=null) {
+                    dtoObjectNames.add(objectName);
+                }
+/*
+                for (XmlType xmlType: model.getXmlTypes()) {
+                    if (xmlType.getName().equals(objectName + "Info")) {
+                        dtoObjectNames.add(objectName);
+                        break;
+                    }
+                }
+*/
             }
         }
         return dtoObjectNames;
     }
 
+    /**
+     * Does the importsAdd for all files required for testing
+     */
     protected void doTestImportsAdd() {
         // kuali imports
         importsAdd("org.kuali.student.common.test.util.IdEntityTester");
@@ -703,6 +718,13 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         importsAdd("org.kuali.student.r2.common.util.RichTextHelper");
         importsAdd("org.kuali.student.r2.core.organization.service.impl.lib.AttributeTester");
         importsAdd("org.kuali.student.r2.core.organization.service.impl.lib.MetaTester");
+
+        // import all the dto
+        // for each DTO, write the testCRUD
+        for (String dtoObjectName : dtoObjectNamesWithCrud) {
+            try { importsAdd(finder.findXmlType(dtoObjectName + "Info").getJavaPackage() + "." + dtoObjectName + "Info"); }
+            catch (Exception ignored) {}
+        }
 
         // exceptions
         importsAdd("org.kuali.student.r2.common.exceptions.DataValidationErrorException");
