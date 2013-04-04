@@ -540,6 +540,11 @@ class CourseOffering
     @activity_offering_cluster_list << ao_cluster
   end
 
+  def delete_ao_cluster(ao_cluster)
+    ao_cluster.delete
+    @activity_offering_cluster_list.delete_if{|x| x.private_name == ao_cluster.private_name}
+  end
+
   def expected_unassigned_ao_list
     expected_unassigned = @ao_list
     @activity_offering_cluster_list.each do |cluster|

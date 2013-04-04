@@ -28,6 +28,9 @@ class ManageCourseOfferings < BasePage
   element(:view_reg_groups_link) { |b| b.tab_links_div.link(text: /View Registration Groups/) }
   action(:view_reg_groups) { |b| b.view_reg_groups_link.click }
 
+  element(:delete_cluster_div) { |b| b.frm.div(id: "ClusterDeleteConfirmationPage") }
+  action(:confirm_delete_cluster) {|b| b.delete_cluster_div.button(text: "Delete Cluster").click; b.loading.wait_while_present }
+
   element(:manage_offering_links_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-CourseOfferingLinks")}
   element(:view_co_details_link) { |b| b.manage_offering_links_div.link(text: "View") }
   element(:edit_course_offering_link) { |b| b.frm.link(id: "edit_co")}
@@ -74,7 +77,7 @@ class ManageCourseOfferings < BasePage
   element(:rename_cluster_popup_div){ |b| b.frm.div(id: "KS-CourseOfferingManagement-RenameAOCPopupForm") }
   element(:rename_private_name) { |b| b.rename_cluster_popup_div.text_field(id: "privateClusterNameForRename_control") }
   element(:rename_published_name) { |b| b.rename_cluster_popup_div.text_field(id: "publishedClusterNameForRename_control") }
-  element(:rename_aoc_button) { |b| b.rename_cluster_popup_div.button(text: "Rename"); b.loading.wait_while_present }
+  action(:rename_aoc_button) { |b| b.rename_cluster_popup_div.button(text: "Rename").click; b.loading.wait_while_present }
 
   element(:add_cluster_popup_div){ |b| b.frm.div(id: "KS-CourseOfferingManagement-AddAOCPopupForm") }
   element(:format_aoc_select) { |b| b.add_cluster_popup_div.select(name: "formatOfferingIdForViewRG") }

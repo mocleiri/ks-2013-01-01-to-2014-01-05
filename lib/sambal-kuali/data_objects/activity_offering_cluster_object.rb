@@ -166,14 +166,14 @@ class ActivityOfferingCluster
 
 # deletes the activity offering cluster
   def delete
-    on ManageRegistrationGroups do |page|
+    on ManageCourseOfferings do |page|
       page.remove_cluster(@private_name)
       page.confirm_delete_cluster
-      begin
-        page.cluster_list_item_div(@private_name).wait_while_present(60)
-      rescue Watir::Exception::UnknownObjectException
+      #begin
+      #  page.cluster_list_item_div(@private_name).wait_while_present(60)
+      #rescue Watir::Exception::UnknownObjectException
         #ignore
-      end
+      #end
     end
     @assigned_ao_list = []
   end

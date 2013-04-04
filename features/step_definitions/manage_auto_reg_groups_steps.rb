@@ -83,7 +83,6 @@ end
 When /^I try to create a second activity offering cluster with the same private name$/ do
   ao_cluster2 = make ActivityOfferingCluster, :private_name=>@course_offering.activity_offering_cluster_list.last.private_name
   ao_cluster2.create
-  @course_offering.add_ao_cluster(ao_cluster2)
 end
 
 Then /^a cluster error message appears stating "(.*?)"$/ do |errMsg|
@@ -94,4 +93,11 @@ end
 
 Then /^I try to rename the second activity offering cluster to the same private name as the first$/ do
     @course_offering.activity_offering_cluster_list.last.rename :private_name=> @course_offering.activity_offering_cluster_list.first.private_name
+end
+Then /^I remove the newly created cluster$/ do
+  @course_offering.activity_offering_cluster_list.each do  |aoc|
+   if aoc.private_name !=  @course_offering.activity_offering_cluster_list.first.private_name
+    @course_offering.delete_ao_cluster(aoc)
+   end
+  end
 end
