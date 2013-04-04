@@ -33,7 +33,7 @@ public class TransactionManagerHelper {
                 UserTransaction userTransaction = txObject.getUserTransaction();
                 if (userTransaction.getStatus() != Status.STATUS_NO_TRANSACTION) {
                     userTransaction.commit();
-                    logger.debug("JTA transaction [" + userTransaction + "] is commited");
+                    logger.debug("JTA transaction [" + userTransaction + "] is committed");
                 }
             } catch (Throwable t) {
                 String errMsg = "Cannot commit JTA transaction: " + t.getMessage();
