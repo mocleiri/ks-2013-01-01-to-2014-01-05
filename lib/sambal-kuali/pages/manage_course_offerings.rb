@@ -70,6 +70,12 @@ class ManageCourseOfferings < BasePage
   element(:add_cluster_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-AddCluster-AO-ClusterTab") }
   action(:add_cluster) { |b| b.add_cluster_button.click; b.loading.wait_while_present }
 
+
+  element(:rename_cluster_popup_div){ |b| b.frm.div(id: "KS-CourseOfferingManagement-RenameAOCPopupForm") }
+  element(:rename_private_name) { |b| b.rename_cluster_popup_div.text_field(id: "privateClusterNameForRename_control") }
+  element(:rename_published_name) { |b| b.rename_cluster_popup_div.text_field(id: "publishedClusterNameForRename_control") }
+  element(:rename_aoc_button) { |b| b.rename_cluster_popup_div.button(text: "Rename"); b.loading.wait_while_present }
+
   element(:add_cluster_popup_div){ |b| b.frm.div(id: "KS-CourseOfferingManagement-AddAOCPopupForm") }
   element(:format_aoc_select) { |b| b.add_cluster_popup_div.select(name: "formatOfferingIdForViewRG") }
   element(:private_name_add) { |b| b.add_cluster_popup_div.text_field(name: "privateClusterNamePopover") }
@@ -98,7 +104,8 @@ class ManageCourseOfferings < BasePage
   end
 
 
-  element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-ARGCourseOfferingManagement-ActivityOfferingListSection") }
+  #element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-ARGCourseOfferingManagement-ActivityOfferingListSection") }
+  element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AOClustersCollection") }
   element(:activity_offering_results_table) { |b| b.activity_offering_results_div.table }
 
   AO_SELECT = 0

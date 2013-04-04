@@ -17,13 +17,16 @@ As an Administrator, I want to create registration groups for a Course Offering
     Then the activity offering is shown as part of the cluster
     #And the remaining activity offerings are shown as unassigned
 
-  @bug @KSENROLL-4230
-  Scenario: RG 2.1C: Error message is displayed if I attempt to create 2 activity offering clusters with the same private name
+  @bugs
+  #No Error Message when using the Rename link to create a cluster with the same name
+  #Modal dialog displays saying data has not been saved on page
+  Scenario: ARG 6.4B: Error message is displayed if I attempt to create 2 activity offering clusters with the same private name
     Given I manage registration groups for a course offering
     When I create an activity offering cluster
-    And I try to create a second activity offering cluster with the same private name
-    Then a create cluster dialog error message appears stating "duplicate cluster name"
-    And only one activity offering cluster is created
+    Then I try to create a second activity offering cluster with the same private name
+    And a cluster error message appears stating "The cluster private name is already in use"
+    Then I try to rename the second activity offering cluster to the same private name as the first
+    And a cluster error message appears stating "The cluster private name is already in use"
 
   Scenario: Validate Registration group numbers
     Given I manage registration groups for a course offering with multiple activity types

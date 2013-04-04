@@ -35,8 +35,8 @@ end
 
 
 When /^I create a(?:n| new) activity offering cluster$/ do
-  @ao_cluster = make ActivityOfferingCluster
-  @course_offering.add_ao_cluster(@ao_cluster)
+  ao_cluster = make ActivityOfferingCluster
+  @course_offering.add_ao_cluster(ao_cluster)
 end
 
 Given /^the default activity offering cluster is present$/ do
@@ -65,8 +65,8 @@ Given /^I have created an additional activity offering cluster for a course offe
   #@course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
   @course_offering = make CourseOffering, :course=>"CHEM612A", :term=>Rollover::OPEN_SOC_TERM
   @course_offering.manage
-  @ao_cluster = make ActivityOfferingCluster
-  @course_offering.add_ao_cluster(@ao_cluster)
+  ao_cluster = make ActivityOfferingCluster
+  @course_offering.add_ao_cluster(ao_cluster)
 end
 
 Given /^there are default registration groups for a catalog course offering$/ do
@@ -78,4 +78,20 @@ end
 Given /^there is registration groups for a catalog course offering$/ do
   @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"BSCI425"
 
+end
+
+When /^I try to create a second activity offering cluster with the same private name$/ do
+  ao_cluster2 = make ActivityOfferingCluster, :private_name=>@course_offering.activity_offering_cluster_list.last.private_name
+  ao_cluster2.create
+  @course_offering.add_ao_cluster(ao_cluster2)
+end
+
+Then /^a cluster error message appears stating "(.*?)"$/ do |errMsg|
+  on ManageCourseOfferings do |page|
+    page.first_msg.include? errMsg
+  end
+end
+
+Then /^I try to rename the second activity offering cluster to the same private name as the first$/ do
+    @course_offering.activity_offering_cluster_list.last.rename :private_name=> @course_offering.activity_offering_cluster_list.first.private_name
 end
