@@ -41,6 +41,15 @@ public interface RefundService {
     Refund checkForRefund(Long paymentId);
 
     /**
+     * Creates on refund for a single payment.
+     *
+     * @param paymentId    Payment ID
+     * @param refundAmount Refund amount
+     * @return a new Refund instance
+     */
+    Refund checkForRefund(Long paymentId, BigDecimal refundAmount);
+
+    /**
      * Creates a list of unverified Refunds in the specified date range.
      * <p/>
      * Per Paul H's description (from "Process Diagrams").

@@ -72,7 +72,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     private ActivityService activityService;
 
 
-    protected Refund checkForRefund(Payment payment, Date refundRequestDate, Account refundRequestedBy) {
+    protected Refund checkForRefund(Payment payment, Date refundRequestDate, Account refundRequestedBy, BigDecimal refundAmount) {
 
         // Get the refund rule:
         String refundRule = StringUtils.isNotBlank(payment.getRefundRule()) ?
@@ -103,8 +103,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
             // Create a new Refund instance
             return processAsCash ?
-                    createCashRefund(payment, refundRequestDate, refundRequestedBy) :
-                    createSourceRefund(payment, refundRequestDate, refundRequestedBy, refundRule);
+                    createCashRefund(payment, refundRequestDate, refundRequestedBy, refundAmount) :
+                    createSourceRefund(payment, refundRequestDate, refundRequestedBy, refundRule, refundAmount);
         }
 
         String errMsg = "Refund rule '" + refundRule + "'' is invalid, Payment ID = " + payment.getId();
@@ -158,7 +158,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         // Iterate through the Payments:
         for (Payment payment : payments) {
-            allRefunds.add(checkForRefund(payment, refundRequestDate, refundRequestedBy));
+            BigDecimal refundAmount = TransactionUtils.getUnallocatedAmount(payment);
+            allRefunds.add(checkForRefund(payment, refundRequestDate, refundRequestedBy, refundAmount));
         }
 
         return allRefunds;
@@ -181,20 +182,52 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             throw new TransactionNotFoundException(errMsg);
         }
 
+        return checkForRefund(payment, TransactionUtils.getUnallocatedAmount(payment));
+    }
+
+    /**
+     * Creates on refund for a single payment.
+     *
+     * @param paymentId    Payment ID
+     * @param refundAmount Refund amount
+     * @return a new Refund instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Refund checkForRefund(Long paymentId, BigDecimal refundAmount) {
+
+        Payment payment = transactionService.getPayment(paymentId);
+        if (payment == null) {
+            String errMsg = "Payment with ID = " + paymentId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        return checkForRefund(payment, refundAmount);
+    }
+
+    protected Refund checkForRefund(Payment payment, BigDecimal refundAmount) {
+
         if (!payment.isRefundable()) {
-            String errMsg = "Payment '" + paymentId + "' is not refundable";
+            String errMsg = "Payment '" + payment.getId() + "' is not refundable";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
 
         if (payment.getRefundRule() == null) {
-            String errMsg = "Refund rule (Payment ID = " + paymentId + ") is required";
+            String errMsg = "Refund rule (Payment ID = " + payment.getId() + ") is required";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
 
         if (payment.getStatus() != TransactionStatus.ACTIVE) {
-            String errMsg = "Payment '" + paymentId + "' must be ACTIVE";
+            String errMsg = "Payment '" + payment.getId() + "' must be ACTIVE";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        if (refundAmount.compareTo(TransactionUtils.getUnallocatedAmount(payment)) > 0) {
+            String errMsg = "Refund amount cannot be greater than unallocated payment amount";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
@@ -202,7 +235,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
         Account refundRequestedBy = accountService.getOrCreateAccount(currentUserId);
 
-        return checkForRefund(payment, new Date(), refundRequestedBy);
+        return checkForRefund(payment, new Date(), refundRequestedBy, refundAmount);
     }
 
     /**
@@ -1151,7 +1184,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @param requestedBy User who requested the refund. Defaults to the current system user.
      * @return A newly created <code>Refund</code>.
      */
-    private Refund createCashRefund(Payment payment, Date requestDate, Account requestedBy) {
+    private Refund createCashRefund(Payment payment, Date requestDate, Account requestedBy, BigDecimal refundAmount) {
 
         // Figure out the refund type method. Get the overridden value first:
         String refundTypeMethod = configService.getParameter(Constants.REFUND_METHOD_OVERRIDE);
@@ -1171,9 +1204,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         if (StringUtils.isNotBlank(refundTypeMethod)) {
 
             RefundType refundType = getOrCreateRefundType(refundTypeMethod, refundTypeMethod);
-            BigDecimal refundAmount = TransactionUtils.getUnallocatedAmount(payment);
 
-            // Creating a new Refund:
+            // Creating a new Refund
             Refund refund = new Refund();
 
             refund.setAmount(refundAmount);
@@ -1201,7 +1233,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @param refundRule  Refund rule from the original payment.
      * @return A newly created <code>Refund</code>.
      */
-    private Refund createSourceRefund(Payment payment, Date requestDate, Account requestedBy, String refundRule) {
+    private Refund createSourceRefund(Payment payment, Date requestDate, Account requestedBy, String refundRule,
+                                      BigDecimal refundAmount) {
 
         // Create a new Refund:
         String refundSourceType = configService.getParameter(Constants.REFUND_SOURCE_TYPE);
@@ -1213,9 +1246,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         RefundType refundType = getOrCreateRefundType(refundSourceType, refundSourceType);
 
-        BigDecimal refundAmount = TransactionUtils.getUnallocatedAmount(payment);
-
-         // Creating a new Refund:
+        // Creating a new Refund
         Refund refund = new Refund();
 
         refund.setAmount(refundAmount);
