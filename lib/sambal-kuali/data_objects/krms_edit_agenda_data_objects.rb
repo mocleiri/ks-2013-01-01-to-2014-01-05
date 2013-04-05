@@ -24,20 +24,17 @@ class EditAgendaData
     end
   end
 
-  def find_krms_element( section, tag, node)
+  def find_krms_element( section, tag, node, parent)
     sect = {"edit_tree"=>:edit_tree_section,"preview_tree"=>:preview_tree_section}
     on EditAgenda do |page|
-      if tag == "select"
-        return page.send(sect[section]).element(:tag_name => tag, :id => /.*node_#{Regexp.escape(node)}.*/).id
+      if tag == "select" || tag == "textarea"
+        return page.send(sect[section]).element(:tag_name => tag, :id => /.*node_#{Regexp.escape(node)}_parent_node_#{Regexp.escape(parent)}.*/).id
       else
-        elements = page.send(sect[section]).elements(:tag_name => tag, :id => /.*node_#{Regexp.escape(node)}.*/) #
+        elements = page.send(sect[section]).elements(:tag_name => tag, :id => /.*node_#{Regexp.escape(node)}_parent_node_#{Regexp.escape(parent)}.*/) #
         elements.each do |elem|
           type = elem.attribute_value "type"
           if tag == "input" && type == "text"
             return elem.id
-          else if tag == "textarea"
-                 return elem.id
-               end
           end
         end
       end
