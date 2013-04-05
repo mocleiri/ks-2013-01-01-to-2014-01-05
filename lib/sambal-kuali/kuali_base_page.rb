@@ -46,8 +46,9 @@ class BasePage < PageFactory
       element(:auth_error) { |b| b.error_list.li(text: /You are not authorized/) }
     end
 
-    def krms_frame_element
+    def krms_frame_elements
       element(:frm) { |b| b.frame(:id=>/easyXDM_default\d+_provider/).frame(id: "iframeportlet") }
+      element(:frm_popup) { |b| b.frame(:class=>"fancybox-iframe")}
     end
   end
 end

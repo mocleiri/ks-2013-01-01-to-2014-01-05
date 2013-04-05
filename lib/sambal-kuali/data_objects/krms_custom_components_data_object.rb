@@ -8,14 +8,10 @@ class CustomComponentsData
     @browser = browser
 
     defaults = {
-        :course=>random_alphanums,
-        :gpa=>"0.0",
-        :test_score=>"0",
-        :test_name=>random_alphanums,
-        :department=>random_alphanums,
-        :organization=>random_alphanums
     }
 
-    set_options(defaults.merge(opts))
+    options = defaults.merge(opts)
+
+    set_options(options)
   end
 end

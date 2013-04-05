@@ -1,58 +1,65 @@
-When /^I search for (?:a|an) "(.*)" with text "(.*)"$/ do |section, code|
-  fields = {"Single Course"=>:course, "Department"=>:department, "Organization"=>:organization, "Test Name"=>:test_name}
+When /^I go to the Components page for "(.*)"$/ do |jira|
+  puts jira
   go_to_krms_components
-  on CustomComponents do |page|
-    page.send(fields[section]).set code
-  end
-  sleep 1
 end
 
-Then /^the text "(.*)" should exist in the results$/ do |code|
+When /^I do an Advanced Search for a "(.*)"$/ do |component|
+  sections = {"course"=>:course_section, "department" => :department_section,
+              "organization" => :organization_section}
   on CustomComponents do |page|
-    page.auto_message.text.should == code
-    page.execute_script("window.confirm = function() {return true}")
+    page.send(sections[component]).a(:text => /Advanced Search/).click
   end
-  sleep 1
+  sleep 3
 end
 
-Then /^the text "(.*)" should not exist in the results$/ do |code|
+When /^I enter "(.*)" in the "(.*)" input field$/ do |text,input_field|
+  fields = {"course title" => :lookup_course_title, "name" => :lookup_name}
   on CustomComponents do |page|
-    if page.auto_message.exists?
-      page.auto_message.text.should_not == code
-    end
+    page.send(fields[input_field]).when_present.set text
+  end
+end
+
+When /^I click the "(.*)" lookup button$/ do |btn|
+  buttons = {"search" => :lookup_search_button}
+  on CustomComponents do |page|
+    page.send(buttons[btn]).click
+  end
+  sleep 10
+end
+
+When /^I return the value of line "(\d+)" in the search results$/ do |num|
+  on CustomComponents do |page|
+    number = num.to_i - 1
+    num = number.to_s
+    page.lookup_section.a(:id=>/u\d+_line#{Regexp.escape(num)}/).click
+  end
+  sleep 5
+end
+
+Then /^the code "(.*)" should be in the "(.*)" input field$/ do |code,input|
+  fields = {"course" => :course, "department" => :department, "organization" => :organization}
+  on CustomComponents do |page|
+    page.send(fields[input]).value.should == code
     page.execute_script("window.confirm = function() {return true}")
   end
-  sleep 1
 end
 
 When /^I enter "(.*)" in the "(.*)" text field$/ do |num, section|
   fields = {"GPA"=>:gpa, "Test Score"=>:test_score}
-  go_to_krms_components
   on CustomComponents do |page|
     page.send(fields[section]).set num
   end
   sleep 1
 end
 
-Then /^the "(.*)" should have an error message$/ do |section|
+Then /^the "(.*)" should have an error message which contains "(.*)"$/ do |section,error|
   fields = {"GPA"=>:gpa, "Test Score"=>:test_score}
+  sect = {"GPA" => :gpa_error_section, "Test Score" => :testscore_error_section}
   on CustomComponents do |page|
     page.send_keys :tab
     page.send(fields[section]).click
     sleep 2
-    if page.error_message.exists?
-      if fields[section] == "gpa"
-        if page.send(fields[section]).text == /^\d$/
-          page.error_message.text.should eq "Please enter at least 3 characters."
-        elsif page.send(fields[section]).text == /^\d\d\d$/
-          page.error_message.text.should eq "Must be a non-zero positive fixed point number, with 2 max digits and 1 digits to the right of the decimal point"
-        end
-      elsif fields[section] == "test_score"
-        page.error_message.text.should eq "Must be a positive whole number"
-      end
-    else
-      false
-    end
+    page.send(sect[section]).html.should match /#{Regexp.escape(error)}/
     page.execute_script("window.confirm = function() {return true}")
     sleep 1
   end
@@ -60,29 +67,25 @@ end
 
 Then /^the "(.*)" should have no error message$/ do |section|
   fields = {"GPA"=>:gpa, "Test Score"=>:test_score}
+  sect = {"GPA" => :gpa_error_section, "Test Score" => :testscore_error_section}
   on CustomComponents do |page|
     page.send_keys :tab
     page.send(fields[section]).click
     sleep 2
-    if page.error_message.exists?
-      page.error_message.text.should eq ""
-    else
-      true
-    end
+    page.send(sect[section]).html.should_not match /.*<li class="uif-errorMessageItem-field">.*/
     page.execute_script("window.confirm = function() {return true}")
   end
   sleep 1
 end
 
 When /^I select "(.*)" for grade$/ do |select|
-  go_to_krms_components
   on CustomComponents do |page|
-    page.label(:value=>" #{select} ").click
+    page.grade_section.label(:text => /.*#{Regexp.escape(select)}.*/).click
   end
-  sleep 1
+  sleep 5
 end
 
-Then /^there should be (\d*) options for grade$/ do |num|
+Then /^there should be (\d+) options for grade$/ do |num|
   on CustomComponents do |page|
     select_list = page.grade_select
     array = select_list.options.map(&:text)
