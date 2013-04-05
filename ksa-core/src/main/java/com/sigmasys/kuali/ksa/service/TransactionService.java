@@ -612,6 +612,15 @@ public interface TransactionService {
      */
     void expireDeferment(Long defermentId);
 
+
+    /**
+     * Expires all deferments on the account whose expiration date has passed
+     *
+     * @param userId Account ID
+     */
+    @WebMethod(exclude = true)
+    void expireDeferments(String userId);
+
     /**
      * Returns the transaction type for the given transaction type ID
      *

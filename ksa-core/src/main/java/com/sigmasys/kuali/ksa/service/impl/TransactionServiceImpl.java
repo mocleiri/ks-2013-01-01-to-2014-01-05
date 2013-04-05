@@ -1844,6 +1844,19 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
     }
 
+    protected void expireDeferment(Deferment deferment) {
+
+        // Removing all allocations for the deferment
+        removeAllAllocations(deferment.getId());
+
+        deferment.setInternal(true);
+        deferment.setAmount(BigDecimal.ZERO);
+        deferment.setExpirationDate(new Date());
+        deferment.setStatus(TransactionStatus.EXPIRED);
+
+        persistTransaction(deferment);
+    }
+
     /**
      * A deferment may be expired automatically (when the date of the deferment
      * passes) or be expired manually but the system, either through user
@@ -1863,15 +1876,28 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new TransactionNotFoundException(errMsg);
         }
 
-        // Removing all allocations for the deferment
-        removeAllAllocations(defermentId);
+        expireDeferment(deferment);
+    }
 
-        deferment.setInternal(true);
-        deferment.setAmount(BigDecimal.ZERO);
-        deferment.setExpirationDate(new Date());
-        deferment.setStatus(TransactionStatus.EXPIRED);
+    /**
+     * Expires all deferments on the account whose expiration date has passed
+     *
+     * @param userId Account ID
+     */
+    @Override
+    @WebMethod(exclude = true)
+    @Transactional(readOnly = false)
+    public void expireDeferments(String userId) {
 
-        persistTransaction(deferment);
+        Date currentDate = new Date();
+
+        List<Deferment> deferments = getDeferments(userId);
+        for (Deferment deferment : deferments) {
+            Date expirationDate = deferment.getExpirationDate();
+            if (expirationDate != null && expirationDate.before(currentDate)) {
+                expireDeferment(deferment);
+            }
+        }
 
     }
 

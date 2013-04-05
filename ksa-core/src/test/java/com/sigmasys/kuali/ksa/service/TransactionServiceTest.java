@@ -6,9 +6,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.junit.Before;
@@ -27,9 +24,6 @@ import static org.springframework.util.Assert.*;
 public class TransactionServiceTest extends AbstractServiceTest {
 
     private static final String GL_ACCOUNT_ID = "03-2-998870 7723";
-
-    @PersistenceContext(unitName = Constants.KSA_PERSISTENCE_UNIT)
-    protected EntityManager em;
 
     @Autowired
     private TransactionService transactionService;
@@ -1497,4 +1491,40 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         Assert.isTrue(endDate.equals(CalendarUtils.addCalendarDays(startDate, -1)));
     }
+
+    @Test
+    public void expireDeferments() throws Exception {
+
+        Date effectiveDate = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse("01/27/2011");
+
+        Date expirationDate = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse("01/27/2012");
+
+        String externalId = null;
+
+        String userId = "admin";
+
+        String type = "chip";
+
+        Transaction transaction = transactionService.createTransaction(type, externalId, userId, effectiveDate,
+                expirationDate, new BigDecimal(100.11111));
+
+        notNull(transaction);
+        notNull(transaction.getId());
+
+        isTrue(transaction instanceof Deferment);
+
+        isTrue(!TransactionStatus.EXPIRED.equals(transaction.getStatus()));
+
+        transactionService.expireDeferments(userId);
+
+        Deferment deferment = transactionService.getDeferment(transaction.getId());
+
+        notNull(deferment);
+        notNull(deferment.getId());
+
+        isTrue(TransactionStatus.EXPIRED.equals(transaction.getStatus()));
+
+    }
+
+
 }
