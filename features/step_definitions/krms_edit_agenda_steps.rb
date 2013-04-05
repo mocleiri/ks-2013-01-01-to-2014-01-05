@@ -27,18 +27,18 @@ When /^I click the "(.*)" button$/ do |btn|
   sleep 7
 end
 
-Then /^there should be nothing selected in the node "(.*)" rule dropdown$/ do |node|
+Then /^there should be nothing selected in the node "(.*)" rule dropdown in parent node "(.*)"$/ do |node, parent|
   on EditAgenda do |page|
-    id_val = @editAgenda.find_krms_element("edit_tree",'select',node)
+    id_val = @editAgenda.find_krms_element("edit_tree",'select',node, parent)
     page.edit_tree_section.select(:id => id_val).option(selected: "selected").text.should == ""
   end
   sleep 5
 end
 
-Then /^the "(.*)" field in node "(.*)" should be empty$/ do |field,node|
+Then /^the "(.*)" field in node "(.*)" in parent node "(.*)" should be empty$/ do |field,node,parent|
   types = {"course"=>'input', "free form text"=>'textarea'}
   on EditAgenda do |page|
-    id = @editAgenda.find_krms_element("edit_tree",types[field],node)
+    id = @editAgenda.find_krms_element("edit_tree",types[field],node,parent)
     page.edit_tree_section.text_field(:id => id).text.should == ""
   end
   sleep 5
