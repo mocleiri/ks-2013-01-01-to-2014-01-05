@@ -50,10 +50,10 @@ class ManageCourseOfferings < BasePage
   # not expected (ie search for ENGL206, returns ENGL206 and ENG206A)
   action(:create_co_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-CO")}
 
-  element(:add_activity_button){ |b| b.frm.button(id: "KS-ARGCourseOfferingManagement-ToolBar-Add-AO") }
+  element(:add_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-AO-ClusterTab") }
   action(:add_activity){ |b| b.add_activity_button.click; b.loading.wait_while_present}
 
-  element(:add_activity_popup_div){ |b| b.frm.div(id: "KS-CourseOfferingManagement-AddActivityOfferingPopupForm-AutoGen") }
+  element(:add_activity_popup_div){ |b| b.frm.div(id: "KS-CourseOfferingManagement-AddActivityOfferingPopupForm") }
   element(:format) { |b| b.add_activity_popup_div.select(name: "formatOfferingIdForNewAO") }
   element(:activity_type) { |b| b.add_activity_popup_div.select(name: "activityIdForNewAO") }
   element(:cluster) { |b| b.add_activity_popup_div.select(name: "clusterIdForNewAO") }
@@ -246,8 +246,11 @@ class ManageCourseOfferings < BasePage
     format.select(input_format)
     loading.wait_while_present(120)
     activity_type.select(activity_type.options[1].text)
+    loading.wait_while_present(120)
+    cluster.select(cluster.options[1].text)
+    loading.wait_while_present(120)
     quantity.set(input_quantity)
-    add
+    complete_add_activity
   end
 
   #def cross_listed_as(crossListedCoCode)
