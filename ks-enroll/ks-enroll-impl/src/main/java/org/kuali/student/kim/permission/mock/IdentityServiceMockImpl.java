@@ -45,7 +45,7 @@ import java.util.Map;
 public class IdentityServiceMockImpl implements IdentityService {
 
     private Map<String, Entity> entities = new HashMap<String,Entity> ();
-    
+
     @Override
     public EntityAddress addAddressToEntity(EntityAddress ea) throws RiceIllegalArgumentException, RiceIllegalStateException {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -483,6 +483,14 @@ public class IdentityServiceMockImpl implements IdentityService {
     public EntityVisa updateVisa(EntityVisa ev) throws RiceIllegalArgumentException, RiceIllegalStateException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    
+
+    @Override
+    public List<Principal> getPrincipalsByEntityId( String entityId)  {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<Principal> getPrincipalsByEmployeeId(String employeeId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

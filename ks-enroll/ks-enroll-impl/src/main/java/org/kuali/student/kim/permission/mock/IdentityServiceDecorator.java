@@ -41,7 +41,7 @@ import java.util.List;
  * @author nwright
  */
 public class IdentityServiceDecorator implements IdentityService {
-    
+
     private IdentityService nextDecorator;
 
     public IdentityService getNextDecorator() {
@@ -482,7 +482,15 @@ public class IdentityServiceDecorator implements IdentityService {
     public EntityAddress addAddressToEntity(EntityAddress ea) throws RiceIllegalArgumentException, RiceIllegalStateException {
         return nextDecorator.addAddressToEntity(ea);
     }
-    
-    
-    
+
+    @Override
+    public List<Principal> getPrincipalsByEntityId( String entityId)  {
+        return nextDecorator.getPrincipalsByEntityId(entityId);
+    }
+
+    @Override
+    public List<Principal> getPrincipalsByEmployeeId(String employeeId) {
+        return nextDecorator.getPrincipalsByEmployeeId(employeeId);
+    }
+
 }
