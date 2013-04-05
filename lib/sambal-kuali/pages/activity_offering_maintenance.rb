@@ -8,6 +8,16 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   action(:submit) { |b| b.submit_button.click; b.loading.wait_while_present(120) }
   
   element(:activity_code) { |b| b.frm.text_field(name: "document.newMaintainableObject.dataObject.aoInfo.activityCode") }
+
+  # Co-located
+  element(:colocated_checkbox) { |b| b.frm.checkbox(id: "is_co_located_control") }
+  action(:select_colocated_checkbox) { |b| b.colocated_checkbox.click(); b.loading.wait_while_present }
+  element(:colocated_co_input_field) { |b| b.frm.text_field(id: "u285_add_control") }
+  element(:colocated_ao_input_field) { |b| b.frm.text_field(id: "u303_add_control") }
+  element(:colocated_add_button) { |b| b.frm.button(id: "ActivityOfferingEdit-CoLocatedActivities_add") }
+  action(:click_colocated_add_button) { |b| b.colocated_add_button.click(); b.loading.wait_while_present }
+  element(:colocated_shared_max_enrollment_input_field) { |b| b.frm.text_field(id: "shared_max_enr_control") }
+
   element(:total_maximum_enrollment) { |b| b.frm.text_field(id: "maximumEnrollment_control") }
 
   element(:mainpage_section){|b| b.frm.div(id:"ActivityOffering-MaintenanceView")}
