@@ -27,22 +27,6 @@
     http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 
-	<!-- The view -->
-	<bean id="GeneralLedgerView" parent="Uif-KsaFormView" p:footer.render="false">
-        <property name="title" value="General Ledger"/>
-        <property name="headerText" value="General Ledger"/>
-        <property name="entryPageId" value="GeneralLedgerMainPage"/>
-        <property name="navigation" ref="KsaAccountNavigation"/>
-		<property name="items">
-            <list merge="true">
-				<!-- The main page -->
-				<ref bean="GeneralLedgerMainPage"/>
-			</list>
-		</property>
-		<property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.GeneralLedgerForm"/>
-	</bean>
-	
-	
 	<!-- 
 	
 	*********************  The main page with the tabbed control    ***********************

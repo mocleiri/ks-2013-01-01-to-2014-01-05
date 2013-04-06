@@ -39,7 +39,8 @@
                         <bean parent="Uif-NavigationActionLink" p:navigateToPageId="Transactions" p:actionLabel="Transactions"/>
                         <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AccountsReceivable" p:actionLabel="Accounts Receivable"/>
                         <bean parent="Uif-NavigationActionLink" p:navigateToPageId="ExportXML" p:actionLabel="Export XML"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerFinancialAid" p:actionLabel="General Ledger &amp; Financial Aid"/>
+                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerMainPage" p:actionLabel="General Ledger"/>
+                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="FinancialAid" p:actionLabel="Financial Aid"/>
                     </list>
                 </property>
             </bean>
@@ -126,10 +127,16 @@
 
                 <!--End Export XML Page-->
 
-                <!--Begin General Ledger and Financial Aid Page-->
+                <!--Begin General Ledger Page-->
 
-                <bean parent="Uif-Page" p:id="GeneralLedgerFinancialAid" p:title="General Ledger &amp; Financial Aid">
-                    <property name="headerText" value="General Ledger &amp; Financial Aid"/>
+                <ref bean="GeneralLedgerMainPage"/>
+
+                <!--End General Ledger Page-->
+
+                <!--Begin Financial Aid Page-->
+
+                <bean parent="Uif-Page" p:id="FinancialAid" p:title="Financial Aid">
+                    <property name="headerText" value="Financial Aid"/>
                     <property name="items">
                         <list>
                             <bean parent="Uif-HorizontalBoxSection">
@@ -144,7 +151,7 @@
                     </property>
                 </bean>
 
-                <!--End General Ledger and Financial Aid Page-->
+                <!--End Financial Aid Page-->
             </list>
         </property>
         <!--

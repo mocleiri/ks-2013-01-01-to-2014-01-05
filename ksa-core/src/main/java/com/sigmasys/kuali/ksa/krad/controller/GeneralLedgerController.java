@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.GeneralLedgerForm;
+import com.sigmasys.kuali.ksa.krad.form.ReportReconciliationForm;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class GeneralLedgerController extends DownloadController {
     @Override
     protected UifFormBase createInitialForm(HttpServletRequest request) {
         // Create a new form:
-        GeneralLedgerForm form = new GeneralLedgerForm();
+        ReportReconciliationForm form = new ReportReconciliationForm();
 
         return form;
     }
