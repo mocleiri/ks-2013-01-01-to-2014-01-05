@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.kuali.student.common</groupId>
     <artifactId>ks-common</artifactId>
-    <version>1.3.0-myplan-SNAPSHOT</version>
+    <version>1.3.0-myplan-r46004</version>
   </parent>
   <dependencies>
     <dependency>
