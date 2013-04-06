@@ -28,6 +28,11 @@ public interface Constants {
     String DEFAULT_GL_PA_STATEMENT = "ksa.general.ledger.payment.application.statement";
     String CONTEST_PAYMENT_TYPE = "ksa.payment.contest.type.id";
 
+    // Cash tracking constants
+    String CASH_TRACKING_SYSTEM = "ksa.cash.tracking.system";
+    String CASH_TRACKING_AMOUNT = "ksa.cash.tracking.amount";
+    String CASH_TRACKING_DAYS = "ksa.cash.tracking.days";
+    String CASH_TRACKING_TAG = "ksa.cash.tracking.tag";
 
     // Drools parameters
     String DROOLS_CLASSPATH = "drools";

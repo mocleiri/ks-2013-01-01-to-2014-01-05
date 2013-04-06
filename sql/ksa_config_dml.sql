@@ -49,6 +49,7 @@ insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('FEE_TYPE_SEQ', 10
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('FEE_DETAIL_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('FEE_DETAIL_AMOUNT_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('ALLOWABLE_GL_ACCOUNT_SEQ', 1001);
+insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('CASH_LIMIT_EVENT_SEQ', 1001);
 
 
 -- KS and Rice DB connection parameters
@@ -79,7 +80,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.general.ledger.payment.applic
 
 
 -- Combined Cash Limit Tracking Settings
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.system', 'On');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.system', 'ON');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.amount', '10000');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.days', '365');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.tag', 'cash');
@@ -144,6 +145,9 @@ insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (4, 'XDRL', 'Drools XM
 -- Allowable GL account values --
 insert into KSSA_ALLOWABLE_GL_ACCOUNT (ID, PATTERN) values (1, '.*');
 
+
+
+
 --- INSERTING RULE SETS ---
 set sqlblanklines on
 set sqlterminator '!'
@@ -169,13 +173,13 @@ Get payments from "allPayments" for 2012 year, store result in "payments2012"
 Get payments from "allPayments" for 2013 year, store result in "payments2013"
 
 Get charges from "allCharges" for 2011 year, store result in "charges2011"
-Sort "charges2011" by priority in ascending order
+Sort "charges2011" by priority in descending order
 
 Get charges from "allCharges" for 2012 year    , store result in "charges2012"
-Sort "charges2012" by priority in ascending order
+Sort "charges2012" by priority in descending order
 
 Get charges from "allCharges" for 2013 year    , store result in "charges2013"
-Sort "charges2013" by priority in ascending order
+Sort "charges2013" by priority in descending order
 
 Get payments with tag "FinAid" from "allPayments" for 2011 year, store result in "finaidPayments2011"
 Get payments with tag "FinAid" from "allPayments" for 2012 year, store result in "finaidPayments2012"
