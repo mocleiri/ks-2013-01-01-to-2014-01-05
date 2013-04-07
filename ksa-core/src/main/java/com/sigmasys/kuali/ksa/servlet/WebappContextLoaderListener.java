@@ -12,7 +12,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 /**
- * Must be used instead Spring's version to initialize ContextUtils with web application context
+ * Must be used instead Spring version to initialize ContextUtils with web application context
  *
  * @author Michael Ivanov
  */

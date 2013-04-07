@@ -31,7 +31,6 @@ import java.util.Set;
  * Main KSA Filter
  *
  * @author Michael Ivanov
- *         Date: 4/2/12
  */
 public class CoreFilter implements Filter {
 

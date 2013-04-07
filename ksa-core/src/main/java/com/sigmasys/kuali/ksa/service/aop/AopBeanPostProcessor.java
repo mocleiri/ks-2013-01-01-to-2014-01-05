@@ -51,6 +51,6 @@ public class AopBeanPostProcessor implements BeanPostProcessor, BeanFactoryAware
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-         this.beanFactory = beanFactory;
+        this.beanFactory = beanFactory;
     }
 }

@@ -10,7 +10,6 @@ import java.util.EnumSet;
  *
  * @author Michael Ivanov
  */
-
 public class EnumUtils {
 
     private EnumUtils() {

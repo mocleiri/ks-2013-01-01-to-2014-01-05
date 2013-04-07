@@ -8,8 +8,6 @@ import java.sql.SQLException;
  * AtomikosDataSourceBean
  *
  * @author Michael Ivanov
- * Date: 4/12/12
- * Time: 8:51 PM
  */
 public class AtomikosDataSourceBean extends AtomikosNonXADataSourceBean {
 

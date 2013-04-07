@@ -10,9 +10,8 @@ import java.util.Set;
 
 /**
  * PackageMappingPostProcessor is used to narrow the JPA scan scope.
- * User: ivanovm
- * Date: Apr 16, 2010
- * Time: 11:36:34 AM
+ *
+ * @author Michael Ivanov
  */
 public class PackageMappingPostProcessor implements PersistenceUnitPostProcessor {
 

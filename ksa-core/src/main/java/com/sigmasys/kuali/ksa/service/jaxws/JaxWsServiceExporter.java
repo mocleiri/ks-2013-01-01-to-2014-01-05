@@ -15,7 +15,7 @@ import java.net.URL;
 /**
  * JaxWsServiceExporter.
  * This class uses the internal Java HTTP server for publishing WS endpoints.
- * Inherited from Spring's SimpleJaxWsServiceExporter to work with endpoints that have @Url annotation.
+ * Inherited from Spring SimpleJaxWsServiceExporter to work with endpoints that have @Url annotation.
  * For endpoints it can use not only the service name as part of the result URL,
  * but the service URL also. If present the service URL has a higher priority than the service name.
  * <p/>

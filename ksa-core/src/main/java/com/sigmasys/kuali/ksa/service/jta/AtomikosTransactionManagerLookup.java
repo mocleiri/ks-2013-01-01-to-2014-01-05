@@ -24,12 +24,12 @@ public class AtomikosTransactionManagerLookup implements TransactionManagerLooku
     }
 
     public static TransactionManager getTransactionManager() {
-       return transactionManager;
+        return transactionManager;
     }
 
     @Override
     public TransactionManager getTransactionManager(Properties props) {
-       return transactionManager;
+        return transactionManager;
     }
 
     @Override
@@ -40,15 +40,15 @@ public class AtomikosTransactionManagerLookup implements TransactionManagerLooku
 
 
     /**
-    	 * Determine an identifier for the given transaction appropriate for use in caching/lookup usages.
-    	 * <p/>
-    	 * Generally speaking the transaction itself will be returned here.  This method was added specifically
-    	 * for use in WebSphere and other unfriendly JEE containers (although WebSphere is still the only known
-    	 * such brain-dead, sales-driven impl).
-    	 *
-    	 * @param transaction The transaction to be identified.
-    	 * @return An appropriate identifier
-    	 */
+     * Determine an identifier for the given transaction appropriate for use in caching/lookup usages.
+     * <p/>
+     * Generally speaking the transaction itself will be returned here.  This method was added specifically
+     * for use in WebSphere and other unfriendly JEE containers (although WebSphere is still the only known
+     * such brain-dead, sales-driven impl).
+     *
+     * @param transaction The transaction to be identified.
+     * @return An appropriate identifier
+     */
     @Override
     public Object getTransactionIdentifier(Transaction transaction) {
         return transaction;

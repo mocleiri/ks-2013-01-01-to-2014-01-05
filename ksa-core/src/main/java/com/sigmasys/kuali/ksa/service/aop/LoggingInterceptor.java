@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
 /**
@@ -25,6 +26,8 @@ import java.lang.reflect.Method;
 public class LoggingInterceptor implements MethodInterceptor {
 
     private final Log logger = LogFactory.getLog(getClass());
+
+    private static final String UNKNOWN_USER_ID = "Unknown";
 
     @Autowired
     private UserSessionManager userSessionManager;
@@ -78,10 +81,16 @@ public class LoggingInterceptor implements MethodInterceptor {
         Object[] arguments = invocation.getArguments();
         Class<?>[] paramTypes = method.getParameterTypes();
 
-        String userId = (RequestUtils.getThreadRequest() != null) ?
-                userSessionManager.getUserId(RequestUtils.getThreadRequest()) : "unknown";
+        String userId;
 
-        StringBuilder logBuffer = new StringBuilder("User '" + (userId != null ? userId : "unknown") + "' ");
+        HttpServletRequest servletRequest = RequestUtils.getThreadRequest();
+        if (servletRequest != null) {
+            userId = userSessionManager.getUserId(servletRequest);
+        } else {
+            userId = UNKNOWN_USER_ID;
+        }
+
+        StringBuilder logBuffer = new StringBuilder("User '" + (userId != null ? userId : UNKNOWN_USER_ID) + "' ");
         logBuffer.append("performed the method call: ");
         logBuffer.append(className);
         logBuffer.append(" :: ");

@@ -3,9 +3,9 @@ package com.sigmasys.kuali.ksa.service.jta;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 
 /**
- * Custom version of JtaTransactionManager that overrides a few Spring's methods.
+ * Custom version of JtaTransactionManager that overrides a few Spring methods.
+ *
  * @author Michael Ivanov
- * 
  */
 public class JtaTransactionManager extends org.springframework.transaction.jta.JtaTransactionManager {
 

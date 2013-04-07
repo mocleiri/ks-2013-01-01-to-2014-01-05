@@ -12,79 +12,80 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.core.Ordered;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * LocalJndiBinder. Provides local JNDI context.
- * 
- * @author ivanovm
+ *
+ * @author Michael Ivanov
  */
 public class LocalJndiBinder implements Ordered {
 
-	private static final Log logger = LogFactory.getLog(LocalJndiBinder.class);
+    private static final Log logger = LogFactory.getLog(LocalJndiBinder.class);
 
-	private static final AtomicBoolean isInitialized = new AtomicBoolean();
+    private static final AtomicBoolean isInitialized = new AtomicBoolean();
 
-	private static InitialContext initialContext;
+    private static InitialContext initialContext;
 
-	public LocalJndiBinder(Map<String, Object> beans) throws Exception {
+    public LocalJndiBinder(Map<String, Object> beans) throws Exception {
 
-		if (isInitialized.get()) {
-			return;
-		}
+        if (isInitialized.get()) {
+            return;
+        }
 
-		logger.debug("JNDI binder initializing...");
+        logger.debug("JNDI binder initializing...");
 
-		try {
-			
-			LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+        try {
 
-			Properties jndiEnv = new Properties();
-			jndiEnv.put(Context.INITIAL_CONTEXT_FACTORY, com.sun.jndi.rmi.registry.RegistryContextFactory.class.getName());
-			jndiEnv.put(Context.PROVIDER_URL, "rmi://localhost:" + Registry.REGISTRY_PORT);
+            LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
 
-			// Adding JNDI props to system properties to make them visible to
-			// all JNDI clients within the JVM
-			System.getProperties().putAll(jndiEnv);
+            Properties jndiEnv = new Properties();
+            jndiEnv.put(Context.INITIAL_CONTEXT_FACTORY, com.sun.jndi.rmi.registry.RegistryContextFactory.class.getName());
+            jndiEnv.put(Context.PROVIDER_URL, "rmi://localhost:" + Registry.REGISTRY_PORT);
 
-			initialContext = new InitialContext(jndiEnv);
+            // Adding JNDI props to system properties to make them visible to
+            // all JNDI clients within the JVM
+            System.getProperties().putAll(jndiEnv);
 
-			isInitialized.set(true);
+            initialContext = new InitialContext(jndiEnv);
 
-			logger.debug("JNDI binder initialized");
-			
-			setBindings(beans);
+            isInitialized.set(true);
 
-		} catch (RemoteException t) {
-			logger.error(t.getMessage(), t);
-		}
+            logger.debug("JNDI binder initialized");
 
-	}
+            setBindings(beans);
 
-	protected void setBindings(Map<String, Object> beans) {
-		
-		if (initialContext == null) {
-			logger.error("Initial context is null");
-			throw new IllegalStateException("Initial context is null");
-		}
-		
-		for (Map.Entry<String, Object> beanMapping : beans.entrySet()) {
-		     try {
-				String name = beanMapping.getKey();
-				Object bean = beanMapping.getValue();
-				initialContext.rebind(name, bean);
-				logger.debug("Added JNDI binding: name = " + name + " value = " + bean.getClass().getName());
-		     } catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			 }
-		}
-		
-	}
+        } catch (RemoteException t) {
+            logger.error(t.getMessage(), t);
+        }
 
-	@Override
-	public int getOrder() {
-		// This service should be initialized ahead of all others
-		return 0;
-	}
+    }
+
+    protected void setBindings(Map<String, Object> beans) {
+
+        if (initialContext == null) {
+            logger.error("Initial context is null");
+            throw new IllegalStateException("Initial context is null");
+        }
+
+        for (Map.Entry<String, Object> beanMapping : beans.entrySet()) {
+            try {
+                String name = beanMapping.getKey();
+                Object bean = beanMapping.getValue();
+                initialContext.rebind(name, bean);
+                logger.debug("Added JNDI binding: name = " + name + " value = " + bean.getClass().getName());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
+    }
+
+    @Override
+    public int getOrder() {
+        // This service should be initialized ahead of all others
+        return 0;
+    }
 
 }

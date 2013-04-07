@@ -22,7 +22,7 @@ import java.util.Properties;
  * (see its documentation), but with the important difference that it doesn't instantiate the
  * Servlet instance directly but delegate for this the BeanContext, so that we can also use IoC.
  *
- * @author ivanovm
+ * @author Michael Ivanov
  */
 @Service(ServletWrappingController.BEAN_NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

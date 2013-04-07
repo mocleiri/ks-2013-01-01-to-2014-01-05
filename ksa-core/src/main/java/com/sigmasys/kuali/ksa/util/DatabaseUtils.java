@@ -13,12 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 
 /**
- * DB Utils.
- * This class uses Hibernate and JPA APIs.
- * <p/>
- * <p/>
- * Use:
- * <p/>
+ * DatabaseUtils contains DDL methods for creating/removing DB objects based on JPA annotations.
+ *
+ * @author Michael Ivanov
  */
 public class DatabaseUtils {
 
@@ -37,7 +34,7 @@ public class DatabaseUtils {
     /**
      * Creates the SQL script to create all tables.
      *
-     * @param em JPA Entity Manager
+     * @param em           JPA Entity Manager
      * @param packageNames array of package names where to look for annotated entities
      * @return A {@link String} representing the SQL script.
      */
@@ -50,7 +47,7 @@ public class DatabaseUtils {
     /**
      * Creates the SQL script to drop all tables.
      *
-     * @param em JPA Entity Manager
+     * @param em           JPA Entity Manager
      * @param packageNames array of package names where to look for annotated entities
      * @return A {@link String} representing the SQL script.
      */

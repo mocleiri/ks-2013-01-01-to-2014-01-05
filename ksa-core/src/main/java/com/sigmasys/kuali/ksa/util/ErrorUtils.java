@@ -5,6 +5,11 @@ import org.apache.commons.logging.LogFactory;
 
 import java.sql.SQLException;
 
+/**
+ * This class contains utility-methods for handling error messages.
+ *
+ * @author Michael Ivanov
+ */
 public class ErrorUtils {
 
     private static final Log logger = LogFactory.getLog(ErrorUtils.class);

@@ -10,7 +10,12 @@ import java.sql.Clob;
 import java.util.*;
 
 
-public final class CommonUtils {
+/**
+ * KSA common utility methods
+ *
+ * @author Michael Ivanov
+ */
+public class CommonUtils {
 
     private static final String PROPERTIES_PATH = "ksa.properties";
 
