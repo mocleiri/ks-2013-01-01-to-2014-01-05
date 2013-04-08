@@ -111,6 +111,13 @@
         <property name="enabled" value="${ks.courseOffering.enable.caching}"/>
     </bean>
 
+    <bean id="SWSClientCacheAdvisor" class="org.kuali.student.myplan.util.QueryMethodArgsCacheAdvice">
+        <property name="cacheName" value="SWSClientCache"/>
+        <property name="cacheManager" ref="myplanCacheManager"/>
+        <property name="enabled" value="${ks.courseOffering.enable.caching}"/>
+    </bean>
+
+
     <bean id="academicRecordCacheAdvisor" class="org.kuali.student.myplan.util.QueryMethodArgsCacheAdvice">
         <property name="cacheName" value="academicRecordCache"/>
         <property name="cacheManager" ref="myplanCacheManager"/>
@@ -229,6 +236,15 @@
                     pointcut="execution(*  edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl.getActivityOfferingDisplaysForCourseOffering(..))"
                     method="getFromCache"/>
         </aop:aspect>
+
+
+        <!-- TODO: This should be removed once we build cache pre fetch on course offering -->
+        <aop:aspect id="SWSClientAround" ref="SWSClientCacheAdvisor">
+            <aop:around
+                    pointcut="execution(*  edu.uw.kuali.student.lib.client.studentservice.StudentServiceClientImpl.getSecondarySections(..))"
+                    method="getFromCache"/>
+        </aop:aspect>
+
 
         <aop:aspect id="academicRecordAroundSearch" ref="academicRecordCacheAdvisor">
             <aop:around
