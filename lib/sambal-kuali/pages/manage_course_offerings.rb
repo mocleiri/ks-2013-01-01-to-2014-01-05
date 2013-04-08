@@ -157,7 +157,7 @@ class ManageCourseOfferings < BasePage
   end
 
   def copy_link(code)
-    target_row(code).link(text: "Copy")
+    target_row(code).link(text: /\b#{Regexp.escape("Copy")}\b/)
   end
 
   def copy(code)

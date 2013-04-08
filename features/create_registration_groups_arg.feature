@@ -18,7 +18,6 @@ As an Administrator, I want to create registration groups for a Course Offering
     #And the remaining activity offerings are shown as unassigned
 
   #No Error Message when using the Rename link to create a cluster with the same name
-  #Modal dialog displays saying data has not been saved on page
   @bugs
   Scenario: ARG 6.4B: Error message is displayed if I attempt to create 2 activity offering clusters with the same private name
     Given I manage registration groups for a course offering
