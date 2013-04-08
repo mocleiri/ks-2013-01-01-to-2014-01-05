@@ -92,7 +92,7 @@ Feature: Schedule Coordinator Authorization
     And I have access to delete an activity offering
     And I have access to edit an activity offering
     And I have access to copy an activity offering
-    And I have access to manage registration groups
+    #And I have access to manage registration groups TODO: validate access to various reg groups links on page
 
   Scenario: AZ FULL CONFIG Schedule Coordinator has full access the Manage CO set of pages (Final Edits SOC)
     Given I am working on a term in "Final Edits" SOC state
@@ -114,7 +114,7 @@ Feature: Schedule Coordinator Authorization
     And I have access to delete an activity offering
     And I have access to edit an activity offering
     And I have access to copy an activity offering
-    And I have access to manage registration groups
+    #And I have access to manage registration groups TODO: validate access to various reg groups links on page
 
   Scenario: AZ FULL CONFIG Schedule Coordinator has full access the Manage CO set of pages (Published SOC)
     Given I am working on a term in "Published" SOC state
@@ -136,4 +136,4 @@ Feature: Schedule Coordinator Authorization
     And I have access to delete an activity offering
     And I have access to edit an activity offering
     And I have access to copy an activity offering
-    And I have access to manage registration groups
+    #And I have access to manage registration groups TODO: validate access to various reg groups links on page

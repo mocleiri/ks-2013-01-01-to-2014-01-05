@@ -24,7 +24,7 @@ Feature: Department Schedule Coordinator Authorization SOC state Locked
     Then I have access to view the course offering details
     And I have access to view the activity offering details
     But I do not have access to edit the course offering
-    And I do not have access to manage registration groups
+    #And I do not have access to manage registration groups TODO: validate access to various reg groups links on page
     And I do not have access to select activity offerings for add, approve, delete
     And I do not have access to edit activity offerings
     And I do not have access to copy activity offerings

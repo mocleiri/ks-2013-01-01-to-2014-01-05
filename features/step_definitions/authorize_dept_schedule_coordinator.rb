@@ -28,7 +28,6 @@ end
 
 Then /^I do not have access to edit the course offering$/ do
   on ManageCourseOfferings do |page|
-    page.ao_results_div.present?.should be_true
     page.edit_course_offering_link.present?.should be_false
   end
 end
@@ -288,13 +287,6 @@ Then /^I have access to copy an activity offering$/ do
   on ManageCourseOfferings do |page|
     page.copy_link(@activity_offering.code).present?.should be_true
     page.copy_link(@activity_offering.code).attribute_value("class").should_not match /disabled/
-  end
-end
-
-Then /^I have access to manage registration groups$/ do
-  on ManageCourseOfferings do |page|
-    page.manage_registration_groups_link.present?.should be_true
-    page.manage_registration_groups_link.attribute_value("class").should_not match /disabled/
   end
 end
 
