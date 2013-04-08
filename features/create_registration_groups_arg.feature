@@ -43,15 +43,19 @@ As an Administrator, I want to create registration groups for a Course Offering
     And I submit the Activity Offering changes
     Then the Manage Course Offerings page is displayed
 
+  Scenario: ARG 6.9 Ability to view AOs in their AOCs, in their AO table and in their RGs
+    Given I manage registration groups for a course offering
+    Then the Activity Offerings are in the cluster table
+    And the corresponding number of registration groups is correct
 
 
-  Scenario: Validate Registration group numbers
-    Given I manage registration groups for a course offering with multiple activity types
-    When I create an activity offering cluster
-    And I add all activity offerings to the activity offering cluster
-    And I generate registration groups
-    And the correct number of registration groups are created
-
+#  Scenario: Validate Registration group numbers
+#    Given I manage registration groups for a course offering with multiple activity types
+#    When I create an activity offering cluster
+#    And I add all activity offerings to the activity offering cluster
+#    And I generate registration groups
+#    And the correct number of registration groups are created
+#
 #  Scenario: RG 2.1B/2.4B: Successfully create a default activity offering cluster and reg groups with all activity offerings assigned to the cluster
 #    Given I manage registration groups for a course offering
 #    When I generate registration groups with no activity offering cluster
