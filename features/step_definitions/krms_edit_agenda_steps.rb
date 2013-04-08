@@ -1,7 +1,21 @@
-When /^I go to the Edit Agenda page for "(.*)"$/ do |test|
+When /^I go to the Manage Course Offering Agendas page for "(.*)"$/ do |test|
   puts test
   @editAgenda = make EditAgendaData
-  go_to_krms_edit_agenda
+  go_to_manage_co_agendas
+end
+
+When /^I click on the "(.*)" section$/ do |sect|
+  on ManageCOAgendas do |page|
+    page.agenda_management_section.span(text: sect).click
+  end
+  sleep 3
+end
+
+When /^I click on the "(.*)" link$/ do |link|
+  on ManageCOAgendas do |page|
+    page.rule_edit_links.a(text: link).click
+  end
+  sleep 5
 end
 
 When /^I select node "(.*)" in the tree$/ do |letter|

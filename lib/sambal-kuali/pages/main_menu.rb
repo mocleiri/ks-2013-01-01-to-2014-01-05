@@ -73,4 +73,5 @@ class MainMenu < BasePage
   #KRMS Links
   action(:krms_components) { |b| b.link(text: "KRMS Components").click }
   action(:krms_edit_agenda) { |b| b.link(text: "Edit Agenda").click }
+  action(:krms_manage_co_agendas) { |b| b.link(text: "Manage Course Offering Agendas").click}
 end

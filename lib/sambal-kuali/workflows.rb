@@ -150,9 +150,9 @@ module Workflows
     end
   end
 
-  def go_to_krms_edit_agenda
+  def go_to_manage_co_agendas
     visit MainMenu do |page|
-      page.krms_edit_agenda
+      page.krms_manage_co_agendas
     end
   end
 end
