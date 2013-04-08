@@ -15,14 +15,13 @@ When /^I click on the "(.*)" link$/ do |link|
   on ManageCOAgendas do |page|
     page.rule_edit_links.a(text: link).click
   end
-  sleep 5
+  sleep 3
 end
 
 When /^I select node "(.*)" in the tree$/ do |letter|
   on EditAgenda do |page|
     page.edit_tree_section.span(:text => /.*#{Regexp.escape(letter)}.*/).click
   end
-  sleep 5
 end
 
 Then /^the background color should change to "(.*)"$/ do |color|
@@ -38,7 +37,7 @@ When /^I click the "(.*)" button$/ do |btn|
   on EditAgenda do |page|
     page.send(buttons[btn]).click
   end
-  sleep 7
+  sleep 4
 end
 
 Then /^there should be nothing selected in the node "(.*)" rule dropdown in parent node "(.*)"$/ do |node, parent|
@@ -115,7 +114,7 @@ When /^I select the "(.*)" option from the node "(.*)" rule dropdown in parent n
     id = @editAgenda.find_krms_element("edit_tree",'select',node,parent_node)
     page.edit_tree_section.select(:id => id).select /#{Regexp.escape(rule)}/
   end
-  sleep 5
+  sleep 10
 end
 
 When /^I enter "(.*)" in the "(.*)" field in node "(.*)" in parent node "(.*)"$/ do |cors, field, node, parent_node|
