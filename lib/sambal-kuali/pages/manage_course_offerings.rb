@@ -10,9 +10,9 @@ class ManageCourseOfferings < BasePage
 
   element(:error_message_course_not_found) { |b| b.frm.li(class: "uif-errorMessageItem") }
 
-  element(:previous_course_link){ |b| b.frm.link(id: "u380") } # Persistent ID needed!
-  element(:list_all_course_link){ |b| b.frm.link(id: "u383") } # Persistent ID needed!
-  element(:next_course_link){ |b| b.frm.link(id: "u386") }     # Persistent ID needed!
+  element(:previous_course_link){ |b| b.frm.link(id: "u229") } # Persistent ID needed!
+  element(:list_all_course_link){ |b| b.frm.link(id: "u232") } # Persistent ID needed!
+  element(:next_course_link){ |b| b.frm.link(id: "u235") }     # Persistent ID needed!
 
   element(:term) { |b| b.frm.text_field(name: "termCode") }
   element(:input_code) { |b| b.frm.text_field(name: "inputCode") }
@@ -20,22 +20,14 @@ class ManageCourseOfferings < BasePage
 
   value(:course_title) { |b| b.ao_results_div.h3.text }
 
-  element(:tab_links_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-ManageTheCourseOfferingSection-Tabs_tabs") }
-  element(:view_by_cluster_link) { |b| b.tab_links_div.link(text: /View by Clusters/) }
-  action(:view_by_clusters) { |b| b.view_by_cluster_link.click }
-  element(:view_activities_link) { |b| b.tab_links_div.link(text: /View All Activities/) }
-  action(:view_activities) { |b| b.view_activities_link.click }
-  element(:view_reg_groups_link) { |b| b.tab_links_div.link(text: /View Registration Groups/) }
-  action(:view_reg_groups) { |b| b.view_reg_groups_link.click }
-
   element(:delete_cluster_div) { |b| b.frm.div(id: "ClusterDeleteConfirmationPage") }
   action(:confirm_delete_cluster) {|b| b.delete_cluster_div.button(text: "Delete Cluster").click; b.loading.wait_while_present }
 
-  element(:manage_offering_links_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-CourseOfferingLinks")}
+  element(:manage_offering_links_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-TheCourseOfferingLinks")}
   element(:view_co_details_link) { |b| b.manage_offering_links_div.link(text: "View") }
   element(:edit_course_offering_link) { |b| b.frm.link(id: "edit_co")}
   action(:edit_course_offering) { |b| b.edit_course_offering_link.click; b.loading.wait_while_present(200) }
-  action(:delete_course_offering_link) { |b| b.manage_offering_links_div.link(id: "ActivityOfferingResultSection-deleteOneCoWithLink") }
+  action(:delete_course_offering_link) { |b| b.manage_offering_links_div.link(id: "delete_co") }
   action(:delete_course_offering) { |b| b.delete_course_offering_link.click; b.loading.wait_while_present }
 
   #value(:cross_listed_as) { |b| b.frm.span(id: "u362_span").text }
@@ -61,13 +53,13 @@ class ManageCourseOfferings < BasePage
   element(:add_button) { |b| b.add_activity_popup_div.button }
   action(:complete_add_activity) { |b| b.add_button.click; b.loading.wait_while_present }
 
-  action(:draft_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Draft-AO-ARG") }
+  action(:draft_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Draft-AO-ClusterTab") }
   action(:draft_activity){ |b| b.draft_activity_button.click; b.loading.wait_while_present}
 
-  element(:approve_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Approve-AO-ARG")}
+  element(:approve_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Approve-AO-ClusterTab")}
   action(:approve_activity){ |b| b.approve_activity_button.click; b.loading.wait_while_present}
 
-  element(:delete_aos_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-AO-ARG") }
+  element(:delete_aos_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-AO-ClusterTab") }
   action(:delete_aos) { |b| b.delete_aos_button.click}
 
   element(:add_cluster_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-AddCluster-AO-ClusterTab") }

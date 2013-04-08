@@ -266,14 +266,21 @@ class CourseOffering
 
       page.show
 
-      begin
+    end
+
+    begin
+      on ManageCourseOfferings do |page|
         page.create_co_button.wait_until_present(5)
+      end
+
+      on ManageCourseOfferingList do |page|
         page.target_row(@course).link(text: "Manage").click
         page.loading.wait_while_present
-      rescue Watir::Wait::TimeoutError
-        #means was single CO returned, AO list is already displayed
       end
+    rescue Watir::Wait::TimeoutError
+      #means was single CO returned, AO list is already displayed
     end
+
 
     on ManageCourseOfferings do |page|
       cluster_divs = page.cluster_div_list

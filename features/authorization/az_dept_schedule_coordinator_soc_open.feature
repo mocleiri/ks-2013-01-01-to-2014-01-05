@@ -25,7 +25,6 @@ Feature: Department Schedule Coordinator Authorization SOC state Open
     And I have access to view the activity offering details
     And I have access to edit the course offering
     And I have access to delete the course offering
-    And I have access to manage registration groups
     And I have access to select activity offerings for add, approve, delete
 
   Scenario: AZ 4.1A/Full_open.1A Validate Department Schedule Coordinator access to a course offering not in their admin org (single CO view)
