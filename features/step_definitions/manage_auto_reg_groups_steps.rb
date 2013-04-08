@@ -25,11 +25,9 @@ end
 
 Given /^I have created an additional activity offering cluster for a catalog course offering$/ do
   @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"BSCI425"
-  @course_offering.manage_registration_groups
-  @ao_cluster = make ActivityOfferingCluster
-  @course_offering.add_ao_cluster(@ao_cluster)
-  @ao_cluster.add_unassigned_aos(["A"])
-  @ao_cluster.generate_reg_groups
+  @course_offering.manage
+  ao_cluster = make ActivityOfferingCluster
+  @course_offering.add_ao_cluster(ao_cluster)
 end
 
 
@@ -62,8 +60,7 @@ Given /^there are default registration groups for a course offering$/ do
 end
 
 Given /^I have created an additional activity offering cluster for a course offering$/ do
-  #@course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
-  @course_offering = make CourseOffering, :course=>"CHEM612A", :term=>Rollover::OPEN_SOC_TERM
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
   @course_offering.manage
   ao_cluster = make ActivityOfferingCluster
   @course_offering.add_ao_cluster(ao_cluster)

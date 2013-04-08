@@ -19,8 +19,8 @@ Feature: Copy course offerings - activity offering clusters
   Scenario: Create course offering by copying from a previous term and ensure default activity offering cluster is copied
     Given there are default registration groups for a catalog course offering
     When I create a new course offering in a subsequent term by copying the catalog course offering
-#    Then the activity offering cluster and assigned AOs are copied over with the course offering
-#    And the registration groups are automatically generated
+    Then the activity offering cluster and assigned AOs are copied over with the course offering
+    And the registration groups are automatically generated
 
   Scenario: Create course offering by copying from a previous term and ensure constrained activity offering clusters are copied
     Given I have created an additional activity offering cluster for a catalog course offering
