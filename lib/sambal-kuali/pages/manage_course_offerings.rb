@@ -237,9 +237,9 @@ class ManageCourseOfferings < BasePage
   def add_ao input_format, input_quantity
     format.select(input_format)
     loading.wait_while_present(120)
-    activity_type.select(activity_type.options[1].text)
+    activity_type.select(activity_type.options[0].text)
     loading.wait_while_present(120)
-    cluster.select(cluster.options[1].text)
+    cluster.select(cluster.options[0].text)
     loading.wait_while_present(120)
     quantity.set(input_quantity)
     complete_add_activity
