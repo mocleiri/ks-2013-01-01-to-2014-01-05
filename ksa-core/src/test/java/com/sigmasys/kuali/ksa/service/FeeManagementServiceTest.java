@@ -1896,7 +1896,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 
         // Insert association table records:
         for (KeyPair kp : studentData) {
-            Query query = em.createNativeQuery("insert into kssa_acnt_kypr (acnt_id_fk, kypr_id_fk) values(:accountId, :keypairId)")
+            Query query = em.createNativeQuery("insert into ksa.kssa_acnt_kypr (acnt_id_fk, kypr_id_fk) values(:accountId, :keypairId)")
                     .setParameter("accountId", accountId).setParameter("keypairId", kp.getId());
 
             query.executeUpdate();
@@ -1942,7 +1942,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 
         // Insert association table records:
         for (PeriodKeyPair pkp : periodData) {
-            Query query = em.createNativeQuery("insert into kssa_acnt_kypr (acnt_id_fk, kypr_id_fk) values(:accountId, :keypairId)")
+            Query query = em.createNativeQuery("insert into ksa.kssa_acnt_kypr (acnt_id_fk, kypr_id_fk) values(:accountId, :keypairId)")
                     .setParameter("accountId", accountId).setParameter("keypairId", pkp.getId());
 
             query.executeUpdate();

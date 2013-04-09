@@ -209,5 +209,23 @@
         </taglib>
     </jsp-config>
 
+    <resource-env-ref>
+        <description>KSA XA DataSource</description>
+        <resource-env-ref-name>ksa</resource-env-ref-name>
+        <resource-env-ref-type>javax.sql.XADataSource</resource-env-ref-type>
+    </resource-env-ref>
+
+    <resource-env-ref>
+        <description>KS XA DataSource</description>
+        <resource-env-ref-name>ks</resource-env-ref-name>
+        <resource-env-ref-type>javax.sql.XADataSource</resource-env-ref-type>
+    </resource-env-ref>
+
+    <resource-env-ref>
+        <description>Rice XA DataSource</description>
+        <resource-env-ref-name>rice</resource-env-ref-name>
+        <resource-env-ref-type>javax.sql.XADataSource</resource-env-ref-type>
+    </resource-env-ref>
+
 
 </web-app>

@@ -1370,7 +1370,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // Since associations between Account and KeyPair/PeriodKeyPair are not defined
         // neither in Account nor KeyPair/PeriodKeyPair, we have to load them using
         // the physical association table join.
-        String sql = "select kp.* from kssa_kypr kp, kssa_acnt_kypr akp where kp.id = akp.kypr_id_fk and akp.acnt_id_fk = :accountId and kp.type = :keypairType";
+        String sql = "select kp.* from ksa.kssa_kypr kp, ksa.kssa_acnt_kypr akp where kp.id = akp.kypr_id_fk " +
+                " and akp.acnt_id_fk = :accountId and kp.type = :keypairType";
         Query query = em.createNativeQuery(sql, resultClass).setParameter("accountId", accountId).setParameter("keypairType", keyPairType.getCode());
         return query.getResultList();
     }
@@ -1472,7 +1473,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     private void createKeyPairAssociationRecord(String accountId, KeyPair keyPair) throws Exception {
         // Create and execute an INSERT statement:
-        Query query = em.createNativeQuery("insert into kssa_acnt_kypr (acnt_id_fk, kypr_id_fk) values (:accountId, :keypairId)");
+        Query query = em.createNativeQuery("insert into ksa.kssa_acnt_kypr (acnt_id_fk, kypr_id_fk) values (:accountId, :keypairId)");
         query.setParameter("accountId", accountId).setParameter("keypairId", keyPair.getId());
 
         query.executeUpdate();
@@ -1498,7 +1499,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     private void removeKeyPairAssociationRecord(String accountId, KeyPair keyPair) throws Exception {
         // Create an execute a DELETE statement:
-        Query query = em.createNativeQuery("delete from kssa_acnt_kypr where acnt_id_fk = :accountId and kypr_id_fk = :keypairId")
+        Query query = em.createNativeQuery("delete from ksa.kssa_acnt_kypr where acnt_id_fk = :accountId and kypr_id_fk = :keypairId")
                 .setParameter("accountId", accountId).setParameter("keypairId", keyPair.getId());
 
         query.executeUpdate();

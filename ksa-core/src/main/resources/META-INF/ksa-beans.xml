@@ -51,7 +51,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
     <bean id="ksaEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="ksa"/>
-        <property name="dataSource" ref="ksaDataSource"/>
         <property name="persistenceXmlLocation" value="classpath:/META-INF/ksa-persistence.xml"/>
         <property name="persistenceUnitPostProcessors" ref="ksaEntityFinder"/>
         <property name="loadTimeWeaver" ref="loadTimeWeaver"/>
@@ -59,7 +58,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
     <bean id="ksEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="ks"/>
-        <property name="dataSource" ref="ksDataSource"/>
         <property name="persistenceXmlLocation" value="classpath:/META-INF/ksa-persistence.xml"/>
         <property name="persistenceUnitPostProcessors" ref="ksEntityFinder"/>
         <property name="loadTimeWeaver" ref="loadTimeWeaver"/>
@@ -67,7 +65,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
     <bean id="riceEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="rice"/>
-        <property name="dataSource" ref="riceDataSource"/>
         <property name="persistenceXmlLocation" value="classpath:/META-INF/ksa-persistence.xml"/>
         <property name="persistenceUnitPostProcessors" ref="riceEntityFinder"/>
         <property name="loadTimeWeaver" ref="loadTimeWeaver"/>

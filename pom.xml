@@ -489,6 +489,7 @@
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
             <version>${jta.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Spring Dependencies -->
@@ -625,25 +626,36 @@
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jdbc</artifactId>
             <version>${atomikos.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jms</artifactId>
+            <version>${atomikos.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jta</artifactId>
             <version>${atomikos.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-api</artifactId>
             <version>${atomikos.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions</artifactId>
             <version>${atomikos.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>atomikos-util</artifactId>
+            <scope>provided</scope>
             <version>${atomikos.version}</version>
         </dependency>
 

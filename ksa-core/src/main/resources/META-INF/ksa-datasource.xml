@@ -9,9 +9,10 @@
     <bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp"/>
 
     <!-- Atomikos JTA TransactionManager implementation -->
-    <bean id="atomikosTransactionManager"
-          class="com.sigmasys.kuali.ksa.service.jta.AtomikosTransactionManagerLookup"
-          factory-method="getTransactionManager"/>
+    <bean id="atomikosTransactionManager" class="com.atomikos.icatch.jta.UserTransactionManager"
+          init-method="init" destroy-method="close">
+        <property name="forceShutdown" value="false"/>
+    </bean>
 
     <!--  Spring JTA TransactionManager -->
     <bean id="transactionManager" class="com.sigmasys.kuali.ksa.service.jta.JtaTransactionManager">
@@ -19,36 +20,25 @@
         <property name="transactionManager" ref="atomikosTransactionManager"/>
     </bean>
 
-
-    <!-- XA data source definitions -->
-    <bean id="xaDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" abstract="true">
-        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
-        <property name="minPoolSize" value="10"/>
-        <property name="poolSize" value="10"/>
-        <property name="maxPoolSize" value="10"/>
-        <property name="testQuery" value="select 1 from dual"/>
+    <bean id="abstractDataSource" class="org.springframework.jndi.JndiObjectFactoryBean" abstract="true">
+        <property name="lookupOnStartup" value="false"/>
+        <property name="expectedType" value="com.atomikos.jdbc.AtomikosDataSourceBean"/>
+        <property name="proxyInterface" value="javax.sql.DataSource"/>
     </bean>
 
-    <bean id="ksaDataSource" class="com.sigmasys.kuali.ksa.service.jta.AtomikosDataSourceBean" parent="xaDataSource">
-        <property name="uniqueResourceName" value="ksaDataSource"/>
-        <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
-        <property name="user" value="ksa"/>
-        <property name="password" value="ksa123"/>
+    <!-- KSA DataSource definition -->
+    <bean id="ksaDataSource" class="org.springframework.jndi.JndiObjectFactoryBean" parent="abstractDataSource">
+        <property name="jndiName" value="java:comp/env/ksa"/>
     </bean>
 
-    <bean id="ksDataSource" class="com.sigmasys.kuali.ksa.service.jta.AtomikosDataSourceBean" parent="xaDataSource">
-        <property name="uniqueResourceName" value="ksDataSource"/>
-        <property name="url" value="${ks.url}"/>
-        <property name="user" value="${ks.user}"/>
-        <property name="password" value="${ks.password}"/>
+    <!-- Rice DataSource definition -->
+    <bean id="riceDataSource" class="org.springframework.jndi.JndiObjectFactoryBean" parent="abstractDataSource">
+        <property name="jndiName" value="java:comp/env/rice"/>
     </bean>
 
-    <bean id="riceDataSource" class="com.sigmasys.kuali.ksa.service.jta.AtomikosDataSourceBean" parent="xaDataSource">
-        <property name="uniqueResourceName" value="riceDataSource"/>
-        <property name="url" value="${rice.url}"/>
-        <property name="user" value="${rice.user}"/>
-        <property name="password" value="${rice.password}"/>
+    <!-- Rice DataSource definition -->
+    <bean id="ksDataSource" class="org.springframework.jndi.JndiObjectFactoryBean" parent="abstractDataSource">
+        <property name="jndiName" value="java:comp/env/ks"/>
     </bean>
-
 
 </beans>

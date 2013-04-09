@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+       default-lazy-init="true">
+
+    <!-- Atomikos UserTransaction implementation -->
+    <bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp"/>
+
+    <!-- Atomikos JTA TransactionManager implementation -->
+    <bean id="atomikosTransactionManager"
+          class="com.sigmasys.kuali.ksa.service.jta.AtomikosTransactionManagerLookup"
+          factory-method="getTransactionManager"/>
+
+    <!--  Spring JTA TransactionManager -->
+    <bean id="transactionManager" class="com.sigmasys.kuali.ksa.service.jta.JtaTransactionManager">
+        <property name="userTransaction" ref="atomikosUserTransaction"/>
+        <property name="transactionManager" ref="atomikosTransactionManager"/>
+    </bean>
+
+
+    <!-- XA data source definitions -->
+    <bean id="xaDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" abstract="true">
+        <property name="xaDataSourceClassName" value="oracle.jdbc.xa.client.OracleXADataSource"/>
+        <property name="minPoolSize" value="10"/>
+        <property name="poolSize" value="10"/>
+        <property name="maxPoolSize" value="10"/>
+        <property name="testQuery" value="select 1 from dual"/>
+    </bean>
+
+    <bean id="ksaDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" parent="xaDataSource">
+        <property name="uniqueResourceName" value="ksaDataSource"/>
+        <property name="xaProperties">
+            <props>
+                <prop key="user">ksa</prop>
+                <prop key="password">ksa123</prop>
+                <prop key="URL">jdbc:oracle:thin:@localhost:1521:XE</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="ksDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" parent="xaDataSource">
+        <property name="uniqueResourceName" value="ksDataSource"/>
+        <property name="xaProperties">
+            <props>
+                <prop key="user">ks</prop>
+                <prop key="password">ks123</prop>
+                <prop key="URL">jdbc:oracle:thin:@localhost:1521:XE</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="riceDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" parent="xaDataSource">
+        <property name="uniqueResourceName" value="riceDataSource"/>
+        <property name="xaProperties">
+            <props>
+                <prop key="user">rice</prop>
+                <prop key="password">rice123</prop>
+                <prop key="URL">jdbc:oracle:thin:@localhost:1521:XE</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="jndiBinder" class="com.sigmasys.kuali.ksa.util.LocalJndiBinder" lazy-init="false">
+        <constructor-arg>
+            <map>
+                <entry key="java:comp/env/TransactionManager" value-ref="atomikosTransactionManager"/>
+                <entry key="java:comp/env/UserTransaction" value-ref="atomikosTransactionManager"/>
+                <entry key="javax.transaction.TransactionManager" value-ref="atomikosTransactionManager"/>
+                <entry key="javax.transaction.UserTransaction" value-ref="atomikosTransactionManager"/>
+                <entry key="ksa" value-ref="ksaDataSource"/>
+                <entry key="ks" value-ref="ksDataSource"/>
+                <entry key="rice" value-ref="riceDataSource"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+</beans>

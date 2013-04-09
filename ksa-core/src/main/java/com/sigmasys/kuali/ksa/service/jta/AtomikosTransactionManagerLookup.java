@@ -34,8 +34,7 @@ public class AtomikosTransactionManagerLookup implements TransactionManagerLooku
 
     @Override
     public String getUserTransactionName() {
-        //return "java:comp/UserTransaction";
-        return null;
+        return "java:comp/env/TransactionManager";
     }
 
 

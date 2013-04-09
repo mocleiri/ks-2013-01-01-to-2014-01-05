@@ -24,6 +24,8 @@ public class LocalJndiBinder implements Ordered {
 
     private static final Log logger = LogFactory.getLog(LocalJndiBinder.class);
 
+    private static int REGISTRY_PORT_NUMBER = Registry.REGISTRY_PORT;
+
     private static final AtomicBoolean isInitialized = new AtomicBoolean();
 
     private static InitialContext initialContext;
@@ -38,11 +40,11 @@ public class LocalJndiBinder implements Ordered {
 
         try {
 
-            LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+            LocateRegistry.createRegistry(REGISTRY_PORT_NUMBER);
 
             Properties jndiEnv = new Properties();
             jndiEnv.put(Context.INITIAL_CONTEXT_FACTORY, com.sun.jndi.rmi.registry.RegistryContextFactory.class.getName());
-            jndiEnv.put(Context.PROVIDER_URL, "rmi://localhost:" + Registry.REGISTRY_PORT);
+            jndiEnv.put(Context.PROVIDER_URL, "rmi://localhost:" + REGISTRY_PORT_NUMBER);
 
             // Adding JNDI props to system properties to make them visible to
             // all JNDI clients within the JVM
@@ -58,6 +60,8 @@ public class LocalJndiBinder implements Ordered {
 
         } catch (RemoteException t) {
             logger.error(t.getMessage(), t);
+        } finally {
+            REGISTRY_PORT_NUMBER++;
         }
 
     }

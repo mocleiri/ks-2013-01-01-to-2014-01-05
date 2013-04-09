@@ -12,6 +12,8 @@
 
     <param name="load.dictionary.external.messages">false</param>
 
+    <param name="userTransaction.jndi.location">java:comp/env/UserTransaction</param>
+
     <!--  log4j Settings -->
     <param name="log4j.reload.minutes">5</param>
     <param name="log4j.settings.path">classpath:/log4j.properties</param>
