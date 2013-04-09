@@ -12,8 +12,8 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   # Co-located
   element(:colocated_checkbox) { |b| b.frm.checkbox(id: "is_co_located_control") }
   action(:select_colocated_checkbox) { |b| b.colocated_checkbox.click(); b.loading.wait_while_present }
-  element(:colocated_co_input_field) { |b| b.frm.text_field(id: "u285_add_control") }
-  element(:colocated_ao_input_field) { |b| b.frm.text_field(id: "u303_add_control") }
+  element(:colocated_co_input_field) { |b| b.frm.text_field(id: "ActivityOfferingEdit-CoLocatedActivities-CoInputField_add_control") }
+  element(:colocated_ao_input_field) { |b| b.frm.text_field(id: "ActivityOfferingEdit-CoLocatedActivities-AoInputField_add_control") }
   element(:colocated_add_button) { |b| b.frm.button(id: "ActivityOfferingEdit-CoLocatedActivities_add") }
   action(:click_colocated_add_button) { |b| b.colocated_add_button.click(); b.loading.wait_while_present; b.colocated_co_input_field.wait_until_present; b.colocated_ao_input_field.wait_until_present; b.colocated_add_button.wait_until_present }
   element(:jointly_share_enrollment_radio) { |b| b.radio(id: "share_seats_control_0") }
