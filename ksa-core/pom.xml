@@ -79,7 +79,7 @@
                 <version>2.3</version>
                 <configuration>
                     <webXml>${basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
-                    <packagingExcludes>WEB-INF/lib/transactions*.jar,WEB-INF/lib/jta*.jar,WEB-INF/lib/log4j*.jar,WEB-INF/lib/ojdbc*.jar</packagingExcludes>
+                    <packagingExcludes>WEB-INF/lib/transactions*.jar,WEB-INF/lib/jta*.jar,WEB-INF/lib/ojdbc*.jar</packagingExcludes>
                 </configuration>
             </plugin>
 
