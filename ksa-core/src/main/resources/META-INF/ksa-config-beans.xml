@@ -24,13 +24,11 @@
     </bean>
 
     <!-- Configure KSA-specific implementations of Rice services/beans here -->
-    <bean id="coreConfigurer" class="org.kuali.rice.core.impl.config.module.CoreConfigurer">
+    <bean id="coreConfigurer" class=" com.sigmasys.kuali.ksa.config.CoreConfigurer">
         <property name="dataSource" ref="riceDataSource"/>
         <property name="serverDataSource" ref="riceDataSource"/>
         <property name="nonTransactionalDataSource" ref="riceDataSource"/>
-        <property name="transactionManager" ref="atomikosTransactionManager"/>
-        <property name="userTransaction" ref="atomikosUserTransaction"/>
-        <property name="platform" value="Oracle"/>
+        <property name="jtaTransactionManager" ref="transactionManager"/>
     </bean>
 
     <bean id="ksbConfigurer" class="com.sigmasys.kuali.ksa.config.KsbConfigurer" depends-on="coreConfigurer">

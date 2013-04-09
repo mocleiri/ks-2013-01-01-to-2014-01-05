@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
 
+import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.LocalizedString;
 import com.sigmasys.kuali.ksa.model.LocalizedStringId;
 import com.sigmasys.kuali.ksa.service.LocalizationService;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,9 +31,12 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 @Service("localizationService")
 @Transactional(readOnly = true)
-public class LocalizationServiceImpl extends GenericPersistenceService implements LocalizationService {
+public class LocalizationServiceImpl implements LocalizationService {
 
     private static final Log logger = LogFactory.getLog(LocalizationServiceImpl.class);
+
+    @PersistenceContext(unitName = Constants.KSA_PERSISTENCE_UNIT)
+    protected EntityManager em;
 
     @Autowired
     private XliffParser xliffParser;
@@ -69,7 +75,7 @@ public class LocalizationServiceImpl extends GenericPersistenceService implement
     private LocalizedString persistTransUnit(TransUnit transUnit, String locale, ImportType importType, boolean isSource) {
 
         LocalizedStringId id = new LocalizedStringId(transUnit.getId(), locale);
-        LocalizedString localizedString = getEntity(id, LocalizedString.class);
+        LocalizedString localizedString = em.find(LocalizedString.class, id);
         boolean isOverridden = (localizedString != null);
 
         if (localizedString != null) {
@@ -94,7 +100,9 @@ public class LocalizationServiceImpl extends GenericPersistenceService implement
         localizedString.setValue(isSource ? transUnit.getSource() : transUnit.getTarget());
         localizedString.setMaxLength(transUnit.getMaxBytes());
         localizedString.setOverridden(isOverridden);
-        persistEntity(localizedString);
+
+        em.persist(localizedString);
+
         return localizedString;
     }
 

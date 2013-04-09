@@ -5,17 +5,15 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
        default-lazy-init="true">
 
-    <!-- Atomikos UserTransaction implementation -->
-    <bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp"/>
 
-    <!-- Atomikos JTA TransactionManager implementation -->
-    <bean id="atomikosTransactionManager"
-          class="com.sigmasys.kuali.ksa.service.jta.AtomikosTransactionManagerLookup"
-          factory-method="getTransactionManager"/>
+    <!-- Atomikos JTA TransactionManager and UserTransaction implementation -->
+    <bean id="atomikosTransactionManager" class="com.atomikos.icatch.jta.UserTransactionManager">
+        <property name="forceShutdown" value="false"/>
+    </bean>
 
     <!--  Spring JTA TransactionManager -->
     <bean id="transactionManager" class="com.sigmasys.kuali.ksa.service.jta.JtaTransactionManager">
-        <property name="userTransaction" ref="atomikosUserTransaction"/>
+        <property name="userTransaction" ref="atomikosTransactionManager"/>
         <property name="transactionManager" ref="atomikosTransactionManager"/>
     </bean>
 
@@ -66,7 +64,7 @@
         <constructor-arg>
             <map>
                 <entry key="java:comp/env/TransactionManager" value-ref="atomikosTransactionManager"/>
-                <entry key="java:comp/env/UserTransaction" value-ref="atomikosTransactionManager"/>
+                <entry key="java:comp/UserTransaction" value-ref="atomikosTransactionManager"/>
                 <entry key="javax.transaction.TransactionManager" value-ref="atomikosTransactionManager"/>
                 <entry key="javax.transaction.UserTransaction" value-ref="atomikosTransactionManager"/>
                 <entry key="ksa" value-ref="ksaDataSource"/>

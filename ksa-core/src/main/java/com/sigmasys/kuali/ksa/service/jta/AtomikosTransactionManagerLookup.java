@@ -4,6 +4,7 @@ package com.sigmasys.kuali.ksa.service.jta;
 import com.atomikos.icatch.jta.UserTransactionManager;
 import org.hibernate.transaction.TransactionManagerLookup;
 
+import javax.naming.InitialContext;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import java.util.Properties;
@@ -16,27 +17,27 @@ import java.util.Properties;
  */
 public class AtomikosTransactionManagerLookup implements TransactionManagerLookup {
 
+    private static final String USER_TRANSACTION_JNDI_NAME = "java:comp/UserTransaction";
+    private static final String TRANSACTION_MANAGER_JNDI_NAME = "java:comp/env/TransactionManager";
 
-    private static final UserTransactionManager transactionManager = new UserTransactionManager();
 
-    static {
-        transactionManager.setForceShutdown(false);
-    }
-
-    public static TransactionManager getTransactionManager() {
-        return transactionManager;
-    }
-
+    /**
+     * @see org.hibernate.transaction.TransactionManagerLookup#getTransactionManager(Properties)
+     */
     @Override
     public TransactionManager getTransactionManager(Properties props) {
-        return transactionManager;
+        try {
+            InitialContext initialContext = new InitialContext();
+            return (UserTransactionManager) initialContext.lookup(TRANSACTION_MANAGER_JNDI_NAME);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not obtain Atomikos transaction manager instance", e);
+        }
     }
 
     @Override
     public String getUserTransactionName() {
-        return "java:comp/env/TransactionManager";
+        return USER_TRANSACTION_JNDI_NAME;
     }
-
 
     /**
      * Determine an identifier for the given transaction appropriate for use in caching/lookup usages.
