@@ -21,8 +21,7 @@ class ActivityOfferingCluster
   include Workflows
 
   #generally set using options hash
-  attr_accessor :is_constrained,
-                :private_name,
+  attr_accessor :private_name,
                 :published_name,
                 :is_valid,
                 :expected_msg,
@@ -30,31 +29,25 @@ class ActivityOfferingCluster
                 :assigned_ao_list,
                 :ao_list
 
-  alias_method :constrained?, :is_constrained
   alias_method :valid?, :is_valid
 
   # provides default data:
   #  defaults = {
-  #    :is_constrained=>true,
   #    :private_name=>"#{random_alphanums(5).strip}_pri",
   #    :published_name=>"#{random_alphanums(5).strip}_pub",
   #    :is_valid=>true,
   #    :expected_msg=>"",
-  #    :assigned_ao_list=>[],
-  #    :to_assign_ao_list=>["A"]
+  #    :ao_list=>[]
   #  }
   # initialize is generally called using TestFactory Foundry .make or .create methods
   def initialize(browser, opts={})
     @browser = browser
 
     defaults = {
-        :is_constrained=>true,
         :private_name=>"#{random_alphanums(5).strip}_pri",
         :published_name=>"#{random_alphanums(5).strip}_pub",
         :is_valid=>true,
         :expected_msg=>"",
-        :assigned_ao_list=>[],
-        :to_assign_ao_list=>["A"],
         :ao_list =>[]
     }
     options = defaults.merge(opts)
@@ -63,7 +56,6 @@ class ActivityOfferingCluster
 
   # while on manage reg groups page, sets up activity offering cluster based on class attributes
   def create
-    if @is_constrained
       on ManageCourseOfferings do |page|
         page.add_cluster
         #page.format_aoc_select -- use default format
@@ -71,68 +63,23 @@ class ActivityOfferingCluster
         page.published_name_add.set @published_name
         page.complete_add_aoc
       end
-    else
-      @private_name = "Default Cluster"
-      @public_name = @private_name
-    end
-
   end
 
-  # moves activity offerings from unassigned list to cluster
-  #
-  # @param ao_list [Array of strings] list of acivity offering codes
-  def add_unassigned_aos(ao_list=[])
-    @to_assign_ao_list = ao_list unless ao_list == []
+  def init_existing(cluster_div)
+    on ManageCourseOfferings do |page|
+      assigned_ao_list = page.get_cluster_div_assigned_ao_list(cluster_div)
 
-    on ManageRegistrationGroups do |page|
-      @to_assign_ao_list.each do |ao_code|
-        page.select_unassigned_ao_row(ao_code)
-        @assigned_ao_list << ao_code
-      end
-      page.ao_cluster_select.select @private_name
-      if @to_assign_ao_list.length != 0
-        page.ao_cluster_assign_button
-        while true
-          begin
-            sleep 1
-            wait_until { page.get_cluster_ao_row(@private_name, @to_assign_ao_list[0]).exists? }
-            break
-          rescue Selenium::WebDriver::Error::StaleElementReferenceError
-            puts "rescued"
-          end
-        end
-      end
-      @to_assign_ao_list = []
-    end
-  end
+      assigned_ao_list.each do |ao|
 
-  # generates unconstrained reg groups and default cluster
-  #
-  # all activity offerings are automatically assigned to the cluster
-  def generate_unconstrained_reg_groups
-    @to_assign_ao_list = []
-    on ManageRegistrationGroups do |page|
-      page.generate_unconstrained_reg_groups
-      while true
-        begin
-          sleep 1
-          wait_until(10) { page.cluster_list_div.exists? }
-          #wait_until { page.cluster_list_item_div(@private_name).exists? }
-          break
-        rescue Watir::Wait::TimeoutError #in case generation fails
-          break
-        rescue Selenium::WebDriver::Error::StaleElementReferenceError
-          puts "rescued - generate_unconstrained_reg_groups"
-        end
+        ao_obj_temp = make ActivityOffering#, :code => ao, :activity_type => page.get_ao_type(temp_aoc.private_name, ao), :max_enrollment => page.get_max_enr(temp_aoc.private_name, ao)
+        ao_obj_temp.init_existing(page.get_cluster_div_ao_row(cluster_div,ao))
+        @ao_list.push(ao_obj_temp)
       end
     end
   end
 
-  # generates reg groups for the cluster
-  def generate_reg_groups
-    on ManageRegistrationGroups do |page|
-      page.cluster_generate_reg_groups(@private_name)
-    end
+  def add_activity_offering(ao_object)
+    @ao_list << ao_object.create
   end
 
   # moves activity offering from cluster to target cluster

@@ -293,6 +293,15 @@ class ManageCourseOfferings < BasePage
     div_list
   end
 
+  def target_cluster(private_name)
+    #TODO - add code to cache hash of divs
+    cluster_div_list.each do |div_element|
+      if cluster_div_private_name(div_element) == private_name then
+        return div_element
+      end
+    end
+  end
+
   def cluster_div_private_name(cluster_div_element)
     #cluster_div_element.fieldset.label.text[/(?<=Cluster: )\S+/]
     tmp_text = cluster_div_element.fieldset.label.text
@@ -301,60 +310,53 @@ class ManageCourseOfferings < BasePage
     tmp_text[9..end_of_private_name]
   end
 
-  def cluster_list_item_div(private_name)
-    cluster_div_list.each do |div_element|
-      if cluster_div_private_name(div_element) == private_name then
-        return div_element
-      end
-    end
-    #img_id = cluster_list_div.span(text: /#{Regexp.escape("#{private_name}")}/).image().id
-    #div_id = img_id[0..-5]    #eg changes  u532_line0_exp to u532_line0
-    #cluster_list_div.div(id: "#{div_id}")
+  def cluster_name_text(private_name)
+    cluster_div_name_text(target_cluster(private_name))
   end
 
-  def cluster_name_text(private_name)
-    cluster_list_item_div(private_name).span().text()
+  def cluster_div_name_text(cluster_div)
+    cluster_div.span().text()
   end
 
   def cluster_published_name(private_name)
-    cluster_list_item_div(private_name).span().text[/(?<=\()\S+(?=\))/] #get the text between parenthesis
-                                                                        #full_name = cluster_list_item_div(private_name).span().text()
-                                                                        #full_name.slice(full_name.index('(')+1..-2)
+    target_cluster(private_name).span().text[/(?<=\()\S+(?=\))/] #get the text between parenthesis
+    #full_name = cluster_list_item_div(private_name).span().text()
+    #full_name.slice(full_name.index('(')+1..-2)
   end
 
   def remove_cluster(private_name)
-    cluster_list_item_div(private_name).link(text: "Delete").click
+    target_cluster(private_name).link(text: "Delete").click
     loading.wait_while_present
   end
 
   def rename_cluster(private_name)
-    cluster_list_item_div(private_name).link(text: "Rename").click
+    target_cluster(private_name).link(text: "Rename").click
     loading.wait_while_present
   end
 
   def get_cluster_status_msg(private_name)
-    cluster_list_item_div(private_name).div(id: /KS-ManageRegistrationGroups-StateAndActionLinks_line/).span.text()
+    target_cluster(private_name).div(id: /KS-ManageRegistrationGroups-StateAndActionLinks_line/).span.text()
   end
 
   def get_cluster_first_error_msg(private_name)
-    cluster_list_item_div(private_name).li(class: "uif-errorMessageItem").text()
+    target_cluster(private_name).li(class: "uif-errorMessageItem").text()
   end
 
   def get_cluster_error_msgs(private_name)
     msg_list = []
-    cluster_list_item_div(private_name).ul(class: "uif-validationMessagesList").lis(class:  "uif-errorMessageItem").each do |li|
+    target_cluster(private_name).ul(class: "uif-validationMessagesList").lis(class:  "uif-errorMessageItem").each do |li|
       msg_list <<  li.text()
     end
     msg_list.to_s
   end
 
   def get_cluster_first_warning_msg(private_name)
-    cluster_list_item_div(private_name).li(class: "uif-warningMessageItem").text()
+    target_cluster(private_name).li(class: "uif-warningMessageItem").text()
   end
 
   def get_cluster_warning_msgs(private_name)
     msg_list = []
-    cluster_list_item_div(private_name).uls(class: "uif-validationMessagesList").each do |ul|
+    target_cluster(private_name).uls(class: "uif-validationMessagesList").each do |ul|
       ul.lis(class:  "uif-warningMessageItem").each do |li|
         msg_list <<  li.text()
       end
@@ -363,13 +365,17 @@ class ManageCourseOfferings < BasePage
   end
 
   def get_cluster_ao_row(private_name, ao_code)
-    cluster_list_item_div(private_name).table.row(text: /\b#{Regexp.escape(ao_code)}\b/)
+    get_cluster_div_ao_row(target_cluster(private_name),ao)
   end
 
-  def get_cluster_assigned_ao_list(private_name)
+  def get_cluster_div_ao_row(cluster_div, ao_code)
+    cluster_div.table.row(text: /\b#{Regexp.escape(ao_code)}\b/)
+  end
+
+  def get_cluster_div_assigned_ao_list(cluster_div)
     assigned_ao_list = []
 
-    cluster_ao_table = cluster_list_item_div(private_name).table
+    cluster_ao_table = cluster_div.table
     if cluster_ao_table.exists? then
       cluster_ao_table.rows[1..-1].each do |row|
         assigned_ao_list << row.cells[AO_CODE].text
@@ -381,31 +387,40 @@ class ManageCourseOfferings < BasePage
     assigned_ao_list
   end
 
+  def get_cluster_assigned_ao_list(private_name)
+    get_cluster_div_assigned_ao_list(target_cluster(private_name))
+  end
+
   def select_cluster_for_ao_move(source_private_name,target_private_name)
-    cluster_list_item_div(source_private_name).select().select(target_private_name)
+    target_cluster(source_private_name).select().select(target_private_name)
   end
 
   def get_ao_type(private_name, ao_code)
-    cluster_list_item_div(private_name).table.row(text: /\b#{Regexp.escape(ao_code)}\b/).cells[AO_TYPE].text
+    target_cluster(private_name).table.row(text: /\b#{Regexp.escape(ao_code)}\b/).cells[AO_TYPE].text
+  end
+
+  def get_ao_row(cluster_div,ao_code)
+    cluster_div.table.row(text: /\b#{Regexp.escape(ao_code)}\b/)
   end
 
   def get_max_enr(private_name, ao_code)
-    cluster_list_item_div(private_name).table.row(text: /\b#{Regexp.escape(ao_code)}\b/).cells[AO_MAX_ENR].text
+    target_cluster(private_name).table.row(text: /\b#{Regexp.escape(ao_code)}\b/).cells[AO_MAX_ENR].text
   end
 
   def move_ao_from_cluster_submit(private_name)
-    cluster_list_item_div(private_name).button(id: /move_ao_button_line/).click
+    target_cluster(private_name).button(id: /move_ao_button_line/).click
     loading.wait_while_present
   end
 
   def view_cluster_reg_groups(private_name)
-    cluster_list_item_div(private_name).link(text: /View Registration Groups/).click
+    target_cluster(private_name).link(text: /View Registration Groups/).click
   end
 
   def get_cluster_reg_groups_list(private_name)
+    #TODO - FIXME this is not returning the Reg Groups
     assigned_ao_list = []
 
-    cluster_ao_table = cluster_list_item_div(private_name).table
+    cluster_ao_table = target_cluster(private_name).table
     if cluster_ao_table.exists? then
       cluster_ao_table.rows[1..-1].each do |row|
         assigned_ao_list << row.cells[1].text

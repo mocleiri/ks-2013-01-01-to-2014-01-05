@@ -119,6 +119,11 @@ class ActivityOffering
       edit(init)
     end
 
+    def init_existing(ao_table_row)
+      @code =  ao_table_row.cells[ManageCourseOfferings::AO_CODE].text
+      @activity_type = ao_table_row.cells[ManageCourseOfferings::AO_TYPE].text
+    end
+
     #navigates activity offering edit page and updates activity offering based on class attributes
     # @example - must always call save
     #  @activity_offering.edit :honors_course=> true

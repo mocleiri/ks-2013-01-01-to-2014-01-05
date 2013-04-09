@@ -281,35 +281,31 @@ class CourseOffering
       #means was single CO returned, AO list is already displayed
     end
 
-
+    cluster_divs = []
     on ManageCourseOfferings do |page|
       cluster_divs = page.cluster_div_list
-      if cluster_divs.length == 0
-        @ao_obj_list= []
-        @ao_list = []
-        @activity_offering_cluster_list = []
-      else
-        @activity_offering_cluster_list = []
-        cluster_divs.each do |cluster_div|
-          temp_aoc = make ActivityOfferingCluster, :private_name => page.cluster_div_private_name(cluster_div)
-          temp_aoc.assigned_ao_list = page.get_cluster_assigned_ao_list(temp_aoc.private_name)
+    end
 
-          @ao_list << temp_aoc.assigned_ao_list
+    if cluster_divs.length == 0
+      @ao_obj_list= []
+      @ao_list = []
+      @activity_offering_cluster_list = []
+    else
+      @activity_offering_cluster_list = []
+      cluster_divs.each do |cluster_div|
+        temp_aoc = make ActivityOfferingCluster
+        temp_aoc.init_existing(cluster_div)
 
-          temp_aoc.assigned_ao_list.each do |ao|
-            ao_obj_temp = make ActivityOffering, :code => ao, :activity_type => page.get_ao_type(temp_aoc.private_name, ao), :max_enrollment => page.get_max_enr(temp_aoc.private_name, ao)
-            temp_aoc.ao_list.push(ao_obj_temp)
-          end
-          @activity_offering_cluster_list.push(temp_aoc)
-        end
-        puts "ao list #{@ao_list}"
-        @activity_offering_cluster_list.each do |cluster|
-          puts "cluster name: #{cluster.private_name}"
-          cluster.ao_list.each do |ao|
-            puts "Assigned AOs: #{ao.code}"
-          end
+        @activity_offering_cluster_list.push(temp_aoc)
+      end
+      puts "ao list #{@ao_list}"
+      @activity_offering_cluster_list.each do |cluster|
+        puts "cluster name: #{cluster.private_name}"
+        cluster.ao_list.each do |ao|
+          puts "Assigned AOs: #{ao.code}"
         end
       end
+
 
     end
   end
@@ -552,15 +548,6 @@ class CourseOffering
     @activity_offering_cluster_list.delete_if{|x| x.private_name == ao_cluster.private_name}
   end
 
-  def expected_unassigned_ao_list
-    expected_unassigned = @ao_list
-    @activity_offering_cluster_list.each do |cluster|
-      expected_unassigned = expected_unassigned - cluster.assigned_ao_list
-    end
-    expected_unassigned.delete_if { |id| id.strip == "" }
-    expected_unassigned
-  end
-
   def create_from_existing_course(course, term)
     pre_copy_co_list = []
     post_copy_co_list = []
@@ -689,37 +676,39 @@ class CourseOffering
     end
   end
 
-  def cleanup_all_ao_clusters
-    existing_cluster_list = []
-    on ManageRegistrationGroups do |page|
-      page.cluster_div_list.each do |cluster_div|
-        existing_cluster_list << cluster_div.span().text()
-      end
-    end
-
-    existing_cluster_list.each do |cluster|
-      on ManageRegistrationGroups do |page|
-        while true
-          begin
-            sleep 1
-            wait_until(10) {page.cluster_list_div.exists? }
-            break
-          rescue Watir::Wait::TimeoutError #in case generation fails
-            break
-          rescue Selenium::WebDriver::Error::StaleElementReferenceError
-            puts "rescued - generate_unconstrained_reg_groups"
-          end
-        end
-        page.remove_cluster(cluster)
-        page.confirm_delete_cluster
-        begin
-          page.cluster_list_item_div(cluster).wait_while_present(60)
-        rescue Watir::Exception::UnknownObjectException
-          #ignore
-        end
-      end
-    end
+  def reset_ao_clusters
+    #TODO move all aos back to default cluster
+    #existing_cluster_list = []
+    #on ManageRegistrationGroups do |page|
+    #  page.cluster_div_list.each do |cluster_div|
+    #    existing_cluster_list << cluster_div.span().text()
+    #  end
+    #end
+    #
+    #existing_cluster_list.each do |cluster|
+    #  on ManageRegistrationGroups do |page|
+    #    while true
+    #      begin
+    #        sleep 1
+    #        wait_until(10) {page.cluster_list_div.exists? }
+    #        break
+    #      rescue Watir::Wait::TimeoutError #in case generation fails
+    #        break
+    #      rescue Selenium::WebDriver::Error::StaleElementReferenceError
+    #        puts "rescued - generate_unconstrained_reg_groups"
+    #      end
+    #    end
+    #    page.remove_cluster(cluster)
+    #    page.confirm_delete_cluster
+    #    begin
+    #      page.cluster_list_item_div_by_name(cluster).wait_while_present(60)
+    #    rescue Watir::Exception::UnknownObjectException
+    #      #ignore
+    #    end
+    #  end
+    #end
   end
+
 end
 
 class AffiliatedOrg
