@@ -67,6 +67,9 @@ class ActivityOfferingCluster
 
   def init_existing(cluster_div)
     on ManageCourseOfferings do |page|
+      @private_name = page.cluster_div_private_name(cluster_div)
+      @public_name = page.cluster_published_name(cluster_div)
+
       assigned_ao_list = page.get_cluster_div_assigned_ao_list(cluster_div)
 
       assigned_ao_list.each do |ao|

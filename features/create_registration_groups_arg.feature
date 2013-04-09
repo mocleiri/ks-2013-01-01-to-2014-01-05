@@ -45,7 +45,10 @@ As an Administrator, I want to create registration groups for a Course Offering
   Scenario: ARG 6.9 Ability to view AOs in their AOCs, in their AO table and in their RGs
     Given I manage registration groups for a course offering
     Then the Activity Offerings are in the cluster table
-    And the corresponding number of registration groups is correct
+    And the corresponding number of registration groups for each cluster is correct
+    Then I create an activity offering cluster
+    And Move one lab and one lecture activity offering to the second cluster
+    Then the corresponding number of registration groups for each cluster is correct
 
 
 #  Scenario: Validate Registration group numbers

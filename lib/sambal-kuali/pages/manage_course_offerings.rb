@@ -318,8 +318,9 @@ class ManageCourseOfferings < BasePage
     cluster_div.span().text()
   end
 
-  def cluster_published_name(private_name)
-    target_cluster(private_name).span().text[/(?<=\()\S+(?=\))/] #get the text between parenthesis
+  def cluster_published_name(cluster_div_element)
+    tmp_text = cluster_div_element.fieldset.label.text[/\([^()]*\)/].gsub(/[()]/, "")
+    #target_cluster(private_name).span().text[/(?<=\()\S+(?=\))/] #get the text between parenthesis
     #full_name = cluster_list_item_div(private_name).span().text()
     #full_name.slice(full_name.index('(')+1..-2)
   end
