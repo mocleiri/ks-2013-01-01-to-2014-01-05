@@ -114,7 +114,7 @@ end
 
 And /^I submit the Activity Offering changes$/ do
   on ActivityOfferingMaintenance do |page|
-    page.submit
+    page.click_submit_button
   end
 end
 
