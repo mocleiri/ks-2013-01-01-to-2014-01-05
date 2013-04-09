@@ -476,6 +476,20 @@ class CourseOffering
     end
   end
 
+  #create a new specified activity offering
+  #
+  #@param opts [Hash] {:ao_code => "CODE"}
+  def create_ao(opts)
+    ao_code = opts[:ao_code]
+    manage
+    on ManageCourseOfferings do |page|
+      page.add_activity
+      format = page.format.options[0].text
+      page.add_ao format, 1
+      @ao_list = page.codes_list
+    end
+  end
+
   #copy the specified activity offering
   #
   #@param  opts [Hash] {:ao_code => "CODE"}

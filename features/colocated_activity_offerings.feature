@@ -9,9 +9,7 @@ Background:
   @wip
   @brandon.gresham
   Scenario Outline: Colocate Activity Offerings
-    When I manage a jointly offered CO
-    And I indicate multiple activities for colocation, selecting to "<manage>" enrollments
-    And I manage a jointly offered CO
+    When I indicate multiple activities for colocation, selecting to "<manage>" enrollments
     Then the AO indicates it is colocated
     Examples:
       |     manage        |
