@@ -6,7 +6,7 @@ Given /^I manage registration groups for (?:a|the) course offering$/ do
 end
 
 When /^I move an activity offering to the cluster$/ do
-  @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("B",@course_offering.activity_offering_cluster_list[1])
+  @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("A",@course_offering.activity_offering_cluster_list[1])
 end
 
 When /^I move a lab activity offering from the first activity offering cluster to the second activity offering cluster$/ do
@@ -18,7 +18,7 @@ Then /^the activity offering is shown as part of the cluster$/ do
   @course_offering.activity_offering_cluster_list.each do |cluster|
     on ManageCourseOfferings do |page|
       actual_aos = page.get_cluster_assigned_ao_list(cluster.private_name)
-      actual_aos.sort.should == cluster.assigned_ao_list.sort
+      actual_aos.sort.should == cluster.ao_code_list.sort unless actual_aos == nil
     end
   end
 end
@@ -60,7 +60,8 @@ Given /^there are default registration groups for a course offering$/ do
 end
 
 Given /^I have created an additional activity offering cluster for a course offering$/ do
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
+  #@course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
+  @course_offering = make CourseOffering, :course=>"CHEM612B", :term=>Rollover::OPEN_SOC_TERM
   @course_offering.manage
   ao_cluster = make ActivityOfferingCluster
   @course_offering.add_ao_cluster(ao_cluster)

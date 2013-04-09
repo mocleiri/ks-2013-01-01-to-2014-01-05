@@ -40,7 +40,7 @@ class ManageCourseOfferings < BasePage
 
   #NB - CO Toolbar is not on this page - this one element is listed here to allow nagivation to single CO when a CO List is
   # not expected (ie search for ENGL206, returns ENGL206 and ENG206A)
-  action(:create_co_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-CO")}
+  element(:create_co_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-CO")}
 
   element(:add_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-AO-ClusterTab") }
   action(:add_activity){ |b| b.add_activity_button.click; b.loading.wait_while_present}
@@ -103,6 +103,17 @@ class ManageCourseOfferings < BasePage
   element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AOClustersCollection") }
   element(:activity_offering_results_table) { |b| b.activity_offering_results_div.table }
 
+  def activity_offering_results_table(cluster_private_name = :default_cluster)
+    aoc_cluster = nil
+    if cluster_private_name == :default_cluster then
+      aoc_cluster = cluster_div_list[0]
+    else
+      aoc_cluster = target_cluster(cluster_private_name)
+    end
+    return aoc_cluster.table
+  end
+
+
   AO_SELECT = 0
   AO_CODE = 1
   AO_STATUS = 2
@@ -118,22 +129,22 @@ class ManageCourseOfferings < BasePage
 
   action(:go) { |b| b.frm.button(text: "Go").click; b.loading.wait_while_present }
 
-  def view_activity_offering(code)
+  def view_activity_offering(code, cluster_private_name = :default_cluster)
     view_activity_offering_link(code).click
     loading.wait_while_present
   end
 
-  def view_activity_offering_link(code)
-    activity_offering_results_table.link(text: code)
+  def view_activity_offering_link(code, cluster_private_name = :default_cluster)
+    activity_offering_results_table(cluster_private_name).link(text: code)
   end
 
-  def target_row(code)
+  def target_row(code, cluster_private_name = :default_cluster)
 #    activity_offering_results_table.row(text: /\b#{Regexp.escape(code)}\b/).wait_until_present(60)
-    activity_offering_results_table.row(text: /\b#{Regexp.escape(code)}\b/)
+    activity_offering_results_table(cluster_private_name).row(text: /\b#{Regexp.escape(code)}\b/)
   end
 
-  def course_list_returned?(subject_code)
-    activity_offering_results_table.row(text: /#{subject_code}/).exists?
+  def course_list_returned?()
+    create_co_button.exists?
   end
 
   def ao_db_id(code)
@@ -144,8 +155,8 @@ class ManageCourseOfferings < BasePage
     target_row(code).cells[AO_STATUS].text
   end
 
-  def row_by_status(aostatus)
-    activity_offering_results_table.row(text: /\b#{Regexp.escape(aostatus)}\b/)
+  def row_by_status(aostatus, cluster_private_name = :default_cluster)
+    activity_offering_results_table(cluster_private_name).row(text: /\b#{Regexp.escape(aostatus)}\b/)
   end
 
 
@@ -226,9 +237,9 @@ class ManageCourseOfferings < BasePage
     retVal = target_row(aoCode).text
   end
 
-  def codes_list
+  def codes_list(cluster_private_name = :default_cluster)
     codes = []
-    activity_offering_results_table.rows.each { |row| codes << row[AO_CODE].text }
+    activity_offering_results_table(cluster_private_name).rows.each { |row| codes << row[AO_CODE].text }
     codes.delete_if { |code| code == "CODE" }
     codes.delete_if { |code| code.strip == "" }
     codes
@@ -252,7 +263,7 @@ class ManageCourseOfferings < BasePage
 
   def check_all_ao_status(aoStatus)
     retVal = true
-    activity_offering_results_table.rows.each {|row|
+    activity_offering_results_table(cluster_private_name).rows.each {|row|
       if !(row[AO_STATUS].text.eql? aoStatus)
         retVal = false
         break
@@ -366,7 +377,7 @@ class ManageCourseOfferings < BasePage
   end
 
   def get_cluster_ao_row(private_name, ao_code)
-    get_cluster_div_ao_row(target_cluster(private_name),ao)
+    get_cluster_div_ao_row(target_cluster(private_name),ao_code)
   end
 
   def get_cluster_div_ao_row(cluster_div, ao_code)

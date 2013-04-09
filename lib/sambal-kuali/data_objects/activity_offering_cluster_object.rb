@@ -69,12 +69,10 @@ class ActivityOfferingCluster
     on ManageCourseOfferings do |page|
       @private_name = page.cluster_div_private_name(cluster_div)
       @public_name = page.cluster_published_name(cluster_div)
-
       assigned_ao_list = page.get_cluster_div_assigned_ao_list(cluster_div)
 
       assigned_ao_list.each do |ao|
-
-        ao_obj_temp = make ActivityOffering#, :code => ao, :activity_type => page.get_ao_type(temp_aoc.private_name, ao), :max_enrollment => page.get_max_enr(temp_aoc.private_name, ao)
+        ao_obj_temp = make ActivityOffering
         ao_obj_temp.init_existing(page.get_cluster_div_ao_row(cluster_div,ao))
         @ao_list.push(ao_obj_temp)
       end
@@ -83,6 +81,14 @@ class ActivityOfferingCluster
 
   def add_activity_offering(ao_object)
     @ao_list << ao_object.create
+  end
+
+  def ao_code_list
+    code_list = []
+    ao_list.each do |ao|
+      code_list << ao.code
+    end
+    code_list
   end
 
   # moves activity offering from cluster to target cluster

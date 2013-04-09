@@ -5,7 +5,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   expected_element :mainpage_section
 
   element(:submit_button) { |b| b.frm.button(text: "submit") }
-  action(:click_submit_button) { |b| b.submit_button.click; b.loading.wait_while_present(120) }
+  action(:submit) { |b| b.submit_button.click; b.loading.wait_while_present(120) }
   
   element(:activity_code) { |b| b.frm.text_field(name: "document.newMaintainableObject.dataObject.aoInfo.activityCode") }
 
