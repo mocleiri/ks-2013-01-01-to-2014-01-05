@@ -35,8 +35,6 @@ class ManageCourseOfferings < BasePage
   element(:cross_listed_message_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AliasMessageSection") }
   value(:cross_listed_message) { |b| b.cross_listed_message_div.span.text }
 
-  action(:select_all) { |b| b.frm.link(id: "KS-CourseOfferingManagement-SelectAll").click; b.loading.wait_while_present }
-
   #NB - CO Toolbar is not on this page - this one element is listed here to allow nagivation to single CO when a CO List is
   # not expected (ie search for ENGL206, returns ENGL206 and ENG206A)
   element(:create_co_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Add-CO")}
@@ -63,7 +61,6 @@ class ManageCourseOfferings < BasePage
 
   element(:add_cluster_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-AddCluster-AO-ClusterTab") }
   action(:add_cluster) { |b| b.add_cluster_button.click; b.loading.wait_while_present }
-
 
   element(:rename_cluster_popup_div){ |b| b.frm.div(id: "KS-CourseOfferingManagement-RenameAOCPopupForm") }
   element(:rename_private_name) { |b| b.rename_cluster_popup_div.text_field(id: "privateClusterNameForRename_control") }
@@ -98,14 +95,15 @@ class ManageCourseOfferings < BasePage
   end
 
   element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AOClustersCollection") }
-  #element(:activity_offering_results_table) { |b| b.activity_offering_results_div.table }
 
   def activity_offering_results_table(cluster_private_name = :default_cluster)
     if cluster_private_name == :default_cluster then
-      cluster_div_list[0].table
+      return cluster_div_list[0].table unless !cluster_div_list[0].table.exists?
     else
-      target_cluster(cluster_private_name).table
+      cluster = target_cluster(cluster_private_name)
+      return cluster.table unless !cluster.table.exists?
     end
+    raise "error in activity_offering_results_table - no AOs for #{cluster_private_name}"
   end
 
   AO_SELECT = 0
@@ -133,18 +131,20 @@ class ManageCourseOfferings < BasePage
   end
 
   def target_row(code, cluster_private_name = :default_cluster)
-    activity_offering_results_table(cluster_private_name).row { |row| code == row[AO_CODE].text }
+    row = activity_offering_results_table(cluster_private_name).row(text: /\b#{Regexp.escape(code)}\b/)
+    return row unless row.nil?
+    raise "error in target_row: #{cluster_private_name}.#{code} not found"
   end
 
   def course_list_returned?()
     create_co_button.exists?
   end
 
-  def ao_db_id(code)
-    target_row(code).cells[AO_CODE].link.attribute_value("href").scan(/aoInfo.id=(.*)&dataObjectClassName/)[0][0]
+  def ao_db_id(code, cluster_private_name = :default_cluster)
+    target_row(code, cluster_private_name).cells[AO_CODE].link.attribute_value("href").scan(/aoInfo.id=(.*)&dataObjectClassName/)[0][0]
   end
 
-  def ao_status(code)
+  def ao_status(code, cluster_private_name = :default_cluster)
     target_row(code).cells[AO_STATUS].text
   end
 
@@ -153,29 +153,30 @@ class ManageCourseOfferings < BasePage
   end
 
 
-  def select_ao_by_status(aostatus)
-    if row_by_status(aostatus).exists? then
-      row_by_status(aostatus).checkbox.set
-      return row_by_status(aostatus).cells[AO_CODE].text
+  def select_ao_by_status(aostatus, cluster_private_name = :default_cluster)
+    row = row_by_status(aostatus, cluster_private_name)
+    if row.exists? then
+      row.checkbox.set
+      return row.cells[AO_CODE].text
     end
   end
 
-  def copy_link(code)
-    target_row(code).link(text: /\b#{Regexp.escape("Copy")}\b/)
+  def copy_link(code,cluster_private_name = :default_cluster)
+    target_row(code, cluster_private_name).link(text: /\b#{Regexp.escape("Copy")}\b/)
   end
 
-  def copy(code)
-    copy_link(code).click
+  def copy(code, cluster_private_name = :default_cluster)
+    copy_link(code, cluster_private_name).click
     loading.wait_while_present
   end
 
-  def edit_link(code)
-    target_row(code).link(text: /\b#{Regexp.escape("Edit")}\b/)
+  def edit_link(code, cluster_private_name = :default_cluster)
+    target_row(code, cluster_private_name).link(text: /\b#{Regexp.escape("Edit")}\b/)
   end
 
-  def edit(code)
+  def edit(code, cluster_private_name = :default_cluster)
     begin
-      edit_link(code).click
+      edit_link(code, cluster_private_name).click
 
       if browser.alert.exists?
         browser.alert.ok
@@ -187,47 +188,34 @@ class ManageCourseOfferings < BasePage
     loading.wait_while_present(120)
   end
 
-  def select_aos(code_list)
+  def select_aos(code_list, cluster_private_name = :default_cluster)
     for code in code_list
-      if !target_row(code).nil?
-        target_row(code).checkbox.set
-      end
+        target_row(code, cluster_private_name).checkbox.set
     end
   end
 
-  def deselect_aos(code_list)
+  def deselect_aos(code_list, cluster_private_name = :default_cluster)
     for code in code_list
-      if !target_row(code).nil?
-        target_row(code).checkbox.clear
-      end
+        target_row(code, cluster_private_name).checkbox.clear
     end
   end
 
   def select_ao(code, cluster_private_name = :default_cluster)
-    if !target_row(code, cluster_private_name).nil?
+    row = target_row(code, cluster_private_name)
       target_row(code, cluster_private_name).checkbox.set
-    end
   end
 
-  def deselect_ao(code)
-    if !target_row(code).nil?
-      target_row(code).checkbox.clear
-    end
+  def deselect_ao(code, cluster_private_name = :default_cluster)
+      target_row(code, cluster_private_name).checkbox.clear
   end
 
-  def ao_status(code, status)
-    retVal = false
-    row_text = target_row(code).text
-
-    if row_text.include? status
-      retVal = true
-    end
-    retVal
+  def ao_status(code, status, cluster_private_name = :default_cluster)
+    row_text = target_row(code, cluster_private_name).text
+    row_text.include? status
   end
 
-  def ao_schedule_data(aoCode)
-    retVal = nil
-    retVal = target_row(aoCode).text
+  def ao_schedule_data(aoCode, cluster_private_name = :default_cluster)
+    target_row(aoCode).text
   end
 
   def codes_list(cluster_private_name = :default_cluster)
@@ -238,6 +226,7 @@ class ManageCourseOfferings < BasePage
     codes
   end
 
+  #TODO - this code is duplicate - see ActivityOffering data object
   def add_ao input_format, input_quantity
     format.select(input_format)
     loading.wait_while_present(120)
@@ -254,7 +243,7 @@ class ManageCourseOfferings < BasePage
   #  course_title
   #end
 
-  def check_all_ao_status(aoStatus)
+  def check_all_ao_status(aoStatus, cluster_private_name = :default_cluster)
     retVal = true
     activity_offering_results_table(cluster_private_name).rows.each {|row|
       if !(row[AO_STATUS].text.eql? aoStatus)
@@ -265,10 +254,10 @@ class ManageCourseOfferings < BasePage
     retVal
   end
 
-  def check_aos_status(aoStatus, aos)
+  def check_aos_status(aoStatus, aos, cluster_private_name = :default_cluster)
     retVal = true
     aos.each { |code|
-      if(!ao_status(code, aoStatus))
+      if(!ao_status(code, aoStatus, cluster_private_name))
         retVal = false
         break
       end
@@ -277,11 +266,8 @@ class ManageCourseOfferings < BasePage
   end
 
   def has_cross_listed_message(co_code)
-    retVal = nil
     cross_listed_message_div.present?.should == true
-    retVal = cross_listed_message.include? co_code
-
-    retVal
+    cross_listed_message.include? co_code
   end
 
   ########################## cluster tab
@@ -304,6 +290,7 @@ class ManageCourseOfferings < BasePage
         return div_element
       end
     end
+    raise "Error: No cluster found: #{private_name}"
   end
 
   def cluster_div_private_name(cluster_div_element)
@@ -327,6 +314,10 @@ class ManageCourseOfferings < BasePage
     #target_cluster(private_name).span().text[/(?<=\()\S+(?=\))/] #get the text between parenthesis
     #full_name = cluster_list_item_div(private_name).span().text()
     #full_name.slice(full_name.index('(')+1..-2)
+  end
+
+  def cluster_select_all_aos(private_name)
+    target_cluster(private_name).table.row.checkbox.set unless !target_cluster(private_name).table.exists?
   end
 
   def remove_cluster(private_name)
