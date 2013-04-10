@@ -10,7 +10,7 @@ Background:
   @brandon.gresham
   Scenario Outline: Colocate Activity Offerings
     When I indicate multiple activities for colocation, selecting to "<manage>" enrollments
-    # And I (deselect|select) all colocated AOs <-- this step cannot be tested yet due to partial implementation not yet being implemented
+    # And I (deselect|select) all colocated AOs <-- this step cannot be developed yet due to partial-colocation not being implemented in the app
     Then the AO indicates it is colocated
     Examples:
       |     manage        |
