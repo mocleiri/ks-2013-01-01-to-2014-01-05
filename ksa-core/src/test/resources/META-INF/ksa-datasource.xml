@@ -21,9 +21,8 @@
     <!-- XA data source definitions -->
     <bean id="xaDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" abstract="true">
         <property name="xaDataSourceClassName" value="oracle.jdbc.xa.client.OracleXADataSource"/>
-        <property name="minPoolSize" value="10"/>
-        <property name="poolSize" value="10"/>
-        <property name="maxPoolSize" value="10"/>
+        <property name="minPoolSize" value="3"/>
+        <property name="maxPoolSize" value="5"/>
         <property name="testQuery" value="select 1 from dual"/>
     </bean>
 
