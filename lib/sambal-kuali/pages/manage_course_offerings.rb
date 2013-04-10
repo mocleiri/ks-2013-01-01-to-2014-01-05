@@ -30,7 +30,6 @@ class ManageCourseOfferings < BasePage
   action(:delete_course_offering_link) { |b| b.manage_offering_links_div.link(id: "delete_co") }
   action(:delete_course_offering) { |b| b.delete_course_offering_link.click; b.loading.wait_while_present }
 
-  #value(:cross_listed_as) { |b| b.frm.span(id: "u362_span").text }
   value(:cross_listed_as_text) { |b| b.frm.span(text: /Crosslisted as/).text }
 
   element(:cross_listed_message_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AliasMessageSection") }
@@ -98,21 +97,16 @@ class ManageCourseOfferings < BasePage
     loading.wait_while_present(180)
   end
 
-
-  #element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-ARGCourseOfferingManagement-ActivityOfferingListSection") }
   element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AOClustersCollection") }
   element(:activity_offering_results_table) { |b| b.activity_offering_results_div.table }
 
   def activity_offering_results_table(cluster_private_name = :default_cluster)
-    aoc_cluster = nil
     if cluster_private_name == :default_cluster then
-      aoc_cluster = cluster_div_list[0]
+      cluster_div_list[0]
     else
-      aoc_cluster = target_cluster(cluster_private_name)
+      target_cluster(cluster_private_name)
     end
-    return aoc_cluster.table
   end
-
 
   AO_SELECT = 0
   AO_CODE = 1
@@ -382,6 +376,12 @@ class ManageCourseOfferings < BasePage
 
   def get_cluster_div_ao_row(cluster_div, ao_code)
     cluster_div.table.row(text: /\b#{Regexp.escape(ao_code)}\b/)
+  end
+
+
+  def get_cluster_div_ao_rows(cluster_div)
+    return cluster_div.table.rows[1..-2] unless !cluster_div.table.exists?
+    return []
   end
 
   def get_cluster_div_assigned_ao_list(cluster_div)

@@ -69,11 +69,11 @@ class ActivityOfferingCluster
     on ManageCourseOfferings do |page|
       @private_name = page.cluster_div_private_name(cluster_div)
       @public_name = page.cluster_published_name(cluster_div)
-      assigned_ao_list = page.get_cluster_div_assigned_ao_list(cluster_div)
+      ao_rows = page.get_cluster_div_ao_rows(cluster_div)
 
-      assigned_ao_list.each do |ao|
+      ao_rows.each do |ao_row|
         ao_obj_temp = make ActivityOffering
-        ao_obj_temp.init_existing(page.get_cluster_div_ao_row(cluster_div,ao))
+        ao_obj_temp.init_existing(ao_row)
         @ao_list.push(ao_obj_temp)
       end
     end
