@@ -673,9 +673,9 @@ public class TransactionModel extends Transaction {
         return null;
     }
 
-    public String getOriginalAmount(){
+    public BigDecimal getOriginalAmount(){
         if(parentTransaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT){
-            //return ((Deferment) parentTransaction).???
+            return ((Deferment) parentTransaction).getOriginalAmount();
         }
         return null;
     }
