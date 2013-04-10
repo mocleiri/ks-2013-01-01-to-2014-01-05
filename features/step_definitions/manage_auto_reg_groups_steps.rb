@@ -137,18 +137,14 @@ When /^the corresponding number of registration groups for each cluster is corre
   on ManageCourseOfferings do |page|
     @course_offering.activity_offering_cluster_list.each do |cluster|
       page.view_cluster_reg_groups(cluster.private_name)
-     # page.get_cluster_reg_groups_list(cluster.private_name).length.should ==  cluster.ao_list.count{|x| x.activity_type == "Discussion"} * cluster.ao_list.count{|x| x.activity_type == "Lecture"}
-      vgnum= page.get_cluster_reg_groups_list(cluster.private_name).length
-
-      disnum= cluster.ao_list.count{|x| x.activity_type == "Discussion"}
-
-      lecnum = cluster.ao_list.count{|x| x.activity_type == "Lecture"}
-
-     lecnum
+      page.get_cluster_reg_groups_list(cluster.private_name).length.should == cluster.ao_list.count{|x| x.activity_type == "Discussion"} * cluster.ao_list.count{|x| x.activity_type == "Lecture"}
     end
   end
 end
 
 When /^Move one lab and one lecture activity offering to the second cluster$/ do
-  pending
+  on ManageCourseOfferings do |page|
+    @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("A", @course_offering.activity_offering_cluster_list[1])
+    @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("J", @course_offering.activity_offering_cluster_list[1])
+  end
 end

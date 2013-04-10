@@ -98,13 +98,13 @@ class ManageCourseOfferings < BasePage
   end
 
   element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AOClustersCollection") }
-  element(:activity_offering_results_table) { |b| b.activity_offering_results_div.table }
+  #element(:activity_offering_results_table) { |b| b.activity_offering_results_div.table }
 
   def activity_offering_results_table(cluster_private_name = :default_cluster)
     if cluster_private_name == :default_cluster then
-      cluster_div_list[0]
+      cluster_div_list[0].table
     else
-      target_cluster(cluster_private_name)
+      target_cluster(cluster_private_name).table
     end
   end
 
@@ -133,8 +133,7 @@ class ManageCourseOfferings < BasePage
   end
 
   def target_row(code, cluster_private_name = :default_cluster)
-#    activity_offering_results_table.row(text: /\b#{Regexp.escape(code)}\b/).wait_until_present(60)
-    activity_offering_results_table(cluster_private_name).row(text: /\b#{Regexp.escape(code)}\b/)
+    activity_offering_results_table(cluster_private_name).row { |row| code == row[AO_CODE].text }
   end
 
   def course_list_returned?()
@@ -204,9 +203,9 @@ class ManageCourseOfferings < BasePage
     end
   end
 
-  def select_ao(code)
-    if !target_row(code).nil?
-      target_row(code).checkbox.set
+  def select_ao(code, cluster_private_name = :default_cluster)
+    if !target_row(code, cluster_private_name).nil?
+      target_row(code, cluster_private_name).checkbox.set
     end
   end
 
