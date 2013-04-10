@@ -123,3 +123,32 @@ Then /^the Manage Course Offerings page is displayed$/ do
     page.term.present?.should be_true
   end
 end
+
+Given /^I manage registration groups for a new course offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM135", :term=>"201301")
+  @course_offering.manage
+end
+
+Then /^the Activity Offerings are present in the cluster table$/ do
+  @course_offering.activity_offering_cluster_list[0].ao_list.count.should > 0
+end
+
+When /^the corresponding number of registration groups for each cluster is correct$/ do
+  on ManageCourseOfferings do |page|
+    @course_offering.activity_offering_cluster_list.each do |cluster|
+      page.view_cluster_reg_groups(cluster.private_name)
+     # page.get_cluster_reg_groups_list(cluster.private_name).length.should ==  cluster.ao_list.count{|x| x.activity_type == "Discussion"} * cluster.ao_list.count{|x| x.activity_type == "Lecture"}
+      vgnum= page.get_cluster_reg_groups_list(cluster.private_name).length
+
+      disnum= cluster.ao_list.count{|x| x.activity_type == "Discussion"}
+
+      lecnum = cluster.ao_list.count{|x| x.activity_type == "Lecture"}
+
+     lecnum
+    end
+  end
+end
+
+When /^Move one lab and one lecture activity offering to the second cluster$/ do
+  pending
+end

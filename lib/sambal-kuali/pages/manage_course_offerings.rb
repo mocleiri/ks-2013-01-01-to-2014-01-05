@@ -430,18 +430,18 @@ class ManageCourseOfferings < BasePage
 
   def get_cluster_reg_groups_list(private_name)
     #TODO - FIXME this is not returning the Reg Groups
-    assigned_ao_list = []
+    reg_group_list = []
+    cluster_rg_table = target_cluster(private_name).table(:index=>1)
 
-    cluster_ao_table = target_cluster(private_name).table
-    if cluster_ao_table.exists? then
-      cluster_ao_table.rows[1..-1].each do |row|
-        assigned_ao_list << row.cells[1].text
+    if cluster_rg_table.exists? then
+      cluster_rg_table.rows[1..-1].each do |row|
+        reg_group_list << row.cells[0].text
       end
-      assigned_ao_list.delete_if{|ao| ao == "" }
+      reg_group_list.delete_if{|rg| rg == "" }
     else
-      assigned_ao_list = []
+      reg_group_list = []
     end
-    assigned_ao_list
+    reg_group_list
   end
 
 end
