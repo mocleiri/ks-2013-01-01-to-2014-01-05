@@ -205,11 +205,13 @@
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="rollupText" p:label="Roll-up" p:style="width: 35%"/>
+                <!--
                 <bean parent="Uif-InputField" p:propertyName="glBreakdownType" p:label="GL Breakdown" p:style="width: 10%">
                     <property name="toolTip">
                         <bean parent="Uif-Tooltip" p:tooltipContent="@{#line.glBreakdownTooltip}"/>
                     </property>
                 </bean>
+                -->
             </list>
         </property>
     </bean>
