@@ -116,7 +116,7 @@ class ManageCourseOfferingList < BasePage
 
   def select_cos(code_list)
     code_list.each do |code|
-      target_row(code).checkbox.set
+      target_row(code.upcase).checkbox.set
     end
   end
 
