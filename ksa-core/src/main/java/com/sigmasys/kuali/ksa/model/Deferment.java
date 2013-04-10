@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.*;
@@ -13,6 +14,11 @@ public class Deferment extends Credit {
      * remove the allocation of the deferment, and the charge it is applied to will become due.
      */
     private Date expirationDate;
+
+    /**
+     * This is the amount of the deferment when it is created.
+     */
+    private BigDecimal originalAmount;
 
 
     @Transient
@@ -28,6 +34,15 @@ public class Deferment extends Credit {
 
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    @Column(name = "ORIG_AMOUNT")
+    public BigDecimal getOriginalAmount() {
+        return originalAmount;
+    }
+
+    public void setOriginalAmount(BigDecimal originalAmount) {
+        this.originalAmount = originalAmount;
     }
 
     /**

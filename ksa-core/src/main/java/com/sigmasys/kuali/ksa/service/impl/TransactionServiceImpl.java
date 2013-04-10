@@ -491,6 +491,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         } else if (transaction instanceof Deferment) {
             Deferment deferment = (Deferment) transaction;
             deferment.setExpirationDate(expirationDate);
+            deferment.setOriginalAmount(amount);
         } else {
             DebitType debitType = (DebitType) transactionType;
             Charge charge = (Charge) transaction;
