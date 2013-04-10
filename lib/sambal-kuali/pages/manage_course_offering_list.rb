@@ -120,6 +120,12 @@ class ManageCourseOfferingList < BasePage
     end
   end
 
+  def select_all_cos()
+    course_offering_results_table.rows[1..-2].each do |row|
+        row.checkbox.set
+    end
+  end
+
   def deselect_cos(code_list)
     code_list.each do |code|
       target_row(code).checkbox.clear
