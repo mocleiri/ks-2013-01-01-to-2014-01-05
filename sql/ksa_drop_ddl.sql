@@ -69,3 +69,4 @@ drop table KSA.KSSA_UI_STRING cascade constraints;
 drop table KSA.KSSA_USER_PREF cascade constraints;
 drop table KSA.KSSA_XML cascade constraints;
 drop table KSA.KSSA_SEQUENCE_TABLE cascade constraints;
+drop table KSA.KSSA_CASH_LIMIT_EVENT cascade constraints;

@@ -68,7 +68,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
     }
 
-    private void createAllocation(boolean locked) {
+    private Allocation createAllocation(boolean locked, boolean internallyLocked) {
 
         String id = "1020";
 
@@ -82,10 +82,14 @@ public class TransactionServiceTest extends AbstractServiceTest {
         notNull(transaction1.getAmount());
         notNull(transaction2.getAmount());
 
-        CompositeAllocation compositeAllocation =
-                locked ?
-                        transactionService.createLockedAllocation(transaction1.getId(), transaction2.getId(), new BigDecimal(90)) :
-                        transactionService.createAllocation(transaction1.getId(), transaction2.getId(), new BigDecimal(90));
+        CompositeAllocation compositeAllocation;
+        if (locked) {
+            compositeAllocation = internallyLocked ?
+                    transactionService.createInternalLockedAllocation(transaction1.getId(), transaction2.getId(), new BigDecimal(90)) :
+                    transactionService.createLockedAllocation(transaction1.getId(), transaction2.getId(), new BigDecimal(90));
+        } else {
+            compositeAllocation = transactionService.createAllocation(transaction1.getId(), transaction2.getId(), new BigDecimal(90));
+        }
 
         notNull(compositeAllocation);
 
@@ -123,26 +127,37 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         isTrue(new BigDecimal(90).equals(allocatedAmount1));
         isTrue(new BigDecimal(90).equals(allocatedAmount2));
+
+        return allocation;
     }
 
     @Test
     public void createAllocation() throws Exception {
 
-        createAllocation(false);
+        createAllocation(false, false);
 
     }
 
     @Test
     public void createLockedAllocation() throws Exception {
 
-        createAllocation(true);
+        createAllocation(true, false);
+
+    }
+
+    @Test
+    public void createInternalLockedAllocation() throws Exception {
+
+        Allocation allocation = createAllocation(true, true);
+
+        isTrue(allocation.getInternallyLocked());
 
     }
 
     @Test
     public void getAllocations() throws Exception {
 
-        createAllocation(true);
+        createAllocation(true, false);
 
         Transaction transaction = transactionService.createTransaction("1020", "admin", new Date(), new BigDecimal(-10));
 

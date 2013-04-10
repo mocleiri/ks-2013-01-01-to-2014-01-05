@@ -41,9 +41,14 @@ public class Allocation extends AccountIdAware implements Identifiable {
     private BigDecimal amount;
 
     /**
-     * Is locked
+     * Is Locked
      */
-    private Boolean locked;
+    private Boolean isLocked;
+
+    /**
+     * Is internally Locked
+     */
+    private Boolean isInternallyLocked;
 
 
     @Id
@@ -103,13 +108,23 @@ public class Allocation extends AccountIdAware implements Identifiable {
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_LOCKED", nullable = false)
+    @Column(name = "IS_LOCKED")
     public Boolean isLocked() {
-        return locked != null ? locked : false;
+        return isLocked != null ? isLocked : false;
     }
 
     public void setLocked(Boolean locked) {
-        this.locked = locked;
+        this.isLocked = locked;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_INTERNALLY_LOCKED")
+    public Boolean getInternallyLocked() {
+        return isInternallyLocked != null ? isInternallyLocked : false;
+    }
+
+    public void setInternallyLocked(Boolean internallyLocked) {
+        isInternallyLocked = internallyLocked;
     }
 }
 	

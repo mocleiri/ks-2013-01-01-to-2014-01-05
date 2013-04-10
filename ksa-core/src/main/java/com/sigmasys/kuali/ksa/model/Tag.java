@@ -16,6 +16,11 @@ public class Tag extends AuditableEntity<Long> {
      */
     private Integer accessLevel;
 
+    /**
+     * Indicates whether the Tag is administrative or not.
+     */
+    private Boolean isAdministrative;
+
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
     @TableGenerator(name = "TABLE_GEN_TAG",
@@ -29,7 +34,6 @@ public class Tag extends AuditableEntity<Long> {
         return id;
     }
 
-
     @Column(name = "ACCESS_LEVEL")
     public Integer getAccessLevel() {
         return accessLevel;
@@ -39,4 +43,13 @@ public class Tag extends AuditableEntity<Long> {
         this.accessLevel = accessLevel;
     }
 
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_ADMINISTRATIVE")
+    public Boolean getAdministrative() {
+        return isAdministrative != null ? isAdministrative : false;
+    }
+
+    public void setAdministrative(Boolean administrative) {
+        isAdministrative = administrative;
+    }
 }
