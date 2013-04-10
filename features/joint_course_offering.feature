@@ -3,7 +3,7 @@ Feature: Jointly-defined Course Offering
     Given I am logged in as a Schedule Coordinator
   Scenario: Create from Catalog a Course Offering which is defined in the CLU as Joint
     When I create joint Course Offerings
-    Then I can add activity offerings to the joint Course Offerings
+    And I can add activity offerings to the joint Course Offerings
   Scenario: Delete jointly-defined Course Offering with NO shared AOs - CANCEL operation
     When I create joint Course Offerings
     And I attempt to delete a joint Course Offering

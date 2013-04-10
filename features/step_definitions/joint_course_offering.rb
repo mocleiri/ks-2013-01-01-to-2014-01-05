@@ -1,14 +1,30 @@
 When /^I create joint Course Offerings$/ do
-  pending # need to define :joint_select method in course_offering_object.rb
-  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "BSCI181", :joint_select => "CHEM181", :grade_format => "Lab", :delivery_format => "Lab"
+
+  # we need to update this once Mike commits his refactor later today
+  @course_offering = create CourseOffering, :term => "201201", :course => "BSCI181", :delivery_format => "Lecture", :grade_format => "Lecture"
+  @course_offering.create_ao :ao_code => "A"
+  puts @course_offering.course + ' created'
 end
 
-Then /^I can add activity offerings to the joint Course Offerings$/ do
-  pending # express the regexp above with the code you wish you had
-  on ManageCourseOfferings do |page|
-    format = page.format.options[1].text
-    page.add_ao format, 1
-  end
+And /^I can add activity offerings to the joint Course Offerings$/ do
+
+  # first we build an ao, then we link it the co -- Mikes commit today will change this so wait and see
+  #@activity_offering = create ActivityOffering
+  #@activity_offering.save
+  @course_offering.create_ao :ao_code => "A"
+end
+
+#REFACTOR THIS STEP NAME TO SOMETHING BETTER
+Then /^we can see the aos in the co we made$/ do
+
+
+  @course_offering.manage
+
+  puts 'Im here'
+  sleep 60
+
+  #validate the CO had the AO
+
 end
 
 When /^I attempt to delete a joint Course Offering$/ do
