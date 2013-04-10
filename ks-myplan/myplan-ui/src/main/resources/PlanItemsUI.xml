@@ -1131,6 +1131,7 @@
                             <value>myplan-course-valid</value>
                         </list>
                     </property>
+                    <property name="style" value="width:114px;"/>
                     <property name="items">
                         <list>
                             <bean parent="Uif-MessageField">
@@ -1385,6 +1386,7 @@
                             <value>myplan-course-valid</value>
                         </list>
                     </property>
+                    <property name="style" value="width:114px;"/>
                     <property name="items">
                         <list>
                             <bean parent="Uif-MessageField">
