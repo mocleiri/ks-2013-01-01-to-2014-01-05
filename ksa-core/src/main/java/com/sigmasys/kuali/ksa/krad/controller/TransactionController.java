@@ -7,7 +7,10 @@ import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
+import com.sigmasys.kuali.ksa.service.RefundService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
+import org.kuali.rice.krad.uif.util.CloneUtils;
+import org.kuali.rice.krad.uif.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,6 +34,9 @@ public class TransactionController extends GenericSearchController {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private RefundService refundService;
 
 
     /**
@@ -60,6 +66,8 @@ public class TransactionController extends GenericSearchController {
      */
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView get(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+
+        //long debugStart = System.currentTimeMillis();
 
         // just for the transactions by person page
         String pageId = request.getParameter("pageId");
@@ -155,6 +163,8 @@ public class TransactionController extends GenericSearchController {
 
         ModelAndView mv = getUIFModelAndView(form);
 
+        //long debugEnd = System.currentTimeMillis();;
+        //logger.info("End of TransactionController.get() userid: " + userId + " Start:" + debugStart + " End: " + debugEnd + " Elapsed (msec): " + (debugEnd - debugStart));
         return mv;
     }
 
@@ -196,6 +206,23 @@ public class TransactionController extends GenericSearchController {
         return performRedirect(form, refreshLocation, props);
     }
 
+    /**
+     * Attempt a refund on a transaction
+     *
+     * @param form Kuali form instance
+     * @return ModelandView
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=refund")
+    public ModelAndView refund(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+
+        String accountId = accountId = form.getAccount().getId();
+        String transactionId = request.getParameter("transactionId");
+
+        BigDecimal amount = null;
+        //refundService.checkForRefundOnTransactionWithAmount(transactionId, amount);
+
+        return getUIFModelAndView(form);
+    }
 
     private void populateRollups(TransactionForm form, List<TransactionModel> transactions) {
         List<TransactionModel> rollUpTransactionModelList = new ArrayList<TransactionModel>();

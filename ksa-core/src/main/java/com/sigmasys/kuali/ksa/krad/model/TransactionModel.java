@@ -52,6 +52,8 @@ public class TransactionModel extends Transaction {
 
     private String refundRule;
 
+    private BigDecimal refundAmount;
+
     private List<Memo> memos;
 
     private List<Tag> tags;
@@ -93,8 +95,6 @@ public class TransactionModel extends Transaction {
 
     // checkboxes
     private String paymentBilling;
-
-    private String refundable;
 
     private String entryGenerated;
 
@@ -312,14 +312,6 @@ public class TransactionModel extends Transaction {
 
     public void setPaymentBilling(String paymentBilling) {
         this.paymentBilling = paymentBilling;
-    }
-
-    public String getRefundable() {
-        return refundable;
-    }
-
-    public void setRefundable(String refundable) {
-        this.refundable = refundable;
     }
 
     public String getEntryGenerated() {
@@ -644,6 +636,29 @@ public class TransactionModel extends Transaction {
         return null;
     }
 
+    public boolean isPaymentRefundable(){
+        if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
+            Payment payment = (Payment) parentTransaction;
+            // No negative or zero amounts are refundable
+            if(payment.getAmount().compareTo(BigDecimal.ZERO) < 1){
+                return false;
+            }
+
+            // has an unallocated balance
+            if(payment.getUnallocatedAmount().compareTo(BigDecimal.ZERO) < 1){
+                return false;
+            }
+
+            // clear date in the past
+            if(payment.getClearDate().after(new Date())){
+                return false;
+            }
+
+            return payment.isRefundable();
+        }
+        return false;
+
+    }
     public String getPaymentRefundable() {
         if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
             return ((Payment) parentTransaction).isRefundable().toString();
@@ -679,4 +694,11 @@ public class TransactionModel extends Transaction {
         return null;
     }
 
+    public BigDecimal getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setRefundAmount(BigDecimal refundAmount) {
+        this.refundAmount = refundAmount;
+    }
 }

@@ -105,7 +105,7 @@ public class CurrencyEditor extends PropertyEditorSupport implements Serializabl
 
         logger.debug("convertToObject '" + text + "'");
 
-        if (text != null) {
+        if (text != null && !"".equals(text)) {
             text = text.trim();
             NumberFormat formatter = getCurrencyInstanceUsingParseBigDecimal();
             // Add the currency symbol suffix/prefix to the text to change to

@@ -215,6 +215,41 @@
                                                         </property>
                                                     </bean>
 
+                                                    <bean parent="Uif-ImageField" p:source="../images/refund.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
+                                                          p:onClickScript="showLightboxComponent('refundLightbox@{#lineSuffix}');" p:render="@{#line.isPaymentRefundable()}">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="&lt;b&gt;Refund:&lt;/b&gt; Click to determine if this transaction can be refunded"/>
+                                                        </property>
+                                                    </bean>
+                                                    <!--  p:render="@{#line.isPaymentRefundable()}" -->
+                                                    <bean id="refundLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:render="@{#line.isPaymentRefundable()}">
+                                                        <property name="hidden" value="true"/>
+                                                        <property name="items">
+                                                            <list>
+                                                                <bean parent="Uif-HeaderTwo" p:headerText="Refund a Transaction"/>
+                                                                <ref bean="transactionDetailFields"/>
+                                                                <bean parent="Uif-Disclosure-VerticalBoxSection" >
+                                                                    <property name="headerText" value="Optional"/>
+                                                                    <property name="readOnly" value="false"/>
+
+                                                                    <property name="items">
+                                                                        <list>
+                                                                            <bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Refund Amount"/>
+                                                                            <bean parent="Uif-InputField" p:propertyName="id">
+                                                                                <property name="control">
+                                                                                    <bean parent="Uif-HiddenControl"/>
+                                                                                </property>
+                                                                            </bean>
+                                                                        </list>
+                                                                    </property>
+                                                                </bean>
+
+                                                                <bean parent="Uif-PrimaryActionButton" p:actionLabel="Refund" p:methodToCall="refund"
+                                                                      p:onClickScript="writeHiddenToForm('transactionId', '@{#line.id}');"/>
+
+                                                            </list>
+                                                        </property>
+                                                    </bean>
                                                     <bean parent="Uif-ImageField" p:source="../images/locked.png" p:style="float: right;" p:altText="" p:title=""
                                                            p:render="@{!#empty(#line.lockedAllocatedAmount) and #line.lockedAllocatedAmount != 0}">
                                                         <property name="toolTip">
@@ -227,7 +262,7 @@
                                                             <bean parent="Uif-Tooltip" p:tooltipContent="Memo: (@{#line.memos.size()}) Click icon to view"/>
                                                         </property>
                                                     </bean>
-                                                    <bean id="memoLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                    <bean id="memoLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:render="@{#line.memos.size() > 0}">
                                                         <property name="hidden" value="true"/>
                                                         <property name="items">
                                                             <list>
@@ -260,7 +295,7 @@
                                                             <bean parent="Uif-Tooltip" p:tooltipContent="Tags: @{#line.tagList}"/>
                                                         </property>
                                                     </bean>
-                                                    <bean id="tagLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                    <bean id="tagLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:render="@{#line.tags.size() > 0}">
                                                         <property name="hidden" value="true"/>
                                                         <property name="items">
                                                             <list>
@@ -336,7 +371,7 @@
                                                             <bean parent="Uif-Tooltip" p:tooltipContent="Memo: (@{#line.memos.size()}) Click icon to view"/>
                                                         </property>
                                                     </bean>
-                                                    <bean id="memoLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                    <bean id="memoLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:render="@{#line.memos.size() > 0}">
                                                         <property name="hidden" value="true"/>
                                                         <property name="items">
                                                             <list>
@@ -369,7 +404,7 @@
                                                             <bean parent="Uif-Tooltip" p:tooltipContent="Tags: @{#line.tagList}"/>
                                                         </property>
                                                     </bean>
-                                                    <bean id="tagLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                    <bean id="tagLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:render="@{#line.tags.size() > 0}">
                                                         <property name="hidden" value="true"/>
                                                         <property name="items">
                                                             <list>
@@ -584,52 +619,7 @@
     <bean id="transactionDetail" parent="Uif-VerticalBoxSection">
         <property name="items">
             <list>
-                <bean parent="Uif-HorizontalBoxGroup">
-                    <property name="items">
-                        <list>
-
-                            <bean parent="Uif-Disclosure-GridSection" p:style="width: 40%;"><property name="items"><list>
-                                <bean parent="Uif-InputField" p:propertyName="transactionDisplayType" p:label="Transaction Type"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.status" p:label="Status"/>
-                                <bean parent="Uif-InputField" p:propertyName="idString" p:label="Transaction ID"/>
-
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.creationDate" p:label="Creation Date"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.effectiveDate" p:label="Effective Date"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.originationDate" p:label="Origination Date"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.recognitionDate" p:label="Recognition Date"/>
-
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.amount" p:label="Amount"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.currency.code" p:label="Currency"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.nativeAmount" p:label="Native Amount"/>
-                            </list></property></bean>
-                            <bean parent="Uif-Disclosure-GridSection" p:style="width: 55%;"><property name="items"><list>
-                                <bean parent="Uif-InputField" p:propertyName="glEntryGenerated" p:label="General Ledger Entry"/>
-                                <bean parent="Uif-InputField" p:propertyName="internal" p:label="Internal Transaction"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.allocatedAmount" p:label="Allocated Amount"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.lockedAllocatedAmount" p:label="Locked Allocated"/>
-
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.transactionType.description" p:label="Description"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.rollup.description" p:label="Roll-up"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.generalLedgerType.description" p:label="General Ledger Type"/>
-                                <bean parent="Uif-InputField" p:propertyName="glOverridden" p:label="Override GL Codes"/>
-                                <bean parent="Uif-InputField" p:propertyName="parentTransaction.transactionType.id.id" p:label="@{#line.transactionDisplayType} Type"/>
-
-                                <!-- Payment specific fields -->
-                                <bean parent="Uif-InputField" p:propertyName="clearDate" p:label="Clear Date" p:render="@{#line.isPayment()}"/>
-                                <bean parent="Uif-InputField" p:propertyName="paymentRefundable" p:label="Payment is Refundable" p:render="@{#line.isPayment()}"/>
-                                <bean parent="Uif-InputField" p:propertyName="paymentRefundRule" p:label="Payment Refund Rule" p:render="@{#line.isPayment()}"/>
-
-                                <!-- Deferment specific fields -->
-                                <bean parent="Uif-InputField" p:propertyName="originalAmount" p:label="Deferment Original Amount" p:render="@{#line.isDeferment()}"/>
-                                <bean parent="Uif-InputField" p:propertyName="defermentExpirationDate" p:label="Deferment Expiration Date" p:render="@{#line.isDeferment()}"/>
-
-                                <!-- Charge specific fields -->
-                                <bean parent="Uif-InputField" p:propertyName="chargeCancellationRule" p:label="Charge Cancellation Rule" p:render="@{#line.isCharge()}"/>
-
-                            </list></property></bean>
-                        </list>
-                    </property>
-                </bean>
+                <ref bean="transactionDetailFields"/>
                 <ref bean="tagGroup"/>
                 <bean parent="Uif-Disclosure-VerticalBoxSection" >
                     <property name="headerText" value="Memos"/>
@@ -660,6 +650,53 @@
                 </bean>
 
 
+            </list>
+        </property>
+    </bean>
+
+    <bean id="transactionDetailFields" parent="Uif-HorizontalBoxGroup">
+        <property name="items">
+            <list>
+
+                <bean parent="Uif-Disclosure-GridSection" p:style="width: 40%;"><property name="items"><list>
+                    <bean parent="Uif-InputField" p:propertyName="transactionDisplayType" p:label="Transaction Type"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.status" p:label="Status"/>
+                    <bean parent="Uif-InputField" p:propertyName="idString" p:label="Transaction ID"/>
+
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.creationDate" p:label="Creation Date"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.effectiveDate" p:label="Effective Date"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.originationDate" p:label="Origination Date"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.recognitionDate" p:label="Recognition Date"/>
+
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.amount" p:label="Amount"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.currency.code" p:label="Currency"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.nativeAmount" p:label="Native Amount"/>
+                </list></property></bean>
+                <bean parent="Uif-Disclosure-GridSection" p:style="width: 55%;"><property name="items"><list>
+                    <bean parent="Uif-InputField" p:propertyName="glEntryGenerated" p:label="General Ledger Entry"/>
+                    <bean parent="Uif-InputField" p:propertyName="internal" p:label="Internal Transaction"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.allocatedAmount" p:label="Allocated Amount"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.lockedAllocatedAmount" p:label="Locked Allocated"/>
+
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.transactionType.description" p:label="Description"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.rollup.description" p:label="Roll-up"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.generalLedgerType.description" p:label="General Ledger Type"/>
+                    <bean parent="Uif-InputField" p:propertyName="glOverridden" p:label="Override GL Codes"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.transactionType.id.id" p:label="@{#line.transactionDisplayType} Type"/>
+
+                    <!-- Payment specific fields -->
+                    <bean parent="Uif-InputField" p:propertyName="clearDate" p:label="Clear Date" p:render="@{#line.isPayment()}"/>
+                    <bean parent="Uif-InputField" p:propertyName="paymentRefundable" p:label="Payment is Refundable" p:render="@{#line.isPayment()}"/>
+                    <bean parent="Uif-InputField" p:propertyName="paymentRefundRule" p:label="Payment Refund Rule" p:render="@{#line.isPayment()}"/>
+
+                    <!-- Deferment specific fields -->
+                    <bean parent="Uif-InputField" p:propertyName="originalAmount" p:label="Deferment Original Amount" p:render="@{#line.isDeferment()}"/>
+                    <bean parent="Uif-InputField" p:propertyName="defermentExpirationDate" p:label="Deferment Expiration Date" p:render="@{#line.isDeferment()}"/>
+
+                    <!-- Charge specific fields -->
+                    <bean parent="Uif-InputField" p:propertyName="chargeCancellationRule" p:label="Charge Cancellation Rule" p:render="@{#line.isCharge()}"/>
+
+                </list></property></bean>
             </list>
         </property>
     </bean>
