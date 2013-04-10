@@ -17,6 +17,19 @@ And /^I create a number of COs with an AO in each$/ do
 
 end
 
+Then /^test some stuff$/ do
+
+### TESTING -- NEXT LINES ARE TEMPORARY -- DELETE IF FOUND (brandon.gresham)
+@bsci_co = make CourseOffering, :term => "201201", :course => "BSCI1816bEFB", :ao_list => ["A"], :delivery_format => "Lecture", :grade_format => "Lecture"
+@chem_co = make CourseOffering, :term => "201201", :course => "CHEM181tXN25", :ao_list => ["A"], :delivery_format => "Lecture", :grade_format => "Lecture"
+@phys_co = make CourseOffering, :term => "201201", :course => "PHYS181a50de", :ao_list => ["A"], :delivery_format => "Lecture", :grade_format => "Lecture"
+
+  @bsci_co.colocate :cos_to_colo => [@chem_co, @phys_co]
+
+  puts 'done'
+  sleep 60
+end
+
 When /^I indicate multiple activities for colocation, selecting to "(share|separately manage)" enrollments$/ do |max_enrollment_flag|
 
 ### TESTING -- NEXT LINES ARE TEMPORARY -- DELETE IF FOUND (brandon.gresham)

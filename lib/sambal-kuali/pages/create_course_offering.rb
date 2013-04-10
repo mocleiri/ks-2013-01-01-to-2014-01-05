@@ -38,6 +38,9 @@ class CreateCourseOffering < BasePage
 
   element(:growl_message) { |b| b.div(text: /Course offering .* has been successfully created/) }
 
+  element(:joint_defined_courses_table) { |b| b.div(id: "KS-Catalog-JointCourse-Section").table() }
+  action(:create_new_joint_defined_course_row_1) { |b| b.joint_defined_courses_table.rows[1].cells[3].link.click }
+
   element(:create_from_existing_offering_copy_button) { |b| b.frm.link(text: /Copy/) }
   element(:delivery_format_add_element) {|b| b.frm.delivery_formats_table.rows[1].cells[ACTIONS_COLUMN].button(text: "add")  }
   action(:delivery_format_add) {|b| b.delivery_format_add_element.click; b.loading.wait_while_present   }

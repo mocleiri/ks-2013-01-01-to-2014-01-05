@@ -44,7 +44,8 @@ class CourseOffering
                 :honors_flag,
                 :grade_options,
                 :reg_options,
-                :search_by_subj
+                :search_by_subj,
+                :joint_co_to_create
   #generally set using options hash - course offering object to copy
   :create_by_copy
 
@@ -97,6 +98,7 @@ class CourseOffering
         :search_by_subj => false,
         :create_by_copy => nil,
         :create_from_existing => nil,
+        :joint_co_to_create => nil
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -121,12 +123,26 @@ class CourseOffering
         @suffix = random_alphanums(5)
         page.suffix.set @suffix
         @course = "#{@course}#{@suffix}"
+        if @joint_co_to_create != nil
+          create_joint_co()
+        end
         delivery_obj = make DeliveryFormat
         delivery_obj.select_random_delivery_formats
         @delivery_format_list << delivery_obj
         page.create_offering
       end
     end
+  end
+
+  def create_joint_co()
+
+    # this is hardcoded to create joint-co from row-1;
+    # needs to be parameterized using the @joint_co_to_create
+    # variable
+    on CreateCourseOffering do |page|
+      page.create_new_joint_defined_course_row_1
+    end
+
   end
 
   # searches for and edits an existing course offering course_code matching @course attribute
@@ -721,6 +737,38 @@ class CourseOffering
     #    end
     #  end
     #end
+  end
+
+  #colocate to provided COs
+  #
+  #@param  opts [Hash] {:cos_to_colo => @course_offering}
+  def colocate(opts)
+
+    puts opts
+    @cos_to_colo = opts[:cos_to_colo]
+    puts @cos_to_colo
+    @cos_to_colo.each do |co_to_colo|
+      puts 'colo...' + co_to_colo.course + " " + co_to_colo.ao_list[0]
+    end
+
+
+
+    manage
+    on ManageCourseOfferings do |page|
+      page.edit( @ao_list[0] )
+    end
+    on ActivityOfferingMaintenance do |page|
+      page.select_colocated_checkbox
+
+      @cos_to_colo.each do |co_to_colo|
+        puts 'adding a colo-co...'
+        sleep 10
+        page.colocated_co_input_field.value = co_to_colo.course
+        page.colocated_ao_input_field.value = co_to_colo.ao_list[0]
+        page.add_colocated
+      end
+    end
+
   end
 
 end
