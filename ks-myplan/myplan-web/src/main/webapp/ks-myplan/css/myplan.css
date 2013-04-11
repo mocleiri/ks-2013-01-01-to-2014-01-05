@@ -2521,10 +2521,14 @@ label.scheduled {
 }
 
 .myplan-full-plan-detail table th {
-    padding: 5px 0 0 10px;
+    width: 54px;
+}
+
+.myplan-full-plan-detail table th .uif-field {
+    margin: 5px 0 0 10px;
+    padding: 0;
     text-align: left;
     display: block;
-    width: 44px;
     font-weight: bold;
     line-height: 1.25em;
 }
