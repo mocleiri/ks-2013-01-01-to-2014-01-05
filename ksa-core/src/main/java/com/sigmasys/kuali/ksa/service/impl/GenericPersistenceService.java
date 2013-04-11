@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.service.impl;
 
 import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.PersistenceService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import com.sigmasys.kuali.ksa.service.aop.LoggingInterceptor;

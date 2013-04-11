@@ -1,6 +1,8 @@
 package com.sigmasys.kuali.ksa.exception;
 
 
+import com.sigmasys.kuali.ksa.model.security.Permission;
+
 /**
  * This exception is thrown  when a user does not have the appropriate permission.
  *
@@ -9,26 +11,20 @@ package com.sigmasys.kuali.ksa.exception;
 public class PermissionDeniedException extends GenericException {
 
     private String userId;
-    private String permissionName;
+    private Permission permission;
 
-    public PermissionDeniedException(String userId, String permissionName) {
-        super(null);
+    public PermissionDeniedException(String userId, Permission permission) {
+        super("User '" + userId + "' does not have permission '" + permission.name() + "'");
         this.userId = userId;
-        this.permissionName = permissionName;
-
+        this.permission = permission;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public String getPermissionName() {
-        return permissionName;
-    }
-
-    @Override
-    public String getMessage() {
-        return "User '" + userId + "' does not have permission '" + permissionName + "'";
+    public Permission getPermission() {
+        return permission;
     }
 
 }

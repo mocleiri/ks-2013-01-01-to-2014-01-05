@@ -119,12 +119,12 @@ public class Allocation extends AccountIdAware implements Identifiable {
 
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_INTERNALLY_LOCKED")
-    public Boolean getInternallyLocked() {
+    public Boolean isInternallyLocked() {
         return isInternallyLocked != null ? isInternallyLocked : false;
     }
 
-    public void setInternallyLocked(Boolean internallyLocked) {
-        isInternallyLocked = internallyLocked;
+    public void setInternallyLocked(Boolean isInternallyLocked) {
+        this.isInternallyLocked = isInternallyLocked;
     }
 }
 	

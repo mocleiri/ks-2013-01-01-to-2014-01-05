@@ -1,5 +1,7 @@
 package com.sigmasys.kuali.ksa.service.security;
 
+import com.sigmasys.kuali.ksa.model.security.Permission;
+
 import java.util.List;
 import java.util.Set;
 
@@ -97,6 +99,22 @@ public interface AccessControlService {
      * @return true if the user has the given permission, false - otherwise
      */
     boolean hasPermission(String permissionName);
+
+    /**
+     * Checks if the currently authenticated user has the given permissions
+     *
+     * @param permissions one or more permissions
+     * @return true if the user has the given permissions, false - otherwise
+     */
+    boolean hasPermissions(Permission... permissions);
+
+    /**
+     * Checks if the currently authenticated user has the given permission
+     *
+     * @param permission a permission
+     * @return true if the user has the given permission, false - otherwise
+     */
+    boolean hasPermission(Permission permission);
 
 
     /**

@@ -150,7 +150,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         Allocation allocation = createAllocation(true, true);
 
-        isTrue(allocation.getInternallyLocked());
+        isTrue(allocation.isInternallyLocked());
 
     }
 
