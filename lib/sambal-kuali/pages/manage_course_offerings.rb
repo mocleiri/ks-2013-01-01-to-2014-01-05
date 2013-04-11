@@ -27,7 +27,7 @@ class ManageCourseOfferings < BasePage
   element(:view_co_details_link) { |b| b.manage_offering_links_div.link(text: "View") }
   element(:edit_course_offering_link) { |b| b.frm.link(id: "edit_co")}
   action(:edit_course_offering) { |b| b.edit_course_offering_link.click; b.loading.wait_while_present(200) }
-  action(:delete_course_offering_link) { |b| b.manage_offering_links_div.link(id: "delete_co") }
+  action(:delete_course_offering_link) { |b| b.manage_offering_links_div.link(id: "ActivityOfferingResultSection-deleteOneCoWithLink") }
   action(:delete_course_offering) { |b| b.delete_course_offering_link.click; b.loading.wait_while_present }
 
   value(:cross_listed_as_text) { |b| b.frm.span(text: /Crosslisted as/).text }
