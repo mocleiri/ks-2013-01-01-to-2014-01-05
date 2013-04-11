@@ -53,6 +53,7 @@ ID,CREATEID,CREATETIME,UPDATEID,UPDATETIME,VER_NBR,NAME,STATE,CD,TYPE,OBJ_ID
 "62","kr","2011-04-13T00:00:00.000+0000","kr","2011-04-13T00:00:00.000+0000","0","Ethnomusicology","Actual","MUET","ks.core.subjectcode.usage.all","c37a0ec5-0a4c-42f1-bb38-2196bdfd2971"
 "63","kr","2011-04-13T00:00:00.000+0000","kr","2011-04-13T00:00:00.000+0000","0","Music Performance","Actual","MUSP","ks.core.subjectcode.usage.all","2de2348d-364f-469a-90be-4b97e094f4d0"
 "64","kr","2011-04-13T00:00:00.000+0000","kr","2011-04-13T00:00:00.000+0000","0","Neuroscience & Cognitive Science","Actual","NACS","ks.core.subjectcode.usage.one","3aab2a00-664c-4556-8dba-c50c638a6f61"
+"65","kr","2011-04-12T20:00:00.000+0000","kr","2011-04-12T20:00:00.000+0000","0","Womens Studies","Actual","WMST","ks.core.subjectcode.usage.one","4e164672-6ae3-4028-9ba5-c3dcd16a2ecf"
 "7","kr","2011-04-14T00:00:00.000+0000","kr","2011-04-13T00:00:00.000+0000","2","FineArts","Actual","ARTS","ks.core.subjectcode.usage.all","22a76253-78db-4194-ae82-35f17918cbd9"
 "8","kr","2011-04-15T00:00:00.000+0000","kr","2011-04-13T00:00:00.000+0000","2","Biochemistry","Actual","BCHM","ks.core.subjectcode.usage.all","e831a7f4-1553-4c45-a942-fabed9873c31"
 "9","kr","2011-04-16T00:00:00.000+0000","kr","2011-04-13T00:00:00.000+0000","3","Biomedical Engineering","Actual","BENG","ks.core.subjectcode.usage.all","b481b138-fb62-4eae-ab58-9a2d34a6b257"
