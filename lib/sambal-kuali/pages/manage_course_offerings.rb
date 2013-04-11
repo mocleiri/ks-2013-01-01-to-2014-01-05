@@ -418,13 +418,17 @@ class ManageCourseOfferings < BasePage
     target_cluster(private_name).link(text: /View Registration Groups/).click
   end
 
+  def view_reg_groups_table(private_name)
+    target_cluster(private_name).table(:index=>1)
+  end
+
   def get_cluster_reg_groups_list(private_name)
     #TODO - FIXME this is not returning the Reg Groups
     reg_group_list = []
-    cluster_rg_table = target_cluster(private_name).table(:index=>1)
+    #cluster_rg_table = target_cluster(private_name).table(:index=>1)
 
-    if cluster_rg_table.exists? then
-      cluster_rg_table.rows[1..-1].each do |row|
+    if view_reg_groups_table(private_name).exists? then
+      view_reg_groups_table(private_name).rows[1..-1].each do |row|
         reg_group_list << row.cells[0].text
       end
       reg_group_list.delete_if{|rg| rg == "" }

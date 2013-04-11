@@ -136,8 +136,12 @@ end
 When /^the corresponding number of registration groups for each cluster is correct$/ do
   on ManageCourseOfferings do |page|
     @course_offering.activity_offering_cluster_list.each do |cluster|
+
+      if page.view_reg_groups_table(cluster.private_name).present? == false
       page.view_cluster_reg_groups(cluster.private_name)
+      end
       page.get_cluster_reg_groups_list(cluster.private_name).length.should == cluster.ao_list.count{|x| x.activity_type == "Discussion"} * cluster.ao_list.count{|x| x.activity_type == "Lecture"}
+
     end
   end
 end

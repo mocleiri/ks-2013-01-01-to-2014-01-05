@@ -102,13 +102,9 @@ class ActivityOfferingCluster
       page.move_aos
       page.select_cluster.select(target_cluster.private_name)
       page.complete_move_ao
-
-      target_cluster.ao_list.push(@ao_list.select{|ao| ao.code == ao_code})
+      target_cluster.ao_list.push(@ao_list.select{|ao| ao.code == ao_code}[0])
       @ao_list.delete_if{|x| x.code == ao_code}
     end
-    #TODO: update ao_list for each cluster
-    #target_cluster.ao_list << ao_code
-    #ao_list.delete(ao_code)
   end
 
   # removes activity offering from cluster (ao becomes unassigned)
