@@ -39,7 +39,7 @@ if ENV['HEADLESS']
 
   After do | scenario |
     if scenario.failed?
-      @browser.close
+      @browser.close unless @browser == nil
       browser = nil
     end
   end
