@@ -3,82 +3,31 @@ And /^I create a number of COs with an AO in each$/ do
   # BSCI181
   @bsci_co = create CourseOffering, :term => "201201", :course => "BSCI181", :delivery_format => "Lecture", :grade_format => "Lecture"
   @bsci_co.create_ao :ao_code => "A"
-  puts @bsci_co.course + ' created'
 
   # CHEM181
   @chem_co = create CourseOffering, :term => "201201", :course => "CHEM181", :delivery_format => "Lecture", :grade_format => "Lecture"
   @chem_co.create_ao :ao_code => "A"
-  puts @chem_co.course + ' created'
 
   # PHYS181
   @phys_co = create CourseOffering, :term => "201201", :course => "PHYS181", :delivery_format => "Lecture", :grade_format => "Lecture"
   @phys_co.create_ao :ao_code => "A"
-  puts @phys_co.course + ' created'
 
-end
-
-Then /^test some stuff$/ do
-
-### TESTING -- NEXT LINES ARE TEMPORARY -- DELETE IF FOUND (brandon.gresham)
-@bsci_co = make CourseOffering, :term => "201201", :course => "BSCI1816bEFB", :ao_list => ["A"], :delivery_format => "Lecture", :grade_format => "Lecture"
-@chem_co = make CourseOffering, :term => "201201", :course => "CHEM181tXN25", :ao_list => ["A"], :delivery_format => "Lecture", :grade_format => "Lecture"
-@phys_co = make CourseOffering, :term => "201201", :course => "PHYS181a50de", :ao_list => ["A"], :delivery_format => "Lecture", :grade_format => "Lecture"
-
-  @bsci_co.colocate :cos_to_colo => [@chem_co, @phys_co]
-
-  puts 'done'
-  sleep 60
 end
 
 When /^I indicate multiple activities for colocation, selecting to "(share|separately manage)" enrollments$/ do |max_enrollment_flag|
 
-### TESTING -- NEXT LINES ARE TEMPORARY -- DELETE IF FOUND (brandon.gresham)
-#@bsci_co = make CourseOffering, :term => "201201", :course => "BSCI1817JCUL", :ao_list => ["A"], :delivery_format => "Lecture", :grade_format => "Lecture"
-#@chem_co = make CourseOffering, :term => "201201", :course => "CHEM181ZN8DK", :ao_list => ["A"], :delivery_format => "Lecture", :grade_format => "Lecture"
-#@phys_co = make CourseOffering, :term => "201201", :course => "PHYS181MQXUZ", :ao_list => ["A"], :delivery_format => "Lecture", :grade_format => "Lecture"
-
-
-
-  # REFACTOR THIS ENTIRE STEP TO:
-  # @bsci_co.add_aos( @chem_co, @phys_co, max_enrollment_flag, enrollment_size )
-
-  @bsci_co.manage
-  on ManageCourseOfferings do |page|
-    page.edit( @bsci_co.ao_list[0] )
+  $should_enrollment_be_shared_flag = true
+  if max_enrollment_flag == 'separately manage'
+    $should_enrollment_be_shared_flag = false
   end
 
-  on ActivityOfferingMaintenance do |page|
-    page.select_colocated_checkbox
-
-    page.colocated_co_input_field.value = @chem_co.course
-    page.colocated_ao_input_field.value = @chem_co.ao_list[0]
-    page.add_colocated
-
-    page.colocated_co_input_field.value = @phys_co.course
-    page.colocated_ao_input_field.value = @phys_co.ao_list[0]
-    page.add_colocated
-
-
-    if(max_enrollment_flag == 'share')
-      page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
-      page.select_jointly_share_enrollment_radio
-      page.colocated_shared_max_enrollment_input_field.value = '10'
-    else # ie: 'separately manage'
-      page.select_separately_manage_enrollment_radio
-      page.colocated_shared_max_enrollment_table_first_ao_input.value = '10'
-    end
-
-    page.submit
-  end
+  @bsci_co.colocate :cos_to_colo => [@chem_co, @phys_co],
+                    :should_enrollment_be_shared_flag => $should_enrollment_be_shared_flag,
+                    :enrollment_size => 10
 
 end
 
 Then /^the AO indicates it is colocated$/ do
-
-  # REFACTOR:
-  # - move expected code to getter on CourseOffering-object such that
-  #    "should include" refers directly to that and the 2 "$_expected"-var-declarations
-  #    go away
 
   @bsci_co.manage
   on ManageCourseOfferings do |page|
@@ -92,6 +41,4 @@ Then /^the AO indicates it is colocated$/ do
 
   end
 
-  puts 'done'
-  sleep 10
 end

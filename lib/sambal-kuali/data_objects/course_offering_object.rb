@@ -741,16 +741,24 @@ class CourseOffering
 
   #colocate to provided COs
   #
-  #@param  opts [Hash] {:cos_to_colo => @course_offering}
+  #@param  opts [Hash] {:cos_to_colo => @course_offering, :should_enrollment_be_shared_flag => true/false, :enrollment_size => int}
   def colocate(opts)
 
-    puts opts
-    @cos_to_colo = opts[:cos_to_colo]
-    puts @cos_to_colo
-    @cos_to_colo.each do |co_to_colo|
-      puts 'colo...' + co_to_colo.course + " " + co_to_colo.ao_list[0]
+
+    $should_enrollment_be_shared_flag = true
+    if opts[:should_enrollment_be_shared_flag] != nil
+      $should_enrollment_be_shared_flag = opts[:should_enrollment_be_shared_flag]
     end
 
+    $enrollment_size = 10
+    if opts[:enrollment_size] != nil
+      $enrollment_size = opts[:enrollment_size]
+    end
+
+    $cos_to_colo = opts[:cos_to_colo]
+    if $cos_to_colo == nil
+      return nil
+    end
 
 
     manage
@@ -760,13 +768,23 @@ class CourseOffering
     on ActivityOfferingMaintenance do |page|
       page.select_colocated_checkbox
 
-      @cos_to_colo.each do |co_to_colo|
-        puts 'adding a colo-co...'
-        sleep 10
+      # add the colo-COs to this CO
+      $cos_to_colo.each do |co_to_colo|
         page.colocated_co_input_field.value = co_to_colo.course
         page.colocated_ao_input_field.value = co_to_colo.ao_list[0]
         page.add_colocated
       end
+
+      if $should_enrollment_be_shared_flag
+        page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
+        page.select_jointly_share_enrollment_radio
+        page.colocated_shared_max_enrollment_input_field.value = $enrollment_size
+      else # ie: 'separately manage'
+        page.select_separately_manage_enrollment_radio
+        page.colocated_shared_max_enrollment_table_first_ao_input.value = $enrollment_size
+      end
+
+      page.submit
     end
 
   end
