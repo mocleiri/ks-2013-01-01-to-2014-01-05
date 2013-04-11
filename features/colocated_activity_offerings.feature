@@ -18,3 +18,9 @@ Background:
       | separately manage |
 
 
+ Scenario: Delete a fully colocated AO
+    When I designate a valid term and Course Offering Code with a fully colocated AO
+    And I delete the fully colcated AO
+    Then The AO is successfully deleted
+
+
