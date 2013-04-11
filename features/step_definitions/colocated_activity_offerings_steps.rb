@@ -42,3 +42,23 @@ Then /^the AO indicates it is colocated$/ do
   end
 
 end
+
+When(/^I designate a valid term and Course Offering Code with a fully colocated AO$/) do
+  @course_offering = make CourseOffering, :course=>"CHEM441", :term=>"201208"
+  @course_offering.manage
+end
+
+And(/^I delete the fully colcated AO$/) do
+  on ManageCourseOfferings do |page|
+    @course_offering.delete_ao_list :code_list =>  page.codes_list
+  end
+end
+
+Then(/^The AO is successfully deleted$/) do
+  @course_offering.manage
+  begin
+    on(ManageCourseOfferings).codes_list
+  rescue RuntimeError => e
+    e.message.should include "error in activity_offering_results_table - no AOs"
+  end
+end
