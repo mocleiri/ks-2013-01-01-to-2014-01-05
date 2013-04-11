@@ -880,6 +880,23 @@ public interface TransactionService {
      */
     TransactionType addTagsToTransactionType(TransactionTypeId typeId, List<Tag> tags);
 
+    /**
+     * Removes the specified list of tags from the transaction type specified by TransactionType ID.
+     *
+     * @param typeId Transaction ID
+     * @return the updated transaction type instance with tags
+     */
+    TransactionType removeTagsFromTransactionType(TransactionTypeId typeId, Long... tagIds);
+
+    /**
+     * Removes the specified list of tags from the transaction specified by Transaction ID.
+     *
+     * @param transactionId Transaction ID
+     * @param tagIds        IDs of tags being removed
+     * @return the updated transaction instance
+     */
+    Transaction removeTagsFromTransaction(Long transactionId, Long... tagIds);
+
 
     /**
      * Retrieve a list of all GL Breakdowns for a given transaction type

@@ -13,7 +13,9 @@ import javax.persistence.TemporalType;
 
 import com.sigmasys.kuali.ksa.exception.*;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.security.PermissionConstants;
 import com.sigmasys.kuali.ksa.service.*;
+import com.sigmasys.kuali.ksa.service.security.AccessControlService;
 import com.sigmasys.kuali.ksa.util.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +47,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                     " left outer join fetch t.currency c " +
                     " left outer join fetch t.rollup r " +
                     " left outer join fetch t.document d ";
+
+    @Autowired
+    private AccessControlService acService;
 
     @Autowired
     private AccountService accountService;
@@ -2879,6 +2884,55 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
+     * Removes the specified list of tags from the transaction specified by Transaction ID.
+     *
+     * @param transactionId Transaction ID
+     * @param tagIds        IDs of tags being removed
+     * @return the updated transaction instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Transaction removeTagsFromTransaction(Long transactionId, Long... tagIds) {
+
+        Transaction transaction = getTransaction(transactionId);
+        if (transaction == null) {
+            String errMsg = "Transaction with ID = " + transactionId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        List<Tag> updatedTags = removeTags(tagIds, transaction.getTags());
+
+        transaction.setTags(updatedTags);
+
+        return transaction;
+    }
+
+    /**
+     * Removes the specified list of tags from the transaction type specified by TransactionType ID.
+     *
+     * @param typeId Transaction ID
+     * @return the updated transaction type instance with tags
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public TransactionType removeTagsFromTransactionType(TransactionTypeId typeId, Long... tagIds) {
+
+        TransactionType transactionType = getTransactionType(typeId);
+        if (transactionType == null) {
+            String errMsg = "Transaction type with ID = " + typeId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionTypeNotFoundException(errMsg);
+        }
+
+        List<Tag> updatedTags = removeTags(tagIds, transactionType.getTags());
+
+        transactionType.setTags(updatedTags);
+
+        return transactionType;
+    }
+
+    /**
      * Adds the list of tags to the transaction type specified by TransactionType ID.
      *
      * @param typeId Transaction ID
@@ -2919,6 +2973,22 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return query.getResultList();
     }
 
+    private List<Tag> removeTags(Long[] tagIdsToRemove, List<Tag> tags) {
+
+        Set<Long> tagIds = new HashSet<Long>(Arrays.asList(tagIdsToRemove));
+
+        if (CollectionUtils.isNotEmpty(tags)) {
+            for (Tag tag : new ArrayList<Tag>(tags)) {
+                if (tagIds.contains(tag.getId())) {
+                    checkTagPermission(tag);
+                    tags.remove(tag);
+                }
+            }
+        }
+
+        return tags;
+    }
+
 
     private List<Tag> mergeNewAndPersistentTags(List<Tag> tagsToAdd, List<Tag> persistentTags) {
 
@@ -2930,12 +3000,14 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             if (tag.getId() != null) {
                 tagIds.add(tag.getId());
             }
+            checkTagPermission(tag);
             auditableEntityService.persistAuditableEntity(tag);
         }
 
         if (persistentTags != null) {
             for (Tag currentTag : new ArrayList<Tag>(persistentTags)) {
                 if (tagIds.contains(currentTag.getId())) {
+                    checkTagPermission(currentTag);
                     persistentTags.remove(currentTag);
                 }
             }
@@ -2947,6 +3019,15 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         return persistentTags;
 
+    }
+
+    private void checkTagPermission(Tag tag) {
+        if (tag.isAdministrative() && !acService.hasPermission(PermissionConstants.EDIT_TAGS)) {
+            String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+            PermissionDeniedException exception = new PermissionDeniedException(userId, PermissionConstants.EDIT_TAGS);
+            logger.error("Tag ID = " + tag.getId() + " : " + exception.getMessage(), exception);
+            throw exception;
+        }
     }
 
 

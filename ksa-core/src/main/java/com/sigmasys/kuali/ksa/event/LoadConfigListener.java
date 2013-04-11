@@ -10,7 +10,7 @@ package com.sigmasys.kuali.ksa.event;
  */
 public abstract class LoadConfigListener implements EventListener<LoadConfigEvent> {
 
-    public abstract void onLoad(LoadConfigEvent loadConfigEvent);
+    public abstract void onLoad(LoadConfigEvent event);
 
     @Override
     public void handleEvent(LoadConfigEvent event) {

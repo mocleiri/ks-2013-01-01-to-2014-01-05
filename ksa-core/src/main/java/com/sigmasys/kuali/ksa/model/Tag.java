@@ -45,11 +45,11 @@ public class Tag extends AuditableEntity<Long> {
 
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_ADMINISTRATIVE")
-    public Boolean getAdministrative() {
+    public Boolean isAdministrative() {
         return isAdministrative != null ? isAdministrative : false;
     }
 
-    public void setAdministrative(Boolean administrative) {
-        isAdministrative = administrative;
+    public void setAdministrative(Boolean isAdministrative) {
+        this.isAdministrative = isAdministrative;
     }
 }

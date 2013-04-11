@@ -1,7 +1,12 @@
-package com.sigmasys.kuali.ksa.service.impl;
+package com.sigmasys.kuali.ksa.service.security.impl;
 
+import com.sigmasys.kuali.ksa.event.EventMulticaster;
+import com.sigmasys.kuali.ksa.event.LoadAccessControlEvent;
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.service.AccessControlService;
+import com.sigmasys.kuali.ksa.service.UserSessionManager;
+import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
+import com.sigmasys.kuali.ksa.service.security.AccessControlService;
+import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +22,7 @@ import org.kuali.rice.kim.api.role.RoleMember;
 import org.kuali.rice.kim.api.role.RoleService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kim.impl.KIMPropertyConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +53,9 @@ public class AccessControlServiceImpl extends GenericPersistenceService implemen
 
     private final Set<String> transactionTypeIds = new HashSet<String>();
     private final Map<String, String> transactionTypeMasks = new HashMap<String, String>();
+
+    @Autowired
+    private UserSessionManager userSessionManager;
 
 
     private IdentityService getIdentityService() {
@@ -227,7 +236,31 @@ public class AccessControlServiceImpl extends GenericPersistenceService implemen
 
     @Override
     public boolean hasPermission(String userId, String permissionName) {
-        return hasPermissions(userId, permissionName);
+        return hasPermissions(userId, new String[]{permissionName});
+    }
+
+
+    /**
+     * Checks if the currently authenticated user has the given permissions
+     *
+     * @param permissionNames one or more permission names
+     * @return true if the user has the given permissions, false - otherwise
+     */
+    @Override
+    public boolean hasPermissions(String... permissionNames) {
+        String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        return hasPermissions(userId, permissionNames);
+    }
+
+    /**
+     * Checks if the currently authenticated user has the given permission
+     *
+     * @param permissionName a permission name
+     * @return true if the user has the given permission, false - otherwise
+     */
+    @Override
+    public boolean hasPermission(String permissionName) {
+        return hasPermissions(new String[]{permissionName});
     }
 
     @Override
@@ -236,5 +269,7 @@ public class AccessControlServiceImpl extends GenericPersistenceService implemen
         loadTransactionTypeIds();
         userRoles.clear();
         userPermissions.clear();
+        // After refreshing all security attributes we have to fire LoadAccessControlEvent
+        EventMulticaster.getInstance().fireEvent(new LoadAccessControlEvent(this));
     }
 }
