@@ -230,7 +230,7 @@
     <resource-env-ref>
         <description>Transaction Manager</description>
         <resource-env-ref-name>TransactionManager</resource-env-ref-name>
-        <resource-env-ref-type>com.atomikos.icatch.jta.UserTransactionManager</resource-env-ref-type>
+        <resource-env-ref-type>javax.transaction.TransactionManager</resource-env-ref-type>
     </resource-env-ref>
 
 </web-app>

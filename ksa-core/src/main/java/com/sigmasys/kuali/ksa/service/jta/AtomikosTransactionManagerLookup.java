@@ -1,7 +1,6 @@
 package com.sigmasys.kuali.ksa.service.jta;
 
 
-import com.atomikos.icatch.jta.UserTransactionManager;
 import org.hibernate.transaction.TransactionManagerLookup;
 
 import javax.naming.InitialContext;
@@ -28,7 +27,7 @@ public class AtomikosTransactionManagerLookup implements TransactionManagerLooku
     public TransactionManager getTransactionManager(Properties props) {
         try {
             InitialContext initialContext = new InitialContext();
-            return (UserTransactionManager) initialContext.lookup(TRANSACTION_MANAGER_JNDI_NAME);
+            return (TransactionManager) initialContext.lookup(TRANSACTION_MANAGER_JNDI_NAME);
         } catch (Exception e) {
             throw new RuntimeException("Could not obtain Atomikos transaction manager instance", e);
         }

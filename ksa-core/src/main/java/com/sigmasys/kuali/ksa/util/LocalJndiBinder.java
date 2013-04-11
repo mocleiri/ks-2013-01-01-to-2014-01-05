@@ -54,7 +54,7 @@ public class LocalJndiBinder implements Ordered {
 
             isInitialized.set(true);
 
-            logger.debug("JNDI binder initialized");
+            logger.debug("JNDI binder initialized on " + REGISTRY_PORT_NUMBER + " port");
 
             setBindings(beans);
 

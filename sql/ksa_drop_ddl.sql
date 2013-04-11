@@ -5,7 +5,6 @@
 drop table KSA.KSSA_ACNT_KYPR cascade constraints;
 
 drop table KSA.KSSA_CONFIG cascade constraints;
-drop table KSA.KSSA_EXTERNAL_DB_CONFIG cascade constraints;
 
 -- KSA tables dropping
 
