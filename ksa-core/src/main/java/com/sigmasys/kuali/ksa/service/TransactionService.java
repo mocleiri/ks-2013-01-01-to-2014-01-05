@@ -384,16 +384,17 @@ public interface TransactionService {
     /**
      * Creates an allocation between two transactions with the specified parameters.
      *
-     * @param transaction1 First transaction
-     * @param transaction2 Second transaction
-     * @param newAmount    amount to be allocated
-     * @param isQueued     indicates whether the GL transaction should be in Q or W status
-     * @param locked       indicates whether the allocation should be locked or unlocked
+     * @param transaction1     First transaction
+     * @param transaction2     Second transaction
+     * @param newAmount        amount to be allocated
+     * @param isQueued         indicates whether the GL transaction should be in Q or W status
+     * @param locked           indicates whether the allocation should be locked or unlocked
+     * @param internallyLocked indicates whether the allocation should be internally locked or unlocked
      * @return a new CompositeAllocation instance that has references to Allocation and GL transactions
      */
     @WebMethod(exclude = true)
-    public CompositeAllocation createAllocation(Transaction transaction1, Transaction transaction2,
-                                                BigDecimal newAmount, boolean isQueued, boolean locked);
+    CompositeAllocation createAllocation(Transaction transaction1, Transaction transaction2, BigDecimal newAmount,
+                                         boolean isQueued, boolean locked, boolean internallyLocked);
 
     /**
      * This will allocate a locked amount on the transaction. A check will be
@@ -409,6 +410,7 @@ public interface TransactionService {
     @WebMethod(exclude = true)
     CompositeAllocation createLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount);
 
+
     /**
      * This will allocate a locked amount on the transaction. A check will be
      * made to ensure that the lockedAmount and the allocateAmount don't exceed
@@ -418,38 +420,27 @@ public interface TransactionService {
      * @param transactionId1 transaction1 ID
      * @param transactionId2 transaction2 ID
      * @param amount         amount of money to be allocated
+     * @param isQueued       indicates whether the GL transaction should be in Q or W status
      * @return a new CompositeAllocation instance that has references to Allocation and GL transactions
      */
     @WebMethod(exclude = true)
-    CompositeAllocation createInternalLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount);
-
-    /**
-     * This will allocate a locked amount on the transaction. A check will be
-     * made to ensure that the lockedAmount and the allocateAmount don't exceed
-     * the ledgerAmount of the transaction. Setting an amount as locked prevents
-     * the payment application system from reallocating the balance elsewhere.
-     *
-     * @param transactionId1 transaction1 ID
-     * @param transactionId2 transaction2 ID
-     * @param amount         amount of money to be allocated
-     * @param isQueued       indicates whether the GL transaction should be in Q or W status
-     * @return a new CompositeAllocation instance that has references to Allocation and GL transactions
-     */
-    CompositeAllocation createInternalLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount, boolean isQueued);
-
-    /**
-     * This will allocate a locked amount on the transaction. A check will be
-     * made to ensure that the lockedAmount and the allocateAmount don't exceed
-     * the ledgerAmount of the transaction. Setting an amount as locked prevents
-     * the payment application system from reallocating the balance elsewhere.
-     *
-     * @param transactionId1 transaction1 ID
-     * @param transactionId2 transaction2 ID
-     * @param amount         amount of money to be allocated
-     * @param isQueued       indicates whether the GL transaction should be in Q or W status
-     * @return a new CompositeAllocation instance that has references to Allocation and GL transactions
-     */
     CompositeAllocation createLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount, boolean isQueued);
+
+    /**
+     * This will allocate a locked amount on the transaction. A check will be
+     * made to ensure that the lockedAmount and the allocateAmount don't exceed
+     * the ledgerAmount of the transaction. Setting an amount as locked prevents
+     * the payment application system from reallocating the balance elsewhere.
+     *
+     * @param transactionId1   transaction1 ID
+     * @param transactionId2   transaction2 ID
+     * @param amount           amount of money to be allocated
+     * @param isQueued         indicates whether the GL transaction should be in Q or W status
+     * @param internallyLocked indicates whether the allocation should be internally locked or not
+     * @return a new CompositeAllocation instance that has references to Allocation and GL transactions
+     */
+    CompositeAllocation createLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount,
+                                               boolean isQueued, boolean internallyLocked);
 
     /**
      * Removes all allocations (locked and non-locked) associated with the given transaction.

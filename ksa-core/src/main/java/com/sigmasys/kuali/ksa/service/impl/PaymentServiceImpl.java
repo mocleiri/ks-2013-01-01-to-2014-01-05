@@ -187,7 +187,7 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
                                 logger.info("Amount to allocate = " + amountToAllocate.toPlainString());
 
                                 CompositeAllocation allocation = transactionService.createAllocation(transaction,
-                                        transaction1, amountToAllocate, isQueued, false);
+                                        transaction1, amountToAllocate, isQueued, false, false);
 
                                 logger.info("Created allocation between " +
                                         transaction.getTransactionTypeValue() + "(" +

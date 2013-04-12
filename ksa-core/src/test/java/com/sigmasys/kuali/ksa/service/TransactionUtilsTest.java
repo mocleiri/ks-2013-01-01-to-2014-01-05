@@ -78,7 +78,7 @@ public class TransactionUtilsTest extends AbstractServiceTest {
         notNull(transaction2);
         notNull(transaction2.getId());
 
-        transactionService.createAllocation(transaction1, transaction2, new BigDecimal(100.00), true, true);
+        transactionService.createAllocation(transaction1, transaction2, new BigDecimal(100.00), true, true, false);
 
         BigDecimal amount = TransactionUtils.getUnallocatedAmount(transaction1);
 
@@ -109,7 +109,7 @@ public class TransactionUtilsTest extends AbstractServiceTest {
         notNull(transaction2);
         notNull(transaction2.getId());
 
-        transactionService.createAllocation(transaction1, transaction2, new BigDecimal(200.00), true, true);
+        transactionService.createAllocation(transaction1, transaction2, new BigDecimal(200.00), true, true, false);
 
         isTrue(TransactionUtils.getUnallocatedAmount(transaction1).compareTo(BigDecimal.ZERO) == 0);
         isTrue(TransactionUtils.getUnallocatedAmount(transaction2).compareTo(BigDecimal.ZERO) > 0);
@@ -143,7 +143,7 @@ public class TransactionUtilsTest extends AbstractServiceTest {
         notNull(transaction2);
         notNull(transaction2.getId());
 
-        transactionService.createAllocation(transaction1, transaction2, new BigDecimal(100.00), true, true);
+        transactionService.createAllocation(transaction1, transaction2, new BigDecimal(100.00), true, true, false);
 
         isTrue(TransactionUtils.getUnallocatedAmount(transaction1).compareTo(BigDecimal.ZERO) > 0);
         isTrue(TransactionUtils.getUnallocatedAmount(transaction2).compareTo(BigDecimal.ZERO) > 0);
@@ -351,7 +351,7 @@ public class TransactionUtilsTest extends AbstractServiceTest {
 
         List<Transaction> transactions = Arrays.asList(transaction1, transaction2);
 
-        transactionService.createAllocation(transaction1, transaction2, new BigDecimal(300.00), true, true);
+        transactionService.createAllocation(transaction1, transaction2, new BigDecimal(300.00), true, true, false);
 
         isTrue(TransactionUtils.getUnallocatedAmount(transaction1).compareTo(BigDecimal.ZERO) > 0);
         isTrue(TransactionUtils.getUnallocatedAmount(transaction2).compareTo(BigDecimal.ZERO) > 0);

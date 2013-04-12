@@ -85,7 +85,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         CompositeAllocation compositeAllocation;
         if (locked) {
             compositeAllocation = internallyLocked ?
-                    transactionService.createInternalLockedAllocation(transaction1.getId(), transaction2.getId(), new BigDecimal(90)) :
+                    transactionService.createLockedAllocation(transaction1.getId(), transaction2.getId(), new BigDecimal(90), true, true) :
                     transactionService.createLockedAllocation(transaction1.getId(), transaction2.getId(), new BigDecimal(90));
         } else {
             compositeAllocation = transactionService.createAllocation(transaction1.getId(), transaction2.getId(), new BigDecimal(90));
@@ -165,7 +165,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Assert.notNull(transaction.getId());
 
         CompositeAllocation compositeAllocation =
-                transactionService.createAllocation(transaction, transaction1, new BigDecimal(3.5), true, true);
+                transactionService.createAllocation(transaction, transaction1, new BigDecimal(3.5), true, true, false);
 
         Assert.notNull(compositeAllocation);
         Assert.notNull(compositeAllocation.getAllocation());
@@ -178,7 +178,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Assert.notNull(transaction.getId());
 
         compositeAllocation =
-                transactionService.createAllocation(transaction1, transaction, new BigDecimal(1), true, true);
+                transactionService.createAllocation(transaction1, transaction, new BigDecimal(1), true, true, false);
 
         Assert.notNull(compositeAllocation);
         Assert.notNull(compositeAllocation.getAllocation());

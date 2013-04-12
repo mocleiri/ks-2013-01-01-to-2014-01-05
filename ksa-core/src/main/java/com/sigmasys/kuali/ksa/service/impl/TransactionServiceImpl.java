@@ -754,7 +754,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
     public CompositeAllocation createAllocation(Long transactionId1, Long transactionId2, BigDecimal amount) {
-        return createAllocation(transactionId1, transactionId2, amount, true, false);
+        return createAllocation(transactionId1, transactionId2, amount, true, false, false);
     }
 
     /**
@@ -773,11 +773,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @Transactional(readOnly = false)
     public CompositeAllocation createAllocation(Long transactionId1, Long transactionId2, BigDecimal amount, boolean isQueued) {
-        return createAllocation(transactionId1, transactionId2, amount, isQueued, false);
+        return createAllocation(transactionId1, transactionId2, amount, isQueued, false, false);
     }
 
     protected CompositeAllocation createAllocation(Long transactionId1, Long transactionId2, BigDecimal newAmount,
-                                                   boolean isQueued, boolean locked) {
+                                                   boolean isQueued, boolean locked, boolean internallyLocked) {
 
         Transaction transaction1 = getTransaction(transactionId1);
         if (transaction1 == null) {
@@ -793,7 +793,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new TransactionNotFoundException(errMsg);
         }
 
-        return createAllocation(transaction1, transaction2, newAmount, isQueued, locked);
+        return createAllocation(transaction1, transaction2, newAmount, isQueued, locked, internallyLocked);
     }
 
     private void addAllocatedAmount(Transaction transaction, BigDecimal newAmount, boolean locked) {
@@ -815,21 +815,35 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     /**
      * Creates an allocation between two transactions with the specified parameters.
      *
-     * @param transaction1 First transaction
-     * @param transaction2 Second transaction
-     * @param newAmount    amount to be allocated
-     * @param isQueued     indicates whether the GL transaction should be in Q or W status
-     * @param locked       indicates whether the allocation should be locked or unlocked
+     * @param transaction1     First transaction
+     * @param transaction2     Second transaction
+     * @param newAmount        amount to be allocated
+     * @param isQueued         indicates whether the GL transaction should be in Q or W status
+     * @param locked           indicates whether the allocation should be locked or unlocked
+     * @param internallyLocked indicates whether the allocation should be internally locked or unlocked
      * @return a new CompositeAllocation instance that has references to Allocation and GL transactions
      */
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
-    public CompositeAllocation createAllocation(Transaction transaction1, Transaction transaction2,
-                                                BigDecimal newAmount, boolean isQueued, boolean locked) {
+    public CompositeAllocation createAllocation(Transaction transaction1, Transaction transaction2, BigDecimal newAmount,
+                                                boolean isQueued, boolean locked, boolean internallyLocked) {
 
         final Long transactionId1 = transaction1.getId();
         final Long transactionId2 = transaction2.getId();
+
+        if (internallyLocked) {
+            if (!locked) {
+                String errMsg = "Internally locked allocations must also be locked";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+            PermissionUtils.checkPermission(Permission.CREATE_INTERNALLY_LOCKED_ALLOCATION);
+        } else if (locked && !internallyLocked) {
+            PermissionUtils.checkPermission(Permission.CREATE_LOCKED_ALLOCATION);
+        } else {
+            PermissionUtils.checkPermission(Permission.CREATE_ALLOCATION);
+        }
 
         if (newAmount == null || newAmount.compareTo(BigDecimal.ZERO) <= 0) {
             String errMsg = "The allocation amount should be a positive number";
@@ -871,6 +885,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         List<Allocation> allocations = query.getResultList();
 
         for (Allocation allocation : allocations) {
+
+            PermissionUtils.checkPermissions(allocation,
+                    Permission.REMOVE_ALLOCATION,
+                    Permission.REMOVE_LOCKED_ALLOCATION,
+                    Permission.REMOVE_INTERNALLY_LOCKED_ALLOCATION);
 
             BigDecimal allocatedAmount1 = locked ? transaction1.getLockedAllocatedAmount() :
                     transaction1.getAllocatedAmount();
@@ -938,6 +957,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             allocation.setSecondTransaction(transaction2);
             allocation.setAmount(newAmount);
             allocation.setLocked(locked);
+            allocation.setInternallyLocked(internallyLocked);
 
             persistEntity(allocation);
 
@@ -1068,7 +1088,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
     public CompositeAllocation createLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount) {
-        return createAllocation(transactionId1, transactionId2, amount, true, true);
+        return createAllocation(transactionId1, transactionId2, amount, true, true, false);
     }
 
     /**
@@ -1080,55 +1100,33 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @param transactionId1 transaction1 ID
      * @param transactionId2 transaction2 ID
      * @param amount         amount of money to be allocated
+     * @param isQueued       indicates whether the GL transaction should be in Q or W status
      * @return a new CompositeAllocation instance that has references to Allocation and GL transactions
      */
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
-    public CompositeAllocation createInternalLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount) {
-        CompositeAllocation compositeAllocation = createLockedAllocation(transactionId1, transactionId2, amount);
-        compositeAllocation.getAllocation().setInternallyLocked(true);
-        return compositeAllocation;
-    }
-
-    /**
-     * This will allocate a locked amount on the transaction. A check will be
-     * made to ensure that the lockedAmount and the allocateAmount don't exceed
-     * the ledgerAmount of the transaction. Setting an amount as locked prevents
-     * the payment application system from reallocating the balance elsewhere.
-     *
-     * @param transactionId1 transaction1 ID
-     * @param transactionId2 transaction2 ID
-     * @param amount         amount of money to be allocated
-     * @param isQueued       indicates whether the GL transaction should be in Q or W status
-     * @return a new CompositeAllocation instance that has references to Allocation and GL transactions
-     */
-    @Override
-    @Transactional(readOnly = false)
-    public CompositeAllocation createInternalLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount,
-                                                              boolean isQueued) {
-        CompositeAllocation compositeAllocation = createLockedAllocation(transactionId1, transactionId2, amount);
-        compositeAllocation.getAllocation().setInternallyLocked(true);
-        return compositeAllocation;
-    }
-
-    /**
-     * This will allocate a locked amount on the transaction. A check will be
-     * made to ensure that the lockedAmount and the allocateAmount don't exceed
-     * the ledgerAmount of the transaction. Setting an amount as locked prevents
-     * the payment application system from reallocating the balance elsewhere.
-     *
-     * @param transactionId1 transaction1 ID
-     * @param transactionId2 transaction2 ID
-     * @param amount         amount of money to be allocated
-     * @param isQueued       indicates whether the GL transaction should be in Q or W status
-     * @return a new CompositeAllocation instance that has references to Allocation and GL transactions
-     */
-    @Override
-    @Transactional(readOnly = false)
     public CompositeAllocation createLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount,
                                                       boolean isQueued) {
-        return createAllocation(transactionId1, transactionId2, amount, isQueued, true);
+        return createAllocation(transactionId1, transactionId2, amount, isQueued, true, false);
+    }
+
+    /**
+     * This will allocate a locked amount on the transaction. A check will be
+     * made to ensure that the lockedAmount and the allocateAmount don't exceed
+     * the ledgerAmount of the transaction. Setting an amount as locked prevents
+     * the payment application system from reallocating the balance elsewhere.
+     *
+     * @param transactionId1   transaction1 ID
+     * @param transactionId2   transaction2 ID
+     * @param amount           amount of money to be allocated
+     * @param isQueued         indicates whether the GL transaction should be in Q or W status
+     * @param internallyLocked indicates whether the allocation should be internally locked or not
+     * @return a new CompositeAllocation instance that has references to Allocation and GL transactions
+     */
+    public CompositeAllocation createLockedAllocation(Long transactionId1, Long transactionId2, BigDecimal amount,
+                                                      boolean isQueued, boolean internallyLocked) {
+        return createAllocation(transactionId1, transactionId2, amount, isQueued, true, true);
     }
 
     /**
@@ -1363,6 +1361,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     protected List<GlTransaction> removeAllocation(Allocation allocation, boolean isQueued) {
+
+        PermissionUtils.checkPermissions(allocation,
+                Permission.REMOVE_ALLOCATION,
+                Permission.REMOVE_LOCKED_ALLOCATION,
+                Permission.REMOVE_INTERNALLY_LOCKED_ALLOCATION);
 
         List<GlTransaction> glTransactions = new LinkedList<GlTransaction>();
 
@@ -1750,7 +1753,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             Transaction reversal = findReversal(unprocessedTransactions, transaction);
             if (reversal != null) {
                 CompositeAllocation allocation =
-                        createAllocation(transaction, reversal, transaction.getAmount().abs(), isQueued, false);
+                        createAllocation(transaction, reversal, transaction.getAmount().abs(), isQueued, false, false);
                 glTransactions.add(allocation.getCreditGlTransaction());
                 glTransactions.add(allocation.getDebitGlTransaction());
                 unprocessedTransactions.remove(transaction);
