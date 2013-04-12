@@ -62,10 +62,8 @@ public interface Constants {
     String TIME_FORMAT_NO_MS = "HH:mm:ss";
     String TIME_FORMAT_MINUTES = "HH:mm";
 
-    // URL mapping constants
-    String CONFIG_SERVICE_URL = "config.service";
-    String ACCOUNT_SERVICE_URL = "account.service";
-    String TRANSACTION_SERVICE_URL = "transaction.service";
+    // Activity constants
+    Long ACTIVITY_TYPE_DATA_CHANGE_ID = 1L;
 
     // Refund constants:
     String REFUND_ACCOUNT_SYSTEM_NAME = "ksa.refund.account.system.name";

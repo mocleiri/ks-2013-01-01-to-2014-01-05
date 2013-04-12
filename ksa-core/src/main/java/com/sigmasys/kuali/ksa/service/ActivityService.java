@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.service;
 
 import com.sigmasys.kuali.ksa.model.Activity;
+import com.sigmasys.kuali.ksa.model.ActivityType;
 
 import java.util.List;
 
@@ -11,6 +12,29 @@ import java.util.List;
  * @author Michael Ivanov
  */
 public interface ActivityService {
+
+    /**
+     * Returns the default activity type.
+     *
+     * @return Activity Type instance
+     */
+    ActivityType getDefaultActivityType();
+
+    /**
+     * Returns the activity type by code.
+     *
+     * @param code Activity type code
+     * @return Activity Type instance
+     */
+    ActivityType getActivityType(String code);
+
+    /**
+     * Returns the activity type by ID.
+     *
+     * @param id Activity type ID
+     * @return Activity Type instance
+     */
+    ActivityType getActivityType(Long id);
 
     /**
      * Returns Activity by ID

@@ -469,7 +469,7 @@ Insert into KSSA_GL_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,CODE
 --   FILTER = none used
 ---------------------------------------------------
 REM INSERTING into KSSA_ACTIVITY_TYPE
-Insert into KSSA_ACTIVITY_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (1,'pheald','Hibernate Intercept Logging Statement',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Database Change', 'DATACHANGE');
+Insert into KSSA_ACTIVITY_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (1,'pheald','Hibernate Intercept Logging Statement',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Database Change', 'DATA_CHANGE');
 Insert into KSSA_ACTIVITY_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (2,'pheald','Access to system or account.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Account Access','ACCESS');
 Insert into KSSA_ACTIVITY_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (3,'pheald','Friendly log event.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Friendly Log','FRIENDLY');
 Insert into KSSA_ACTIVITY_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (4,'pheald','Internal person-entered information.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Logging memo','LOGMEMO');

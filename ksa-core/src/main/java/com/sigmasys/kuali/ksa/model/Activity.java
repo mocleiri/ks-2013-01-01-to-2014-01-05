@@ -69,9 +69,9 @@ public class Activity implements Identifiable {
     private String newAttribute;
 
     /**
-     * Activity type
+     * Activity Type ID
      */
-    private ActivityType type;
+    private Long typeId;
 
 
     @Id
@@ -165,14 +165,13 @@ public class Activity implements Identifiable {
         this.newAttribute = newAttribute;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACTIVITY_TYPE_ID_FK")
-    public ActivityType getType() {
-        return type;
+    @Column(name = "ACTIVITY_TYPE_ID", nullable = false)
+    public Long getTypeId() {
+        return typeId;
     }
 
-    public void setType(ActivityType type) {
-        this.type = type;
+    public void setTypeId(Long typeId) {
+        this.typeId = typeId;
     }
 
     @Column(name = "ALTERED_ENTITY_PROPERTY", length = 100)

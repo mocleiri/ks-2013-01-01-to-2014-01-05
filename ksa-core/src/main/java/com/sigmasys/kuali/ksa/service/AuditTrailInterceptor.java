@@ -2,10 +2,7 @@ package com.sigmasys.kuali.ksa.service;
 
 import com.sigmasys.kuali.ksa.annotation.AnnotationUtils;
 import com.sigmasys.kuali.ksa.annotation.Auditable;
-import com.sigmasys.kuali.ksa.model.AccountIdAware;
-import com.sigmasys.kuali.ksa.model.Activity;
-import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.Identifiable;
+import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
 import com.sigmasys.kuali.ksa.util.GuidGenerator;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
@@ -289,6 +286,8 @@ public class AuditTrailInterceptor extends EmptyInterceptor {
         if (entry instanceof AccountIdAware) {
             activity.setAccountId(((AccountIdAware) entry).getAccountId());
         }
+
+        activity.setTypeId(Constants.ACTIVITY_TYPE_DATA_CHANGE_ID);
 
         session.persist(activity);
     }
