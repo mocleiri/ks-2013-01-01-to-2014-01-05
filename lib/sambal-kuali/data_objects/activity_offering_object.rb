@@ -25,7 +25,8 @@ class ActivityOffering
                   :activity_type,
                   :max_enrollment,
                   :seat_remaining_percent,
-                  :course_url
+                  :course_url,
+                  :aoc_private_name
     #type: hash - generally set using options hash
     attr_accessor :actual_delivery_logistics_list,
                   :requested_delivery_logistics_list,
@@ -34,7 +35,8 @@ class ActivityOffering
     attr_accessor :personnel_list
     #boolean - generally set using options hash
     attr_accessor :evaluation,
-                  :honors_course
+                  :honors_course,
+                  :create_by_copy
 
     # provides default data:
     # default_seat_pool_hash = {"random"=> (make SeatPool)}
@@ -69,8 +71,11 @@ class ActivityOffering
           #:seat_pool_list => Array.new(1){make SeatPool},
           :course_url => "www.test_course.com",
           :evaluation => true,
-          :honors_course => true
+          :honors_course => true,
+          :aoc_private_name => :default_cluster,
+          :create_by_copy => nil #if true create copy using :ao_code
       }
+
       options = defaults.merge(opts)
 
       @format = options[:format]
@@ -82,6 +87,15 @@ class ActivityOffering
 
     #navigates to activity offering edit page and sets up activity offering based on class attributes
     def create
+      if @create_by_copy then
+        on ManageCourseOfferings do |page|
+          pre_copy_list = page.get_cluster_assigned_ao_list(@aoc_private_name)
+          page.copy(@code, @aoc_private_name)
+          post_copy_list = page.get_cluster_assigned_ao_list(@aoc_private_name)
+          @code = (post_copy_list - pre_copy_list).first
+          return
+        end
+      end
 
       on ManageCourseOfferings do |page|
         pre_add_ao_list = page.codes_list

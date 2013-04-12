@@ -30,7 +30,7 @@ class ManageCourseOfferings < BasePage
   action(:delete_course_offering_link) { |b| b.manage_offering_links_div.link(id: "ActivityOfferingResultSection-deleteOneCoWithLink") }
   action(:delete_course_offering) { |b| b.delete_course_offering_link.click; b.loading.wait_while_present }
 
-  value(:cross_listed_as_text) { |b| b.frm.span(text: /Crosslisted as/).text }
+  value(:cross_listed_as_text) { |b| b.frm.span(text: /crosslisted alias/).text }
 
   element(:cross_listed_message_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AliasMessageSection") }
   value(:cross_listed_message) { |b| b.cross_listed_message_div.span.text }
@@ -178,9 +178,9 @@ class ManageCourseOfferings < BasePage
     begin
       edit_link(code, cluster_private_name).click
 
-      if browser.alert.exists?
-        browser.alert.ok
-      end
+      #if browser.alert.exists?
+      #  browser.alert.ok
+      #end
 
     rescue Timeout::Error => e
       puts "rescued target_row edit"
@@ -285,6 +285,8 @@ class ManageCourseOfferings < BasePage
 
   def target_cluster(private_name)
     #TODO - add code to cache hash of divs
+    div_list = cluster_div_list
+    return div_list[0] unless private_name != :default_cluster
     cluster_div_list.each do |div_element|
       if cluster_div_private_name(div_element) == private_name then
         return div_element
@@ -321,12 +323,12 @@ class ManageCourseOfferings < BasePage
   end
 
   def remove_cluster(private_name)
-    target_cluster(private_name).link(text: "Delete").click
+    target_cluster(private_name).link(text: /Delete/).click
     loading.wait_while_present
   end
 
   def rename_cluster(private_name)
-    target_cluster(private_name).link(text: "Rename").click
+    target_cluster(private_name).link(text: /Rename/).click
     loading.wait_while_present
   end
 
@@ -367,7 +369,6 @@ class ManageCourseOfferings < BasePage
   def get_cluster_div_ao_row(cluster_div, ao_code)
     cluster_div.table.row(text: /\b#{Regexp.escape(ao_code)}\b/)
   end
-
 
   def get_cluster_div_ao_rows(cluster_div)
     return cluster_div.table.rows[1..-2] unless !cluster_div.table.exists?

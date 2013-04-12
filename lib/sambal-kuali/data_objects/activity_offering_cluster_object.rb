@@ -91,6 +91,10 @@ class ActivityOfferingCluster
     code_list
   end
 
+  def get_ao_obj_by_code(ao_code)
+    @ao_list.select{|ao| ao.code == ao_code}[0]
+  end
+
   # moves activity offering from cluster to target cluster
   #
   # @param ao_code [String] activity offering code
@@ -102,21 +106,26 @@ class ActivityOfferingCluster
       page.move_aos
       page.select_cluster.select(target_cluster.private_name)
       page.complete_move_ao
-      target_cluster.ao_list.push(@ao_list.select{|ao| ao.code == ao_code}[0])
-      @ao_list.delete_if{|x| x.code == ao_code}
     end
+    moved_ao = get_ao_obj_by_code(ao_code)
+    target_cluster.ao_list.push(moved_ao)
+    @ao_list.delete(moved_ao)
   end
 
-  # removes activity offering from cluster (ao becomes unassigned)
+  # moves activity offering from cluster to target cluster
   #
   # @param ao_code [String] activity offering code
-  def remove_ao(ao_code)
-    on ManageRegistrationGroups do |page|
-      row = page.get_cluster_ao_row(@private_name,ao_code)
-      row.link(text: "Remove").click
-      page.loading.wait_while_present
-      @assigned_ao_list.delete(ao_code)
+  # @param target cluster [ActivityOfferingCluster] target cluster object
+  def move_all_aos_to_another_cluster(target_cluster)
+    on ManageCourseOfferings do |page|
+      if page.cluster_select_all_aos(@private_name) then
+        page.move_aos
+        page.select_cluster.select(target_cluster.private_name)
+        page.complete_move_ao
+      end
     end
+    @ao_list = []
+    target_cluster.ao_list << @ao_list
   end
 
 # deletes the activity offering cluster
@@ -133,12 +142,6 @@ class ActivityOfferingCluster
     @assigned_ao_list = []
   end
 
-#initiates generates all reg groups operation
-  def generate_all_reg_groups
-    on ManageRegistrationGroups do |page|
-      page.generate_all_reg_groups
-    end
-  end
 
   # renames cluster
   #

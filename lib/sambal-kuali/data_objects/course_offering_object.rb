@@ -30,8 +30,6 @@ class CourseOffering
                 :final_exam_type
   #generally set using options hash
   attr_accessor :activity_offering_cluster_list,
-                :ao_obj_list,
-                :ao_list,
                 :affiliated_person_list,
                 :affiliated_org_list
   #generally set using options hash
@@ -57,7 +55,6 @@ class CourseOffering
   #    :course=>"ENGL211",
   #    :suffix=>"",
   #    :activity_offering_cluster_list=>[],
-  #    :ao_list => [],
   #    :final_exam_type => "NONE",
   #    :wait_list => "NO",
   #    :wait_list_level => "Course Offering",
@@ -82,7 +79,6 @@ class CourseOffering
         :course=>"ENGL211",
         :suffix=>"",
         :activity_offering_cluster_list=>[],
-        :ao_list => [],
         :final_exam_type => "STANDARD",
         :wait_list => "YES",
         :wait_list_level => "Course Offering",
@@ -110,13 +106,11 @@ class CourseOffering
       @course = create_co_copy(@create_by_copy.course, @create_by_copy.term)
       #deep copy
       @term = @create_by_copy.term
-      @activity_offering_cluster_list = @create_by_copy.activity_offering_cluster_list
-      @ao_list = @create_by_copy.ao_list
+      @activity_offering_cluster_list = @create_by_copy.activity_offering_cluster_list.sort
     elsif @create_from_existing != nil
       @course = create_from_existing_course(@create_from_existing.course, @create_from_existing.term)
       #deep copy
       @activity_offering_cluster_list = @create_from_existing.activity_offering_cluster_list
-      @ao_list = @create_from_existing.ao_list
     else #create from catalog
       start_create_by_search
       on CreateCourseOffering do  |page|
@@ -303,8 +297,6 @@ class CourseOffering
     end
 
     if cluster_divs.length == 0
-      @ao_obj_list= []
-      @ao_list = []
       @activity_offering_cluster_list = []
     else
       @activity_offering_cluster_list = []
@@ -314,15 +306,18 @@ class CourseOffering
 
         @activity_offering_cluster_list.push(temp_aoc)
       end
-      puts "ao list #{@ao_list}"
-      @activity_offering_cluster_list.each do |cluster|
-        puts "cluster name: #{cluster.private_name}"
-        cluster.ao_list.each do |ao|
-          puts "Assigned AOs: #{ao.code}"
-        end
+      show_debug_details
+
+
+    end
+  end
+
+  def show_debug_details
+    @activity_offering_cluster_list.each do |cluster|
+      puts "cluster name: #{cluster.private_name}"
+      cluster.ao_list.each do |ao|
+        puts "Assigned AO: #{ao.code}"
       end
-
-
     end
   end
 
@@ -421,22 +416,37 @@ class CourseOffering
   #
   #@param  opts [Hash] {:ao_code => "code"}
   def delete_ao(opts)
-    ao_code = opts[:ao_code]
-    delete_ao_list( {:code_list => [ ao_code]})
+
+    defaults = {
+        :cluster_private_name => :default_cluster
+    }
+    options = defaults.merge(opts)
+
+    delete_ao_list( {:code_list => [ options[:ao_code]], :cluster_private_name => options[:cluster_private_name] })
   end
 
   #delete specified activity offerings
   #
   #@param  opts [Hash] {:code_list => ["code1","code2", ...]}
   def delete_ao_list(opts)
-    ao_code_list = opts[:code_list]
+
+    defaults = {
+      :cluster_private_name => :default_cluster
+  }
+  options = defaults.merge(opts)
+    ao_code_list =
     on ManageCourseOfferings do |page|
-      page.select_aos(ao_code_list)
+      page.select_aos(options[:code_list], options[:cluster_private_name])
       page.delete_aos
     end
     on ActivityOfferingConfirmDelete do |page|
       page.delete_activity_offering
     end
+    #TODO remove from cluster ao_list
+    options[:code_list].each do |ao_code|
+      get_cluster_obj_by_private_name(options[:cluster_private_name]).ao_list.delete(get_ao_obj_by_code(ao_code))
+    end
+
   end
 
   def delete_top_n_aos(num_aos_to_delete_from_top)
@@ -452,10 +462,10 @@ class CourseOffering
     delete_ao_list :code_list => aos_to_delete
   end
 
-  def attempt_ao_delete_by_status(aostate)
+  def attempt_ao_delete_by_status(aostate, cluster_private_name = :default_cluster)
     on ManageCourseOfferings do |page|
-      if page.row_by_status(aostate).exists?
-        ao = page.select_ao_by_status(aostate)
+      if page.row_by_status(aostate, cluster_private_name).exists?
+        ao = page.select_ao_by_status(aostate, cluster_private_name)
         if page.delete_aos_button.enabled?
           page.delete_aos
           on ActivityOfferingConfirmDelete do |page|
@@ -468,9 +478,8 @@ class CourseOffering
           return false
         end
       else
-        page.copy("A")
-        @ao_list = page.codes_list
-        page.select_ao(@ao_list.first)
+        new_ao = copy_ao :ao_code => "A"
+        page.select_ao(new_ao.code)
         if aostate == "Approved"
           page.approve_activity
           ao = page.select_ao_by_status(aostate)
@@ -478,9 +487,9 @@ class CourseOffering
         if page.delete_aos_button.enabled?
           page.delete_aos
           on ActivityOfferingConfirmDelete do |page|
-            @access = page.delete_activity_offering_button.present?
-            page.delete_activity_offering
-            return @access
+            delete_present = page.delete_activity_offering_button.present?
+            page.cancel
+            return delete_present
           end
         else
           page.deselect_ao(ao)
@@ -500,49 +509,67 @@ class CourseOffering
         return false
       end
       on DeleteCourseOffering do |page|
-        return  page.confirm_delete_button.present?
+        return page.confirm_delete_button.present?
       end
     end
   end
 
   #create a new specified activity offering
   #
-  #@param opts [Hash] {:number_aos_to_create => int}
-  def create_ao(opts)
-    number_aos_to_create = opts[:number_aos_to_create]
-    manage
-    on ManageCourseOfferings do |page|
-      page.add_activity
-      format = page.format.options[0].text
-      page.add_ao format, number_aos_to_create
-      @ao_list = page.codes_list
-    end
+  #@param opts [Hash] {:ao_code => "CODE"}
+
+  def create_ao(opts) #TODO - param should be an ActivityOffering
+    #TODO: number_aos_to_create = opts[:number_aos_to_create] implement as a separate method?
+    defaults = {
+        :cluster_private_name => :default_cluster
+    }
+    options = defaults.merge(opts)
+
+    new_activity_offering = make ActivityOffering, :code => options[:ao_code], :seat_pool_list => {}, :requested_delivery_logistics_list => {},:personnel_list => []
+    new_activity_offering.create
+    new_activity_offering.save
+    get_cluster_obj_by_private_name(options[:cluster_private_name]).ao_list << new_activity_offering
+    return new_activity_offering
   end
 
   #copy the specified activity offering
   #
   #@param  opts [Hash] {:ao_code => "CODE"}
   def copy_ao(opts)
-    ao_code = opts[:ao_code]
-    on ManageCourseOfferings do |page|
-      page.copy(ao_code)
-    end
+
+    defaults = {
+        :cluster_private_name => :default_cluster
+    }
+    options = defaults.merge(opts)
+    new_activity_offering = make ActivityOffering, :code => options[:ao_code], :aoc_private_name => options[:cluster_private_name], :create_by_copy => true
+    new_activity_offering.create
+    get_cluster_obj_by_private_name(options[:cluster_private_name]).ao_list << new_activity_offering
+    return new_activity_offering
   end
 
   #enter the edit page for the specified activity offering
   #
   #@param  opts [Hash] {:ao_code => "CODE"}
   def edit_ao(opts)
-    ao_code = opts[:ao_code]
+    defaults = {
+        :cluster_private_name => :default_cluster
+    }
+    options = defaults.merge(opts)
+
     on ManageCourseOfferings do |page|
-      page.edit(ao_code)
+      page.edit(options[:code_list], options[:cluster_private_name])
     end
   end
 
+  #TODO - how is this different from delete_ao?
   def delete_ao_cross_list_value(opts)
-    ao_code_list = opts[:code_list]
+    defaults = {
+        :cluster_private_name => :default_cluster
+    }
+    options = defaults.merge(opts)
+
     on ManageCourseOfferings do |page|
-      page.select_aos(ao_code_list)
+      page.select_aos(options[:code_list], options[:cluster_private_name])
       page.delete_aos
     end
     on ActivityOfferingConfirmDelete do |page|
@@ -572,6 +599,7 @@ class CourseOffering
     retVal
   end
 
+  #TODO: this method does not use parameter?
   def cross_listed_co_data(co_code)
     retVal = nil
     on ManageCourseOfferings do |page|
@@ -588,7 +616,12 @@ class CourseOffering
 
   def delete_ao_cluster(ao_cluster)
     ao_cluster.delete
-    @activity_offering_cluster_list.delete_if{|x| x.private_name == ao_cluster.private_name}
+    @activity_offering_cluster_list.delete(get_cluster_obj_by_private_name(ao_cluster.private_name))
+  end
+
+  def get_cluster_obj_by_private_name(cluster_private_name)
+    return @activity_offering_cluster_list[0] unless cluster_private_name != :default_cluster
+    @activity_offering_cluster_list.select{|cluster| cluster.private_name == cluster_private_name}[0]
   end
 
   def create_from_existing_course(course, term)
@@ -699,6 +732,7 @@ class CourseOffering
     end
   end
 
+  #deletes CO from single CO view page
   def delete_co_with_link(args={})
     should_confirm_delete = false
     case args[:should_confirm_delete]
@@ -719,44 +753,30 @@ class CourseOffering
     end
   end
 
+  def full_ao_list
+    #TODO - required for existing validations
+  end
+
   def reset_ao_clusters
-    #TODO move all aos back to default cluster
-    #existing_cluster_list = []
-    #on ManageRegistrationGroups do |page|
-    #  page.cluster_div_list.each do |cluster_div|
-    #    existing_cluster_list << cluster_div.span().text()
-    #  end
-    #end
-    #
-    #existing_cluster_list.each do |cluster|
-    #  on ManageRegistrationGroups do |page|
-    #    while true
-    #      begin
-    #        sleep 1
-    #        wait_until(10) {page.cluster_list_div.exists? }
-    #        break
-    #      rescue Watir::Wait::TimeoutError #in case generation fails
-    #        break
-    #      rescue Selenium::WebDriver::Error::StaleElementReferenceError
-    #        puts "rescued - generate_unconstrained_reg_groups"
-    #      end
-    #    end
-    #    page.remove_cluster(cluster)
-    #    page.confirm_delete_cluster
-    #    begin
-    #      page.cluster_list_item_div_by_name(cluster).wait_while_present(60)
-    #    rescue Watir::Exception::UnknownObjectException
-    #      #ignore
-    #    end
-    #  end
-    #end
+    #move all aos back first cluster - NB init_existing needs to be run first
+
+    @activity_offering_cluster_list[1..-1].each do |cluster|
+      puts "reset cluster name: #{cluster.private_name}"
+      cluster.move_all_aos_to_another_cluster(@activity_offering_cluster_list[0])
+      cluster.delete
+      #TODO - delete from array  - test this
+      @activity_offering_cluster_list.delete(cluster)
+    end
   end
 
   #colocate to provided COs
   #
   #@param  opts [Hash] {:cos_to_colo => @course_offering, :should_enrollment_be_shared_flag => true/false, :enrollment_size => int}
+  #TODO - should use ActivityOffering.edit
   def colocate(opts)
-
+    #@activity_offering_cluster_list[0].ao_list[0].edit :max_enroll => 25
+    #@activity_offering_cluster_list[0].ao_list[0].save
+    #new_activity_offering.edit(option...)
 
     $should_enrollment_be_shared_flag = true
     if opts[:should_enrollment_be_shared_flag] != nil
