@@ -128,7 +128,7 @@ public class ActivityServiceImpl extends GenericPersistenceService implements Ac
             String userId = (request != null) ? userSessionManager.getUserId(request) : null;
             activity.setCreatorId(userId);
         }
-        if ( activity.getTypeId() == null) {
+        if (activity.getTypeId() == null) {
             activity.setTypeId(Constants.ACTIVITY_TYPE_DATA_CHANGE_ID);
         }
         return persistEntity(activity);
