@@ -152,41 +152,42 @@ public class SettingsController extends GenericSearchController {
         AuditableEntityModel entity = form.getAuditableEntity();
         AuditableEntity parentEntity = entity.getParentEntity();
 
-        if(entity == null){
+        if (entity == null) {
             logger.info("Entity is null");
         } else {
             logger.info("Entity is of type : " + entity.getClass().getName());
             logger.info("Entity code: " + entity.getCode());
         }
 
-        if(parentEntity == null){
+        if (parentEntity == null) {
             logger.info("Parent entity is null");
         } else {
+
+
             logger.info("Parent entity is of type : " + parentEntity.getClass().getName());
-        }
 
+            try {
 
-        try {
+                String code = parentEntity.getCode();
+                String name = parentEntity.getName();
+                String description = parentEntity.getDescription();
 
-            String code = parentEntity.getCode();
-            String name = parentEntity.getName();
-            String description = parentEntity.getDescription();
+                auditableEntityService.createAuditableEntity(code, name, description, parentEntity.getClass());
 
-            auditableEntityService.createAuditableEntity(code, name, description, parentEntity.getClass());
+                form.setAuditableEntities(auditableEntityService.getAuditableEntities(parentEntity.getClass()));
 
-            form.setAuditableEntities(auditableEntityService.getAuditableEntities(parentEntity.getClass()));
-
-            form.setAuditableEntity(parentEntity.getClass().newInstance());
-            // success in creating the currency.
-            String statusMsg = "Success: " + parentEntity.getClass().getName() + " saved, ID = " + parentEntity.getId();
-            form.setStatusMessage(statusMsg);
-            logger.info(statusMsg);
-        } catch (Exception e) {
-            // failed to create the currency. Leave the currency information in the view
-            String statusMsg = "Failure: " + parentEntity.getClass().getName() + "entity did not save, ID = " + parentEntity.getId() +
-                    ". " + e.getMessage();
-            form.setStatusMessage(statusMsg);
-            logger.error(statusMsg);
+                form.setAuditableEntity(parentEntity.getClass().newInstance());
+                // success in creating the currency.
+                String statusMsg = "Success: " + parentEntity.getClass().getName() + " saved, ID = " + parentEntity.getId();
+                form.setStatusMessage(statusMsg);
+                logger.info(statusMsg);
+            } catch (Exception e) {
+                // failed to create the currency. Leave the currency information in the view
+                String statusMsg = "Failure: " + parentEntity.getClass().getName() + "entity did not save, ID = " + parentEntity.getId() +
+                        ". " + e.getMessage();
+                form.setStatusMessage(statusMsg);
+                logger.error(statusMsg);
+            }
         }
 
         return getUIFModelAndView(form);
@@ -202,14 +203,14 @@ public class SettingsController extends GenericSearchController {
         AuditableEntityModel entity = form.getAuditableEntity();
         LatePeriod parentEntity = entity.getLatePeriod();
 
-        if(entity == null){
+        if (entity == null) {
             logger.info("Entity is null");
         } else {
             logger.info("Entity is of type : " + entity.getClass().getName());
             logger.info("Entity code: " + entity.getCode());
         }
 
-        if(parentEntity == null){
+        if (parentEntity == null) {
             logger.info("Parent entity is null");
         } else {
             logger.info("Parent entity is of type : " + parentEntity.getClass().getName());
@@ -240,11 +241,11 @@ public class SettingsController extends GenericSearchController {
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=updateAuditableEntity")
     public <T extends AuditableEntity> ModelAndView updateAuditableEntity(@ModelAttribute("KualiForm")
-                                                                           SettingsForm form) {
+                                                                          SettingsForm form) {
 
         AuditableEntity entity = form.getAuditableEntity();
-        if(entity instanceof AuditableEntityModel){
-            entity = ((AuditableEntityModel)entity).getParentEntity();
+        if (entity instanceof AuditableEntityModel) {
+            entity = ((AuditableEntityModel) entity).getParentEntity();
         }
 
         try {
