@@ -9,8 +9,10 @@ import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
 import com.sigmasys.kuali.ksa.service.RefundService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.uif.util.CloneUtils;
 import org.kuali.rice.krad.uif.view.View;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -216,10 +218,61 @@ public class TransactionController extends GenericSearchController {
     public ModelAndView refund(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
         String accountId = accountId = form.getAccount().getId();
-        String transactionId = request.getParameter("transactionId");
+        Long transactionId;
+        String errorMessage = "";
+        try{
+            transactionId = new Long(request.getParameter("transactionId"));
+        } catch(NumberFormatException e){
+            // Error here
+            errorMessage = "Invalid Payment";
+            //GlobalVariables.getMessageMap().putError("refundLightbox", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            form.setMessage(errorMessage);
+
+            return getUIFModelAndView(form);
+
+        }
+
+
+        // Need to loop through the transactions and find the one that matches this transaction id to make sure
+        // it is a payment and get the amount (if any)
 
         BigDecimal amount = null;
-        //refundService.checkForRefundOnTransactionWithAmount(transactionId, amount);
+        Payment payment = null;
+        TransactionModel model = null;
+
+        for(TransactionModel t : form.getAllTransactions()){
+            Long id =t.getParentTransaction().getId();
+            if(t.getParentTransaction().getId().equals(transactionId)){
+                model = t;
+                if(t.getTransactionTypeValue().equals(TransactionTypeValue.PAYMENT)){
+                    payment = (Payment)t.getParentTransaction();
+                    amount = t.getRefundAmount();
+                } else {
+                     // error here, Refunds must occur on payments
+                    errorMessage = "Refunds can only apply to payments";
+                    //GlobalVariables.getMessageMap().putError("refundLightbox_line0", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+                    t.setMessage(errorMessage);
+                    return getUIFModelAndView(form);
+                }
+            }
+        }
+        if(model == null){
+            // The row isn't in the collection at all.  Something major happened.
+            errorMessage = "Invalid Transaction ID";
+            GlobalVariables.getMessageMap().putError("TransactionView", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+        try{
+            Refund refund = refundService.checkForRefund(transactionId, amount);
+            String success = "Refund saved";
+            //GlobalVariables.getMessageMap().putInfo("refundLightbox", RiceKeyConstants.ERROR_CUSTOM, success);
+            model.setMessage(success);
+
+        } catch(RuntimeException e){
+            errorMessage = e.getMessage();
+            //GlobalVariables.getMessageMap().putError("refundLightbox", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            model.setMessage(errorMessage);
+        }
 
         return getUIFModelAndView(form);
     }

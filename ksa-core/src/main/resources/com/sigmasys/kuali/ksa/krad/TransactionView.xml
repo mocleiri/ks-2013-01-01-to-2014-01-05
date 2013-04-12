@@ -226,7 +226,7 @@
                                                         <property name="hidden" value="true"/>
                                                         <property name="items">
                                                             <list>
-                                                                <bean parent="Uif-HeaderTwo" p:headerText="Refund a Transaction"/>
+                                                                <bean id="RefundTransactionLightboxTitle" parent="Uif-HeaderTwo" p:headerText="Refund a Transaction"/>
                                                                 <ref bean="transactionDetailFields"/>
                                                                 <bean parent="Uif-Disclosure-VerticalBoxSection" >
                                                                     <property name="headerText" value="Optional"/>
@@ -244,7 +244,9 @@
                                                                     </property>
                                                                 </bean>
 
-                                                                <bean parent="Uif-PrimaryActionButton" p:actionLabel="Refund" p:methodToCall="refund"
+                                                                <bean parent="Uif-MessageField" p:messageText="@{#line.message}"/>
+
+                                                                <bean parent="Uif-PrimaryActionButton" p:ajaxSubmit="true" p:actionLabel="Refund" p:methodToCall="refund"
                                                                       p:onClickScript="writeHiddenToForm('transactionId', '@{#line.id}');"/>
 
                                                             </list>

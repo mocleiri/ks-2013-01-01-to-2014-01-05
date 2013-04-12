@@ -100,6 +100,8 @@ public class TransactionModel extends Transaction {
 
     private String allocationLocked;
 
+    private String message;
+
     // Constructor
     public TransactionModel() {
     }
@@ -700,5 +702,13 @@ public class TransactionModel extends Transaction {
 
     public void setRefundAmount(BigDecimal refundAmount) {
         this.refundAmount = refundAmount;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
