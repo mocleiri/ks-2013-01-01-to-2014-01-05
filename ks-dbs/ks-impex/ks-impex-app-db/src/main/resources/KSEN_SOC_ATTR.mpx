@@ -57,6 +57,7 @@ ID,OBJ_ID,ATTR_KEY,ATTR_VALUE,OWNER_ID
 "e6841550-a8cf-4024-85fa-d5ead493af94","56ffdfe3-4b22-41ae-98b9-dad6d7b93660","kuali.soc.state.locked","2013-04-08T09:35:20-0400","bfc8460e-38da-4494-a096-2446c47991fd"
 "ea8c76ae-fd93-4f78-b976-2c3a80e9352b","8db60837-23c2-43a7-b378-1e6b620f49ef","kuali.soc.state.open","2012-11-13T10:47:30-0500","60bb46ef-b868-4791-a248-e4fc5a7fbadd"
 "ec817971-beee-4478-ab90-389cf91d4549","27732153-838b-4ee9-81e5-26c80cf81e9f","kuali.soc.state.published","2012-11-13T10:47:30-0500","34900c53-8239-4403-a8f6-f6d683a1186b"
+"ed3c11a5-c41e-43a2-a4c9-ca107f4772c4","2e84c5e9-5a1a-4072-8e5b-03d3e01e8bd4","kuali.soc.state.draft","2013-04-11T14:06:43-0700","37e98492-08f8-4fc1-a5bc-02155ca89c26"
 "f3a1f504-1de3-43ff-8bec-1a9bd6a78dd8","aeb02f09-5001-4d1d-9255-179f8f03fbc9","kuali.soc.state.open","2013-04-08T09:34:01-0400","88554e12-aebb-4600-a4c0-f36aec78d4e7"
 "f48a1dcc-d73f-4931-a4a6-f401656b17ec","a3bef6b0-11c2-4104-a88f-334d24ed800d","kuali.soc.state.draft","2013-04-08T09:30:46-0400","bfc8460e-38da-4494-a096-2446c47991fd"
 "f696c191-e030-4ef9-b2d2-37623aeee8dc","923c46c0-e2c7-43e3-bb9b-cceeb12d8f18","kuali.soc.state.finaledits","2013-04-08T09:35:36-0400","03192a24-765a-4b9d-b638-5158430e09c8"
