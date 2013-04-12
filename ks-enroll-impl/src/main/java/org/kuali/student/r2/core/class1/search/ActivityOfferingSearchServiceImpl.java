@@ -1,5 +1,7 @@
 package org.kuali.student.r2.core.class1.search;
 
+import org.apache.commons.lang.StringUtils;
+import org.kuali.student.enrollment.class1.lui.model.LuiEntity;
 import org.kuali.student.r2.common.class1.search.SearchServiceAbstractHardwiredImplBase;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
@@ -17,9 +19,8 @@ import org.kuali.student.r2.core.search.util.SearchRequestHelper;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,12 +36,12 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
     @Resource
     private EntityManager entityManager;
 
-    public static final TypeInfo SCH_ID_BY_AO_SEARCH_TYPE;
+    public static final TypeInfo SCH_IDS_BY_AO_SEARCH_TYPE;
     public static final TypeInfo AOS_AND_CLUSTERS_BY_CO_ID_SEARCH_TYPE;
     public static final TypeInfo REG_GROUPS_BY_CO_ID_SEARCH_TYPE;
     public static final TypeInfo AOS_WO_CLUSTER_BY_FO_ID_SEARCH_TYPE;
 
-    public static final String SCH_ID_BY_AO_SEARCH_KEY = "kuali.search.type.lui.searchForScheduleIdByAoId";
+    public static final String SCH_IDS_BY_AO_SEARCH_KEY = "kuali.search.type.lui.searchForScheduleIdsByAoId";
     public static final String AOS_AND_CLUSTERS_BY_CO_ID_SEARCH_KEY = "kuali.search.type.lui.searchForAOsAndClustersByCoId";
     public static final String REG_GROUPS_BY_CO_ID_SEARCH_KEY = "kuali.search.type.lui.searchForRegGroupsByCoId";
     public static final String AOS_WO_CLUSTER_BY_FO_ID_SEARCH_KEY = "kuali.search.type.lui.searchForAOsWithoutClusterByFormatId";
@@ -68,7 +69,7 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
 
     static {
         TypeInfo info = new TypeInfo();
-        info.setKey(SCH_ID_BY_AO_SEARCH_KEY);
+        info.setKey(SCH_IDS_BY_AO_SEARCH_KEY);
         info.setName("Activity Offering Search");
         info.setDescr(new RichTextHelper().fromPlain("Return search results for Activity Offerings"));
 
@@ -77,7 +78,7 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
         } catch ( IllegalArgumentException ex) {
             throw new RuntimeException("bad code");
         }
-        SCH_ID_BY_AO_SEARCH_TYPE = info;
+        SCH_IDS_BY_AO_SEARCH_TYPE = info;
 
 
         info = new TypeInfo();
@@ -121,7 +122,7 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
 
     @Override
     public TypeInfo getSearchType() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return SCH_IDS_BY_AO_SEARCH_TYPE;
     }
 
     @Override
@@ -158,9 +159,9 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
     public SearchResultInfo search(SearchRequestInfo searchRequestInfo, ContextInfo contextInfo) throws MissingParameterException, OperationFailedException, PermissionDeniedException {
 
         // As this class expands, you can add multiple searches. Ie. right now there is only one search (so only one search key).
-        if (SCH_ID_BY_AO_SEARCH_KEY.equals(searchRequestInfo.getSearchKey())) {
-            return searchForScheduleIdByAoId(searchRequestInfo);
-        }
+        if (StringUtils.equals(searchRequestInfo.getSearchKey(), SCH_IDS_BY_AO_SEARCH_TYPE.getKey())) {
+            return searchForScheduleIdsByAoId(searchRequestInfo,contextInfo);
+        } 
         else if (AOS_AND_CLUSTERS_BY_CO_ID_SEARCH_KEY.equals(searchRequestInfo.getSearchKey())){
             return searchForAOsAndClustersByCoId(searchRequestInfo);
         }
@@ -214,13 +215,17 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
 
     /**
      *
-     * @param searchRequestInfo   Contains an Activity Offering ID that we will use to find the scheduleId
+     * @param searchRequestInfo   Contains an Activity Offering ID that we will use to find the scheduleIds
      * @return
      * @throws MissingParameterException
      * @throws OperationFailedException
      * @throws PermissionDeniedException
      */
+<<<<<<< .working
+    protected SearchResultInfo searchForScheduleIdsByAoId(SearchRequestInfo searchRequestInfo, ContextInfo contextInfo) throws MissingParameterException, OperationFailedException, PermissionDeniedException {
+=======
     protected SearchResultInfo searchForScheduleIdByAoId(SearchRequestInfo searchRequestInfo) throws MissingParameterException, OperationFailedException, PermissionDeniedException {
+>>>>>>> .merge-right.r46340
         SearchRequestHelper requestHelper = new SearchRequestHelper(searchRequestInfo);
 
         String aoId = requestHelper.getParamAsString(SearchParameters.AO_ID);
@@ -229,7 +234,13 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
             throw new RuntimeException("Activity Offering id is required");
         }
 
-        List<String> results = entityManager.createNamedQuery("Lui.getScheduleIdByLuiId").setParameter("aoId", aoId).getResultList();
+        List<String> results = Collections.EMPTY_LIST;
+        List<LuiEntity> luis = entityManager.createNamedQuery("Lui.getLuisByLuiId").setParameter("aoId", aoId).getResultList();
+        if(luis != null && !luis.isEmpty()) {
+            LuiEntity lui = luis.get(0);
+            results = new ArrayList<String>();
+            results.addAll(lui.getScheduleIds());
+        }
 
         SearchResultInfo resultInfo = new SearchResultInfo();
         resultInfo.setTotalResults(results.size());
