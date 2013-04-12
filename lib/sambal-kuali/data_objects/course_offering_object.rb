@@ -439,6 +439,19 @@ class CourseOffering
     end
   end
 
+  def delete_top_n_aos(num_aos_to_delete_from_top)
+    last_index_to_delete = num_aos_to_delete_from_top.to_i - 1
+
+    manage
+
+    aos_to_delete = Array.new
+    ao_list[0..last_index_to_delete].each do |ao|
+      aos_to_delete << ao
+    end
+
+    delete_ao_list :code_list => aos_to_delete
+  end
+
   def attempt_ao_delete_by_status(aostate)
     on ManageCourseOfferings do |page|
       if page.row_by_status(aostate).exists?
@@ -494,14 +507,14 @@ class CourseOffering
 
   #create a new specified activity offering
   #
-  #@param opts [Hash] {:ao_code => "CODE"}
+  #@param opts [Hash] {:number_aos_to_create => int}
   def create_ao(opts)
-    ao_code = opts[:ao_code]
+    number_aos_to_create = opts[:number_aos_to_create]
     manage
     on ManageCourseOfferings do |page|
       page.add_activity
       format = page.format.options[0].text
-      page.add_ao format, 1
+      page.add_ao format, number_aos_to_create
       @ao_list = page.codes_list
     end
   end

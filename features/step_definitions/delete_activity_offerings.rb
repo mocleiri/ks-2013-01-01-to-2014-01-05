@@ -1,20 +1,20 @@
-When /^I designate a valid term and a Course Offering Code$/ do
-  @course_offering = make CourseOffering
-  @course_offering.manage
+When /^I create a Course Offering with "(\d+)" Activity Offerings$/ do |number_of_aos_to_create|
+  @course_offering = create CourseOffering
+  @course_offering.create_ao :number_aos_to_create => number_of_aos_to_create
 end
 
 
-And /^I delete the selected multiple AOs$/ do
-  @total_number = @course_offering.ao_list.count
-  @course_offering.copy_ao :ao_code =>  @course_offering.ao_list[@total_number-1]
-  @course_offering.copy_ao :ao_code =>  @course_offering.ao_list[@total_number-1]
-  @course_offering.copy_ao :ao_code =>  @course_offering.ao_list[@total_number-1]
+
+And /^I delete "(\d+)" Activity Offerings$/ do |number_of_aos_to_delete|
+  @course_offering.delete_top_n_aos(number_of_aos_to_delete)
+end
+
+Then /^The Course Offering should contain "(\d+)" Activity Offerings$/ do |number_of_aos_to_validate_exist|
   @course_offering.manage
-  new_total = @course_offering.ao_list.count
-  new_total.should == @total_number + 3
-  @total_number = @course_offering.ao_list.count
-  @ao_code_list = [@course_offering.ao_list[0],@course_offering.ao_list[1],@course_offering.ao_list[2]]
-  @course_offering.delete_ao_list :code_list =>  @ao_code_list
+  on ManageCourseOfferings do |page|
+    aos_found_on_page = page.codes_list
+    page.codes_list == number_of_aos_to_validate_exist.to_i
+  end
 end
 
 Then /^The AOs are Successfully deleted$/ do
