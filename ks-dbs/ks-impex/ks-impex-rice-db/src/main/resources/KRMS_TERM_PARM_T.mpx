@@ -146,7 +146,7 @@ TERM_PARM_ID,TERM_ID,NM,VAL,VER_NBR
 "10144","10131","kuali.term.parameter.type.program.cluSet.id","11770bd5-7df1-4a9a-8676-a44633ad96c4","1"
 "10145","10132","kuali.term.parameter.type.course.clu.id","ae05f250-25a1-4d01-ab1d-82a6d69c73d7","1"
 "10146","10133","kuali.term.parameter.type.org.id","4269648307","1"
-"10147","10134","kuali.term.parameter.type.course.clu.id","cfff5b07-4dd4-4ad8-8295-1bed0bd6648e","1"
+"10147","10134","kuali.term.parameter.type.course.clu.id","4c1056a0-8ac2-489d-8457-986c6f419eca","1"
 "10148","10135","kuali.term.parameter.type.course.cluSet.id","bd2745e8-12ec-48a0-b701-d9696e6c406e","1"
 "10149","10136","kuali.term.parameter.type.org.id","4269648307","1"
 "10150","10137","kuali.term.parameter.type.course.clu.id","REFERENCECOURSEGEOG100","1"

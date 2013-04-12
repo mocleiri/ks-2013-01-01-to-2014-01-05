@@ -3763,6 +3763,8 @@ RELATED_LUI_TYPE,LUI_ID
 "kuali.lui.type.activity.offering.lecture","e9fb96e5-57ce-40e9-bdb3-308cdf6a2415"
 "kuali.lui.type.activity.offering.lab","ea23234f-4589-47e0-9e99-df483e845f90"
 "kuali.lui.type.activity.offering.lecture","ea31e7d0-abe3-47db-bd42-3a3a0447bc84"
+"kuali.lui.type.activity.offering.lab","ea393e8f-5319-43a5-9478-7461251686aa"
+"kuali.lui.type.activity.offering.lecture","ea393e8f-5319-43a5-9478-7461251686aa"
 "kuali.lui.type.activity.offering.lecture","ea65e1e5-6bb0-4872-983b-ded2c0295780"
 "kuali.lui.type.activity.offering.lecture","ea6ed435-72f0-47a2-a8e3-8c8f41cae87e"
 "kuali.lui.type.activity.offering.lecture","ea8580e6-ed59-44c4-9f60-07ded0b2a464"
