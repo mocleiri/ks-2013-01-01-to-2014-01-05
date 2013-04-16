@@ -1424,31 +1424,48 @@ function switchFetchAction(actionId, toggleId) {
 }
 
 function toggleSections(actionId, toggleId, showClass, showText, hideText) {
-    var group = jQuery("#" + toggleId + " table tbody tr").not("." + showClass);
+    var group = jQuery("#" + toggleId + " table tbody tr.row").not("." + showClass);
     var action = jQuery("#" + actionId);
     if (action.data("hidden")) {
-        group.not(".collapsible").show();
+        group.each(function(){
+            var toggle = jQuery(this).find("a[id^='toggle_']");
+            if (toggle.data("hidden") || typeof toggle.data("hidden") == "undefined") {
+                jQuery(this).show();
+            } else {
+                jQuery(this).show().next("tr.collapsible").show().next("tr.collapsible").show();
+            }
+        });
         jQuery(".myplan-quarter-detail .activityInstitutionHeading").show();
         action.text(hideText).data("hidden", false);
     } else {
-        group.hide();
+        group.each(function(){
+            var toggle = jQuery(this).find("a[id^='toggle_']");
+            if (toggle.data("hidden") || typeof toggle.data("hidden") == "undefined") {
+                jQuery(this).hide();
+            } else {
+                jQuery(this).hide().next("tr.collapsible").hide().next("tr.collapsible").hide();
+            }
+        });
         jQuery(".myplan-quarter-detail .activityInstitutionHeading").hide();
         action.text(showText).data("hidden", true);
     }
 }
 
 function toggleSectionDetails(sectionRow, obj, expandText, collapseText) {
+    if (typeof obj.data("hidden") == "undefined") {
+        obj.data("hidden", true);
+    }
     var collapsibleRow = sectionRow.next("tr.collapsible");
-    if (collapsibleRow.is(":visible")) {
-        sectionRow.find("td").first().attr("rowspan", "1");
-        sectionRow.find("td").last().attr("rowspan", "1");
-        collapsibleRow.hide().next("tr.collapsible").hide();
-        obj.text(expandText);
-    } else {
+    if (obj.data("hidden")) {
         sectionRow.find("td").first().attr("rowspan", "3");
         sectionRow.find("td").last().attr("rowspan", "3");
         collapsibleRow.show().next("tr.collapsible").show();
-        obj.text(collapseText);
+        obj.text(collapseText).data("hidden", false);
+    } else {
+        sectionRow.find("td").first().attr("rowspan", "1");
+        sectionRow.find("td").last().attr("rowspan", "1");
+        collapsibleRow.hide().next("tr.collapsible").hide();
+        obj.text(expandText).data("hidden", true);
     }
 }
 
