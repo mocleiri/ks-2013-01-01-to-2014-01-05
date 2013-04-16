@@ -151,7 +151,7 @@ public class AccessControlServiceImpl extends GenericPersistenceService implemen
     }
 
     @Override
-    public Set<String> getPermissions(String userId) {
+    public Set<String> getUserPermissions(String userId) {
         List<Permission> permissions = getKimPermissions(userId);
         if (CollectionUtils.isNotEmpty(permissions)) {
             Set<String> permissionNames = new HashSet<String>(permissions.size());
@@ -220,7 +220,7 @@ public class AccessControlServiceImpl extends GenericPersistenceService implemen
 
     @Override
     public boolean hasPermissions(String userId, String... permissionNames) {
-        Set<String> permissions = getPermissions(userId);
+        Set<String> permissions = getUserPermissions(userId);
         for (String permissionName : permissionNames) {
             if (!permissions.contains(permissionName)) {
                 return false;
@@ -243,7 +243,17 @@ public class AccessControlServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     public boolean hasPermissions(String... permissionNames) {
+        // Getting the current user ID from UserSessionManager
         String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        // Checking if the permissions are cached by UserSessionManager
+        Set<String> permissions = userSessionManager.getUserPermissions(RequestUtils.getThreadRequest());
+        if (CollectionUtils.isNotEmpty(permissions)) {
+            for (String permissionName : permissionNames) {
+                if (!permissions.contains(permissionName)) {
+                    return false;
+                }
+            }
+        }
         return hasPermissions(userId, permissionNames);
     }
 

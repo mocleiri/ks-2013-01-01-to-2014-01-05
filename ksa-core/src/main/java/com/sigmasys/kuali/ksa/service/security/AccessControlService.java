@@ -20,7 +20,7 @@ public interface AccessControlService {
      * @param userId Account ID
      * @return a set of permission names
      */
-    Set<String> getPermissions(String userId);
+    Set<String> getUserPermissions(String userId);
 
     /**
      * Returns a set of Role names for the given user ID
