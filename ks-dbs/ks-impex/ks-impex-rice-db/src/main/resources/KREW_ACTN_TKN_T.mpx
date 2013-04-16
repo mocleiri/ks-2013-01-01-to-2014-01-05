@@ -1,5 +1,5 @@
 ACTN_TKN_ID,DOC_HDR_ID,PRNCPL_ID,DLGTR_PRNCPL_ID,ACTN_CD,ACTN_DT,DOC_VER_NBR,ANNOTN,CUR_IND,VER_NBR,DLGTR_GRP_ID
-"2330","3011","admin","${mpx.null}","S","2013-02-18T13:11:27.000+0000","1","${mpx.null}","1","1","${mpx.null}"
-"2331","3012","admin","${mpx.null}","S","2013-02-18T13:20:11.000+0000","1","${mpx.null}","1","1","${mpx.null}"
-"2332","3013","admin","${mpx.null}","S","2013-02-18T13:23:34.000+0000","1","${mpx.null}","1","1","${mpx.null}"
-"2333","3014","admin","${mpx.null}","S","2013-02-18T13:26:07.000+0000","1","${mpx.null}","1","1","${mpx.null}"
+"2330","3011","admin","${mpx.null}","S","2013-02-18T13:11:27.000-0700","1","${mpx.null}","1","1","${mpx.null}"
+"2331","3012","admin","${mpx.null}","S","2013-02-18T13:20:11.000-0700","1","${mpx.null}","1","1","${mpx.null}"
+"2332","3013","admin","${mpx.null}","S","2013-02-18T13:23:34.000-0700","1","${mpx.null}","1","1","${mpx.null}"
+"2333","3014","admin","${mpx.null}","S","2013-02-18T13:26:07.000-0700","1","${mpx.null}","1","1","${mpx.null}"
