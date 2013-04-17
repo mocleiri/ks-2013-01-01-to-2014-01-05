@@ -1,6 +1,5 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
-import com.sigmasys.kuali.ksa.krad.form.GeneralLedgerForm;
 import com.sigmasys.kuali.ksa.krad.form.ReportReconciliationForm;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import org.kuali.rice.krad.web.form.UifFormBase;
@@ -47,7 +46,7 @@ public class GeneralLedgerController extends DownloadController {
      * @return ModelAndView for the initial page.
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=displayGeneralLedger")
-    public ModelAndView displayGeneralLedger(@ModelAttribute("KualiForm") GeneralLedgerForm form) {
+    public ModelAndView displayGeneralLedger(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
         return getUIFModelAndView(form);
     }
 
@@ -58,7 +57,7 @@ public class GeneralLedgerController extends DownloadController {
      * @return ModelAndView for the page.
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=searchForPriorBatches")
-    public ModelAndView searchForPriorBatches(@ModelAttribute("KualiForm") GeneralLedgerForm form) {
+    public ModelAndView searchForPriorBatches(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
         // Find prior batches:
 
         // Set objects on the form:
@@ -73,7 +72,7 @@ public class GeneralLedgerController extends DownloadController {
      * @return ModelAndView for the page.
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=searchForPendingTransactions")
-    public ModelAndView searchForPendingTransactions(@ModelAttribute("KualiForm") GeneralLedgerForm form) {
+    public ModelAndView searchForPendingTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
         // Find pending transactions:
 
         // Set objects on the form:
@@ -88,7 +87,7 @@ public class GeneralLedgerController extends DownloadController {
      * @return         null because we want to stay on the same page when download starts.
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=exportAllPendingTransactions")
-    public ModelAndView exportAllPendingTransactions (@ModelAttribute("KualiForm") GeneralLedgerForm form){
+    public ModelAndView exportAllPendingTransactions (@ModelAttribute("KualiForm") ReportReconciliationForm form){
         // Retrieve a list of Pending Transactions for all GL Accounts:
 
         return null;
@@ -103,7 +102,7 @@ public class GeneralLedgerController extends DownloadController {
      * @return          null because we want to stay on the same page when download starts.
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=downloadPriorBatchTransactions")
-    public ModelAndView downloadPriorBatchTransactions(@ModelAttribute("KualiForm") GeneralLedgerForm form, @RequestParam("batchId") String batchId) {
+    public ModelAndView downloadPriorBatchTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form, @RequestParam("batchId") String batchId) {
         // Retrieve a list of Transactions for a Batch:
 
         return null;
@@ -117,7 +116,7 @@ public class GeneralLedgerController extends DownloadController {
      * @return              null for AJAX requests to stay on the same page.
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=getPendingTransactionForGlAccount")
-    public ModelAndView getPendingTransactionForGlAccount(@ModelAttribute("KualiForm") GeneralLedgerForm form, @RequestParam("glAccountId") String glAccountId) {
+    public ModelAndView getPendingTransactionForGlAccount(@ModelAttribute("KualiForm") ReportReconciliationForm form, @RequestParam("glAccountId") String glAccountId) {
         // Retrieve a list of Pending Transactions for a GL Account:
 
         return null;
@@ -131,7 +130,7 @@ public class GeneralLedgerController extends DownloadController {
      * @return          null for AJAX requests to stay on the same page.
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=getGlAccountsForBatch")
-    public ModelAndView getGlAccountsForBatch(@ModelAttribute("KualiForm") GeneralLedgerForm form, @RequestParam("batchId") String batchId) {
+    public ModelAndView getGlAccountsForBatch(@ModelAttribute("KualiForm") ReportReconciliationForm form, @RequestParam("batchId") String batchId) {
         // Retrieve a list of GL Accounts for a Batch:
 
         return null;
