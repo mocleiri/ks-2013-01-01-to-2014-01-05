@@ -14,8 +14,8 @@ class EditAgenda < BasePage
   element(:object_tab) { |b| b.frm.a(:text => "Edit with Object")}
   element(:logic_text) { |b| b.frm.textarea(name: "document.newMaintainableObject.dataObject.logicArea")}
 
-  element(:add_btn) { |b| b.frm.button(:text => /Add Requisite/)}
-  element(:group_btn) { |b| b.frm.button(:text => /Group/)}
+  element(:add_btn) { |b| b.frm.button(:text => /Add Rule Statement/)}
+  element(:group_btn) { |b| b.frm.button(:text => /Create Group/)}
   element(:update_rule_btn) { |b| b.frm.button(:text => /Update Rule/)}
   element(:down_btn) { |b| b.frm.button(:text => /Move Down/)}
   element(:up_btn) { |b| b.frm.button(:text => /Move Up/)}

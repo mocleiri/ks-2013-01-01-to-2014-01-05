@@ -67,7 +67,7 @@ Then /^the background color should change to "(.*)"$/ do |color|
 end
 
 When /^I click the "(.*)" button$/ do |btn|
-  buttons = {"Add Requisite"=>:add_btn, "Group"=>:group_btn, "Update Rule"=>:update_rule_btn, "Move Down"=>:down_btn,
+  buttons = {"Add Rule Statement"=>:add_btn, "Create Group"=>:group_btn, "Update Rule"=>:update_rule_btn, "Move Down"=>:down_btn,
              "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move Left"=>:left_btn}
   on EditAgenda do |page|
     page.send(buttons[btn]).when_present.click
