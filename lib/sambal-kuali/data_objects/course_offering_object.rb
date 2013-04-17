@@ -556,9 +556,8 @@ class CourseOffering
         :cluster_private_name => :default_cluster
     }
     options = defaults.merge(opts)
-
     on ManageCourseOfferings do |page|
-      page.edit(options[:code_list], options[:cluster_private_name])
+      page.edit(options[:ao_code], options[:cluster_private_name])
     end
   end
 
