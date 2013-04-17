@@ -311,12 +311,12 @@ class ManageCourseOfferings < BasePage
     cluster_div.span().text()
   end
 
-  def cluster_published_name(cluster_div_element)
-    tmp_text = cluster_div_element.fieldset.label.text[/\([^()]*\)/].gsub(/[()]/, "")
-    #target_cluster(private_name).span().text[/(?<=\()\S+(?=\))/] #get the text between parenthesis
-    #full_name = cluster_list_item_div(private_name).span().text()
-    #full_name.slice(full_name.index('(')+1..-2)
-  end
+  #def cluster_published_name(cluster_div_element)     No longer on the page
+  #  tmp_text = cluster_div_element.fieldset.label.text[/\([^()]*\)/].gsub(/[()]/, "")
+  #  #target_cluster(private_name).span().text[/(?<=\()\S+(?=\))/] #get the text between parenthesis
+  #  #full_name = cluster_list_item_div(private_name).span().text()
+  #  #full_name.slice(full_name.index('(')+1..-2)
+  #end
 
   def cluster_select_all_aos(private_name)
     target_cluster(private_name).table.row.checkbox.set unless !target_cluster(private_name).table.exists?
