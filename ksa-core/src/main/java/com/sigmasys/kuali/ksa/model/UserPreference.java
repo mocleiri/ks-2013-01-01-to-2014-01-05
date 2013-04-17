@@ -61,7 +61,7 @@ public class UserPreference extends AccountIdAware implements Identifiable {
     }
 
     @Id
-    @Column(name = "NAME", length = 256)
+    @Column(name = "NAME", length = 255)
     public String getName() {
         return name;
     }

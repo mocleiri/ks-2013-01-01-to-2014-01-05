@@ -31,7 +31,7 @@ public class TransactionMaskRole extends AuditableEntity<Long> {
         return id;
     }
 
-    @Column(name = "TYPE_MASK", length = 512)
+    @Column(name = "TYPE_MASK", length = 255)
     public String getTypeMask() {
         return typeMask;
     }
@@ -40,7 +40,7 @@ public class TransactionMaskRole extends AuditableEntity<Long> {
         this.typeMask = typeMask;
     }
 
-    @Column(name = "ROLE_NAME", length = 256)
+    @Column(name = "ROLE_NAME", length = 255)
     public String getRoleName() {
         return roleName;
     }

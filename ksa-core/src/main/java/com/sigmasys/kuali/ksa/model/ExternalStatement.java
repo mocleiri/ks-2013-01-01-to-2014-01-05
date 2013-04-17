@@ -102,7 +102,7 @@ public class ExternalStatement implements Identifiable {
         this.mimeType = mimeType;
     }
 
-    @Column(name = "UNIQUE_KEY", length = 256)
+    @Column(name = "UNIQUE_KEY", length = 255)
     public String getUniqueKey() {
         return uniqueKey;
     }
@@ -129,7 +129,7 @@ public class ExternalStatement implements Identifiable {
         this.toDate = toDate;
     }
 
-    @Column(name = "URI", length = 256)
+    @Column(name = "URI", length = 255)
     public String getUri() {
         return uri;
     }

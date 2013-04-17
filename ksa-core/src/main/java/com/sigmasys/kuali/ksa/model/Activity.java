@@ -93,7 +93,7 @@ public class Activity implements Identifiable {
         this.ipAddress = ipAddress;
     }
 
-    @Column(name = "ALTERED_ENTITY_ID", length = 256)
+    @Column(name = "ALTERED_ENTITY_ID", length = 255)
     public String getEntityId() {
         return entityId;
     }
@@ -138,7 +138,7 @@ public class Activity implements Identifiable {
         this.accountId = accountId;
     }
 
-    @Column(name = "ALTERED_ENTITY_TYPE", length = 256)
+    @Column(name = "ALTERED_ENTITY_TYPE", length = 255)
     public String getEntityType() {
         return entityType;
     }
