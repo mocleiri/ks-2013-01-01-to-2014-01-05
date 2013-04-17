@@ -1,44 +1,57 @@
-And /^I create a number of COs with an AO in each$/ do
-
-  # BSCI181
-  @bsci_co = create CourseOffering, :term => "201201", :course => "BSCI181", :delivery_format => "Lecture", :grade_format => "Lecture"
-  @bsci_co.create_ao :ao_code => "A"
-
-  # CHEM181
-  @chem_co = create CourseOffering, :term => "201201", :course => "CHEM181", :delivery_format => "Lecture", :grade_format => "Lecture"
-  @chem_co.create_ao :ao_code => "A"
-
-  # PHYS181
-  @phys_co = create CourseOffering, :term => "201201", :course => "PHYS181", :delivery_format => "Lecture", :grade_format => "Lecture"
-  @phys_co.create_ao :ao_code => "A"
-
+When /^I create "([2-9])" COs with an AO in each$/ do |number_of_cos_to_create|
+  reference_co_to_copy = make CourseOffering
+  @array_of_cos = []
+  for i in 1..number_of_cos_to_create.to_i
+    puts "create " + i.to_s
+    co = create CourseOffering, :create_by_copy=>reference_co_to_copy
+    co.create_ao :ao_code => "A"
+    @array_of_cos << co
+  end
 end
 
-When /^I indicate multiple activities for colocation, selecting to "(share|separately manage)" enrollments$/ do |max_enrollment_flag|
+When /^I colocate multiple activities, selecting to "(share|separately manage)" enrollments$/ do |max_enrollment_flag|
 
   $should_enrollment_be_shared_flag = true
   if max_enrollment_flag == 'separately manage'
     $should_enrollment_be_shared_flag = false
   end
 
-  @bsci_co.colocate :cos_to_colo => [@chem_co, @phys_co],
+  # get a reference to the main CO where we are going to create the colo
+  first_co = @array_of_cos[0]
+
+  # get a reference to the rest of the COs (less the main CO)
+  remaining_cos = []
+  for i in 1..@array_of_cos.size
+    remaining_cos << @array_of_cos[i]
+  end
+
+  # this is broke right now; waiting for fix from Mike W. to come in
+  first_co.colocate :cos_to_colo => remaining_cos,
                     :should_enrollment_be_shared_flag => $should_enrollment_be_shared_flag,
                     :enrollment_size => 10
 
 end
 
-Then /^the AO indicates it is colocated$/ do
+Then /^the activities indicate they are colocated$/ do
 
-  @bsci_co.manage
+  # get a reference to the main CO where we are going to validate the colo
+  first_co = @array_of_cos[0]
+
+  # get a reference to the rest of the COs (less the main CO)
+  remaining_cos = []
+  for i in 1..@array_of_cos.size
+    remaining_cos << @array_of_cos[i]
+  end
+
+  # this is broke right now; waiting for fix from Mike W. to come in
+  first_co.manage
   on ManageCourseOfferings do |page|
-    $colocated_tooltip_text = page.target_row('A')[1].image.alt.upcase
+    colocated_tooltip_text = page.target_row('A')[1].image.alt.upcase
 
-    $chem_expected = @chem_co.course.upcase + ' ' + @chem_co.ao_list[0].upcase
-    $phys_expected = @phys_co.course.upcase + ' ' + @phys_co.ao_list[0].upcase
-
-    $colocated_tooltip_text.should include $chem_expected
-    $colocated_tooltip_text.should include $phys_expected
-
+    remaining_cos.each do |co|
+      expected = co.course.upcase + ' ' + co.ao_list[0].upcase
+      colocated_tooltip_text.should include expected
+    end
   end
 
 end
