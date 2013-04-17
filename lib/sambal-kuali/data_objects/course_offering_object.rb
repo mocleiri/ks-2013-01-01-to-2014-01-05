@@ -517,7 +517,6 @@ class CourseOffering
   #create a new specified activity offering
   #
   #@param opts [Hash] {:ao_code => "CODE"}
-
   def create_ao(opts) #TODO - param should be an ActivityOffering
     #TODO: number_aos_to_create = opts[:number_aos_to_create] implement as a separate method?
     defaults = {
@@ -525,6 +524,7 @@ class CourseOffering
     }
     options = defaults.merge(opts)
 
+    manage
     new_activity_offering = make ActivityOffering, :code => options[:ao_code], :parent_course_offering => self
     new_activity_offering.create
     new_activity_offering.save
