@@ -25,10 +25,10 @@ Then /^the activity offering clusters? and assigned AOs are copied over with the
   end
 
   @course_offering_copy.activity_offering_cluster_list.each do |cluster|
-    cluster.assigned_ao_list.each do |ao_code|
+    cluster.ao_list.each do |ao_code|
       on ManageCourseOfferings do |page|
         actual_aos = page.get_cluster_assigned_ao_list(cluster.private_name)
-        actual_aos.sort.should == cluster.assigned_ao_list.sort
+        actual_aos.sort.should == cluster.ao_list.sort
       end
     end
   end
@@ -47,9 +47,9 @@ Then /^the activity offering clusters?, assigned AOs and reg groups are rolled o
   @course_offering_copy.activity_offering_cluster_list.each do |cluster|
     on ManageRegistrationGroups do |page|
     page.get_cluster_status_msg(cluster.private_name).strip.should  match /.*All Registration Groups Generated.*/
-    cluster.assigned_ao_list.each do |ao_code|
+    cluster.ao_list.each do |ao_code|
         actual_aos = page.get_cluster_assigned_ao_list(cluster.private_name)
-        actual_aos.sort.should == cluster.assigned_ao_list.sort
+        actual_aos.sort.should == cluster.ao_list.sort
       end
     end
   end

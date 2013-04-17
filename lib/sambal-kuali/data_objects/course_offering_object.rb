@@ -23,12 +23,12 @@ class CourseOffering
   include StringFactory
   include Workflows
 
-  #generally set using options hash
+  #string - generally set using options hash
   attr_accessor :term,
                 :course,
                 :suffix,
                 :final_exam_type
-  #generally set using options hash
+  #array - generally set using options hash
   attr_accessor :activity_offering_cluster_list,
                 :affiliated_person_list,
                 :affiliated_org_list
@@ -44,8 +44,8 @@ class CourseOffering
                 :reg_options,
                 :search_by_subj,
                 :joint_co_to_create
-  #generally set using options hash - course offering object to copy
-  :create_by_copy
+  #object - generally set using options hash - course offering object to copy
+  attr_accessor  :create_by_copy
 
 
 
@@ -525,7 +525,7 @@ class CourseOffering
     }
     options = defaults.merge(opts)
 
-    new_activity_offering = make ActivityOffering, :code => options[:ao_code], :seat_pool_list => {}, :requested_delivery_logistics_list => {},:personnel_list => []
+    new_activity_offering = make ActivityOffering, :code => options[:ao_code], :parent_course_offering => self
     new_activity_offering.create
     new_activity_offering.save
     get_cluster_obj_by_private_name(options[:cluster_private_name]).ao_list << new_activity_offering
@@ -541,7 +541,8 @@ class CourseOffering
         :cluster_private_name => :default_cluster
     }
     options = defaults.merge(opts)
-    new_activity_offering = make ActivityOffering, :code => options[:ao_code], :aoc_private_name => options[:cluster_private_name], :create_by_copy => true
+    new_activity_offering = make ActivityOffering, :code => options[:ao_code], :aoc_private_name => options[:cluster_private_name], :create_by_copy => true, :parrent_course_offering => self
+
     new_activity_offering.create
     get_cluster_obj_by_private_name(options[:cluster_private_name]).ao_list << new_activity_offering
     return new_activity_offering

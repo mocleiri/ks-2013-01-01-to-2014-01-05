@@ -19,10 +19,7 @@ When /^I edit an existing activity offering with (\d+) seat pools?$/ do |number|
     temp_list[ctr] = seatpool
   end
 
-  @activity_offering = create ActivityOffering, :seat_pool_list => temp_list,
-                            :requested_delivery_logistics_list => {},
-                            :personnel_list => []
-
+  @activity_offering = create ActivityOffering, :seat_pool_list => temp_list
   @activity_offering.save
 
   #TODO - uncomment this code when KSENROLL-5974 is fixed

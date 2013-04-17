@@ -26,7 +26,8 @@ class ActivityOffering
                   :max_enrollment,
                   :seat_remaining_percent,
                   :course_url,
-                  :aoc_private_name
+                  :aoc_private_name,
+                  :parent_course_offering
     #type: hash - generally set using options hash
     attr_accessor :actual_delivery_logistics_list,
                   :requested_delivery_logistics_list,
@@ -39,36 +40,42 @@ class ActivityOffering
                   :create_by_copy
 
     # provides default data:
-    # default_seat_pool_hash = {"random"=> (make SeatPool)}
-    # default_rdl_hash = {"default"=> (make DeliveryLogistics)}
+    #
     #  defaults = {
+    #    :parent_course_offering => ""
     #    :format => "Lecture Only",
     #    :activity_type => "Lecture",
     #    :max_enrollment => 100,
     #    :actual_delivery_logistics_list => {},
-    #    :requested_delivery_logistics_list => default_rdl_hash,
-    #    :personnel_list => Array.new(1){make Personnel} ,
-    #    :seat_pool_list => default_seat_pool_hash,
+    #    :requested_delivery_logistics_list => {} ,
+    #    :personnel_list => [],
+    #    :seat_pool_list => {} ,
     #    :course_url => "www.test_course.com",
     #    :evaluation => true,
     #    :honors_course => true
     #  }
+    # some basic e.g. list/hash values:
+    # :seat_pool_list =>  {"random"=> (make SeatPool)}
+    # :requested_delivery_logistics_list => {"default"=> (make DeliveryLogistics)}
+    # :personnel_list => Array.new(1){make Personnel}
+
     # initialize is generally called using TestFactory Foundry .make or .create methods
     def initialize(browser, opts={})
       @browser = browser
 
-      default_seat_pool_hash = {"random"=> (make SeatPool)}
-      default_rdl_hash = {"default"=> (make DeliveryLogistics)}
+      # :seat_pool_list =  {"random"=> (make SeatPool)}
+      # :requested_delivery_logistics_list = {"default"=> (make DeliveryLogistics)}
+      # :personnel_list => [] -- Array.new(1){make Personnel}
 
       defaults = {
+          :parent_course_offering => nil,
           :format => "Lecture Only",
           :activity_type => "Lecture",
           :max_enrollment => 100,
           :actual_delivery_logistics_list => {},
-          :requested_delivery_logistics_list => default_rdl_hash,
-          :personnel_list => Array.new(1){make Personnel} ,
-          :seat_pool_list => default_seat_pool_hash,
-          #:seat_pool_list => Array.new(1){make SeatPool},
+          :requested_delivery_logistics_list => {},
+          :personnel_list => [] ,
+          :seat_pool_list => {},
           :course_url => "www.test_course.com",
           :evaluation => true,
           :honors_course => true,
