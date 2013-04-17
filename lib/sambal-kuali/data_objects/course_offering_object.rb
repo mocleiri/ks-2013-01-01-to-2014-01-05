@@ -541,7 +541,7 @@ class CourseOffering
         :cluster_private_name => :default_cluster
     }
     options = defaults.merge(opts)
-    new_activity_offering = make ActivityOffering, :code => options[:ao_code], :aoc_private_name => options[:cluster_private_name], :create_by_copy => true, :parrent_course_offering => self
+    new_activity_offering = make ActivityOffering, :code => options[:ao_code], :aoc_private_name => options[:cluster_private_name], :create_by_copy => true, :parent_course_offering => self
 
     new_activity_offering.create
     get_cluster_obj_by_private_name(options[:cluster_private_name]).ao_list << new_activity_offering
