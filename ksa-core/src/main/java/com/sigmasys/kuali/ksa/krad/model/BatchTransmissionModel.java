@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.krad.model;
 import com.sigmasys.kuali.ksa.model.GlTransmission;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class BatchTransmissionModel implements Serializable {
     /**
      * Total Batch transmission amount.
      */
-    private String formattedAmount;
+    private BigDecimal formattedAmount;
 
 
     public String getBatchId() {
@@ -49,11 +50,11 @@ public class BatchTransmissionModel implements Serializable {
         this.transmissionDate = transmissionDate;
     }
 
-    public String getFormattedAmount() {
+    public BigDecimal getFormattedAmount() {
         return formattedAmount;
     }
 
-    public void setFormattedAmount(String formattedAmount) {
+    public void setFormattedAmount(BigDecimal formattedAmount) {
         this.formattedAmount = formattedAmount;
     }
 }

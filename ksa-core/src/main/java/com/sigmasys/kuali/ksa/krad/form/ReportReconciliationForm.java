@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.krad.model.BatchTransmissionModel;
 import com.sigmasys.kuali.ksa.krad.model.GlPendingTransactionModel;
 import com.sigmasys.kuali.ksa.model.Account;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -28,12 +29,12 @@ public class ReportReconciliationForm extends AbstractViewModel {
     /**
      * Formatted total amount for all GL Accounts with Pending Transactions.
      */
-    private String allGlAccountsTotal;
+    private BigDecimal allGlAccountsTotal;
 
     /**
      * Formatted total amount for all Prior Batches.
      */
-    private String allPriorBatchTotal;
+    private BigDecimal allPriorBatchTotal;
 
 
     public List<GlPendingTransactionModel> getGlAccountsPending() {
@@ -52,19 +53,19 @@ public class ReportReconciliationForm extends AbstractViewModel {
         this.priorBatchTransmissions = priorBatchTransmissions;
     }
 
-    public String getAllGlAccountsTotal() {
+    public BigDecimal getAllGlAccountsTotal() {
         return allGlAccountsTotal;
     }
 
-    public void setAllGlAccountsTotal(String allGlAccountsTotal) {
+    public void setAllGlAccountsTotal(BigDecimal allGlAccountsTotal) {
         this.allGlAccountsTotal = allGlAccountsTotal;
     }
 
-    public String getAllPriorBatchTotal() {
+    public BigDecimal getAllPriorBatchTotal() {
         return allPriorBatchTotal;
     }
 
-    public void setAllPriorBatchTotal(String allPriorBatchTotal) {
+    public void setAllPriorBatchTotal(BigDecimal allPriorBatchTotal) {
         this.allPriorBatchTotal = allPriorBatchTotal;
     }
 
