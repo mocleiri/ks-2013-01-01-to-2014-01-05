@@ -371,7 +371,7 @@ Feature: KRMS Edit Agenda
 
   #ELIG9.10.2.EB2 (KSENROLL-6335)
   @pending
-  Scenario: Confirm that the Update Rule loads the Agenda Maintenance page
+  Scenario: Confirm that the Update Rule after Copy & Paste loads the Agenda Maintenance page
     When I go to the Manage Course Offering Agendas page for "ELIG9.10.2.EB2 (KSENROLL-6335)"
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
@@ -384,12 +384,57 @@ Feature: KRMS Edit Agenda
 
   #ELIG9.10.2.EB3 (KSENROLL-6335)
   @bug @KSENROLL-?
-  Scenario: Confirm that the Submit button persists the data
+  Scenario: Confirm that the Submit button persists the data after Copy & Paste
     When I go to the Manage Course Offering Agendas page for "ELIG9.10.2.EB3 (KSENROLL-6335)"
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
     And I click the "Copy" button
+    And I select node "B" in the tree
+    And I click the "Paste" button
+    And I click the "Update Rule" button
+    And I click the "Save" button on Manage CO Agendas page
+    And I go to the Main Menu from Manage CO Agendas
+    And I go to the Manage Course Offering Agendas page for ""
+    And I click on the "Student Eligibility & Prerequisite" section
+    Then the new node "Some free text goes here." should be between two "AND" operators
+
+  #ELIG9.10.3.EB1 (KSENROLL-6336)
+  @bug @KSENROLL-?
+  Scenario: Confirm that the Cut and Paste buttons works as expected
+    When I go to the Manage Course Offering Agendas page for "ELIG9.10.3.EB1 (KSENROLL-6336)"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Edit Rule" link
+    And I select node "D" in the tree
+    And I click the "Cut" button
+    And I select node "B" in the tree
+    And I click the "Paste" button
+    Then there should be a new node with text "D. Some free text goes here."
+    And there should be a dropdown with value "AND" before node "D."
+    And I click the "Edit Rule Logic" tab
+    Then the text "A(B AND D AND C(E) AND F)" should be present in the text area
+
+  #ELIG9.10.3.EB2 (KSENROLL-6336)
+  @pending
+  Scenario: Confirm that the Update Rule after Cut & Paste loads the Agenda Maintenance page
+    When I go to the Manage Course Offering Agendas page for "ELIG9.10.3.EB2 (KSENROLL-6336)"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Edit Rule" link
+    And I select node "D" in the tree
+    And I click the "Cut" button
+    And I select node "B" in the tree
+    And I click the "Paste" button
+    And I click the "Update Rule" button
+    Then the loaded page should have "Enrollment Eligibility" as a heading
+
+  #ELIG9.10.3.EB3 (KSENROLL-6336)
+  @bug @KSENROLL-?
+  Scenario: Confirm that the Submit button persists the data after Cut & Paste
+    When I go to the Manage Course Offering Agendas page for "ELIG9.10.3.EB3 (KSENROLL-6336)"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Edit Rule" link
+    And I select node "D" in the tree
+    And I click the "Cut" button
     And I select node "B" in the tree
     And I click the "Paste" button
     And I click the "Update Rule" button
