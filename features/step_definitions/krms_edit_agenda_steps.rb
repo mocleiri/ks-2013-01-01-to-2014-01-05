@@ -68,7 +68,8 @@ end
 
 When /^I click the "(.*)" button$/ do |btn|
   buttons = {"Add Rule Statement"=>:add_btn, "Create Group"=>:group_btn, "Update Rule"=>:update_rule_btn, "Move Down"=>:down_btn,
-             "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move Left"=>:left_btn}
+             "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move Left"=>:left_btn, "Copy"=>:copy_btn,
+             "Cut"=>:cut_btn, "Paste"=>:paste_btn}
   on EditAgenda do |page|
     page.send(buttons[btn]).when_present.click
   end
@@ -105,7 +106,7 @@ Then /^there should be a dropdown with value "(.*)" before node "(.*)"$/ do |dro
 end
 
 When /^I click the "(.*)" tab$/ do |tab|
-  tabs = {"Logic"=>:logic_tab, "Object"=>:object_tab}
+  tabs = {"Edit Rule Logic"=>:logic_tab, "Edit Rule"=>:object_tab}
   on EditAgenda do |page|
     page.send(tabs[tab]).when_present.click
   end
@@ -151,7 +152,7 @@ end
 When /^I enter "(.*)" in the "(.*)" field$/ do |cors, field|
   types = {"course"=>:course_field, "free form text"=>:free_text_field}
   on EditAgenda do |page|
-    page.edit_tree_section.send(types[field]).when_present.set cors
+    page.send(types[field]).when_present.set cors
   end
 end
 
@@ -183,5 +184,30 @@ end
 Then /^the node "(.*)" should be a secondary node in the tree$/ do |node|
   on EditAgenda do |page|
     page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).id.should match /u\d+_node_\d+_parent_node_\d+_parent_node_\d+_parent_root_span/
+  end
+end
+
+Then /^the loaded page should have "(.*)" as a heading$/ do |head|
+  on ManageCOAgendas do |page|
+    page.agenda_management_section.html.should match /.*#{Regexp.escape(head)}.*/
+  end
+end
+
+When /^I click the "(.*)" button on Manage CO Agendas page$/ do |btn|
+  buttons = {"Save"=>:submit_btn, "Cancel"=>:cancel_btn}
+  on ManageCOAgendas do |page|
+    page.send(buttons[btn])
+  end
+end
+
+When /^I go to the Main Menu from Manage CO Agendas$/ do
+  on ManageCOAgendas do |page|
+    page.main_menu
+  end
+end
+
+Then /^the new node "(.*)" should be between two "(.*)" operators$/ do |node, operator|
+  on ManageCOAgendas do |page|
+    page.preview_tree.text.should match /.*#{Regexp.escape(operator)}\n#{Regexp.escape(node)}\n#{Regexp.escape(operator)}.*/m
   end
 end
