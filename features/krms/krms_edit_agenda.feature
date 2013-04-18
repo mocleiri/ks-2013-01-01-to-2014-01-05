@@ -494,4 +494,4 @@ Feature: KRMS Edit Agenda
     And I enter "ENGL101" in the "courses" field
     And I click the "add" button
     And I click the "Preview Change" button
-    Then there should be a new node with text "B. Must not have successfully completed any courses from ENGL101"
+    Then there should be a new node with text "A. Must not have successfully completed any courses from ENGL101"
