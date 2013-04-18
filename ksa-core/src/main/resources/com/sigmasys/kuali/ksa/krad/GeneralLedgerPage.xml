@@ -65,8 +65,9 @@
 	<bean id="glPriorBatchSection" parent="Uif-VerticalBoxSection" p:headerText="Prior Batch">
 		<property name="items">
 			<list>
-				<!-- The "Refresh" button that will actually display the contents since we don't want to load the contents immediately -->
-				<bean parent="Uif-SecondaryActionButton" p:actionLabel="Refresh" p:methodToCall="searchForPriorBatches"/> 
+				<!-- The "Refresh" link that will actually display the contents since we don't want to load the contents immediately -->
+				<bean parent="Uif-LinkField" p:linkText="Refresh" p:target="_self"
+						p:href="generalLedger?methodToCall=searchForPriorBatches&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage" p:style="text-decoration:underline"/>
 				
 				<!-- The table of Prior Batches -->
 				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:displayCollectionSize="10">
@@ -77,7 +78,7 @@
 					<property name="layoutManager.renderSequenceField" value="false"/>
 					<property name="renderAddBlankLineButton" value="false"/>
 					<property name="renderAddLine" value="false"/>
-					<property name="renderLineActions" value="true"/>
+					<property name="renderLineActions" value="false"/>
 					<property name="items">
 						<list>
 							<bean parent="Uif-DataField" p:label="Batch No." p:propertyName="batchId"/>
@@ -87,7 +88,7 @@
 							<!-- Download XML action link -->
 							<bean parent="Uif-LinkField" p:linkText="Download XML" p:target="_self"
 								  p:align="center" p:width="10%"
-								  p:href="generalLedger?methodToCall=downloadPriorBatchTransactions&amp;viewId=GeneralLedgerView&amp;pageId=GeneralLedgerMainPage"/>
+								  p:href="generalLedger?methodToCall=downloadPriorBatchTransactions&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage"/>
 						</list>
 					</property>
 				</bean>
@@ -109,8 +110,9 @@
 	<bean id="glPendingTransactionSection" parent="Uif-VerticalBoxSection" p:headerText="Pending">
 		<property name="items">
 			<list>
-				<!-- The "Refresh" button that will actually display the contents since we don't want to load the contents immediately -->
-				<bean parent="Uif-SecondaryActionButton" p:actionLabel="Refresh" p:methodToCall="searchForPendingTransactions"/> 
+				<!-- The "Refresh" link that will actually display the contents since we don't want to load the contents immediately -->
+				<bean parent="Uif-LinkField" p:linkText="Refresh" p:target="_self"
+						p:href="generalLedger?methodToCall=searchForPendingTransactions&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage" p:style="text-decoration:underline"/>
 				
 				<!-- The table of GL Accounts -->
 				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="3" p:displayCollectionSize="10">
