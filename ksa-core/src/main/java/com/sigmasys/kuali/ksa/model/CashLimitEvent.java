@@ -6,9 +6,8 @@ import com.sigmasys.kuali.ksa.util.EnumUtils;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
-
-// TODO:
 
 /**
  * Cash limit event model.
@@ -79,6 +78,11 @@ public class CashLimitEvent implements Identifiable {
      * Reference to XML document
      */
     private XmlDocument xmlDocument;
+
+    /**
+     * Transactions associated with this cash limit event
+     */
+    private Set<Transaction> transactions;
 
     /**
      * Status
@@ -196,7 +200,7 @@ public class CashLimitEvent implements Identifiable {
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")
-       @Column(name = "IS_MULTIPLE")
+    @Column(name = "IS_MULTIPLE")
     public Boolean getMultiple() {
         return isMultiple != null ? isMultiple : false;
     }
@@ -213,6 +217,23 @@ public class CashLimitEvent implements Identifiable {
 
     public void setXmlDocument(XmlDocument xmlDocument) {
         this.xmlDocument = xmlDocument;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "CASH_LIMIT_EVENT_TRANS",
+            joinColumns = {
+                    @JoinColumn(name = "CASH_LIMIT_EVENT_ID_FK")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "TRANSACTION_ID_FK")
+            }
+    )
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     @Column(name = "STATUS", length = 1)

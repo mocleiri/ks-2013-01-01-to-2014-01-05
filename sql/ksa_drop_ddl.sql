@@ -8,6 +8,7 @@ drop table KSA.KSSA_CONFIG cascade constraints;
 
 -- KSA tables dropping
 
+drop table KSA.CASH_LIMIT_EVENT_TRANS cascade constraints;
 drop table KSA.KSSA_ACNT cascade constraints;
 drop table KSA.KSSA_ACNT_PROTECTED_INFO cascade constraints;
 drop table KSA.KSSA_ACNT_STATUS_TYPE cascade constraints;
@@ -18,6 +19,9 @@ drop table KSA.KSSA_ALLOWABLE_GL_ACCOUNT cascade constraints;
 drop table KSA.KSSA_BANK_TYPE cascade constraints;
 drop table KSA.KSSA_BATCH_RECEIPT cascade constraints;
 drop table KSA.KSSA_BILL_AUTHORITY cascade constraints;
+drop table KSA.KSSA_CASH_LIMIT_EVENT cascade constraints;
+drop table KSA.KSSA_CASH_LIMIT_PARAMETER cascade constraints;
+drop table KSA.KSSA_CASH_LIMIT_SUM_ELEMENT cascade constraints;
 drop table KSA.KSSA_CREDIT_PERMISSION cascade constraints;
 drop table KSA.KSSA_CURRENCY cascade constraints;
 drop table KSA.KSSA_DOCUMENT cascade constraints;
@@ -68,4 +72,3 @@ drop table KSA.KSSA_UI_STRING cascade constraints;
 drop table KSA.KSSA_USER_PREF cascade constraints;
 drop table KSA.KSSA_XML cascade constraints;
 drop table KSA.KSSA_SEQUENCE_TABLE cascade constraints;
-drop table KSA.KSSA_CASH_LIMIT_EVENT cascade constraints;
