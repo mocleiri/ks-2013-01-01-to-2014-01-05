@@ -46,8 +46,9 @@ When /^I click on the "(.*)" section$/ do |sect|
 end
 
 When /^I click on the "(.*)" link$/ do |link|
+  sections = {"Add Rule"=>:rule_add_link, "Edit Rule"=>:rule_edit_links}
   on ManageCOAgendas do |page|
-    page.rule_edit_links.a(text: link).when_present.click
+    page.send(sections[link]).a(text: link).when_present.click
   end
   sleep 2
 end
@@ -69,7 +70,7 @@ end
 When /^I click the "(.*)" button$/ do |btn|
   buttons = {"Add Rule Statement"=>:add_btn, "Create Group"=>:group_btn, "Update Rule"=>:update_rule_btn, "Move Down"=>:down_btn,
              "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move Left"=>:left_btn, "Copy"=>:copy_btn,
-             "Cut"=>:cut_btn, "Paste"=>:paste_btn}
+             "Cut"=>:cut_btn, "Paste"=>:paste_btn, "Delete"=>:del_btn, "add"=>:add_line_btn}
   on EditAgenda do |page|
     page.send(buttons[btn]).when_present.click
   end
@@ -142,15 +143,16 @@ When /^I select "(.*)" from the dropdown before node "(.*)"$/ do |cond, node|
   sleep 3
 end
 
-When /^I select the "(.*)" option from the rule dropdown$/ do |rule|
+When /^I select the "(.*)" option from the "(.*)" dropdown$/ do |rule, type|
+  dropdown = {"rule"=>"proposition.typeId", "courses"=>"proposition.multipleCourseType"}
   on EditAgenda do |page|
-    page.edit_tree_section.select(:name => /.*editTree.*proposition\.typeId/).when_present.select /#{Regexp.escape(rule)}/
+    page.edit_tree_section.select(:name => /.*editTree.*#{Regexp.escape(dropdown[type])}/).when_present.select /#{Regexp.escape(rule)}/
   end
   sleep 10
 end
 
 When /^I enter "(.*)" in the "(.*)" field$/ do |cors, field|
-  types = {"course"=>:course_field, "free form text"=>:free_text_field}
+  types = {"course"=>:course_field, "free form text"=>:free_text_field, "courses"=>:courses_field}
   on EditAgenda do |page|
     page.send(types[field]).when_present.set cors
   end
@@ -209,5 +211,18 @@ end
 Then /^the new node "(.*)" should be between two "(.*)" operators$/ do |node, operator|
   on ManageCOAgendas do |page|
     page.preview_tree.text.should match /.*#{Regexp.escape(operator)}\n#{Regexp.escape(node)}\n#{Regexp.escape(operator)}.*/m
+  end
+end
+
+Then /^there should be no node with letter "(.*)"$/ do |letter|
+  on EditAgenda do |page|
+    page.edit_tree_section.text.should_not match /.*#{Regexp.escape(letter)}.*/
+  end
+end
+
+Then /^there should be no node "(.*)" before an "(.*)" operator$/ do |text, operator|
+  on ManageCOAgendas do |page|
+    puts page.preview_tree.text
+    page.preview_tree.text.should_not match /.*#{Regexp.escape(text)}\n#{Regexp.escape(operator)}.*/
   end
 end

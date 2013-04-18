@@ -30,7 +30,7 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     Then the "course" field should be empty
 
   #ELIG9.1.2.EB3 (KSENROLL-5776)
@@ -41,7 +41,7 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     Then there should be a new node with text "G. Must have successfully completed ENGL101"
@@ -55,7 +55,7 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I click the "Logic" tab
@@ -71,7 +71,7 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     Then the "free form text" field should be empty
 
   #ELIG9.5.1.EB2 (KSENROLL-5818)
@@ -82,7 +82,7 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "xyz" in the "free form text" field
     And I click the "Preview Change" button
     Then there should be a new node with text "G. xyz"
@@ -96,12 +96,12 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select "OR" from the dropdown before node "2"
@@ -115,12 +115,12 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select "OR" from the dropdown before node "2"
@@ -135,16 +135,16 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "E" in the tree
     And I click the "Create Group" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
     Then there should be a new node with text "F. Must meet all of the following"
@@ -159,21 +159,21 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I click the "Create Group" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "I" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
     And I click the "Edit Rule Logic" tab
@@ -195,16 +195,16 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
     And I click the "Create Group" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "I" in the tree
@@ -223,21 +223,21 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
     And I click the "Create Group" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "F" in the tree
     And I click the "Create Group" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "BSCI207" in the "course" field
     And I click the "Preview Change" button
     And I click the "Edit Rule Logic" tab
@@ -256,16 +256,16 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
     And I click the "Create Group" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
     And I click the "Move Left" button
@@ -279,16 +279,16 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
     And I click the "Create Group" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
     And I click the "Move Left" button
@@ -303,16 +303,16 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
     And I click the "Create Group" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
     And I click the "Move Left" button
@@ -327,16 +327,16 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the rule dropdown
+    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
     And I click the "Create Group" button
-    And I select the "Free Form Text" option from the rule dropdown
+    And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
     And I click the "Move Left" button
@@ -443,3 +443,55 @@ Feature: KRMS Edit Agenda
     And I go to the Manage Course Offering Agendas page for ""
     And I click on the "Student Eligibility & Prerequisite" section
     Then the new node "Some free text goes here." should be between two "AND" operators
+
+  #ELIG9.10.4.EB1 (KSENROLL-6337)
+  @bug @KSENROLL-?
+  Scenario: Confirm that the Delete button works as expected
+    When I go to the Manage Course Offering Agendas page for "ELIG9.10.4.EB1 (KSENROLL-6337)"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Edit Rule" link
+    And I select node "D" in the tree
+    And I click the "Delete" button
+    Then there should be no node with letter "D."
+    And I click the "Edit Rule Logic" tab
+    Then the text "A(B AND C(E) AND F)" should be present in the text area
+
+  #ELIG9.10.4.EB2 (KSENROLL-6337)
+  @pending
+  Scenario: Confirm that the Update Rule after Delete loads the Agenda Maintenance page
+    When I go to the Manage Course Offering Agendas page for "ELIG9.10.4.EB2 (KSENROLL-6337)"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Edit Rule" link
+    And I select node "D" in the tree
+    And I click the "Delete" button
+    And I click the "Update Rule" button
+    Then the loaded page should have "Enrollment Eligibility" as a heading
+
+  #ELIG9.10.4.EB3 (KSENROLL-6337)
+  @bug @KSENROLL-?
+  Scenario: Confirm that the Submit button persists the data after Delete
+    When I go to the Manage Course Offering Agendas page for "ELIG9.10.4.EB2 (KSENROLL-6337)"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Edit Rule" link
+    And I select node "D" in the tree
+    And I click the "Delete" button
+    And I click the "Update Rule" button
+    And I click the "Save" button on Manage CO Agendas page
+    And I go to the Main Menu from Manage CO Agendas
+    And I go to the Manage Course Offering Agendas page for ""
+    And I click on the "Student Eligibility & Prerequisite" section
+    Then there should be no node "Some free text goes here." before an "OR" operator
+
+  #KSENROLL-6383
+  @bug @KSENROLL-6381
+  Scenario: Test whether the Preview Change button works for Antirequisites
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6383"
+    And I click on the "Antirequisite" section
+    And I click on the "Add Rule" link
+    And I click the "Add Rule Statement" button
+    And I select the "Must not have successfully completed any courses from <courses>" option from the "rule" dropdown
+    And I select the "Approved Courses" option from the "courses" dropdown
+    And I enter "ENGL101" in the "courses" field
+    And I click the "add" button
+    And I click the "Preview Change" button
+    Then there should be a new node with text "B. Must not have successfully completed any courses from ENGL101"

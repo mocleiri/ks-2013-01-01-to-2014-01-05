@@ -25,7 +25,10 @@ class EditAgenda < BasePage
   element(:copy_btn) { |b| b.frm.button(:text => /Copy/)}
   element(:cut_btn) { |b| b.frm.button(:text => /Cut/)}
   element(:paste_btn) { |b| b.frm.button(:text => /Paste/)}
+  element(:del_btn) { |b| b.frm.button(:text => /Delete/)}
+  element(:add_line_btn) { |b| b.frm.button(:text => /add/)}
 
   element(:course_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.courseInfo\.code/)}
   element(:free_text_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.termParameter/)}
+  element(:courses_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.cluSet\.clus\'\]\.code/)}
 end
