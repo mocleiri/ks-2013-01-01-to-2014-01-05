@@ -57,6 +57,7 @@
                 <value>classpath:CourseSectionsUI.xml</value>
                 <value>classpath:DegreeAuditDetailsUI.xml</value>
                 <value>classpath:DegreeAuditUI.xml</value>
+                <value>classpath:PlanAuditUI.xml</value>
                 <value>classpath:FullPlanCoursesUI.xml</value>
                 <value>classpath:PlanItemsUI.xml</value>
                 <value>classpath:QuickAddUI.xml</value>
