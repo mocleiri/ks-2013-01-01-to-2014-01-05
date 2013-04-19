@@ -1,42 +1,39 @@
-And /^I create a number of COs with an AO in each$/ do
+When /^I create "([2-9])" COs with an AO in each$/ do |number_of_cos_to_create|
+  @colo_aos = []
 
-  co1 = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM611", :term=>Rollover::OPEN_SOC_TERM)
-  @ao1 = make ActivityOffering, :code => "A", :parent_course_offering => co1
-  co2 = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM611", :term=>Rollover::OPEN_SOC_TERM)
-  @ao2 = make ActivityOffering, :code => "A", :parent_course_offering => co2
-  co3 = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM611", :term=>Rollover::OPEN_SOC_TERM)
-  @ao3 = make ActivityOffering, :code => "A", :parent_course_offering => co3
-  ## BSCI181
-  #@bsci_co = create CourseOffering, :term => "201201", :course => "BSCI181", :delivery_format => "Lecture", :grade_format => "Lecture"
-  #@bsci_co.create_ao :ao_code => "A"
-  #
-  ## CHEM181
-  #@chem_co = create CourseOffering, :term => "201201", :course => "CHEM181", :delivery_format => "Lecture", :grade_format => "Lecture"
-  #@chem_co.create_ao :ao_code => "A"
-  #
-  ## PHYS181
-  #@phys_co = create CourseOffering, :term => "201201", :course => "PHYS181", :delivery_format => "Lecture", :grade_format => "Lecture"
-  #@phys_co.create_ao :ao_code => "A"
-
+  for i in 1..number_of_cos_to_create.to_i
+    co = create CourseOffering, :create_by_copy => (make CourseOffering, :course => "ENGL211", :term => Rollover::MAIN_TEST_TERM_TARGET)
+    ao = make ActivityOffering, :code => "A", :parent_course_offering => co
+    @colo_aos << ao
+  end
 end
 
 When /^I colocate multiple activities, selecting to "(share|separately manage)" enrollments$/ do |max_enrollment_flag|
 
-  @ao1.parent_course_offering.manage
-  @ao1.edit :colocate_ao_list => [@ao2,@ao3], :colocate_shared_enrollment => true, :max_enrollment => 48
-  @ao1.save
+  should_enrollment_be_shared_flag = true
+  if max_enrollment_flag == 'separately manage'
+    should_enrollment_be_shared_flag = false
+  end
 
+  # colocate the first AO to all the others
+  @colo_aos[0].parent_course_offering.manage
+  @colo_aos[0].edit :colocate_ao_list => @colo_aos[1, @colo_aos.length],
+                    :colocate_shared_enrollment => should_enrollment_be_shared_flag,
+                    :max_enrollment => 48
+  @colo_aos[0].save
 end
 
 Then /^the activities indicate they are colocated$/ do
 
-  @ao1.parent_course_offering.manage
+  @colo_aos[0].parent_course_offering.manage
   on ManageCourseOfferings do |page|
     colocated_tooltip_text = page.target_row('A')[1].image.alt.upcase
-    chem_expected = @ao2.parent_course_offering.course.upcase + ' ' + @ao2.code.upcase
-    phys_expected = @ao3.parent_course_offering.course.upcase + ' ' + @ao3.code.upcase
-    colocated_tooltip_text.should include chem_expected
-    colocated_tooltip_text.should include phys_expected
+
+    # validate tooltip text contains each colo
+    @colo_aos[1, @colo_aos.length].each do |other_ao|
+      expected = other_ao.parent_course_offering.course.upcase + ' ' + other_ao.code.upcase
+      colocated_tooltip_text.should include expected
+    end
   end
 
 end
@@ -57,7 +54,7 @@ When /^I break colocation on the first colocated AO, "(supplying new|acknowledgi
 
 end
 
-Then /^the first colocated AO is not colocated with the remaining AO\(s\)$/ do
+Then /^the first colocated AO is not colocated with any remaining AOs$/ do
   #pending
 
   # MFT has these steps which map to this step:
@@ -69,21 +66,22 @@ Then /^the first colocated AO is not colocated with the remaining AO\(s\)$/ do
   #       the one that broke away from the colo should no longer have a CO-icon
 end
 
-When(/^I designate a valid term and Course Offering Code with a fully colocated AO$/) do
-  @course_offering = make CourseOffering, :course=>"CHEM441", :term=>"201208"
-  @course_offering.manage_and_init
+When /^I designate a valid term and Course Offering Code with a fully colocated AO$/ do
+  co = create CourseOffering, :create_by_copy => (make CourseOffering, :course => "CHEM441", :term => "201208")
+  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => co
 end
 
-And(/^I delete the fully colcated AO$/) do
+And /^I delete the fully colcated AO$/ do
+  @activity_offering.parent_course_offering.manage
   on ManageCourseOfferings do |page|
-    @course_offering.delete_ao_list :code_list =>  page.codes_list
+    @activity_offering.parent_course_offering.delete_ao_list :code_list =>  page.codes_list
   end
 end
 
-Then(/^The AO is successfully deleted$/) do
-  @course_offering.manage
+Then /^The AO is successfully deleted$/ do
+  @activity_offering.parent_course_offering.manage
   begin
-    on(ManageCourseOfferings).codes_list
+    on(ManageCourseOfferings).codes_list # this line is broken
   rescue RuntimeError => e
     e.message.should include "error in activity_offering_results_table - no AOs"
   end
@@ -91,23 +89,28 @@ end
 
 
 ### CREATE DUMMY DATA
+### This data should already exist in the DB, with an AO 'A' in each CO,
+### and with the first CO's AO colocated to the other 2
 When /^I create some dummy test data to speed up AFT development$/ do
 
-  #pending
-
   # populate an array with a bunch of COs that already exist in the DB
-  @array_of_cos = []
+  @colo_aos = []
 
-  # 201201 ENGL211 COLOTEST-1 AO:A
-  co = make CourseOffering, :term => '201201', :course => 'ENGL211COLOTEST-1'
-  @array_of_cos << co
+  # 201301 ENGL211G AO:A
+  co = make CourseOffering, :term => '201301', :course => 'ENGL211G'
+  ao = make ActivityOffering, :code => "A", :parent_course_offering => co
+  @colo_aos << ao
 
-  # 201201 ENGL211 COLOTEST-2 AO:A
-  co = make CourseOffering, :term => '201201', :course => 'ENGL211COLOTEST-2'
-  @array_of_cos << co
+  # 201301 ENGL211H AO:A
+  co = make CourseOffering, :term => '201301', :course => 'ENGL211H'
+  ao = make ActivityOffering, :code => "A", :parent_course_offering => co
+  @colo_aos << ao
 
-  # 201201 ENGL211 COLOTEST-3 AO:A
-  co = make CourseOffering, :term => '201201', :course => 'ENGL211COLOTEST-3'
-  @array_of_cos << co
+  # 201301 ENGL211I AO:A
+  co = make CourseOffering, :term => '201301', :course => 'ENGL211I'
+  ao = make ActivityOffering, :code => "A", :parent_course_offering => co
+  @colo_aos << ao
 
 end
+
+
