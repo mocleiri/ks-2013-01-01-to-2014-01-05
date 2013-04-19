@@ -71,11 +71,11 @@ Insert into KSSA_ID_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME
 --   FILTER = none used
 ---------------------------------------------------
 REM INSERTING into KSSA_ACNT_STATUS_TYPE
-Insert into KSSA_ACNT_STATUS_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME) values (2,'pheald','Account is in good standing but has a history of delinquency',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Currently In Good Standing');
-Insert into KSSA_ACNT_STATUS_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME) values (3,'pheald','Account is in collections.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'In Collections');
-Insert into KSSA_ACNT_STATUS_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME) values (4,'pheald','Account is in process of being closed.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Closing');
-Insert into KSSA_ACNT_STATUS_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME) values (5,'pheald','Account is closed.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Closed');
-Insert into KSSA_ACNT_STATUS_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME) values (1,'pheald','Account is in good standing',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'In Good Standing');
+Insert into KSSA_ACNT_STATUS_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (1,'pheald','Account is in good standing',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'In Good Standing', 'CODE_1');
+Insert into KSSA_ACNT_STATUS_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (2,'pheald','Account is in good standing but has a history of delinquency',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Currently In Good Standing', 'CODE_2');
+Insert into KSSA_ACNT_STATUS_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (3,'pheald','Account is in collections.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'In Collections', 'CODE_3');
+Insert into KSSA_ACNT_STATUS_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (4,'pheald','Account is in process of being closed.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Closing', 'CODE_4');
+Insert into KSSA_ACNT_STATUS_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (5,'pheald','Account is closed.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Closed', 'CODE_5');
 
 ---------------------------------------------------
 --   END DATA FOR TABLE KSSA_ACNT_STATUS_TYPE
@@ -1221,9 +1221,9 @@ Insert into KSSA_LATE_PERIOD (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,
 --   FILTER = none used
 ---------------------------------------------------
 REM INSERTING into KSSA_CURRENCY
-Insert into KSA.KSSA_CURRENCY (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (1,'USD',to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'pheald','United States Dollar as used in the USA.','admin',null,'Dollar');
+Insert into KSA.KSSA_CURRENCY (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (1,'USD',to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'pheald','United States Dollar as used in the USA.','admin',null,'US Dollar');
 Insert into KSA.KSSA_CURRENCY (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (2,'GBP',to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'pheald','British Pound as used in the United Kingdom. Also referred to as sterling.',null,null,'Sterling');
-Insert into KSA.KSSA_CURRENCY (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (3,'AUD',to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'pheald','Australian Dollar.',null,null,'Dollar');
+Insert into KSA.KSSA_CURRENCY (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (3,'AUD',to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'pheald','Australian Dollar.',null,null,'AU Dollar');
 Insert into KSA.KSSA_CURRENCY (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (4,'EUR',to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'pheald','Euro',null,null,'Euro');
 Insert into KSA.KSSA_CURRENCY (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (5,'ZAR',to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'pheald','South African Rand',null,null,'Rand');
 Insert into KSA.KSSA_CURRENCY (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (6,'AED',to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'pheald','United Arab Emirates Dirham',null,null,'United Arab Emirates Dirham');

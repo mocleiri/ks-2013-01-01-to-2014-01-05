@@ -39,6 +39,11 @@ public class CashLimitParameter extends AuditableEntity<Long> {
      */
     private Tag tag;
 
+    /**
+     * Is still active?
+     */
+    private Boolean isActive;
+
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
@@ -99,6 +104,15 @@ public class CashLimitParameter extends AuditableEntity<Long> {
         this.tag = tag;
     }
 
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_ACTIVE")
+    public Boolean isActive() {
+        return isActive != null ? isActive : false;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
 }
 	
 

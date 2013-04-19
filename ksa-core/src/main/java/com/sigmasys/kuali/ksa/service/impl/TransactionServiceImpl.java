@@ -2984,7 +2984,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         if (CollectionUtils.isNotEmpty(tags)) {
             for (Tag tag : new ArrayList<Tag>(tags)) {
                 if (tagIds.contains(tag.getId())) {
-                    PermissionUtils.checkPermission(Permission.EDIT_ADMIN_TAG, tag);
+                    PermissionUtils.checkPermissions(tag, Permission.EDIT_TAG, Permission.EDIT_ADMIN_TAG);
                     tags.remove(tag);
                 }
             }
@@ -3004,14 +3004,14 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             if (tag.getId() != null) {
                 tagIds.add(tag.getId());
             }
-            PermissionUtils.checkPermission(Permission.EDIT_ADMIN_TAG, tag);
+            PermissionUtils.checkPermissions(tag, Permission.EDIT_TAG, Permission.EDIT_ADMIN_TAG);
             auditableEntityService.persistAuditableEntity(tag);
         }
 
         if (persistentTags != null) {
             for (Tag currentTag : new ArrayList<Tag>(persistentTags)) {
                 if (tagIds.contains(currentTag.getId())) {
-                    PermissionUtils.checkPermission(Permission.EDIT_ADMIN_TAG, currentTag);
+                    PermissionUtils.checkPermissions(currentTag, Permission.EDIT_TAG, Permission.EDIT_ADMIN_TAG);
                     persistentTags.remove(currentTag);
                 }
             }

@@ -25,6 +25,9 @@ public enum Permission {
     CREATE_INTERNALLY_LOCKED_ALLOCATION,
     REMOVE_INTERNALLY_LOCKED_ALLOCATION,
 
+    // Cash limit permissions
+    CREATE_CASH_LIMIT_PARAMETER,
+
     // UI tab permissions
     VIEW_ADMINISTRATION_TAB,
     VIEW_REPORTING_TAB,

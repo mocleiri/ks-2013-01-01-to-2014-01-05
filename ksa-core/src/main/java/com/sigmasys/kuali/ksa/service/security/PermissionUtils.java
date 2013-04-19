@@ -80,8 +80,13 @@ public class PermissionUtils {
             } else if (target instanceof Tag) {
                 Tag tag = (Tag) target;
                 switch (permission) {
+                    case CREATE_ADMIN_TAG:
                     case EDIT_ADMIN_TAG:
                         throwException = noPermission && tag.isAdministrative();
+                        break;
+                    case CREATE_TAG:
+                    case EDIT_TAG:
+                        throwException = noPermission;
                         break;
                 }
             }
