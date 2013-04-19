@@ -201,7 +201,7 @@ public class CashLimitEvent implements Identifiable {
 
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_MULTIPLE")
-    public Boolean getMultiple() {
+    public Boolean isMultiple() {
         return isMultiple != null ? isMultiple : false;
     }
 

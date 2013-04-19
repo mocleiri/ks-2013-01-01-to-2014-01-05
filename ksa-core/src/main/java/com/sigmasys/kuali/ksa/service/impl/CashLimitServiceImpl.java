@@ -5,6 +5,8 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
+import com.sigmasys.kuali.ksa.util.CalendarUtils;
+import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,8 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebService;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Cash limit service implementation
@@ -192,6 +198,79 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
         String cashTracking = configService.getParameter(Constants.CASH_TRACKING_SYSTEM);
         if (!"ON".equalsIgnoreCase(cashTracking)) {
             return false;
+        }
+
+        String trackingTag = configService.getParameter(Constants.CASH_TRACKING_TAG);
+
+        int trackingDays = Integer.parseInt(configService.getParameter(Constants.CASH_TRACKING_DAYS));
+
+        final Date endDate = CalendarUtils.removeTime(new Date());
+        final Date startDate = CalendarUtils.removeTime(CalendarUtils.addCalendarDays(endDate, -trackingDays));
+
+        Query query = em.createQuery("select distinct t.id from Transaction t where exists " +
+                " (select 1 from CashLimitEvent cle " +
+                " inner join cle.transactions ts " +
+                " where t.id = ts.id " +
+                " and cle.accountId = :userId and cle.statusCode = :status " +
+                " and cle.eventDate between :startDate and :endDate) ");
+
+        query.setParameter("userId", userId);
+        query.setParameter("status", CashLimitEventStatus.COMPLETED_CODE);
+        query.setParameter("startDate", startDate, TemporalType.DATE);
+        query.setParameter("endDate", endDate, TemporalType.DATE);
+
+        Set<Long> transactionIds = new HashSet<Long>(query.getResultList());
+
+        boolean transactionIdsExist = CollectionUtils.isNotEmpty(transactionIds);
+
+        query = em.createQuery("select distinct t from Transaction t, CashLimitParameter clp " +
+                " left outer join t.tags tag " +
+                " where t.account.id = :userId and clp.active = true " +
+                " and t.amount between clp.lowerLimit and clp.upperLimit " +
+                " and tag.code = clp.tag.code and tag.code = :tagCode " +
+                (transactionIdsExist ? " and t.id not in (:transactionIds)" : ""));
+
+        query.setParameter("userId", userId);
+        query.setParameter("tagCode", trackingTag);
+
+        if (transactionIdsExist) {
+            query.setParameter("transactionIds", transactionIds);
+        }
+
+        List<Transaction> transactions = query.getResultList();
+        if (CollectionUtils.isNotEmpty(transactions)) {
+
+            BigDecimal transactionAmount = BigDecimal.ZERO;
+
+            for (Transaction transaction : transactions) {
+                transactionAmount = transactionAmount.add(transaction.getAmount());
+            }
+
+            BigDecimal trackingAmount = new BigDecimal(configService.getParameter(Constants.CASH_TRACKING_AMOUNT));
+
+            if (transactionAmount.compareTo(trackingAmount) < 0) {
+
+                return false;
+
+            } else {
+
+                CashLimitEvent cashLimitEvent = new CashLimitEvent();
+                cashLimitEvent.setAccountId(userId);
+                cashLimitEvent.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+                cashLimitEvent.setEventDate(new Date());
+                cashLimitEvent.setTransactionAmount(transactionAmount);
+                cashLimitEvent.setTransactions(new HashSet<Transaction>(transactions));
+                cashLimitEvent.setNotificationDate(new Date());
+                cashLimitEvent.setNotificationSentTo(configService.getParameter(Constants.CASH_TRACKING_EMAIL_ADDRESS));
+                cashLimitEvent.setMultiple(transactions.size() > 1);
+                cashLimitEvent.setStatus(CashLimitEventStatus.COMPLETED);
+
+                persistEntity(cashLimitEvent);
+
+                // TODO: cash limit report and email
+
+                return true;
+            }
         }
 
         // TODO:

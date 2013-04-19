@@ -33,6 +33,7 @@ public interface Constants {
     String CASH_TRACKING_AMOUNT = "ksa.cash.tracking.amount";
     String CASH_TRACKING_DAYS = "ksa.cash.tracking.days";
     String CASH_TRACKING_TAG = "ksa.cash.tracking.tag";
+    String CASH_TRACKING_EMAIL_ADDRESS = "ksa.cash.tracking.email.address";
 
     // Drools parameters
     String DROOLS_CLASSPATH = "drools";

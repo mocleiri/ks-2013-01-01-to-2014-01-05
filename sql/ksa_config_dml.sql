@@ -77,6 +77,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.system', 'ON');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.amount', '10000');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.days', '365');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.tag', 'cash');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.address', 'mivanov@sigmasys.com');
 
 -- Memo settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.memo.level', '2');
