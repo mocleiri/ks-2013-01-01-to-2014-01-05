@@ -298,9 +298,9 @@ class ManageCourseOfferings < BasePage
   def cluster_div_private_name(cluster_div_element)
     #cluster_div_element.fieldset.label.text[/(?<=Cluster: )\S+/]
     tmp_text = cluster_div_element.fieldset.label.text
-    end_of_private_name = -1
-    end_of_private_name = tmp_text.index('(')-2 unless tmp_text.index('(') == nil
-    tmp_text[9..end_of_private_name]
+    #end_of_private_name = -1
+    #end_of_private_name = tmp_text.index('(')-2 unless tmp_text.index('(') == nil
+    #tmp_text[9..end_of_private_name]
   end
 
   def cluster_name_text(private_name)
