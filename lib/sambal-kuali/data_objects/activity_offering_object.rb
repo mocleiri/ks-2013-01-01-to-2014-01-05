@@ -99,7 +99,6 @@ class ActivityOffering
 
     set_options(options)
 
-    puts "parent_course_offering #{@parent_course_offering.course}"
   end
 
   #navigates to activity offering edit page and sets up activity offering based on class attributes
