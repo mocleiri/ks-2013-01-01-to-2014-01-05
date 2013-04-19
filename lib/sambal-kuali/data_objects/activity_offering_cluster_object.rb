@@ -27,7 +27,8 @@ class ActivityOfferingCluster
                 :expected_msg,
                 :to_assign_ao_list,
                 :assigned_ao_list,
-                :ao_list
+                :ao_list,
+                :parent_course_offering
 
   alias_method :valid?, :is_valid
 
@@ -37,7 +38,8 @@ class ActivityOfferingCluster
   #    :published_name=>"#{random_alphanums(5).strip}_pub",
   #    :is_valid=>true,
   #    :expected_msg=>"",
-  #    :ao_list=>[]
+  #    :ao_list=>[] ,
+  #    :parent_course_offering => nil
   #  }
   # initialize is generally called using TestFactory Foundry .make or .create methods
   def initialize(browser, opts={})
@@ -48,7 +50,8 @@ class ActivityOfferingCluster
         :published_name=>"#{random_alphanums(5).strip}_pub",
         :is_valid=>true,
         :expected_msg=>"",
-        :ao_list =>[]
+        :ao_list =>[],
+        :parent_course_offering => nil
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -65,15 +68,16 @@ class ActivityOfferingCluster
       end
   end
 
-  def init_existing(cluster_div)
+  def init_existing(cluster_div, parent_co)
     on ManageCourseOfferings do |page|
+      @parent_course_offering = parent_co
       @private_name = page.cluster_div_private_name(cluster_div)
       #@public_name = page.cluster_published_name(cluster_div)
       ao_rows = page.get_cluster_div_ao_rows(cluster_div)
 
       ao_rows.each do |ao_row|
         ao_obj_temp = make ActivityOffering
-        ao_obj_temp.init_existing(ao_row)
+        ao_obj_temp.init_existing(ao_row, @parent_course_offering)
         @ao_list.push(ao_obj_temp)
       end
     end

@@ -263,7 +263,6 @@ class CourseOffering
   end
 
   def manage
-    #TODO: ?change to def manage_and_init
     go_to_manage_course_offerings
     on ManageCourseOfferings do |page|
       page.term.set @term
@@ -277,7 +276,6 @@ class CourseOffering
       page.show
 
     end
-
     begin
       on ManageCourseOfferings do |page|
         page.create_co_button.wait_until_present(5)
@@ -291,6 +289,13 @@ class CourseOffering
       #means was single CO returned, AO list is already displayed
     end
 
+  end
+
+
+  def manage_and_init
+
+    manage
+
     cluster_divs = []
     on ManageCourseOfferings do |page|
       cluster_divs = page.cluster_div_list
@@ -302,13 +307,11 @@ class CourseOffering
       @activity_offering_cluster_list = []
       cluster_divs.each do |cluster_div|
         temp_aoc = make ActivityOfferingCluster
-        temp_aoc.init_existing(cluster_div)
+        temp_aoc.init_existing(cluster_div, self)
 
         @activity_offering_cluster_list.push(temp_aoc)
       end
       show_debug_details
-
-
     end
   end
 
@@ -435,14 +438,14 @@ class CourseOffering
   def delete_ao_list(opts)
 
     defaults = {
-      :cluster_private_name => :default_cluster
-  }
-  options = defaults.merge(opts)
+        :cluster_private_name => :default_cluster
+    }
+    options = defaults.merge(opts)
     ao_code_list =
-    on ManageCourseOfferings do |page|
-      page.select_aos(options[:code_list], options[:cluster_private_name])
-      page.delete_aos
-    end
+        on ManageCourseOfferings do |page|
+          page.select_aos(options[:code_list], options[:cluster_private_name])
+          page.delete_aos
+        end
     on ActivityOfferingConfirmDelete do |page|
       page.delete_activity_offering
     end
@@ -522,7 +525,7 @@ class CourseOffering
   #
   #@param opts [Hash] {:ao_code => "CODE"}
   def create_ao(opts) #TODO - param should be an ActivityOffering
-    #TODO: number_aos_to_create = opts[:number_aos_to_create] implement as a separate method?
+                      #TODO: number_aos_to_create = opts[:number_aos_to_create] implement as a separate method?
     defaults = {
         :cluster_private_name => :default_cluster
     }
@@ -625,7 +628,7 @@ class CourseOffering
 
   def get_cluster_obj_by_private_name(cluster_private_name)
     return @activity_offering_cluster_list[0] unless cluster_private_name != :default_cluster
-    @activity_offering_cluster_list.select{|cluster| cluster.private_name == cluster_private_name}[0]
+    @activity_offering_cluster_list.select {|cluster| cluster.private_name == cluster_private_name}[0]
   end
 
   def create_from_existing_course(course, term)
@@ -771,59 +774,6 @@ class CourseOffering
       #TODO - delete from array  - test this
       @activity_offering_cluster_list.delete(cluster)
     end
-  end
-
-  #colocate to provided COs
-  #
-  #@param  opts [Hash] {:cos_to_colo => @course_offering, :should_enrollment_be_shared_flag => true/false, :enrollment_size => int}
-  #TODO - should use ActivityOffering.edit
-  def colocate(opts)
-    #@activity_offering_cluster_list[0].ao_list[0].edit :max_enroll => 25
-    #@activity_offering_cluster_list[0].ao_list[0].save
-    #new_activity_offering.edit(option...)
-
-    $should_enrollment_be_shared_flag = true
-    if opts[:should_enrollment_be_shared_flag] != nil
-      $should_enrollment_be_shared_flag = opts[:should_enrollment_be_shared_flag]
-    end
-
-    $enrollment_size = 10
-    if opts[:enrollment_size] != nil
-      $enrollment_size = opts[:enrollment_size]
-    end
-
-    $cos_to_colo = opts[:cos_to_colo]
-    if $cos_to_colo == nil
-      return nil
-    end
-
-
-    manage
-    on ManageCourseOfferings do |page|
-      page.edit( @ao_list[0] )
-    end
-    on ActivityOfferingMaintenance do |page|
-      page.select_colocated_checkbox
-
-      # add the colo-COs to this CO
-      $cos_to_colo.each do |co_to_colo|
-        page.colocated_co_input_field.value = co_to_colo.course
-        page.colocated_ao_input_field.value = co_to_colo.ao_list[0]
-        page.add_colocated
-      end
-
-      if $should_enrollment_be_shared_flag
-        page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
-        page.select_jointly_share_enrollment_radio
-        page.colocated_shared_max_enrollment_input_field.value = $enrollment_size
-      else # ie: 'separately manage'
-        page.select_separately_manage_enrollment_radio
-        page.colocated_shared_max_enrollment_table_first_ao_input.value = $enrollment_size
-      end
-
-      page.submit
-    end
-
   end
 
 end

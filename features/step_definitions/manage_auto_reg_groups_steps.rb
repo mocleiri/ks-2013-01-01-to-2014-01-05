@@ -2,7 +2,7 @@ Given /^I manage registration groups for (?:a|the) course offering$/ do
   #@course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"BSCI283", :term => Rollover::MAIN_TEST_TERM_TARGET)
   #@course_offering.manage_registration_groups
   @course_offering = make CourseOffering, :course=>"CHEM237", :term => Rollover::MAIN_TEST_TERM_TARGET
-  @course_offering.manage
+  @course_offering.manage_and_init
 end
 
 When /^I move an activity offering to the cluster$/ do
@@ -25,7 +25,7 @@ end
 
 Given /^I have created an additional activity offering cluster for a catalog course offering$/ do
   @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"BSCI425"
-  @course_offering.manage
+  @course_offering.manage_and_init
   ao_cluster = make ActivityOfferingCluster
   @course_offering.add_ao_cluster(ao_cluster)
 end
@@ -60,16 +60,21 @@ Given /^there are default registration groups for a course offering$/ do
 end
 
 Given /^I have created an additional activity offering cluster for a course offering$/ do
-  #@course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
-  @course_offering = make CourseOffering, :course=>"CHEM612B", :term=>Rollover::OPEN_SOC_TERM
-  @course_offering.manage
-  ao_cluster = make ActivityOfferingCluster
-  @course_offering.add_ao_cluster(ao_cluster)
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
+  #@course_offering = make CourseOffering, :course=>"CHEM612A", :term=>Rollover::OPEN_SOC_TERM
+  @course_offering.manage_and_init
+  #@course_offering.create_ao :ao_code => "F"
+  @course_offering.copy_ao :ao_code => "A"
+  @course_offering.show_debug_details
+
+  #@course_offering.reset_ao_clusters
+  #ao_cluster = make ActivityOfferingCluster
+  #@course_offering.add_ao_cluster(ao_cluster)
 end
 
 Given /^there are default registration groups for a catalog course offering$/ do
   @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"BSCI425"
-  @course_offering.manage
+  @course_offering.manage_and_init
 end
 
 
@@ -126,7 +131,7 @@ end
 
 Given /^I manage registration groups for a new course offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM135", :term=>"201301")
-  @course_offering.manage
+  @course_offering.manage_and_init
 end
 
 Then /^the Activity Offerings are present in the cluster table$/ do

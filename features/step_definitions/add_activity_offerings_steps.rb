@@ -5,7 +5,7 @@ When /^I manage an existing Course Offering in "(.*?)" view$/ do |view|
     @course_offering = make CourseOffering, :course=>"CHEM317"
   end
 
-  @course_offering.manage
+  @course_offering.manage_and_init
   @total_number = @course_offering.ao_list.count
 end
 
