@@ -395,7 +395,9 @@ class CourseOffering
     search_by_subjectcode
     on ManageCourseOfferingList do |page|
       sleep 1
-      page.approve_subject_code
+      page.select_all_cos
+      page.approve_course_offering
+      page.approve_yes
     end
     approved = false
     on ManageCourseOfferingList do |page|
@@ -407,7 +409,9 @@ class CourseOffering
       search_by_subjectcode
       on ManageCourseOfferingList do |page|
         sleep 1
-        page.approve_subject_code
+        page.select_all_cos
+        page.approve_course_offering
+        page.approve_yes
       end
     end
   end
