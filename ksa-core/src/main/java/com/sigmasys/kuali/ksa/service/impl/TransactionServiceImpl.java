@@ -493,7 +493,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             int clearPeriod = (creditType.getClearPeriod() != null) ? creditType.getClearPeriod() : 0;
             payment.setClearDate(CalendarUtils.addCalendarDays(effectiveDate, clearPeriod));
             payment.setRefundRule(creditType.getRefundRule());
-            payment.setRefundable(creditType.getRefundRule() != null);
+            payment.setRefundable(creditType.isRefundable());
         } else if (transaction instanceof Deferment) {
             Deferment deferment = (Deferment) transaction;
             deferment.setExpirationDate(expirationDate);

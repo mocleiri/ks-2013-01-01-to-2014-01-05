@@ -162,6 +162,22 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     }
 
     /**
+     * Checks if the cash limit parameter exists by code.
+     *
+     * @param code CashLimitParameter's code
+     * @return CashLimitParameter instance
+     */
+    @Override
+    public CashLimitParameter getCashLimitParameter(String code) {
+        Query query = em.createQuery("select clp from CashLimitParameter clp " +
+                " left outer join fetch clp.tag tag " +
+                " where clp.code = :code");
+        query.setParameter("code", code);
+        List<CashLimitParameter> results = query.getResultList();
+        return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+    }
+
+    /**
      * This method will return true if there has been a cash limit event. A <code>CashLimitEvent</code> object will be
      * created and persisted and an email will be sent to the appropriate administrator to allow them to check
      * up on the event. A further step will be required to actually register the event (by producing an 8300

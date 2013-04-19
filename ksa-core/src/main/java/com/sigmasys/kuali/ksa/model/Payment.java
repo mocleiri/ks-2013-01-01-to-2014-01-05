@@ -15,10 +15,11 @@ import javax.persistence.*;
 public class Payment extends Credit {
 
     /**
-     * if set to true, the amount may be refunded to the student subject to any other clearing rules, for example, a check 10-day waiting period, etc.
-     * This will be set to false in the case of tuition deposits, etc, which may not be refunded to a student, but may be allocated to charges on the account.
+     * if set to true, the amount may be refunded to the student subject to any other clearing rules,
+     * for example, a check 10-day waiting period, etc. This will be set to false in the case of tuition deposits, etc,
+     * which may not be refunded to a student, but may be allocated to charges on the account.
      */
-    protected Boolean isRefundable;
+    private Boolean isRefundable;
 
     /**
      * Refund rule
@@ -43,8 +44,8 @@ public class Payment extends Credit {
         return isRefundable != null ? isRefundable : false;
     }
 
-    public void setRefundable(Boolean refundable) {
-        isRefundable = refundable;
+    public void setRefundable(Boolean isRefundable) {
+        this.isRefundable = isRefundable;
     }
 
     @Column(name = "REFUND_RULE", length = 2000)

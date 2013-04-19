@@ -22,6 +22,8 @@ public class CreditType extends TransactionType {
 
     private String refundRule;
 
+    private Boolean isRefundable;
+
     private String authorizationText;
 
     private String unallocatedGlAccount;
@@ -44,6 +46,16 @@ public class CreditType extends TransactionType {
 
     public void setRefundRule(String refundRule) {
         this.refundRule = refundRule;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_REFUNDABLE")
+    public Boolean isRefundable() {
+        return isRefundable != null ? isRefundable : false;
+    }
+
+    public void setRefundable(Boolean isRefundable) {
+        this.isRefundable = isRefundable;
     }
 
     @Column(name = "AUTH_TXT", length = 1000)
