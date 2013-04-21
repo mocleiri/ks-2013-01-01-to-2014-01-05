@@ -77,7 +77,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.system', 'ON');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.amount', '10000');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.days', '365');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.tag', 'cash');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.address.from', 'mivanov@sigmasys.com');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.address.from', 'ksa.sigmasys@gmail.com');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.address.to', 'mivanov@sigmasys.com');
 
 -- SMTP service parameters
@@ -87,7 +87,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.auth', 'true');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.user', 'ksa.sigmasys');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.password', 'sigmasys2013');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.tls.enabled', 'true');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.address.from', 'mivanov@sigmasys.com');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.address.from', 'ksa.sigmasys@gmail.com');
 
 -- Memo settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.memo.level', '2');
