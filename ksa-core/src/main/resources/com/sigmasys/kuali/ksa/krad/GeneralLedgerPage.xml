@@ -70,27 +70,39 @@
 						p:href="generalLedger?methodToCall=searchForPriorBatches&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage" p:style="text-decoration:underline"/>
 				
 				<!-- The table of Prior Batches -->
-				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:displayCollectionSize="10">
+				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:displayCollectionSize="10">
+					<property name="title" value="Roll-Up"/>
+                    <property name="readOnly" value="true"/>
 					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.BatchTransmissionModel"/>
 					<property name="propertyName" value="priorBatchTransmissions" />
 					<property name="layoutManager.generateAutoSequence" value="false" />
-					<property name="layoutManager.richTable.render" value="false"/>
+					<property name="layoutManager.richTable.render" value="true"/>
 					<property name="layoutManager.renderSequenceField" value="false"/>
 					<property name="renderAddBlankLineButton" value="false"/>
 					<property name="renderAddLine" value="false"/>
 					<property name="renderLineActions" value="false"/>
+					<property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                    <property name="layoutManager.richTable.disableTableSort" value="true"/>
 					<property name="items">
 						<list>
-							<bean parent="Uif-DataField" p:label="Batch No." p:propertyName="batchId"/>
-							<bean parent="Uif-DataField" p:label="Date" p:propertyName="transmissionDate"/>
-							<bean parent="Uif-DataField" p:label="Total" p:propertyName="formattedAmount"/>
+							<bean parent="Uif-DataField" p:label="Batch No." p:propertyName="batchId" p:style="width: 20%;"/>
+							<bean parent="Uif-DataField" p:label="Date" p:propertyName="transmissionDate" p:style="width: 35%;"/>
+							<bean parent="Uif-DataField" p:label="Total" p:propertyName="totalAmount" p:style="text-align: right; width: 20%;"/>
 							
 							<!-- Download XML action link -->
 							<bean parent="Uif-LinkField" p:linkText="Download XML" p:target="_self"
-								  p:align="center" p:width="10%"
+								  p:align="center" p:width="20%"
 								  p:href="generalLedger?methodToCall=downloadPriorBatchTransactions&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage"/>
 						</list>
 					</property>
+
+					<property name="layoutManager.expandDetailsActionPrototype">
+						<bean parent="Uif-ExpandDetailsImageAction"/>
+					</property>
+					<property name="layoutManager.rowDetailsGroup">
+						<ref bean="generalLedgerAccountSublist"/>
+					</property>
+
 				</bean>
 				
 				<!-- The total of all GL Accounts -->
@@ -99,7 +111,29 @@
 		</property>
 	</bean>
 	
-	
+	<bean id="generalLedgerAccountSublist" parent="Uif-TableSubCollection-WithinSection" p:layoutManager.numberOfColumns="3">
+        <property name="headerText" value="General Ledger Accounts" />
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel" />
+        <property name="propertyName" value="glAccountSublist" />
+        <property name="layoutManager.richTable.render" value="true" />
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="style" value="width: 100%;"/>
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="false"/>
+                <entry key="bInfo" value="false"/>
+                <entry key="bFilter" value="false"/>
+            </map>
+        </property>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="name" p:label="General Ledger Account" p:style="width: 60%;"/>
+                <bean parent="Uif-InputField" p:propertyName="operationTypeString" p:label="Type" p:style="text-align: center; width: 10%;"/>
+                <bean parent="Uif-InputField" p:propertyName="totalAmount" p:label="Total" p:style="text-align: right; width: 30%;"/>
+            </list>
+        </property>
+    </bean>
+
 	
 	<!-- 
 	
@@ -128,7 +162,7 @@
 						<list>
 							<bean parent="Uif-DataField" p:label="General Ledger Account" p:propertyName="accountName"/>
 							<bean parent="Uif-DataField" p:label="Type" p:propertyName="accountType"/>
-							<bean parent="Uif-DataField" p:label="Amount" p:propertyName="formattedAmount"/>
+							<bean parent="Uif-DataField" p:label="Amount" p:propertyName="totalAmount"/>
 						</list>
 					</property>
 				</bean>

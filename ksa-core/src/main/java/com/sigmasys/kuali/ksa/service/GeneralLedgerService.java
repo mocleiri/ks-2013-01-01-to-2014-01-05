@@ -220,4 +220,12 @@ public interface GeneralLedgerService {
     @WebMethod(exclude = true)
     List<GlTransaction> getGlTransactionsByStatus(GlTransactionStatus status);
 
+    /**
+     * Retrieves all GL Transmissions with the specified statuses.
+     *
+     * @param status Status of GL Transmissions to retrieve.
+     * @return A list of GL Transmissions with the specified statuses.
+     */
+    @WebMethod(exclude = true)
+    List<GlTransmission> getGlTransmissions(GlTransmissionStatus... status);
 }

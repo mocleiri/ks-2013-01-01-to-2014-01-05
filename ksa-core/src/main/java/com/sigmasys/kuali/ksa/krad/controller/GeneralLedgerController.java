@@ -1,10 +1,13 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.ReportReconciliationForm;
-import com.sigmasys.kuali.ksa.krad.model.BatchTransmission;
 import com.sigmasys.kuali.ksa.krad.model.BatchTransmissionModel;
+import com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel;
 import com.sigmasys.kuali.ksa.model.GeneralLedgerType;
+import com.sigmasys.kuali.ksa.model.GlOperationType;
 import com.sigmasys.kuali.ksa.model.GlTransmission;
+import com.sigmasys.kuali.ksa.model.GlTransmissionStatus;
+import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -35,6 +38,9 @@ public class GeneralLedgerController extends DownloadController {
 
     @Autowired
     private GeneralLedgerService generalLedgerService;
+
+    @Autowired
+    private AuditableEntityService auditableEntityService;
 
 
     /**
@@ -67,29 +73,14 @@ public class GeneralLedgerController extends DownloadController {
      */
     @RequestMapping(method = {RequestMethod.GET,RequestMethod.POST}, params = "methodToCall=searchForPriorBatches")
     public ModelAndView searchForPriorBatches(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
-        // Find GL Transmissions, create BatchTransmission Map by Batch ID:
-        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsForExport();
+        // Find GL Transmissions, create BatchTransmissionModel List:
+        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissions(
+                GlTransmissionStatus.TRANSMITTED, GlTransmissionStatus.COMPLETED);
         MutableDouble totalAllBatches = new MutableDouble(0);
-        Map<String,BatchTransmission> batchTransmissionMap = createBatchTransmissionMap(glTransmissions, totalAllBatches);
-
-        // Create a list of BatchTransmissionModel objects:
-        List<BatchTransmissionModel> priorBatches = new ArrayList<BatchTransmissionModel>();
-
-        for (String batchId : batchTransmissionMap.keySet()) {
-            // Get a BatchTransmission and create a BatchTransmissionModel out of it:
-            BatchTransmission batchTransmission = batchTransmissionMap.get(batchId);
-            BatchTransmissionModel batchTransmissionModel = new BatchTransmissionModel();
-
-            batchTransmissionModel.setBatchId(batchId);
-            batchTransmissionModel.setTransmissionDate(batchTransmission.getDate());
-            batchTransmissionModel.setFormattedAmount(TransactionUtils.getFormattedAmount(batchTransmission.getTotalAmount()));
-
-            // Add to the list:
-            priorBatches.add(batchTransmissionModel);
-        }
+        List<BatchTransmissionModel> batchTransmissions = createBatchTransmissionList(glTransmissions, totalAllBatches);
 
         // Set objects on the form:
-        form.setPriorBatchTransmissions(priorBatches);
+        form.setPriorBatchTransmissions(batchTransmissions);
         form.setAllPriorBatchTotal(TransactionUtils.getFormattedAmount(new BigDecimal(totalAllBatches.doubleValue())));
 
         return getUIFModelAndView(form);
@@ -173,17 +164,20 @@ public class GeneralLedgerController extends DownloadController {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Creates a Map of all Batches mapped to BatchTransmission objects that contain
+     * Creates a List of all BatchTransmissionModel objects that contain
      * their related GL Account Types.
      *
      * @param glTransmissions   All GL Transmissions.
-     * @param totalAllBatches   The total for all batches. This is an OUT parameter.
-     * @return  a Map of all Batches IDs mapped to BatchTransmission objects.
+     * @param grandTotalAmount  The total for all batches. This is an OUT parameter.
+     * @return  a List of all BatchTransmissionModel objects.
      */
-    private Map<String, BatchTransmission> createBatchTransmissionMap(List<GlTransmission> glTransmissions,
-                                                                      MutableDouble totalAllBatches) {
-        // Create the result Map:
-        Map<String, BatchTransmission> result = new HashMap<String, BatchTransmission>();
+    private List<BatchTransmissionModel> createBatchTransmissionList(List<GlTransmission> glTransmissions,
+                                                                      MutableDouble grandTotalAmount) {
+        // Create a temporary Map of Batch IDs mapped to BatchTransmissionModel objects:
+        Map<String, BatchTransmissionModel> result = new HashMap<String, BatchTransmissionModel>();
+
+        // Declare, but not fetch yet, a list of all GL Types:
+        List<GeneralLedgerType> generalLedgerTypes = null;
 
         // Go through the list of GLTransmissions
         for (GlTransmission glTransmission : glTransmissions) {
@@ -191,33 +185,104 @@ public class GeneralLedgerController extends DownloadController {
             String batchId = glTransmission.getBatchId();
 
             if (StringUtils.isNotEmpty(batchId)) {
-                // See if the current GlTransmission is already mapped to a BatchTransmission:
-                BatchTransmission batchTransmission = result.get(batchId);
+                // Initialize the list of GL Types if needed:
+                if (generalLedgerTypes == null) {
+                    generalLedgerTypes = auditableEntityService.getAuditableEntities(GeneralLedgerType.class);
+                }
 
-                // If not mapped yet, create a new BatchTransmission, set attributes and map it:
+                // See if the current GlTransmission is already mapped to a BatchTransmissionModel:
+                BatchTransmissionModel batchTransmission = result.get(batchId);
+
+                // If not mapped yet, create a new BatchTransmissionModel, set attributes and map it:
                 if (batchTransmission == null) {
-                    batchTransmission = new BatchTransmission();
+                    batchTransmission = new BatchTransmissionModel();
                     batchTransmission.setBatchId(batchId);
-                    batchTransmission.setDate(glTransmission.getDate());
-                    batchTransmission.setGlAccounts(new ArrayList<GeneralLedgerType>());
+                    batchTransmission.setTransmissionDate(glTransmission.getDate());
+                    batchTransmission.setGlAccountSublist(new ArrayList<GeneralLedgerAccountModel>());
                     batchTransmission.setTotalAmount(new BigDecimal(0));
                     result.put(batchId, batchTransmission);
                 }
 
-                // Add the current transmission's amount to the total:
-                if (glTransmission.getAmount() != null) {
-                    BigDecimal transmissionAmount = glTransmission.getAmount();
-                    BigDecimal newTotal = batchTransmission.getTotalAmount().add(transmissionAmount);
-
-                    batchTransmission.setTotalAmount(newTotal);
-                    totalAllBatches.add(transmissionAmount);
-                }
-
-                // TODO:Add GL Account to the list of all accounts in the batch:
-                // Need to figure out how to link GL Accounts to GL Transmissions.
+                // Add a GL Account to the sub-list:
+                addGlAccountModel(glTransmission, generalLedgerTypes, batchTransmission,
+                        batchTransmission.getGlAccountSublist(), grandTotalAmount);
             }
         }
 
-        return result;
+        return new ArrayList<BatchTransmissionModel>(result.values());
+    }
+
+    /**
+     * Searches for a GL Type in the given list by its GL Account ID.
+     *
+     * @param generalLedgerTypes    A list of GL Types.
+     * @param glAccountId           ID of a GL Account.
+     * @return                      A matching GL Type or <code>null</code> if no match can be found.
+     */
+    private GeneralLedgerType findGlType(List<GeneralLedgerType> generalLedgerTypes, String glAccountId) {
+        for (GeneralLedgerType glType : generalLedgerTypes) {
+            if (StringUtils.equalsIgnoreCase(glType.getGlAccountId(), glAccountId)) {
+                return glType;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Creates a new GeneralLedgerAccountModel object from the given GlTransmission
+     * and adds it to the given list. Or if one wiht a matching GL Account ID and Operation
+     * Type already exists in the list, adds or subtracts the amount.
+     *
+     * @param glTransmission        A GlTransmission.
+     * @param generalLedgerTypes    A list of all existing GlTypes.
+     * @param glAccountModels       A list of GeneralLedgerAccountModel objects belonging to a BatchTransmissionModel.
+     * @param grandTotalAmount      The grand total for all Batch Transmissions.
+     * @return A new GeneralLedgerAccountModel object created from the given GlTransmission.
+     */
+    private GeneralLedgerAccountModel addGlAccountModel(GlTransmission glTransmission,
+            List<GeneralLedgerType> generalLedgerTypes, BatchTransmissionModel batchTransmission,
+            List<GeneralLedgerAccountModel> glAccountModels, MutableDouble grandTotalAmount) {
+        // Try to find a matching GL Type:
+        String glAccountId = glTransmission.getGlAccountId();
+        GeneralLedgerType glType = findGlType(generalLedgerTypes, glAccountId);
+        String glAccountName = (glType != null)
+                ? StringUtils.defaultIfBlank(glType.getDescription(), glType.getName()) : glAccountId;
+        GlOperationType glOperationType = (glType != null)
+                ? glType.getGlOperationOnCharge() : glTransmission.getGlOperation();
+        GeneralLedgerAccountModel glAccount =null;
+
+        // Try to find an existing GeneralLedgerAccountModel in the list:
+        for (GeneralLedgerAccountModel glAccountModel : glAccountModels) {
+            if (StringUtils.equals(glAccountId, glAccountModel.getGlAccountId())
+                    && (glOperationType == glAccountModel.getOperationType())) {
+                glAccount = glAccountModel;
+                break;
+            }
+        }
+
+        // Create a new GeneralLedgerAccountModel object if an existing one is not found:
+        if (glAccount == null) {
+            glAccount = new GeneralLedgerAccountModel();
+            glAccount.setGlAccountId(glAccountId);
+            glAccount.setName(glAccountName);
+            glAccount.setOperationType(glOperationType);
+            glAccount.setTotalAmount(new BigDecimal(0));
+            glAccountModels.add(glAccount);
+        }
+
+        // Adjust the amount of the GeneralLedgerAccountModel object:
+        BigDecimal adjustmentAmount = (glOperationType == GlOperationType.CREDIT)
+                ? glTransmission.getAmount() : glTransmission.getAmount().negate();
+
+        glAccount.setTotalAmount(glAccount.getTotalAmount().add(adjustmentAmount));
+
+        // Adjust the total amount for the GlTransmission and the Grand Total:
+        if (glType != null) {
+            batchTransmission.setTotalAmount(batchTransmission.getTotalAmount().add(adjustmentAmount));
+            grandTotalAmount.add(adjustmentAmount);
+        }
+
+        return glAccount;
     }
 }

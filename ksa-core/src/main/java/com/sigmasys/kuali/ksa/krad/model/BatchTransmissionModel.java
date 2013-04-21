@@ -1,9 +1,8 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
-import com.sigmasys.kuali.ksa.model.GlTransmission;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,8 +30,25 @@ public class BatchTransmissionModel implements Serializable {
     /**
      * Total Batch transmission amount.
      */
-    private BigDecimal formattedAmount;
+    private BigDecimal totalAmount;
 
+    /**
+     * A Batch's sub-list of GL Accounts.
+     */
+    private List<GeneralLedgerAccountModel> glAccountSublist;
+
+
+    public List<GeneralLedgerAccountModel> getGlAccountSublist() {
+        if (glAccountSublist == null) {
+            glAccountSublist = new ArrayList<GeneralLedgerAccountModel>();
+        }
+
+        return glAccountSublist;
+    }
+
+    public void setGlAccountSublist(List<GeneralLedgerAccountModel> glAccountSublist) {
+        this.glAccountSublist = glAccountSublist;
+    }
 
     public String getBatchId() {
         return batchId;
@@ -50,11 +66,11 @@ public class BatchTransmissionModel implements Serializable {
         this.transmissionDate = transmissionDate;
     }
 
-    public BigDecimal getFormattedAmount() {
-        return formattedAmount;
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setFormattedAmount(BigDecimal formattedAmount) {
-        this.formattedAmount = formattedAmount;
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }

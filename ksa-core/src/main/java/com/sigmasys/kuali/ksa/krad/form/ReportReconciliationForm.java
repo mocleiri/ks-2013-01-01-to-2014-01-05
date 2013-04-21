@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.krad.model.BatchTransmissionModel;
+import com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel;
 import com.sigmasys.kuali.ksa.krad.model.GlPendingTransactionModel;
 import com.sigmasys.kuali.ksa.model.Account;
 
@@ -25,6 +26,7 @@ public class ReportReconciliationForm extends AbstractViewModel {
      * All Batch Transmissions.
      */
     private List<BatchTransmissionModel> priorBatchTransmissions;
+
 
     /**
      * Formatted total amount for all GL Accounts with Pending Transactions.
