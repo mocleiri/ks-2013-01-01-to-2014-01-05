@@ -127,4 +127,13 @@ public interface Constants {
     String HOLD_ISSUE_TYPE_FINANCIAL_OVERDUE_PERIOD2 = "kuali.hold.issue.type.financial.overdue.period2";
     String HOLD_ISSUE_TYPE_FINANCIAL_OVERDUE_PERIOD3 = "kuali.hold.issue.type.financial.overdue.period3";
 
+    // SMTP client constants
+    String SMTP_HOST = "ksa.smtp.host";
+    String SMTP_PORT = "ksa.smtp.port";
+    String SMTP_AUTH = "ksa.smtp.auth";
+    String SMTP_USER = "ksa.smtp.user";
+    String SMTP_PASSWORD = "ksa.smtp.password";
+    String SMTP_TLS_ENABLED = "ksa.smtp.tls.enabled";
+    String SMTP_ADDRESS_FROM = "ksa.smtp.address.from";
+
 }

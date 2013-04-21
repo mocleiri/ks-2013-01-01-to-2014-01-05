@@ -226,11 +226,14 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
         query = em.createQuery("select distinct t from Transaction t, CashLimitParameter clp " +
                 " left outer join t.tags tag " +
                 " where t.account.id = :userId and clp.active = true " +
+                " and t.effectiveDate between :startDate and :endDate " +
                 " and t.amount between clp.lowerLimit and clp.upperLimit " +
                 " and tag.code = clp.tag.code and tag.code = :tagCode " +
                 (transactionIdsExist ? " and t.id not in (:transactionIds)" : ""));
 
         query.setParameter("userId", userId);
+        query.setParameter("startDate", startDate, TemporalType.DATE);
+        query.setParameter("endDate", endDate, TemporalType.DATE);
         query.setParameter("tagCode", trackingTag);
 
         if (transactionIdsExist) {
