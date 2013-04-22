@@ -56,6 +56,7 @@ Feature: Department Schedule Coordinator Authorization SOC state Locked
     When I attempt to create a course offering for a subject not in my admin org
     Then I do not have access to create the course offering
 
+    @bug @KSENROLL-6498
   Scenario: AZ 5.1B/Full_locked.4 Department Schedule Coordinator Carol has limited access to delete Co's (in admin org)
     And there is a "Planned" course offering in my admin org
     When I list the course offerings for that subject code
