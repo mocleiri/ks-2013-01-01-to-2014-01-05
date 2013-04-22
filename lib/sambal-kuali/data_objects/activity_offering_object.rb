@@ -18,6 +18,7 @@ class ActivityOffering
   include DateFactory
   include StringFactory
   include Workflows
+  include Comparable
 
   #type: string generally set using options hash
   attr_accessor :code,
@@ -75,7 +76,7 @@ class ActivityOffering
     # :personnel_list => [] -- Array.new(1){make Personnel}
 
     defaults = {
-        :parent_course_offering => nil,
+        :parent_course_offering => (make CourseOffering),
         :format => "Lecture Only",
         :activity_type => "Lecture",
         :max_enrollment => 100,
@@ -99,6 +100,10 @@ class ActivityOffering
 
     set_options(options)
 
+  end
+
+  def <=>(other)
+    @code <=> other.code
   end
 
   #navigates to activity offering edit page and sets up activity offering based on class attributes
@@ -143,7 +148,7 @@ class ActivityOffering
         :evaluation => @evaluation,
         :honors_course => @honors_course,
         :colocate_ao_list => @colocate_ao_list,
-        :@colocate_shared_enrollment => @colocate_shared_enrollment
+        :colocate_shared_enrollment => @colocate_shared_enrollment
     }
 
     edit(init)

@@ -6,7 +6,7 @@ Activity Offering so that the seat pool reflects current business needs.
 
   Background:
     Given I am logged in as a Schedule Coordinator
-    Given I am managing a course offering
+    #Given I am managing a course offering
 
   Scenario: Edit existing seat pool seat count and expiration milestone
     When I edit an existing activity offering with 1 seat pool

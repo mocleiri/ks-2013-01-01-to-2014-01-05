@@ -6,7 +6,7 @@ since this seat pool is no longer needed.
 
   Background:
     Given I am logged in as a Schedule Coordinator
-    Given I am managing a course offering
+    #Given I am managing a course offering
 
   Scenario: Remove seat pool and ensure seat pool priorities are properly re-sequenced
     When I edit an existing activity offering with 3 seat pools

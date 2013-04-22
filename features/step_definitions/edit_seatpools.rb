@@ -27,7 +27,7 @@ When /^I edit an existing activity offering with (\d+) seat pools?$/ do |number|
   #  page.home
   #end
   #now reopen course offering for ao edit
-  @course_offering.manage
+  @activity_offering.parent_course_offering.manage
 
   on ManageCourseOfferings do |page|
     page.edit @activity_offering.code
@@ -120,7 +120,7 @@ Then /^the activity offering is updated when saved$/ do
   @activity_offering.resequence_expected_seatpool_priorities()
 
   #reopens activity offering in edit mode to recheck everything persisted
-  @course_offering.manage
+  @activity_offering.parent_course_offering.manage
   on ManageCourseOfferings do |page|
     page.edit @activity_offering.code
   end

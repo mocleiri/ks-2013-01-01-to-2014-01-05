@@ -6,7 +6,7 @@ so that I can reserve seats in this Activity Offering for one or more population
 
   Background:
     Given I am logged in as a Schedule Coordinator
-    Given I am managing a course offering
+    #Given I am managing a course offering
 
   Scenario: Successfully create a seat pool for a population by completing all fields
     When I create a seat pool for an activity offering by completing all fields

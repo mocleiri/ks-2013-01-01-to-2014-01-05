@@ -1,6 +1,6 @@
 When /^I create a seat pool for an activity offering by completing all fields$/ do
   @activity_offering = create ActivityOffering, :seat_pool_list =>  {"random"=> (make SeatPool)}
-  end
+end
 
 Then /^the percent allocated for each row is updated$/ do
   on ActivityOfferingMaintenance do |page|
