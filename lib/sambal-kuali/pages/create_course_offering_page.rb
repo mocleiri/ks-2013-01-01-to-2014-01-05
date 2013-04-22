@@ -40,6 +40,9 @@ class CreateCourseOffering < BasePage
 
   element(:joint_defined_courses_table) { |b| b.div(id: "KS-Catalog-JointCourse-Section").table() }
   action(:create_new_joint_defined_course_row_1) { |b| b.joint_defined_courses_table.rows[1].cells[3].link.click }
+  action(:create_new_joint_defined_course_row_2) { |b| b.joint_defined_courses_table.rows[2].cells[3].link.click }
+  element(:joint_defined_course_row_1) { |b| b.joint_defined_courses_table.rows[1].text }
+  element(:joint_defined_course_row_2) { |b| b.joint_defined_courses_table.rows[2].text }
 
   element(:create_from_existing_offering_copy_button) { |b| b.frm.link(text: /Copy/) }
   element(:delivery_format_add_element) {|b| b.frm.delivery_formats_table.rows[1].cells[ACTIONS_COLUMN].button(text: "add")  }

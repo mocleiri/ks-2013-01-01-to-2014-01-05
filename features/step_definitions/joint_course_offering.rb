@@ -61,32 +61,33 @@ And /^then I restore the joint course offering I removed from the reference data
 end
 
 When /^I create a joint course offering from catalog while creating a new course offering$/ do
-  @bsci_co = create CourseOffering, :term => "201201", :course => "BSCI181", :joint_co_to_create => "CHEM181", :delivery_format => "Lecture", :grade_format => "Lecture"
+  @bsci_co = create CourseOffering, :term => "201201", :course => "BSCI181", :joint_co_to_create => "CHEM181, PHYS181", :delivery_format => "Lecture", :grade_format => "Lecture"
 end
 
-Then /^I can add activity offerings to the joint Course Offerings$/ do
-  puts 'here we are'
-  sleep 10
-
-  @bsci_co.create_ao :ao_code => "A"
-
-  @chem_co = make CourseOffering, :term => "201201", :course => "CHEM181", :delivery_format => "Lecture", :grade_format => "Lecture"
-  @chem_co.create_ao :ao_code => "A"
-
-  puts 'done?'
-  sleep 60
-end
 
 #REFACTOR THIS STEP NAME TO SOMETHING BETTER
-Then /^we can see the aos in the co we made$/ do
+Then /^The joint course offerings are created.$/ do
+  @bsci_co.search_by_subjectcode
+  #delete
+  @bsci_co.delete_co :code_list => [@bsci_co.course], :should_confirm_delete=>true
+  # display the created
+  @chem181_co = make CourseOffering
+  @chem181_co.term="201201"
+  @chem181_co.course="CHEM181"
+  @phys181_co = make CourseOffering
+  @phys181_co.term="201201"
+  @phys181_co.course="PHYS181"
+
+  @chem181_co.search_by_subjectcode
+  #delete
+  @chem181_co.delete_co :code_list => [@chem181_co.course], :should_confirm_delete=>true
+
+  @phys181_co.search_by_subjectcode
+  #delete
+  @phys181_co.delete_co :code_list => [@phys181_co.course], :should_confirm_delete=>true
 
 
-  @course_offering.manage
-
-  puts 'Im here'
-  sleep 60
-
-  #validate the CO had the AO
+  puts 'Done'
 
 end
 

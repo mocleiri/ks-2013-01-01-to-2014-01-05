@@ -142,6 +142,7 @@ class CourseOffering
     # variable
     on CreateCourseOffering do |page|
       page.create_new_joint_defined_course_row_1
+      page.create_new_joint_defined_course_row_2
     end
 
   end
