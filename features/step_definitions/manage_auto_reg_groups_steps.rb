@@ -100,6 +100,7 @@ end
 Then /^I remove the newly created cluster$/ do
   @course_offering.activity_offering_cluster_list.each do  |aoc|
    if aoc.private_name !=  @course_offering.activity_offering_cluster_list.first.private_name
+    @deleted_aoc = aoc.private_name
     @course_offering.delete_ao_cluster(aoc)
    end
   end
@@ -152,8 +153,21 @@ When /^the corresponding number of registration groups for each cluster is corre
 end
 
 When /^Move one lab and one lecture activity offering to the second cluster$/ do
-  on ManageCourseOfferings do |page|
     @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("A", @course_offering.activity_offering_cluster_list[1])
     @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("J", @course_offering.activity_offering_cluster_list[1])
+end
+
+Then /^I copy the newly created course offering$/ do
+  @course_offering_copy = create CourseOffering, :term=> "201301", :create_by_copy=>@course_offering
+  @course_offering_copy.manage_and_init
+end
+
+Then /^the new course offering is formatted the same as the original$/ do
+  @course_offering_copy.activity_offering_cluster_list.should ==  @course_offering.activity_offering_cluster_list
+end
+
+Then /^the cluster and pertaining AO's are deleted$/ do
+  @course_offering.activity_offering_cluster_list.each do |cluster|
+    cluster.private_name.should_not == @deleted_aoc
   end
 end

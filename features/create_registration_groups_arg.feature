@@ -1,24 +1,22 @@
-@wip
+@nightly
 Feature: Create registration groups
 
 As an Administrator, I want to create registration groups for a Course Offering
 
   Background:
     Given I am logged in as a Schedule Coordinator
-
+  @wip
   Scenario: ARG 0.1: Successfully view and list default ao cluster and list aos
     Given I manage registration groups for a course offering
     Then the default activity offering cluster is present
     And all activity offerings are assigned to the ARG cluster
-
+  @wip
   Scenario: RG 2.1A: Successfully create a activity offering cluster (for a course offering with a single activity offering type) and assign activity offerings to the cluster
     Given I have created an additional activity offering cluster for a course offering
     And I move an activity offering to the cluster
     Then the activity offering is shown as part of the cluster
     #And the remaining activity offerings are shown as unassigned
 
-  #No Error Message when using the Rename link to create a cluster with the same name
-  @bugs
   Scenario: ARG 6.4B: Error message is displayed if I attempt to create 2 activity offering clusters with the same private name
     Given I manage registration groups for a course offering
     When I create an activity offering cluster
@@ -49,6 +47,20 @@ As an Administrator, I want to create registration groups for a Course Offering
     Then I create an activity offering cluster
     And Move one lab and one lecture activity offering to the second cluster
     Then the corresponding number of registration groups for each cluster is correct
+
+  Scenario: ARG 6.2 When creating a CO by copy AOC and AOs should also be copied and RGs are generated
+    Given I manage registration groups for a new course offering
+    When I create an activity offering cluster
+    And Move one lab and one lecture activity offering to the second cluster
+    And I copy the newly created course offering
+    Then the activity offering clusters and assigned AOs are copied over with the course offering
+
+  Scenario: ARG 6.7 When deleting an AOC delete all associated AOs as well
+    Given I manage registration groups for a new course offering
+    When I create an activity offering cluster
+    And Move one lab and one lecture activity offering to the second cluster
+    And I remove the newly created cluster
+    Then the cluster and pertaining AO's are deleted
 
 
 #  Scenario: Validate Registration group numbers
