@@ -223,9 +223,9 @@ public interface GeneralLedgerService {
     /**
      * Retrieves all GL Transmissions with the specified statuses.
      *
-     * @param status Status of GL Transmissions to retrieve.
+     * @param statuses Statuses of GL Transmissions to retrieve.
      * @return A list of GL Transmissions with the specified statuses.
      */
     @WebMethod(exclude = true)
-    List<GlTransmission> getGlTransmissions(GlTransmissionStatus... status);
+    List<GlTransmission> getGlTransmissionsByStatuses(GlTransmissionStatus... statuses);
 }

@@ -74,7 +74,7 @@ public class GeneralLedgerController extends DownloadController {
     @RequestMapping(method = {RequestMethod.GET,RequestMethod.POST}, params = "methodToCall=searchForPriorBatches")
     public ModelAndView searchForPriorBatches(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
         // Find GL Transmissions, create BatchTransmissionModel List:
-        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissions(
+        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsByStatuses(
                 GlTransmissionStatus.TRANSMITTED, GlTransmissionStatus.COMPLETED);
         MutableDouble totalAllBatches = new MutableDouble(0);
         List<BatchTransmissionModel> batchTransmissions = createBatchTransmissionList(glTransmissions, totalAllBatches);

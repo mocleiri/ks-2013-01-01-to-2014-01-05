@@ -784,22 +784,25 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     /**
      * Retrieves all GL Transmissions with the specified statuses.
      *
-     * @param status Status of GL Transmissions to retrieve.
+     * @param statuses Status of GL Transmissions to retrieve.
      * @return A list of GL Transmissions with the specified statuses.
      */
     @WebMethod(exclude = true)
-    public List<GlTransmission> getGlTransmissions(GlTransmissionStatus... status) {
+    public List<GlTransmission> getGlTransmissionsByStatuses(GlTransmissionStatus... statuses) {
+
         List<String> statusCodes = new ArrayList<String>();
 
-        for (GlTransmissionStatus st : status) {
-            statusCodes.add(st.getId());
+        for (GlTransmissionStatus status : statuses) {
+            statusCodes.add(status.getId());
         }
 
         Query query = em.createQuery("select glt from GlTransmission glt " +
                 " inner join fetch glt.recognitionPeriod rp " +
                 " where glt.statusCode in (:statuses) " +
                 " order by glt.date asc");
+
         query.setParameter("statuses", statusCodes);
+
         return query.getResultList();
     }
 }
