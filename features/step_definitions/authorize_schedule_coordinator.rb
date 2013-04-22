@@ -12,7 +12,7 @@ When /^I manage a course offering$/ do
 end
 
 Then /^I have access to delete an activity offering in a "([^"]*)" state$/ do |aostate|
-  @course_offering.manage
+  @course_offering.manage_and_init
   @course_offering.attempt_ao_delete_by_status(aostate).should == true
 end
 
