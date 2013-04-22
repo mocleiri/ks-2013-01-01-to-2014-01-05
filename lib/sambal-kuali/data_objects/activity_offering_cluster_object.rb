@@ -19,6 +19,7 @@ class ActivityOfferingCluster
   include DateFactory
   include StringFactory
   include Workflows
+  include Comparable
 
   #generally set using options hash
   attr_accessor :private_name,
@@ -26,7 +27,6 @@ class ActivityOfferingCluster
                 :is_valid,
                 :expected_msg,
                 :to_assign_ao_list,
-                :assigned_ao_list,
                 :ao_list,
                 :parent_course_offering
 
@@ -55,6 +55,10 @@ class ActivityOfferingCluster
     }
     options = defaults.merge(opts)
     set_options(options)
+  end
+
+  def <=>(other)
+    @private_name <=> other.private_name
   end
 
   # while on manage reg groups page, sets up activity offering cluster based on class attributes
@@ -143,7 +147,7 @@ class ActivityOfferingCluster
         #ignore
       #end
     end
-    @assigned_ao_list = []
+    @ao_list = []
   end
 
 

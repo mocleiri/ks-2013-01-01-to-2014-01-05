@@ -15,7 +15,6 @@ Then /^the registration groups are automatically generated$/ do
   #end
 end
 
-
 Then /^the activity offering clusters? and assigned AOs are copied over with the course offering$/ do
   @course_offering_copy.manage
 
@@ -25,11 +24,9 @@ Then /^the activity offering clusters? and assigned AOs are copied over with the
   end
 
   @course_offering_copy.activity_offering_cluster_list.each do |cluster|
-    cluster.ao_list.each do |ao_code|
-      on ManageCourseOfferings do |page|
-        actual_aos = page.get_cluster_assigned_ao_list(cluster.private_name)
-        actual_aos.sort.should == cluster.ao_list.sort
-      end
+    on ManageCourseOfferings do |page|
+      actual_aos = page.get_cluster_assigned_ao_list(cluster.private_name)
+      actual_aos.sort.should == cluster.ao_code_list.sort
     end
   end
 end
@@ -55,11 +52,10 @@ Then /^the activity offering clusters?, assigned AOs and reg groups are rolled o
   end
 end
 
-
 Then /^I copy the course offering$/ do
   @course_offering_copy = create CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :create_by_copy=>@course_offering
 end
 
 When /^I create a new course offering in a subsequent term by copying the catalog course offering$/ do
-  @course_offering_copy = create CourseOffering, :term=> Rollover::FINAL_EDITS_SOC_TERM, :course => "BSCI425", :create_from_existing=>@course_offering
+  @course_offering_copy = create CourseOffering, :term=> Rollover::FINAL_EDITS_SOC_TERM, :create_from_existing=>@course_offering
 end

@@ -22,6 +22,7 @@ class CourseOffering
   include DateFactory
   include StringFactory
   include Workflows
+  include Comparable
 
   #string - generally set using options hash
   attr_accessor :term,
@@ -75,7 +76,7 @@ class CourseOffering
     @browser = browser
 
     defaults = {
-        :term=>Rollover::MAIN_TEST_TERM_SOURCE,
+        :term=>Rollover::MAIN_TEST_TERM_TARGET,
         :course=>"ENGL211",
         :suffix=>"",
         :activity_offering_cluster_list=>[],
@@ -100,6 +101,10 @@ class CourseOffering
     set_options(options)
   end
 
+  def <=>(other)
+    @course <=> other.course
+  end
+
   # creates course offering based on class attributes
   def create
     if @create_by_copy != nil
@@ -108,6 +113,8 @@ class CourseOffering
       @term = @create_by_copy.term
       @activity_offering_cluster_list = @create_by_copy.activity_offering_cluster_list.sort
     elsif @create_from_existing != nil
+      @course = @create_from_existing.course
+      #will update @course if suffix added
       @course = create_from_existing_course(@create_from_existing.course, @create_from_existing.term)
       #deep copy
       @activity_offering_cluster_list = @create_from_existing.activity_offering_cluster_list

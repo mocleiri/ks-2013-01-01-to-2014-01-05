@@ -24,7 +24,7 @@ Then /^the activity offering is shown as part of the cluster$/ do
 end
 
 Given /^I have created an additional activity offering cluster for a catalog course offering$/ do
-  @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"BSCI425"
+  @course_offering = make CourseOffering, :term=>Rollover::MAIN_TEST_TERM_TARGET, :course=>"CHEM277"
   @course_offering.manage_and_init
   ao_cluster = make ActivityOfferingCluster
   @course_offering.add_ao_cluster(ao_cluster)
@@ -40,7 +40,7 @@ end
 Given /^the default activity offering cluster is present$/ do
    on ManageCourseOfferings do |page|
      #page.view_by_clusters
-     page.cluster_div_list.length.should == 3
+     page.cluster_div_list.length.should == 1
    end
 end
 
@@ -56,20 +56,20 @@ Given /^all activity offerings are assigned to the ARG cluster$/ do
 end
 
 Given /^there are default registration groups for a course offering$/ do
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"BSCI215", :term=>Rollover::OPEN_SOC_TERM)
+  @course_offering = make CourseOffering, :course=>"BSCI215", :term=>Rollover::OPEN_SOC_TERM
+  @course_offering.manage_and_init
 end
 
 Given /^I have created an additional activity offering cluster for a course offering$/ do
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM612", :term=>Rollover::OPEN_SOC_TERM)
-  #@course_offering = make CourseOffering, :course=>"CHEM612A", :term=>Rollover::OPEN_SOC_TERM
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM277", :term=>Rollover::OPEN_SOC_TERM)
+  #@course_offering = make CourseOffering, :course=>"CHEM277A", :term=>Rollover::OPEN_SOC_TERM
   @course_offering.manage_and_init
-  #@course_offering.create_ao :ao_code => "F"
-  @course_offering.copy_ao :ao_code => "A"
-  @course_offering.show_debug_details
+  existing_cluster = @course_offering.activity_offering_cluster_list[0]
+  new_ao = @course_offering.copy_ao :ao_code =>  existing_cluster.ao_list[0].code
+  new_cluster = make ActivityOfferingCluster
+  @course_offering.add_ao_cluster(new_cluster)
+  existing_cluster.move_ao_to_another_cluster(new_ao.code, new_cluster)
 
-  #@course_offering.reset_ao_clusters
-  #ao_cluster = make ActivityOfferingCluster
-  #@course_offering.add_ao_cluster(ao_cluster)
 end
 
 Given /^there are default registration groups for a catalog course offering$/ do
