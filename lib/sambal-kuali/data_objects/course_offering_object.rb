@@ -531,25 +531,20 @@ class CourseOffering
 
   #create a new specified activity offering
   #
-  #@param opts [Hash] {:ao_code => "CODE"}
-  def create_ao(opts) #TODO - param should be an ActivityOffering
-                      #TODO: number_aos_to_create = opts[:number_aos_to_create] implement as a separate method?
-    defaults = {
-        :cluster_private_name => :default_cluster
-    }
-    options = defaults.merge(opts)
-
-    manage
-    new_activity_offering = make ActivityOffering, :code => options[:ao_code], :parent_course_offering => self
-    new_activity_offering.create
-    new_activity_offering.save
-    get_cluster_obj_by_private_name(options[:cluster_private_name]).ao_list << new_activity_offering
-    return new_activity_offering
+  #@param opts ActivityOffering object
+  def create_ao(activity_offering_object)
+                     #TODO: number_aos_to_create = opts[:number_aos_to_create] implement as a separate method?
+    #manage #TODO: probably not required
+    activity_offering_object.parent_course_offering = self
+    activity_offering_object.create
+    activity_offering_object.save
+    get_cluster_obj_by_private_name(activity_offering_object.aoc_private_name).ao_list << activity_offering_object
+    return activity_offering_object
   end
 
   #copy the specified activity offering
   #
-  #@param  opts [Hash] {:ao_code => "CODE"}
+  #@param  opts [Hash] {:ao_code => "CODE", :cluster_private_name => "private_name" (see default value = :default_cluster)}
   def copy_ao(opts)
 
     defaults = {

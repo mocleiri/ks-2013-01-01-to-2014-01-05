@@ -87,9 +87,10 @@ class ActivityOfferingCluster
     end
   end
 
-  def add_activity_offering(ao_object)
-    @ao_list << ao_object.create
-  end
+  # see CourseOffering
+  #def add_activity_offering(ao_object)
+  #  @ao_list << ao_object.create
+  #end
 
   def ao_code_list
     code_list = []
