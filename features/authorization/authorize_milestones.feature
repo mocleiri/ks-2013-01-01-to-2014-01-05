@@ -11,16 +11,16 @@ Feature: Authorize Milestones Feature
     Then I have access to delete an activity offering in a "Draft" state
     And I have access to delete a course offering in a "Draft" state
     And there is a "Planned" course offering in my admin org
-    And I do not have access to delete a course offering in a "Planned" state
+    And I do not have access to select course offerings for approve, delete
     And I do not have access to delete an activity offering in a "Planned" state
 
   Scenario:Department Schedule Coordinator Carol does not have access to delete AO's After the first day of class
     Given It is "After" the first day of classes
     And there is a "Draft" course offering in my admin org
     Then I do not have access to delete an activity offering in a "Draft" state
-    And I do not have access to delete a course offering in a "Draft" state
+    And I do not have access to select course offerings for approve, delete
     And there is a "Offered" course offering in my admin org
-    And I do not have access to delete a course offering in a "Offered" state
+    And I do not have access to select course offerings for approve, delete
     And I do not have access to delete an activity offering in a "Offered" state
 
   Scenario: Department Schedule Coordinator Carol Access Verification for Manage course offering List
