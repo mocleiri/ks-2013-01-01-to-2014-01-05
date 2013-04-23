@@ -4,6 +4,7 @@ $test_site = "http://env2.ks.kuali.org" # TODO: This needs some serious re-think
 $: << File.dirname(__FILE__)+'/../../lib'
 
 require 'sambal-kuali'
+require 'watir-webdriver/extensions/alerts' # required to deal with BROWSER-alerts (as opposed to JS-alerts)
 
 World Foundry
 World StringFactory
