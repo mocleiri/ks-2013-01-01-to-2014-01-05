@@ -232,8 +232,6 @@ class ActivityOffering
 
       def edit_break_colocation opts={}
 
-puts 'breaking colo...'
-
         @browser.confirm( opts[:break_colocation] ) {
           on(ActivityOfferingMaintenance).select_colocated_checkbox
         }
