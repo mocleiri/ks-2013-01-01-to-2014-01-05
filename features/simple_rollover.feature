@@ -13,8 +13,5 @@ Feature: Simple Rollover
     When I initiate a rollover by specifying source and target terms
     Then the results of the rollover are available
     And the rollover can be released to departments
-    And course offerings are copied to the target term
+    #And course offerings are copied to the target term
     And the activity offering clusters, assigned AOs and reg groups are rolled over with the course offering
-
-
-

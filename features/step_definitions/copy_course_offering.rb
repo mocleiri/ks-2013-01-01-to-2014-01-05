@@ -1,9 +1,9 @@
 When /^the registration groups are not copied$/ do
   @course_offering_copy.activity_offering_cluster_list.each do |cluster|
-       on ManageRegistrationGroups do |page|
-         page.get_cluster_status_msg(cluster.private_name).strip.should  match /.*No Registration Groups Generated.*/
-      end
-   end
+    on ManageRegistrationGroups do |page|
+      page.get_cluster_status_msg(cluster.private_name).strip.should  match /.*No Registration Groups Generated.*/
+    end
+  end
 end
 
 Then /^the registration groups are automatically generated$/ do
@@ -33,21 +33,17 @@ end
 
 Then /^the activity offering clusters?, assigned AOs and reg groups are rolled over with the course offering$/ do
   @course_offering_copy = make CourseOffering, :course=>@course_offering.course, :term=>Rollover::ROLLOVER_TEST_TERM_TARGET
-  @course_offering_copy.activity_offering_cluster_list = @course_offering.activity_offering_cluster_list
-  @course_offering_copy.manage_registration_groups({:cleanup_existing_clusters => false})
+  @course_offering_copy.manage
 
-  on ManageRegistrationGroups do |page|
+  on ManageCourseOfferings do |page|
     clusters = page.cluster_div_list
     clusters.length.should == @course_offering_copy.activity_offering_cluster_list.length
   end
 
   @course_offering_copy.activity_offering_cluster_list.each do |cluster|
-    on ManageRegistrationGroups do |page|
-    page.get_cluster_status_msg(cluster.private_name).strip.should  match /.*All Registration Groups Generated.*/
-    cluster.ao_list.each do |ao_code|
-        actual_aos = page.get_cluster_assigned_ao_list(cluster.private_name)
-        actual_aos.sort.should == cluster.ao_list.sort
-      end
+    on ManageCourseOfferings do |page|
+      actual_aos = page.get_cluster_assigned_ao_list(cluster.private_name)
+      actual_aos.sort.should == cluster.ao_code_list.sort
     end
   end
 end
