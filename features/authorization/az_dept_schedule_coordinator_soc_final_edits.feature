@@ -44,7 +44,6 @@ Feature: Department Schedule Coordinator Authorization SOC state Final Edits
     Then I have access to view course offering details
     And I have access to add new course offerings
     And I do not have access to approve course offerings for scheduling
-    And I do not have access to approve the subject code for scheduling
     And I have access to delete the listed course offerings
     And I have access to edit the listed course offerings
     And I have access to copy the listed course offerings
@@ -55,7 +54,6 @@ Feature: Department Schedule Coordinator Authorization SOC state Final Edits
     And I have access to manage course offerings
     And I do not have access to select course offerings for approve, delete
     But I do not have access to edit the listed course offering
-    And I do not have access to approve the subject code for scheduling
 
   Scenario: AZ 4.1C/Full_final_edits.3 Department Schedule Coordinator Carol has access to create CO's in her admin org
     When I attempt to create a course offering for a subject in my admin org
