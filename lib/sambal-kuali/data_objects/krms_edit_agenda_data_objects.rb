@@ -23,4 +23,21 @@ class EditAgendaData
       return page.send(sect[section]).element(:tag_name => tag, :id => /.*node_#{node_i}.*/).id
     end
   end
+
+  def advanced_search(field, code)
+    fields = {"course code"=>:lookup_course_code, "course title"=>:lookup_course_title}
+    on EditAgenda do |page|
+      page.search_link
+      sleep 2
+      page.send(fields[field]).set code
+      sleep 2
+      page.lookup_search_button
+      sleep 2
+      if field == "course code"
+        page.lookup_results.a(:href => /#{Regexp.escape(code)}/).click
+      else
+        #TODO - find a way to return course code randomly when searching for title or description
+      end
+    end
+  end
 end

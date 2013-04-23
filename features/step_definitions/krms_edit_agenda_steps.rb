@@ -55,8 +55,9 @@ end
 
 When /^I select node "(.*)" in the tree$/ do |letter|
   on EditAgenda do |page|
-    page.edit_tree_section.span(:text => /.*#{Regexp.escape(letter)}\..*/).when_present.click
+    page.edit_tree_section.span(:text => /.*#{Regexp.escape(letter)}\..*/).click
   end
+  sleep 2
 end
 
 Then /^the background color should change to "(.*)"$/ do |color|
@@ -72,9 +73,9 @@ When /^I click the "(.*)" button$/ do |btn|
              "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move Left"=>:left_btn, "Copy"=>:copy_btn,
              "Cut"=>:cut_btn, "Paste"=>:paste_btn, "Delete"=>:del_btn, "add"=>:add_line_btn}
   on EditAgenda do |page|
-    page.send(buttons[btn]).when_present.click
+    page.send(buttons[btn])
   end
-  sleep 5
+  sleep 2
 end
 
 Then /^there should be nothing selected in the rule dropdown$/ do
@@ -148,7 +149,7 @@ When /^I select the "(.*)" option from the "(.*)" dropdown$/ do |rule, type|
   on EditAgenda do |page|
     page.edit_tree_section.select(:name => /.*editTree.*#{Regexp.escape(dropdown[type])}/).when_present.select /#{Regexp.escape(rule)}/
   end
-  sleep 10
+  sleep 5
 end
 
 When /^I enter "(.*)" in the "(.*)" field$/ do |cors, field|
@@ -225,4 +226,9 @@ Then /^there should be no node "(.*)" before an "(.*)" operator$/ do |text, oper
     puts page.preview_tree.text
     page.preview_tree.text.should_not match /.*#{Regexp.escape(text)}\n#{Regexp.escape(operator)}.*/
   end
+end
+
+When /^I search for the "(.*)" "(.*)"$/ do |field, code|
+  @editAgenda.advanced_search(field, code)
+  sleep 3
 end
