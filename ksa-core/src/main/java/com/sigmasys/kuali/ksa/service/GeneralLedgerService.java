@@ -163,12 +163,22 @@ public interface GeneralLedgerService {
     void prepareGlTransmissions();
 
     /**
-     * Retrieves all GL transmissions with the empty "result" field for export.
+     * Retrieves all GL transmissions with the statuses for export
      *
      * @return list of GlTransmission instances
      */
     @WebMethod(exclude = true)
     List<GlTransmission> getGlTransmissionsForExport();
+
+    /**
+     * Retrieves all GL transmissions with the statuses for export by batch ID.
+     *
+     * @param batchId  GL transmission batch ID
+     * @param statuses Status of GL Transmissions to retrieve.
+     * @return list of GlTransmission instances
+     */
+    @WebMethod(exclude = true)
+    List<GlTransmission> getGlTransmissionsForExport(String batchId, GlTransmissionStatus... statuses);
 
     /**
      * Retrieves all GL transmissions with the empty "result" field

@@ -40,6 +40,11 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     private static final Log logger = LogFactory.getLog(GeneralLedgerServiceImpl.class);
 
 
+    private List<String> getTransmissionStatusesForExport() {
+        return Arrays.asList(GlTransmissionStatus.GENERATED_CODE, GlTransmissionStatus.FAILED_CODE);
+    }
+
+
     /**
      * Creates a new general ledger type.
      *
@@ -605,7 +610,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     }
 
     /**
-     * Retrieves all GL transmissions with the empty "result" field for export.
+     * Retrieves all GL transmissions with the statuses for export.
      *
      * @return list of GlTransmission instances
      */
@@ -616,7 +621,36 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
                 " inner join fetch glt.recognitionPeriod rp " +
                 " where glt.statusCode in (:statuses) " +
                 " order by glt.date asc");
-        query.setParameter("statuses", Arrays.asList(GlTransmissionStatus.GENERATED_CODE, GlTransmissionStatus.FAILED_CODE));
+        query.setParameter("statuses", getTransmissionStatusesForExport());
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves all GL transmissions with the statuses for export by batch ID.
+     *
+     * @param batchId  GL transmission batch ID
+     * @param statuses Status of GL Transmissions to retrieve.
+     * @return list of GlTransmission instances
+     */
+    @Override
+    @WebMethod(exclude = true)
+    public List<GlTransmission> getGlTransmissionsForExport(String batchId, GlTransmissionStatus... statuses) {
+
+        List<String> statusCodes = new ArrayList<String>(statuses.length);
+
+        for (GlTransmissionStatus status : statuses) {
+            statusCodes.add(status.getId());
+        }
+
+        Query query = em.createQuery("select glt from GlTransmission glt " +
+                " inner join fetch glt.recognitionPeriod rp " +
+                " where glt.statusCode in (:statuses) " +
+                " and glt.batchId = :batchId " +
+                " order by glt.date asc");
+
+        query.setParameter("batchId", batchId);
+        query.setParameter("statuses", statusCodes);
+
         return query.getResultList();
     }
 
@@ -656,7 +690,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
                 " ts." + dateField + " <> null and ts." + dateField + " between :fromDate and :toDate " +
                 " order by glt.date asc");
 
-        query.setParameter("statuses", Arrays.asList(GlTransmissionStatus.GENERATED_CODE, GlTransmissionStatus.FAILED_CODE));
+        query.setParameter("statuses", getTransmissionStatusesForExport());
         query.setParameter("fromDate", startDate);
         query.setParameter("toDate", endDate);
 
@@ -790,7 +824,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @WebMethod(exclude = true)
     public List<GlTransmission> getGlTransmissionsByStatuses(GlTransmissionStatus... statuses) {
 
-        List<String> statusCodes = new ArrayList<String>();
+        List<String> statusCodes = new ArrayList<String>(statuses.length);
 
         for (GlTransmissionStatus status : statuses) {
             statusCodes.add(status.getId());

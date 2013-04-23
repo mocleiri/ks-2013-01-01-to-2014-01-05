@@ -43,6 +43,14 @@ public interface TransactionExportService {
     String exportTransactionsForDates(Date startDate, Date endDate, boolean isEffectiveDate);
 
     /**
+     * Gets GlTransmission objects persisted in the database as XML for the given batch ID
+     *
+     * @param batchId GL transmission batch ID
+     * @return XML content that contains the transactions to be exported
+     */
+    String exportTransactionsForBatch(String batchId);
+
+    /**
      * Parses the GL account and returns the list of <code>java.util.String</code> values.
      * The format of GL account is organization-specific. The current implementation supports the UMD format.
      *

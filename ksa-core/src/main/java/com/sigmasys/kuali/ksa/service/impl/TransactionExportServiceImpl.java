@@ -74,6 +74,18 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     }
 
     /**
+     * Gets GlTransmission objects persisted in the database as XML for the given batch ID
+     *
+     * @param batchId GL transmission batch ID
+     * @return XML content that contains the transactions to be exported
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public String exportTransactionsForBatch(String batchId) {
+        return convertGlTransmissionsToXml(batchId, glService.getGlTransmissionsForExport(batchId));
+    }
+
+    /**
      * Gets GlTransmission objects for the given effective/recognition dates with a result that is blank and
      * returns the completed XML file that will be uploaded to KFS or any other external system.
      *
@@ -122,14 +134,19 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     }
 
     protected String convertGlTransmissionsToXml(List<GlTransmission> glTransmissions) {
+        return convertGlTransmissionsToXml(null, glTransmissions);
+    }
 
-        // Generating the batch ID
-        final BigInteger batchId = generateBatchId();
+    protected String convertGlTransmissionsToXml(String batchId, List<GlTransmission> glTransmissions) {
 
-        // Setting the result and batch ID for each GL transmission from the list
-        for (GlTransmission glTransmission : glTransmissions) {
-            glTransmission.setBatchId(String.valueOf(batchId));
-            glTransmission.setStatus(GlTransmissionStatus.TRANSMITTED);
+        if (batchId == null) {
+            // Generating the batch ID
+            batchId = String.valueOf(generateBatchId());
+            // Setting the result and batch ID for each GL transmission from the list
+            for (GlTransmission glTransmission : glTransmissions) {
+                glTransmission.setBatchId(batchId);
+                glTransmission.setStatus(GlTransmissionStatus.TRANSMITTED);
+            }
         }
 
         final ObjectFactory objectFactory = new ObjectFactory();
@@ -247,14 +264,13 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
 
                 // TODO: figure out if we need DetailType here
                 //batchType.getGlEntryAndDetail().add(detailType);
-
             }
 
         }
 
         // Creating HeaderType instance
         HeaderType headerType = objectFactory.createHeaderType();
-        headerType.setBatchSequenceNumber(batchId);
+        headerType.setBatchSequenceNumber(new BigInteger(batchId));
         headerType.setCampusCode(configService.getParameter(KFS_CAMPUS_CODE_PARAM_NAME));
         headerType.setChartOfAccountsCode(configService.getParameter(KFS_CHART_OF_ACCOUNTS_CODE_PARAM_NAME));
         headerType.setDepartmentName(configService.getParameter(KFS_DEPARTMENT_NAME_PARAM_NAME));
