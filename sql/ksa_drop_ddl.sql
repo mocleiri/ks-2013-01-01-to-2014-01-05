@@ -21,7 +21,6 @@ drop table KSA.KSSA_BATCH_RECEIPT cascade constraints;
 drop table KSA.KSSA_BILL_AUTHORITY cascade constraints;
 drop table KSA.KSSA_CASH_LIMIT_EVENT cascade constraints;
 drop table KSA.KSSA_CASH_LIMIT_PARAMETER cascade constraints;
-drop table KSA.KSSA_CASH_LIMIT_SUM_ELEMENT cascade constraints;
 drop table KSA.KSSA_CREDIT_PERMISSION cascade constraints;
 drop table KSA.KSSA_CURRENCY cascade constraints;
 drop table KSA.KSSA_DOCUMENT cascade constraints;

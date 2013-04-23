@@ -51,7 +51,7 @@ public class CashLimitEvent implements Identifiable {
     /**
      * A person name to whom the notification has been sent
      */
-    private String notificationSentTo;
+    private String recipient;
 
     /**
      * Total transaction amount
@@ -164,12 +164,12 @@ public class CashLimitEvent implements Identifiable {
     }
 
     @Column(name = "NOTIF_SENT_TO", length = 255)
-    public String getNotificationSentTo() {
-        return notificationSentTo;
+    public String getRecipient() {
+        return recipient;
     }
 
-    public void setNotificationSentTo(String notificationSentTo) {
-        this.notificationSentTo = notificationSentTo;
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
     }
 
     @Column(name = "TOTAL_TRANS_AMOUNT")

@@ -45,6 +45,9 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private SmtpService smtpService;
+
 
     /**
      * Creates a new cash limit parameter for the given parameters.
@@ -61,6 +64,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * @return a new instance of CashLimitParameter
      */
     @Override
+    @Transactional(readOnly = false)
     public CashLimitParameter createCashLimitParameter(String code, String name, String description, Tag tag,
                                                        BigDecimal lowerLimit, BigDecimal upperLimit, boolean isActive,
                                                        String authorityName, String xmlElement) {
@@ -96,6 +100,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * @return Cash limit parameter ID
      */
     @Override
+    @Transactional(readOnly = false)
     public Long persistCashLimitParameter(CashLimitParameter cashLimitParameter) {
 
         Tag tag = cashLimitParameter.getTag();
@@ -162,7 +167,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     @Override
     public boolean cashLimitParameterExists(String code) {
         Query query = em.createQuery("select 1 from CashLimitParameter where code = :code");
-        query.setParameter("id", code);
+        query.setParameter("code", code);
         query.setMaxResults(1);
         return CollectionUtils.isNotEmpty(query.getResultList());
     }
@@ -193,6 +198,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * @return true if there has been a cash limit event, otherwise false
      */
     @Override
+    @Transactional(readOnly = false)
     public boolean checkCashLimit(String userId) {
 
         String cashTracking = configService.getParameter(Constants.CASH_TRACKING_SYSTEM);
@@ -223,13 +229,13 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
         boolean transactionIdsExist = CollectionUtils.isNotEmpty(transactionIds);
 
-        query = em.createQuery("select distinct t from Transaction t, CashLimitParameter clp " +
-                " left outer join t.tags tag " +
-                " where t.account.id = :userId and clp.active = true " +
+        query = em.createQuery("select distinct t from Transaction t inner join t.tags tag " +
+                " where t.account.id = :userId and tag.code = :tagCode " +
                 " and t.effectiveDate between :startDate and :endDate " +
-                " and t.amount between clp.lowerLimit and clp.upperLimit " +
-                " and tag.code = clp.tag.code and tag.code = :tagCode " +
-                (transactionIdsExist ? " and t.id not in (:transactionIds)" : ""));
+                (transactionIdsExist ? " and t.id not in (:transactionIds)" : "") +
+                " and exists (select 1 from CashLimitParameter clp  " +
+                " where t.amount between clp.lowerLimit and clp.upperLimit " +
+                " and clp.active = true and clp.tag.code = :tagCode)");
 
         query.setParameter("userId", userId);
         query.setParameter("startDate", startDate, TemporalType.DATE);
@@ -240,8 +246,15 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
             query.setParameter("transactionIds", transactionIds);
         }
 
+        logger.debug("Cash tracking query parameters: userId = " + query.getParameterValue("userId") +
+                ", startDate = " + query.getParameterValue("startDate") +
+                ", endDate = " + query.getParameterValue("endDate") +
+                ", tagCode = " + query.getParameterValue("tagCode"));
+
         List<Transaction> transactions = query.getResultList();
         if (CollectionUtils.isNotEmpty(transactions)) {
+
+            logger.debug("Number of transactions to track = " + transactions.size());
 
             BigDecimal transactionAmount = BigDecimal.ZERO;
 
@@ -257,6 +270,8 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
             } else {
 
+                String recipient = configService.getParameter(Constants.CASH_TRACKING_EMAIL_RECIPIENT);
+
                 CashLimitEvent cashLimitEvent = new CashLimitEvent();
                 cashLimitEvent.setAccountId(userId);
                 cashLimitEvent.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
@@ -264,19 +279,23 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
                 cashLimitEvent.setTransactionAmount(transactionAmount);
                 cashLimitEvent.setTransactions(new HashSet<Transaction>(transactions));
                 cashLimitEvent.setNotificationDate(new Date());
-                cashLimitEvent.setNotificationSentTo(configService.getParameter(Constants.CASH_TRACKING_EMAIL_ADDRESS));
+                cashLimitEvent.setRecipient(recipient);
                 cashLimitEvent.setMultiple(transactions.size() > 1);
                 cashLimitEvent.setStatus(CashLimitEventStatus.COMPLETED);
 
                 persistEntity(cashLimitEvent);
 
-                // TODO: cash limit report and email
+                // Sending email notification
+                String subject = configService.getParameter(Constants.CASH_TRACKING_EMAIL_SUBJECT);
+                String body = "\n\nCash Limit Event (ID = " + cashLimitEvent.getId() + ") has been created. " +
+                        "The form 8300 can now be filed with IRS.";
+
+                smtpService.sendEmail(new String[]{recipient}, subject, body);
 
                 return true;
             }
         }
 
-        // TODO:
         return false;
     }
 
