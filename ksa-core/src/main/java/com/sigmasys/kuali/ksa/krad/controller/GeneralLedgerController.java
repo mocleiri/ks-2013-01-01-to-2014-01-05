@@ -60,28 +60,11 @@ public class GeneralLedgerController extends DownloadController {
      * @param form GeneralLedger form.
      * @return ModelAndView for the initial page.
      */
-    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=displayGeneralLedger")
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, params = "methodToCall=displayGeneralLedger")
     public ModelAndView displayGeneralLedger(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
-        return getUIFModelAndView(form);
-    }
-
-    /**
-     * Searches for Prior Batches and displays them on the page.
-     *
-     * @param form GeneralLedger form.
-     * @return ModelAndView for the page.
-     */
-    @RequestMapping(method = {RequestMethod.GET,RequestMethod.POST}, params = "methodToCall=searchForPriorBatches")
-    public ModelAndView searchForPriorBatches(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
-        // Find GL Transmissions, create BatchTransmissionModel List:
-        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsByStatuses(
-                GlTransmissionStatus.TRANSMITTED, GlTransmissionStatus.COMPLETED);
-        MutableDouble totalAllBatches = new MutableDouble(0);
-        List<BatchTransmissionModel> batchTransmissions = createBatchTransmissionList(glTransmissions, totalAllBatches);
-
-        // Set objects on the form:
-        form.setPriorBatchTransmissions(batchTransmissions);
-        form.setAllPriorBatchTotal(TransactionUtils.getFormattedAmount(new BigDecimal(totalAllBatches.doubleValue())));
+        // At this time, we actively pre-generate the model for the view because KRAD is unable
+        // to remember the tab selection or use asynchronous requests to load the data on-demand.
+        searchForPriorBatches(form);
 
         return getUIFModelAndView(form);
     }
@@ -122,7 +105,7 @@ public class GeneralLedgerController extends DownloadController {
      * @param batchId   Batch ID.
      * @return          null because we want to stay on the same page when download starts.
      */
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=downloadPriorBatchTransactions")
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=downloadPriorBatchTransactions")
     public ModelAndView downloadPriorBatchTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form, @RequestParam("batchId") String batchId) {
         // Retrieve a list of Transactions for a Batch:
 
@@ -163,16 +146,35 @@ public class GeneralLedgerController extends DownloadController {
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    /**
+     * Searches for Prior Batches and populates the form object.
+     *
+     * @param form GeneralLedger form.
+     */
+    private void searchForPriorBatches(ReportReconciliationForm form) {
+        // Create BatchTransmissionModel List:
+        MutableDouble totalAllBatches = new MutableDouble(0);
+        List<BatchTransmissionModel> batchTransmissions = createBatchTransmissionList(totalAllBatches);
+
+        // Set objects on the form:
+        form.setPriorBatchTransmissions(batchTransmissions);
+        form.setAllPriorBatchTotal(TransactionUtils.getFormattedAmount(new BigDecimal(totalAllBatches.doubleValue())));
+    }
+
     /**
      * Creates a List of all BatchTransmissionModel objects that contain
      * their related GL Account Types.
      *
-     * @param glTransmissions   All GL Transmissions.
      * @param grandTotalAmount  The total for all batches. This is an OUT parameter.
      * @return  a List of all BatchTransmissionModel objects.
      */
-    private List<BatchTransmissionModel> createBatchTransmissionList(List<GlTransmission> glTransmissions,
-                                                                      MutableDouble grandTotalAmount) {
+    private List<BatchTransmissionModel> createBatchTransmissionList(MutableDouble grandTotalAmount) {
+        // Find all GL Transmissions in all statuses:
+        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsByStatuses(
+                GlTransmissionStatus.TRANSMITTED, GlTransmissionStatus.COMPLETED,
+                GlTransmissionStatus.FAILED, GlTransmissionStatus.GENERATED);
+
         // Create a temporary Map of Batch IDs mapped to BatchTransmissionModel objects:
         Map<String, BatchTransmissionModel> result = new HashMap<String, BatchTransmissionModel>();
 

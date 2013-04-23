@@ -37,6 +37,10 @@
 		<property name="headerText" value="General Ledger"/>
 		<property name="items">
 			<list>
+				<!-- The "Refresh" link that will actually display the contents since we don't want to load the contents immediately -->
+				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Refresh View" 
+						p:actionScript="window.location.href='generalLedger?methodToCall=displayGeneralLedger&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage'"/>
+									
 				<!-- Export Pending Transaction action -->
 				
 				<!-- The tabbed Control -->
@@ -66,8 +70,8 @@
 		<property name="items">
 			<list>
 				<!-- The "Refresh" link that will actually display the contents since we don't want to load the contents immediately -->
-				<bean parent="Uif-LinkField" p:linkText="Refresh" p:target="_self"
-						p:href="generalLedger?methodToCall=searchForPriorBatches&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage" p:style="text-decoration:underline"/>
+				<!--bean parent="Uif-LinkField" p:linkText="Refresh" p:target="_self"
+						p:href="generalLedger?methodToCall=searchForPriorBatches&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage" p:style="text-decoration:underline"/-->
 				
 				<!-- The table of Prior Batches -->
 				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:displayCollectionSize="10">
