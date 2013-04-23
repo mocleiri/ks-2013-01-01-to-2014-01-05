@@ -11,7 +11,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   # Co-located
   element(:colocated_checkbox) { |b| b.frm.checkbox(id: "is_co_located_control") }
-  action(:select_colocated_checkbox) { |b| b.colocated_checkbox.click(); b.loading.wait_while_present }
+  action(:select_colocated_checkbox) { |b| b.colocated_checkbox.click() }
   element(:colocated_co_input_field) { |b| b.frm.text_field(id: "ActivityOfferingEdit-CoLocatedActivities-CoInputField_add_control") }
   element(:colocated_ao_input_field) { |b| b.frm.text_field(id: "ActivityOfferingEdit-CoLocatedActivities-AoInputField_add_control") }
   element(:colocated_add_button) { |b| b.frm.button(id: "ActivityOfferingEdit-CoLocatedActivities_add") }
