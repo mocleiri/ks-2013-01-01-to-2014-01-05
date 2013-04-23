@@ -75,7 +75,7 @@ public class GeneralLedgerController extends DownloadController {
      * @param form GeneralLedger form.
      * @return ModelAndView for the page.
      */
-    @RequestMapping(method = {RequestMethod.GET,RequestMethod.POST}, params = "methodToCall=searchForPendingTransactions")
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, params = "methodToCall=searchForPendingTransactions")
     public ModelAndView searchForPendingTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
         // Find pending transactions:
 
@@ -87,11 +87,11 @@ public class GeneralLedgerController extends DownloadController {
     /**
      * Exports all Pending Transactions to the General ledger and starts download.
      *
-     * @param form  The form object.
-     * @return         null because we want to stay on the same page when download starts.
+     * @param form The form object.
+     * @return null because we want to stay on the same page when download starts.
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=exportAllPendingTransactions")
-    public ModelAndView exportAllPendingTransactions (@ModelAttribute("KualiForm") ReportReconciliationForm form){
+    public ModelAndView exportAllPendingTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
         // Retrieve a list of Pending Transactions for all GL Accounts:
 
         return null;
@@ -100,10 +100,9 @@ public class GeneralLedgerController extends DownloadController {
     /**
      * Generates a list of Prior Batch Transactions for a GL Account and starts download.
      *
-     *
-     * @param form      The form object.
-     * @param batchId   Batch ID.
-     * @return          null because we want to stay on the same page when download starts.
+     * @param form    The form object.
+     * @param batchId Batch ID.
+     * @return null because we want to stay on the same page when download starts.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=downloadPriorBatchTransactions")
     public ModelAndView downloadPriorBatchTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form, @RequestParam("batchId") String batchId) {
@@ -115,9 +114,9 @@ public class GeneralLedgerController extends DownloadController {
     /**
      * Retrieves a list of Pending Transactions for a GL Account. Used as an AJAX call handler.
      *
-     * @param form          The form object.
-     * @param glAccountId   GL Account ID.
-     * @return              null for AJAX requests to stay on the same page.
+     * @param form        The form object.
+     * @param glAccountId GL Account ID.
+     * @return null for AJAX requests to stay on the same page.
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=getPendingTransactionForGlAccount")
     public ModelAndView getPendingTransactionForGlAccount(@ModelAttribute("KualiForm") ReportReconciliationForm form, @RequestParam("glAccountId") String glAccountId) {
@@ -129,9 +128,9 @@ public class GeneralLedgerController extends DownloadController {
     /**
      * Retrieves a list of GL Accounts for a Batch. Used as an AJAX call handler.
      *
-     * @param form      The form object.
-     * @param batchId   Batch ID.
-     * @return          null for AJAX requests to stay on the same page.
+     * @param form    The form object.
+     * @param batchId Batch ID.
+     * @return null for AJAX requests to stay on the same page.
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=getGlAccountsForBatch")
     public ModelAndView getGlAccountsForBatch(@ModelAttribute("KualiForm") ReportReconciliationForm form, @RequestParam("batchId") String batchId) {
@@ -166,14 +165,13 @@ public class GeneralLedgerController extends DownloadController {
      * Creates a List of all BatchTransmissionModel objects that contain
      * their related GL Account Types.
      *
-     * @param grandTotalAmount  The total for all batches. This is an OUT parameter.
-     * @return  a List of all BatchTransmissionModel objects.
+     * @param grandTotalAmount The total for all batches. This is an OUT parameter.
+     * @return a List of all BatchTransmissionModel objects.
      */
     private List<BatchTransmissionModel> createBatchTransmissionList(MutableDouble grandTotalAmount) {
+
         // Find all GL Transmissions in all statuses:
-        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsByStatuses(
-                GlTransmissionStatus.TRANSMITTED, GlTransmissionStatus.COMPLETED,
-                GlTransmissionStatus.FAILED, GlTransmissionStatus.GENERATED);
+        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsByStatuses(GlTransmissionStatus.TRANSMITTED);
 
         // Create a temporary Map of Batch IDs mapped to BatchTransmissionModel objects:
         Map<String, BatchTransmissionModel> result = new HashMap<String, BatchTransmissionModel>();
@@ -183,10 +181,12 @@ public class GeneralLedgerController extends DownloadController {
 
         // Go through the list of GLTransmissions
         for (GlTransmission glTransmission : glTransmissions) {
+
             // Get the batch ID from the current transmission:
             String batchId = glTransmission.getBatchId();
 
             if (StringUtils.isNotEmpty(batchId)) {
+
                 // Initialize the list of GL Types if needed:
                 if (generalLedgerTypes == null) {
                     generalLedgerTypes = auditableEntityService.getAuditableEntities(GeneralLedgerType.class);
@@ -217,9 +217,9 @@ public class GeneralLedgerController extends DownloadController {
     /**
      * Searches for a GL Type in the given list by its GL Account ID.
      *
-     * @param generalLedgerTypes    A list of GL Types.
-     * @param glAccountId           ID of a GL Account.
-     * @return                      A matching GL Type or <code>null</code> if no match can be found.
+     * @param generalLedgerTypes A list of GL Types.
+     * @param glAccountId        ID of a GL Account.
+     * @return A matching GL Type or <code>null</code> if no match can be found.
      */
     private GeneralLedgerType findGlType(List<GeneralLedgerType> generalLedgerTypes, String glAccountId) {
         for (GeneralLedgerType glType : generalLedgerTypes) {
@@ -236,15 +236,15 @@ public class GeneralLedgerController extends DownloadController {
      * and adds it to the given list. Or if one wiht a matching GL Account ID and Operation
      * Type already exists in the list, adds or subtracts the amount.
      *
-     * @param glTransmission        A GlTransmission.
-     * @param generalLedgerTypes    A list of all existing GlTypes.
-     * @param glAccountModels       A list of GeneralLedgerAccountModel objects belonging to a BatchTransmissionModel.
-     * @param grandTotalAmount      The grand total for all Batch Transmissions.
+     * @param glTransmission     A GlTransmission.
+     * @param generalLedgerTypes A list of all existing GlTypes.
+     * @param glAccountModels    A list of GeneralLedgerAccountModel objects belonging to a BatchTransmissionModel.
+     * @param grandTotalAmount   The grand total for all Batch Transmissions.
      * @return A new GeneralLedgerAccountModel object created from the given GlTransmission.
      */
     private GeneralLedgerAccountModel addGlAccountModel(GlTransmission glTransmission,
-            List<GeneralLedgerType> generalLedgerTypes, BatchTransmissionModel batchTransmission,
-            List<GeneralLedgerAccountModel> glAccountModels, MutableDouble grandTotalAmount) {
+                                                        List<GeneralLedgerType> generalLedgerTypes, BatchTransmissionModel batchTransmission,
+                                                        List<GeneralLedgerAccountModel> glAccountModels, MutableDouble grandTotalAmount) {
         // Try to find a matching GL Type:
         String glAccountId = glTransmission.getGlAccountId();
         GeneralLedgerType glType = findGlType(generalLedgerTypes, glAccountId);
@@ -252,7 +252,7 @@ public class GeneralLedgerController extends DownloadController {
                 ? StringUtils.defaultIfBlank(glType.getDescription(), glType.getName()) : glAccountId;
         GlOperationType glOperationType = (glType != null)
                 ? glType.getGlOperationOnCharge() : glTransmission.getGlOperation();
-        GeneralLedgerAccountModel glAccount =null;
+        GeneralLedgerAccountModel glAccount = null;
 
         // Try to find an existing GeneralLedgerAccountModel in the list:
         for (GeneralLedgerAccountModel glAccountModel : glAccountModels) {
