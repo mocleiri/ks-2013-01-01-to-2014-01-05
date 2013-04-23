@@ -351,7 +351,7 @@ When /^there is a "([^"]*)" course offering present/ do |co_status|
 end
 
 When /^I have access to delete an activity offering in "([^"]*)" status for the course offering$/ do |aostate|
-  @course_offering.manage
+  @course_offering.manage_and_init
   @course_offering.attempt_ao_delete_by_status(aostate).should be_true
 end
 
