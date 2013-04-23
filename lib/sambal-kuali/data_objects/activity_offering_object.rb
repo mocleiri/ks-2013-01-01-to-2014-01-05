@@ -170,48 +170,97 @@ class ActivityOffering
   # @param opts [Hash] key => value for attribute to be updated
   def edit opts={}
 
-    on ManageCourseOfferings do |page|
-      page.edit @code
-    end
+    on(ManageCourseOfferings).edit @code
 
-    if opts[:colocate_ao_list].length != 0
+    edit_colocation opts
+    edit_max_enrollment_no_colocation opts
+    edit_requested_delivery_logistics opts
+    edit_course_url opts
+    edit_evaluation opts
+    edit_honors_course opts
+    edit_personnel_list opts
+    edit_seat_pool_list opts
 
-      on ActivityOfferingMaintenance do |page|
-        page.select_colocated_checkbox
+  end #END: edit
 
-        # add the colo-COs to this CO
-        opts[:colocate_ao_list].each do |ao_to_colo|
-          page.colocated_co_input_field.value = ao_to_colo.parent_course_offering.course
-          page.colocated_ao_input_field.value = ao_to_colo.code
-          page.add_colocated
+  # PRIVATE helper methods for edit()
+
+      def edit_colocation opts={}
+
+        is_breaking_colocation = false
+        if !opts[:break_colocation].nil? # only test for nil; true/false map to 'confirm/cancel'
+          is_breaking_colocation = true
         end
 
-        if opts[:colocate_shared_enrollment]
-          page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
-          page.select_jointly_share_enrollment_radio
-          page.colocated_shared_max_enrollment_input_field.value = opts[:max_enrollment]
-        else # ie: 'separately manage'
-          page.select_separately_manage_enrollment_radio
-          page.colocated_shared_max_enrollment_table_first_ao_input.value = opts[:max_enrollment]
+        is_editing_colocation = false
+        if !opts[:colocate_ao_list].nil? && !opts[:colocate_ao_list].empty?
+          is_editing_colocation = true
         end
-      end
 
-    else #if colocated, Max enrollment field is not present
-      if opts[:max_enrollment] != nil
+        # cannot both EDIT and BREAK the colo simultaneously
+        if is_breaking_colocation && is_editing_colocation
+          raise "Cannot both EDIT and BREAK a colocation simultaneously"
+        end
+
+        if is_breaking_colocation
+          edit_break_colocation opts
+          return nil
+        end
+
+        # else perform normal EDIT
         on ActivityOfferingMaintenance do |page|
-          page.total_maximum_enrollment.set opts[:max_enrollment]
-          page.total_maximum_enrollment.fire_event "onchange"
-          @max_enrollment = opts[:max_enrollment]
+          page.select_colocated_checkbox
+
+          # add the colo-COs to this CO
+          opts[:colocate_ao_list].each do |ao_to_colo|
+            page.colocated_co_input_field.value = ao_to_colo.parent_course_offering.course
+            page.colocated_ao_input_field.value = ao_to_colo.code
+            page.add_colocated
+          end
+
+          if opts[:colocate_shared_enrollment]
+            page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
+            page.select_jointly_share_enrollment_radio
+            page.colocated_shared_max_enrollment_input_field.value = opts[:max_enrollment]
+          else # ie: 'separately manage'
+            page.select_separately_manage_enrollment_radio
+            page.colocated_shared_max_enrollment_table_first_ao_input.value = opts[:max_enrollment]
+          end
         end
-      end
 
+      end #END: edit_colocation
 
-    end
+      def edit_break_colocation opts={}
 
+puts 'breaking colo...'
 
-    #TODO: comparison could be more robust
-    if opts[:requested_delivery_logistics_list] != nil
-      if opts[:requested_delivery_logistics_list].length > 0
+        @browser.confirm( opts[:break_colocation] ) {
+          on(ActivityOfferingMaintenance).select_colocated_checkbox
+        }
+
+      end #END: edit_break_colocation
+
+      def edit_max_enrollment_no_colocation opts={}
+
+        if opts[:colocate_ao_list] && !opts[:colocate_ao_list].empty?
+          return nil
+        end
+
+        if opts[:max_enrollment] != nil
+          on ActivityOfferingMaintenance do |page|
+            page.total_maximum_enrollment.set opts[:max_enrollment]
+            page.total_maximum_enrollment.fire_event "onchange"
+            @max_enrollment = opts[:max_enrollment]
+          end
+        end
+
+      end #END: edit_max_enrollment_no_colocation
+
+      def edit_requested_delivery_logistics opts={}
+
+        if opts[:requested_delivery_logistics_list].nil? || opts[:requested_delivery_logistics_list].empty?
+          return nil
+        end
 
         #'save' vs 'save and process' determined by first rdl
         first_rdl = opts[:requested_delivery_logistics_list].values[0]
@@ -222,55 +271,97 @@ class ActivityOffering
           request.create
           requests_added["#{request.days}#{request.start_time}#{request.start_time_ampm.upcase}".delete(' ')] = request
         end
-      end
-    end
 
-    on ActivityOfferingMaintenance do |page|
-      if opts[:course_url] != nil
-        page.course_url.set opts[:course_url]
+      end #END: edit_request_delivery_logistics
+
+      def edit_course_url opts={}
+
+        if opts[:course_url].nil?
+          return nil
+        end
+
+        on(ActivityOfferingMaintenance).course_url.set opts[:course_url]
         @course_url = opts[:course_url]
-      end
 
-      if opts[:evaluation] != nil
-        if opts[:evaluation]
-          page.requires_evaluation.set
-        else
-          page.requires_evaluation.clear
+      end #END: edit_course_url
+
+      def edit_evaluation opts={}
+
+        if opts[:evaluation].nil?
+          return nil
         end
+
+        on ActivityOfferingMaintenance do |page|
+          if opts[:evaluation]
+            page.requires_evaluation.set
+          else
+            page.requires_evaluation.clear
+          end
+        end
+
         @evaluation =  opts[:evaluation]
-      end
 
-      if opts[:honors_course] != nil
-        if opts[:honors_course]
-          page.honors_flag.set
-        else
-          page.honors_flag.clear
+      end #END: edit_evaluation
+
+      def edit_honors_course opts={}
+
+        if opts[:honors_course].nil?
+          return nil
         end
+
+        on ActivityOfferingMaintenance do |page|
+          if opts[:honors_course]
+            page.honors_flag.set
+          else
+            page.honors_flag.clear
+          end
+        end
+
         @honors_course = opts[:honors_course]
-      end
-    end
-    if opts[:personnel_list] != nil
-      opts[:personnel_list].each do |person|
-        person.add_personnel
-      end
-      @personnel_list = opts[:personnel_list]
-    end
 
-    #TODO: comparison could be more robust/could rework to include remove/edit/add seatpool methods?
-    if opts[:seat_pool_list] != nil
-      opts[:seat_pool_list].each do |key,seat_pool|
-        seat_pool.add_seatpool(seatpool_populations_used)
-        @seat_pool_list[key] = seat_pool unless !seat_pool.exp_add_succeed?
-      end
-    end
-  end
+      end #END: edit_honors_course
 
+      def edit_personnel_list opts={}
 
+        if opts[:personnel_list].nil?
+          return nil
+        end
 
+        opts[:personnel_list].each do |person|
+          person.add_personnel
+        end
+
+        @personnel_list = opts[:personnel_list]
+
+      end #END: edit_personnel_list
+
+      def edit_seat_pool_list opts={}
+
+        if opts[:seat_pool_list].nil?
+          return nil
+        end
+
+        opts[:seat_pool_list].each do |key,seat_pool|
+          seat_pool.add_seatpool(seatpool_populations_used)
+          @seat_pool_list[key] = seat_pool unless !seat_pool.exp_add_succeed?
+        end
+
+      end #END: edit_seat_pool_list
+
+  private :edit_colocation,
+          :edit_break_colocation,
+          :edit_max_enrollment_no_colocation,
+          :edit_requested_delivery_logistics,
+          :edit_course_url,
+          :edit_evaluation,
+          :edit_honors_course,
+          :edit_personnel_list,
+          :edit_seat_pool_list
 
   #completes activity offering edit operation
   #this is a separate step from edit as it allows validation steps to occur during the edit process
   def save()
+puts 'save'
     on ActivityOfferingMaintenance do |page|
       page.submit
     end
