@@ -1,8 +1,8 @@
 When /^I manage an existing Course Offering in "(.*?)" view$/ do |view|
   if view == 'Subject Code'
-    @course_offering = make CourseOffering, :course=>"CHEM142", :search_by_subj => true
+    @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :course=>"CHEM277", :search_by_subj => true)
   else
-    @course_offering = make CourseOffering, :course=>"CHEM277"
+    @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :course=>"CHEM277")
   end
 
   @course_offering.manage_and_init
