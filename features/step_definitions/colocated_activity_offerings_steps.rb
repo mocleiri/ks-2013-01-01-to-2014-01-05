@@ -38,32 +38,36 @@ Then /^the activities indicate they are colocated$/ do
 
 end
 
-When /^I break colocation on the first colocated AO, "(supplying new|acknowledging retained)" max-enrollment$/ do |max_enrollment_flag|
-  #pending
-
-  # MFT has these steps which map to this step:
-  #   1. On Manage Course Offering page, enter code for term, and course code: CHEM131
-  #   2. Click the manage button of CO131B
-  #   3. On manage CO131B page, click on the edit button to edit Activity Offering: A of CHEM131B
-  #   4. On edit AO page, uncheck This activity is co-located checkbox
-  #   5. A dialog to confirm this action is displayed.
-  #   6. On the dialog, select to confirm to leave the colocation set
-  #   7. supply max-enrollment (if max-enrollment is being shared)
-  #       or that max-enrollment was retained (if max-enrollment is being separately managed)
-  #   8. Click Submit to submit the changes for this AO.
-
+When /^I break colocation on the first colocated AO$/ do
+  @colo_aos[0].parent_course_offering.manage
+  @colo_aos[0].edit :break_colocation => true
+  @colo_aos[0].save
 end
 
 Then /^the first colocated AO is not colocated with any remaining AOs$/ do
-  #pending
 
-  # MFT has these steps which map to this step:
-  #   1. Both Activity Offerings: A of CHEM131A and A of CHEM131B no longer have colocated relationship.
-  #   2. Activity Offering: A of CHEM131A will have the RDLs in the colocation set which will be displayed in the edit AO: A of CHEM131A page
-  #   3. Activity Offering: A of CHEM131B has no RDL left.
-  #   4. to include validation of the CO-icons:
-  #       the ones that stayed in the colo should still contain CO-icons (with appropriate tooltip-language);
-  #       the one that broke away from the colo should no longer have a CO-icon
+  # first AO should no indicate colocation
+  @colo_aos[0].parent_course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.target_row('A')[1].image.should_not be_present
+# validate no DLs
+  end
+
+  # second AO should indicate colocation with all the remaining
+  @colo_aos[1].parent_course_offering.manage
+  on ManageCourseOfferings do |page|
+    colocated_tooltip_text = page.target_row('A')[1].image.alt.upcase
+
+    # validate tooltip text contains each colo
+    @colo_aos[2, @colo_aos.length].each do |other_ao|
+      expected = other_ao.parent_course_offering.course.upcase + ' ' + other_ao.code.upcase
+      colocated_tooltip_text.should include expected
+    end
+# validate DLs
+  end
+
+puts 'DONE!'
+sleep 60
 end
 
 When /^I designate a valid term and Course Offering Code with a fully colocated AO$/ do
@@ -71,7 +75,7 @@ When /^I designate a valid term and Course Offering Code with a fully colocated 
   @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => co
 end
 
-And /^I delete the fully colcated AO$/ do
+And /^I delete the fully colocated AO$/ do
   @activity_offering.parent_course_offering.manage
   on ManageCourseOfferings do |page|
     @activity_offering.parent_course_offering.delete_ao_list :code_list =>  page.codes_list
@@ -79,6 +83,12 @@ And /^I delete the fully colcated AO$/ do
 end
 
 Then /^The AO is successfully deleted$/ do
+puts 'here'
+puts @activity_offering.code
+puts @activity_offering.parent_course_offering
+puts @activity_offering.parent_course_offering.course
+puts 'continuing...'
+
   @activity_offering.parent_course_offering.manage
   begin
     on(ManageCourseOfferings).codes_list # this line is broken
@@ -97,17 +107,17 @@ When /^I create some dummy test data to speed up AFT development$/ do
   @colo_aos = []
 
   # 201301 ENGL211G AO:A
-  co = make CourseOffering, :term => '201301', :course => 'ENGL211G'
+  co = make CourseOffering, :term => '201301', :course => 'ENGL211Q'
   ao = make ActivityOffering, :code => "A", :parent_course_offering => co
   @colo_aos << ao
 
   # 201301 ENGL211H AO:A
-  co = make CourseOffering, :term => '201301', :course => 'ENGL211H'
+  co = make CourseOffering, :term => '201301', :course => 'ENGL211R'
   ao = make ActivityOffering, :code => "A", :parent_course_offering => co
   @colo_aos << ao
 
   # 201301 ENGL211I AO:A
-  co = make CourseOffering, :term => '201301', :course => 'ENGL211I'
+  co = make CourseOffering, :term => '201301', :course => 'ENGL211S'
   ao = make ActivityOffering, :code => "A", :parent_course_offering => co
   @colo_aos << ao
 
