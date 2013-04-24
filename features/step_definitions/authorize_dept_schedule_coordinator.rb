@@ -569,6 +569,7 @@ Then /^I do not have access to select activity offerings for add, approve, delet
 end
 
 Then /^I do not have access to select course offerings for approve, delete$/ do
+  @course_offering.search_by_subjectcode
   on ManageCourseOfferingList do |page|
     page.delete_cos_button.enabled?.should be_false
     page.approve_course_offering_button.enabled?.should be_false

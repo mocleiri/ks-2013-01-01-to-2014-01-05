@@ -4,7 +4,6 @@ Feature: Schedule Coordinator Authorization
   Background:
     Given I am logged in as a Schedule Coordinator
 
-    @check_uses_correct_state
   Scenario: AZ 5.1C As a Schedule Coordinator I have access to delete draft Activity Offerings in a Final Edits state
     Given I am working on a term in "Final Edits" SOC state
     And there is a "Draft" course offering present
