@@ -1,20 +1,22 @@
 When /^I create a new jointly defined Course Offering$/ do
-  @bsci_co = create CourseOffering, :term => "201201", :course => "BSCI181", :delivery_format => "Lecture", :grade_format => "Lecture"
+  @joint_co = create CourseOffering, :create_by_copy => (make CourseOffering, :course => "HIST300", :term => "201208")
 end
 
 And /^I attempt to "(delete|delete and cancel)" a joint Course Offering$/ do |delete_flag|
-  @bsci_co.search_by_subjectcode
 
-  $should_confirm_delete = false
+  should_confirm_delete = false
   if delete_flag == 'delete'
-    $should_confirm_delete = true
+    should_confirm_delete = true
   end
 
-  @bsci_co.delete_co :code_list => [@bsci_co.course], :should_confirm_delete=>$should_confirm_delete
+  @joint_co.manage
+  @joint_co.delete_co_with_link :should_confirm_delete=>should_confirm_delete
+
 end
 
 Then /^the Course Offering is "(deleted|not deleted)"$/ do |delete_flag|
-  @bsci_co.search_by_coursecode
+
+  @joint_co.manage
 
   on ManageCourseOfferings do |page|
     if delete_flag == 'deleted'
@@ -23,6 +25,29 @@ Then /^the Course Offering is "(deleted|not deleted)"$/ do |delete_flag|
       page.error_message_course_not_found.should_not be_present
     end
   end
+
+end
+
+When /^I create a joint course offering from catalog while creating a new course offering$/ do
+  @joint_cos = []
+
+  primary_co = create CourseOffering, :term => "201201", :course => "BSCI181", :joint_co_to_create => "CHEM181, PHYS181", :delivery_format => "Lecture", :grade_format => "Lecture"
+  @joint_cos << primary_co
+
+  # keep track of the joints created when creating primary-CO
+  @joint_cos << (make CourseOffering, :term => "201201", :course => "CHEM181")
+  @joint_cos << (make CourseOffering, :term => "201201", :course => "PHYS181")
+end
+
+Then /^The joint course offerings are created.$/ do
+
+  @joint_cos.each do |joint_co|
+    joint_co.manage
+    on ManageCourseOfferings do |page|
+      page.error_message_course_not_found.should_not be_present
+    end
+  end
+
 end
 
 
@@ -35,15 +60,19 @@ end
 
 # This step is required because if (for example) CHEM181 already exists then when you create a new
 # linked CO (for example, BSCI181) the 'create new joint co'-link does not appear
+#
+# ALL THIS STEP DOES IS SCRUB THE REF-DATA TO REMOVE ALL INSTANCES OF BSCI181/CHEM181/PHYS181
+# WHICH MAY HAVE BEEN CREATED PREVIOUSLY BY ANOTHER AFT/PERSON AND WHICH IF THEY EXIST PREVENT
+# THE ABILITY TO CREATE A JOINT CO WHILE CREATING ANOTHER CO (ie: the "Create New"-link is removed)
 When /^I remove a joint course offering from the reference data in order to enable this test$/ do
 
   # yes, we have to create 2 in order to delete all; sorry, caused by side-affect of
   # having unreliable ref-data plus the app shows different views depending on whether
   # the course-code has 1 or multiple offerings
-  @ref_data_to_delete = create CourseOffering, :term => "201201", :course => "CHEM181"
-  @ref_data_to_delete = create CourseOffering, :term => "201201", :course => "CHEM181"
-  @ref_data_to_delete.course = "CHEM181"
-  @ref_data_to_delete.search_by_coursecode
+  ref_data_to_delete = create CourseOffering, :term => "201201", :course => "BSCI181"
+  ref_data_to_delete = create CourseOffering, :term => "201201", :course => "BSCI181"
+  ref_data_to_delete.course = "BSCI181"
+  ref_data_to_delete.search_by_coursecode
   on ManageCourseOfferingList do |page|
     page.select_all_cos
     page.delete_cos
@@ -52,42 +81,38 @@ When /^I remove a joint course offering from the reference data in order to enab
     page.confirm_delete
   end
 
+  # yes, we have to create 2 in order to delete all; sorry, caused by side-affect of
+  # having unreliable ref-data plus the app shows different views depending on whether
+  # the course-code has 1 or multiple offerings
+  ref_data_to_delete = create CourseOffering, :term => "201201", :course => "CHEM181"
+  ref_data_to_delete = create CourseOffering, :term => "201201", :course => "CHEM181"
+  ref_data_to_delete.course = "CHEM181"
+  ref_data_to_delete.search_by_coursecode
+  on ManageCourseOfferingList do |page|
+    page.select_all_cos
+    page.delete_cos
+  end
+  on DeleteCourseOffering do |page|
+    page.confirm_delete
+  end
+
+  # yes, we have to create 2 in order to delete all; sorry, caused by side-affect of
+  # having unreliable ref-data plus the app shows different views depending on whether
+  # the course-code has 1 or multiple offerings
+  ref_data_to_delete = create CourseOffering, :term => "201201", :course => "PHYS181"
+  ref_data_to_delete = create CourseOffering, :term => "201201", :course => "PHYS181"
+  ref_data_to_delete.course = "PHYS181"
+  ref_data_to_delete.search_by_coursecode
+  on ManageCourseOfferingList do |page|
+    page.select_all_cos
+    page.delete_cos
+  end
+  on DeleteCourseOffering do |page|
+    page.confirm_delete
+  end
+
+  puts 'Ref-data for BSCI181/CHEM181/PHYS181 have been removed'
 end
 
-# This step is required because after running the delete-ref-data step (above), the ref-data is
-# left in an unexpected state; this restores the state back to expected condition
-And /^then I restore the joint course offering I removed from the reference data$/ do
 
-end
-
-When /^I create a joint course offering from catalog while creating a new course offering$/ do
-  @bsci_co = create CourseOffering, :term => "201201", :course => "BSCI181", :joint_co_to_create => "CHEM181, PHYS181", :delivery_format => "Lecture", :grade_format => "Lecture"
-end
-
-
-#REFACTOR THIS STEP NAME TO SOMETHING BETTER
-Then /^The joint course offerings are created.$/ do
-  @bsci_co.search_by_subjectcode
-  #delete
-  @bsci_co.delete_co :code_list => [@bsci_co.course], :should_confirm_delete=>true
-  # display the created
-  @chem181_co = make CourseOffering
-  @chem181_co.term="201201"
-  @chem181_co.course="CHEM181"
-  @phys181_co = make CourseOffering
-  @phys181_co.term="201201"
-  @phys181_co.course="PHYS181"
-
-  @chem181_co.search_by_subjectcode
-  #delete
-  @chem181_co.delete_co :code_list => [@chem181_co.course], :should_confirm_delete=>true
-
-  @phys181_co.search_by_subjectcode
-  #delete
-  @phys181_co.delete_co :code_list => [@phys181_co.course], :should_confirm_delete=>true
-
-
-  puts 'Done'
-
-end
 
