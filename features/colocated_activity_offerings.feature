@@ -1,4 +1,4 @@
-@draft
+@nightly
 @brandon.gresham
 Feature: Co-location of Activity Offerings
 
