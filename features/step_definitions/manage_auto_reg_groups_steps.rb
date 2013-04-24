@@ -171,3 +171,45 @@ Then /^the cluster and pertaining AO's are deleted$/ do
     cluster.private_name.should_not == @deleted_aoc
   end
 end
+
+When /^I copy an Activity Offering$/ do
+   @course_offering.copy_ao :ao_code=>"A"
+end
+
+When /^I add an Activity Offering$/ do
+  @course_offering.create_ao(make ActivityOffering, :format => "Lecture/Discussion")
+end
+
+When /^I update an Activity Offering to have less seats$/ do
+  @course_offering.edit_ao :ao_code=>"A"
+  @course_offering.activity_offering_cluster_list[0].ao_list.each do |ao|
+    if ao.code == "A"
+      ao.edit :max_enrollment => 200, :edit_already_started=>true
+      ao.save
+    end
+  end
+
+end
+
+Then /^A warning message is displayed about seats$/ do
+  on ManageCourseOfferings do |page|
+    page.get_cluster_warning_msgs.include?("The sums of maximum enrollment seats")
+  end
+end
+
+Then /^a warning message is displayed about a time conflict$/ do
+  on ManageCourseOfferings do |page|
+    page.get_cluster_warning_msgs.include?("invalid due to scheduling conflicts")
+  end
+end
+
+When /^I update an Activity Offering to create a time conflict$/ do
+  @course_offering.edit_ao :ao_code=>"B"
+
+  @course_offering.activity_offering_cluster_list[0].ao_list.each do |ao|
+    if ao.code == "B"
+      ao.edit :requested_delivery_logistics_list => {"default"=> (make DeliveryLogistics, :days=>"M")}, :edit_already_started=>true
+      ao.save
+    end
+  end
+end

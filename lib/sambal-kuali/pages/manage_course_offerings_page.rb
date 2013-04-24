@@ -340,7 +340,7 @@ class ManageCourseOfferings < BasePage
     target_cluster(private_name).li(class: "uif-errorMessageItem").text()
   end
 
-  def get_cluster_error_msgs(private_name)
+  def get_cluster_error_msgs(private_name = :default_cluster)
     msg_list = []
     target_cluster(private_name).ul(class: "uif-validationMessagesList").lis(class:  "uif-errorMessageItem").each do |li|
       msg_list <<  li.text()
@@ -352,7 +352,7 @@ class ManageCourseOfferings < BasePage
     target_cluster(private_name).li(class: "uif-warningMessageItem").text()
   end
 
-  def get_cluster_warning_msgs(private_name)
+  def get_cluster_warning_msgs(private_name = :default_cluster)
     msg_list = []
     target_cluster(private_name).uls(class: "uif-validationMessagesList").each do |ul|
       ul.lis(class:  "uif-warningMessageItem").each do |li|

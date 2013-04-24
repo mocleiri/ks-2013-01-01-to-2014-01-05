@@ -62,6 +62,26 @@ As an Administrator, I want to create registration groups for a Course Offering
     And I remove the newly created cluster
     Then the cluster and pertaining AO's are deleted
 
+  Scenario: ARG 6.5 When deleting an AOC delete all associated AOs as well
+    Given I manage registration groups for a new course offering
+    When I create an activity offering cluster
+    And Move one lab and one lecture activity offering to the second cluster
+    And I remove the newly created cluster
+    Then the cluster and pertaining AO's are deleted
+
+  Scenario: ARG 6.3 RG's are automatically generated when adding or copying an AO
+    Given I manage registration groups for a new course offering
+    When I copy an Activity Offering
+    Then the corresponding number of registration groups for each cluster is correct
+    And I add an Activity Offering
+    Then the corresponding number of registration groups for each cluster is correct
+
+  Scenario: ARG 6.4 A when an AO is updated and creates a time conflict or a total seats issue the reg group state and the messaging should reflect this
+    Given I manage registration groups for a new course offering
+    When I update an Activity Offering to have less seats
+    Then A warning message is displayed about seats
+    And I update an Activity Offering to create a time conflict
+    Then a warning message is displayed about a time conflict
 
 #  Scenario: Validate Registration group numbers
 #    Given I manage registration groups for a course offering with multiple activity types
