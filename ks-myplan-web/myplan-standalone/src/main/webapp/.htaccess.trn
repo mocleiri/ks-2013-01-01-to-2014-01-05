@@ -3,7 +3,7 @@
 #
 AuthType UWNetID
 PubcookieAppID KualiStudent 
-require group u_subman_c-myplan
+require group u_astra_ears_myplan u_subman_c-myplan
 
 
 #
