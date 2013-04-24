@@ -170,11 +170,9 @@ class ActivityOffering
   # @param opts [Hash] key => value for attribute to be updated - additional opts :edit_already_started (bool), TODO :defer_submit
   def edit opts={}
 
-    if !opts[:edit_already_started] then
-      on(ManageCourseOfferings).edit @code
-    end
+    on(ManageCourseOfferings).edit @code  unless opts[:edit_already_started]
 
-    #edit_colocation opts  TODO - figure out why colocation checkbox checked in all cases
+    edit_colocation opts
     edit_max_enrollment_no_colocation opts
     edit_requested_delivery_logistics opts
     edit_course_url opts
@@ -206,10 +204,14 @@ class ActivityOffering
 
         if is_breaking_colocation
           edit_break_colocation opts
-          return nil
+          return nil # when breaking colo, cannot do other colo-editing
         end
 
-        # else perform normal EDIT
+        if !is_editing_colocation
+          return nil # nothing to do if not breaking colo nor supplying any AOs to colo-edit with
+        end
+
+        # else perform normal colo-EDIT
         on ActivityOfferingMaintenance do |page|
           page.select_colocated_checkbox
 
