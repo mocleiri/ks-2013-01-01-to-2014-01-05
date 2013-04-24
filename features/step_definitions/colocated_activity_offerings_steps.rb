@@ -50,7 +50,8 @@ Then /^the first colocated AO is not colocated with any remaining AOs$/ do
   @colo_aos[0].parent_course_offering.manage
   on ManageCourseOfferings do |page|
     page.target_row('A')[1].image.should_not be_present
-# validate no DLs
+
+    # validate should also include ensuring there are no DLs
   end
 
   # second AO should indicate colocation with all the remaining
@@ -62,12 +63,11 @@ Then /^the first colocated AO is not colocated with any remaining AOs$/ do
     @colo_aos[2, @colo_aos.length].each do |other_ao|
       expected = other_ao.parent_course_offering.course.upcase + ' ' + other_ao.code.upcase
       colocated_tooltip_text.should include expected
+
+      #validation should also include ensuring DLs still exist
     end
-# validate DLs
   end
 
-puts 'DONE!'
-sleep 60
 end
 
 When /^I designate a valid term and Course Offering Code with a fully colocated AO$/ do
