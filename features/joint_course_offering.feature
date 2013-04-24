@@ -1,4 +1,4 @@
-@draft
+@nightly
 @brandon.gresham
 Feature: Jointly-defined Course Offering
 
