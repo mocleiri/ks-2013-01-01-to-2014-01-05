@@ -239,6 +239,6 @@ end
 
 Then /^the old and new rule should be compared$/ do
   on EditAgenda do |page|
-    puts page.compare_rule_section.text.should match /Compare CLU and CO Rules/
+    page.compare_rule_section.text.should match /Compare CLU and CO Rules/
   end
 end
