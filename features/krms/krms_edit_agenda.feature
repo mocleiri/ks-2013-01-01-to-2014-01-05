@@ -509,8 +509,9 @@ Feature: KRMS Edit Agenda
     Then there should be a new node with text "A. Text random input value"
 
   #KSENROLL-6389
+  @pending
   Scenario: Test whether the Compare to Original on an empty tree works as expected
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6384"
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6389"
     And I click on the "Antirequisite" section
     And I click on the "Add Rule" link
     And I click on the "Compare to Original" link on the Edit Agenda page
