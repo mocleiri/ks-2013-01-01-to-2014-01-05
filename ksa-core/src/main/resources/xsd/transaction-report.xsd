@@ -237,4 +237,100 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="irs-8300">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="type">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="amends"/>
+                            <xs:enumeration value="suspicious"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="payer">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element ref="person-name"/>
+                            <xs:element ref="postal-address"/>
+                            <xs:element name="identity" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="tax-identifier" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="date-of-birth" type="xs:date" minOccurs="0"/>
+                                        <xs:element name="occupation" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="identity-document" minOccurs="0">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="id-type" type="xs:string"/>
+                                                    <xs:element name="id-issuer" type="xs:string"/>
+                                                    <xs:element name="id-serial" type="xs:string"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="transaction-description">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="date" type="xs:date"/>
+                            <xs:element name="total-amount" type="xs:decimal"/>
+                            <xs:element name="multiple-payments" type="xs:boolean"/>
+                            <xs:element name="total-price" type="xs:decimal"/>
+                            <xs:element name="detail">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="financial-breakdown">
+                                            <xs:complexType>
+                                                <xs:sequence maxOccurs="unbounded">
+                                                    <xs:element name="type" type="xs:string"/>
+                                                    <xs:element name="amount" type="xs:decimal"/>
+                                                    <xs:element name="native-amount" type="xs:decimal"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="serials"/>
+                                        <xs:choice>
+                                            <xs:element name="type">
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:enumeration value="personalproperty"/>
+                                                        <xs:enumeration value="realproperty"/>
+                                                        <xs:enumeration value="personalservice"/>
+                                                        <xs:enumeration value="businessservice"/>
+                                                        <xs:enumeration value="intangibleproperty"/>
+                                                        <xs:enumeration value="debtobligation"/>
+                                                        <xs:enumeration value="exchangeofcash"/>
+                                                        <xs:enumeration value="escrow"/>
+                                                        <xs:enumeration value="bail"/>
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:element>
+                                            <xs:element name="other-type" type="xs:string"/>
+                                        </xs:choice>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="recipient">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="business-name"/>
+                            <xs:element name="ein" minOccurs="0"/>
+                            <xs:element name="ssn" minOccurs="0"/>
+                            <xs:element ref="postal-address"/>
+                            <xs:element name="nature-of-business"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
 </xs:schema>

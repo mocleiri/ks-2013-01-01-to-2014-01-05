@@ -59,7 +59,6 @@ public interface CashLimitService {
      */
     boolean checkCashLimit(String userId);
 
-
     /**
      * Retrieves all CashLimitEvent objects for the given user ID and CashLimitEventStatus.
      *
@@ -68,6 +67,15 @@ public interface CashLimitService {
      * @return a list of cash limit events
      */
     List<CashLimitEvent> getCashLimitEvents(String userId, CashLimitEventStatus status);
+
+
+    /**
+     * Returns CashLimitEvent object by ID.
+     *
+     * @param id Cash limit event ID
+     * @return CashLimitEvent instance
+     */
+    CashLimitEvent getCashLimitEvent(Long id);
 
     /**
      * Retrieves cash limit parameters.

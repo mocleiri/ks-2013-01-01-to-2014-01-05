@@ -18,10 +18,7 @@ import javax.jws.WebService;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Cash limit service implementation
@@ -41,9 +38,6 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
     @Autowired
     private ConfigService configService;
-
-    @Autowired
-    private TransactionService transactionService;
 
     @Autowired
     private SmtpService smtpService;
@@ -141,6 +135,23 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
         query.setParameter("userId", userId);
         query.setParameter("status", status.getId());
         return query.getResultList();
+    }
+
+    /**
+     * Returns CashLimitEvent object by ID.
+     *
+     * @param id Cash limit event ID
+     * @return CashLimitEvent instance
+     */
+    @Override
+    public CashLimitEvent getCashLimitEvent(Long id) {
+        Query query = em.createQuery("select cle from CashLimitEvent cle " +
+                " left outer join fetch cle.xmlDocument xml " +
+                " left outer join fetch cle.transactions ts " +
+                " where cle.id = :id");
+        query.setParameter("id", id);
+        List<CashLimitEvent> results = query.getResultList();
+        return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
 
     /**
@@ -281,7 +292,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
                 cashLimitEvent.setNotificationDate(new Date());
                 cashLimitEvent.setRecipient(recipient);
                 cashLimitEvent.setMultiple(transactions.size() > 1);
-                cashLimitEvent.setStatus(CashLimitEventStatus.COMPLETED);
+                cashLimitEvent.setStatus(CashLimitEventStatus.QUEUED);
 
                 persistEntity(cashLimitEvent);
 
@@ -297,6 +308,56 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
         }
 
         return false;
+    }
+
+    private Set<Transaction> getTransactionsByTag(Set<Transaction> transactions, Tag tag) {
+        Set<Transaction> transactionsForTag = new HashSet<Transaction>();
+        for (Transaction transaction : transactions) {
+            List<Tag> tags = transaction.getTags();
+            if (CollectionUtils.isNotEmpty(tags)) {
+                boolean tagIsPresent = false;
+                for (Tag t : tags) {
+                    if (tag.getId().equals(t.getId())) {
+                        tagIsPresent = true;
+                        break;
+                    }
+                }
+                if (tagIsPresent) {
+                    transactionsForTag.add(transaction);
+                }
+            }
+        }
+        return transactionsForTag;
+    }
+
+    public String exportCashLimitEvent(Long cashLimitEventId) {
+
+        CashLimitEvent cashLimitEvent = getCashLimitEvent(cashLimitEventId);
+        if (cashLimitEvent == null) {
+            String errMsg = "Cannot find CashLimitEvent with ID = " + cashLimitEventId;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        if (!CashLimitEventStatus.QUEUED.equals(cashLimitEvent.getStatus())) {
+            String errMsg = "Only CashLimitEvent objects with QUEUED status can be exported, ID = " + cashLimitEventId;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        Set<Transaction> transactions = cashLimitEvent.getTransactions();
+
+        List<CashLimitParameter> activeParameters = getCashLimitParameters(true);
+
+        for (CashLimitParameter parameter : activeParameters) {
+            Tag tag = parameter.getTag();
+            Set<Transaction> transactionsByTag = getTransactionsByTag(transactions, tag);
+            // TODO
+        }
+
+        // TODO
+        return null;
+
     }
 
 
