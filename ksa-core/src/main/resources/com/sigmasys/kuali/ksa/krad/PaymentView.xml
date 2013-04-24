@@ -64,26 +64,8 @@
     <bean id="addPaymentSection" parent="Uif-VerticalBoxSection"
           p:title="@{account.id}"
           p:instructionalText="The following form will allow a payment to be applied to the account">
-        <property name="disclosure.render" value="false"/>
         <property name="items">
             <list>
-                <!-- Use a field to get/set the value  -->
-                <bean parent="Uif-InputField" p:propertyName="printReceipt" p:label="Print receipt"
-                      p:defaultValue="false" p:fieldLabel.renderColon="true">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-CheckboxControl"/>
-                    </property>
-                </bean>
-                <!-- Use a field to get/set the value  -->
-                <bean parent="Uif-InputField" p:propertyName="emailReceipt" p:label="Email receipt"
-                      p:defaultValue="false" p:fieldLabel.renderColon="true">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-CheckboxControl"/>
-                    </property>
-                </bean>
-                <!-- Use a field to get/set the value  -->
                 <bean parent="Uif-InputField" p:propertyName="estimatedCurrentBalance"
                       p:label="Estimated Current Balance"
                       p:instructionalText="An estimate of the current balance"
@@ -95,66 +77,179 @@
                         <bean parent="Uif-TextControl" p:size="11" />
                     </property>
                 </bean>
-                <!-- Use a field to get/set the value  -->
-                <bean parent="Uif-InputField" p:propertyName="paymentTransactionTypeId"
-                      p:label="Payment Type"
-                      p:fieldLabel.renderColon="true"
-                      p:labelPlacement="TOP"
-                      p:maxLength="10"
-                      p:required="true">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="11" />
-                    </property>
-                    <property name="suggest">
-                        <bean parent="Uif-Suggest">
-                            <property name="sourcePropertyName" value="id.id"/>
-                            <property name="templateOptions" value="minLength:2,delay:0"/>
-                            <property name="suggestQuery">
-                                <bean parent="Uif-AttributeQueryConfig">
-                                    <property name="queryMethodToCall" value="getPaymentsForSuggest"/>
-                                </bean>
-                            </property>
-                        </bean>
-                    </property>
 
-                </bean>
-                <bean parent="Uif-InputField" p:propertyName="payment.externalId"
-                      p:label="Authorization"
-                      p:instructionalText="Enter the authorization code"
-                      p:fieldLabel.renderColon="true"
-                      p:labelPlacement="TOP"
-                      p:maxLength="16"
-                      p:required="true">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="17"/>
+                <bean parent="Uif-Disclosure-VerticalBoxSection" >
+                    <property name="headerText" value="Receipt"/>
+                    <!-- disclosure fixed in Rice 2.2.1, disabling for now: https://jira.kuali.org/browse/KULRICE-8938 -->
+                    <!--<property name="disclosure.defaultOpen" value="false" />-->
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:propertyName="printReceipt" p:label="Print receipt" p:defaultValue="false" p:fieldLabel.renderColon="true">
+                                <property name="bindingInfo.bindToForm" value="true"/>
+                                <property name="control">
+                                    <bean parent="Uif-CheckboxControl"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="emailReceipt" p:label="Email receipt" p:defaultValue="false" p:fieldLabel.renderColon="true">
+                                <property name="bindingInfo.bindToForm" value="true"/>
+                                <property name="control">
+                                    <bean parent="Uif-CheckboxControl"/>
+                                </property>
+                            </bean>
+                        </list>
                     </property>
                 </bean>
-                <!-- Use the Payment instance to get/set the values -->
-                <bean parent="Uif-InputField" p:propertyName="payment.amount"
-                      p:label="Amount"
-                      p:instructionalText="Enter the amount of the payment"
-                      p:fieldLabel.renderColon="true"
-                      p:labelPlacement="TOP"
-                      p:maxLength="21"
-                      p:required="true">
-                    <property name="control">
-                        <bean parent="Uif-CurrencyTextControl" p:size="22"/>
+                <bean parent="Uif-Disclosure-VerticalBoxSection" >
+                    <property name="headerText" value="Payment"/>
+                    <!-- disclosure fixed in Rice 2.2.1, disabling for now: https://jira.kuali.org/browse/KULRICE-8938 -->
+                    <!--<property name="disclosure.defaultOpen" value="false" />-->
+                    <property name="items">
+                        <list>
+                            <bean id="paymentTypeSuggest" parent="Uif-InputField" p:propertyName="paymentTransactionTypeId"
+                                  p:label="Payment Type" p:fieldLabel.renderColon="false" p:labelPlacement="TOP"
+                                  p:maxLength="10" p:required="true">
+                                <property name="suggest">
+                                    <bean parent="Uif-Suggest">
+                                        <property name="sourcePropertyName" value="id.id"/>
+                                        <property name="templateOptions">
+                                            <map>
+                                                <entry key="minLength" value="2"/>
+                                                <entry key="delay" value="0"/>
+                                            </map>
+                                        </property>
+                                        <property name="suggestQuery">
+                                            <bean parent="Uif-AttributeQueryConfig">
+                                                <property name="queryMethodToCall" value="getPaymentsForSuggest"/>
+                                            </bean>
+                                        </property>
+                                    </bean>
+                                </property>
+
+                            </bean>
+                            <bean parent="Uif-VerticalBoxSection" p:methodToCallOnRefresh="getTransactionType" p:refreshWhenChangedPropertyNames="paymentTransactionTypeId">
+                                <property name="items"><list>
+                                    <bean parent="Uif-MessageField" p:messageText="@{transactionTypeMessage}"/>
+                                    <bean parent="Uif-HorizontalBoxSection" p:render="@{isTransactionTypeValid()}">
+                                        <property name="items">
+                                            <list>
+                                                <bean parent="Uif-VerticalBoxSection">
+                                                    <property name="items">
+                                                        <list>
+                                                            <bean parent="Uif-InputField" p:propertyName="externalId" p:label="@{authorizationText}" p:labelPlacement="TOP"/>
+                                                            <bean parent="Uif-HorizontalBoxSection" p:render="@{isTransactionTypeValid()}">
+                                                                <property name="items">
+                                                                    <list>
+                                                                        <bean parent="Uif-InputField" p:propertyName="payment.nativeAmount" p:label="Amount" p:labelPlacement="LEFT">
+                                                                            <property name="control">
+                                                                                <bean parent="Uif-TextControl" p:size="10" p:maxLength="100"/>
+                                                                            </property>
+                                                                        </bean>
+                                                                        <bean parent="Uif-InputField" id="currencyId" p:propertyName="currencyId" p:labelPlacement="TOP"
+                                                                              p:fieldLabel.renderColon="false">
+                                                                            <property name="control">
+                                                                                <bean parent="Uif-DropdownControl"/>
+                                                                            </property>
+                                                                            <property name="optionsFinder" value="@{getCurrencyOptionsFinder()}"/>
+                                                                        </bean>
+                                                                    </list>
+                                                                </property>
+                                                            </bean>
+                                                            <bean parent="Uif-InputField" p:propertyName="payment.amount" p:label="Amount in @{systemCurrency}"
+                                                                  p:progressiveRender="@{currencyId != systemCurrencyId}" p:labelPlacement="TOP">
+                                                                <property name="control">
+                                                                    <bean parent="Uif-TextControl" p:size="10" p:maxLength="100"/>
+                                                                </property>
+                                                            </bean>
+
+
+                                                        </list>
+                                                    </property>
+                                                </bean>
+                                                <bean parent="Uif-VerticalBoxSection" p:style="background-color: #CCC; border-radius: 15px;"><property name="items"><list>
+                                                    <bean parent="Uif-Disclosure-GridSection" p:readOnly="true" >
+                                                        <property name="items">
+                                                            <list>
+                                                                <bean parent="Uif-InputField" p:propertyName="paymentTransactionTypeId2" p:label="Payment Type" />
+                                                                <bean parent="Uif-InputField" p:propertyName="description" p:label="Description" />
+                                                                <bean parent="Uif-InputField" p:propertyName="defaultClearingPeriod" p:label="Default Clearing Period" />
+                                                            </list>
+                                                        </property>
+                                                    </bean>
+                                                    <bean parent="Uif-InputField" p:propertyName="refundRule" p:readOnly="true" p:label="RefundRule" p:labelPlacement="TOP"/>
+                                                </list></property></bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </list></property>
+                            </bean>
+                        </list>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="payment.effectiveDate"
-                      p:label="Effective Date"
-                      p:instructionalText="Enter the effective date of the payment"
-                      p:fieldLabel.renderColon="true"
-                      p:labelPlacement="TOP"
-                      p:maxLength="10"
-                      p:required="true">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-DateControl" p:size="11"/>
+                <bean parent="Uif-Disclosure-VerticalBoxSection" >
+                    <property name="headerText" value="Extended Options"/>
+                    <!-- disclosure fixed in Rice 2.2.1, disabling for now: https://jira.kuali.org/browse/KULRICE-8938 -->
+                    <!--<property name="disclosure.defaultOpen" value="false" />-->
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HorizontalBoxSection">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-VerticalBoxSection">
+                                            <property name="items">
+                                                <list>
+                                                    <bean parent="Uif-InputField" p:propertyName="payment.effectiveDate" p:label="Effective Date">
+                                                        <property name="control">
+                                                            <bean parent="Uif-DateControl" p:size="11"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean parent="Uif-InputField" p:propertyName="payment.originationDate" p:label="Origination Date">
+                                                        <property name="control">
+                                                            <bean parent="Uif-DateControl" p:size="11"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean parent="Uif-InputField" p:propertyName="payment.recognitionDate" p:label="Recognition Date">
+                                                        <property name="control">
+                                                            <bean parent="Uif-DateControl" p:size="11"/>
+                                                        </property>
+                                                    </bean>
+
+                                                </list>
+                                            </property>
+                                        </bean>
+                                        <bean parent="Uif-VerticalBoxSection">
+                                            <property name="items">
+                                                <list>
+                                                    <bean parent="Uif-InputField" p:propertyName="internal">
+                                                        <property name="control">
+                                                            <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Internal Transaction"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean parent="Uif-InputField" p:label="Statement Text" p:propertyName="payment.statementText" p:labelPlacement="TOP">
+                                                        <property name="control">
+                                                            <bean parent="Uif-TextAreaControl"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean parent="Uif-InputField" p:propertyName="rollupId" p:labelPlacement="TOP" p:label="Roll-Up"
+                                                          p:fieldLabel.renderColon="false">
+                                                        <property name="control">
+                                                            <bean parent="Uif-DropdownControl" p:width="100%"/>
+                                                        </property>
+                                                        <property name="optionsFinder" value="@{getRollupOptionsFinder()}"/>
+                                                    </bean>
+
+                                                </list>
+                                            </property>
+                                        </bean>
+                                    </list>
+                                </property>
+                            </bean>
+                    </list>
                     </property>
                 </bean>
+
+
+
+
                 <!-- Use a field to get/set the value  -->
                 <bean parent="Uif-InputField" p:propertyName="estimatedPendingBalance"
                       p:label="Estimated Pending Balance"
@@ -167,9 +262,30 @@
                         <bean parent="Uif-TextControl" p:size="11" />
                     </property>
                 </bean>
+                <bean parent="Uif-InputField" p:propertyName="ageAccount">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Age the account"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="allocatePayment">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Allocate this payment"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="addMemoToPayment">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Add a memo to this payment"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="addAdditionalPayment">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Add another payment"/>
+                    </property>
+                </bean>
+
                 <ref bean="paymentControls"/>
-                <!--  Status message -->
-                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
+                <!--  Status message
+                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/> -->
             </list>
         </property>
     </bean>
@@ -183,9 +299,7 @@
     <bean id="paymentControls" parent="Uif-HorizontalBoxSubSection">
         <property name="items">
             <list>
-                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="submitAge" p:actionLabel="Submit and Apply Payments"
-                      p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);"/>
-                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="submit" p:actionLabel="Submit"
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="submit" p:actionLabel="Submit Payment"
                       p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);"/>
             </list>
         </property>

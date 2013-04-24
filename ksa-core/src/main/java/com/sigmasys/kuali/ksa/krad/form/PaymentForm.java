@@ -2,9 +2,12 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.CreditType;
+import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.model.Payment;
+import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 /**
  * Created by: dmulderink on 9/30/12 at 11:27 AM
@@ -16,7 +19,10 @@ public class PaymentForm extends AbstractViewModel {
    private Payment payment;
 
    private String paymentTransactionTypeId;
-    private CreditType transactionType = new CreditType();
+
+   private CreditType transactionType;
+
+   private boolean transactionTypeValid;
 
    private String printReceipt;
 
@@ -28,9 +34,23 @@ public class PaymentForm extends AbstractViewModel {
 
    private String statusMessage;
 
-   /*
-     Get / Set methods
-   */
+   private String transactionTypeMessage;
+
+   private String systemCurrency;
+    private KeyValuesFinder currencyOptionsFinder;
+    private KeyValuesFinder rollupOptionsFinder;
+    private String currencyId;
+    private String systemCurrencyId;
+    private String rollupId;
+
+    private boolean ageAccount;
+    private boolean allocatePayment;
+    private boolean addMemoToPayment;
+    private boolean addAdditionalPayment;
+
+    /*
+      Get / Set methods
+    */
 
 
    public Account getAccount() {
@@ -42,6 +62,9 @@ public class PaymentForm extends AbstractViewModel {
    }
 
    public Payment getPayment() {
+       if(payment == null){
+           payment = new Payment();
+       }
       return payment;
    }
 
@@ -103,5 +126,158 @@ public class PaymentForm extends AbstractViewModel {
 
     public void setTransactionType(CreditType transactionType) {
         this.transactionType = transactionType;
+    }
+
+    public String getExternalId(){
+        if(payment != null){
+            return payment.getExternalId();
+        }
+        return "";
+    }
+
+    public void setExternalId(String externalId){
+        if(this.payment != null){
+            this.payment.setExternalId(externalId);
+        }
+    }
+
+
+    public String getPaymentTransactionTypeId2() {
+        if(this.transactionType != null){
+            return this.transactionType.getId().getId();
+        }
+        return "";
+    }
+
+    public String getDescription() {
+        if(this.transactionType != null){
+            return transactionType.getDescription();
+        }
+        return "";
+    }
+
+    public String getDefaultClearingPeriod() {
+        if(this.transactionType != null){
+            return transactionType.getClearPeriod().toString() + " days";
+        }
+        return "";
+    }
+
+    public String getRefundRule(){
+        if(this.transactionType != null){
+            return transactionType.getRefundRule();
+        }
+        return "";
+    }
+
+    public String getAuthorizationText(){
+        if(this.transactionType != null){
+            return transactionType.getAuthorizationText();
+        }
+        return "";
+    }
+
+
+    public String getTransactionTypeMessage() {
+        return transactionTypeMessage;
+    }
+
+    public void setTransactionTypeMessage(String transactionTypeMessage) {
+        this.transactionTypeMessage = transactionTypeMessage;
+    }
+
+    public boolean isTransactionTypeValid() {
+        if(transactionType == null){
+            return false;
+        }
+        return true;
+    }
+
+    public String getSystemCurrency() {
+        if(systemCurrency == null){
+            systemCurrency = java.util.Currency.getInstance(Locale.getDefault()).getCurrencyCode();
+        }
+        return systemCurrency;
+    }
+
+    public void setSystemCurrency(String systemCurrency) {
+        this.systemCurrency = systemCurrency;
+    }
+
+    public KeyValuesFinder getCurrencyOptionsFinder() {
+        return currencyOptionsFinder;
+    }
+
+    public void setCurrencyOptionsFinder(KeyValuesFinder currencyOptionsFinder) {
+        this.currencyOptionsFinder = currencyOptionsFinder;
+    }
+
+    public KeyValuesFinder getRollupOptionsFinder() {
+        return rollupOptionsFinder;
+    }
+
+    public void setRollupOptionsFinder(KeyValuesFinder rollupOptionsFinder) {
+        this.rollupOptionsFinder = rollupOptionsFinder;
+    }
+
+    public String getCurrencyId() {
+        return currencyId;
+    }
+
+    public void setCurrencyId(String currencyId) {
+        this.currencyId = currencyId;
+        this.systemCurrencyId = currencyId;
+    }
+
+    public String getSystemCurrencyId(){
+        return this.systemCurrencyId;
+    }
+
+    public Boolean getInternal(){
+        return payment.isInternal();
+    }
+
+    public void setInternal(Boolean internal){
+        payment.setInternal(internal);
+    }
+
+    public String getRollupId() {
+        return rollupId;
+    }
+
+    public void setRollupId(String rollupId) {
+        this.rollupId = rollupId;
+    }
+
+    public boolean isAgeAccount() {
+        return ageAccount;
+    }
+
+    public void setAgeAccount(boolean ageAccount) {
+        this.ageAccount = ageAccount;
+    }
+
+    public boolean isAllocatePayment() {
+        return allocatePayment;
+    }
+
+    public void setAllocatePayment(boolean allocatePayment) {
+        this.allocatePayment = allocatePayment;
+    }
+
+    public boolean isAddMemoToPayment() {
+        return addMemoToPayment;
+    }
+
+    public void setAddMemoToPayment(boolean addMemoToPayment) {
+        this.addMemoToPayment = addMemoToPayment;
+    }
+
+    public boolean isAddAdditionalPayment() {
+        return addAdditionalPayment;
+    }
+
+    public void setAddAdditionalPayment(boolean addAdditionalPayment) {
+        this.addAdditionalPayment = addAdditionalPayment;
     }
 }

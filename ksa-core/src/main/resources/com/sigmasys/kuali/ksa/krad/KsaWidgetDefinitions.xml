@@ -61,7 +61,7 @@
                 <bean parent="Uif-Link" p:linkText="Transactions" p:target="_self"
                       p:href="transactionView?methodToCall=get&amp;pageId=ViewTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Make a Payment" p:target="_self"
-                      p:href="paymentView?methodToCall=get&amp;viewId=PaymentView&amp;userId=@{account.id}"/>
+                      p:href="paymentView?methodToCall=create&amp;viewId=PaymentView&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Add a Charge" p:target="_self"
                       p:href="chargeView?methodToCall=get&amp;viewId=ChargeView&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Add a Deferment" p:target="_self"

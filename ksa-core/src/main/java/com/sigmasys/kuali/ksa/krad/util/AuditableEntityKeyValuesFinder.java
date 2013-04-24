@@ -15,9 +15,16 @@ public class AuditableEntityKeyValuesFinder<T extends AuditableEntity> extends G
 
     private Class<T> type;
 
+    private boolean useCode = false;
+
 
     public AuditableEntityKeyValuesFinder(Class<T> type) {
+        this(type, false);
+    }
+
+    public AuditableEntityKeyValuesFinder(Class<T> type, boolean useCode) {
         this.type = type;
+        this.useCode = useCode;
         this.setBlankOption(true);
     }
 
@@ -31,7 +38,12 @@ public class AuditableEntityKeyValuesFinder<T extends AuditableEntity> extends G
         // Iterate through entities and add Key Value pairs:
         for (T entity : entities) {
             String key = entity.getId().toString();
-            String value = StringUtils.isNotBlank(entity.getName()) ? entity.getName() : "UNDEFINED";
+            String value;
+            if(useCode){
+                value = StringUtils.isNotBlank(entity.getCode()) ? entity.getCode() : "UNDEFINED";
+            } else {
+                value = StringUtils.isNotBlank(entity.getName()) ? entity.getName() : "UNDEFINED";
+            }
             ConcreteKeyValue keyValue = new ConcreteKeyValue(key, value);
 
             result.add(keyValue);
