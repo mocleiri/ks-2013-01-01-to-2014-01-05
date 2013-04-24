@@ -294,3 +294,15 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I click the "add" button
     And I click the "Preview Change" button
     Then there should be a new node with text "A. Must not have successfully completed ENGL101"
+
+  #KSENROLL-6387
+  @bug @KSENROLL-6483
+  Scenario: Confirm by using AS whether the changes made with the Edit button persists
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6387"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Edit Rule" link
+    And I select node "C" in the tree
+    And I click the "Edit" button
+    And I search for the "course code" "ENGL101"
+    And I click the "Preview Change" button
+    Then there should be a new node with text "G. Must have successfully completed ENGL101"

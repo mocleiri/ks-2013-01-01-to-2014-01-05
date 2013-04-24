@@ -17,6 +17,7 @@ class EditAgenda < BasePage
   element(:logic_text) { |b| b.frm.textarea(name: "document.newMaintainableObject.dataObject.logicArea")}
 
   action(:add_btn) { |b| b.frm.button(:text => /Add Rule Statement/).click}
+  action(:edit_btn) { |b| b.frm.button(:text => /Edit/).click}
   action(:group_btn) { |b| b.frm.button(:text => /Create Group/).click}
   action(:update_rule_btn) { |b| b.frm.button(:text => /Update Rule/).click}
   action(:down_btn) { |b| b.frm.button(:text => /Move Down/).click}

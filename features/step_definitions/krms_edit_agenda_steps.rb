@@ -69,7 +69,7 @@ end
 When /^I click the "(.*)" button$/ do |btn|
   buttons = {"Add Rule Statement"=>:add_btn, "Create Group"=>:group_btn, "Update Rule"=>:update_rule_btn, "Move Down"=>:down_btn,
              "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move Left"=>:left_btn, "Copy"=>:copy_btn,
-             "Cut"=>:cut_btn, "Paste"=>:paste_btn, "Delete"=>:del_btn, "add"=>:add_line_btn}
+             "Cut"=>:cut_btn, "Paste"=>:paste_btn, "Delete"=>:del_btn, "add"=>:add_line_btn, "Edit"=>:edit_btn}
   on EditAgenda do |page|
     page.send(buttons[btn])
   end

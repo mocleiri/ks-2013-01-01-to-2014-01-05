@@ -516,3 +516,15 @@ Feature: KRMS Edit Agenda
     And I click on the "Add Rule" link
     And I click on the "Compare to Original" link on the Edit Agenda page
     Then the old and new rule should be compared
+
+  #KSENROLL-6387
+  @bug @KSENROLL-6483
+  Scenario: Confirm whether the changes made with the Edit button persists
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6387"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Edit Rule" link
+    And I select node "C" in the tree
+    And I click the "Edit" button
+    And I enter "ENGL101" in the "course" field
+    And I click the "Preview Change" button
+    Then there should be a new node with text "G. Must have successfully completed ENGL101"
