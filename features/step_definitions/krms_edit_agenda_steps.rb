@@ -230,3 +230,15 @@ When /^I search for the "(.*)" "(.*)"$/ do |field, code|
   @editAgenda.advanced_search(field, code)
   sleep 3
 end
+
+When /^I click on the "(.*)" link on the Edit Agenda page$/ do |link|
+  on EditAgenda do |page|
+    page.preview_rule_section.a(:text => /#{Regexp.escape(link)}/).click
+  end
+end
+
+Then /^the old and new rule should be compared$/ do
+  on EditAgenda do |page|
+    puts page.compare_rule_section.text.should match /Compare CLU and CO Rules/
+  end
+end

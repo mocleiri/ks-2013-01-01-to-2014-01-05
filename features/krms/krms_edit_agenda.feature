@@ -507,3 +507,11 @@ Feature: KRMS Edit Agenda
     And I enter "Text random input value" in the "free form text" field
     And I click the "Preview Change" button
     Then there should be a new node with text "A. Text random input value"
+
+  #KSENROLL-6389
+  Scenario: Test whether the Compare to Original on an empty tree works as expected
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6384"
+    And I click on the "Antirequisite" section
+    And I click on the "Add Rule" link
+    And I click on the "Compare to Original" link on the Edit Agenda page
+    Then the old and new rule should be compared

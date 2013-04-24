@@ -8,6 +8,8 @@ class EditAgenda < BasePage
   element(:edit_tree_section) { |b| b.frm.div(id: "RuleStudentEditorView-Tree_tree")}
   element(:logic_tab_section) { |b| b.frm.div(id: "u438_boxLayout")}
   element(:preview_tree_section) { |b| b.frm.div(id: "u466")}
+  element(:compare_rule_section) { |b| b.frm.div(id: "compareRuleLightBox")}
+  element(:preview_rule_section) { |b| b.frm.div(id: "KS-RulePreview-Links")}
 
   element(:background_div) { |b| b.frm.li(:id => /^u\d+_node_0_parent_root$/)}
   element(:logic_tab) { |b| b.frm.a(:text => "Edit Rule Logic")}
