@@ -82,7 +82,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     @Override
     @Transactional(readOnly = false)
     public String exportTransactionsForBatch(String batchId) {
-        return convertGlTransmissionsToXml(batchId, glService.getGlTransmissionsForExport(batchId));
+        return convertGlTransmissionsToXml(batchId, glService.getGlTransmissionsForExport(batchId, GlTransmissionStatus.TRANSMITTED));
     }
 
     /**
