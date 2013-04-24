@@ -1,10 +1,7 @@
 When /^I create a Course Offering with Draft Activity Offerings$/ do
   #setup
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering)
-  on ManageCourseOfferings do |page|
-    page.target_row(@course_offering.course).link(text: "Manage").click
-    page.ao_status("A", "Draft").should == true
-  end
+  @course_offering.check_course_in_status("Draft")
 end
 
 And /^I cancel the deletion of a Course Offering in Course Offering Code view$/ do
