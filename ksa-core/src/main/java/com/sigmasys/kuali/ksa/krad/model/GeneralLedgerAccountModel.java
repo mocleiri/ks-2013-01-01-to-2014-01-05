@@ -5,6 +5,8 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,6 +36,11 @@ public class GeneralLedgerAccountModel implements Serializable {
      * Total amount of the account.
      */
     private BigDecimal totalAmount;
+
+    /**
+     * Associated General Ledger Transactions.
+     */
+    private List<GeneralLedgerTransactionModel> glTransactions;
 
 
     /**
@@ -95,5 +102,17 @@ public class GeneralLedgerAccountModel implements Serializable {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public List<GeneralLedgerTransactionModel> getGlTransactions() {
+        if (glTransactions == null) {
+            glTransactions = new ArrayList<GeneralLedgerTransactionModel>();
+        }
+
+        return glTransactions;
+    }
+
+    public void setGlTransactions(List<GeneralLedgerTransactionModel> glTransactions) {
+        this.glTransactions = glTransactions;
     }
 }

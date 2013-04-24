@@ -69,13 +69,9 @@
 	<bean id="glPriorBatchSection" parent="Uif-VerticalBoxSection" p:headerText="Prior Batch">
 		<property name="items">
 			<list>
-				<!-- The "Refresh" link that will actually display the contents since we don't want to load the contents immediately -->
-				<!--bean parent="Uif-LinkField" p:linkText="Refresh" p:target="_self"
-						p:href="generalLedger?methodToCall=searchForPriorBatches&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage" p:style="text-decoration:underline"/-->
-				
 				<!-- The table of Prior Batches -->
 				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:displayCollectionSize="10">
-					<property name="title" value="Roll-Up"/>
+					<property name="title" value="Prior Batch"/>
                     <property name="readOnly" value="true"/>
 					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.BatchTransmissionModel"/>
 					<property name="propertyName" value="priorBatchTransmissions" />
@@ -96,7 +92,7 @@
 							<!-- Download XML action link -->
 							<bean parent="Uif-LinkField" p:linkText="Download XML" p:target="_self"
 								  p:align="center" p:width="20%"
-								  p:href="generalLedger?methodToCall=downloadPriorBatchTransactions&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage"/>
+								  p:href="generalLedger?methodToCall=downloadPriorBatchTransactions&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage&amp;batchId=@{#line.batchId}"/>
 						</list>
 					</property>
 
@@ -148,27 +144,35 @@
 	<bean id="glPendingTransactionSection" parent="Uif-VerticalBoxSection" p:headerText="Pending">
 		<property name="items">
 			<list>
-				<!-- The "Refresh" link that will actually display the contents since we don't want to load the contents immediately -->
-				<bean parent="Uif-LinkField" p:linkText="Refresh" p:target="_self"
-						p:href="generalLedger?methodToCall=searchForPendingTransactions&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage" p:style="text-decoration:underline"/>
-				
 				<!-- The table of GL Accounts -->
-				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="3" p:displayCollectionSize="10">
-					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GlPendingTransactionModel"/>
+				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:displayCollectionSize="10">
+					<property name="title" value="Pending Transactions"/>
+                    <property name="readOnly" value="true"/>
+					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel"/>
 					<property name="propertyName" value="glAccountsPending" />
 					<property name="layoutManager.generateAutoSequence" value="false" />
-					<property name="layoutManager.richTable.render" value="false"/>
+					<property name="layoutManager.richTable.render" value="true"/>
 					<property name="layoutManager.renderSequenceField" value="false"/>
 					<property name="renderAddBlankLineButton" value="false"/>
 					<property name="renderAddLine" value="false"/>
-					<property name="renderLineActions" value="true"/>
+					<property name="renderLineActions" value="false"/>
+					<property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                    <property name="layoutManager.richTable.disableTableSort" value="true"/>
 					<property name="items">
 						<list>
-							<bean parent="Uif-DataField" p:label="General Ledger Account" p:propertyName="accountName"/>
-							<bean parent="Uif-DataField" p:label="Type" p:propertyName="accountType"/>
-							<bean parent="Uif-DataField" p:label="Amount" p:propertyName="totalAmount"/>
+							<bean parent="Uif-InputField" p:label="General Ledger Account" p:propertyName="name" p:style="width: 60%;"/>
+							<bean parent="Uif-InputField" p:label="Type" p:propertyName="operationTypeString" p:style="text-align: center; width: 10%;"/>
+							<bean parent="Uif-InputField" p:label="Total" p:propertyName="totalAmount" p:style="text-align: right; width: 25%;"/>
 						</list>
 					</property>
+
+					<property name="layoutManager.expandDetailsActionPrototype">
+						<bean parent="Uif-ExpandDetailsImageAction"/>
+					</property>
+					<property name="layoutManager.rowDetailsGroup">
+						<ref bean="generalLedgerTransactionSublist"/>
+					</property>
+
 				</bean>
 				
 				<!-- The total of all GL Accounts -->
@@ -176,6 +180,32 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="generalLedgerTransactionSublist" parent="Uif-TableSubCollection-WithinSection" p:layoutManager.numberOfColumns="6">
+        <property name="headerText" value="Transactions" />
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GeneralLedgerTransactionModel" />
+        <property name="propertyName" value="glTransactions" />
+        <property name="layoutManager.richTable.render" value="true" />
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="style" value="width: 100%;"/>
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="false"/>
+                <entry key="bInfo" value="false"/>
+                <entry key="bFilter" value="false"/>
+            </map>
+        </property>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="transactionDate" p:label="Date" p:style="width: 10%;"/>
+                <bean parent="Uif-InputField" p:propertyName="originalAmount" p:label="Original Amount" p:style="text-align: right; width: 10%;"/>
+                <bean parent="Uif-InputField" p:propertyName="description" p:label="Description" p:style="width: 50%;"/>
+                <bean parent="Uif-InputField" p:propertyName="operationTypeString" p:label="Type" p:style="text-align: center; width: 10%;"/>
+                <bean parent="Uif-InputField" p:propertyName="glAmount" p:label="GL Amount" p:style="text-align: right; width: 10%;"/>
+                <bean parent="Uif-InputField" p:propertyName="originatingAccountId" p:label="Originating Account" p:style="text-align: right; width: 10%;"/>
+            </list>
+        </property>
+    </bean>
 	
 	
 </beans>

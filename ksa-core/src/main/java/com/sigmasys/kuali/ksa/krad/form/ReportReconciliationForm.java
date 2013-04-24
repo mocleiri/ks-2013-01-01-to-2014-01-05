@@ -2,7 +2,6 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.krad.model.BatchTransmissionModel;
 import com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel;
-import com.sigmasys.kuali.ksa.krad.model.GlPendingTransactionModel;
 import com.sigmasys.kuali.ksa.model.Account;
 
 import java.math.BigDecimal;
@@ -20,7 +19,7 @@ public class ReportReconciliationForm extends AbstractViewModel {
      * All table rows containing information about GL Accounts
      * that have Pending Transactions.
      */
-    private List<GlPendingTransactionModel> glAccountsPending;
+    private List<GeneralLedgerAccountModel> glAccountsPending;
 
     /**
      * All Batch Transmissions.
@@ -39,11 +38,11 @@ public class ReportReconciliationForm extends AbstractViewModel {
     private BigDecimal allPriorBatchTotal;
 
 
-    public List<GlPendingTransactionModel> getGlAccountsPending() {
+    public List<GeneralLedgerAccountModel> getGlAccountsPending() {
         return glAccountsPending;
     }
 
-    public void setGlAccountsPending(List<GlPendingTransactionModel> glAccountsPending) {
+    public void setGlAccountsPending(List<GeneralLedgerAccountModel> glAccountsPending) {
         this.glAccountsPending = glAccountsPending;
     }
 
