@@ -41,7 +41,7 @@ end
 
 
 And /^I increase the overall max enrollment$/ do
-  @activity_offering.edit :max_enrollment => @activity_offering.max_enrollment.to_i + 20
+  @activity_offering.edit :max_enrollment => @activity_offering.max_enrollment.to_i + 20, :edit_already_started => true
 end
 
 

@@ -167,12 +167,14 @@ class ActivityOffering
   #
   # NB: 'save' is a separate step from edit as it allows validation steps to occur during the edit process
   #
-  # @param opts [Hash] key => value for attribute to be updated
+  # @param opts [Hash] key => value for attribute to be updated - additional opts :edit_already_started (bool), TODO :defer_submit
   def edit opts={}
 
-    on(ManageCourseOfferings).edit @code
+    if !opts[:edit_already_started] then
+      on(ManageCourseOfferings).edit @code
+    end
 
-    edit_colocation opts
+    #edit_colocation opts  TODO - figure out why colocation checkbox checked in all cases
     edit_max_enrollment_no_colocation opts
     edit_requested_delivery_logistics opts
     edit_course_url opts
@@ -341,7 +343,9 @@ class ActivityOffering
 
         opts[:seat_pool_list].each do |key,seat_pool|
           seat_pool.add_seatpool(seatpool_populations_used)
-          @seat_pool_list[key] = seat_pool unless !seat_pool.exp_add_succeed?
+          if !seat_pool.exp_add_succeed then
+            @seat_pool_list.delete(key)
+          end
         end
 
       end #END: edit_seat_pool_list
@@ -359,7 +363,6 @@ class ActivityOffering
   #completes activity offering edit operation
   #this is a separate step from edit as it allows validation steps to occur during the edit process
   def save()
-puts 'save'
     on ActivityOfferingMaintenance do |page|
       page.submit
     end

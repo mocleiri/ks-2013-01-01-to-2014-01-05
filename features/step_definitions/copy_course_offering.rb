@@ -33,7 +33,8 @@ end
 
 Then /^the activity offering clusters?, assigned AOs and reg groups are rolled over with the course offering$/ do
   @course_offering_copy = make CourseOffering, :course=>@course_offering.course, :term=>Rollover::ROLLOVER_TEST_TERM_TARGET
-  @course_offering_copy.manage
+  @course_offering_copy.activity_offering_cluster_list = @course_offering.activity_offering_cluster_list.sort
+  @course_offering_copy.manage   #NB, in this case can never be manage_and_init
 
   on ManageCourseOfferings do |page|
     clusters = page.cluster_div_list
