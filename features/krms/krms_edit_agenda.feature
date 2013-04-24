@@ -495,3 +495,15 @@ Feature: KRMS Edit Agenda
     And I click the "add" button
     And I click the "Preview Change" button
     Then there should be a new node with text "A. Must not have successfully completed any courses from ENGL101"
+
+  #KSENROLL-6384
+  @pending
+  Scenario: Test whether the free form text rule works for Corequisites
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6384"
+    And I click on the "Corequisite" section
+    And I click on the "Add Rule" link
+    And I click the "Add Rule Statement" button
+    And I select the "Free Form Text" option from the "rule" dropdown
+    And I enter "Text random input value" in the "free form text" field
+    And I click the "Preview Change" button
+    Then there should be a new node with text "A. Text random input value"

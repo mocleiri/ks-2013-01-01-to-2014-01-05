@@ -46,11 +46,9 @@ When /^I click on the "(.*)" section$/ do |sect|
 end
 
 When /^I click on the "(.*)" link$/ do |link|
-  sections = {"Add Rule"=>:rule_add_link, "Edit Rule"=>:rule_edit_links}
   on ManageCOAgendas do |page|
-    page.send(sections[link]).a(text: link).when_present.click
+    page.agenda_management_section.a(:text => /#{Regexp.escape(link)}/).when_present.click
   end
-  sleep 2
 end
 
 When /^I select node "(.*)" in the tree$/ do |letter|
