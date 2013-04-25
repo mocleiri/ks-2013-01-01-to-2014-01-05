@@ -17,22 +17,22 @@ class EditAgenda < BasePage
   element(:object_tab) { |b| b.frm.a(:text => "Edit Rule")}
   element(:logic_text) { |b| b.frm.textarea(name: "document.newMaintainableObject.dataObject.logicArea")}
 
-  action(:add_btn) { |b| b.frm.button(:text => /Add Rule Statement/).click}
-  action(:edit_btn) { |b| b.frm.button(:text => /Edit/).click}
-  action(:group_btn) { |b| b.frm.button(:text => /Create Group/).click}
-  action(:update_rule_btn) { |b| b.frm.button(:text => /Update Rule/).click}
-  action(:down_btn) { |b| b.frm.button(:text => /Move Down/).click}
-  action(:up_btn) { |b| b.frm.button(:text => /Move Up/).click}
-  action(:left_btn) { |b| b.frm.button(:text => /Move Left/).click}
-  action(:right_btn) { |b| b.frm.button(:text => /Move Right/).click}
-  action(:preview_btn) { |b| b.frm.button(:text => /Preview Change/).click}
-  action(:copy_btn) { |b| b.frm.button(:text => /Copy/).click}
-  action(:cut_btn) { |b| b.frm.button(:text => /Cut/).click}
-  action(:paste_btn) { |b| b.frm.button(:text => /Paste/).click}
-  action(:del_btn) { |b| b.frm.button(:text => /Delete/).click}
-  action(:add_line_btn) { |b| b.frm.button(:text => /add/).click}
+  action(:add_btn) { |b| b.frm.button(:text => /Add Rule Statement/).when_present.click}
+  action(:edit_btn) { |b| b.frm.button(:text => /Edit/).when_present.click}
+  action(:group_btn) { |b| b.frm.button(:text => /Create Group/).when_present.click}
+  action(:update_rule_btn) { |b| b.frm.button(:text => /Update Rule/).when_present.click}
+  action(:down_btn) { |b| b.frm.button(:text => /Move Down/).when_present.click}
+  action(:up_btn) { |b| b.frm.button(:text => /Move Up/).when_present.click}
+  action(:left_btn) { |b| b.frm.button(:text => /Move Left/).when_present.click}
+  action(:right_btn) { |b| b.frm.button(:text => /Move Right/).when_present.click}
+  action(:preview_btn) { |b| b.frm.button(:text => /Preview Change/).when_present.click}
+  action(:copy_btn) { |b| b.frm.button(:text => /Copy/).when_present.click}
+  action(:cut_btn) { |b| b.frm.button(:text => /Cut/).when_present.click}
+  action(:paste_btn) { |b| b.frm.button(:text => /Paste/).when_present.click}
+  action(:del_btn) { |b| b.frm.button(:text => /Delete/).when_present.click}
+  action(:add_line_btn) { |b| b.frm.button(:text => /add/).when_present.click}
 
-  action(:search_link) { |b| b.edit_tree_section.a(:text => /Advanced Search/).click}
+  action(:search_link) { |b| b.edit_tree_section.a(:text => /Advanced Search/).when_present.click}
 
   element(:course_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.courseInfo\.code/)}
   element(:free_text_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.termParameter/)}
@@ -44,5 +44,5 @@ class EditAgenda < BasePage
   element(:lookup_course_code) { |b| b.frm_popup.text_field(name: "lookupCriteria[code]")}
   element(:lookup_description) { |b| b.frm_popup.text_field(name: "lookupCriteria[description]")}
 
-  action(:lookup_search_button) { |b| b.frm_popup.button(id: "button_search").click}
+  action(:lookup_search_button) { |b| b.frm_popup.button(id: "button_search").when_present.click}
 end

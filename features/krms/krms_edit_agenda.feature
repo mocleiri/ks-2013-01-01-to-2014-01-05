@@ -517,6 +517,8 @@ Feature: KRMS Edit Agenda
     And I click on the "Compare to Original" link on the Edit Agenda page
     Then the old and new rule should be compared
 
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #Tests will change when the data on the page is back to normal
   #KSENROLL-6387
   @bug @KSENROLL-6483
   Scenario: Confirm whether the changes made with the Edit button persists
@@ -528,6 +530,7 @@ Feature: KRMS Edit Agenda
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     Then there should be a new node with text "G. Must have successfully completed ENGL101"
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   #KSENROLL-6391
   @pending
@@ -538,7 +541,10 @@ Feature: KRMS Edit Agenda
     And I click on the "Cancel" link on the Edit Agenda page
     Then the loaded page should have "Enrollment Eligibility" as a heading
 
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #Tests will change when the data on the page is back to normal
   #KSENROLL-6393
+  @pending
   Scenario: Confirm whether creating a second group does not cause the page to crash
     When I go to the Manage Course Offering Agendas page for "KSENROLL-6393"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -551,3 +557,19 @@ Feature: KRMS Edit Agenda
     And I click the "Create Group" button
     Then there should be nothing selected in the rule dropdown
 
+  #KSENROLL-6491
+  @bug @KSENROLL-6489
+  Scenario: Confirm that the page does not crash when moving nodes around and adding a group
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6491"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Edit Rule" link
+    And I select node "B" in the tree
+    And I click the "Add Rule Statement" button
+    And I select the "Free Form Text" option from the "rule" dropdown
+    And I enter "free form text input value" in the "free form text" field
+    And I click the "Preview Change" button
+    And I select node "B" in the tree
+    And I click the "Move Down" button
+    And I click the "Create Group" button
+    Then there should be nothing selected in the rule dropdown
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

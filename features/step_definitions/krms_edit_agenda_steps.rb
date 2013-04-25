@@ -20,7 +20,7 @@ end
 When /^I click the "(.*)" button on Manage CO page$/ do |btn|
   buttons = {"Show"=>:show}
   on ManageCourseOfferings do |page|
-    page.send(buttons[btn]).when_present
+    page.send(buttons[btn])
   end
 end
 
@@ -67,7 +67,7 @@ When /^I click the "(.*)" button$/ do |btn|
              "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move Left"=>:left_btn, "Copy"=>:copy_btn,
              "Cut"=>:cut_btn, "Paste"=>:paste_btn, "Delete"=>:del_btn, "add"=>:add_line_btn, "Edit"=>:edit_btn}
   on EditAgenda do |page|
-    page.send(buttons[btn]).when_present
+    page.send(buttons[btn])
   end
 end
 
@@ -182,13 +182,13 @@ end
 When /^I click the "(.*)" button on Manage CO Agendas page$/ do |btn|
   buttons = {"Save"=>:submit_btn, "Cancel"=>:cancel_btn}
   on ManageCOAgendas do |page|
-    page.send(buttons[btn]).when_present
+    page.send(buttons[btn])
   end
 end
 
 When /^I go to the Main Menu from Manage CO Agendas$/ do
   on ManageCOAgendas do |page|
-    page.main_menu.when_present
+    page.main_menu
   end
 end
 
