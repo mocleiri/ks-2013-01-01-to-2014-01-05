@@ -17,7 +17,7 @@ import java.util.Date;
  * Time: 3:15 PM
  * To change this template use File | Settings | File Templates.
  */
-public class GeneralLedgerTransactionModel implements Serializable {
+public class GeneralLedgerTransactionModel extends TransactionModel implements Serializable {
 
     /**
      * The General Ledger Transaction.
@@ -29,6 +29,22 @@ public class GeneralLedgerTransactionModel implements Serializable {
      */
     private Transaction ksaTransaction;
 
+
+    /**
+     * Creates an empty GeneralLedgerTransactionModel.
+     */
+    public GeneralLedgerTransactionModel() {}
+
+    /**
+     * Creates a new GeneralLedgerTransactionModel with the given KSA Transaction.
+     *
+     * @param ksaTransaction    A KSA Transaction.
+     */
+    public GeneralLedgerTransactionModel(Transaction ksaTransaction) {
+        super(ksaTransaction);
+
+        this.ksaTransaction = ksaTransaction;
+    }
 
     public GlTransaction getGlTransaction() {
         return glTransaction;
