@@ -220,7 +220,7 @@ public class CashLimitEvent implements Identifiable {
     }
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "CASH_LIMIT_EVENT_TRANS",
+    @JoinTable(name = "KSSA_CASH_LIMIT_EVENT_TRANS",
             joinColumns = {
                     @JoinColumn(name = "CASH_LIMIT_EVENT_ID_FK")
             },
