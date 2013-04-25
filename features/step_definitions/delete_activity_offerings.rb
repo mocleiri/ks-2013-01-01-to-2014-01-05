@@ -1,6 +1,6 @@
 When /^I create a Course Offering with "(\d+)" Activity Offerings$/ do |number_of_aos_to_create|
   @course_offering = create CourseOffering
-  @course_offering.create_ao :number_aos_to_create => number_of_aos_to_create
+  @course_offering.create_ao(make ActivityOffering, :number_aos_to_create => number_of_aos_to_create )
 end
 
 
