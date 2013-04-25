@@ -18,7 +18,7 @@ As an Administrator, I want to create registration groups for a Course Offering
     #And the remaining activity offerings are shown as unassigned
 
   Scenario: ARG 6.4B: Error message is displayed if I attempt to create 2 activity offering clusters with the same private name
-    Given I manage registration groups for a course offering
+    Given I manage registration groups for a new course offering
     When I create an activity offering cluster
     Then I try to create a second activity offering cluster with the same private name
     And a cluster error message appears stating "The cluster private name is already in use"
@@ -27,14 +27,14 @@ As an Administrator, I want to create registration groups for a Course Offering
     Then I remove the newly created cluster
 
   Scenario: ARG 6.10-1 Access Edit AO directly from within the clusters on the new Mge AO page and return with cancel
-    Given I manage registration groups for a course offering
+    Given I manage registration groups for a new course offering
     When I edit the Activity Offering
     Then the edit Activity Offering page is displayed
     And I return from the edit Activity Offering page
     Then the Manage Course Offerings page is displayed
 
   Scenario: ARG 6.10-2 Access Edit AO directly from within the clusters on the new Mge AO page can submit ao changes
-    Given I manage registration groups for a course offering
+    Given I manage registration groups for a new course offering
     When I edit the Activity Offering
     Then the edit Activity Offering page is displayed
     And I submit the Activity Offering changes
