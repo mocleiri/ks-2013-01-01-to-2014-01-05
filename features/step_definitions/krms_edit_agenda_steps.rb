@@ -13,28 +13,27 @@ end
 When /^I enter "(.*)" in the "(.*)" field on Manage CO page$/ do |input,field|
   fields = {"term"=>:term, "course"=>:input_code}
   on ManageCourseOfferings do |page|
-    page.send(fields[field]).set input
+    page.send(fields[field]).when_present.set input
   end
 end
 
 When /^I click the "(.*)" button on Manage CO page$/ do |btn|
   buttons = {"Show"=>:show}
   on ManageCourseOfferings do |page|
-    page.send(buttons[btn])
+    page.send(buttons[btn]).when_present
   end
 end
 
 When /^I click the "(.*)" link for course "(.*)"$/ do |link,cours|
   on ManageCourseOfferingList do |page|
-    page.target_row(cours).link(text: link).click
+    page.target_row(cours).link(text: link).when_present.click
   end
-  sleep 5
 end
 
 When /^I click on the "(.*)" link on Manage CO page$/ do |link|
   on ManageCourseOfferings do |page|
     #link does not exist yet
-    #page.link(text: link).click
+    page.a(text: link).when_present.click
   end
 end
 
@@ -42,7 +41,6 @@ When /^I click on the "(.*)" section$/ do |sect|
   on ManageCOAgendas do |page|
     page.agenda_management_section.span(text: sect).when_present.click
   end
-  sleep 2
 end
 
 When /^I click on the "(.*)" link$/ do |link|
@@ -53,9 +51,8 @@ end
 
 When /^I select node "(.*)" in the tree$/ do |letter|
   on EditAgenda do |page|
-    page.edit_tree_section.span(:text => /.*#{Regexp.escape(letter)}\..*/).click
+    page.edit_tree_section.span(:text => /.*#{Regexp.escape(letter)}\..*/).when_present.click
   end
-  sleep 2
 end
 
 Then /^the background color should change to "(.*)"$/ do |color|
@@ -63,7 +60,6 @@ Then /^the background color should change to "(.*)"$/ do |color|
   on EditAgenda do |page|
     page.background_div.style('background-color').should == colors[color]
   end
-  sleep 5
 end
 
 When /^I click the "(.*)" button$/ do |btn|
@@ -71,16 +67,14 @@ When /^I click the "(.*)" button$/ do |btn|
              "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move Left"=>:left_btn, "Copy"=>:copy_btn,
              "Cut"=>:cut_btn, "Paste"=>:paste_btn, "Delete"=>:del_btn, "add"=>:add_line_btn, "Edit"=>:edit_btn}
   on EditAgenda do |page|
-    page.send(buttons[btn])
+    page.send(buttons[btn]).when_present
   end
-  sleep 2
 end
 
 Then /^there should be nothing selected in the rule dropdown$/ do
   on EditAgenda do |page|
     page.edit_tree_section.select(:name => /.*editTree.*proposition\.typeId/).option(selected: "selected").text.should == ""
   end
-  sleep 5
 end
 
 Then /^the "(.*)" field should be empty$/ do |field|
@@ -88,21 +82,18 @@ Then /^the "(.*)" field should be empty$/ do |field|
   on EditAgenda do |page|
     page.edit_tree_section.text_field(:name => /.*editTree.*proposition\.#{Regexp.escape(types[field])}/).text.should == ""
   end
-  sleep 5
 end
 
 Then /^there should be a new node with text "(.*)"$/ do |text|
   on EditAgenda do |page|
     page.edit_tree_section.text.should match /.*#{Regexp.escape(text)}.*/
   end
-  sleep 2
 end
 
 Then /^there should be a dropdown with value "(.*)" before node "(.*)"$/ do |drop, node|
   on EditAgenda do |page|
     page.edit_tree_section.text.should match /.*#{Regexp.escape(drop)}.*#{Regexp.escape(node)}.*/m
   end
-  sleep 5
 end
 
 When /^I click the "(.*)" tab$/ do |tab|
@@ -110,28 +101,24 @@ When /^I click the "(.*)" tab$/ do |tab|
   on EditAgenda do |page|
     page.send(tabs[tab]).when_present.click
   end
-  sleep 3
 end
 
 Then /^the text "(.*)" should be present in the text area$/ do |text|
   on EditAgenda do |page|
     page.logic_text.text.should == text
   end
-  sleep 3
 end
 
 Then /^the preview section should have the text "(.*)"$/ do |text|
   on EditAgenda do |page|
     page.preview_tree_section.text.should match /.*#{Regexp.escape(text)}.*/
   end
-  sleep 5
 end
 
 Then /^the word "(.*)" should exist before node "(.*)"$/ do |text, node|
   on EditAgenda do |page|
     page.preview_tree_section.text.should match /.*#{Regexp.escape(text)}\n#{Regexp.escape(node)}.*/
   end
-  sleep 5
 end
 
 When /^I select "(.*)" from the dropdown before node "(.*)"$/ do |cond, node|
@@ -139,7 +126,6 @@ When /^I select "(.*)" from the dropdown before node "(.*)"$/ do |cond, node|
     id = @editAgenda.find_krms_before_element("edit_tree",'select',node)
     page.edit_tree_section.when_present.select(:id => id).select cond
   end
-  sleep 3
 end
 
 When /^I select the "(.*)" option from the "(.*)" dropdown$/ do |rule, type|
@@ -147,7 +133,6 @@ When /^I select the "(.*)" option from the "(.*)" dropdown$/ do |rule, type|
   on EditAgenda do |page|
     page.edit_tree_section.select(:name => /.*editTree.*#{Regexp.escape(dropdown[type])}/).when_present.select /#{Regexp.escape(rule)}/
   end
-  sleep 5
 end
 
 When /^I enter "(.*)" in the "(.*)" field$/ do |cors, field|
@@ -197,13 +182,13 @@ end
 When /^I click the "(.*)" button on Manage CO Agendas page$/ do |btn|
   buttons = {"Save"=>:submit_btn, "Cancel"=>:cancel_btn}
   on ManageCOAgendas do |page|
-    page.send(buttons[btn])
+    page.send(buttons[btn]).when_present
   end
 end
 
 When /^I go to the Main Menu from Manage CO Agendas$/ do
   on ManageCOAgendas do |page|
-    page.main_menu
+    page.main_menu.when_present
   end
 end
 
@@ -228,13 +213,12 @@ end
 
 When /^I search for the "(.*)" "(.*)"$/ do |field, code|
   @editAgenda.advanced_search(field, code)
-  sleep 3
 end
 
 When /^I click on the "(.*)" link on the Edit Agenda page$/ do |link|
   sect = {"Compare to Original"=>:preview_rule_section, "Cancel"=>:rule_maintenance_section}
   on EditAgenda do |page|
-    page.send(sect[link]).a(:text => /#{Regexp.escape(link)}/).click
+    page.send(sect[link]).a(:text => /#{Regexp.escape(link)}/).when_present.click
   end
 end
 

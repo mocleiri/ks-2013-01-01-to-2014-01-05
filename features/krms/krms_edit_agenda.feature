@@ -532,9 +532,22 @@ Feature: KRMS Edit Agenda
   #KSENROLL-6391
   @pending
   Scenario: Confirm whether the cancel button works in edit proposition on Antirequisite page
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6389"
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6391"
     And I click on the "Antirequisite" section
     And I click on the "Add Rule" link
     And I click on the "Cancel" link on the Edit Agenda page
     Then the loaded page should have "Enrollment Eligibility" as a heading
+
+  #KSENROLL-6393
+  Scenario: Confirm whether creating a second group does not cause the page to crash
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6393"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Edit Rule" link
+    And I select node "C" in the tree
+    And I click the "Create Group" button
+    And I select the "Free Form Text" option from the "rule" dropdown
+    And I enter "free form text input value" in the "free form text" field
+    And I click the "Preview Change" button
+    And I click the "Create Group" button
+    Then there should be nothing selected in the rule dropdown
 
