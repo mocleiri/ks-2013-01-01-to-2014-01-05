@@ -13,6 +13,8 @@ import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableDouble;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.kew.rule.GenericRoleAttribute;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +40,9 @@ import java.util.*;
  */
 @Controller
 @RequestMapping(value = "/generalLedger")
-public class GeneralLedgerController extends DownloadController {
+public class GeneralLedgerController extends ReportReconciliationController {
+
+    private static final Log logger = LogFactory.getLog(GeneralLedgerController.class);
 
     @Autowired
     private GeneralLedgerService generalLedgerService;
@@ -46,20 +50,6 @@ public class GeneralLedgerController extends DownloadController {
     @Autowired
     private AuditableEntityService auditableEntityService;
 
-    @Autowired
-    private TransactionExportService transactionExportService;
-
-
-    /**
-     * Creates an initial form, which is the GeneralLedger page form.
-     */
-    @Override
-    protected UifFormBase createInitialForm(HttpServletRequest request) {
-        // Create a new form:
-        ReportReconciliationForm form = new ReportReconciliationForm();
-
-        return form;
-    }
 
     /**
      * Displays the initial page.
@@ -75,19 +65,6 @@ public class GeneralLedgerController extends DownloadController {
         searchForPendingTransactions(form);
 
         return getUIFModelAndView(form);
-    }
-
-    /**
-     * Exports all Pending Transactions to the General ledger and starts download.
-     *
-     * @param form The form object.
-     * @return null because we want to stay on the same page when download starts.
-     */
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=exportAllPendingTransactions")
-    public ModelAndView exportAllPendingTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
-        // Retrieve a list of Pending Transactions for all GL Accounts:
-
-        return null;
     }
 
     /**

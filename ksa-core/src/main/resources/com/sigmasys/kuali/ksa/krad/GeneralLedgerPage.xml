@@ -37,12 +37,15 @@
 		<property name="headerText" value="General Ledger"/>
 		<property name="items">
 			<list>
+				<!-- Export Pending Transaction action -->
+				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Export All Pending Transactions" p:ajaxSubmit="true" p:methodToCall="exportAllPendingTransactions"
+						p:successCallback="alert('Transactions exported successfully.');"
+						p:errorCallback="alert('There were errors exporting transactions. See log for details.');"/>
+				
 				<!-- The "Refresh" link that will actually display the contents since we don't want to load the contents immediately -->
 				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Refresh View" 
 						p:actionScript="window.location.href='generalLedger?methodToCall=displayGeneralLedger&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage'"/>
 									
-				<!-- Export Pending Transaction action -->
-				
 				<!-- The tabbed Control -->
 				<bean parent="Uif-TabGroup">
 					<property name="items">

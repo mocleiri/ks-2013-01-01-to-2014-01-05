@@ -2,8 +2,10 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.ReportReconciliationForm;
 import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.service.TransactionExportService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +19,13 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @RequestMapping(value = "/reportReconciliationView")
-public class ReportReconciliationController extends GenericSearchController {
+public class ReportReconciliationController extends DownloadController {
 
     private static final Log logger = LogFactory.getLog(ReportReconciliationController.class);
+
+    @Autowired
+    protected TransactionExportService transactionExportService;
+
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -58,4 +64,18 @@ public class ReportReconciliationController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+
+    /**
+     * Exports all Pending Transactions to the General ledger.
+     *
+     * @param form The form object.
+     * @return null because we want to stay on the same page.
+     */
+    @RequestMapping(method = {RequestMethod.POST,RequestMethod.GET}, params = "methodToCall=exportAllPendingTransactions")
+    public ModelAndView exportAllPendingTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
+        // Call the service to export all pending transactions:
+        transactionExportService.exportTransactions();
+
+        return getUIFModelAndView(form);
+    }
 }
