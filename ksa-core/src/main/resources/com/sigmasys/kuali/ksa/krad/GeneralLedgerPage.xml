@@ -202,8 +202,16 @@
             <list>
                 <bean parent="Uif-InputField" p:propertyName="transactionDate" p:label="Date" p:style="width: 10%;"/>
                 <bean parent="Uif-InputField" p:propertyName="originalAmount" p:label="Original Amount" p:style="text-align: right; width: 10%;"/>
-                <bean parent="Uif-InputField" p:propertyName="description" p:label="Description" p:style="width: 50%;"/>
-                <bean parent="Uif-InputField" p:propertyName="operationTypeString" p:label="Type" p:style="text-align: center; width: 10%;"/>
+				<bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 50%;">
+					<property name="items">
+						<list>
+							<bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" 
+									p:linkText="@{#line.description}" p:style="width: 100%;"/>
+							<ref bean="transactionDetailLightboxRunningTotal"/>
+						</list>
+					</property>
+				</bean>
+				<bean parent="Uif-InputField" p:propertyName="operationTypeString" p:label="Type" p:style="text-align: center; width: 10%;"/>
                 <bean parent="Uif-InputField" p:propertyName="glAmount" p:label="GL Amount" p:style="text-align: right; width: 10%;"/>
                 <bean parent="Uif-InputField" p:propertyName="originatingAccountId" p:label="Originating Account" p:style="text-align: right; width: 10%;"/>
             </list>

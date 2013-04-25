@@ -205,16 +205,8 @@
                                             <property name="items">
                                                 <list>
                                                     <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />
-                                                    <bean id="transactionDetailLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
-                                                        <property name="hidden" value="true"/>
-                                                        <property name="items">
-                                                            <list>
-                                                                <bean parent="Uif-HeaderTwo" p:headerText="Transaction Details"/>
-                                                                <ref bean="transactionDetail"/>
-                                                            </list>
-                                                        </property>
-                                                    </bean>
-
+													<ref bean="transactionDetailLightboxRunningTotal"/>
+													
                                                     <bean parent="Uif-ImageField" p:source="../images/refund.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
                                                           p:onClickScript="showLightboxComponent('refundLightbox@{#lineSuffix}');" p:render="@{#line.isPaymentRefundable()}">
                                                         <property name="toolTip">
@@ -618,6 +610,16 @@
         </property>
     </bean>
 
+	<bean id="transactionDetailLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+		<property name="hidden" value="true"/>
+		<property name="items">
+			<list>
+				<bean parent="Uif-HeaderTwo" p:headerText="Transaction Details"/>
+				<ref bean="transactionDetail"/>
+			</list>
+		</property>
+	</bean>
+	
     <bean id="transactionDetail" parent="Uif-VerticalBoxSection">
         <property name="items">
             <list>
