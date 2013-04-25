@@ -18,14 +18,13 @@ Feature: Department Schedule Coordinator Authorization SOC state Open
     And I have access to edit the CO honors flag
     But I do not have access to edit the final exam type
 
-
   Scenario: AZ 4.1A/Full_open.1 Validate Department Schedule Coordinator access to a course offering in their admin org (single CO view)
     When I manage a course offering in my admin org
     Then I have access to view the course offering details
     And I have access to view the activity offering details
     And I have access to edit the course offering
     And I have access to delete the course offering
-    #And I have access to manage registration groups TODO: validate access to various reg groups links on page
+    And I have access to manage activity offering clusters
     And I have access to select activity offerings for add, approve, delete
 
   Scenario: AZ 4.1A/Full_open.1A Validate Department Schedule Coordinator access to a course offering not in their admin org (single CO view)

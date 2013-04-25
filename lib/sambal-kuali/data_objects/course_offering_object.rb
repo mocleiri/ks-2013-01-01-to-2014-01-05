@@ -319,7 +319,7 @@ class CourseOffering
 
         @activity_offering_cluster_list.push(temp_aoc)
       end
-      show_debug_details
+      #show_debug_details
     end
   end
 

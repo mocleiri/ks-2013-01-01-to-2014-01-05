@@ -195,6 +195,22 @@ Then /^I have access to delete the course offering$/ do
   end
 end
 
+Then /^I have access to manage activity offering clusters$/ do
+  on ManageCourseOfferings do |page|
+    page.add_cluster_button.present?.should be_true
+    page.add_cluster_button.enabled?.should be_true
+
+    page.move_aos_button.present?.should be_true
+    page.move_aos_button.enabled?.should be_true
+
+    page.rename_cluster_link(:default_cluster).present?.should be_true
+    page.rename_cluster_link(:default_cluster).attribute_value("class").should_not match /disabled/
+
+    page.remove_cluster_link(:default_cluster).present?.should be_true
+    page.remove_cluster_link(:default_cluster).attribute_value("class").should_not match /disabled/
+
+  end
+end
 
 Then /^I do not have access to delete the course offering$/ do
   on ManageCourseOfferings do |page|
@@ -581,7 +597,7 @@ Then /^I do not have access to select course offerings for approve, delete$/ do
   end
 end
 
-
+#TODO - need to add check for the state of the buttons here?
 Then /^I have access to select activity offerings for add, approve, delete$/ do
   on ManageCourseOfferings do |page|
     page.add_activity_button.enabled?.should be_true

@@ -27,8 +27,11 @@ class ManageCourseOfferings < BasePage
   element(:view_co_details_link) { |b| b.manage_offering_links_div.link(text: "View") }
   element(:edit_course_offering_link) { |b| b.frm.link(id: "edit_co")}
   action(:edit_course_offering) { |b| b.edit_course_offering_link.click; b.loading.wait_while_present(200) }
-  action(:delete_course_offering_link) { |b| b.manage_offering_links_div.link(id: "ActivityOfferingResultSection-deleteOneCoWithLink") }
+  element(:delete_course_offering_link) { |b| b.manage_offering_links_div.link(id: "ActivityOfferingResultSection-deleteOneCoWithLink") }
   action(:delete_course_offering) { |b| b.delete_course_offering_link.click; b.loading.wait_while_present }
+  element(:view_all_reg_groups_link) { |b| b.manage_offering_links_div.link(text: /View All Registration Groups/) }
+  action(:view_all_reg_groups) { |b| b.view_all_reg_groups_link.click; b.loading.wait_while_present }
+
 
   value(:cross_listed_as_text) { |b| b.frm.span(text: /crosslisted alias/).text }
 
@@ -83,7 +86,6 @@ class ManageCourseOfferings < BasePage
   action(:complete_move_ao) { |b| b.move_ao_button.click; b.loading.wait_while_present }
 
   def approve_co_confirm
-    puts "exists? #{approve_co_popup_div.checkbox(index: 0).exists?}"
     approve_co_popup_div.checkbox(index: 0).click
     loading.wait_while_present(180)
   end
@@ -279,7 +281,7 @@ class ManageCourseOfferings < BasePage
     if cluster_list_div.exists?
       div_list = cluster_list_div.divs(class: "uif-group uif-boxGroup uif-horizontalBoxGroup uif-collectionItem uif-boxCollectionItem")
     end
-    puts "div list #{div_list.length}"
+    #puts "div list #{div_list.length}"
     div_list
   end
 
@@ -322,13 +324,22 @@ class ManageCourseOfferings < BasePage
     target_cluster(private_name).table.row.checkbox.set unless !target_cluster(private_name).table.exists?
   end
 
+  def remove_cluster_link(private_name)
+    target_cluster(private_name).link(text: /Delete/)
+  end
+
   def remove_cluster(private_name)
-    target_cluster(private_name).link(text: /Delete/).click
+    remove_cluster_link(private_name).click
     loading.wait_while_present
   end
 
+  def rename_cluster_link(private_name)
+    target_cluster(private_name).link(text: /Rename/)
+  end
+
+
   def rename_cluster(private_name)
-    target_cluster(private_name).link(text: /Rename/).click
+    rename_cluster_link(private_name).click
     loading.wait_while_present
   end
 
@@ -415,8 +426,12 @@ class ManageCourseOfferings < BasePage
     loading.wait_while_present
   end
 
-  def view_cluster_reg_groups(private_name)
+  def view_cluster_reg_groups_link(private_name)
     target_cluster(private_name).link(text: /View Registration Groups/).click
+  end
+
+  def view_cluster_reg_groups(private_name)
+    view_cluster_reg_groups_link(private_name).click
   end
 
   def view_reg_groups_table(private_name)
