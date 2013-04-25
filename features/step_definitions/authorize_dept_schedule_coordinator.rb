@@ -345,7 +345,7 @@ When /^I have access to create the course from an existing offering$/ do
   end
 end
 
-When /^there is a "([^"]*)" course offering in my admin org/ do |co_status|
+When /^there is an? "([^"]*)" course offering in my admin org/ do |co_status|
   step "I am logged in as a Schedule Coordinator"
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
   @course_offering.check_course_in_status(co_status)
@@ -584,6 +584,19 @@ Then /^I do not have access to select activity offerings for add, approve, delet
   end
 end
 
+Then /^I do not have access to select the "([^"]*)" course offering for approve, delete$/ do |co_status|
+  @course_offering.search_by_subjectcode
+  on ManageCourseOfferingList do |page|
+    page.delete_cos_button.enabled?.should be_false
+    page.approve_course_offering_button.enabled?.should be_false
+    #page.create_course_offering_button.enabled?.should be_false
+    #page.draft_activity_button.enabled?.should be_false
+    co_row = page.target_row(@course_offering.course)
+    page.co_row_status(co_row).should == co_status
+    co_row.checkbox.present?.should be_false
+  end
+end
+
 Then /^I do not have access to select course offerings for approve, delete$/ do
   @course_offering.search_by_subjectcode
   on ManageCourseOfferingList do |page|
@@ -593,6 +606,20 @@ Then /^I do not have access to select course offerings for approve, delete$/ do
     #page.draft_activity_button.enabled?.should be_false
     page.co_list.each do |co_code|
       page.target_row(co_code).checkbox.present?.should be_false
+    end
+  end
+end
+
+Then /^I do not have access to select course offerings for approve$/ do
+  @course_offering.search_by_subjectcode
+  on ManageCourseOfferingList do |page|
+    page.approve_course_offering_button.enabled?.should be_false
+    page.co_list.each do |co_code|
+      checkbox = page.target_row(co_code).checkbox
+      if checkbox.present? then
+        checkbox.set
+        page.approve_course_offering_button.enabled?.should be_false
+      end
     end
   end
 end

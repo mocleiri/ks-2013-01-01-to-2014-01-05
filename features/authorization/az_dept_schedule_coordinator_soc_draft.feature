@@ -9,7 +9,7 @@ Feature: Department Schedule Coordinator Authorization SOC state Draft
     When I manage course offerings for a subject code in my admin org
     Then I do not have access to manage the course offering
 
-  Scenario: AZ 6.1//Full_draft.1 Department Schedule Coordinator Carol has no access to manage activity offerings (in admin org) for a term with SOC State Draft (single CO view)
+  Scenario: AZ 6.1/Full_draft.1 Department Schedule Coordinator Carol has no access to manage activity offerings (in admin org) for a term with SOC State Draft (single CO view)
     When I manage a course offering in my admin org
     Then I do not have access to view the activity offerings
 

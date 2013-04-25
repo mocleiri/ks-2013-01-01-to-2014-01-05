@@ -10,7 +10,7 @@ Feature: Department Schedule Coordinator Authorization SOC state Published
     Then I have access to view the course offering details
     And I have access to view the activity offering details
     And I do not have access to edit the course offering
-    And I do not have access to delete the course offering
+    #And I do not have access to delete the course offering - can delete if "draft"
     #And I do not have access to manage registration groups TODO: AZ not implemented yet
 
 
@@ -26,10 +26,13 @@ Feature: Department Schedule Coordinator Authorization SOC state Published
     And I do not have access to add a new activity offering
 
   Scenario: AZ 4.1A/4.2/Full_published.2 Department Schedule Coordinator Carol can access the Manage CO set of pages for COs for her own admin org (CO list view)
+    Given there is a "Draft" course offering in my admin org
+    Given there is an "Offered" course offering in my admin org
     When I manage course offerings for a subject code in my admin org
     Then I have access to view course offering details
     But I do not have access to add course offerings
-    And I do not have access to select course offerings for approve, delete
+    And I do not have access to select course offerings for approve
+    #delete covered in separate tests
     And I do not have access to edit the listed course offering
     And I do not have access to copy the listed course offering
 
@@ -49,7 +52,6 @@ Feature: Department Schedule Coordinator Authorization SOC state Published
     When I attempt to create a course offering for a subject not in my admin org
     Then I do not have access to create the course offering
 
-
   Scenario: AZ 5.1B/Full_published.4 Department Schedule Coordinator Carol has limited access to delete Co's (in admin org)
     Given there is a "Draft" course offering in my admin org
     When I list the course offerings for that subject code
@@ -60,7 +62,7 @@ Feature: Department Schedule Coordinator Authorization SOC state Published
   Scenario: AZ 5.1B/Full_published.4B Department Schedule Coordinator Carol has limited access to delete Co's (in admin org)
     And there is a "Offered" course offering in my admin org
     When I list the course offerings for that subject code
-    And I do not have access to select course offerings for approve, delete
+    And I do not have access to select the "Offered" course offering for approve, delete
     When I manage the course offering
     Then I do not have access to delete the course offering
 #TODO not yet implemented - access to offered suspended and cancelled states

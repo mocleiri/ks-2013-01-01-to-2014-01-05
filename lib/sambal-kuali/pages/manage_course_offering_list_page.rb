@@ -80,6 +80,11 @@ class ManageCourseOfferingList < BasePage
     end
   end
 
+  def co_row_status(target_row)
+    target_row.cells[CO_STATUS_COLUMN].text
+  end
+
+
   def copy(co_code)
     copy_link(co_code).click
     loading.wait_while_present(220)
