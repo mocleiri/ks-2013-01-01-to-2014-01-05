@@ -118,7 +118,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('kfs.transaction.gl.entry.descript
 -- KSA Transaction settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.transaction.recognition.year', '2014');
 
--- 1098T settings
+-- IRS 1098T report settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.1098.filer.name', 'Sigma University');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.1098.filer.address1', '2305 S Colorado Blvd');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.1098.filer.address2', '');
@@ -135,6 +135,19 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.1098.tag.insurance.refund', '
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.1098.tag.grants', 'Scholarship1098');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.1098.us.ssn.tax.type', 'SSN');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.1098.us.ssn.display.digits', '4');
+
+-- IRS 8300 report settings
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.name', 'Sigma University');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.address1', '2305 S Colorado Blvd');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.address2', '');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.address3', '');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.city', 'Denver');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.state', 'CO');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.country', 'US');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.zip', '80222');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.fein', '55-5555555');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.business.nature', 'Soul trading');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.us.ssn.tax.type', 'SSN');
 
 -- Refund constants
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.ach.bank.type', 'ACH');

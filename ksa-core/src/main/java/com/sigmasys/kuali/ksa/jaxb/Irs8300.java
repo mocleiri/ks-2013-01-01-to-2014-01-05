@@ -129,13 +129,13 @@ import java.util.List;
  *             &lt;/complexContent>
  *           &lt;/complexType>
  *         &lt;/element>
- *         &lt;element name="recipient">
+ *         &lt;element name="filer">
  *           &lt;complexType>
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
  *                   &lt;element name="business-name" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
- *                   &lt;element name="ein" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
+ *                   &lt;element name="fein" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
  *                   &lt;element name="ssn" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
  *                   &lt;element ref="{}postal-address"/>
  *                   &lt;element name="nature-of-business" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
@@ -155,19 +155,19 @@ import java.util.List;
         "type",
         "payer",
         "transactionDescription",
-        "recipient"
+        "filer"
 })
 @XmlRootElement(name = "irs-8300")
 public class Irs8300 {
 
-    @XmlElement(required = true)
+    @XmlElement(required = false)
     protected String type;
     @XmlElement(required = true)
-    protected Irs8300.Payer payer;
+    protected Payer payer;
     @XmlElement(name = "transaction-description", required = true)
-    protected Irs8300.TransactionDescription transactionDescription;
+    protected TransactionDescription transactionDescription;
     @XmlElement(required = true)
-    protected Irs8300.Recipient recipient;
+    protected Filer filer;
 
     /**
      * Gets the value of the type property.
@@ -230,23 +230,23 @@ public class Irs8300 {
     }
 
     /**
-     * Gets the value of the recipient property.
+     * Gets the value of the filer property.
      *
      * @return possible object is
-     *         {@link Irs8300.Recipient }
+     *         {@link com.sigmasys.kuali.ksa.jaxb.Irs8300.Filer }
      */
-    public Irs8300.Recipient getRecipient() {
-        return recipient;
+    public Filer getFiler() {
+        return filer;
     }
 
     /**
-     * Sets the value of the recipient property.
+     * Sets the value of the filer property.
      *
      * @param value allowed object is
-     *              {@link Irs8300.Recipient }
+     *              {@link com.sigmasys.kuali.ksa.jaxb.Irs8300.Filer }
      */
-    public void setRecipient(Irs8300.Recipient value) {
-        this.recipient = value;
+    public void setFiler(Filer value) {
+        this.filer = value;
     }
 
 
@@ -612,7 +612,7 @@ public class Irs8300 {
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
      *         &lt;element name="business-name" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
-     *         &lt;element name="ein" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
+     *         &lt;element name="fein" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
      *         &lt;element name="ssn" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
      *         &lt;element ref="{}postal-address"/>
      *         &lt;element name="nature-of-business" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
@@ -625,29 +625,29 @@ public class Irs8300 {
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
             "businessName",
-            "ein",
+            "fein",
             "ssn",
             "postalAddress",
             "natureOfBusiness"
     })
-    public static class Recipient {
+    public static class Filer {
 
         @XmlElement(name = "business-name", required = true)
-        protected Object businessName;
-        protected Object ein;
-        protected Object ssn;
+        protected String businessName;
+        protected String fein;
+        protected String ssn;
         @XmlElement(name = "postal-address", required = true)
         protected PostalAddress postalAddress;
         @XmlElement(name = "nature-of-business", required = true)
-        protected Object natureOfBusiness;
+        protected String natureOfBusiness;
 
         /**
          * Gets the value of the businessName property.
          *
          * @return possible object is
-         *         {@link Object }
+         *         {@link String }
          */
-        public Object getBusinessName() {
+        public String getBusinessName() {
             return businessName;
         }
 
@@ -655,39 +655,39 @@ public class Irs8300 {
          * Sets the value of the businessName property.
          *
          * @param value allowed object is
-         *              {@link Object }
+         *              {@link String }
          */
-        public void setBusinessName(Object value) {
+        public void setBusinessName(String value) {
             this.businessName = value;
         }
 
         /**
-         * Gets the value of the ein property.
+         * Gets the value of the fein property.
          *
          * @return possible object is
-         *         {@link Object }
+         *         {@link String }
          */
-        public Object getEin() {
-            return ein;
+        public String getFein() {
+            return fein;
         }
 
         /**
-         * Sets the value of the ein property.
+         * Sets the value of the fein property.
          *
          * @param value allowed object is
-         *              {@link Object }
+         *              {@link String }
          */
-        public void setEin(Object value) {
-            this.ein = value;
+        public void setFein(String value) {
+            this.fein = value;
         }
 
         /**
          * Gets the value of the ssn property.
          *
          * @return possible object is
-         *         {@link Object }
+         *         {@link String }
          */
-        public Object getSsn() {
+        public String getSsn() {
             return ssn;
         }
 
@@ -695,9 +695,9 @@ public class Irs8300 {
          * Sets the value of the ssn property.
          *
          * @param value allowed object is
-         *              {@link Object }
+         *              {@link String }
          */
-        public void setSsn(Object value) {
+        public void setSsn(String value) {
             this.ssn = value;
         }
 
@@ -725,9 +725,9 @@ public class Irs8300 {
          * Gets the value of the natureOfBusiness property.
          *
          * @return possible object is
-         *         {@link Object }
+         *         {@link String }
          */
-        public Object getNatureOfBusiness() {
+        public String getNatureOfBusiness() {
             return natureOfBusiness;
         }
 
@@ -735,9 +735,9 @@ public class Irs8300 {
          * Sets the value of the natureOfBusiness property.
          *
          * @param value allowed object is
-         *              {@link Object }
+         *              {@link String }
          */
-        public void setNatureOfBusiness(Object value) {
+        public void setNatureOfBusiness(String value) {
             this.natureOfBusiness = value;
         }
 
@@ -826,7 +826,7 @@ public class Irs8300 {
         @XmlElement(name = "total-price", required = true)
         protected BigDecimal totalPrice;
         @XmlElement(required = true)
-        protected Irs8300.TransactionDescription.Detail detail;
+        protected Detail detail;
 
         /**
          * Gets the value of the date property.
@@ -981,9 +981,9 @@ public class Irs8300 {
         public static class Detail {
 
             @XmlElement(name = "financial-breakdown", required = true)
-            protected Irs8300.TransactionDescription.Detail.FinancialBreakdown financialBreakdown;
+            protected FinancialBreakdown financialBreakdown;
             @XmlElement(required = true)
-            protected Object serials;
+            protected String serials;
             protected String type;
             @XmlElement(name = "other-type")
             protected String otherType;
@@ -1012,9 +1012,9 @@ public class Irs8300 {
              * Gets the value of the serials property.
              *
              * @return possible object is
-             *         {@link Object }
+             *         {@link String }
              */
-            public Object getSerials() {
+            public String getSerials() {
                 return serials;
             }
 
@@ -1022,9 +1022,9 @@ public class Irs8300 {
              * Sets the value of the serials property.
              *
              * @param value allowed object is
-             *              {@link Object }
+             *              {@link String }
              */
-            public void setSerials(Object value) {
+            public void setSerials(String value) {
                 this.serials = value;
             }
 

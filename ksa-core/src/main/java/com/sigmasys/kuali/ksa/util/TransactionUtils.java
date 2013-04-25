@@ -3,7 +3,6 @@ package com.sigmasys.kuali.ksa.util;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.time.DateUtils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -38,6 +37,14 @@ public class TransactionUtils {
 
     public static BigDecimal getFormattedAmount(BigDecimal amount) {
         return new BigDecimal(formatAmount(amount));
+    }
+
+    public static BigDecimal getTotalAmount(Collection<Transaction> transactions) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (Transaction transaction : transactions) {
+            totalAmount = totalAmount.add(transaction.getAmount());
+        }
+        return totalAmount;
     }
 
     public static BigDecimal getUnallocatedAmount(Transaction transaction) {

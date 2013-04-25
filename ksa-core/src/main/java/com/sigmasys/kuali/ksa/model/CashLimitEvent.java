@@ -54,14 +54,14 @@ public class CashLimitEvent implements Identifiable {
     private String recipient;
 
     /**
-     * Total transaction amount
+     * Total payment amount
      */
-    private BigDecimal transactionAmount;
+    private BigDecimal paymentAmount;
 
     /**
-     * Total price
+     * Total charge amount
      */
-    private BigDecimal totalPrice;
+    private BigDecimal chargeAmount;
 
     /**
      * Serial numbers
@@ -80,9 +80,9 @@ public class CashLimitEvent implements Identifiable {
     private XmlDocument xmlDocument;
 
     /**
-     * Transactions associated with this cash limit event
+     * Payments associated with this cash limit event
      */
-    private Set<Transaction> transactions;
+    private Set<Payment> payments;
 
     /**
      * Status
@@ -163,7 +163,7 @@ public class CashLimitEvent implements Identifiable {
         this.reportDate = reportDate;
     }
 
-    @Column(name = "NOTIF_SENT_TO", length = 255)
+    @Column(name = "NOTIF_RECIPIENT", length = 255)
     public String getRecipient() {
         return recipient;
     }
@@ -172,22 +172,22 @@ public class CashLimitEvent implements Identifiable {
         this.recipient = recipient;
     }
 
-    @Column(name = "TOTAL_TRANS_AMOUNT")
-    public BigDecimal getTransactionAmount() {
-        return transactionAmount;
+    @Column(name = "TOTAL_PAYMENT_AMOUNT")
+    public BigDecimal getPaymentAmount() {
+        return paymentAmount;
     }
 
-    public void setTransactionAmount(BigDecimal transactionAmount) {
-        this.transactionAmount = transactionAmount;
+    public void setPaymentAmount(BigDecimal paymentAmount) {
+        this.paymentAmount = paymentAmount;
     }
 
-    @Column(name = "TOTAL_PRICE")
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
+    @Column(name = "TOTAL_CHARGE_AMOUNT")
+    public BigDecimal getChargeAmount() {
+        return chargeAmount;
     }
 
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setChargeAmount(BigDecimal chargeAmount) {
+        this.chargeAmount = chargeAmount;
     }
 
     @Column(name = "SERIALS", length = 1)
@@ -228,12 +228,12 @@ public class CashLimitEvent implements Identifiable {
                     @JoinColumn(name = "TRANSACTION_ID_FK")
             }
     )
-    public Set<Transaction> getTransactions() {
-        return transactions;
+    public Set<Payment> getPayments() {
+        return payments;
     }
 
-    public void setTransactions(Set<Transaction> transactions) {
-        this.transactions = transactions;
+    public void setPayments(Set<Payment> payments) {
+        this.payments = payments;
     }
 
     @Column(name = "STATUS", length = 1)

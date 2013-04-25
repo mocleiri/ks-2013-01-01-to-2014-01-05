@@ -310,7 +310,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         // Filling in Filer
 
         filer.setName(report.getFilerName());
-        filer.setFederalIdentificationNumber(report.getFilerFederalId());
+        filer.setFein(report.getFilerFederalId());
 
         PostalAddress filerAddress = ObjectFactory.getInstance().createPostalAddress();
         filerAddress.setAddressLine1(report.getFilerStreetAddress1());
@@ -1044,7 +1044,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
         AccountReport.Name name = new AccountReport.Name();
         com.sigmasys.kuali.ksa.model.PersonName defaultPersonName = account.getDefaultPersonName();
-        if (companyName == null && defaultPersonName != null) {
+        if (defaultPersonName != null) {
             logger.debug("Default person name = " + defaultPersonName);
             PersonName personName = new PersonName();
             personName.setTitle(defaultPersonName.getTitle());

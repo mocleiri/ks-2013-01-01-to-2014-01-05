@@ -120,6 +120,19 @@ public interface Constants {
     String KSA_1098_TAG_GRANTS = "ksa.1098.tag.grants";
     String KSA_1098_REPORTING_METHOD_CHANGE = "ksa.1098.reporting.method.change";
 
+    // 8300 Report constants
+    String KSA_8300_SSN_TAX_TYPE = "ksa.8300.us.ssn.tax.type";
+    String KSA_8300_FILER_NAME = "ksa.8300.filer.name";
+    String KSA_8300_FILER_ADDRESS1 = "ksa.8300.filer.address1";
+    String KSA_8300_FILER_ADDRESS2 = "ksa.8300.filer.address2";
+    String KSA_8300_FILER_ADDRESS3 = "ksa.8300.filer.address3";
+    String KSA_8300_FILER_CITY = "ksa.8300.filer.city";
+    String KSA_8300_FILER_STATE = "ksa.8300.filer.state";
+    String KSA_8300_FILER_COUNTRY = "ksa.8300.filer.country";
+    String KSA_8300_FILER_ZIP = "ksa.8300.filer.zip";
+    String KSA_8300_FILER_FEIN = "ksa.8300.filer.fein";
+    String KSA_8300_BUSINESS_NATURE = "ksa.8300.business.nature";
+
     // KSA Transaction constants
     String KSA_TRANSACTION_RECOGNITION_YEAR = "ksa.transaction.recognition.year";
 

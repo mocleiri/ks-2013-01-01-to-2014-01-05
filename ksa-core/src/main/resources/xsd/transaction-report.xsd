@@ -25,7 +25,7 @@
                             <xs:element name="name" type="xs:string"/>
                             <xs:element ref="postal-address"/>
                             <xs:element name="telephone-number" type="xs:string"/>
-                            <xs:element name="federal-identification-number" type="xs:string"/>
+                            <xs:element name="fein" type="xs:string"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
@@ -240,11 +240,11 @@
     <xs:element name="irs-8300">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="type">
+                <xs:element name="type" minOccurs="0">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
-                            <xs:enumeration value="amends"/>
-                            <xs:enumeration value="suspicious"/>
+                            <xs:enumeration value="AMENDS"/>
+                            <xs:enumeration value="SUSPICIOUS"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
@@ -293,20 +293,20 @@
                                                 </xs:sequence>
                                             </xs:complexType>
                                         </xs:element>
-                                        <xs:element name="serials"/>
+                                        <xs:element name="serials" type="xs:string"/>
                                         <xs:choice>
                                             <xs:element name="type">
                                                 <xs:simpleType>
                                                     <xs:restriction base="xs:string">
-                                                        <xs:enumeration value="personalproperty"/>
-                                                        <xs:enumeration value="realproperty"/>
-                                                        <xs:enumeration value="personalservice"/>
-                                                        <xs:enumeration value="businessservice"/>
-                                                        <xs:enumeration value="intangibleproperty"/>
-                                                        <xs:enumeration value="debtobligation"/>
-                                                        <xs:enumeration value="exchangeofcash"/>
-                                                        <xs:enumeration value="escrow"/>
-                                                        <xs:enumeration value="bail"/>
+                                                        <xs:enumeration value="PERSONAL_PROPERTY"/>
+                                                        <xs:enumeration value="REAL_PROPERTY"/>
+                                                        <xs:enumeration value="PERSONAL_SERVICE"/>
+                                                        <xs:enumeration value="BUSINESS_SERVICE"/>
+                                                        <xs:enumeration value="INTANGIBLE_PROPERTY"/>
+                                                        <xs:enumeration value="DEBT_OBLIGATION"/>
+                                                        <xs:enumeration value="EXCHANGE_OF_CASH"/>
+                                                        <xs:enumeration value="ESCROW"/>
+                                                        <xs:enumeration value="BAIL"/>
                                                     </xs:restriction>
                                                 </xs:simpleType>
                                             </xs:element>
@@ -318,14 +318,14 @@
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="recipient">
+                <xs:element name="filer">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="business-name"/>
-                            <xs:element name="ein" minOccurs="0"/>
-                            <xs:element name="ssn" minOccurs="0"/>
+                            <xs:element name="business-name" type="xs:string"/>
+                            <xs:element name="fein" type="xs:string" minOccurs="0"/>
+                            <xs:element name="ssn" type="xs:string" minOccurs="0"/>
                             <xs:element ref="postal-address"/>
-                            <xs:element name="nature-of-business"/>
+                            <xs:element name="nature-of-business" type="xs:string"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

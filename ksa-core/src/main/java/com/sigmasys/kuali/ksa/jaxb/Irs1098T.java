@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  *                   &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *                   &lt;element ref="{}postal-address"/>
  *                   &lt;element name="telephone-number" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                   &lt;element name="federal-identification-number" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
+ *                   &lt;element name="fein" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
  *                 &lt;/sequence>
  *               &lt;/restriction>
  *             &lt;/complexContent>
@@ -231,7 +231,7 @@ public class Irs1098T {
      *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
      *         &lt;element ref="{}postal-address"/>
      *         &lt;element name="telephone-number" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *         &lt;element name="federal-identification-number" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
+     *         &lt;element name="fein" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -243,7 +243,7 @@ public class Irs1098T {
             "name",
             "postalAddress",
             "telephoneNumber",
-            "federalIdentificationNumber"
+            "fein"
     })
     public static class Filer {
 
@@ -253,8 +253,8 @@ public class Irs1098T {
         protected PostalAddress postalAddress;
         @XmlElement(name = "telephone-number", required = true)
         protected String telephoneNumber;
-        @XmlElement(name = "federal-identification-number", required = true)
-        protected String federalIdentificationNumber;
+        @XmlElement(name = "fein", required = true)
+        protected String fein;
 
         /**
          * Gets the value of the name property.
@@ -317,23 +317,23 @@ public class Irs1098T {
         }
 
         /**
-         * Gets the value of the federalIdentificationNumber property.
+         * Gets the value of the fein property.
          *
          * @return possible object is
          *         {@link String }
          */
-        public String getFederalIdentificationNumber() {
-            return federalIdentificationNumber;
+        public String getFein() {
+            return fein;
         }
 
         /**
-         * Sets the value of the federalIdentificationNumber property.
+         * Sets the value of the fein property.
          *
          * @param value allowed object is
          *              {@link String }
          */
-        public void setFederalIdentificationNumber(String value) {
-            this.federalIdentificationNumber = value;
+        public void setFein(String value) {
+            this.fein = value;
         }
 
     }

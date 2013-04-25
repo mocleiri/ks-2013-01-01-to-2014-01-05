@@ -85,7 +85,7 @@ public class CashLimitServiceTest extends AbstractServiceTest {
 
         Assert.isTrue(cashLimitEventIsCreated);
 
-        List<CashLimitEvent> cashLimitEvents = cashLimitService.getCashLimitEvents(TEST_USER_ID, COMPLETED);
+        List<CashLimitEvent> cashLimitEvents = cashLimitService.getCashLimitEvents(TEST_USER_ID, QUEUED);
 
         Assert.notNull(cashLimitEvents);
         Assert.notEmpty(cashLimitEvents);
@@ -101,7 +101,7 @@ public class CashLimitServiceTest extends AbstractServiceTest {
             Assert.notNull(cashLimitEvent.getRecipient());
             Assert.notNull(cashLimitEvent.getStatus());
 
-            Assert.isTrue(cashLimitEvent.getStatus() == COMPLETED);
+            Assert.isTrue(cashLimitEvent.getStatus() == QUEUED);
             Assert.isTrue(cashLimitEvent.getAccountId().equals(TEST_USER_ID));
 
         }
