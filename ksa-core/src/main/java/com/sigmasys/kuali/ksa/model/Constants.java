@@ -121,6 +121,7 @@ public interface Constants {
     String KSA_1098_REPORTING_METHOD_CHANGE = "ksa.1098.reporting.method.change";
 
     // 8300 Report constants
+    String KSA_8300_DEFAULT_TYPE = "ksa.8300.default.type";
     String KSA_8300_SSN_TAX_TYPE = "ksa.8300.us.ssn.tax.type";
     String KSA_8300_FILER_NAME = "ksa.8300.filer.name";
     String KSA_8300_FILER_ADDRESS1 = "ksa.8300.filer.address1";

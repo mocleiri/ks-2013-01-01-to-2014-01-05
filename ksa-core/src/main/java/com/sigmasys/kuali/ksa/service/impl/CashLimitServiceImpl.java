@@ -1,10 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
 import com.sigmasys.kuali.ksa.config.ConfigService;
-import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
-import com.sigmasys.kuali.ksa.jaxb.*;
-import com.sigmasys.kuali.ksa.jaxb.PersonName;
-import com.sigmasys.kuali.ksa.jaxb.PostalAddress;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
@@ -42,9 +38,6 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
     @Autowired
     private ConfigService configService;
-
-    @Autowired
-    private AccountService accountService;
 
     @Autowired
     private SmtpService smtpService;
@@ -348,144 +341,5 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
         return false;
     }
-
-    private <T extends Transaction> Set<T> getTransactionsByTag(Set<T> transactions, Tag tag) {
-        Set<T> transactionsForTag = new HashSet<T>();
-        for (T transaction : transactions) {
-            List<Tag> tags = transaction.getTags();
-            if (CollectionUtils.isNotEmpty(tags)) {
-                boolean tagIsPresent = false;
-                for (Tag t : tags) {
-                    if (tag.getId().equals(t.getId())) {
-                        tagIsPresent = true;
-                        break;
-                    }
-                }
-                if (tagIsPresent) {
-                    transactionsForTag.add(transaction);
-                }
-            }
-        }
-        return transactionsForTag;
-    }
-
-    public String exportCashLimitEvent(Long cashLimitEventId) {
-
-        CashLimitEvent cashLimitEvent = getCashLimitEvent(cashLimitEventId);
-        if (cashLimitEvent == null) {
-            String errMsg = "Cannot find CashLimitEvent with ID = " + cashLimitEventId;
-            logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
-        }
-
-        if (!CashLimitEventStatus.QUEUED.equals(cashLimitEvent.getStatus())) {
-            String errMsg = "Only CashLimitEvent objects with QUEUED status can be exported, ID = " + cashLimitEventId;
-            logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
-        }
-
-        DirectChargeAccount account = (DirectChargeAccount) accountService.getFullAccount(cashLimitEvent.getAccountId());
-        if (account == null) {
-            String errMsg = "Account with ID = " + cashLimitEvent.getAccountId() + " does not exist";
-            logger.error(errMsg);
-            throw new UserNotFoundException(errMsg);
-        }
-
-        AccountProtectedInfo accountInfo = accountService.getAccountProtectedInfo(cashLimitEvent.getAccountId());
-        if (accountInfo == null) {
-            String errMsg = "AccountProtectedInfo does not exist for Account ID = " + cashLimitEvent.getAccountId();
-            logger.error(errMsg);
-            throw new UserNotFoundException(errMsg);
-        }
-
-
-        Set<Payment> payments = cashLimitEvent.getPayments();
-
-        List<CashLimitParameter> activeParameters = getCashLimitParameters(true);
-
-        Irs8300 irs8300 = new Irs8300();
-
-        // Filling out Filer info
-        Irs8300.Filer filer = new Irs8300.Filer();
-        filer.setBusinessName(configService.getParameter(Constants.KSA_8300_FILER_NAME));
-        filer.setFein(configService.getParameter(Constants.KSA_8300_FILER_FEIN));
-        filer.setNatureOfBusiness(configService.getParameter(Constants.KSA_8300_BUSINESS_NATURE));
-
-        PostalAddress postalAddress = new PostalAddress();
-        postalAddress.setAddressLine1(configService.getParameter(Constants.KSA_1098_FILER_ADDRESS1));
-        postalAddress.setAddressLine2(configService.getParameter(Constants.KSA_1098_FILER_ADDRESS2));
-        postalAddress.setAddressLine3(configService.getParameter(Constants.KSA_1098_FILER_ADDRESS3));
-        postalAddress.setCity(configService.getParameter(Constants.KSA_1098_FILER_CITY));
-        postalAddress.setPostalCode(configService.getParameter(Constants.KSA_1098_FILER_ZIP));
-        postalAddress.setCountryCode(configService.getParameter(Constants.KSA_1098_FILER_COUNTRY));
-
-        filer.setPostalAddress(postalAddress);
-
-        irs8300.setFiler(filer);
-
-        // Filling out TransactionDescription
-        Irs8300.TransactionDescription transactionDesc = new Irs8300.TransactionDescription();
-        transactionDesc.setDate(CalendarUtils.toXmlGregorianCalendar(cashLimitEvent.getEventDate()));
-        transactionDesc.setMultiplePayments(cashLimitEvent.isMultiple());
-        transactionDesc.setTotalAmount(cashLimitEvent.getPaymentAmount());
-        transactionDesc.setTotalPrice(cashLimitEvent.getChargeAmount());
-
-        // Filling out Payer
-        Irs8300.Payer payer = new Irs8300.Payer();
-
-        Irs8300.Payer.Identity identity = new Irs8300.Payer.Identity();
-        identity.setTaxIdentifier(accountInfo.getTaxReference());
-        identity.setDateOfBirth(CalendarUtils.toXmlGregorianCalendar(account.getDateOfBirth()));
-
-        Irs8300.Payer.Identity.IdentityDocument identityDocument = new Irs8300.Payer.Identity.IdentityDocument();
-        identityDocument.setIdIssuer(accountInfo.getIdentityIssuer());
-        identityDocument.setIdSerial(accountInfo.getIdentitySerial());
-        identityDocument.setIdType(accountInfo.getIdentityType().getCode());
-
-        identity.setIdentityDocument(identityDocument);
-
-        payer.setIdentity(identity);
-
-        com.sigmasys.kuali.ksa.model.PersonName defaultPersonName = account.getDefaultPersonName();
-
-        PersonName personName = new PersonName();
-        personName.setTitle(defaultPersonName.getTitle());
-        personName.setSuffix(defaultPersonName.getSuffix());
-        personName.setFirstName(defaultPersonName.getFirstName());
-        personName.setLastName(defaultPersonName.getLastName());
-        personName.setMiddleName(defaultPersonName.getMiddleName());
-        personName.setKimType(defaultPersonName.getKimNameType());
-        personName.setDefault(true);
-
-        payer.setPersonName(personName);
-
-        com.sigmasys.kuali.ksa.model.PostalAddress defaultPostalAddress = account.getDefaultPostalAddress();
-
-        postalAddress = new PostalAddress();
-        postalAddress.setAddressLine1(defaultPostalAddress.getStreetAddress1());
-        postalAddress.setAddressLine2(defaultPostalAddress.getStreetAddress2());
-        postalAddress.setAddressLine3(defaultPostalAddress.getStreetAddress3());
-        postalAddress.setCity(defaultPostalAddress.getCity());
-        postalAddress.setStateCode(defaultPostalAddress.getState());
-        postalAddress.setPostalCode(defaultPostalAddress.getPostalCode());
-        postalAddress.setCountryCode(defaultPostalAddress.getCountry());
-
-        payer.setPostalAddress(postalAddress);
-
-        Irs8300.TransactionDescription.Detail transactionDetail = new Irs8300.TransactionDescription.Detail();
-
-        for (CashLimitParameter parameter : activeParameters) {
-            Tag tag = parameter.getTag();
-            Set<Payment> paymentsByTag = getTransactionsByTag(payments, tag);
-            String serials = parameter.getAuthorityName();
-
-            // TODO
-        }
-
-        // TODO
-        return null;
-
-    }
-
 
 }

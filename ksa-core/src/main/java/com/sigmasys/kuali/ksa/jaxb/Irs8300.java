@@ -985,7 +985,7 @@ public class Irs8300 {
             @XmlElement(required = true)
             protected String serials;
             protected String type;
-            @XmlElement(name = "other-type")
+            @XmlElement(name = "other-type", required = false)
             protected String otherType;
 
             /**

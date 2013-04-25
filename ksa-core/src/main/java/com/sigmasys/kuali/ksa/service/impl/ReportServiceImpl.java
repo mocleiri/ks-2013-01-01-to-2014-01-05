@@ -11,6 +11,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
+import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.aopalliance.aop.Advice;
@@ -70,6 +71,9 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private CashLimitService cashLimitService;
 
     @PostConstruct
     private void postConstruct() {
@@ -1166,11 +1170,232 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
     }
 
 
+    public String generateCashLimitReport(Long cashLimitEventId) {
+
+        CashLimitEvent cashLimitEvent = cashLimitService.getCashLimitEvent(cashLimitEventId);
+        if (cashLimitEvent == null) {
+            String errMsg = "Cannot find CashLimitEvent with ID = " + cashLimitEventId;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        if (!CashLimitEventStatus.QUEUED.equals(cashLimitEvent.getStatus())) {
+            String errMsg = "Only CashLimitEvent objects with QUEUED status can be exported, ID = " + cashLimitEventId;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        DirectChargeAccount account = (DirectChargeAccount) accountService.getFullAccount(cashLimitEvent.getAccountId());
+        if (account == null) {
+            String errMsg = "Account with ID = " + cashLimitEvent.getAccountId() + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        AccountProtectedInfo accountInfo = accountService.getAccountProtectedInfo(cashLimitEvent.getAccountId());
+        if (accountInfo == null) {
+            String errMsg = "AccountProtectedInfo does not exist for Account ID = " + cashLimitEvent.getAccountId();
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+
+        Set<Payment> payments = cashLimitEvent.getPayments();
+
+        List<CashLimitParameter> activeParameters = cashLimitService.getCashLimitParameters(true);
+
+        Irs8300 irs8300 = new Irs8300();
+
+        // Filling out Filer info
+        Irs8300.Filer filer = new Irs8300.Filer();
+        filer.setBusinessName(configService.getParameter(Constants.KSA_8300_FILER_NAME));
+        filer.setFein(configService.getParameter(Constants.KSA_8300_FILER_FEIN));
+        filer.setNatureOfBusiness(configService.getParameter(Constants.KSA_8300_BUSINESS_NATURE));
+
+        PostalAddress postalAddress = new PostalAddress();
+        postalAddress.setAddressLine1(configService.getParameter(Constants.KSA_8300_FILER_ADDRESS1));
+        postalAddress.setAddressLine2(configService.getParameter(Constants.KSA_8300_FILER_ADDRESS2));
+        postalAddress.setAddressLine3(configService.getParameter(Constants.KSA_8300_FILER_ADDRESS3));
+        postalAddress.setCity(configService.getParameter(Constants.KSA_8300_FILER_CITY));
+        postalAddress.setPostalCode(configService.getParameter(Constants.KSA_8300_FILER_ZIP));
+        postalAddress.setCountryCode(configService.getParameter(Constants.KSA_8300_FILER_COUNTRY));
+
+        filer.setPostalAddress(postalAddress);
+
+        irs8300.setFiler(filer);
+
+        // Filling out TransactionDescription
+        Irs8300.TransactionDescription transactionDesc = new Irs8300.TransactionDescription();
+        transactionDesc.setDate(CalendarUtils.toXmlGregorianCalendar(cashLimitEvent.getEventDate()));
+        transactionDesc.setMultiplePayments(cashLimitEvent.isMultiple());
+        transactionDesc.setTotalAmount(cashLimitEvent.getPaymentAmount());
+        transactionDesc.setTotalPrice(cashLimitEvent.getChargeAmount());
+
+        // Filling out Payer
+        Irs8300.Payer payer = new Irs8300.Payer();
+
+        Irs8300.Payer.Identity identity = new Irs8300.Payer.Identity();
+
+        TaxType taxType = accountInfo.getTaxType();
+        if (taxType != null && taxType.getCode().equals(configService.getParameter(Constants.KSA_8300_SSN_TAX_TYPE))) {
+            identity.setTaxIdentifier(accountInfo.getTaxReference());
+        }
+
+        identity.setDateOfBirth(CalendarUtils.toXmlGregorianCalendar(account.getDateOfBirth()));
+
+        Irs8300.Payer.Identity.IdentityDocument identityDocument = new Irs8300.Payer.Identity.IdentityDocument();
+        identityDocument.setIdIssuer(accountInfo.getIdentityIssuer());
+        identityDocument.setIdSerial(accountInfo.getIdentitySerial());
+        identityDocument.setIdType(accountInfo.getIdentityType().getCode());
+
+        identity.setIdentityDocument(identityDocument);
+
+        payer.setIdentity(identity);
+
+        com.sigmasys.kuali.ksa.model.PersonName defaultPersonName = account.getDefaultPersonName();
+
+        PersonName personName = new PersonName();
+        personName.setTitle(defaultPersonName.getTitle());
+        personName.setSuffix(defaultPersonName.getSuffix());
+        personName.setFirstName(defaultPersonName.getFirstName());
+        personName.setLastName(defaultPersonName.getLastName());
+        personName.setMiddleName(defaultPersonName.getMiddleName());
+        personName.setKimType(defaultPersonName.getKimNameType());
+        personName.setDefault(true);
+
+        payer.setPersonName(personName);
+
+        com.sigmasys.kuali.ksa.model.PostalAddress defaultPostalAddress = account.getDefaultPostalAddress();
+
+        postalAddress = new PostalAddress();
+        postalAddress.setAddressLine1(defaultPostalAddress.getStreetAddress1());
+        postalAddress.setAddressLine2(defaultPostalAddress.getStreetAddress2());
+        postalAddress.setAddressLine3(defaultPostalAddress.getStreetAddress3());
+        postalAddress.setCity(defaultPostalAddress.getCity());
+        postalAddress.setStateCode(defaultPostalAddress.getState());
+        postalAddress.setPostalCode(defaultPostalAddress.getPostalCode());
+        postalAddress.setCountryCode(defaultPostalAddress.getCountry());
+
+        payer.setPostalAddress(postalAddress);
+
+        Irs8300.TransactionDescription.Detail transactionDetail = new Irs8300.TransactionDescription.Detail();
+
+        // Retrieving IRS 8300 default type
+        String defaultType = configService.getParameter(Constants.KSA_8300_DEFAULT_TYPE);
+        List<String> standardTypes = Irs8300Type.getNames();
+        if (standardTypes.contains(defaultType)) {
+            transactionDetail.setType(defaultType);
+        } else {
+            transactionDetail.setOtherType(defaultType);
+        }
+
+        // Creating FinancialBreakdown
+        Irs8300.TransactionDescription.Detail.FinancialBreakdown breakdown =
+                new Irs8300.TransactionDescription.Detail.FinancialBreakdown();
+
+        StringBuilder serials = new StringBuilder();
+        for (CashLimitParameter parameter : activeParameters) {
+
+            Tag tag = parameter.getTag();
+
+            serials.append(parameter.getAuthorityName());
+            serials.append(",");
+
+            BigDecimal transactionAmount = BigDecimal.ZERO;
+            BigDecimal transactionNativeAmount = BigDecimal.ZERO;
+
+            Set<Payment> paymentsByTag = getTransactionsByTag(payments, tag);
+            for (Payment payment : paymentsByTag) {
+                populateSerials(serials, payment);
+                transactionAmount = transactionAmount.add(payment.getAmount());
+                transactionNativeAmount = transactionNativeAmount.add(payment.getNativeAmount());
+            }
+
+            String xmlElement = parameter.getXmlElement();
+            BigDecimal amount = TransactionUtils.getFormattedAmount(transactionAmount);
+            BigDecimal nativeAmount = TransactionUtils.getFormattedAmount(transactionNativeAmount);
+
+            JAXBElement<String> jaxbType =
+                    ObjectFactory.getInstance().createIrs8300FinancialBreakdownType(xmlElement);
+
+            JAXBElement<BigDecimal> jaxbAmount =
+                    ObjectFactory.getInstance().createIrs8300FinancialBreakdownAmount(amount);
+
+            JAXBElement<BigDecimal> jaxbNativeAmount =
+                    ObjectFactory.getInstance().createIrs8300FinancialBreakdownNativeAmount(nativeAmount);
+
+            // Adding the type, amount and native amount to
+            breakdown.getTypeAndAmountAndNativeAmount().add(jaxbType);
+            breakdown.getTypeAndAmountAndNativeAmount().add(jaxbAmount);
+            breakdown.getTypeAndAmountAndNativeAmount().add(jaxbNativeAmount);
+        }
+
+        // Setting the breakdown and serials
+        transactionDetail.setFinancialBreakdown(breakdown);
+        transactionDetail.setSerials(serials.toString());
+
+        // Setting TransactionDetail to TransactionDescription
+        transactionDesc.setDetail(transactionDetail);
+
+        // Setting TransactionDescription to Irs8300
+        irs8300.setTransactionDescription(transactionDesc);
+
+        return JaxbUtils.toXml(irs8300);
+
+    }
+
+
 /* =====================================================================
 *
 * Helper methods.
 *
 * ==================================================================== */
+
+    /**
+     * Used by IRS 8300 report generator.
+     *
+     * @param transactions a set of transactions
+     * @param tag          Tag instance
+     * @param <T>          Any subclass of Transaction
+     * @return transactions filtered by tag
+     */
+    private <T extends Transaction> Set<T> getTransactionsByTag(Set<T> transactions, Tag tag) {
+        Set<T> transactionsForTag = new HashSet<T>();
+        for (T transaction : transactions) {
+            List<Tag> tags = transaction.getTags();
+            if (CollectionUtils.isNotEmpty(tags)) {
+                boolean tagIsPresent = false;
+                for (Tag t : tags) {
+                    if (tag.getId().equals(t.getId())) {
+                        tagIsPresent = true;
+                        break;
+                    }
+                }
+                if (tagIsPresent) {
+                    transactionsForTag.add(transaction);
+                }
+            }
+        }
+        return transactionsForTag;
+    }
+
+    /**
+     * Used by IRS 8300 report generator.
+     *
+     * @param builder serial value builder
+     * @param payment Payment instance
+     */
+    private void populateSerials(StringBuilder builder, Payment payment) {
+        builder.append(payment.getId());
+        builder.append("(USD");
+        builder.append(" ");
+        builder.append(TransactionUtils.formatAmount(payment.getAmount()));
+        builder.append(")(");
+        builder.append(java.util.Currency.getInstance(Locale.getDefault()).getCurrencyCode());
+        builder.append(")");
+        builder.append(payment.getExternalId() != null ? payment.getExternalId() : "no serial");
+        builder.append(".");
+    }
 
     /**
      * Tries to find an object of type <code>AgedBalanceReport.AgeBreakdown</code> that

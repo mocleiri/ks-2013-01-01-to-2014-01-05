@@ -295,7 +295,7 @@
                                         </xs:element>
                                         <xs:element name="serials" type="xs:string"/>
                                         <xs:choice>
-                                            <xs:element name="type">
+                                            <xs:element name="type" minOccurs="0">
                                                 <xs:simpleType>
                                                     <xs:restriction base="xs:string">
                                                         <xs:enumeration value="PERSONAL_PROPERTY"/>
@@ -310,7 +310,7 @@
                                                     </xs:restriction>
                                                 </xs:simpleType>
                                             </xs:element>
-                                            <xs:element name="other-type" type="xs:string"/>
+                                            <xs:element name="other-type" type="xs:string" minOccurs="0"/>
                                         </xs:choice>
                                     </xs:sequence>
                                 </xs:complexType>

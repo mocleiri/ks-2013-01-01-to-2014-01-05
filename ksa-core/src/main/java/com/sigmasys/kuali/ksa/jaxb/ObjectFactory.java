@@ -8,7 +8,11 @@
 
 package com.sigmasys.kuali.ksa.jaxb;
 
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
+import javax.xml.namespace.QName;
+import java.math.BigDecimal;
 
 
 /**
@@ -26,6 +30,11 @@ import javax.xml.bind.annotation.XmlRegistry;
  */
 @XmlRegistry
 public class ObjectFactory {
+
+    private static final QName FinancialBreakdownAmount_QNAME = new QName("", "amount");
+    private static final QName FinancialBreakdownNativeAmount_QNAME = new QName("", "native-amount");
+    private static final QName FinancialBreakdownType_QNAME = new QName("", "type");
+
 
     private static final ObjectFactory objectFactory = new ObjectFactory();
 
@@ -360,6 +369,33 @@ public class ObjectFactory {
      */
     public PostalAddress createPostalAddress() {
         return new PostalAddress();
+    }
+
+    /**
+     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link java.math.BigDecimal }{@code >}}
+     */
+    @XmlElementDecl(namespace = "", name = "amount", scope = Irs8300.TransactionDescription.Detail.FinancialBreakdown.class)
+    public JAXBElement<BigDecimal> createIrs8300FinancialBreakdownAmount(BigDecimal value) {
+        return new JAXBElement<BigDecimal>(FinancialBreakdownAmount_QNAME, BigDecimal.class,
+                Irs8300.TransactionDescription.Detail.FinancialBreakdown.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link BigDecimal }{@code >}}
+     */
+    @XmlElementDecl(namespace = "", name = "native-amount", scope = Irs8300.TransactionDescription.Detail.FinancialBreakdown.class)
+    public JAXBElement<BigDecimal> createIrs8300FinancialBreakdownNativeAmount(BigDecimal value) {
+        return new JAXBElement<BigDecimal>(FinancialBreakdownNativeAmount_QNAME, BigDecimal.class,
+                Irs8300.TransactionDescription.Detail.FinancialBreakdown.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     */
+    @XmlElementDecl(namespace = "", name = "type", scope = Irs8300.TransactionDescription.Detail.FinancialBreakdown.class)
+    public JAXBElement<String> createIrs8300FinancialBreakdownType(String value) {
+        return new JAXBElement<String>(FinancialBreakdownType_QNAME, String.class,
+                Irs8300.TransactionDescription.Detail.FinancialBreakdown.class, value);
     }
 
 }

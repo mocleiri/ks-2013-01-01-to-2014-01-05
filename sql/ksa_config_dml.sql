@@ -78,7 +78,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.amount', '10000
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.days', '365');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.tag', 'Cash');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.address.from', 'ksa.sigmasys@gmail.com');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.recipient', 'mivanov@sigmasys.com');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.recipient', 'ksa-sigma@sigmasys.com');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.subject', 'Cash Limit Event');
 
 -- SMTP service parameters
@@ -148,6 +148,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.zip', '80222');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.filer.fein', '55-5555555');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.business.nature', 'Soul trading');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.us.ssn.tax.type', 'SSN');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.default.type', 'PERSONAL_SERVICE');
 
 -- Refund constants
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.ach.bank.type', 'ACH');
