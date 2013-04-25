@@ -49,6 +49,9 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     @Autowired
     private SmtpService smtpService;
 
+    @Autowired
+    private TransactionService transactionService;
+
 
     /**
      * Creates a new cash limit parameter for the given parameters.
@@ -276,8 +279,8 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
             BigDecimal paymentAmount = BigDecimal.ZERO;
 
-            for (Payment transaction : payments) {
-                paymentAmount = paymentAmount.add(transaction.getAmount());
+            for (Payment payment : payments) {
+                paymentAmount = paymentAmount.add(payment.getAmount());
             }
 
             BigDecimal trackingAmount = new BigDecimal(configService.getParameter(Constants.CASH_TRACKING_AMOUNT));
@@ -300,6 +303,35 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
                 cashLimitEvent.setRecipient(recipient);
                 cashLimitEvent.setMultiple(payments.size() > 1);
                 cashLimitEvent.setStatus(CashLimitEventStatus.QUEUED);
+
+                // Calculating the total charge amount from allocations
+                Map<Long, Transaction> chargeMap = new HashMap<Long, Transaction>();
+                for (Payment payment : payments) {
+                    List<Allocation> allocations = transactionService.getAllocations(payment.getId());
+                    for (Allocation allocation : allocations) {
+                        Transaction transaction1 = allocation.getFirstTransaction();
+                        Transaction transaction2 = allocation.getSecondTransaction();
+                        if (transaction1.getId().equals(payment.getId())) {
+                            chargeMap.put(transaction2.getId(), transaction2);
+                        } else {
+                            chargeMap.put(transaction1.getId(), transaction1);
+                        }
+                    }
+                }
+
+                // Summarizing the transaction amounts from chargeMap
+                BigDecimal chargeAmount = BigDecimal.ZERO;
+                for (Transaction charge : chargeMap.values()) {
+                    chargeAmount = chargeAmount.add(charge.getAmount());
+                }
+
+                // If the charge amount is less than the payment amount we should use the payment amount
+                if (chargeAmount.compareTo(paymentAmount) < 0) {
+                    chargeAmount = paymentAmount;
+                }
+
+                cashLimitEvent.setChargeAmount(chargeAmount);
+
 
                 persistEntity(cashLimitEvent);
 
