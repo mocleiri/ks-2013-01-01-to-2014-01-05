@@ -57,6 +57,8 @@ Feature: Schedule Coordinator Authorization
     Given I am working on a term in "Draft" SOC state
     When I manage a course offering
     Then I have access to view the activity offering details
+    And I have access to view all registration groups
+    And I have access to manage activity offering clusters
     And the next, previous and list all course offering links are enabled
     And I have access to add a new activity offering
     And I have access to delete an activity offering

@@ -9,8 +9,9 @@ Feature: Department Schedule Coordinator Authorization SOC state Locked
     When I manage a course offering in my admin org
     Then I have access to view the course offering details
     And I have access to view the activity offering details
+    And I have access to view all registration groups
     But I do not have access to edit the course offering
-    # And I do not have access to manage registration groups - TODO not implemented yet in app
+    And I do not have access to manage activity offering clusters
     #And I do not have access to select activity offerings for add, approve, delete
     And I do not have access to delete the course offering
     And I do not have access to edit activity offerings
@@ -23,8 +24,9 @@ Feature: Department Schedule Coordinator Authorization SOC state Locked
     When I manage a course offering for a subject code not in my admin org
     Then I have access to view the course offering details
     And I have access to view the activity offering details
+    And I have access to view all registration groups
     But I do not have access to edit the course offering
-    #And I do not have access to manage registration groups TODO: validate access to various reg groups links on page
+    And I do not have access to manage activity offering clusters
     And I do not have access to select activity offerings for add, approve, delete
     And I do not have access to edit activity offerings
     And I do not have access to copy activity offerings

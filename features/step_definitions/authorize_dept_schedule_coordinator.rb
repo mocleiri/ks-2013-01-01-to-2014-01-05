@@ -195,6 +195,13 @@ Then /^I have access to delete the course offering$/ do
   end
 end
 
+Then /^I have access to view all registration groups$/ do
+  on ManageCourseOfferings do |page|
+    page.view_all_reg_groups_link.present?.should be_true
+    page.view_all_reg_groups_link.attribute_value("class").should_not match /disabled/
+  end
+end
+
 Then /^I have access to manage activity offering clusters$/ do
   on ManageCourseOfferings do |page|
     page.add_cluster_button.present?.should be_true
@@ -208,6 +215,21 @@ Then /^I have access to manage activity offering clusters$/ do
 
     page.remove_cluster_link(:default_cluster).present?.should be_true
     page.remove_cluster_link(:default_cluster).attribute_value("class").should_not match /disabled/
+
+  end
+end
+
+Then /^I do not have access to manage activity offering clusters$/ do
+  on ManageCourseOfferings do |page|
+    page.add_cluster_button.present?.should be_true
+    page.add_cluster_button.enabled?.should be_false
+
+    page.move_aos_button.present?.should be_true
+    page.move_aos_button.enabled?.should be_false
+
+    page.rename_cluster_link(:default_cluster).present?.should be_false
+
+    page.remove_cluster_link(:default_cluster).present?.should be_false
 
   end
 end
