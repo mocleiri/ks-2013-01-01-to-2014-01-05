@@ -232,8 +232,9 @@ When /^I search for the "(.*)" "(.*)"$/ do |field, code|
 end
 
 When /^I click on the "(.*)" link on the Edit Agenda page$/ do |link|
+  sect = {"Compare to Original"=>:preview_rule_section, "Cancel"=>:rule_maintenance_section}
   on EditAgenda do |page|
-    page.preview_rule_section.a(:text => /#{Regexp.escape(link)}/).click
+    page.send(sect[link]).a(:text => /#{Regexp.escape(link)}/).click
   end
 end
 

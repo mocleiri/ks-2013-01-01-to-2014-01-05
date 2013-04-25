@@ -5,6 +5,7 @@ class EditAgenda < BasePage
   wrapper_elements
   krms_frame_elements
 
+  element(:rule_maintenance_section) { |b| b.frm.div(id: "KRMS-RuleMaintenance-Page")}
   element(:edit_tree_section) { |b| b.frm.div(id: "RuleStudentEditorView-Tree_tree")}
   element(:logic_tab_section) { |b| b.frm.div(id: "u438_boxLayout")}
   element(:preview_tree_section) { |b| b.frm.div(id: "u466")}

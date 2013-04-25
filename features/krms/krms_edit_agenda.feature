@@ -528,3 +528,13 @@ Feature: KRMS Edit Agenda
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
     Then there should be a new node with text "G. Must have successfully completed ENGL101"
+
+  #KSENROLL-6391
+  @pending
+  Scenario: Confirm whether the cancel button works in edit proposition on Antirequisite page
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6389"
+    And I click on the "Antirequisite" section
+    And I click on the "Add Rule" link
+    And I click on the "Cancel" link on the Edit Agenda page
+    Then the loaded page should have "Enrollment Eligibility" as a heading
+
