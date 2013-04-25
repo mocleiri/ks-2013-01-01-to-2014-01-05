@@ -8,7 +8,7 @@
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <jta-data-source>ksa</jta-data-source>
         <properties>
-            <property name="hibernate.default_schema" value="KSA"/>
+            <!--property name="hibernate.default_schema" value="KSA"/-->
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
             <property name="hibernate.jdbc.fetch_size" value="1000"/>
             <property name="hibernate.transaction.factory_class"
@@ -23,7 +23,7 @@
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <jta-data-source>rice</jta-data-source>
         <properties>
-            <property name="hibernate.default_schema" value="RICE"/>
+            <!--property name="hibernate.default_schema" value="RICE"/-->
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
             <property name="hibernate.jdbc.fetch_size" value="1000"/>
             <property name="hibernate.transaction.factory_class"
@@ -37,7 +37,7 @@
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <jta-data-source>ks</jta-data-source>
         <properties>
-            <property name="hibernate.default_schema" value="KS"/>
+            <!--property name="hibernate.default_schema" value="KS"/-->
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
             <property name="hibernate.jdbc.fetch_size" value="1000"/>
             <property name="hibernate.transaction.factory_class"

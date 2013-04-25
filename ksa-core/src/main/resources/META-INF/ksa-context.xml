@@ -6,7 +6,7 @@
        default-lazy-init="true">
 
     <bean id="initialParameterConfigurer" class="com.sigmasys.kuali.ksa.config.InitialParameterConfigurer">
-        <constructor-arg index="0" value="KSA.KSSA_CONFIG"/>
+        <constructor-arg index="0" value="KSSA_CONFIG"/>
         <constructor-arg index="1" value="0"/>
         <property name="location" value="classpath:/ksa.properties"/>
         <property name="dataSource" ref="ksaDataSource"/>
