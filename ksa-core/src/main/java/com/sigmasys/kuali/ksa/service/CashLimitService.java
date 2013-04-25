@@ -94,11 +94,19 @@ public interface CashLimitService {
     boolean cashLimitParameterExists(String code);
 
     /**
-     * Checks if the cash limit parameter exists by code.
+     * Returns the cash limit parameter by code.
      *
      * @param code CashLimitParameter's code
      * @return CashLimitParameter instance
      */
-    CashLimitParameter getCashLimitParameter(String code);
+    CashLimitParameter getCashLimitParameterByCode(String code);
+
+    /**
+     * Returns the cash limit parameter by ID.
+     *
+     * @param id CashLimitParameter's ID
+     * @return CashLimitParameter instance
+     */
+    CashLimitParameter getCashLimitParameter(Long id);
 
 }
