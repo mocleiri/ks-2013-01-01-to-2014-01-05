@@ -28,14 +28,14 @@ As an Administrator, I want to create registration groups for a Course Offering
 
   Scenario: ARG 6.10-1 Access Edit AO directly from within the clusters on the new Mge AO page and return with cancel
     Given I manage registration groups for a course offering
-    When I edit an Activity Offering
+    When I edit the Activity Offering
     Then the edit Activity Offering page is displayed
     And I return from the edit Activity Offering page
     Then the Manage Course Offerings page is displayed
 
   Scenario: ARG 6.10-2 Access Edit AO directly from within the clusters on the new Mge AO page can submit ao changes
     Given I manage registration groups for a course offering
-    When I edit an Activity Offering
+    When I edit the Activity Offering
     Then the edit Activity Offering page is displayed
     And I submit the Activity Offering changes
     Then the Manage Course Offerings page is displayed

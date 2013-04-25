@@ -213,3 +213,7 @@ When /^I update an Activity Offering to create a time conflict$/ do
     end
   end
 end
+
+When /^I edit the Activity Offering$/ do
+  @course_offering.edit_ao :ao_code =>"A"
+end
