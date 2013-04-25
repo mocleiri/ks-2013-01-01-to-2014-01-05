@@ -351,10 +351,17 @@ public class GeneralLedgerController extends ReportReconciliationController {
         if (CollectionUtils.size(ksaTransactions) == 1) {
             // Create a new GeneralLedgerTransactionModel and add it to the GL Account model object:
             Transaction ksaTransaction = (Transaction)CollectionUtils.get(ksaTransactions, 0);
-            GeneralLedgerTransactionModel glTransactionModel = new GeneralLedgerTransactionModel();
+            GeneralLedgerTransactionModel glTransactionModel = new GeneralLedgerTransactionModel(ksaTransaction);
 
+            // Prefetch associated properties:
+            ksaTransaction.getCurrency().getCode();
+            ksaTransaction.getTransactionType().getDescription();
+            ksaTransaction.getTransactionType().getId().getId();
+            ksaTransaction.getRollup().getDescription();
+            ksaTransaction.getGeneralLedgerType().getDescription();
+
+            // Link to the GL Account model:
             glTransactionModel.setGlTransaction(glTransaction);
-            glTransactionModel.setKsaTransaction(ksaTransaction);
             glAccountModel.getGlTransactions().add(glTransactionModel);
 
             // Adjust the total for the GL Account and the Grand Total amount:
