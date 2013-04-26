@@ -204,4 +204,13 @@ public interface ReportService {
      * @return XML representation of the form.
      */
     String convertIrs1098TToXml(Long irs1098TId);
+
+    /**
+     * Generates IRS 8300 report based on the CashLimitEvent object specified by ID.
+     *
+     * @param cashLimitEventId CashLimitEvent ID
+     * @return String representation of Irs8300 XML report.
+     */
+    String generateIrs8300Report(Long cashLimitEventId);
+
 }

@@ -898,7 +898,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
 
     /**
-     * Return an XML account report for the given account in the <code>accountId</code> list, between the dates listed.
+     * Returns an XML account report for the given account in the <code>accountId</code> list, between the dates listed.
      * If <code>details</code> is <code>true</code>, then all transactions will also be reported.
      * If <code>paymentApplication</code> is <code>true</code> then <code>paymentApplication</code> method will be run
      * before the account is reported.
@@ -1169,8 +1169,14 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         return JaxbUtils.toXml(transactionReceipt);
     }
 
-
-    public String generateCashLimitReport(Long cashLimitEventId) {
+    /**
+     * Generates IRS 8300 report based on the CashLimitEvent object specified by ID.
+     *
+     * @param cashLimitEventId CashLimitEvent ID
+     * @return String representation of Irs8300 XML report.
+     */
+    @Override
+    public String generateIrs8300Report(Long cashLimitEventId) {
 
         CashLimitEvent cashLimitEvent = cashLimitService.getCashLimitEvent(cashLimitEventId);
         if (cashLimitEvent == null) {
@@ -1228,8 +1234,8 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         Irs8300.TransactionDescription transactionDesc = new Irs8300.TransactionDescription();
         transactionDesc.setDate(CalendarUtils.toXmlGregorianCalendar(cashLimitEvent.getEventDate()));
         transactionDesc.setMultiplePayments(cashLimitEvent.isMultiple());
-        transactionDesc.setTotalAmount(cashLimitEvent.getPaymentAmount());
-        transactionDesc.setTotalPrice(cashLimitEvent.getChargeAmount());
+        transactionDesc.setTotalAmount(TransactionUtils.getFormattedAmount(cashLimitEvent.getPaymentAmount()));
+        transactionDesc.setTotalPrice(TransactionUtils.getFormattedAmount(cashLimitEvent.getChargeAmount()));
 
         // Filling out Payer
         Irs8300.Payer payer = new Irs8300.Payer();
@@ -1277,6 +1283,8 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         postalAddress.setCountryCode(defaultPostalAddress.getCountry());
 
         payer.setPostalAddress(postalAddress);
+
+        irs8300.setPayer(payer);
 
         Irs8300.TransactionDescription.Detail transactionDetail = new Irs8300.TransactionDescription.Detail();
 
@@ -1386,13 +1394,21 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      * @param payment Payment instance
      */
     private void populateSerials(StringBuilder builder, Payment payment) {
+        String defaultCurrencyCode = java.util.Currency.getInstance(Locale.getDefault()).getCurrencyCode();
         builder.append(payment.getId());
-        builder.append("(USD");
+        builder.append("(");
+        builder.append(defaultCurrencyCode);
         builder.append(" ");
         builder.append(TransactionUtils.formatAmount(payment.getAmount()));
-        builder.append(")(");
-        builder.append(java.util.Currency.getInstance(Locale.getDefault()).getCurrencyCode());
         builder.append(")");
+        String transactionCurrencyCode = payment.getCurrency().getCode();
+        if (!transactionCurrencyCode.equalsIgnoreCase(defaultCurrencyCode)) {
+            builder.append("(");
+            builder.append(transactionCurrencyCode);
+            builder.append(" ");
+            builder.append(TransactionUtils.formatAmount(payment.getNativeAmount()));
+            builder.append(")");
+        }
         builder.append(payment.getExternalId() != null ? payment.getExternalId() : "no serial");
         builder.append(".");
     }

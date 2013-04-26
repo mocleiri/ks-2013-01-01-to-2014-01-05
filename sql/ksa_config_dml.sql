@@ -78,7 +78,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.amount', '10000
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.days', '365');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.tag', 'Cash');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.address.from', 'ksa.sigmasys@gmail.com');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.recipient', 'ksa-sigma@sigmasys.com');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.recipient', 'mivanov@sigmasys.com');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.subject', 'Cash Limit Event');
 
 -- SMTP service parameters

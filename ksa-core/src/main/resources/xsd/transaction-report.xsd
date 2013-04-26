@@ -263,8 +263,8 @@
                                             <xs:complexType>
                                                 <xs:sequence>
                                                     <xs:element name="id-type" type="xs:string"/>
-                                                    <xs:element name="id-issuer" type="xs:string"/>
-                                                    <xs:element name="id-serial" type="xs:string"/>
+                                                    <xs:element name="id-issuer" type="xs:string" minOccurs="0"/>
+                                                    <xs:element name="id-serial" type="xs:string" minOccurs="0"/>
                                                 </xs:sequence>
                                             </xs:complexType>
                                         </xs:element>
