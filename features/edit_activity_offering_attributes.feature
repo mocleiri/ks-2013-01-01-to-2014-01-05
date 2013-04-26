@@ -11,11 +11,6 @@ Feature: Edit Activity Offering Attributes
     Then I am able to submit the changes
     And verify that the changes of Information attributes have persisted
 
-  Scenario: Edit Activity Offering Requested Delivery Logistics
-    When I change Requested Delivery Logistics
-    Then I am able to submit the changes
-    And verify that the changes of ADL have persisted
-
   Scenario: Edit Activity Offering Personnel attributes
     When I change Personnel attributes
     Then I am able to submit the changes

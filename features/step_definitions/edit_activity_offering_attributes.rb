@@ -29,51 +29,6 @@ And /^verify that the changes of Information attributes have persisted$/ do
   end
 end
 
-#Scenario: Edit Activity Offering Requested Delivery Logistics
-When /^I change Requested Delivery Logistics$/ do
-  #TODO - there is an ActivityOffering data object method that does this
-#  Facility code: ccc and room 1105  or CHM  and 124
-  @requested_delivery_logistics = make DeliveryLogistics
-  @requested_delivery_logistics.days =           "WF"
-  @requested_delivery_logistics.start_time =     "9:00"
-  @requested_delivery_logistics.start_time_ampm = "am"
-  @requested_delivery_logistics.end_time =        "11:00"
-  @requested_delivery_logistics.end_time_ampm =   "am"
-  @requested_delivery_logistics.facility =        "CHM"
-  @requested_delivery_logistics.room =            "124"
-
-  on ActivityOfferingMaintenance do |page|
-    page.revise_logistics
-  end
-
-  @requested_delivery_logistics.add_logistics_request
-  @requested_delivery_logistics.save
-
-end
-
-And /^verify that the changes of ADL have persisted$/ do
-  @course_offering.manage
-  @course_offering.edit_ao :ao_code =>  @orig_ao_code
-  on ActivityOfferingMaintenance do |page|
-    page.revise_logistics
-  end
-  added_rdl = false
-  num = @requested_delivery_logistics.rdl_row_numbers.table.rows.count
-
-  if num > 2
-    added_rdl = true
-  end
-  added_rdl.should == true
-
-  puts(num)
-
-  @requested_delivery_logistics.delete_rdl(num-2)
-
-  on ActivityOfferingMaintenance do |page|
-    page.submit
-  end
-end
-
 
 #Scenario: Edit Activity Offering Personnel attributes
 When /^I change Personnel attributes$/ do
@@ -128,8 +83,9 @@ And /^verify that the changes of Miscellaneous have persisted$/ do
 end
 
 Given /^I manage a given Course Offering$/ do
-  @course_offering = make CourseOffering, :course=>"ENGL222"
-  @course_offering.manage
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :course=>"ENGL222")
+  #@course_offering = make CourseOffering, :course=>"ENGL222"
+  @course_offering.manage_and_init
 end
 
 Given /^I edit an Activity Offering$/ do
