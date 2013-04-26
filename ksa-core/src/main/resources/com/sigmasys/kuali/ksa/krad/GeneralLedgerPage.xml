@@ -109,7 +109,7 @@
 				</bean>
 				
 				<!-- The total of all GL Accounts -->
-				<bean parent="Uif-DataField" p:label="Total" p:shortLabel="Total" p:labelPlacement="LEFT" p:propertyName="allPriorBatchTotal"/>
+				<!--bean parent="Uif-DataField" p:label="Total" p:shortLabel="Total" p:labelPlacement="LEFT" p:propertyName="allPriorBatchTotal"/-->
 			</list>
 		</property>
 	</bean>
@@ -179,7 +179,7 @@
 				</bean>
 				
 				<!-- The total of all GL Accounts -->
-				<bean parent="Uif-DataField" p:label="Total" p:shortLabel="Total" p:labelPlacement="LEFT" p:propertyName="allGlAccountsTotal"/>
+				<!--bean parent="Uif-DataField" p:label="Total" p:shortLabel="Total" p:labelPlacement="LEFT" p:propertyName="allGlAccountsTotal"/-->
 			</list>
 		</property>
 	</bean>
