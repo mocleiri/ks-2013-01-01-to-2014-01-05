@@ -45,9 +45,6 @@ public class GeneralLedgerController extends ReportReconciliationController {
     private static final Log logger = LogFactory.getLog(GeneralLedgerController.class);
 
     @Autowired
-    private GeneralLedgerService generalLedgerService;
-
-    @Autowired
     private AuditableEntityService auditableEntityService;
 
 

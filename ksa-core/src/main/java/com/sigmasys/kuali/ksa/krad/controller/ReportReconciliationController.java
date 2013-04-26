@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.ReportReconciliationForm;
 import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.TransactionExportService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 public class ReportReconciliationController extends DownloadController {
 
     private static final Log logger = LogFactory.getLog(ReportReconciliationController.class);
+
+    @Autowired
+    protected GeneralLedgerService generalLedgerService;
 
     @Autowired
     protected TransactionExportService transactionExportService;
@@ -73,6 +77,9 @@ public class ReportReconciliationController extends DownloadController {
      */
     @RequestMapping(method = {RequestMethod.POST,RequestMethod.GET}, params = "methodToCall=exportAllPendingTransactions")
     public ModelAndView exportAllPendingTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
+        // Prepare the General Ledger transactions:
+        generalLedgerService.prepareGlTransmissions();
+
         // Call the service to export all pending transactions:
         transactionExportService.exportTransactions();
 
