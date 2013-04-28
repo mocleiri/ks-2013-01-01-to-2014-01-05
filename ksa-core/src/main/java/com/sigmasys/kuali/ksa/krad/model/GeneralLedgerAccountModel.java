@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
+import com.sigmasys.kuali.ksa.model.GeneralLedgerType;
 import com.sigmasys.kuali.ksa.model.GlOperationType;
 import org.apache.commons.lang.StringUtils;
 
@@ -31,6 +32,11 @@ public class GeneralLedgerAccountModel implements Serializable {
      * Account operation, Debit or Credit.
      */
     private GlOperationType operationType;
+
+    /**
+     * General Ledger Type.
+     */
+    private GeneralLedgerType glType;
 
     /**
      * Total amount of the account.
@@ -114,5 +120,13 @@ public class GeneralLedgerAccountModel implements Serializable {
 
     public void setGlTransactions(List<GeneralLedgerTransactionModel> glTransactions) {
         this.glTransactions = glTransactions;
+    }
+
+    public GeneralLedgerType getGlType() {
+        return glType;
+    }
+
+    public void setGlType(GeneralLedgerType glType) {
+        this.glType = glType;
     }
 }
