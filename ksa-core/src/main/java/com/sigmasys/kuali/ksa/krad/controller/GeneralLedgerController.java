@@ -1,13 +1,12 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.ReportReconciliationForm;
+import com.sigmasys.kuali.ksa.krad.model.BatchTransmissionDetailsModel;
 import com.sigmasys.kuali.ksa.krad.model.BatchTransmissionModel;
 import com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel;
 import com.sigmasys.kuali.ksa.krad.model.GeneralLedgerTransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
-import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
-import com.sigmasys.kuali.ksa.service.TransactionExportService;
 import com.sigmasys.kuali.ksa.util.ErrorUtils;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -15,8 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableDouble;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.kuali.rice.kew.rule.GenericRoleAttribute;
-import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -102,6 +98,23 @@ public class GeneralLedgerController extends ReportReconciliationController {
         return null;
     }
 
+    /**
+     * Called to display the Batch Details page when a Batch ID is clicked in the Prior Batch table.
+     *
+     * @param form      The form object.
+     * @param batchId   ID of the batch to display its details.
+     * @return          ModelAndView.
+     * @throws Exception
+     */
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=displayBatchDetails")
+    public ModelAndView displayBatchDetails(@ModelAttribute("KualiForm") ReportReconciliationForm form,
+                                            @RequestParam("batchId") String batchId) throws Exception {
+        // Get the Batch details:
+        searchForBatchDetails(form, batchId);
+
+        return getUIFModelAndView(form);
+    }
+
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -115,9 +128,12 @@ public class GeneralLedgerController extends ReportReconciliationController {
      * @param form The form object.
      */
     private void searchForPriorBatches(ReportReconciliationForm form) {
+        // Find all GL Transmissions in all statuses:
+        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsByStatuses(GlTransmissionStatus.TRANSMITTED);
+
         // Create a BatchTransmissionModel List:
         MutableDouble grandTotal = new MutableDouble(0);
-        List<BatchTransmissionModel> batchTransmissions = createBatchTransmissionList(grandTotal);
+        List<BatchTransmissionModel> batchTransmissions = createBatchTransmissionList(glTransmissions, grandTotal);
 
         // Set objects on the form:
         form.setPriorBatchTransmissions(batchTransmissions);
@@ -140,16 +156,40 @@ public class GeneralLedgerController extends ReportReconciliationController {
     }
 
     /**
+     * Searches for details for a particular Batch.
+     * Populates the form object with the details.
+     *
+     * @param form The form object.
+     */
+    private void searchForBatchDetails(ReportReconciliationForm form, String batchId) {
+        // Get GL Transmissions for the given batch:
+        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsForExport(batchId, GlTransmissionStatus.TRANSMITTED);
+        List<GlTransaction> glTransactions = generalLedgerService.getGlTransactionsForBatch(batchId);
+
+        // Create a BatchTransmissionModel list, which should contain only one element:
+        MutableDouble grandTotal = new MutableDouble(0);
+        List<BatchTransmissionModel> batchTransmissions = createBatchTransmissionList(glTransmissions, grandTotal);
+
+        // Set the objects on the form:
+        if (CollectionUtils.isNotEmpty(batchTransmissions)) {
+            // Create a BatchTransmissionDetailsModel object:
+            BatchTransmissionDetailsModel batchDetails = createBatchTransmissionDetails(batchTransmissions.get(0), glTransactions);
+
+            form.setDisplayedBatch(batchDetails);
+        } else {
+            // Set an empty object:
+            form.setDisplayedBatch(new BatchTransmissionDetailsModel());
+        }
+    }
+
+    /**
      * Creates a List of all BatchTransmissionModel objects that contain
      * their related GL Account Types.
      *
      * @param grandTotalAmount The total for all batches. This is an OUT parameter.
      * @return a List of all BatchTransmissionModel objects.
      */
-    private List<BatchTransmissionModel> createBatchTransmissionList(MutableDouble grandTotalAmount) {
-
-        // Find all GL Transmissions in all statuses:
-        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsByStatuses(GlTransmissionStatus.TRANSMITTED);
+    private List<BatchTransmissionModel> createBatchTransmissionList(List<GlTransmission> glTransmissions, MutableDouble grandTotalAmount) {
 
         // Create a temporary Map of Batch IDs mapped to BatchTransmissionModel objects:
         Map<String, BatchTransmissionModel> result = new HashMap<String, BatchTransmissionModel>();
@@ -248,6 +288,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
             glAccount.setName(glAccountName);
             glAccount.setOperationType(glOperationType);
             glAccount.setTotalAmount(new BigDecimal(0));
+            glAccount.setGlType(glType);
             glAccountModels.add(glAccount);
         }
 
@@ -320,11 +361,12 @@ public class GeneralLedgerController extends ReportReconciliationController {
                     glAccountModel.setName(glAccountName);
                     glAccountModel.setOperationType(glOperationType);
                     glAccountModel.setTotalAmount(new BigDecimal(0));
+                    glAccountModel.setGlType(glType);
                     glAccountMap.put(glAccountId, glAccountModel);
                 }
 
                 // Add a GL Transaction to the GL Account:
-                addGlTransactionModel(glAccountModel, glTransaction, grandTotalAmount);
+                addGlTransactionModel(glAccountModel, glTransaction, grandTotalAmount, true);
             }
         }
 
@@ -335,38 +377,204 @@ public class GeneralLedgerController extends ReportReconciliationController {
      * Adds a GL Transaction to the given GeneralLedgerAccountModel object.
      * Adjusts the GL Account amount and the Grand total amount accordingly.
      * According to the logic, only those GL Transactions that point to a SINGLE
-     * KSA Transactions are need for this view.
+     * KSA Transactions are hyperlinked for a light-box view.
      *
      * @param glAccountModel    A GL Account to add a GL Transaction to.
      * @param glTransaction     A GL Transaction to add to the GL Account.
      * @param grandTotalAmount  The grand total amount for all GL Accounts.
+     * @param adjustGlAccountTotal Optionally, GL Account Total adjustment can be turned on or off.
      */
-    private void addGlTransactionModel(GeneralLedgerAccountModel glAccountModel, GlTransaction glTransaction, MutableDouble grandTotalAmount) {
+    private void addGlTransactionModel(GeneralLedgerAccountModel glAccountModel, GlTransaction glTransaction,
+                                       MutableDouble grandTotalAmount, boolean adjustGlAccountTotal) {
+
         // Get the list of KSA Transactions from the GL Transaction:
         Set<Transaction> ksaTransactions = glTransaction.getTransactions();
+        Transaction ksaTransaction;
+        GeneralLedgerTransactionModel glTransactionModel;
 
+        // If GL Transaction is linked to a single KSA Transaction, fetch its details:
         if (CollectionUtils.size(ksaTransactions) == 1) {
-            // Create a new GeneralLedgerTransactionModel and add it to the GL Account model object:
-            Transaction ksaTransaction = (Transaction)CollectionUtils.get(ksaTransactions, 0);
-            GeneralLedgerTransactionModel glTransactionModel = new GeneralLedgerTransactionModel(ksaTransaction);
-
             // Prefetch associated properties:
+            ksaTransaction = (Transaction)CollectionUtils.get(ksaTransactions, 0);
             ksaTransaction.getCurrency().getCode();
             ksaTransaction.getTransactionType().getDescription();
             ksaTransaction.getTransactionType().getId().getId();
             ksaTransaction.getRollup().getDescription();
             ksaTransaction.getGeneralLedgerType().getDescription();
 
-            // Link to the GL Account model:
-            glTransactionModel.setGlTransaction(glTransaction);
-            glAccountModel.getGlTransactions().add(glTransactionModel);
+            // Create a new GeneralLedgerTransactionModel object:
+            glTransactionModel = new GeneralLedgerTransactionModel(ksaTransaction);
+        } else {
+            // Create a scarcely populated substitute KSA Transaction:
+            ksaTransaction = createMinimalKsaTransactionForView(glTransaction, ksaTransactions);
 
-            // Adjust the total for the GL Account and the Grand Total amount:
-            BigDecimal adjustmentAmount = (glTransaction.getGlOperation() == GlOperationType.CREDIT)
-                    ? glTransaction.getAmount() : glTransaction.getAmount().negate();
-
-            glAccountModel.setTotalAmount(glAccountModel.getTotalAmount().add(adjustmentAmount));
-            grandTotalAmount.add(adjustmentAmount);
+            // Create a new GeneralLedgerTransactionModel object:
+            glTransactionModel = new GeneralLedgerTransactionModel();
+            glTransactionModel.setKsaTransaction(ksaTransaction);
         }
+
+        // Link to the GL Account model:
+        glTransactionModel.setGlTransaction(glTransaction);
+        glAccountModel.getGlTransactions().add(glTransactionModel);
+
+        // Adjust the total for the GL Account and the Grand Total amount:
+        BigDecimal adjustmentAmount = (glTransaction.getGlOperation() == GlOperationType.CREDIT)
+                ? glTransaction.getAmount() : glTransaction.getAmount().negate();
+
+        grandTotalAmount.add(adjustmentAmount);
+
+        if (adjustGlAccountTotal) {
+            glAccountModel.setTotalAmount(glAccountModel.getTotalAmount().add(adjustmentAmount));
+        }
+    }
+
+    /**
+     * Creates a scarcely populated KSA Transaction, which is enough for the view.
+     * Assigns no statement text, so it's not hyperlinked in the view.
+     * Calculates the total amount of all Transactions.
+     *
+     * @param glTransaction     GL Transaction, the owner of KSA Transactions.
+     * @param ksaTransactions   A Set of KSA Transactions linked to the GL Transaction.
+     * @return A scarcely populated KSA Transaction for the view.
+     */
+    private Transaction createMinimalKsaTransactionForView(GlTransaction glTransaction,
+                                                           Set<Transaction> ksaTransactions) {
+        // Calculate the total amount of all KSA Transactions:
+        MutableDouble totalAmount = new MutableDouble(0);
+        final boolean isCredit = (glTransaction.getGlOperation() == GlOperationType.CREDIT);
+        String originatingAccountId = null;
+
+        for(Transaction ksaTransaction : ksaTransactions) {
+            BigDecimal adjustmentAmount = isCredit ? ksaTransaction.getAmount() : ksaTransaction.getAmount().negate();
+
+            totalAmount.add(adjustmentAmount);
+            originatingAccountId = ksaTransaction.getAccountId();
+        }
+
+        // Create a minimal KSA Transaction, which is enough for the view:
+        Transaction ksaTransaction = new Transaction() {
+            @Override
+            public TransactionTypeValue getTransactionTypeValue() {
+                return isCredit ? TransactionTypeValue.PAYMENT : TransactionTypeValue.CHARGE;
+            }
+        };
+
+        ksaTransaction.setAmount(new BigDecimal(totalAmount.doubleValue()));
+        ksaTransaction.setAccountId(originatingAccountId);
+
+        return ksaTransaction;
+    }
+
+    /**
+     * Creates a BatchTransmissionDetailsModel object from a BatchTransmissionModel object.
+     *
+     * @param batchTransmission A BatchTransmissionModel object.
+     * @return                  A BatchTransmissionDetailsModel object created.
+     */
+    private BatchTransmissionDetailsModel createBatchTransmissionDetails(BatchTransmissionModel batchTransmission,
+                                                                         List<GlTransaction> glTransactions) {
+        // Create a new BatchTransmissionDetailsModel object:
+        BatchTransmissionDetailsModel batchDetails = new BatchTransmissionDetailsModel();
+
+        // Separate GL Accounts into Accrual and All Other GL Accounts:
+        separateGlAccountsForDetails(batchTransmission, batchDetails, glTransactions);
+
+        // Set the attributes of the Details object from the given Transmission object:
+        batchDetails.setBatchId(batchTransmission.getBatchId());
+        batchDetails.setTransmissionDate(batchTransmission.getTransmissionDate());
+        batchDetails.setTotalAmount(batchTransmission.getTotalAmount());
+
+        return batchDetails;
+    }
+
+    /**
+     * Separates GL Accounts of the given Transmission object into Accrual and All Other GL Accounts
+     * and sets them on the Details object. Calculates totals for both groups of GL Accounts.
+     *
+     * @param batchTransmission A BatchTransmissionModel object.
+     * @param batchDetails      A BatchTransmissionDetailsModel object.
+     */
+    private void separateGlAccountsForDetails(BatchTransmissionModel batchTransmission, BatchTransmissionDetailsModel batchDetails,
+                                              List<GlTransaction> glTransactions) {
+        // Define two lists of GL Accounts and totals for each group:
+        List<GeneralLedgerAccountModel> accrualGlAccount = new ArrayList<GeneralLedgerAccountModel>();
+        List<GeneralLedgerAccountModel> allOtherGlAccount = new ArrayList<GeneralLedgerAccountModel>();
+        MutableDouble accrualGlAccountsTotal = new MutableDouble(0);
+        MutableDouble allOtherGlAccountsTotal = new MutableDouble(0);
+
+        // Create a Map of GlTransactions by GL Account IDs they belong to:
+        Map<String,List<GlTransaction>> batchGlTransactions = createGlAccountTransactionMap(glTransactions);
+
+        // Iterate through the list of all GL Accounts and separate them:
+        List<GeneralLedgerAccountModel> glAccounts = batchTransmission.getGlAccountSublist();
+
+        for (GeneralLedgerAccountModel glAccount : glAccounts) {
+            // If a GL Account has a GL Type, it's an Accrual GL Account:
+            if (glAccount.getGlType() != null) {
+                accrualGlAccount.add(glAccount);
+                addGlTransactionsForBatchDetails(glAccount, batchGlTransactions, accrualGlAccountsTotal);
+            } else {
+                allOtherGlAccount.add(glAccount);
+                addGlTransactionsForBatchDetails(glAccount, batchGlTransactions, allOtherGlAccountsTotal);
+            }
+        }
+
+        // Set the attributes of the Details object:
+        batchDetails.setAccrualGlAccounts(accrualGlAccount);
+        batchDetails.setAllOtherGlAccounts(allOtherGlAccount);
+        batchDetails.setAccrualGlAccountsTotal(new BigDecimal(accrualGlAccountsTotal.doubleValue()));
+        batchDetails.setAllOtherGlAccountsTotal(new BigDecimal(allOtherGlAccountsTotal.doubleValue()));
+    }
+
+    /**
+     * Create a Map of GlTransactions by GL Account IDs they belong to.
+     *
+     * @param glTransactions A list of GlTransactions.
+     * @return A Map of GlTransactions mapped to their GL Account IDs.
+     */
+    private Map<String,List<GlTransaction>> createGlAccountTransactionMap(List<GlTransaction> glTransactions) {
+        // Create the resulting Map:
+        Map<String,List<GlTransaction>> result = new HashMap<String, List<GlTransaction>>();
+
+        // Iterate through the list of Gl Transactions and record them under their GL Account IDs:
+        for (GlTransaction glTransaction : glTransactions) {
+            // Get the mapped List:
+            String glAccountId = glTransaction.getTransmission().getGlAccountId();
+            List<GlTransaction> mappedGlTransactions = result.get(glAccountId);
+
+            // If the GL Account ID hasn't been mapped yet, create a new List and map it:
+            if (mappedGlTransactions == null) {
+                mappedGlTransactions = new ArrayList<GlTransaction>();
+                result.put(glAccountId, mappedGlTransactions);
+            }
+
+            // Add the current GL Transaction to the list of mapped ones:
+            mappedGlTransactions.add(glTransaction);
+        }
+
+        return result;
+    }
+
+    /**
+     * Adds GeneralLedgerTransactionModel objects to the given GeneralLedgerAccountModel object
+     * for a sub-table display.
+     *
+     * @param glAccount             A GeneralLedgerAccountModel object.
+     * @param batchGlTransactions   A Map of GlTransactions in a batch by GL Account Id.
+     * @param totalAmount           The total amount for each group of GL Accounts.
+     */
+    private void addGlTransactionsForBatchDetails(GeneralLedgerAccountModel glAccount,
+                Map<String,List<GlTransaction>> batchGlTransactions, MutableDouble totalAmount) {
+
+        // Add GL Transaction model objects to the GL Account model object:
+        String glAccountId = glAccount.getGlAccountId();
+        List<GlTransaction> glAccountTransactions = batchGlTransactions.get(glAccountId);
+
+        if (CollectionUtils.isNotEmpty(glAccountTransactions)) {
+            for (GlTransaction glTransaction : glAccountTransactions) {
+                addGlTransactionModel(glAccount, glTransaction, totalAmount, false);
+            }
+        }
+
     }
 }
