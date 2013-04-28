@@ -130,6 +130,7 @@
                 <!--Begin General Ledger Page-->
 
                 <ref bean="GeneralLedgerMainPage"/>
+				<ref bean="GeneralLedgerBatchDetailsPage"/>
 
                 <!--End General Ledger Page-->
 

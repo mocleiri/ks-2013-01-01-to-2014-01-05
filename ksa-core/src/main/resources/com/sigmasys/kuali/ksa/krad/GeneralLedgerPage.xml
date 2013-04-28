@@ -62,6 +62,23 @@
 		</property>
 	</bean>
 	
+
+	<!-- 
+	
+	*********************  The Batch Details page    ***********************
+	
+	-->
+	
+	<bean id="GeneralLedgerBatchDetailsPage" parent="Uif-Page" p:id="GeneralLedgerBatchDetailsPage" p:title="General Ledger">
+		<property name="headerText" value="Detail View of Batch No. @{displayedBatchId}"/>
+		<property name="items">
+			<list>
+				<!-- GL Accounts that make up the batch section -->
+				<ref bean="displayedBatchGLAccountsSection"/>
+			</list>
+		</property>
+	</bean>
+	
 	
 	<!-- 
 	
@@ -88,7 +105,8 @@
                     <property name="layoutManager.richTable.disableTableSort" value="true"/>
 					<property name="items">
 						<list>
-							<bean parent="Uif-DataField" p:label="Batch No." p:propertyName="batchId" p:style="width: 20%;"/>
+							<bean parent="Uif-LinkField" p:label="Batch No." p:linkText="@{#line.batchId}" p:style="width: 20%;"
+									p:href="generalLedger?methodToCall=displayBatchDetails&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerBatchDetailsPage&amp;batchId=@{#line.batchId}"/>
 							<bean parent="Uif-DataField" p:label="Date" p:propertyName="transmissionDate" p:style="width: 35%;"/>
 							<bean parent="Uif-DataField" p:label="Total" p:propertyName="totalAmount" p:style="text-align: right; width: 20%;"/>
 							
@@ -148,42 +166,46 @@
 		<property name="items">
 			<list>
 				<!-- The table of GL Accounts -->
-				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:displayCollectionSize="10">
-					<property name="title" value="Pending Transactions"/>
-                    <property name="readOnly" value="true"/>
-					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel"/>
-					<property name="propertyName" value="glAccountsPending" />
-					<property name="layoutManager.generateAutoSequence" value="false" />
-					<property name="layoutManager.richTable.render" value="true"/>
-					<property name="layoutManager.renderSequenceField" value="false"/>
-					<property name="renderAddBlankLineButton" value="false"/>
-					<property name="renderAddLine" value="false"/>
-					<property name="renderLineActions" value="false"/>
-					<property name="layoutManager.applyDefaultCellWidths" value="false"/>
-                    <property name="layoutManager.richTable.disableTableSort" value="true"/>
-					<property name="items">
-						<list>
-							<bean parent="Uif-InputField" p:label="General Ledger Account" p:propertyName="name" p:style="width: 60%;"/>
-							<bean parent="Uif-InputField" p:label="Type" p:propertyName="operationTypeString" p:style="text-align: center; width: 10%;"/>
-							<bean parent="Uif-InputField" p:label="Total" p:propertyName="totalAmount" p:style="text-align: right; width: 25%;"/>
-						</list>
-					</property>
-
-					<property name="layoutManager.expandDetailsActionPrototype">
-						<bean parent="Uif-ExpandDetailsImageAction"/>
-					</property>
-					<property name="layoutManager.rowDetailsGroup">
-						<ref bean="generalLedgerTransactionSublist"/>
-					</property>
-
-				</bean>
+				<ref bean="glAccountTable"/>
 				
 				<!-- The total of all GL Accounts -->
 				<!--bean parent="Uif-DataField" p:label="Total" p:shortLabel="Total" p:labelPlacement="LEFT" p:propertyName="allGlAccountsTotal"/-->
 			</list>
 		</property>
 	</bean>
-	
+
+	<!-- Table of GL Accounts -->
+	<bean id="glAccountTable" parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:displayCollectionSize="10">
+		<property name="title" value="Pending Transactions"/>
+		<property name="readOnly" value="true"/>
+		<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel"/>
+		<property name="propertyName" value="glAccountsPending" />
+		<property name="layoutManager.generateAutoSequence" value="false" />
+		<property name="layoutManager.richTable.render" value="true"/>
+		<property name="layoutManager.renderSequenceField" value="false"/>
+		<property name="renderAddBlankLineButton" value="false"/>
+		<property name="renderAddLine" value="false"/>
+		<property name="renderLineActions" value="false"/>
+		<property name="layoutManager.applyDefaultCellWidths" value="false"/>
+		<property name="layoutManager.richTable.disableTableSort" value="true"/>
+		<property name="items">
+			<list>
+				<bean parent="Uif-InputField" p:label="General Ledger Account" p:propertyName="name" p:style="width: 60%;"/>
+				<bean parent="Uif-InputField" p:label="Type" p:propertyName="operationTypeString" p:style="text-align: center; width: 10%;"/>
+				<bean parent="Uif-InputField" p:label="Total" p:propertyName="totalAmount" p:style="text-align: right; width: 25%;"/>
+			</list>
+		</property>
+
+		<property name="layoutManager.expandDetailsActionPrototype">
+			<bean parent="Uif-ExpandDetailsImageAction"/>
+		</property>
+		<property name="layoutManager.rowDetailsGroup">
+			<ref bean="generalLedgerTransactionSublist"/>
+		</property>
+
+	</bean>
+
+	<!-- Sublist of GL Transactions that belong to a GL Account -->
 	<bean id="generalLedgerTransactionSublist" parent="Uif-TableSubCollection-WithinSection" p:layoutManager.numberOfColumns="6">
         <property name="headerText" value="Transactions" />
         <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GeneralLedgerTransactionModel" />
@@ -217,6 +239,116 @@
             </list>
         </property>
     </bean>
+	
+	
+	<!-- 
+	
+	*********************  The Batch GL Accounts section    ***********************
+	
+	-->
+	
+	<bean id="displayedBatchGLAccountsSection" parent="Uif-VerticalBoxSection">
+		<property name="items">
+			<list>				
+				<!-- Batch Details -->
+				<bean parent="Uif-VerticalBoxSection">
+					<property name="items">
+						<list>
+							<bean parent="Uif-DataField" p:label="Batch No." p:propertyName="displayedBatch.batchId" />
+							<bean parent="Uif-DataField" p:label="Date" p:propertyName="displayedBatch.transmissionDate" />
+							<bean parent="Uif-DataField" p:label="Total" p:propertyName="displayedBatch.totalAmount" />
+						</list>
+					</property>
+				</bean>
+				
+				<!-- The table of Accrual GL Accounts -->
+				<bean parent="Uif-VerticalBoxSection">
+					<property name="headerText" value="Accrual Accounts"/>
+					<property name="items">
+						<list>
+							<ref bean="batchDetailsAccrualGlAccountsTable"/>
+							<bean parent="Uif-DataField" p:label="Total" p:propertyName="displayedBatch.accrualGlAccountsTotal"/>
+						</list>
+					</property>
+				</bean>
+				
+				<!-- The table of All Other GL Accounts -->
+				<bean parent="Uif-VerticalBoxSection">
+					<property name="headerText" value="All Other General Ledger Accounts"/>
+					<property name="items">
+						<list>
+							<ref bean="batchDetailsAllOtherGlAccountsTable"/>
+							<bean parent="Uif-DataField" p:label="Total" p:propertyName="displayedBatch.allOtherGlAccountsTotal"/>
+						</list>
+					</property>
+				</bean>
+				
+			</list>
+		</property>
+	</bean>
+
+	<!-- Table of Accrual GL Accounts -->
+	<bean id="batchDetailsAccrualGlAccountsTable" parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:displayCollectionSize="10">
+		<property name="title" value="Accrual Accounts"/>
+		<property name="readOnly" value="true"/>
+		<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel"/>
+		<property name="propertyName" value="displayedBatch.accrualGlAccounts" />
+		<property name="layoutManager.generateAutoSequence" value="false" />
+		<property name="layoutManager.richTable.render" value="true"/>
+		<property name="layoutManager.renderSequenceField" value="false"/>
+		<property name="renderAddBlankLineButton" value="false"/>
+		<property name="renderAddLine" value="false"/>
+		<property name="renderLineActions" value="false"/>
+		<property name="layoutManager.applyDefaultCellWidths" value="false"/>
+		<property name="layoutManager.richTable.disableTableSort" value="true"/>
+		<property name="items">
+			<list>
+				<bean parent="Uif-InputField" p:label="General Ledger Account" p:propertyName="name" p:style="width: 60%;"/>
+				<bean parent="Uif-InputField" p:label="Type" p:propertyName="operationTypeString" p:style="text-align: center; width: 10%;"/>
+				<bean parent="Uif-InputField" p:label="Total" p:propertyName="totalAmount" p:style="text-align: right; width: 25%;"/>
+			</list>
+		</property>
+
+		<property name="layoutManager.expandDetailsActionPrototype">
+			<bean parent="Uif-ExpandDetailsImageAction"/>
+		</property>
+		<property name="layoutManager.rowDetailsGroup">
+			<ref bean="generalLedgerTransactionSublist"/>
+		</property>
+
+	</bean>
+
+	<!-- Table of All Other GL Accounts -->
+	<bean id="batchDetailsAllOtherGlAccountsTable" parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:displayCollectionSize="10">
+		<property name="title" value="All Other General Ledger Accounts"/>
+		<property name="readOnly" value="true"/>
+		<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel"/>
+		<property name="propertyName" value="displayedBatch.allOtherGlAccounts" />
+		<property name="layoutManager.generateAutoSequence" value="false" />
+		<property name="layoutManager.richTable.render" value="true"/>
+		<property name="layoutManager.renderSequenceField" value="false"/>
+		<property name="renderAddBlankLineButton" value="false"/>
+		<property name="renderAddLine" value="false"/>
+		<property name="renderLineActions" value="false"/>
+		<property name="layoutManager.applyDefaultCellWidths" value="false"/>
+		<property name="layoutManager.richTable.disableTableSort" value="true"/>
+		<property name="items">
+			<list>
+				<bean parent="Uif-InputField" p:label="General Ledger Account" p:propertyName="name" p:style="width: 60%;"/>
+				<bean parent="Uif-InputField" p:label="Type" p:propertyName="operationTypeString" p:style="text-align: center; width: 10%;"/>
+				<bean parent="Uif-InputField" p:label="Total" p:propertyName="totalAmount" p:style="text-align: right; width: 25%;"/>
+			</list>
+		</property>
+
+		<property name="layoutManager.expandDetailsActionPrototype">
+			<bean parent="Uif-ExpandDetailsImageAction"/>
+		</property>
+		<property name="layoutManager.rowDetailsGroup">
+			<ref bean="generalLedgerTransactionSublist"/>
+		</property>
+
+	</bean>
+	
 	
 	
 </beans>
