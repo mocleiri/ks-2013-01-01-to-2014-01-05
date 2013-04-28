@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.krad.model.BatchTransmissionDetailsModel;
 import com.sigmasys.kuali.ksa.krad.model.BatchTransmissionModel;
 import com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel;
 import com.sigmasys.kuali.ksa.model.Account;
@@ -37,6 +38,28 @@ public class ReportReconciliationForm extends AbstractViewModel {
      */
     private BigDecimal allPriorBatchTotal;
 
+    /**
+     * A Batch, which details are being displayed in the "Batch Details" page.
+     */
+    private BatchTransmissionDetailsModel displayedBatch;
+
+
+    /**
+     * Returns the ID of the Batch being displayed in the "Batch Details" page.
+     *
+     * @return ID of the displayed Batch.
+     */
+    public String getDisplayedBatchId() {
+        return (displayedBatch != null) ? displayedBatch.getBatchId() : "";
+    }
+
+    public BatchTransmissionDetailsModel getDisplayedBatch() {
+        return displayedBatch;
+    }
+
+    public void setDisplayedBatch(BatchTransmissionDetailsModel displayedBatch) {
+        this.displayedBatch = displayedBatch;
+    }
 
     public List<GeneralLedgerAccountModel> getGlAccountsPending() {
         return glAccountsPending;
