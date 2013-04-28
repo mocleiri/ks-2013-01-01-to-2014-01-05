@@ -816,6 +816,32 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     }
 
     /**
+     * Retrieves GL transactions that belong to the specified Batch.
+     *
+     * @param batchId   ID of a Batch which GL Transactions to retrieve.
+     * @return list of GL Transactions belonging to the Batch.
+     */
+    @WebMethod(exclude = true)
+    public List<GlTransaction> getGlTransactionsForBatch(String batchId) {
+
+        if (org.apache.commons.lang.StringUtils.isEmpty(batchId)) {
+            String errMsg = "Batch ID cannot be empty or null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Query query = em.createQuery("select glt from GlTransaction glt " +
+                " left outer join fetch glt.recognitionPeriod rp " +
+                " left outer join fetch glt.transmission t " +
+                " where t.batchId = :batchId " +
+                " order by glt.date asc");
+
+        query.setParameter("batchId", batchId);
+
+        return query.getResultList();
+    }
+
+    /**
      * Retrieves all GL Transmissions with the specified statuses.
      *
      * @param statuses Status of GL Transmissions to retrieve.

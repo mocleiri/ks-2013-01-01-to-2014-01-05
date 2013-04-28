@@ -231,6 +231,15 @@ public interface GeneralLedgerService {
     List<GlTransaction> getGlTransactionsByStatus(GlTransactionStatus status);
 
     /**
+     * Retrieves GL transactions that belong to the specified Batch.
+     *
+     * @param batchId   ID of a Batch which GL Transactions to retrieve.
+     * @return list of GL Transactions belonging to the Batch.
+     */
+    @WebMethod(exclude = true)
+    List<GlTransaction> getGlTransactionsForBatch(String batchId);
+
+    /**
      * Retrieves all GL Transmissions with the specified statuses.
      *
      * @param statuses Statuses of GL Transmissions to retrieve.
