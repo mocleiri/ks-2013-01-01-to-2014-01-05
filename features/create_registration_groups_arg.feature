@@ -16,13 +16,12 @@ As an Administrator, I want to create registration groups for a Course Offering
     And I add an Activity Offering
     Then the corresponding number of registration groups for each cluster is correct
 
-#TODO warning message steps - use std format - Then a cluster warning message appears stating.../Page warning etc
   Scenario: ARG 6.4A when an AO is updated and creates a time conflict or a total seats issue the reg group state and the messaging should reflect this
     Given I manage registration groups for a new course offering
     When I update an Activity Offering to have less seats
-    Then A warning message is displayed about seats
+    Then a warning message is displayed stating "The sums of maximum enrollment seats"
     And I update an Activity Offering to create a time conflict
-    Then a warning message is displayed about a time conflict
+    Then a warning message is displayed stating "invalid due to scheduling conflicts"
 
   Scenario: ARG 6.4B: Error message is displayed if I attempt to create 2 activity offering clusters with the same private name
     Given I manage registration groups for a new course offering
@@ -35,13 +34,15 @@ As an Administrator, I want to create registration groups for a Course Offering
 
   @draft
   Scenario: ARG 6.4C When an AO cluster does not have all AO types represented, a warning message should appear
-    Given I manage a course offering with 2 AO clusters
-    When I move the only lecture AO from the first cluster
-    Then a cluster warning message appears stating "blah"
+    Given I manage registration groups for a new course offering
+    When I create an activity offering cluster
+    And I move a lab activity offering to the new cluster
+    Then a cluster error message appears stating "The cluster private name is already in use"
 
-#TODO - test should be RGs are automatically updated when an AO is deleted from a cluster
   Scenario: ARG 6.5 When deleting an AOC delete all associated AOs as well
     Given I manage registration groups for a new course offering
+    And I delete an Activity Offering
+    Then the corresponding number of registration groups for each cluster is correct
     When I create an activity offering cluster
     And Move one lab and one lecture activity offering to the second cluster
     And I remove the newly created cluster

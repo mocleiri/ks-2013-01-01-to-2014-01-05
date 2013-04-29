@@ -97,13 +97,8 @@ end
 
 Then /^I remove the newly created cluster$/ do
   @course_offering.delete_ao_cluster(@ao_cluster)
-  #@course_offering.activity_offering_cluster_list.each do  |aoc|
-  # if aoc.private_name !=  @ao_cluster.private_name
-  #  @deleted_aoc = aoc.private_name
-  #  @course_offering.delete_ao_cluster(aoc)
-  # end
-  #end
 end
+
 
 Then /^the edit Activity Offering page is displayed$/ do
   on ActivityOfferingMaintenance do |page|
@@ -190,15 +185,9 @@ When /^I update an Activity Offering to have less seats$/ do
 
 end
 
-Then /^A warning message is displayed about seats$/ do
+Then /^a warning message is displayed stating "([^"]*)"$/ do |msg|
   on ManageCourseOfferings do |page|
-    page.get_cluster_warning_msgs.include?("The sums of maximum enrollment seats")
-  end
-end
-
-Then /^a warning message is displayed about a time conflict$/ do
-  on ManageCourseOfferings do |page|
-    page.get_cluster_warning_msgs.include?("invalid due to scheduling conflicts")
+    page.get_cluster_warning_msgs.include?(msg)
   end
 end
 
@@ -215,4 +204,12 @@ end
 
 When /^I edit the Activity Offering$/ do
   @course_offering.edit_ao :ao_code =>"A"
+end
+
+When /^I move a lab activity offering to the new cluster$/ do
+  @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("A", @course_offering.activity_offering_cluster_list[1])
+end
+
+When /^I delete an Activity Offering$/ do
+   @course_offering.delete_ao("B")
 end
