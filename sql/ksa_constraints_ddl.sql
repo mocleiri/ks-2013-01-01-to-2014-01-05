@@ -6,8 +6,6 @@ alter table KSSA_ACNT_KYPR add constraint FK0002_KSSA_ACNT_KYPR foreign key (KYP
 
 -- Creating constraints
 
-alter table KSSA_CASH_LIMIT_EVENT_TRANS add constraint FKEF56CBD3D61AFDF9 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
-alter table KSSA_CASH_LIMIT_EVENT_TRANS add constraint FKEF56CBD3E0CEA4F3 foreign key (CASH_LIMIT_EVENT_ID_FK) references KSSA_CASH_LIMIT_EVENT;
 alter table KSSA_ACNT add constraint FKB8F79251AC72F7E6 foreign key (ACNT_STATUS_TYPE_ID_FK) references KSSA_ACNT_STATUS_TYPE;
 alter table KSSA_ACNT add constraint FKB8F7925156D383B8 foreign key (LATE_PERIOD_ID_FK) references KSSA_LATE_PERIOD;
 alter table KSSA_ACNT_PROTECTED_INFO add constraint FKEF75726D2C28B62A foreign key (BANK_TYPE_ID_FK) references KSSA_BANK_TYPE;
@@ -24,6 +22,8 @@ alter table KSSA_BILL_AUTHORITY add constraint FK2239C29498518DD2 foreign key (A
 alter table KSSA_BILL_AUTHORITY add constraint FK2239C294F6AF9F26 foreign key (POSTAL_ADDRESS_ID_FK) references KSSA_POSTAL_ADDRESS;
 alter table KSSA_BILL_AUTHORITY add constraint FK2239C294E5947A1E foreign key (ELECTRONIC_CONTACT_ID_FK) references KSSA_ELECTRONIC_CONTACT;
 alter table KSSA_CASH_LIMIT_EVENT add constraint FK6B695933F13B97E6 foreign key (XML_ID_FK) references KSSA_XML;
+alter table KSSA_CASH_LIMIT_EVENT_TRANS add constraint FKB402C47C321DFEA1 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
+alter table KSSA_CASH_LIMIT_EVENT_TRANS add constraint FKB402C47CE0CEA4F3 foreign key (CASH_LIMIT_EVENT_ID_FK) references KSSA_CASH_LIMIT_EVENT;
 alter table KSSA_CASH_LIMIT_PARAMETER add constraint FKEA9B9DC247AB5D71 foreign key (TAG_ID_FK) references KSSA_TAG;
 alter table KSSA_CREDIT_PERMISSION add constraint FK1F74048CBC57B259 foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSSA_TRANSACTION_TYPE;
 alter table KSSA_ELECTRONIC_CONTACT_ACNT add constraint FKED3ACBA198518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
@@ -33,6 +33,7 @@ alter table KSSA_FD_KYPR add constraint FKDD4CD1485C970A06 foreign key (KYPR_ID_
 alter table KSSA_FD_KYPR add constraint FKDD4CD148C0260932 foreign key (FD_ID_FK) references KSSA_FEE_DETAIL;
 alter table KSSA_FEE_DETAIL add constraint FKF349E9739BE8AA30 foreign key (FEE_TYPE_ID_FK) references KSSA_FEE_TYPE;
 alter table KSSA_FEE_DETAIL_AMOUNT add constraint FK295260A4309F229E foreign key (FEE_DETAIL_ID_FK) references KSSA_FEE_DETAIL;
+alter table KSSA_GL_BATCH_BASELINE add constraint FK3C33E61BFA70171C foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
 alter table KSSA_GL_BREAKDOWN add constraint FKF48BE710AE27AC92 foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSSA_TRANSACTION_TYPE;
 alter table KSSA_GL_BREAKDOWN add constraint FKF48BE710FA70171C foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
 alter table KSSA_GL_BREAKDOWN_OVERRIDE add constraint FKD521481BD61AFDF9 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
