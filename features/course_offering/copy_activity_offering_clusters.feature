@@ -1,5 +1,5 @@
 @nightly
-Feature: Copy course offerings - activity offering clusters
+Feature: Copy course offerings - activity offering clusters RG 6.2
 
   Background:
     Given I am logged in as a Schedule Coordinator

@@ -1,7 +1,5 @@
 Given /^I manage registration groups for (?:a|the) course offering$/ do
-  #@course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"BSCI283", :term => Rollover::MAIN_TEST_TERM_TARGET)
-  #@course_offering.manage_registration_groups
-  @course_offering = make CourseOffering, :course=>"CHEM237", :term => Rollover::MAIN_TEST_TERM_TARGET
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM237", :term => Rollover::MAIN_TEST_TERM_TARGET)
   @course_offering.manage_and_init
 end
 
@@ -33,8 +31,8 @@ end
 
 
 When /^I create a(?:n| new) activity offering cluster$/ do
-  ao_cluster = make ActivityOfferingCluster
-  @course_offering.add_ao_cluster(ao_cluster)
+  @ao_cluster = make ActivityOfferingCluster
+  @course_offering.add_ao_cluster(@ao_cluster)
 end
 
 Given /^the default activity offering cluster is present$/ do
@@ -84,8 +82,7 @@ Given /^there is registration groups for a catalog course offering$/ do
 end
 
 When /^I try to create a second activity offering cluster with the same private name$/ do
-  ao_cluster2 = make ActivityOfferingCluster, :private_name=>@course_offering.activity_offering_cluster_list.last.private_name
-  ao_cluster2.create
+  @ao_cluster2 = create ActivityOfferingCluster, :private_name=>@ao_cluster.private_name
 end
 
 Then /^a cluster error message appears stating "(.*?)"$/ do |errMsg|
@@ -95,15 +92,17 @@ Then /^a cluster error message appears stating "(.*?)"$/ do |errMsg|
 end
 
 Then /^I try to rename the second activity offering cluster to the same private name as the first$/ do
-    @course_offering.activity_offering_cluster_list.last.rename :private_name=> @course_offering.activity_offering_cluster_list.first.private_name
+    @ao_cluster2.rename :private_name=> @ao_cluster.private_name
 end
+
 Then /^I remove the newly created cluster$/ do
-  @course_offering.activity_offering_cluster_list.each do  |aoc|
-   if aoc.private_name !=  @course_offering.activity_offering_cluster_list.first.private_name
-    @deleted_aoc = aoc.private_name
-    @course_offering.delete_ao_cluster(aoc)
-   end
-  end
+  @course_offering.delete_ao_cluster(@ao_cluster)
+  #@course_offering.activity_offering_cluster_list.each do  |aoc|
+  # if aoc.private_name !=  @ao_cluster.private_name
+  #  @deleted_aoc = aoc.private_name
+  #  @course_offering.delete_ao_cluster(aoc)
+  # end
+  #end
 end
 
 Then /^the edit Activity Offering page is displayed$/ do
@@ -144,7 +143,7 @@ When /^the corresponding number of registration groups for each cluster is corre
     @course_offering.activity_offering_cluster_list.each do |cluster|
 
       if page.view_reg_groups_table(cluster.private_name).present? == false
-      page.view_cluster_reg_groups(cluster.private_name)
+        page.view_cluster_reg_groups(cluster.private_name)
       end
       page.get_cluster_reg_groups_list(cluster.private_name).length.should == cluster.ao_list.count{|x| x.activity_type == "Discussion"} * cluster.ao_list.count{|x| x.activity_type == "Lecture"}
 

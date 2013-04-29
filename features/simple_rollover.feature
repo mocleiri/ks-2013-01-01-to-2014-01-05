@@ -8,7 +8,7 @@ Feature: Simple Rollover
   Background:
     Given I am logged in as a Schedule Coordinator
 
-  Scenario: Successfully rollover courses to target term
+  Scenario: RG 6.1 - Successfully rollover courses to target term, copying course offerings etc
     Given I have created an additional activity offering cluster for a course offering
     When I initiate a rollover by specifying source and target terms
     Then the results of the rollover are available
