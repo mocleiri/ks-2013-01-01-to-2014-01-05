@@ -1,4 +1,4 @@
-@nightly
+@pending
 Feature: Manage SOC
 
   MSR 2.6: As Central Administrator, I want to process delivery logistics requests for all Activity Offerings within a selected Term
