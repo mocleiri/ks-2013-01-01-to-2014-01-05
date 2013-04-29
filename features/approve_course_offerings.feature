@@ -15,18 +15,15 @@ Feature: Approve COs and their AOs for scheduling
 
   Scenario: Approve a departmental set of COs and their AOs for scheduling
     When I create two new Course Offerings
-    And I add Activity Offerings to the new Course Offerings
-    And I approve the subject code for scheduling
-    Then the Activity Offerings should be in Approved state
+    And I approve the two Course Offerings for scheduling
+    Then the Activity Offerings of these two COs should be in Approved state
 
   Scenario: Approve a Course Offering for scheduling
     When I manage a Course Offering
-    And I add Activity Offerings to the Course Offering
     And I approve the Course Offering for scheduling
     Then the Activity Offerings should be in Approved state
 
   Scenario: Approve selected Activity Offerings for scheduling
     When I manage a Course Offering
-    And I add Activity Offerings to the Course Offering
     And I approve selected Activity Offerings for scheduling
     Then the selected Activity Offerings should be in Approved state
