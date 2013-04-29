@@ -8,12 +8,12 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -135,7 +135,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         glTransaction.setAmount(amount != null ? amount : BigDecimal.ZERO);
         glTransaction.setGlAccountId(glAccountId);
         glTransaction.setGlOperation(operationType);
-        if (StringUtils.hasText(statement)) {
+        if (StringUtils.isNotBlank(statement)) {
             glTransaction.setStatement(statement);
         }
         glTransaction.setTransactions(new HashSet<Transaction>(Arrays.asList(transaction)));
@@ -332,7 +332,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     public GeneralLedgerType getDefaultGeneralLedgerType() {
         String defaultGlTypeCode = configService.getParameter(DEFAULT_GL_TYPE);
-        if (org.apache.commons.lang.StringUtils.isBlank(defaultGlTypeCode)) {
+        if (StringUtils.isBlank(defaultGlTypeCode)) {
             String errMsg = "Configuration parameter '" + DEFAULT_GL_TYPE + "' is required";
             logger.error(errMsg);
             throw new ConfigurationException(errMsg);
@@ -348,7 +348,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     public GeneralLedgerMode getDefaultGeneralLedgerMode() {
         String glMode = configService.getParameter(DEFAULT_GL_MODE);
-        if (org.apache.commons.lang.StringUtils.isBlank(glMode)) {
+        if (StringUtils.isBlank(glMode)) {
             String errMsg = "Configuration parameter '" + DEFAULT_GL_MODE + "' is required";
             logger.error(errMsg);
             throw new ConfigurationException(errMsg);
@@ -415,7 +415,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         }
 
         String glModeCode = configService.getParameter(DEFAULT_GL_MODE);
-        if (org.apache.commons.lang.StringUtils.isBlank(glModeCode)) {
+        if (StringUtils.isBlank(glModeCode)) {
             String errMsg = "Configuration parameter '" + Constants.DEFAULT_GL_MODE + "' is required";
             logger.error(errMsg);
             throw new ConfigurationException(errMsg);
@@ -714,7 +714,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     public boolean isGlAccountValid(String glAccount) {
 
-        if (!StringUtils.hasText(glAccount)) {
+        if (StringUtils.isBlank(glAccount)) {
             logger.warn("GL Account cannot be empty");
             return false;
         }
@@ -818,13 +818,14 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     /**
      * Retrieves GL transactions that belong to the specified Batch.
      *
-     * @param batchId   ID of a Batch which GL Transactions to retrieve.
+     * @param batchId ID of a Batch which GL Transactions to retrieve.
      * @return list of GL Transactions belonging to the Batch.
      */
+    @Override
     @WebMethod(exclude = true)
     public List<GlTransaction> getGlTransactionsForBatch(String batchId) {
 
-        if (org.apache.commons.lang.StringUtils.isEmpty(batchId)) {
+        if (StringUtils.isBlank(batchId)) {
             String errMsg = "Batch ID cannot be empty or null";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);

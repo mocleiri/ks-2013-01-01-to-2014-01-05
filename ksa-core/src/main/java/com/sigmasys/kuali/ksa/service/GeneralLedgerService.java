@@ -233,7 +233,7 @@ public interface GeneralLedgerService {
     /**
      * Retrieves GL transactions that belong to the specified Batch.
      *
-     * @param batchId   ID of a Batch which GL Transactions to retrieve.
+     * @param batchId ID of a Batch which GL Transactions to retrieve.
      * @return list of GL Transactions belonging to the Batch.
      */
     @WebMethod(exclude = true)
