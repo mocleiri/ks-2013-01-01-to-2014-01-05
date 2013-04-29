@@ -86,8 +86,6 @@ public class TransactionExportServiceTest extends AbstractServiceTest {
         Assert.notNull(glTransaction3.getId());
         Assert.notNull(glTransaction3.getGlAccountId());
 
-        glService.prepareGlTransmissions();
-
         String xml = transactionExportService.exportTransactions();
 
         Assert.notNull(xml);
@@ -124,8 +122,6 @@ public class TransactionExportServiceTest extends AbstractServiceTest {
         Assert.notNull(glTransaction3.getId());
         Assert.notNull(glTransaction3.getGlAccountId());
 
-        glService.prepareGlTransmissions();
-
         // Exporting transactions for effective dates
         String xml = transactionExportService.exportTransactionsForDates(startDate, endDate, true);
 
@@ -144,10 +140,46 @@ public class TransactionExportServiceTest extends AbstractServiceTest {
 
     }
 
+
+    @Test
+    public void exportTransactionsForRecognitionPeriods() throws Exception {
+
+        final String[] recognitionPeriods = { "11", "12", "13"};
+
+        GlTransaction glTransaction1 = glService.createGlTransaction(transaction1.getId(), GL_ACCOUNT_ID,
+                new BigDecimal(10e4), GlOperationType.DEBIT, "Statement 1");
+
+        Assert.notNull(glTransaction1);
+        Assert.notNull(glTransaction1.getId());
+        Assert.notNull(glTransaction1.getGlAccountId());
+
+        GlTransaction glTransaction2 = glService.createGlTransaction(transaction2.getId(), GL_ACCOUNT_ID,
+                new BigDecimal(399.3333), GlOperationType.CREDIT, "Statement 2");
+
+        Assert.notNull(glTransaction2);
+        Assert.notNull(glTransaction2.getId());
+        Assert.notNull(glTransaction2.getGlAccountId());
+
+        GlTransaction glTransaction3 = glService.createGlTransaction(transaction3.getId(), GL_ACCOUNT_ID,
+                new BigDecimal(50.01), GlOperationType.DEBIT, "Statement 3");
+
+        Assert.notNull(glTransaction3);
+        Assert.notNull(glTransaction3.getId());
+        Assert.notNull(glTransaction3.getGlAccountId());
+
+        // Exporting transactions for recognition periods
+        String xml = transactionExportService.exportTransactionsForPeriods(recognitionPeriods);
+
+        Assert.notNull(xml);
+        Assert.hasText(xml);
+
+        logger.info("XML = \n" + xml);
+
+    }
+
+
     @Test
     public void exportExistingTransactions() {
-
-        glService.prepareGlTransmissions();
 
         String xml = transactionExportService.exportTransactions();
 

@@ -77,8 +77,6 @@ public class ReportReconciliationController extends DownloadController {
      */
     @RequestMapping(method = {RequestMethod.POST,RequestMethod.GET}, params = "methodToCall=exportAllPendingTransactions")
     public ModelAndView exportAllPendingTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
-        // Prepare the General Ledger transactions:
-        generalLedgerService.prepareGlTransmissions();
 
         // Call the service to export all pending transactions:
         transactionExportService.exportTransactions();

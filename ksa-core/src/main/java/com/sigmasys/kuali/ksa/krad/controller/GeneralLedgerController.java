@@ -163,7 +163,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
      */
     private void searchForBatchDetails(ReportReconciliationForm form, String batchId) {
         // Get GL Transmissions for the given batch:
-        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsForExport(batchId, GlTransmissionStatus.TRANSMITTED);
+        List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsForBatch(batchId, GlTransmissionStatus.TRANSMITTED);
         List<GlTransaction> glTransactions = generalLedgerService.getGlTransactionsForBatch(batchId);
 
         // Create a BatchTransmissionModel list, which should contain only one element:

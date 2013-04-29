@@ -891,9 +891,9 @@ INSERT INTO KSSA_ELECTRONIC_CONTACT_ACNT (ACNT_ID_FK, ELECTRONIC_CONTACT_ID_FK) 
 --   DATA FOR TABLE KSSA_GL_RECOGNITION_PERIOD
 --   FILTER = none used
 ---------------------------------------------------
-Insert into KSSA_GL_RECOGNITION_PERIOD (ID, CODE, FISCAL_YEAR, START_DATE, END_DATE, CREATION_DATE, CREATOR_ID) values (1, '11', 2012, to_date('01/01/2012', 'MM/dd/yyyy'), to_date('12/31/2012', 'MM/dd/yyyy'), to_date('11/11/2011', 'MM/dd/yyyy'), 'admin');
-Insert into KSSA_GL_RECOGNITION_PERIOD (ID, CODE, FISCAL_YEAR, START_DATE, END_DATE, CREATION_DATE, CREATOR_ID) values (2, '12', 2013, to_date('01/01/2013', 'MM/dd/yyyy'), to_date('12/31/2013', 'MM/dd/yyyy'), to_date('12/22/2012', 'MM/dd/yyyy'), 'admin');
-
+Insert into KSSA_GL_RECOGNITION_PERIOD (ID, CODE, FISCAL_YEAR, START_DATE, END_DATE, CREATION_DATE, CREATOR_ID) values (1, '11', 2011, to_date('01/01/2011', 'MM/dd/yyyy'), to_date('12/31/2011', 'MM/dd/yyyy'), to_date('11/11/2011', 'MM/dd/yyyy'), 'admin');
+Insert into KSSA_GL_RECOGNITION_PERIOD (ID, CODE, FISCAL_YEAR, START_DATE, END_DATE, CREATION_DATE, CREATOR_ID) values (2, '12', 2012, to_date('01/01/2012', 'MM/dd/yyyy'), to_date('12/31/2012', 'MM/dd/yyyy'), to_date('12/22/2012', 'MM/dd/yyyy'), 'admin');
+Insert into KSSA_GL_RECOGNITION_PERIOD (ID, CODE, FISCAL_YEAR, START_DATE, END_DATE, CREATION_DATE, CREATOR_ID) values (3, '13', 2013, to_date('01/01/2013', 'MM/dd/yyyy'), to_date('12/31/2013', 'MM/dd/yyyy'), to_date('01/22/2013', 'MM/dd/yyyy'), 'admin');
 ---------------------------------------------------
 --   DATA FOR TABLE KSSA_GL_TRANSACTION
 --   Data here is as near to UMD standard as I can do. The recognition period is still unsure, and until I get an answer from Jen about accrual numbers, I cannot make the GL balance.

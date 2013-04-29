@@ -49,9 +49,6 @@ public class TransactionExportController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView get(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        // Prepare the General Ledger transactions:
-        generalLedgerService.prepareGlTransmissions();
-
         // Get the XML content for the export:
         String xml = transactionExportService.exportTransactions();
 

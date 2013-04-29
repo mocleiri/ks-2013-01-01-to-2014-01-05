@@ -70,7 +70,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     @Override
     @Transactional(readOnly = false)
     public String exportTransactions() {
-        return convertGlTransmissionsToXml(glService.getGlTransmissionsForExport());
+        return convertGlTransmissionsToXml(glService.createGlTransmissions(null, null, true));
     }
 
     /**
@@ -82,7 +82,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     @Override
     @Transactional(readOnly = false)
     public String exportTransactionsForBatch(String batchId) {
-        return convertGlTransmissionsToXml(batchId, glService.getGlTransmissionsForExport(batchId, GlTransmissionStatus.TRANSMITTED));
+        return convertGlTransmissionsToXml(batchId, glService.getGlTransmissionsForBatch(batchId, GlTransmissionStatus.TRANSMITTED));
     }
 
     /**
@@ -98,7 +98,19 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     @Override
     @Transactional(readOnly = false)
     public String exportTransactionsForDates(Date startDate, Date endDate, boolean isEffectiveDate) {
-        return convertGlTransmissionsToXml(glService.getGlTransmissionsForExport(startDate, endDate, isEffectiveDate));
+        return convertGlTransmissionsToXml(glService.createGlTransmissions(startDate, endDate, isEffectiveDate));
+    }
+
+    /**
+     * Retrieves GL transmissions and exports them into XML for the given GL recognition periods.
+     *
+     * @param recognitionPeriods an array of GL recognition period codes
+     * @return XML content that contains the transactions to be exported
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public String exportTransactionsForPeriods(String... recognitionPeriods) {
+        return convertGlTransmissionsToXml(glService.createGlTransmissions(null, null, true, recognitionPeriods));
     }
 
     /**

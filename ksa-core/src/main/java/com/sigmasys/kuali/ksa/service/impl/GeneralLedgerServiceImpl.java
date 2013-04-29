@@ -40,11 +40,6 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     private static final Log logger = LogFactory.getLog(GeneralLedgerServiceImpl.class);
 
 
-    private List<String> getTransmissionStatusesForExport() {
-        return Arrays.asList(GlTransmissionStatus.GENERATED_CODE, GlTransmissionStatus.FAILED_CODE);
-    }
-
-
     /**
      * Creates a new general ledger type.
      *
@@ -398,14 +393,28 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     private GlRecognitionPeriod getGlRecognitionPeriod(Date date) {
         date = CalendarUtils.removeTime(date);
-        Query query = em.createQuery("select rp from GlRecognitionPeriod rp where rp.startDate <= :date and rp.endDate >= :date");
+        Query query = em.createQuery("select rp from GlRecognitionPeriod rp " +
+                " where rp.startDate <= :date and rp.endDate >= :date");
         query.setParameter("date", date);
         List<GlRecognitionPeriod> results = (List<GlRecognitionPeriod>) query.getResultList();
         return (results != null && !results.isEmpty()) ? results.get(0) : null;
     }
 
-    private synchronized void prepareGlTransmissions(Date fromDate, Date toDate, boolean isEffectiveDate,
-                                                     String... recognitionPeriods) {
+    /**
+     * Creates and returns the list og GL transmissions for export based on the given parameters.
+     *
+     * @param fromDate           Start date, can be null
+     * @param toDate             End date, can be null
+     * @param isEffectiveDate    indicates whether Transaction effective date should be used if true,
+     *                           otherwise - recognition date
+     * @param recognitionPeriods an array of recognition period codes
+     * @return list of GL transmissions
+     */
+    @Override
+    @WebMethod(exclude = true)
+    @Transactional(readOnly = false)
+    public List<GlTransmission> createGlTransmissions(Date fromDate, Date toDate, boolean isEffectiveDate,
+                                                      String... recognitionPeriods) {
 
         if (fromDate != null && toDate != null && fromDate.after(toDate)) {
             String errMsg = "Start Date cannot be greater than End Date: Start Date = " + fromDate +
@@ -427,6 +436,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
+
+        List<GlTransmission> transmissions = new LinkedList<GlTransmission>();
 
         Query query;
         if (fromDate != null && toDate != null) {
@@ -464,7 +475,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
             } else {
                 logger.warn("No GL transactions found");
             }
-            return;
+            return transmissions;
         }
 
         if (glMode == GeneralLedgerMode.INDIVIDUAL) {
@@ -474,6 +485,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
             earliestGlTransaction.setTransmission(transmission);
             earliestGlTransaction.setStatus(GlTransactionStatus.COMPLETED);
             //persistEntity(earliestGlTransaction);
+            transmissions.add(transmission);
         } else if (glMode == GeneralLedgerMode.BATCH) {
             for (GlTransaction transaction : glTransactions) {
                 GlRecognitionPeriod recognitionPeriod = transaction.getRecognitionPeriod();
@@ -481,6 +493,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
                 transaction.setTransmission(transmission);
                 transaction.setStatus(GlTransactionStatus.COMPLETED);
                 //persistEntity(transaction);
+                transmissions.add(transmission);
             }
 
         } else if (glMode == GeneralLedgerMode.BATCH_ROLLUP) {
@@ -546,6 +559,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
                     transaction.setTransmission(transmission);
                     //persistEntity(transaction);
                 }
+
+                transmissions.add(transmission);
             }
         } else {
             String errMsg = "Unexpected GeneralLedgerMode: " + glMode;
@@ -553,76 +568,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
             throw new IllegalStateException(errMsg);
         }
 
-    }
-
-    /**
-     * Prepares a transmission to the general ledger for the given range of effective dates.
-     * This process takes into account the different ways in which an institution may choose to transmit to
-     * the general ledger, including real-time, batch, and rollup modes.
-     *
-     * @param fromDate Start effective date
-     * @param toDate   End effective date
-     */
-    @Override
-    @WebMethod(exclude = true)
-    @Transactional(readOnly = false)
-    public void prepareGlTransmissionsForEffectiveDates(Date fromDate, Date toDate) {
-        prepareGlTransmissions(fromDate, toDate, true);
-    }
-
-    /**
-     * Prepares a transmission to the general ledger for the given range of recognition dates.
-     * This process takes into account the different ways in which an institution may choose to transmit to
-     * the general ledger, including real-time, batch, and rollup modes.
-     *
-     * @param fromDate Start recognition date
-     * @param toDate   End recognition date
-     */
-    @Override
-    @WebMethod(exclude = true)
-    @Transactional(readOnly = false)
-    public void prepareGlTransmissionsForRecognitionDates(Date fromDate, Date toDate) {
-        prepareGlTransmissions(fromDate, toDate, false);
-    }
-
-    /**
-     * Prepares a transmission to the general ledger for all GL transactions in status Q.
-     * This process takes into account the different ways in which an institution may choose to transmit to
-     * the general ledger, including real-time, batch, and rollup modes.
-     */
-    @Override
-    @WebMethod(exclude = true)
-    @Transactional(readOnly = false)
-    public void prepareGlTransmissions() {
-        prepareGlTransmissions(null, null, true);
-    }
-
-    /**
-     * Prepares a transmission to the general ledger for the given GL recognition
-     *
-     * @param recognitionPeriods an array of GL recognition period codes
-     */
-    @Override
-    @WebMethod(exclude = true)
-    @Transactional(readOnly = false)
-    public void prepareGlTransmissions(String... recognitionPeriods) {
-        prepareGlTransmissions(null, null, true, recognitionPeriods);
-    }
-
-    /**
-     * Retrieves all GL transmissions with the statuses for export.
-     *
-     * @return list of GlTransmission instances
-     */
-    @Override
-    @WebMethod(exclude = true)
-    public List<GlTransmission> getGlTransmissionsForExport() {
-        Query query = em.createQuery("select glt from GlTransmission glt " +
-                " inner join fetch glt.recognitionPeriod rp " +
-                " where glt.statusCode in (:statuses) " +
-                " order by glt.date asc");
-        query.setParameter("statuses", getTransmissionStatusesForExport());
-        return query.getResultList();
+        return transmissions;
     }
 
     /**
@@ -634,7 +580,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @WebMethod(exclude = true)
-    public List<GlTransmission> getGlTransmissionsForExport(String batchId, GlTransmissionStatus... statuses) {
+    public List<GlTransmission> getGlTransmissionsForBatch(String batchId, GlTransmissionStatus... statuses) {
 
         List<String> statusCodes = new ArrayList<String>(statuses.length);
 
@@ -653,57 +599,6 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
 
         return query.getResultList();
     }
-
-    /**
-     * Retrieves all GL transmissions with the empty "result" field
-     * for the given transaction effective start and end dates
-     *
-     * @param startDate       Transaction effective or recognition start date
-     * @param endDate         Transaction effective or recognition end date
-     * @param isEffectiveDate if "true" this parameter indicates that transaction effective date should be used,
-     *                        if "false" - transaction recognition date
-     * @return list of GlTransmission instances
-     */
-    @Override
-    public List<GlTransmission> getGlTransmissionsForExport(Date startDate, Date endDate, boolean isEffectiveDate) {
-
-        if (startDate == null || endDate == null) {
-            String errMsg = "Start Date and End Date cannot be null";
-            logger.error(errMsg);
-            throw new IllegalArgumentException(errMsg);
-        }
-
-        if (startDate.after(endDate)) {
-            String errMsg = "Start Date cannot be greater than End Date: Start Date = " + startDate +
-                    ", End Date = " + endDate;
-            logger.error(errMsg);
-            throw new IllegalArgumentException(errMsg);
-        }
-
-        String dateField = isEffectiveDate ? "effectiveDate" : "recognitionDate";
-
-        Query query = em.createQuery("select distinct glt from GlTransaction glt " +
-                " inner join fetch glt.recognitionPeriod rp " +
-                " inner join fetch glt.transmission t " +
-                " left outer join glt.transactions ts " +
-                " where t.statusCode in (:statuses) and " +
-                " ts." + dateField + " <> null and ts." + dateField + " between :fromDate and :toDate " +
-                " order by glt.date asc");
-
-        query.setParameter("statuses", getTransmissionStatusesForExport());
-        query.setParameter("fromDate", startDate);
-        query.setParameter("toDate", endDate);
-
-        List<GlTransaction> glTransactions = query.getResultList();
-        List<GlTransmission> glTransmissions = new ArrayList<GlTransmission>(glTransactions.size());
-
-        for (GlTransaction glTransaction : glTransactions) {
-            glTransmissions.add(glTransaction.getTransmission());
-        }
-
-        return glTransmissions;
-    }
-
 
     /**
      * Validates the GL account number.

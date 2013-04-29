@@ -1661,12 +1661,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         transaction.setGlEntryGenerated(true);
 
         //persistTransaction(transaction);
-
-        // If GL mode is Individual then we prepare the GL transmission
-        GeneralLedgerMode glMode = glService.getDefaultGeneralLedgerMode();
-        if (glMode == GeneralLedgerMode.INDIVIDUAL) {
-            glService.prepareGlTransmissions();
-        }
     }
 
     /**

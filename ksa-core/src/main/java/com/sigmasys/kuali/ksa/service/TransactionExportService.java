@@ -42,6 +42,15 @@ public interface TransactionExportService {
      */
     String exportTransactionsForDates(Date startDate, Date endDate, boolean isEffectiveDate);
 
+
+    /**
+     * Retrieves GL transmissions and exports them into XML for the given GL recognition periods.
+     *
+     * @param recognitionPeriods an array of GL recognition period codes
+     * @return XML content that contains the transactions to be exported
+     */
+    String exportTransactionsForPeriods(String... recognitionPeriods);
+
     /**
      * Gets GlTransmission objects persisted in the database as XML for the given batch ID
      *

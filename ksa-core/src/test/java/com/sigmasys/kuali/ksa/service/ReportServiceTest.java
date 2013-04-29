@@ -30,9 +30,6 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
     private TransactionExportService transactionExportService;
 
     @Autowired
-    private GeneralLedgerService glService;
-
-    @Autowired
     private CashLimitService cashLimitService;
 
     @Autowired
@@ -98,8 +95,6 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
 
         transactionService.makeEffective(transaction1.getId(), true);
         transactionService.makeEffective(transaction2.getId(), true);
-
-        glService.prepareGlTransmissions();
 
         String xml = transactionExportService.exportTransactions();
 

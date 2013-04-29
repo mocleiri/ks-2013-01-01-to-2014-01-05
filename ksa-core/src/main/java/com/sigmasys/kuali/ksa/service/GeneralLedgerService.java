@@ -125,50 +125,18 @@ public interface GeneralLedgerService {
     GeneralLedgerType getDefaultGeneralLedgerType();
 
     /**
-     * Prepares a transmission to the general ledger for the given range of effective dates.
-     * This process takes into account the different ways in which an institution may choose to transmit to
-     * the general ledger, including real-time, batch, and rollup modes.
+     * Creates and returns the list og GL transmissions for export based on the given parameters.
      *
-     * @param fromDate Start effective date
-     * @param toDate   End effective date
+     * @param fromDate           Start date, can be null
+     * @param toDate             End date, can be null
+     * @param isEffectiveDate    indicates whether Transaction effective date should be used if true,
+     *                           otherwise - recognition date
+     * @param recognitionPeriods an array of recognition period codes
+     * @return list of GL transmissions
      */
     @WebMethod(exclude = true)
-    void prepareGlTransmissionsForEffectiveDates(Date fromDate, Date toDate);
-
-    /**
-     * Prepares a transmission to the general ledger for the given range of recognition dates.
-     * This process takes into account the different ways in which an institution may choose to transmit to
-     * the general ledger, including real-time, batch, and rollup modes.
-     *
-     * @param fromDate Start recognition date
-     * @param toDate   End recognition date
-     */
-    @WebMethod(exclude = true)
-    void prepareGlTransmissionsForRecognitionDates(Date fromDate, Date toDate);
-
-    /**
-     * Prepares a transmission to the general ledger for the given GL recognition
-     *
-     * @param recognitionPeriods an array of GL recognition period codes
-     */
-    @WebMethod(exclude = true)
-    void prepareGlTransmissions(String... recognitionPeriods);
-
-    /**
-     * Prepares a transmission to the general ledger for all GL transactions in status Q.
-     * This process takes into account the different ways in which an institution may choose to transmit to
-     * the general ledger, including real-time, batch, and rollup modes.
-     */
-    @WebMethod(exclude = true)
-    void prepareGlTransmissions();
-
-    /**
-     * Retrieves all GL transmissions with the statuses for export
-     *
-     * @return list of GlTransmission instances
-     */
-    @WebMethod(exclude = true)
-    List<GlTransmission> getGlTransmissionsForExport();
+    List<GlTransmission> createGlTransmissions(Date fromDate, Date toDate, boolean isEffectiveDate,
+                                               String... recognitionPeriods);
 
     /**
      * Retrieves all GL transmissions with the statuses for export by batch ID.
@@ -178,19 +146,8 @@ public interface GeneralLedgerService {
      * @return list of GlTransmission instances
      */
     @WebMethod(exclude = true)
-    List<GlTransmission> getGlTransmissionsForExport(String batchId, GlTransmissionStatus... statuses);
+    List<GlTransmission> getGlTransmissionsForBatch(String batchId, GlTransmissionStatus... statuses);
 
-    /**
-     * Retrieves all GL transmissions with the empty "result" field
-     * for the given transaction effective start and end dates
-     *
-     * @param startDate       Transaction effective or recognition start date
-     * @param endDate         Transaction effective or recognition end date
-     * @param isEffectiveDate if "true" this parameter indicates that transaction effective date should be used,
-     *                        if "false" - transaction recognition date
-     * @return list of GlTransmission instances
-     */
-    List<GlTransmission> getGlTransmissionsForExport(Date startDate, Date endDate, boolean isEffectiveDate);
 
     /**
      * Validates the GL account number.
