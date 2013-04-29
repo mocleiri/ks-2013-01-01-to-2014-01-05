@@ -109,6 +109,9 @@ public class PaymentController extends GenericSearchController {
         form.setCurrencyOptionsFinder(this.getCurrencyOptionsFinder());
         form.setRollupOptionsFinder(this.getRollupOptionsFinder());
 
+        BigDecimal startingBalance = accountService.getBalance(userId, new Date());
+        form.setEstimatedCurrentBalance(startingBalance);
+
         return getUIFModelAndView(form);
     }
 

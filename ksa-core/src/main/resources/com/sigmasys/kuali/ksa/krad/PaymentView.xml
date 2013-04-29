@@ -30,13 +30,13 @@
 
     <bean id="PaymentView" parent="Uif-KsaFormView" p:footer.render="false">
         <property name="title" value=""/>
-        <property name="headerText" value="Payment"/>
+        <property name="headerText" value="Payment - @{account.getCompositeDefaultPersonName()}"/>
         <property name="entryPageId" value="AddPaymentPage"/>
         <property name="navigation" ref="KsaAccountNavigation"/>
         <property name="items">
             <list merge="true">
-                <bean parent="Uif-Page" p:id="AddPaymentPage" p:title="Account">
-                    <property name="headerText" value="Account"/>
+                <bean parent="Uif-Page" p:id="AddPaymentPage">
+                    <property name="headerText" value="@{account.getCompositeDefaultPersonName()}"/>
                     <property name="items">
                         <list>
                             <ref bean="addPaymentSection"/>
