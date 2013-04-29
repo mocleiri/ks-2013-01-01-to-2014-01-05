@@ -12,18 +12,18 @@ Feature: Manage SOC
     And I manage SOC for a term
 
   Scenario: Test Manage SOC process and related object state changes
-    When I "Lock" the SOC
-    Then I verify that "Schedule" button is there for next action
+    When I Lock the SOC
+    Then I verify that Schedule button is there for next action
 
-    When I "Schedule" the SOC
-    Then I verify that "FinalEdit" button is there for next action
-    And I verify the related object state changes for "Schedule" action
+    When I Schedule the SOC
+    Then I verify that FinalEdit button is there for next action
+    And I verify the related object state changes for Schedule action
 
-    When I "FinalEdit" the SOC
-    Then I verify that "Publish" button is there for next action
+    When I FinalEdit the SOC
+    Then I verify that Publish button is there for next action
 
-    When I "Publish" the SOC
-    Then I verify that "Close" button is there for next action
-    And I verify the related object state changes for "Publish" action
+    When I Publish the SOC
+    Then I verify that Close button is there for next action
+    And I verify the related object state changes for Publish action
 
 
