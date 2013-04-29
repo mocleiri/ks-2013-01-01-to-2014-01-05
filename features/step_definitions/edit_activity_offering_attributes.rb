@@ -2,30 +2,29 @@
 When /^I change Activity Offering Information attributes$/ do
   # Activity Code can not be saved. This is a bug
   # Modify Total Maximum Enrollment to 100
-  @total_maximum_enrollment = 88
-  on ActivityOfferingMaintenance do |page|
-    @orig_enroll = page.total_maximum_enrollment.value.to_i
-    page.total_maximum_enrollment.set @total_maximum_enrollment
-    page.total_maximum_enrollment.fire_event "onchange"
-  end
+
+  person = make Personnel, :id => "admin", :affiliation => "Instructor", :inst_effort => 30
+  @activity_offering.edit :course_url => "www.google.com", :personnel_list => [person]
 end
 
 Then /^I am able to submit the changes$/ do
-  on ActivityOfferingMaintenance do |page|
-    page.submit
-  end
+  @activity_offering.save
 end
 
 
 And /^verify that the changes of Information attributes have persisted$/ do
   @course_offering.manage
-  @course_offering.edit_ao :ao_code =>  @orig_ao_code
-  sleep 6
+  @activity_offering.edit
+  #sleep 6
   on ActivityOfferingMaintenance do |page|
-    page.total_maximum_enrollment.value.to_i.should == @total_maximum_enrollment
+    page.total_maximum_enrollment.value.should == @activity_offering.max_enrollment
+    pers_id = @activity_offering.personnel_list[0].id
+    page.get_inst_effort(pers_id).should == @activity_offering.personnel_list[0].inst_effort.to_s
+    page.get_affiliation(pers_id).should == @activity_offering.personnel_list[0].affiliation
+    page.course_url.should == @activity_offering.course_url
     # clean up
-    page.total_maximum_enrollment.set @orig_enroll
-    page.submit
+    #page.total_maximum_enrollment.set @orig_enroll
+    page.cancel
   end
 end
 
@@ -83,17 +82,19 @@ And /^verify that the changes of Miscellaneous have persisted$/ do
 end
 
 Given /^I manage a given Course Offering$/ do
-  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :course=>"ENGL222")
-  #@course_offering = make CourseOffering, :course=>"ENGL222"
+  #@course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :course=>"ENGL222")
+  @course_offering = make CourseOffering, :course=>"ENGL222H"
   @course_offering.manage_and_init
 end
 
 Given /^I edit an Activity Offering$/ do
-  @total_number = @course_offering.activity_offering_cluster_list[0].ao_list.count
-  @orig_ao_code = @course_offering.activity_offering_cluster_list[0].ao_list[@total_number-1].code
-  @added_person_id = "admin"
-  @effort_num = 30
-  @misc_url = "www.google.com"
+  @activity_offering = @course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
 
-  @course_offering.edit_ao :ao_code =>  @orig_ao_code
+  #@total_number = @course_offering.activity_offering_cluster_list[0].ao_list.count
+  #@orig_ao_code = @course_offering.activity_offering_cluster_list[0].ao_list[@total_number-1].code
+  #@added_person_id = "admin"
+  #@effort_num = 30
+  #@misc_url =
+  #
+  #@course_offering.edit_ao :ao_code =>  @orig_ao_code
 end

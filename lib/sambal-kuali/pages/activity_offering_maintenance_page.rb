@@ -87,6 +87,10 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
     target_person_row(id).cells[INST_EFFORT_COLUMN].text_field.value
   end
 
+  def get_affiliation(id)
+    target_person_row(id).cells[AFFILIATION_COLUMN].select.selected_options[0].text
+  end
+
   def update_affiliation(id, affiliation)
     target_person_row(id).select affiliation
   end

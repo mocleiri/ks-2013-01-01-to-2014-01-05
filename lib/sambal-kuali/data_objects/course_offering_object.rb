@@ -327,7 +327,7 @@ class CourseOffering
     @activity_offering_cluster_list.each do |cluster|
       puts "cluster name: #{cluster.private_name}"
       cluster.ao_list.each do |ao|
-        puts "Assigned AO: #{ao.code}"
+        puts "Assigned AO: #{ao.code}, #{ao.activity_type}, #{ao.max_enrollment} "
       end
     end
   end

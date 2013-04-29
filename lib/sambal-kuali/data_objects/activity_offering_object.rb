@@ -157,6 +157,7 @@ class ActivityOffering
   def init_existing(ao_table_row, parent_co)
     @code =  ao_table_row.cells[ManageCourseOfferings::AO_CODE].text
     @activity_type = ao_table_row.cells[ManageCourseOfferings::AO_TYPE].text
+    @max_enrollment = ao_table_row.cells[ManageCourseOfferings::AO_MAX_ENR].text
     @parent_course_offering = parent_co
   end
 
@@ -330,7 +331,7 @@ class ActivityOffering
         end
 
         opts[:personnel_list].each do |person|
-          person.add_personnel
+          person.create
         end
 
         @personnel_list = opts[:personnel_list]
@@ -659,17 +660,17 @@ class Personnel
   # edits personnel based on values in options hash
   #
   #  @param opts [Hash] key => value for attribute to be updated
-  def add_personnel(opts={})
-    @id = opts[:id]
-    @affiliation = opts[:affiliation]
-    @inst_effort = opts[:inst_effort]
-    on ActivityOfferingMaintenance do |page|
-      page.add_person_id.set @id
-      page.add_affiliation.select @affiliation
-      page.add_inst_effort.set @inst_effort
-      page.add_personnel
-    end
-  end
+#  def add_personnel(opts={})
+#    @id = opts[:id]
+#    @affiliation = opts[:affiliation]
+#    @inst_effort = opts[:inst_effort]
+#    on ActivityOfferingMaintenance do |page|
+#      page.add_person_id.set @id
+#      page.add_affiliation.select @affiliation
+#      page.add_inst_effort.set @inst_effort
+#      page.add_personnel
+#    end
+#  end
 end
 
 # stores test data for creating/editing and validating delivery logistics data and provides convenience methods for navigation and data entry

@@ -3,8 +3,8 @@ Feature: Edit Activity Offering Attributes
 
   Background:
     Given I am logged in as a Schedule Coordinator
-    Given I manage a given Course Offering
-    Given I edit an Activity Offering
+    And I manage a given Course Offering
+    And I edit an Activity Offering
 
   Scenario: Edit Activity Offering Information attributes
     When I change Activity Offering Information attributes
