@@ -207,8 +207,12 @@ Then /^I have access to manage activity offering clusters$/ do
     page.add_cluster_button.present?.should be_true
     page.add_cluster_button.enabled?.should be_true
 
+    page.select_ao("A")
+
     page.move_aos_button.present?.should be_true
     page.move_aos_button.enabled?.should be_true
+
+    page.deselect_ao("A")
 
     page.rename_cluster_link(:default_cluster).present?.should be_true
     page.rename_cluster_link(:default_cluster).attribute_value("class").should_not match /disabled/
