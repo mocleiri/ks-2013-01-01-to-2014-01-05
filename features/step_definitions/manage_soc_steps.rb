@@ -1,18 +1,25 @@
 Given /^I manage SOC for a term$/ do
-  @manageSoc = make ManageSoc
+  @rollover = make Rollover, :source_term => "201205", :target_term => "202105"
+  @rollover.perform_rollover
+  @rollover.wait_for_rollover_to_complete
+  @rollover.release_to_depts
+
+  @course_offering = make CourseOffering, :course=>"ENGL245", :term=>"202105"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.ao_from_first_cluster.set
+    page.approve_activity
+  end
+  @manageSoc = make ManageSoc, :term_code => "202105", :co_code => "ENGL245"
 end
 
 Given /^I manage SOC for "(.*?)"$/ do |term_code|
   @manageSoc = make ManageSoc, :term_code =>term_code
 end
 
-Given /^the SOC is valid for "(.*?)"$/ do |currentState|
+When /^I "(.*?)" the SOC$/ do |newState|
   @manageSoc.search
-  @manageSoc.check_state_change_button_exists currentState
-end
-
-When /^I "(.*?)" the SOC and press "(.*?)" on the confirm dialog$/ do |newState,confirmStateChange|
-  @manageSoc.change_action newState, confirmStateChange
+  @manageSoc.change_action newState
 end
 
 Then /^I verify that "(.*?)" button is there for next action$/ do |nextState|
