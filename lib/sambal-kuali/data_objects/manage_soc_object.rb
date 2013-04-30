@@ -120,11 +120,12 @@ class ManageSoc
     raise "Once schedule started, schedule completed date should say 'Scheduling in progress'" unless page.schedule_completed_date == 'Scheduling in progress'
     raise "Schedule duration should have the '(in progress)' text at the end" unless page.schedule_duration.should =~ /(in progress)/
     raise "Info message text at the top doesnt match" unless page.message == 'Approved activities were successfully sent to Scheduler.'
-    until page.final_edit_button.enabled? or tries == 6 do
+    until page.final_edit_button.enabled? or tries == 15 do
       sleep 20
       tries += 1
       search
     end
+    raise "Test timed out waiting for Scheduler process" unless page.final_edit_button.enabled?
   end
 
   #pubilsh soc
@@ -141,11 +142,12 @@ class ManageSoc
     raise "Publish duration should have the '(in progress)' text at the end" unless page.publish_duration.should =~ /(in progress)/
     raise "Publishing In Progress Date is blank" unless page.is_date_exists('Publishing In Progress')
     tries = 0
-    until page.soc_status == 'Published' or tries == 6 do
+    until page.soc_status == 'Published' or tries == 15 do
       sleep 20
       tries += 1
       search
     end
+    raise "Test timed out waiting for Publish process" unless page.soc_status == 'Published'
   end
 
   def verify_schedule_state_changes
