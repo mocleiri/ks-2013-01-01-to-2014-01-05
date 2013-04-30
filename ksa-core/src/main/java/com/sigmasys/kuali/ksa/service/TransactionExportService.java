@@ -23,7 +23,7 @@ public interface TransactionExportService {
     String PORT_NAME = SERVICE_NAME + "Port";
 
     /**
-     * Gets all the GlTransmission objects with a result that is blank and
+     * Creates all GlTransmission objects and
      * returns the completed XML file that will be uploaded to KFS or any other external system.
      *
      * @return XML content that contains the transactions to be exported
@@ -31,7 +31,7 @@ public interface TransactionExportService {
     String exportTransactions();
 
     /**
-     * Gets GlTransmission objects for the given effective/recognition dates with a result that is blank and
+     * Creates GlTransmission objects for the given effective/recognition dates with a result that is blank and
      * returns the completed XML file that will be uploaded to KFS or any other external system.
      *
      * @param startDate       Transaction effective or recognition start date

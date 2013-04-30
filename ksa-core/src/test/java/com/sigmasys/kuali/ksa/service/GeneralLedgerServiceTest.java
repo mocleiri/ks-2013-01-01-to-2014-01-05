@@ -13,9 +13,7 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
@@ -35,6 +33,9 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
 
     @Autowired
     protected GeneralLedgerService glService;
+
+    @Autowired
+    private TransactionExportService transactionExportService;
 
     protected Transaction transaction1;
     protected Transaction transaction2;
@@ -68,6 +69,14 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
     protected GlTransaction createGlTransaction(Transaction transaction) {
         return glService.createGlTransaction(transaction.getId(), GL_ACCOUNT_ID, new BigDecimal(10e4),
                 GlOperationType.DEBIT, "GL transaction statement");
+    }
+
+
+    @Test
+    public void getDefaultGLValues() {
+        Assert.notNull(glService.getDefaultGeneralLedgerType());
+        Assert.notNull(glService.getDefaultGeneralLedgerMode());
+        Assert.notNull(configService.getParameter(Constants.DEFAULT_GL_PA_STATEMENT));
     }
 
     @Test
@@ -263,11 +272,100 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
         Assert.isTrue(transactions.size() >= 3);
     }
 
+    private Set<String> _createGlBaselineAmounts() {
+
+        transactionService.makeEffective(transaction1.getId(), true);
+        transactionService.makeEffective(transaction2.getId(), true);
+        transactionService.makeEffective(transaction3.getId(), true);
+
+        String xml = transactionExportService.exportTransactions();
+
+        Assert.notNull(xml);
+        Assert.hasText(xml);
+
+        List<GlTransmission> transmissions = glService.getGlTransmissionsByStatuses(GlTransmissionStatus.TRANSMITTED);
+
+        Assert.notNull(transmissions);
+        Assert.notEmpty(transmissions);
+
+        Set<String> batchIds = new HashSet<String>();
+
+        for (GlTransmission transmission : transmissions) {
+
+            Assert.notNull(transmission.getBatchId());
+            Assert.hasText(transmission.getBatchId());
+
+            batchIds.add(transmission.getBatchId());
+        }
+
+        for (String batchId : batchIds) {
+
+            List<GlBatchBaseline> baselines = glService.createGlBaselineAmounts(batchId);
+
+            Assert.notNull(baselines);
+
+            for (GlBatchBaseline baseline : baselines) {
+
+                logger.debug("GL Batch Baseline = " + baseline);
+
+                Assert.notNull(baseline);
+                Assert.notNull(baseline.getId());
+                Assert.notNull(baseline.getAmount());
+                Assert.notNull(baseline.getBatchId());
+                Assert.notNull(baseline.getType());
+
+                if (baseline.getType() == GlBatchBaselineType.GL_TYPE) {
+                    Assert.notNull(baseline.getGeneralLedgerType());
+                } else {
+                    Assert.isNull(baseline.getGeneralLedgerType());
+                }
+
+            }
+        }
+
+        return batchIds;
+
+    }
 
     @Test
-    public void getDefaultGLValues() {
-        Assert.notNull(glService.getDefaultGeneralLedgerType());
-        Assert.notNull(glService.getDefaultGeneralLedgerMode());
-        Assert.notNull(configService.getParameter(Constants.DEFAULT_GL_PA_STATEMENT));
+    public void createGlBaselineAmounts() {
+        _createGlBaselineAmounts();
     }
+
+    @Test
+    public void getGlBaselineAmounts() {
+
+        Set<String> batchIds = _createGlBaselineAmounts();
+
+        Assert.notNull(batchIds);
+        Assert.notEmpty(batchIds);
+
+        for (String batchId : batchIds) {
+
+            List<GlBatchBaseline> baselines = glService.getGlBaselineAmounts(batchId);
+
+            Assert.notNull(baselines);
+
+            for (GlBatchBaseline baseline : baselines) {
+                logger.debug("GL Batch Baseline = " + baseline);
+
+                Assert.notNull(baseline);
+                Assert.notNull(baseline.getId());
+                Assert.notNull(baseline.getAmount());
+                Assert.notNull(baseline.getBatchId());
+                Assert.notNull(baseline.getType());
+
+                if (baseline.getType() == GlBatchBaselineType.GL_TYPE) {
+                    Assert.notNull(baseline.getGeneralLedgerType());
+                } else {
+                    Assert.isNull(baseline.getGeneralLedgerType());
+                }
+
+            }
+
+        }
+
+    }
+
+
 }

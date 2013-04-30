@@ -70,7 +70,7 @@ public class GlBatchBaseline implements Identifiable {
         this.id = id;
     }
 
-    @Column(name = "BATCH_ID", length = 45)
+    @Column(name = "BATCH_ID", length = 45, nullable = false)
     public String getBatchId() {
         return batchId;
     }
@@ -79,7 +79,7 @@ public class GlBatchBaseline implements Identifiable {
         this.batchId = batchId;
     }
 
-    @Column(name = "AMOUNT")
+    @Column(name = "AMOUNT", nullable = false)
     public BigDecimal getAmount() {
         return amount;
     }
@@ -98,7 +98,7 @@ public class GlBatchBaseline implements Identifiable {
         this.generalLedgerType = generalLedgerType;
     }
 
-    @Column(name = "TYPE", length = 1)
+    @Column(name = "TYPE", length = 1, nullable = false)
     protected String getTypeCode() {
         return typeCode;
     }
@@ -118,6 +118,17 @@ public class GlBatchBaseline implements Identifiable {
         typeCode = type.getId();
     }
 
+    @Override
+    public String toString() {
+        return "GlBatchBaseline{" +
+                "id=" + id +
+                ", batchId='" + batchId + '\'' +
+                ", amount=" + amount +
+                ", generalLedgerType=" + generalLedgerType +
+                ", type=" + type +
+                ", typeCode='" + typeCode + '\'' +
+                '}';
+    }
 }
 	
 

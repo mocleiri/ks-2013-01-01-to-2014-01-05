@@ -204,4 +204,22 @@ public interface GeneralLedgerService {
      */
     @WebMethod(exclude = true)
     List<GlTransmission> getGlTransmissionsByStatuses(GlTransmissionStatus... statuses);
+
+    /**
+     * Creates a list of GlBatchBaseline objects that contain some summary information about transactions
+     * and their amounts.
+     *
+     * @param batchId Transmission batch ID generated during transaction export
+     * @return list of GlBatchBaseline instances
+     */
+    List<GlBatchBaseline> createGlBaselineAmounts(String batchId);
+
+    /**
+     * Retrieves the previously persisted GlBatchBaseline objects that contain some summary information about
+     * transactions and their amounts by Batch ID.
+     *
+     * @param batchId Transmission batch ID generated during transaction export
+     * @return list of GlBatchBaseline instances
+     */
+    List<GlBatchBaseline> getGlBaselineAmounts(String batchId);
 }

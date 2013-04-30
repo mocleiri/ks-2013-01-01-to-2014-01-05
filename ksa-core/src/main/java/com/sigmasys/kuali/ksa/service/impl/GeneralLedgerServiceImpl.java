@@ -761,4 +761,107 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
 
         return query.getResultList();
     }
+
+    /**
+     * Creates a list of GlBatchBaseline objects that contain some summary information about transactions
+     * and their amounts.
+     *
+     * @param batchId Transmission batch ID generated during transaction export
+     * @return list of GlBatchBaseline instances
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public List<GlBatchBaseline> createGlBaselineAmounts(String batchId) {
+
+        Query query = em.createQuery("select 1 from GlTransmission where batchId = :batchId");
+        query.setParameter("batchId", batchId);
+        query.setMaxResults(1);
+
+        boolean batchIdExists = !CollectionUtils.isEmpty(query.getResultList());
+
+        if (batchIdExists) {
+
+            List<GlBatchBaseline> baselines = new LinkedList<GlBatchBaseline>();
+
+            // Getting charge amounts for GL types
+            query = em.createQuery("select glt.code, " +
+                    " sum(t.amount)-sum(t.allocatedAmount)-sum(t.lockedAllocatedAmount) " +
+                    " from Charge t " +
+                    " inner join t.generalLedgerType glt " +
+                    " where t.glEntryGenerated = true " +
+                    " group by glt.code");
+
+            List<Object[]> results = query.getResultList();
+            if (!CollectionUtils.isEmpty(results)) {
+                for (Object[] values : results) {
+
+                    String glTypeCode = (String) values[0];
+                    BigDecimal unallocatedAmount = new BigDecimal(values[1].toString());
+
+                    GlBatchBaseline baseline = new GlBatchBaseline();
+                    baseline.setBatchId(batchId);
+                    baseline.setType(GlBatchBaselineType.GL_TYPE);
+                    baseline.setGeneralLedgerType(getGeneralLedgerType(glTypeCode));
+                    baseline.setAmount(unallocatedAmount);
+
+                    persistEntity(baseline);
+
+                    baselines.add(baseline);
+                }
+            }
+
+            // Getting payment and deferment amounts
+            query = em.createQuery("select type(t), " +
+                    " sum(t.amount)-sum(t.allocatedAmount)-sum(t.lockedAllocatedAmount) " +
+                    " from Transaction t " +
+                    " where t.glEntryGenerated = true " +
+                    " and type(t) in (Payment, Deferment) " +
+                    " group by type(t)");
+
+            results = query.getResultList();
+            if (!CollectionUtils.isEmpty(results)) {
+                for (Object[] values : results) {
+
+                    Class<Transaction> transactionType = (Class<Transaction>) values[0];
+                    BigDecimal unallocatedAmount = new BigDecimal(values[1].toString());
+
+                    GlBatchBaseline baseline = new GlBatchBaseline();
+                    baseline.setBatchId(batchId);
+                    baseline.setType(Payment.class.equals(transactionType) ?
+                            GlBatchBaselineType.UNALLOCATED_CASH : GlBatchBaselineType.DEFERMENT);
+                    baseline.setAmount(unallocatedAmount);
+
+                    persistEntity(baseline);
+
+                    baselines.add(baseline);
+                }
+            }
+
+            return baselines;
+
+        }
+
+        String errMsg = "Batch ID = " + batchId + " does not exist";
+        logger.error(errMsg);
+        throw new IllegalArgumentException(errMsg);
+
+    }
+
+    /**
+     * Retrieves the previously persisted GlBatchBaseline objects that contain some summary information about
+     * transactions and their amounts by Batch ID.
+     *
+     * @param batchId Transmission batch ID generated during transaction export
+     * @return list of GlBatchBaseline instances
+     */
+    @Override
+    public List<GlBatchBaseline> getGlBaselineAmounts(String batchId) {
+        Query query = em.createQuery("select b from GlBatchBaseline b " +
+                " left outer join fetch b.generalLedgerType " +
+                " where b.batchId = :batchId");
+        query.setParameter("batchId", batchId);
+        return query.getResultList();
+    }
+
+
 }

@@ -62,7 +62,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     }
 
     /**
-     * Gets all the GlTransmission objects with a result that is blank and
+     * Creates all the GlTransmission objects and
      * returns the completed XML file that will be uploaded to KFS or any other external system.
      *
      * @return XML content that contains the transactions to be exported
@@ -86,7 +86,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     }
 
     /**
-     * Gets GlTransmission objects for the given effective/recognition dates with a result that is blank and
+     * Creates GlTransmission objects for the given effective/recognition dates with a result that is blank and
      * returns the completed XML file that will be uploaded to KFS or any other external system.
      *
      * @param startDate       Transaction effective or recognition start date
