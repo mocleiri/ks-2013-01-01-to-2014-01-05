@@ -50,9 +50,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                     " left outer join fetch t.document d ";
 
     @Autowired
-    private AccessControlService acService;
-
-    @Autowired
     private AccountService accountService;
 
     @Autowired
@@ -411,6 +408,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     protected Transaction createTransaction(TransactionTypeId id, String externalId, String userId,
                                             Date effectiveDate, Date expirationDate,
                                             BigDecimal amount, boolean overrideBlocks) {
+
+        if (amount == null) {
+            String errMsg = "Transaction amount must not be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
 
         TransactionType transactionType = getTransactionType(id);
         if (transactionType == null) {
