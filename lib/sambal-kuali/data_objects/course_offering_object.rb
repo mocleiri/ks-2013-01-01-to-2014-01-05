@@ -44,7 +44,8 @@ class CourseOffering
                 :grade_options,
                 :reg_options,
                 :search_by_subj,
-                :joint_co_to_create
+                :joint_co_to_create,
+                :cross_listed_codes
   #object - generally set using options hash - course offering object to copy
   attr_accessor  :create_by_copy
 
@@ -95,7 +96,8 @@ class CourseOffering
         :search_by_subj => false,
         :create_by_copy => nil,
         :create_from_existing => nil,
-        :joint_co_to_create => nil
+        :joint_co_to_create => nil,
+        :cross_listed_codes => []
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -321,6 +323,13 @@ class CourseOffering
       end
       #show_debug_details
     end
+
+    # capture the crosslisted aliases
+    # note: we nav to subject-view for this because the course-view does not currently support showing the
+    #       SUFFIX of the cross-listed course
+    search_by_subjectcode
+    @cross_listed_codes = on(ManageCourseOfferingList).crosslisted_codes(course)
+
   end
 
   def show_debug_details
