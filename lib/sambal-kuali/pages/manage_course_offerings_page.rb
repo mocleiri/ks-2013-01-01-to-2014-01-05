@@ -427,7 +427,7 @@ class ManageCourseOfferings < BasePage
   end
 
   def view_cluster_reg_groups_link(private_name)
-    target_cluster(private_name).link(text: /View Registration Groups/).click
+    target_cluster(private_name).link(text: /View Registration Groups/)
   end
 
   def view_cluster_reg_groups(private_name)
