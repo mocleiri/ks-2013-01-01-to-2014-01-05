@@ -257,7 +257,7 @@ public class PaymentController extends GenericSearchController {
 
         try {
             payment = (Payment) transactionService.createTransaction(typeIdString, form.getExternalId(),
-                    payment.getAccount().getId(), effectiveDate, null, payment.getAmount(), false);
+                    payment.getAccount().getId(), effectiveDate, null, amount, false);
             if (payment.getId() != null) {
 
                 if(nativeAmount != null){
