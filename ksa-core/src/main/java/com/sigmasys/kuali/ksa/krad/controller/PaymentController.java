@@ -186,6 +186,7 @@ public class PaymentController extends GenericSearchController {
     private boolean savePayment(PaymentForm form) {
 
         boolean saveResult = false;
+        boolean errors = false;
         String statusMsg = "";
         Payment payment = form.getPayment();
         payment.setAccount(form.getAccount());
@@ -207,7 +208,7 @@ public class PaymentController extends GenericSearchController {
         Currency systemCurr = auditableEntityService.getCurrency(systemCurrency);
         String systemCurrencyId = systemCurr.getId().toString();
 
-        if(systemCurrencyId.equals(currencyId)){
+        if(currencyId == null || systemCurrencyId.equals(currencyId)){
             amount = nativeAmount;
             nativeAmount = null;
         } else {
@@ -219,36 +220,38 @@ public class PaymentController extends GenericSearchController {
             statusMsg = "Amount must be a numerical value";
             GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
-            return saveResult;
-        }
-
-        int compareResult = amount.compareTo(BigDecimal.ZERO);
-        if (compareResult <= 0) {
+            errors = true;
+        } else if (amount.compareTo(BigDecimal.ZERO) <= 0){
             statusMsg = "Amount must be a positive value";
             GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
-            return saveResult;
+            errors = true;
         }
 
-        TransactionType tt;
+        TransactionType tt = null;
         try {
             tt = transactionService.getTransactionType(typeIdString, effectiveDate);
         } catch (InvalidTransactionTypeException e) {
             logger.error(e.getMessage(), e);
-            GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
-            return saveResult;
+            //GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+            //errors = true;
         }
 
         if (tt == null) {
             // Error handler here.
-            statusMsg = "Invalid Transaction Type";
+            statusMsg = "Invalid Payment Type";
             GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
-            return saveResult;
+            errors=true;
         } else if (!(tt instanceof CreditType)) {
-            statusMsg = "Transaction Type must be a payment";
+            statusMsg = "Payment Type must be a credit type";
             GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
+            errors = true;
+        }
+
+        // Handle all error checking prior to this point.
+        if(errors){
             return saveResult;
         }
 
