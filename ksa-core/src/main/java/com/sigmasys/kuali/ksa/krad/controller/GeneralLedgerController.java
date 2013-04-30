@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.krad.model.BatchTransmissionModel;
 import com.sigmasys.kuali.ksa.krad.model.GeneralLedgerAccountModel;
 import com.sigmasys.kuali.ksa.krad.model.GeneralLedgerTransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.util.ErrorUtils;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
@@ -396,11 +397,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
         if (CollectionUtils.size(ksaTransactions) == 1) {
             // Prefetch associated properties:
             ksaTransaction = (Transaction)CollectionUtils.get(ksaTransactions, 0);
-            ksaTransaction.getCurrency().getCode();
-            ksaTransaction.getTransactionType().getDescription();
-            ksaTransaction.getTransactionType().getId().getId();
-            ksaTransaction.getRollup().getDescription();
-            ksaTransaction.getGeneralLedgerType().getDescription();
+            safePrefetchKsaTransactionAssociations(ksaTransaction);
 
             // Create a new GeneralLedgerTransactionModel object:
             glTransactionModel = new GeneralLedgerTransactionModel(ksaTransaction);
@@ -425,6 +422,37 @@ public class GeneralLedgerController extends ReportReconciliationController {
 
         if (adjustGlAccountTotal) {
             glAccountModel.setTotalAmount(glAccountModel.getTotalAmount().add(adjustmentAmount));
+        }
+    }
+
+    /**
+     * Safely prefetches KSA Transaction associations. If any of the associations
+     * or their attributes is null, this method ignores them.
+     *
+     * @param ksaTransaction A KSA Transaction.
+     */
+    private void safePrefetchKsaTransactionAssociations(Transaction ksaTransaction) {
+        if (ksaTransaction != null) {
+            // Prefetch associations of Transaction:
+            Currency currency = ksaTransaction.getCurrency();
+            TransactionType transactionType = ksaTransaction.getTransactionType();
+            Rollup rollup = ksaTransaction.getRollup();
+            GeneralLedgerType generalLedgerType = ksaTransaction.getGeneralLedgerType();
+
+            // Prefetch attributes of associations:
+            if (currency != null) {
+                currency.getCode();
+            }
+            if (transactionType != null) {
+                transactionType.getDescription();
+                ksaTransaction.getTransactionType().getId().getId();
+            }
+            if (rollup != null) {
+                rollup.getDescription();
+            }
+            if (generalLedgerType != null) {
+                generalLedgerType.getDescription();
+            }
         }
     }
 
