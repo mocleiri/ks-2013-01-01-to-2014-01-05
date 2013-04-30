@@ -457,9 +457,10 @@ class CourseOffering
     on ActivityOfferingConfirmDelete do |page|
       page.delete_activity_offering
     end
-    #TODO remove from cluster ao_list
+
     options[:code_list].each do |ao_code|
-      get_cluster_obj_by_private_name(options[:cluster_private_name]).ao_list.delete(get_ao_obj_by_code(ao_code))
+      ao_obj = get_cluster_obj_by_private_name(options[:cluster_private_name]).get_ao_obj_by_code(ao_code)
+      get_cluster_obj_by_private_name(options[:cluster_private_name]).ao_list.delete(ao_obj)
     end
 
   end

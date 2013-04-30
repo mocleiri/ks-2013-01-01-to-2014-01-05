@@ -211,5 +211,5 @@ When /^I move a lab activity offering to the new cluster$/ do
 end
 
 When /^I delete an Activity Offering$/ do
-   @course_offering.delete_ao("B")
+   @course_offering.delete_ao :ao_code=>"B"
 end
