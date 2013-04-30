@@ -84,6 +84,22 @@ class ManageCourseOfferingList < BasePage
     target_row.cells[CO_STATUS_COLUMN].text
   end
 
+  def crosslist_tooltip_text(co_code)
+    retVal = ""
+
+    crosslist_tooltip_text = target_row(co_code)[CO_CODE_COLUMN].img.alt
+    if crosslist_tooltip_text != nil
+      retVal = crosslist_tooltip_text
+    end
+
+    retVal
+  end
+
+  def crosslisted_codes(co_code)
+    crosslist_tooltip_text = crosslist_tooltip_text(co_code)
+    crosslist_tooltip_text = crosslist_tooltip_text.gsub( "This course is crosslisted with:", "")
+    crosslist_tooltip_text.split( "<br>" ).reject! { |e| e.empty? }
+  end
 
   def copy(co_code)
     copy_link(co_code).click
