@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8">
+    <title>
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body { padding-top: 60px; /* 60px to make the container go all the way
+      to the bottom of the topbar */ }
+    </style>
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
+      </script>
+    <![endif]-->
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    <style>
+    </style>
+  </head>
+  <body>
+    <div id="application-container" title="application-container" class="container">
+    	<div id="application-header" title="application-header" class="container-fluid navbar navbar-inverse navbar-fixed-top sticky">
+    		<div class="navbar-inner">
+    			<a id="application-header-logo" title="application-header-logo" class="brand" href="#">application-header-logo</a>
+    			<ul id="application-header-user" title="application-header-user" class="nav pull-right">
+    				<li class="dropdown">
+    					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Action List
+                        <b class="caret"></b>
+                        </a>
+    					<ul class="dropdown-menu">
+    						<li>
+    							<a href="#">Action A</a>
+    						</li>
+    						<li>
+    							<a href="#">Action B</a>
+    						</li>
+    						<li>
+    							<a href="#">Action C</a>
+    						</li>
+    					</ul>
+    				</li>
+    				<li>
+    					<a href="#">Username</a>
+    				</li>
+    			</ul>
+    		</div>
+    	</div>
+    	<div id="view-container" title="view-container" class="container-fluid">
+    		<div id="view-top-group" title="view-top-group" class="container-fluid navbar-fixed-top sticky optional">
+    			<div class="control-group pull-right">
+    				<form id="view-context-changer" title="view-context-changer" class="form-horizontal">
+    					<div class="control-group">
+    						<label class="control-label" for="context-changer-input">
+    							Term
+    						</label>
+    						<div class="controls">
+    							<input id="context-changer-input" title="context-changer-input" class="input-mini" placeholder="Enter Term Code" value="201308" type="text">
+    						</div>
+    					</div>
+    				</form>
+    			</div>
+    			<span id="view-term" title="view-term" class="">Term</span>
+    			<span id="view-term-state" title="view-term-state" class="">State</span>
+    		</div>
+    		<div id="view-breadcrumbs" title="view-breadcrumbs" class="container-fluid navbar-fixed-top sticky optional">
+    			<ul class="breadcrumb">
+    				<li class="home">
+    					<a href="#"><span class="">Home</span></a>
+    				</li>
+    				<li class="node1">
+    					<a href="#" class="">Enrollment</a>
+    				</li>
+    				<li class="active">
+    					Find Course Offering
+    				</li>
+    			</ul>
+    		</div>
+    		<div id="view-header" title="view-header" class="container-fluid navbar-fixed-top sticky">
+    			<div id="page-title" class="container">
+    				<div id="page-title-main" class="container">
+    					AAST102
+    				</div>
+    				<div id="page-title-support" class="container">
+    					Edit Course Offering
+    				</div>
+    			</div>
+    			<div id="view-header-group" title="view-header-group" class="container-fluid optional no-pad">
+    				<div id="action-bar" class="container">
+    					<a href="#" class="action action-details"><i class="icon-file"></i> Details</a>
+    					<a href="#" class="action action-edit"><i class="icon-edit"></i> Edit</a>
+    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i> Copy</a>
+    					<a href="#" class="action action-comments"><i class="icon-comment"></i> Comments</a>
+    					<a href="#" class="action action-print"><i class="icon-print"></i> Print</a>
+    					<a href="#" class="action action-delete jetstrap-selected"><i class="icon-remove"></i> Delete</a>
+    				</div>
+    			</div>
+    		</div>
+    		<div id="navigation-panel " title="navigation-panel " class="container-fluid      optional no-margin hidden">
+    		</div>
+    		<div id="page-container" title="page-container" class="container-fluid no-margin">
+    			<div id="page-header" title="page-header" class="container-fluid  no-padding">
+    				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
+    					<span class="detail detail-title">Title of this course</span>
+    					<span class="detail detail-crosslisted">Crosslistings</span>
+    					<div id="meta-data" title="meta-data" class="container-fluid pull-right optional">
+    						<span class="detail detail-status">Status</span>
+    						<span class="detail detail-modification">Last modified six minutes ago</span>
+    						<span id="more-info" class="">
+                                <a href="#" class="detail detail-more"><i class="icon-info-sign"></i> More info</a>
+                            </span>
+                        </div>
+    				</div>
+    			</div>
+    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation optional hidden">
+    			</div>
+    			<div class="container-fluid group optional no-padding">
+    				<div class="container-fluid group-header no-padding">
+    				</div>
+    				<div class="container-fluid validation group-error-validation-messaging optional hidden">
+    				</div>
+    				<div class="row-fluid no-padding">
+    					<div class="container-fluid group span12 optional no-margin no-padding">
+    						<form id="#main-form">
+    							<div class="well control-group info jetstrap-highlighted">
+    								<h2 class="">
+    									Overview section
+    								</h2>
+    								<p class="">
+    									This section is marked as "info"
+    								</p>
+    								<label class="control-label">
+    									Label text
+    								</label>
+    								<div class="controls">
+    									<input class="span4" type="text">
+    									<span class="help-inline hidden">Inline help text</span>
+    									<span class="help-block">This field has hidden inline help text.</span>
+    								</div>
+    								<label class="control-label">
+    									Label text
+    								</label>
+    								<div class="controls">
+    									<input class="span4" type="text">
+    									<span class="help-block hidden">This instruction text is hidden.</span>
+    								</div>
+    							</div>
+    							<div class="control-group error">
+    								<label class="control-label">
+    									Required text input
+    								</label>
+    								<div class="controls">
+    									<input class="span4" required="" type="text">
+    									<span class="help-inline">Inline help text</span>
+    									<span class="help-block">This field had an error</span>
+    								</div>
+    							</div>
+    							<div class="control-group warning">
+    								<label class="control-label">
+    									Unit with optional fields
+    								</label>
+    								<div class="controls inline">
+    									<input class="span2" type="text">
+    									<input class="span2" type="text">
+    									<span class="help-block">This is a "Unit" with a warning</span>
+    								</div>
+    							</div>
+    							<fieldset>
+    								<legend>
+    									Section Title
+    								</legend>
+    								<div class="control-group">
+    									<label class="control-label">
+    										Radio Button
+    									</label>
+    									<label class="span2 radio inline">
+    										<input name="optionsRadios" id="optionsRadios1" value="No" checked="checked" type="radio">
+    										No
+    									</label>
+    									<label class="span4 radio inline">
+    										<input name="optionsRadios" id="optionsRadios2" value="Yes" type="radio">
+    										Yes
+    										<input class="input-small" disabled="" type="text">
+    										<span class="input-small uneditable-input">Uneditable input is here.</span>
+    									</label>
+    								</div>
+    							</fieldset>
+    							<fieldset>
+    								<legend>
+    									Another Section
+    								</legend>
+    								<div class="control-group">
+    									<label class="control-label">
+    										Text Area
+    									</label>
+    									<div class="controls">
+    										<textarea class="span4" rows="3"></textarea>
+    									</div>
+    									<div class="control-group">
+    										<label class="checkbox">
+    											<input value="1" type="checkbox">
+    											Option one is this and that—be sure to include why it's great
+    										</label>
+    									</div>
+    								</div>
+    								<div class="control-group">
+    									<label class="control-label">
+    										Different sizes
+    									</label>
+    									<div class="controls">
+    										<input class="input-mini" placeholder=".input-mini" type="text">
+    										<input class="input-small" placeholder=".input-small" type="text">
+    										<input class="input-medium" placeholder=".input-medium" type="text">
+    										<input class="input-large" placeholder=".input-large" type="text">
+    										<input class="input-xlarge" placeholder=".input-xlarge" type="text">
+    										<input class="input-xxlarge" placeholder=".input-xxlarge" type="text">
+    									</div>
+    								</div>
+    								<div class="control-group">
+    									<label class="control-label">
+    										Selections
+    									</label>
+    									<div class="controls">
+    										<select class="span4">
+    											<option>
+    												1
+    											</option>
+    											<option>
+    												2
+    											</option>
+    											<option>
+    												3
+    											</option>
+    											<option>
+    												4
+    											</option>
+    											<option>
+    												5
+    											</option>
+    										</select>
+    									</div>
+    									<div class="controls">
+    										<select class="span4" multiple="multiple">
+    											<option>
+    												1
+    											</option>
+    											<option>
+    												2
+    											</option>
+    											<option>
+    												3
+    											</option>
+    											<option>
+    												4
+    											</option>
+    											<option>
+    												5
+    											</option>
+    										</select>
+    									</div>
+    								</div>
+    							</fieldset>
+    							<fieldset>
+    								<legend>
+    									Collection
+    								</legend>
+    								<button type="submit" class="btn">
+    									Add
+    								</button>
+    								<table class="table table-hover table-condensed">
+    									<thead>
+    										<tr>
+    											<th>
+    												Field 1
+    											</th>
+    											<th>
+    												Field 2
+    											</th>
+    											<th>
+    												Field 3
+    											</th>
+    											<th>
+    												Field 4
+    											</th>
+    											<th>
+    												Field 5
+    											</th>
+    										</tr>
+    									</thead>
+    									<tbody>
+    										<tr class="warning">
+    											<td>
+    												<select class="span1">
+    													<option>
+    														1
+    													</option>
+    													<option>
+    														2
+    													</option>
+    													<option>
+    														3
+    													</option>
+    													<option>
+    														4
+    													</option>
+    													<option>
+    														5
+    													</option>
+    												</select>
+    											</td>
+    											<td>
+    												<input class="input" type="text">
+    											</td>
+    											<td>
+    												<input class="input" type="text">
+    											</td>
+    											<td>
+    												<input class="input-mini" type="text">
+    											</td>
+    											<td>
+    												<input class="input-mini" type="text">
+    											</td>
+    										</tr>
+    										<tr>
+    											<td>
+    												1
+    											</td>
+    											<td>
+    												2
+    											</td>
+    											<td>
+    												3
+    											</td>
+    											<td>
+    												4
+    											</td>
+    											<td>
+    												5
+    											</td>
+    										</tr>
+    										<tr>
+    											<td>
+    												1
+    											</td>
+    											<td>
+    												2
+    											</td>
+    											<td>
+    												3
+    											</td>
+    											<td>
+    												4
+    											</td>
+    											<td>
+    												5
+    											</td>
+    										</tr>
+    									</tbody>
+    								</table>
+    							</fieldset>
+    						</form>
+    					</div>
+    				</div>
+    				<div class="container-fluid group-footer">
+    				</div>
+    			</div>
+    			<!-- Additional groups in columns -->
+    			<div class="container-fluid group optional">
+    				<div class="container-fluid group-header">
+    				</div>
+    				<div class="container-fluid validation group-error-validation-messaging optional hidden">
+    				</div>
+    				<div class="row-fluid">
+    					<div class="container-fluid group span6 optional no-margin">
+    					</div>
+    					<div class="container-fluid group span6 optional no-margin">
+    					</div>
+    				</div>
+    				<div class="container-fluid group-footer">
+    				</div>
+    			</div>
+    			<div id="page-footer" title="page-footer" class="container-fluid">
+    			</div>
+    		</div>
+    		<div id="view-footer" title="view-footer" class="container-fluid navbar-fixed-bottom sticky">
+    			<div class="pull-right">
+    				<form>
+    					<button type="submit" class="btn btn-primary">
+    						Save
+    					</button>
+    					<button type="submit" class="btn secondary">
+    						Save Progress
+    					</button>
+    					<a href="#" class="cancel">Cancel</a>
+    				</form>
+    			</div>
+    		</div>
+    	</div>
+    	<div id="application-footer" title="application-footer" class="container-fluid navbar-fixed-bottom sticky">
+    	</div>
+    </div>
+
+    <style>
+      
+      body {}
+      /* STICKY */
+      #application-container {
+         margin-top: 60px; /* Adjustments needed to accommodate to the Jetstrap navbar */
+      }
+      #application-header {
+          margin-top: 0px;
+      }
+      #view-top-group {
+          margin-top: 41px; 
+          vertical-align: center;
+          padding: 8px 8px 0px 8px;
+      }
+      #view-breadcrumbs {
+          margin-top: 78px; 
+          background: #eeeeee;
+      }
+      #view-header {
+          margin-top: 110px; 
+      }
+      #view-container {
+          margin-top: 190px; 
+          margin-bottom: 100px; 
+          padding: 0px;
+      }
+      #page-container {
+          padding: 0px;
+      }
+      #view-footer {
+          margin-bottom: 40px; /* When application-footer is not hidden, add 20px */
+          padding-top: 8px;
+      }
+      #application-footer {
+          margin-bottom: 40px;
+      }
+      
+      /* DEVELOPMENT */
+      .show-border {
+          border: 1px solid lightblue; 
+      }
+      /*
+      div {
+          border: 1px solid lightgray; 
+          margin: 1px;
+      }
+      .optional {
+          border: 1px dashed lightgray;
+      }
+      .group {
+          border: 2px solid orange;
+      }
+      */
+      .validation {
+          background-color: #FF9999;
+      }
+      
+      /* STRUCTURE */
+      .no-margin {
+          margin-left: 0px;
+          margin-right: 0px;
+      }
+      .no-padding {
+          padding-left: 0px;
+          padding-right: 0px;
+      }
+      .navbar-inner {
+          padding-left: 20px !important;
+          padding-right: 20px !important;
+      }
+      #application-header {
+          padding-left: 0px;
+          padding-right: 0px;
+          z-index: 2001;
+      }
+      #view-top-group span {
+          padding-right: 1.0em;
+      }
+      #view-top-group {
+          border-left: 8px solid lightgreen; 
+          max-height: 30px !important;
+      }
+      #view-breadcrumbs {
+          max-height: 20px !important;
+          padding: 0px !important;
+          z-index: 2000;
+      }
+      .breadcrumb {
+          max-height: 20px !important;
+          padding: 0px !important;
+      }
+      #navigation-panel {
+          position: fixed;
+          width: 200px;
+          left: 0px;
+      }
+      #page-container {
+      /*    padding-left: 220px; /* only needed if navigation-panel is not hidden */
+      }
+      #page-header-group {
+          margin-bottom: 1.0em;
+      }
+      #view-footer {
+          background-color: #EEEEEE;
+      }
+      
+      /* FORMATTING: GENERL */
+      .sticky {
+          background-color: white;
+      }
+      .secondary {}
+      .cancel {
+          font-size: 0.8em;
+      }
+      
+      /* FORMATTING: Context Changer */
+      #view-context-changer {
+          font-size: 0.7em;
+          margin-bottom: 0px !important;
+      }
+      #view-context-changer label {
+          font-size: 1.2em;
+      }
+      #view-context-changer input {
+          font-size: 1.2em;
+          height: auto;
+          margin: 2px auto;
+      }
+      
+      /* FORMATING: breadcrumbs */
+      .breadcrumb {
+          border-top-width: 1px;
+          border-bottom-width: 1px;
+          border-top-style: solid;
+          border-bottom-style: solid;
+          border-top-color: #e2e2e2;
+          border-bottom-color: #e2e2e2;
+      	background: rgb(255,255,255);
+          background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmNWY1ZjUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+          background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
+      	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(255,255,255,1)), color-stop(100%, rgba(245,245,245,1)));
+      	background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
+      	background: -o-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
+      	background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
+      	background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
+       filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f5f5f5', GradientType=0 );
+          margin: 0px;
+      /*    
+          width: 100%;
+      	list-style: none;
+      */    
+          max-height: 28px;
+          min-height: 28px;
+      }
+      .breadcrumb li {
+          background-image: url(http://ux.kuali.org/prototypes/rice/assets/img/divider-breadcrumb.png);
+          background-position: right center;
+          background-repeat: no-repeat;
+          padding-right: 36px;
+      /*    
+          float: left;
+      */    
+          padding-left: 12px;  
+          font-size: 0.9em;
+          min-height: 28px;
+      }
+      .breadcrumb li:last-child {
+          background-image: none;
+      }
+      /*
+      .breadcrumb li:hover {
+          background: white;
+      	background-image: url(http://ux.kuali.org/prototypes/rice/assets/img/divider-breadcrumb-hover.png);
+      	background-position: right center;
+      	background-repeat: no-repeat;
+      }
+      */
+      .breadcrumb a {
+          color: #5b5b5b;
+          display: block;
+          margin-top: 0.2em;
+      /*
+          float: left;
+      	text-decoration: none;
+      	position: relative;
+      	padding-top: 0.4em;
+      	padding-right: .7em;
+      	padding-bottom: 0.4em;
+      	padding-left: 1em;
+      */
+      }
+      .breadcrumb a:hover {
+      	text-decoration: underline;
+      }
+      .breadcrumb li:first-child a {
+      /*
+      padding-left: 1em;
+      */
+      }
+      .breadcrumb .home a span {
+      /* NOTE: Remove this if "Home" is preferred */
+          background-image: url(http://ux.kuali.org/prototypes/rice/assets/img/icon-home.png);
+          background-repeat: no-repeat;
+          display: block;
+          opacity: .3;
+          width: 16px;
+          height: 15px;
+          overflow: hidden;
+          text-indent: 100%;
+          white-space: nowrap;
+      }
+      .breadcrumb .active /*, .breadcrumb li a.current:hover*/ {
+          font-weight: bold;
+      	background: none;
+      }
+      /* 
+      NOTE: There is additional dropdown styling available at:
+      http://ux.kuali.org/prototypes/rice/breadcrumb.php#
+      (Jetstrap isn't supporting the javascript interactivity)
+      */
+      
+      /* FORMATING: View Header */
+      #page-title {
+          margin-bottom: 1.0em;
+      }
+      #page-title-area {
+          color: #cccccc;
+      }
+      #page-title-main {
+          font-size: 3.0em;
+          line-height: 1.0em;
+      }
+      #page-title-support {
+          color: #666666;
+          font-size: 1.3em;
+          line-height: 1.3em;
+      }
+      #action-bar {
+          margin-bottom: 1.0em;
+          border-bottom: 1px solid #666666;
+          font-size: .85em;
+      }
+      .action {
+          padding-right: 1.0em;
+      }
+      
+      
+      
+      /* FORMATING: Page Header Group (overview) */
+      #page-header-group {
+          background-color: #CCCCCC;
+          padding: 0.6em 1.2em;
+          font-size: 0.8em;
+      }
+      .detail {
+          margin-right: 2.0em;
+      }
+      .detail-title {
+          font-weight: bold;
+          font-size: 1.1em;
+      }
+      .detail-crosslisted {}
+      #meta-data {}
+      .detail-status {
+          color: white;
+          background-color: darkorange;
+          font-weight: bold;
+          padding: 0.4em 0.8em;
+          border-radius: 3px;
+      }
+      .detail-modification {
+          font-style: italic;
+      }
+      .detail-more {
+          margin-right: 0;
+      }
+      
+      #more-info {
+          padding-top:px;
+          border: 1px solid red;
+      }
+      
+      /* FORMATING: Forms */
+      form label {}
+      
+      
+      /* HIDE UNUSED */
+      .hidden {
+          display:none;
+      }
+      
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
+    </script>
+    <script src="assets/js/bootstrap.js">
+    </script>
+    <script>
+
+    </script>
+  </body>
+</html>
