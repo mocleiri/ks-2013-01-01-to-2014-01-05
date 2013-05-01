@@ -324,12 +324,14 @@ class CourseOffering
       #show_debug_details
     end
 
-    # capture the crosslisted aliases
+  end
+
+  def capture_crosslist_aliases
+
     # note: we nav to subject-view for this because the course-view does not currently support showing the
     #       SUFFIX of the cross-listed course
-    #search_by_subjectcode   -- TODO: can't do the navigation here, breaks existing code
-    #@cross_listed_codes = on(ManageCourseOfferingList).crosslisted_codes(course)
-
+    search_by_subjectcode
+    @cross_listed_codes = on(ManageCourseOfferingList).crosslisted_codes(course)
   end
 
   def show_debug_details
