@@ -98,7 +98,7 @@ And /^no cross-listing is indicated for the (.*?) course$/ do |cross_listed_as_o
 
 end
 
-When /^I create a cross-listed Course Offering$/ do
+When /^OLD I create a cross-listed Course Offering OLD$/ do
   @suffix_with_cl = "AFT#{random_alphanums(2)}".upcase
   @suffix_without_cl = "NOCL"
   @source_term = "201201"
@@ -152,7 +152,7 @@ And /^I edit the course offering to add alias$/ do
   end
 end
 
-And /^I delete the alias Course Offering$/ do
+And /^OLD I delete the alias Course Offering OLD$/ do
   @course = make CourseOffering
 
   @course_offering.go_to_manage_course_offerings
@@ -280,5 +280,43 @@ Then /^the edit confirmation view (should|should not) indicate that a cross-list
       page.cross_listed_as_label.should be_present
     end
   end
+
+end
+
+
+When /^I create a cross-listed Course Offering$/ do
+  @cross_listed_co = create CourseOffering, :create_by_copy => (make CourseOffering, :course => "ENGL250", :term => Rollover::MAIN_TEST_TERM_SOURCE)
+  @cross_listed_co.capture_crosslist_aliases
+end
+
+
+And /^I delete the alias Course Offering$/ do
+  cross_listed_co_alias = make CourseOffering, :course => @cross_listed_co.cross_listed_codes[0],
+                               :term => @cross_listed_co.term
+  cross_listed_co_alias.manage
+  cross_listed_co_alias.delete_co_with_link :code_list => [cross_listed_co_alias.course],
+                                            :should_confirm_delete => true
+end
+
+Then /^the owner Course Offering and all it's aliases are deleted$/ do
+  @cross_listed_co.manage
+  on(ManageCourseOfferings).error_message_course_not_found.should be_present
+
+  @cross_listed_co.cross_listed_codes.each do |code|
+    cross_listed_co_alias = make CourseOffering, :course => code,
+                                 :term => @cross_listed_co.term
+    cross_listed_co_alias.manage
+    on(ManageCourseOfferings).error_message_course_not_found.should be_present
+  end
+
+end
+
+
+### CREATE DUMMY DATA
+### This data should already exist in the DB, having been put in there manually
+When /^I create some dummy test data to speed up AFT development for deleting crosslistings$/ do
+
+  @cross_listed_co = make CourseOffering, :course => "ENGL250D", :term => Rollover::MAIN_TEST_TERM_SOURCE
+  @cross_listed_co.cross_listed_codes = ["WMST255D"]
 
 end
