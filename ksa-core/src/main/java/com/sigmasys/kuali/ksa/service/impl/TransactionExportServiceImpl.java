@@ -64,13 +64,15 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     /**
      * Creates all the GlTransmission objects and
      * returns the completed XML file that will be uploaded to KFS or any other external system.
+     * It also creates GL Baseline objects to persist transaction summary information.
      *
      * @return XML content that contains the transactions to be exported
      */
     @Override
     @Transactional(readOnly = false)
     public String exportTransactions() {
-        return convertGlTransmissionsToXml(glService.createGlTransmissions(null, null, true));
+        List<GlTransmission> transmissions = glService.createGlTransmissions(null, null, true);
+        return convertGlTransmissionsToXml(null, transmissions, true);
     }
 
     /**
@@ -150,6 +152,11 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     }
 
     protected String convertGlTransmissionsToXml(String batchId, List<GlTransmission> glTransmissions) {
+        return convertGlTransmissionsToXml(batchId, glTransmissions, false);
+    }
+
+    protected String convertGlTransmissionsToXml(String batchId, List<GlTransmission> glTransmissions,
+                                                 boolean createGlBaselineAmounts) {
 
         if (batchId == null) {
             // Generating the batch ID
@@ -159,6 +166,11 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
                 glTransmission.setBatchId(batchId);
                 glTransmission.setStatus(GlTransmissionStatus.TRANSMITTED);
             }
+        }
+
+        // Creating GlBatchBaseline objects if "createGlBaselineAmounts" is true
+        if (createGlBaselineAmounts) {
+            glService.createGlBaselineAmounts(batchId);
         }
 
         final ObjectFactory objectFactory = new ObjectFactory();

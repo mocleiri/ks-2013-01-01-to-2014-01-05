@@ -25,6 +25,7 @@ public interface TransactionExportService {
     /**
      * Creates all GlTransmission objects and
      * returns the completed XML file that will be uploaded to KFS or any other external system.
+     * It also creates GL Baseline objects to persist transaction summary information.
      *
      * @return XML content that contains the transactions to be exported
      */
