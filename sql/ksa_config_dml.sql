@@ -202,8 +202,14 @@ Get charges from "allCharges" for 2013 year    , store result in "charges2013"
 Sort "charges2013" by priority in descending order
 
 Get payments with tag "FinAid" from "allPayments" for 2011 year, store result in "finaidPayments2011"
+Sort "finaidPayments2011" by effective date in ascending order
+Sort "finaidPayments2011" by priority in descending order
 Get payments with tag "FinAid" from "allPayments" for 2012 year, store result in "finaidPayments2012"
+Sort "finaidPayments2012" by effective date in ascending order
+Sort "finaidPayments2012" by priority in descending order
 Get payments with tag "FinAid" from "allPayments" for 2013 year, store result in "finaidPayments2013"
+Sort "finaidPayments2013" by effective date in ascending order
+Sort "finaidPayments2013" by priority in descending order
 
 Apply payments for "finaidPayments2011, charges2011", add result          to "glTransactions"
 Apply payments for "finaidPayments2012, charges2012", add result to "glTransactions"
