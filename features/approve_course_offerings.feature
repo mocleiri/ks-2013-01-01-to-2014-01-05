@@ -1,4 +1,4 @@
-@pending
+@nightly
 Feature: Approve COs and their AOs for scheduling
 
   CO12.1: As a Departmental Administrator, I want to indicate that I have finished creating and editing all of the Course Offerings in my department

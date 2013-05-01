@@ -395,16 +395,25 @@ class CourseOffering
       else
         @course = create_co_copy(@course, @term)
         if co_status == "Offered" or co_status == "Planned"
-          approve_course
+          approve_co
         end
       end
     end
   end
 
-  def approve_course
+
+  def approve_co
+    #search_by_subjectcode
+    approve_co_list :co_obj_list => [ self ]
+  end
+
+  def approve_co_list(opts)
+    search_by_subjectcode
     on ManageCourseOfferingList do |page|
       begin
-        page.select_co(@course.upcase)
+        opts[:co_obj_list].each do |co|
+          page.select_co(co.course.upcase)
+        end
         page.approve_course_offering
         page.approve_yes
       rescue Timeout::Error => e
@@ -460,20 +469,21 @@ class CourseOffering
         :cluster_private_name => :default_cluster
     }
     options = defaults.merge(opts)
-    ao_code_list =
-        on ManageCourseOfferings do |page|
-          page.select_aos(options[:code_list], options[:cluster_private_name])
-          page.delete_aos
-        end
+
+    on ManageCourseOfferings do |page|
+      page.select_aos(options[:code_list], options[:cluster_private_name])
+      page.delete_aos
+    end
+
     on ActivityOfferingConfirmDelete do |page|
       page.delete_activity_offering
     end
 
     options[:code_list].each do |ao_code|
-      ao_obj = get_cluster_obj_by_private_name(options[:cluster_private_name]).get_ao_obj_by_code(ao_code)
-      get_cluster_obj_by_private_name(options[:cluster_private_name]).ao_list.delete(ao_obj)
+      ao_cluster = get_cluster_obj_by_private_name(options[:cluster_private_name])
+      ao_obj = ao_cluster.get_ao_obj_by_code(ao_code)
+      ao_cluster.ao_list.delete(ao_obj)
     end
-
   end
 
   def delete_top_n_aos(num_aos_to_delete_from_top)
@@ -541,11 +551,29 @@ class CourseOffering
     end
   end
 
+  #approve specified activity offerings
+  #
+  #@param  opts [Hash] {:code_list => ["code1","code2", ...], :cluster_private_name => "priv_name"}
+  def approve_ao_list(opts)
+
+    defaults = {
+        :cluster_private_name => :default_cluster
+    }
+    options = defaults.merge(opts)
+
+    on ManageCourseOfferings do |page|
+      page.select_aos(options[:code_list], options[:cluster_private_name])
+      page.approve_activity
+    end
+  end
+
+
+
   #create a new specified activity offering
   #
   #@param opts ActivityOffering object
   def create_ao(activity_offering_object)
-                     #TODO: number_aos_to_create = opts[:number_aos_to_create] implement as a separate method?
+    #TODO: number_aos_to_create = opts[:number_aos_to_create] implement as a separate method?
     #manage #TODO: probably not required
     activity_offering_object.parent_course_offering = self
     activity_offering_object.create
@@ -599,12 +627,13 @@ class CourseOffering
     end
   end
 
+  #TODO: needs refactoring
   def ao_status(inputOrg)
     retVal = nil
     aoCode = inputOrg[:inputs][0]
     aoState = inputOrg[:inputs][1]
     on ManageCourseOfferings do |page|
-      if page.ao_status(aoCode, aoState)
+      if page.ao_status(aoCode, aoState) #TODO: NB - ao_status method is updated
         retVal = aoState
       end
     end

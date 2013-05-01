@@ -147,7 +147,7 @@ class ManageCourseOfferings < BasePage
   end
 
   def ao_status(code, cluster_private_name = :default_cluster)
-    target_row(code).cells[AO_STATUS].text
+    target_row(code, cluster_private_name).cells[AO_STATUS].text
   end
 
   def row_by_status(aostatus, cluster_private_name = :default_cluster)
@@ -211,10 +211,10 @@ class ManageCourseOfferings < BasePage
       target_row(code, cluster_private_name).checkbox.clear
   end
 
-  def ao_status(code, status, cluster_private_name = :default_cluster)
-    row_text = target_row(code, cluster_private_name).text
-    row_text.include? status
-  end
+  #def ao_status(code, status, cluster_private_name = :default_cluster)
+  #  row_text = target_row(code, cluster_private_name).text
+  #  row_text.include? status
+  #end
 
   def ao_schedule_data(aoCode, cluster_private_name = :default_cluster)
     target_row(aoCode).text

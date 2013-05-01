@@ -18,7 +18,7 @@ Then /^The new CO and AOs are Successfully created$/ do
 
   @new_total  = @course_offering.ao_list.count
   @inputVals = [@course_offering.ao_list[0], "Draft"]
-  @curState = @course_offering.ao_status :inputs =>  @inputVals
+  @curState = @course_offering.ao_status :inputs =>  @inputVals   #TODO: NB - ao_status method is updated
   if @curState != "Draft"
     raise "AO status is not Draft: ao_code: @course_offering.ao_list[0]"
   end
@@ -41,7 +41,7 @@ And /^The ADLs are Successfully copied to RDLs in the new AOs of the newly creat
   @orig_total  = @course_offering.ao_list.count
   @orig_total.should == @new_total
   @inputVals = [@course_offering.ao_list[0], "Offered"]
-  @origState = @course_offering.ao_status :inputs =>  @inputVals
+  @origState = @course_offering.ao_status :inputs =>  @inputVals     #TODO: NB - ao_status method is updated
   if @origState != "Offered"
     raise "AO status is not Draft: ao_code: @course_offering.ao_list[0]"
   end
@@ -110,7 +110,7 @@ Then /^The COs and AOs in the previous term are Successfully rolled over to the 
   @orig_total  = @course_offering.ao_list.count
 
   @inputVals = [@course_offering.ao_list[0], "Offered"]
-  @origState = @course_offering.ao_status :inputs =>  @inputVals
+  @origState = @course_offering.ao_status :inputs =>  @inputVals #TODO: NB - ao_status method is updated
   if @origState != "Offered"
     raise "AO status is not Draft: ao_code: @course_offering.ao_list[0]"
   end
@@ -130,7 +130,7 @@ Then /^The COs and AOs in the previous term are Successfully rolled over to the 
 
   @new_total  = @course_offering.ao_list.count
   @inputVals = [@course_offering.ao_list[0], "Draft"]
-  @curState = @course_offering.ao_status :inputs =>  @inputVals
+  @curState = @course_offering.ao_status :inputs =>  @inputVals   #TODO: NB - ao_status method is updated
   if @curState != "Draft"
     raise "AO status is not Draft: ao_code: @course_offering.ao_list[0]"
   end

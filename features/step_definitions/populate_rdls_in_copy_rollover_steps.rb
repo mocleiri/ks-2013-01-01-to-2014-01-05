@@ -2,7 +2,7 @@ When /^I copy an AO with ADL to a new AO in the same term$/ do
   @total_number = @course_offering.ao_list.count
   @orig_ao_code = @course_offering.ao_list[@total_number-1]
   @inputVals = [@course_offering.ao_list[@total_number-1], "Offered"]
-  @origState = @course_offering.ao_status :inputs =>  @inputVals
+  @origState = @course_offering.ao_status :inputs =>  @inputVals #TODO: NB - ao_status method is updated
   if @origState != "Offered"
     raise "AO status is not Offered: ao_code: @course_offering.ao_list[@total_number-1]"
   end
@@ -24,7 +24,7 @@ end
 And /^The ADL is Successfully copied to the new AO$/ do
   @new_total  = @course_offering.ao_list.count
   @inputVals = [@course_offering.ao_list[0], "Draft"]
-  curState = @course_offering.ao_status :inputs =>  @inputVals
+  curState = @course_offering.ao_status :inputs =>  @inputVals   #TODO: NB - ao_status method is updated
   if curState != "Draft"
     raise "AO status is not Draft: ao_code: @course_offering.ao_list[0]"
   end
@@ -58,7 +58,7 @@ When /^I copy an AO with RDL to a new AO in the same term$/ do
   @orig_ao_code = @course_offering.ao_list[0]
 
   @inputVals = [@course_offering.ao_list[0], "Draft"]
-  curState = @course_offering.ao_status :inputs =>  @inputVals
+  curState = @course_offering.ao_status :inputs =>  @inputVals #TODO: NB - ao_status method is updated
   if curState != "Draft"
     raise "AO status is not Draft: ao_code: @course_offering.ao_list[0]"
   end
@@ -80,7 +80,7 @@ end
 
 And /^The RDL is Successfully copied to RDL in the new AO$/ do
   @inputVals = [@course_offering.ao_list[0], "Draft"]
-  curState = @course_offering.ao_status :inputs =>  @inputVals
+  curState = @course_offering.ao_status :inputs =>  @inputVals #TODO: NB - ao_status method is updated
   if curState != "Draft"
     raise "AO status is not Draft: ao_code: @course_offering.ao_list[0]"
   end
