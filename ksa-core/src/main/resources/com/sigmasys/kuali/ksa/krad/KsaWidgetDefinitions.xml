@@ -58,8 +58,12 @@
                       p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage"/>
                 <bean parent="Uif-Link" p:linkText="Quick View" p:target="_self"
                       p:href="quickView?methodToCall=get&amp;viewId=QuickView&amp;userId=@{account.id}"/>
-                <bean parent="Uif-Link" p:linkText="Transactions" p:target="_self"
+                <bean parent="Uif-Link" p:linkText="Transactions - All" p:target="_self"
                       p:href="transactionView?methodToCall=get&amp;pageId=ViewTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Transactions - Roll-Up" p:target="_self"
+                      p:href="transactionView?methodToCall=get&amp;pageId=RollUpTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Transactions - Running Balance" p:target="_self"
+                      p:href="transactionView?methodToCall=get&amp;pageId=RunningBalanceTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Make a Payment" p:target="_self"
                       p:href="paymentView?methodToCall=create&amp;viewId=PaymentView&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Add a Charge" p:target="_self"

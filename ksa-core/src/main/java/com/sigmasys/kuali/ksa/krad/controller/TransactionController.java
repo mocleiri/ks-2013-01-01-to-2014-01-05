@@ -4,14 +4,11 @@ import com.sigmasys.kuali.ksa.krad.form.TransactionForm;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
-
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
 import com.sigmasys.kuali.ksa.service.RefundService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
-import org.kuali.rice.krad.uif.util.CloneUtils;
-import org.kuali.rice.krad.uif.view.View;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 @Controller
 @RequestMapping(value = "/transactionView")
@@ -89,7 +89,7 @@ public class TransactionController extends GenericSearchController {
         }
         form.setAccount(accountService.getFullAccount(userId));
 
-        if ("ViewTransactions".equals(pageId)) {
+        if ("ViewTransactions".equals(pageId) || "RollUpTransactions".equals(pageId) || "RunningBalanceTransactions".equals(pageId)) {
             form.setAlerts(informationService.getAlerts(userId));
             form.setFlags(informationService.getFlags(userId));
 
