@@ -39,6 +39,8 @@ import org.kuali.rice.krad.datadictionary.validation.processor.ValidCharactersCo
 import org.kuali.rice.krad.datadictionary.validation.result.ConstraintValidationResult;
 import org.kuali.rice.krad.datadictionary.validation.result.DictionaryValidationResult;
 import org.kuali.rice.krad.datadictionary.validation.result.ProcessorResult;
+import org.kuali.rice.krad.messages.MessageService;
+import org.kuali.rice.krad.messages.MessageServiceImpl;
 import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.service.KualiModuleService;
 import org.kuali.rice.krad.service.impl.KualiModuleServiceImpl;
@@ -441,6 +443,10 @@ class SimpleSpringResourceLoader implements ApplicationContextAware, ServiceLoca
     };
 
     private static KualiModuleService kualiModuleService = new KualiModuleServiceImpl();
+    private static MessageService messageService = new MessageServiceImpl() {
+        @Override protected String getDefaultLocaleCode() { return "en-US"; }
+        @Override public String getMessageText(String key) { return key; }
+    };
 
     private ApplicationContext applicationContext;
 
@@ -455,6 +461,8 @@ class SimpleSpringResourceLoader implements ApplicationContextAware, ServiceLoca
             return configurationService;
         } else if (KRADServiceLocatorWeb.KUALI_MODULE_SERVICE.equals(localServiceName)) {
             return kualiModuleService;
+        } else if (KRADServiceLocatorWeb.MESSAGE_SERVICE.equals(localServiceName)) {
+            return messageService;
         } else {
             return applicationContext.getBean(localServiceName);
         }
