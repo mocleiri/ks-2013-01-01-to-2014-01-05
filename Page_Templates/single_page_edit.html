@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-  
   <head>
     <meta charset="utf-8">
     <title>
+		Kuali Student UIM Page Template :: Single-Page Edit
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -12,6 +12,7 @@
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/custom.css" rel="stylesheet">
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -75,7 +76,7 @@
     		<div id="view-breadcrumbs" title="view-breadcrumbs" class="container-fluid navbar-fixed-top sticky optional">
     			<ul class="breadcrumb">
     				<li class="home">
-    					<a href="#"><span class="">Home</span></a>
+    					<a href="index.html"><span class="">Home</span></a>
     				</li>
     				<li class="node1">
     					<a href="#" class="">Enrollment</a>
@@ -131,6 +132,139 @@
     				<div class="row-fluid no-padding">
     					<div class="container-fluid group span12 optional no-margin no-padding">
     						<form id="#main-form">
+    							<fieldset>
+    								<legend>
+    									Course Offering Information
+    								</legend>
+    								<div class="control-group">
+	    								<label class="control-label">
+	    									Course Offering Code
+	    								</label>
+	    								<div class="controls inline">
+											<span>ENLG101</span>
+	    									<input class="span1" type="text" placeholder="" value="A">
+	    									<span class="help-inline hidden">Inline help text</span>
+	    									<span class="help-block hidden">This field has hidden inline help text.</span>
+	    								</div>
+    								</div>
+
+									(Radio) Grading Options: Letter<br />
+									(?) Student Registration Options: None available<br />
+									(Radio) Credit Type: Fixed / (Selection) Credits: 3.0
+    							</fieldset>
+
+    							<fieldset>
+    								<legend>
+    									Delivery and Assessment
+    								</legend>
+
+									(Radio) Final Exams:  Standard final Exam, Alternate final assessment, No final exam or assessmen<br />
+    								<div class="control-group">
+	    								<label class="control-label">
+	    									Delivery Formats
+	    								</label>
+    									<span class="help-block">Add the delivery formats to be used for this course offering</span>
+	    								<div class="controls inline">
+											(Collection) * FORMAT /	* GRADE ROSTER LEVEL /	* FINAL EXAM DRIVER ACTIVITY / Actions 
+											Lecture Only / (Selection) Course Offering, Lecture / (Selection) Lecture /
+	    								</div>
+    								</div>
+    							</fieldset>
+
+    							<fieldset>
+    								<legend>
+    									Waitlists
+    								</legend>
+
+									(Checkbox) Waitlist:  This course offering has a waitlist<br />
+									[Progressive Enable] (Radio) Waitlist Level: Course Offering, Activity Offering<br />
+									[Progressive Enable] (Selection) Waitlist Type: Automatic, Semi-automatic, Manual<br />
+
+   							</fieldset>
+
+    							<fieldset>
+    								<legend>
+    									Personnel
+    								</legend>
+
+    								<div class="control-group">
+	    								<label class="control-label">
+	    									Affiliated Personnel
+	    								</label>
+ 	    								<div class="controls inline">
+											(Collection) ID /	Name 	/ * AFFILIATION /	Actions 
+											(Input) w/ Lookup / (Input) / (Selection) Instructor, Teaching Assistant / 
+	    								</div>
+    								</div>
+
+   							</fieldset>
+
+    							<fieldset>
+    								<legend>
+    									Miscellaneous
+    								</legend>
+    								<div class="control-group">
+	    								<label class="control-label">
+	    									Administering Organizations
+	    								</label>
+	    								<div class="controls inline">
+		    								<table class="table table-hover table-condensed table-col-3">
+		    									<thead>
+		    										<tr>
+		    											<th>
+		    												Organization ID *
+		    											</th>
+		    											<th>
+		    												Organization Name
+		    											</th>
+		    											<th>
+						    								<button type="submit" class="btn pull-right">
+						    									Add a new row
+						    								</button>
+		    											</th>
+		    										</tr>
+		    									</thead>
+		    									<tbody>
+		    										<tr class="warning">
+		    											<td>
+		    												<input class="input-medium" type="text" placeholder="" value="A">
+		    												<a href="#"><i class="icon-search"></i></a><!-- Make this pop up into a lightbox -->
+		    											</td>
+		    											<td>
+		    												
+		    											</td>
+		    											<td>
+			
+		    											</td>
+		    										</tr>
+		    										<tr>
+		    											<td>
+		    												2677933260
+		    											</td>
+		    											<td>
+		    												ARHU-English
+		    											</td>
+		    											<td>
+		    												<a href="#" class="btn btn-mini btn-danger pull-right"><i class="icon-remove icon-white"></i></a>
+		    											</td>
+		    										</tr>
+		    									</tbody>
+		    								</table>
+	    								</div>
+    								</div>
+ 									<div class="control-group">
+ 	    								<label class="control-label">
+	    									Honors Flag
+	    								</label>
+										<label class="checkbox">
+ 											<input value="Honors" type="checkbox">
+ 											This is an Honors Course 
+ 										</label>
+ 									</div>
+   							</fieldset>
+
+
+<!--
     							<div class="well control-group info jetstrap-highlighted">
     								<h2 class="">
     									Overview section
@@ -367,7 +501,9 @@
     									</tbody>
     								</table>
     							</fieldset>
-    						</form>
+--> 
+
+   						</form>
     					</div>
     				</div>
     				<div class="container-fluid group-footer">
@@ -411,16 +547,7 @@
     	</div>
     </div>
 
-    <style>
-      
-         
-    </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
-    </script>
-    <script src="assets/js/bootstrap.js">
-    </script>
-    <script>
-
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
   </body>
 </html>

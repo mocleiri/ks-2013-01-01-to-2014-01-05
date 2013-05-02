@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+		Kuali Student UIM Page Template
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/custom.css" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
+      </script>
+    <![endif]-->
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    <style>
+    </style>
+  </head>
+  <body>
+    <div id="application-container" title="application-container" class="container">
+    	<div id="application-header" title="application-header" class="container-fluid navbar navbar-inverse navbar-fixed-top sticky">
+    		<div class="navbar-inner">
+    			<a id="application-header-logo" title="application-header-logo" class="brand" href="#">application-header-logo</a>
+    			<ul id="application-header-user" title="application-header-user" class="nav pull-right">
+    				<li class="dropdown">
+    					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Action List
+                        <b class="caret"></b>
+                        </a>
+    					<ul class="dropdown-menu">
+    						<li>
+    							<a href="#">Action A</a>
+    						</li>
+    						<li>
+    							<a href="#">Action B</a>
+    						</li>
+    						<li>
+    							<a href="#">Action C</a>
+    						</li>
+    					</ul>
+    				</li>
+    				<li>
+    					<a href="#">Username</a>
+    				</li>
+    			</ul>
+    		</div>
+    	</div>
+    	<div id="view-container" title="view-container" class="container-fluid">
+    		<div id="view-top-group" title="view-top-group" class="container-fluid navbar-fixed-top sticky optional">
+    			<div class="control-group pull-right">
+    				<form id="view-context-changer" title="view-context-changer" class="form-horizontal">
+    					<div class="control-group">
+    						<label class="control-label" for="context-changer-input">
+    							Term
+    						</label>
+    						<div class="controls">
+    							<input id="context-changer-input" title="context-changer-input" class="input-mini" placeholder="Enter Term Code" value="201308" type="text">
+    						</div>
+    					</div>
+    				</form>
+    			</div>
+    			<span id="view-term" title="view-term" class="">Term</span>
+    			<span id="view-term-state" title="view-term-state" class="">State</span>
+    		</div>
+    		<div id="view-breadcrumbs" title="view-breadcrumbs" class="container-fluid navbar-fixed-top sticky optional">
+    			<ul class="breadcrumb">
+    				<li class="home">
+    					<a href="index.html"><span class="">Home</span></a>
+    				</li>
+    				<li class="node1">
+    					<a href="#" class="">Enrollment</a>
+    				</li>
+    				<li class="active">
+    					Find Course Offering
+    				</li>
+    			</ul>
+    		</div>
+    		<div id="view-header" title="view-header" class="container-fluid navbar-fixed-top sticky">
+    			<div id="page-title" class="container">
+    				<div id="page-title-main" class="container">
+    					AAST102
+    				</div>
+    				<div id="page-title-support" class="container">
+    					Edit Course Offering
+    				</div>
+    			</div>
+    			<div id="view-header-group" title="view-header-group" class="container-fluid optional no-pad">
+    				<div id="action-bar" class="container">
+    					<a href="#" class="action action-details"><i class="icon-file"></i> Details</a>
+    					<a href="#" class="action action-edit"><i class="icon-edit"></i> Edit</a>
+    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i> Copy</a>
+    					<a href="#" class="action action-comments"><i class="icon-comment"></i> Comments</a>
+    					<a href="#" class="action action-print"><i class="icon-print"></i> Print</a>
+    					<a href="#" class="action action-delete jetstrap-selected"><i class="icon-remove"></i> Delete</a>
+    				</div>
+    			</div>
+    		</div>
+    		<div id="navigation-panel " title="navigation-panel " class="container-fluid      optional no-margin hidden">
+    		</div>
+    		<div id="page-container" title="page-container" class="container-fluid no-margin">
+    			<div id="page-header" title="page-header" class="container-fluid  no-padding">
+    				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
+    					<span class="detail detail-title">Title of this course</span>
+    					<span class="detail detail-crosslisted">Crosslistings</span>
+    					<div id="meta-data" title="meta-data" class="container-fluid pull-right optional">
+    						<span class="detail detail-status">Status</span>
+    						<span class="detail detail-modification">Last modified six minutes ago</span>
+    						<span id="more-info" class="">
+                                <a href="#" class="detail detail-more"><i class="icon-info-sign"></i> More info</a>
+                            </span>
+                        </div>
+    				</div>
+    			</div>
+    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation optional hidden">
+    			</div>
+				<!-- begin PAGE CONTENT -->
+    			<div class="container-fluid group optional no-padding">
+    				<div class="container-fluid group-header no-padding">
+    				</div>
+    				<div class="container-fluid validation group-error-validation-messaging optional hidden">
+    				</div>
+    				<div class="row-fluid no-padding">
+    					<div class="container-fluid group span12 optional no-margin no-padding">
+
+
+							<ul>
+								<li><a href="boilerplate.html">Boilerplate (no content)</a></li>
+								<li><a href="single_page_edit.html">Single-Page Edit</a></li>
+							</ul>
+
+
+    					</div>
+    				</div>
+    				<div class="container-fluid group-footer">
+    				</div>
+    			</div>
+    			<!-- Additional groups in columns -->
+    			<div class="container-fluid group optional">
+    				<div class="container-fluid group-header">
+    				</div>
+    				<div class="container-fluid validation group-error-validation-messaging optional hidden">
+    				</div>
+    				<div class="row-fluid">
+    					<div class="container-fluid group span6 optional no-margin">
+    					</div>
+    					<div class="container-fluid group span6 optional no-margin">
+    					</div>
+    				</div>
+    				<div class="container-fluid group-footer">
+    				</div>
+    			</div>
+ 				<!-- end PAGE CONTENT -->
+   			<div id="page-footer" title="page-footer" class="container-fluid">
+    			</div>
+    		</div>
+    		<div id="view-footer" title="view-footer" class="container-fluid navbar-fixed-bottom sticky">
+				<div class="container">
+    				<div class="pull-right">
+    					<form>
+    						<button type="submit" class="btn btn-primary">
+    							Save
+    						</button>
+    						<button type="submit" class="btn secondary">
+    							Save Progress
+    						</button>
+    						<a href="#" class="cancel">Cancel</a>
+    					</form>
+    				</div>
+				</div>
+    		</div>
+    	</div>
+    	<div id="application-footer" title="application-footer" class="container-fluid navbar-fixed-bottom sticky">
+    	</div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+  </body>
+</html>
