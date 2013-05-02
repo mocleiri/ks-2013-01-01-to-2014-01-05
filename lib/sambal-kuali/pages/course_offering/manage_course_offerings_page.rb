@@ -8,7 +8,8 @@ class ManageCourseOfferings < BasePage
 
   expected_element :term
 
-  element(:error_message_course_not_found) { |b| b.frm.li(class: "uif-errorMessageItem") }
+  #deprecated, for better pattern, refer to: course_offering_cross-listed_steps.rb > "Then the owner Course Offering and all it's aliases are deleted"
+  #element(:error_message_course_not_found) { |b| b.frm.li(class: "uif-errorMessageItem") }
 
   element(:previous_course_link){ |b| b.frm.link(id: "LoadPrev") } # Persistent ID needed!
   element(:list_all_course_link){ |b| b.frm.link(id: "ListAll") } # Persistent ID needed!

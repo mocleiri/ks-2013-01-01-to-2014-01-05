@@ -299,14 +299,17 @@ And /^I delete the alias Course Offering$/ do
 end
 
 Then /^the owner Course Offering and all it's aliases are deleted$/ do
+
+  expected_errMsg = "Cannot find any course offering"
+
   @cross_listed_co.manage
-  on(ManageCourseOfferings).error_message_course_not_found.should be_present
+  on(ManageCourseOfferings).first_msg.should match /.*#{Regexp.escape(expected_errMsg)}.*/
 
   @cross_listed_co.cross_listed_codes.each do |code|
     cross_listed_co_alias = make CourseOffering, :course => code,
                                  :term => @cross_listed_co.term
     cross_listed_co_alias.manage
-    on(ManageCourseOfferings).error_message_course_not_found.should be_present
+    on(ManageCourseOfferings).first_msg.should match /.*#{Regexp.escape(expected_errMsg)}.*/
   end
 
 end
