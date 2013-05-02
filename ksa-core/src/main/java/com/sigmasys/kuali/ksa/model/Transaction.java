@@ -247,7 +247,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
 
     @Column(name = "NATIVE_AMOUNT")
     public BigDecimal getNativeAmount() {
-        return nativeAmount;
+        return nativeAmount != null ? nativeAmount : BigDecimal.ZERO;
     }
 
     public void setNativeAmount(BigDecimal nativeAmount) {
@@ -256,7 +256,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
 
     @Column(name = "LOCKED_ALLOCATED")
     public BigDecimal getLockedAllocatedAmount() {
-        return lockedAllocatedAmount;
+        return lockedAllocatedAmount != null ? lockedAllocatedAmount : BigDecimal.ZERO;
     }
 
     public void setLockedAllocatedAmount(BigDecimal lockedAllocatedAmount) {
@@ -327,7 +327,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
 
     @Column(name = "AMOUNT")
     public BigDecimal getAmount() {
-        return amount;
+        return amount != null ? amount : BigDecimal.ZERO;
     }
 
     public void setAmount(BigDecimal amount) {
@@ -346,7 +346,7 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
 
     @Column(name = "ALLOCATED")
     public BigDecimal getAllocatedAmount() {
-        return allocatedAmount;
+        return allocatedAmount != null ? allocatedAmount : BigDecimal.ZERO;
     }
 
     public void setAllocatedAmount(BigDecimal allocatedAmount) {
