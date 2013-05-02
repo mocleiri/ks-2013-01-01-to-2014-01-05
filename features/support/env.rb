@@ -1,5 +1,6 @@
 #$test_site = "http://localhost:8081/ks-with-rice-bundled-dev" #Local Env
-$test_site = "http://env2.ks.kuali.org" # TODO: This needs some serious re-thinking. Should come from a yaml config file instead of being explicitly declared here.
+$test_site = "http://env2.ks.kuali.org"
+$test_site = ENV['TEST_SITE'] unless ENV['TEST_SITE'] == nil
 
 $: << File.dirname(__FILE__)+'/../../lib'
 
@@ -30,7 +31,7 @@ Before do
   @browser = browser
 end
 
-at_exit { browser.close unless browser == nil }
+#at_exit { browser.close unless browser == nil }
 
 
 if ENV['HEADLESS']
