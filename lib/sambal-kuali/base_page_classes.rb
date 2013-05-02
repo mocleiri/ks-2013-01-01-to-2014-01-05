@@ -193,7 +193,7 @@ class HolidayBase < BasePage
   element(:all_day) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].allDay") }
   element(:date_range) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].dateRange") }
   element(:instructional) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].instructional") }
-  element(:add_button) { |b| b.frm.button(id: /u\d+_add/) }
+  element(:add_button) { |b| b.frm.button(id: "KS-HolidayCalendar-HolidaySection_add") }
 
   element(:make_official_button) { |b| b.frm.button(text: "Make Official") }
 
@@ -326,7 +326,7 @@ module Holidays
   def select_random_holiday
     holidays = []
     wait_until { holiday_type.enabled? }
-    sleep 5
+    sleep 10
     holiday_type.options.each { |opt| holidays << opt.text }
     holidays.delete_if { |item| item == "Select holiday type" }
     holidays[rand(holidays.length)]

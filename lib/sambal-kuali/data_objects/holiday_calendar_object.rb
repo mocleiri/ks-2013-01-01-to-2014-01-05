@@ -123,7 +123,7 @@ class HolidayCalendar
       def search
         go_to_calendar_search
         on CalendarSearch do |page|
-          page.search_for "Academic Calendar", @name
+          page.search_for "Holiday Calendar", @name
         end
       end
 
@@ -143,6 +143,21 @@ class HolidayCalendar
         end
       end
 
+    end
+  end
+
+  def search_and_edit_holiday_calendar
+    go_to_calendar_search
+    on CalendarSearch do |page|
+      page.search_for "Holiday Calendar", @name
+      page.edit @name
+    end
+  end
+
+  def search_holiday_calendar
+    go_to_calendar_search
+    on CalendarSearch do |page|
+      page.search_for "Holiday Calendar", @name
     end
   end
 end

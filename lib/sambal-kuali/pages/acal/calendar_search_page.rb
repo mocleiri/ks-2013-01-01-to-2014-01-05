@@ -33,6 +33,7 @@ class CalendarSearch < BasePage
   def search_for cal_or_term, nm, yr=""
     search_for_select.select cal_or_term
     setnameyear nm, yr
+    loading.wait_while_present
   end
 
   def view calendar
