@@ -215,7 +215,7 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-Disclosure-TableCollectionSection"
-                                  p:layoutManager.numberOfColumns="6"
+                                  p:layoutManager.numberOfColumns="5"
                                   p:disclosure.render="false"
                                   p:progressiveRenderViaAJAX="true"
                                   p:title="Matching Accounts"
@@ -258,9 +258,6 @@
                                         <bean parent="Uif-LinkField" p:linkText="Quick View" p:target="_self"
                                               p:align="center" p:width="10%"
                                               p:href="quickView?methodToCall=get&amp;viewId=QuickView&amp;userId=@{#line.id}"/>
-                                        <bean parent="Uif-LinkField" p:linkText="IRS Form 1098T" p:target="_self"
-                                              p:align="center" p:width="10%"
-                                              p:href="generate1098T?methodToCall=display1098TForm&amp;viewId=Generate1098TView&amp;userId=@{#line.id}"/>
                                     </list>
                                 </property>
                             </bean>
