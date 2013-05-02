@@ -1,6 +1,5 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
-import com.sigmasys.kuali.ksa.exception.GeneralLedgerTypeNotFoundException;
 import com.sigmasys.kuali.ksa.krad.form.TransactionTypeForm;
 import com.sigmasys.kuali.ksa.krad.model.GlBreakdownModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionTypeGroupModel;
@@ -15,9 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
-import org.kuali.rice.krad.messages.providers.ResourceMessageProvider;
 import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.MessageMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -308,7 +305,7 @@ public class TransactionTypeController extends GenericSearchController {
 
         try {
             // occurs in the detail page.
-            auditableEntityService.persistAuditableEntity(entity);
+            auditableEntityService.persistAuditableEntity(entity.getTransactionType());
             // success in updating the currency.
             String statusMsg = "Success: Transaction Type entity updated. Entity ID =  " + entity.getId();
             form.setStatusMessage(statusMsg);

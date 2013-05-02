@@ -1,9 +1,5 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
-import com.sigmasys.kuali.ksa.model.AuditableEntity;
-import com.sigmasys.kuali.ksa.model.Rollup;
-import com.sigmasys.kuali.ksa.model.TransactionType;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,31 +14,22 @@ public class TransactionTypeGroupModel {
 
     private TransactionTypeModel currentTransactionType;
 
-    public <T extends AuditableEntity> void addTransactionType(T entity) {
-
-        TransactionTypeModel m;
-        if(entity instanceof  TransactionTypeModel) {
-            m = (TransactionTypeModel) entity;
-        } else if (entity instanceof TransactionType) {
-            m = new TransactionTypeModel((TransactionType) entity);
-        } else {
-            throw new RuntimeException("Unexpected type passed to addTransactionType: " + entity.getClass().getName());
-        }
+    public void addTransactionType(TransactionTypeModel entity) {
 
         if(transactionTypes == null){
             transactionTypes = new ArrayList<TransactionTypeModel>();
         }
-        transactionTypes.add(m);
+        transactionTypes.add(entity);
 
         // there can be only one with the null end date.  That's the current one.
-        if(currentTransactionType == null || m.getTransactionType().getEndDate() == null){
-            currentTransactionType = m;
+        if(currentTransactionType == null || entity.getTransactionType().getEndDate() == null){
+            currentTransactionType = entity;
         } else {
             Date currentEndDate = currentTransactionType.getTransactionType().getEndDate();
-            Date newEndDate = m.getTransactionType().getEndDate();
+            Date newEndDate = entity.getTransactionType().getEndDate();
 
             if(currentEndDate != null && newEndDate.after(currentEndDate)){
-                currentTransactionType = m;
+                currentTransactionType = entity;
             }
         }
     }

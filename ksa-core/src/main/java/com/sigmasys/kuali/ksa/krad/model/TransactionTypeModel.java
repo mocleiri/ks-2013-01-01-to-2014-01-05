@@ -4,7 +4,6 @@ import com.sigmasys.kuali.ksa.krad.util.HighPrecisionPercentageFormatter;
 import com.sigmasys.kuali.ksa.model.*;
 
 import java.math.BigDecimal;
-import java.security.PrivateKey;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +12,8 @@ import java.util.List;
  * Date: 11/29/12
  * Time: 11:43 AM
  */
-public class TransactionTypeModel extends TransactionType {
+public class TransactionTypeModel {
+    // extends TransactionType {
 
     private TransactionType parentEntity;
 
@@ -91,7 +91,7 @@ public class TransactionTypeModel extends TransactionType {
         this.tagList = tagList.toString();
     }
 
-    @Override
+    //@Override
     public String getCode() {
         if (parentEntity == null || parentEntity.getCode() == null) {
             return "";
@@ -99,67 +99,67 @@ public class TransactionTypeModel extends TransactionType {
         return parentEntity.getCode();
     }
 
-    @Override
+    //@Override
     public void setCode(String code) {
         parentEntity.setCode(code);
     }
 
-    @Override
+    //@Override
     public String getName() {
         return parentEntity.getName();
     }
 
-    @Override
+    //@Override
     public void setName(String name) {
         parentEntity.setName(name);
     }
 
-    @Override
+    //@Override
     public String getCreatorId() {
         return parentEntity.getCreatorId();
     }
 
-    @Override
+    //@Override
     public void setCreatorId(String creatorId) {
         parentEntity.setCreatorId(creatorId);
     }
 
-    @Override
+    //@Override
     public String getEditorId() {
         return parentEntity.getEditorId();
     }
 
-    @Override
+    //@Override
     public void setEditorId(String editorId) {
         parentEntity.setEditorId(editorId);
     }
 
-    @Override
+    //@Override
     public Date getLastUpdate() {
         return parentEntity.getLastUpdate();
     }
 
-    @Override
+    //@Override
     public void setLastUpdate(Date lastUpdate) {
         parentEntity.setLastUpdate(lastUpdate);
     }
 
-    @Override
+    //@Override
     public String getDescription() {
         return parentEntity.getDescription();
     }
 
-    @Override
+    //@Override
     public void setDescription(String description) {
         parentEntity.setDescription(description);
     }
 
-    @Override
+    //@Override
     public Date getCreationDate() {
         return parentEntity.getCreationDate();
     }
 
-    @Override
+    //@Override
     public void setCreationDate(Date creationDate) {
         parentEntity.setCreationDate(creationDate);
     }
@@ -174,7 +174,7 @@ public class TransactionTypeModel extends TransactionType {
         }
     }
 
-    @Override
+    //@Override
     public TransactionTypeId getId() {
         return parentEntity.getId();
     }
