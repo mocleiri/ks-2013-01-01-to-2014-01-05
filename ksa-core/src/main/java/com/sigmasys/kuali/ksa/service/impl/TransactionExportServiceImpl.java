@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.export.*;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.util.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,7 +170,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
         }
 
         // Creating GlBatchBaseline objects if "createGlBaselineAmounts" is true
-        if (createGlBaselineAmounts) {
+        if (createGlBaselineAmounts && CollectionUtils.isNotEmpty(glTransmissions)) {
             glService.createGlBaselineAmounts(batchId);
         }
 
