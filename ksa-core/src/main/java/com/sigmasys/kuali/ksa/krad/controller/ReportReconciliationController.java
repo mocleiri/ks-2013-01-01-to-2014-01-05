@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.ReportReconciliationForm;
 import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.model.Transaction;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.TransactionExportService;
 import org.apache.commons.logging.Log;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by: dmulderink on 10/6/12 at 2:24 PM
@@ -73,13 +76,40 @@ public class ReportReconciliationController extends DownloadController {
      * Exports all Pending Transactions to the General ledger.
      *
      * @param form The form object.
-     * @return null because we want to stay on the same page.
+     * @return The page's form.
      */
     @RequestMapping(method = {RequestMethod.POST,RequestMethod.GET}, params = "methodToCall=exportAllPendingTransactions")
     public ModelAndView exportAllPendingTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
 
         // Call the service to export all pending transactions:
         transactionExportService.exportTransactions();
+
+        return getUIFModelAndView(form);
+    }
+
+    /**
+     * Makes all KSA Transactions effective.
+     *
+     * @param form The form object.
+     * @return The page's form.
+     */
+    @RequestMapping(method = {RequestMethod.POST,RequestMethod.GET}, params = "methodToCall=makeTransactionsEffective")
+    public ModelAndView makeTransactionsEffective(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
+        try {
+            // Get all KSA Transactions:
+            List<Transaction> transactions = transactionService.getTransactions();
+            Date today = new Date();
+
+            for (Transaction t : transactions) {
+                // Make the Transaction effective:
+                if (!t.isGlEntryGenerated() && t.getEffectiveDate().before(today)) {
+                    logger.info("Calling 'makeEffective' for ID: " + t.getId());
+                    transactionService.makeEffective(t.getId(), false);
+                }
+            }
+        } catch (Exception e) {
+            return handleError(form, e);
+        }
 
         return getUIFModelAndView(form);
     }
