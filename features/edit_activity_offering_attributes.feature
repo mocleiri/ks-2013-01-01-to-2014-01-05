@@ -1,4 +1,4 @@
-@wip
+@nightly
 Feature: Edit Activity Offering Attributes
 
   Background:
