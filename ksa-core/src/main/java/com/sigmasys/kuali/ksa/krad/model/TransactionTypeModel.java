@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.krad.model;
 import com.sigmasys.kuali.ksa.krad.util.HighPrecisionPercentageFormatter;
 import com.sigmasys.kuali.ksa.model.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -12,8 +13,7 @@ import java.util.List;
  * Date: 11/29/12
  * Time: 11:43 AM
  */
-public class TransactionTypeModel {
-    // extends TransactionType {
+public class TransactionTypeModel implements Serializable {
 
     private TransactionType parentEntity;
 
@@ -27,8 +27,6 @@ public class TransactionTypeModel {
 
     private String glBreakdownTooltip;
 
-    private String auditTooltip;
-
     public TransactionTypeModel() {
     }
 
@@ -40,7 +38,7 @@ public class TransactionTypeModel {
         parentEntity = entity;
 
         Rollup r = parentEntity.getRollup();
-        if(r == null){
+        if (r == null) {
             setRollupText("");
         } else {
             setRollupText(r.getDescription());
@@ -49,7 +47,7 @@ public class TransactionTypeModel {
         this.setGlBreakdownType("Default");
         this.setGlBreakdownTooltip("No GL Breakdown");
 
-        if(entity instanceof CreditType){
+        if (entity instanceof CreditType) {
             this.setGlBreakdownType("None");
         }
 
@@ -167,7 +165,7 @@ public class TransactionTypeModel {
     @Override
     public String toString() {
         String str = "Auditable Entity Model parent: ";
-        if(parentEntity == null){
+        if (parentEntity == null) {
             return str + null;
         } else {
             return str + parentEntity.toString();
@@ -179,10 +177,10 @@ public class TransactionTypeModel {
         return parentEntity.getId();
     }
 
-    public String getType(){
-        if(parentEntity instanceof CreditType){
+    public String getType() {
+        if (parentEntity instanceof CreditType) {
             return "Credit";
-        } else if(parentEntity instanceof DebitType){
+        } else if (parentEntity instanceof DebitType) {
             return "Debit";
         } else {
             return "Unknown";
@@ -227,24 +225,24 @@ public class TransactionTypeModel {
 
         String tooltip = "";
 
-        for(GlBreakdown breakdown : glBreakdowns){
+        for (GlBreakdown breakdown : glBreakdowns) {
             String type = breakdown.getGeneralLedgerType().getDescription();
-            if(firstType == null){
+            if (firstType == null) {
                 firstType = type;
                 tooltip += "<h4>" + type + "</h4>";
-            } else if(! firstType.equals(type)){
+            } else if (!firstType.equals(type)) {
                 this.setGlBreakdownType("Complex");
                 tooltip += "<h4>" + type + "</h4>";
             }
             String account = breakdown.getGlAccount();
             String operation = breakdown.getGlOperation().name();
 
-            String percent = null;
+            String percent;
             BigDecimal amount = breakdown.getBreakdown();
-            if(amount.equals(BigDecimal.ZERO)){
+            if (amount.equals(BigDecimal.ZERO)) {
                 percent = "Remainder";
-            }else {
-                percent = (String)percentageFormatter.format(amount);
+            } else {
+                percent = (String) percentageFormatter.format(amount);
             }
 
             tooltip += account + ", " + operation + ", " + percent + "<br/>";
