@@ -633,16 +633,24 @@ class CourseOffering
     end
   end
 
-  #TODO: needs refactoring
-  def ao_status(inputOrg)
-    retVal = nil
-    aoCode = inputOrg[:inputs][0]
-    aoState = inputOrg[:inputs][1]
-    on ManageCourseOfferings do |page|
-      if page.ao_status(aoCode, aoState) #TODO: NB - ao_status method is updated
-        retVal = aoState
+  # returns a list of AOs matching a given state
+  # note: can return an empty array but not nil
+  #
+  # @param inputOrg [Array] [array_of_aos, string_of_target_state]
+  # example: draft_aos = @courseOffering.ao_status [list_of_aos, "Draft"]
+  def ao_status(inputs)
+    retVal = []
+
+    aos = inputs[0]
+    aoState = inputs[1]
+
+    aos.each { |ao|
+      status = on(ManageCourseOfferings).ao_status(ao.code)
+      if status == aoState
+        retVal << ao
       end
-    end
+    }
+
     retVal
   end
 
