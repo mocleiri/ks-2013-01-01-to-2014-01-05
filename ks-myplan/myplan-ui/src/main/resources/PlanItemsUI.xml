@@ -61,7 +61,7 @@
                             <ref bean="backup_menu_items"/>
                             <ref bean="completed_menu_items"/>
                             <ref bean="completed_backup_menu_items"/>
-                            <bean id="hidden_new_user_flag" parent="Uif-DataField" p:propertyName="newUser"
+                            <bean id="hidden_new_user_flag" parent="KSAP-SimpleDataField" p:propertyName="newUser"
                                   p:style="display:none;"/>
                         </list>
                     </property>
@@ -79,7 +79,7 @@
                 <value>myplan-plan-loader</value>
             </list>
         </property>
-        <property name="validationMessages.displayMessages" value="false"/>
+        <property name="validationMessages"><null/></property>
         <property name="onDocumentReadyScript" value="
             var user = jQuery.trim(jQuery('#hidden_new_user_flag').text());
             if (user == 'true' &amp;&amp; !jQuery.cookie('new_user_cookie')) {
@@ -258,6 +258,10 @@
       This lookup provides the term by term view of Planned Courses.
     -->
     <bean id="PlannedCourses-LookupView" parent="MyPlanBaseLookupView">
+        <property name="theme">
+            <bean parent="MyPlanRetrievedTheme"/>
+        </property>
+        <property name="onLoadScript" value=""/>
         <property name="headerText" value="Plan"/>
         <property name="header.render" value="false"/>
         <property name="viewName" value="PlannedCourses-LookupView"/>
@@ -269,11 +273,6 @@
         <property name="cssClasses">
             <list merge="true">
                 <value>myplan-view</value>
-            </list>
-        </property>
-        <property name="additionalScriptFiles">
-            <list>
-                <value>ks-myplan/plugins/jcarousellite.js?@{#ConfigProperties['myplan.version']}</value>
             </list>
         </property>
         <property name="items">
@@ -345,11 +344,13 @@
                 });
             }
         "/>
-        <property name="validationMessages.displayMessages" value="false"/>
+        <property name="validationMessages"><null/></property>
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalBoxGroup">
-                    <property name="validationMessages.render" value="false"/>
+                    <property name="validationMessages">
+                        <null/>
+                    </property>
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-plan-heading</value>
@@ -358,7 +359,9 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-HorizontalBoxGroup" p:style="margin:0; width:72px;">
-                                <property name="validationMessages.render" value="false"/>
+                                <property name="validationMessages">
+                                    <null/>
+                                </property>
                                 <property name="items">
                                     <list>
                                         <bean id="previous_year_button" parent="MyPlan-NavLink"
@@ -401,7 +404,9 @@
                             </bean>
 
                             <bean parent="Uif-HorizontalBoxGroup" p:style="margin:0; width: 132px;">
-                                <property name="validationMessages.render" value="false"/>
+                                <property name="validationMessages">
+                                    <null/>
+                                </property>
                                 <property name="items">
                                     <list>
                                         <bean id="single_quarter_button" parent="MyPlan-NavLink">
@@ -456,7 +461,9 @@
                 </bean>
                 <ref bean="overallPlanLink"/>
                 <bean parent="Uif-HorizontalBoxGroup">
-                    <property name="validationMessages.render" value="false"/>
+                    <property name="validationMessages">
+                        <null/>
+                    </property>
                     <property name="items">
                         <list>
                             <bean parent="Uif-MessageField"
@@ -470,7 +477,9 @@
     </bean>
 
     <bean id="planned_courses_detail_list" parent="Uif-ListCollectionSection">
-        <property name="validationMessages.render" value="false"/>
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="collectionObjectClass" value="org.kuali.student.myplan.plan.dataobject.PlannedTerm"/>
         <property name="propertyName" value="lookupResults"/>
         <property name="header.render" value="false"/>
@@ -498,7 +507,9 @@
                                 <value>@{#line.openForPlanning ? 'open' : 'closed'}</value>
                             </list>
                         </property>
-                        <property name="validationMessages.render" value="false"/>
+                        <property name="validationMessages">
+                            <null/>
+                        </property>
                         <property name="disclosure.renderImage" value="false"/>
                         <property name="disclosure.defaultOpen" value="true"/>
                     </bean>
@@ -516,20 +527,19 @@
                 <!-- This hidden field is only rendered for the ATP that should have focus in the UI. The value of "index" will
                      be used to initialize the javascript "carousellite" component. It should only be displayed for the PlanTerm
                      that should get focus -->
-                <bean id="atp_start_index" parent="Uif-DataField" p:propertyName="index"
+                <bean id="atp_start_index" parent="KSAP-SimpleDataField" p:propertyName="index"
                       p:render="@{#line.index ge 0}" p:style="display:none;"/>
 
-                <bean id="plan_base_atpId" parent="Uif-DataField" p:propertyName="atpId" p:style="display: none;">
+                <bean id="plan_base_atpId" parent="KSAP-SimpleDataField" p:propertyName="atpId" p:style="display: none;">
                     <property name="fieldLabel.render" value="false"/>
                 </bean>
 
-                <bean id="single_quarter_atpId" parent="Uif-DataField" p:propertyName="singleQuarterAtp"
+                <bean id="single_quarter_atpId" parent="KSAP-SimpleDataField" p:propertyName="singleQuarterAtp"
                       p:style="display: none;">
                     <property name="fieldLabel.render" value="false"/>
                 </bean>
 
-                <bean p:id="@{#line.atpId}_plan_status" parent="Uif-InputField" p:propertyName="openForPlanning">
-                    <property name="fieldLabel.render" value="false"/>
+                <bean p:id="@{#line.atpId}_plan_status" parent="KSAP-SimpleInputField" p:propertyName="openForPlanning">
                     <property name="control">
                         <bean parent="Uif-HiddenControl"/>
                     </property>
@@ -577,7 +587,9 @@
 
     <bean id="academicRecordCollection" parent="Uif-StackedCollectionGroup"
           p:headerText="@{#parentLine.completedTerm ? 'Completed': (#parentLine.academicRecord.size() gt 0 or !#parentLine.openForPlanning)? 'Registered' : ''}">
-        <property name="validationMessages.render" value="false"/>
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="header">
             <bean parent="Uif-HeaderSix"/>
         </property>
@@ -585,7 +597,9 @@
                   value="@{#line.completedTerm or #line.academicRecord.size() gt 0 or !#line.openForPlanning}"/>
         <property name="header.rightGroup">
             <bean parent="Uif-HorizontalBoxGroup">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="items">
                     <list>
                         <ref bean="completed_help_icon"/>
@@ -596,7 +610,9 @@
         </property>
         <property name="header.lowerGroup">
             <bean parent="Uif-HorizontalBoxGroup">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="items">
                     <list>
                         <ref bean="MyPlanRegistrationStatusIcon"/>
@@ -605,7 +621,9 @@
             </bean>
         </property>
         <property name="layoutManager.lineGroupPrototype.footer.render" value="false"/>
-        <property name="layoutManager.lineGroupPrototype.validationMessages.render" value="false"/>
+        <property name="layoutManager.lineGroupPrototype.validationMessages">
+            <null/>
+        </property>
         <property name="layoutManager">
             <bean parent="Uif-StackedCollectionLayout-WithBoxItems">
                 <property name="lineGroupPrototype">
@@ -640,7 +658,9 @@
                       p:title="@{#line.courseTitle}"
                       p:style="padding-left:28px"
                       p:render="@{#line.courseCode ne null and #line.courseId ne null}">
-                    <property name="group.validationMessages.render" value="false"/>
+                    <property name="group.validationMessages">
+                        <null/>
+                    </property>
                     <property name="onClickScript"
                               value="openMenu('@{#line.uuid}_completed','completed_menu_items','@{#line.atpId}',e,'.uif-collectionItem','fl-container-150 uif-boxLayoutHorizontalItem',{tail:{align:'top'},align:'top',position:'right'},false);"/>
                     <property name="dataAttributes">
@@ -656,7 +676,7 @@
                     </property>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="@{#line.courseCode}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -664,7 +684,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="@{#line.activityCode}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -673,7 +693,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="(@{#line.credit})"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -681,7 +701,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField" p:render="@{#line.grade ne null}">
+                            <bean parent="KSAP-MessageField" p:render="@{#line.grade ne null}">
                                 <property name="messageText" value="@{#line.grade}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -695,7 +715,9 @@
                 <bean p:id="@{#line.uuid}_completed" parent="Uif-HorizontalFieldGroup" p:title="@{#line.courseTitle}"
                       p:style="padding-left:28px"
                       p:render="@{#line.courseCode ne null and #line.courseId eq null}">
-                    <property name="group.validationMessages.render" value="false"/>
+                    <property name="group.validationMessages">
+                        <null/>
+                    </property>
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-course-invalid</value>
@@ -703,7 +725,7 @@
                     </property>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="@{#line.courseCode}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -711,7 +733,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="(@{#line.credit})"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -719,7 +741,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField" p:render="@{#line.grade ne null}">
+                            <bean parent="KSAP-MessageField" p:render="@{#line.grade ne null}">
                                 <property name="messageText" value="@{#line.grade}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -750,7 +772,9 @@
 
     <bean id="advisorAcademicRecordCollection" parent="Uif-StackedCollectionGroup"
           p:headerText="@{#parentLine.completedTerm ? 'Completed': (#parentLine.academicRecord.size() gt 0 or !#parentLine.openForPlanning)? 'Registered' : ''}">
-        <property name="validationMessages.render" value="false"/>
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="header">
             <bean parent="Uif-HeaderSix"/>
         </property>
@@ -758,7 +782,9 @@
                   value="@{#line.completedTerm or #line.academicRecord.size() gt 0 or !#line.openForPlanning}"/>
         <property name="header.rightGroup">
             <bean parent="Uif-HorizontalBoxGroup">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="items">
                     <list>
                         <ref bean="completed_help_icon"/>
@@ -769,7 +795,9 @@
         </property>
         <property name="header.lowerGroup">
             <bean parent="Uif-HorizontalBoxGroup">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="items">
                     <list>
                         <ref bean="MyPlanRegistrationStatusIcon"/>
@@ -778,7 +806,9 @@
             </bean>
         </property>
         <property name="layoutManager.lineGroupPrototype.footer.render" value="false"/>
-        <property name="layoutManager.lineGroupPrototype.validationMessages.render" value="false"/>
+        <property name="layoutManager.lineGroupPrototype.validationMessages">
+            <null/>
+        </property>
         <property name="layoutManager">
             <bean parent="Uif-StackedCollectionLayout-WithBoxItems">
                 <property name="lineGroupPrototype">
@@ -813,7 +843,9 @@
                       p:title="@{#line.courseTitle}"
                       p:render="@{#line.courseCode ne null and #line.courseId ne null}"
                       p:onClickScript="openPlanItemPopUp('@{#line.uuid}','course_summary_dialog_page',{courseId:'@{#line.courseId}',pageId:'course_summary_dialog_page'},e,null,{tail:{hidden:true},align:'top',position:'right'});">
-                    <property name="group.validationMessages.render" value="false"/>
+                    <property name="group.validationMessages">
+                        <null/>
+                    </property>
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-course-valid</value>
@@ -821,7 +853,7 @@
                     </property>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="@{#line.courseCode}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -829,7 +861,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="@{#line.activityCode}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -838,7 +870,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="(@{#line.credit})"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -846,7 +878,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField" p:render="@{#line.grade ne null}">
+                            <bean parent="KSAP-MessageField" p:render="@{#line.grade ne null}">
                                 <property name="messageText" value="@{#line.grade}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -859,7 +891,9 @@
                 </bean>
                 <bean p:id="@{#line.uuid}_completed" parent="Uif-HorizontalFieldGroup" p:title="@{#line.courseTitle}"
                       p:render="@{#line.courseCode ne null and #line.courseId eq null}">
-                    <property name="group.validationMessages.render" value="false"/>
+                    <property name="group.validationMessages">
+                        <null/>
+                    </property>
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-course-invalid</value>
@@ -867,7 +901,7 @@
                     </property>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="@{#line.courseCode}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -875,7 +909,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="(@{#line.credit})"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -883,7 +917,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField" p:render="@{#line.grade ne null}">
+                            <bean parent="KSAP-MessageField" p:render="@{#line.grade ne null}">
                                 <property name="messageText" value="@{#line.grade}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -913,13 +947,17 @@
     </bean>
 
     <bean id="plannedCollection" parent="Uif-StackedCollectionGroup" p:headerText="Planned">
-        <property name="validationMessages.render" value="false"/>
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="header">
             <bean parent="Uif-HeaderSix"/>
         </property>
         <property name="header.rightGroup">
             <bean parent="Uif-HorizontalBoxGroup">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="items">
                     <list>
                         <ref bean="planned_help_icon"/>
@@ -957,7 +995,9 @@
             </list>
         </property>
         <property name="layoutManager.lineGroupPrototype.footer.render" value="false"/>
-        <property name="layoutManager.lineGroupPrototype.validationMessages.render" value="false"/>
+        <property name="layoutManager.lineGroupPrototype.validationMessages">
+            <null/>
+        </property>
         <property name="collectionObjectClass"
                   value="org.kuali.student.myplan.plan.dataobject.PlannedCourseDataObject"/>
         <property name="propertyName" value="plannedList"/>
@@ -971,7 +1011,9 @@
                       parent="Uif-HorizontalFieldGroup"
                       p:render="@{#line.courseDetails.code ne null}"
                       p:title="@{#line.courseDetails.courseTitle}">
-                    <property name="group.validationMessages.render" value="false"/>
+                    <property name="group.validationMessages">
+                        <null/>
+                    </property>
                     <property name="onClickScript"
                               value="openMenu('@{#line.planItemDataObject.id}_planned','planned_menu_items','@{#line.planItemDataObject.atp}',e,'.uif-collectionItem','fl-container-150 uif-boxLayoutHorizontalItem',{tail:{align:'top'},align:'top',position:'right'},false);"/>
                     <!-- TODO: after M2 upgrade : add SpEL for page name in openMenu param to swtich menu -->
@@ -1005,7 +1047,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="@{#line.courseDetails.code}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1013,7 +1055,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField" p:render="@{#line.sections NE ''}">
+                            <bean parent="KSAP-MessageField" p:render="@{#line.sections NE ''}">
                                 <property name="messageText" value="@{#line.sections}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1022,7 +1064,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="(@{#line.credit})"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1039,7 +1081,9 @@
         <property name="collectionLookup.quickfinderAction.render" value="false"/>
         <property name="footer">
             <bean parent="Uif-VerticalBoxGroup">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="items">
                     <list>
                         <bean parent="term_total_credits" p:cssClasses="myplan-carousel-term-total"
@@ -1071,13 +1115,17 @@
     </bean>
 
     <bean id="advisorPlannedCollection" parent="Uif-StackedCollectionGroup" p:headerText="Planned">
-        <property name="validationMessages.render" value="false"/>
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="header">
             <bean parent="Uif-HeaderSix"/>
         </property>
         <property name="header.rightGroup">
             <bean parent="Uif-HorizontalBoxGroup">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="items">
                     <list>
                         <ref bean="planned_help_icon"/>
@@ -1108,7 +1156,9 @@
             </list>
         </property>
         <property name="layoutManager.lineGroupPrototype.footer.render" value="false"/>
-        <property name="layoutManager.lineGroupPrototype.validationMessages.render" value="false"/>
+        <property name="layoutManager.lineGroupPrototype.validationMessages">
+            <null/>
+        </property>
         <property name="collectionObjectClass"
                   value="org.kuali.student.myplan.plan.dataobject.PlannedCourseDataObject"/>
         <property name="propertyName" value="plannedList"/>
@@ -1123,7 +1173,9 @@
                       p:title="@{#line.courseDetails.courseTitle}"
                       p:render="@{#line.courseDetails.code ne null}"
                       p:onClickScript="openPlanItemPopUp('@{#line.planItemDataObject.id}','course_summary_dialog_page',{courseId:'@{#line.courseDetails.courseId}',pageId:'course_summary_dialog_page'},e,null,{tail:{hidden:true},align:'top',position:'right'});">
-                    <property name="group.validationMessages.render" value="false"/>
+                    <property name="group.validationMessages">
+                        <null/>
+                    </property>
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-course-valid</value>
@@ -1132,7 +1184,7 @@
                     <property name="style" value="width:@{#line.timeScheduleOpen ? '136':'114'}px;"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="@{#line.courseDetails.code}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1140,7 +1192,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField" p:render="@{#line.sections NE ''}">
+                            <bean parent="KSAP-MessageField" p:render="@{#line.sections NE ''}">
                                 <property name="messageText" value="@{#line.sections}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1149,7 +1201,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="(@{#line.credit})"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1166,7 +1218,9 @@
         <property name="collectionLookup.quickfinderAction.render" value="false"/>
         <property name="footer">
             <bean parent="Uif-VerticalBoxGroup">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="items">
                     <list>
                         <bean parent="term_total_credits" p:cssClasses="myplan-carousel-term-total"
@@ -1198,13 +1252,17 @@
     </bean>
 
     <bean id="backupCollection" parent="Uif-StackedCollectionGroup" p:headerText="Backup">
-        <property name="validationMessages.render" value="false"/>
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="header">
             <bean parent="Uif-HeaderSix"/>
         </property>
         <property name="header.rightGroup">
             <bean parent="Uif-HorizontalBoxGroup">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="items">
                     <list>
                         <ref bean="backup_help_icon"/>
@@ -1241,7 +1299,9 @@
             </list>
         </property>
         <property name="layoutManager.lineGroupPrototype.footer.render" value="false"/>
-        <property name="layoutManager.lineGroupPrototype.validationMessages.render" value="false"/>
+        <property name="layoutManager.lineGroupPrototype.validationMessages">
+            <null/>
+        </property>
         <property name="collectionObjectClass"
                   value="org.kuali.student.myplan.plan.dataobject.PlannedCourseDataObject"/>
         <property name="propertyName" value="backupList"/>
@@ -1255,7 +1315,9 @@
                       parent="Uif-HorizontalFieldGroup"
                       p:title="@{#line.courseDetails.courseTitle}"
                       p:render="@{#line.courseDetails.code ne null}">
-                    <property name="group.validationMessages.render" value="false"/>
+                    <property name="group.validationMessages">
+                        <null/>
+                    </property>
                     <property name="onClickScript"
                               value="openMenu('@{#line.planItemDataObject.id}_backup','backup_menu_items','@{#line.planItemDataObject.atp}',e,'.uif-collectionItem','fl-container-150 uif-boxLayoutHorizontalItem',{tail:{align:'top'},align:'top',position:'right'},false);"/>
                     <!-- TODO: after M2 upgrade : add SpEL for page name in openMenu param to switch menu -->
@@ -1288,7 +1350,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="@{#line.courseDetails.code}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1296,7 +1358,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField" p:render="@{#line.sections NE ''}">
+                            <bean parent="KSAP-MessageField" p:render="@{#line.sections NE ''}">
                                 <property name="messageText" value="@{#line.sections}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1305,7 +1367,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="(@{#line.credit})"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1327,13 +1389,17 @@
     </bean>
 
     <bean id="advisorBackupCollection" parent="Uif-StackedCollectionGroup" p:headerText="Backup">
-        <property name="validationMessages.render" value="false"/>
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="header">
             <bean parent="Uif-HeaderSix"/>
         </property>
         <property name="header.rightGroup">
             <bean parent="Uif-HorizontalBoxGroup">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="items">
                     <list>
                         <ref bean="backup_help_icon"/>
@@ -1363,7 +1429,9 @@
             </list>
         </property>
         <property name="layoutManager.lineGroupPrototype.footer.render" value="false"/>
-        <property name="layoutManager.lineGroupPrototype.validationMessages.render" value="false"/>
+        <property name="layoutManager.lineGroupPrototype.validationMessages">
+            <null/>
+        </property>
         <property name="collectionObjectClass"
                   value="org.kuali.student.myplan.plan.dataobject.PlannedCourseDataObject"/>
         <property name="propertyName" value="backupList"/>
@@ -1378,7 +1446,9 @@
                       p:title="@{#line.courseDetails.courseTitle}"
                       p:render="@{#line.courseDetails.code ne null}"
                       p:onClickScript="openPlanItemPopUp('@{#line.planItemDataObject.id}','course_summary_dialog_page',{courseId:'@{#line.CourseDetails.courseId}',pageId:'course_summary_dialog_page'},e,null,{tail:{hidden:true},align:'top',position:'right'});">
-                    <property name="group.validationMessages.render" value="false"/>
+                    <property name="group.validationMessages">
+                        <null/>
+                    </property>
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-course-valid</value>
@@ -1387,7 +1457,7 @@
                     <property name="style" value="width:@{#line.timeScheduleOpen ? '136':'114'}px;"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="@{#line.courseDetails.code}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1395,7 +1465,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField" p:render="@{#line.sections NE ''}">
+                            <bean parent="KSAP-MessageField" p:render="@{#line.sections NE ''}">
                                 <property name="messageText" value="@{#line.sections}"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1404,7 +1474,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-MessageField">
+                            <bean parent="KSAP-MessageField">
                                 <property name="messageText" value="(@{#line.credit})"/>
                                 <property name="cssClasses">
                                     <list merge="true">
@@ -1426,7 +1496,9 @@
     </bean>
 
     <bean id="term_no_courses" parent="Uif-VerticalBoxGroup">
-        <property name="validationMessages.render" value="false"/>
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="items">
             <list>
                 <bean parent="Uif-Message" p:messageText="No courses planned">
@@ -1444,7 +1516,9 @@
     </bean>
 
     <bean id="term_total_credits" parent="Uif-HorizontalBoxGroup">
-        <property name="validationMessages.render" value="false"/>
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="items">
             <list>
                 <ref bean="term_total_credits_label"/>
@@ -1454,9 +1528,9 @@
         </property>
     </bean>
 
-    <bean id="term_total_credits_label" parent="Uif-MessageField" p:messageText="Credits"/>
+    <bean id="term_total_credits_label" parent="KSAP-MessageField" p:messageText="Credits"/>
 
-    <bean id="term_total_credits_text" parent="Uif-MessageField"
+    <bean id="term_total_credits_text" parent="KSAP-MessageField"
           p:messageText="@{#line.credits ne null ? #line.credits : '0'}">
         <property name="cssClasses">
             <list merge="true">

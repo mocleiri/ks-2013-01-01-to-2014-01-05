@@ -157,13 +157,12 @@
                 <value>ks-myplan/scripts/myplan.widgets.js?@{#ConfigProperties['myplan.version']}</value>
                 <value>ks-myplan/scripts/myplan.events.js?@{#ConfigProperties['myplan.version']}</value>
                 <value>ks-myplan/plugins/jquery.subscribe.js?@{#ConfigProperties['myplan.version']}</value>
-                <value>ks-myplan/plugins/polling.js?@{#ConfigProperties['myplan.version']}</value>
                 <value>ks-myplan/jquery-popover/jquery.popover.js?@{#ConfigProperties['myplan.version']}</value>
                 <value>ks-myplan/scripts/myplan.google.js?@{#ConfigProperties['myplan.version']}</value>
+                <value>ks-myplan/plugins/polling.js?@{#ConfigProperties['myplan.version']}</value>
             </list>
         </property>
     </bean>
-
 
     <!--Myplan theme with different view-->
     <bean id="MyPlanBaseTheme" abstract="true" parent="MyPlanBaseTheme-parentBean"/>
@@ -182,8 +181,20 @@
                 <value>ks-myplan/scripts/myplan.widgets.js?@{#ConfigProperties['myplan.version']}</value>
                 <value>ks-myplan/scripts/myplan.events.js?@{#ConfigProperties['myplan.version']}</value>
                 <value>ks-myplan/plugins/jquery.subscribe.js?@{#ConfigProperties['myplan.version']}</value>
-                <value>ks-myplan/jquery-popover/jquery.popover.min.js?@{#ConfigProperties['myplan.version']}</value>
+                <value>ks-myplan/jquery-popover/jquery.popover.js?@{#ConfigProperties['myplan.version']}</value>
+                <value>ks-myplan/scripts/myplan.google.js?@{#ConfigProperties['myplan.version']}</value>
             </list>
+        </property>
+    </bean>
+
+    <!--Myplan theme with different view-->
+    <bean id="MyPlanRetrievedTheme" abstract="true" parent="MyPlanRetrievedTheme-parentBean"/>
+    <bean id="MyPlanRetrievedTheme-parentBean" parent="Uif-KradTheme">
+        <property name="cssFiles">
+            <list merge="false"/>
+        </property>
+        <property name="scriptFiles">
+            <list merge="false"/>
         </property>
     </bean>
 
@@ -327,7 +338,9 @@
         </property>
         <property name="lineGroupPrototype">
             <bean parent="Uif-CollectionHorizontalBoxItem">
-                <property name="validationMessages.render" value="false"/>
+                <property name="validationMessages">
+                    <null/>
+                </property>
                 <property name="footer.render" value="false"/>
             </bean>
         </property>
@@ -339,6 +352,9 @@
     </bean>
 
     <bean id="myplan_section" parent="Uif-VerticalBoxSubSection" p:style="width: 220px; margin: 0;">
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="header.render" value="false"/>
         <property name="cssClasses">
             <list merge="true">
@@ -356,6 +372,9 @@
 
     <bean id="your_stuff_widget" parent="Uif-VerticalBoxSubSection" p:headerText="YOUR STUFF"
           p:style="margin-bottom:10px;">
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="header">
             <bean parent="Uif-HeaderFive">
                 <property name="cssClasses">
@@ -392,6 +411,9 @@
     </bean>
 
     <bean id="messages_widget" parent="Uif-VerticalBoxGroup" p:headerText="MESSAGES" p:style="margin-bottom: 10px;">
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="cssClasses">
             <list merge="true">
                 <value>myplan-widget</value>
@@ -422,6 +444,9 @@
 
 
     <bean id="watch_list" parent="Uif-VerticalBoxGroup" p:headerText="Bookmarked Courses">
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="cssClasses">
             <list merge="true">
                 <value>myplan-saved-courses-summary</value>
@@ -451,6 +476,9 @@
     </bean>
 
     <bean id="degree_audits_list" parent="Uif-VerticalBoxGroup" p:headerText="Recent Audit Reports">
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="cssClasses">
             <list merge="true">
                 <value>myplan-recent-audit</value>
@@ -532,6 +560,9 @@
 
     <!--  Message to use when an adviser can't perform a particular action. -->
     <bean id="course_adviser_actions_message" parent="Uif-VerticalBoxGroup">
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="cssClasses">
             <list merge="true">
                 <value>myplan-status</value>
@@ -541,6 +572,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalFieldGroup" p:style="margin:0px;">
+                    <property name="group.validationMessages.render" value="false"/>
                     <property name="fieldLabel.render" value="false"/>
                     <property name="items">
                         <list>
@@ -559,6 +591,9 @@
     </bean>
 
     <bean id="audit_adviser_actions_message" parent="Uif-VerticalBoxGroup">
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="cssClasses">
             <list merge="true">
                 <value>myplan-status</value>
@@ -568,6 +603,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalFieldGroup">
+                    <property name="group.validationMessages.render" value="false"/>
                     <property name="fieldLabel.render" value="false"/>
                     <property name="items">
                         <list>
@@ -586,6 +622,9 @@
     </bean>
 
     <bean id="bookmark_adviser_actions_message" parent="Uif-VerticalBoxGroup">
+        <property name="validationMessages">
+            <null/>
+        </property>
         <property name="cssClasses">
             <list merge="true">
                 <value>myplan-status</value>
@@ -595,6 +634,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalFieldGroup">
+                    <property name="group.validationMessages.render" value="false"/>
                     <property name="fieldLabel.render" value="false"/>
                     <property name="items">
                         <list>
@@ -635,5 +675,98 @@
             </list>
         </property>
     </bean>
+
+
+    <!-- Light weight fields -->
+    <bean id="KSAP-SimpleDataField" parent="KSAP-SimpleDataField-parentBean"/>
+    <bean id="KSAP-SimpleDataField-parentBean" abstract="true" parent="Uif-DataField" scope="prototype">
+        <property name="fieldLabel.render" value="false"/>
+        <property name="template" value="/ks-myplan/WEB-INF/ftl/components/KSAPSimpleDataField.ftl"/>
+        <property name="templateName" value="ksap_simpleDataField"/>
+        <property name="inquiry">
+            <null/>
+        </property>
+        <property name="help">
+            <null/>
+        </property>
+    </bean>
+
+
+    <bean id="KSAP-SimpleInputField" parent="KSAP-SimpleInputField-parentBean"/>
+    <bean id="KSAP-SimpleInputField-parentBean" abstract="true" parent="Uif-InputField-parentBean" scope="prototype">
+        <property name="fieldLabel.render" value="false"/>
+        <property name="template" value="/ks-myplan/WEB-INF/ftl/components/KSAPSimpleDataField.ftl"/>
+        <property name="templateName" value="ksap_simpleDataField"/>
+        <property name="inquiry">
+            <null/>
+        </property>
+        <property name="help">
+            <null/>
+        </property>
+        <property name="quickfinder">
+            <null/>
+        </property>
+        <property name="validationMessages">
+            <null/>
+        </property>
+    </bean>
+
+    <bean id="KSAP-MessageField" parent="KSAP-MessageField-parentBean"/>
+    <bean id="KSAP-MessageField-parentBean" abstract="true" class="org.kuali.rice.krad.uif.field.MessageField"
+          parent="Uif-MessageField-parentBean" scope="prototype">
+        <property name="message">
+            <bean parent="KSAP-NoSpanMessage"/>
+        </property>
+    </bean>
+
+    <bean id="KSAP-NoSpanMessage" parent="KSAP-NoSpanMessage-parentBean"/>
+    <bean id="KSAP-NoSpanMessage-parentBean" abstract="true" parent="Uif-Message-parentBean" scope="prototype">
+        <property name="generateSpan" value="false"/>
+    </bean>
+
+
+    <bean id="KSAP-StackedCollectionGroup" parent="KSAP-StackedCollectionGroup-parentBean"/>
+    <bean id="KSAP-StackedCollectionGroup-parentBean" parent="Uif-StackedCollectionGroup-parentBean">
+        <property name="template" value="/ks-myplan/WEB-INF/ftl/components/KSAPcollectionGroup.ftl"/>
+        <property name="templateName" value="ksap_collectionGroup"/>
+
+
+        <property name="highlightNewItems" value="false"/>
+        <property name="newItemsCssClass" value="uif-newCollectionItem"/>
+        <property name="highlightAddItem" value="false"/>
+        <property name="addItemCssClass" value="uif-collectionAddItem"/>
+        <property name="renderAddBlankLineButton" value="false"/>
+        <property name="renderAddLine" value="false"/>
+        <property name="readOnly" value="true"/>
+        <property name="bindingInfo">
+            <ref bean="Uif-BindingInfo"/>
+        </property>
+        <property name="addLineBindingInfo">
+            <null/>
+        </property>
+        <property name="addLineLabel">
+            <null/>
+        </property>
+        <property name="addLineActions">
+            <list>
+            </list>
+        </property>
+        <property name="lineActions">
+            <list>
+            </list>
+        </property>
+        <property name="addBlankLineAction">
+            <null/>
+        </property>
+        <property name="addViaLightBoxAction">
+            <null/>
+        </property>
+        <property name="collectionLookup">
+            <null/>
+        </property>
+
+
+    </bean>
+
 
 </beans>
