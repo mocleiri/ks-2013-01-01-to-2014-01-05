@@ -1,5 +1,4 @@
-@pending
-@brandon.gresham
+@nightly
 Feature: Delete cross-listed COs
   As a user, I want to be able to delete a cross-listed course offering
   so that it will no longer be offered for the term.
