@@ -62,9 +62,9 @@ public class TransactionController extends GenericSearchController {
 
 
     /**
-     * @param form
-     * @param request
-     * @return
+     * @param form    TransactionForm
+     * @param request HttpServletRequest
+     * @return ModelAndView
      */
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView get(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
@@ -162,19 +162,14 @@ public class TransactionController extends GenericSearchController {
             form.setMemos(informationService.getMemos(userId));
         }
 
-
-        ModelAndView mv = getUIFModelAndView(form);
-
-        //long debugEnd = System.currentTimeMillis();;
-        //logger.info("End of TransactionController.get() userid: " + userId + " Start:" + debugStart + " End: " + debugEnd + " Elapsed (msec): " + (debugEnd - debugStart));
-        return mv;
+        return getUIFModelAndView(form);
     }
 
     /**
      * perform Payment Application.
      *
      * @param form Kuali form instance
-     * @return ModelandView
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=paymentApplication")
     public ModelAndView paymentApplication(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
@@ -188,7 +183,6 @@ public class TransactionController extends GenericSearchController {
 
         }
 
-        ModelAndView mv = getUIFModelAndView(form);
         Properties props = new Properties();
         String refreshLocation = request.getParameter("refresh");
         if (refreshLocation == null) {
@@ -212,17 +206,19 @@ public class TransactionController extends GenericSearchController {
      * Attempt a refund on a transaction
      *
      * @param form Kuali form instance
-     * @return ModelandView
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=refund")
     public ModelAndView refund(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
-        String accountId = accountId = form.getAccount().getId();
         Long transactionId;
         String errorMessage = "";
-        try{
+
+        try {
+
             transactionId = new Long(request.getParameter("transactionId"));
-        } catch(NumberFormatException e){
+
+        } catch (NumberFormatException e) {
             // Error here
             errorMessage = "Invalid Payment";
             //GlobalVariables.getMessageMap().putError("refundLightbox", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
@@ -240,15 +236,14 @@ public class TransactionController extends GenericSearchController {
         Payment payment = null;
         TransactionModel model = null;
 
-        for(TransactionModel t : form.getAllTransactions()){
-            Long id =t.getParentTransaction().getId();
-            if(t.getParentTransaction().getId().equals(transactionId)){
+        for (TransactionModel t : form.getAllTransactions()) {
+            if (t.getParentTransaction().getId().equals(transactionId)) {
                 model = t;
-                if(t.getTransactionTypeValue().equals(TransactionTypeValue.PAYMENT)){
-                    payment = (Payment)t.getParentTransaction();
+                if (t.getTransactionTypeValue().equals(TransactionTypeValue.PAYMENT)) {
+                    payment = (Payment) t.getParentTransaction();
                     amount = t.getRefundAmount();
                 } else {
-                     // error here, Refunds must occur on payments
+                    // error here, Refunds must occur on payments
                     errorMessage = "Refunds can only apply to payments";
                     //GlobalVariables.getMessageMap().putError("refundLightbox_line0", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
                     t.setMessage(errorMessage);
@@ -256,19 +251,19 @@ public class TransactionController extends GenericSearchController {
                 }
             }
         }
-        if(model == null){
+        if (model == null) {
             // The row isn't in the collection at all.  Something major happened.
             errorMessage = "Invalid Transaction ID";
             GlobalVariables.getMessageMap().putError("TransactionView", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
         }
-        try{
+        try {
             Refund refund = refundService.checkForRefund(transactionId, amount);
             String success = "Refund saved";
             //GlobalVariables.getMessageMap().putInfo("refundLightbox", RiceKeyConstants.ERROR_CUSTOM, success);
             model.setMessage(success);
 
-        } catch(RuntimeException e){
+        } catch (RuntimeException e) {
             errorMessage = e.getMessage();
             //GlobalVariables.getMessageMap().putError("refundLightbox", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             model.setMessage(errorMessage);
