@@ -3,5 +3,5 @@ body {
 }
 .uif-application {
     min-width: 0px !important;
-    overflow: hidden;
+    overflow: hidden !important;
 }

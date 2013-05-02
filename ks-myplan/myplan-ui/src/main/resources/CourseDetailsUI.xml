@@ -142,10 +142,7 @@
                             </bean>
                             <ref bean="course_details_overview"/>
                             <!--<ref bean="course_details_links"/>-->
-
-                            <ref bean="course_details_institution_data_single"/>
-                            <ref bean="course_details_institution_data_multi"/>
-                            <!-- <ref bean="course_details_sections"/> -->
+                            <ref bean="course_details_sections"/>
                         </list>
                     </property>
                 </bean>
@@ -870,6 +867,19 @@
             </list>
         </property>
     </bean>-->
+
+    <bean id="course_details_sections" parent="Uif-VerticalBoxGroup">
+        <property name="validationMessages">
+            <null/>
+        </property>
+        <property name="render" value="@{dataObject.courseSummaryDetails.scheduledTerms.size() gt 0}"/>
+        <property name="items">
+            <list>
+                <ref bean="course_details_institution_data_single"/>
+                <ref bean="course_details_institution_data_multi"/>
+            </list>
+        </property>
+    </bean>
 
     <bean id="course_details_institution_data_single" parent="KSAP-StackedCollectionGroup">
         <property name="validationMessages">
