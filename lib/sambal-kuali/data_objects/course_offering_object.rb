@@ -901,11 +901,9 @@ class DeliveryFormat
         @grade_format = selected_options[:grade_format]
       end
 
-
       @final_exam_driver = selected_options[:final_exam_driver]
       return selected_options
     end
-
   end
 
   def edit_random_delivery_formats

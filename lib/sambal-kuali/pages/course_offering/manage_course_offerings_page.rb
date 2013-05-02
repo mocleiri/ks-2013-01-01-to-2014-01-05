@@ -33,11 +33,7 @@ class ManageCourseOfferings < BasePage
   element(:view_all_reg_groups_link) { |b| b.manage_offering_links_div.link(text: /View All Registration Groups/) }
   action(:view_all_reg_groups) { |b| b.view_all_reg_groups_link.click; b.loading.wait_while_present }
 
-
-  value(:cross_listed_as_text) { |b| b.frm.span(text: /crosslisted alias/).text }
-
-  element(:cross_listed_message_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AliasMessageSection") }
-  value(:cross_listed_message) { |b| b.cross_listed_message_div.span.text }
+  value(:cross_listed_message) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AliasMessage").span.text }
 
   #NB - CO Toolbar is not on this page - this one element is listed here to allow nagivation to single CO when a CO List is
   # not expected (ie search for ENGL206, returns ENGL206 and ENG206A)
