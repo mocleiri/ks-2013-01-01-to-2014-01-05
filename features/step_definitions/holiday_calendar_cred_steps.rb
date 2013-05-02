@@ -21,9 +21,8 @@ When /^I create a Holiday Calendar$/ do
     sleep 2
     page.add_date_range_holiday(page.select_random_holiday, "03/02/#{next_year + 1}", "03/04/#{next_year + 1}")
     sleep 2
-    page.add_partial_day_holiday(page.select_random_holiday, "04/05/#{next_year + 1}", "03:00", "pm", "07:44", "pm")
-    sleep 2
-    page.add_partial_range_holiday(page.select_random_holiday, "05/11/#{next_year + 1}", "02:22", "am", "05/22/#{next_year + 1}", "04:44", "pm")
+    #page.add_partial_day_holiday(page.select_random_holiday, "04/05/#{next_year + 1}", "03:00", "pm", "07:44", "pm")
+    #page.add_partial_range_holiday(page.select_random_holiday, "05/11/#{next_year + 1}", "02:22", "am", "05/22/#{next_year + 1}", "04:44", "pm")
     #save the calender
     page.save
   end
