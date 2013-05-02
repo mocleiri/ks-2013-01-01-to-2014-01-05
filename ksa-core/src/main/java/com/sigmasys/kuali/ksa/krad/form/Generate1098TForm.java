@@ -28,7 +28,19 @@ public class Generate1098TForm extends AbstractViewModel {
 	 * Generated Form 1098T collection lines for the search by account.
 	 */
 	private List<Form1098TModel> form1098TModels;
-	
+
+
+    /**
+     * Answers whether to hide the "No saved documents" message.
+     * That message must be shown only if the "Display Saved Document" button
+     * has been pressed and none were found.
+     *
+     * @return boolean Whether to hide the "No saved documents" message.
+     */
+    public boolean getHideNoSavedDocumentsMessage() {
+        return (form1098TModels == null)
+                || ((form1098TModels != null) && !form1098TModels.isEmpty());
+    }
 
 	/**
 	 * Returns the page header, which defaults to the Account holder's name.
