@@ -27,7 +27,7 @@ class ActivityOfferingMaintenanceView < ActivityOfferingMaintenanceBase
     value(:honors){ |b| b.frm.div(data_label: "This is an honors course").span().text }
 =end
     value(:course_url)  { |b| b.frm.text_field(id: "course_url_control").value }
-    value(:evaluation)  { |b| b.frm.checkbox(id: "is_evaluated_control").set? }
+    value(:requires_evaluation)  { |b| b.frm.checkbox(id: "is_evaluated_control").set? }
     value(:honors){ |b| b.frm.checkbox(id: "is_honors_offering_control").set? }
 
 

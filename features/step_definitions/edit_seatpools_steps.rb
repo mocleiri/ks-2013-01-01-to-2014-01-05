@@ -163,7 +163,7 @@ Then /^the activity offering is updated when saved$/ do
       page.get_priority(seatpool.population_name).should == seatpool.priority.to_s
     end
 
-    page.requires_evaluation.set?.should == @activity_offering.evaluation
+    page.requires_evaluation.set?.should == @activity_offering.requires_evaluation
   end
 end
 

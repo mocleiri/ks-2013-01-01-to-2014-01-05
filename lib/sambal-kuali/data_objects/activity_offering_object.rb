@@ -36,7 +36,7 @@ class ActivityOffering
   attr_accessor :personnel_list,
                 :colocate_ao_list
   #boolean - generally set using options hash
-  attr_accessor :evaluation,
+  attr_accessor :requires_evaluation,
                 :honors_course,
                 :create_by_copy,
                 :colocate_shared_enrollment
@@ -85,7 +85,7 @@ class ActivityOffering
         :personnel_list => [] ,
         :seat_pool_list => {},
         :course_url => "www.test_course.com",
-        :evaluation => true,
+        :requires_evaluation => true,
         :honors_course => true,
         :aoc_private_name => :default_cluster,
         :create_by_copy => nil, #if true create copy using :ao_code
@@ -145,7 +145,7 @@ class ActivityOffering
         :personnel_list => @personnel_list ,
         :seat_pool_list => @seat_pool_list,
         :course_url => @course_url,
-        :evaluation => @evaluation,
+        :requires_evaluation => @requires_evaluation,
         :honors_course => @honors_course,
         :colocate_ao_list => @colocate_ao_list,
         :colocate_shared_enrollment => @colocate_shared_enrollment
@@ -290,19 +290,19 @@ class ActivityOffering
 
       def edit_evaluation opts={}
 
-        if opts[:evaluation].nil?
+        if opts[:requires_evaluation].nil?
           return nil
         end
 
         on ActivityOfferingMaintenance do |page|
-          if opts[:evaluation]
+          if opts[:requires_evaluation]
             page.requires_evaluation.set
           else
             page.requires_evaluation.clear
           end
         end
 
-        @evaluation =  opts[:evaluation]
+        @requires_evaluation =  opts[:requires_evaluation]
 
       end #END: edit_evaluation
 
