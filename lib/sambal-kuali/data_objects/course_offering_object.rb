@@ -553,7 +553,7 @@ class CourseOffering
 
   #approve specified activity offerings
   #
-  #@param  opts [Hash] {:code_list => ["code1","code2", ...], :cluster_private_name => "priv_name"}
+  #@param  opts [Hash] {:ao_obj_list => [activity_offering1,activity_offering2, ...], :cluster_private_name => "priv_name"}
   def approve_ao_list(opts)
 
     defaults = {
@@ -562,11 +562,12 @@ class CourseOffering
     options = defaults.merge(opts)
 
     on ManageCourseOfferings do |page|
-      page.select_aos(options[:code_list], options[:cluster_private_name])
+      options[:ao_obj_list].each do |ao|
+        page.select_aos([ao.code], options[:cluster_private_name])
+      end
       page.approve_activity
     end
   end
-
 
 
   #create a new specified activity offering

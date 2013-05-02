@@ -17,9 +17,9 @@ And /^I approve the Course Offering for scheduling$/ do
 end
 
 And /^I approve selected Activity Offerings for scheduling$/ do
-  new_ao_list = ["A", "B"]
-  @course_offering.manage
-  @course_offering.approve_ao_list(:code_list => new_ao_list)
+  @course_offering.manage_and_init
+  @selected_ao_list =  @course_offering.activity_offering_cluster_list[0].ao_list[0..1]
+  @course_offering.approve_ao_list(:ao_obj_list => @selected_ao_list)
 end
 
 Then /^the Activity Offerings of these two COs should be in Approved state$/ do
@@ -43,8 +43,7 @@ end
 
 Then /^the Activity Offerings should be in Approved state$/ do
   @course_offering.manage_and_init
-  new_cluster_list = @course_offering.activity_offering_cluster_list
-  ao_list = new_cluster_list[0].ao_list
+  ao_list = @course_offering.activity_offering_cluster_list[0].ao_list
   ao_list.each do |ao|
     on ManageCourseOfferings do |page|
       page.ao_status(ao.code).should == "Approved"
@@ -53,9 +52,8 @@ Then /^the Activity Offerings should be in Approved state$/ do
 end
 
 Then /^the selected Activity Offerings should be in Approved state$/ do
-  @course_offering.manage_and_init
-  selected_ao_list = ["A", "B"]
-  selected_ao_list.each do |ao|
+  @course_offering.manage
+  @selected_ao_list.each do |ao|
     on ManageCourseOfferings do |page|
       page.ao_status(ao.code).should == "Approved"
     end
