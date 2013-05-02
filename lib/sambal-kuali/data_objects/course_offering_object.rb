@@ -33,7 +33,7 @@ class CourseOffering
   attr_accessor :activity_offering_cluster_list,
                 :affiliated_person_list,
                 :affiliated_org_list
-  #generally set using options hash
+  #string - generally set using options hash
   attr_accessor :wait_list,
                 :wait_list_level,
                 :wait_list_type,
@@ -48,6 +48,8 @@ class CourseOffering
                 :cross_listed_codes
   #object - generally set using options hash - course offering object to copy
   attr_accessor  :create_by_copy
+  #boolean - - generally set using options hash true/false
+  attr_accessor :cross_listed
 
 
 
@@ -70,7 +72,8 @@ class CourseOffering
   #    :grade_options => "Letter",
   #    :reg_options => "None available",
   #    :search_by_subj => false,
-  #    :create_by_copy => nil
+  #    :create_by_copy => nil,
+  #    :cross_listed => false,  (applies only to create from catalog)
   #  }
   # initialize is generally called using TestFactory Foundry .make or .create methods
   def initialize(browser, opts={})
@@ -80,7 +83,7 @@ class CourseOffering
         :term=>Rollover::MAIN_TEST_TERM_TARGET,
         :course=>"ENGL211",
         :suffix=>"",
-        :activity_offering_cluster_list=>[],
+        :activity_offering_cluster_list=> [ (make ActivityOfferingCluster, :private_name=> :default_cluster ) ],
         :final_exam_type => "STANDARD",
         :wait_list => "YES",
         :wait_list_level => "Course Offering",
@@ -97,6 +100,7 @@ class CourseOffering
         :create_by_copy => nil,
         :create_from_existing => nil,
         :joint_co_to_create => nil,
+        :cross_listed => false,
         :cross_listed_codes => []
     }
     options = defaults.merge(opts)
@@ -132,6 +136,7 @@ class CourseOffering
         delivery_obj = make DeliveryFormat
         delivery_obj.select_random_delivery_formats
         @delivery_format_list << delivery_obj
+        page.cross_listed_co_check_box.set unless !@cross_listed
         page.create_offering
       end
     end
