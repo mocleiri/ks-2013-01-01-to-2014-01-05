@@ -823,7 +823,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
                 for (Object[] values : results) {
 
                     Class<Transaction> transactionType = (Class<Transaction>) values[0];
-                    BigDecimal unallocatedAmount = new BigDecimal(values[1].toString());
+                    BigDecimal unallocatedAmount = (values[1] != null) ?
+                            new BigDecimal(values[1].toString()) : BigDecimal.ZERO;
 
                     GlBatchBaseline baseline = new GlBatchBaseline();
                     baseline.setBatchId(batchId);
