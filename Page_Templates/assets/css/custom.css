@@ -280,7 +280,27 @@ http://ux.kuali.org/prototypes/rice/breadcrumb.php#
 }
 
 /* FORMATING: Forms */
-form label {}
+fieldset {
+	margin-bottom: 2.0em;
+}
+legend {
+	margin-bottom: 0.1em;
+}
+.field-label {
+	font-weight: bold;
+}
+.collection-label {
+	font-weight: bold;
+	font-size: 1.4em;
+	margin-top: 1.5em;
+}
+.form-child {
+	padding-left: 2.0em;
+}
+.form-read-only {
+	background-color: #eeeeee;
+	padding: 1.5em;
+}
 
 /* FORMATING: Tables */
 .table-col-1 {

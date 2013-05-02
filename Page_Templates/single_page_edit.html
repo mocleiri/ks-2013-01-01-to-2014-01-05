@@ -136,88 +136,68 @@
     								<legend>
     									Course Offering Information
     								</legend>
-    								<div class="control-group">
-	    								<label class="control-label">
+    								<div class="control-group inline">
+	    								<label class="control-label field-label">
 	    									Course Offering Code
 	    								</label>
-	    								<div class="controls inline">
+	    								<div class="controls pull-left inline">
 											<span>ENLG101</span>
-	    									<input class="span1" type="text" placeholder="" value="A">
+	    									<input class="input-mini" type="text" placeholder="" value="A">
 	    									<span class="help-inline hidden">Inline help text</span>
 	    									<span class="help-block hidden">This field has hidden inline help text.</span>
 	    								</div>
+										<div class="form-read-only span6">
+											<dl class="dl-horizontal">
+									    		<dt>Grading Options</dt><dd>Letter</dd>
+									    		<dt>Student Registration Options</dt><dd>None available</dd>
+									    		<dt>Credit Type</dt><dd>Fixed (3.0 Credits)</dd>
+									    	</dl>
+										</div>
     								</div>
-
-									(Radio) Grading Options: Letter<br />
-									(?) Student Registration Options: None available<br />
-									(Radio) Credit Type: Fixed / (Selection) Credits: 3.0
     							</fieldset>
 
+    							<fieldset>
     							<fieldset>
     								<legend>
     									Delivery and Assessment
     								</legend>
 
-									(Radio) Final Exams:  Standard final Exam, Alternate final assessment, No final exam or assessmen<br />
     								<div class="control-group">
-	    								<label class="control-label">
+    									<label class="control-label field-label">
+    										Final Exams
+    									</label>
+    									<label class="radio">
+    										<input type="radio" name="optionsRadios" checked>
+    										Standard final Exam
+    									</label>
+    									<label class="radio">
+    										<input type="radio" name="optionsRadios">
+    										Alternate final assessment
+    									</label>
+    									<label class="radio">
+    										<input type="radio" name="optionsRadios">
+    										No final exam or assessment
+    									</label>
+    								</div>
+   								<div class="control-group">
+	    								<label class="control-label collection-label">
 	    									Delivery Formats
 	    								</label>
-    									<span class="help-block">Add the delivery formats to be used for this course offering</span>
+    									<span class="help-block">Add the delivery formats to be used for this course offering.</span>
 	    								<div class="controls inline">
-											(Collection) * FORMAT /	* GRADE ROSTER LEVEL /	* FINAL EXAM DRIVER ACTIVITY / Actions 
-											Lecture Only / (Selection) Course Offering, Lecture / (Selection) Lecture /
-	    								</div>
-    								</div>
-    							</fieldset>
-
-    							<fieldset>
-    								<legend>
-    									Waitlists
-    								</legend>
-
-									(Checkbox) Waitlist:  This course offering has a waitlist<br />
-									[Progressive Enable] (Radio) Waitlist Level: Course Offering, Activity Offering<br />
-									[Progressive Enable] (Selection) Waitlist Type: Automatic, Semi-automatic, Manual<br />
-
-   							</fieldset>
-
-    							<fieldset>
-    								<legend>
-    									Personnel
-    								</legend>
-
-    								<div class="control-group">
-	    								<label class="control-label">
-	    									Affiliated Personnel
-	    								</label>
- 	    								<div class="controls inline">
-											(Collection) ID /	Name 	/ * AFFILIATION /	Actions 
-											(Input) w/ Lookup / (Input) / (Selection) Instructor, Teaching Assistant / 
-	    								</div>
-    								</div>
-
-   							</fieldset>
-
-    							<fieldset>
-    								<legend>
-    									Miscellaneous
-    								</legend>
-    								<div class="control-group">
-	    								<label class="control-label">
-	    									Administering Organizations
-	    								</label>
-	    								<div class="controls inline">
-		    								<table class="table table-hover table-condensed table-col-3">
+		    								<table class="table table-hover table-condensed table-col-4">
 		    									<thead>
 		    										<tr>
-		    											<th>
-		    												Organization ID *
+		    											<th class="span3">
+		    												Format <i class="icon-asterisk"></i>
 		    											</th>
-		    											<th>
-		    												Organization Name
+		    											<th class="span3">
+		    												Grade Roster Level <i class="icon-asterisk"></i>
 		    											</th>
-		    											<th>
+		    											<th class="span3">
+		    												Final Exam Driver Activity <i class="icon-asterisk"></i>
+		    											</th>
+		    											<th class="span3">
 						    								<button type="submit" class="btn pull-right">
 						    									Add a new row
 						    								</button>
@@ -227,14 +207,200 @@
 		    									<tbody>
 		    										<tr class="warning">
 		    											<td>
-		    												<input class="input-medium" type="text" placeholder="" value="A">
+		    												Lecture Only
+		    											</td>
+		    											<td>
+				    										<select class="span10" required>
+				    											<option>
+				    												Course Offering
+				    											</option>
+				    											<option>
+				    												Lecture
+				    											</option>
+				    										</select>
+		    											</td>
+		    											<td>
+				    										Lecture
+		    											</td>
+		    											<td>
+		    												
+		    											</td>
+		    										</tr>
+		    									</tbody>
+		    								</table>
+	    								</div>
+    								</div>
+   							</fieldset>
+
+    							<fieldset>
+    								<legend>
+    									Waitlists
+    								</legend>
+ 									<div class="control-group">
+ 	    								<label class="control-label field-label">
+	    									Waitlist
+	    								</label>
+										<label class="checkbox">
+ 											<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options">
+ 											This course offering has a waitlist
+ 										</label>
+ 									</div>
+									<div id="waitlist-options" class="collapse in form-child">
+	    								<div class="control-group">
+	    									<label class="control-label field-label">
+	    										Waitlist Level
+	    									</label>
+	    									<label class="radio">
+	    										<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
+	    										Course Offering
+	    									</label>
+	    									<label class="radio">
+	    										<input type="radio" name="optionsRadios" id="optionsRadios2" value="Activity Offering">
+	    										Activity Offering
+	    									</label>
+	    								</div>
+	    								<div class="control-group">
+		    								<label class="control-label field-label">
+		    									Waitlist Type
+		    								</label>
+		    								<div class="controls">
+	    										<select class="span2" required>
+	    											<option>
+	    												Automatic
+	    											</option>
+	    											<option>
+	    												Semi-automatic
+	    											</option>
+	    											<option>
+	    												Manual
+	    											</option>
+	    										</select>
+		    								</div>
+	    								</div>
+									</div>
+   							</fieldset>
+
+    							<fieldset>
+    								<legend>
+    									Personnel
+    								</legend>
+   								<div class="control-group">
+	    								<label class="control-label collection-label">
+	    									Affiliated Personnel
+	    								</label>
+	    								<div class="controls inline">
+		    								<table class="table table-hover table-condensed table-col-4">
+		    									<thead>
+		    										<tr>
+		    											<th class="span3">
+		    												ID
+		    											</th>
+		    											<th class="span3">
+		    												Name
+		    											</th>
+		    											<th class="span3">
+		    												Affiliation <i class="icon-asterisk"></i>
+		    											</th>
+		    											<th class="span3">
+						    								<button type="submit" class="btn pull-right">
+						    									Add a new row
+						    								</button>
+		    											</th>
+		    										</tr>
+		    									</thead>
+		    									<tbody>
+		    										<tr class="warning">
+		    											<td>
+		    												<input class="input-medium" type="text" placeholder="e.g., 12345678" value="">
 		    												<a href="#"><i class="icon-search"></i></a><!-- Make this pop up into a lightbox -->
 		    											</td>
 		    											<td>
 		    												
 		    											</td>
 		    											<td>
-			
+				    										<select class="span10" required>
+				    											<option>
+				    												Instructor
+				    											</option>
+				    											<option>
+				    												Teaching Assistant
+				    											</option>
+				    										</select>
+		    											</td>
+		    											<td>
+		    												
+		    											</td>
+		    										</tr>
+		    										<tr class="success">
+		    											<td>
+		    												8376209
+		    											</td>
+		    											<td>
+															Robert Johnson
+		    											</td>
+		    											<td>
+				    										Teaching Assistant
+		    											</td>
+		    											<td>
+		    												<a href="#" class="btn btn-mini btn-danger pull-right"><i class="icon-remove icon-white"></i></a>
+		    											</td>
+		    										</tr>
+		    										<tr>
+		    											<td>
+		    												6378288
+		    											</td>
+		    											<td>
+															Rebecca Worthingtonson
+		    											</td>
+		    											<td>
+				    										Instructor
+		    											</td>
+		    											<td>
+		    												<a href="#" class="btn btn-mini btn-danger pull-right"><i class="icon-remove icon-white"></i></a>
+		    											</td>
+		    										</tr>
+		    									</tbody>
+		    								</table>
+	    								</div>
+    								</div>
+   							</fieldset>
+
+    							<fieldset>
+    								<legend>
+    									Miscellaneous
+    								</legend>
+    								<div class="control-group">
+	    								<label class="control-label collection-label">
+	    									Administering Organizations
+	    								</label>
+	    								<div class="controls inline">
+		    								<table class="table table-hover table-condensed table-col-3">
+		    									<thead>
+		    										<tr>
+		    											<th class="span4">
+		    												Organization ID <i class="icon-asterisk"></i>
+		    											</th>
+		    											<th class="span4">
+		    												Organization Name
+		    											</th>
+		    											<th class="span4">
+						    								<button type="submit" class="btn pull-right">
+						    									Add a new row
+						    								</button>
+		    											</th>
+		    										</tr>
+		    									</thead>
+		    									<tbody>
+		    										<tr class="warning">
+		    											<td>
+		    												<input class="input-medium" type="text" placeholder="e.g., 10293940" value="" required>
+		    												<a href="#"><i class="icon-search"></i></a><!-- Make this pop up into a lightbox -->
+		    											</td>
+		    											<td>
+		    												
+		    											</td>
+		    											<td>
+
 		    											</td>
 		    										</tr>
 		    										<tr>
@@ -253,7 +419,7 @@
 	    								</div>
     								</div>
  									<div class="control-group">
- 	    								<label class="control-label">
+ 	    								<label class="control-label field-label">
 	    									Honors Flag
 	    								</label>
 										<label class="checkbox">
@@ -549,5 +715,16 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="assets/js/bootstrap.js"></script>
+	<script type='text/javascript'>//<![CDATA[ 
+	$(window).load(function(){
+
+	});//]]>  
+	</script>
+	<script type="text/javascript">//<![CDATA[ 
+	$(document).ready(function() {
+		$(".collapse").collapse();
+	   $('.accordion').collapse();
+	});
+	//]]> </script>
   </body>
 </html>
