@@ -805,7 +805,7 @@
         </property>-->
         <property name="additionalScriptFiles">
             <list>
-                <value>krad/plugins/rice/datatables/jquery.dataTables.js</value>
+                <value>ks-myplan/scripts/jquery.dataTables.min.js</value>
             </list>
         </property>
 
