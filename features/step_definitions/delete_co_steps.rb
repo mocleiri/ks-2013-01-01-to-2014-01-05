@@ -28,14 +28,14 @@ end
 
 And /^I cancel the deletion of a Course Offering in Subject Code view$/ do
   @course_offering.manage
-  @course_offering.delete_co_with_link :should_confirm_delete=>false
+  @course_offering.delete_co_coc_view :should_confirm_delete=>false
 end
 
 And /^I delete this Course Offering in Subject Code view$/ do
   #setup
   @course_offering.manage
   #delete
-  @course_offering.delete_co_with_link :should_confirm_delete=>true
+  @course_offering.delete_co_coc_view :should_confirm_delete=>true
 end
 
 Then /^the deleted course offering does not appear on the list of available Course Offerings$/ do

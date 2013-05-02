@@ -10,7 +10,7 @@ And /^I attempt to "(delete|delete and cancel)" a joint Course Offering$/ do |de
   end
 
   @joint_co.manage
-  @joint_co.delete_co_with_link :should_confirm_delete=>should_confirm_delete
+  @joint_co.delete_co_coc_view :should_confirm_delete=>should_confirm_delete
 
 end
 

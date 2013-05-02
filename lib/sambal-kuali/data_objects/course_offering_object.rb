@@ -746,28 +746,48 @@ class CourseOffering
     on(ManageCourseOfferingList).co_list
   end
 
-  def delete_co(args={})
+  # deletes CO from the subject-code view using the toolbar
+  #
+  # @param opts [Hash] {:should_confirm_delete => false}
+  def delete_co(opts={})
+    defaults = {
+        :should_confirm_delete => true
+    }
+    opts = defaults.merge(opts)
 
-    should_confirm_delete = false
-    case args[:should_confirm_delete]
-      when true
-        should_confirm_delete = true
-    end
-
-    co_code_list = args[:code_list]
+    co_code_list = opts[:code_list]
     on ManageCourseOfferingList do |page|
       page.select_cos(co_code_list)
       page.delete_cos
     end
     on DeleteCourseOffering do |page|
-      case should_confirm_delete
-        when true
-          page.confirm_delete
-        else
-          page.cancel_delete
+      if opts[:should_confirm_delete]
+        page.confirm_delete
+      else
+        page.cancel_delete
       end
     end
+  end
 
+  # deletes CO from the single-CO view using the link
+  #
+  # @param opts [Hash] {:should_confirm_delete => false}
+  def delete_co_coc_view(opts={})
+    defaults = {
+        :should_confirm_delete => true
+    }
+    opts = defaults.merge(opts)
+
+    on ManageCourseOfferings do |page|
+      page.delete_course_offering
+    end
+    on DeleteCourseOffering do |page|
+      if opts[:should_confirm_delete]
+        page.confirm_delete
+      else
+        page.cancel_delete
+      end
+    end
   end
 
   def delete_co_warning_message(args={})
@@ -781,27 +801,6 @@ class CourseOffering
       delete_warning = page.delete_warning_message
       page.cancel_delete
       return delete_warning
-    end
-  end
-
-  #deletes CO from single CO view page
-  def delete_co_with_link(args={})
-    should_confirm_delete = false
-    case args[:should_confirm_delete]
-      when true
-        should_confirm_delete = true
-    end
-
-    on ManageCourseOfferings do |page|
-      page.delete_course_offering
-    end
-    on DeleteCourseOffering do |page|
-      case should_confirm_delete
-        when true
-          page.confirm_delete
-        else
-          page.cancel_delete
-      end
     end
   end
 

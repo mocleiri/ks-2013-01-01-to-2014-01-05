@@ -294,7 +294,7 @@ And /^I delete the alias Course Offering$/ do
   cross_listed_co_alias = make CourseOffering, :course => @cross_listed_co.cross_listed_codes[0],
                                :term => @cross_listed_co.term
   cross_listed_co_alias.manage
-  cross_listed_co_alias.delete_co_with_link :code_list => [cross_listed_co_alias.course],
+  cross_listed_co_alias.delete_co_coc_view :code_list => [cross_listed_co_alias.course],
                                             :should_confirm_delete => true
 end
 
