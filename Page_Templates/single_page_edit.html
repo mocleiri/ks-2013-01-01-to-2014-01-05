@@ -100,7 +100,7 @@ Jump to another <strong>module</strong>
     					<a href="index.html">Enrollment</a>
 						<b class="caret align-base dynamic-node"></b>
    				</li>
-    				<li class="active"id="node2" class="node2 active" data-toggle="popover" data-html="true" data-content="
+    				<li class="active" id="node2" class="node2 active" data-toggle="popover" data-html="true" data-content="
 Jump to a <strong>course offering</strong>
 <form id='node1-search' title='node1-search' class='form-horizontal dynamic-node-content'>
 	<div class='input-append'>
@@ -131,7 +131,9 @@ Jump to a <strong>course offering</strong>
 		  				<div id="meta-data" title="meta-data" class="pull-right optional">
 								<span class="detail-modification">Last modified six minutes ago</span>
 								<span id="more-info" class="">
-									<a href="#" class="detail detail-more"><i class="icon-info-sign"></i></a>
+									<a href="#" id="detail-more" class="detail detail-more" data-toggle="popover" data-html="true" data-content="
+We can put a whole bunch of meta data here, including <strong>HTML</strong>
+"><i class="icon-info-sign"></i></a>
 								</span>
 								<span class="detail-status">Draft</span>
 						</div>
@@ -827,6 +829,9 @@ Jump to a <strong>course offering</strong>
 			placement: 'bottom'
 		});
 		$("#node2").popover({
+			placement: 'bottom'
+		});
+		$("#detail-more").popover({
 			placement: 'bottom'
 		});
 	   $('#advanced-select-personnel').modal({
