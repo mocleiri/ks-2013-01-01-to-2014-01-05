@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>
-		Kuali Student UIM Page Template :: Single-Page Edit
+		Kuali Student UIM Page Template :: Single-Page Edit X
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -54,10 +54,12 @@
     					<a href="#">Username</a>
     				</li>
     			</ul>
+    			<form id="jump-to-navigation" title="jump-to-navigation" class="form-horizontal pull-right">
+    				<input id="jump-to-navigation-input" title="jump-to-navigation-input" class="input-mini" placeholder="Jump to Code" value="" type="text">
+    			</form>
     		</div>
-    	</div>
-    	<div id="view-container" title="view-container" class="container-fluid">
-    		<div id="view-top-group" title="view-top-group" class="container-fluid navbar-fixed-top sticky optional">
+
+    		<div id="view-top-group" title="view-top-group" class="container-fluid sticky optional">
     			<div class="control-group pull-right">
     				<form id="view-context-changer" title="view-context-changer" class="form-horizontal">
     					<div class="control-group">
@@ -73,7 +75,7 @@
     			<span id="view-term" title="view-term" class="">Term</span>
     			<span id="view-term-state" title="view-term-state" class="">State</span>
     		</div>
-    		<div id="view-breadcrumbs" title="view-breadcrumbs" class="container-fluid navbar-fixed-top sticky optional">
+    		<div id="view-breadcrumbs" title="view-breadcrumbs" class="container-fluid sticky optional">
     			<ul class="breadcrumb">
     				<li class="home">
     					<a href="index.html"><span class="">Home</span></a>
@@ -86,7 +88,7 @@
     				</li>
     			</ul>
     		</div>
-    		<div id="view-header" title="view-header" class="container-fluid navbar-fixed-top sticky">
+    		<div id="view-header" title="view-header" class="container-fluid sticky">
     			<div id="page-title" class="container">
 					<div class="pull-left">
 	    				<div id="page-title-main">
@@ -117,6 +119,9 @@
     				</div>
     			</div>
     		</div>
+
+    	</div>
+    	<div id="view-container" title="view-container" class="container-fluid">
     		<div id="navigation-panel " title="navigation-panel " class="container-fluid      optional no-margin hidden">
     		</div>
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
@@ -160,7 +165,6 @@
     								</div>
     							</fieldset>
 
-    							<fieldset>
     							<fieldset>
     								<legend>
     									Delivery and Assessment
@@ -316,7 +320,7 @@
 		    										<tr class="warning">
 		    											<td>
 		    												<input class="input-medium" type="text" placeholder="e.g., 12345678" value="">
-		    												<a href="#"><i class="icon-search"></i></a><!-- Make this pop up into a lightbox -->
+		    												<a href="#advanced-select-personnel" role="link" data-toggle="modal"><i class="icon-search"></i></a><!-- Make this pop up into a lightbox -->
 		    											</td>
 		    											<td>
 		    												
@@ -398,7 +402,7 @@
 		    										<tr class="warning">
 		    											<td>
 		    												<input class="input-medium" type="text" placeholder="e.g., 10293940" value="" required>
-		    												<a href="#"><i class="icon-search"></i></a><!-- Make this pop up into a lightbox -->
+		    												<a href="#advanced-select-organization" role="link" data-toggle="modal"><i class="icon-search"></i></a><!-- Make this pop up into a lightbox -->
 		    											</td>
 		    											<td>
 		    												
@@ -432,247 +436,6 @@
  										</label>
  									</div>
    							</fieldset>
-
-
-<!--
-    							<div class="well control-group info jetstrap-highlighted">
-    								<h2 class="">
-    									Overview section
-    								</h2>
-    								<p class="">
-    									This section is marked as "info"
-    								</p>
-    								<label class="control-label">
-    									Label text
-    								</label>
-    								<div class="controls">
-    									<input class="span4" type="text">
-    									<span class="help-inline hidden">Inline help text</span>
-    									<span class="help-block">This field has hidden inline help text.</span>
-    								</div>
-    								<label class="control-label">
-    									Label text
-    								</label>
-    								<div class="controls">
-    									<input class="span4" type="text">
-    									<span class="help-block hidden">This instruction text is hidden.</span>
-    								</div>
-    							</div>
-    							<div class="control-group error">
-    								<label class="control-label">
-    									Required text input
-    								</label>
-    								<div class="controls">
-    									<input class="span4" required="" type="text">
-    									<span class="help-inline">Inline help text</span>
-    									<span class="help-block">This field had an error</span>
-    								</div>
-    							</div>
-    							<div class="control-group warning">
-    								<label class="control-label">
-    									Unit with optional fields
-    								</label>
-    								<div class="controls inline">
-    									<input class="span2" type="text">
-    									<input class="span2" type="text">
-    									<span class="help-block">This is a "Unit" with a warning</span>
-    								</div>
-    							</div>
-    							<fieldset>
-    								<legend>
-    									Section Title
-    								</legend>
-    								<div class="control-group">
-    									<label class="control-label">
-    										Radio Button
-    									</label>
-    									<label class="span2 radio inline">
-    										<input name="optionsRadios" id="optionsRadios1" value="No" checked="checked" type="radio">
-    										No
-    									</label>
-    									<label class="span4 radio inline">
-    										<input name="optionsRadios" id="optionsRadios2" value="Yes" type="radio">
-    										Yes
-    										<input class="input-small" disabled="" type="text">
-    										<span class="input-small uneditable-input">Uneditable input is here.</span>
-    									</label>
-    								</div>
-    							</fieldset>
-    							<fieldset>
-    								<legend>
-    									Another Section
-    								</legend>
-    								<div class="control-group">
-    									<label class="control-label">
-    										Text Area
-    									</label>
-    									<div class="controls">
-    										<textarea class="span4" rows="3"></textarea>
-    									</div>
-    									<div class="control-group">
-    										<label class="checkbox">
-    											<input value="1" type="checkbox">
-    											Option one is this and that—be sure to include why it's great
-    										</label>
-    									</div>
-    								</div>
-    								<div class="control-group">
-    									<label class="control-label">
-    										Different sizes
-    									</label>
-    									<div class="controls">
-    										<input class="input-mini" placeholder=".input-mini" type="text">
-    										<input class="input-small" placeholder=".input-small" type="text">
-    										<input class="input-medium" placeholder=".input-medium" type="text">
-    										<input class="input-large" placeholder=".input-large" type="text">
-    										<input class="input-xlarge" placeholder=".input-xlarge" type="text">
-    										<input class="input-xxlarge" placeholder=".input-xxlarge" type="text">
-    									</div>
-    								</div>
-    								<div class="control-group">
-    									<label class="control-label">
-    										Selections
-    									</label>
-    									<div class="controls">
-    										<select class="span4">
-    											<option>
-    												1
-    											</option>
-    											<option>
-    												2
-    											</option>
-    											<option>
-    												3
-    											</option>
-    											<option>
-    												4
-    											</option>
-    											<option>
-    												5
-    											</option>
-    										</select>
-    									</div>
-    									<div class="controls">
-    										<select class="span4" multiple="multiple">
-    											<option>
-    												1
-    											</option>
-    											<option>
-    												2
-    											</option>
-    											<option>
-    												3
-    											</option>
-    											<option>
-    												4
-    											</option>
-    											<option>
-    												5
-    											</option>
-    										</select>
-    									</div>
-    								</div>
-    							</fieldset>
-    							<fieldset>
-    								<legend>
-    									Collection
-    								</legend>
-    								<button type="submit" class="btn">
-    									Add
-    								</button>
-    								<table class="table table-hover table-condensed">
-    									<thead>
-    										<tr>
-    											<th>
-    												Field 1
-    											</th>
-    											<th>
-    												Field 2
-    											</th>
-    											<th>
-    												Field 3
-    											</th>
-    											<th>
-    												Field 4
-    											</th>
-    											<th>
-    												Field 5
-    											</th>
-    										</tr>
-    									</thead>
-    									<tbody>
-    										<tr class="warning">
-    											<td>
-    												<select class="span1">
-    													<option>
-    														1
-    													</option>
-    													<option>
-    														2
-    													</option>
-    													<option>
-    														3
-    													</option>
-    													<option>
-    														4
-    													</option>
-    													<option>
-    														5
-    													</option>
-    												</select>
-    											</td>
-    											<td>
-    												<input class="input" type="text">
-    											</td>
-    											<td>
-    												<input class="input" type="text">
-    											</td>
-    											<td>
-    												<input class="input-mini" type="text">
-    											</td>
-    											<td>
-    												<input class="input-mini" type="text">
-    											</td>
-    										</tr>
-    										<tr>
-    											<td>
-    												1
-    											</td>
-    											<td>
-    												2
-    											</td>
-    											<td>
-    												3
-    											</td>
-    											<td>
-    												4
-    											</td>
-    											<td>
-    												5
-    											</td>
-    										</tr>
-    										<tr>
-    											<td>
-    												1
-    											</td>
-    											<td>
-    												2
-    											</td>
-    											<td>
-    												3
-    											</td>
-    											<td>
-    												4
-    											</td>
-    											<td>
-    												5
-    											</td>
-    										</tr>
-    									</tbody>
-    								</table>
-    							</fieldset>
---> 
-
    						</form>
     					</div>
     				</div>
@@ -717,8 +480,320 @@
     	</div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="assets/js/bootstrap.js"></script>
+	<!-- Lightboxes -->
+	<div id="advanced-select-personnel" class="modal hide fade modal-medium" tabindex="-1" role="dialog" aria-labelledby="lightboxLabel-personnel" aria-hidden="true">
+   	<div class="modal-header">
+   		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+   		<h3 id="lightboxLabel-personnel">Personnel Lookup</h3>
+   	</div>
+   	<div class="modal-body modal-body-medium">
+			<div class="search-parameters">
+				<form id="organizations-search" title="search-organizations">
+					<div class="controls controls-row">
+						<div class="control-group span2">
+							<label class="control-label field-label">
+								Name
+							</label>
+							<div class="controls">
+								<input class="span2" type="text" placeholder="e.g., Johnson" value="Johnson">
+							</div>
+						</div>
+						<div class="control-group span2">
+							<label class="control-label field-label">
+								ID
+							</label>
+							<div class="controls">
+								<input class="span2" type="text" placeholder="e.g., rjohnson" value="">
+							</div>
+						</div>										
+						<div class="control-group span2">
+							<a class="btn btn-primary no-label">
+								Find Matches
+							</a>
+						</div>										
+					</div>
+				</form>
+			</div>
+			<div class="search-results clearfix">
+				<table class="table table-hover table-condensed">
+					<thead>
+						<tr>
+							<th class="span2">
+								Username 
+							</th>
+							<th class="span4">
+								Name
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.sarahh
+							</td>
+							<td>
+								JOHNSON, SARAH
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.michaelh10615
+							</td>
+							<td>
+								JOHNSON, SARAH
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.michaelh10615
+							</td>
+							<td>
+								JOHNSON, MICHAEL
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.michaelp
+							</td>
+							<td>
+								JOHNSON, MICHAEL
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.francisw
+							</td>
+							<td>
+								JOHNSON, FRANCIS
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.pimonet
+							</td>
+							<td>
+								JOHNSON, PIMONE
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.helens
+							</td>
+							<td>
+								JOHNSON, HELEN
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.barrettr
+							</td>
+							<td>
+								JOHNSON, BARRETT
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.markh
+							</td>
+							<td>
+								JOHNSON, MARK
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.garyh
+							</td>
+							<td>
+								JOHNSON, GARY
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.shangap
+							</td>
+							<td>
+								JOHNSON, SHANGA
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+   	</div>
+		<div class="modal-footer">
+			<a href="#" class="cancel" data-dismiss="modal" aria-hidden="true">Cancel</a>
+		</div>
+   </div>
+	
+	
+	<div id="advanced-select-organization" class="modal hide fade lightbox modal-large" tabindex="-1" role="dialog" aria-labelledby="lightboxLabel-organization" aria-hidden="true">
+   	<div class="modal-header">
+   		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+   		<h3 id="lightboxLabel-organization">Organizational Lookup</h3>
+   	</div>
+   	<div class="modal-body modal-body-large">
+			<div class="search-parameters">
+				<form id="organizations-search" title="search-organizations">
+					<div class="controls controls-row">
+						<div class="control-group span2">
+							<label class="control-label field-label">
+								Organization Name
+							</label>
+							<div class="controls">
+								<input class="span2" type="text" placeholder="e.g., Civil-Center" value="Civil Center">
+							</div>
+						</div>
+						<div class="control-group span4">
+							<label class="control-label field-label">
+								Abbreviation
+							</label>
+							<div class="controls">
+								<input class="span4" type="text" placeholder="e.g., Ctr Excellence on Proj Mgmt" value="">
+							</div>
+						</div>										
+						<div class="control-group span2">
+							<a class="btn btn-primary no-label">
+								Find Matches
+							</a>
+						</div>										
+					</div>
+				</form>
+			</div>
+			<div class="search-results clearfix">
+				<table class="table table-hover table-condensed">
+					<thead>
+						<tr>
+							<th class="span2">
+								ID 
+							</th>
+							<th class="span6">
+								Name
+							</th>
+							<th class="span4">
+								Abbreviation
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								1511461247 
+							</td>
+							<td>
+								AGNR-Dean-Joint Inst for Food Safety &amp; Applied Nutrition
+							</td>
+							<td>
+								Inst Food Safety &amp; Appl Nutr
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								1835615967 
+							</td>
+							<td>
+								AEXST-WT-Journalism
+							</td>
+							<td>
+								Winter Term-JOUR
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								31193503 
+							</td>
+							<td>
+								ENGR-Civil-Center for Excellence on Project Management
+							</td>
+							<td>
+								Ctr Excellence on Proj Mgmt
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								3392144313 
+							</td>
+							<td>
+								ARHU-Meyerhoff Program & Center for Jewish Studies
+							</td>
+							<td>
+								Meyerhoff Prg & Ctr Jewish Std
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								3506629388 
+							</td>
+							<td>
+								VPRGS-UMCAPS-Ctr for Criminal Justice Tech. Res.
+							</td>
+							<td>
+								UMCAPS-Ctr For Criminal Just.
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								4236812358 
+							</td>
+							<td>
+								JOUR-Philip Merrill College of Journalism
+							</td>
+							<td>
+								Philip Merrill Coll Journalism
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								4282297334 
+							</td>
+							<td>
+								ARHU-Women's Studies-Curric Transform Project
+							</td>
+							<td>
+								Wom Std-Curric Transform Proj
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								436661015 
+							</td>
+							<td>
+								CMNS-Astro-Joint Space Sciences Institute
+							</td>
+							<td>
+								Joint Space Sciences Inst
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								438750448 
+							</td>
+							<td>
+								EXST-FC-Journalism
+							</td>
+							<td>
+								Freshmen Connection-JOUR
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								53692544 
+							</td>
+							<td>
+								Joint Quantum Institute
+							</td>
+							<td>
+								CMNS-Physics-Joint Quantum Institute
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+   	</div>
+		<div class="modal-footer">
+			<a href="#" class="cancel" data-dismiss="modal" aria-hidden="true">Cancel</a>
+		</div>
+   </div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="assets/js/bootstrap.js"></script>
 	<script type='text/javascript'>//<![CDATA[ 
 	$(window).load(function(){
 
@@ -728,6 +803,12 @@
 	$(document).ready(function() {
 		$(".collapse").collapse();
 	   $('.accordion').collapse();
+	   $('#advanced-select-personnel').modal({
+			show: false
+		});
+	   $('#advanced-select-organization').modal({
+			show: false
+		});
 	});
 	//]]> </script>
   </body>
