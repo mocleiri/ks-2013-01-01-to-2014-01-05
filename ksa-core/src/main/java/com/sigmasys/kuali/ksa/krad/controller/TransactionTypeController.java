@@ -80,11 +80,11 @@ public class TransactionTypeController extends GenericSearchController {
 
             Map<String, TransactionTypeGroupModel> map = form.getTransactionTypeGroups();
 
-            for(TransactionType tt : entities){
+            for (TransactionType tt : entities) {
                 TransactionTypeModel ttModel = new TransactionTypeModel(tt);
                 String id = tt.getId().getId();
                 TransactionTypeGroupModel group = map.get(id);
-                if(group == null){
+                if (group == null) {
                     group = new TransactionTypeGroupModel();
                     map.put(id, group);
                 }
@@ -92,7 +92,7 @@ public class TransactionTypeController extends GenericSearchController {
 
                 group.addTransactionType(ttModel);
 
-                if(tt instanceof DebitType){
+                if (tt instanceof DebitType) {
                     ttModel.setGlBreakdowns(transactionService.getGlBreakdowns((DebitType) tt));
                 }
             }
@@ -134,10 +134,10 @@ public class TransactionTypeController extends GenericSearchController {
 
         String modelToCopy = request.getParameter("model");
 
-        if(modelToCopy != null){
+        if (modelToCopy != null) {
             TransactionType ttSource = transactionService.getTransactionType(modelToCopy, new Date());
 
-            if(ttSource != null){
+            if (ttSource != null) {
                 this.loadFormFromTransactionType(form, ttSource);
             }
         }
@@ -154,8 +154,6 @@ public class TransactionTypeController extends GenericSearchController {
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insert")
     public ModelAndView insert(@ModelAttribute("KualiForm") TransactionTypeForm form) {
-
-        boolean errors = false;
 
         String type = form.getType();
         String code = form.getCode();
@@ -175,9 +173,9 @@ public class TransactionTypeController extends GenericSearchController {
         /*
             validate as much as we can before we save anything.
          */
-        errors = this.validateBreakdowns(breakdowns, form, defaultGlType);
+        boolean errors = this.validateBreakdowns(breakdowns, form, defaultGlType);
 
-        if(errors){
+        if (errors) {
             return getUIFModelAndView(form);
         }
 
@@ -185,7 +183,7 @@ public class TransactionTypeController extends GenericSearchController {
 
         TransactionType tt;
 
-        if(subCode == null || subCode == -1){
+        if (subCode == null || subCode == -1) {
             if ("C".equalsIgnoreCase(type)) {
                 if (!typeExists) {
                     tt = transactionService.createCreditType(code, "", startDate, priority, description);
@@ -203,7 +201,6 @@ public class TransactionTypeController extends GenericSearchController {
             } else {
                 String errMsg = "Invalid transaction type '" + type + "'";
                 logger.error(errMsg);
-                errors = true;
                 GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, errMsg);
                 return getUIFModelAndView(form);
             }
@@ -225,9 +222,9 @@ public class TransactionTypeController extends GenericSearchController {
         tt.setTags(tags);
 
         Long rollupId;
-        try{
-            rollupId= new Long(form.getRollupId());
-        } catch(NumberFormatException e){
+        try {
+            rollupId = new Long(form.getRollupId());
+        } catch (NumberFormatException e) {
             rollupId = null;
         }
 
@@ -238,7 +235,7 @@ public class TransactionTypeController extends GenericSearchController {
 
         TransactionTypeId ttId = transactionService.persistTransactionType(tt);
         if (tt instanceof DebitType) {
-            for(GlBreakdown breakdown : breakdowns){
+            for (GlBreakdown breakdown : breakdowns) {
                 breakdown.setDebitType((DebitType) tt);
             }
             transactionService.createGlBreakdowns(defaultGlType.getId(), ttId, breakdowns);
@@ -246,9 +243,9 @@ public class TransactionTypeController extends GenericSearchController {
             String unAllocatedGlOperation = form.getUnallocatedGLOperation();
             GlOperationType unallocatedGlOperationType = (GlOperationType.CREDIT.getId().equals(unAllocatedGlOperation)) ?
                     GlOperationType.CREDIT : GlOperationType.DEBIT;
-            ((CreditType)tt).setUnallocatedGlOperation(unallocatedGlOperationType);
+            ((CreditType) tt).setUnallocatedGlOperation(unallocatedGlOperationType);
             String unallocatedGLAccount = form.getUnallocatedGLAccount();
-            ((CreditType)tt).setUnallocatedGlAccount(unallocatedGLAccount);
+            ((CreditType) tt).setUnallocatedGlAccount(unallocatedGLAccount);
             transactionService.persistTransactionType(tt);
         }
 
@@ -273,10 +270,10 @@ public class TransactionTypeController extends GenericSearchController {
         TransactionTypeId ttId = new TransactionTypeId(modelToCopy, subCode);
 
 
-        if(modelToCopy != null){
+        if (modelToCopy != null) {
             TransactionType ttSource = transactionService.getTransactionType(ttId);
 
-            if(ttSource != null){
+            if (ttSource != null) {
                 form.setSubCode(ttSource.getId().getSubCode());
                 this.loadFormFromTransactionType(form, ttSource);
             }
@@ -351,24 +348,24 @@ public class TransactionTypeController extends GenericSearchController {
         }
     }
 
-    private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType ttSource){
+    private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType ttSource) {
         List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>();
         form.setType((ttSource instanceof CreditType ? "C" : "D"));
         form.setCode(ttSource.getId().getId());
         form.setStartDate(new Date());
         form.setDescription(ttSource.getDescription());
-        if(ttSource.getRollup() != null){
+        if (ttSource.getRollup() != null) {
             form.setRollupId(ttSource.getRollup().getId().toString());
         }
         ArrayList<Tag> tags = new ArrayList<Tag>();
-        for(Tag t: ttSource.getTags()){
+        for (Tag t : ttSource.getTags()) {
             tags.add(t);
         }
 
         form.setTags(tags);
         //form.setGlBreakdowns(ttSource.get);
 
-        List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns((DebitType)ttSource);
+        List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns((DebitType) ttSource);
 
         for (GlBreakdown sourceBreakdown : sourceBreakdowns) {
             GlBreakdownModel breakdownModel = new GlBreakdownModel();
@@ -382,10 +379,10 @@ public class TransactionTypeController extends GenericSearchController {
 
     }
 
-    public boolean validateBreakdowns(List<GlBreakdown> breakdowns, TransactionTypeForm form, GeneralLedgerType defaultGlType){
+    public boolean validateBreakdowns(List<GlBreakdown> breakdowns, TransactionTypeForm form, GeneralLedgerType defaultGlType) {
         boolean errors = false;
         String type = form.getType();
-        if(!"D".equals(type)){
+        if (!"D".equals(type)) {
             // Breakdowns only apply to Debit types
             return errors;
         }
@@ -408,7 +405,7 @@ public class TransactionTypeController extends GenericSearchController {
             }
 
             String operation = breakdownModel.getOperation();
-            if(operation == null || "".equals(operation)){
+            if (operation == null || "".equals(operation)) {
                 GlobalVariables.getMessageMap().putError("glBreakdownList", RiceKeyConstants.ERROR_CUSTOM, "Operation is required");
                 errors = true;
             }
@@ -417,14 +414,14 @@ public class TransactionTypeController extends GenericSearchController {
             breakdown.setGlOperation(operationType);
 
             BigDecimal b = breakdownModel.getBreakdown();
-            if(b == null){
+            if (b == null) {
                 b = BigDecimal.ZERO;
             }
             breakdown.setBreakdown(b);
             total = total.add(b);
 
-            if(BigDecimal.ZERO.equals(b)){
-                if(!zeroRow){
+            if (BigDecimal.ZERO.equals(b)) {
+                if (!zeroRow) {
                     zeroRow = true;
                 } else {
                     // There can be only one
@@ -441,7 +438,7 @@ public class TransactionTypeController extends GenericSearchController {
 
         }
 
-        if(!zeroRow){
+        if (!zeroRow) {
             // Tell the user here that there needs to be a row with a 0 amount
             GlobalVariables.getMessageMap().putError("glBreakdownList", RiceKeyConstants.ERROR_CUSTOM, "One row must have a breakdown of 0%");
             errors = true;
