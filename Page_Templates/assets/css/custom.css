@@ -164,11 +164,13 @@ div {
 }
 .cancel {
 }
-
 /* FORMATING: Nav Bar */
 
 #view-term {
 	font-style: bold;
+}
+.align-base {
+	vertical-align: baseline;
 }
 
 #view-term-state {
@@ -226,8 +228,9 @@ div {
     float: left;
 */    
     padding-left: 12px;  
-    font-size: 0.9em;
-    min-height: 28px;
+    font-size: 1.0em;
+	color: #333333;
+    min-height: 24px;
 }
 .breadcrumb li:last-child {
     background-image: none;
@@ -283,6 +286,18 @@ NOTE: There is additional dropdown styling available at:
 http://ux.kuali.org/prototypes/rice/breadcrumb.php#
 (Jetstrap isn't supporting the javascript interactivity)
 */
+#view-breadcrumbs a {
+	display: inline;
+}
+#view-breadcrumbs li {
+	padding-top: 4px;
+}
+.dynamic-node {
+	margin-left: 1.0em;
+}
+.dynamic-node-content {
+	margin-top: 0.7em;
+}
 
 
 /* FORMATING: View Header */
