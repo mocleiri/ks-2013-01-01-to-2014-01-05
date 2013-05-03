@@ -11,6 +11,7 @@ import com.sigmasys.kuali.ksa.jaxb.Ach;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
@@ -891,6 +892,81 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         return query.getResultList();
     }
 
+    /**
+     * Expanded search for Accounts using multiple search criteria.
+     *
+     * @param searchPatterns Multiple search patterns.
+     * @return List of matching Accounts.
+     */
+    @Override
+    public List<Account> findAccountsByExpandedSearchPatterns(String... searchPatterns) {
+        // Remove empty elements resulted from extra spaces in the search string:
+        searchPatterns = removeEmptyStrings(searchPatterns);
+
+        // A list of properties used to search Accounts:
+        List<String> searchAttributes = Arrays.asList(
+                "a.id",
+                "pn.firstName",
+                "pn.middleName",
+                "pn.lastName",
+                "pa.streetAddress1",
+                "pa.postalCode",
+                "pa.city",
+                "pa.state",
+                "pa.country"
+        );
+
+        // Get the Account search query and build additional search conditions:
+        StringBuilder accountSearchQuery = new StringBuilder(GET_FULL_ACCOUNTS_QUERY);
+        int patternCount = searchPatterns.length;
+
+        if (patternCount > 0) {
+            accountSearchQuery.append(" and (");
+
+            // Add conditions for each search attribute:
+            for (int i=0; i<patternCount; i++) {
+                // Add conditions using bind variables:
+                for (String searchAttribute : searchAttributes) {
+                    accountSearchQuery.append("lower(").append(searchAttribute).append(") like ? or ");
+                }
+            }
+
+            accountSearchQuery.setLength(accountSearchQuery.length()-3);
+            accountSearchQuery.append(")");
+        }
+
+        // Add "order by":
+        accountSearchQuery.append(" order by a.id");
+
+        // Create an parameterize a Query:
+        Query query = em.createQuery(accountSearchQuery.toString());
+        int searchAttributeCount = searchAttributes.size();
+
+        if (patternCount > 0) {
+            for (int i=0; i<patternCount; i++) {
+                // Set parameter for each search attribute:
+                String pattern = "%" + StringUtils.lowerCase(searchPatterns[i]) + "%";
+
+                for (int j=0; j<searchAttributeCount; j++) {
+                    query.setParameter(i*searchAttributeCount + j + 1, pattern);
+                }
+            }
+        }
+
+        return query.getResultList();
+    }
+
+    private String[] removeEmptyStrings(String[] array) {
+        List<String> temp = new ArrayList<String>();
+
+        for (String s : array) {
+            if (StringUtils.isNotEmpty(s)) {
+                temp.add(s);
+            }
+        }
+
+        return temp.toArray(new String[temp.size()]);
+    }
 
     private EntityBo getEntityBo(String entityId) {
         BusinessObjectService boService = KRADServiceLocator.getBusinessObjectService();

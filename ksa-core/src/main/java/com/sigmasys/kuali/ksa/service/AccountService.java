@@ -186,6 +186,14 @@ public interface AccountService {
     List<Account> findAccountsByNamePattern(String namePattern);
 
     /**
+     * Expanded search for Accounts using multiple search criteria.
+     *
+     * @param searchPatterns Multiple search patterns.
+     * @return List of matching Accounts.
+     */
+    List<Account> findAccountsByExpandedSearchPatterns(String... searchPatterns);
+
+    /**
      * Returns the account protected information by user ID.
      *
      * @param userId Account ID
