@@ -49,6 +49,8 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   action(:add_new_delivery_logistics) { |b| b.add_new_delivery_logistics_button.click; b.loading.wait_while_present }
 
   element(:view_requested_delivery_logistics_link) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-Requested_toggle") }
+  action(:view_requested_delivery_logistics) { |b| b.view_requested_delivery_logistics_link.click; b.loading.wait_while_present }
+
   element(:delete_requested_delivery_logistics_button) { |b| b.requested_logistics_table.button(text: "delete") } #TODO: identify button by row (days + start_time)
 
   PERS_ACTION_COLUMN = 4
