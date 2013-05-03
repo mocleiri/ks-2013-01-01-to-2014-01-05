@@ -11,7 +11,6 @@ import com.sigmasys.kuali.ksa.jaxb.Ach;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
@@ -924,14 +923,14 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             accountSearchQuery.append(" and (");
 
             // Add conditions for each search attribute:
-            for (int i=0; i<patternCount; i++) {
+            for (int i = 0; i < patternCount; i++) {
                 // Add conditions using bind variables:
                 for (String searchAttribute : searchAttributes) {
                     accountSearchQuery.append("lower(").append(searchAttribute).append(") like ? or ");
                 }
             }
 
-            accountSearchQuery.setLength(accountSearchQuery.length()-3);
+            accountSearchQuery.setLength(accountSearchQuery.length() - 3);
             accountSearchQuery.append(")");
         }
 
@@ -943,12 +942,12 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         int searchAttributeCount = searchAttributes.size();
 
         if (patternCount > 0) {
-            for (int i=0; i<patternCount; i++) {
+            for (int i = 0; i < patternCount; i++) {
                 // Set parameter for each search attribute:
                 String pattern = "%" + StringUtils.lowerCase(searchPatterns[i]) + "%";
 
-                for (int j=0; j<searchAttributeCount; j++) {
-                    query.setParameter(i*searchAttributeCount + j + 1, pattern);
+                for (int j = 0; j < searchAttributeCount; j++) {
+                    query.setParameter(i * searchAttributeCount + j + 1, pattern);
                 }
             }
         }
