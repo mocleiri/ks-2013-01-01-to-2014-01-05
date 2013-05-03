@@ -55,7 +55,7 @@ public class SmtpServiceImpl implements SmtpService {
      */
     @Override
     public void sendEmail(String[] recipients, String subject, String message) {
-        String fromAddress = configService.getParameter(Constants.SMTP_ADDRESS_FROM);
+        String fromAddress = configService.getParameter(Constants.MAIL_ADDRESS_FROM);
         sendEmail(fromAddress, recipients, subject, message, null, null, null);
     }
 
@@ -79,7 +79,7 @@ public class SmtpServiceImpl implements SmtpService {
      * @param fromAddress           Client email address
      * @param recipients            Email recipients
      * @param subject               Email subject
-     * @param message               Email message body
+     * @param messageBody           Email message body
      * @param attachmentName        Attachment name
      * @param attachmentContentType Attachment content type
      * @param attachment            Attachment body
@@ -88,7 +88,7 @@ public class SmtpServiceImpl implements SmtpService {
     public void sendEmail(String fromAddress,
                           String[] recipients,
                           String subject,
-                          String message,
+                          String messageBody,
                           String attachmentName,
                           String attachmentContentType,
                           byte[] attachment) {
@@ -97,12 +97,20 @@ public class SmtpServiceImpl implements SmtpService {
 
             Properties properties = new Properties();
 
-            boolean requiresAuthentication = Boolean.parseBoolean(getParameter(Constants.SMTP_AUTH));
+            final boolean requiresAuthentication = Boolean.parseBoolean(getParameter(Constants.MAIL_AUTH));
+            final String host = getParameter(Constants.MAIL_HOST);
+            final int port = Integer.valueOf(getParameter(Constants.MAIL_PORT));
+            final boolean tlsEnabled = Boolean.parseBoolean(getParameter(Constants.MAIL_TLS_ENABLED));
+            final String mailProtocol = getParameter(Constants.MAIL_PROTOCOL);
+            final String user = getParameter(Constants.MAIL_USER);
+            final String password = getParameter(Constants.MAIL_PASSWORD);
 
-            properties.put("mail.smtp.host", getParameter(Constants.SMTP_HOST));
-            properties.put("mail.smtp.port", getParameter(Constants.SMTP_PORT));
+            properties.put("mail.smtp.host", host);
+            properties.put("mail.smtp.port", port);
             properties.put("mail.smtp.auth", requiresAuthentication);
-            properties.put("mail.smtp.starttls.enable", getParameter(Constants.SMTP_TLS_ENABLED));
+            properties.put("mail.smtp.starttls.enable", tlsEnabled);
+
+            properties.put("mail.transport.protocol", mailProtocol);
 
             properties.put("mail.recipients", recipients);
 
@@ -110,9 +118,7 @@ public class SmtpServiceImpl implements SmtpService {
 
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(
-                            getParameter(Constants.SMTP_USER),
-                            getParameter(Constants.SMTP_PASSWORD));
+                    return new PasswordAuthentication(user, password);
                 }
 
             } : null;
@@ -120,9 +126,11 @@ public class SmtpServiceImpl implements SmtpService {
 
             Session session = Session.getDefaultInstance(properties, authenticator);
 
-            MimeMessage msg = new MimeMessage(session);
+            Transport transport = session.getTransport(mailProtocol);
 
-            msg.setFrom(new InternetAddress(fromAddress));
+            MimeMessage message = new MimeMessage(session);
+
+            message.setFrom(new InternetAddress(fromAddress));
 
             InternetAddress[] addresses = new InternetAddress[recipients.length];
 
@@ -130,15 +138,15 @@ public class SmtpServiceImpl implements SmtpService {
                 addresses[i] = new InternetAddress(recipients[i]);
             }
 
-            msg.setRecipients(Message.RecipientType.TO, addresses);
-            msg.setSentDate(new Date());
-            msg.setSubject(subject);
+            message.setRecipients(Message.RecipientType.TO, addresses);
+            message.setSentDate(new Date());
+            message.setSubject(subject);
 
             if (attachment != null && attachment.length > 0) {
 
                 // Set the email message text.
                 MimeBodyPart messagePart = new MimeBodyPart();
-                messagePart.setText(message);
+                messagePart.setText(messageBody);
 
                 // Set the email attachment file
                 MimeBodyPart attachmentPart = new MimeBodyPart();
@@ -151,13 +159,18 @@ public class SmtpServiceImpl implements SmtpService {
                 multipart.addBodyPart(messagePart);
                 multipart.addBodyPart(attachmentPart);
 
-                msg.setContent(multipart);
+                message.setContent(multipart);
 
             } else {
-                msg.setText(message);
+                message.setText(messageBody);
             }
 
-            Transport.send(msg);
+            // Synchronization is required by the statement "assert Thread.holdsLock(this);" in SMTPTransport class
+            synchronized (transport) {
+                transport.connect();
+                transport.sendMessage(message, addresses);
+                transport.close();
+            }
 
         } catch (Exception e) {
             logger.error("Cannot send email notification: " + e.getMessage(), e);

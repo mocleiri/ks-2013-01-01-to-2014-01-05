@@ -83,13 +83,14 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.recipient
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.email.subject', 'Cash Limit Event');
 
 -- SMTP service parameters
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.host', 'smtp.gmail.com');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.port', '587');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.auth', 'true');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.user', 'ksa.sigmasys');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.password', 'sigmasys2013');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.tls.enabled', 'true');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.smtp.address.from', 'ksa.sigmasys@gmail.com');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.host', 'smtp.gmail.com');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.port', '587');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.protocol', 'smtp');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.auth', 'true');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.user', 'ksa.sigmasys');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.password', 'sigmasys2013');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.tls.enabled', 'true');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.address.from', 'ksa.sigmasys@gmail.com');
 
 -- Memo settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.memo.level', '2');
