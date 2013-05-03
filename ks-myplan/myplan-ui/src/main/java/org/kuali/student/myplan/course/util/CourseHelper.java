@@ -2,6 +2,7 @@ package org.kuali.student.myplan.course.util;
 
 import edu.uw.kuali.student.lib.client.studentservice.ServiceException;
 import org.dom4j.DocumentException;
+import org.kuali.student.lum.course.dto.CourseInfo;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 
@@ -20,4 +21,8 @@ public interface CourseHelper {
     public String getCourseIdForTerm(String subjectArea, String number, String termId);
 
     public String joinStringsByDelimiter(char delimiter, String... list);
+
+    public CourseInfo getCourseInfo(String courseId);
+
+    public String getVerifiedCourseId(String courseId);
 }

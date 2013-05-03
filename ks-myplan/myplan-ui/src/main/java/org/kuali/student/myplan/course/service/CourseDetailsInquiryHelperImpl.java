@@ -1,15 +1,11 @@
 package org.kuali.student.myplan.course.service;
 
+import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.kns.inquiry.KualiInquirableImpl;
 import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.student.common.exceptions.DoesNotExistException;
-import org.kuali.student.common.search.dto.SearchRequest;
-import org.kuali.student.common.search.dto.SearchResult;
-import org.kuali.student.common.search.dto.SearchResultCell;
-import org.kuali.student.common.search.dto.SearchResultRow;
 import org.kuali.student.core.atp.service.AtpService;
 import org.kuali.student.core.enumerationmanagement.dto.EnumeratedValueInfo;
 import org.kuali.student.core.organization.dto.OrgInfo;
@@ -39,7 +35,10 @@ import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.course.util.CreditsFormatter;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.controller.PlanController;
-import org.kuali.student.myplan.plan.dataobject.*;
+import org.kuali.student.myplan.plan.dataobject.AcademicRecordDataObject;
+import org.kuali.student.myplan.plan.dataobject.PlanItemDataObject;
+import org.kuali.student.myplan.plan.dataobject.PlannedCourseSummary;
+import org.kuali.student.myplan.plan.dataobject.ServicesStatusDataObject;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.AtpHelper.YearTerm;
 import org.kuali.student.myplan.plan.util.DateFormatHelper;
@@ -50,10 +49,6 @@ import org.kuali.student.myplan.utils.TimeStringMillisConverter;
 import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.TimeOfDayInfo;
-import org.kuali.student.r2.common.exceptions.InvalidParameterException;
-import org.kuali.student.r2.common.exceptions.MissingParameterException;
-import org.kuali.student.r2.common.exceptions.OperationFailedException;
-import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.r2.core.room.dto.BuildingInfo;
 import org.kuali.student.r2.core.room.dto.RoomInfo;
@@ -138,6 +133,9 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
 
     public CourseHelper getCourseHelper() {
+        if (courseHelper == null) {
+            courseHelper = new CourseHelperImpl();
+        }
         return courseHelper;
     }
 
@@ -174,7 +172,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
          * If version identpendent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
-        CourseInfo course = getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
         CourseSummaryDetails courseDetails = retrieveCourseSummary(course);
         return courseDetails;
     }
@@ -369,7 +367,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
         CourseDetails courseDetails = new CourseDetails();
 
-        CourseInfo course = getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
 
         // Get Course Summary first
         CourseSummaryDetails courseSummaryDetails = retrieveCourseSummary(course);
@@ -410,7 +408,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
          * If version identpendent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
-        CourseInfo course = getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
         return getPlannedCourseSummary(course, studentId);
     }
 
@@ -512,7 +510,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
          * If version identpendent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
-        CourseInfo course = getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
         return getCourseOfferingInstitutions(course, terms);
     }
 
@@ -625,7 +623,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
         List<ActivityOfferingItem> activityOfferingItems = new ArrayList<ActivityOfferingItem>();
 
-        CourseInfo course = getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
         try {
 
             List<CourseOfferingInfo> courseOfferingInfoList = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(course.getId(), termId, CourseSearchConstants.CONTEXT_INFO);
@@ -852,7 +850,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      */
     public boolean isCourseIdValid(String courseId) {
         boolean isCourseIdValid = false;
-        CourseInfo course = getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
         if (course != null) {
             isCourseIdValid = true;
         }
@@ -912,25 +910,6 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             return PlanConstants.BACKUP_TYPE;
         }
         return null;
-    }
-
-    /**
-     * returns the courseInfo for the given courseId by verifying the courId to be a verifiedcourseId
-     *
-     * @param courseId
-     * @return
-     */
-    public CourseInfo getCourseInfo(String courseId) {
-
-        CourseInfo courseInfo = null;
-        try {
-            courseInfo = getCourseService().getCourse(getVerifiedCourseId(courseId));
-        } catch (DoesNotExistException e) {
-            throw new RuntimeException(String.format("Course [%s] not found.", courseId), e);
-        } catch (Exception e) {
-            throw new RuntimeException("Query failed.", e);
-        }
-        return courseInfo;
     }
 
     public AcademicRecordService getAcademicRecordService() {
@@ -1030,34 +1009,6 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             logger.error(" Exception loading plan item :" + refObjId + " for atp: " + atpId + " " + e.getMessage());
         }
         return new PlanItemInfo();
-    }
-
-    /**
-     * Takes a courseId that can be either a version independent Id or a version dependent Id and
-     * returns a version dependent Id. In case of being passed in a version depend
-     *
-     * @param courseId
-     * @return
-     */
-    private String getVerifiedCourseId(String courseId) {
-        String verifiedCourseId = null;
-        try {
-            SearchRequest req = new SearchRequest("myplan.course.version.id");
-            req.addParam("courseId", courseId);
-            req.addParam("courseId", courseId);
-            req.addParam("lastScheduledTerm", AtpHelper.getLastScheduledAtpId());
-            SearchResult result = getLuService().search(req);
-            for (SearchResultRow row : result.getRows()) {
-                for (SearchResultCell cell : row.getCells()) {
-                    if ("lu.resultColumn.cluId".equals(cell.getKey())) {
-                        verifiedCourseId = cell.getValue();
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error("version verified Id retrieval failed", e);
-        }
-        return verifiedCourseId;
     }
 
 

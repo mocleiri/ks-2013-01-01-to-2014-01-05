@@ -6,21 +6,14 @@ import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.student.common.exceptions.DoesNotExistException;
 import org.kuali.student.enrollment.academicrecord.dto.StudentCourseRecordInfo;
 import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService;
-import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingDisplayInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.service.CourseService;
-import org.kuali.student.lum.course.service.CourseServiceConstants;
 import org.kuali.student.myplan.academicplan.dto.LearningPlanInfo;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanService;
-import org.kuali.student.myplan.course.dataobject.ActivityOfferingItem;
-import org.kuali.student.myplan.course.dataobject.CourseSummaryDetails;
-import org.kuali.student.myplan.course.service.CourseDetailsInquiryHelperImpl;
 import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.course.util.CreditsFormatter;
@@ -31,7 +24,7 @@ import org.kuali.student.myplan.plan.dataobject.PlannedCourseDataObject;
 import org.kuali.student.myplan.plan.dataobject.PlannedTerm;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.AtpHelper.YearTerm;
-import org.kuali.student.r2.common.dto.AttributeInfo;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 
 import javax.xml.namespace.QName;
 import java.util.*;
@@ -500,9 +493,10 @@ public class PlannedTermsHelperBase {
         String studentID = user.getPrincipalId();
         YearTerm yearTerm = AtpHelper.atpToYearTerm(termId);
         ArrayList<String> creditList = new ArrayList<String>();
-        PlanItemLookupableHelperBase planItemLookupableHelperBase = new PlanItemLookupableHelperBase();
         try {
+
             List<LearningPlanInfo> learningPlanList = getAcademicPlanService().getLearningPlansForStudentByType(studentID, PlanConstants.LEARNING_PLAN_TYPE_PLAN, CourseSearchConstants.CONTEXT_INFO);
+            //This should be looping only once as student has only one learning plan of plan type
             for (LearningPlanInfo learningPlan : learningPlanList) {
                 String learningPlanID = learningPlan.getId();
 
@@ -517,15 +511,15 @@ public class PlannedTermsHelperBase {
                         String courseOfferingId = getCourseHelper().joinStringsByDelimiter('=', yearTerm.getYearAsString(), yearTerm.getTermAsID(), deconstructedCourseCode.getSubject(), deconstructedCourseCode.getNumber(), deconstructedCourseCode.getSection());
                         try {
                             courseOfferingInfo = getCourseOfferingService().getCourseOffering(courseOfferingId, CourseSearchConstants.CONTEXT_INFO);
-                        } catch (Exception e) {
-                            logger.error("Could not retrieve CourseOffering data for" + courseOfferingId, e);
+                        } catch (DoesNotExistException e) {
+                            //secondary section will return does not exist exceptions
                             continue;
                         }
                         if (courseOfferingInfo != null) {
                             if (courseSectionCreditsMap.containsKey(courseOfferingInfo.getCourseCode())) {
-                                courseSectionCreditsMap.get(courseOfferingInfo.getCourseId()).add(courseOfferingInfo.getCreditOptionName());
+                                courseSectionCreditsMap.get(courseOfferingInfo.getCourseCode()).add(courseOfferingInfo.getCreditOptionName());
                             } else {
-                                courseSectionCreditsMap.put(courseOfferingInfo.getCourseId(), Arrays.asList(courseOfferingInfo.getCreditOptionName()));
+                                courseSectionCreditsMap.put(courseOfferingInfo.getCourseCode(), Arrays.asList(courseOfferingInfo.getCreditOptionName()));
                             }
                         }
                     } else if (PlanConstants.COURSE_TYPE.equalsIgnoreCase(luType)) {
@@ -533,11 +527,10 @@ public class PlannedTermsHelperBase {
                     }
                 }
                 for (PlanItemInfo planItemInfo : plannedCourses) {
-                    CourseDetailsInquiryHelperImpl courseDetailsInquiry = new CourseDetailsInquiryHelperImpl();
-                    CourseInfo courseInfo = courseDetailsInquiry.getCourseInfo(planItemInfo.getRefObjectId());
-                    List<String> sectionCreditRangeList = courseSectionCreditsMap.get(courseInfo.getId());
+                    CourseInfo courseInfo = getCourseHelper().getCourseInfo(planItemInfo.getRefObjectId());
+                    List<String> sectionCreditRangeList = courseSectionCreditsMap.get(courseInfo.getCode());
                     String credit = null;
-                    if (sectionCreditRangeList != null && sectionCreditRangeList.size() >= 0) {
+                    if (sectionCreditRangeList != null && sectionCreditRangeList.size() > 0) {
                         credit = unionCreditList(sectionCreditRangeList);
                     } else {
                         credit = CreditsFormatter.formatCredits(courseInfo);

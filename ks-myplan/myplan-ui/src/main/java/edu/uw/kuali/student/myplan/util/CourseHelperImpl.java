@@ -3,14 +3,21 @@ package edu.uw.kuali.student.myplan.util;
 import edu.uw.kuali.student.lib.client.studentservice.ServiceException;
 import edu.uw.kuali.student.lib.client.studentservice.StudentServiceClient;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.dom4j.xpath.DefaultXPath;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
+import org.kuali.student.common.exceptions.DoesNotExistException;
 import org.kuali.student.common.search.dto.SearchRequest;
 import org.kuali.student.common.search.dto.SearchResult;
+import org.kuali.student.common.search.dto.SearchResultCell;
+import org.kuali.student.common.search.dto.SearchResultRow;
+import org.kuali.student.lum.course.dto.CourseInfo;
+import org.kuali.student.lum.course.service.CourseService;
+import org.kuali.student.lum.course.service.CourseServiceConstants;
 import org.kuali.student.lum.lu.service.LuService;
 import org.kuali.student.lum.lu.service.LuServiceConstants;
 import org.kuali.student.myplan.course.util.CourseHelper;
@@ -24,8 +31,22 @@ import java.util.*;
 
 public class CourseHelperImpl implements CourseHelper {
 
-
+    private final Logger logger = Logger.getLogger(CourseHelperImpl.class);
     private StudentServiceClient studentServiceClient;
+
+    private CourseService courseService;
+
+    protected synchronized CourseService getCourseService() {
+        if (this.courseService == null) {
+            this.courseService = (CourseService) GlobalResourceLoader
+                    .getService(new QName(CourseServiceConstants.COURSE_NAMESPACE, "CourseService"));
+        }
+        return this.courseService;
+    }
+
+    public synchronized void setCourseService(CourseService courseService) {
+        this.courseService = courseService;
+    }
 
     public void setStudentServiceClient(StudentServiceClient studentServiceClient) {
         this.studentServiceClient = studentServiceClient;
@@ -159,6 +180,25 @@ public class CourseHelperImpl implements CourseHelper {
         return courseId;
     }
 
+    /**
+     * returns the courseInfo for the given courseId by verifying the courId to be a verifiedcourseId
+     *
+     * @param courseId
+     * @return
+     */
+    public CourseInfo getCourseInfo(String courseId) {
+
+        CourseInfo courseInfo = null;
+        try {
+            courseInfo = getCourseService().getCourse(getVerifiedCourseId(courseId));
+        } catch (DoesNotExistException e) {
+            throw new RuntimeException(String.format("Course [%s] not found.", courseId), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Query failed.", e);
+        }
+        return courseInfo;
+    }
+
 
     private static int getAsInteger(Element element, String name) {
         int result = 0;
@@ -202,12 +242,40 @@ public class CourseHelperImpl implements CourseHelper {
     }
 
     /**
-     *
      * @param delimiter
      * @param list
      * @return
      */
     public String joinStringsByDelimiter(char delimiter, String... list) {
         return StringUtils.join(list, delimiter);
+    }
+
+    /**
+     * Takes a courseId that can be either a version independent Id or a version dependent Id and
+     * returns a version dependent Id. In case of being passed in a version depend
+     *
+     * @param courseId
+     * @return
+     */
+    @Override
+    public String getVerifiedCourseId(String courseId) {
+        String verifiedCourseId = null;
+        try {
+            SearchRequest req = new SearchRequest("myplan.course.version.id");
+            req.addParam("courseId", courseId);
+            req.addParam("courseId", courseId);
+            req.addParam("lastScheduledTerm", AtpHelper.getLastScheduledAtpId());
+            SearchResult result = getLuService().search(req);
+            for (SearchResultRow row : result.getRows()) {
+                for (SearchResultCell cell : row.getCells()) {
+                    if ("lu.resultColumn.cluId".equals(cell.getKey())) {
+                        verifiedCourseId = cell.getValue();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("version verified Id retrieval failed", e);
+        }
+        return verifiedCourseId;
     }
 }
