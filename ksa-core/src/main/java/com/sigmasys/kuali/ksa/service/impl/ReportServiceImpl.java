@@ -14,6 +14,8 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.sigmasys.kuali.ksa.model.security.Permission;
+import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -248,6 +250,9 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
     }
 
     private com.sigmasys.kuali.ksa.model.Irs1098T getIrs1098T(Long id) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_IRS_1098_T);
+
         Query query = em.createQuery("select irs from Irs1098T irs " +
                 " left outer join fetch irs.account account " +
                 " left outer join fetch irs.studentPostalAddress address " +
@@ -265,6 +270,8 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      * @return XML representation of IRS 1098T form.
      */
     protected String toXml(String accountId, com.sigmasys.kuali.ksa.model.Irs1098T report) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_IRS_1098_T);
 
         AccountProtectedInfo accountInfo = accountService.getAccountProtectedInfo(accountId);
         if (accountInfo == null) {
@@ -1177,6 +1184,8 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      */
     @Override
     public String generateIrs8300Report(Long cashLimitEventId) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_IRS_8300);
 
         CashLimitEvent cashLimitEvent = cashLimitService.getCashLimitEvent(cashLimitEventId);
         if (cashLimitEvent == null) {

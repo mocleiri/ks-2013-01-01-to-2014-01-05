@@ -27,6 +27,8 @@ public enum Permission {
 
     // Cash limit permissions
     CREATE_CASH_LIMIT_PARAMETER,
+    EDIT_CASH_LIMIT_PARAMETER,
+    CHECK_CASH_LIMIT,
 
     // UI tab permissions
     VIEW_ADMINISTRATION_TAB,
@@ -145,8 +147,12 @@ public enum Permission {
     REVERSE_PAYMENT_BILLING,
 
     // 1098T permissions
-    GENERATE_1098_T,
-    VIEW_1098_T,
+    GENERATE_IRS_1098_T,
+    VIEW_IRS_1098_T,
+
+    // 8300 permissions
+    GENERATE_IRS_8300,
+    VIEW_IRS_8300,
 
     // Report permissions
     GENERATE_AGED_BALANCE_REPORT,

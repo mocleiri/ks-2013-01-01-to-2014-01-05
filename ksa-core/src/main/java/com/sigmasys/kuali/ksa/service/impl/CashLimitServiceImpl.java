@@ -100,6 +100,9 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     @Transactional(readOnly = false)
     public Long persistCashLimitParameter(CashLimitParameter cashLimitParameter) {
 
+        PermissionUtils.checkPermission(cashLimitParameter.getId() == null ?
+                Permission.CREATE_CASH_LIMIT_PARAMETER : Permission.EDIT_CASH_LIMIT_PARAMETER);
+
         Tag tag = cashLimitParameter.getTag();
         if (tag != null) {
             if (tag.getId() != null) {
@@ -131,6 +134,9 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      */
     @Override
     public List<CashLimitEvent> getCashLimitEvents(String userId, CashLimitEventStatus status) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_IRS_8300);
+
         Query query = em.createQuery("select cle from CashLimitEvent cle " +
                 " left outer join fetch cle.xmlDocument xml " +
                 " where cle.accountId = :userId and cle.statusCode = :status " +
@@ -148,6 +154,9 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      */
     @Override
     public CashLimitEvent getCashLimitEvent(Long id) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_IRS_8300);
+
         Query query = em.createQuery("select cle from CashLimitEvent cle " +
                 " left outer join fetch cle.xmlDocument xml " +
                 " left outer join fetch cle.payments ts " +
@@ -230,6 +239,8 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     @Override
     @Transactional(readOnly = false)
     public boolean checkCashLimit(String userId) {
+
+        PermissionUtils.checkPermission(Permission.CHECK_CASH_LIMIT);
 
         String cashTracking = configService.getParameter(Constants.CASH_TRACKING_SYSTEM);
         if (!"ON".equalsIgnoreCase(cashTracking)) {
