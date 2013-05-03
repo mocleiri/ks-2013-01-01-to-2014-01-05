@@ -17,3 +17,10 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}/student/$1 [R,L]
 ReWriteRule ^(.*);jsessionid=.*$ /student/$1 [PT]
 # To Tomcat
 RewriteRule ^(.*)$ ajp://localhost:8009/student/$1 [P,L]
+
+
+#Gzip
+<ifmodule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css application/x-javascript application/javascript text/javascript
+</ifmodule>
+#End Gzip
