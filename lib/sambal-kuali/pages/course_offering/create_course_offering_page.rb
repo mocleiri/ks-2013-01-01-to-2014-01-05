@@ -39,6 +39,7 @@ class CreateCourseOffering < BasePage
   element(:growl_message) { |b| b.div(text: /Course offering .* has been successfully created/) }
 
   element(:joint_defined_courses_table) { |b| b.div(id: "KS-Catalog-JointCourse-Section").table() }
+  element(:create_new_joint_defined_course_first_row) { |b| b.joint_defined_courses_table.rows[1].cells[3].link}
   action(:create_new_joint_defined_course_row_1) { |b| b.joint_defined_courses_table.rows[1].cells[3].link.click }
   action(:create_new_joint_defined_course_row_2) { |b| b.joint_defined_courses_table.rows[2].cells[3].link.click }
   element(:joint_defined_course_row_1) { |b| b.joint_defined_courses_table.rows[1].text }

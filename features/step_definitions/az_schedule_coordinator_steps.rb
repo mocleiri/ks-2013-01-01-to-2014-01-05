@@ -30,3 +30,9 @@ Then /^I do not have access to delete a course offering in a "([^"]*)" state$/ d
   @course_offering.search_by_subjectcode
   @course_offering.attempt_co_delete_by_status(costate).should be_false
 end
+
+Then /^I have access to create a new joint offered course offering$/ do
+  on CreateCourseOffering do |page|
+    page.create_new_joint_defined_course_first_row.exists?.should == true
+  end
+end
