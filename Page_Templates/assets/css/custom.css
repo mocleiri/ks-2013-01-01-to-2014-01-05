@@ -20,6 +20,7 @@ body {
 /*    margin-top: 41px; */
     vertical-align: center;
     padding: 8px 8px 0px 8px;
+    background-color: #eaeaea;
 }
 #view-breadcrumbs {
 /*    margin-top: 78px; */
@@ -29,7 +30,9 @@ body {
 /*    margin-top: 108px; */
 	-webkit-box-shadow: 0px 6px 6px -5px rgba(0, 0, 0, 0.5);
 	-moz-box-shadow: 0px 6px 6px -5pxrgba(0, 0, 0, 0.5);
-	box-shadow: 0px 0px 7px -5px rgba(0, 0, 0, 0.5);
+	box-shadow: 0px 6px 6px -5px rgba(0, 0, 0, 0.5);
+	border: 1px solid lightgray;
+	margin-top: 5px;
 } 
 
 #view-container {
@@ -50,6 +53,8 @@ NOTE: 	This probably isn't the place for this, as it causes a border at the bott
 #view-footer {
     margin-bottom: 0px; /* When application-footer is not hidden, add 20px */
     padding-top: 8px;
+	border: 1px solid #bbb;
+	box-shadow: 0px -5px 6px -6px rgba(0, 0, 0, 0.5);	
 }
 #application-footer {
     margin-bottom: 40px;
@@ -151,17 +156,22 @@ div {
 #page-header-group {
     margin-bottom: 1.0em;
 }
-#view-footer {
-    background-color: #EEEEEE;
-}
+
 
 /* FORMATTING: GENERAL */
 .sticky {
     background-color: white;
 }
 .cancel {
-    font-size: 0.8em;
+}
 
+/* FORMATING: Nav Bar */
+
+#view-term {
+	font-style: bold;
+}
+
+#view-term-state {
 }
 
 /* FORMATTING: Context Changer */
@@ -179,6 +189,8 @@ div {
 }
 
 /* FORMATING: breadcrumbs */
+
+
 .breadcrumb {
     border-top-width: 1px;
     border-bottom-width: 1px;
@@ -196,6 +208,8 @@ div {
 	background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f5f5f5', GradientType=0 );
     margin: 0px;
+
+
 /*    
     width: 100%;
 	list-style: none;
@@ -270,6 +284,7 @@ http://ux.kuali.org/prototypes/rice/breadcrumb.php#
 (Jetstrap isn't supporting the javascript interactivity)
 */
 
+
 /* FORMATING: View Header */
 #page-title {
     margin-bottom: 1.0em;
@@ -293,6 +308,11 @@ http://ux.kuali.org/prototypes/rice/breadcrumb.php#
     padding-right: 1.0em;
 }
 
+#action-bar a i {
+	padding-right: .2em;
+	opacity: .5;
+}
+
 /* FORMATING: Page Header Group (overview) */
 #page-header-group {
     background-color: #CCCCCC;
@@ -311,16 +331,23 @@ http://ux.kuali.org/prototypes/rice/breadcrumb.php#
 .detail-status {
     color: white;
     background-color: darkorange;
-    font-weight: bold;
     font-size: 1.1em;
-    padding: 0.3em 0.8em;
-    border-radius: 3px;
+    padding: 0.2em 0.6em;
+    border-radius: 6px;
+	margin-left: 1em;
 }
 .detail-modification {
     font-style: italic;
+    font-size: .9em;
+	padding-right: .4em;
 }
 .detail-more {
+    font-size: .9em;
     margin-right: 0;
+}
+
+.detail-more i {
+	opacity: .7;
 }
 
 /* FORMATING: Forms */
