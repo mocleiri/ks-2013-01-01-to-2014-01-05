@@ -11,8 +11,9 @@ Feature: delete activity offerings
     When I create a Course Offering with "3" Activity Offerings
     And I delete "2" Activity Offerings
     Then The Course Offering should contain "1" Activity Offerings
+    And The "2" AOs are Successfully deleted
 
   Scenario: Delete an AO in cross-listed course offering
-    When I create a Course Offering with "1" Activity Offerings
+    When I designate a valid term and cross-listed Course Offering Code
     And I delete the AO with Draft state
     Then The AO is Successfully deleted

@@ -575,12 +575,19 @@ class CourseOffering
   end
 
 
+  #create a new specified list of activity offerings
+  #
+  #@param opts[:number_aos_to_create]
+  def create_list_aos(opts)
+    activity_offering_object = opts[:ao_object]
+    activity_offering_object.parent_course_offering = self
+    activity_offering_object.create_simple :number_aos_to_create => opts[:number_aos_to_create]
+  end
+
   #create a new specified activity offering
   #
   #@param opts ActivityOffering object
   def create_ao(activity_offering_object)
-    #TODO: number_aos_to_create = opts[:number_aos_to_create] implement as a separate method?
-    #manage #TODO: probably not required
     activity_offering_object.parent_course_offering = self
     activity_offering_object.create
     activity_offering_object.save

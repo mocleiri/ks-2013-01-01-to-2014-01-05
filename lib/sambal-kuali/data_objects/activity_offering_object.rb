@@ -106,7 +106,46 @@ class ActivityOffering
     @code <=> other.code
   end
 
-  #navigates to activity offering edit page and sets up activity offering based on class attributes
+  #create one or many simple aos without details.
+  def create_simple  opts={}
+
+    @number_aos_to_add = "1"
+    if opts[:number_aos_to_create] != nil
+      @number_aos_to_add = opts[:number_aos_to_create]
+    end
+
+    @parent_course_offering.manage
+
+    if @create_by_copy then
+      on ManageCourseOfferings do |page|
+        pre_copy_list = page.get_cluster_assigned_ao_list(@aoc_private_name)
+        page.copy(@code, @aoc_private_name)
+        post_copy_list = page.get_cluster_assigned_ao_list(@aoc_private_name)
+        @code = (post_copy_list - pre_copy_list).first
+        return
+      end
+    end
+
+    on ManageCourseOfferings do |page|
+      pre_add_ao_list = page.codes_list
+      post_add_ao_list = []
+      #if page.codes_list.length == 0
+      sleep 2
+      page.add_activity
+      page.format.select @format
+      page.loading.wait_while_present
+      sleep 2
+      page.activity_type.select @activity_type
+      page.quantity.set @number_aos_to_add
+      page.complete_add_activity
+      post_add_ao_list = page.codes_list
+      #end
+      new_code =  post_add_ao_list - pre_add_ao_list
+      @code = new_code
+    end
+  end
+
+    #navigates to activity offering edit page and sets up activity offering based on class attributes
   def create
     @parent_course_offering.manage
 
