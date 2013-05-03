@@ -77,7 +77,7 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
                     }
 
                     plannedCourseList.add(plannedCourse);
-                } else if (planItemInfo.getRefObjectType().equalsIgnoreCase(PlanConstants.SECTION_TYPE)) {
+                } else if (!planItemType.equalsIgnoreCase(PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST) && planItemInfo.getRefObjectType().equalsIgnoreCase(PlanConstants.SECTION_TYPE)) {
                     List<String> planPeriods = planItemInfo.getPlanPeriods();
                     String termId = !planPeriods.isEmpty() ? planPeriods.get(0) : null;
                     if (null != termId && !AtpHelper.isAtpCompletedTerm(termId)) {
@@ -98,6 +98,7 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
                         for (AttributeInfo attributeInfo : activityDisplayInfo.getAttributes()) {
                             if ("PrimaryActivityOfferingCode".equalsIgnoreCase(attributeInfo.getKey())) {
                                 primarySectionCode = attributeInfo.getValue();
+                                break;
                             }
                         }
                         String courseOfferingId = getCourseHelper().joinStringsByDelimiter('=', yearTerm.getYearAsString(), yearTerm.getTermAsID(), deconstructedCourseCode.getSubject(), deconstructedCourseCode.getNumber(), primarySectionCode);
@@ -122,17 +123,19 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
 
                 }
             }
-            for (PlannedCourseDataObject plannedCourse : plannedCourseList) {
-                List<ActivityOfferingItem> activityOfferingItems = plannedSections.get(generateKey(plannedCourse.getCourseDetails().getSubjectArea(), plannedCourse.getCourseDetails().getCourseNumber(), plannedCourse.getPlanItemDataObject().getAtp()));
-                if (activityOfferingItems != null && activityOfferingItems.size() > 0) {
-                    Collections.sort(activityOfferingItems, new Comparator<ActivityOfferingItem>() {
-                        @Override
-                        public int compare(ActivityOfferingItem item1, ActivityOfferingItem item2) {
-                            return item1.getCode().compareTo(item2.getCode());
-                        }
-                    });
+            if (!planItemType.equalsIgnoreCase(PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST)) {
+                for (PlannedCourseDataObject plannedCourse : plannedCourseList) {
+                    List<ActivityOfferingItem> activityOfferingItems = plannedSections.get(generateKey(plannedCourse.getCourseDetails().getSubjectArea(), plannedCourse.getCourseDetails().getCourseNumber(), plannedCourse.getPlanItemDataObject().getAtp()));
+                    if (activityOfferingItems != null && activityOfferingItems.size() > 0) {
+                        Collections.sort(activityOfferingItems, new Comparator<ActivityOfferingItem>() {
+                            @Override
+                            public int compare(ActivityOfferingItem item1, ActivityOfferingItem item2) {
+                                return item1.getCode().compareTo(item2.getCode());
+                            }
+                        });
+                    }
+                    plannedCourse.setPlanActivities(activityOfferingItems);
                 }
-                plannedCourse.setPlanActivities(activityOfferingItems);
             }
         }
         return plannedCourseList;
