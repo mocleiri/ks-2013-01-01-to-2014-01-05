@@ -636,17 +636,23 @@ class CourseOffering
   # returns a list of AOs matching a given state
   # note: can return an empty array but not nil
   #
-  # @param inputOrg [Array] [array_of_aos, string_of_target_state]
-  # example: draft_aos = @courseOffering.ao_status [list_of_aos, "Draft"]
-  def ao_status(inputs)
+  # @param opts [Hash] {:cluster_private_name => "private_name", (see default value = :default_cluster)
+  #                     :aos => [],
+  #                     :ao_status => "target_status" (see default value = "Draft") }
+  # example: draft_aos = @courseOffering.get_aos_by_status :aos => array_of_all_aos
+  def get_aos_by_status(opts)
+    defaults = {
+        :cluster_private_name => :default_cluster,
+        :aos => [],
+        :ao_status => "Draft"
+    }
+    options = defaults.merge(opts)
+
     retVal = []
 
-    aos = inputs[0]
-    aoState = inputs[1]
-
-    aos.each { |ao|
-      status = on(ManageCourseOfferings).ao_status(ao.code)
-      if status == aoState
+    options[:aos].each { |ao|
+      status = on(ManageCourseOfferings).ao_status( ao.code, options[:cluster_private_name] )
+      if status == options[:ao_status]
         retVal << ao
       end
     }
