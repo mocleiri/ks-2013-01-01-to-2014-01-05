@@ -146,7 +146,11 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
     @Override
     public CourseDetails retrieveDataObject(Map fieldValues) {
         String studentId = UserSessionHelper.getStudentId();
-        return retrieveCourseDetails((String) fieldValues.get(PlanConstants.PARAM_COURSE_ID), studentId);
+        boolean offeringsFlag = false;
+        if (fieldValues.get(PlanConstants.PARAM_OFFERINGS_FLAG) != null) {
+            offeringsFlag = Boolean.valueOf(fieldValues.get(PlanConstants.PARAM_OFFERINGS_FLAG).toString());
+        }
+        return retrieveCourseDetails((String) fieldValues.get(PlanConstants.PARAM_COURSE_ID), studentId, offeringsFlag);
     }
 
 
@@ -363,7 +367,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      * @param studentId
      * @return
      */
-    public CourseDetails retrieveCourseDetails(String courseId, String studentId) {
+    public CourseDetails retrieveCourseDetails(String courseId, String studentId, boolean offeringsFlag) {
 
         CourseDetails courseDetails = new CourseDetails();
 
@@ -376,20 +380,20 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         // Course Plan + Academic Records
         courseDetails.setPlannedCourseSummary(getPlannedCourseSummary(course, studentId));
 
-
-        // Course offerings
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        List<String> termList = null;
-        if (request.getParameter("section_term") != null) {
-            String termId = AtpHelper.atpIdToTermName(request.getParameter("section_term"));
-            termList = new ArrayList<String>();
-            termList.add(termId);
-        } else {
-            termList = courseDetails.getCourseSummaryDetails().getScheduledTerms();
+        if (offeringsFlag) {
+            // Course offerings
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            List<String> termList = null;
+            if (request.getParameter("section_term") != null) {
+                String termId = AtpHelper.atpIdToTermName(request.getParameter("section_term"));
+                termList = new ArrayList<String>();
+                termList.add(termId);
+            } else {
+                termList = courseDetails.getCourseSummaryDetails().getScheduledTerms();
+            }
+            List<CourseOfferingInstitution> courseOfferingInstitutions = getCourseOfferingInstitutions(course, termList);
+            courseDetails.setCourseOfferingInstitutionList(courseOfferingInstitutions);
         }
-        List<CourseOfferingInstitution> courseOfferingInstitutions = getCourseOfferingInstitutions(course, termList);
-        courseDetails.setCourseOfferingInstitutionList(courseOfferingInstitutions);
-
         return courseDetails;
     }
 
