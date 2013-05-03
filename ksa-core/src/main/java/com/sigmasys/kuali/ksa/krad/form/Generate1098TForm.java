@@ -29,6 +29,16 @@ public class Generate1098TForm extends AbstractViewModel {
 	 */
 	private List<Form1098TModel> form1098TModels;
 
+    /**
+     * An error generating 1098T.
+     */
+    private String documentGenerationError;
+
+    /**
+     * An error viewing a generated 1098T form.
+     */
+    private String viewGeneratedFormError;
+
 
     /**
      * Answers whether to hide the "No saved documents" message.
@@ -101,4 +111,20 @@ public class Generate1098TForm extends AbstractViewModel {
 	public void setForm1098TModels(List<Form1098TModel> form1098TModels) {
 		this.form1098TModels = form1098TModels;
 	}
+
+    public String getDocumentGenerationError() {
+        return documentGenerationError;
+    }
+
+    public void setDocumentGenerationError(String documentGenerationError) {
+        this.documentGenerationError = documentGenerationError;
+    }
+
+    public String getViewGeneratedFormError() {
+        return viewGeneratedFormError;
+    }
+
+    public void setViewGeneratedFormError(String viewGeneratedFormError) {
+        this.viewGeneratedFormError = viewGeneratedFormError;
+    }
 }

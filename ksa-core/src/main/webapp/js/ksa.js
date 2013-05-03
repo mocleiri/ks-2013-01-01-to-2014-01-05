@@ -21,9 +21,12 @@ jQuery.download = function (url, data, method) {
 * On "Generate 1098T" button click.
 */
 function onGenerate1098TClick(/*String*/accountId) {
+	// Hide the previous error message:
+	jQuery("#documentGenerationErrorMessage_span").css("display", "none");
+	
 	// Get the selected report year:
 	var reportYear = jQuery("#reportYearSelectControl_control option:selected").text();
 
 	// Start download:
-	jQuery.download("/ksa/uif/generate1098T", "methodToCall=download1098TForm&userId=" + accountId + "&reportYear=" + reportYear);
+	jQuery.download("/ksa/uif/generate1098T", "viewId=Generate1098TView&methodToCall=download1098TForm&userId=" + accountId + "&reportYear=" + reportYear);
 }

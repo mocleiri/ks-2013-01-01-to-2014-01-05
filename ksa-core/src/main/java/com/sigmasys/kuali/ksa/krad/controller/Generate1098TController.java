@@ -87,17 +87,17 @@ public class Generate1098TController extends DownloadController {
                                           @RequestParam("reportYear") int reportYear) throws Exception {
         // Read the report file:
         String form1098T = null;
-        String error = null;
         String accountId = form.getAccount().getId();
 
         // Get the form from the ReportService:
         try {
             form1098T = reportService.generate1098TReportByYear(accountId, reportYear, false);
         } catch (Exception e) {
-            error = String.format("<h2>Error generating form 1098T. See log file for details.</h2><p><h4>%s</h4>",
-                    getExceptionMessage(e, "Contact your administrator for details."));
-            logger.error(error, e);
+            logger.error("Error generating form 1098T. See log file for details.", e);
         }
+
+        // Reset the error messages:
+        resetErrorMessages(form);
 
         // If the form content is available, start download:
         if (StringUtils.isNotEmpty(form1098T)) {
@@ -106,9 +106,10 @@ public class Generate1098TController extends DownloadController {
 
             doDownload(form1098T, reportFileName, "application/xml", response);
         } else {
-            // Write an error message into the HTTP response:
-            PrintWriter out = response.getWriter();
-            out.println(error);
+            // Set the error on the form and return the ModelAndView:
+            form.setDocumentGenerationError("Error generating form 1098T. See log file for details.");
+
+            return getUIFModelAndView(form);
         }
 
         return null;
@@ -153,6 +154,9 @@ public class Generate1098TController extends DownloadController {
         // Set the 1098T forms on the form object:
         form.setForm1098TModels(collectionLines);
 
+        // Reset the error messages:
+        resetErrorMessages(form);
+
         return getUIFModelAndView(form);
     }
 
@@ -171,14 +175,12 @@ public class Generate1098TController extends DownloadController {
                                                @RequestParam("form1098TId") Long form1098TId,
                                                @RequestParam("reportYear") String reportYear) throws Exception {
         String xml = null;
-        String error = null;
 
         // Get the report as XML string:
         try {
             xml = reportService.convertIrs1098TToXml(form1098TId);
         } catch (Exception e) {
             logger.error("Error converting an object Irs1098T to XML", e);
-            error = getExceptionMessage(e, "Error converting an object Irs1098T to XML");
         }
 
         // If the XML content is valid, start downloading:
@@ -188,14 +190,11 @@ public class Generate1098TController extends DownloadController {
 
             doDownload(xml, reportFileName, "application/xml", response);
         } else {
-            // Write an error message into the HTTP response:
-            PrintWriter out = response.getWriter();
-            String personsName = form.getAccount().getDefaultPersonName().getDisplayValue();
-            String errorMsg =
-                    String.format("<h2>Form 1098T for %s for the tax year %s is unavailable</h2><p><h4>%s</h4>",
-                            personsName, reportYear, error);
+            // Load the previously displayed 1089T forms, set the error on the form and return a ModelAndView:
+            viewGenerated1098TForms(form);
+            form.setViewGeneratedFormError(String.format("Form 1098T for the tax year %s is unavailable.", reportYear));
 
-            out.println(errorMsg);
+            return getUIFModelAndView(form);
         }
 
         return null;
@@ -207,6 +206,16 @@ public class Generate1098TController extends DownloadController {
       * Helper methods.
       *
       * ****************************************************************************************************/
+
+    /**
+     * Resets the error messages on the form to null.
+     *
+     * @param form The form object.
+     */
+    private void resetErrorMessages(Generate1098TForm form) {
+        form.setViewGeneratedFormError(null);
+        form.setDocumentGenerationError(null);
+    }
 
     private void initializeForm(Generate1098TForm form, String userId) {
         // Get the full Account if it has not been selected yet:

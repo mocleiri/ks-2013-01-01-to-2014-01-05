@@ -169,6 +169,9 @@
 							
 							<!-- Generate Document button -->
 							<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Generate Document" p:actionScript="onGenerate1098TClick('@{account.id}')"/>
+				
+							<!-- Document Generation error message -->
+							<bean id="documentGenerationErrorMessage" parent="Uif-Message" p:messageText="@{getDocumentGenerationError()}" p:hidden="@{getDocumentGenerationError() == null}" p:style="color: red"/>
 						</list>
 					</property>
 				</bean>
@@ -221,6 +224,7 @@
 							<!-- Actions -->
 							<bean parent="Uif-LinkField" p:linkText="View" p:target="_self"
 								  p:align="center" p:width="10%"
+								  p:onClickScript="jQuery('#viewGeneratedDocumentErrorMessage_span').css('display', 'none')"
 								  p:href="generate1098T?methodToCall=viewGenerated1098TForm&amp;viewId=Generate1098TView&amp;userId=@{account.id}&amp;reportYear=@{#line.form1098T.formYear}&amp;form1098TId=@{#line.form1098T.id}"/>
 						</list>
 					</property>
@@ -228,6 +232,9 @@
 				
 				<!-- "No Saved Documents" message -->
 				<bean parent="Uif-Message" p:messageText="No saved documents." p:hidden="@{getHideNoSavedDocumentsMessage()}" p:style="font-size: larger"/>
+				
+				<!-- View Generated Document error message -->
+				<bean id="viewGeneratedDocumentErrorMessage" parent="Uif-Message" p:messageText="@{getViewGeneratedFormError()}" p:hidden="@{getViewGeneratedFormError() == null}" p:style="color: red"/>
 			</list>
 		</property>
 	</bean>
