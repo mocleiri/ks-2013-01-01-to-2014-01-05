@@ -4,7 +4,10 @@
  */
 
 
-body {}
+body {
+	font-size: 13px;
+}
+
 /* STICKY */
 #application-container {
    margin-top: 60px; /* Adjustments needed to accommodate to the Jetstrap navbar */
@@ -22,12 +25,18 @@ body {}
     background: #eeeeee;
 }
 #view-header {
-    margin-top: 108px; 
+    margin-top: 108px;
+	-webkit-box-shadow: 0px 6px 6px -5px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 6px 6px -5pxrgba(0, 0, 0, 0.5);
+	box-shadow: 0px 0px 7px -5px rgba(0, 0, 0, 0.5);
+} 
 }
 #view-container {
     margin-top: 190px; 
     margin-bottom: 100px; 
-    padding: 0px;
+    padding: 0px
+    border: 1px solid lightgray;
+	box-shadow: 0px 6px 6px -5px rgba(0, 0, 0, 0.5);
 }
 #page-container {
     padding: 0px;
@@ -112,13 +121,13 @@ div {
     background-color: #EEEEEE;
 }
 
-/* FORMATTING: GENERL */
+/* FORMATTING: GENERAL */
 .sticky {
     background-color: white;
 }
-.secondary {}
 .cancel {
     font-size: 0.8em;
+
 }
 
 /* FORMATTING: Context Changer */
@@ -235,17 +244,16 @@ http://ux.kuali.org/prototypes/rice/breadcrumb.php#
     color: #cccccc;
 }
 #page-title-main {
-    font-size: 3.0em;
+    font-size: 2.5em;
     line-height: 1.0em;
 }
 #page-title-support {
     color: #666666;
     font-size: 1.3em;
-    line-height: 1.3em;
+    line-height: 1.4em;
 }
 #action-bar {
     margin-bottom: 1.0em;
-    border-bottom: 1px solid #666666;
 }
 .action {
     padding-right: 1.0em;
@@ -270,7 +278,9 @@ http://ux.kuali.org/prototypes/rice/breadcrumb.php#
     color: white;
     background-color: darkorange;
     font-weight: bold;
-    padding: 0.4em 0.8em;
+    font-size: 1.1em;
+    padding: 0.3em 0.8em;
+    border-radius: 3px;
 }
 .detail-modification {
     font-style: italic;
