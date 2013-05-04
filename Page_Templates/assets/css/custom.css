@@ -2,12 +2,8 @@
  * CUSTOM STYLING
  *
  */
-
-
-body {
-	font-size: 13px;
-}
-
+ 
+ 
 /* STICKY */
 #application-container {
    margin-top: 60px; /* Adjustments needed to accommodate to the Jetstrap navbar */
@@ -21,6 +17,7 @@ body {
     vertical-align: center;
     padding: 8px 8px 0px 8px;
     background-color: #eaeaea;
+    font-size: .9em;
 }
 #view-breadcrumbs {
 /*    margin-top: 78px; */
@@ -122,16 +119,17 @@ div {
 	height: 1.0em;
 }
 #jump-to-navigation-input {
-	font-size: 0.6em;
+	font-size: 0.8em;
 	margin-top: 1.0em;
-	height: 1.2em;
+	height: .9em;
+	width:auto
 }
 #view-top-group span {
     padding-right: 1.0em;
 }
 #view-top-group {
     border-left: 8px solid lightgreen; 
-    max-height: 30px !important;
+    max-height: 1.8em !important;
 }
 #view-breadcrumbs {
     max-height: 31px !important;
@@ -164,6 +162,42 @@ div {
 }
 .cancel {
 }
+
+::-webkit-input-placeholder {
+	font-style: italic;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+	font-style: italic;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+	font-style: italic;
+}
+
+:-ms-input-placeholder {  
+	font-style: italic;
+}
+
+
+
+
+/* FORMATING: KS Header */
+
+.brand {
+	background-image: url(/assets/ks_logo.gif)
+}
+
+#application-header-user li a i {
+	padding-right: .2em;
+	opacity: .5;
+}
+
+#application-header-user li a:hover i {
+	opacity: 1;
+}
+
+
 /* FORMATING: Nav Bar */
 
 #view-term {
@@ -176,18 +210,15 @@ div {
 #view-term-state {
 }
 
+
 /* FORMATTING: Context Changer */
 #view-context-changer {
-    font-size: 0.7em;
     margin-bottom: 0px !important;
 }
 #view-context-changer label {
-    font-size: 1.2em;
 }
 #view-context-changer input {
-    font-size: 1.2em;
-    height: auto;
-    margin: 2px auto;
+	height: 1em;
 }
 
 /* FORMATING: breadcrumbs */
@@ -325,17 +356,19 @@ b:hover {
 .action {
     padding-right: 1.0em;
 }
-
 #action-bar a i {
-	padding-right: .2em;
+	padding-right: .3em;
 	opacity: .5;
+}
+#action-bar a:hover i {
+	opacity: 1;
 }
 
 /* FORMATING: Page Header Group (overview) */
 #page-header-group {
-    background-color: #CCCCCC;
+    background-color: #ebebeb;
     padding: 0.6em 1.2em;
-    font-size: 0.8em;
+	border-radius: 2px;
 }
 .detail {
     margin-right: 2.0em;
@@ -364,11 +397,23 @@ b:hover {
     margin-right: 0;
 }
 
-.detail-more i {
-	opacity: .7;
-}
 
 /* FORMATING: Forms */
+
+h2 {
+	font-size: 1.8em;
+	padding-top: 1.2em;
+	clear:both;
+}
+
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+	padding: 5px 6px;
+	margin-bottom: 0px;
+	border-radius: 2px;
+	transition: border linear 0.2s, box-shadow linear 0s;
+	color: #000;
+}
+
 fieldset {
 	margin-bottom: 2.0em;
 }
@@ -388,7 +433,7 @@ legend {
 }
 .form-read-only {
 	background-color: #eeeeee;
-	padding: 1.5em;
+	padding: .2em 1em;
 }
 .no-label {
 	margin-top: 1.8em;
