@@ -74,7 +74,6 @@ div {
     border: 2px solid orange;
 }
 */
-.validation {}
 
 /* STRUCTURE */
 .modal-large { 
@@ -438,6 +437,19 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .no-label {
 	margin-top: 1.8em;
 }
+.delete-action {
+	opacity: 0.3;
+}
+.delete-action:hover {
+	opacity: 1.0;
+}
+.btn-flat {
+	border: 1px solid #ccc;
+	background: none;
+	background-color: #F2F2F2;
+	font-size: 0.9em;
+	margin-bottom: 1.0em;
+}
 
 /* FORMATING: Tables */
 .table-col-1 {
@@ -454,6 +466,18 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 .table-lightbox-small {
 	max-width: 60%;
+}
+
+/* VALIDATION */
+.validation-error {
+	background-color: #FFEFF5;
+}
+.error {
+	border: 2px solid #A30101 !important;
+}
+.required {
+	color: #A30101;
+	font-size: 1.2em;
 }
 
 /* KRAD */
