@@ -73,9 +73,7 @@ div {
     border: 2px solid orange;
 }
 */
-.validation {
-    background-color: #FF9999;
-}
+.validation {}
 
 /* STRUCTURE */
 .modal-large { 
@@ -222,8 +220,6 @@ div {
 }
 
 /* FORMATING: breadcrumbs */
-
-
 .breadcrumb {
     border-top-width: 1px;
     border-bottom-width: 1px;
@@ -420,6 +416,9 @@ fieldset {
 legend {
 	margin-bottom: 0.1em;
 }
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+	margin-bottom: 0em;
+}
 .field-label {
 	font-weight: bold;
 }
@@ -454,6 +453,42 @@ legend {
 }
 .table-lightbox-small {
 	max-width: 60%;
+}
+
+/* KRAD */
+.uif-instructionalMessage {
+	font-size: 0.9em;
+	font-weight: normal;
+	margin-bottom: 0.4em;
+	/*
+		display: block;
+		max-width: 36em;
+	*/
+}
+.uif-constraintMessage {
+	font-size: 0.85em;
+	color: gray;
+	margin-top: 0.3em;
+	/*
+		display: block;
+		max-width: 36em;
+	*/
+	padding-left: 0.4em;
+}
+.uif-constraintMessage i {
+	opacity: .5;
+}
+.uif-constraintMessage:hover i {
+	opacity: 1.0;
+}
+.uif-pageValidationMessages-error {
+	border: 1px solid #ffa09c;
+}
+.uif-pageValidationMessages-warning {
+	border: 1px solid #FF9900;
+}
+.uif-pageValidationMessages-info {
+	border: 1px solid #3366CC;
 }
 
 
