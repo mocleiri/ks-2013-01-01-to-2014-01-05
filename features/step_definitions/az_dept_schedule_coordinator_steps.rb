@@ -671,3 +671,27 @@ Then /^I do not have access to create a new joint offered course offering$/ do
   page.create_new_joint_defined_course_first_row.exists?.should == false
   end
 end
+
+When /^there is a course with a co-located DL in my admin org/ do
+  step "I am logged in as a Schedule Coordinator"
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL462", :term=>@term_for_test)
+  @course_offering.manage_and_init
+  @course_offering.edit_ao :ao_code =>"A"
+  on ActivityOfferingMaintenance do |page|
+    page.select_colocated_checkbox
+    page.colocated_co_input_field.set "ENGL295"
+    page.colocated_ao_input_field.set "A"
+    page.add_colocated
+    page.select_jointly_share_enrollment_radio
+    page.colocated_shared_max_enrollment_input_field.set 25
+    page.submit
+  end
+  step "I am logged in as a Department Schedule Coordinator"
+end
+
+Then /^I do not have access to edit the co-located Activity Offering$/ do
+  @course_offering.manage_and_init
+  on ManageCourseOfferings do |page|
+    page.edit_link("A").present?.should == false
+  end
+end
