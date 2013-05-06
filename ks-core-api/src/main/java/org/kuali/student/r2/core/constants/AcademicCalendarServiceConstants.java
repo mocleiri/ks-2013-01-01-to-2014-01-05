@@ -14,12 +14,13 @@
  */
 package org.kuali.student.r2.core.constants;
 
-import org.kuali.student.r2.common.constants.CommonServiceConstants;
 import org.kuali.student.r2.core.acal.dto.AcademicCalendarInfo;
 import org.kuali.student.r2.core.acal.dto.HolidayCalendarInfo;
 import org.kuali.student.r2.core.acal.dto.HolidayInfo;
 import org.kuali.student.r2.core.acal.dto.KeyDateInfo;
 import org.kuali.student.r2.core.acal.dto.TermInfo;
+import org.kuali.student.r2.common.constants.CommonServiceConstants;
+import org.kuali.student.r2.core.constants.AtpServiceConstants;
 
 /**
  * This class holds the constants used by the Academic Calendar service

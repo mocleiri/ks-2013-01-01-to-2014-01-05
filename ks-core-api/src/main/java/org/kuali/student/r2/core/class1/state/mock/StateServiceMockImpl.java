@@ -293,6 +293,8 @@ public class StateServiceMockImpl
         this.stateMap.put(stateKey, stateInfo);
         this.lifeCycleStatesMap.get(lifecycleKey).add(stateKey);
 
+        if( stateInfo.getIsInitialState() != null && stateInfo.getIsInitialState() ) this.addInitialStateToLifecycle( stateKey, lifecycleKey, contextInfo );
+
         return stateInfo;
     }
 
@@ -350,9 +352,7 @@ public class StateServiceMockImpl
             throw new DoesNotExistException(initialStateKey + " does not exist");
         }
 
-        if(!this.initialStatesMap.get(lifecycleKey).add(initialStateKey)) {
-            throw new AlreadyExistsException(initialStateKey + "already exists");
-        }
+        this.initialStatesMap.get(lifecycleKey).add(initialStateKey);
 
         return new StatusInfo();
     }
@@ -366,9 +366,7 @@ public class StateServiceMockImpl
             throw new DoesNotExistException(initialStateKey + " does not exist");
         }
 
-        if(!this.initialStatesMap.get(lifecycleKey).remove(initialStateKey)) {
-            throw new DoesNotExistException(initialStateKey + " initial state does not exist");
-        }
+        this.initialStatesMap.remove(lifecycleKey);
 
         return new StatusInfo();
     }
