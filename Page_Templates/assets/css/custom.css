@@ -17,7 +17,7 @@
     vertical-align: center;
     padding: 8px 8px 0px 8px;
 	color: rgb(231, 231, 231);
-	background-color: #222;
+	background-color: #555;
     font-size: .9em;
 }
 #view-breadcrumbs {
@@ -159,6 +159,8 @@ div {
     background-color: white;
 }
 .cancel {
+	vertical-align: middle;
+	padding-left: 1em;
 }
 
 ::-webkit-input-placeholder {
@@ -214,11 +216,15 @@ div {
 /* FORMATTING: Context Changer */
 #view-context-changer {
     margin-bottom: 0px !important;
+	margin-top: -4px;
 }
 #view-context-changer label {
+	font-size: 1em;
+	padding-top: 2px;
 }
 #view-context-changer input {
 	height: 0.9em;
+	font-size: 1em;
 }
 
 /* FORMATING: breadcrumbs */
@@ -366,7 +372,7 @@ b:hover {
 #page-header-group {
     background-color: #ebebeb;
     padding: 0.6em 1.2em;
-	border-radius: 2px;
+	border-radius: 3px;
 }
 .detail {
     margin-right: 2.0em;
@@ -407,7 +413,7 @@ h2 {
 select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
 	padding: 5px 6px;
 	margin-bottom: 0px;
-	border-radius: 2px;
+	border-radius: 3px;
 	transition: border linear 0.2s, box-shadow linear 0s;
 	color: #000;
 }
@@ -426,7 +432,6 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 .collection-label {
 	font-weight: bold;
-	font-size: 1.4em;
 	margin-top: 1.5em;
 }
 .form-child {
@@ -435,6 +440,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .form-read-only {
 	background-color: #eeeeee;
 	padding: .2em 1em;
+	border-radius:3px;
 }
 .no-label {
 	margin-top: 1.8em;
@@ -456,15 +462,23 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 /* FORMATING: Tables */
 .table-col-1 {
 	max-width: 20%;
+	border-bottom: 1px solid lightgray;
+	border-top: 1px solid lightgray;
 }
 .table-col-2 {
 	max-width: 40%;
+	border-bottom: 1px solid lightgray;
+	border-top: 1px solid lightgray;
 }
 .table-col-3 {
 	max-width: 60%;
+	border-bottom: 1px solid lightgray;
+	border-top: 1px solid lightgray;
 }
 .table-col-4 {
 	max-width: 80%;
+	border-bottom: 1px solid lightgray;
+	border-top: 1px solid lightgray;
 }
 .table-lightbox-small {
 	max-width: 60%;
@@ -509,13 +523,16 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	opacity: 1.0;
 }
 .uif-pageValidationMessages-error {
-	border: 1px solid #ffa09c;
+	border: 1px solid #A30101;
+	border-radius: 3px;
 }
 .uif-pageValidationMessages-warning {
 	border: 1px solid #FF9900;
+	border-radius: 3px;
 }
 .uif-pageValidationMessages-info {
 	border: 1px solid #3366CC;
+	border-radius: 3px;
 }
 
 
