@@ -146,11 +146,11 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
     @Override
     public CourseDetails retrieveDataObject(Map fieldValues) {
         String studentId = UserSessionHelper.getStudentId();
-        boolean offeringsFlag = false;
+        boolean loadActivityOffering = false;
         if (fieldValues.get(PlanConstants.PARAM_OFFERINGS_FLAG) != null) {
-            offeringsFlag = Boolean.valueOf(fieldValues.get(PlanConstants.PARAM_OFFERINGS_FLAG).toString());
+            loadActivityOffering = Boolean.valueOf(fieldValues.get(PlanConstants.PARAM_OFFERINGS_FLAG).toString());
         }
-        return retrieveCourseDetails((String) fieldValues.get(PlanConstants.PARAM_COURSE_ID), studentId, offeringsFlag);
+        return retrieveCourseDetails((String) fieldValues.get(PlanConstants.PARAM_COURSE_ID), studentId, loadActivityOffering);
     }
 
 
@@ -367,7 +367,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      * @param studentId
      * @return
      */
-    public CourseDetails retrieveCourseDetails(String courseId, String studentId, boolean offeringsFlag) {
+    public CourseDetails retrieveCourseDetails(String courseId, String studentId, boolean loadActivityOffering) {
 
         CourseDetails courseDetails = new CourseDetails();
 
@@ -380,7 +380,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         // Course Plan + Academic Records
         courseDetails.setPlannedCourseSummary(getPlannedCourseSummary(course, studentId));
 
-        if (offeringsFlag) {
+        if (loadActivityOffering) {
             // Course offerings
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             List<String> termList = null;
