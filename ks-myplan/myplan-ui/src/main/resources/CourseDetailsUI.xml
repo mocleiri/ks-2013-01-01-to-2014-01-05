@@ -1345,7 +1345,9 @@
 
     <bean id="activityEnrlData" parent="Uif-HorizontalFieldGroup" p:rowSpan="1" p:colSpan="1"
           p:id="enrl_@{#line.atpId.replace('.','-')}_@{#line.registrationCode}">
-        <property name="group.validationMessages.render" value="false"/>
+        <property name="group.validationMessages">
+            <null/>
+        </property>
         <property name="label" value="ENRL / Limit"/>
         <property name="cssClasses">
             <list merge="true">
@@ -1369,7 +1371,9 @@
 
     <bean id="activityInstructor" parent="Uif-VerticalFieldGroup" p:rowSpan="1" p:colSpan="2" p:valign="TOP">
         <property name="id" value="instructor_@{#line.atpId.replace('.','-')}_@{#line.registrationCode}"/>
-        <property name="group.validationMessages.render" value="false"/>
+        <property name="group.validationMessages">
+            <null/>
+        </property>
         <property name="items">
             <list>
                 <bean parent="Uif-Label" p:labelText="Instructor" p:renderColon="false" p:style="margin:0;"/>
@@ -1390,7 +1394,9 @@
     </bean>
 
     <bean id="activityOther" parent="Uif-VerticalFieldGroup" p:valign="TOP" p:rowSpan="1" p:colSpan="3">
-        <property name="group.validationMessages.render" value="false"/>
+        <property name="group.validationMessages">
+            <null/>
+        </property>
         <property name="cssClasses">
             <list merge="true">
                 <value>activityOther</value>
@@ -1443,7 +1449,9 @@
 
     <bean id="activityAdditionalDetails" parent="Uif-VerticalFieldGroup" p:valign="TOP" p:rowSpan="1" p:colSpan="5">
         <property name="id" value="details_@{#line.atpId.replace('.','-')}_@{#line.registrationCode}"/>
-        <property name="group.validationMessages.render" value="false"/>
+        <property name="group.validationMessages">
+            <null/>
+        </property>
         <property name="onDocumentReadyScript" value="
             var collapsibleRow = jQuery('#details_@{#line.atpId.replace('.','-')}_@{#line.registrationCode}').parents('tr');
             var secondary = @{!#line.primary};
@@ -1462,7 +1470,9 @@
             <list>
                 <bean parent="Uif-Label" p:labelText="Additional Details" p:renderColon="false" p:style="margin:0;"/>
                 <bean parent="Uif-HorizontalFieldGroup" p:style="margin:0;">
-                    <property name="group.validationMessages.render" value="false"/>
+                    <property name="group.validationMessages">
+                        <null/>
+                    </property>
                     <property name="items">
                         <list>
                             <bean parent="KSAP-NoSpanMessage"
