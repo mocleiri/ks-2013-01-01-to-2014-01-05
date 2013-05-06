@@ -470,7 +470,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 
 /* VALIDATION */
 .validation-error {
-	background-color: #FFEFF5;
+	background-color: #ffeaf0;
 }
 .error {
 	border: 2px solid #A30101 !important;
