@@ -210,7 +210,7 @@ class ActivityOffering
   # @param opts [Hash] key => value for attribute to be updated - additional opts :edit_already_started (bool), TODO :defer_submit
   def edit opts={}
 
-    on(ManageCourseOfferings).edit @code  unless opts[:edit_already_started]
+    on(ManageCourseOfferings).edit @code unless opts[:edit_already_started]
 
     edit_colocation opts
     edit_max_enrollment_no_colocation opts
