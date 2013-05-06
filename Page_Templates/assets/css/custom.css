@@ -489,7 +489,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	background-color: #ffeaf0;
 }
 .error {
-	border: 2px solid #A30101 !important;
+	border: 2px solid #ff2300 !important;
 }
 .required {
 	color: #A30101;
@@ -523,7 +523,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	opacity: 1.0;
 }
 .uif-pageValidationMessages-error {
-	border: 1px solid #A30101;
+	border: 1px solid #FFD1DE;
 	border-radius: 3px;
 }
 .uif-pageValidationMessages-warning {
