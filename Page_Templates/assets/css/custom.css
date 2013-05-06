@@ -181,7 +181,9 @@ div {
 
 
 /* FORMATING: KS Header */
-
+#application-header-logo img {
+	height: 18px;
+}
 .brand {
 	background-image: url(/assets/ks_logo.gif)
 }
