@@ -12,7 +12,9 @@ Given /^I manage SOC for a term$/ do
     page.approve_activity
   end
 =end
-  @manageSoc = make ManageSoc, :term_code => "202105", :co_code => "ENGL245"
+  @term_code = "202105"
+  @co_code = "ENGL245"
+  @manageSoc = make ManageSoc, :term_code => @term_code, :co_code => @co_code
 end
 
 Given /^I manage SOC for "(.*?)"$/ do |term_code|
@@ -30,10 +32,35 @@ end
 
 And /^I verify the related object state changes for (.*?) action$/ do |state|
   if state == 'Schedule'
-    @manageSoc.verify_schedule_state_changes
+    verify_schedule_state_changes
   elsif state == 'Publish'
-    @manageSoc.verify_publish_state_changes
+    verify_publish_state_changes
   else
     raise 'Invalid state. Allowed values are \'Schedule\' and \'Publish\''
+  end
+end
+
+def verify_schedule_state_changes
+  @browser.goto "#{$test_site}/kr-krad/statusview/#{@term_code}/#{@co_code}"
+  on StatusViewPage do |page|
+    page.soc_state.should == 'Locked'
+    page.soc_scheduling_state.should == 'Completed'
+    (page.co_state =~ /Planned$/).should_not == nil
+    page.approved_aos.each do |row|
+      page.fo_state(row).should == 'Planned'
+    end
+  end
+end
+
+def verify_publish_state_changes
+  @browser.goto "#{$test_site}/kr-krad/statusview/#{@term_code}/#{@co_code}"
+  on StatusViewPage do |page|
+    page.soc_state.should == 'Published'
+    page.soc_scheduling_state.should == 'Completed'
+    (page.co_state =~ /Offered/).should_not == nil
+    page.offered_aos.each do |row|
+      page.ao_state(row).should == 'Offered'
+      page.fo_state(row).should == 'Offered'
+    end
   end
 end

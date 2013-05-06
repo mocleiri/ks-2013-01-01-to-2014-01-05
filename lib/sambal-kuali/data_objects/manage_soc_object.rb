@@ -118,7 +118,7 @@ class ManageSoc
     tries = 0
     raise "Schedule Initiated Date is blank" unless page.schedule_initiated_date != nil
     raise "Once schedule started, schedule completed date should say 'Scheduling in progress'" unless page.schedule_completed_date == 'Scheduling in progress'
-    raise "Schedule duration should have the '(in progress)' text at the end" unless page.schedule_duration.should =~ /(in progress)/
+    raise "Schedule duration should have the '(in progress)' text at the end" unless page.schedule_duration =~ /(in progress)/
     raise "Info message text at the top doesnt match" unless page.message == 'Approved activities were successfully sent to Scheduler.'
     until page.final_edit_button.enabled? or tries == 15 do
       sleep 20
@@ -139,7 +139,7 @@ class ManageSoc
     raise "Close button not displayed" unless page.close_button.exists?
     raise "Publish Initiated Date is blank" unless page.schedule_initiated_date != nil
     raise "Once publish started, schedule completed date should say 'Publishing in progress'" unless page.publish_completed_date == 'Publishing in progress'
-    raise "Publish duration should have the '(in progress)' text at the end" unless page.publish_duration.should =~ /(in progress)/
+    raise "Publish duration should have the '(in progress)' text at the end" unless page.publish_duration =~ /(in progress)/
     raise "Publishing In Progress Date is blank" unless page.is_date_exists('Publishing In Progress')
     tries = 0
     until page.soc_status == 'Published' or tries == 15 do
@@ -150,28 +150,5 @@ class ManageSoc
     raise "Test timed out waiting for Publish process" unless page.soc_status == 'Published'
   end
 
-  def verify_schedule_state_changes
-    @browser.goto "#{$test_site}/kr-krad/statusview/#{@term_code}/#{@co_code}"
-    on StatusViewPage do |page|
-      page.soc_state.should == 'Locked'
-      page.soc_scheduling_state.should == 'Completed'
-      (page.co_state =~ /Planned$/).should_not == nil
-      page.approved_aos.each do |row|
-        page.fo_state(row).should == 'Planned'
-      end
-    end
-  end
 
-  def verify_publish_state_changes
-    @browser.goto "#{$test_site}/kr-krad/statusview/#{@term_code}/#{@co_code}"
-    on StatusViewPage do |page|
-      page.soc_state.should == 'Published'
-      page.soc_scheduling_state.should == 'Completed'
-      (page.co_state =~ /Offered/).should_not == nil
-      page.offered_aos.each do |row|
-        page.ao_state(row).should == 'Offered'
-        page.fo_state(row).should == 'Offered'
-      end
-    end
-  end
 end
