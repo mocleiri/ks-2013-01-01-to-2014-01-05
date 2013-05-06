@@ -328,13 +328,16 @@ http://ux.kuali.org/prototypes/rice/breadcrumb.php#
 	padding-top: 4px;
 }
 b:hover {
-	background-color: red;
+	/* background-color: red; */
 }
 .dynamic-node {
 	margin-left: 1.0em;
 }
 .dynamic-node-content {
 	margin-top: 0.7em;
+}
+.dynamic-node-content input {
+	height: 1.3em;
 }
 
 
