@@ -4,10 +4,12 @@ import com.sigmasys.kuali.ksa.exception.AccountTypeNotFoundException;
 import com.sigmasys.kuali.ksa.exception.ConfigurationException;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.ActivityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.jaxb.Ach;
+import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -100,6 +102,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public List<Pair<Debit, BigDecimal>> rebalance(String userId, boolean ignoreDeferment) {
 
+        PermissionUtils.checkPermission(Permission.REBALANCE_ACCOUNT);
+
         Query query = em.createQuery("select t from Transaction t " +
                 " where t.account.id = :userId and " +
                 "       t.effectiveDate <= CURRENT_DATE and type(t) in (:chargeCode) " +
@@ -152,14 +156,19 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public void ageDebt(boolean ignoreDeferment) {
+
+        PermissionUtils.checkPermission(Permission.AGE_ACCOUNT);
+
         String ageDebtMethodName = configService.getParameter(Constants.AGE_DEBT_METHOD);
         if (StringUtils.isBlank(ageDebtMethodName)) {
             String errMsg = "Configuration parameter '" + Constants.AGE_DEBT_METHOD + "' is required";
             logger.error(errMsg);
             throw new ConfigurationException(errMsg);
         }
+
         AgeDebtMethod ageDebtMethod = AgeDebtMethod.valueOf(ageDebtMethodName);
         List<Account> accounts = getFullAccounts();
+
         for (Account account : accounts) {
             if (account instanceof ChargeableAccount) {
                 ageDebt((ChargeableAccount) account, ageDebtMethod, ignoreDeferment);
@@ -169,6 +178,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
     protected ChargeableAccount ageDebt(ChargeableAccount chargeableAccount, AgeDebtMethod ageDebtMethod,
                                         boolean ignoreDeferment) {
+
+        PermissionUtils.checkPermission(Permission.AGE_ACCOUNT);
 
         LatePeriod latePeriod = chargeableAccount.getLatePeriod();
 
@@ -266,6 +277,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Transactional(readOnly = false)
     public ChargeableAccount ageDebt(String userId, boolean ignoreDeferment) {
 
+        PermissionUtils.checkPermission(Permission.AGE_ACCOUNT);
+
         String ageDebtMethodName = configService.getParameter(Constants.AGE_DEBT_METHOD);
         if (StringUtils.isBlank(ageDebtMethodName)) {
             String errMsg = "Configuration parameter '" + Constants.AGE_DEBT_METHOD + "' is required";
@@ -289,6 +302,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, boolean ignoreDeferment) {
+
+        PermissionUtils.checkPermission(Permission.AGE_ACCOUNT);
 
         Account account = getFullAccount(userId);
         if (account == null) {
@@ -328,6 +343,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public BigDecimal getBalance(String userId, Date toDate) {
 
+        PermissionUtils.checkPermission(Permission.VIEW_BALANCE);
+
         if (toDate == null) {
             return BigDecimal.ZERO;
         }
@@ -355,6 +372,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
                 }
             }
         }
+
         return balance;
     }
 
@@ -371,6 +389,9 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
     public BigDecimal getBalance(String userId, boolean ignoreDeferment, boolean notYetEffective) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_BALANCE);
+
         final String sign = notYetEffective ? ">" : "<=";
         Query query = em.createQuery("select t from Transaction t " +
                 " where t.account.id = :userId and t.effectiveDate " + sign + " CURRENT_DATE");
@@ -405,6 +426,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
                 }
             }
         }
+
         return amountBilled.subtract(amountPaid);
     }
 
@@ -416,6 +438,9 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public BigDecimal getUnallocatedBalance(String userId) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_BALANCE);
+
         List<Payment> payments = transactionService.getPayments(userId);
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (Payment payment : payments) {
@@ -490,6 +515,9 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public Account getFullAccount(String userId) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+
         Query query = em.createQuery("select a from Account a " +
                 "left outer join fetch a.personNames pn " +
                 "left outer join fetch a.postalAddresses pa " +
@@ -509,6 +537,9 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public List<Account> getFullAccounts() {
+
+        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+
         Query query = em.createQuery(GET_FULL_ACCOUNTS_QUERY);
         return query.getResultList();
     }
@@ -525,6 +556,9 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public Account getOrCreateAccount(String userId) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+
         Account account = getEntity(userId, Account.class);
         if (account == null) {
             PersonService personService = KimApiServiceLocator.getPersonService();
@@ -537,10 +571,13 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             // If the person exists in KIM we have to create a new KSA account based on that
             account = createAccount(person);
         }
+
         return account;
     }
 
     private Account createAccount(Person person) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_ACCOUNT);
 
         TransactionStatus transaction = transactionManager.getTransaction(transactionDefinition);
 
@@ -661,6 +698,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Transactional(readOnly = false)
     public PersonName addPersonName(String userId, PersonName personName) {
 
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
+
         Account account = getFullAccount(userId);
         if (account == null) {
             String errMsg = "Account with ID = " + userId + " does not exist";
@@ -701,6 +740,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public PostalAddress addPostalAddress(String userId, PostalAddress postalAddress) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
         Account account = getFullAccount(userId);
         if (account == null) {
@@ -743,6 +784,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Transactional(readOnly = false)
     public ElectronicContact addElectronicContact(String userId, ElectronicContact electronicContact) {
 
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
+
         Account account = getFullAccount(userId);
         if (account == null) {
             String errMsg = "Account with ID = " + userId + " does not exist";
@@ -783,6 +826,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public Ach getAch(String userId) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_ACH);
 
         String errMsg = "ACH Account with ID = " + userId + " does not exist";
 
@@ -839,6 +884,9 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public AccountProtectedInfo getAccountProtectedInfo(String userId) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT_PROTECTED_INFO);
+
         Query query = em.createQuery("select a from AccountProtectedInfo a " +
                 " left outer join fetch a.bankType" +
                 " left outer join fetch a.taxType" +
@@ -859,6 +907,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             }
             return accountInfo;
         }
+
         return null;
     }
 
@@ -870,6 +919,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public List<Account> findAccountsByNamePattern(String namePattern) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
 
         boolean patternIsNotEmpty = (namePattern != null) && !namePattern.isEmpty();
 
@@ -899,6 +950,9 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public List<Account> findAccountsByExpandedSearchPatterns(String... searchPatterns) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+
         // Remove empty elements resulted from extra spaces in the search string:
         searchPatterns = removeEmptyStrings(searchPatterns);
 
@@ -917,13 +971,16 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         // Get the Account search query and build additional search conditions:
         StringBuilder accountSearchQuery = new StringBuilder(GET_FULL_ACCOUNTS_QUERY);
-        int patternCount = searchPatterns.length;
 
-        if (patternCount > 0) {
+        boolean searchPatternsExist = searchPatterns != null && searchPatterns.length > 0;
+
+        if (searchPatternsExist) {
+
             accountSearchQuery.append(" and (");
 
             // Add conditions for each search attribute:
-            for (int i = 0; i < patternCount; i++) {
+            int i = 0;
+            while (i++ < searchPatterns.length) {
                 // Add conditions using bind variables:
                 for (String searchAttribute : searchAttributes) {
                     accountSearchQuery.append("lower(").append(searchAttribute).append(") like ? or ");
@@ -937,12 +994,11 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         // Add "order by":
         accountSearchQuery.append(" order by a.id");
 
-        // Create an parameterize a Query:
         Query query = em.createQuery(accountSearchQuery.toString());
         int searchAttributeCount = searchAttributes.size();
 
-        if (patternCount > 0) {
-            for (int i = 0; i < patternCount; i++) {
+        if (searchPatternsExist) {
+            for (int i = 0; i < searchPatterns.length; i++) {
                 // Set parameter for each search attribute:
                 String pattern = "%" + StringUtils.lowerCase(searchPatterns[i]) + "%";
 
@@ -956,7 +1012,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
     private String[] removeEmptyStrings(String[] array) {
-        List<String> temp = new ArrayList<String>();
+
+        List<String> temp = new LinkedList<String>();
 
         for (String s : array) {
             if (StringUtils.isNotEmpty(s)) {
@@ -967,6 +1024,12 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         return temp.toArray(new String[temp.size()]);
     }
 
+    /**
+     * Retrieves KIM's EntityBo instance by entity ID.
+     *
+     * @param entityId Entity ID
+     * @return EntityBo instance
+     */
     private EntityBo getEntityBo(String entityId) {
         BusinessObjectService boService = KRADServiceLocator.getBusinessObjectService();
         return boService.findByPrimaryKey(EntityBo.class, Collections.singletonMap("id", entityId));
@@ -982,6 +1045,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public void updateAccount(Account account, String password) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
         if (StringUtils.isBlank(password)) {
             String errMsg = "Password cannot be empty, Account ID = " + account.getId();

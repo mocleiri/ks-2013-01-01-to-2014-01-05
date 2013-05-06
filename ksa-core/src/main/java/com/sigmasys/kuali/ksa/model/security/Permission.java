@@ -48,7 +48,9 @@ public enum Permission {
     AGE_ACCOUNT,
     VIEW_BALANCE,
     WRITE_OFF_ACCOUNT,
-    VIEW_PROTECTED_INFORMATION,
+    VIEW_ACCOUNT_PROTECTED_INFO,
+    REBALANCE_ACCOUNT,
+    VIEW_ACH,
 
     // Currency permissions
     EDIT_CURRENCY,
