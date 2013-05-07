@@ -23,7 +23,7 @@ public class PlannedCourseDataObject implements Comparable {
 
     private transient boolean showAlert;
 
-    private transient String activityStatusAlert;
+    private transient List<String> statusAlerts;
 
     // TODO: KULRICE-9003. This should be on plannedTerm once the jira is resolved
     private transient boolean timeScheduleOpen;
@@ -81,12 +81,20 @@ public class PlannedCourseDataObject implements Comparable {
         this.planActivities = planActivities;
     }
 
-    public String getActivityStatusAlert() {
-        return activityStatusAlert;
+    public List<String> getStatusAlerts() {
+        return statusAlerts;
     }
 
-    public void setActivityStatusAlert(String activityStatusAlert) {
-        this.activityStatusAlert = activityStatusAlert;
+    public void setStatusAlerts(List<String> statusAlerts) {
+        this.statusAlerts = statusAlerts;
+    }
+
+    //Used to get the list strings as a single string
+    public String getAlertsAsString() {
+        if (getStatusAlerts() != null) {
+            return StringUtils.join(getStatusAlerts(), "");
+        }
+        return null;
     }
 
     /*Added this for getting the Sections planned as a String to show in PlanView courses
