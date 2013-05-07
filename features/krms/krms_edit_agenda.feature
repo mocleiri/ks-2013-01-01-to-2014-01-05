@@ -128,7 +128,7 @@ Feature: KRMS Edit Agenda
     Then the text "A(B OR H OR G OR C(D OR E) OR F)" should be present in the text area
 
   #ELIG9.7.2.EB1 (KSENROLL-5861)
-  @bug @KSENROLL-6381
+  @pending
   Scenario: Confirm that the Group Button is working as expected
     When I go to the Manage Course Offering Agendas page for "ELIG9.7.2.EB1 (KSENROLL-5861)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -147,16 +147,11 @@ Feature: KRMS Edit Agenda
     And node "G" should be after node "F"
 
   #ELIG9.7.2.EB2 (KSENROLL-5861)
-  @bug @KSENROLL-6381
+  @pending
   Scenario: The newly created group should be visible in the Edit with Logic tab
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.2.EB2 (KSENROLL-5861)"
+    When I go to the Manage Course Offering Agendas page for "ELIG9.7.2.EB1 (KSENROLL-5861)"
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
-    And I select node "B" in the tree
-    And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
-    And I enter "ENGL101" in the "course" field
-    And I click the "Preview Change" button
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
     And I select the "Free Form Text" option from the "rule" dropdown
@@ -166,13 +161,13 @@ Feature: KRMS Edit Agenda
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
-    And I select node "I" in the tree
+    And I select node "E" in the tree
     And I click the "Add Rule Statement" button
     And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Text" in the "free form text" field
+    And I enter "more text" in the "free form text" field
     And I click the "Preview Change" button
     And I click the "Edit Rule Logic" tab
-    Then the text "A(B AND F(E AND H AND G) AND D AND C)" should be present in the text area
+    Then the text "A(B(C OR D) AND F(E AND H AND G))" should be present in the text area
 
   #KSENROLL-5880
   Scenario: The group should change depending on the AND/OR operator

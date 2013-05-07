@@ -58,6 +58,7 @@ end
 Then /^the background color should change to "(.*)"$/ do |color|
   colors = {"blue"=>"rgba(231,244,249,1)", "red"=>"rgba(255,0,0,1)"}
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.background_div.style('background-color').should == colors[color]
   end
 end
@@ -73,6 +74,7 @@ end
 
 Then /^there should be nothing selected in the rule dropdown$/ do
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.edit_tree_section.select(:name => /.*editTree.*proposition\.typeId/).option(selected: "selected").text.should == ""
   end
 end
@@ -80,18 +82,21 @@ end
 Then /^the "(.*)" field should be empty$/ do |field|
   types = {"course"=>"courseInfo.code", "free form text"=>"termParameter"}
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.edit_tree_section.text_field(:name => /.*editTree.*proposition\.#{Regexp.escape(types[field])}/).text.should == ""
   end
 end
 
 Then /^there should be a new node with text "(.*)"$/ do |text|
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.edit_tree_section.text.should match /.*#{Regexp.escape(text)}.*/
   end
 end
 
 Then /^there should be a dropdown with value "(.*)" before node "(.*)"$/ do |drop, node|
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.edit_tree_section.text.should match /.*#{Regexp.escape(drop)}.*#{Regexp.escape(node)}.*/m
   end
 end
@@ -105,18 +110,21 @@ end
 
 Then /^the text "(.*)" should be present in the text area$/ do |text|
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.logic_text.text.should == text
   end
 end
 
 Then /^the preview section should have the text "(.*)"$/ do |text|
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.preview_tree_section.text.should match /.*#{Regexp.escape(text)}.*/
   end
 end
 
 Then /^the word "(.*)" should exist before node "(.*)"$/ do |text, node|
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.preview_tree_section.text.should match /.*#{Regexp.escape(text)}\n#{Regexp.escape(node)}.*/
   end
 end
@@ -144,6 +152,7 @@ end
 
 Then /^the first node should match "(.*)"$/ do |text|
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.edit_tree_section.text.should match /.*A\..*#{Regexp.escape(text)}.*/
   end
 end
@@ -157,24 +166,28 @@ end
 
 Then /^the node "(.*)" should be a primary node in the tree$/ do |node|
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).id.should match /u\d+_node_\d+_parent_node_\d+_parent_root_span/
   end
 end
 
 Then /^node "(.*)" should be after node "(.*)"$/ do |second,first|
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.edit_tree_section.text.should match /.*#{Regexp.escape(first)}\..+#{Regexp.escape(second)}\..*/m
   end
 end
 
 Then /^the node "(.*)" should be a secondary node in the tree$/ do |node|
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).id.should match /u\d+_node_\d+_parent_node_\d+_parent_node_\d+_parent_root_span/
   end
 end
 
 Then /^the loaded page should have "(.*)" as a heading$/ do |head|
   on ManageCOAgendas do |page|
+    page.loading.wait_while_present
     page.agenda_management_section.html.should match /.*#{Regexp.escape(head)}.*/
   end
 end
@@ -194,19 +207,21 @@ end
 
 Then /^the new node "(.*)" should be between two "(.*)" operators$/ do |node, operator|
   on ManageCOAgendas do |page|
+    page.loading.wait_while_present
     page.preview_tree.text.should match /.*#{Regexp.escape(operator)}\n#{Regexp.escape(node)}\n#{Regexp.escape(operator)}.*/m
   end
 end
 
 Then /^there should be no node with letter "(.*)"$/ do |letter|
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.edit_tree_section.text.should_not match /.*#{Regexp.escape(letter)}.*/
   end
 end
 
 Then /^there should be no node "(.*)" before an "(.*)" operator$/ do |text, operator|
   on ManageCOAgendas do |page|
-    puts page.preview_tree.text
+    page.loading.wait_while_present
     page.preview_tree.text.should_not match /.*#{Regexp.escape(text)}\n#{Regexp.escape(operator)}.*/
   end
 end
@@ -224,6 +239,7 @@ end
 
 Then /^the old and new rule should be compared$/ do
   on EditAgenda do |page|
+    page.loading.wait_while_present
     page.compare_rule_section.text.should match /Compare CLU and CO Rules/
   end
 end

@@ -72,58 +72,6 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I click the "Edit Rule Logic" tab
     Then the text "A(B OR H OR G OR C(D OR E) OR F)" should be present in the text area
 
-  #ELIG9.7.2.EB1 (KSENROLL-5861)
-  @bug @KSENROLL-6483
-  Scenario: AS - Confirm that the Group Button is working as expected
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.2.EB1 (KSENROLL-5861)"
-    And I click on the "Student Eligibility & Prerequisite" section
-    And I click on the "Edit Rule" link
-    And I select node "B" in the tree
-    And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
-    And I search for the "course code" "ENGL101"
-    And I click the "Preview Change" button
-    And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "free form text input value" in the "free form text" field
-    And I click the "Preview Change" button
-    And I select node "E" in the tree
-    And I click the "Create Group" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Text" in the "free form text" field
-    And I click the "Preview Change" button
-    Then there should be a new node with text "F. Must meet all of the following"
-    And node "E" should be after node "F"
-    And node "G" should be after node "F"
-
-  #ELIG9.7.2.EB2 (KSENROLL-5861)
-  @bug @KSENROLL-6483
-  Scenario: AS - The newly created group should be visible in the Edit with Logic tab
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.2.EB2 (KSENROLL-5861)"
-    And I click on the "Student Eligibility & Prerequisite" section
-    And I click on the "Edit Rule" link
-    And I select node "B" in the tree
-    And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
-    And I search for the "course code" "ENGL101"
-    And I click the "Preview Change" button
-    And I select node "B" in the tree
-    And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "free form text input value" in the "free form text" field
-    And I click the "Preview Change" button
-    And I click the "Add Parent" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Text" in the "free form text" field
-    And I click the "Preview Change" button
-    And I select node "I" in the tree
-    And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Text" in the "free form text" field
-    And I click the "Preview Change" button
-    And I click the "Edit Rule Logic" tab
-    Then the text "A(B AND F(E AND H AND G) AND D AND C)" should be present in the text area
-
   #ELIG9.7.3.EB1 (KSENROLL-6308)
   @bug @KSENROLL-6483
   Scenario: AS - Confirm changes to the tree is shown in the sections of the Logic tab
