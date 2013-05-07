@@ -50,7 +50,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select "OR" from the dropdown before node "2"
-    Then there should be a dropdown with value "OR" before node "H"
+    Then there should be a dropdown with value "OR" before node "F"
 
   #ELIG9.7.1.EB2 (KSENROLL-5777)
   @bug @KSENROLL-6483
@@ -112,7 +112,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
-    And I click the "Create Group" button
+    And I click the "Add Parent" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
@@ -140,7 +140,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
-    And I click the "Create Group" button
+    And I click the "Add Parent" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
@@ -168,12 +168,12 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
-    And I click the "Create Group" button
+    And I click the "Add Parent" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "F" in the tree
-    And I click the "Create Group" button
+    And I click the "Add Parent" button
     And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I search for the "course code" "BSCI207"
     And I click the "Preview Change" button
@@ -201,7 +201,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
-    And I click the "Create Group" button
+    And I click the "Add Parent" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
@@ -224,7 +224,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
-    And I click the "Create Group" button
+    And I click the "Add Parent" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
@@ -248,7 +248,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
-    And I click the "Create Group" button
+    And I click the "Add Parent" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
@@ -272,7 +272,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "B" in the tree
-    And I click the "Create Group" button
+    And I click the "Add Parent" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button

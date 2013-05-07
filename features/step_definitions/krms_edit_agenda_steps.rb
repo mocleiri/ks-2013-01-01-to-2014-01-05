@@ -124,7 +124,7 @@ end
 When /^I select "(.*)" from the dropdown before node "(.*)"$/ do |cond, node|
   on EditAgenda do |page|
     id = @editAgenda.find_krms_before_element("edit_tree",'select',node)
-    page.edit_tree_section.when_present.select(:id => id).select cond
+    page.edit_tree_section.select(:id => id).when_present.select cond
   end
 end
 

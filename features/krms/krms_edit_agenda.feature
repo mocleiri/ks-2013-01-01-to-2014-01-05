@@ -135,14 +135,9 @@ Feature: KRMS Edit Agenda
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
     And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
-    And I enter "ENGL101" in the "course" field
-    And I click the "Preview Change" button
-    And I click the "Add Rule Statement" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
-    And I select node "E" in the tree
     And I click the "Add Parent" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
