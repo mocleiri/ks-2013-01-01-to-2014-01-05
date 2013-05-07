@@ -6,7 +6,7 @@
  
 /* STICKY */
 #application-container {
-   margin-top: 60px; /* Adjustments needed to accommodate to the Jetstrap navbar */
+   margin-top: 47px; /* Adjustments needed to accommodate to the Jetstrap navbar */
 }
 
 #application-header {
@@ -30,8 +30,7 @@
 	-moz-box-shadow: 0px 6px 6px -5pxrgba(0, 0, 0, 0.5);
 	box-shadow: 0px 6px 6px -5px rgba(0, 0, 0, 0.5);
 	border: 1px solid lightgray;
-	margin-top: 5px;
-
+	margin-top: 3px;
 } 
 #view-container {
     margin-top: 190px; 
@@ -46,7 +45,6 @@ NOTE: 	This probably isn't the place for this, as it causes a border at the bott
 */
 }
 #page-container {
-    padding: 0px 1.6em;
 }
 #view-footer {
     margin-bottom: 0px; /* When application-footer is not hidden, add 20px */
@@ -127,7 +125,7 @@ div {
 }
 #view-top-group {
     border-left: 8px solid lightgreen; 
-    max-height: 1.8em !important;
+    max-height: 2em !important;
 }
 #view-breadcrumbs {
     max-height: 31px !important;
@@ -183,11 +181,17 @@ div {
 
 
 /* FORMATING: KS Header */
+#application-header-logo {
+	color: #ddd;
+}
 #application-header-logo img {
 	height: 18px;
+	vertical-align: top;
+	padding-right: .2em;
 }
 .brand {
 	background-image: url(/assets/ks_logo.gif)
+	padding: 5px 9px 5px;
 }
 
 #application-header-user li a i {
@@ -220,7 +224,6 @@ div {
 }
 #view-context-changer label {
 	font-size: 1em;
-	padding-top: 2px;
 }
 #view-context-changer input {
 	height: 0.9em;
@@ -266,6 +269,10 @@ div {
     font-size: 1.0em;
 	color: #333333;
     min-height: 24px;
+}
+.caret {
+	margin-top: .7em;
+	border-top: 4px solid #999;
 }
 .breadcrumb li:last-child {
     background-image: none;
@@ -313,7 +320,6 @@ padding-left: 1em;
     white-space: nowrap;
 }
 .breadcrumb .active /*, .breadcrumb li a.current:hover*/ {
-    font-weight: bold;
 	background: none;
 }
 /* 
@@ -435,7 +441,6 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 .collection-label {
 	font-weight: bold;
-	margin-top: 1.5em;
 }
 .form-child {
 	padding-left: 2.0em;
@@ -460,7 +465,20 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	background-color: #F2F2F2;
 	font-size: 0.9em;
 	margin-bottom: 1.0em;
+	color: #0088cc;
 }
+.btn-flat i {
+padding-right: .3em;
+opacity: .5;
+}
+.btn-flat:hover i {
+padding-right: .3em;
+opacity: 1;
+}
+.btn-flat:hover {
+	color: #0088cc;
+}
+
 
 /* FORMATING: Tables */
 .table-col-1 {
@@ -495,7 +513,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	border: 2px solid #ff2300 !important;
 }
 .required {
-	color: #A30101;
+	color: #ff2300;
 	font-size: 1.2em;
 }
 
@@ -512,7 +530,6 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .uif-constraintMessage {
 	font-size: 0.85em;
 	color: gray;
-	margin-top: 0.3em;
 	/*
 		display: block;
 		max-width: 36em;
@@ -528,6 +545,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .uif-pageValidationMessages-error {
 	border: 1px solid #FFD1DE;
 	border-radius: 3px;
+	margin-top: .8em;
 }
 .uif-pageValidationMessages-warning {
 	border: 1px solid #FF9900;
