@@ -63,7 +63,7 @@ Then /^the background color should change to "(.*)"$/ do |color|
 end
 
 When /^I click the "(.*)" button$/ do |btn|
-  buttons = {"Add Rule Statement"=>:add_btn, "Create Group"=>:group_btn, "Update Rule"=>:update_rule_btn, "Move Down"=>:down_btn,
+  buttons = {"Add Rule Statement"=>:add_btn, "Add Parent"=>:group_btn, "Update Rule"=>:update_rule_btn, "Move Down"=>:down_btn,
              "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move Left"=>:left_btn, "Copy"=>:copy_btn,
              "Cut"=>:cut_btn, "Paste"=>:paste_btn, "Delete"=>:del_btn, "add"=>:add_line_btn, "Edit"=>:edit_btn}
   on EditAgenda do |page|
@@ -180,7 +180,7 @@ Then /^the loaded page should have "(.*)" as a heading$/ do |head|
 end
 
 When /^I click the "(.*)" button on Manage CO Agendas page$/ do |btn|
-  buttons = {"Save"=>:submit_btn, "Cancel"=>:cancel_btn}
+  buttons = {"submit"=>:submit_btn, "cancel"=>:cancel_btn}
   on ManageCOAgendas do |page|
     page.send(buttons[btn])
   end

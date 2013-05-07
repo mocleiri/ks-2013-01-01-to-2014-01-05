@@ -19,7 +19,7 @@ class EditAgenda < BasePage
 
   action(:add_btn) { |b| b.frm.button(:text => /Add Rule Statement/).when_present.click}
   action(:edit_btn) { |b| b.frm.button(:text => /Edit/).when_present.click}
-  action(:group_btn) { |b| b.frm.button(:text => /Create Group/).when_present.click}
+  action(:group_btn) { |b| b.frm.button(:text => /Add Parent/).when_present.click}
   action(:update_rule_btn) { |b| b.frm.button(:text => /Update Rule/).when_present.click}
   action(:down_btn) { |b| b.frm.button(:text => /Move Down/).when_present.click}
   action(:up_btn) { |b| b.frm.button(:text => /Move Up/).when_present.click}

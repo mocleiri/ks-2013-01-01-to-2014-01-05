@@ -11,6 +11,6 @@ class ManageCOAgendas < BasePage
   element(:rule_edit_links) { |b| b.frm.div( id: "KRSM-RuleEdit-ActionLinks")}
   element(:rule_add_link) { |b| b.frm.div( id: "KRMS-RuleAdd-ActionLink")}
 
-  element(:submit_btn) { |b| b.frm.button(:text => /Save/)}
-  element(:cancel_btn) { |b| b.frm.button(:text => /Cancel/)}
+  element(:submit_btn) { |b| b.frm.button(:text => /submit/)}
+  element(:cancel_btn) { |b| b.frm.button(:text => /cancel/)}
 end
