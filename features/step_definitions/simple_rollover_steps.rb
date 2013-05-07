@@ -99,6 +99,11 @@ Then /^the rollover can be released to departments$/ do
   #TODO validation
 end
 
+When /^I initiate a rollover to create a term for manage soc testing$/ do
+  @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::MANAGE_SOC_TERM_TARGET
+  @rollover.perform_rollover
+end
+
 When /^I am working on a term in "Open" SOC state$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM
 end
