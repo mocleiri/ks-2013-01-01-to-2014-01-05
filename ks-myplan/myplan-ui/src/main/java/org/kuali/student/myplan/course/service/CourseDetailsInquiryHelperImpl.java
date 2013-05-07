@@ -746,6 +746,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         /*Data from ActivityOfferingDisplayInfo*/
         activity.setCourseId(courseOfferingInfo.getCourseId());
         activity.setCode(displayInfo.getActivityOfferingCode());
+        activity.setStateKey(displayInfo.getStateKey());
         activity.setActivityOfferingType(displayInfo.getTypeName());
         List<MeetingDetails> meetingDetailsList = activity.getMeetingDetailsList();
         {
@@ -753,15 +754,19 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             for (ScheduleComponentDisplayInfo scdi : sdi.getScheduleComponentDisplays()) {
                 MeetingDetails meeting = new MeetingDetails();
 
-                BuildingInfo building = scdi.getBuilding();
-                if (building != null) {
-                    meeting.setCampus(building.getCampusKey());
-                    meeting.setBuilding(building.getBuildingCode());
+                if (!PlanConstants.WITHDRAWN_STATE.equalsIgnoreCase(activity.getStateKey())) {
+                    BuildingInfo building = scdi.getBuilding();
+                    if (building != null) {
+                        meeting.setCampus(building.getCampusKey());
+                        meeting.setBuilding(building.getBuildingCode());
+                    }
                 }
 
-                RoomInfo roomInfo = scdi.getRoom();
-                if (roomInfo != null) {
-                    meeting.setRoom(roomInfo.getRoomCode());
+                if (!PlanConstants.WITHDRAWN_STATE.equalsIgnoreCase(activity.getStateKey())) {
+                    RoomInfo roomInfo = scdi.getRoom();
+                    if (roomInfo != null) {
+                        meeting.setRoom(roomInfo.getRoomCode());
+                    }
                 }
 
                 for (TimeSlotInfo timeSlot : scdi.getTimeSlots()) {
@@ -809,7 +814,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                 activity.setFeeAmount(value);
                 continue;
             }
-            if ("SLN".equalsIgnoreCase(key)) {
+            if ("SLN".equalsIgnoreCase(key) && !PlanConstants.WITHDRAWN_STATE.equalsIgnoreCase(activity.getStateKey())) {
                 activity.setRegistrationCode(value);
                 continue;
             }
@@ -854,7 +859,6 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             }
 
         }
-        activity.setStateKey(displayInfo.getStateKey());
         activity.setInstructor(displayInfo.getInstructorName());
         activity.setHonorsSection(displayInfo.getIsHonorsOffering());
 
