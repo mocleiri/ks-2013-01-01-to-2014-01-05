@@ -4,7 +4,9 @@ import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.exception.InvalidGeneralLedgerAccountException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.export.*;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
+import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -158,6 +160,8 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
 
     protected String convertGlTransmissionsToXml(String batchId, List<GlTransmission> glTransmissions,
                                                  boolean createGlBaselineAmounts) {
+
+        PermissionUtils.checkPermission(Permission.EXPORT_GL_TRANSMISSION);
 
         if (batchId == null) {
             // Generating the batch ID

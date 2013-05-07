@@ -57,10 +57,18 @@ public enum Permission {
     VIEW_CURRENCY,
 
     // General Ledger permissions
+    CREATE_GL_TYPE,
+    EDIT_GL_TYPE,
+    VIEW_GL_TYPE,
+    CREATE_GL_TRANSACTION,
+    EDIT_GL_TRANSACTION,
+    VIEW_GL_TRANSACTION,
+    SUMMARIZE_GL_TRANSACTIONS,
     EDIT_GL_SETTINGS,
     VIEW_GL_REPORT,
     CREATE_GL_TRANSMISSION,
     EXPORT_GL_TRANSMISSION,
+    VIEW_GL_TRANSMISSION,
 
     // Memo permissions
     VIEW_MEMO,
@@ -117,10 +125,6 @@ public enum Permission {
     // Account type permissions
     CREATE_ACCOUNT_TYPE,
     EDIT_ACCOUNT_TYPE,
-
-    // General Ledger type permissions
-    CREATE_GL_TYPE,
-    EDIT_GL_TYPE,
 
     // Activity type permissions
     CREATE_ACTIVITY_TYPE,
