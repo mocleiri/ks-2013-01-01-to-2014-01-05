@@ -1,8 +1,8 @@
-class MainMenu < BasePage
+class PortalMenu < BasePage
 
   page_url "#{$test_site}/portal.do?selectedTab=main"
-  expected_title /Kuali Portal Index/
-  expected_element :enrollment_home_link
+  #expected_title /Kuali Portal Index/
+  #expected_element :enrollment_home_link
 
   wrapper_elements
 
@@ -74,4 +74,28 @@ class MainMenu < BasePage
   action(:krms_components) { |b| b.link(text: "KRMS Components").click }
   action(:krms_edit_agenda) { |b| b.link(text: "Edit Agenda").click }
   action(:krms_manage_co_agendas) { |b| b.link(text: "Manage Course Offering Agendas").click}
+
+  element(:username_field) { |b| b.text_field(:name=>"j_username") }
+  element(:password_field) { |b| b.text_field(:name=>"j_password") }
+  element(:login_button) { |b| b.button(:value=>"Login") }
+  #action(:logout) { |b| b.button(value: "Logout").click }
+
+  def login_with username, password
+    username_field.set username
+    password_field.set password
+    login_button.click
+    enrollment_home_link.wait_until_present
+    sleep 5
+  end
+
+
+  def current_logged_in_user_id
+    user = ""
+    begin
+      user = logged_in_user
+    rescue Watir::Exception::UnknownObjectException
+      user = :no_user
+    end
+    user
+  end
 end

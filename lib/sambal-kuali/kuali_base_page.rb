@@ -5,6 +5,7 @@ class BasePage < PageFactory
     def wrapper_elements
       element(:main_menu_el) { |b| b.link(title: "Main Menu") }
       element(:logout_el) { |b| b.button(value: "Logout") }
+      action(:logout) { |b| b.logout_el.click }
       element(:administration_el) { |b| b.link(title: "Administration") }
 
       action(:home) { |b| b.link(text: "Home").click }

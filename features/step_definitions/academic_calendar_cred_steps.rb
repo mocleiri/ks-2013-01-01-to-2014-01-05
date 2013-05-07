@@ -15,10 +15,7 @@ end
 
 When /^I search for the Academic Calendar using (.*)$/ do |arg|
   search_terms = { :wildcards=>"*", :"partial name"=>@calendar.name[0..2] }
-  visit MainMenu do |page|
-    page.enrollment_home
-  end
-  on Enrollment do |page|
+  visit Enrollment do |page|
     page.search_for_calendar_or_term
   end
   on CalendarSearch do |page|

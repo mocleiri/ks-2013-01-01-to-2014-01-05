@@ -1,10 +1,12 @@
 class Enrollment < BasePage
 
+  page_url "#{$test_site}/kr-krad/launch?viewId=enrollmentHomeView&methodToCall=start"
   expected_element :home_link
 
   wrapper_elements
   frame_element
 
+  element(:enrol_home_view) { |b| b.frm.div(id: "enrollmentHomeView") }
   element(:home_link) { |b| b.frm.link(text: "Home") }
 
   action(:search_for_calendar_or_term) { |p| p.frm.link(text: "Search for Calendar or Term").click }

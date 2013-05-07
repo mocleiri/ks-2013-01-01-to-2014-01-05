@@ -4,7 +4,7 @@ When /^I create a Holiday Calendar$/ do
   @calendar_name = random_alphanums
   @start_date = "09/01/#{next_year}"
   @end_date = "06/20/#{next_year + 1}"
-  visit MainMenu do |page|
+  visit PortalMenu do |page|
     page.enrollment_home
   end
   on Enrollment do |page|
