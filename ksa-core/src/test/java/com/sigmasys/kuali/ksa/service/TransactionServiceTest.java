@@ -415,7 +415,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Date expirationDate = new Date(effectiveDate.getTime() * 2);
 
         Transaction deferment =
-                transactionService.createTransaction(id, null, userId, effectiveDate, expirationDate,
+                transactionService.createTransaction(id, null, userId, effectiveDate, effectiveDate, expirationDate,
                         new BigDecimal(10e5), false);
 
 
@@ -431,6 +431,9 @@ public class TransactionServiceTest extends AbstractServiceTest {
         notNull(deferment.getAccountId());
         notNull(deferment.getCurrency());
         notNull(deferment.getAmount());
+
+        notNull(deferment.getEffectiveDate());
+        notNull(deferment.getRecognitionDate());
 
     }
 
@@ -445,7 +448,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Date expirationDate = new Date(effectiveDate.getTime() * 2);
 
         Transaction deferment =
-                transactionService.createTransaction(id, null, userId, effectiveDate, expirationDate,
+                transactionService.createTransaction(id, null, userId, effectiveDate, effectiveDate, expirationDate,
                         new BigDecimal(10e5), false);
 
 
@@ -461,6 +464,9 @@ public class TransactionServiceTest extends AbstractServiceTest {
         notNull(deferment.getAccountId());
         notNull(deferment.getCurrency());
         notNull(deferment.getAmount());
+
+        notNull(deferment.getEffectiveDate());
+        notNull(deferment.getRecognitionDate());
 
         transactionService.expireDeferment(deferment.getId());
 
@@ -483,6 +489,9 @@ public class TransactionServiceTest extends AbstractServiceTest {
         notNull(transaction.getCurrency());
         notNull(transaction.getAmount());
 
+        notNull(transaction.getEffectiveDate());
+        notNull(transaction.getRecognitionDate());
+
         transactionService.makeEffective(transaction.getId(), false);
 
     }
@@ -503,6 +512,9 @@ public class TransactionServiceTest extends AbstractServiceTest {
         notNull(transaction.getAccountId());
         notNull(transaction.getCurrency());
         notNull(transaction.getAmount());
+
+        notNull(transaction.getEffectiveDate());
+        notNull(transaction.getRecognitionDate());
 
         transactionService.makeEffective(transaction.getId(), true);
 
@@ -525,6 +537,9 @@ public class TransactionServiceTest extends AbstractServiceTest {
         notNull(transaction.getAccountId());
         notNull(transaction.getCurrency());
         notNull(transaction.getAmount());
+
+        notNull(transaction.getEffectiveDate());
+        notNull(transaction.getRecognitionDate());
 
         transaction = transactionService.writeOffTransaction(transaction.getId(), null, "Memo text", "Write-off");
 

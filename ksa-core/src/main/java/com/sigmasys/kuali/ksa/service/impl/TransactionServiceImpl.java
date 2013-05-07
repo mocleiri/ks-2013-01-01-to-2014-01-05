@@ -121,18 +121,18 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *
      * @param transactionTypeId The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
      *                          based on the effective date
-     * @param externalId        Transaction External ID
      * @param userId            Account ID
-     * @param effectiveDate     Transaction effective Date
-     * @param expirationDate    used for deferments only
+     * @param effectiveDate     Transaction Effective date
+     * @param recognitionDate   Transaction Recognition date
      * @param amount            Transaction amount
      * @return new Transaction instance
      */
     @Override
+    @WebMethod(exclude = true)
     @Transactional(readOnly = false)
-    public Transaction createTransaction(String transactionTypeId, String externalId, String userId,
-                                         Date effectiveDate, Date expirationDate, BigDecimal amount) {
-        return createTransaction(transactionTypeId, externalId, userId, effectiveDate, expirationDate, amount, false);
+    public Transaction createTransaction(String transactionTypeId, String userId, Date effectiveDate,
+                                         Date recognitionDate, BigDecimal amount) {
+        return createTransaction(transactionTypeId, null, userId, effectiveDate, recognitionDate, null, amount, false);
     }
 
     /**
@@ -142,7 +142,27 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *                          based on the effective date
      * @param externalId        Transaction External ID
      * @param userId            Account ID
-     * @param effectiveDate     Transaction effective Date
+     * @param effectiveDate     Transaction Effective Date
+     * @param expirationDate    used for deferments only
+     * @param amount            Transaction amount
+     * @return new Transaction instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Transaction createTransaction(String transactionTypeId, String externalId, String userId,
+                                         Date effectiveDate, Date expirationDate, BigDecimal amount) {
+        return createTransaction(transactionTypeId, externalId, userId, effectiveDate, null, expirationDate, amount, false);
+    }
+
+    /**
+     * Creates a new transaction based on the given parameters
+     *
+     * @param transactionTypeId The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
+     *                          based on the effective date
+     * @param externalId        Transaction External ID
+     * @param userId            Account ID
+     * @param effectiveDate     Transaction Effective Date
+     * @param recognitionDate   Transaction Recognition Date
      * @param expirationDate    Used for deferments only
      * @param amount            Transaction amount
      * @param overrideBlocks    indicates whether the account blocks must be overridden
@@ -152,39 +172,42 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
     public Transaction createTransaction(String transactionTypeId, String externalId, String userId,
-                                         Date effectiveDate, Date expirationDate,
+                                         Date effectiveDate, Date recognitionDate, Date expirationDate,
                                          BigDecimal amount, boolean overrideBlocks) {
-        TransactionTypeId id = getTransactionType(transactionTypeId, effectiveDate).getId();
-        return createTransaction(id, externalId, userId, effectiveDate, expirationDate, amount, overrideBlocks);
+        if (recognitionDate == null) {
+            recognitionDate = effectiveDate;
+        }
+        TransactionTypeId id = getTransactionType(transactionTypeId, recognitionDate).getId();
+        return createTransaction(id, externalId, userId, effectiveDate, recognitionDate, expirationDate, amount, overrideBlocks);
     }
 
 
     /**
-     * Returns the transaction type instance for the given transaction type ID and effective date
+     * Returns the transaction type instance for the given transaction type ID and date
      *
      * @param transactionTypeId The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
      *                          based on the effective date
-     * @param effectiveDate     Transaction effective Date
+     * @param date              Transaction effective or recognition Date
      * @return TransactionType instance
      */
     @Override
-    public TransactionType getTransactionType(String transactionTypeId, Date effectiveDate) {
+    public TransactionType getTransactionType(String transactionTypeId, Date date) {
 
-        effectiveDate = CalendarUtils.removeTime(effectiveDate);
+        date = CalendarUtils.removeTime(date);
 
         Query query = em.createQuery("select t from TransactionType t " +
-                " where t.id.id = :transactionTypeId and :effectiveDate >= t.startDate and " +
-                " (t.endDate is null or t.endDate >= :effectiveDate)");
+                " where t.id.id = :transactionTypeId and :date >= t.startDate and " +
+                " (t.endDate is null or t.endDate >= :date)");
 
         query.setParameter("transactionTypeId", transactionTypeId);
-        query.setParameter("effectiveDate", effectiveDate, TemporalType.DATE);
+        query.setParameter("date", date, TemporalType.DATE);
 
         List<TransactionType> transactionTypes = query.getResultList();
         if (CollectionUtils.isNotEmpty(transactionTypes)) {
             return transactionTypes.get(0);
         }
 
-        String errMsg = "Cannot find TransactionType for ID = " + transactionTypeId + " and date = " + effectiveDate;
+        String errMsg = "Cannot find TransactionType for ID = " + transactionTypeId + " and date = " + date;
         logger.error(errMsg);
         throw new InvalidTransactionTypeException(errMsg);
     }
@@ -396,17 +419,17 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     /**
      * Creates a new transaction based on the given parameters
      *
-     * @param id             Transaction type ID
-     * @param userId         Account ID
-     * @param effectiveDate  Transaction effective Date
-     * @param expirationDate used for deferments only
-     * @param amount         Transaction amount
-     * @param overrideBlocks indicates whether the account blocks must be overridden
+     * @param id              Transaction type ID
+     * @param userId          Account ID
+     * @param effectiveDate   Transaction Effective Date
+     * @param recognitionDate Transaction Recognition Date
+     * @param expirationDate  Used for deferments only
+     * @param amount          Transaction amount
+     * @param overrideBlocks  indicates whether the account blocks must be overridden
      * @return new Transaction instance
      */
-    @Transactional(readOnly = false)
     protected Transaction createTransaction(TransactionTypeId id, String externalId, String userId,
-                                            Date effectiveDate, Date expirationDate,
+                                            Date effectiveDate, Date recognitionDate, Date expirationDate,
                                             BigDecimal amount, boolean overrideBlocks) {
 
         if (amount == null) {
@@ -465,7 +488,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         transaction.setExternalId(externalId);
         transaction.setEffectiveDate(effectiveDate);
-        transaction.setRecognitionDate(effectiveDate);
+        transaction.setRecognitionDate(recognitionDate != null ? recognitionDate : effectiveDate);
         transaction.setNativeAmount(amount);
         transaction.setAmount(amount);
         transaction.setAllocatedAmount(BigDecimal.ZERO);

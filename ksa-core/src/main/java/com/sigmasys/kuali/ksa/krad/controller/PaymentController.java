@@ -1,7 +1,5 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
-import com.sigmasys.kuali.ksa.exception.InvalidTransactionTypeException;
-import com.sigmasys.kuali.ksa.exception.TransactionNotAllowedException;
 import com.sigmasys.kuali.ksa.krad.form.PaymentForm;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
@@ -25,7 +23,9 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by: dmulderink on 9/30/12 at 11:27 AM
+ * PaymentController
+ *
+ * @author Tim
  */
 @Controller
 @RequestMapping(value = "/paymentView")
@@ -34,15 +34,18 @@ public class PaymentController extends GenericSearchController {
     private static final Log logger = LogFactory.getLog(PaymentController.class);
 
     @Autowired
-    AuditableEntityService auditableEntityService;
+    private AuditableEntityService auditableEntityService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
      */
     @Override
     protected PaymentForm createInitialForm(HttpServletRequest request) {
+
         PaymentForm form = new PaymentForm();
+
         form.setStatusMessage("");
+
         String userId = request.getParameter("userId");
 
         if (userId != null) {
@@ -56,31 +59,28 @@ public class PaymentController extends GenericSearchController {
             }
 
             form.setAccount(account);
-        } /*else {
-         String errMsg = "'userId' request parameter cannot be null";
-         logger.error(errMsg);
-         throw new IllegalStateException(errMsg);
-      }*/
+        }
 
         return form;
-
     }
 
     /**
-     * @param form
-     * @param request
-     * @return
+     * Default GET method
+     *
+     * @param form PaymentForm
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
-    public ModelAndView get(@ModelAttribute("KualiForm") PaymentForm form, HttpServletRequest request) {
-
+    public ModelAndView get(@ModelAttribute("KualiForm") PaymentForm form) {
         return getUIFModelAndView(form);
     }
 
     /**
-     * @param form
-     * @param request
-     * @return
+     * Payment creating method
+     *
+     * @param form    PaymentForm
+     * @param request HttpServletRequest
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=create")
     public ModelAndView create(@ModelAttribute("KualiForm") PaymentForm form, HttpServletRequest request) {
@@ -116,24 +116,30 @@ public class PaymentController extends GenericSearchController {
     }
 
     /**
-     * @param form
-     * @param request
-     * @return
+     * Retrieves the transaction type.
+     *
+     * @param form PaymentForm
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=getTransactionType")
-    public ModelAndView getTransactionType(@ModelAttribute("KualiForm") PaymentForm form, HttpServletRequest request) {
+    public ModelAndView getTransactionType(@ModelAttribute("KualiForm") PaymentForm form) {
+
         String ttId = form.getPaymentTransactionTypeId();
 
         form.setTransactionType(null);
         TransactionType type = null;
-        try{
+
+        try {
             form.setTransactionTypeMessage("");
             type = transactionService.getTransactionType(ttId, new Date());
-        } catch(RuntimeException e){
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
             form.setTransactionTypeMessage("Invalid Transaction Type");
         }
-        if(type != null && type instanceof CreditType){
-            form.setTransactionType((CreditType)type);
+
+        if (type != null && type instanceof CreditType) {
+
+            form.setTransactionType((CreditType) type);
 
             String systemCurrency = java.util.Currency.getInstance(Locale.getDefault()).getCurrencyCode();
             form.setSystemCurrency(systemCurrency);
@@ -145,11 +151,13 @@ public class PaymentController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
-        /**
-        * @param form
-        * @param request
-        * @return
-        */
+    /**
+     * Form submitting method
+     *
+     * @param form    PaymentForm
+     * @param request HttpServletRequest
+     * @return ModelAndView
+     */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=submit")
     @Transactional(readOnly = false)
     public ModelAndView submit(@ModelAttribute("KualiForm") PaymentForm form, HttpServletRequest request) {
@@ -160,8 +168,9 @@ public class PaymentController extends GenericSearchController {
         String userId = request.getParameter("userId");
 
         logger.info("View: " + viewId + " User: " + userId);
-        if (this.savePayment(form)) {
-            this.initPayment(form);
+
+        if (savePayment(form)) {
+            initPayment(form);
         }
 
         Payment payment = form.getPayment();
@@ -208,7 +217,7 @@ public class PaymentController extends GenericSearchController {
         Currency systemCurr = auditableEntityService.getCurrency(systemCurrency);
         String systemCurrencyId = systemCurr.getId().toString();
 
-        if(currencyId == null || systemCurrencyId.equals(currencyId)){
+        if (currencyId == null || systemCurrencyId.equals(currencyId)) {
             amount = nativeAmount;
             nativeAmount = null;
         } else {
@@ -221,7 +230,7 @@ public class PaymentController extends GenericSearchController {
             GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
             errors = true;
-        } else if (amount.compareTo(BigDecimal.ZERO) <= 0){
+        } else if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             statusMsg = "Amount must be a positive value";
             GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
@@ -229,12 +238,11 @@ public class PaymentController extends GenericSearchController {
         }
 
         TransactionType tt = null;
+
         try {
             tt = transactionService.getTransactionType(typeIdString, effectiveDate);
-        } catch (InvalidTransactionTypeException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            //GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
-            //errors = true;
         }
 
         if (tt == null) {
@@ -242,7 +250,7 @@ public class PaymentController extends GenericSearchController {
             statusMsg = "Invalid Payment Type";
             GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
-            errors=true;
+            errors = true;
         } else if (!(tt instanceof CreditType)) {
             statusMsg = "Payment Type must be a credit type";
             GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
@@ -251,16 +259,18 @@ public class PaymentController extends GenericSearchController {
         }
 
         // Handle all error checking prior to this point.
-        if(errors){
+        if (errors) {
             return saveResult;
         }
 
         try {
-            payment = (Payment) transactionService.createTransaction(typeIdString, form.getExternalId(),
-                    payment.getAccount().getId(), effectiveDate, null, amount, false);
-            if (payment.getId() != null) {
 
-                if(nativeAmount != null){
+            payment = (Payment) transactionService.createTransaction(typeIdString, form.getExternalId(),
+                    payment.getAccount().getId(), effectiveDate, effectiveDate, null, amount, false);
+
+            if (payment != null && payment.getId() != null) {
+
+                if (nativeAmount != null) {
                     payment.setAmount(amount);
                     Currency c = auditableEntityService.getAuditableEntity(new Long(currencyId), Currency.class);
                     payment.setCurrency(c);
@@ -276,7 +286,7 @@ public class PaymentController extends GenericSearchController {
                 saveResult = true;
             }
 
-        } catch (TransactionNotAllowedException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
 

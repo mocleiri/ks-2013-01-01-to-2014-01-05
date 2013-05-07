@@ -34,7 +34,7 @@ public interface TransactionService {
      * @param transactionTypeId The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
      *                          based on the effective date
      * @param userId            Account ID
-     * @param effectiveDate     Transaction effective Date
+     * @param effectiveDate     Transaction Effective Date
      * @param amount            Transaction amount
      * @return new Transaction instance
      */
@@ -46,9 +46,24 @@ public interface TransactionService {
      *
      * @param transactionTypeId The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
      *                          based on the effective date
+     * @param userId            Account ID
+     * @param effectiveDate     Transaction Effective date
+     * @param recognitionDate   Transaction Recognition date
+     * @param amount            Transaction amount
+     * @return new Transaction instance
+     */
+    @WebMethod(exclude = true)
+    Transaction createTransaction(String transactionTypeId, String userId, Date effectiveDate,
+                                  Date recognitionDate, BigDecimal amount);
+
+    /**
+     * Creates a new transaction based on the given parameters
+     *
+     * @param transactionTypeId The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
+     *                          based on the effective date
      * @param externalId        Transaction external ID
      * @param userId            Account ID
-     * @param effectiveDate     Transaction effective Date
+     * @param effectiveDate     Transaction Effective Date
      * @param expirationDate    Used for deferments only
      * @param amount            Transaction amount
      * @return new Transaction instance
@@ -63,7 +78,8 @@ public interface TransactionService {
      *                          based on the effective date
      * @param externalId        Transaction External ID
      * @param userId            Account ID
-     * @param effectiveDate     Transaction effective Date
+     * @param effectiveDate     Transaction Effective Date
+     * @param recognitionDate   Transaction Recognition Date
      * @param expirationDate    Used for deferments only
      * @param amount            Transaction amount
      * @param overrideBlocks    indicates whether the account blocks must be overridden
@@ -71,7 +87,7 @@ public interface TransactionService {
      */
     @WebMethod(exclude = true)
     Transaction createTransaction(String transactionTypeId, String externalId, String userId,
-                                  Date effectiveDate, Date expirationDate,
+                                  Date effectiveDate, Date recognitionDate, Date expirationDate,
                                   BigDecimal amount, boolean overrideBlocks);
 
     /**
@@ -79,7 +95,7 @@ public interface TransactionService {
      *
      * @param transactionTypeId The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
      *                          based on the effective date
-     * @param effectiveDate     Transaction effective Date
+     * @param effectiveDate     Transaction Effective Date
      * @return TransactionType instance
      */
     TransactionType getTransactionType(String transactionTypeId, Date effectiveDate);
