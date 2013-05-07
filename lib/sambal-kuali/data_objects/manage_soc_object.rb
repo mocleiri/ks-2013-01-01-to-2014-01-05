@@ -150,5 +150,29 @@ class ManageSoc
     raise "Test timed out waiting for Publish process" unless page.soc_status == 'Published'
   end
 
+  def verify_schedule_state_changes
+    @browser.goto "#{$test_site}/kr-krad/statusview/#{@term_code}/#{@co_code}"
+    on StatusViewPage do |page|
+      raise "expected SOC state 'Locked', was #{page.soc_state}" unless page.soc_state == 'Locked'
+      raise "expected SOC scheduling state 'Completed', was #{page.soc_scheduling_state}" unless page.soc_scheduling_state == 'Completed'
+      raise "expected CO state 'Planned', was #{page.co_state}" unless (page.co_state =~ /Planned$/) != nil
+      page.approved_aos.each do |row|
+        raise "expected FO state 'Planned', was #{page.fo_state(row)}" unless page.fo_state(row) == 'Planned'
+      end
+    end
+  end
+
+  def verify_publish_state_changes
+    @browser.goto "#{$test_site}/kr-krad/statusview/#{@term_code}/#{@co_code}"
+    on StatusViewPage do |page|
+      raise "expected SOC state 'Published', was #{page.soc_state}" unless page.soc_state == 'Published'
+      raise "expected SOC scheduling state 'Completed', was #{page.soc_scheduling_state}" unless page.soc_scheduling_state == 'Completed'
+      raise "expected CO state 'Offered', was #{page.co_state}" unless (page.co_state =~ /Offered$/) != nil
+      page.approved_aos.each do |row|
+        raise "expected AO state 'Offered', was #{page.ao_state(row)}" unless page.ao_state(row) == 'Offered'
+        raise "expected FO state 'Offered', was #{page.fo_state(row)}" unless page.fo_state(row) == 'Offered'
+      end
+    end
+  end
 
 end
