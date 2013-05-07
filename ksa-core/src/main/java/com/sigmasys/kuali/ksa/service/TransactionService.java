@@ -64,7 +64,7 @@ public interface TransactionService {
      * @param externalId        Transaction External ID
      * @param userId            Account ID
      * @param effectiveDate     Transaction effective Date
-     * @param expirationDate    used for deferments only
+     * @param expirationDate    Used for deferments only
      * @param amount            Transaction amount
      * @param overrideBlocks    indicates whether the account blocks must be overridden
      * @return new Transaction instance
