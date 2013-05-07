@@ -127,7 +127,7 @@ class CourseOffering
     else #create from catalog
       start_create_by_search
       on CreateCourseOffering do  |page|
-        @suffix = random_alphanums(5)
+        @suffix = random_alphanums(5) unless @suffix != ""
         page.suffix.set @suffix
         @course = "#{@course}#{@suffix}"
         if @joint_co_to_create != nil

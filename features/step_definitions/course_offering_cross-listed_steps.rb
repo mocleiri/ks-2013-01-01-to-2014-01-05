@@ -2,60 +2,39 @@
 # additional notes about future-refactoring were left in this jira: https://jira.kuali.org/browse/KSENROLL-5895
 
 When /^I designate a valid term and cross-listed Catalog Course Code$/ do
-  @suffix_with_cl = "AFT#{random_alphanums(2)}".upcase
-  @source_term = "201201"
-  @cross_listed_co_code = "WMST255"
-  @catalogue_course_code = "ENGL250"
-  #TODO - need to use appropriate course_offering 'create' method
-  @course_offering = make CourseOffering, :course => @catalogue_course_code, :suffix => @suffix_with_cl, :term => @source_term, :delivery_format => "Lecture"
-  @course_offering.start_create_by_search
+  suffix = "AFT#{random_alphanums(2)}".upcase
+  source_term = Rollover::MAIN_TEST_TERM_SOURCE
+
+  @course_offering_owner = make CourseOffering, :course => "ENGL250", :suffix => suffix, :term => source_term, :cross_listed => true
+  @course_offering_alias = make CourseOffering, :course => "WMST255#{suffix}", :term => source_term, :delivery_format => "Lecture"
+
+
 end
 
 And /^I create a Course Offering (with|without) selected cross-listed Catalog Course Code$/ do
   |crosslisted|
-  on CreateCourseOffering do  |page|
-    page.suffix.set @suffix_with_cl
-    @course = "#{@catalogue_course_code}#{@suffix_with_cl}"
-    delivery_obj = make DeliveryFormat, :format=>"Lecture", :grade_format => "Course", :final_exam_driver => "Lecture"
-    delivery_obj.select_random_delivery_formats
-    if crosslisted == 'with'
-      page.cross_listed_co_check_box.click
-    end
-    page.create_offering
-  end
+  @course_offering_owner.cross_listed = false unless crosslisted == 'with'
+  @course_offering_owner.create
 end
 
 And /^the cross-listing is indicated for the alias Course Offering$/ do
-  # build the appropriate CLU data-object
-  @course_offering = make CourseOffering, :term => @source_term, :suffix => @suffix_with_cl
-  @course_offering.course = @cross_listed_co_code
-  @cross_listed_infoText_targetValue = @catalogue_course_code + @suffix_with_cl + " (Owner)"
+  cross_listed_infoText_targetValue = @course_offering_owner.course + " (Owner)"
 
-  # navigate to the course offering via the aliased course code
-  @course_offering.go_to_manage_course_offerings
-  on ManageCourseOfferings do |page|
-    page.term.set @course_offering.term
-    page.input_code.set "#{@course_offering.course}#{@course_offering.suffix}"
-    page.show
-  end
+  @course_offering_alias.manage
 
   #  Validate the crosslisting messaging is present.
-  on(ManageCourseOfferings).cross_listed_message.include? "crosslisted alias for: " << @cross_listed_infoText_targetValue
+  on(ManageCourseOfferings).cross_listed_message.include? "crosslisted alias for: " << cross_listed_infoText_targetValue
 end
 
 And /^the copy-link is not showing for the alias$/ do
-  @course_offering = make CourseOffering, :term=>@source_term, :course=>@cross_listed_co_code, :search_by_subj=>true
-  @course_offering.search_by_subjectcode
-  on(ManageCourseOfferingList).copy_link(@course_offering.course).should_not be_present
+  @course_offering_alias.search_by_subjectcode
+  on(ManageCourseOfferingList).copy_link(@course_offering_alias.course).should_not be_present
 end
 
 Then /^the alias course does not exist$/ do
-  @course_offering = make CourseOffering
-  @course_offering.term=@source_term
-  @course_offering.course=@cross_listed_co_code  +  @suffix_with_cl
-  @course_offering.manage
+  @course_offering_alias.manage
 
-  expected_errMsg = "Cannot find any course offering for the Course Code code: (" << @course_offering.course()
+  expected_errMsg = "Cannot find any course offering for the Course Code code: (#{@course_offering_alias.course}"
   on(ManageCourseOfferings).first_msg.should match /.*#{Regexp.escape(expected_errMsg)}.*/
 end
 
