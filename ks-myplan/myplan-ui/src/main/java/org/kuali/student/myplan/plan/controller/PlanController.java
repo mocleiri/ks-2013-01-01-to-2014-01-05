@@ -1888,6 +1888,7 @@ public class PlanController extends UifControllerBase {
             params.put("InstituteCode", planForm.getInstituteCode());
             params.put("shortTermName", AtpHelper.atpIdToShortTermName(planItem.getPlanPeriods().get(0)));
             params.put("ItemsToUpdate", itemsToBeUpdated);
+            params.put("ActivityStateKey", planForm.getActivityStateKey());
             if (courseDetails.getCourseId() != null && planForm.getInstituteCode() != null && planForm.getSectionCode() != null) {
                 String sectionCode = null;
                 List<String> sections = new ArrayList<String>();

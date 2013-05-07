@@ -35,10 +35,7 @@ import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.course.util.CreditsFormatter;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.controller.PlanController;
-import org.kuali.student.myplan.plan.dataobject.AcademicRecordDataObject;
-import org.kuali.student.myplan.plan.dataobject.PlanItemDataObject;
-import org.kuali.student.myplan.plan.dataobject.PlannedCourseSummary;
-import org.kuali.student.myplan.plan.dataobject.ServicesStatusDataObject;
+import org.kuali.student.myplan.plan.dataobject.*;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.AtpHelper.YearTerm;
 import org.kuali.student.myplan.plan.util.DateFormatHelper;
@@ -571,7 +568,6 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                     }
                 }
 
-
                 List<ActivityOfferingItem> list = getActivityOfferingItems(course, courseOfferingInfoList, atp, planItemsByTerm.get(atp));
                 for (ActivityOfferingItem activityOfferingItem : list) {
                     int instituteCode = Integer.valueOf(activityOfferingItem.getInstituteCode());
@@ -655,6 +651,14 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
     protected List<ActivityOfferingItem> getActivityOfferingItems(CourseInfo course, List<CourseOfferingInfo> courseOfferingInfoList, String termId, Map<String, String> planItemMap) {
 
+        List<String> plannedSections = new ArrayList<String>();
+        if (planItemMap != null) {
+            for (Map.Entry<String, String> entry : planItemMap.entrySet()) {
+                if (entry.getKey().startsWith(course.getCode())) {
+                    plannedSections.add(entry.getKey());
+                }
+            }
+        }
         List<ActivityOfferingItem> activityOfferingItemList = new ArrayList<ActivityOfferingItem>();
 
         if (AtpHelper.getPublishedTerms().contains(termId)) {
@@ -680,8 +684,48 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                     }
                     ActivityOfferingItem activityOfferingItem = getActivityItem(aodi, courseInfo, openForPlanning, termId, planItemId);
                     activityOfferingItemList.add(activityOfferingItem);
+                    if (plannedSections.contains(planRefObjId)) {
+                        plannedSections.remove(planRefObjId);
+                    }
                 }
             }
+            //Sections withdrawn and planned are included in activities
+            for (String sec : plannedSections) {
+                YearTerm yearTerm = AtpHelper.atpToYearTerm(termId);
+                DeconstructedCourseCode deconstructedCourseCode = getCourseHelper().getCourseDivisionAndNumber(sec);
+                String activityOfferingId = getCourseHelper().joinStringsByDelimiter('=', yearTerm.getYearAsString(), yearTerm.getTermAsID(), deconstructedCourseCode.getSubject(), deconstructedCourseCode.getNumber(), deconstructedCourseCode.getSection());
+                ActivityOfferingDisplayInfo activityDisplayInfo = null;
+                try {
+                    activityDisplayInfo = getCourseOfferingService().getActivityOfferingDisplay(activityOfferingId, PlanConstants.CONTEXT_INFO);
+                } catch (Exception e) {
+                    logger.error("Could not retrieve ActivityOffering data for" + activityOfferingId, e);
+                    continue;
+                }
+                String primarySectionCode = null;
+                for (AttributeInfo attributeInfo : activityDisplayInfo.getAttributes()) {
+                    if ("PrimaryActivityOfferingCode".equalsIgnoreCase(attributeInfo.getKey())) {
+                        primarySectionCode = attributeInfo.getValue();
+                        break;
+                    }
+                }
+                String courseOfferingId = getCourseHelper().joinStringsByDelimiter('=', yearTerm.getYearAsString(), yearTerm.getTermAsID(), deconstructedCourseCode.getSubject(), deconstructedCourseCode.getNumber(), primarySectionCode);
+                CourseOfferingInfo courseOfferingInfo = null;
+                try {
+                    courseOfferingInfo = getCourseOfferingService().getCourseOffering(courseOfferingId, CourseSearchConstants.CONTEXT_INFO);
+                } catch (Exception e) {
+                    logger.error("Could not retrieve CourseOffering data for" + courseOfferingId, e);
+                    continue;
+                }
+                String planItemId = planItemMap.get(sec);
+                ActivityOfferingItem activityOfferingItem = getActivityItem(activityDisplayInfo, courseOfferingInfo, openForPlanning, termId, planItemId);
+                activityOfferingItemList.add(activityOfferingItem);
+            }
+            Collections.sort(activityOfferingItemList, new Comparator<ActivityOfferingItem>() {
+                @Override
+                public int compare(ActivityOfferingItem item1, ActivityOfferingItem item2) {
+                    return item1.getCode().compareTo(item2.getCode());
+                }
+            });
         }
 
         return activityOfferingItemList;
@@ -810,6 +854,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             }
 
         }
+        activity.setStateKey(displayInfo.getStateKey());
         activity.setInstructor(displayInfo.getInstructorName());
         activity.setHonorsSection(displayInfo.getIsHonorsOffering());
 

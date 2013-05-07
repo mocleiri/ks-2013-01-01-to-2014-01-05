@@ -37,6 +37,7 @@ public class ActivityOfferingItem {
     private String enrollEstimate;
     private String instructor;
     private String details;
+    private String stateKey;
 
     private boolean distanceLearning;
     private boolean honorsSection;
@@ -271,6 +272,14 @@ public class ActivityOfferingItem {
 
     public void setCourseId(String courseId) {
         this.courseId = courseId;
+    }
+
+    public String getStateKey() {
+        return stateKey;
+    }
+
+    public void setStateKey(String stateKey) {
+        this.stateKey = stateKey;
     }
 
 //    public boolean isStandalone() {

@@ -122,6 +122,8 @@
 
                                                                 <bean parent="activityEnrlRestr"/>
 
+                                                                <bean parent="activityEnrlStatus"/>
+
                                                                 <bean parent="activityEnrlData"/>
 
                                                                 <bean parent="activityActionButton" p:rowSpan="1"
@@ -217,6 +219,8 @@
                                                                             <bean parent="activityRegCode"/>
 
                                                                             <bean parent="activityEnrlRestr"/>
+
+                                                                            <bean parent="activityEnrlStatus"/>
 
                                                                             <bean parent="activityEnrlData"/>
 
