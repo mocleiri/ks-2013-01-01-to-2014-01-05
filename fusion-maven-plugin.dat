@@ -5,6 +5,6 @@ ks-core::enrollment_ks-core_branches_rice-2.3-m2-upgrade::795027912479c4c2f2d87a
 # module = ks-lum branch Path = enrollment/ks-lum/branches/rice-2.3-m2-upgrade revision = 47206
 ks-lum::enrollment_ks-lum_branches_rice-2.3-m2-upgrade::f6fa05c6340942b64551871ca68ecc3baa6405c0
 # module = ks-enroll branch Path = enrollment/ks-enroll/branches/rice-2.3-m2-upgrade revision = 47206
-ks-enroll::enrollment_ks-enroll_branches_rice-2.3-m2-upgrade::fdb25daae1cf11c236373b200d1ed65ad75a86bc
+ks-enroll::enrollment_ks-enroll_branches_rice-2.3-m2-upgrade::91e400d54da637ebcc7903afa4f5f7c0bb059cf1
 # module = ks-deployments branch Path = enrollment/ks-deployments/branches/rice-2.3-m2-upgrade revision = 47206
 ks-deployments::enrollment_ks-deployments_branches_rice-2.3-m2-upgrade::4f5f5c3d4d2f16444b2ebc3e8a6400bd67a8e991
