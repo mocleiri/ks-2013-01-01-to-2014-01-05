@@ -1,6 +1,8 @@
 When /^I copy an CO with AOs that have ADLs to a new CO in the different term with RDLs in its AOs$/ do
-  #TODO  use data object e.g. @course_offering = create CourseOffering, :term=> "201612", :course => "CHEM132", :create_from_existing=>(make CourseOffering, :term=> "201201", :course => "CHEM132")
-  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201205", :course => "ENGL221")
+  @source_term = "201212"
+  @target_term = Rollover::PUBLISHED_SOC_TERM
+  @catalogue_course_code = "ENGL222"
+  @course_offering = create CourseOffering, :term=> @target_term, :create_from_existing => (make CourseOffering, :term=> @source_term, :course => @catalogue_course_code)
 end
 
 Then /^The new CO and AOs are Successfully created$/ do
@@ -11,8 +13,7 @@ Then /^The new CO and AOs are Successfully created$/ do
 
   @new_total  = @ao_list.count
   @aos = [@ao_list[0]]
-  @inputVals = [@aos, "Draft"]
-  @aos_matched = @course_offering.ao_status(@inputVals)   #TODO: NB - ao_status method is updated
+  @aos_matched = @course_offering.get_aos_by_status(:ao_status => "Draft", :aos => @aos)
   if @aos_matched.length != 1
     raise "AO status is not Draft: ao_code: @course_offering.ao_list[0]"
   end
@@ -40,7 +41,7 @@ Then /^The new CO and AOs are Successfully created$/ do
 end
 
 And /^The ADLs are Successfully copied to RDLs in the new AOs of the newly created CO$/ do
-  @orig_course_offering = make CourseOffering, :term=> "201205", :course => "ENGL221"
+  @orig_course_offering = make CourseOffering, :term=> @source_term, :course => @catalogue_course_code
   @orig_course_offering.suffix=""
   @orig_course_offering.manage_and_init
 
@@ -52,10 +53,6 @@ And /^The ADLs are Successfully copied to RDLs in the new AOs of the newly creat
     page.actual_logistics_table.exists? == false
     page.view_requested_delivery_logistics
     @orig_schedule_set = page.requested_logistics_table.rows[1].text.split(' ').to_set
-  end
-
-  if @new_schedule_set.length < 8
-    raise "AO has no schedule copied: ao_code: @course_offering.ao_list[0]"
   end
 
   @result_set = @orig_schedule_set ^ @new_schedule_set
@@ -117,16 +114,5 @@ And /^The ADLs are Successfully copied as RDLs to the rolled over AOs$/ do
 
 end
 
-Given /^I am creating a new course offering$/ do
-  @source_term = "201201"
-  @target_term = "201401"
-  @catalogue_course_code = "ENGL222"
-#  set target term and course code
-  go_to_create_course_offerings
-  on CreateCourseOffering do |page|
-    page.target_term.set @target_term
-    page.catalogue_course_code.set @catalogue_course_code
-    page.show
-  end
-end
+
 

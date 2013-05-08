@@ -10,7 +10,6 @@
     Given I am logged in as a Schedule Coordinator
 
   Scenario: Copy ADLs from source AOs to RDLs of new AOs of different term when copying a Course Offering from a previous term
-    Given I am creating a new course offering
     When I copy an CO with AOs that have ADLs to a new CO in the different term with RDLs in its AOs
     Then The new CO and AOs are Successfully created
     And The ADLs are Successfully copied to RDLs in the new AOs of the newly created CO
