@@ -11,9 +11,9 @@ class PerformRollover < BasePage
   element(:target_term_input_div) { |b| b.frm.div(data_label: "Target Term")}
   action(:target_term_go) { |b| b.target_term_input_div.button(text: "Go").click; b.loading.wait_while_present }
 
-  value(:target_term_code) { |b| b.frm.div(data_label: "Term Code").span(index: 2).text }
-  value(:target_term_start_date) { |b| b.frm.div(data_label: "Term Start Date").span(index: 2).text }
-  value(:target_term_end_date) { |b| b.frm.div(data_label: "Term End Date").span(index: 2).text }
+  value(:target_term_code) { |b| b.frm.div(data_label: "Term Code", index: 1).span(index: 2).text }
+  value(:target_term_start_date) { |b| b.frm.div(data_label: "Term Start Date", index: 1).span(index: 2).text }
+  value(:target_term_end_date) { |b| b.frm.div(data_label: "Term End Date", index: 1).span(index: 2).text }
 
   element(:target_term_validation_msg_list)  { |b| b.target_term_input_div.div(class: "uif-validationMessages uif-groupValidationMessages").ul }
   value(:target_term_first_validation_msg) { |b| b.target_term_validation_msg_list.link.text }
@@ -25,9 +25,9 @@ class PerformRollover < BasePage
   element(:source_term_validation_msg_list)  { |b| b.source_term_input_div.div(class: "uif-validationMessages uif-groupValidationMessages").ul }
   value(:source_term_first_validation_msg) { |b| b.source_term_validation_msg_list.link.text }
 
-  value(:source_term_code) { |b| b.frm.div(data_label: "Term Code", index: 1).span(index: 2).text }
-  value(:source_term_start_date) { |b| b.frm.div(data_label: "Term Start Date", index: 1).span(index: 2).text }
-  value(:source_term_end_date) { |b| b.frm.div(data_label: "Term End Date", index: 1).span(index: 2).text }
+  value(:source_term_code) { |b| b.frm.div(data_label: "Term Code", index: 0).span(index: 2).text }
+  value(:source_term_start_date) { |b| b.frm.div(data_label: "Term Start Date", index: 0).span(index: 2).text }
+  value(:source_term_end_date) { |b| b.frm.div(data_label: "Term End Date", index: 0).span(index: 2).text }
 
   element(:rollover_button) { |b| b.frm.button(text: /Rollover/) }
 
@@ -39,8 +39,11 @@ class PerformRollover < BasePage
 # looks for next available target term in the one specified is used (if select_next_available_term = true, default is false) - returns actual target term code used
   def select_terms(m_target_term,m_source_term,select_next_available_term = false)
     actual_target_term = m_target_term
-    set_target_term(actual_target_term)
     source_term.set m_source_term
+    source_term_go
+    loading.wait_while_present
+
+    set_target_term(actual_target_term)
     retry_ctr = 0
 
     if select_next_available_term then
@@ -51,8 +54,7 @@ class PerformRollover < BasePage
       end
     end
 
-    source_term_go
-    loading.wait_while_present
+
     actual_target_term
   end
 

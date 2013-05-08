@@ -62,8 +62,8 @@ class Rollover
     go_to_perform_rollover
     on PerformRollover do |page|
       @target_term = page.select_terms(@target_term,@source_term)
-      raise "source_term_code issue" unless  page.source_term_code == @source_term
-      raise "target_term_code issue" unless  page.target_term_code == @target_term
+      raise "source_term_code issue: #{page.source_term_code}" unless  page.source_term_code == @source_term
+      raise "target_term_code issue: #{page.target_term_code}" unless  page.target_term_code == @target_term
 
       puts "Rollover initiated - source term: #{@source_term}"
       puts "Rollover initiated - target term: #{@target_term}"
