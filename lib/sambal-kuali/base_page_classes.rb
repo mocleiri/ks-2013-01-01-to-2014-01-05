@@ -325,7 +325,7 @@ module Holidays
   # Returns a random item from the list of holidays
   def select_random_holiday
     holidays = []
-    wait_until { holiday_type.enabled? }
+    #wait_until { holiday_type.enabled? }
     sleep 10
     holiday_type.options.each { |opt| holidays << opt.text }
     holidays.delete_if { |item| item == "Select holiday type" }
