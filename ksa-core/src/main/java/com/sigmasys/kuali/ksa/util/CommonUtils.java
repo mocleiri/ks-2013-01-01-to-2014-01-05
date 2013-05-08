@@ -25,6 +25,10 @@ public class CommonUtils {
     private CommonUtils() {
     }
 
+    public static long generateUuid() {
+        return Math.abs(new Random(System.currentTimeMillis()).nextLong());
+    }
+
     public static Properties getProperties(String name, Class<?> clazz) {
         try {
             Properties props = new Properties();

@@ -146,8 +146,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
     }
 
     private BigInteger generateBatchId() {
-        long randomLong = Math.abs(new Random(System.currentTimeMillis()).nextLong());
-        return BigInteger.valueOf(randomLong);
+        return BigInteger.valueOf(CommonUtils.generateUuid());
     }
 
     protected String convertGlTransmissionsToXml(List<GlTransmission> glTransmissions) {

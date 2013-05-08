@@ -209,4 +209,17 @@ public interface AccountService {
      */
     void updateAccount(Account account, String password);
 
+    /**
+     * Creates the user account in both places - KSA and KIM
+     *
+     * @param account        Account instance to be created
+     * @param defaultName    Default PersonName
+     * @param defaultAddress Default PersonAddress
+     * @param defaultContact Default ElectronicContact
+     * @param password       User password
+     * @return Account instance
+     */
+    Account createAccount(Account account, PersonName defaultName, PostalAddress defaultAddress,
+                          ElectronicContact defaultContact, String password);
+
 }

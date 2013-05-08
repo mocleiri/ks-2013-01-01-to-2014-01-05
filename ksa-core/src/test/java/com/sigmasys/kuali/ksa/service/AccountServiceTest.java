@@ -411,4 +411,50 @@ public class AccountServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void createAccount() {
+
+        String userId = "_admin5";
+        String password = "_admin123";
+
+        PersonName name = new PersonName();
+        name.setFirstName("Mario");
+        name.setLastName("Morris");
+        name.setTitle("Mr.");
+        name.setKimNameType("PRFR");
+        name.setMiddleName("L");
+        name.setSuffix("Jr.");
+        name.setDefault(true);
+
+        PostalAddress address = new PostalAddress();
+        address.setStreetAddress1("1500");
+        address.setStreetAddress2("Mass ave");
+        address.setStreetAddress3("#37");
+        address.setCity("Washington");
+        address.setState("DC");
+        address.setPostalCode("20005");
+        address.setCountry("USA");
+        address.setDefault(true);
+
+        ElectronicContact contact = new ElectronicContact();
+        contact.setPhoneNumber("202-245-0988");
+        contact.setPhoneExtension("457");
+        contact.setPhoneCountry("US");
+        contact.setEmailAddress("admin5@test.edu");
+        contact.setKimEmailAddressType("WRK");
+        contact.setKimPhoneType("WRK");
+        contact.setDefault(true);
+
+        Account account = new DirectChargeAccount();
+        account.setId(userId);
+        account.setAbleToAuthenticate(true);
+        account.setKimAccount(true);
+
+        account = accountService.createAccount(account, name, address, contact, password);
+
+        // TODO - Add assertions
+
+
+    }
+
 }

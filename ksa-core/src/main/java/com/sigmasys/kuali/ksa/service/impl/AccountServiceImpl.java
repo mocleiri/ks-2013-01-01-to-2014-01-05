@@ -11,16 +11,25 @@ import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.jaxb.Ach;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
+import com.sigmasys.kuali.ksa.util.CommonUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.wsdl.http.AddressType;
+import org.kuali.rice.kim.api.identity.CodedAttribute;
 import org.kuali.rice.kim.api.identity.IdentityService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kim.api.identity.address.EntityAddress;
+import org.kuali.rice.kim.api.identity.email.EntityEmail;
+import org.kuali.rice.kim.api.identity.entity.Entity;
+import org.kuali.rice.kim.api.identity.name.EntityName;
+import org.kuali.rice.kim.api.identity.phone.EntityPhone;
 import org.kuali.rice.kim.api.identity.principal.Principal;
+import org.kuali.rice.kim.api.identity.type.EntityTypeContactInfo;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kim.impl.identity.address.EntityAddressBo;
 import org.kuali.rice.kim.impl.identity.email.EntityEmailBo;
@@ -1035,9 +1044,263 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         return boService.findByPrimaryKey(EntityBo.class, Collections.singletonMap("id", entityId));
     }
 
+    protected void updateKimAccount(Account account, String password) {
+
+        final Date currentDate = new Date();
+        final Timestamp timestamp = new Timestamp(currentDate.getTime());
+
+        IdentityService identityService = KimApiServiceLocator.getIdentityService();
+        BusinessObjectService boService = KRADServiceLocator.getBusinessObjectService();
+
+        Principal principal = identityService.getPrincipal(account.getId());
+        if (principal == null) {
+            String errMsg = "Principal does not exist, Account ID = " + account.getId();
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        PrincipalBo principalBo = PrincipalBo.from(principal);
+        principalBo.setPassword(password);
+
+        // Persisting PrincipalBo
+        boService.save(principalBo);
+
+        EntityBo entity = getEntityBo(principal.getEntityId());
+
+        // TODO: Saving only default ones? if not, how to merge their lists and our sets?
+
+        PersonName personName = account.getDefaultPersonName();
+        if (personName != null) {
+            List<EntityNameBo> names = entity.getNames();
+            if (CollectionUtils.isNotEmpty(names)) {
+                for (EntityNameBo name : names) {
+                    if (name.isActive()) {
+                        name.setDefaultValue(personName.isDefault());
+                        name.setFirstName(personName.getFirstName());
+                        name.setMiddleName(personName.getMiddleName());
+                        name.setLastName(personName.getLastName());
+                        name.setNameChangedDate(timestamp);
+                        name.setNameTitle(personName.getTitle());
+                        name.setNameSuffix(personName.getSuffix());
+                        // Persisting EntityNameBo
+                        boService.save(name);
+                        personName.setKimNameType(name.getNameCode());
+                        persistEntity(personName);
+                        break;
+                    }
+                }
+            }
+        }
+
+        List<EntityTypeContactInfoBo> contactInfos = entity.getEntityTypeContactInfos();
+        if (CollectionUtils.isNotEmpty(contactInfos)) {
+            for (EntityTypeContactInfoBo contactInfo : contactInfos) {
+                if (contactInfo.isActive()) {
+                    EntityAddressBo address = contactInfo.getDefaultAddress();
+                    if (address != null) {
+                        PostalAddress postalAddress = account.getDefaultPostalAddress();
+                        if (postalAddress != null) {
+                            address.setPostalCode(postalAddress.getPostalCode());
+                            address.setCountryCode(postalAddress.getCountry());
+                            address.setStateProvinceCode(postalAddress.getState());
+                            address.setCity(postalAddress.getCity());
+                            address.setLine1(postalAddress.getStreetAddress1());
+                            address.setLine2(postalAddress.getStreetAddress2());
+                            address.setLine3(postalAddress.getStreetAddress3());
+                            address.setDefaultValue(postalAddress.isDefault());
+                            address.setModifiedDate(timestamp);
+                            // Saving EntityAddressBo
+                            boService.save(address);
+                            postalAddress.setKimAddressType(address.getAddressTypeCode());
+                            persistEntity(postalAddress);
+                        }
+                    }
+                    ElectronicContact contact = account.getDefaultElectronicContact();
+                    if (contact != null) {
+                        EntityPhoneBo phone = contactInfo.getDefaultPhoneNumber();
+                        if (phone != null) {
+                            phone.setCountryCode(contact.getPhoneCountry());
+                            phone.setPhoneNumber(contact.getPhoneNumber());
+                            phone.setExtensionNumber(contact.getPhoneExtension());
+                            phone.setDefaultValue(contact.isDefault());
+                            // Saving EntityPhoneBo
+                            boService.save(phone);
+                            contact.setKimPhoneType(phone.getPhoneTypeCode());
+                        }
+                        EntityEmailBo email = contactInfo.getDefaultEmailAddress();
+                        if (email != null) {
+                            email.setEmailAddress(contact.getEmailAddress());
+                            email.setDefaultValue(contact.isDefault());
+                            // Saving  EntityEmailBo
+                            boService.save(email);
+                            contact.setKimEmailAddressType(email.getEmailTypeCode());
+                        }
+                        if (phone != null || email != null) {
+                            persistEntity(contact);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+    }
+
+    protected void createKimAccount(Account account, PersonName name, PostalAddress address, ElectronicContact contact,
+                                    String password) {
+
+        final String ENTITY_TYPE_CODE = "PERSON";
+        final String DEFAULT_NAME_TYPE = "PRM";
+        final String DEFAULT_ADDRESS_TYPE = "HM";
+
+        final String entityId = String.valueOf(CommonUtils.generateUuid());
+
+        IdentityService identityService = KimApiServiceLocator.getIdentityService();
+        BusinessObjectService boService = KRADServiceLocator.getBusinessObjectService();
+
+        // Creating EntityBuilder
+        Entity.Builder entityBuilder = Entity.Builder.create();
+
+        entityBuilder.setId(entityId);
+        entityBuilder.setObjectId(entityId);
+        entityBuilder.setActive(true);
+        entityBuilder.setVersionNumber(1L);
+        entityBuilder.setEntityTypes(Arrays.asList(EntityTypeContactInfo.Builder.create(entityId, ENTITY_TYPE_CODE)));
+
+        // Creating KIM Entity
+        Entity entity = identityService.createEntity(entityBuilder.build());
+
+        // Creating Principal Builder
+        Principal.Builder principalBuilder = Principal.Builder.create(account.getId());
+        principalBuilder.setPrincipalId(account.getId());
+        principalBuilder.setEntityId(entity.getId());
+        principalBuilder.setObjectId(entity.getObjectId());
+        principalBuilder.setActive(true);
+        principalBuilder.setVersionNumber(1L);
+
+        // Building Principle, converting it to PrincipalBo and setting the new password
+        PrincipalBo principalBo = PrincipalBo.from(principalBuilder.build());
+
+        // This seems to be the only way to set password for Principal
+        principalBo.setPassword(password);
+
+        // Persisting PrincipalBo
+        boService.save(principalBo);
+
+        // Creating EntityName Builder
+        EntityName.Builder entityNameBuilder = EntityName.Builder.create(String.valueOf(CommonUtils.generateUuid()),
+                entity.getId(), name.getFirstName(), name.getLastName(), false);
+        entityNameBuilder.setMiddleName(name.getMiddleName());
+        entityNameBuilder.setNameTitle(name.getTitle());
+        entityNameBuilder.setNameSuffix(name.getSuffix());
+
+        String nameTypeCode = name.getKimNameType();
+        if (StringUtils.isBlank(nameTypeCode)) {
+            nameTypeCode = DEFAULT_NAME_TYPE;
+        }
+
+        CodedAttribute nameType = identityService.getNameType(nameTypeCode);
+
+        entityNameBuilder.setNameType(CodedAttribute.Builder.create(nameType));
+
+        entityNameBuilder.setObjectId(entity.getId());
+        entityNameBuilder.setDefaultValue(name.isDefault());
+        entityNameBuilder.setActive(true);
+        entityNameBuilder.setVersionNumber(1L);
+
+        // Adding EntityName to Entity
+        identityService.addNameToEntity(entityNameBuilder.build());
+
+        // Creating EntityAddress Builder
+        EntityAddress.Builder entityAddressBuilder = EntityAddress.Builder.create();
+        entityAddressBuilder.setId(String.valueOf(CommonUtils.generateUuid()));
+        entityAddressBuilder.setEntityId(entity.getId());
+        entityAddressBuilder.setLine1(address.getStreetAddress1());
+        entityAddressBuilder.setLine2(address.getStreetAddress2());
+        entityAddressBuilder.setLine3(address.getStreetAddress3());
+        entityAddressBuilder.setCity(address.getCity());
+        entityAddressBuilder.setStateProvinceCode(address.getState());
+        entityAddressBuilder.setPostalCode(address.getPostalCode());
+
+        String countryCode = address.getCountry();
+        if (countryCode != null && countryCode.length() > 2) {
+            countryCode = countryCode.substring(0, 2);
+        }
+        entityAddressBuilder.setCountryCode(countryCode);
+
+        entityAddressBuilder.setEntityTypeCode(ENTITY_TYPE_CODE);
+
+        String addressTypeCode = address.getKimAddressType();
+        if (StringUtils.isBlank(addressTypeCode)) {
+            addressTypeCode = DEFAULT_ADDRESS_TYPE;
+        }
+
+        CodedAttribute addressType = identityService.getAddressType(addressTypeCode);
+
+        entityAddressBuilder.setAddressType(CodedAttribute.Builder.create(addressType));
+        entityAddressBuilder.setDefaultValue(address.isDefault());
+        entityAddressBuilder.setActive(true);
+        entityAddressBuilder.setVersionNumber(1L);
+
+        // Adding EntityAddress to Entity
+        identityService.addAddressToEntity(entityAddressBuilder.build());
+
+        // Creating EntityEmail Builder
+        EntityEmail.Builder entityEmailBuilder = EntityEmail.Builder.create();
+        entityEmailBuilder.setId(String.valueOf(CommonUtils.generateUuid()));
+        entityEmailBuilder.setEntityId(entity.getId());
+        entityEmailBuilder.setEntityTypeCode(ENTITY_TYPE_CODE);
+
+        String emailTypeCode = contact.getKimEmailAddressType();
+        if (StringUtils.isBlank(emailTypeCode)) {
+            emailTypeCode = DEFAULT_ADDRESS_TYPE;
+        }
+
+        CodedAttribute emailType = identityService.getEmailType(emailTypeCode);
+
+        entityEmailBuilder.setEmailType(CodedAttribute.Builder.create(emailType));
+        entityEmailBuilder.setDefaultValue(contact.isDefault());
+        entityEmailBuilder.setActive(true);
+        entityEmailBuilder.setVersionNumber(1L);
+
+        // Adding EntityEmail to Entity
+        identityService.addEmailToEntity(entityEmailBuilder.build());
+
+        // Creating EntityPhone Builder
+        EntityPhone.Builder entityPhoneBuilder = EntityPhone.Builder.create();
+        entityPhoneBuilder.setId(String.valueOf(CommonUtils.generateUuid()));
+        entityPhoneBuilder.setEntityId(entity.getId());
+        entityPhoneBuilder.setPhoneNumber(contact.getPhoneNumber());
+        entityPhoneBuilder.setExtensionNumber(contact.getPhoneExtension());
+
+        countryCode = contact.getPhoneCountry();
+        if (countryCode != null && countryCode.length() > 2) {
+            countryCode = countryCode.substring(0, 2);
+        }
+        entityPhoneBuilder.setCountryCode(countryCode);
+
+        entityPhoneBuilder.setEntityTypeCode(ENTITY_TYPE_CODE);
+
+        String phoneTypeCode = contact.getKimPhoneType();
+        if (StringUtils.isBlank(phoneTypeCode)) {
+            phoneTypeCode = DEFAULT_ADDRESS_TYPE;
+        }
+
+        CodedAttribute phoneType = identityService.getPhoneType(phoneTypeCode);
+
+        entityPhoneBuilder.setPhoneType(CodedAttribute.Builder.create(phoneType));
+        entityPhoneBuilder.setDefaultValue(true);
+        entityPhoneBuilder.setActive(true);
+        entityPhoneBuilder.setVersionNumber(1L);
+
+        // Adding EntityPhone to Entity
+        identityService.addPhoneToEntity(entityPhoneBuilder.build());
+
+    }
+
 
     /**
-     * Updates the KSA account in both places - KSA and KIM
+     * Updates the user account in both places - KSA and KIM
      *
      * @param account  Account instance to be updated
      * @param password User password
@@ -1048,115 +1311,59 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
+        if (!ksaAccountExists(account.getId())) {
+            String errMsg = "Account '" + account.getId() + "' does not exist";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
         if (StringUtils.isBlank(password)) {
             String errMsg = "Password cannot be empty, Account ID = " + account.getId();
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
 
-
-        final Date currentDate = new Date();
-        final Timestamp timestamp = new Timestamp(currentDate.getTime());
+        persistEntity(account);
 
         if (account.isKimAccount()) {
+            updateKimAccount(account, password);
+        }
+    }
 
-            IdentityService identityService = KimApiServiceLocator.getIdentityService();
-            BusinessObjectService boService = KRADServiceLocator.getBusinessObjectService();
+    /**
+     * Creates the user account in both places - KSA and KIM
+     *
+     * @param account        Account instance to be created
+     * @param defaultName    Default PersonName
+     * @param defaultAddress Default PersonAddress
+     * @param defaultContact Default ElectronicContact
+     * @param password       User password
+     * @return Account instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Account createAccount(Account account, PersonName defaultName, PostalAddress defaultAddress,
+                                 ElectronicContact defaultContact, String password) {
 
-            Principal principal = identityService.getPrincipal(account.getId());
-            if (principal == null) {
-                String errMsg = "Principal does not exist, Account ID = " + account.getId();
-                logger.error(errMsg);
-                throw new IllegalStateException(errMsg);
-            }
+        PermissionUtils.checkPermission(Permission.CREATE_ACCOUNT);
 
-            PrincipalBo principalBo = PrincipalBo.from(principal);
-            principalBo.setPassword(password);
-
-            // Persisting PrincipalBo
-            boService.save(principalBo);
-
-            EntityBo entity = getEntityBo(principal.getEntityId());
-
-            // TODO: Saving only default ones? if not, how to merge their lists and our sets?
-
-            PersonName personName = account.getDefaultPersonName();
-            if (personName != null) {
-                List<EntityNameBo> names = entity.getNames();
-                if (CollectionUtils.isNotEmpty(names)) {
-                    for (EntityNameBo name : names) {
-                        if (name.isActive()) {
-                            name.setDefaultValue(personName.isDefault());
-                            name.setFirstName(personName.getFirstName());
-                            name.setMiddleName(personName.getMiddleName());
-                            name.setLastName(personName.getLastName());
-                            name.setNameChangedDate(timestamp);
-                            name.setNameTitle(personName.getTitle());
-                            name.setNameSuffix(personName.getSuffix());
-                            // Persisting EntityNameBo
-                            boService.save(name);
-                            personName.setKimNameType(name.getNameCode());
-                            persistEntity(personName);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            List<EntityTypeContactInfoBo> contactInfos = entity.getEntityTypeContactInfos();
-            if (CollectionUtils.isNotEmpty(contactInfos)) {
-                for (EntityTypeContactInfoBo contactInfo : contactInfos) {
-                    if (contactInfo.isActive()) {
-                        EntityAddressBo address = contactInfo.getDefaultAddress();
-                        if (address != null) {
-                            PostalAddress postalAddress = account.getDefaultPostalAddress();
-                            if (postalAddress != null) {
-                                address.setPostalCode(postalAddress.getPostalCode());
-                                address.setCountryCode(postalAddress.getCountry());
-                                address.setStateProvinceCode(postalAddress.getState());
-                                address.setCity(postalAddress.getCity());
-                                address.setLine1(postalAddress.getStreetAddress1());
-                                address.setLine2(postalAddress.getStreetAddress2());
-                                address.setLine3(postalAddress.getStreetAddress3());
-                                address.setDefaultValue(postalAddress.isDefault());
-                                address.setModifiedDate(timestamp);
-                                // Saving EntityAddressBo
-                                boService.save(address);
-                                postalAddress.setKimAddressType(address.getAddressTypeCode());
-                                persistEntity(postalAddress);
-                            }
-                        }
-                        ElectronicContact contact = account.getDefaultElectronicContact();
-                        if (contact != null) {
-                            EntityPhoneBo phone = contactInfo.getDefaultPhoneNumber();
-                            if (phone != null) {
-                                phone.setCountryCode(contact.getPhoneCountry());
-                                phone.setPhoneNumber(contact.getPhoneNumber());
-                                phone.setExtensionNumber(contact.getPhoneExtension());
-                                phone.setDefaultValue(contact.isDefault());
-                                // Saving EntityPhoneBo
-                                boService.save(phone);
-                                contact.setKimPhoneType(phone.getPhoneTypeCode());
-                            }
-                            EntityEmailBo email = contactInfo.getDefaultEmailAddress();
-                            if (email != null) {
-                                email.setEmailAddress(contact.getEmailAddress());
-                                email.setDefaultValue(contact.isDefault());
-                                // Saving  EntityEmailBo
-                                boService.save(email);
-                                contact.setKimEmailAddressType(email.getEmailTypeCode());
-                            }
-                            if (phone != null || email != null) {
-                                persistEntity(contact);
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
+        if (StringUtils.isBlank(password)) {
+            String errMsg = "Password cannot be empty";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
         }
 
         persistEntity(account);
+
+        addPersonName(account.getId(), defaultName);
+        addPostalAddress(account.getId(), defaultAddress);
+        addElectronicContact(account.getId(), defaultContact);
+
+        if (account.isKimAccount()) {
+            createKimAccount(account, defaultName, defaultAddress, defaultContact, password);
+        }
+
+        return account;
     }
 
 
