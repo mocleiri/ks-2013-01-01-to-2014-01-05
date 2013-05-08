@@ -58,7 +58,7 @@ Feature: KRMS Edit Agenda
     And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I enter "ENGL101" in the "course" field
     And I click the "Preview Change" button
-    And I click the "Logic" tab
+    And I click the "Edit Rule Logic" tab
     Then the text "A(B AND G AND C(D OR E) AND F)" should be present in the text area
     And the preview section should have the text "G. Must have successfully completed ENGL101"
     And the word "AND" should exist before node "G"
@@ -147,7 +147,7 @@ Feature: KRMS Edit Agenda
     And node "G" should be after node "F"
 
   #ELIG9.7.2.EB2 (KSENROLL-5861)
-  @pending
+  @bug @KSENROLL-6609
   Scenario: The newly created group should be visible in the Edit with Logic tab
     When I go to the Manage Course Offering Agendas page for "ELIG9.7.2.EB1 (KSENROLL-5861)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -345,7 +345,7 @@ Feature: KRMS Edit Agenda
     And I click on the "Manage Rules" link on Manage CO page
 
   #ELIG9.10.2.EB1 (KSENROLL-6335)
-  @bug @KSENROLL-?
+  @bug @KSENROLL-6788
   Scenario: Confirm that the Copy and Paste buttons works as expected
     When I go to the Manage Course Offering Agendas page for "ELIG9.10.2.EB1 (KSENROLL-6335)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -354,13 +354,13 @@ Feature: KRMS Edit Agenda
     And I click the "Copy" button
     And I select node "B" in the tree
     And I click the "Paste" button
-    Then there should be a new node with text "G. Some free text goes here."
-    And there should be a dropdown with value "AND" before node "G."
+    Then there should be a new node with text "E. Permission of instructor required"
+    And there should be a dropdown with value "AND" before node "E."
     And I click the "Edit Rule Logic" tab
-    Then the text "A(B AND G AND C(D OR E) AND F)" should be present in the text area
+    Then the text "A(B(C OR D) AND E)" should be present in the text area
 
   #ELIG9.10.2.EB2 (KSENROLL-6335)
-  @pending
+  @bug @KSENROLL-6788
   Scenario: Confirm that the Update Rule after Copy & Paste loads the Agenda Maintenance page
     When I go to the Manage Course Offering Agendas page for "ELIG9.10.2.EB2 (KSENROLL-6335)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -373,7 +373,7 @@ Feature: KRMS Edit Agenda
     Then the loaded page should have "Enrollment Eligibility" as a heading
 
   #ELIG9.10.2.EB3 (KSENROLL-6335)
-  @bug @KSENROLL-?
+  @bug @KSENROLL-6788
   Scenario: Confirm that the Submit button persists the data after Copy & Paste
     When I go to the Manage Course Offering Agendas page for "ELIG9.10.2.EB3 (KSENROLL-6335)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -387,10 +387,10 @@ Feature: KRMS Edit Agenda
     And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page for ""
     And I click on the "Student Eligibility & Prerequisite" section
-    Then the new node "Some free text goes here." should be between two "AND" operators
+    Then the new node "Permission of instructor required" should be after an "AND" operator
 
   #ELIG9.10.3.EB1 (KSENROLL-6336)
-  @bug @KSENROLL-?
+  @bug @KSENROLL-6789
   Scenario: Confirm that the Cut and Paste buttons works as expected
     When I go to the Manage Course Offering Agendas page for "ELIG9.10.3.EB1 (KSENROLL-6336)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -399,10 +399,10 @@ Feature: KRMS Edit Agenda
     And I click the "Cut" button
     And I select node "B" in the tree
     And I click the "Paste" button
-    Then there should be a new node with text "D. Some free text goes here."
+    Then there should be a new node with text "D. Permission of instructor required"
     And there should be a dropdown with value "AND" before node "D."
     And I click the "Edit Rule Logic" tab
-    Then the text "A(B AND D AND C(E) AND F)" should be present in the text area
+    Then the text "A(B(C) AND D)" should be present in the text area
 
   #ELIG9.10.3.EB2 (KSENROLL-6336)
   @pending
@@ -418,7 +418,7 @@ Feature: KRMS Edit Agenda
     Then the loaded page should have "Enrollment Eligibility" as a heading
 
   #ELIG9.10.3.EB3 (KSENROLL-6336)
-  @bug @KSENROLL-?
+  @bug @KSENROLL-6789
   Scenario: Confirm that the Submit button persists the data after Cut & Paste
     When I go to the Manage Course Offering Agendas page for "ELIG9.10.3.EB3 (KSENROLL-6336)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -432,10 +432,10 @@ Feature: KRMS Edit Agenda
     And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page for ""
     And I click on the "Student Eligibility & Prerequisite" section
-    Then the new node "Some free text goes here." should be between two "AND" operators
+    Then the new node "Permission of instructor required" should be after an "AND" operator
 
   #ELIG9.10.4.EB1 (KSENROLL-6337)
-  @bug @KSENROLL-?
+  @bug @KSENROLL-6485 @KSENROLL-6609
   Scenario: Confirm that the Delete button works as expected
     When I go to the Manage Course Offering Agendas page for "ELIG9.10.4.EB1 (KSENROLL-6337)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -444,10 +444,10 @@ Feature: KRMS Edit Agenda
     And I click the "Delete" button
     Then there should be no node with letter "D."
     And I click the "Edit Rule Logic" tab
-    Then the text "A(B AND C(E) AND F)" should be present in the text area
+    Then the text "A(B(C))" should be present in the text area
 
   #ELIG9.10.4.EB2 (KSENROLL-6337)
-  @pending
+  @bug @KSENROLL-6485 @KSENROLL-6609
   Scenario: Confirm that the Update Rule after Delete loads the Agenda Maintenance page
     When I go to the Manage Course Offering Agendas page for "ELIG9.10.4.EB2 (KSENROLL-6337)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -458,7 +458,7 @@ Feature: KRMS Edit Agenda
     Then the loaded page should have "Enrollment Eligibility" as a heading
 
   #ELIG9.10.4.EB3 (KSENROLL-6337)
-  @bug @KSENROLL-?
+  @bug @KSENROLL-6485 @KSENROLL-6609
   Scenario: Confirm that the Submit button persists the data after Delete
     When I go to the Manage Course Offering Agendas page for "ELIG9.10.4.EB2 (KSENROLL-6337)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -504,7 +504,7 @@ Feature: KRMS Edit Agenda
     When I go to the Manage Course Offering Agendas page for "KSENROLL-6389"
     And I click on the "Antirequisite" section
     And I click on the "Add Rule" link
-    And I click on the "Compare to Original" link on the Edit Agenda page
+    And I click on the "Compare to Canonical" link on the Edit Agenda page
     Then the old and new rule should be compared
 
   #KSENROLL-6387
@@ -569,5 +569,5 @@ Feature: KRMS Edit Agenda
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
-    And I click on the "Compare to Original" link on the Edit Agenda page
+    And I click on the "Compare to Canonical" link on the Edit Agenda page
     Then the old and new rule should be compared

@@ -28,10 +28,10 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I select the "Must have successfully completed <course>" option from the "rule" dropdown
     And I search for the "course code" "ENGL101"
     And I click the "Preview Change" button
-    And I click the "Logic" tab
-    Then the text "A(B AND G AND C(D OR E) AND F)" should be present in the text area
-    And the preview section should have the text "G. Must have successfully completed ENGL101"
-    And the word "AND" should exist before node "G"
+    And I click the "Edit Rule Logic" tab
+    Then the text "A(B(C OR D) AND E)" should be present in the text area
+    And the preview section should have the text "E. Must have successfully completed ENGL101"
+    And the word "AND" should exist before node "E"
 
   #ELIG9.7.1.EB1 (KSENROLL-5777)
   @bug @KSENROLL-6483
@@ -70,10 +70,10 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I click the "Preview Change" button
     And I select "OR" from the dropdown before node "2"
     And I click the "Edit Rule Logic" tab
-    Then the text "A(B OR H OR G OR C(D OR E) OR F)" should be present in the text area
+    Then the text "A(B(C OR D) AND F AND E)" should be present in the text area
 
   #ELIG9.7.3.EB1 (KSENROLL-6308)
-  @bug @KSENROLL-6483
+  @bug @KSENROLL-6609
   Scenario: AS - Confirm changes to the tree is shown in the sections of the Logic tab
     When I go to the Manage Course Offering Agendas page for "ELIG9.7.3.EB1 (KSENROLL-6308)"
     And I click on the "Student Eligibility & Prerequisite" section
@@ -87,12 +87,12 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
-    And I select node "B" in the tree
+    And I select node "E" in the tree
     And I click the "Add Parent" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Text" in the "free form text" field
     And I click the "Preview Change" button
-    And I select node "I" in the tree
+    And I select node "E" in the tree
     And I click the "Move Down" button
     And I select node "F" in the tree
     And I click the "Move Up" button

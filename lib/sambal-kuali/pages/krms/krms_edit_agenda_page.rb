@@ -7,8 +7,8 @@ class EditAgenda < BasePage
 
   element(:rule_maintenance_section) { |b| b.frm.div(id: "KRMS-RuleMaintenance-Page")}
   element(:edit_tree_section) { |b| b.frm.div(id: "RuleStudentEditorView-Tree_tree")}
-  element(:logic_tab_section) { |b| b.frm.div(id: "u438_boxLayout")}
-  element(:preview_tree_section) { |b| b.frm.div(id: "u466")}
+  element(:logic_tab_section) { |b| b.frm.div(id: "KS-EditWithLogic-EditGroup")}
+  element(:preview_tree_section) { |b| b.frm.div(id: "LogicPreview-Tree")}
   element(:compare_rule_section) { |b| b.frm.div(id: "compareRuleLightBox")}
   element(:preview_rule_section) { |b| b.frm.div(id: "KS-RulePreview-Links")}
 

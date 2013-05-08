@@ -205,10 +205,10 @@ When /^I go to the Main Menu from Manage CO Agendas$/ do
   end
 end
 
-Then /^the new node "(.*)" should be between two "(.*)" operators$/ do |node, operator|
+Then /^the new node "(.*)" should be after an "(.*)" operator$/ do |node, operator|
   on ManageCOAgendas do |page|
     page.loading.wait_while_present
-    page.preview_tree.text.should match /.*#{Regexp.escape(operator)}\n#{Regexp.escape(node)}\n#{Regexp.escape(operator)}.*/m
+    page.preview_tree.text.should match /.*#{Regexp.escape(operator)}\n#{Regexp.escape(node)}}.*/m
   end
 end
 

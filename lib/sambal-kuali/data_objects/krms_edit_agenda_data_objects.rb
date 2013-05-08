@@ -28,11 +28,9 @@ class EditAgendaData
     fields = {"course code"=>:lookup_course_code, "course title"=>:lookup_course_title}
     on EditAgenda do |page|
       page.search_link
-      sleep 2
-      page.send(fields[field]).set code
-      sleep 2
+      page.send(fields[field]).when_present.set code
       page.lookup_search_button
-      sleep 2
+      page.loading.wait_while_present
       if field == "course code"
         page.lookup_results.a(:href => /#{Regexp.escape(code)}/).click
       else
