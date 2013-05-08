@@ -1,4 +1,4 @@
-@wip
+@nightly
 Feature: Holiday Calendar CRED
 
   Background:
