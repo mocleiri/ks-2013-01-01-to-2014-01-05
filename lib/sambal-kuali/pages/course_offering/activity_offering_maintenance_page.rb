@@ -6,7 +6,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   element(:submit_button) { |b| b.frm.button(text: "submit") }
   action(:submit) { |b| b.submit_button.click; b.loading.wait_while_present(120) }
-  
+
   element(:activity_code) { |b| b.frm.text_field(name: "document.newMaintainableObject.dataObject.aoInfo.activityCode") }
 
   # Co-located
@@ -73,7 +73,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   ACTIONS = 7
 
   def edit_requested_delivery_logistics_row(row_num)
-    requested_logistics_table[row_num][7].link(text: "Edit").click
+    requested_logistics_table[row_num][ACTIONS].link(text: "Edit").click
   end
 
   def days_for_requested_delivery_logistics_row(row_num)

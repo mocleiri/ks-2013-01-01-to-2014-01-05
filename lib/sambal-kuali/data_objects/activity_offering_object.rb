@@ -316,7 +316,23 @@ class ActivityOffering
 
       end #END: edit_request_delivery_logistics
 
-      def edit_course_url opts={}
+  def change_rdl_days row_num
+    on ActivityOfferingMaintenance do |page|
+      page.view_requested_delivery_logistics
+      orig_days = page.get_requested_logistics_days(row_num).gsub!(/\s+/, "")
+      new_days = (orig_days=="SU")?"MWF":"SU"
+      page.edit_requested_delivery_logistics_row(row_num)
+      sleep 2
+      page.div(id: "rdl_days").text_field().set(new_days)
+      page.add_logistics_div.button(text: "Update").click
+      page.loading.wait_while_present
+      page.submit
+      return orig_days
+    end
+  end
+
+
+  def edit_course_url opts={}
 
         if opts[:course_url].nil?
           return nil
