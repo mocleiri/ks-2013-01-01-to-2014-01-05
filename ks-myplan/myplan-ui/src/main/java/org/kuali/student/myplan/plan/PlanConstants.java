@@ -68,10 +68,11 @@ public class PlanConstants extends AcademicPlanServiceConstants {
     public static final String COPY_DIALOG_PAGE = "copy_dialog_page";
     public static final String DELETE_DIALOG_PAGE = "plan_item_delete_page";
 
+    public static final String ACTIVE_STATE = "active";
     public static final String WITHDRAWN_STATE = "withdrawn";
     public static final String SUSPENDED_STATE = "suspended";
-    public static final String WITHDRAWN_ALERT = "Section(s) %s has been withdrawn.";
-    public static final String SUSPENDED_ALERT = "Section(s) %s has been suspended.";
+    public static final String WITHDRAWN_ALERT = "Section %s has been withdrawn.";
+    public static final String SUSPENDED_ALERT = "Section %s has been suspended.";
     public static final String COURSE_NOT_SCHEDULE_ALERT = "%s is not scheduled for %s. ";
     public static final String COURSE_SCHEDULE_ALERT = "%s is scheduled for %s. ";
 
