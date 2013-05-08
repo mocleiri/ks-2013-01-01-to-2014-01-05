@@ -152,4 +152,9 @@ public interface Constants {
     String MAIL_TLS_ENABLED = "ksa.mail.tls.enabled";
     String MAIL_ADDRESS_FROM = "ksa.mail.address.from";
 
+    // KIM API constants
+    String KIM_ENTITY_TYPE_CODE = "PERSON";
+    String KIM_DEFAULT_NAME_TYPE = "PRM";
+    String KIM_DEFAULT_ADDRESS_TYPE = "HM";
+
 }

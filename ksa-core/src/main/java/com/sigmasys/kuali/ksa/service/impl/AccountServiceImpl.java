@@ -18,7 +18,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.wsdl.http.AddressType;
 import org.kuali.rice.kim.api.identity.CodedAttribute;
 import org.kuali.rice.kim.api.identity.IdentityService;
 import org.kuali.rice.kim.api.identity.Person;
@@ -706,6 +705,10 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public PersonName addPersonName(String userId, PersonName personName) {
+        return addPersonName(userId, personName, true);
+    }
+
+    protected PersonName addPersonName(String userId, PersonName personName, boolean createKimName) {
 
         PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
@@ -736,6 +739,10 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         personNames.add(personName);
         account.setPersonNames(personNames);
 
+        if (createKimName && account.isKimAccount()) {
+            addKimPersonName(userId, personName);
+        }
+
         return personName;
     }
 
@@ -749,6 +756,10 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public PostalAddress addPostalAddress(String userId, PostalAddress postalAddress) {
+        return addPostalAddress(userId, postalAddress, true);
+    }
+
+    protected PostalAddress addPostalAddress(String userId, PostalAddress postalAddress, boolean createKimAddress) {
 
         PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
@@ -779,6 +790,10 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         addresses.add(postalAddress);
         account.setPostalAddresses(addresses);
 
+        if (createKimAddress && account.isKimAccount()) {
+            addKimPostalAddress(userId, postalAddress);
+        }
+
         return postalAddress;
     }
 
@@ -792,6 +807,10 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public ElectronicContact addElectronicContact(String userId, ElectronicContact electronicContact) {
+        return addElectronicContact(userId, electronicContact, true);
+    }
+
+    protected ElectronicContact addElectronicContact(String userId, ElectronicContact electronicContact, boolean createKimContact) {
 
         PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
@@ -822,8 +841,11 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         contacts.add(electronicContact);
         account.setElectronicContacts(contacts);
 
-        return electronicContact;
+        if (createKimContact && account.isKimAccount()) {
+            addKimElectronicContact(userId, electronicContact);
+        }
 
+        return electronicContact;
     }
 
     /**
@@ -1033,6 +1055,17 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         return temp.toArray(new String[temp.size()]);
     }
 
+    private Principal getPrincipal(String userId) {
+        IdentityService identityService = KimApiServiceLocator.getIdentityService();
+        Principal principal = identityService.getPrincipal(userId);
+        if (principal == null) {
+            String errMsg = "Principal does not exist, Account ID = " + userId;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+        return principal;
+    }
+
     /**
      * Retrieves KIM's EntityBo instance by entity ID.
      *
@@ -1044,20 +1077,162 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         return boService.findByPrimaryKey(EntityBo.class, Collections.singletonMap("id", entityId));
     }
 
+    protected void addKimPersonName(String userId, PersonName personName) {
+        addKimPersonName(getPrincipal(userId), personName);
+    }
+
+    protected void addKimPersonName(Principal principal, PersonName personName) {
+
+        // Creating EntityName Builder
+        EntityName.Builder entityNameBuilder = EntityName.Builder.create(
+                String.valueOf(CommonUtils.generateUuid()),
+                principal.getEntityId(),
+                personName.getFirstName(),
+                personName.getLastName(),
+                false);
+
+        entityNameBuilder.setMiddleName(personName.getMiddleName());
+        entityNameBuilder.setNameTitle(personName.getTitle());
+        entityNameBuilder.setNameSuffix(personName.getSuffix());
+
+        String nameTypeCode = personName.getKimNameType();
+        if (StringUtils.isBlank(nameTypeCode)) {
+            nameTypeCode = Constants.KIM_DEFAULT_NAME_TYPE;
+        }
+
+        IdentityService identityService = KimApiServiceLocator.getIdentityService();
+
+        CodedAttribute nameType = identityService.getNameType(nameTypeCode);
+
+        entityNameBuilder.setNameType(CodedAttribute.Builder.create(nameType));
+
+        entityNameBuilder.setObjectId(principal.getEntityId());
+        entityNameBuilder.setDefaultValue(personName.isDefault());
+        entityNameBuilder.setActive(true);
+        entityNameBuilder.setVersionNumber(1L);
+
+        // Adding EntityName to Entity
+        identityService.addNameToEntity(entityNameBuilder.build());
+    }
+
+    protected void addKimPostalAddress(String userId, PostalAddress postalAddress) {
+        addKimPostalAddress(getPrincipal(userId), postalAddress);
+    }
+
+    protected void addKimPostalAddress(Principal principal, PostalAddress postalAddress) {
+
+        // Creating EntityAddress Builder
+        EntityAddress.Builder entityAddressBuilder = EntityAddress.Builder.create();
+        entityAddressBuilder.setId(String.valueOf(CommonUtils.generateUuid()));
+        entityAddressBuilder.setEntityId(principal.getEntityId());
+        entityAddressBuilder.setLine1(postalAddress.getStreetAddress1());
+        entityAddressBuilder.setLine2(postalAddress.getStreetAddress2());
+        entityAddressBuilder.setLine3(postalAddress.getStreetAddress3());
+        entityAddressBuilder.setCity(postalAddress.getCity());
+
+        String stateCode = postalAddress.getState();
+        if (stateCode != null && stateCode.length() > 2) {
+            stateCode = stateCode.substring(0, 2);
+        }
+        entityAddressBuilder.setStateProvinceCode(stateCode);
+
+        entityAddressBuilder.setPostalCode(postalAddress.getPostalCode());
+
+        String countryCode = postalAddress.getCountry();
+        if (countryCode != null && countryCode.length() > 2) {
+            countryCode = countryCode.substring(0, 2);
+        }
+        entityAddressBuilder.setCountryCode(countryCode);
+
+        entityAddressBuilder.setEntityTypeCode(Constants.KIM_ENTITY_TYPE_CODE);
+
+        String addressTypeCode = postalAddress.getKimAddressType();
+        if (StringUtils.isBlank(addressTypeCode)) {
+            addressTypeCode = Constants.KIM_DEFAULT_ADDRESS_TYPE;
+        }
+
+        IdentityService identityService = KimApiServiceLocator.getIdentityService();
+
+        CodedAttribute addressType = identityService.getAddressType(addressTypeCode);
+
+        entityAddressBuilder.setAddressType(CodedAttribute.Builder.create(addressType));
+        entityAddressBuilder.setDefaultValue(postalAddress.isDefault());
+        entityAddressBuilder.setActive(true);
+        entityAddressBuilder.setVersionNumber(1L);
+
+        // Adding EntityAddress to Entity
+        identityService.addAddressToEntity(entityAddressBuilder.build());
+    }
+
+    protected void addKimElectronicContact(String userId, ElectronicContact contact) {
+        addKimElectronicContact(getPrincipal(userId), contact);
+    }
+
+    protected void addKimElectronicContact(Principal principal, ElectronicContact contact) {
+
+        // Creating EntityEmail Builder
+        EntityEmail.Builder entityEmailBuilder = EntityEmail.Builder.create();
+        entityEmailBuilder.setId(String.valueOf(CommonUtils.generateUuid()));
+        entityEmailBuilder.setEntityId(principal.getEntityId());
+        entityEmailBuilder.setEntityTypeCode(Constants.KIM_ENTITY_TYPE_CODE);
+
+        String emailTypeCode = contact.getKimEmailAddressType();
+        if (StringUtils.isBlank(emailTypeCode)) {
+            emailTypeCode = Constants.KIM_DEFAULT_ADDRESS_TYPE;
+        }
+
+        IdentityService identityService = KimApiServiceLocator.getIdentityService();
+
+        CodedAttribute emailType = identityService.getEmailType(emailTypeCode);
+
+        entityEmailBuilder.setEmailType(CodedAttribute.Builder.create(emailType));
+        entityEmailBuilder.setDefaultValue(contact.isDefault());
+        entityEmailBuilder.setActive(true);
+        entityEmailBuilder.setVersionNumber(1L);
+
+        // Adding EntityEmail to Entity
+        identityService.addEmailToEntity(entityEmailBuilder.build());
+
+        // Creating EntityPhone Builder
+        EntityPhone.Builder entityPhoneBuilder = EntityPhone.Builder.create();
+        entityPhoneBuilder.setId(String.valueOf(CommonUtils.generateUuid()));
+        entityPhoneBuilder.setEntityId(principal.getEntityId());
+        entityPhoneBuilder.setPhoneNumber(contact.getPhoneNumber());
+        entityPhoneBuilder.setExtensionNumber(contact.getPhoneExtension());
+
+        String countryCode = contact.getPhoneCountry();
+        if (countryCode != null && countryCode.length() > 2) {
+            countryCode = countryCode.substring(0, 2);
+        }
+        entityPhoneBuilder.setCountryCode(countryCode);
+
+        entityPhoneBuilder.setEntityTypeCode(Constants.KIM_ENTITY_TYPE_CODE);
+
+        String phoneTypeCode = contact.getKimPhoneType();
+        if (StringUtils.isBlank(phoneTypeCode)) {
+            phoneTypeCode = Constants.KIM_DEFAULT_ADDRESS_TYPE;
+        }
+
+        CodedAttribute phoneType = identityService.getPhoneType(phoneTypeCode);
+
+        entityPhoneBuilder.setPhoneType(CodedAttribute.Builder.create(phoneType));
+        entityPhoneBuilder.setDefaultValue(true);
+        entityPhoneBuilder.setActive(true);
+        entityPhoneBuilder.setVersionNumber(1L);
+
+        // Adding EntityPhone to Entity
+        identityService.addPhoneToEntity(entityPhoneBuilder.build());
+    }
+
+
     protected void updateKimAccount(Account account, String password) {
 
         final Date currentDate = new Date();
         final Timestamp timestamp = new Timestamp(currentDate.getTime());
 
-        IdentityService identityService = KimApiServiceLocator.getIdentityService();
         BusinessObjectService boService = KRADServiceLocator.getBusinessObjectService();
 
-        Principal principal = identityService.getPrincipal(account.getId());
-        if (principal == null) {
-            String errMsg = "Principal does not exist, Account ID = " + account.getId();
-            logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
-        }
+        Principal principal = getPrincipal(account.getId());
 
         PrincipalBo principalBo = PrincipalBo.from(principal);
         principalBo.setPassword(password);
@@ -1149,10 +1324,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     protected void createKimAccount(Account account, PersonName name, PostalAddress address, ElectronicContact contact,
                                     String password) {
 
-        final String ENTITY_TYPE_CODE = "PERSON";
-        final String DEFAULT_NAME_TYPE = "PRM";
-        final String DEFAULT_ADDRESS_TYPE = "HM";
-
         final String entityId = String.valueOf(CommonUtils.generateUuid());
 
         IdentityService identityService = KimApiServiceLocator.getIdentityService();
@@ -1165,7 +1336,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         entityBuilder.setObjectId(entityId);
         entityBuilder.setActive(true);
         entityBuilder.setVersionNumber(1L);
-        entityBuilder.setEntityTypes(Arrays.asList(EntityTypeContactInfo.Builder.create(entityId, ENTITY_TYPE_CODE)));
+        entityBuilder.setEntityTypes(Arrays.asList(EntityTypeContactInfo.Builder.create(entityId, Constants.KIM_ENTITY_TYPE_CODE)));
 
         // Creating KIM Entity
         Entity entity = identityService.createEntity(entityBuilder.build());
@@ -1179,7 +1350,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         principalBuilder.setVersionNumber(1L);
 
         // Building Principle, converting it to PrincipalBo and setting the new password
-        PrincipalBo principalBo = PrincipalBo.from(principalBuilder.build());
+        Principal principal = principalBuilder.build();
+        PrincipalBo principalBo = PrincipalBo.from(principal);
 
         // This seems to be the only way to set password for Principal
         principalBo.setPassword(password);
@@ -1187,114 +1359,10 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         // Persisting PrincipalBo
         boService.save(principalBo);
 
-        // Creating EntityName Builder
-        EntityName.Builder entityNameBuilder = EntityName.Builder.create(String.valueOf(CommonUtils.generateUuid()),
-                entity.getId(), name.getFirstName(), name.getLastName(), false);
-        entityNameBuilder.setMiddleName(name.getMiddleName());
-        entityNameBuilder.setNameTitle(name.getTitle());
-        entityNameBuilder.setNameSuffix(name.getSuffix());
-
-        String nameTypeCode = name.getKimNameType();
-        if (StringUtils.isBlank(nameTypeCode)) {
-            nameTypeCode = DEFAULT_NAME_TYPE;
-        }
-
-        CodedAttribute nameType = identityService.getNameType(nameTypeCode);
-
-        entityNameBuilder.setNameType(CodedAttribute.Builder.create(nameType));
-
-        entityNameBuilder.setObjectId(entity.getId());
-        entityNameBuilder.setDefaultValue(name.isDefault());
-        entityNameBuilder.setActive(true);
-        entityNameBuilder.setVersionNumber(1L);
-
-        // Adding EntityName to Entity
-        identityService.addNameToEntity(entityNameBuilder.build());
-
-        // Creating EntityAddress Builder
-        EntityAddress.Builder entityAddressBuilder = EntityAddress.Builder.create();
-        entityAddressBuilder.setId(String.valueOf(CommonUtils.generateUuid()));
-        entityAddressBuilder.setEntityId(entity.getId());
-        entityAddressBuilder.setLine1(address.getStreetAddress1());
-        entityAddressBuilder.setLine2(address.getStreetAddress2());
-        entityAddressBuilder.setLine3(address.getStreetAddress3());
-        entityAddressBuilder.setCity(address.getCity());
-        entityAddressBuilder.setStateProvinceCode(address.getState());
-        entityAddressBuilder.setPostalCode(address.getPostalCode());
-
-        String countryCode = address.getCountry();
-        if (countryCode != null && countryCode.length() > 2) {
-            countryCode = countryCode.substring(0, 2);
-        }
-        entityAddressBuilder.setCountryCode(countryCode);
-
-        entityAddressBuilder.setEntityTypeCode(ENTITY_TYPE_CODE);
-
-        String addressTypeCode = address.getKimAddressType();
-        if (StringUtils.isBlank(addressTypeCode)) {
-            addressTypeCode = DEFAULT_ADDRESS_TYPE;
-        }
-
-        CodedAttribute addressType = identityService.getAddressType(addressTypeCode);
-
-        entityAddressBuilder.setAddressType(CodedAttribute.Builder.create(addressType));
-        entityAddressBuilder.setDefaultValue(address.isDefault());
-        entityAddressBuilder.setActive(true);
-        entityAddressBuilder.setVersionNumber(1L);
-
-        // Adding EntityAddress to Entity
-        identityService.addAddressToEntity(entityAddressBuilder.build());
-
-        // Creating EntityEmail Builder
-        EntityEmail.Builder entityEmailBuilder = EntityEmail.Builder.create();
-        entityEmailBuilder.setId(String.valueOf(CommonUtils.generateUuid()));
-        entityEmailBuilder.setEntityId(entity.getId());
-        entityEmailBuilder.setEntityTypeCode(ENTITY_TYPE_CODE);
-
-        String emailTypeCode = contact.getKimEmailAddressType();
-        if (StringUtils.isBlank(emailTypeCode)) {
-            emailTypeCode = DEFAULT_ADDRESS_TYPE;
-        }
-
-        CodedAttribute emailType = identityService.getEmailType(emailTypeCode);
-
-        entityEmailBuilder.setEmailType(CodedAttribute.Builder.create(emailType));
-        entityEmailBuilder.setDefaultValue(contact.isDefault());
-        entityEmailBuilder.setActive(true);
-        entityEmailBuilder.setVersionNumber(1L);
-
-        // Adding EntityEmail to Entity
-        identityService.addEmailToEntity(entityEmailBuilder.build());
-
-        // Creating EntityPhone Builder
-        EntityPhone.Builder entityPhoneBuilder = EntityPhone.Builder.create();
-        entityPhoneBuilder.setId(String.valueOf(CommonUtils.generateUuid()));
-        entityPhoneBuilder.setEntityId(entity.getId());
-        entityPhoneBuilder.setPhoneNumber(contact.getPhoneNumber());
-        entityPhoneBuilder.setExtensionNumber(contact.getPhoneExtension());
-
-        countryCode = contact.getPhoneCountry();
-        if (countryCode != null && countryCode.length() > 2) {
-            countryCode = countryCode.substring(0, 2);
-        }
-        entityPhoneBuilder.setCountryCode(countryCode);
-
-        entityPhoneBuilder.setEntityTypeCode(ENTITY_TYPE_CODE);
-
-        String phoneTypeCode = contact.getKimPhoneType();
-        if (StringUtils.isBlank(phoneTypeCode)) {
-            phoneTypeCode = DEFAULT_ADDRESS_TYPE;
-        }
-
-        CodedAttribute phoneType = identityService.getPhoneType(phoneTypeCode);
-
-        entityPhoneBuilder.setPhoneType(CodedAttribute.Builder.create(phoneType));
-        entityPhoneBuilder.setDefaultValue(true);
-        entityPhoneBuilder.setActive(true);
-        entityPhoneBuilder.setVersionNumber(1L);
-
-        // Adding EntityPhone to Entity
-        identityService.addPhoneToEntity(entityPhoneBuilder.build());
+        // Adding person name, postal address and contact information
+        addKimPersonName(principal, name);
+        addKimPostalAddress(principal, address);
+        addKimElectronicContact(principal, contact);
 
     }
 
@@ -1355,9 +1423,9 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         persistEntity(account);
 
-        addPersonName(account.getId(), defaultName);
-        addPostalAddress(account.getId(), defaultAddress);
-        addElectronicContact(account.getId(), defaultContact);
+        addPersonName(account.getId(), defaultName, false);
+        addPostalAddress(account.getId(), defaultAddress, false);
+        addElectronicContact(account.getId(), defaultContact, false);
 
         if (account.isKimAccount()) {
             createKimAccount(account, defaultName, defaultAddress, defaultContact, password);
