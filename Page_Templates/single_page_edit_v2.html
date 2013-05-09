@@ -198,7 +198,8 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
     		<div id="navigation-panel " title="navigation-panel " class="container-fluid optional no-margin hidden">
     		</div>
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
-    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error collapse in">
+<div id="togglePageError" class="collapse in">
+    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
 					<h4 class="uif-pageValidationHeader" id="pageValidationHeader">
 						<img src="assets/img/error.png" width="16" height="16" alt="Error" class="hidden">
 						This page has 2 errors
@@ -208,6 +209,7 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 						<li data-messageitemfor="Demo-ValidationLayout-Section2" class="uif-errorMessageItem"><a href="#section-waitlists">The "Waitlists" section has 1 errors</a></li>
 					</ul>
     			</div>
+</div>
     			<div id="page-header" title="page-header" class="container-fluid  no-padding">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
 						<dl class="dl-horizontal">
@@ -215,7 +217,7 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 				    		<dt>Crosslisted</dt><dd>HIST 300, ENGL 200</dd>
 				    		<dt>Grading Options</dt><dd>Letter</dd>
 				    		<dt>Student Registration Options</dt><dd>None available</dd>
-				    		<dt>Credit Type</dt><dd>Fixed (3.0 Credits)<a data-toggle="collapse" data-target="#page-error-validation-messaging">.</a></dd>
+				    		<dt>Credit Type</dt><dd>Fixed (3.0 Credits)<a data-toggle="collapse" data-target="#togglePageError">.</a></dd>
 				    	</dl>	
     				</div>
     			</div>
@@ -270,7 +272,7 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 	    								</label>
     									<span class="help-block uif-instructionalMessage">Add the delivery formats to be used for this course offering.</span>
 	    								<div class="controls inline">
-		    								<a id="add-delivery"  type="submit" class="btn btn-flat">
+		    								<a id="add-delivery" class="btn btn-flat">
 		    									<i class="icon-plus-sign"></i>
 												Add a Delivery Format
 		    								</a>
@@ -472,7 +474,7 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 	    									Administering Organizations
 	    								</label>
 	    								<div class="controls inline">
-		    								<a id="add-organization" type="submit" class="btn btn-flat">
+		    								<a id="add-organization" class="btn btn-flat">
 		    									<i class="icon-plus-sign"></i>
 												Add an Organization
 		    								</a>
