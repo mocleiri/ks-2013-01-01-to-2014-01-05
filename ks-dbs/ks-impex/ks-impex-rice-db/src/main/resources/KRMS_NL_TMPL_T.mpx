@@ -77,7 +77,7 @@ NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR
 "KS-KRMS-NL-TMPL-1088","en","KS-KRMS-NL-USAGE-1004","10062","Must have successfully completed <course> between <term1> and <term2>","0"
 "KS-KRMS-NL-TMPL-1090","en","KS-KRMS-NL-USAGE-1004","10019","Must have successfully completed a minimum of <n> courses from <courses>","0"
 "KS-KRMS-NL-TMPL-1091","en","KS-KRMS-NL-USAGE-1004","10018","Must have successfully completed all courses from <courses>","0"
-"KS-KRMS-NL-TMPL-1092","en","KS-KRMS-NL-USAGE-1004","10054","Must have successfully completed a minimum of <n> credits from <course>","0"
+"KS-KRMS-NL-TMPL-1092","en","KS-KRMS-NL-USAGE-1004","10054","Must have successfully completed a minimum of <n> credits from <courses>","0"
 "KS-KRMS-NL-TMPL-1093","en","KS-KRMS-NL-USAGE-1004","10055","Must have successfully completed a minimum of <n> credits from courses in the <org>","0"
 "KS-KRMS-NL-TMPL-1094","en","KS-KRMS-NL-USAGE-1004","10040","Must have earned a minimum cumulative GPA of <GPA>","0"
 "KS-KRMS-NL-TMPL-1095","en","KS-KRMS-NL-USAGE-1004","10041","Must have earned a minimum Cumulative GPA of <GPA> in <duration>","0"
