@@ -25,8 +25,8 @@ public class OrgPositionPersonRelationInfo implements Serializable{
     private String title;
     private String orgPersonRelationTypeKey;
     private String desc;
-    private String minNumRelations;
-    private String maxNumRelations;
+    private Integer minNumRelations;
+    private Integer maxNumRelations;
     
     public ArrayList<String> getPersonId(){
         return this.personId;
@@ -68,19 +68,19 @@ public class OrgPositionPersonRelationInfo implements Serializable{
         this.desc=desc;
     }
     
-    public String getMinNumRelations(){
+    public Integer getMinNumRelations(){
         return this.minNumRelations;
     }
     
-    public void setMinNumRelations(String minNumRelations){
+    public void setMinNumRelations(Integer minNumRelations){
         this.minNumRelations=minNumRelations;
     }
     
-    public String getMaxNumRelations(){
+    public Integer getMaxNumRelations(){
         return this.maxNumRelations;
     }
     
-    public void setMaxNumRelations(String maxNumRelations){
+    public void setMaxNumRelations(Integer maxNumRelations){
         this.maxNumRelations=maxNumRelations;
     }
     
