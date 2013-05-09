@@ -126,10 +126,10 @@
     					<a href="">Enrollment</a>
 						<b class="caret dynamic-node"></b>
    					</li>
-    				<li class="node1">
+    				<li id="node2" class="node2">
     					<a href=""><span class="">Course Offerings: AAST</span></a>
     				</li>
-    				<li id="node3" class="node1" data-toggle="popover" data-html="true" data-content="
+    				<li id="node3" class="node3" data-toggle="popover" data-html="true" data-content="
 						<strong>Navigate to Course Offering</strong>
 						<form id='node2-search' title='node2-search' class='form-horizontal dynamic-node-content'>
 							<div class='input-append'>
@@ -144,7 +144,7 @@
     					<a href=""><span class="">AAST102</span></a>
 						<b class="caret dynamic-node"></b>
     				</li>
-    				<li class="active" id="node2" class="node2 active" data-toggle="popover" data-html="true" data-content="
+    				<li id="node4" class="node4 active" data-toggle="popover" data-html="true" data-content="
 						<ul class='breadcrumb-menu'>
 							<li>
 			    				<a href='#' class='action action-details'><i class='icon-file'></i>Inspect Course Offering</a>
@@ -902,30 +902,38 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 		$("#node1").popover({
 			placement: 'bottom'
 		});
-		$('#node1').on('show', function () {
-			$("#node2").popover('hide');
-			$("#node3").popover('hide');
-    	});
-		$("#node2").popover({
-			placement: 'bottom'
-		});
-		$('#node2').on('show', function () {
-			$("#node1").popover('hide');
-			$("#node3").popover('hide');
-    	});
 		$("#node3").popover({
 			placement: 'bottom'
 		});
-		$('#node3').on('show', function () {
-			$("#node1").popover('hide');
-			$("#node2").popover('hide');
-    	});
+		$("#node4").popover({
+			placement: 'bottom'
+		});
 		$("#term-picker").popover({
 			placement: 'bottom'
 		});
 		$("#detail-more").popover({
 			placement: 'bottom'
 		});
+		$('#term-picker').on('show', function () {
+			$("#node1").popover('hide');
+			$("#node3").popover('hide');
+			$("#node4").popover('hide');
+    	});
+		$('#node1').on('show', function () {
+			$("#term-picker").popover('hide');
+			$("#node3").popover('hide');
+			$("#node4").popover('hide');
+    	});
+		$('#node3').on('show', function () {
+			$("#term-picker").popover('hide');
+			$("#node1").popover('hide');
+			$("#node4").popover('hide');
+    	});
+		$('#node4').on('show', function () {
+			$("#term-picker").popover('hide');
+			$("#node1").popover('hide');
+			$("#node3").popover('hide');
+    	});
 		$('#add-delivery').click(function () {
 			$("#no-delivery-data").hide();
 			$("#add-delivery-fields").show();
