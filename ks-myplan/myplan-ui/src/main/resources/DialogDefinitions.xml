@@ -191,7 +191,7 @@
                 <bean parent="KSAP-SimpleDataField" p:label="Scheduled for"
                       p:propertyName="courseSummaryDetails"
                       p:fieldLabel.cssClasses="fl-text-gray myplan-text-normal" p:labelPlacement="LEFT"
-                      p:escapeHtmlInPropertyValue="false">
+                      p:escapeHtmlInPropertyValue="false" p:fieldLabel.render="true">
                     <property name="propertyEditor" ref="scheduled_terms_list_formatter"/>
                     <property name="cssClasses">
                         <list merge="true">
