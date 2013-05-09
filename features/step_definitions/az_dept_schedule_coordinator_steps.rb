@@ -695,3 +695,21 @@ Then /^I do not have access to edit the co-located Activity Offering$/ do
     page.edit_link("A").present?.should == false
   end
 end
+
+Then /^I have access to add new delivery logistics$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.add_new_delivery_logistics_button.present?.should == true
+  end
+end
+
+When /^I have access to view requested delivery logistics$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.view_requested_delivery_logistics
+    page.requested_logistics_table.present?.should == true
+  end
+end
+When /^I have access to delete requested delivery logistics$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.delete_requested_delivery_logistics_button.present?.should == true
+  end
+end
