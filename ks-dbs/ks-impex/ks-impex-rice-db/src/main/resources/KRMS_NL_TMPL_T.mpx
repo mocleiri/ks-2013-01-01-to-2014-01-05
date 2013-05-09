@@ -181,7 +181,7 @@ NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR
 "KS-KRMS-NL-TMPL-1304","en","KS-KRMS-NL-USAGE-1001","10031","<reqCompFieldType=kuali.reqComponent.field.type.value.freeform.text;reqCompFieldLabel=Text>","0"
 "KS-KRMS-NL-TMPL-1318","en","KS-KRMS-NL-USAGE-1003","10031","$freeText","0"
 "KS-KRMS-NL-TMPL-1325","en","KS-KRMS-NL-USAGE-1000","10031","$freeText","0"
-"KS-KRMS-NL-TMPL-1330","en","KS-KRMS-NL-USAGE-1000","10021","Must successfully complete no more than $intValue $NLHelper.getProperGrammar($intValue, ${mpx.quote}credit${mpx.quote}) from","0"
+"KS-KRMS-NL-TMPL-1330","en","KS-KRMS-NL-USAGE-1000","10021","Must successfully complete no more than $intValue $NLHelper.getProperGrammar($intValue, ${mpx.quote}credit${mpx.quote}) from $courseCluSet.getCluSetAsCode()","0"
 "KS-KRMS-NL-TMPL-1331","en","KS-KRMS-NL-USAGE-1000","10022","Must not have successfully completed any credits from $courseCluSet.getCluSetAsCode()","0"
 "KS-KRMS-NL-TMPL-1333","en","KS-KRMS-NL-USAGE-1000","10025","Must have earned a minimum GPA of $intValue in $courseCluSet.getCluSetAsCode()","0"
 "KS-KRMS-NL-TMPL-1334","en","KS-KRMS-NL-USAGE-1000","10023","#if($courseCluSet.getCluList().size() == 1)Must be concurrently enrolled in $courseCluSet.getCluSetAsCode()#{else}Must be concurrently enrolled in all courses from $courseCluSet.getCluSetAsCode()#end","0"
