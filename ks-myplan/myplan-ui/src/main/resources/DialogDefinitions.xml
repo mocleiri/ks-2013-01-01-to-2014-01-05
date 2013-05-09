@@ -211,7 +211,7 @@
                 <!-- Last Offered -->
                 <bean parent="KSAP-SimpleDataField" p:label="Last Offered"
                       p:propertyName="courseSummaryDetails.lastOffered"
-                      p:labelPlacement="LEFT">
+                      p:labelPlacement="LEFT" p:fieldLabel.render="true">
                     <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal"/>
                     <property name="render"
                               value="@{courseSummaryDetails.lastOffered ne null and courseSummaryDetails.scheduledTerms.size() eq 0}"/>
@@ -219,7 +219,7 @@
                 <!-- Projected Terms -->
                 <bean parent="KSAP-SimpleDataField" p:label="Projected for"
                       p:propertyName="courseSummaryDetails.termsOffered"
-                      p:labelPlacement="LEFT" p:escapeHtmlInPropertyValue="false">
+                      p:labelPlacement="LEFT" p:escapeHtmlInPropertyValue="false" p:fieldLabel.render="true">
                     <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal"/>
                     <property name="cssClasses">
                         <list merge="true">
