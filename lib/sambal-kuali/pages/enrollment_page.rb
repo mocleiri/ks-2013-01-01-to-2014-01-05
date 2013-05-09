@@ -1,7 +1,7 @@
 class Enrollment < BasePage
 
   page_url "#{$test_site}/kr-krad/launch?viewId=enrollmentHomeView&methodToCall=start"
-  expected_element :home_link
+  expected_element :enrol_home_view
 
   wrapper_elements
   frame_element
