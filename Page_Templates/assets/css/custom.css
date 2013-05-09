@@ -181,16 +181,15 @@ div {
 	vertical-align: top;
 	padding-right: .2em;
 }
-.brand {
+.ks-project {
 	background-image: url(/assets/ks_logo.gif)
 	padding: 5px 9px 5px;
+	font-size: 1.2em !important;
 }
-
 #application-header-user li a i {
 	padding-right: .2em;
 	opacity: .5;
 }
-
 #application-header-user li a:hover i {
 	opacity: 1;
 }
@@ -447,7 +446,6 @@ ul.breadcrumb-menu {
 
 
 /* FORMATING: Forms */
-
 h2 {
 	font-size: 1.8em;
 	padding-top: 1.2em;
@@ -612,6 +610,13 @@ opacity: 1;
 	border-radius: 3px;
 }
 
+#add-delivery-fields, #add-person-fields, #add-organization-fields {
+	display: none;
+}
+#no-delivery-data td, #no-person-data td, #no-organization-data td {
+	text-align: center;
+	font-style: italic;
+}
 
 /* HIDE UNUSED */
 .hidden {

@@ -30,7 +30,7 @@
     <div id="application-container" title="application-container" class="container">
     	<div id="application-header" title="application-header" class="container-fluid navbar navbar-inverse navbar-fixed-top sticky">
     		<div class="navbar-inner">
-    			<a id="application-header-logo" title="application-header-logo" class="brand" href="#"><img src="assets/img/ks_logo_white.png" alt="Kuali Student Logo">Student</a>
+    			<a id="application-header-logo" title="application-header-logo" class="brand ks-project" href="#"><img src="assets/img/ks_logo_white.png" alt="Kuali Student Logo">Student</a>
     			<ul id="application-header-user" title="application-header-user" class="nav pull-right">
 
 
@@ -198,7 +198,7 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
     		<div id="navigation-panel " title="navigation-panel " class="container-fluid optional no-margin hidden">
     		</div>
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
-    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
+    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error collapse in">
 					<h4 class="uif-pageValidationHeader" id="pageValidationHeader">
 						<img src="assets/img/error.png" width="16" height="16" alt="Error" class="hidden">
 						This page has 2 errors
@@ -215,7 +215,7 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 				    		<dt>Crosslisted</dt><dd>HIST 300, ENGL 200</dd>
 				    		<dt>Grading Options</dt><dd>Letter</dd>
 				    		<dt>Student Registration Options</dt><dd>None available</dd>
-				    		<dt>Credit Type</dt><dd>Fixed (3.0 Credits)</dd>
+				    		<dt>Credit Type</dt><dd>Fixed (3.0 Credits)<a data-toggle="collapse" data-target="#page-error-validation-messaging">.</a></dd>
 				    	</dl>	
     				</div>
     			</div>
@@ -270,10 +270,10 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 	    								</label>
     									<span class="help-block uif-instructionalMessage">Add the delivery formats to be used for this course offering.</span>
 	    								<div class="controls inline">
-		    								<button type="submit" class="btn btn-flat">
+		    								<a id="add-delivery"  type="submit" class="btn btn-flat">
 		    									<i class="icon-plus-sign"></i>
 												Add a Delivery Format
-		    								</button>
+		    								</a>
 		    								<table class="table table-hover table-condensed table-col-4">
 		    									<thead>
 		    										<tr>
@@ -291,7 +291,7 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 		    										</tr>
 		    									</thead>
 		    									<tbody>
-		    										<tr>
+		    										<tr id="add-delivery-fields">
 		    											<td>
 		    												Lecture Only
 		    											</td>
@@ -310,6 +310,11 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 		    											</td>
 		    											<td>
 		    												
+		    											</td>
+		    										</tr>
+		    										<tr id="no-delivery-data">
+		    											<td colspan="3">
+		    												No delivery formats have been selected
 		    											</td>
 		    										</tr>
 		    									</tbody>
@@ -380,10 +385,10 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 	    									Affiliated Personnel
 	    								</label>
 	    								<div class="controls inline">
-		    								<button type="submit" class="btn btn-flat">
+		    								<a id="add-person" class="btn btn-flat">
 		    									<i class="icon-plus-sign"></i>
 												Add a Person
-		    								</button>
+		    								</a>
 		    								<table class="table table-hover table-condensed table-col-4">
 		    									<thead>
 		    										<tr>
@@ -401,7 +406,7 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 		    										</tr>
 		    									</thead>
 		    									<tbody>
-		    										<tr>
+		    										<tr id="add-person-fields">
 		    											<td>
 		    												<input class="input-medium" type="text" placeholder="e.g., 12345678" value="">
 					   									<span class="uif-constraintMessage"><a href="#advanced-select-personnel" role="link" data-toggle="modal">Find personnel ID</a></span>
@@ -467,10 +472,10 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 	    									Administering Organizations
 	    								</label>
 	    								<div class="controls inline">
-		    								<button type="submit" class="btn btn-flat">
+		    								<a id="add-organization" type="submit" class="btn btn-flat">
 		    									<i class="icon-plus-sign"></i>
 												Add an Organization
-		    								</button>
+		    								</a>
 		    								<table class="table table-hover table-condensed table-col-3">
 		    									<thead>
 		    										<tr>
@@ -485,7 +490,7 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 		    										</tr>
 		    									</thead>
 		    									<tbody>
-		    										<tr>
+		    										<tr id="add-organization-fields">
 		    											<td>
 		    												<input class="input-medium" type="text" placeholder="e.g., 10293940" value="" required>
 		    												<span class="uif-constraintMessage"><a href="#advanced-select-organization" role="link" data-toggle="modal">Find organization ID</a></span>
@@ -495,6 +500,17 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 		    											</td>
 		    											<td>
 
+		    											</td>
+		    										</tr>
+		    										<tr>
+		    											<td>
+		    												2677933260
+		    											</td>
+		    											<td>
+		    												ARHU-English
+		    											</td>
+		    											<td>
+		    												<a href="#" class="pull-right delete-action"><i class="icon-remove"></i></a>
 		    											</td>
 		    										</tr>
 		    										<tr>
@@ -884,18 +900,42 @@ We can put a whole bunch of meta data here, including <strong>HTML</strong>
 		$("#node1").popover({
 			placement: 'bottom'
 		});
+		$('#node1').on('show', function () {
+			$("#node2").popover('hide');
+			$("#node3").popover('hide');
+    	});
 		$("#node2").popover({
 			placement: 'bottom'
 		});
+		$('#node2').on('show', function () {
+			$("#node1").popover('hide');
+			$("#node3").popover('hide');
+    	});
 		$("#node3").popover({
 			placement: 'bottom'
 		});
+		$('#node3').on('show', function () {
+			$("#node1").popover('hide');
+			$("#node2").popover('hide');
+    	});
 		$("#term-picker").popover({
 			placement: 'bottom'
 		});
 		$("#detail-more").popover({
 			placement: 'bottom'
 		});
+		$('#add-delivery').click(function () {
+			$("#no-delivery-data").hide();
+			$("#add-delivery-fields").show();
+    	});
+		$('#add-person').click(function () {
+			$("#no-person-data").hide();
+			$("#add-person-fields").show();
+    	});
+		$('#add-organization').click(function () {
+			$("#no-organization-data").hide();
+			$("#add-organization-fields").show();
+    	});
 	   $('#advanced-select-personnel').modal({
 			show: false
 		});
