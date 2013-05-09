@@ -15,12 +15,13 @@ class EditAgendaData
     set_options(options)
   end
 
-  def find_krms_before_element( section, tag, node)
+  def find_krms_before_element( section, tag, node, comp)
     sect = {"edit_tree"=>:edit_tree_section,"preview_tree"=>:preview_tree_section}
+    compounds = {"outer compound"=>"_parent_node_0_parent_root_control"}
     on EditAgenda do |page|
       node_i = node.to_i
       node_i -= 1
-      return page.send(sect[section]).element(:tag_name => tag, :id => /.*node_#{node_i}.*/).id
+      return page.send(sect[section]).element(:tag_name => tag, :id => /.*node_#{node_i}#{Regexp.escape(compounds[comp])}.*/).id
     end
   end
 

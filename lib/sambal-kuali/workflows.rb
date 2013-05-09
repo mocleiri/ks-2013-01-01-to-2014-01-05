@@ -92,6 +92,12 @@ module Workflows
     end
   end
 
+  def go_to_krms_manage_course_offerings
+    visit PortalMenu do |page|
+      page.manage_course_offerings
+    end
+  end
+
   def log_in(user, pwd)
     if !$distributed_env then
       visit PortalMenu do |page|

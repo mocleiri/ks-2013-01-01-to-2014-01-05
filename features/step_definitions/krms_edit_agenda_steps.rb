@@ -7,33 +7,33 @@ end
 When /^I go to the Manage Course Offerings page for "(.*)"$/ do |test|
   puts test
   @editAgenda = make EditAgendaData
-  go_to_manage_course_offerings
+  go_to_krms_manage_course_offerings
 end
 
 When /^I enter "(.*)" in the "(.*)" field on Manage CO page$/ do |input,field|
   fields = {"term"=>:term, "course"=>:input_code}
-  on ManageCourseOfferings do |page|
+  on KRMSManageCourseOfferings do |page|
     page.send(fields[field]).when_present.set input
   end
 end
 
 When /^I click the "(.*)" button on Manage CO page$/ do |btn|
   buttons = {"Show"=>:show}
-  on ManageCourseOfferings do |page|
+  on KRMSManageCourseOfferings do |page|
     page.send(buttons[btn])
   end
 end
 
 When /^I click the "(.*)" link for course "(.*)"$/ do |link,cours|
-  on ManageCourseOfferingList do |page|
+  on KRMSManageCourseOfferingList do |page|
     page.target_row(cours).link(text: link).when_present.click
   end
 end
 
 When /^I click on the "(.*)" link on Manage CO page$/ do |link|
-  on ManageCourseOfferings do |page|
+  on KRMSManageCourseOfferings do |page|
     #link does not exist yet
-    page.a(text: link).when_present.click
+    page.manage_course_offering_requisites
   end
 end
 
@@ -129,9 +129,9 @@ Then /^the word "(.*)" should exist before node "(.*)"$/ do |text, node|
   end
 end
 
-When /^I select "(.*)" from the dropdown before node "(.*)"$/ do |cond, node|
+When /^I select "(.*)" from the dropdown before node "(.*)" on the "(.*)"$/ do |cond, node, comp|
   on EditAgenda do |page|
-    id = @editAgenda.find_krms_before_element("edit_tree",'select',node)
+    id = @editAgenda.find_krms_before_element("edit_tree",'select',node, comp)
     page.edit_tree_section.select(:id => id).when_present.select cond
   end
 end
@@ -153,7 +153,7 @@ end
 Then /^the first node should match "(.*)"$/ do |text|
   on EditAgenda do |page|
     page.loading.wait_while_present
-    page.edit_tree_section.text.should match /.*A\..*#{Regexp.escape(text)}.*/
+    page.edit_tree_section.text.should match /.*#{Regexp.escape(text)}.*/
   end
 end
 
@@ -208,7 +208,7 @@ end
 Then /^the new node "(.*)" should be after an "(.*)" operator$/ do |node, operator|
   on ManageCOAgendas do |page|
     page.loading.wait_while_present
-    page.preview_tree.text.should match /.*#{Regexp.escape(operator)}\n#{Regexp.escape(node)}}.*/m
+    page.preview_tree.text.should match /.*#{Regexp.escape(operator)}\n#{Regexp.escape(node)}.*/m
   end
 end
 
@@ -231,7 +231,7 @@ When /^I search for the "(.*)" "(.*)"$/ do |field, code|
 end
 
 When /^I click on the "(.*)" link on the Edit Agenda page$/ do |link|
-  sect = {"Compare to Original"=>:preview_rule_section, "Cancel"=>:rule_maintenance_section}
+  sect = {"Compare to Canonical"=>:preview_rule_section, "Cancel"=>:rule_maintenance_section}
   on EditAgenda do |page|
     page.send(sect[link]).a(:text => /#{Regexp.escape(link)}/).when_present.click
   end
