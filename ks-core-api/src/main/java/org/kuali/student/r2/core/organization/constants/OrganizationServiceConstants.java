@@ -1,21 +1,37 @@
-package org.kuali.student.r2.core.organization.service.impl.util.constants;
+/**
+ * Copyright 2011 The Kuali Foundation 
+ *
+ * Licensed under the * Educational Community License, Version 2.0
+ * (the "License"); you may * not use this file except in compliance
+ * with the License. You may * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package org.kuali.student.r2.core.organization.constants;
 
 import org.kuali.student.r2.common.constants.CommonServiceConstants;
+import org.kuali.student.r2.core.organization.dto.OrgInfo;
 import org.kuali.student.r2.core.organization.dto.OrgCodeInfo;
 import org.kuali.student.r2.core.organization.dto.OrgHierarchyInfo;
-import org.kuali.student.r2.core.organization.dto.OrgInfo;
 import org.kuali.student.r2.core.organization.dto.OrgOrgRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
 
+
 /**
- * Created with IntelliJ IDEA.
- * User: msedgren
- * Date: 2/21/13
- * Time: 11:51 AM
- * To change this template use File | Settings | File Templates.
+ * This class holds the constants used by the organization service
+ *
+ * @author tom
  */
 public class OrganizationServiceConstants {
+
     /**
      * Reference Object URIs
      */
@@ -51,4 +67,11 @@ public class OrganizationServiceConstants {
     public static final String ORGANIZATION_UNIVERSITY_SUPPORT_TYPE_KEY = "kuali.org.UniversitySupport";
     public static final String ORGANIZATION_SUB_DEPARTMENT_TYPE_KEY = "kuali.org.SubDepartment";
     public static final String ORGANIZATION_INSTITUTION_TYPE_KEY = "kuali.org.Institution";
+    public static final String ORGANIZATION_SUBJECT_CODE_TYPE_KEY = "kuali.org.SubjectCode"; // KSENROLL-5112
+
+    /**
+     * Org-Org types (https://wiki.kuali.org/display/STUDENT/Organization+Service+Types+and+States)
+     * KSENROLL-5112
+     */
+    public static final String ORG_ORG_SUBJECT_CODE_TO_ORG_TYPE_KEY = "kuali.org.org.relation.type.subjectcode2org";
 }
