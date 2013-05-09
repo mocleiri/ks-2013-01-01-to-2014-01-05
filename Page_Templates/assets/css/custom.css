@@ -15,10 +15,11 @@
 #view-top-group {
 /*    margin-top: 41px; */
     vertical-align: center;
-    padding: 8px 8px 0px 8px;
-	color: rgb(231, 231, 231);
+    padding: 8px 8px;
 	background-color: #555;
-    font-size: .9em;
+}
+#view-top-group a {
+	color: rgb(231, 231, 231);
 }
 #view-breadcrumbs {
 /*    margin-top: 78px; */
@@ -29,11 +30,9 @@
 	-webkit-box-shadow: 0px 6px 6px -5px rgba(0, 0, 0, 0.5);
 	-moz-box-shadow: 0px 6px 6px -5pxrgba(0, 0, 0, 0.5);
 	box-shadow: 0px 6px 6px -5px rgba(0, 0, 0, 0.5);
-	border: 1px solid lightgray;
-	margin-top: 3px;
 } 
 #view-container {
-    margin-top: 190px; 
+    margin-top: 180px; 
     margin-bottom: 100px; 
     padding: 0px;
 /*
@@ -49,7 +48,6 @@ NOTE: 	This probably isn't the place for this, as it causes a border at the bott
 #view-footer {
     margin-bottom: 0px; /* When application-footer is not hidden, add 20px */
     padding-top: 8px;
-	border: 1px solid #bbb;
 	box-shadow: 0px -5px 6px -6px rgba(0, 0, 0, 0.5);	
 }
 #application-footer {
@@ -144,12 +142,6 @@ div {
 #page-container {
 /*    padding-left: 220px; /* only needed if navigation-panel is not hidden */
 }
-#page-title {
-    margin-top: 1.0em;
-}
-#page-header-group {
-    margin-bottom: 1.0em;
-}
 
 
 /* FORMATTING: GENERAL */
@@ -206,14 +198,30 @@ div {
 
 /* FORMATING: Nav Bar */
 
-#view-term {
-	font-style: bold;
+#view-term a:hover {
+	text-decoration: none;
+	color: white;
 }
+
 .align-base {
 	vertical-align: baseline;
 }
 
 #view-term-state {
+    font-size: .85em;
+    padding: 0.2em 0.4em 0.1em 0.6em;
+    border-radius: 6px;
+    color: white;
+    background-color: #999;
+}
+
+#view-top-group .caret {
+	border-top: 4px solid rgb(231, 231, 231);
+	margin-left: 7px;
+}
+
+#view-top-group a:hover .caret {
+	border-top: 4px solid #fff;
 }
 
 
@@ -257,7 +265,7 @@ div {
     max-height: 28px;
     min-height: 28px;
 }
-.breadcrumb li {
+.breadcrumb > li {
     background-image: url(http://ux.kuali.org/prototypes/rice/assets/img/divider-breadcrumb.png);
     background-position: right center;
     background-repeat: no-repeat;
@@ -271,7 +279,7 @@ div {
     min-height: 24px;
 }
 .caret {
-	margin-top: .7em;
+	margin-top: .6em;
 	border-top: 4px solid #999;
 }
 .breadcrumb li:last-child {
@@ -336,6 +344,7 @@ http://ux.kuali.org/prototypes/rice/breadcrumb.php#
 b:hover {
 	/* background-color: red; */
 }
+
 .dynamic-node {
 	margin-left: 1.0em;
 }
@@ -346,10 +355,29 @@ b:hover {
 	height: 1.3em;
 }
 
+.breadcrumb-menu a {
+	color: #0088cc;
+}
+
+.breadcrumb-menu a:hover {
+	color: #0088cc;
+	color: #005580;
+}
+
+ul.breadcrumb-menu {
+	margin-left: 0;
+}
+.breadcrumb-menu li {
+	list-style: none;
+}
+
+
 
 /* FORMATING: View Header */
 #page-title {
     margin-bottom: 1.0em;
+    margin-top: 1.8em;
+	
 }
 #page-title-area {
     color: #cccccc;
@@ -364,24 +392,31 @@ b:hover {
     line-height: 1.4em;
 }
 #action-bar {
-    margin-bottom: 1.0em;
+    margin-top: 1.0em;
+	clear: right;
 }
 .action {
     padding-right: 1.0em;
 }
-#action-bar a i {
+.action:last-child {
+    padding-right: 0em;
+}
+#action-bar a i, .breadcrumb-menu a i {
 	padding-right: .3em;
 	opacity: .5;
 }
-#action-bar a:hover i {
+#action-bar a:hover i, .breadcrumb-menu a:hover i {
 	opacity: 1;
 }
+
 
 /* FORMATING: Page Header Group (overview) */
 #page-header-group {
     background-color: #ebebeb;
     padding: 0.6em 1.2em;
 	border-radius: 3px;
+    margin-top: 2.0em;
+	margin-bottom: -1.4em;
 }
 .detail {
     margin-right: 2.0em;
@@ -395,8 +430,8 @@ b:hover {
 .detail-status {
     color: white;
     background-color: darkorange;
-    font-size: 1.1em;
-    padding: 0.2em 0.6em;
+    font-size: .85em;
+    padding: 0.2em 0.6em 0.1em;
     border-radius: 6px;
 	margin-left: 1em;
 }
@@ -418,7 +453,6 @@ h2 {
 	padding-top: 1.2em;
 	clear:both;
 }
-
 select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
 	padding: 5px 6px;
 	margin-bottom: 0px;
@@ -426,7 +460,9 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	transition: border linear 0.2s, box-shadow linear 0s;
 	color: #000;
 }
-
+.control-group {
+	margin-bottom: 1.5em;
+}
 fieldset {
 	margin-bottom: 2.0em;
 }
@@ -466,6 +502,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	font-size: 0.9em;
 	margin-bottom: 1.0em;
 	color: #0088cc;
+	padding: 2px 10px;
 }
 .btn-flat i {
 padding-right: .3em;
@@ -479,8 +516,20 @@ opacity: 1;
 	color: #0088cc;
 }
 
+/* to keep bootstrap from truncating detail panel labels */
+.dl-horizontal dd {
+	margin-left: 215px;
+}
+.dl-horizontal dt {
+	float: left;
+	width: 203px;
+}
+
 
 /* FORMATING: Tables */
+.table thead th {
+	background-color: #f5f5f5;
+}
 .table-col-1 {
 	max-width: 20%;
 	border-bottom: 1px solid lightgray;
@@ -529,7 +578,9 @@ opacity: 1;
 }
 .uif-constraintMessage {
 	font-size: 0.85em;
+	display: block;
 	color: gray;
+	margin-bottom: 0.1em;
 	/*
 		display: block;
 		max-width: 36em;
@@ -545,8 +596,13 @@ opacity: 1;
 .uif-pageValidationMessages-error {
 	border: 1px solid #FFD1DE;
 	border-radius: 3px;
-	margin-top: .8em;
+	color: rgb(180, 25, 0);
 }
+
+.uif-pageValidationMessages-error a {
+	color: rgb(180, 25, 0);
+}
+
 .uif-pageValidationMessages-warning {
 	border: 1px solid #FF9900;
 	border-radius: 3px;
