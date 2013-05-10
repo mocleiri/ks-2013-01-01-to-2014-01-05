@@ -24,6 +24,7 @@ public enum Permission {
     REMOVE_LOCKED_ALLOCATION,
     CREATE_INTERNALLY_LOCKED_ALLOCATION,
     REMOVE_INTERNALLY_LOCKED_ALLOCATION,
+    VIEW_ALLOCATION,
 
     // Cash limit permissions
     CREATE_CASH_LIMIT_PARAMETER,
@@ -69,6 +70,8 @@ public enum Permission {
     CREATE_GL_TRANSMISSION,
     EXPORT_GL_TRANSMISSION,
     VIEW_GL_TRANSMISSION,
+    CREATE_GL_BREAKDOWN,
+    VIEW_GL_BREAKDOWN,
 
     // Memo permissions
     VIEW_MEMO,
@@ -92,6 +95,8 @@ public enum Permission {
     WRITE_OFF_TRANSACTION,
     BOUNCE_TRANSACTION,
     CONTEST_CHARGE,
+    CANCEL_CHARGE,
+    EDIT_TRANSACTION,
     VIEW_TRANSACTION,
     TRANSFER_TRANSACTION,
     REVERSE_TRANSFER_TRANSACTION,
@@ -100,11 +105,13 @@ public enum Permission {
     // Transaction Type permissions
     CREATE_TRANSACTION_TYPE,
     EDIT_TRANSACTION_TYPE,
+    VIEW_TRANSACTION_TYPE,
     ASSIGN_TRANSACTION_TYPE_TO_ROLE,
 
     // Rollup permissions
     CREATE_ROLLUP,
     EDIT_ROLLUP,
+    VIEW_ROLLUP,
 
     // Ban type permissions
     CREATE_BANK_TYPE,
@@ -168,6 +175,9 @@ public enum Permission {
 
     // Third party permissions
     GENERATE_THIRD_PARTY_BILLING,
-    REVERSE_THIRD_PARTY_BILLING
+    REVERSE_THIRD_PARTY_BILLING,
+
+    // CreditPermission permissions
+    VIEW_CREDIT_PERMISSION
 
 }
