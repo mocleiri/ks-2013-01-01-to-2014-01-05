@@ -870,7 +870,7 @@ class DeliveryLogistics
         page.edit_rdl_row(target_row)
         sleep 2
 
-        if @tba
+        if opts[:tba]
           page.add_tba.set
         else
           page.add_tba.clear
@@ -931,36 +931,6 @@ class DeliveryLogistics
     on ActivityOfferingMaintenance do |page|
       page.delete_requested_logistics_features(row)
       page.save_request
-    end
-  end
-
-  # delete multiple Delivery Logistics requests
-  #
-  # generally called from ActivityOffering class - see ActivityOffering
-  #
-  # @param [int] num of rows to delete
-  def delete_rdls(num)
-    on DeliveryLogisticsEdit do |page|
-      i = 1
-      begin
-        puts(i)
-        begin
-          page.delete_requested_logistics_features(i)
-        rescue Exception
-          page.delete_requested_logistics_features(1)
-        end
-        i +=1
-      end while i < num-1
-
-      page.save_request
-    end
-
-  end
-
-  # ??
-  def rdl_row_numbers
-    on DeliveryLogisticsEdit do |page|
-      page.rdl_table_row_nums
     end
   end
 
