@@ -386,7 +386,7 @@ class ActivityOfferingMaintenanceBase < BasePage
 
   def self.rdl_table_accessor_maker(method_name, column)
     define_method method_name.to_s do |row|
-      requested_logistics_table.rows[row].cells[column].text()
+      row.cells[column].text()
     end
   end
 

@@ -145,7 +145,7 @@ class ActivityOffering
     end
   end
 
-    #navigates to activity offering edit page and sets up activity offering based on class attributes
+  #navigates to activity offering edit page and sets up activity offering based on class attributes
   def create
     @parent_course_offering.manage
 
@@ -197,6 +197,39 @@ class ActivityOffering
     @code =  ao_table_row.cells[ManageCourseOfferings::AO_CODE].text
     @activity_type = ao_table_row.cells[ManageCourseOfferings::AO_TYPE].text
     @max_enrollment = ao_table_row.cells[ManageCourseOfferings::AO_MAX_ENR].text
+    delivery_days = ao_table_row.cells[ManageCourseOfferings::AO_DAYS].text
+    if delivery_days != "" then
+      #there are delivery logistics
+      isRdl = ao_table_row.cells[ManageCourseOfferings::AO_DAYS].span(index: 1).present? and ao_table_row.cells[ManageCourseOfferings::AO_DAYS].span(index: 1).attribute_value("class") == "uif-scheduled-dl"
+      dl_object = make DeliveryLogistics, :days => delivery_days
+      dl_object.start_time = ao_table_row.cells[ManageCourseOfferings::AO_ST_TIME].text.split[0]
+      st_time = ao_table_row.cells[ManageCourseOfferings::AO_ST_TIME].text
+      if st_time != "" then
+        dl_object.start_time = st_time.split[0]
+        dl_object.start_time_ampm = st_time.split[1]
+      else
+        dl_object.start_time = ""
+        dl_object.start_time_ampm = ""
+      end
+      end_time = ao_table_row.cells[ManageCourseOfferings::AO_END_TIME].text
+      if end_time != "" then
+        dl_object.end_time = end_time.split[0]
+        dl_object.end_time_ampm = end_time.split[1]
+      else
+        dl_object.end_time = ""
+        dl_object.end_time_ampm = ""
+      end
+      dl_object.facility_long_name = ao_table_row.cells[ManageCourseOfferings::AO_BLDG].text
+      dl_object.facility = ""
+      dl_object.room = ao_table_row.cells[ManageCourseOfferings::AO_ROOM].text
+      if isRdl then
+        dl_object.isRDL = true
+        @requested_delivery_logistics_list[dl_object.dl_key] = dl_object
+      else
+        dl_object.isRDL = false
+        @actual_delivery_logistics_list[dl_object.dl_key] = dl_object
+      end
+    end
     @parent_course_offering = parent_co
   end
 
@@ -225,96 +258,96 @@ class ActivityOffering
 
   # PRIVATE helper methods for edit()
 
-      def edit_colocation opts={}
+  def edit_colocation opts={}
 
-        is_breaking_colocation = false
-        if !opts[:break_colocation].nil? # only test for nil; true/false map to 'confirm/cancel'
-          is_breaking_colocation = true
-        end
+    is_breaking_colocation = false
+    if !opts[:break_colocation].nil? # only test for nil; true/false map to 'confirm/cancel'
+      is_breaking_colocation = true
+    end
 
-        is_editing_colocation = false
-        if !opts[:colocate_ao_list].nil? && !opts[:colocate_ao_list].empty?
-          is_editing_colocation = true
-        end
+    is_editing_colocation = false
+    if !opts[:colocate_ao_list].nil? && !opts[:colocate_ao_list].empty?
+      is_editing_colocation = true
+    end
 
-        # cannot both EDIT and BREAK the colo simultaneously
-        if is_breaking_colocation && is_editing_colocation
-          raise "Cannot both EDIT and BREAK a colocation simultaneously"
-        end
+    # cannot both EDIT and BREAK the colo simultaneously
+    if is_breaking_colocation && is_editing_colocation
+      raise "Cannot both EDIT and BREAK a colocation simultaneously"
+    end
 
-        if is_breaking_colocation
-          edit_break_colocation opts
-          return nil # when breaking colo, cannot do other colo-editing
-        end
+    if is_breaking_colocation
+      edit_break_colocation opts
+      return nil # when breaking colo, cannot do other colo-editing
+    end
 
-        if !is_editing_colocation
-          return nil # nothing to do if not breaking colo nor supplying any AOs to colo-edit with
-        end
+    if !is_editing_colocation
+      return nil # nothing to do if not breaking colo nor supplying any AOs to colo-edit with
+    end
 
-        # else perform normal colo-EDIT
-        on ActivityOfferingMaintenance do |page|
-          page.select_colocated_checkbox
+    # else perform normal colo-EDIT
+    on ActivityOfferingMaintenance do |page|
+      page.select_colocated_checkbox
 
-          # add the colo-COs to this CO
-          opts[:colocate_ao_list].each do |ao_to_colo|
-            page.colocated_co_input_field.value = ao_to_colo.parent_course_offering.course
-            page.colocated_ao_input_field.value = ao_to_colo.code
-            page.add_colocated
-          end
+      # add the colo-COs to this CO
+      opts[:colocate_ao_list].each do |ao_to_colo|
+        page.colocated_co_input_field.value = ao_to_colo.parent_course_offering.course
+        page.colocated_ao_input_field.value = ao_to_colo.code
+        page.add_colocated
+      end
 
-          if opts[:colocate_shared_enrollment]
-            page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
-            page.select_jointly_share_enrollment_radio
-            page.colocated_shared_max_enrollment_input_field.value = opts[:max_enrollment]
-          else # ie: 'separately manage'
-            page.select_separately_manage_enrollment_radio
-            page.colocated_shared_max_enrollment_table_first_ao_input.value = opts[:max_enrollment]
-          end
-        end
+      if opts[:colocate_shared_enrollment]
+        page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
+        page.select_jointly_share_enrollment_radio
+        page.colocated_shared_max_enrollment_input_field.value = opts[:max_enrollment]
+      else # ie: 'separately manage'
+        page.select_separately_manage_enrollment_radio
+        page.colocated_shared_max_enrollment_table_first_ao_input.value = opts[:max_enrollment]
+      end
+    end
 
-      end #END: edit_colocation
+  end #END: edit_colocation
 
-      def edit_break_colocation opts={}
+  def edit_break_colocation opts={}
 
-        @browser.confirm( opts[:break_colocation] ) {
-          on(ActivityOfferingMaintenance).select_colocated_checkbox
-        }
+    @browser.confirm( opts[:break_colocation] ) {
+      on(ActivityOfferingMaintenance).select_colocated_checkbox
+    }
 
-      end #END: edit_break_colocation
+  end #END: edit_break_colocation
 
-      def edit_max_enrollment_no_colocation opts={}
+  def edit_max_enrollment_no_colocation opts={}
 
-        if opts[:colocate_ao_list] && !opts[:colocate_ao_list].empty?
-          return nil
-        end
+    if opts[:colocate_ao_list] && !opts[:colocate_ao_list].empty?
+      return nil
+    end
 
-        if opts[:max_enrollment] != nil
-          on ActivityOfferingMaintenance do |page|
-            page.total_maximum_enrollment.set opts[:max_enrollment]
-            page.total_maximum_enrollment.fire_event "onchange"
-            @max_enrollment = opts[:max_enrollment]
-          end
-        end
+    if opts[:max_enrollment] != nil
+      on ActivityOfferingMaintenance do |page|
+        page.total_maximum_enrollment.set opts[:max_enrollment]
+        page.total_maximum_enrollment.fire_event "onchange"
+        @max_enrollment = opts[:max_enrollment]
+      end
+    end
 
-      end #END: edit_max_enrollment_no_colocation
+  end #END: edit_max_enrollment_no_colocation
 
-      def edit_requested_delivery_logistics opts={}
+  def edit_requested_delivery_logistics opts={}
 
-        if opts[:requested_delivery_logistics_list].nil? || opts[:requested_delivery_logistics_list].empty?
-          return nil
-        end
+    if opts[:requested_delivery_logistics_list].nil? || opts[:requested_delivery_logistics_list].empty?
+      return nil
+    end
 
-        #'save' vs 'save and process' determined by first rdl
-        first_rdl = opts[:requested_delivery_logistics_list].values[0]
-        #list of requests added with updated keys
-        requests_added = {}
+    #'save' vs 'save and process' determined by first rdl
+    first_rdl = opts[:requested_delivery_logistics_list].values[0]
+    #list of requests added with updated keys
+    requests_added = {}
 
-        opts[:requested_delivery_logistics_list].values.each do |request|
-          request.create
-          requests_added["#{request.days}#{request.start_time}#{request.start_time_ampm.upcase}".delete(' ')] = request
-        end
+    opts[:requested_delivery_logistics_list].values.each do |request|
+      request.create
+      requests_added["#{request.days}#{request.start_time}#{request.start_time_ampm.upcase}".delete(' ')] = request
+    end
 
-      end #END: edit_request_delivery_logistics
+  end #END: edit_request_delivery_logistics
 
   def change_rdl_days row_num
     on ActivityOfferingMaintenance do |page|
@@ -334,79 +367,79 @@ class ActivityOffering
 
   def edit_course_url opts={}
 
-        if opts[:course_url].nil?
-          return nil
-        end
+    if opts[:course_url].nil?
+      return nil
+    end
 
-        on(ActivityOfferingMaintenance).course_url.set opts[:course_url]
-        @course_url = opts[:course_url]
+    on(ActivityOfferingMaintenance).course_url.set opts[:course_url]
+    @course_url = opts[:course_url]
 
-      end #END: edit_course_url
+  end #END: edit_course_url
 
-      def edit_evaluation opts={}
+  def edit_evaluation opts={}
 
-        if opts[:requires_evaluation].nil?
-          return nil
-        end
+    if opts[:requires_evaluation].nil?
+      return nil
+    end
 
-        on ActivityOfferingMaintenance do |page|
-          if opts[:requires_evaluation]
-            page.requires_evaluation.set
-          else
-            page.requires_evaluation.clear
-          end
-        end
+    on ActivityOfferingMaintenance do |page|
+      if opts[:requires_evaluation]
+        page.requires_evaluation.set
+      else
+        page.requires_evaluation.clear
+      end
+    end
 
-        @requires_evaluation =  opts[:requires_evaluation]
+    @requires_evaluation =  opts[:requires_evaluation]
 
-      end #END: edit_evaluation
+  end #END: edit_evaluation
 
-      def edit_honors_course opts={}
+  def edit_honors_course opts={}
 
-        if opts[:honors_course].nil?
-          return nil
-        end
+    if opts[:honors_course].nil?
+      return nil
+    end
 
-        on ActivityOfferingMaintenance do |page|
-          if opts[:honors_course]
-            page.honors_flag.set
-          else
-            page.honors_flag.clear
-          end
-        end
+    on ActivityOfferingMaintenance do |page|
+      if opts[:honors_course]
+        page.honors_flag.set
+      else
+        page.honors_flag.clear
+      end
+    end
 
-        @honors_course = opts[:honors_course]
+    @honors_course = opts[:honors_course]
 
-      end #END: edit_honors_course
+  end #END: edit_honors_course
 
-      def edit_personnel_list opts={}
+  def edit_personnel_list opts={}
 
-        if opts[:personnel_list].nil?
-          return nil
-        end
+    if opts[:personnel_list].nil?
+      return nil
+    end
 
-        opts[:personnel_list].each do |person|
-          person.create
-        end
+    opts[:personnel_list].each do |person|
+      person.create
+    end
 
-        @personnel_list = opts[:personnel_list]
+    @personnel_list = opts[:personnel_list]
 
-      end #END: edit_personnel_list
+  end #END: edit_personnel_list
 
-      def edit_seat_pool_list opts={}
+  def edit_seat_pool_list opts={}
 
-        if opts[:seat_pool_list].nil?
-          return nil
-        end
+    if opts[:seat_pool_list].nil?
+      return nil
+    end
 
-        opts[:seat_pool_list].each do |key,seat_pool|
-          seat_pool.add_seatpool(seatpool_populations_used)
-          if !seat_pool.exp_add_succeed then
-            @seat_pool_list.delete(key)
-          end
-        end
+    opts[:seat_pool_list].each do |key,seat_pool|
+      seat_pool.add_seatpool(seatpool_populations_used)
+      if !seat_pool.exp_add_succeed then
+        @seat_pool_list.delete(key)
+      end
+    end
 
-      end #END: edit_seat_pool_list
+  end #END: edit_seat_pool_list
 
   private :edit_colocation,
           :edit_break_colocation,
@@ -537,7 +570,7 @@ class ActivityOffering
 
 end
 
-# stoes test data for creating/editing and validating seatpool and provides convenience methods for navigation and data entry
+# stores test data for creating/editing and validating seatpool and provides convenience methods for navigation and data entry
 #
 # SeatPool is a child of a ActivityOffering
 #
@@ -715,17 +748,17 @@ class Personnel
   # edits personnel based on values in options hash
   #
   #  @param opts [Hash] key => value for attribute to be updated
-#  def add_personnel(opts={})
-#    @id = opts[:id]
-#    @affiliation = opts[:affiliation]
-#    @inst_effort = opts[:inst_effort]
-#    on ActivityOfferingMaintenance do |page|
-#      page.add_person_id.set @id
-#      page.add_affiliation.select @affiliation
-#      page.add_inst_effort.set @inst_effort
-#      page.add_personnel
-#    end
-#  end
+  #  def add_personnel(opts={})
+  #    @id = opts[:id]
+  #    @affiliation = opts[:affiliation]
+  #    @inst_effort = opts[:inst_effort]
+  #    on ActivityOfferingMaintenance do |page|
+  #      page.add_person_id.set @id
+  #      page.add_affiliation.select @affiliation
+  #      page.add_inst_effort.set @inst_effort
+  #      page.add_personnel
+  #    end
+  #  end
 end
 
 # stores test data for creating/editing and validating delivery logistics data and provides convenience methods for navigation and data entry
@@ -750,7 +783,7 @@ class DeliveryLogistics
   include Workflows
 
   #boolean - generally set using options hash
-  attr_accessor :tba, :process
+  attr_accessor :tba, :process, :isRDL
   #generally set using options hash
   attr_accessor :days,
                 :start_time,
@@ -778,13 +811,15 @@ class DeliveryLogistics
   #    :facility_long_name  => "Reckord Armory",
   #    :room  => "126",
   #    :features_list  => [],
-  #    :process => true
+  #    :process => true,
+  #     :isRDL => true
   # }
   # initialize is generally called using TestFactory Foundry .make or .create methods
   def initialize(browser, opts={})
     @browser = browser
 
     defaults = {
+        :isRDL => true,
         :tba  => false,
         :days  => "MWF",
         :start_time  => "01:00",
@@ -794,8 +829,8 @@ class DeliveryLogistics
         :facility  => "ARM",
         :facility_long_name  => "Reckord Armory",
         :room  => "126",
-        :features_list  => [],
-        :process => true
+        :features_list  => []
+        #     :process => true
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -808,6 +843,7 @@ class DeliveryLogistics
   # generally called from ActivityOffering class
   def create
     on ActivityOfferingMaintenance do |page|
+      isRDL = true
       if @tba
         page.add_tba.set
       else
@@ -824,21 +860,65 @@ class DeliveryLogistics
       #page.facility_features TODO: later, facility features persistence not implemented yet
       page.add_new_delivery_logistics
     end
-
   end
 
-  # completes create operation (allows adding multiple rdls)
-  def save_and_process
-    on DeliveryLogisticsEdit do |page|
-      page.save_and_process_request
+  def edit(opts)
+    if isRDL then
+      on ActivityOfferingMaintenance do |page|
+        page.view_requested_delivery_logistics
+        target_row = target_row_by_dl_key
+        page.edit_rdl_row(target_row)
+        sleep 2
+
+        if @tba
+          page.add_tba.set
+        else
+          page.add_tba.clear
+        end
+
+        if opts[:days] != nil then
+          page.add_days.set opts[:days]
+        end
+
+        if opts[:start_time] != nil then
+          page.add_days.set opts[:start_time]
+          page.add_start_time_ampm.select opts[:start_time_ampm] unless opts[:start_time_ampm] == ""
+        end
+
+        if opts[:end_time] != nil then
+          page.add_days.set opts[:end_time]
+          page.add_start_time_ampm.select opts[:end_time_ampm] unless opts[:end_time_ampm] == ""
+        end
+
+        if opts[:facility] != nil then
+          page.add_days.set opts[:facility]
+        end
+
+        if opts[:room] != nil then
+          page.add_days.set opts[:room]
+        end
+
+        #opts["features_list"] TODO if implemented
+        page.add_new_delivery_logistics
+      end
+      set_options(opts)
+    else
+      raise "error: cannot edit Actual Delivery Logistics"
     end
   end
 
-  # completes create operation (allows adding multiple rdls)
-  def save
-    on DeliveryLogisticsEdit do |page|
-      page.save_request
+  def dl_key
+    "#{@days}#{@start_time}#{@start_time_ampm}"
+  end
+
+  def target_row_by_dl_key
+    on ActivityOfferingMaintenance do |page|
+      page.requested_logistics_table.rows.each do |row|
+        row_key = "#{row.cells[ActivityOfferingMaintenanceBase::DAYS_COLUMN].text}#{row.cells[ActivityOfferingMaintenanceBase::ST_TIME_COLUMN].text}".delete(' ')
+        return row unless row_key != dl_key
+      end
     end
+    return nil
   end
 
   # delete Delivery Logistics request row
@@ -846,8 +926,9 @@ class DeliveryLogistics
   # generally called from ActivityOffering class - see ActivityOffering
   #
   # @param row
-  def delete_rdl(row)
-    on DeliveryLogisticsEdit do |page|
+  def delete_rdl
+    row = target_row_by_dl_key
+    on ActivityOfferingMaintenance do |page|
       page.delete_requested_logistics_features(row)
       page.save_request
     end

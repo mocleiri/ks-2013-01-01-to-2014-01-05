@@ -45,8 +45,8 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   action(:cancel) { |b| b.frm.link(text: "cancel").click; b.loading.wait_while_present }
 
-  element(:add_new_delivery_logistics_button) { |b| b.add_logistics_div.button(text: "Add") }
-  action(:add_new_delivery_logistics) { |b| b.add_new_delivery_logistics_button.click; b.loading.wait_while_present }
+  element(:add_new_delivery_logistics_button) { |b| b.add_logistics_div.button(id: "add_rdl_button") }
+  action(:add_new_delivery_logistics) { |b| b.add_new_delivery_logistics_button.click; b.adding.wait_while_present }
 
   element(:view_requested_delivery_logistics_link) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-Requested_toggle") }
   action(:view_requested_delivery_logistics) { |b| b.view_requested_delivery_logistics_link.click; b.loading.wait_while_present }
@@ -72,45 +72,55 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   FEATURES = 6
   ACTIONS = 7
 
-  def edit_requested_delivery_logistics_row(row_num)
-    requested_logistics_table[row_num][ACTIONS].link(text: "Edit").click
+  def edit_rdl_row(row)
+    row.cells[ACTIONS].link(text: "Edit").click
+    loading.wait_while_present(120)
   end
 
-  def days_for_requested_delivery_logistics_row(row_num)
-    requested_logistics_table[row_num][1].text_field.value
+  def delete_rdl_row(row)
+    row.cells[ACTIONS].button(text: "Delete").click
   end
 
-
-  def days_for_actual_delivery_logistics_row(row_num)
-    actual_logistics_table[row_num][1].span.text
-  end
-
-  # get the ADL-data as an array of Sets (with table-header and "Actions" removed)
-  def get_actual_delivery_logistics_data_as_array_of_sets
-    get_delivery_logistics_data_as_set(false)
-  end
-  # get the RDL-data as an array of Sets (with table-header and "Actions" removed)
-  def get_requested_delivery_logistics_data_as_array_of_sets
-    get_delivery_logistics_data_as_set(true)
-  end
-  # private-helper to get delivery-data
-  def get_delivery_logistics_data_as_set(isTargetRDL)
-    result_set = []
-
-    delivery_logistics_table = actual_logistics_table
-    if(isTargetRDL)
-      delivery_logistics_table = requested_logistics_table
-    end
-    delivery_logistics_table.rows.each_with_index do |row, index|
-      next if index == 0 || row.nil? || row.text.empty? # 1st-row is table-header; empty-rows aren't wanted either
-      row_set = row.text.split(' ').to_set
-      row_set = row_set.delete('delete') #strip off the "Actions"-button
-      result_set << row_set
-    end
-
-    return result_set
-  end
-  private :get_delivery_logistics_data_as_set
+  #
+  #def edit_requested_delivery_logistics_row(row_num)
+  #  requested_logistics_table[row_num][ACTIONS].link(text: "Edit").click
+  #end
+  #
+  #def days_for_requested_delivery_logistics_row(row_num)
+  #  requested_logistics_table[row_num][1].text_field.value
+  #end
+  #
+  #
+  #def days_for_actual_delivery_logistics_row(row_num)
+  #  actual_logistics_table[row_num][1].span.text
+  #end
+  #
+  ## get the ADL-data as an array of Sets (with table-header and "Actions" removed)
+  #def get_actual_delivery_logistics_data_as_array_of_sets
+  #  get_delivery_logistics_data_as_set(false)
+  #end
+  ## get the RDL-data as an array of Sets (with table-header and "Actions" removed)
+  #def get_requested_delivery_logistics_data_as_array_of_sets
+  #  get_delivery_logistics_data_as_set(true)
+  #end
+  ## private-helper to get delivery-data
+  #def get_delivery_logistics_data_as_set(isTargetRDL)
+  #  result_set = []
+  #
+  #  delivery_logistics_table = actual_logistics_table
+  #  if(isTargetRDL)
+  #    delivery_logistics_table = requested_logistics_table
+  #  end
+  #  delivery_logistics_table.rows.each_with_index do |row, index|
+  #    next if index == 0 || row.nil? || row.text.empty? # 1st-row is table-header; empty-rows aren't wanted either
+  #    row_set = row.text.split(' ').to_set
+  #    row_set = row_set.delete('delete') #strip off the "Actions"-button
+  #    result_set << row_set
+  #  end
+  #
+  #  return result_set
+  #end
+  #private :get_delivery_logistics_data_as_set
 
   def get_inst_effort(id)
     target_person_row(id).cells[INST_EFFORT_COLUMN].text_field.value
