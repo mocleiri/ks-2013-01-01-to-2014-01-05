@@ -137,7 +137,7 @@
                     method="invalidateCache"/>
         </aop:aspect>
         <aop:aspect id="atpCacheAroundSearch" ref="atpMethodCacheAdvisor">
-            <aop:around pointcut="execution(*  org.kuali.student.core.atp.service.impl.*.getAtpType(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.core.atp.service.impl.*.getAtp*(..))"
                         method="getFromCache"/>
             <aop:around pointcut="execution(*  org.kuali.student.core.atp.service.impl.*.search*(..))"
                         method="getFromCache"/>
@@ -204,6 +204,12 @@
                         method="getFromCache"/>
             <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.get*(..))"
                         method="getFromCache"/>
+            <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.update*(..))"
+                        method="invalidateCache"/>
+            <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.create*(..))"
+                        method="invalidateCache"/>
+               <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.delete*(..))"
+                        method="invalidateCache"/>
         </aop:aspect>
 
         <aop:aspect id="academicCalendarCacheAroundSearch" ref="academicCalendarCacheAdvisor">
