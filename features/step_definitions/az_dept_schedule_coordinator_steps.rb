@@ -386,10 +386,23 @@ When /^there is a "([^"]*)" course offering not in my admin org/ do |co_status|
 end
 
 
-When /^there is a "([^"]*)" course offering present/ do |co_status|
+When /^there is an? "([^"]*)" course offering present/ do |co_status|
   step "I am logged in as a Schedule Coordinator"
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
   @course_offering.check_course_in_status(co_status)
+end
+# About "CL 1", probably should not hard-code, but how to get the private name?
+When /^there is a Planned course offering with 2 activity offerings present/ do
+  step "I am logged in as a Schedule Coordinator"
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL243", :term=>@term_for_test)
+  @course_offering.approve_co
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    if page.cluster_select_all_aos("CL 1") then
+      page.draft_activity_button.wait_until_present(5)
+      page.draft_activity
+    end
+  end
 end
 
 When /^I have access to delete an activity offering in "([^"]*)" status for the course offering$/ do |aostate|
@@ -657,18 +670,6 @@ Then /^I have access to select activity offerings for add, approve, delete$/ do
     page.codes_list.each do |ao_code|
       page.target_row(ao_code).checkbox.present?.should be_true
     end
-  end
-end
-
-When /^I attempt to create a joint offered course offering for a subject in my admin org$/ do
-  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL316"
-  @course_offering.start_create_by_search
-end
-
-
-Then /^I do not have access to create a new joint offered course offering$/ do
-  on CreateCourseOffering do |page|
-  page.create_new_joint_defined_course_first_row.exists?.should == false
   end
 end
 

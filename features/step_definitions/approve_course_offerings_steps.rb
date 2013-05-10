@@ -22,6 +22,12 @@ And /^I approve selected Activity Offerings for scheduling$/ do
   @course_offering.approve_ao_list(:ao_obj_list => @selected_ao_list)
 end
 
+And /^I approve the first Activity Offering for scheduling$/ do
+  @course_offering.manage_and_init
+  @selected_ao_list =  @course_offering.activity_offering_cluster_list[0].ao_list[0..0]
+  @course_offering.approve_ao_list(:ao_obj_list => @selected_ao_list)
+end
+
 Then /^the Activity Offerings of these two COs should be in Approved state$/ do
   @course_offering_ENGL221.manage_and_init
   new_cluster_list = @course_offering_ENGL221.activity_offering_cluster_list

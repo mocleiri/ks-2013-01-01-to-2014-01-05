@@ -4,6 +4,36 @@ When /^I manage course offerings for a subject code$/ do
   @course_offering.search_by_subjectcode
 end
 
+When /^I manage course offerings for subject code ENGL$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"ENGL", :term=>@term_for_test
+  @course_offering.search_by_subjectcode
+end
+
+When /^I manage course offerings for subject code ENGL206$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"ENGL206", :term=>@term_for_test
+  @course_offering.manage
+end
+
+When /^I manage course offerings for subject code ENGL245$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"ENGL245", :term=>@term_for_test
+  @course_offering.manage
+end
+
+When /^I manage a course offering in the specified state$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering.manage
+end
+
+When /^I manage a course offering for a subject code in "Draft" state$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
+  @course_offering.manage
+  @activity_offering = make ActivityOffering, :code=>"A"
+end
+
 When /^I manage a course offering$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
@@ -34,5 +64,116 @@ end
 Then /^I have access to create a new joint offered course offering$/ do
   on CreateCourseOffering do |page|
     page.create_new_joint_defined_course_first_row.exists?.should == true
+  end
+end
+
+Then /^the expected state of the toolbar is: Create: "([^"]*)"; Approve: "([^"]*)"; Delete: "([^"]*)"$/ do |create_button_state, approve_button_state, delete_button_state|
+  on ManageCourseOfferingList do |page|
+    if create_button_state == "enabled"
+      page.create_course_offering_button.enabled?.should be_true
+    elsif create_button_state == "disabled"
+      page.create_course_offering_button.enabled?.should be_false
+    else
+      raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
+    end
+
+    if approve_button_state == "enabled"
+      page.approve_course_offering_button.enabled?.should be_true
+    elsif approve_button_state == "disabled"
+      page.approve_course_offering_button.enabled?.should be_false
+    else
+      raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
+    end
+
+    if delete_button_state == "enabled"
+      page.delete_cos_button.enabled?.should be_true
+    elsif delete_button_state == "disabled"
+      page.delete_cos_button.enabled?.should be_false
+    else
+      raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
+    end
+  end
+end
+
+Then /^the expected state of the AO toolbar is: Create: "([^"]*)"; Approve: "([^"]*)"; SetAsDraft: "([^"]*)"; Delete: "([^"]*)"; AddCluster: "([^"]*)"; Move: "([^"]*)"$/ do |create_button_state, approve_button_state, setasdraft_button_state, delete_button_state, addcluster_button_state, move_button_state|
+  on ManageCourseOfferings do |page|
+    if create_button_state == "enabled"
+      page.add_activity_button.enabled?.should be_true
+    elsif create_button_state == "disabled"
+      page.add_activity_button.enabled?.should be_false
+    else
+      raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
+    end
+
+    if approve_button_state == "enabled"
+      page.approve_activity_button.enabled?.should be_true
+    elsif approve_button_state == "disabled"
+      page.approve_activity_button.enabled?.should be_false
+    else
+      raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
+    end
+
+    if setasdraft_button_state == "enabled"
+      page.draft_activity_button.enabled?.should be_true
+    elsif setasdraft_button_state == "disabled"
+      page.draft_activity_button.enabled?.should be_false
+    else
+      raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
+    end
+
+    if delete_button_state == "enabled"
+      page.delete_aos_button.enabled?.should be_true
+    elsif delete_button_state == "disabled"
+      page.delete_aos_button.enabled?.should be_false
+    else
+      raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
+    end
+
+    if addcluster_button_state == "enabled"
+      page.add_cluster_button.enabled?.should be_true
+    elsif addcluster_button_state == "disabled"
+      page.add_cluster_button.enabled?.should be_false
+    else
+      raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
+    end
+
+    if move_button_state == "enabled"
+      page.move_aos_button.enabled?.should be_true
+    elsif move_button_state == "disabled"
+      page.move_aos_button.enabled?.should be_false
+    else
+      raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
+    end
+  end
+end
+
+When /^I set the activity offering as draft$/ do
+  on ManageCourseOfferings do |page|
+    page.draft_activity_button.wait_until_present(5)
+    page.draft_activity
+#    page.set_ao_as_draft
+  end
+end
+
+When /^I select the first activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao("A")
+  end
+end
+
+When /^I select the second activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao("B")
+  end
+end
+
+When /^I deselect the first activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.deselect_ao("A")
+  end
+end
+When /^I deselect the second activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.deselect_ao("B")
   end
 end
