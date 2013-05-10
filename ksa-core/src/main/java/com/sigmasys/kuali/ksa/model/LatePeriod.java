@@ -3,11 +3,9 @@ package com.sigmasys.kuali.ksa.model;
 import javax.persistence.*;
 
 /**
- * Late periods model
+ * LatePeriod model.
  * <p/>
- * User: mike
- * Date: 1/22/12
- * Time: 3:47 PM
+ * @author Michael Ivanov
  */
 @Entity
 @Table(name = "KSSA_LATE_PERIOD")
