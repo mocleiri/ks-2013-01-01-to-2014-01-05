@@ -135,7 +135,7 @@
                                                 <bean parent="Uif-VerticalBoxSection">
                                                     <property name="items">
                                                         <list>
-                                                            <bean parent="Uif-InputField" p:propertyName="externalId" p:label="@{authorizationText}" p:labelPlacement="TOP"/>
+                                                            <bean parent="Uif-InputField" p:propertyName="externalId" p:label="@{authorizationText}" p:labelPlacement="TOP" p:render="@{!#empty(authorizationText)}"/>
                                                             <bean parent="Uif-HorizontalBoxSection" p:render="@{isTransactionTypeValid()}">
                                                                 <property name="items">
                                                                     <list>
