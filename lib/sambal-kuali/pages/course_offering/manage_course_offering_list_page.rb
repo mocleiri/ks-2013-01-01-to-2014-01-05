@@ -20,10 +20,10 @@ class ManageCourseOfferingList < BasePage
   action(:delete_cos) { |b|b.delete_cos_button.click; b.loading.wait_while_present(300) }
 
   element(:approve_dialog){|b| b.frm.div(id:"approveCODialog")}
-  element(:approve_yes_element) { |b| b.approve_dialog.checkbox(index:0)}
+  element(:approve_yes_element) { |b| b.approve_dialog.radio(index:0)}
   action(:approve_yes) { |b| b.approve_yes_element.click;b.loading.wait_while_present(300)}
 
-  element(:no_button_element) { |b| b.approve_dialog.checkbox(index:1)}
+  element(:no_button_element) { |b| b.approve_dialog.radio(index:1)}
   action(:no) { |b| b.no_button_element.click;b.loading.wait_while_present(300)}
 
   SELECT_COLUMN = 0

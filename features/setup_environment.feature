@@ -25,7 +25,7 @@ Feature: Setup Environment
 #    Then I verify that Close button is there for next action
 #    And I verify the related object state changes for Publish action
 
-  Scenario: Set up a term in published state for milestones testing
+  Scenario: Set up a milestones testing term in published state
     When I initiate a rollover to create a term in published state for milestones testing
     Then the results of the rollover are available
     And the rollover can be released to departments
