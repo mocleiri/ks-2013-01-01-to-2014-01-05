@@ -59,6 +59,8 @@ alter table KSSA_PERSON_NAME_ACNT add constraint FK9F7C59B7FD92EAC foreign key (
 alter table KSSA_PERSON_NAME_ACNT add constraint FK9F7C59B98518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_POSTAL_ADDRESS_ACNT add constraint FKBDC431DE98518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_POSTAL_ADDRESS_ACNT add constraint FKBDC431DEF6AF9F26 foreign key (POSTAL_ADDRESS_ID_FK) references KSSA_POSTAL_ADDRESS;
+alter table KSSA_RATE add constraint FKB8FF45C9BA6CDBA3 foreign key (RATE_CATALOG_ID_FK) references KSSA_RATE_TYPE;
+alter table KSSA_RATE_TYPE add constraint FK29242FF013EF60F7 foreign key (RATE_TYPE_ID_FK) references KSSA_RATE_TYPE;
 alter table KSSA_REFUND add constraint FK76773E217FC9D8F2 foreign key (REFUND_TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_REFUND add constraint FK76773E21D61AFDF9 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_REFUND add constraint FK76773E21A0B2BA5 foreign key (AUTHORIZED_BY_ID_FK) references KSSA_ACNT;

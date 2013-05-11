@@ -186,13 +186,13 @@ public class Account implements Identifiable {
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_KIM_ACNT")
     public Boolean isKimAccount() {
-        return isKimAccount;
+        return isKimAccount != null ? isKimAccount : false;
     }
-    
+
     @Transient
- 	public Boolean getIsKimAccount() {
- 		return isKimAccount();
- 	}
+    public Boolean getIsKimAccount() {
+        return isKimAccount();
+    }
 
     public void setKimAccount(Boolean kimAccount) {
         isKimAccount = kimAccount;
@@ -201,13 +201,13 @@ public class Account implements Identifiable {
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "CAN_AUTHENTICATE")
     public Boolean isAbleToAuthenticate() {
-        return ableToAuthenticate;
+        return ableToAuthenticate != null ? ableToAuthenticate : false;
     }
-    
+
     @Transient
-	public Boolean getAbleToAuthenticate() {
-		return isAbleToAuthenticate();
-	}
+    public Boolean getAbleToAuthenticate() {
+        return isAbleToAuthenticate();
+    }
 
     public void setAbleToAuthenticate(Boolean ableToAuthenticate) {
         this.ableToAuthenticate = ableToAuthenticate;
