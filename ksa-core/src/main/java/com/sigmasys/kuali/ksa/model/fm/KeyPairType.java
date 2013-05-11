@@ -1,4 +1,4 @@
-package com.sigmasys.kuali.ksa.model;
+package com.sigmasys.kuali.ksa.model.fm;
 
 /**
  * This enumeration represents possible values of KeyPair class and subclass types. 

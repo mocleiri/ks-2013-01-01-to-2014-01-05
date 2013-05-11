@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.FeeBase;
-import com.sigmasys.kuali.ksa.model.LearningPeriod;
-import com.sigmasys.kuali.ksa.model.LearningUnit;
-import com.sigmasys.kuali.ksa.model.PeriodKeyPair;
+import com.sigmasys.kuali.ksa.model.fm.LearningPeriod;
+import com.sigmasys.kuali.ksa.model.fm.LearningUnit;
+import com.sigmasys.kuali.ksa.model.fm.PeriodKeyPair;
 import com.sigmasys.kuali.ksa.service.AccountImportService;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.FeeManagementService;
@@ -255,7 +255,7 @@ public class AccountImportServiceImpl implements AccountImportService {
     }
 
     /**
-     * Creates a new {@link com.sigmasys.kuali.ksa.model.KeyPair} only if the <code>value</code> is not empty
+     * Creates a new {@link com.sigmasys.kuali.ksa.model.fm.KeyPair} only if the <code>value</code> is not empty
      * as checked by {@link StringUtils#isNotBlank(String)}
      *
      * @param feeBase A <code>FeeBase</code> object.
@@ -292,7 +292,7 @@ public class AccountImportServiceImpl implements AccountImportService {
     }
 
     /**
-     * Creates a new {@link com.sigmasys.kuali.ksa.model.KeyPair} only if the <code>value</code> is not empty
+     * Creates a new {@link com.sigmasys.kuali.ksa.model.fm.KeyPair} only if the <code>value</code> is not empty
      * as checked by {@link StringUtils#isNotBlank(String)}
      *
      * @param feeBase A <code>FeeBase</code> object.

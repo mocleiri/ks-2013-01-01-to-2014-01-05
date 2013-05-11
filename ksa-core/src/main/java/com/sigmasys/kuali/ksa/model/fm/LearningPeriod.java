@@ -1,4 +1,6 @@
-package com.sigmasys.kuali.ksa.model;
+package com.sigmasys.kuali.ksa.model.fm;
+
+import com.sigmasys.kuali.ksa.model.AuditableEntity;
 
 import java.util.Date;
 

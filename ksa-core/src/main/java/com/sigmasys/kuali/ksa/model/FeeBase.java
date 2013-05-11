@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.sigmasys.kuali.ksa.model.fm.KeyPair;
+import com.sigmasys.kuali.ksa.model.fm.LearningUnit;
+import com.sigmasys.kuali.ksa.model.fm.PeriodKeyPair;
 import com.sigmasys.kuali.ksa.service.FeeManagementService;
 
 /**

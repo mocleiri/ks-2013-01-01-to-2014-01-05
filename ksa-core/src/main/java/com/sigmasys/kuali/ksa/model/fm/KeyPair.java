@@ -1,4 +1,4 @@
-package com.sigmasys.kuali.ksa.model;
+package com.sigmasys.kuali.ksa.model.fm;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -12,6 +12,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import com.sigmasys.kuali.ksa.model.Identifiable;
 import org.apache.commons.lang.StringUtils;
 
 /**

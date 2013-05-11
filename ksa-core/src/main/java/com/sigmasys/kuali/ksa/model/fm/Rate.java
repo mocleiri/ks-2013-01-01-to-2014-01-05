@@ -25,7 +25,7 @@ public class Rate extends AuditableEntity<Long> {
 
     private Date recognitionDate;
 
-    private Boolean isDefAmountFinal;
+    private Boolean isAmountFinal;
 
     private Boolean isTransactionTypeFinal;
 
@@ -93,13 +93,13 @@ public class Rate extends AuditableEntity<Long> {
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_DEF_AMOUNT_FINAL")
-    public Boolean isDefAmountFinal() {
-        return isDefAmountFinal;
+    @Column(name = "IS_AMOUNT_FINAL")
+    public Boolean isAmountFinal() {
+        return isAmountFinal;
     }
 
-    public void setDefAmountFinal(Boolean defAmountFinal) {
-        isDefAmountFinal = defAmountFinal;
+    public void setAmountFinal(Boolean amountFinal) {
+        isAmountFinal = amountFinal;
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")

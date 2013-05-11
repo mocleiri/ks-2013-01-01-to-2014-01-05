@@ -1,4 +1,4 @@
-package com.sigmasys.kuali.ksa.model;
+package com.sigmasys.kuali.ksa.model.fm;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -18,6 +18,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.model.AccountIdAware;
+import com.sigmasys.kuali.ksa.model.Identifiable;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;

@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.fm.KeyPair;
+import com.sigmasys.kuali.ksa.model.fm.LearningPeriod;
+import com.sigmasys.kuali.ksa.model.fm.LearningUnit;
+import com.sigmasys.kuali.ksa.model.fm.PeriodKeyPair;
 
 /**
  * This interface represents a service object to work with Fee Assessments of ChargeableAccounts.

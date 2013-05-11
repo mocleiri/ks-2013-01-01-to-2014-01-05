@@ -14,6 +14,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.fm.KeyPair;
+import com.sigmasys.kuali.ksa.model.fm.LearningPeriod;
+import com.sigmasys.kuali.ksa.model.fm.LearningUnit;
+import com.sigmasys.kuali.ksa.model.fm.PeriodKeyPair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
