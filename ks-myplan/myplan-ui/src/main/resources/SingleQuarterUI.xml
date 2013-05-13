@@ -858,7 +858,7 @@
                                 <property name="style"
                                           value="display:inline-block; font-size:11px; margin:0; text-align:right; float:right;"/>
                                 <property name="render"
-                                          value="@{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND #line.timeScheduleOpen AND !#line.showAlert}"/>
+                                          value="@{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND #line.timeScheduleOpen AND #line.sectionsAvailable}"/>
                             </bean>
 
                         </list>
