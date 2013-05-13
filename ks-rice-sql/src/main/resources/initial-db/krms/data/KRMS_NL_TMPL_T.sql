@@ -235,7 +235,7 @@ INSERT INTO KRMS_NL_TMPL_T (LANG_CD,NL_TMPL_ID,NL_USAGE_ID,TMPL,TYP_ID,VER_NBR)
   VALUES ('en', 'KS-KRMS-NL-TMPL-1091','KS-KRMS-NL-USAGE-1004','Must have successfully completed all courses from <courses>','10018',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (LANG_CD,NL_TMPL_ID,NL_USAGE_ID,TMPL,TYP_ID,VER_NBR)
-  VALUES ('en', 'KS-KRMS-NL-TMPL-1092','KS-KRMS-NL-USAGE-1004','Must have successfully completed a minimum of <n> credits from <course>','10054',0)
+  VALUES ('en', 'KS-KRMS-NL-TMPL-1092','KS-KRMS-NL-USAGE-1004','Must have successfully completed a minimum of <n> credits from <courses>','10054',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (LANG_CD,NL_TMPL_ID,NL_USAGE_ID,TMPL,TYP_ID,VER_NBR)
   VALUES ('en', 'KS-KRMS-NL-TMPL-1093','KS-KRMS-NL-USAGE-1004','Must have successfully completed a minimum of <n> credits from courses in the <org>','10055',0)
@@ -445,10 +445,10 @@ INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
   VALUES ('KS-KRMS-NL-TMPL-1239','en','KS-KRMS-NL-USAGE-1003','10020','#if($courseCluSet.getCluList().size() == 1)Must not have successfully completed#{else}Must not have successfully completed any courses from#end',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
-  VALUES ('KS-KRMS-NL-TMPL-1246','en','KS-KRMS-NL-USAGE-1000','10040','Must have earned a minimum cumulative GPA of $gpa',0)
+  VALUES ('KS-KRMS-NL-TMPL-1246','en','KS-KRMS-NL-USAGE-1000','10040','Must have earned a minimum cumulative GPA of $intValue',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
-  VALUES ('KS-KRMS-NL-TMPL-1247','en','KS-KRMS-NL-USAGE-1000','10041','Must have earned a minimum $durationType.getName().toLowerCase() GPA of $gpa',0)
+  VALUES ('KS-KRMS-NL-TMPL-1247','en','KS-KRMS-NL-USAGE-1000','10041','Must have earned a minimum $durationType.getName().toLowerCase() GPA of $intValue',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
   VALUES ('KS-KRMS-NL-TMPL-1248','en','KS-KRMS-NL-USAGE-1003','10018','#if($courseCluSet.getCluList().size() == 1)Must have successfully completed#{else}Must have successfully completed all courses from#end',0)
@@ -466,7 +466,7 @@ INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
   VALUES ('KS-KRMS-NL-TMPL-1252','en','KS-KRMS-NL-USAGE-1003','10022','Must not have successfully completed any credits from',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
-  VALUES ('KS-KRMS-NL-TMPL-1254','en','KS-KRMS-NL-USAGE-1003','10025','Must have earned a minimum GPA of $gpa in',0)
+  VALUES ('KS-KRMS-NL-TMPL-1254','en','KS-KRMS-NL-USAGE-1003','10025','Must have earned a minimum GPA of $intValue in',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
   VALUES ('KS-KRMS-NL-TMPL-1255','en','KS-KRMS-NL-USAGE-1003','10023','#if($courseCluSet.getCluList().size() == 1)Must be concurrently enrolled in#{else}Must be concurrently enrolled in all courses from#end',0)
@@ -478,10 +478,10 @@ INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
   VALUES ('KS-KRMS-NL-TMPL-1262','en','KS-KRMS-NL-USAGE-1003','10047','Must not have earned more than $intValue $NLHelper.getProperGrammar($intValue, "credit")',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
-  VALUES ('KS-KRMS-NL-TMPL-1271','en','KS-KRMS-NL-USAGE-1003','10040','Must have earned a minimum cumulative GPA of $gpa',0)
+  VALUES ('KS-KRMS-NL-TMPL-1271','en','KS-KRMS-NL-USAGE-1003','10040','Must have earned a minimum cumulative GPA of $intValue',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
-  VALUES ('KS-KRMS-NL-TMPL-1272','en','KS-KRMS-NL-USAGE-1003','10041','Must have earned a minimum $durationType.getName().toLowerCase() GPA of $gpa',0)
+  VALUES ('KS-KRMS-NL-TMPL-1272','en','KS-KRMS-NL-USAGE-1003','10041','Must have earned a minimum $durationType.getName().toLowerCase() GPA of $intValue',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
   VALUES ('KS-KRMS-NL-TMPL-1273','en','KS-KRMS-NL-USAGE-1003','10027','Must have earned a minimum grade of #if($gradeType.getId().equals("kuali.result.scale.grade.letter") || $gradeType.getId().equals("kuali.result.scale.grade.percentage"))$gradeType.getName().toLowerCase() #{end}$grade in',0)
@@ -547,13 +547,13 @@ INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
   VALUES ('KS-KRMS-NL-TMPL-1325','en','KS-KRMS-NL-USAGE-1000','10031','$freeText',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
-  VALUES ('KS-KRMS-NL-TMPL-1330','en','KS-KRMS-NL-USAGE-1000','10021','Must successfully complete no more than $intValue $NLHelper.getProperGrammar($intValue, "credit") from',0)
+  VALUES ('KS-KRMS-NL-TMPL-1330','en','KS-KRMS-NL-USAGE-1000','10021','Must successfully complete no more than $intValue $NLHelper.getProperGrammar($intValue, "credit") from $courseCluSet.getCluSetAsCode()',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
   VALUES ('KS-KRMS-NL-TMPL-1331','en','KS-KRMS-NL-USAGE-1000','10022','Must not have successfully completed any credits from $courseCluSet.getCluSetAsCode()',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
-  VALUES ('KS-KRMS-NL-TMPL-1333','en','KS-KRMS-NL-USAGE-1000','10025','Must have earned a minimum GPA of $gpa in $courseCluSet.getCluSetAsCode()',0)
+  VALUES ('KS-KRMS-NL-TMPL-1333','en','KS-KRMS-NL-USAGE-1000','10025','Must have earned a minimum GPA of $intValue in $courseCluSet.getCluSetAsCode()',0)
 /
 INSERT INTO KRMS_NL_TMPL_T (NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR)
   VALUES ('KS-KRMS-NL-TMPL-1334','en','KS-KRMS-NL-USAGE-1000','10023','#if($courseCluSet.getCluList().size() == 1)Must be concurrently enrolled in $courseCluSet.getCluSetAsCode()#{else}Must be concurrently enrolled in all courses from $courseCluSet.getCluSetAsCode()#end',0)
