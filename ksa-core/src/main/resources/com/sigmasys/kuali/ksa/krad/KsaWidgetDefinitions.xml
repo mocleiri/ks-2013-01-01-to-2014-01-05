@@ -122,6 +122,18 @@
         </property>
     </bean>
 
+    <bean name="KsaBatchNavigation" parent="Uif-KsaPageNavigation">
+        <property name="items">
+            <list>
+                <bean parent="Uif-HeaderTwo" p:headerText="Batch Transactions"/>
+                <bean parent="Uif-Link" p:linkText="Upload a File"
+                      p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView"/>
+                <bean parent="Uif-Link" p:linkText="Refunds"
+                      p:href="batchRefundView?methodToCall=get&amp;viewId=BatchRefundView"/>
+            </list>
+        </property>
+    </bean>
+
 
     <bean id="Uif-KsaPageNavigation" parent="Uif-MenuNavigationGroup" abstract="true" scope="prototype">
         <property name="items">

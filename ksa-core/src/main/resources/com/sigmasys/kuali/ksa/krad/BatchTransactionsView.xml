@@ -30,18 +30,7 @@
         <property name="title" value="Batch Transactions"/>
         <property name="headerText" value="Batch Transaction Upload"/>
         <property name="entryPageId" value="BatchTransactionsUploadFilePage"/>
-        <property name="navigation">
-            <bean parent="Uif-KsaPageNavigation">
-                <property name="items">
-                    <list>
-                        <bean parent="Uif-HeaderTwo" p:headerText="Batch Transactions"/>
-                        <bean parent="Uif-NavigationActionLink"
-                              p:navigateToPageId="BatchTransactionsUploadFilePage"
-                              p:actionLabel="Upload a File"/>
-                    </list>
-                </property>
-            </bean>
-        </property>
+        <property name="navigation" ref="KsaBatchNavigation"/>
         <property name="items">
             <list merge="true">
                 <bean parent="Uif-Page" p:id="BatchTransactionsQuickMenuOptionsPage" p:title="Quick Options">
