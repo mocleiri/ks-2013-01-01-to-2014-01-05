@@ -9,30 +9,40 @@ And /^I attempt to "(delete|delete and cancel)" a joint Course Offering$/ do |de
     should_confirm_delete = true
   end
 
-  @joint_co.manage
+  @joint_co.manage_and_init
   @joint_co.delete_co_coc_view :should_confirm_delete=>should_confirm_delete
 
 end
 
 Then /^the Course Offering is "(deleted|not deleted)"$/ do |delete_flag|
 
-  @joint_co.manage
+  fund_co = false
+  @joint_co.search_by_subjectcode
 
-  on ManageCourseOfferings do |page|
-    if delete_flag == 'deleted'
-      page.error_message_course_not_found.should be_present
-    else # "not deleted"
-      page.error_message_course_not_found.should_not be_present
+  on ManageCourseOfferingList do |page|
+    page.co_list.each do |co_code|
+      if(delete_flag == "deleted")
+        co_code.should_not == @joint_co.course
+      else
+        if( co_code == @joint_co.course )
+          fund_co = true
+        end
+      end
     end
-  end
+   end
 
+  if(delete_flag == "deleted")
+    fund_co.should == false
+  else
+    fund_co.should == true
+  end
 end
 
 When /^I create a joint course offering from catalog while creating a new course offering$/ do
   @joint_cos = []
 
-  primary_co = create CourseOffering, :term => "201201", :course => "BSCI181", :joint_co_to_create => "CHEM181, PHYS181", :delivery_format => "Lecture", :grade_format => "Lecture"
-  @joint_cos << primary_co
+  @primary_co = create CourseOffering, :term => "201201", :course => "BSCI181", :joint_co_to_create => "CHEM181, PHYS181", :delivery_format => "Lecture", :grade_format => "Lecture"
+  @joint_cos << @primary_co
 
   # keep track of the joints created when creating primary-CO
   @joint_cos << (make CourseOffering, :term => "201201", :course => "CHEM181")
@@ -42,10 +52,12 @@ end
 Then /^The joint course offerings are created.$/ do
 
   @joint_cos.each do |joint_co|
-    joint_co.manage
-    on ManageCourseOfferings do |page|
-      page.error_message_course_not_found.should_not be_present
-    end
+    @activity_offering = make ActivityOffering, :format => "Lecture Only"
+
+    joint_co.create_list_aos :ao_object => @activity_offering, :number_aos_to_create=>2
+    joint_co.manage_and_init
+    total_number = joint_co.activity_offering_cluster_list[0].ao_list.count
+    total_number.should == 2
   end
 
 end

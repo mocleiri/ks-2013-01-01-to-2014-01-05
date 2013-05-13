@@ -127,7 +127,12 @@ class ActivityOffering
     end
 
     on ManageCourseOfferings do |page|
-      pre_add_ao_list = page.codes_list
+      begin
+        pre_add_ao_list = page.codes_list
+      rescue
+        pre_add_ao_list = nil
+      end
+
       post_add_ao_list = []
       #if page.codes_list.length == 0
       sleep 2
@@ -140,7 +145,12 @@ class ActivityOffering
       page.complete_add_activity
       post_add_ao_list = page.codes_list
       #end
-      new_code =  post_add_ao_list - pre_add_ao_list
+      if(pre_add_ao_list != nil )
+        new_code =  post_add_ao_list - pre_add_ao_list
+      else
+        new_code =  post_add_ao_list
+      end
+
       @code = new_code
     end
   end
