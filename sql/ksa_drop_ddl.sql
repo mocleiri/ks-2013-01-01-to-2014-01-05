@@ -56,6 +56,8 @@ drop table KSSA_POSTAL_ADDRESS_ACNT cascade constraints;
 drop table KSSA_RATE cascade constraints;
 drop table KSSA_RATE_AMOUNT cascade constraints;
 drop table KSSA_RATE_CATALOG_ATP cascade constraints;
+drop table KSSA_RATE_CATALOG_KYPR cascade constraints;
+drop table KSSA_RATE_KYPR cascade constraints;
 drop table KSSA_RATE_TYPE cascade constraints;
 drop table KSSA_REFUND cascade constraints;
 drop table KSSA_REFUND_MANIFEST cascade constraints;

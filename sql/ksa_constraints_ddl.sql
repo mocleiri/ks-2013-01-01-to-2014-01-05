@@ -62,6 +62,10 @@ alter table KSSA_POSTAL_ADDRESS_ACNT add constraint FKBDC431DEF6AF9F26 foreign k
 alter table KSSA_RATE add constraint FKB8FF45C9BA6CDBA3 foreign key (RATE_CATALOG_ID_FK) references KSSA_RATE_TYPE;
 alter table KSSA_RATE_AMOUNT add constraint FK4FC2978EB1D17704 foreign key (RATE_ID_FK) references KSSA_RATE;
 alter table KSSA_RATE_CATALOG_ATP add constraint FKE76AB3C1BA6CDBA3 foreign key (RATE_CATALOG_ID_FK) references KSSA_RATE_TYPE;
+alter table KSSA_RATE_CATALOG_KYPR add constraint FK5F0632CBA6CDBA3 foreign key (RATE_CATALOG_ID_FK) references KSSA_RATE_TYPE;
+alter table KSSA_RATE_CATALOG_KYPR add constraint FK5F0632C67B98119 foreign key (KYPR_ID_FK) references KSSA_KYPR;
+alter table KSSA_RATE_KYPR add constraint FK292018A667B98119 foreign key (KYPR_ID_FK) references KSSA_KYPR;
+alter table KSSA_RATE_KYPR add constraint FK292018A6B1D17704 foreign key (RATE_ID_FK) references KSSA_RATE;
 alter table KSSA_RATE_TYPE add constraint FK29242FF013EF60F7 foreign key (RATE_TYPE_ID_FK) references KSSA_RATE_TYPE;
 alter table KSSA_REFUND add constraint FK76773E217FC9D8F2 foreign key (REFUND_TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_REFUND add constraint FK76773E21D61AFDF9 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;

@@ -15,37 +15,19 @@ import javax.persistence.*;
 public class RateCatalogAtp implements Identifiable {
 
 
-    private Long id;
-
-    private String atpId;
+    private RateCatalogAtpId id;
 
     private RateCatalog rateCatalog;
 
 
-    @Id
-    @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_RATE_CATALOG_ATP",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "RATE_CATALOG_ATP_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_RATE_CATALOG_ATP")
     @Override
-    public Long getId() {
-        return id;
+    @EmbeddedId
+    public RateCatalogAtpId getId() {
+         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(RateCatalogAtpId id) {
         this.id = id;
-    }
-
-    @Column(name = "ATP_ID", length = 45)
-    public String getAtpId() {
-        return atpId;
-    }
-
-    public void setAtpId(String atpId) {
-        this.atpId = atpId;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -17,13 +17,13 @@ public class RateAmount implements Identifiable {
 
     private Long id;
 
-    private Integer code;
+    private Integer unit;
 
-    private Integer subCode;
+    private Integer unitFraction;
 
     private BigDecimal amount;
 
-    private String transactionTypeCode;
+    private String transactionTypeId;
 
     private Rate rate;
 
@@ -44,22 +44,22 @@ public class RateAmount implements Identifiable {
         this.id = id;
     }
 
-    @Column(name = "CODE")
-    public Integer getCode() {
-        return code;
+    @Column(name = "UNIT")
+    public Integer getUnit() {
+        return unit;
     }
 
-    public void setCode(Integer code) {
-        this.code = code;
+    public void setUnit(Integer unit) {
+        this.unit = unit;
     }
 
-    @Column(name = "SUB_CODE")
-    public Integer getSubCode() {
-        return subCode;
+    @Column(name = "UNIT_FRACTION")
+    public Integer getUnitFraction() {
+        return unitFraction;
     }
 
-    public void setSubCode(Integer subCode) {
-        this.subCode = subCode;
+    public void setUnitFraction(Integer unitFraction) {
+        this.unitFraction = unitFraction;
     }
 
     @Column(name = "AMOUNT")
@@ -71,13 +71,13 @@ public class RateAmount implements Identifiable {
         this.amount = amount;
     }
 
-    @Column(name = "TRANSACTION_TYPE_CD", length = 20)
-    public String getTransactionTypeCode() {
-        return transactionTypeCode;
+    @Column(name = "TRANSACTION_TYPE_ID", length = 20)
+    public String getTransactionTypeId() {
+        return transactionTypeId;
     }
 
-    public void setTransactionTypeCode(String transactionTypeCode) {
-        this.transactionTypeCode = transactionTypeCode;
+    public void setTransactionTypeId(String transactionTypeId) {
+        this.transactionTypeId = transactionTypeId;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

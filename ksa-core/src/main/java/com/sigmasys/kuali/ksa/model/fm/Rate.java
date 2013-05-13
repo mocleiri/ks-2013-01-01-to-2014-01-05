@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.model.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * FM Rate model.
@@ -17,7 +18,7 @@ public class Rate extends AuditableEntity<Long> {
 
     private String atpId;
 
-    private String transactionTypeCode;
+    private String transactionTypeId;
 
     private String transactionDateType;
 
@@ -30,6 +31,8 @@ public class Rate extends AuditableEntity<Long> {
     private Boolean isTransactionTypeFinal;
 
     private RateCatalog rateCatalog;
+
+    private Set<KeyPair> keyPairs;
 
 
     @Id
@@ -54,13 +57,13 @@ public class Rate extends AuditableEntity<Long> {
         this.atpId = atpId;
     }
 
-    @Column(name = "TRANSACTION_TYPE_CD", length = 20)
-    public String getTransactionTypeCode() {
-        return transactionTypeCode;
+    @Column(name = "TRANSACTION_TYPE_ID", length = 20)
+    public String getTransactionTypeId() {
+        return transactionTypeId;
     }
 
-    public void setTransactionTypeCode(String transactionTypeCode) {
-        this.transactionTypeCode = transactionTypeCode;
+    public void setTransactionTypeId(String transactionTypeId) {
+        this.transactionTypeId = transactionTypeId;
     }
 
     @Column(name = "TRANS_DATE_TYPE", length = 10)
@@ -120,5 +123,22 @@ public class Rate extends AuditableEntity<Long> {
 
     public void setRateCatalog(RateCatalog rateCatalog) {
         this.rateCatalog = rateCatalog;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "KSSA_RATE_KYPR",
+            joinColumns = {
+                    @JoinColumn(name = "RATE_ID_FK")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "KYPR_ID_FK")
+            }
+    )
+    public Set<KeyPair> getKeyPairs() {
+        return keyPairs;
+    }
+
+    public void setKeyPairs(Set<KeyPair> keyPairs) {
+        this.keyPairs = keyPairs;
     }
 }

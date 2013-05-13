@@ -10,7 +10,6 @@ import javax.persistence.Embeddable;
  *
  * @author Michael Ivanov
  */
-@SuppressWarnings("serial")
 @Embeddable
 public class TransactionTypeId implements Serializable {
 
@@ -48,8 +47,8 @@ public class TransactionTypeId implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((subCode == null) ? 0 : subCode.hashCode());
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getSubCode() == null) ? 0 : getSubCode().hashCode());
         return result;
     }
 
@@ -91,6 +90,6 @@ public class TransactionTypeId implements Serializable {
 
     @Override
     public String toString() {
-        return "TransactionTypeId{id='" + id + '\'' + ", subCode=" + subCode + '}';
+        return "TransactionTypeId{id='" + getId() + ", subCode=" + getSubCode() + '}';
     }
 }
