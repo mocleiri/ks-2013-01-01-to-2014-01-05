@@ -1,10 +1,10 @@
 When /^I create a Course Offering with "(\d+)" Activity Offerings$/ do |number_of_aos_to_create|
-  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :course=>"CHEM277")
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :course=>"CHEM401")
   @course_offering.manage_and_init
   @orig_number_aos = @course_offering.activity_offering_cluster_list[0].ao_list.count
 
 
-  @activity_offering = make ActivityOffering, :format => "Lecture/Lab"
+  @activity_offering = make ActivityOffering, :format => "Lecture Only"
 
   @course_offering.create_list_aos :ao_object => @activity_offering, :number_aos_to_create=>number_of_aos_to_create
 
@@ -19,7 +19,8 @@ And /^I delete "(\d+)" Activity Offerings$/ do |number_of_aos_to_delete|
   $i = 0
   @list_Ao_codes = []
   while $i < number_of_aos_to_delete.to_i  do
-    @list_Ao_codes << @ao_list[$i].code
+    del_num = @total_number - $i - 1
+    @list_Ao_codes << @ao_list[del_num].code
     $i +=1
   end
   @course_offering.delete_ao_list :code_list => @list_Ao_codes
