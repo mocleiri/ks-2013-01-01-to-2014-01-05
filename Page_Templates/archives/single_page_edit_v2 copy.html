@@ -3,29 +3,28 @@
   <head>
     <meta charset="utf-8">
     <title>
-		Kuali Student UIM Page Template :: Single-Page Edit
+		Kuali Student UIM Page Template :: Single-Page Edit X
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- styles -->
+    <!-- Le styles -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="assets/css/krad.css" rel="stylesheet">
-    <link href="assets/css/kualistudent.css" rel="stylesheet">
-    <link href="assets/css/forms.css" rel="stylesheet">
-    <link href="assets/css/tables.css" rel="stylesheet">
-    <!-- HTML5, for IE6-8 support of HTML5 elements -->
+    <link href="assets/css/custom.css" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
       </script>
     <![endif]-->
-    <!-- fav and touch icons -->
+    <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="assets/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    <style>
+    </style>
   </head>
   <body>
     <div id="application-container" title="application-container" class="container">
@@ -51,26 +50,90 @@
     		</div>
     		<div id="view-top-group" title="view-top-group" class="container-fluid sticky optional">
     			<span id="view-term" title="view-term" class="view-term">
-	    			<a id="term-picker">Term Year</a>
+	    			<a id="term-picker" data-toggle="popover" data-html="true" data-content="
+<strong>Default Term</strong>
+<form id='node2-search' title='node2-search' class='dynamic-node-content'>
+	<div class='input-append'>
+		<div class='controls'>
+			<input id='context-changer-input' title='context-changer-input' class='input-mini' placeholder='Enter Term Code' value='201308' type='text'>
+			<button class='btn btn-primary align-base'>Set Term</button>
+		</div>
+	</div>
+</form>
+<style>
+	.popover { top: 65px !important; left: 15px !important; min-width: 250px; width: 15%; }
+	.arrow { visibility: hidden; }
+</style>">
+						Winter 2013<b class="caret"></b></a>
 			    </span>
-    			<span id="view-term-state" title="view-term-state">term state</span>
+    			<span id="view-term-state" title="view-term-state" class="">PUBLISHED</span>
     		</div>
     		<div id="view-breadcrumbs" title="view-breadcrumbs" class="container-fluid sticky optional">
     			<ul class="breadcrumb">
     				<li class="home">
     					<a href="index.html"><span class="">Home</span></a>
     				</li>
-    				<li id="node1" class="node1">
-    					<a href="">Module</a>
-  					</li>
+    				<li id="node1" class="node1" data-toggle="popover" data-html="true" data-content="
+						<strong>Navigate to Module</strong>
+						<form id='node1-search' title='node1-search' class='form-horizontal dynamic-node-content'>
+							<div class='input-append'>
+								<select class='span2'>
+									<option>
+										Enrollment
+									</option>
+									<option>
+										Curriculum Management
+									</option>
+									<option>
+										Student Accounts
+									</option>
+									<option>
+										Academic Planning
+									</option>
+								</select>
+								<button class='btn btn-primary align-base'>Go</button>
+						   </div>
+						</form>
+						<style>
+							.popover { margin-top: 0px !important; left: 64px !important; min-width: 250px; width: 20%; }
+							.arrow { visibility: hidden; }
+						</style>">
+    					<a href="">Enrollment</a>
+						<b class="caret dynamic-node"></b>
+   					</li>
     				<li id="node2" class="node2">
-    					<a href=""><span class="">Node 2</span></a>
+    					<a href=""><span class="">Course Offerings: AAST</span></a>
     				</li>
-    				<li id="node3" class="node3">
-    					<a href=""><span class="">Node 3</span></a>
+    				<li id="node3" class="node3" data-toggle="popover" data-html="true" data-content="
+						<strong>Navigate to Course Offering</strong>
+						<form id='node2-search' title='node2-search' class='form-horizontal dynamic-node-content'>
+							<div class='input-append'>
+								<input class='span2' type='text' placeholder='e.g., ENGL101A'>
+								<button class='btn btn-primary align-base'>Go</button>
+						   </div>
+						</form>
+						<style>
+							.popover { margin-top: 0px !important; left: 413px !important; min-width: 250px; width: 20%; }
+							.arrow { visibility: hidden; }
+						</style>">
+    					<a href=""><span class="">AAST102</span></a>
+						<b class="caret dynamic-node"></b>
     				</li>
-    				<li id="node4" class="node4 active">
-    					Node 4
+    				<li id="node4" class="node4 active" data-toggle="popover" data-html="true" data-content="
+						<ul class='breadcrumb-menu'>
+							<li>
+			    				<a href='#' class='action action-details'><i class='icon-file'></i>Inspect Course Offering</a>
+		    				</li>
+							<li>
+		    					<a href='#' class='action action-edit'><i class='icon-wrench'></i>Manage Course Offering</a>
+		    				</li>
+						</ul>
+						<style>
+							.popover { margin-top: 0px !important; left: 533px !important; min-width: 250px; width: 20%; }
+							.arrow { visibility: hidden; }
+						</style>">
+    					Edit Course Offering
+						<b class="caret dynamic-node"></b>
     				</li>
     			</ul>
     		</div>
@@ -78,23 +141,27 @@
     			<div id="page-title" class="container-fluid">
 					<div class="pull-left">
 		    				<div id="page-title-main">
-		    					Main Title
+		    					AAST 102
 		    				</div>
 		    				<div id="page-title-support">
-		    					Support Title
+		    					Edit Course Offering
 		    				</div>
 					</div>
 					<div class="pull-right">
 		  				<div id="meta-data" title="meta-data" class="pull-right">
-								<span class="detail-modification">Last modified 05:15 a.m.</span>
-								<span class="detail-status">Detail Status</span>
+								<span class="detail-modification">Last modified six minutes ago</span>
+<!--
+								<span id="more-info" class="">
+									<a href="#" id="detail-more" class="detail detail-more" data-toggle="popover" data-html="true" data-content="
+We can put a whole bunch of meta data here, including <strong>HTML</strong>
+"><i class="icon-info-sign"></i></a>
+								</span>
+-->
+								<span class="detail-status">DRAFT</span>
 						</div>
 	    				<div id="action-bar" class="pull-right">
-	    					<a href="#" class="action action-inspect"><i class="icon-file"></i>Inspect</a>
-	    					<a href="#" class="action action-manage"><i class="icon-wrench"></i>Manage</a>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
-	    					<a href="#" class="action action-delete"><i class="icon-remove"></i>Delete</a>
+	    					<a href="#" class="action action-delete jetstrap-selected"><i class="icon-remove"></i>Delete</a>
 	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
 	    					<a href="#" class="action action-print"><i class="icon-print"></i>Print</a>
 	    				</div>	
@@ -106,22 +173,26 @@
     		<div id="navigation-panel " title="navigation-panel " class="container-fluid optional no-margin hidden">
     		</div>
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
-    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error hidden">
+<div id="togglePageError" class="collapse in"><!-- NOTE: This is added only to allow for a toggle of this message and is not part of the template otherwise -->
+    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
 					<h4 class="uif-pageValidationHeader" id="pageValidationHeader">
 						<img src="assets/img/error.png" width="16" height="16" alt="Error" class="hidden">
-						This page has N errors
+						This page has 2 errors
 					</h4>
 					<ul id="pageValidationList" class="uif-validationMessagesList" aria-labelledby="pageValidationHeader">
-						<li data-messageitemfor="Demo-ValidationLayout-Section1" class="uif-errorMessageItem"><a href="#section-information">The "Information" section has 1 error</a></li>
+						<li data-messageitemfor="Demo-ValidationLayout-Section1" class="uif-errorMessageItem"><a href="#section-information">The "Course Offering Information" section has 1 error</a></li>
+						<li data-messageitemfor="Demo-ValidationLayout-Section2" class="uif-errorMessageItem"><a href="#section-waitlists">The "Waitlists" section has 1 errors</a></li>
 					</ul>
-				</div>
+    			</div>
+</div>
     			<div id="page-header" title="page-header" class="container-fluid  no-padding">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
 						<dl class="dl-horizontal">
-				    		<dt>Field A</dt><dd>Lorum Ipsum</dd>
-				    		<dt>Field B</dt><dd>Lorum Ipsum</dd>
-				    		<dt>Field C</dt><dd>Lorum Ipsum</dd>
-				    		<dt>Field D</dt><dd>Lorum Ipsum</dd>
+				    		<dt>Course Title</dt><dd>Lorum Ipsum</dd>
+				    		<dt>Crosslisted</dt><dd>HIST 300, ENGL 200</dd>
+				    		<dt>Grading Options</dt><dd>Letter</dd>
+				    		<dt>Student Registration Options</dt><dd>None available</dd>
+				    		<dt>Credit Type</dt><dd>Fixed (3.0 Credits)<a data-toggle="collapse" data-target="#togglePageError">.</a></dd>
 				    	</dl>	
     				</div>
     			</div>
@@ -135,7 +206,7 @@
     							<div>
 	   							<a name="section-information"></a>
     								<h2>
-    									Section A
+    									Course Offering Information
     								</h2>
     								<div class="control-group inline">
 	    								<label class="control-label field-label">
@@ -143,24 +214,157 @@
 	    								</label>
 	    								<div class="controls pull-left inline">
 											<span>ENLG101</span>
-	    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini" placeholder="e.g. A" value="A">
+	    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini error" placeholder="e.g. A" value="A">
 	    								</div>
     								</div>
 	   						</div>
 
-   							<div>
+    							<div>
+	   							<a name="section-delivery"></a>
+    								<h2>
+    									Delivery and Assessment
+   								</h2>
+    								<div class="control-group">
+    									<label class="control-label field-label">
+    										Final Exams
+    									</label>
+    									<label class="radio">
+    										<input type="radio" name="optionsRadios" checked>
+    										Standard final Exam
+    									</label>
+    									<label class="radio">
+    										<input type="radio" name="optionsRadios">
+    										Alternate final assessment
+    									</label>
+    									<label class="radio">
+    										<input type="radio" name="optionsRadios">
+    										No final exam or assessment
+    									</label>
+    								</div>
+   								<div class="control-group">
+	    								<label class="control-label collection-label">
+	    									Delivery Formats
+	    								</label>
+    									<span class="help-block uif-instructionalMessage">Add the delivery formats to be used for this course offering.</span>
+	    								<div class="controls inline">
+		    								<a id="add-delivery" class="btn btn-flat">
+		    									<i class="icon-plus-sign"></i>
+												Add a Delivery Format
+		    								</a>
+		    								<table class="table table-hover table-condensed table-col-4">
+		    									<thead>
+		    										<tr>
+		    											<th class="span3">
+		    												Format <span class="required">*</span>
+		    											</th>
+		    											<th class="span3">
+		    												Grade Roster Level <span class="required">*</span>
+		    											</th>
+		    											<th class="span3">
+		    												Final Exam Driver Activity <span class="required">*</span>
+		    											</th>
+		    											<th class="span3">
+		    											</th>
+		    										</tr>
+		    									</thead>
+		    									<tbody>
+		    										<tr id="add-delivery-fields">
+		    											<td>
+		    												Lecture Only
+		    											</td>
+		    											<td>
+				    										<select class="span10" required>
+				    											<option>
+				    												Course Offering
+				    											</option>
+				    											<option>
+				    												Lecture
+				    											</option>
+				    										</select>
+		    											</td>
+		    											<td>
+				    										Lecture
+		    											</td>
+		    											<td>
+		    												
+		    											</td>
+		    										</tr>
+		    										<tr id="no-delivery-data">
+		    											<td colspan="3">
+		    												No delivery formats have been selected
+		    											</td>
+		    										</tr>
+		    									</tbody>
+		    								</table>
+	    								</div>
+    								</div>
+								</div>
+
+    							<div>
+	 		  						<a name="section-waitlists"></a>
+    								<h2>
+    									Waitlists
+    								</h2>
+ 									<div class="control-group">
+ 	    								<label class="control-label field-label">
+	    									Waitlist
+	    								</label>
+										<label class="checkbox">
+ 											<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options" checked>
+ 											This course offering has a waitlist
+										</label>
+ 									</div>
+									<div id="waitlist-options" class="collapse form-child">
+	    								<div class="control-group">
+	    									<label class="control-label field-label">
+	    										Waitlist Level
+	    									</label>
+	    									<label class="radio">
+	    										<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
+	    										Course Offering
+	    									</label>
+	    									<label class="radio">
+	    										<input type="radio" name="optionsRadios" id="optionsRadios2" value="Activity Offering">
+	    										Activity Offering
+	    									</label>
+	    								</div>
+	    								<div class="control-group">
+		    								<label class="control-label field-label">
+		    									Waitlist Type
+		    								</label>
+		    								<div class="controls">
+	    										<select id="message-waitlistType" name="waitlistType" class="span2 error" required>
+	    											<option selected>
+	    												Select a type ...
+	    											</option>
+	    											<option>
+	    												Automatic
+	    											</option>
+	    											<option>
+	    												Semi-automatic
+	    											</option>
+	    											<option>
+	    												Manual
+	    											</option>
+	    										</select> 
+		    								</div>
+	    								</div>
+									</div>
+  								</div>
+
+    							<div>
 			  						<a name="section-personnel"></a>
     								<h2>
-    									Section B
+    									Personnel
     								</h2>
 	   								<div class="control-group">
 	    								<label class="control-label collection-label">
-	    									Collection Label
+	    									Affiliated Personnel
 	    								</label>
 	    								<div class="controls inline">
 		    								<a id="add-person" class="btn btn-flat">
 		    									<i class="icon-plus-sign"></i>
-												Add a Record
+												Add a Person
 		    								</a>
 		    								<table class="table table-hover table-condensed table-col-4">
 		    									<thead>
@@ -201,9 +405,32 @@
 		    												
 		    											</td>
 		    										</tr>
-		    										<tr id="no-person-data">
-		    											<td colspan="3">
-		    												No records have been selected
+		    										<tr>
+		    											<td>
+		    												8376209
+		    											</td>
+		    											<td>
+															Robert Johnson
+		    											</td>
+		    											<td>
+				    										Teaching Assistant
+		    											</td>
+		    											<td>
+		    												<a href="#" class="pull-right delete-action"><i class="icon-remove"></i></a>
+		    											</td>
+		    										</tr>
+		    										<tr>
+		    											<td>
+		    												6378288
+		    											</td>
+		    											<td>
+															Rebecca Worthingtonson
+		    											</td>
+		    											<td>
+				    										Instructor
+		    											</td>
+		    											<td>
+		    												<a href="#" class="pull-right delete-action"><i class="icon-remove"></i></a>
 		    											</td>
 		    										</tr>
 		    									</tbody>
@@ -211,58 +438,83 @@
 	    								</div>
     								</div>
 								</div>
-
+								
     							<div>
-	 		  						<a name="section-waitlists"></a>
+			  						<a name="section-miscellaneous"></a>
     								<h2>
-    									Section C
+    									Miscellaneous
     								</h2>
+    								<div class="control-group">
+	    								<label class="control-label collection-label">
+	    									Administering Organizations
+	    								</label>
+	    								<div class="controls inline">
+		    								<a id="add-organization" class="btn btn-flat">
+		    									<i class="icon-plus-sign"></i>
+												Add an Organization
+		    								</a>
+		    								<table class="table table-hover table-condensed table-col-3">
+		    									<thead>
+		    										<tr>
+		    											<th class="span4">
+		    												Organization ID <span class="required">*</span>
+		    											</th>
+		    											<th class="span4">
+		    												Organization Name
+		    											</th>
+		    											<th class="span4">
+		    											</th>
+		    										</tr>
+		    									</thead>
+		    									<tbody>
+		    										<tr id="add-organization-fields">
+		    											<td>
+		    												<input class="input-medium" type="text" placeholder="e.g., 10293940" value="" required>
+		    												<span class="uif-constraintMessage"><a href="#advanced-select-organization" role="link" data-toggle="modal">Find organization ID</a></span>
+		    											</td>
+		    											<td>
+		    												
+		    											</td>
+		    											<td>
+
+		    											</td>
+		    										</tr>
+		    										<tr>
+		    											<td>
+		    												2677933260
+		    											</td>
+		    											<td>
+		    												ARHU-English
+		    											</td>
+		    											<td>
+		    												<a href="#" class="pull-right delete-action"><i class="icon-remove"></i></a>
+		    											</td>
+		    										</tr>
+		    										<tr>
+		    											<td>
+		    												2677933260
+		    											</td>
+		    											<td>
+		    												ARHU-English
+		    											</td>
+		    											<td>
+		    												<a href="#" class="pull-right delete-action"><i class="icon-remove"></i></a>
+		    											</td>
+		    										</tr>
+		    									</tbody>
+		    								</table>
+	    								</div>
+    								</div>
  									<div class="control-group">
  	    								<label class="control-label field-label">
-	    									Waitlist
+	    									Honors Flag
 	    								</label>
 										<label class="checkbox">
- 											<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options" checked>
- 											This course offering has a waitlist
-										</label>
+ 											<input value="Honors" type="checkbox">
+ 											This is an Honors Course 
+ 										</label>
  									</div>
-									<div id="waitlist-options" class="collapse form-child">
-	    								<div class="control-group">
-	    									<label class="control-label field-label">
-	    										Waitlist Level
-	    									</label>
-	    									<label class="radio">
-	    										<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
-	    										Course Offering
-	    									</label>
-	    									<label class="radio">
-	    										<input type="radio" name="optionsRadios" id="optionsRadios2" value="Activity Offering">
-	    										Activity Offering
-	    									</label>
-	    								</div>
-	    								<div class="control-group">
-		    								<label class="control-label field-label">
-		    									Waitlist Type
-		    								</label>
-		    								<div class="controls">
-	    										<select id="message-waitlistType" name="waitlistType" class="span2" required>
-	    											<option selected>
-	    												Select a type ...
-	    											</option>
-	    											<option>
-	    												Automatic
-	    											</option>
-	    											<option>
-	    												Semi-automatic
-	    											</option>
-	    											<option>
-	    												Manual
-	    											</option>
-	    										</select> 
-		    								</div>
-	    								</div>
-									</div>
-  								</div>
+ 							</div>
 
   							</form>
     					</div>

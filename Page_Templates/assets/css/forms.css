@@ -1,0 +1,118 @@
+/*!
+ * CUSTOM STYLING
+ *
+ */
+
+
+
+/************************************************************* FORMATING: Forms */
+h2 {
+	font-size: 1.8em;
+	padding-top: 1.2em;
+	clear:both;
+}
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+	padding: 5px 6px;
+	margin-bottom: 0px;
+	border-radius: 3px;
+	transition: border linear 0.2s, box-shadow linear 0s;
+	color: #000;
+}
+fieldset {
+	margin-bottom: 2.0em;
+}
+legend {
+	margin-bottom: 0.1em;
+}
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+	margin-bottom: 0em;
+}
+.control-group {
+	margin-bottom: 1.5em;
+}
+.field-label {
+	font-weight: bold;
+}
+.collection-label {
+	font-weight: bold;
+}
+.form-child {
+	padding-left: 2.0em;
+}
+.form-read-only {
+	background-color: #eeeeee;
+	padding: .2em 1em;
+	border-radius:3px;
+}
+.no-label {
+	margin-top: 1.8em;
+}
+.delete-action {
+	opacity: 0.3;
+}
+.delete-action:hover {
+	opacity: 1.0;
+}
+.btn-flat {
+	border: 1px solid #ccc;
+	background: none;
+	background-color: #F2F2F2;
+	font-size: 0.9em;
+	margin-bottom: 1.0em;
+	color: #0088cc;
+	padding: 2px 10px;
+}
+.btn-flat i {
+	padding-right: .3em;
+	opacity: .5;
+}
+.btn-flat:hover i {
+	padding-right: .3em;
+	opacity: 1;
+}
+.btn-flat:hover {
+	color: #0088cc;
+}
+.dl-horizontal dd {
+	margin-left: 215px; /* to keep bootstrap from truncating detail panel labels */
+}
+.dl-horizontal dt {
+	float: left;
+	width: 203px;
+}
+::-webkit-input-placeholder {
+	font-style: italic;
+}
+:-moz-placeholder { /* Firefox 18- */
+	font-style: italic;
+}
+::-moz-placeholder {  /* Firefox 19+ */
+	font-style: italic;
+}
+:-ms-input-placeholder {  
+	font-style: italic;
+}
+
+
+
+/************************************************************* VALIDATION */
+.validation-error {
+	background-color: #ffeaf0;
+}
+.error {
+	border: 2px solid #ff2300 !important;
+}
+.required {
+	color: #ff2300;
+	font-size: 1.2em;
+}
+
+
+
+#add-delivery-fields, #add-person-fields, #add-organization-fields {
+	display: none;
+}
+#no-delivery-data td, #no-person-data td, #no-organization-data td {
+	text-align: center;
+	font-style: italic;
+}

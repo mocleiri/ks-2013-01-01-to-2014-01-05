@@ -3,74 +3,124 @@
   <head>
     <meta charset="utf-8">
     <title>
-		Kuali Student UIM Page Template :: Single-Page Edit
+		Kuali Student UIM Page Template :: Single-Page Edit X
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- styles -->
+    <!-- Le styles -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="assets/css/krad.css" rel="stylesheet">
-    <link href="assets/css/kualistudent.css" rel="stylesheet">
-    <link href="assets/css/forms.css" rel="stylesheet">
-    <link href="assets/css/tables.css" rel="stylesheet">
-    <!-- HTML5, for IE6-8 support of HTML5 elements -->
+    <link href="assets/css/custom.css" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
       </script>
     <![endif]-->
-    <!-- fav and touch icons -->
+    <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="assets/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    <style>
+    </style>
   </head>
   <body>
     <div id="application-container" title="application-container" class="container">
     	<div id="application-header" title="application-header" class="container-fluid navbar navbar-inverse navbar-fixed-top sticky">
     		<div class="navbar-inner">
-    			<a id="application-header-logo" title="application-header-logo" class="brand ks-project" href="#"><img src="assets/img/ks_logo_white.png" alt="Kuali Student Logo">Student</a>
+    			<a id="application-header-logo" title="application-header-logo" class="brand" href="#"><img src="assets/img/ks_logo_white.png" alt="Kuali Student Logo">Student</a>
     			<ul id="application-header-user" title="application-header-user" class="nav pull-right">
-					<li>
-					<a href="#">Action List</a>
     				<li class="dropdown">
     					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    						<i class="icon-user icon-white"></i>
-    						Username
-    						<b class="caret"></b>
-    					</a>
-						<ul class="dropdown-menu">
+                        Action List
+                        <b class="caret"></b>
+                        </a>
+    					<ul class="dropdown-menu">
     						<li>
-    							<a href="#">Logout</a>
-    						</li>    						
-    					</ul>	
+    							<a href="#">Action A</a>
+    						</li>
+    						<li>
+    							<a href="#">Action B</a>
+    						</li>
+    						<li>
+    							<a href="#">Action C</a>
+    						</li>
+    					</ul>
+    				</li>
+    				<li>
+    					<a href="#"><i class="icon-user icon-white"></i>Username</a>
     				</li>
     			</ul>
+    			<form id="jump-to-navigation" title="jump-to-navigation" class="form-horizontal pull-right">
+    				<input id="jump-to-navigation-input" title="jump-to-navigation-input" class="input-mini" placeholder="Jump to Code" value="" type="text">
+    			</form>
     		</div>
     		<div id="view-top-group" title="view-top-group" class="container-fluid sticky optional">
-    			<span id="view-term" title="view-term" class="view-term">
-	    			<a id="term-picker">Term Year</a>
-			    </span>
-    			<span id="view-term-state" title="view-term-state">term state</span>
+    			<div class="control-group pull-right">
+    				<form id="view-context-changer" title="view-context-changer" class="form-horizontal">
+    					<div class="control-group">
+    						<label class="control-label" for="context-changer-input">
+    							Term
+    						</label>
+    						<div class="controls">
+    							<input id="context-changer-input" title="context-changer-input" class="input-mini" placeholder="Enter Term Code" value="201308" type="text">
+    						</div>
+    					</div>
+    				</form>
+    			</div>
+    			<span id="view-term" title="view-term" class="view-term">Winter 2013</span>
+    			<span id="view-term-state" title="view-term-state" class="">Published</span>
     		</div>
     		<div id="view-breadcrumbs" title="view-breadcrumbs" class="container-fluid sticky optional">
     			<ul class="breadcrumb">
     				<li class="home">
     					<a href="index.html"><span class="">Home</span></a>
     				</li>
-    				<li id="node1" class="node1">
-    					<a href="">Module</a>
-  					</li>
-    				<li id="node2" class="node2">
-    					<a href=""><span class="">Node 2</span></a>
+    				<li id="node1" class="node1" data-toggle="popover" data-html="true" data-content="
+Jump to another <strong>module</strong>
+<form id='node1-search' title='node1-search' class='form-horizontal dynamic-node-content'>
+	<div class='input-append'>
+		<select class='span2'>
+			<option>
+				Course Offering
+			</option>
+			<option>
+				Lecture
+			</option>
+		</select>
+		<button class='btn btn-primary align-base'>Jump</button>
+   </div>
+</form>
+<style>
+	.popover { margin-top: 0px !important; left: 50px !important; min-width: 250px; width: 20%; }
+	.arrow { visibility: hidden; }
+</style>">
+    					<a href="index.html">Enrollment</a>
+						<b class="caret dynamic-node"></b>
+   				</li>
+    				<li class="node1">
+    					<a href="index.html"><span class="">Course Offerings: AAST</span></a>
     				</li>
-    				<li id="node3" class="node3">
-    					<a href=""><span class="">Node 3</span></a>
+    				<li class="node1">
+    					<a href="index.html"><span class="">AAST 102</span></a>
     				</li>
-    				<li id="node4" class="node4 active">
-    					Node 4
+	
+    				<li class="active" id="node2" class="node2 active" data-toggle="popover" data-html="true" data-content="
+Jump to a <strong>course offering</strong>
+<form id='node2-search' title='node2-search' class='form-horizontal dynamic-node-content'>
+	<div class='input-append'>
+		<input class='span2' type='text' placeholder='e.g., ENGL101A'>
+		<button class='btn btn-primary align-base'>Find</button>
+   </div>
+</form>
+<style>
+	.popover { margin-top: 0px !important; left: 535px !important; min-width: 250px; width: 20%; }
+	.arrow { visibility: hidden; }
+</style>">
+    					Edit Course Offering
+						<b class="caret dynamic-node"></b>
     				</li>
     			</ul>
     		</div>
@@ -78,27 +128,33 @@
     			<div id="page-title" class="container-fluid">
 					<div class="pull-left">
 		    				<div id="page-title-main">
-		    					Main Title
+		    					AAST 102
 		    				</div>
 		    				<div id="page-title-support">
-		    					Support Title
+		    					Edit Course Offering
 		    				</div>
 					</div>
 					<div class="pull-right">
-		  				<div id="meta-data" title="meta-data" class="pull-right">
-								<span class="detail-modification">Last modified 05:15 a.m.</span>
-								<span class="detail-status">Detail Status</span>
+		  				<div id="meta-data" title="meta-data" class="pull-right optional">
+								<span class="detail-modification">Last modified six minutes ago</span>
+								<span id="more-info" class="">
+									<a href="#" id="detail-more" class="detail detail-more" data-toggle="popover" data-html="true" data-content="
+We can put a whole bunch of meta data here, including <strong>HTML</strong>
+"><i class="icon-info-sign"></i></a>
+								</span>
+								<span class="detail-status">Draft</span>
 						</div>
-	    				<div id="action-bar" class="pull-right">
-	    					<a href="#" class="action action-inspect"><i class="icon-file"></i>Inspect</a>
-	    					<a href="#" class="action action-manage"><i class="icon-wrench"></i>Manage</a>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
-	    					<a href="#" class="action action-delete"><i class="icon-remove"></i>Delete</a>
-	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
-	    					<a href="#" class="action action-print"><i class="icon-print"></i>Print</a>
-	    				</div>	
                     </div>
+    			</div>
+    			<div id="view-header-group" title="view-header-group" class="container-fluid optional no-pad">
+    				<div id="action-bar" class="container">
+    					<a href="#" class="action action-details"><i class="icon-file"></i>Details</a>
+    					<a href="#" class="action action-edit"><i class="icon-wrench"></i>Manage</a>
+    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
+    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
+    					<a href="#" class="action action-print"><i class="icon-print"></i>Print</a>
+    					<a href="#" class="action action-delete jetstrap-selected"><i class="icon-remove"></i>Delete</a>
+    				</div>
     			</div>
     		</div>
     	</div>
@@ -106,24 +162,21 @@
     		<div id="navigation-panel " title="navigation-panel " class="container-fluid optional no-margin hidden">
     		</div>
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
-    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error hidden">
-					<h4 class="uif-pageValidationHeader" id="pageValidationHeader">
-						<img src="assets/img/error.png" width="16" height="16" alt="Error" class="hidden">
-						This page has N errors
-					</h4>
-					<ul id="pageValidationList" class="uif-validationMessagesList" aria-labelledby="pageValidationHeader">
-						<li data-messageitemfor="Demo-ValidationLayout-Section1" class="uif-errorMessageItem"><a href="#section-information">The "Information" section has 1 error</a></li>
-					</ul>
-				</div>
     			<div id="page-header" title="page-header" class="container-fluid  no-padding">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
-						<dl class="dl-horizontal">
-				    		<dt>Field A</dt><dd>Lorum Ipsum</dd>
-				    		<dt>Field B</dt><dd>Lorum Ipsum</dd>
-				    		<dt>Field C</dt><dd>Lorum Ipsum</dd>
-				    		<dt>Field D</dt><dd>Lorum Ipsum</dd>
-				    	</dl>	
+    					<span class="detail detail-title">Title of this course</span>
+    					<span class="detail detail-crosslisted">Crosslisted: HIST 300, ENGL 200</span>
     				</div>
+    			</div>
+    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
+					<h4 class="uif-pageValidationHeader" id="pageValidationHeader">
+						<img src="assets/img/error.png" width="16" height="16" alt="Error">
+						This page has 2 errors
+					</h4>
+					<ul id="pageValidationList" class="uif-validationMessagesList" aria-labelledby="pageValidationHeader">
+						<li data-messageitemfor="Demo-ValidationLayout-Section1" class="uif-errorMessageItem"><a href="#section-information">The "Course Offering Information" section has 1 error</a></li>
+						<li data-messageitemfor="Demo-ValidationLayout-Section2" class="uif-errorMessageItem"><a href="#section-waitlists">The "Waitlists" section has 1 errors</a></li>
+					</ul>
     			</div>
     			<div class="container-fluid group optional no-padding">
     				<div class="container-fluid group-header no-padding">
@@ -135,7 +188,7 @@
     							<div>
 	   							<a name="section-information"></a>
     								<h2>
-    									Section A
+    									Course Offering Information
     								</h2>
     								<div class="control-group inline">
 	    								<label class="control-label field-label">
@@ -143,67 +196,86 @@
 	    								</label>
 	    								<div class="controls pull-left inline">
 											<span>ENLG101</span>
-	    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini" placeholder="e.g. A" value="A">
+	    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini error" placeholder="e.g. A" value="A">
 	    								</div>
+										<div class="form-read-only span4">
+											<dl class="dl-horizontal">
+									    		<dt>Grading Options</dt><dd>Letter</dd>
+									    		<dt>Student Registration Options</dt><dd>None available</dd>
+									    		<dt>Credit Type</dt><dd>Fixed (3.0 Credits)</dd>
+									    	</dl>
+										</div>
     								</div>
 	   						</div>
 
-   							<div>
-			  						<a name="section-personnel"></a>
+    							<div>
+	   							<a name="section-delivery"></a>
     								<h2>
-    									Section B
-    								</h2>
-	   								<div class="control-group">
+    									Delivery and Assessment
+   								</h2>
+    								<div class="control-group">
+    									<label class="control-label field-label">
+    										Final Exams
+    									</label>
+    									<label class="radio">
+    										<input type="radio" name="optionsRadios" checked>
+    										Standard final Exam
+    									</label>
+    									<label class="radio">
+    										<input type="radio" name="optionsRadios">
+    										Alternate final assessment
+    									</label>
+    									<label class="radio">
+    										<input type="radio" name="optionsRadios">
+    										No final exam or assessment
+    									</label>
+    								</div>
+   								<div class="control-group">
 	    								<label class="control-label collection-label">
-	    									Collection Label
+	    									Delivery Formats
 	    								</label>
+    									<span class="help-block uif-instructionalMessage">Add the delivery formats to be used for this course offering.</span>
 	    								<div class="controls inline">
-		    								<a id="add-person" class="btn btn-flat">
+		    								<button type="submit" class="btn btn-flat">
 		    									<i class="icon-plus-sign"></i>
-												Add a Record
-		    								</a>
+												Add a new row
+		    								</button>
 		    								<table class="table table-hover table-condensed table-col-4">
 		    									<thead>
 		    										<tr>
 		    											<th class="span3">
-		    												ID
+		    												Format <span class="required">*</span>
 		    											</th>
 		    											<th class="span3">
-		    												Name
+		    												Grade Roster Level <span class="required">*</span>
 		    											</th>
 		    											<th class="span3">
-		    												Affiliation <span class="required">*</span>
+		    												Final Exam Driver Activity <span class="required">*</span>
 		    											</th>
 		    											<th class="span3">
 		    											</th>
 		    										</tr>
 		    									</thead>
 		    									<tbody>
-		    										<tr id="add-person-fields">
+		    										<tr>
 		    											<td>
-		    												<input class="input-medium" type="text" placeholder="e.g., 12345678" value="">
-					   									<span class="uif-constraintMessage"><a href="#advanced-select-personnel" role="link" data-toggle="modal">Find personnel ID</a></span>
-		    											</td>
-		    											<td>
-		    												
+		    												Lecture Only
 		    											</td>
 		    											<td>
 				    										<select class="span10" required>
 				    											<option>
-				    												Instructor
+				    												Course Offering
 				    											</option>
 				    											<option>
-				    												Teaching Assistant
+				    												Lecture
 				    											</option>
 				    										</select>
 		    											</td>
 		    											<td>
-		    												
+				    										Lecture
 		    											</td>
-		    										</tr>
-		    										<tr id="no-person-data">
-		    											<td colspan="3">
-		    												No records have been selected
+		    											<td>
+		    												
 		    											</td>
 		    										</tr>
 		    									</tbody>
@@ -215,7 +287,7 @@
     							<div>
 	 		  						<a name="section-waitlists"></a>
     								<h2>
-    									Section C
+    									Waitlists
     								</h2>
  									<div class="control-group">
  	    								<label class="control-label field-label">
@@ -245,7 +317,7 @@
 		    									Waitlist Type
 		    								</label>
 		    								<div class="controls">
-	    										<select id="message-waitlistType" name="waitlistType" class="span2" required>
+	    										<select id="message-waitlistType" name="waitlistType" class="span2 error" required>
 	    											<option selected>
 	    												Select a type ...
 	    											</option>
@@ -263,6 +335,159 @@
 	    								</div>
 									</div>
   								</div>
+
+    							<div>
+			  						<a name="section-personnel"></a>
+    								<h2>
+    									Personnel
+    								</h2>
+	   								<div class="control-group">
+	    								<label class="control-label collection-label">
+	    									Affiliated Personnel
+	    								</label>
+	    								<div class="controls inline">
+		    								<button type="submit" class="btn btn-flat">
+		    									<i class="icon-plus-sign"></i>
+												Add a new row
+		    								</button>
+		    								<table class="table table-hover table-condensed table-col-4">
+		    									<thead>
+		    										<tr>
+		    											<th class="span3">
+		    												ID
+		    											</th>
+		    											<th class="span3">
+		    												Name
+		    											</th>
+		    											<th class="span3">
+		    												Affiliation <span class="required">*</span>
+		    											</th>
+		    											<th class="span3">
+		    											</th>
+		    										</tr>
+		    									</thead>
+		    									<tbody>
+		    										<tr>
+		    											<td>
+		    												<input class="input-medium" type="text" placeholder="e.g., 12345678" value="">
+					   									<span class="help-block uif-constraintMessage"><i class="icon-search"></i> <a href="#advanced-select-personnel" role="link" data-toggle="modal">Find personnel ID</a></span>
+		    											</td>
+		    											<td>
+		    												
+		    											</td>
+		    											<td>
+				    										<select class="span10" required>
+				    											<option>
+				    												Instructor
+				    											</option>
+				    											<option>
+				    												Teaching Assistant
+				    											</option>
+				    										</select>
+		    											</td>
+		    											<td>
+		    												
+		    											</td>
+		    										</tr>
+		    										<tr>
+		    											<td>
+		    												8376209
+		    											</td>
+		    											<td>
+															Robert Johnson
+		    											</td>
+		    											<td>
+				    										Teaching Assistant
+		    											</td>
+		    											<td>
+		    												<a href="#" class="pull-right delete-action"><i class="icon-remove"></i></a>
+		    											</td>
+		    										</tr>
+		    										<tr>
+		    											<td>
+		    												6378288
+		    											</td>
+		    											<td>
+															Rebecca Worthingtonson
+		    											</td>
+		    											<td>
+				    										Instructor
+		    											</td>
+		    											<td>
+		    												<a href="#" class="pull-right delete-action"><i class="icon-remove"></i></a>
+		    											</td>
+		    										</tr>
+		    									</tbody>
+		    								</table>
+	    								</div>
+    								</div>
+								</div>
+								
+    							<div>
+			  						<a name="section-miscellaneous"></a>
+    								<h2>
+    									Miscellaneous
+    								</h2>
+    								<div class="control-group">
+	    								<label class="control-label collection-label">
+	    									Administering Organizations
+	    								</label>
+	    								<div class="controls inline">
+		    								<button type="submit" class="btn btn-flat">
+		    									<i class="icon-plus-sign"></i>
+												Add a new row
+		    								</button>
+		    								<table class="table table-hover table-condensed table-col-3">
+		    									<thead>
+		    										<tr>
+		    											<th class="span4">
+		    												Organization ID <span class="required">*</span>
+		    											</th>
+		    											<th class="span4">
+		    												Organization Name
+		    											</th>
+		    											<th class="span4">
+		    											</th>
+		    										</tr>
+		    									</thead>
+		    									<tbody>
+		    										<tr>
+		    											<td>
+		    												<input class="input-medium" type="text" placeholder="e.g., 10293940" value="" required>
+		    												<span class="help-block uif-constraintMessage"><i class="icon-search"></i> <a href="#advanced-select-organization" role="link" data-toggle="modal">Find organization ID</a></span>
+		    											</td>
+		    											<td>
+		    												
+		    											</td>
+		    											<td>
+
+		    											</td>
+		    										</tr>
+		    										<tr>
+		    											<td>
+		    												2677933260
+		    											</td>
+		    											<td>
+		    												ARHU-English
+		    											</td>
+		    											<td>
+		    												<a href="#" class="pull-right delete-action"><i class="icon-remove"></i></a>
+		    											</td>
+		    										</tr>
+		    									</tbody>
+		    								</table>
+	    								</div>
+    								</div>
+ 									<div class="control-group">
+ 	    								<label class="control-label field-label">
+	    									Honors Flag
+	    								</label>
+										<label class="checkbox">
+ 											<input value="Honors" type="checkbox">
+ 											This is an Honors Course 
+ 										</label>
+ 									</div>
+ 							</div>
 
   							</form>
     					</div>
@@ -625,50 +850,12 @@
 		$("#node1").popover({
 			placement: 'bottom'
 		});
-		$("#node3").popover({
-			placement: 'bottom'
-		});
-		$("#node4").popover({
-			placement: 'bottom'
-		});
-		$("#term-picker").popover({
+		$("#node2").popover({
 			placement: 'bottom'
 		});
 		$("#detail-more").popover({
 			placement: 'bottom'
 		});
-		$('#term-picker').on('show', function () {
-			$("#node1").popover('hide');
-			$("#node3").popover('hide');
-			$("#node4").popover('hide');
-    	});
-		$('#node1').on('show', function () {
-			$("#term-picker").popover('hide');
-			$("#node3").popover('hide');
-			$("#node4").popover('hide');
-    	});
-		$('#node3').on('show', function () {
-			$("#term-picker").popover('hide');
-			$("#node1").popover('hide');
-			$("#node4").popover('hide');
-    	});
-		$('#node4').on('show', function () {
-			$("#term-picker").popover('hide');
-			$("#node1").popover('hide');
-			$("#node3").popover('hide');
-    	});
-		$('#add-delivery').click(function () {
-			$("#no-delivery-data").hide();
-			$("#add-delivery-fields").show();
-    	});
-		$('#add-person').click(function () {
-			$("#no-person-data").hide();
-			$("#add-person-fields").show();
-    	});
-		$('#add-organization').click(function () {
-			$("#no-organization-data").hide();
-			$("#add-organization-fields").show();
-    	});
 	   $('#advanced-select-personnel').modal({
 			show: false
 		});

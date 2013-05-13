@@ -1,0 +1,50 @@
+/*!
+ * CUSTOM STYLING
+ *
+ */
+
+
+
+/************************************************************* KRAD */
+.uif-instructionalMessage {
+	font-size: 0.9em;
+	font-weight: normal;
+	margin-bottom: 0.4em;
+	/*
+		display: block;
+		max-width: 36em;
+	*/
+}
+.uif-constraintMessage {
+	font-size: 0.85em;
+	display: block;
+	color: gray;
+	margin-bottom: 0.1em;
+	/*
+		display: block;
+		max-width: 36em;
+	*/
+	padding-left: 0.4em;
+}
+.uif-constraintMessage i {
+	opacity: .5;
+}
+.uif-constraintMessage:hover i {
+	opacity: 1.0;
+}
+.uif-pageValidationMessages-error {
+	border: 1px solid #FFD1DE;
+	border-radius: 3px;
+	color: rgb(180, 25, 0);
+}
+.uif-pageValidationMessages-error a {
+	color: rgb(180, 25, 0);
+}
+.uif-pageValidationMessages-warning {
+	border: 1px solid #FF9900;
+	border-radius: 3px;
+}
+.uif-pageValidationMessages-info {
+	border: 1px solid #3366CC;
+	border-radius: 3px;
+}

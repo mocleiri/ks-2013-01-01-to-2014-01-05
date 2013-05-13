@@ -1,0 +1,301 @@
+/*!
+ * CUSTOM STYLING
+ *
+ */
+
+
+
+/************************************************************* DEVELOPMENT */
+.show-border {
+    border: 1px solid lightblue; 
+}
+.hidden {
+    display: none;
+}
+
+
+
+/************************************************************* STRUCTURE */
+#application-container {
+   margin-top: 47px; 
+}
+#application-header {
+    padding-left: 0px;
+    padding-right: 0px;
+    z-index: 1001;
+}
+#view-top-group {
+    vertical-align: center;
+    padding: 8px 8px;
+	background-color: #555;
+    border-left: 8px solid lightgreen; 
+    max-height: 2em !important;
+}
+#view-top-group span {
+    padding-right: 1.0em;
+}
+#view-breadcrumbs {
+    background: #eeeeee;
+    max-height: 31px !important;
+    padding: 0px !important;
+    z-index: 1000;
+}
+#view-header {
+	-webkit-box-shadow: 0px 6px 6px -5px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 6px 6px -5pxrgba(0, 0, 0, 0.5);
+	box-shadow: 0px 6px 6px -5px rgba(0, 0, 0, 0.5);
+} 
+#view-container {
+    margin-top: 180px; 
+    margin-bottom: 100px; 
+    padding: 0px;
+}
+#navigation-panel {
+    position: fixed;
+    width: 200px;
+    left: 0px;
+}
+#page-container {
+/*    padding-left: 220px; /* only needed if navigation-panel is not hidden */
+}
+#view-footer {
+    margin-bottom: 0px; /* When application-footer is not hidden, add 20px */
+    padding-top: 8px;
+	box-shadow: 0px -5px 6px -6px rgba(0, 0, 0, 0.5);	
+}
+#application-footer {
+    margin-bottom: 40px;
+}
+.no-margin {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+.no-padding {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.navbar-inner {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
+.modal-large { 
+	max-height: 70%; 
+	width: 80%; 
+	margin-left: -40%; /* -(width/2) */
+}
+.modal-body-large {
+	min-height: 80%;
+	max-height: 80%;
+}
+.modal-medium { 
+	max-height: 70%; 
+	width: 60%; 
+	margin-left: -30%; /* -(width/2) */
+}
+.modal-body-medium {
+	min-height: 60%;
+	max-height: 60%;
+}
+
+
+
+/************************************************************* FORMATTING: GENERAL */
+.sticky {
+    background-color: white;
+}
+.cancel {
+	vertical-align: middle;
+	padding-left: 1em;
+}
+.align-base {
+	vertical-align: baseline;
+}
+.caret {
+	margin-top: .6em;
+	border-top: 4px solid #999;
+}
+
+
+
+/************************************************************* FORMATING: KS Header */
+#application-header-logo {
+	color: #ddd;
+}
+#application-header-logo img {
+	height: 18px;
+	vertical-align: top;
+	padding-right: .2em;
+}
+#application-header-user li a i {
+	padding-right: .2em;
+	opacity: .5;
+}
+#application-header-user li a:hover i {
+	opacity: 1;
+}
+.ks-project {
+	background-image: url(/assets/ks_logo.gif)
+	padding: 5px 9px 5px;
+	font-size: 1.2em !important;
+}
+
+
+
+/************************************************************* FORMATING: Nav Bar */
+#view-term-state  {
+    font-size: .85em;
+    padding: 0.1em 0.1em 0.1em 0.8em;
+    border-radius: 4px;
+    color: white;
+    background-color: #999;
+	text-transform: uppercase;
+	text-align: center;
+}
+#view-top-group a {
+	color: rgb(231, 231, 231);
+}
+
+
+
+/************************************************************* FORMATING: breadcrumbs */
+#view-breadcrumbs a {
+	display: inline;
+}
+#view-breadcrumbs li {
+	padding-top: 4px;
+}
+.breadcrumb { /* This overrides a Bootstrap class */
+    padding: 0px !important;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-top-color: #e2e2e2;
+	border-bottom-color: #e2e2e2;
+	background: rgb(255,255,255);
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmNWY1ZjUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+    background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(255,255,255,1)), color-stop(100%, rgba(245,245,245,1)));
+	background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
+	background: -o-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
+	background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
+	background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
+ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f5f5f5', GradientType=0 );
+    margin: 0px;
+    max-height: 28px;
+    min-height: 28px;
+}
+.breadcrumb > li {
+    background-image: url(http://ux.kuali.org/prototypes/rice/assets/img/divider-breadcrumb.png);
+    background-position: right center;
+    background-repeat: no-repeat;
+    padding-right: 36px;
+    padding-left: 12px;  
+    font-size: 1.0em;
+	color: #333333;
+    min-height: 24px;
+}
+.breadcrumb a {
+    color: #5b5b5b;
+    display: block;
+    margin-top: 0.2em;
+}
+.breadcrumb a:hover {
+	text-decoration: underline;
+}
+.breadcrumb li:first-child a {}
+.breadcrumb li:last-child {
+    background-image: none;
+	font-weight: bold;
+	color: #333;
+}
+.breadcrumb .home a span {
+/* NOTE: Remove this if "Home" text is preferred */
+    background-image: url(http://ux.kuali.org/prototypes/rice/assets/img/icon-home.png);
+    background-repeat: no-repeat;
+    display: block;
+    opacity: .3;
+    width: 16px;
+    height: 15px;
+    overflow: hidden;
+    text-indent: 100%;
+    white-space: nowrap;
+}
+
+
+
+/************************************************************* FORMATING: View Header */
+#page-title {
+    margin-bottom: 1.0em;
+    margin-top: 1.8em;
+	
+}
+#page-title-area {
+    color: #cccccc;
+}
+#page-title-main {
+    font-size: 2.5em;
+    line-height: 1.0em;
+}
+#page-title-support {
+    color: #666666;
+    font-size: 1.3em;
+    line-height: 1.4em;
+}
+#action-bar {
+    margin-top: 1.0em;
+	clear: right;
+}
+#action-bar a i, .breadcrumb-menu a i {
+	padding-right: .3em;
+	opacity: .5;
+}
+#action-bar a:hover i, .breadcrumb-menu a:hover i {
+	opacity: 1;
+}
+.action {
+    padding-right: 1.0em;
+}
+.action:last-child {
+    padding-right: 0em;
+}
+
+
+
+/************************************************************* FORMATING: Page Header Group (overview) */
+#page-header-group {
+    background-color: #ebebeb;
+    padding: 0.6em 1.2em;
+	border-radius: 3px;
+    margin-top: 2.0em;
+	margin-bottom: -1.4em;
+}
+#meta-data {}
+.detail {
+    margin-right: 2.0em;
+}
+.detail-title {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.detail-crosslisted {}
+.detail-status {
+    color: white;
+    background-color: darkorange;
+    font-size: .85em;
+    padding: 0.2em 0.6em;
+    border-radius: 6px;
+	margin-left: 1em;
+	text-transform: uppercase;
+}
+.detail-modification {
+    font-style: italic;
+    font-size: .9em;
+	padding-right: .4em;
+}
+.detail-more {
+    font-size: .9em;
+    margin-right: 0;
+}
+
+

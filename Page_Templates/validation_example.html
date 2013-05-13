@@ -106,7 +106,7 @@
     		<div id="navigation-panel " title="navigation-panel " class="container-fluid optional no-margin hidden">
     		</div>
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
-    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error hidden">
+				<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
 					<h4 class="uif-pageValidationHeader" id="pageValidationHeader">
 						<img src="assets/img/error.png" width="16" height="16" alt="Error" class="hidden">
 						This page has N errors
@@ -139,19 +139,71 @@
     								</h2>
     								<div class="control-group inline">
 	    								<label class="control-label field-label">
-	    									Course Offering Code
+	    									Label for this part
 	    								</label>
 	    								<div class="controls pull-left inline">
-											<span>ENLG101</span>
-	    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini" placeholder="e.g. A" value="A">
+											<span>Text Code</span>
+	    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini error" placeholder="e.g. A" value="A">
 	    								</div>
     								</div>
 	   						</div>
 
-   							<div>
-			  						<a name="section-personnel"></a>
+    							<div>
+	 		  						<a name="section-waitlists"></a>
     								<h2>
     									Section B
+    								</h2>
+ 									<div class="control-group">
+ 	    								<label class="control-label field-label">
+	    									Toggle Field
+	    								</label>
+										<label class="checkbox">
+ 											<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options" checked>
+ 											This box should be checked
+										</label>
+ 									</div>
+									<div id="waitlist-options" class="collapse form-child">
+	    								<div class="control-group">
+	    									<label class="control-label field-label">
+	    										Secondary Field Label AA
+	    									</label>
+	    									<label class="radio">
+	    										<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
+	    										Option 1
+	    									</label>
+	    									<label class="radio">
+	    										<input type="radio" name="optionsRadios" id="optionsRadios2" value="Activity Offering">
+	    										Option 2
+	    									</label>
+	    								</div>
+	    								<div class="control-group">
+		    								<label class="control-label field-label">
+		    									Secondary Field Label BB
+		    								</label>
+		    								<div class="controls">
+	    										<select id="message-waitlistType" name="waitlistType" class="span2 error" required>
+	    											<option selected>
+	    												Select a type ...
+	    											</option>
+	    											<option>
+	    												Automatic
+	    											</option>
+	    											<option>
+	    												Semi-automatic
+	    											</option>
+	    											<option>
+	    												Manual
+	    											</option>
+	    										</select> 
+		    								</div>
+	    								</div>
+									</div>
+  								</div>
+
+    							<div>
+			  						<a name="section-personnel"></a>
+    								<h2>
+    									Section C
     								</h2>
 	   								<div class="control-group">
 	    								<label class="control-label collection-label">
@@ -211,59 +263,7 @@
 	    								</div>
     								</div>
 								</div>
-
-    							<div>
-	 		  						<a name="section-waitlists"></a>
-    								<h2>
-    									Section C
-    								</h2>
- 									<div class="control-group">
- 	    								<label class="control-label field-label">
-	    									Waitlist
-	    								</label>
-										<label class="checkbox">
- 											<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options" checked>
- 											This course offering has a waitlist
-										</label>
- 									</div>
-									<div id="waitlist-options" class="collapse form-child">
-	    								<div class="control-group">
-	    									<label class="control-label field-label">
-	    										Waitlist Level
-	    									</label>
-	    									<label class="radio">
-	    										<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
-	    										Course Offering
-	    									</label>
-	    									<label class="radio">
-	    										<input type="radio" name="optionsRadios" id="optionsRadios2" value="Activity Offering">
-	    										Activity Offering
-	    									</label>
-	    								</div>
-	    								<div class="control-group">
-		    								<label class="control-label field-label">
-		    									Waitlist Type
-		    								</label>
-		    								<div class="controls">
-	    										<select id="message-waitlistType" name="waitlistType" class="span2" required>
-	    											<option selected>
-	    												Select a type ...
-	    											</option>
-	    											<option>
-	    												Automatic
-	    											</option>
-	    											<option>
-	    												Semi-automatic
-	    											</option>
-	    											<option>
-	    												Manual
-	    											</option>
-	    										</select> 
-		    								</div>
-	    								</div>
-									</div>
-  								</div>
-
+								
   							</form>
     					</div>
     				</div>
