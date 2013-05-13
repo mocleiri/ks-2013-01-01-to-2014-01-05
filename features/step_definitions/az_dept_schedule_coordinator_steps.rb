@@ -673,6 +673,18 @@ Then /^I have access to select activity offerings for add, approve, delete$/ do
   end
 end
 
+When /^I attempt to create a joint offered course offering for a subject in my admin org$/ do
+  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL316"
+  @course_offering.start_create_by_search
+end
+
+
+Then /^I do not have access to create a new joint offered course offering$/ do
+  on CreateCourseOffering do |page|
+  page.create_new_joint_defined_course_first_row.exists?.should == false
+  end
+end
+
 When /^there is a course with a co-located DL in my admin org/ do
   step "I am logged in as a Schedule Coordinator"
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL462", :term=>@term_for_test)
