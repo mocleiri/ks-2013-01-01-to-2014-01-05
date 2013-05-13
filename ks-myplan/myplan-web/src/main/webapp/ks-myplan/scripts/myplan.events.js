@@ -184,7 +184,7 @@ function fnToggleSectionAction(actionId, regId, action, data, primaryPlan) {
             }
             break;
     }
-    if (action != "suspended") script += "jQuery('#' + '" + actionId + "').mouseover(function(){ buildHoverText(jQuery(this));}); ";
+    if (action != "suspended") script += "jQuery('#' + '" + actionId + "').mouseover(function(){ buildHoverText(jQuery(this)); }); ";
     updateHiddenScript(actionId, script);
 }
 
