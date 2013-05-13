@@ -15,6 +15,7 @@ When /^I revise an AO's requested delivery logistics$/ do
   @activity_offering.save
 end
 
+
 Then /^the AO's delivery logistics shows the new schedule$/ do
   @activity_offering.parent_course_offering.manage
   @activity_offering.edit
@@ -30,14 +31,10 @@ end
 
 ########################################################################################################################
 ### DUMMY DATA AND TESTING
-
-When /^I create dummy data to speed dev of edit-ao-delivery-logistics$/ do
-
-  course_offering = make CourseOffering, :term => "201208", :course => "ENGL222A"
-  course_offering.manage_and_init
-
-  @activity_offering = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
-
-end
+#When /^I create dummy data to speed dev of edit-ao-delivery-logistics$/ do
+#  course_offering = make CourseOffering, :term => "201208", :course => "ENGL222A"
+#  course_offering.manage_and_init
+#  @activity_offering = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
+#end
 
 
