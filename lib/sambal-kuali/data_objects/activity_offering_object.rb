@@ -872,6 +872,93 @@ class DeliveryLogistics
     end
   end
 
+  # compares 2 instances of DeliveryLogistics for field-equality
+  # note: by default, the comparison ignores the isRDL-field
+  # @example
+  #   DeliveryLogistics.compare( @dl1, @dl2 )
+  #
+  # @param instance1 -- a DeliveryLogistics object
+  # @param instance2 -- a DeliveryLogistics object
+  # @param opts [Hash] key => value
+  def self.compare(instance1, instance2, opts={})
+
+    defaults = {
+        :ignore_dl_type => true
+    }
+    options = defaults.merge(opts)
+
+
+    if instance1.nil? && instance2.nil?
+      puts 'EQUAL: both instances are nil'
+      return true
+    end
+    if instance1.nil?
+      puts 'NOT EQUAL: instance1 is nil'
+      return false
+    end
+    if instance2.nil?
+      puts 'NOT EQUAL: instance2 is nil'
+      return false
+    end
+
+    if opts[:ignore_dl_type]
+      puts 'Ignoring isRDL while testing for equality'
+    else
+      if instance1.isRDL != instance2.isRDL
+        puts 'NOT EQUAL: isRDL is different (' + instance1.isRDL.to_s + ":" + instance2.isRDL.to_s + ")"
+        return false
+      end
+    end
+
+    if instance1.tba != instance2.tba
+      puts 'NOT EQUAL: tba is different (' + instance1.tba + ":" + instance2.tba + ")"
+      return false
+    end
+
+    if instance1.days != instance2.days
+      puts 'NOT EQUAL: days is different (' + instance1.days + ":" + instance2.days + ")"
+      return false
+    end
+
+    if instance1.start_time != instance2.start_time
+      puts 'NOT EQUAL: start_time is different (' + instance1.start_time + ":" + instance2.start_time + ")"
+      return false
+    end
+
+    if instance1.start_time_ampm != instance2.start_time_ampm
+      puts 'NOT EQUAL: start_time_ampm is different (' + instance1.start_time_ampm + ":" + instance2.start_time_ampm + ")"
+      return false
+    end
+
+    if instance1.end_time != instance2.end_time
+      puts 'NOT EQUAL: end_time is different (' + instance1.end_time + ":" + instance2.end_time + ")"
+      return false
+    end
+
+    if instance1.end_time_ampm != instance2.end_time_ampm
+      puts 'NOT EQUAL: end_time_ampm is different (' + instance1.end_time_ampm + ":" + instance2.end_time_ampm + ")"
+      return false
+    end
+
+    if instance1.facility != instance2.facility
+      puts 'NOT EQUAL: facility is different (' + instance1.facility + ":" + instance2.facility + ")"
+      return false
+    end
+
+    if instance1.facility_long_name != instance2.facility_long_name
+      puts 'NOT EQUAL: facility_long_name is different (' + instance1.facility_long_name + ":" + instance2.facility_long_name + ")"
+      return false
+    end
+
+    if instance1.room != instance2.room
+      puts 'NOT EQUAL: room is different (' + instance1.room + ":" + instance2.room + ")"
+      return false
+    end
+
+
+    return true
+  end
+
   def edit(opts)
     if isRDL then
       on ActivityOfferingMaintenance do |page|
