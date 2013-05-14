@@ -14,7 +14,7 @@ And /^the Course Offering is not deleted$/ do
   #verify CO still exists
   @course_offering.search_by_subjectcode
   on ManageCourseOfferingList do |page|
-    page.co_list.include? @course_offering.course
+    page.co_list.should include @course_offering.course
   end
 end
 
@@ -40,12 +40,6 @@ end
 
 Then /^the deleted course offering does not appear on the list of available Course Offerings$/ do
   #verify CO does not exist
-  #verify CO still exists
-  #@course_offering.manage
-  #on ManageCourseOfferings do |page|
-  #  page.error_message_course_not_found.should be_present
-  #end
-
   expected_errMsg = "Cannot find any course offering"
 
   @course_offering.manage
@@ -67,7 +61,7 @@ And /^I cancel the deletion of the Course Offerings in Course Offering Code view
 end
 
 And /^the Course Offerings are not deleted$/ do
-  @co_code_list.each { |co_code| @course_offering_ENGL250.total_co_list('ENGL2').should include co_code }
+  @co_code_list.each { |co_code| @course_offering_ENGL250.total_co_list('ENGL2').should include co_code.upcase }
 end
 
 And /^I delete these Course Offerings$/ do
@@ -77,5 +71,5 @@ end
 
 
 Then /^the deleted course offerings do not appear on the list of available Course Offerings$/ do
-  @co_code_list.each { |co_code| @course_offering_ENGL250.total_co_list('ENGL2').should_not include co_code }
+  @co_code_list.each { |co_code| @course_offering_ENGL250.total_co_list('ENGL2').should_not include co_code.upcase }
 end
