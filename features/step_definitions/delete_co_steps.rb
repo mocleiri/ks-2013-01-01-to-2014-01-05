@@ -12,9 +12,9 @@ end
 
 And /^the Course Offering is not deleted$/ do
   #verify CO still exists
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.error_message_course_not_found.should_not be_present
+  @course_offering.search_by_subjectcode
+  on ManageCourseOfferingList do |page|
+    page.co_list.include? @course_offering.course
   end
 end
 
@@ -41,10 +41,15 @@ end
 Then /^the deleted course offering does not appear on the list of available Course Offerings$/ do
   #verify CO does not exist
   #verify CO still exists
+  #@course_offering.manage
+  #on ManageCourseOfferings do |page|
+  #  page.error_message_course_not_found.should be_present
+  #end
+
+  expected_errMsg = "Cannot find any course offering"
+
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.error_message_course_not_found.should be_present
-  end
+  on(ManageCourseOfferings).first_msg.should match /.*#{Regexp.escape(expected_errMsg)}.*/
 end
 
 
