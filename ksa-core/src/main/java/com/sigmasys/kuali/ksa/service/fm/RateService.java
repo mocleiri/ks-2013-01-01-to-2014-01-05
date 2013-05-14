@@ -37,7 +37,7 @@ public interface RateService {
     /**
      * Removes the RateType instance specified by ID from the persistence store.
      *
-     * @param rateTypeId
+     * @param rateTypeId RateType ID
      */
     void deleteRateType(Long rateTypeId);
 
