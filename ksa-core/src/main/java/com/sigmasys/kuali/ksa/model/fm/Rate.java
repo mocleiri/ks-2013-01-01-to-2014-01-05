@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_RATE")
+@Table(name = "KSSA_RATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE", "ATP_ID"})})
 public class Rate extends AuditableEntity<Long> {
 
     private String atpId;
@@ -48,7 +48,7 @@ public class Rate extends AuditableEntity<Long> {
         return id;
     }
 
-    @Column(name = "ATP_ID", length = 45)
+    @Column(name = "ATP_ID", length = 45, nullable = false)
     public String getAtpId() {
         return atpId;
     }
