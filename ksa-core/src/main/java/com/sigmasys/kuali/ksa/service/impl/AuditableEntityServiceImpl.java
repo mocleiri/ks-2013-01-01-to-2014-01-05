@@ -71,8 +71,9 @@ public class AuditableEntityServiceImpl extends GenericPersistenceService implem
      * @return List of Information instances
      */
     @Override
-    public <T extends AuditableEntity> List<T> getAuditableEntitiesByName(String name, Class<T> entityType) {
-        Query query = em.createQuery("select ae from " + entityType.getName() + " ae where upper(ae.name) like upper(:name)");
+    public <T extends AuditableEntity> List<T> getAuditableEntitiesByNamePattern(String name, Class<T> entityType) {
+        Query query = em.createQuery("select ae from " + entityType.getName() +
+                " ae where upper(ae.name) like upper(:name)");
         query.setParameter("name", "%" + name + "%");
         return query.getResultList();
     }

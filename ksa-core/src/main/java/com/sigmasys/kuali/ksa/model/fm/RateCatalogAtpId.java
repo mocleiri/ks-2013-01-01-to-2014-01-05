@@ -19,8 +19,8 @@ public class RateCatalogAtpId implements Serializable {
     public RateCatalogAtpId() {
     }
 
-    public RateCatalogAtpId(String id, String atpId) {
-        setCode(id);
+    public RateCatalogAtpId(String code, String atpId) {
+        setCode(code);
         setAtpId(atpId);
     }
 

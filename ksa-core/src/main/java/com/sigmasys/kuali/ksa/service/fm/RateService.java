@@ -1,9 +1,12 @@
 package com.sigmasys.kuali.ksa.service.fm;
 
+import com.sigmasys.kuali.ksa.annotation.Url;
+import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.fm.Rate;
 import com.sigmasys.kuali.ksa.model.fm.RateCatalog;
 import com.sigmasys.kuali.ksa.model.fm.RateType;
 
+import javax.jws.WebService;
 import java.util.List;
 
 /**
@@ -12,7 +15,15 @@ import java.util.List;
  *
  * @author Michael Ivanov
  */
+@Url(RateService.SERVICE_URL)
+@WebService(serviceName = RateService.SERVICE_NAME, portName = RateService.PORT_NAME,
+        targetNamespace = Constants.WS_NAMESPACE)
 public interface RateService {
+
+    String SERVICE_URL = "rate.webservice";
+    String SERVICE_NAME = "RateService";
+    String PORT_NAME = SERVICE_NAME + "Port";
+
 
     // Rate Type methods
 

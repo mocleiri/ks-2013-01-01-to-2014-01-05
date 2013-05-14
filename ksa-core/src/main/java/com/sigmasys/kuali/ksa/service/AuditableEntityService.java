@@ -46,7 +46,7 @@ public interface AuditableEntityService {
      * @param entityType Class instance of AuditableEntity subclass
      * @return List of Information instances
      */
-    <T extends AuditableEntity> List<T> getAuditableEntitiesByName(String name, Class<T> entityType);
+    <T extends AuditableEntity> List<T> getAuditableEntitiesByNamePattern(String name, Class<T> entityType);
 
     /**
      * Persists the AuditableEntity entity in the database.

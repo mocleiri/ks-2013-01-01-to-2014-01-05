@@ -32,7 +32,7 @@ public class TransactionTypeHelper extends ViewHelperServiceImpl {
     private List<Tag> searchTags;
 
     public List<Tag> getTagsForSuggest(String suggest) {
-        searchTags = getAuditableEntityService().getAuditableEntitiesByName(suggest, Tag.class);
+        searchTags = getAuditableEntityService().getAuditableEntitiesByNamePattern(suggest, Tag.class);
         return searchTags;
     }
 
