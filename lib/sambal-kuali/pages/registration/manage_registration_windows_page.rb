@@ -102,8 +102,8 @@ class RegistrationWindowsCreate < RegistrationWindowsBase
   action(:cancel_delete) { |b| b.delete_popup_div.radio(index:1).click; b.loading.wait_while_present }
 
   element(:break_appointments_popup_div) { |b| b.div(id: "KS-RegistrationWindowsManagement-ConfirmBreakAppointments-Dialog") }
-  action(:confirm_break_appointments) { |b| b.break_appointments_popup_div.checkbox(index: 0).click; b.loading.wait_while_present }
-  action(:cancel_break_appointments) { |b| b.break_appointments_popup_div.checkbox(index: 1).click; b.loading.wait_while_present }
+  action(:confirm_break_appointments) { |b| b.break_appointments_popup_div.radio(index: 0).click; b.loading.wait_while_present }
+  action(:cancel_break_appointments) { |b| b.break_appointments_popup_div.radio(index: 1).click; b.loading.wait_while_present }
 
   def results_list_by_window_name()
     names = []
