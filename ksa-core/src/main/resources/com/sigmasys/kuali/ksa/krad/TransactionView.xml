@@ -268,7 +268,7 @@
                 <property name="items">
                     <list>
                         <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective" p:style="width: 10%;"/>
-                        <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
+                        <bean id="transactionViewDescriptionField" parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
                             <property name="items">
                                 <list>
                                     <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />

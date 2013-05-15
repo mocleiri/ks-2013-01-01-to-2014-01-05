@@ -553,6 +553,18 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
     /**
+     * This method fetches all KSA accounts that match the substring %name%
+     *
+     * @return the list account instances
+     */
+    @Override
+    public List<Account> getAccountsByNamePattern(String name) {
+        Query query = em.createQuery("select a from Account a where upper(a.id) like upper(:name)");
+        query.setParameter("name", "%" + name + "%");
+        return query.getResultList();
+    }
+
+    /**
      * This method is used to verify that an account exists before a transaction or other operations are
      * performed on the account. There is an initial inquiry into the KSA store. If no account exist, then there is
      * an inquiry into KIM. If KIM also returns no result, then false is returned. If a KIM account does exist, then

@@ -144,7 +144,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         Query query = em.createQuery(sql);
         query.setParameter("dateFrom", CalendarUtils.removeTime(dateFrom));
         query.setParameter("dateTo", CalendarUtils.removeTime(dateTo));
-        query.setParameter("statusCode", TransactionStatus.ACTIVE);
+        query.setParameter("statusCode", TransactionStatus.ACTIVE.toString());
         query.setParameter("amountThreshold", amountThreshold);
 
         List<Payment> payments = query.getResultList();

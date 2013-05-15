@@ -19,15 +19,18 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <bean id="batchRefundHelper" class="com.sigmasys.kuali.ksa.krad.helper.BatchRefundHelper"/>
 
     <bean id="BatchRefundView" parent="Uif-KsaFormView" p:footer.render="false">
         <property name="title" value="Batch Refunds"/>
         <property name="headerText" value="Batch Refunds"/>
         <property name="entryPageId" value="BatchRefundPage"/>
         <property name="navigation" ref="KsaBatchNavigation"/>
+        <property name="viewHelperService" ref="batchRefundHelper"/>
         <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.BatchRefundForm"/>
         <property name="items">
             <list merge="true">
@@ -35,11 +38,9 @@
                     <property name="headerText" value="Batch Refunds"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="get"
-                                  p:actionLabel="Refresh">
-                                  <!--p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">-->
-                            </bean>
-                            <!--<ref bean="quickViewSection"/>-->
+                            <ref bean="BatchRefundFilterSection"/>
+                            <ref bean="batchRefundTabs"/>
+
                         </list>
                     </property>
                 </bean>
@@ -47,4 +48,212 @@
         </property>
     </bean>
 
+    <bean id="BatchRefundFilterSection" parent="Uif-Disclosure-VerticalBoxSection">
+        <property name="headerText" value="Filter Transactions"/>
+        <property name="items">
+            <list>
+                <ref bean="accountFilterGroup"/>
+                <ref bean="dateRangeFilterGroup"/>
+                <ref bean="tagFilterGroup"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="accountFilterGroup" parent="Uif-HorizontalBoxSection">
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="Accounts" p:propertyName="newAccount">
+                    <property name="suggest">
+                        <bean parent="Uif-Suggest">
+                            <property name="sourcePropertyName" value="id"/>
+                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                            <property name="suggestQuery">
+                                <bean parent="Uif-AttributeQueryConfig">
+                                    <property name="queryMethodToCall" value="getAccountsForSuggest"/>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="filterAccounts" p:actionLabel="Add this Account"/>
+                <bean parent="Uif-ListCollectionGroup" >
+                    <property name="title" value="Filter by Selected Accounts"/>
+                    <property name="readOnly" value="true"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.DirectChargeAccount"/>
+                    <property name="propertyName" value="accounts"/>
+                    <!--<property name="layoutManager.sequencePropertyName" value="id"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                    <property name="layoutManager.richTable.disableTableSort" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="true"/>
+                            <entry key="iDisplayLength" value="20"/>
+                            <entry key="bSort" value="true" />
+                        </map>
+                    </property>-->
+                    <!--<property name="layoutManager.groupingPropertyNames"> <list> <value>transactionType.id.id</value> </list> </property>-->
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-MessageField" p:messageText="@{#line.id}, @{#line.compositeDefaultPersonName}"/>
+                        </list>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dateRangeFilterGroup" parent="Uif-HorizontalFieldGroup" >
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="startingDate" p:labelPlacement="LEFT" p:label="From"
+                      p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="endingDate" p:labelPlacement="LEFT" p:label="to"
+                      p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
+                    <property name="control">
+                        <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="filterDates" p:actionLabel="Filter">
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="tagFilterGroup" parent="Uif-HorizontalBoxSection">
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="Tags" p:propertyName="newTag">
+                    <property name="suggest">
+                        <bean parent="Uif-Suggest">
+                            <property name="sourcePropertyName" value="code"/>
+                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                            <property name="suggestQuery">
+                                <bean parent="Uif-AttributeQueryConfig">
+                                    <property name="queryMethodToCall" value="getTagsForSuggest"/>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="filterTags" p:actionLabel="Add this Tag"/>
+                <bean parent="Uif-ListCollectionGroup" >
+                    <property name="title" value="Filter by Selected Tags"/>
+                    <property name="readOnly" value="true"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Tag"/>
+                    <property name="propertyName" value="tags"/>
+                    <!--<property name="layoutManager.sequencePropertyName" value="id"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                    <property name="layoutManager.richTable.disableTableSort" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="true"/>
+                            <entry key="iDisplayLength" value="20"/>
+                            <entry key="bSort" value="true" />
+                        </map>
+                    </property>-->
+                    <!--<property name="layoutManager.groupingPropertyNames"> <list> <value>transactionType.id.id</value> </list> </property>-->
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:propertyName="code"/>
+                        </list>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="batchRefundTabs" parent="Uif-TabGroup"><property name="items"><list>
+        <bean parent="Uif-VerticalBoxSection" p:headerText="Potential Refunds">
+            <property name="items">
+                <list>
+                    <ref bean="potentialRefundList"/>
+
+                </list>
+            </property>
+        </bean>
+        <bean parent="Uif-VerticalBoxSection" p:headerText="Refund Status">
+            <property name="items">
+                <list>
+                    <ref bean="refundStatusList"/>
+
+                </list>
+            </property>
+        </bean>
+    </list></property></bean>
+
+    <bean id="potentialRefundList" parent="Uif-Disclosure-VerticalBoxSection">
+        <property name="items">
+            <list>
+                <bean parent="Uif-MessageField" p:messageText="No Potential Refunds found with supplied filter criteria" p:render="@{potentialRefunds.size() == 0}"/>
+                <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="8">
+                    <property name="title" value="Potential Refunds"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PotentialRefund"/>
+                    <property name="propertyName" value="potentialRefunds"/>
+                    <property name="layoutManager.sequencePropertyName" value="transaction.id"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="renderAddBlankLineButton" value="false" />
+                    <property name="renderAddLine" value="false" />
+                    <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                    <property name="layoutManager.richTable.disableTableSort" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="false"/>
+                            <entry key="bInfo" value="false"/>
+                            <entry key="bFilter" value="false"/>
+                        </map>
+                    </property>
+                    <!--
+                    <property name="layoutManager.columnCalculations">
+                        <list>
+                            <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="chargeAmount"/>
+                            <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="paymentAmount"/>
+                            <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="allocatedLockedAllocated"/>
+                            <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="unallocatedAmount"/>
+                        </list>
+                    </property>
+                    -->
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:label="Account ID" p:propertyName="transaction.account.id" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="transaction.effectiveDate" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="transaction.statementText" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:label="Override Description" p:propertyName="overrideDescription" p:readOnly="false"/>
+                            <bean parent="Uif-InputField" p:propertyName="transaction.paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="transaction.allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="transaction.unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Amount to Refund" p:style="text-align: right; width: 10%;" p:readOnly="false"/>
+                        </list>
+                    </property>
+                    <!--
+                    <property name="layoutManager.expandDetailsActionPrototype">
+                        <bean parent="Uif-ExpandDetailsImageAction"/>
+                    </property>
+                    <property name="layoutManager.rowDetailsGroup">
+                        <ref bean="rollupTransactionList"/>
+                    </property>
+                    -->
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="refundStatusList" parent="Uif-Disclosure-VerticalBoxSection">
+        <property name="items">
+            <list>
+                <bean parent="Uif-MessageField" p:messageText="Refunds size: @{refunds.size()}"/>
+            </list>
+        </property>
+    </bean>
 </beans>

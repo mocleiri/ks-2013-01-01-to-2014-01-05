@@ -457,4 +457,23 @@ public class AccountServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void searchByWildcard() throws Exception {
+        String searchString = "user";
+
+        List<Account> types = accountService.getAccountsByNamePattern(searchString);
+
+        Assert.notNull(types);
+        Assert.isTrue(types.size() == 10, "Searching Accounts for '" + searchString + "' returned " + types.size() + " results instead of 10");
+
+        searchString = "adm";
+
+        List<Account> tags = accountService.getAccountsByNamePattern(searchString);
+
+        Assert.notNull(types);
+        Assert.isTrue(tags.size() == 2, "Searching Tags for '" + searchString + "' returned " + types.size() + " results instead of 2");
+
+    }
+
+
 }
