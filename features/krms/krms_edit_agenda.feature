@@ -104,7 +104,7 @@ Feature: KRMS Edit Agenda
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
-    And I select "OR" from the dropdown before node "2"
+    And I select "OR" from the dropdown before node "2" on the "outer compound"
     Then there should be a dropdown with value "OR" before node "F"
 
   #ELIG9.7.1.EB2 (KSENROLL-5777)
@@ -123,7 +123,7 @@ Feature: KRMS Edit Agenda
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "free form text input value" in the "free form text" field
     And I click the "Preview Change" button
-    And I select "OR" from the dropdown before node "2"
+    And I select "OR" from the dropdown before node "2" on the "outer compound"
     And I click the "Edit Rule Logic" tab
     Then the text "A(B(C OR D) OR F OR E)" should be present in the text area
 
