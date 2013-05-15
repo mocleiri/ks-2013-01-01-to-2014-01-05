@@ -555,12 +555,16 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     /**
      * This method fetches all KSA accounts that match the substring %name%
      *
-     * @return the list account instances
+     * @param pattern Name pattern
+     * @return the list of Account instances
      */
     @Override
-    public List<Account> getAccountsByNamePattern(String name) {
-        Query query = em.createQuery("select a from Account a where upper(a.id) like upper(:name)");
-        query.setParameter("name", "%" + name + "%");
+    public List<Account> getAccountsByNamePattern(String pattern) {
+
+        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+
+        Query query = em.createQuery(GET_FULL_ACCOUNTS_QUERY + " and upper(a.id) like upper(:pattern)");
+        query.setParameter("pattern", "%" + pattern + "%");
         return query.getResultList();
     }
 

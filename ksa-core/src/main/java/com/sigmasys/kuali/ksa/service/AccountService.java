@@ -143,9 +143,10 @@ public interface AccountService {
     /**
      * This method fetches all KSA accounts that match the substring %name%
      *
-     * @return the list account instances
+     * @param pattern Name pattern
+     * @return the list of Account instances
      */
-    List<Account> getAccountsByNamePattern(String name);
+    List<Account> getAccountsByNamePattern(String pattern);
 
     /**
      * Creates and associates a new person name object with the given Account ID.
