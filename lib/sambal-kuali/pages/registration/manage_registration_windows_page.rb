@@ -97,9 +97,9 @@ class RegistrationWindowsCreate < RegistrationWindowsBase
 
 
   element(:yes_label) { |b| b.frm.span(text: "Yes") }
-  element(:delete_popup_div) { |b| b.div(id: "KS-RegistrationWindowsManagement-ConfirmDelete-Dialog") }
-  action(:confirm_delete) { |b| b.delete_popup_div.checkbox(index: 0).click; b.loading.wait_while_present }
-  action(:cancel_delete) { |b| b.delete_popup_div.checkbox(index: 1).click; b.loading.wait_while_present }
+  element(:delete_popup_div) { |b| b.frm.div(id: "KS-RegistrationWindowsManagement-ConfirmDelete-Dialog") }
+  action(:confirm_delete) { |b| b.delete_popup_div.radio(index:0).click; b.loading.wait_while_present }
+  action(:cancel_delete) { |b| b.delete_popup_div.radio(index:1).click; b.loading.wait_while_present }
 
   element(:break_appointments_popup_div) { |b| b.div(id: "KS-RegistrationWindowsManagement-ConfirmBreakAppointments-Dialog") }
   action(:confirm_break_appointments) { |b| b.break_appointments_popup_div.checkbox(index: 0).click; b.loading.wait_while_present }
