@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.fm.impl;
 
+import com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateTypeException;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.fm.Rate;
@@ -15,6 +16,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.student.r2.core.atp.service.AtpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
     private static final Log logger = LogFactory.getLog(RateServiceImpl.class);
 
+
+    @Autowired
+    private AtpService atpService;
 
     @Autowired
     private AuditableEntityService auditableEntityService;
@@ -198,8 +203,17 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     @Transactional(readOnly = false)
     public RateCatalog createRateCatalog(RateCatalog rateCatalog) {
+
         PermissionUtils.checkPermission(Permission.CREATE_RATE_CATALOG);
+
+        if (!isRateCatalogValid(rateCatalog)) {
+            String errMsg = "RateCatalog (code=" + rateCatalog.getCode() + ") is invalid";
+            logger.error(errMsg);
+            throw new InvalidRateCatalogException(errMsg);
+        }
+
         auditableEntityService.persistAuditableEntity(rateCatalog);
+
         return rateCatalog;
     }
 
@@ -212,7 +226,15 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     @Transactional(readOnly = false)
     public Long persistRateCatalog(RateCatalog rateCatalog) {
+
         PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG);
+
+        if (!isRateCatalogValid(rateCatalog)) {
+            String errMsg = "RateCatalog (code=" + rateCatalog.getCode() + ") is invalid";
+            logger.error(errMsg);
+            throw new InvalidRateCatalogException(errMsg);
+        }
+
         return auditableEntityService.persistAuditableEntity(rateCatalog);
     }
 
@@ -472,7 +494,14 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public boolean isRateCatalogValid(RateCatalog rateCatalog) {
+
+        if (rateCatalog.getRateType() == null) {
+            logger.error("RateType is required");
+            return false;
+        }
+
         // TODO
+
         return false;
     }
 
