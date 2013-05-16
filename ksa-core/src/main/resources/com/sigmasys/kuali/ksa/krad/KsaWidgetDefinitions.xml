@@ -21,8 +21,8 @@
     </bean>
 
     <bean id="Uif-KsaNavigationGroupBase" class="com.sigmasys.kuali.ksa.krad.uif.LinkNavigationGroup" abstract="true">
-        <property name="template" value="/krad/WEB-INF/ftl/components/group/navigationGroup.ftl"/>
-        <property name="templateName" value="uif_navigationGroup"/>
+        <property name="template" value="/WEB-INF/ftl/navigationGroup.ftl"/>
+        <property name="templateName" value="uif_ksa_navigationGroup"/>
         <property name="cssClasses">
             <list>
                 <value>uif-navigationGroup</value>
@@ -143,8 +143,7 @@
         </property>
     </bean>
 
-    <bean id="Uif-KsaHeader" class="com.sigmasys.kuali.ksa.krad.uif.KsaHeader" parent="Uif-HeaderBase"
-          scope="prototype">
+    <bean id="Uif-KsaHeader" parent="Uif-HeaderBase" scope="prototype">
         <property name="template" value="/WEB-INF/ftl/header.ftl"/>
         <property name="upperGroup" ref="Uif-KsaViewNavigation"/>
     </bean>

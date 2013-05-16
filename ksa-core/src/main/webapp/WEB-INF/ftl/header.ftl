@@ -32,7 +32,7 @@
 
     <@krad.div component=element>
         <#-- upper group -->
-        <@krad.template component=element.upperGroup currentPageId="${element.view.currentPageId}"/>
+        <@krad.template component=element.upperGroup/>
 
     </@krad.div>
 

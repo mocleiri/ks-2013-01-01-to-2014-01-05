@@ -15,8 +15,8 @@ public class KsaFormView extends FormView {
 
     @Override
     public void setHeader(Header header) {
-        if (header instanceof KsaHeader) {
-            ((KsaHeader) header).setView(this);
+        if (header != null && header.getUpperGroup() != null) {
+            header.getUpperGroup().setBaseId(getCurrentPageId());
         }
         super.setHeader(header);
     }
