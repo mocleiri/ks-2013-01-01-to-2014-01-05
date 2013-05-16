@@ -468,10 +468,10 @@ public class AccountServiceTest extends AbstractServiceTest {
 
         searchString = "adm";
 
-        List<Account> tags = accountService.getAccountsByNamePattern(searchString);
+        types = accountService.getAccountsByNamePattern(searchString);
 
         Assert.notNull(types);
-        Assert.isTrue(tags.size() == 2, "Searching Tags for '" + searchString + "' returned " + types.size() + " results instead of 2");
+        Assert.isTrue(types.size() == 2, "Searching Accounts for '" + searchString + "' returned " + types.size() + " results instead of 2");
 
     }
 
