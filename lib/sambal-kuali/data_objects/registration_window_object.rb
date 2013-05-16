@@ -88,8 +88,6 @@ class RegistrationWindow
     @start_date = get_date_for(RegistrationWindowsConstants::DATE_BOUND_START, @start_date, @period_key)
     @end_date = get_date_for(RegistrationWindowsConstants::DATE_BOUND_END, @end_date, @period_key)
 
-    @start_date = Date.strptime(@start_date, '%m/%d/%Y').next_day.strftime("%m/%d/%Y").to_s
-
     puts "Adding Registration Window #{@appointment_window_info_name} for Period #{@period_key}. Start Date = #{@start_date} and End Date = #{@end_date}"
     on RegistrationWindowsCreate do |page|
       page.appointment_window_info_name.set @appointment_window_info_name
