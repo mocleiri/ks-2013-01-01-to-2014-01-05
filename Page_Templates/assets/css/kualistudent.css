@@ -118,6 +118,9 @@
 	padding-top: 1.2em;
 	clear:both;
 }
+.actions {
+	text-align: right !important;
+}
 h2 {
 	font-size: 1.8em;
 }
