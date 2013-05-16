@@ -1,0 +1,26 @@
+/*!
+ * CUSTOM STYLING
+ *
+ */
+
+
+
+/************************************************************* FORMATING: Navigation Panel */
+#navigation-panel {
+    position: fixed;
+    width: 200px;
+    left: 0px;
+}
+#page-container {
+    padding-left: 220px; /* only needed if navigation-panel is not hidden */
+}
+.nav-panel {
+    margin-left: -20px !important;
+}
+.nav-panel a {
+	border-top-left-radius: 0 !important;
+	border-bottom-left-radius: 0 !important;
+}
+
+
+

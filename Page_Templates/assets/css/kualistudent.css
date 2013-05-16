@@ -50,14 +50,6 @@
     margin-bottom: 100px; 
     padding: 0px;
 }
-#navigation-panel {
-    position: fixed;
-    width: 200px;
-    left: 0px;
-}
-#page-container {
-/*    padding-left: 220px; /* only needed if navigation-panel is not hidden */
-}
 #view-footer {
     margin-bottom: 0px; /* When application-footer is not hidden, add 20px */
     padding-top: 8px;
