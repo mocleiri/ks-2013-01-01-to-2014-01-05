@@ -13,7 +13,8 @@ import java.util.Set;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_RATE_TYPE")
+@Table(name = "KSSA_RATE_CATALOG")
+@AttributeOverride(name = "code", column = @Column(name ="CODE", length = 20, nullable = false))
 public class RateCatalog extends AuditableEntity<Long> {
 
 

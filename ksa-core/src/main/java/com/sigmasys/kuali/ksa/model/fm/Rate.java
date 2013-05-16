@@ -13,7 +13,8 @@ import java.util.Set;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_RATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE", "ATP_ID"})})
+@Table(name = "KSSA_RATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE", "RATE_CATALOG_ATP_ID_FK"})})
+@AttributeOverride(name = "code", column = @Column(name ="CODE", length = 20, nullable = false))
 public class Rate extends AuditableEntity<Long> {
 
     private String atpId;
@@ -30,7 +31,7 @@ public class Rate extends AuditableEntity<Long> {
 
     private Boolean isTransactionTypeFinal;
 
-    private RateCatalog rateCatalog;
+    private RateCatalogAtp rateCatalogAtp;
 
     private Set<KeyPair> keyPairs;
 
@@ -48,7 +49,7 @@ public class Rate extends AuditableEntity<Long> {
         return id;
     }
 
-    @Column(name = "ATP_ID", length = 45, nullable = false)
+    @Column(name = "RATE_CATALOG_ATP_ID_FK", insertable = false, updatable = false, length = 45)
     public String getAtpId() {
         return atpId;
     }
@@ -116,14 +117,18 @@ public class Rate extends AuditableEntity<Long> {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RATE_CATALOG_ID_FK")
-    public RateCatalog getRateCatalog() {
-        return rateCatalog;
+    @JoinColumns({
+            @JoinColumn(name = "RATE_CATALOG_CODE_FK", referencedColumnName = "RATE_CATALOG_CODE"),
+            @JoinColumn(name = "RATE_CATALOG_ATP_ID_FK", referencedColumnName = "ATP_ID")
+    })
+    public RateCatalogAtp getRateCatalogAtp() {
+        return rateCatalogAtp;
     }
 
-    public void setRateCatalog(RateCatalog rateCatalog) {
-        this.rateCatalog = rateCatalog;
+    public void setRateCatalogAtp(RateCatalogAtp rateCatalogAtp) {
+        this.rateCatalogAtp = rateCatalogAtp;
     }
+
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "KSSA_RATE_KYPR",
@@ -141,4 +146,5 @@ public class Rate extends AuditableEntity<Long> {
     public void setKeyPairs(Set<KeyPair> keyPairs) {
         this.keyPairs = keyPairs;
     }
+
 }
