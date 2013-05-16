@@ -58,7 +58,7 @@ public class KsMaintenanceViewAuthorizerBase extends MaintenanceViewAuthorizerBa
                 ActivityOfferingMaintainableImpl theForm = (ActivityOfferingMaintainableImpl)document.getOldMaintainableObject();
                 ActivityOfferingWrapper wrapper = (ActivityOfferingWrapper)theForm.getDataObject();
                 if(wrapper.getAdminOrg() != null){
-                    attributes.put("org", wrapper.getAdminOrg());
+                    attributes.put("offeringAdminOrgId", wrapper.getAdminOrg());
                 }
                 if(wrapper.getCourse() != null){
                     attributes.put("subjectArea", wrapper.getCourse().getSubjectArea());
@@ -73,7 +73,7 @@ public class KsMaintenanceViewAuthorizerBase extends MaintenanceViewAuthorizerBa
                 CourseOfferingCreateMaintainableImpl theForm = (CourseOfferingCreateMaintainableImpl)document.getNewMaintainableObject();
                 CourseOfferingCreateWrapper wrapper = (CourseOfferingCreateWrapper) theForm.getDataObject();
                 if(wrapper.getAdminOrg() != null){
-                    attributes.put("org", wrapper.getAdminOrg());
+                    attributes.put("offeringAdminOrgId", wrapper.getAdminOrg());
                 }
                 if(wrapper.getCourse() != null){
                     attributes.put("subjectArea", wrapper.getCourse().getSubjectArea());
@@ -274,6 +274,14 @@ public class KsMaintenanceViewAuthorizerBase extends MaintenanceViewAuthorizerBa
 
             if(getMessageService().getMessageText(messageKey) != null){ // if the message isn't configured, then don't display any error
                 GlobalVariables.getMessageMap().putError(view.getId(), messageKey);
+            }
+
+            if (model != null && model instanceof MaintenanceDocumentForm) {
+                MaintenanceDocumentForm form = (MaintenanceDocumentForm) model;
+                if (form.getDocument().getNewMaintainableObject().getDataObject() instanceof CourseOfferingCreateWrapper) {
+                    CourseOfferingCreateWrapper coWrapper = ((CourseOfferingCreateWrapper) form.getDocument().getNewMaintainableObject().getDataObject());
+                    coWrapper.setEnableCreateButton(false);
+                }
             }
         }
 

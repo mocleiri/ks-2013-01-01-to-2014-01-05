@@ -1,5 +1,6 @@
 package org.kuali.student.enrollment.class1.krms.dto;
 
+import org.kuali.student.enrollment.class1.krms.util.CluSetRangeHelper;
 import org.kuali.student.r2.lum.clu.dto.CluSetInfo;
 import org.kuali.student.r2.lum.clu.dto.MembershipQueryInfo;
 import org.springframework.util.StringUtils;
@@ -19,6 +20,8 @@ public class CluSetInformation implements Serializable {
     private MembershipQueryInfo membershipQueryInfo;
     private List<CluInformation> clusInRange;
     private Map<String, CluSetInformation> subCluSetInformations;
+
+    private List<CluSetRangeHelper> cluSetRange;
 
     public CluSetInfo getCluSetInfo() {
         return cluSetInfo;
@@ -66,6 +69,17 @@ public class CluSetInformation implements Serializable {
         this.clusInRange = clusInRange;
     }
 
+    public List<CluSetRangeHelper> getCluSetRange() {
+        if (this.cluSetRange == null) {
+            this.cluSetRange = new ArrayList<CluSetRangeHelper>();
+        }
+        return cluSetRange;
+    }
+
+    public void setCluSetRange(List<CluSetRangeHelper> cluSetRange) {
+        this.cluSetRange.set(0, cluSetRange.get(cluSetRange.size()-1));
+    }
+
     public Map<String, CluSetInformation> getSubCluSetInformations() {
         if (subCluSetInformations == null) {
             subCluSetInformations = new HashMap<String, CluSetInformation>();
@@ -77,7 +91,7 @@ public class CluSetInformation implements Serializable {
         this.subCluSetInformations = subCluSetInformations;
     }
 
-    public String getDelimitedString() {
+    public String getCluDelimitedString() {
 
         StringBuilder sb = new StringBuilder();
         for (CluInformation clu : this.getClus()) {
@@ -85,15 +99,6 @@ public class CluSetInformation implements Serializable {
                 sb.append(",");
             }
             sb.append(clu.getVerIndependentId());
-        }
-
-        for (CluSetInfo cluSet : this.getCluSets()) {
-            for (String id : cluSet.getCluIds()) {
-                if (sb.length() > 0) {
-                    sb.append(",");
-                }
-                sb.append(id);
-            }
         }
 
         if (this.getClusInRange() != null) {
@@ -104,6 +109,19 @@ public class CluSetInformation implements Serializable {
                 sb.append(clu.getVerIndependentId());
             }
         }
+        return sb.toString();
+    }
+
+    public String getCluSetDelimitedString() {
+
+        StringBuilder sb = new StringBuilder();
+        for (CluSetInfo cluSet : this.getCluSets()) {
+            if (sb.length() > 0) {
+                sb.append(",");
+            }
+            sb.append(cluSet.getId());
+        }
+
         return sb.toString();
     }
 

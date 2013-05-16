@@ -2,6 +2,120 @@
  * Fix for KULRICE-7795 as suggested by Brian. We need to remove this method once we get the same in next rice upgrade M3/M4
  */
 
+jQuery.validator.setDefaults({
+    onsubmit: false,
+    ignore: ".ignoreValid",
+    wrapper: "",
+    onfocusout: false,
+    onclick: false,
+    onkeyup: function (element) {
+        if (validateClient) {
+            var id = getAttributeId(jQuery(element).attr('id'));
+            var data = jQuery("#" + id).data(kradVariables.VALIDATION_MESSAGES);
+
+            //if this field previously had errors validate on key up
+            if (data && data.focusedErrors && data.focusedErrors.length) {
+                validateFieldValue(element);
+            }
+        }
+    },
+    highlight: function (element, errorClass, validClass) {
+        jQuery(element).addClass(errorClass).removeClass(validClass);
+        jQuery(element).attr("aria-invalid", "true");
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        jQuery(element).removeClass(errorClass).addClass(validClass);
+        jQuery(element).removeAttr("aria-invalid");
+
+        var id = getAttributeId(jQuery(element).attr("id"));
+        var data = jQuery("#" + id).data(kradVariables.VALIDATION_MESSAGES);
+
+        if (data) {
+            data.errors = [];
+            jQuery("#" + id).data(kradVariables.VALIDATION_MESSAGES, data);
+
+            if (messageSummariesShown) {
+                handleMessagesAtField(id);
+            }
+            else {
+                writeMessagesAtField(id);
+            }
+
+            //force hide of tooltip if no messages present
+            if (!(data.warnings.length || data.info.length || data.serverErrors.length
+                || data.serverWarnings.length || data.serverInfo.length)) {
+                hideMessageTooltip(id);
+            }
+        }
+    },
+    errorPlacement: function (error, element) {
+    },
+    showErrors: function (nameErrorMap, elementObjectList) {
+        this.defaultShowErrors();
+
+        for (var i in elementObjectList) {
+            var element = elementObjectList[i].element;
+            var message = elementObjectList[i].message;
+            var id = getAttributeId(jQuery(element).attr('id'));
+
+            var data = jQuery("#" + id).data(kradVariables.VALIDATION_MESSAGES);
+
+            var exists = false;
+            if (data && data.errors && data.errors.length) {
+                for (var j in data.errors) {
+                    if (data.errors[j] === message) {
+                        exists = true;
+                    }
+                }
+            }
+
+            if (!exists) {
+                data.errors = [];
+                data.errors.push(message);
+                jQuery("#" + id).data(kradVariables.VALIDATION_MESSAGES, data);
+            }
+
+            if (data) {
+                if (messageSummariesShown) {
+                    handleMessagesAtField(id);
+                }
+                else {
+                    writeMessagesAtField(id);
+                }
+            }
+
+            if (data && !exists && !pauseTooltipDisplay) {
+
+            }
+        }
+
+    },
+    success: function (label) {
+        var htmlFor = jQuery(label).attr('for');
+        var id = "";
+        if (htmlFor.indexOf("_control") >= 0) {
+            id = getAttributeId(htmlFor);
+        }
+        else {
+            id = jQuery("[name='" + escapeName(htmlFor) + "']:first").attr("id");
+            id = getAttributeId(id);
+        }
+
+        var data = jQuery("#" + id).data(kradVariables.VALIDATION_MESSAGES);
+        if (data && data.errors && data.errors.length) {
+            data.errors = [];
+            jQuery("#" + id).data(kradVariables.VALIDATION_MESSAGES, data);
+            if (messageSummariesShown) {
+                handleMessagesAtField(id);
+            }
+            else {
+                writeMessagesAtField(id);
+            }
+            showMessageTooltip(id, false, true);
+        }
+    }
+});
+
 function replaceBreadCrumbs(bc) {
     if (bc && 0!==bc.length) {
         var bcObj = jQuery.parseJSON(bc);
@@ -340,35 +454,49 @@ function showFixedOptions(textBox, url, courseTypeKey) {
     jQuery('#div_fixed_options').show().css('top', jQuery(textBox).offset().top).css('left', jQuery(textBox).offset().left);
 }
 
-function removeCheckboxColumns(columns, componentId) {
-    var div = jQuery('#' + componentId);
-    var table = jQuery(div).find('table');
-    var tableId = jQuery(table).attr('id');
+function removeCheckboxColumns(column, componentId, functionToCall) {
+    var components = jQuery('div[id^="' + componentId + '"]');
+    jQuery.each(components, function (index) {
+        var subComponentId = jQuery(this).attr('id');
+        var table = jQuery(this).find('table');
+        var tableId = jQuery(table).attr('id');
 
-    var foundCheckBox = false;
+        var foundCheckBox = false;
 
-    jQuery(table).find('input:checkbox').each(function(){
-        var div = jQuery(this).parent('div');
-        if(jQuery(div).is(":visible")){
-            foundCheckBox = true;
-            return false;
-        }
-    });
+        jQuery('#' + tableId + ' tbody > tr > td:nth-child(' + column + ')').find('[type=checkbox]').each(function () {
+            var div = jQuery(this).parent('div');
+            if (jQuery(div).is(":visible")) {
+                foundCheckBox = true;
+                return foundCheckBox;
+            }
+        });
 
-    if (!foundCheckBox) {
-        jQuery.each(columns, function (index, column) {
-            var columIndex = column - index
-            var th = jQuery('#' + tableId + ' thead tr').find('th:nth-child(' + columIndex + ')');
+        if (!foundCheckBox) {
+            var th = jQuery('#' + tableId + ' thead tr').find('th:nth-child(' + column + ')');
             jQuery(th).remove();
-            jQuery('#' + tableId + ' tbody tr').find('td:nth-child(' + columIndex + ')').each(function () {
+            jQuery('#' + tableId + ' tbody tr').find('td:nth-child(' + column + ')').each(function () {
                 jQuery(this).remove();
             });
-            var tf = jQuery('#' + tableId + ' tfoot tr').find('th:nth-child(' + columIndex + ')');
+            var tf = jQuery('#' + tableId + ' tfoot tr').find('th:nth-child(' + column + ')');
             jQuery(tf).remove();
-        });
-    }else{
-        ksAddRowSelectionCheckbox(false, componentId,false,'');
-    }
+        } else {
+            var toggleCheckbox = jQuery("<input type='checkbox' id='" + tableId + "_toggle_control_checkbox'/>");
+            var isChecked = toggleCheckbox.prop('checked');
+            toggleCheckbox.click(function (e) {
+                jQuery('#' + tableId + ' tbody > tr > td:nth-child(' + column + ')').find('[type=checkbox]').each(function () {
+                    jQuery(this).prop('checked', jQuery(toggleCheckbox).prop('checked'));
+                });
+                if (functionToCall) {
+                    var target = jQuery.makeArray(functionToCall);
+                    var clickFn = new Function(functionToCall)
+                    clickFn.call(target);
+                }
+            });
+            var th = jQuery('#' + tableId + ' thead tr').find('th:nth-child(' + column + ')');
+            jQuery(th).append(toggleCheckbox);
+        }
+
+    });
 }
 
 function addActionColumn(isReadOnly, componentId) {
@@ -414,7 +542,7 @@ function addActionColumn(isReadOnly, componentId) {
             jQuery(this).append(tdBody);
 
             jQuery('#bodyAnchor_line' + index).data('submitData', {
-                "methodToCall":"loadAOs",
+                "methodToCall":"loadAOs_RGs_AOCs",
                 "actionParameters[selectedCollectionPath]":"courseOfferingResultList",
                 "actionParameters[selectedLineIndex]":index,
                 "showHistory":"false",
@@ -453,41 +581,6 @@ function addActionColumn(isReadOnly, componentId) {
 
         // Add the Footer
         jQuery('#' + tableId + ' tfoot tr').append(thFooter);
-    }
-}
-
-
-/**
- * Fix for KSENROLL-4394 as suggested by Brian. We need to remove this method once we get the same in next rice upgrade 2.2.1-M1
- *
- * In KRAD it's not checking that sectionData != null so that check is added below.  Overwriting method in krad.validate.js
- */
-function displayHeaderMessageCount(sectionId, sectionData) {
-    var sectionHeader = jQuery("[data-headerFor='" + sectionId + "']").find("> :header, > label");
-
-    if(errorImage == undefined){
-        setupImages();
-    }
-
-    if (sectionHeader.length && sectionData && sectionData.messageTotal) {
-
-        var countMessage = generateCountString(sectionData.errorTotal, sectionData.warningTotal, sectionData.infoTotal);
-        var image = "";
-        if (sectionData.errorTotal) {
-            image = errorImage;
-        }
-        else if (sectionData.warningTotal) {
-            image = warningImage;
-        }
-        else if (sectionData.infoTotal) {
-            image = infoImage;
-        }
-
-        jQuery(sectionHeader).find("div." + kradVariables.MESSAGE_COUNT_CLASS).remove();
-
-        if (countMessage != "") {
-            jQuery("<div class='" + kradVariables.MESSAGE_COUNT_CLASS + "'>[" + image + " " + countMessage + "]</div>").appendTo(sectionHeader);
-        }
     }
 }
 
@@ -819,6 +912,26 @@ function addTabs(aoTabName , regTabName, aoDivIdPrefix, regDivIdPrefix){
     });
 }
 
+function closeTooltip(e) {
+    var popupTarget;
+    if (typeof e === "string") {
+        popupTarget = jQuery("#" + e);
+    } else {  // source is a trigger event
+        stopEvent(e);
+        popupTarget = jQuery((e.currentTarget) ? e.currentTarget : e.srcElement);
+    }
+
+    // save open property before closing popups
+    var isPopupOpen = popupTarget.IsBubblePopupOpen();
+    if (isPopupOpen) {
+        var b = jQuery(popupTarget).data("private_jquerybubblepopup_options");
+        if (b != 'undefined') {
+//            var bubbleId = jQuery(b).attr('privateVars').id = null;
+            var isOpen = jQuery(b).attr('privateVars').is_open = null;
+        }
+    }
+}
+
 function addNewClusterOptionSuccessCallBack(){
     retrieveComponent('KS-CourseOfferingManagement-MoveAOCPopupForm',undefined, addNewClusterOption, undefined);
 }
@@ -869,3 +982,4 @@ function removeZebraColoring(id){
     });
 
 }
+

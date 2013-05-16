@@ -36,7 +36,7 @@
     </bean>
 
     <!-- InquiryView -->
-    <bean id="KS-CourseOfferingEditWrapper-InquiryView" parent="KSInquiryView"
+    <bean id="KS-CourseOfferingEditWrapper-InquiryView" parent="KS-Uif-InquiryView"
           p:headerText="Course Offering Inquiry"
           p:dataObjectClassName="org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper"
           p:viewHelperServiceClass="org.kuali.student.enrollment.class2.courseoffering.service.impl.CourseOfferingEditInquirableImpl"
@@ -45,7 +45,7 @@
 
         <property name="page.header">
             <!-- suppress Expand/Collapse buttons -->
-            <ref bean="KSHeader_Empty" />
+            <ref bean="KS-Uif-HeaderOne-Empty" />
         </property>
         <property name="Items">
             <list>
@@ -178,13 +178,27 @@
     </bean>
 
     <!-- Edit a Course Offering MaintenanceView -->
-    <bean id="KS-CourseOfferingEditWrapper-EditMaintenanceView" parent="KSMaintenanceView">
+    <bean id="KS-CourseOfferingEditWrapper-EditMaintenanceView" parent="KS-Uif-MaintenanceView">
         <property name="authorizer">
             <bean class="org.kuali.student.enrollment.main.view.KsMaintenanceViewAuthorizerBase"/>
         </property>
         <property name="headerText" value="Edit @{document.oldMaintainableObject.dataObject.courseOfferingInfo.courseOfferingCode} - @{document.oldMaintainableObject.dataObject.courseOfferingInfo.courseOfferingTitle} (@{document.oldMaintainableObject.dataObject.courseOfferingInfo.creditCnt} Credits)"/>
         <property name="dataObjectClassName" value="org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper"/>
         <!-- <property name="render" value="@{#hasPermDtls('KS-ENR','Open Views for KS-CourseOfferingEditWrapper-EditMaintenanceView',null,document.oldMaintainableObject.dataObject.adminOrg)}" /> -->
+
+        <property name="breadcrumbOptions.homewardPathBreadcrumbs">
+            <list>
+                <bean parent="Uif-BreadcrumbItem">
+                    <property name="label" value="Home"/>
+                    <property name="url.href" value="@{#ConfigProperties['application.url']}/portal.do"/>
+                </bean>
+                <bean parent="Uif-BreadcrumbItem">
+                    <property name="label" value="Enrollment"/>
+                    <property name="url.viewId" value="enrollmentHomeView"/>
+                </bean>
+            </list>
+        </property>
+
         <property name="header.lowerGroup">
             <bean parent="Uif-HeaderLowerGroup">
                 <property name="style" value="margin-bottom:px;"/>
@@ -195,12 +209,15 @@
                 </property>
             </bean>
         </property>
+        <!--<property name="viewLabelFieldPropertyName" value="Edit @{document.oldMaintainableObject.dataObject.courseOfferingInfo.courseOfferingCode} - @{document.oldMaintainableObject.dataObject.courseOfferingInfo.courseOfferingTitle} (@{document.oldMaintainableObject.dataObject.courseOfferingInfo.creditCnt} Credits)"/>-->
+        <!--<property name="breadcrumbTitleDisplayOption" value="replace"/>-->
+
         <property name="viewHelperServiceClass" value="org.kuali.student.enrollment.class2.courseoffering.service.impl.CourseOfferingEditMaintainableImpl" />
         <property name="page.items">
             <list>
                 <ref bean="KS-EditCourseOffering-AliasMessageSection" />
                 <ref bean="KS-CourseOfferingEdit-Term"/>
-                <ref bean="KSDocumentPageFooter_SubmitCancel"/>
+                <ref bean="KS-Uif-DocumentPageFooter-SubmitCancel"/>
                 <ref bean="KS-CourseOfferingEdit-CourseOfferingInformation"/>
                 <ref bean="KS-CourseOfferingEdit-DeliveryAndAssessment"/>
                 <ref bean="KS-CourseOfferingEdit-Waitlist"/>
@@ -210,7 +227,7 @@
             </list>
         </property>
         <property name="page.footer.items">
-            <ref bean="KSDocumentPageFooter_SubmitCancel" />
+            <ref bean="KS-Uif-DocumentPageFooter-SubmitCancel" />
         </property>
     </bean>
 

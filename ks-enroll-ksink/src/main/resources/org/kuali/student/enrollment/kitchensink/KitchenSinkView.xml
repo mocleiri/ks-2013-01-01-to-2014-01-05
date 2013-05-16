@@ -24,10 +24,10 @@
 
     <!-- View definitions -->
 
-    <bean id="KS-KitchenSink-FormView" parent="KSFormView" abstract="true">
+    <bean id="KS-KitchenSink-FormView" parent="KS-Uif-FormView" abstract="true">
         <property name="formClass" value="org.kuali.student.enrollment.kitchensink.KitchenSinkForm"/>
         <property name="viewHelperServiceClass" value="org.kuali.student.enrollment.kitchensink.KitchenSinkHelper"/>
-        <property name="header.render" value="false"/>
+        <!--<property name="header.render" value="false"/>-->
         <property name="footer.render" value="false"/>
         <property name="applyDirtyCheck" value="false"/>
         <property name="additionalCssFiles">
@@ -61,7 +61,7 @@
         <!-- -->
     </bean>
 
-    <bean id="KS-KitchenSink-InquiryView-NoHeaderButtons" parent="KSInquiryView">
+    <bean id="KS-KitchenSink-InquiryView-NoHeaderButtons" parent="KS-Uif-InquiryView">
         <property name="page">
             <bean parent="Uif-InquiryPage">
                 <property name="header">

@@ -52,10 +52,8 @@
         </property>
     </bean>
 
-    <bean id="KS-CourseOfferingManagement-ManageTheCourseOfferingSection" p:id="manageTheCourseOfferingSection" parent="Uif-VerticalBoxSection">
-        <!-- TODO Put this back in !!!!!!!!!!!!!! Do we still need it? -->
-        <!-- in old implementation id="KS-CourseOfferingManagement-ActivityOfferingResultSection" p:id="ActivityOfferingResultSection" -->
-        <!--<property name="componentSecurity.viewAuthz" value="true"/>-->
+    <bean id="KS-CourseOfferingManagement-ManageTheCourseOfferingSection" p:id="ActivityOfferingResultSection" parent="Uif-VerticalBoxSection">
+        <property name="componentSecurity.viewAuthz" value="true"/>
         <property name="headerText" value="@{currentCourseOfferingWrapper.ownerCode} - @{currentCourseOfferingWrapper.courseOfferingDesc} (@{currentCourseOfferingWrapper.creditCnt} Credits, SOC State: @{socState})" />
         <property name="disclosure.render" value="false"/>
         <property name="header.cssClasses">
@@ -98,6 +96,8 @@
                                         <bean id="delete_co" parent="Uif-ActionLink" p:id="ActivityOfferingResultSection-deleteOneCoWithLink" p:methodToCall="deleteOneCoWithLink" p:actionLabel=" | Delete" p:disabled="@{#parent.readOnly}" p:render = "@{currentCourseOfferingWrapper.stateKey eq 'kuali.lui.state.draft' or currentCourseOfferingWrapper.stateKey eq 'kuali.lui.course.offering.state.draft' or currentCourseOfferingWrapper.stateKey eq 'kuali.lui.course.offering.state.planned'  or currentCourseOfferingWrapper.stateKey eq 'kuali.lui.activity.offering.state.offered' or currentCourseOfferingWrapper.stateKey eq 'kuali.lui.course.offering.state.offered'}" p:componentSecurity.performActionAuthz="true" p:actionEvent="deleteCO" />
                                         <bean parent="Uif-ActionLink" p:actionLabel=" | View All Registration Groups (@{rgResultList.size()})"
                                               p:actionScript = "showLightboxComponent('KS-CourseOfferingManagement-AllRegistrationGroupsForACourseOffering', '@{#ConfigProperties['application.url']}');"/>
+                                        <bean parent="Uif-Link" p:linkText="| Manage Course Offering Requisites "
+                                              p:href="@{#ConfigProperties['application.url']}/kr-krad/krmsRuleStudentEditor?viewTypeName=MAINTENANCE&amp;methodToCall=maintenanceEdit&amp;dataObjectClassName=org.kuali.student.enrollment.class1.krms.dto.CORuleManagementWrapper&amp;viewName=COAgendaManagementView&amp;overrideKeys=refObjectId&amp;refObjectId=@{currentCourseOfferingWrapper.courseOfferingId}"/>
                                     </list>
                                 </property>
                             </bean>

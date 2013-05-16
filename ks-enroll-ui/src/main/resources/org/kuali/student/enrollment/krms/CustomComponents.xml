@@ -36,7 +36,7 @@
 
     <!--bean id="KRMS-Course-SuggestControl" parent="Uif-Suggest">
         <property name="render" value="true"/>
-        <property name="sourcePropertyName" value="displayName"/>
+        <property name="valuePropertyName" value="displayName"/>
         <property name="templateOptions" value="minLength:1,delay:0"/>
         <property name="suggestQuery">
             <bean parent="Uif-AttributeQueryConfig">
@@ -49,6 +49,9 @@
         <!--property name="suggest">
             <bean parent="KRMS-Course-SuggestControl"/>
         </property-->
+        <property name="control">
+            <bean parent="Uif-TextControl" p:style="margin-top:null 2px;" p:disabled="true"/>
+        </property>
         <property name="quickfinder">
             <bean parent="KRMS-Course-QuickFinder"/>
         </property>
@@ -57,7 +60,7 @@
 
     <bean id="KRMS-CollectionGridItem" abstract="true" parent="Uif-GridGroup">
         <property name="layoutManager">
-            <bean parent="Uif-HorizontalBoxLayout"/>
+            <bean parent="Uif-HorizontalBoxLayout" p:style="width:480px"/>
         </property>
         <property name="cssClasses">
             <list merge="true">
@@ -115,7 +118,7 @@
             <map>
                 <entry key="code" value="proposition.courseInfo.code"/>
                 <entry key="cluId" value="proposition.courseInfo.id"/>
-                <entry key="verIndependentId" value="proposition.courseInfo.version"/>
+                <entry key="verIndependentId" value="proposition.courseInfo.version.versionIndId"/>
             </map>
         </property>
     </bean>
@@ -142,7 +145,7 @@
         </property>
     </bean>
 
-    <bean id="KRMS-StackedCollectionLayout-WithBoxItems" parent="Uif-StackedCollectionLayout-WithBoxItems"
+    <bean id="KRMS-StackedCollectionLayout-WithBoxItems" parent="Uif-StackedCollectionLayout-WithBoxItems" p:style="width: 500px"
           class="org.kuali.student.enrollment.class1.krms.HorizontalActionsStackedLayoutManager">
         <property name="lineGroupPrototype">
             <bean parent="KRMS-CollectionGridItem"/>
@@ -157,7 +160,7 @@
         </property>
     </bean>
 
-    <bean id="KRMS-StackedCollectionGroup" parent="Uif-StackedCollectionGroup" abstract="true" p:style="width: 400px; padding: 0;">
+    <bean id="KRMS-StackedCollectionGroup" parent="Uif-StackedCollectionGroup" abstract="true" p:style="width: 480px; padding: 0;">
         <property name="addItemCssClass" value="ks-collectionAddItem"/>
         <property name="header">
             <bean parent="Uif-HeaderSix">
@@ -182,7 +185,7 @@
         </property>
     </bean>
 
-    <bean id="KRMS-CourseSetStackedCollectionGroup" parent="KRMS-StackedCollectionGroup" p:headerText="Courses Sets">
+    <bean id="KRMS-CourseSetStackedCollectionGroup" parent="KRMS-StackedCollectionGroup" p:headerText="Course Sets">
         <property name="layoutManager">
             <bean parent="KRMS-StackedCollectionLayout-WithBoxItems">
                 <property name="summaryFields" value="name" />
@@ -203,19 +206,21 @@
         </property>
         <property name="items">
             <list>
-                <bean parent="Uif-MessageField" p:messageText="@{#line.name}" p:style="width: 290px; margin: 0px;"/>
+                <bean parent="Uif-MessageField" p:messageText="@{#line.name}" p:style="width: 380px; margin: 0px;"/>
             </list>
         </property>
         <property name="addLineItems">
             <list>
-                <bean parent="Uif-InputField-LabelTop" p:style="width: 280px;">
+                <bean parent="Uif-InputField-LabelTop" p:style="width: 380px;">
                     <property name="propertyName" value="name"/>
-                    <property name="readOnly" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:style="width:370px; margin-top:null 2px;" p:disabled="true"/>
+                    </property>
                     <property name="label" value="Course Sets"/>
                     <!--property name="suggest">
                         <bean parent="Uif-Suggest">
                             <property name="render" value="true"/>
-                            <property name="sourcePropertyName" value="displayName"/>
+                            <property name="valuePropertyName" value="displayName"/>
                             <property name="templateOptions" value="minLength:1,delay:0"/>
                             <property name="suggestQuery">
                                 <bean parent="Uif-AttributeQueryConfig">
@@ -254,14 +259,16 @@
         </property>
         <property name="items">
             <list>
-                <bean parent="Uif-MessageField" p:messageText="@{#line.code}" p:style="width: 290px; margin: 0px;"/>
+                <bean parent="Uif-MessageField" p:messageText="@{#line.code}" p:style="width: 380px; margin: 0px;"/>
             </list>
         </property>
         <property name="addLineItems">
             <list>
                 <bean parent="Uif-InputField-LabelTop" p:style="width: 280px;">
                     <property name="propertyName" value="code"/>
-                    <property name="readOnly" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:style="margin-top:null 2px;" p:disabled="true"/>
+                    </property>
                     <property name="label" value="Approved Courses"/>
                     <!--property name="suggest">
                         <bean parent="KRMS-Course-SuggestControl"/>
@@ -278,32 +285,76 @@
     <bean id="KRMS-CourseRangeStackedCollectionGroup" parent="KRMS-StackedCollectionGroup">
         <property name="layoutManager">
             <bean parent="KRMS-StackedCollectionLayout-WithBoxItems">
-                <property name="summaryFields" value="parameter" />
+                <property name="summaryFields" value="subjectCode" />
             </bean>
+        </property>
+        <property name="lineActions">
+            <list>
+                <bean parent="Uif-ActionLink" p:actionLabel="View" p:methodToCall="viewCourseRange"/>
+                <bean parent="Uif-DeleteLineAction">
+                    <property name="cssClasses">
+                        <list merge="true">
+                            <value>ks-stackedActionItem</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
         </property>
     </bean>
 
     <bean id="KRMS-CourseRange-Section-Parent" parent="Uif-VerticalBoxSection" p:progressiveRender="#np.proposition.multipleCourseType eq '3'">
-
         <property name="items">
             <list>
                 <bean parent="Uif-Label" p:labelText="Course Range" p:renderColon="false" />
                 <bean parent="Uif-ActionLink" p:actionLabel="Define Course Range" p:style="color: #3F7826;" p:actionScript="showLightboxComponent('courseRangeLightBox');"/>
-                <bean parent="KRMS-CourseRangeStackedCollectionGroup">
-                <property name="propertyName" value="proposition.termParameterList"/>
-                <property name="collectionObjectClass"
-                          value="org.kuali.rice.krms.impl.ui.TermParameter"/>
-                <property name="items">
-                    <list>
-                        <bean parent="Uif-MessageField" p:messageText="@{#line.parameter}"
-                              p:style="width: 290px; margin: 0px;"/>
-                    </list>
-                </property>
+                <bean parent="KRMS-CourseRangeStackedCollectionGroup" p:renderAddLine="false">
+                    <property name="propertyName" value="proposition.cluSet.cluSetRange"/>
+                    <property name="collectionObjectClass" value="org.kuali.student.enrollment.class1.krms.util.CluSetRangeHelper"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-MessageField" p:messageText="@{#line.cluSetRangeLabel}" p:style="width: 290px; margin: 0px;"/>
+                        </list>
+                    </property>
                 </bean>
             </list>
         </property>
     </bean>
     <bean id="KRMS-CourseRange-Section" parent="KRMS-CourseRange-Section-Parent" />
+
+    <bean id="KRMS-CourseRangeResult-Lookup" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:style="margin: 5px; width: 800px;">
+        <property name="hidden" value="true"/>
+        <property name="headerText" value="Course Range"/>
+        <property name="disclosure.render" value="false"/>
+        <property name="items">
+            <list>
+                <ref bean="KRMS-CourseRangeResult"/>
+                <bean parent="Uif-ActionLink" p:actionLabel="Close" p:actionScript="jQuery.fancybox.close();" p:align="right"/>
+            </list>
+        </property>
+     </bean>
+
+    <bean id="KRMS-CourseRangeResult" parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="3" p:renderAddLine="false">
+        <property name="collectionObjectClass" value="org.kuali.student.enrollment.class1.krms.dto.CluInformation" />
+        <property name="propertyName" value="clusInRange" />
+        <property name="renderLineActions" value="false"/>
+        <property name="collectionLookup.quickfinderAction.render" value="false" />
+        <property name="layoutManager.renderSequenceField" value="false" />
+        <property name="layoutManager.applyDefaultCellWidths" value="true" />
+        <property name="layoutManager.applyAlternatingRowStyles" value="false" />
+        <property name="layoutManager.richTable.templateOptions">
+            <map>
+                <entry key="sDom" value="rtip"/>
+                <entry key="aaSorting" value="[[ 1, 'asc' ]]"/>
+            </map>
+        </property>
+        <property name="items">
+            <list>
+                <bean parent="Uif-DataField" p:label="Code" p:propertyName="code" />
+                <bean parent="Uif-DataField" p:label="Title" p:propertyName="title"/>
+                <bean parent="Uif-DataField" p:label="Description" p:propertyName="description"/>
+            </list>
+        </property>
+    </bean>
 
     <bean id="KRMS-CourseRangeLightBox-parent" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:style="margin: 5px; width: 800px;">
         <property name="hidden" value="true"/>
@@ -360,13 +411,13 @@
         <property name="instructionalText" value="Enter one or more fields"/>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField-LabelTop" p:propertyName="subjectCode" p:label="Subject Code">
+                <bean parent="Uif-InputField-LabelTop" p:propertyName="cluSetRange.subjectCode" p:label="Subject Code">
                     <property name="control">
                         <bean parent="Uif-TextControl" />
                     </property>
                 </bean>
 
-                <bean parent="Uif-InputField-LabelTop" p:propertyName="courseNumberRange" p:label="Course Number Range">
+                <bean parent="Uif-InputField-LabelTop" p:propertyName="cluSetRange.courseNumberRange" p:label="Course Number Range">
                     <property name="control">
                         <bean parent="Uif-TextControl" />
                     </property>
@@ -381,7 +432,7 @@
         <property name="instructionalText" value="Enter one or more fields"/>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField-LabelTop" p:propertyName="learningObjective" p:label="Description">
+                <bean parent="Uif-InputField-LabelTop" p:propertyName="cluSetRange.learningObjective" p:label="Description">
                     <property name="control">
                         <bean parent="Uif-TextControl" />
                     </property>
@@ -396,13 +447,13 @@
         <property name="instructionalText" value="Enter one or more fields"/>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField-LabelTop" p:propertyName="effectiveFrom" p:label="Effective From">
+                <bean parent="Uif-InputField-LabelTop" p:propertyName="cluSetRange.effectiveFrom" p:label="Effective From">
                     <property name="control">
                         <bean parent="Uif-DateControl" />
                     </property>
                 </bean>
 
-                <bean parent="Uif-InputField-LabelTop" p:propertyName="effectiveTo" p:label="Effective To">
+                <bean parent="Uif-InputField-LabelTop" p:propertyName="cluSetRange.effectiveTo" p:label="Effective To">
                     <property name="control">
                         <bean parent="Uif-DateControl" />
                     </property>
@@ -411,7 +462,7 @@
         </property>
     </bean>
 
-    <bean id="KRMS-GPA-Field-Parent" parent="Uif-InputField-LabelTop" p:propertyName="proposition.termParameter" p:label="GPA" p:minLength="3" p:maxLength="3" p:required="true">
+    <bean id="KRMS-GPA-Field-Parent" parent="Uif-InputField-LabelTop" p:propertyName="proposition.parameters[1].value" p:label="GPA" p:minLength="3" p:maxLength="3" p:required="true">
         <property name="control">
             <bean parent="Uif-TextControl"/>
         </property>
@@ -425,7 +476,7 @@
         <property name="suggest">
             <bean parent="Uif-Suggest">
                 <property name="render" value="true"/>
-                <property name="sourcePropertyName" value="displayName"/>
+                <property name="valuePropertyName" value="displayName"/>
                 <property name="templateOptions" value="minLength:1,delay:0"/>
                 <property name="suggestQuery">
                     <bean parent="Uif-AttributeQueryConfig">
@@ -467,7 +518,7 @@
         <property name="suggest">
             <bean parent="Uif-Suggest">
                 <property name="render" value="true"/>
-                <property name="sourcePropertyName" value="displayName"/>
+                <property name="valuePropertyName" value="displayName"/>
                 <property name="templateOptions" value="minLength:1,delay:0"/>
                 <property name="suggestQuery">
                     <bean parent="Uif-AttributeQueryConfig">
@@ -633,9 +684,28 @@
     <bean id="KRMS-CourseOffering-InputField-Parent" parent="Uif-InputField-LabelTop" p:propertyName="proposition.termParameter" p:label="Program" p:required="true"/>
     <bean id="KRMS-CourseOffering-InputField" parent="KRMS-CourseOffering-InputField-Parent" />
 
+    <bean id="KRMS-MultiCourseWithNof-Group" parent="Uif-VerticalFieldGroup">
+        <property name="items">
+            <list>
+                <ref bean="KRMS-NumberOfCourses-ConstantValue" />
+                <ref bean="KRMS-MultiCourse-Section" />
+            </list>
+        </property>
+    </bean>
+
     <bean id="KRMS-MultiCourseWithGrade-Group" parent="Uif-VerticalFieldGroup">
         <property name="items">
             <list>
+                <ref bean="KRMS-Grade-Tree-Section" />
+                <ref bean="KRMS-MultiCourse-Section" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="KRMS-MultiCourseWithGradeNof-Group" parent="Uif-VerticalFieldGroup">
+        <property name="items">
+            <list>
+                <ref bean="KRMS-NumberOfCourses-ConstantValue" />
                 <ref bean="KRMS-MultiCourse-Section" />
                 <ref bean="KRMS-Grade-Tree-Section" />
             </list>
@@ -645,8 +715,8 @@
     <bean id="KRMS-MultiCourseWithGPA-Group" parent="Uif-VerticalFieldGroup">
         <property name="items">
             <list>
-                <ref bean="KRMS-MultiCourse-Section" />
                 <ref bean="KRMS-GPA-Field" />
+                <ref bean="KRMS-MultiCourse-Section" />
             </list>
         </property>
     </bean>
@@ -654,8 +724,8 @@
     <bean id="KRMS-MultiCourseWithCredit-Group" parent="Uif-VerticalFieldGroup">
         <property name="items">
             <list>
-                <ref bean="KRMS-MultiCourse-Section" />
                 <ref bean="KRMS-Credits-ConstantValue" />
+                <ref bean="KRMS-MultiCourse-Section" />
             </list>
         </property>
     </bean>
@@ -695,7 +765,7 @@
             </list>
         </property>
     </bean>
-    <bean id="KRMS-DurationCount-Field-Parent" parent="Uif-InputField-LabelTop" p:propertyName="proposition.termParameter" p:label="Duration Count"  p:maxLength="6"  p:required="true">
+    <bean id="KRMS-DurationCount-Field-Parent" parent="Uif-InputField-LabelTop" p:propertyName="proposition.duration" p:label="Duration Count"  p:maxLength="6"  p:required="true">
         <property name="control">
             <bean parent="Uif-TextControl"/>
         </property>
@@ -705,7 +775,7 @@
     </bean>
     <bean id="KRMS-DurationCount-Field" parent="KRMS-DurationCount-Field-Parent" />
 
-    <bean id="KRMS-DurationType-Field-Parent" parent="Uif-InputField-LabelTop" p:propertyName="proposition.termParameter"  p:label="Duration Type" p:required="true">
+    <bean id="KRMS-DurationType-Field-Parent" parent="Uif-InputField-LabelTop" p:propertyName="proposition.durationType" p:label="Duration Type" p:required="true">
         <property name="control">
             <bean parent="Uif-DropdownControl"/>
         </property>
@@ -766,12 +836,14 @@
             <list>
                 <bean parent="Uif-InputField-LabelTop" p:required="true" p:style="width: 280px;">
                     <property name="propertyName" value="code"/>
-                    <property name="readOnly" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:style="margin-top:null 2px;" p:disabled="true"/>
+                    </property>
                     <property name="label" value="Approved Programs"/>
                     <!--<property name="suggest">-->
                         <!--<bean parent="Uif-Suggest">-->
                             <!--<property nahme="render" value="true"/>-->
-                            <!--<property name="sourcePropertyName" value="displayName"/>-->
+                            <!--<property name="valuePropertyName" value="displayName"/>-->
                             <!--<property name="templateOptions" value="minLength:1,delay:0"/>-->
                             <!--<property name="suggestQuery">-->
                                 <!--<bean parent="Uif-AttributeQueryConfig">-->

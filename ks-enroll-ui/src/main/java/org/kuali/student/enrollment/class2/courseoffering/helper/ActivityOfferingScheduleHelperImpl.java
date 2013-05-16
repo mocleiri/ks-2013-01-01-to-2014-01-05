@@ -380,7 +380,7 @@ public class ActivityOfferingScheduleHelperImpl implements ActivityOfferingSched
          *  2. When the user opens a cross listed AO and then user decides to change it to non cross listed AO
          *        For M6, this should not be the problem as user has to delete all the RDLs first before uncheck
          */
-        try{
+        /**try{
             if (wrapper.getScheduleRequestInfo() != null && StringUtils.isNotBlank(wrapper.getScheduleRequestInfo().getId())){
                 if (wrapper.isPartOfColoSetOnLoadAlready()){
                     if (!wrapper.isColocatedAO()){
@@ -404,7 +404,7 @@ public class ActivityOfferingScheduleHelperImpl implements ActivityOfferingSched
             }
         }catch (Exception e){
             throw new RuntimeException(e);
-        }
+        }      **/
 
         buildScheduleRequestInfo(wrapper);
 
@@ -441,8 +441,12 @@ public class ActivityOfferingScheduleHelperImpl implements ActivityOfferingSched
 
         for (ScheduleWrapper scheduleWrapper : wrapper.getRequestedScheduleComponents()) {
             if (!scheduleWrapper.isRequestAlreadySaved() || createScheduleComponent){
-                ScheduleRequestComponentInfo componentInfo = buildScheduleComponentRequest(scheduleWrapper);
-                wrapper.getScheduleRequestInfo().getScheduleRequestComponents().add(componentInfo);
+                try{
+                    ScheduleRequestComponentInfo componentInfo = buildScheduleComponentRequest(scheduleWrapper);
+                    wrapper.getScheduleRequestInfo().getScheduleRequestComponents().add(componentInfo);
+                }catch (Exception ex){
+                    throw new RuntimeException("Unable to buildScheduleComponentRequest for AO[" + wrapper.getId() + "]", ex);
+                }
             }
             else {
                 wrapper.getScheduleRequestInfo().getScheduleRequestComponents().add(scheduleWrapper.getScheduleRequestComponentInfo());
@@ -472,7 +476,7 @@ public class ActivityOfferingScheduleHelperImpl implements ActivityOfferingSched
 
     }
 
-    private ScheduleRequestComponentInfo buildScheduleComponentRequest(ScheduleWrapper scheduleWrapper){
+    private ScheduleRequestComponentInfo buildScheduleComponentRequest(ScheduleWrapper scheduleWrapper) throws Exception{
 
         ScheduleRequestComponentInfo componentInfo = new ScheduleRequestComponentInfo();
 //        componentInfo.setId(UUIDHelper.genStringUUID());
@@ -488,7 +492,7 @@ public class ActivityOfferingScheduleHelperImpl implements ActivityOfferingSched
 
         TimeSlotInfo timeSlot = new TimeSlotInfo();
         timeSlot.setTypeKey(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING);
-        timeSlot.setStateKey(SchedulingServiceConstants.TIME_SLOT_STATE_STANDARD_KEY);
+        timeSlot.setStateKey(SchedulingServiceConstants.TIME_SLOT_STATE_ACTIVE);
         List<Integer> days = buildDaysForDTO(scheduleWrapper.getDays());
         timeSlot.setWeekdays(days);
 
@@ -520,7 +524,7 @@ public class ActivityOfferingScheduleHelperImpl implements ActivityOfferingSched
             TimeSlotInfo createdTimeSlot = getSchedulingService().createTimeSlot(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING,timeSlot, ContextUtils.createDefaultContextInfo());
             componentInfo.getTimeSlotIds().add(createdTimeSlot.getId());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new Exception("Error creating timeslot: " + timeSlot, e);
         }
 
         return componentInfo;

@@ -6,6 +6,7 @@ import org.kuali.rice.krms.tree.node.CompareTreeNode;
 import org.kuali.rice.krms.tree.node.RuleEditorTreeNode;
 import org.kuali.rice.krms.tree.node.TreeNode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,12 +20,16 @@ public class RuleManagementWrapper extends UifFormBase {
 
     private String refObjectId;
     private String selectedRuleId;
-    private List<String> deletedRuleIds;
+    private String namePrefix;
+    private String namespace;
+    private String refDiscriminatorType;
 
     private List<AgendaEditor> agendas;
     private RuleEditor ruleEditor;
 
     private Tree<CompareTreeNode, String> compareTree;
+
+    private String compareLightBoxHeader;
 
     public String getRefObjectId() {
         return refObjectId;
@@ -40,14 +45,6 @@ public class RuleManagementWrapper extends UifFormBase {
 
     public void setSelectedRuleId(String selectedRuleId) {
         this.selectedRuleId = selectedRuleId;
-    }
-
-    public List<String> getDeletedRuleIds() {
-        return deletedRuleIds;
-    }
-
-    public void setDeletedRuleIds(List<String> deletedRuleIds) {
-        this.deletedRuleIds = deletedRuleIds;
     }
 
     public List<AgendaEditor> getAgendas() {
@@ -126,11 +123,35 @@ public class RuleManagementWrapper extends UifFormBase {
         this.getRuleEditor().setLogicArea(logicArea);
     }
 
-    public String getSelectedTab() {
-        return this.getRuleEditor().getSelectedTab();
+    public String getNamePrefix() {
+        return namePrefix;
     }
 
-    public void setSelectedTab(String selectedTab) {
-        this.getRuleEditor().setSelectedTab(selectedTab);
+    public void setNamePrefix(String namePrefix) {
+        this.namePrefix = namePrefix;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public String getRefDiscriminatorType() {
+        return refDiscriminatorType;
+    }
+
+    public void setRefDiscriminatorType(String refDiscriminatorType) {
+        this.refDiscriminatorType = refDiscriminatorType;
+    }
+
+    public String getCompareLightBoxHeader(){
+        return compareLightBoxHeader;
+    }
+
+    public void setCompareLightBoxHeader( String compareLightBoxHeader){
+        this.compareLightBoxHeader = compareLightBoxHeader;
     }
 }

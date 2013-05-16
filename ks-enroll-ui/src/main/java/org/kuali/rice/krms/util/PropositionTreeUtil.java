@@ -2,8 +2,6 @@ package org.kuali.rice.krms.util;
 
 import org.kuali.rice.core.api.util.tree.Node;
 import org.kuali.rice.krms.api.repository.LogicalOperator;
-import org.kuali.rice.krms.api.repository.proposition.PropositionDefinitionContract;
-import org.kuali.rice.krms.api.repository.proposition.PropositionParameterContract;
 import org.kuali.rice.krms.api.repository.proposition.PropositionType;
 import org.kuali.rice.krms.api.repository.type.KrmsTypeDefinition;
 import org.kuali.rice.krms.dto.PropositionEditor;
@@ -80,10 +78,8 @@ public class PropositionTreeUtil {
 
     public static PropositionEditor findProposition(Node<RuleEditorTreeNode, String> currentNode, String selectedPropKey) {
 
-        if (selectedPropKey == null) {
+        if ((selectedPropKey == null)||(selectedPropKey.isEmpty())) {
             return null;
-        } else if (selectedPropKey.isEmpty()) {
-            return currentNode.getChildren().get(0).getData().getProposition();
         }
 
         // if it's in children, we have the parent
@@ -127,9 +123,9 @@ public class PropositionTreeUtil {
         return result;
     }
 
-    public static void resetEditModeOnPropositionTree(RuleEditor ruleEditor) {
+    public static boolean resetEditModeOnPropositionTree(RuleEditor ruleEditor) {
         Node<RuleEditorTreeNode, String> root = ruleEditor.getEditTree().getRootElement();
-        resetEditModeOnPropositionTree(root);
+        return resetEditModeOnPropositionTree(root);
     }
 
     /**
@@ -137,15 +133,21 @@ public class PropositionTreeUtil {
      *
      * @param currentNode
      */
-    public static void resetEditModeOnPropositionTree(Node<RuleEditorTreeNode, String> currentNode) {
+    public static boolean resetEditModeOnPropositionTree(Node<RuleEditorTreeNode, String> currentNode) {
+        boolean editMode = false;
         if (currentNode.getData() != null) {
             RuleEditorTreeNode dataNode = currentNode.getData();
+            editMode = dataNode.getProposition().isEditMode();
             dataNode.getProposition().setEditMode(false);
         }
         List<Node<RuleEditorTreeNode, String>> children = currentNode.getChildren();
         for (Node<RuleEditorTreeNode, String> child : children) {
-            resetEditModeOnPropositionTree(child);
+            if(resetEditModeOnPropositionTree(child)){
+                editMode=true;
+            }
+
         }
+        return editMode;
     }
 
     public static Node<RuleEditorTreeNode, String> findPropositionTreeNode(Node<RuleEditorTreeNode, String> currentNode, String selectedPropId) {
@@ -189,30 +191,6 @@ public class PropositionTreeUtil {
             logicExpression += ")";
         }
         return logicExpression;
-    }
-
-    public static PropositionEditor copyProposition(PropositionDefinitionContract existing, Class<? extends PropositionEditor> propClass) throws IllegalAccessException, InstantiationException {
-        // Note: RuleId is not set
-        PropositionEditor newProp = propClass.newInstance();
-        newProp.setDescription(existing.getDescription());
-        newProp.setPropositionTypeCode(existing.getPropositionTypeCode());
-        newProp.setTypeId(existing.getTypeId());
-        newProp.setCompoundOpCode(existing.getCompoundOpCode());
-        // parameters
-        List<PropositionParameterEditor> newParms = new ArrayList<PropositionParameterEditor>();
-        for (PropositionParameterContract parm : existing.getParameters()) {
-            PropositionParameterEditor p = new PropositionParameterEditor(parm.getParameterType(), parm.getSequenceNumber());
-            p.setValue(parm.getValue());
-            newParms.add(p);
-        }
-        newProp.setParameters(newParms);
-        // compoundComponents
-        List<PropositionEditor> newCompoundComponents = new ArrayList<PropositionEditor>();
-        for (PropositionDefinitionContract component : existing.getCompoundComponents()) {
-            newCompoundComponents.add(copyProposition(component, propClass));
-        }
-        newProp.setCompoundEditors(newCompoundComponents);
-        return newProp;
     }
 
     /**
@@ -286,7 +264,7 @@ public class PropositionTreeUtil {
         if (proposition.getCompoundEditors() != null) {
             while (i < proposition.getCompoundEditors().size()) {
                 PropositionEditor child = proposition.getCompoundEditors().get(i);
-                if (child.isNewProp()) {
+                if (child.isNewProp() && child.isEditMode()) {
                     proposition.getCompoundEditors().remove(child);
                     continue;
                 } else {

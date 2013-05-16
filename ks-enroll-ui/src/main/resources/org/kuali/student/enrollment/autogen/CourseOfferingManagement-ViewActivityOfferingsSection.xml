@@ -15,8 +15,9 @@
         </property>
     </bean>
 
+    <!--p:onDocumentReadyScript="removeCheckboxColumns([1], 'KS-CourseOfferingManagement-ActivityOfferingListSection');-->
     <bean id="KSCourseOfferingManagement-ActivityOfferingListSection" parent="Uif-TableCollectionSection"
-          p:layoutManager.numberOfColumns="3"  p:readOnly="@{#parent.readOnly}" p:renderAddLine="false" p:onDocumentReadyScript="removeCheckboxColumns([1], 'KS-CourseOfferingManagement-ActivityOfferingListSection'); ">
+          p:layoutManager.numberOfColumns="3"  p:readOnly="@{#parent.readOnly}" p:renderAddLine="false">
         <property name="collectionObjectClass" value="org.kuali.student.enrollment.class2.courseoffering.dto.ActivityOfferingWrapper" />
         <property name="propertyName" value="activityWrapperList" />
         <property name="headerText" value="Activities (@{activityWrapperList.size()})" />
@@ -43,8 +44,8 @@
 
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="isChecked" p:required="false"
-                      p:onChangeScript="handleToolbar('KSCourseOfferingManagement-ActivityOfferingListSection', ['enableApproveButton', 'enableDeleteButton', 'enableDraftButton'], ['KS-CourseOfferingManagement-ToolBar-Approve-AO','KS-CourseOfferingManagement-ToolBar-Delete-AO', 'KS-CourseOfferingManagement-ToolBar-Draft-AO']);">
+                <bean parent="KS-Uif-InputField-Simple" p:propertyName="isChecked" p:required="false"
+                      p:onChangeScript="handleToolbar('KSCourseOfferingManagement-ActivityOfferingListSection', ['enableApproveButton', 'enableDeleteButton', 'enableDraftButton', 'enableMoveToButton'], ['KS-CourseOfferingManagement-ToolBar-Approve-AO','KS-CourseOfferingManagement-ToolBar-Delete-AO', 'KS-CourseOfferingManagement-ToolBar-Draft-AO', 'KS-CourseOfferingManagement-ToolBar-MoveTo']);">
                     <!--p:onChangeScript="handleARGAOToolbar();" p:hidden="@{#dp.currentCourseOfferingWrapper.crossListed}" -->
                     <property name="control">
                         <bean parent="Uif-CheckboxControl" p:disabled="false"/>
@@ -88,6 +89,7 @@
                 <bean name="enableDeleteButton" parent="Uif-InputField" p:propertyName="enableDeleteButton" />
                 <bean name="enableCopyAOActionLink" parent="Uif-InputField" p:propertyName="enableCopyAOActionLink" />
                 <bean name="enableEditAOActionLink" parent="Uif-InputField" p:propertyName="enableEditAOActionLink" />
+                <bean name="enableMoveToButton" parent="Uif-InputField" p:propertyName="enableMoveToButton" />
             </list>
         </property>
         <property name="layoutManager.richTable.hiddenColumns">
@@ -100,6 +102,7 @@
                 <value>enableDeleteButton</value>
                 <value>enableCopyAOActionLink</value>
                 <value>enableEditAOActionLink</value>
+                <value>enableMoveToButton</value>
             </set>
         </property>
         <property name="layoutManager.actionFieldPrototype">

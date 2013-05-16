@@ -18,30 +18,17 @@ package org.kuali.rice.krms.controller;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.util.tree.Node;
 import org.kuali.rice.krad.uif.UifParameters;
-import org.kuali.rice.krad.uif.component.Component;
-import org.kuali.rice.krad.uif.container.Group;
-import org.kuali.rice.krad.uif.container.LinkGroup;
-import org.kuali.rice.krad.uif.element.Action;
-import org.kuali.rice.krad.uif.field.MessageField;
-import org.kuali.rice.krad.uif.util.ComponentFactory;
-import org.kuali.rice.krad.uif.util.ComponentUtils;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.MaintenanceDocumentController;
 import org.kuali.rice.krad.web.form.MaintenanceDocumentForm;
 import org.kuali.rice.krad.web.form.UifFormBase;
-import org.kuali.rice.krms.api.repository.LogicalOperator;
 import org.kuali.rice.krms.api.repository.proposition.PropositionType;
 import org.kuali.rice.krms.api.repository.type.KrmsTypeDefinition;
-import org.kuali.rice.krms.dto.AgendaEditor;
-import org.kuali.rice.krms.dto.PropositionEditor;
-import org.kuali.rice.krms.dto.RuleEditor;
-import org.kuali.rice.krms.dto.RuleManagementWrapper;
-import org.kuali.rice.krms.dto.RuleTypeInfo;
-import org.kuali.rice.krms.dto.TemplateInfo;
+import org.kuali.rice.krms.dto.*;
 import org.kuali.rice.krms.impl.repository.KrmsRepositoryServiceLocator;
 import org.kuali.rice.krms.service.RuleViewHelperService;
-import org.kuali.rice.krms.tree.RuleViewTreeBuilder;
 import org.kuali.rice.krms.util.AgendaUtilities;
+import org.kuali.student.enrollment.class1.krms.dto.EnrolPropositionEditor;
 import org.kuali.student.enrollment.class1.krms.tree.node.KSSimplePropositionEditNode;
 import org.kuali.student.enrollment.class1.krms.tree.node.KSSimplePropositionNode;
 import org.kuali.rice.krms.tree.node.RuleEditorTreeNode;
@@ -74,8 +61,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
     public ModelAndView goToRuleView(@ModelAttribute("KualiForm") UifFormBase form, @SuppressWarnings("unused") BindingResult result,
                                      @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
-        RuleEditor ruleEditor = AgendaUtilities.retrieveSelectedRuleEditor(form);
+        //Clear the client state on new edit rule.
+        form.getClientStateForSyncing().clear();
 
+        RuleEditor ruleEditor = AgendaUtilities.retrieveSelectedRuleEditor(form);
         this.getViewHelper(form).refreshInitTrees(ruleEditor);
 
         form.getActionParameters().put(UifParameters.NAVIGATE_TO_PAGE_ID, "KRMS-RuleMaintenance-Page");
@@ -89,19 +78,16 @@ public class RuleEditorController extends MaintenanceDocumentController {
         RuleManagementWrapper ruleWrapper = (RuleManagementWrapper) document.getDocument().getNewMaintainableObject().getDataObject();
         String ruleKey = document.getActionParamaterValue("ruleKey");
 
-        if (ruleWrapper.getDeletedRuleIds() == null) {
-            List<String> ruleIds = new ArrayList<String>();
-            ruleIds.add(ruleKey);
-            ruleWrapper.setDeletedRuleIds(ruleIds);
-        } else {
-            ruleWrapper.getDeletedRuleIds().add(ruleKey);
-        }
-
         RuleEditor ruleEditor = AgendaUtilities.getSelectedRuleEditor(ruleWrapper, ruleKey);
 
         List<AgendaEditor> agendas = ruleWrapper.getAgendas();
         for (AgendaEditor agenda : agendas) {
             if (agenda.getRuleEditors().contains(ruleEditor)) {
+
+                //Only add rules to delete list that are already persisted.
+                if(ruleEditor.getId()!=null){
+                    agenda.getDeletedRules().add(ruleEditor);
+                }
                 agenda.getRuleEditors().remove(ruleEditor);
             }
         }
@@ -112,6 +98,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
     @RequestMapping(params = "methodToCall=addRule")
     public ModelAndView addRule(@ModelAttribute("KualiForm") UifFormBase form, @SuppressWarnings("unused") BindingResult result,
                                 @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+
+        //Clear the client state on new edit rule.
+        form.getClientStateForSyncing().clear();
+
         RuleEditor ruleEditor = AgendaUtilities.retrieveSelectedRuleEditor(form);
         ruleEditor.setDummy(false);
 
@@ -258,13 +248,15 @@ public class RuleEditorController extends MaintenanceDocumentController {
                         ruleEditor.setProposition(blank);
                     }
                     // handle regular case of adding a simple prop to an existing compound prop
-                    else if (isSimpleNode(child.getNodeType())) {
+                    else if (!parent.equals(root)){
 
                         // build new Blank Proposition
                         blank = viewHelper.createSimplePropositionBoStub(child.getData().getProposition());
                         //add it to the parent
                         PropositionEditor parentProp = parent.getData().getProposition();
                         parentProp.getCompoundEditors().add(((index / 2) + 1), blank);
+                    } else {
+                        return getUIFModelAndView(form);
                     }
                     this.getViewHelper(form).refreshInitTrees(ruleEditor);
                     if(blank!=null){
@@ -361,7 +353,12 @@ public class RuleEditorController extends MaintenanceDocumentController {
 
                     //remove it from its current spot
                     PropositionEditor parentProp = parent.getData().getProposition();
-                    PropositionEditor workingProp = parentProp.getCompoundEditors().remove(index / 2);
+                    PropositionEditor workingProp = null;
+                    if(index != 0 && up) {
+                        workingProp = parentProp.getCompoundEditors().remove(index / 2);
+                    } else if(!up && index != (children.size() - 1)) {
+                        workingProp = parentProp.getCompoundEditors().remove(index / 2);
+                    }
                     if ((index > 0) && up) {
                         parentProp.getCompoundEditors().add((index / 2) - 1, workingProp);
                     } else if ((index < (children.size() - 1) && !up)) {
@@ -505,12 +502,14 @@ public class RuleEditorController extends MaintenanceDocumentController {
 
                     parentBo.getCompoundEditors().set(propIndex, compound);
                     compound.getCompoundEditors().get(1).setEditMode(true);
-                    ruleEditor.setSelectedKey(compound.getCompoundComponents().get(1).getId());
                 }
+
+                viewHelper.refreshInitTrees(ruleEditor);
+                ruleEditor.setSelectedKey(compound.getCompoundEditors().get(1).getKey());
+
             }
         }
 
-        viewHelper.refreshInitTrees(ruleEditor);
         return getUIFModelAndView(form);
     }
 
@@ -657,11 +656,15 @@ public class RuleEditorController extends MaintenanceDocumentController {
                                           HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         RuleEditor ruleEditor = getRuleEditor(form);
-        PropositionTreeUtil.resetNewProp((PropositionEditor) ruleEditor.getProposition());
+        if(ruleEditor.getProposition()!=null){
+            PropositionTreeUtil.resetNewProp((PropositionEditor) ruleEditor.getProposition());
+        }
 
-        //Reset the description
-        PropositionEditor proposition = PropositionTreeUtil.getProposition(ruleEditor);
-        this.getViewHelper(form).resetDescription(proposition);
+        //Reset the description on current selected proposition
+        EnrolPropositionEditor proposition = (EnrolPropositionEditor) PropositionTreeUtil.getProposition(ruleEditor);
+        if (proposition!=null){
+            this.getViewHelper(form).resetDescription(proposition);
+        }
 
         //Remove the edit mode
         PropositionTreeUtil.resetEditModeOnPropositionTree(ruleEditor);
@@ -680,13 +683,15 @@ public class RuleEditorController extends MaintenanceDocumentController {
 
         RuleEditor ruleEditor = getRuleEditor(form);
 
+        if (!(ruleEditor.getProposition() == null && ruleEditor.getPropId() == null)) {
+            PropositionTreeUtil.resetNewProp((PropositionEditor) ruleEditor.getProposition());
+
+            if (PropositionTreeUtil.resetEditModeOnPropositionTree(ruleEditor)) {
+                PropositionEditor proposition = PropositionTreeUtil.getProposition(ruleEditor);
+                this.getViewHelper(form).resetDescription(proposition);
+            }
+        }
         this.getViewHelper(form).refreshViewTree(ruleEditor);
-        PropositionTreeUtil.resetNewProp((PropositionEditor) ruleEditor.getProposition());
-
-        PropositionTreeUtil.resetEditModeOnPropositionTree(ruleEditor);
-        PropositionEditor proposition = PropositionTreeUtil.getProposition(ruleEditor);
-        this.getViewHelper(form).resetDescription(proposition);
-
 
         //Replace edited rule with existing rule.
         for (AgendaEditor agendaEditor : ruleWrapper.getAgendas()) {
@@ -707,9 +712,15 @@ public class RuleEditorController extends MaintenanceDocumentController {
     public ModelAndView updatePreview(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
                                       HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        RuleLogicExpressionParser ruleLogicExpressionParser = new RuleLogicExpressionParser();
-
         RuleEditor ruleEditor = getRuleEditor(form);
+        parseRuleExpression(ruleEditor);
+
+        this.getViewHelper(form).refreshInitTrees(ruleEditor);
+        return getUIFModelAndView(form);
+    }
+
+    private void parseRuleExpression(RuleEditor ruleEditor) {
+        RuleLogicExpressionParser ruleLogicExpressionParser = new RuleLogicExpressionParser();
         ruleLogicExpressionParser.setExpression(ruleEditor.getLogicArea());
         List<String> propsAlpha = this.getPropositionKeys(new ArrayList<String>(), (PropositionEditor) ruleEditor.getProposition());
 
@@ -723,17 +734,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
                 GlobalVariables.getMessageMap().putError("document.newMaintainableObject.dataObject.logicArea", errorMessages.get(i));
             }
             // reload page1
-            ruleEditor.setSelectedTab("1");
-            return getUIFModelAndView(form);
+            return;
         }
 
-        ruleEditor.setSelectedTab("1");
-
         ruleEditor.setProposition(ruleLogicExpressionParser.parseExpressionIntoRule(ruleEditor));
-        PropositionTreeUtil.resetEditModeOnPropositionTree(ruleEditor);
-        this.getViewHelper(form).refreshInitTrees(ruleEditor);
-
-        return getUIFModelAndView(form);
     }
 
     private List<String> getPropositionKeys(List<String> propositionKeys, PropositionEditor propositionEditor) {
@@ -786,30 +790,9 @@ public class RuleEditorController extends MaintenanceDocumentController {
             throws Exception {
 
         PropositionEditor proposition = PropositionTreeUtil.getProposition(this.getRuleEditor(form));
-        configureProposition(form, proposition);
+        this.getViewHelper(form).configurePropositionForType(proposition);
 
         return getUIFModelAndView(form);
-    }
-
-    private void configureProposition(UifFormBase form, PropositionEditor proposition) {
-
-        if (proposition != null) {
-
-            if (PropositionType.COMPOUND.getCode().equalsIgnoreCase(proposition.getPropositionTypeCode())) {
-                return;
-            }
-
-            String propositionTypeId = proposition.getTypeId();
-            if (propositionTypeId == null) {
-                proposition.setType(null);
-                return;
-            }
-
-            KrmsTypeDefinition type = KrmsRepositoryServiceLocator.getKrmsTypeRepositoryService().getTypeById(propositionTypeId);
-            if (type != null) {
-                proposition.setType(type.getName());
-            }
-        }
     }
 
     /**
@@ -842,7 +825,7 @@ public class RuleEditorController extends MaintenanceDocumentController {
 
             //Build the compare rule tree
             ruleWrapper.setCompareTree(this.getViewHelper(form).buildCompareTree(ruleEditor, ruleWrapper.getRefObjectId()));
-
+            ruleWrapper.setCompareLightBoxHeader( ruleEditor.getRuleTypeInfo().getDescription());
         }
 
         // redirect back to client to display lightbox

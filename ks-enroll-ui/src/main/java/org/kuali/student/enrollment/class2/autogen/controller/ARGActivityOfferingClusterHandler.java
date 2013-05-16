@@ -89,7 +89,7 @@ public class ARGActivityOfferingClusterHandler {
         ActivityOfferingWrapper selectedAO = (ActivityOfferingWrapper) ARGUtil.getSelectedObject(form, "copy");
         try {
             String aoIdToCopy = selectedAO.getAoInfo().getId(); // Create a copy of this AO
-            String clusterId = selectedAO.getAoCluster().getId(); // Use this AO cluster
+            String clusterId = selectedAO.getAoClusterID();
             ActivityOfferingResult aoResult =
                     ARGUtil.getArgServiceAdapter().copyActivityOfferingToCluster(aoIdToCopy, clusterId, ContextBuilder.loadContextInfo());
 
@@ -139,7 +139,7 @@ public class ARGActivityOfferingClusterHandler {
         urlParameters.put(KRADConstants.DATA_OBJECT_CLASS_ATTRIBUTE, ActivityOfferingWrapper.class.getName());
         urlParameters.put(UifConstants.UrlParams.SHOW_HOME, BooleanUtils.toStringTrueFalse(false));
 
-        KSUifUtils.setBreadcrumbRedirectUrlParams(urlParameters, theForm);
+//        KSUifUtils.setBreadcrumbRedirectUrlParams(urlParameters, theForm);
         return urlParameters;
     }
 
@@ -227,48 +227,6 @@ public class ARGActivityOfferingClusterHandler {
         theForm.setFormatOfferingIdForNewAO(null);
         theForm.setActivityIdForNewAO(null);
         theForm.setNoOfActivityOfferings(null);
-    }
-
-    /**
-     * This method does not delete, just marks which AOs are to be deleted.
-     * @param theForm the form that has a list of activityWrappers that are checked or not
-     * @throws Exception
-     */
-    public static void deleteAOs(ARGCourseOfferingManagementForm theForm) throws Exception {
-
-        List<ActivityOfferingWrapper> aoList = theForm.getActivityWrapperList();
-        List<ActivityOfferingWrapper> selectedIndexList = theForm.getSelectedToDeleteList();
-        boolean bNoDeletion = false;
-        int checked = 0;
-        int enabled = 0;
-
-        selectedIndexList.clear();
-        for (ActivityOfferingWrapper ao : aoList) {
-
-            if (ao.isEnableDeleteButton() && ((!"0".equals(theForm.getSelectedTabId()))&& ao.getIsChecked())||
-                    ( "0".equals(theForm.getSelectedTabId()))&& ao.getIsCheckedByCluster()) {
-                selectedIndexList.add(ao);
-                enabled++;
-            } else if ((!"0".equals(theForm.getSelectedTabId()))&& ao.getIsChecked() ||
-                    ( "0".equals(theForm.getSelectedTabId()))&& ao.getIsCheckedByCluster()) {
-                checked++;
-                if (!bNoDeletion) {
-                    bNoDeletion = true;
-                }
-            }
-        }
-
-        if (selectedIndexList.isEmpty()) {
-            theForm.setSelectedIllegalAOInDeletion(false);
-            if (bNoDeletion) {
-                theForm.setSelectedIllegalAOInDeletion(true);
-            }
-        }
-
-        if (checked > enabled) {
-            KSUifUtils.addGrowlMessageIcon(GrowlIcon.WARNING, CourseOfferingConstants.ACTIVITYOFFERING_TOOLBAR_DELETE);
-        }
-
     }
 
     public static ARGCourseOfferingManagementForm createNewCluster(ARGCourseOfferingManagementForm theForm) throws Exception {
@@ -640,6 +598,7 @@ public class ARGActivityOfferingClusterHandler {
     public static void deleteClusterCascaded(ARGCourseOfferingManagementForm theForm) throws Exception {
         ActivityOfferingClusterWrapper aoWrapper = theForm.getSelectedCluster();
         ARGUtil.getArgServiceAdapter().deleteActivityOfferingCluster(aoWrapper.getActivityOfferingClusterId(), ContextBuilder.loadContextInfo());
+        CourseOfferingViewHelperUtil.updateCourseOfferingStateFromActivityOfferingStateChange(theForm.getCurrentCourseOfferingWrapper().getCourseOfferingInfo(), ContextBuilder.loadContextInfo());
         ARGUtil.reloadTheCourseOfferingWithAOs_RGs_Clusters(theForm);
     }
 

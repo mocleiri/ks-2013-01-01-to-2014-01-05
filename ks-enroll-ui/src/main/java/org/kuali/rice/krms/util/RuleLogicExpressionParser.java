@@ -66,7 +66,7 @@ public class RuleLogicExpressionParser {
             errorMessages.add("must start with ( or condition");
             return false;
         }
-        if ((tokenList.get(1).type == ExpressionToken.StartParenthesis) == false) {
+        if ((tokenList.size()>1)&&((tokenList.get(1).type == ExpressionToken.StartParenthesis) == false)) {
             errorMessages.add("parent compound proposition cannot be changed");
             return false;
         }
@@ -124,15 +124,21 @@ public class RuleLogicExpressionParser {
                 //do nothing
             } else if (token.type == ExpressionToken.EndParenthesis) {
                 ExpressionToken operator = operatorStack.pop();
-                while (operatorStack.peek().type != ExpressionToken.StartParenthesis) {
-                    ExpressionToken next = operatorStack.pop();
-                    if (next.type != operator.type){
-                        errorMessages.add("Operators within parenthesis must be the same type.");
-                        return false;
-                    }
-                }
 
-                operatorStack.pop();// pop the (
+                //Check if first type is a OR or a AND
+                if (operator.type != ExpressionToken.StartParenthesis){
+
+                    //Check if all other types are the same as the first type.
+                    while (operatorStack.peek().type != ExpressionToken.StartParenthesis) {
+                        ExpressionToken next = operatorStack.pop();
+                        if (next.type != operator.type){
+                            errorMessages.add("Operators within parenthesis must be the same type.");
+                            return false;
+                        }
+                    }
+
+                    operatorStack.pop();// pop the (
+                }
             } else {
                 operatorStack.push(token);
             }
@@ -384,7 +390,7 @@ public class RuleLogicExpressionParser {
     private PropositionEditor ruleFromRPN(List<ExpressionToken> rpnList, List<PropositionEditor> rcs) {
         //if rule is empty
         if (rpnList.size() == 0) {
-            return new PropositionEditor();
+            return null;
         }
 
         Stack<PropositionEditor> conditionStack = new Stack<PropositionEditor>();

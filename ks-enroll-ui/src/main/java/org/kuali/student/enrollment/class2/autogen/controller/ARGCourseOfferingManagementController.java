@@ -35,6 +35,9 @@ import org.kuali.student.enrollment.class2.courseoffering.util.CourseOfferingCon
 import org.kuali.student.enrollment.class2.courseoffering.util.RegistrationGroupConstants;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingClusterInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
+import org.kuali.student.enrollment.uif.util.GrowlIcon;
+import org.kuali.student.enrollment.uif.util.KSUifUtils;
+import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.util.ContextUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -44,6 +47,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -124,14 +128,13 @@ public class ARGCourseOfferingManagementController extends UifControllerBase {
     @RequestMapping(params = "methodToCall=show")
     public ModelAndView show(@ModelAttribute("KualiForm") ARGCourseOfferingManagementForm form) throws Exception {
 
+        //Reset the form
+        ARGUtil.clearForm(form);
+
         form.setInputCode(form.getInputCode().toUpperCase());
         ARGUtil.getViewHelperService(form).populateTerm(form);
 
-        //Reset the form - there should be a better place for this
-        form.setFormatOfferingIdForNewAO(null);
-        form.setAdminOrg(null);
-
-        if (GlobalVariables.getMessageMap().getErrorCount() > 1) {
+        if (GlobalVariables.getMessageMap().getErrorCount() > 0) {
             return getUIFModelAndView(form);
         }
 
@@ -187,11 +190,11 @@ public class ARGCourseOfferingManagementController extends UifControllerBase {
         String controllerPath = RegistrationGroupConstants.RG_CONTROLLER_PATH;
 
         //set the redirection param to carry over view information to RG view for customized breadcrumb generation
-        urlParameters.put(CourseOfferingConstants.BREADCRUMB_PREVIOUS_CONTROLLER_PATH_KEY, CourseOfferingConstants.MANAGE_CO_CONTROLLER_PATH);
-        urlParameters.put(CourseOfferingConstants.BREADCRUMB_PREVIOUS_VIEW_ID_KEY, CourseOfferingConstants.MANAGE_CO_VIEW_ID);
-        urlParameters.put(CourseOfferingConstants.BREADCRUMB_PREVIOUS_HOME_URL_KEY, theForm.getFormHistory().getHomewardPath().get(0).getUrl());
-        urlParameters.put(CourseOfferingConstants.BREADCRUMB_PREVIOUS_FORM_HISTORY_KEY, theForm.getFormHistory().getHistoryParameterString());
-        urlParameters.put(CourseOfferingConstants.BREADCRUMB_PREVIOUS_FORMKEY_KEY, theForm.getFormKey());
+//        urlParameters.put(CourseOfferingConstants.BREADCRUMB_PREVIOUS_CONTROLLER_PATH_KEY, CourseOfferingConstants.MANAGE_CO_CONTROLLER_PATH);
+//        urlParameters.put(CourseOfferingConstants.BREADCRUMB_PREVIOUS_VIEW_ID_KEY, CourseOfferingConstants.MANAGE_CO_VIEW_ID);
+//        urlParameters.put(CourseOfferingConstants.BREADCRUMB_PREVIOUS_HOME_URL_KEY, theForm.getFormHistory().getHomewardPath().get(0).getUrl());
+//        urlParameters.put(CourseOfferingConstants.BREADCRUMB_PREVIOUS_FORM_HISTORY_KEY, theForm.getFormHistory().getHistoryParameterString());
+//        urlParameters.put(CourseOfferingConstants.BREADCRUMB_PREVIOUS_FORMKEY_KEY, theForm.getFormKey());
 
         return super.performRedirect(theForm, controllerPath, urlParameters);
 
@@ -207,8 +210,6 @@ public class ARGCourseOfferingManagementController extends UifControllerBase {
     @RequestMapping(params = "methodToCall=loadPreviousCO")
     public ModelAndView loadPreviousCO(@ModelAttribute("KualiForm") ARGCourseOfferingManagementForm form) throws Exception {
         CourseOfferingWrapper previousCOWrapper = form.getPreviousCourseOfferingWrapper();
-        //TODO: From Bonnie: why do we need to clear COResultList here
-        form.getCourseOfferingResultList().clear();
         ARGUtil.prepare_AOs_RGs_AOCs_Lists(form, previousCOWrapper);
         return getUIFModelAndView(form);
     }
@@ -223,7 +224,6 @@ public class ARGCourseOfferingManagementController extends UifControllerBase {
     @RequestMapping(params = "methodToCall=loadNextCO")
     public ModelAndView loadNextCO(@ModelAttribute("KualiForm") ARGCourseOfferingManagementForm form) throws Exception {
         CourseOfferingWrapper coWrapper = form.getNextCourseOfferingWrapper();
-        form.getCourseOfferingResultList().clear();
         ARGUtil.prepare_AOs_RGs_AOCs_Lists(form, coWrapper);
         return getUIFModelAndView(form);
     }
@@ -420,8 +420,18 @@ public class ARGCourseOfferingManagementController extends UifControllerBase {
 
     @RequestMapping(params = "methodToCall=addActivityOfferings")
     public ModelAndView addActivityOfferings(@ModelAttribute("KualiForm") ARGCourseOfferingManagementForm theForm) throws Exception {
+        String quantity = theForm.getNoOfActivityOfferings();
+        if(!StringUtils.isEmpty(quantity) && StringUtils.isNumeric(quantity)){
+            if(Integer.parseInt(quantity) < 1){
+                KSUifUtils.addGrowlMessageIcon(GrowlIcon.ERROR, CourseOfferingConstants.ACTIVITYOFFERING_TOOLBAR_ADD_INVALID_ERROR);
+            } else {
+                ARGActivityOfferingClusterHandler.addActivityOfferings(theForm);
+            }
+        }
+        else{
+            KSUifUtils.addGrowlMessageIcon(GrowlIcon.ERROR, CourseOfferingConstants.ACTIVITYOFFERING_TOOLBAR_ADD_INVALID_ERROR);
+        }
 
-        ARGActivityOfferingClusterHandler.addActivityOfferings(theForm);
         return getUIFModelAndView(theForm);
 
     }
@@ -552,7 +562,49 @@ public class ARGCourseOfferingManagementController extends UifControllerBase {
     public ModelAndView deleteAOs(@ModelAttribute("KualiForm") ARGCourseOfferingManagementForm theForm, @SuppressWarnings("unused") BindingResult result,
                                   @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
-        ARGActivityOfferingClusterHandler.deleteAOs(theForm);
+        List<ActivityOfferingWrapper> aoList = theForm.getActivityWrapperList();
+        List<ActivityOfferingWrapper> selectedIndexList = theForm.getSelectedToDeleteList();
+        CourseOfferingWrapper currentCoWrapper = theForm.getCurrentCourseOfferingWrapper();
+        currentCoWrapper.setColocatedAoToDelete(false);
+        ContextInfo context = ContextUtils.createDefaultContextInfo();
+
+        boolean bNoDeletion = false;
+        int checked = 0;
+        int enabled = 0;
+        int totalAosToDelete = 0;
+        int numColocatedAosToDelete = 0;
+
+        selectedIndexList.clear();
+        for(ActivityOfferingWrapper ao : aoList) {
+
+            if(ao.isEnableDeleteButton() && ao.getIsCheckedByCluster()) {
+                totalAosToDelete++;
+                ao.setActivityCode(ao.getAoInfo().getActivityCode());
+                selectedIndexList.add(ao);
+                if(ao.isColocatedAO())  {
+                    currentCoWrapper.setColocatedAoToDelete(true);
+                    numColocatedAosToDelete++;
+                }
+                enabled++;
+            } else if (ao.getIsCheckedByCluster()){
+                checked++;
+                if (!bNoDeletion) {
+                    bNoDeletion = true;
+                }
+            }
+        }
+
+        if (selectedIndexList.isEmpty()) {
+            theForm.setSelectedIllegalAOInDeletion(false);
+            if (bNoDeletion) {
+                theForm.setSelectedIllegalAOInDeletion(true);
+            }
+        }
+
+        if(checked > enabled){
+            KSUifUtils.addGrowlMessageIcon(GrowlIcon.WARNING, CourseOfferingConstants.ACTIVITYOFFERING_TOOLBAR_DELETE);
+        }
+
         return getUIFModelAndView(theForm, CourseOfferingConstants.AO_DELETE_CONFIRM_PAGE);
     }
 

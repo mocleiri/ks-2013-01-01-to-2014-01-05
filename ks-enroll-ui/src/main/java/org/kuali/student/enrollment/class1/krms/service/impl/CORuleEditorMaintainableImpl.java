@@ -7,6 +7,7 @@ import org.kuali.rice.krms.api.repository.agenda.AgendaItemDefinition;
 import org.kuali.rice.krms.api.repository.agenda.AgendaTreeDefinition;
 import org.kuali.rice.krms.api.repository.agenda.AgendaTreeEntryDefinitionContract;
 import org.kuali.rice.krms.api.repository.agenda.AgendaTreeRuleEntry;
+import org.kuali.rice.krms.api.repository.reference.ReferenceObjectBinding;
 import org.kuali.rice.krms.api.repository.rule.RuleDefinition;
 import org.kuali.rice.krms.dto.AgendaEditor;
 import org.kuali.rice.krms.dto.PropositionEditor;
@@ -15,17 +16,21 @@ import org.kuali.rice.krms.service.impl.RuleEditorMaintainableImpl;
 import org.kuali.rice.krms.tree.RuleCompareTreeBuilder;
 import org.kuali.rice.krms.tree.RuleViewTreeBuilder;
 import org.kuali.rice.krms.util.NaturalLanguageHelper;
+import org.kuali.student.enrollment.class1.krms.dto.CORuleManagementWrapper;
 import org.kuali.student.enrollment.class1.krms.dto.EnrolAgendaEditor;
 import org.kuali.student.enrollment.class1.krms.dto.EnrolRuleEditor;
 import org.kuali.student.enrollment.class1.krms.dto.EnrolRuleManagementWrapper;
-import org.kuali.student.enrollment.class1.krms.tree.CORuleViewTreeBuilder;
+import org.kuali.student.enrollment.class1.krms.tree.EnrolRuleViewTreeBuilder;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.krms.util.KSKRMSConstants;
+import org.kuali.student.r2.common.exceptions.*;
 import org.kuali.student.r2.common.util.ContextUtils;
 import org.kuali.student.r2.common.util.constants.CourseOfferingServiceConstants;
-import org.kuali.student.r2.lum.clu.dto.CluIdentifierInfo;
-import org.kuali.student.r2.lum.clu.dto.CluInfo;
+import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.constants.AtpServiceConstants;
 import org.kuali.student.r2.lum.clu.service.CluService;
 import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
 
@@ -44,25 +49,27 @@ import java.util.Map;
 public class CORuleEditorMaintainableImpl extends RuleEditorMaintainableImpl {
 
     private transient CluService cluService;
+    private transient AtpService atpService;
     private transient CourseOfferingService courseOfferingService;
 
     @Override
     public Object retrieveObjectForEditOrCopy(MaintenanceDocument document, Map<String, String> dataObjectKeys) {
 
-        EnrolRuleManagementWrapper dataObject = new EnrolRuleManagementWrapper();
+        CORuleManagementWrapper dataObject = new CORuleManagementWrapper();
 
-        List<AgendaEditor> agendas = new ArrayList<AgendaEditor>();
-        //TODO: get all agendas linked to a course offering
-        if(this.getRuleManagementService().getAgenda("10063") != null) {
-            agendas.add(this.getAgendaEditor("10063"));
-        } else if(this.getRuleManagementService().getAgenda("10002") != null) {
-            agendas.add(this.getAgendaEditor("10002"));
-        }
-
-        dataObject.setAgendas(agendas);
+        dataObject.setNamespace(KSKRMSConstants.KS_SYS_NAMESPACE);
+        dataObject.setRefDiscriminatorType("kuali.lui.type.course.offering");
 
         String coId = dataObjectKeys.get("refObjectId");
         dataObject.setRefObjectId(coId);
+
+        List<AgendaEditor> agendas = new ArrayList<AgendaEditor>();
+        List<ReferenceObjectBinding> refObjectsBindings = this.getRuleManagementService().findReferenceObjectBindingsByReferenceObject(dataObject.getRefDiscriminatorType(), coId);
+        for(ReferenceObjectBinding referenceObjectBinding : refObjectsBindings){
+            agendas.add(this.getAgendaEditor(referenceObjectBinding.getKrmsObjectId()));
+        }
+
+        dataObject.setAgendas(agendas);
 
         //Retrieve the Clu information
         CourseOfferingInfo courseOffering = null;
@@ -76,14 +83,26 @@ public class CORuleEditorMaintainableImpl extends RuleEditorMaintainableImpl {
 
         //Populate Clu Identification Information
         if (courseOffering != null) {
-            /*CluIdentifierInfo cluIdentInfo = courseOffering.getOfficialIdentifier();
+            //Get the atp code.
+            StringBuilder atpCode = new StringBuilder();
+            try {
+                AtpInfo atp = this.getAtpService().getAtp(courseOffering.getTermId(), ContextUtils.createDefaultContextInfo());
+                atpCode.append(atp.getCode());
+                atpCode.append(" - ");
+            } catch (Exception e) {
+                //TODO: Add Exception handling.
+            }
+
+            //Set the name prefix used for agenda and rule names.
+            dataObject.setNamePrefix(atpCode.toString() + courseOffering.getCourseOfferingCode());
+
+            //Set the description used on the screen.
             StringBuilder courseNameBuilder = new StringBuilder();
-            courseNameBuilder.append(cluIdentInfo.getDivision());
-            courseNameBuilder.append(" ");
-            courseNameBuilder.append(cluIdentInfo.getSuffixCode());
+            courseNameBuilder.append(atpCode.toString());
+            courseNameBuilder.append(courseOffering.getCourseOfferingCode());
             courseNameBuilder.append(" - ");
-            courseNameBuilder.append(cluIdentInfo.getLongName());
-            dataObject.setCluDescription(courseNameBuilder.toString());*/
+            courseNameBuilder.append(courseOffering.getCourseOfferingTitle());
+            dataObject.setCluDescription(courseNameBuilder.toString());
         }
 
         dataObject.setCompareTree(RuleCompareTreeBuilder.initCompareTree());
@@ -108,7 +127,7 @@ public class CORuleEditorMaintainableImpl extends RuleEditorMaintainableImpl {
         nlHelper.setRuleManagementService(this.getRuleManagementService());
 
         //Create a ViewTreeBuilder to build the previews.
-        RuleViewTreeBuilder viewTreeBuilder = new CORuleViewTreeBuilder();
+        RuleViewTreeBuilder viewTreeBuilder = new EnrolRuleViewTreeBuilder();
         viewTreeBuilder.setRuleManagementService(this.getRuleManagementService());
 
         List<RuleEditor> rules = new ArrayList<RuleEditor>();
@@ -117,11 +136,11 @@ public class CORuleEditorMaintainableImpl extends RuleEditorMaintainableImpl {
                 AgendaTreeRuleEntry treeRuleEntry = (AgendaTreeRuleEntry) treeEntry;
                 AgendaItemDefinition agendaItem = this.getRuleManagementService().getAgendaItem(treeEntry.getAgendaItemId());
 
-                if (agendaItem.getRuleId() != null) {
+                if (agendaItem.getRule() != null) {
 
-                    //Retrieve the rule
-                    RuleDefinition rule = this.getRuleManagementService().getRule(treeRuleEntry.getRuleId());
-                    RuleEditor ruleEditor = new EnrolRuleEditor(rule);
+                    //Build the ruleEditor
+                    RuleEditor ruleEditor = new EnrolRuleEditor(agendaItem.getRule());
+                    ruleEditor.setAgendaItem(agendaItem);
 
                     //Initialize the Proposition tree
                     PropositionEditor rootProposition = (PropositionEditor) ruleEditor.getProposition();
@@ -157,5 +176,13 @@ public class CORuleEditorMaintainableImpl extends RuleEditorMaintainableImpl {
                     CourseOfferingServiceConstants.SERVICE_NAME_LOCAL_PART));
         }
         return courseOfferingService;
+    }
+
+    private AtpService getAtpService() {
+        if (atpService == null) {
+            atpService = (AtpService) GlobalResourceLoader.getService(new QName(AtpServiceConstants.NAMESPACE,
+                    AtpServiceConstants.SERVICE_NAME_LOCAL_PART));
+        }
+        return atpService;
     }
 }

@@ -37,21 +37,22 @@
         <property name="componentSecurity.viewAuthz" value="true"/>
         <property name="headerText" value="@{subjectCode} - @{subjectCodeDescription}" />
         <property name="disclosure.render" value="false"/>
+        <property name="help">
+            <bean parent="Uif-Help">
+                <!-- TODO: This is for debugging only. Remove after we upgrade the header to display this information-->
+                <property name="tooltipHelpContent" value="SOC State: @{socState}"/>
+            </bean>
+        </property>
         <property name="items">
             <list>
-                <!--<bean id="KS-CourseOfferingManagement-ApproveSubj" parent="Uif-ActionLink" p:preSubmitCall="return confirm('This will mark all Activity Offerings in this Subject Code as: Ready for Scheduling')"-->
-                      <!--p:methodToCall="markSubjectCodeReadyForScheduling"-->
-                      <!--p:actionLabel="Approve Subject Code for Scheduling" p:disabled="@{#parent.readOnly}"-->
-                      <!--p:componentSecurity.performActionAuthz="true" p:actionEvent="approveSubj"  />-->
                 <ref bean="KS-CourseOfferingManagement-CO-ToolBarSection"/>
                 <ref bean="KS-CourseOfferingManagement-CourseOfferingListSection"/>
             </list>
         </property>
     </bean>
 
-
-    <bean id="KS-CourseOfferingManagement-CourseOfferingListSection" parent="Uif-TableCollectionSection" p:renderAddLine="false"
-          p:onDocumentReadyScript="removeCheckboxColumns([1], 'KS-CourseOfferingManagement-CourseOfferingListSection'); addActionColumn(@{#parent.readOnly}, 'KS-CourseOfferingManagement-CourseOfferingListSection');">
+    <bean id="KS-CourseOfferingManagement-CourseOfferingListSection" parent="KS-Uif-TableCollectionSection-WithActionSeperator" p:renderAddLine="false" p:lineActionSeparator="&#160;&#160;|&#160;&#160;"
+          p:onDocumentReadyScript="removeCheckboxColumns(1, 'KS-CourseOfferingManagement-CourseOfferingListSection',&quot;handleToolbar('KS-CourseOfferingManagement-CourseOfferingListSection',['enableApproveButton', 'enableDeleteButton'], ['KS-CourseOfferingManagement-ToolBar-Approve-CO', 'KS-CourseOfferingManagement-ToolBar-Delete-CO'] )&quot;), addActionColumn(@{#parent.readOnly}, 'KS-CourseOfferingManagement-CourseOfferingListSection');">
         <property name="collectionObjectClass" value="org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingListSectionWrapper" />
         <property name="propertyName" value="courseOfferingResultList" />
         <property name="collectionLookup.quickfinderAction.render" value="false" />
@@ -70,7 +71,7 @@
             <list>
                 <bean parent="Uif-InputField" p:propertyName="isChecked" p:required="false"
                       p:onChangeScript="handleToolbar('KS-CourseOfferingManagement-CourseOfferingListSection',['enableApproveButton', 'enableDeleteButton'], ['KS-CourseOfferingManagement-ToolBar-Approve-CO', 'KS-CourseOfferingManagement-ToolBar-Delete-CO'] );"
-                      p:hidden="@{#lp.crossListed or !#line.isEnableEditCOActionLink()}">
+                      p:hidden="@{#lp.crossListed or !#line.isEnableDeleteButton()}">
                     <property name="control">
                         <bean parent="Uif-CheckboxControl" p:disabled="false"/>
                     </property>
@@ -79,7 +80,7 @@
                     <property name="label" value="Label"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-DataField" p:propertyName="courseOfferingCode">
+                            <bean parent="KS-Uif-DataField-Simple" p:propertyName="courseOfferingCode">
                                 <property name="inquiry">
                                     <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper"  p:inquiryParameters="courseOfferingId" />
                                 </property>
@@ -92,25 +93,25 @@
                         </list>
                     </property>
                 </bean>
-                <bean parent="Uif-DataField"
+                <bean parent="KS-Uif-DataField-Simple"
                       p:label="STATUS"
                       p:propertyName="courseOfferingStateDisplay"/>
-                <bean parent="Uif-DataField"
+                <bean parent="KS-Uif-DataField-Simple"
                       p:label="TITLE"
                       p:propertyName="courseOfferingDesc"/>
-                <bean parent="Uif-DataField"
+                <bean parent="KS-Uif-DataField-Simple"
                       p:label="CREDITS"
                       p:propertyName="courseOfferingCreditOptionDisplay"/>
-                <bean parent="Uif-DataField"
+                <bean parent="KS-Uif-DataField-Simple"
                       p:label="GRADING"
                       p:propertyName="courseOfferingGradingOptionDisplay"/>
-                <bean name="enableApproveButton" parent="Uif-InputField" p:propertyName="enableApproveButton"/>
-                <bean name="enableSuspendButton" parent="Uif-InputField" p:propertyName="enableSuspendButton"/>
-                <bean name="enableCancelButton" parent="Uif-InputField" p:propertyName="enableCancelButton"/>
-                <bean name="enableReinstateButton" parent="Uif-InputField" p:propertyName="enableReinstateButton" />
-                <bean name="enableDeleteButton" parent="Uif-InputField" p:propertyName="enableDeleteButton" />
-                <bean name="enableCopyCOActionLink" parent="Uif-InputField" p:propertyName="enableCopyCOActionLink" />
-                <bean name="enableEditCOActionLink" parent="Uif-InputField" p:propertyName="enableEditCOActionLink" />
+                <bean name="enableApproveButton" parent="KS-Uif-InputField-Simple" p:propertyName="enableApproveButton"/>
+                <bean name="enableSuspendButton" parent="KS-Uif-InputField-Simple" p:propertyName="enableSuspendButton"/>
+                <bean name="enableCancelButton" parent="KS-Uif-InputField-Simple" p:propertyName="enableCancelButton"/>
+                <bean name="enableReinstateButton" parent="KS-Uif-InputField-Simple" p:propertyName="enableReinstateButton" />
+                <bean name="enableDeleteButton" parent="KS-Uif-InputField-Simple" p:propertyName="enableDeleteButton" />
+                <bean name="enableCopyCOActionLink" parent="KS-Uif-InputField-Simple" p:propertyName="enableCopyCOActionLink" />
+                <bean name="enableEditCOActionLink" parent="KS-Uif-InputField-Simple" p:propertyName="enableEditCOActionLink" />
             </list>
         </property>
         <property name="layoutManager.richTable.hiddenColumns">
@@ -129,26 +130,26 @@
         </property>
         <property name="lineActions">
             <list>
-                <!-- Note by Bonnie: turn on authz on copy and edit links now -->
-                <bean parent="Uif-NavigationActionLink" p:methodToCall="copyCourseOffering" p:actionLabel="Copy"
-                      p:render="@{#line.isEnableCopyCOActionLink()}" p:actionEvent="copyCOonManageCOsPage"/>
-                <!--<bean parent="Uif-NavigationActionLink" p:methodToCall="copyCourseOffering" p:actionLabel="Copy" />-->
-                <bean parent="Uif-NavigationActionLink" p:methodToCall="edit" p:actionLabel="Edit"
-                      p:render="@{#line.isEnableEditCOActionLink()}" p:actionEvent="editCOonManageCOsPage">
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>ks-table-uif-navigationActionLink</value>
-                        </list>
-                    </property>
-                </bean>
-                <!--<bean parent="Uif-NavigationActionLink" p:methodToCall="edit" p:actionLabel="Edit" />-->
-                <bean parent="Uif-NavigationActionLink" p:methodToCall="loadAOs_RGs_AOCs" p:actionLabel="Manage">
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>ks-table-uif-navigationActionLink</value>
-                        </list>
-                    </property>
-                </bean>
+                <!--<bean parent="KS-Uif-NavigationActionLink-withSeparator" p:seperator="&#160;&#160;|&#160;&#160;">-->
+                    <!--<property name="seperatedActions">-->
+                        <!--<list>-->
+                            <!-- Note by Bonnie: turn on authz on copy and edit links now -->
+                            <bean  parent="Uif-NavigationActionLink" p:methodToCall="copyCourseOffering"
+                                  p:actionLabel="Copy"
+                                  p:render="@{#line.isEnableCopyCOActionLink() and !#line.isCrossListed()}"
+                                  p:actionEvent="copyCOonManageCOsPage"/>
+                            <!--<bean parent="Uif-NavigationActionLink" p:methodToCall="copyCourseOffering" p:actionLabel="Copy" />-->
+                            <bean  parent="Uif-NavigationActionLink" p:methodToCall="edit"
+                                  p:actionLabel="Edit"
+                                  p:render="@{#line.isEnableEditCOActionLink()}" p:actionEvent="editCOonManageCOsPage">
+                            </bean>
+                            <!--<bean parent="Uif-NavigationActionLink" p:methodToCall="edit" p:actionLabel="Edit" />-->
+                            <bean  parent="Uif-NavigationActionLink" p:methodToCall="loadAOs_RGs_AOCs"
+                                  p:actionLabel="Manage">
+                            </bean>
+                        <!--</list>-->
+                    <!--</property>-->
+                <!--</bean>-->
             </list>
         </property>
     </bean>

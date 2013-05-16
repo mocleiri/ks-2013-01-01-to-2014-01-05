@@ -18,7 +18,7 @@
         </property>
     </bean>
 
-    <bean id="KS-AcademicTerm-EditSection-Main" parent="KS-HorizontalCollectionSection">
+    <bean id="KS-AcademicTerm-EditSection-Main" parent="KS-Uif-StackedCollectionSection-HorizontalSubCollectionFieldGroup">
         <property name="id" value="acal-term"/>
         <property name="readOnly" value="@{#view.readOnly}"/>
         <property name="propertyName" value="termWrapperList" />
@@ -87,7 +87,7 @@
         </property>
     </bean>
 
-    <bean id="KS-KeyDatesGroup-EditSubSection" parent="KS-Disclosure-HorizontalCollectionSubSection">
+    <bean id="KS-KeyDatesGroup-EditSubSection" parent="KS-Uif-StackedCollectionSubSection-HorizontalSubCollectionFieldGroupWithDisclosure">
         <property name="id" value="acal-term-keydatesgroup"/>
         <property name="readOnly" value="@{#view.readOnly}"/>
         <property name="propertyName" value="keyDatesGroupWrappers" />

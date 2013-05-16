@@ -13,6 +13,7 @@ import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.student.enrollment.class2.autogen.form.ARGCourseOfferingManagementForm;
 import org.kuali.student.enrollment.class2.courseoffering.dto.ActivityOfferingWrapper;
+import org.kuali.student.enrollment.class2.courseoffering.dto.ActivityOfferingClusterWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingListSectionWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingWrapper;
@@ -193,7 +194,7 @@ public class ARGUtil {
         //set the ownerCode if not set
         if (currentCOWrapper.getOwnerCode()==null ||currentCOWrapper.getOwnerCode().equals("") ) {
             for (CourseOfferingListSectionWrapper courseOfferingListSectionWrapper : form.getCourseOfferingResultList()) {
-               if (courseOfferingListSectionWrapper.getCourseOfferingCode().equals(form.getInputCode())) {
+               if (courseOfferingListSectionWrapper.getCourseOfferingCode().equals(currentCOWrapper.getCourseOfferingCode())) {
                    currentCOWrapper.setOwnerCode(courseOfferingListSectionWrapper.getOwnerCode());
                    break;
                }
@@ -269,15 +270,8 @@ public class ARGUtil {
 //        ARGUtil.loadRegistrationGroupsByCourseOffering(foIds, form);
         
 
-        //turn off authz for now
+        //turn off authz for now -- TODO: do we still need this authz? seems not (by Bonnie)
 //        form.setEditAuthz(checkEditViewAuthz(form));
-
-        //TODO: Set SOC State - temporary display, to be removed after testing is finished
-        String socState = getSocState(form.getTermInfo().getId());
-        if (StringUtils.isNotBlank(socState)) {
-            socState = (socState.substring(0, 1)).toUpperCase() + socState.substring(1, socState.length());
-        }
-        form.setSocState(socState);
 
         ARGToolbarUtil.processAoToolbarForUser(form.getActivityWrapperList(), form);
     }
@@ -645,5 +639,46 @@ public class ARGUtil {
         }
 
     }
+
+    public static void clearForm (ARGCourseOfferingManagementForm form) throws Exception {
+        form.setAdminOrg(null);
+        form.setCourseOfferingResultList(new ArrayList<CourseOfferingListSectionWrapper>());
+        form.setActivityWrapperList(new ArrayList<ActivityOfferingWrapper>());
+        form.setClusterResultList(new ArrayList<ActivityOfferingClusterWrapper>());
+        form.setRgResultList(new ArrayList<RegistrationGroupWrapper>());
+
+        form.setSelectedToDeleteList(new ArrayList<ActivityOfferingWrapper>());
+        form.setSelectedCoToDeleteList(new ArrayList<CourseOfferingListSectionWrapper>());
+
+        form.setCourseOfferingCopyWrapper(null);
+        form.setFormatOfferingIdForNewAO(null);
+
+        form.setHasMoreThanOneFormat(false);
+        form.setHasMoreThanOneCluster(false);
+        form.setTermInfo(null);
+        form.setSubjectCode(null);
+        form.setSubjectCodeDescription(null);
+
+        form.setFormatIdForNewAO(null);
+        form.setFormatOfferingIdForNewAO(null);
+        form.setActivityIdForNewAO(null);
+        form.setClusterIdForNewAO(null);
+        form.setNoOfActivityOfferings(null);
+
+        form.setCurrentCourseOfferingWrapper(null);
+        form.setPreviousCourseOfferingWrapper(null);
+        form.setNextCourseOfferingWrapper(null);
+
+        form.setSocState(null);
+        form.setSocStateKey(null);
+
+        form.setSelectedIllegalAOInDeletion(false);
+
+        form.setEnableAddButton(false);
+        form.setEnableMoveAOButton(false);
+        form.setEnableAddClusterButton(false);
+
+    }
+
 
 }

@@ -20,6 +20,8 @@ import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
+import org.kuali.student.enrollment.class2.courseoffering.dao.ActivityOfferingClusterDaoApi;
+import org.kuali.student.enrollment.class2.courseoffering.model.ActivityOfferingClusterEntity;
 import org.kuali.student.enrollment.class2.courseoffering.service.adapter.issue.ActivityOfferingNotInAocSubissue;
 import org.kuali.student.enrollment.class2.courseoffering.service.adapter.issue.CourseOfferingAutogenIssue;
 import org.kuali.student.enrollment.class2.courseoffering.service.adapter.issue.FormatOfferingAutogenIssue;
@@ -50,7 +52,6 @@ import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.exceptions.ReadOnlyException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.common.permutation.PermutationCounter;
-import org.kuali.student.r2.common.util.ContextUtils;
 import org.kuali.student.r2.common.util.constants.CourseOfferingServiceConstants;
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
 import org.kuali.student.r2.core.acal.dto.TermInfo;
@@ -96,6 +97,8 @@ public class AutogenRegGroupServiceAdapterImpl implements AutogenRegGroupService
     private TypeService typeService;
 
     private CourseService courseService;
+
+    private ActivityOfferingClusterDaoApi activityOfferingClusterDao;
     
     /* (non-Javadoc)
      * @see org.kuali.student.enrollment.class2.courseoffering.service.adapter.AutogenRegGroupServiceAdapter#getDefaultClusterName(int)
@@ -426,15 +429,20 @@ public class AutogenRegGroupServiceAdapterImpl implements AutogenRegGroupService
                     rgStatusInfo.setSuccess(true);
 
                     StatusInfo statusInfo;
-                    if (_isRegistrationGroupValid (rgInfo.getId(), context)) {
-                        if (coService.changeRegistrationGroupState(rgInfo.getId(), LuiServiceConstants.REGISTRATION_GROUP_OFFERED_STATE_KEY, context).getIsSuccess()) {
-                        } else if (coService.changeRegistrationGroupState(rgInfo.getId(), LuiServiceConstants.REGISTRATION_GROUP_PENDING_STATE_KEY, context).getIsSuccess()) {
+
+                    //Canceled state handling is out of scope. We ignore the state for now
+                    // TODO: this checking will be removed when canceled state handling is available.
+                    if(!rgInfo.getStateKey().equals(LuiServiceConstants.REGISTRATION_GROUP_CANCELED_STATE_KEY)){
+                        if (_isRegistrationGroupValid (rgInfo.getId(), context)) {
+                            if (coService.changeRegistrationGroupState(rgInfo.getId(), LuiServiceConstants.REGISTRATION_GROUP_OFFERED_STATE_KEY, context).getIsSuccess()) {
+                            } else if (coService.changeRegistrationGroupState(rgInfo.getId(), LuiServiceConstants.REGISTRATION_GROUP_PENDING_STATE_KEY, context).getIsSuccess()) {
+                            } else {
+                                throw new RuntimeException("State change failed for RG: " + rgInfo.getId() + "From state:" + rgInfo.getStateKey());
+                            }
                         } else {
-                            throw new RuntimeException("State change failed for RG: " + rgInfo.getId() + "From state:" + rgInfo.getStateKey());
+                            coService.changeRegistrationGroupState(rgInfo.getId(), LuiServiceConstants.REGISTRATION_GROUP_INVALID_STATE_KEY, context);
+                            rgStatusInfo.setSuccess(false);
                         }
-                    } else {
-                        coService.changeRegistrationGroupState(rgInfo.getId(), LuiServiceConstants.REGISTRATION_GROUP_INVALID_STATE_KEY, context);
-                        rgStatusInfo.setSuccess(false);
                     }
 
                     rgStatusInfos.add(rgStatusInfo);
@@ -960,6 +968,24 @@ public class AutogenRegGroupServiceAdapterImpl implements AutogenRegGroupService
         
     }
 
+    /**
+     * Returns all ActivityOfferingClusterInfos that map back to a single course offering
+     *
+     * @param courseOfferingId
+     * @return
+     */
+    @Override
+    public List<ActivityOfferingClusterInfo> getActivityOfferingClusterByCourseOffering(String courseOfferingId) {
+
+        List<ActivityOfferingClusterInfo> lRet = new ArrayList<ActivityOfferingClusterInfo>();
+        List<ActivityOfferingClusterEntity> aoClusters = getActivityOfferingClusterDao().getByCourseOffering(courseOfferingId);
+
+        for(ActivityOfferingClusterEntity aoc : aoClusters){
+            lRet.add(aoc.toDto());
+        }
+        return lRet;
+    }
+
     public CourseOfferingService getCoService() {
         if(coService == null) {
 //            coService = (CourseOfferingService) GlobalResourceLoader.getService("CourseOfferingService");
@@ -990,5 +1016,13 @@ public class AutogenRegGroupServiceAdapterImpl implements AutogenRegGroupService
             courseService = (CourseService) GlobalResourceLoader.getService(qname);
         }
         return courseService;
+    }
+
+    public ActivityOfferingClusterDaoApi getActivityOfferingClusterDao() {
+        return activityOfferingClusterDao;
+    }
+
+    public void setActivityOfferingClusterDao(ActivityOfferingClusterDaoApi activityOfferingClusterDao) {
+        this.activityOfferingClusterDao = activityOfferingClusterDao;
     }
 }

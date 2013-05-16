@@ -3,6 +3,7 @@ package org.kuali.rice.krms.dto;
 import org.kuali.rice.core.api.util.tree.Tree;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.rice.krms.api.repository.action.ActionDefinitionContract;
+import org.kuali.rice.krms.api.repository.agenda.AgendaItemDefinition;
 import org.kuali.rice.krms.api.repository.proposition.PropositionDefinitionContract;
 import org.kuali.rice.krms.api.repository.rule.RuleDefinition;
 import org.kuali.rice.krms.api.repository.rule.RuleDefinitionContract;
@@ -39,6 +40,7 @@ public class RuleEditor extends UifFormBase implements RuleDefinitionContract, S
     private Long versionNumber;
 
     private PropositionEditor proposition;
+    private AgendaItemDefinition agendaItem;
 
     private String ruleType;
     private String copyKey;
@@ -49,7 +51,6 @@ public class RuleEditor extends UifFormBase implements RuleDefinitionContract, S
 
     //Edit with Logic
     private String logicArea;
-    private String selectedTab;
 
     // for Rule editor display
     private Tree<RuleEditorTreeNode, String> editTree;
@@ -57,13 +58,15 @@ public class RuleEditor extends UifFormBase implements RuleDefinitionContract, S
     // for Rule Preview display
     private Tree<TreeNode, String> previewTree;
     private Tree<TreeNode, String> viewTree;
-    private transient AlphaIterator alpha;
+    private AlphaIterator alpha;
 
     // for Compare
     private Tree<CompareTreeNode, String> compareTree;
 
     //Rule Instruction
     private String ruleInstruction;
+
+    private RuleTypeInfo ruleTypeInfo;
 
     public RuleEditor() {
         super();
@@ -213,6 +216,14 @@ public class RuleEditor extends UifFormBase implements RuleDefinitionContract, S
         this.logicArea = logicArea;
     }
 
+    public AgendaItemDefinition getAgendaItem() {
+        return agendaItem;
+    }
+
+    public void setAgendaItem(AgendaItemDefinition agendaItem) {
+        this.agendaItem = agendaItem;
+    }
+
     @Override
     public String getName() {
         return this.name;
@@ -306,14 +317,6 @@ public class RuleEditor extends UifFormBase implements RuleDefinitionContract, S
         return versionNumber;
     }
 
-    public String getSelectedTab() {
-        return selectedTab;
-    }
-
-    public void setSelectedTab(String selectedTab) {
-        this.selectedTab = selectedTab;
-    }
-
     public String getRuleInstruction() {
         return ruleInstruction;
     }
@@ -324,5 +327,13 @@ public class RuleEditor extends UifFormBase implements RuleDefinitionContract, S
 
     protected PropositionEditor createPropositionEditor(PropositionDefinitionContract definition){
         return new PropositionEditor(definition);
+    }
+
+    public RuleTypeInfo getRuleTypeInfo() {
+        return ruleTypeInfo;
+    }
+
+    public void setRuleTypeInfo(RuleTypeInfo ruleTypeInfo) {
+        this.ruleTypeInfo = ruleTypeInfo;
     }
 }

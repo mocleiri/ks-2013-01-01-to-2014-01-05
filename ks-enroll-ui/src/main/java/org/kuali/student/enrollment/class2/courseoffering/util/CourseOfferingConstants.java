@@ -90,8 +90,9 @@ public class CourseOfferingConstants {
     public static final String COURSEOFFERING_INFO_COPIED_SUCCESSFULLY = "info.enroll.courseoffering.copied.successful";
     public static final String COURSEOFFERING_ROLLOVER_RELEASE_TO_DEPTS_SUCCESSFULLY = "info.enroll.courseoffering.rollover.releaseToDepts.successful";
 
-    //JSON string root key for customized breadcrumb
+    //JSON string root keys
     public static final String BREADCRUMB_JSON_ROOT_KEY = "breadCrumb";
+    public static final String POPULATIONS_JSON_ROOT_KEY = "populations";
 
     //Map keys for params of customized breadcrumb generation of multiple views
     public static final String BREADCRUMB_PREVIOUS_CONTROLLER_PATH_KEY = "previousControllerPath";
@@ -124,6 +125,8 @@ public class CourseOfferingConstants {
     public static final String ACTIVITYOFFERING_TOOLBAR_APPROVED_1_SUCCESS="info.enroll.activityoffering.toolbar.approved.1.success";
     public static final String COURSEOFFERING_TOOLBAR_DELETE_1_SUCCESS="info.enroll.courseoffering.toolbar.delete.1.success";
     public static final String COURSEOFFERING_TOOLBAR_APPROVED_1_SUCCESS="info.enroll.courseoffering.toolbar.approved.1.success";
+
+    public static final String ACTIVITYOFFERING_TOOLBAR_ADD_INVALID_ERROR="error.enroll.activityoffering.toolbar.add.invalid";
     
     //controller path
     public static final String CONTROLLER_PATH_COURSEOFFERING_BASE_MAINTENANCE = "courseOffering";
@@ -133,6 +136,10 @@ public class CourseOfferingConstants {
     public final static String COURSEOFFERING_FINAL_EXAM_TYPE_STANDARD = "STANDARD";
     public final static String COURSEOFFERING_FINAL_EXAM_TYPE_ALTERNATE = "ALTERNATE";
     public final static String COURSEOFFERING_FINAL_EXAM_TYPE_NONE = "NONE";
+
+    //colocation
+    public static final String COLOCATION_MAX_ENR_SHARED="info.enroll.courseoffering.colocation.enr.shared";
+    public static final String COLOCATION_MAX_ENR_SEPARATED="info.enroll.courseoffering.colocation.enr.separated";
 
     /**
          * These are the confirm dialog bean ids used in Manage CO/AO view.

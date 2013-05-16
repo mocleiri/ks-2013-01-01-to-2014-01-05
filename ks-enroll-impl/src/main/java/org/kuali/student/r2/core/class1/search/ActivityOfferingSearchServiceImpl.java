@@ -65,6 +65,7 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
     public static final class SearchResultColumns {
         public static final String SCHEDULE_ID = "scheduleId";
         public static final String FO_ID = "foId";
+        public static final String FORMAT_ID = "formatId";
         public static final String FO_NAME = "foName";
         public static final String AOC_ID = "aocId";
         public static final String AOC_NAME = "aocName";
@@ -287,7 +288,8 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
         String queryStr =
                 "SELECT aoMatchIds," +
                 "       co_ident.code," +
-                "       ao_ident.code " +
+                "       ao_ident.code," +
+                "       lset.id " +
                 "FROM LuiSetEntity lset," +
                 "     IN(lset.luiIds) aoMatchIds," +
                 "     IN(lset.luiIds) aoIds," +
@@ -317,6 +319,7 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
             row.addCell(SearchResultColumns.AO_ID, (String)resultRow[i++]);
             row.addCell(SearchResultColumns.CO_CODE, (String)resultRow[i++]);
             row.addCell(SearchResultColumns.AO_CODE, (String)resultRow[i++]);
+            row.addCell(SearchResultColumns.LUI_SET_ID, (String)resultRow[i++]);
             resultInfo.getRows().add(row);
         }
 
@@ -435,6 +438,7 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
         String queryStr = "SELECT DISTINCT " +
                 "    co2fo.RELATED_LUI_ID AS col_0_0_, " +
                 "    fo.NAME              AS col_1_0_, " +
+                "    fo.CLU_ID            AS col_2_0_, " +
                 "    clster.ID            AS col_2_0_, " +
                 "    clster.NAME          AS col_3_0_, " +
                 "    clster.PRIVATE_NAME  AS col_4_0_, " +
@@ -482,6 +486,7 @@ public class ActivityOfferingSearchServiceImpl extends SearchServiceAbstractHard
             SearchResultRowInfo row = new SearchResultRowInfo();
             row.addCell(SearchResultColumns.FO_ID, (String)resultRow[i++]);
             row.addCell(SearchResultColumns.FO_NAME, (String)resultRow[i++]);
+            row.addCell(SearchResultColumns.FORMAT_ID, (String)resultRow[i++]);
             row.addCell(SearchResultColumns.AOC_ID, (String)resultRow[i++]);
             row.addCell(SearchResultColumns.AOC_NAME, (String)resultRow[i++]);
             row.addCell(SearchResultColumns.AOC_PRIVATE_NAME, (String)resultRow[i++]);

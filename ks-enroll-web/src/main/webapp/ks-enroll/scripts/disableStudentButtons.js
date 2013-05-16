@@ -19,6 +19,7 @@ var PASTE='.kr-paste-button';
 var DELETE='.kr-delete-button';
 var REFRESH='.kr-refresh-button';
 var TREE = '.tree-bar-button';
+var MOVE='.kr-move-button';
 
 var ENABLED = true;
 var pasting = false;
@@ -78,6 +79,9 @@ function disableTreeButtons() {
     disableButton(TREE);
 }
 
+function disableMoveButtons() {
+    disableButton(MOVE);
+}
 
 function cutPasteButtonInit() {
     // CUT
@@ -87,11 +91,11 @@ function cutPasteButtonInit() {
         });
     }
     // PASTE
-    if (jq('.kr-paste-button') != undefined && jq('.kr-paste-button') != null) {
-        jq('.kr-paste-button').click(function() {
-            disablePasteButton();
-        });
-    }
+    //if (jq('.kr-paste-button') != undefined && jq('.kr-paste-button') != null) {
+    //    jq('.kr-paste-button').click(function() {
+    //       disablePasteButton();
+    //    });
+    //}
 }
 
 

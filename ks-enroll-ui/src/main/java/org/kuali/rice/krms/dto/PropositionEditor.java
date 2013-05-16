@@ -30,6 +30,7 @@ public class PropositionEditor implements PropositionDefinitionContract, Seriali
     private String description;
     private String ruleId;
     private String compoundOpCode;
+    private Integer compoundSequenceNumber;
     private String typeId;
     private String propositionTypeCode;
     private Long versionNumber;
@@ -70,6 +71,7 @@ public class PropositionEditor implements PropositionDefinitionContract, Seriali
             this.parameters.add(new PropositionParameterEditor(parm));
         }
         this.compoundOpCode = definition.getCompoundOpCode();
+        this.compoundSequenceNumber = definition.getCompoundSequenceNumber();
         this.compoundEditors = new ArrayList<PropositionEditor>();
         for (PropositionDefinitionContract prop : definition.getCompoundComponents()) {
             this.compoundEditors.add(createPropositionEditor(prop));
@@ -96,9 +98,14 @@ public class PropositionEditor implements PropositionDefinitionContract, Seriali
     public String getCompoundOpCode() {
         return compoundOpCode;
     }
+    
+    @Override
+    public Integer getCompoundSequenceNumber() {
+        return compoundSequenceNumber;
+    }
 
     public void setId(String id) {
-        if (!StringUtils.isBlank(id)) {
+        if (!StringUtils.isBlank(id) || id == null) {
             this.id = id;
         }
     }
@@ -130,6 +137,10 @@ public class PropositionEditor implements PropositionDefinitionContract, Seriali
     @Override
     public List<? extends PropositionDefinitionContract> getCompoundComponents() {
         return compoundEditors;
+    }
+
+    public void setVersionNumber(Long versionNumber) {
+        this.versionNumber = versionNumber;
     }
 
     public List<PropositionParameterEditor> getParameters() {

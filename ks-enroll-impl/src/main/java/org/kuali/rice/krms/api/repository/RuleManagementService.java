@@ -24,7 +24,6 @@ import org.kuali.rice.krms.api.repository.language.NaturalLanguageUsage;
 import org.kuali.rice.krms.api.repository.proposition.PropositionDefinition;
 import org.kuali.rice.krms.api.repository.reference.ReferenceObjectBinding;
 import org.kuali.rice.krms.api.repository.rule.RuleDefinition;
-import org.springframework.cache.annotation.Cacheable;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -36,8 +35,11 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;
 import java.util.Set;
 import org.kuali.rice.krms.api.repository.action.ActionDefinition;
+import org.kuali.rice.krms.api.repository.agenda.AgendaTreeDefinition;
 import org.kuali.rice.krms.api.repository.context.ContextDefinition;
+import org.kuali.rice.krms.api.repository.context.ContextSelectionCriteria;
 import org.kuali.rice.krms.api.repository.language.NaturalLanguageTemplate;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * The rule maintenance service operations facilitate management of rules and
@@ -48,7 +50,7 @@ import org.kuali.rice.krms.api.repository.language.NaturalLanguageTemplate;
 @WebService(name = "ruleManagementService", targetNamespace = KrmsConstants.Namespaces.KRMS_NAMESPACE_2_0)
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL,
 parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
-public interface RuleManagementService extends RuleRepositoryService, TranslateBusinessMethods {
+public interface RuleManagementService extends TranslateBusinessMethods {
 
     /**
      * Create RefObject-KRMS object binding
@@ -204,7 +206,7 @@ public interface RuleManagementService extends RuleRepositoryService, TranslateB
     //// agenda methods
     ////
     /**
-     * Create Agenda
+     * Create Agenda and an empty first item
      *
      * @param agendaDefinition data for the new Agenda to be created
      * @return newly created Agenda
@@ -214,6 +216,19 @@ public interface RuleManagementService extends RuleRepositoryService, TranslateB
     @WebMethod(operationName = "createAgenda")
     @WebResult(name = "agenda")
     public AgendaDefinition createAgenda(@WebParam(name = "AgendaDefinition") AgendaDefinition agendaDefinition) throws RiceIllegalArgumentException;
+
+    
+    /**
+     * Create Agenda if not found by contextId and name
+     *
+     * @param agendaDefinition data for the new Agenda to be created
+     * @return newly created or found Agenda
+     * @throws RiceIllegalArgumentException if the given agendaDefinition is
+     *                                      null or invalid
+     */
+    @WebMethod(operationName = "findCreateAgenda")
+    @WebResult(name = "agenda")
+    public AgendaDefinition findCreateAgenda(@WebParam(name = "AgendaDefinition") AgendaDefinition agendaDefinition) throws RiceIllegalArgumentException;
 
     /**
      * Retrieve Agenda for the specified id
@@ -226,6 +241,22 @@ public interface RuleManagementService extends RuleRepositoryService, TranslateB
     @WebResult(name = "agenda")
     public AgendaDefinition getAgenda(@WebParam(name = "id") String id) throws RiceIllegalArgumentException;
 
+	
+    /**
+     * Retrieves an Agenda from the repository based on the provided agenda name
+     * and context id.
+     *
+     * @param name the name of the Agenda to retrieve.
+     * @param contextId the id of the context that the agenda belongs to.
+     * @return an {@link AgendaDefinition} identified by the given name and namespace.  
+     * A null reference is returned if an invalid or non-existent name and
+     * namespace combination is supplied.
+     */
+    @WebMethod(operationName = "getAgendaByNameAndContextId")
+    @WebResult(name = "agenda")
+    public AgendaDefinition getAgendaByNameAndContextId (@WebParam(name = "name") String name,
+                                                         @WebParam(name = "contextId") String contextId);
+    
     /**
      * Retrieve Agendas of the specified type
      *
@@ -406,9 +437,25 @@ public interface RuleManagementService extends RuleRepositoryService, TranslateB
      */
     @WebMethod(operationName = "getRule")
     @WebResult(name = "rule")
-    @Cacheable(value = RuleDefinition.Cache.NAME, key = "'ruleId=' + #p0")
     public RuleDefinition getRule(@WebParam(name = "ruleId") String ruleId);
 
+    /**
+     * Retrieves an Rule from the repository based on the provided rule name
+     * and namespace.
+     *
+     * @param name the name of the Rule to retrieve.
+     * @param namespace the namespace that the rule is under.
+     * @return an {@link RuleDefinition} identified by the given name and namespace.
+     * A null reference is returned if an invalid or non-existent name and
+     * namespace combination is supplied.
+     * @throws IllegalArgumentException if the either the name or the namespace
+     * is null or blank.
+     */
+    @WebMethod(operationName = "getRuleByNameAndNamespace")
+    @WebResult(name = "rule")
+    public RuleDefinition getRuleByNameAndNamespace(@WebParam(name = "name") String name, 
+                                                    @WebParam(name = "namespace") String namespace);
+	
     /**
      * Retrieves all of the rules for the given list of ruleIds.  The rule
      * includes the propositions which define the condition that is to be
@@ -481,7 +528,6 @@ public interface RuleManagementService extends RuleRepositoryService, TranslateB
      */
     @WebMethod(operationName = "getAction")
     @WebResult(name = "action")
-    @Cacheable(value = ActionDefinition.Cache.NAME, key = "'actionId=' + #p0")
     public ActionDefinition getAction(@WebParam(name = "actionId") String actionId) throws RiceIllegalArgumentException;
 
     /**
@@ -1027,4 +1073,74 @@ public interface RuleManagementService extends RuleRepositoryService, TranslateB
     @XmlElement(name = "action", required = false)
     @WebResult(name = "actionIds")
     List<String> findActionIds(@WebParam(name = "query") QueryByCriteria queryByCriteria) throws RiceIllegalArgumentException;
+    
+    ////
+    //// extra methods from RuleRepositoryService copied here so I can break the dependence on that service
+    //// and then implement different caching schemes for each 
+    ////
+    
+    
+      /**
+     * Locates a ContextDefinition based on the given map of context qualifiers.
+     * The requirements for valid selection criteria are implementation
+     * dependent. An IllegalArgumentException may be thrown if the
+     * implementation can't operate with the given criteria.
+     *
+     * @param contextSelectionCriteria
+     * @return
+     * @see ContextSelectionCriteria
+     * @throws RiceIllegalArgumentException if the implementation can't handle
+     * the given ContextSelectionCriteria
+     */
+    @WebMethod(operationName = "selectContext")
+    @WebResult(name = "contextDefinition")
+    public ContextDefinition selectContext(@WebParam(name = "contextSelectionCriteria") ContextSelectionCriteria contextSelectionCriteria)
+            throws RiceIllegalArgumentException;
+
+    /**
+     * Retrieves the agenda tree for the given agendaId. The agenda tree
+     * includes the entire agenda definition in the appropriate order and with
+     * the defined agenda branching.
+     *
+     * @param agendaId the id of the agenda for which to retrieve the agenda
+     * tree
+     * @return the agenda tree, or null if no agenda could be located for the
+     * given agendaId
+     *
+     * @throws RiceIllegalArgumentException if the given agendaId is null
+     */
+    @WebMethod(operationName = "getAgendaTree")
+    @WebResult(name = "agendaTree")
+    public AgendaTreeDefinition getAgendaTree(@WebParam(name = "agendaId") String agendaId)
+            throws RiceIllegalArgumentException;
+
+    /**
+     * Retrieves all of the agendas trees for the given list of agendaIds. The
+     * agenda tree includes the entire agenda definition in the appropriate
+     * order and with the defined agenda branching.
+     *
+     * <p>The list which is returned from this operation may not be the same
+     * size as the list which is passed to this method. If an agenda doesn't
+     * exist for a given agenda id then no result for that id will be returned
+     * in the list. As a result of this, the returned list can be empty, but it
+     * will never be null.
+     *
+     * @param agendaIds the list of agenda ids for which to retrieve the agenda
+     * trees
+     * @return the list of agenda trees for the given ids, this list will only
+     * contain agenda trees for the ids that were resolved successfully, it will
+     * never return null but could return an empty list if no agenda trees could
+     * be loaded for the given set of ids
+     *
+     * @throws RiceIllegalArgumentException if the given list of agendaIds is
+     * null
+     */
+    @WebMethod(operationName = "getAgendaTrees")
+    @XmlElementWrapper(name = "agendaTrees", required = true)
+    @XmlElement(name = "agendaTree", required = false)
+    @WebResult(name = "agendaTrees")
+    public List<AgendaTreeDefinition> getAgendaTrees(@WebParam(name = "agendaIds") List<String> agendaIds)
+            throws RiceIllegalArgumentException;
+
+   
 }

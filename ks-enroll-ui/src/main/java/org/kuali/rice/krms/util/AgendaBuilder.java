@@ -13,10 +13,7 @@ import org.kuali.rice.krad.uif.util.ComponentFactory;
 import org.kuali.rice.krad.uif.util.ComponentUtils;
 import org.kuali.rice.krad.uif.view.View;
 import org.kuali.rice.krad.util.KRADConstants;
-import org.kuali.rice.krms.dto.AgendaEditor;
-import org.kuali.rice.krms.dto.AgendaTypeInfo;
-import org.kuali.rice.krms.dto.RuleTypeInfo;
-import org.kuali.rice.krms.dto.RuleEditor;
+import org.kuali.rice.krms.dto.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +45,39 @@ public class AgendaBuilder {
         this.typeRelationsMap = typeRelationsMap;
     }
 
+    public List<Component> build(RuleManagementWrapper ruleManagementWrapper){
+
+        // Get the list of existing agendas
+        List<AgendaEditor> agendas = ruleManagementWrapper.getAgendas();
+
+        // Initialize new array lists.
+        List<AgendaEditor> sortedAgendas = new ArrayList<AgendaEditor>();
+        List<Component> components = new ArrayList<Component>();
+
+        // Lookup existing agenda by type
+        List<AgendaTypeInfo> agendaTypeInfos = new ArrayList<AgendaTypeInfo>(typeRelationsMap.values());
+        for (AgendaTypeInfo agendaTypeInfo : agendaTypeInfos) {
+            AgendaEditor agenda = null;
+            for (AgendaEditor existingAgenda : agendas) {
+                if (existingAgenda.getTypeId().equals(agendaTypeInfo.getId())) {
+                    agenda=existingAgenda;
+                    break;
+                }
+            }
+            if (agenda==null) {
+                agenda = new AgendaEditor();
+                agenda.setTypeId(agendaTypeInfo.getId());
+            }
+            agenda.setAgendaTypeInfo(agendaTypeInfo);
+            components.add(this.buildAgenda(agenda));
+            sortedAgendas.add(agenda);
+        }
+
+        ruleManagementWrapper.setAgendas(sortedAgendas);
+
+        return components;
+    }
+
     /**
      * This method dynamically build the components on the screen to render an angenda.
      *
@@ -58,13 +88,12 @@ public class AgendaBuilder {
         // Reset the rule counter.
         ruleCounter = 0;
 
-        AgendaTypeInfo agendaType = typeRelationsMap.get(agenda.getTypeId());
         Group group = (Group) ComponentFactory.getNewComponentInstance("KRMS-AgendaSection-Template");
-        group.setHeaderText(agendaType.getDescription());
+        group.setHeaderText(agenda.getAgendaTypeInfo().getDescription());
 
         List<Component> components = new ArrayList<Component>();
         List<RuleEditor> ruleEditors = new ArrayList<RuleEditor>();
-        for (RuleTypeInfo ruleType : agendaType.getRuleTypes()) {
+        for (RuleTypeInfo ruleType : agenda.getAgendaTypeInfo().getRuleTypes()) {
 
             // Add all existing rules of this type.
             boolean exist = false;
@@ -72,7 +101,8 @@ public class AgendaBuilder {
                 for (RuleEditor rule : agenda.getRuleEditors()) {
                     if (rule.getTypeId().equals(ruleType.getId()) && (!rule.isDummy())) {
                         rule.setKey((String)alphaIterator.next());
-                        components.add(buildEditRule(rule, ruleType));
+                        rule.setRuleTypeInfo(ruleType);
+                        components.add(buildRule(rule, ruleType, this.buildEditRuleSection(rule, ruleType)));
                         exist = true;
 
                         ruleEditors.add(rule);
@@ -82,11 +112,13 @@ public class AgendaBuilder {
 
             // If the ruletype does not exist, add an empty rule section
             if (!exist) {
-                components.add(buildAddRule(ruleType));
                 RuleEditor ruleEditor = new RuleEditor();
+                components.add(buildRule(ruleEditor, ruleType, this.buildAddRuleSection(ruleEditor, ruleType)));
+
                 ruleEditor.setKey((String)alphaIterator.next());
                 ruleEditor.setDummy(true);
                 ruleEditor.setTypeId(ruleType.getId());
+                ruleEditor.setRuleTypeInfo(ruleType);
                 ruleEditors.add(ruleEditor);
             }
 
@@ -106,11 +138,21 @@ public class AgendaBuilder {
      * @param rule
      * @return
      */
-    protected Component buildEditRule(RuleEditor rule, RuleTypeInfo ruleTypeInfo) {
-        Group group = (Group) ComponentFactory.getNewComponentInstance("KRMS-RuleEdit-Template");
+    protected Component buildRule(RuleEditor rule, RuleTypeInfo ruleTypeInfo, Group ruleSection) {
+        Group group = (Group) ComponentFactory.getNewComponentInstance("KRMS-Rule-Template");
         group.setHeaderText(ruleTypeInfo.getDescription());
 
-        Group editSection = (Group) ComponentUtils.findComponentInList((List<Component>) group.getItems(), "KRMS-RuleEdit-Section");
+        //Add edit container to disclosure section
+        List<Component> items = new ArrayList<Component>();
+        items.add(ruleSection);
+        group.setItems(items);
+
+        ruleCounter++;
+        return group;
+    }
+
+    protected Group buildEditRuleSection(RuleEditor rule, RuleTypeInfo ruleTypeInfo){
+        Group editSection = (Group) ComponentFactory.getNewComponentInstance("KRMS-RuleEdit-Section");
         LinkGroup links = (LinkGroup) ComponentUtils.findComponentInList((List<Component>) editSection.getItems(), "KRSM-RuleEdit-ActionLinks");
         List<Action> actionLinks = (List<Action>) links.getItems();
         for (Action actionLink : actionLinks) {
@@ -125,8 +167,7 @@ public class AgendaBuilder {
             treeGroups.get(0).setPropertyName("agendas[" + agendaCounter + "].ruleEditors[" + ruleCounter + "].viewTree");
         }
 
-        ruleCounter++;
-        return group;
+        return editSection;
     }
 
     /**
@@ -135,31 +176,17 @@ public class AgendaBuilder {
      * @param ruleTypeInfo
      * @return
      */
-    protected Component buildAddRule(RuleTypeInfo ruleTypeInfo) {
-        Group group = (Group) ComponentFactory.getNewComponentInstance("KRMS-RuleAdd-Template");
-        group.setHeaderText(ruleTypeInfo.getDescription());
-
-        Group editSection = (Group) ComponentUtils.findComponentInList((List<Component>) group.getItems(), "KRMS-RuleAdd-Section");
-        LinkGroup links = (LinkGroup) ComponentUtils.findComponentInList((List<Component>) editSection.getItems(), "KRMS-RuleAdd-ActionLink");
+    protected Group buildAddRuleSection(RuleEditor ruleEditor, RuleTypeInfo ruleTypeInfo) {
+        Group addSection = (Group) ComponentFactory.getNewComponentInstance("KRMS-RuleAdd-Section");
+        LinkGroup links = (LinkGroup) ComponentUtils.findComponentInList((List<Component>) addSection.getItems(), "KRMS-RuleAdd-ActionLink");
         List<Action> actionLinks = (List<Action>) links.getItems();
         for (Action actionLink : actionLinks) {
             actionLink.getActionParameters().put("ruleType", ruleTypeInfo.getId());
         }
-        MessageField messageField = (MessageField) ComponentUtils.findComponentInList((List<Component>) editSection.getItems(), "KRMS-Instruction-AddMessage");
+        MessageField messageField = (MessageField) ComponentUtils.findComponentInList((List<Component>) addSection.getItems(), "KRMS-Instruction-AddMessage");
         messageField.setMessageText(ruleTypeInfo.getInstruction());
 
-        ruleCounter++;
-        return group;
+        return addSection;
     }
 
-    public Properties buildAgendaURLParameters(RuleEditor ruleEditor, String methodToCall) {
-        Properties props = new Properties();
-        props.put("viewTypeName", "MAINTENANCE");
-        props.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, methodToCall);
-        props.put(KRADConstants.DATA_OBJECT_CLASS_ATTRIBUTE, "org.kuali.student.enrollment.class1.krms.dto.EnrolRuleEditor");
-        props.put("viewName", "EnrolRuleEditView");
-        props.put("id", ruleEditor.getId());
-        props.put(UifConstants.UrlParams.SHOW_HOME, BooleanUtils.toStringTrueFalse(false));
-        return props;
-    }
 }

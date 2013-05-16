@@ -519,7 +519,6 @@ public class HolidayCalendarController extends UifControllerBase {
         Collections.sort(hcForm.getHolidays());
 
         GlobalVariables.getMessageMap().putInfo("holidayCalendarInfo.name", updateMsg, hCalInfo.getName());
-
         if (isSetOfficial) {
             return getUIFModelAndView(hcForm, CalendarConstants.HOLIDAYCALENDAR_VIEWPAGE);
         } else {

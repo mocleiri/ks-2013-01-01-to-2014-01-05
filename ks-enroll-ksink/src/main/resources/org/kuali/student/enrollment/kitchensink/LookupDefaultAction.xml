@@ -37,7 +37,7 @@
     <!-- just the various containers for the interesting bits -->
 
     <!-- Maintenance view for PopulationInfo -->
-    <bean id="KS-KitchenSink-MaintenanceView-PopulationInfo" parent="KSMaintenanceView">
+    <bean id="KS-KitchenSink-MaintenanceView-PopulationInfo" parent="KS-Uif-MaintenanceView">
         <property name="dataObjectClassName" value="org.kuali.student.r2.core.population.dto.PopulationInfo"/>
         <property name="breadcrumbs.render" value="false"/>
         <property name="headerText" value="PopulationInfo Maintenance View"/>
@@ -114,7 +114,7 @@
     </bean>
 
     <!-- base UIM lookup view for PopulationInfo -->
-    <bean id="KS-KitchenSink-Population-LookupView-Base" parent="KSLookupView" abstract="true">
+    <bean id="KS-KitchenSink-Population-LookupView-Base" parent="KS-Uif-LookupView" abstract="true">
         <property name="dataObjectClassName" value="org.kuali.student.r2.core.population.dto.PopulationInfo"/>
         <!--<property name="viewName" value="default"/>-->
         <property name="breadcrumbs.render" value="false"/>
@@ -156,15 +156,6 @@
                 <bean parent="Uif-DataField" p:propertyName="name" p:label="Name"/>
                 <bean parent="Uif-DataField" p:propertyName="descr.plain" p:label="Description"/>
             </list>
-        </property>
-        <!-- custom "resultsActionsFieldGroup" to display "edit" link only -->
-        <property name="resultsActionsFieldGroup">
-            <bean parent="Uif-FieldGroupBase">
-                <property name="label" value="Actions"/>
-                <property name="group">
-                    <bean parent="KS-LookupView-ResultActions"/>
-                </property>
-            </bean>
         </property>
     </bean>
 

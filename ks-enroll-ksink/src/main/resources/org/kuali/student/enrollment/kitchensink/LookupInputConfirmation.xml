@@ -28,8 +28,9 @@
         <property name="label" value="Term"/>
         <property name="instructionalText"
                   value="Please enter a term to begin"/>
+        <property name="constraintText" value="Constraint text can go here"/>
         <property name="propertyName" value="stringField3"/>
-        <property name="defaultValue" value="199912"/>
+        <property name="defaultValue" value="200000"/>
         <property name="propertyNamesForAdditionalDisplay" value="stringField4" />
         <property name="attributeQuery">
             <bean parent="Uif-AttributeQueryConfig">

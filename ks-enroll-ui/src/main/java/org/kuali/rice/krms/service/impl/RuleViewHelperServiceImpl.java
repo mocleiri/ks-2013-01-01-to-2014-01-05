@@ -6,7 +6,6 @@ import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.core.api.util.tree.Tree;
 import org.kuali.rice.krad.uif.component.Component;
 import org.kuali.rice.krad.uif.container.Container;
-import org.kuali.rice.krad.uif.container.TabGroup;
 import org.kuali.rice.krad.uif.util.ComponentFactory;
 import org.kuali.rice.krad.uif.view.View;
 import org.kuali.rice.krad.util.GlobalVariables;
@@ -15,10 +14,7 @@ import org.kuali.rice.krms.api.KrmsConstants;
 import org.kuali.rice.krms.api.repository.LogicalOperator;
 import org.kuali.rice.krms.api.repository.RuleManagementService;
 import org.kuali.rice.krms.api.repository.language.NaturalLanguageTemplate;
-import org.kuali.rice.krms.api.repository.language.NaturalLanguageUsage;
-import org.kuali.rice.krms.api.repository.proposition.PropositionDefinition;
-import org.kuali.rice.krms.api.repository.proposition.PropositionDefinitionContract;
-import org.kuali.rice.krms.api.repository.proposition.PropositionParameter;
+import org.kuali.rice.krms.api.repository.proposition.PropositionParameterContract;
 import org.kuali.rice.krms.api.repository.proposition.PropositionType;
 import org.kuali.rice.krms.api.repository.rule.RuleDefinitionContract;
 import org.kuali.rice.krms.api.repository.term.TermDefinition;
@@ -28,9 +24,9 @@ import org.kuali.rice.krms.api.repository.type.KrmsTypeDefinition;
 import org.kuali.rice.krms.api.repository.type.KrmsTypeRepositoryService;
 import org.kuali.rice.krms.api.repository.typerelation.TypeTypeRelation;
 import org.kuali.rice.krms.builder.ComponentBuilder;
-import org.kuali.rice.krms.dto.AgendaEditor;
 import org.kuali.rice.krms.dto.AgendaTypeInfo;
 import org.kuali.rice.krms.dto.PropositionEditor;
+import org.kuali.rice.krms.dto.PropositionParameterEditor;
 import org.kuali.rice.krms.dto.RuleEditor;
 import org.kuali.rice.krms.dto.RuleManagementWrapper;
 import org.kuali.rice.krms.dto.RuleTypeInfo;
@@ -50,14 +46,18 @@ import org.kuali.rice.krms.util.NaturalLanguageHelper;
 import org.kuali.rice.krms.util.PropositionTreeUtil;
 import org.kuali.rice.krms.dto.TemplateInfo;
 import org.kuali.rice.krms.service.RuleViewHelperService;
+import org.kuali.student.enrollment.class1.krms.dto.EnrolPropositionEditor;
 import org.kuali.student.krms.naturallanguage.util.KsKrmsConstants;
 import org.kuali.student.enrollment.class2.courseoffering.service.decorators.PermissionServiceConstants;
 import org.kuali.student.enrollment.uif.service.impl.KSViewHelperServiceImpl;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -111,75 +111,51 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
     @Override
     protected void addCustomContainerComponents(View view, Object model, Container container) {
         if ("KS-PropositionEdit-DetailSection".equals(container.getId())) {
-
-            //Retrieve the current editing proposition if exists.
-            RuleEditor ruleEditor = this.getRuleEditor(model);
-            PropositionEditor propEditor = PropositionTreeUtil.getProposition(ruleEditor);
-
-            List<Component> components = new ArrayList<Component>();
-            if (propEditor != null) {
-                //Retrieve the name of the xml component to display for the proposition type.
-                TemplateInfo template = this.getTemplateForType(propEditor.getType());
-
-                if (template != null && template.getComponentId() != null) {
-                    Component component = ComponentFactory.getNewComponentInstance(template.getComponentId());
-                    view.assignComponentIds(component);
-
-                    //Add Proposition Type FieldGroup to Tree Node
-                    components.add(component);
-                }
-
-                if (template != null && template.getConstantComponentId() != null) {
-                    Component component = ComponentFactory.getNewComponentInstance(template.getConstantComponentId());
-                    view.assignComponentIds(component);
-
-                    //Add Proposition Type FieldGroup to Tree Node
-                    components.add(component);
-                }
-            }
-
-            container.setItems(components);
-        } else if ("KS-RuleEdit-TabSection".equals(container.getId())) {
-            if (container instanceof TabGroup) {
-                RuleEditor ruleEditor = this.getRuleEditor(model);
-                TabGroup tabGroup = (TabGroup) container;
-                Map<String, String> options = tabGroup.getTabsWidget().getTemplateOptions();
-                if (ruleEditor.getSelectedTab() == null) {
-                    ruleEditor.setSelectedTab("0");
-                }
-                options.put("selected", ruleEditor.getSelectedTab());
-                ruleEditor.setSelectedTab("0");
-            }
+            customizePropositionEditSection(view, model, container);
         } else if ("KRMS-AgendaMaintenance-Page".equals(container.getId())) {
-
-            AgendaBuilder builder = new AgendaBuilder(view);
-            builder.setTypeRelationsMap(this.getTypeRelationsMap());
-            List<Component> components = new ArrayList<Component>();
-
-            List<AgendaTypeInfo> agendaTypeInfos = new ArrayList<AgendaTypeInfo>(typeRelationsMap.values());
-
-            //Retrieve the current editing proposition if exists.
-            MaintenanceDocumentForm document = (MaintenanceDocumentForm) model;
-            RuleManagementWrapper form = (RuleManagementWrapper) document.getDocument().getNewMaintainableObject().getDataObject();
-
-            List<AgendaEditor> agendas = form.getAgendas();
-            for (AgendaTypeInfo agendaTypeInfo : agendaTypeInfos) {
-                boolean exist = false;
-                for (AgendaEditor agenda : agendas) {
-                    if (agenda.getTypeId().equals(agendaTypeInfo.getId())) {
-                        components.add(builder.buildAgenda(agenda));
-                        exist = true;
-                    }
-                }
-                if (!exist) {
-                    AgendaEditor emptyAgenda = new AgendaEditor();
-                    emptyAgenda.setTypeId(agendaTypeInfo.getId());
-                    components.add(builder.buildAgenda(emptyAgenda));
-                }
-            }
-            container.setItems(components);
-
+            customizeAgendaMaintenance(view, model, container);
         }
+    }
+
+    private void customizePropositionEditSection(View view, Object model, Container container) {
+        //Retrieve the current editing proposition if exists.
+        RuleEditor ruleEditor = this.getRuleEditor(model);
+        PropositionEditor propEditor = PropositionTreeUtil.getProposition(ruleEditor);
+
+        List<Component> components = new ArrayList<Component>();
+        if (propEditor != null) {
+            //Retrieve the name of the xml component to display for the proposition type.
+            TemplateInfo template = this.getTemplateForType(propEditor.getType());
+
+            if (template != null && template.getComponentId() != null) {
+                Component component = ComponentFactory.getNewComponentInstance(template.getComponentId());
+                view.assignComponentIds(component);
+
+                //Add Proposition Type FieldGroup to Tree Node
+                components.add(component);
+            }
+
+            if (template != null && template.getConstantComponentId() != null) {
+                Component component = ComponentFactory.getNewComponentInstance(template.getConstantComponentId());
+                view.assignComponentIds(component);
+
+                //Add Proposition Type FieldGroup to Tree Node
+                components.add(component);
+            }
+        }
+
+        container.setItems(components);
+    }
+
+    private void customizeAgendaMaintenance(View view, Object model, Container container) {
+        AgendaBuilder builder = new AgendaBuilder(view);
+        builder.setTypeRelationsMap(this.getTypeRelationsMap());
+
+        //Retrieve the current editing proposition if exists.
+        MaintenanceDocumentForm document = (MaintenanceDocumentForm) model;
+        RuleManagementWrapper form = (RuleManagementWrapper) document.getDocument().getNewMaintainableObject().getDataObject();
+
+        container.setItems(builder.build(form));
     }
 
     /**
@@ -189,7 +165,7 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
      */
     private Map<String, AgendaTypeInfo> getTypeRelationsMap() {
         if (typeRelationsMap == null) {
-            typeRelationsMap = new HashMap<String, AgendaTypeInfo>();
+            typeRelationsMap = new LinkedHashMap<String, AgendaTypeInfo>();
 
             // Get Instruction Usage Id
             String instructionUsageId = getRuleManagementService().getNaturalLanguageUsageByNameAndNamespace(KsKrmsConstants.KRMS_NL_TYPE_INSTRUCTION,
@@ -200,7 +176,7 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
                     PermissionServiceConstants.KS_SYS_NAMESPACE).getId();
 
             // Get the super type.
-            KrmsTypeDefinition requisitesType = this.getKrmsTypeRepositoryService().getTypeByName(PermissionServiceConstants.KS_SYS_NAMESPACE, "kuali.krms.agenda.type.course");
+            KrmsTypeDefinition requisitesType = this.getKrmsTypeRepositoryService().getTypeByName(PermissionServiceConstants.KS_SYS_NAMESPACE, this.getViewTypeName());
 
             // Get all agenda types linked to super type.
             List<TypeTypeRelation> agendaRelationships = this.getKrmsTypeRepositoryService().findTypeTypeRelationsByFromType(requisitesType.getId());
@@ -271,18 +247,20 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
 
     public String resetDescription(PropositionEditor prop) {
 
+        //If proposition type is null, set description and term null
+        if(prop.getType() == null) {
+            prop.setDescription(StringUtils.EMPTY);
+            prop.setTerm(null);
+            prop.getNaturalLanguage().clear();
+            return prop.getDescription();
+        }
+
         //Build the new termParamters with the matching component builder.
         if (PropositionType.SIMPLE.getCode().equalsIgnoreCase(prop.getPropositionTypeCode())) {
             Map<String, String> termParameters = null;
             ComponentBuilder builder = this.getTemplateRegistry().getComponentBuilderForType(prop.getType());
             if (builder != null) {
                 termParameters = builder.buildTermParameters(prop);
-            }
-            if (prop.getTerm() == null){
-                TermEditor term = new TermEditor();
-                String termSpecName = this.getTemplateRegistry().getTermSpecNameForType(prop.getType());
-                term.setSpecification(getTermRepositoryService().getTermSpecificationByNameAndNamespace(termSpecName,KsKrmsConstants.NAMESPACE_CODE));
-                prop.setTerm(term);
             }
 
             List<TermParameterEditor> parameters = new ArrayList<TermParameterEditor>();
@@ -312,13 +290,52 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
             }
 
             prop.getTerm().setParameters(parameters);
+
+            //Set the term specification if it doesn't exist.
+            if(prop.getTerm().getSpecification()==null){
+                String termSpecName = this.getTemplateRegistry().getTermSpecNameForType(prop.getType());
+                prop.getTerm().setSpecification(getTermRepositoryService().getTermSpecificationByNameAndNamespace(termSpecName, KsKrmsConstants.NAMESPACE_CODE));
+            }
+
+        } else {
+            prop.setTerm(null);
         }
 
         //Refresh the natural language.
         this.getNaturalLanguageHelper().setNaturalLanguageForUsage(prop, KsKrmsConstants.KRMS_NL_RULE_EDIT);
         this.getNaturalLanguageHelper().setNaturalLanguageForUsage(prop, KsKrmsConstants.KRMS_NL_PREVIEW);
-        prop.setDescription(prop.getNaturalLanguageForUsage(KsKrmsConstants.KRMS_NL_RULE_EDIT));
+        String description = prop.getNaturalLanguageForUsage(KsKrmsConstants.KRMS_NL_RULE_EDIT);
+        prop.setDescription(StringUtils.abbreviate(description, 99));
         return prop.getDescription();
+    }
+
+    public void configurePropositionForType(PropositionEditor proposition) {
+
+        if (proposition != null) {
+
+            if (PropositionType.COMPOUND.getCode().equalsIgnoreCase(proposition.getPropositionTypeCode())) {
+                return;
+            }
+
+            String propositionTypeId = proposition.getTypeId();
+            if (propositionTypeId == null) {
+                proposition.setType(null);
+                return;
+            }
+
+            KrmsTypeDefinition type = KrmsRepositoryServiceLocator.getKrmsTypeRepositoryService().getTypeById(propositionTypeId);
+            if (type != null) {
+                proposition.setType(type.getName());
+            }
+
+            if (proposition.getTerm() == null){
+                proposition.setTerm(new TermEditor());
+            }
+
+            String termSpecName = this.getTemplateRegistry().getTermSpecNameForType(proposition.getType());
+            proposition.getTerm().setSpecification(getTermRepositoryService().getTermSpecificationByNameAndNamespace(termSpecName, KsKrmsConstants.NAMESPACE_CODE));
+
+        }
     }
 
     /**
@@ -500,6 +517,8 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
         //Also reset the logic expression. Should only be done after editTree is already built.
         if (rule.getProposition() != null) {
             rule.setLogicArea(PropositionTreeUtil.configureLogicExpression((PropositionEditor) rule.getProposition()));
+        } else {
+            rule.setLogicArea(StringUtils.EMPTY);
         }
 
     }
@@ -529,12 +548,52 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
     }
 
     @Override
-    public PropositionEditor copyProposition(PropositionEditor proposition) {
+    public PropositionEditor copyProposition(PropositionEditor oldProposition) {
         try {
-            return PropositionTreeUtil.copyProposition(proposition, this.getPropositionEditorClass());
+            PropositionEditor newProposition = this.copyPropositionEditor(oldProposition);
+            return newProposition;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private PropositionEditor copyPropositionEditor(PropositionEditor oldProposition) {
+        EnrolPropositionEditor newProposition = new EnrolPropositionEditor();
+        BeanUtils.copyProperties(oldProposition, newProposition, new String[]{"key","id","term","parameters"});
+
+        if(!oldProposition.getPropositionTypeCode().equals("C")) {
+            List<PropositionParameterEditor> propositionParameterEditors = new ArrayList<PropositionParameterEditor>();
+            for(PropositionParameterEditor parm : oldProposition.getParameters()) {
+                PropositionParameterEditor newParm = new PropositionParameterEditor();
+                BeanUtils.copyProperties(parm, newParm, new String[]{"termValue","id","versionNumber"});
+                propositionParameterEditors.add(newParm);
+            }
+
+            newProposition.setParameters(propositionParameterEditors);
+
+            TermEditor termEditor = new TermEditor();
+            BeanUtils.copyProperties(oldProposition.getTerm(), termEditor, new String[]{"id","versionNumber","parameters"});
+            List<TermParameterEditor> termParameterEditors = new ArrayList<TermParameterEditor>();
+            for(TermParameterEditor termParm : oldProposition.getTerm().getEditorParameters()) {
+                TermParameterEditor newTermParm = new TermParameterEditor();
+                BeanUtils.copyProperties(termParm, newTermParm, new String[]{"id","versionNumber"});
+                termParameterEditors.add(newTermParm);
+            }
+            termEditor.setParameters(termParameterEditors);
+
+            newProposition.setTerm(termEditor);
+            this.resetDescription(newProposition);
+        }
+
+        if(newProposition.getCompoundEditors().size() != 0) {
+            List<PropositionEditor> props = new ArrayList<PropositionEditor>();
+            for(PropositionEditor prop : newProposition.getCompoundEditors()) {
+                props.add(this.copyPropositionEditor(prop));
+            }
+            newProposition.setCompoundEditors(props);
+        }
+
+        return newProposition;
     }
 
     @Override

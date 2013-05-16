@@ -45,7 +45,7 @@
             https://wiki.kuali.org/display/STUDENT/KS+ENR+HLDS+-+Manage+Complex+Course+Offerings+%28Part+1%29
     -->
 
-    <bean id="KS-CourseOffering-Create-MaintenanceView" parent="KSMaintenanceView">
+    <bean id="KS-CourseOffering-Create-MaintenanceView" parent="KS-Uif-MaintenanceView">
         <property name="id" value="createCourseOfferingPage"/>
         <property name="headerText" value="Create Course Offering"/>
         <property name="dataObjectClassName" value="org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingCreateWrapper"/>
@@ -55,7 +55,7 @@
         <property name="authorizer">
             <bean class="org.kuali.student.enrollment.main.view.KsMaintenanceViewAuthorizerBase"/>
         </property>
-        <property name="items">
+        <property name="page.items">
             <list>
                 <ref bean="KS-CourseOffering-MetaSection"/>
                 <ref bean="KS-CourseOffering-NewCourseOffering"/>
@@ -296,8 +296,8 @@
         </property>
         <property name="lineActions">
             <list>
-                <bean parent="Uif-ActionLink" p:ajaxSubmit="false" p:methodToCall="markCourseForJointOffering"
-                      p:performClientSideValidation="false" p:actionLabel="@{!#lp.selectedToJointlyOfferred ? 'Create New' : 'Deselect'}" p:onClickScript="writeHiddenToForm(&quot;document.newMaintainableObject.dataObject.selectedIndex&quot;, &quot;@{#index}&quot;);" p:render="@{!#lp.alreadyOffered}"/>
+                <bean parent="Uif-ActionLink" p:ajaxSubmit="false" p:methodToCall="markCourseForJointOffering" p:actionEvent="createNewCO"
+                      p:performClientSideValidation="false" p:actionLabel="@{!#lp.selectedToJointlyOfferred ? 'Create New' : 'Deselect'}" p:onClickScript="writeHiddenToForm(&quot;document.newMaintainableObject.dataObject.selectedIndex&quot;, &quot;@{#index}&quot;);" p:render="@{!#lp.alreadyOffered and #line.isEnableCreateNewCOActionLink()}"/>
             </list>
         </property>
     </bean>

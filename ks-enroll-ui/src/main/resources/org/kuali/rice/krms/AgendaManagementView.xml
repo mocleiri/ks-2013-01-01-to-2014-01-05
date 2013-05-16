@@ -18,14 +18,10 @@
      See the License for the specific language governing permissions and
      limitations under the License.
     -->
-    <bean id="KRMS-AgendaManagement-View" parent="KSMaintenanceView">
-        <property name="headerText" value="Course Rules"/>
+    <bean id="KRMS-AgendaManagement-View" parent="KS-Uif-MaintenanceView">
+        <property name="headerText" value="Course Offering Requisites"/>
+        <property name="header.style" value="margin-bottom: -2em"/>
         <property name="dataObjectClassName" value="org.kuali.rice.krms.dto.RuleManagementWrapper"/>
-        <property name="cssClasses">
-            <list merge="true">
-                <value>ks-enrollment-home</value>
-            </list>
-        </property>
         <property name="additionalScriptFiles">
             <list>
                 <value>krms/scripts/agendaTree.js</value>
@@ -73,20 +69,35 @@
     </bean>
 
     <bean name="KRMS-AgendaMaintenance-Page-Parent" parent="Uif-Page">
-        <property name="footer">
-            <bean id="KRMS-Footer-SubmitCancel" parent="KRMS-Footer-SubmitCancel-parent" />
+        <property name="header.lowerGroup">
+            <bean parent="Uif-VerticalBoxGroup" p:style="margin-bottom: -1em">
+                <property name="items">
+                    <list>
+                        <bean parent="Uif-PageHeader" p:headerText="@{#dp.cluDescription}"/>
+                        <bean parent="Uif-HorizontalBoxGroup">
+                            <property name="items">
+                                <list>
+                                    <bean parent="Uif-ActionLink" p:actionScript="expandDisclosures();"
+                                          p:actionLabel="[+] expand all">
+                                        <property name="actionImage">
+                                            <null/>
+                                        </property>
+                                    </bean>
+                                    <bean parent="Uif-ActionLink" p:actionScript="collapseDisclosures();"
+                                          p:actionLabel="[-] collapse all" p:style="margin-left:1em">
+                                        <property name="actionImage">
+                                            <null/>
+                                        </property>
+                                    </bean>
+                                </list>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
         </property>
-    </bean>
-
-    <bean id="KRMS-Footer-SubmitCancel-parent" parent="Uif-DocumentPageFooter" abstract="true">
-        <property name="items">
-            <list>
-                <bean parent="Uif-PrimaryActionButton" p:ajaxSubmit="false" p:methodToCall="route" p:actionLabel="Save"
-                      p:performClientSideValidation="true"
-                      p:render="@{#actionFlags[#Constants.KUALI_ACTION_CAN_ROUTE]}"/>
-                <bean parent="Uif-ActionLink" p:ajaxSubmit="false" p:methodToCall="cancel" p:actionLabel="Cancel"
-                      p:render="@{#actionFlags[#Constants.KUALI_ACTION_CAN_CANCEL]}"/>
-            </list>
+        <property name="footer">
+            <ref bean="KS-Uif-DocumentPageFooter-SubmitCancel"/>
         </property>
     </bean>
 
@@ -100,11 +111,13 @@
             <bean parent="Uif-FooterBase">
                 <property name="items">
                     <list>
-                        <bean id="update-button" parent="Uif-SecondaryActionButton-Small" p:performClientSideValidation="true">
+                        <bean id="update-button" parent="Uif-SecondaryActionButton-Small"
+                              p:performClientSideValidation="true">
                             <property name="actionLabel" value="Update Rule"/>
                             <property name="methodToCall" value="updateRule"/>
                         </bean>
-                        <bean id="cancel-button" parent="Uif-ActionLink" p:style="margin-left: 0.5em;margin-top: 0.3em;">
+                        <bean id="cancel-button" parent="Uif-ActionLink"
+                              p:style="margin-left: 0.5em;margin-top: 0.3em;">
                             <property name="actionLabel" value="Cancel"/>
                             <property name="methodToCall" value="cancelEditRule"/>
                         </bean>
@@ -120,28 +133,22 @@
         </property>
     </bean>
 
-    <bean id="KRMS-RuleEdit-Links" parent="Uif-LinkGroup">
+    <bean id="KRMS-RuleEdit-Links" parent="Uif-LinkGroup" p:render="@{#actionFlags[#Constants.KUALI_ACTION_CAN_ROUTE]}">
         <property name="linkSeparator" value=" | "/>
         <property name="items">
             <list>
-                <bean parent="Uif-ActionLink" p:actionLabel="Compare to Original" p:methodToCall="compareRules">
-                    <property name="toolTip">
-                        <bean parent="Uif-TooltipFocus" p:onMouseHover="true"
-                              p:tooltipContent="Compares CLU and CO Rules"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-ActionLink" p:actionLabel="Edit Rule" p:methodToCall="goToRuleView">
-                    <property name="toolTip">
-                        <bean parent="Uif-TooltipFocus" p:onMouseHover="true"
-                              p:tooltipContent="Edit Rule"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-ActionLink" p:actionLabel="Delete Rule" p:methodToCall="deleteRule">
-                    <property name="toolTip">
-                        <bean parent="Uif-TooltipFocus" p:onMouseHover="true"
-                              p:tooltipContent="Delete Rule"/>
-                    </property>
-                </bean>
+                <bean parent="Uif-ActionLink" p:actionLabel="Compare Rule" p:methodToCall="compareRules"/>
+                <bean parent="Uif-ActionLink" p:actionLabel="Edit Rule" p:methodToCall="goToRuleView"/>
+                <bean parent="Uif-ActionLink" p:actionLabel="Delete Rule" p:methodToCall="deleteRule"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="KRMS-RuleView-Links" parent="Uif-LinkGroup" p:render="@{!#actionFlags[#Constants.KUALI_ACTION_CAN_ROUTE]}">
+        <property name="linkSeparator" value=" | "/>
+        <property name="items">
+            <list>
+                <ref bean="KRMS-CompareCanonical-Link" />
             </list>
         </property>
     </bean>
@@ -149,37 +156,31 @@
     <bean id="KRMS-RuleAdd-Links" parent="Uif-LinkGroup">
         <property name="items">
             <list>
-                <bean parent="Uif-ActionLink" p:actionLabel="Add Rule" p:methodToCall="addRule">
-                    <property name="toolTip">
-                        <bean parent="Uif-TooltipFocus" p:onMouseHover="true"
-                              p:tooltipContent="Add Requisite to Rule"/>
-                    </property>
-                </bean>
+                <bean parent="Uif-ActionLink" p:actionLabel="Add Rule" p:methodToCall="addRule"
+                      p:render="@{#actionFlags[#Constants.KUALI_ACTION_CAN_ROUTE]}"/>
             </list>
         </property>
     </bean>
 
-    <bean id="KRMS-RuleEdit-Template" parent="Uif-Disclosure-VerticalBoxSection">
+    <bean id="KRMS-Rule-Template" parent="Uif-Disclosure-VerticalBoxSection">
         <property name="disclosure.defaultOpen" value="false"/>
         <property name="header">
             <bean parent="Uif-HeaderThree"/>
         </property>
+    </bean>
+
+    <bean id="KRMS-RuleEdit-Section" parent="Uif-VerticalBoxSection" p:width="500px"
+          p:style="margin-left:1em">
         <property name="items">
             <list>
-                <bean id="KRMS-RuleEdit-Section" parent="Uif-VerticalBoxSection" p:width="500px"
-                      p:style="margin-left:1em">
+                <bean parent="KRMS-RuleEdit-Links" p:id="KRSM-RuleEdit-ActionLinks" p:align="right"/>
+                <bean parent="KRMS-RuleView-Links" p:id="KRSM-RuleView-ActionLinks" p:align="right"/>
+                <bean id="KRMS-Instruction-EditMessage" parent="Uif-MessageField"/>
+                <bean id="KRMS-PreviewTree-Group" parent="Uif-VerticalBoxGroup" p:cssClasses="viewModeNode"
+                      p:style="border: 1px solid #999999">
                     <property name="items">
                         <list>
-                            <bean parent="KRMS-RuleEdit-Links" p:id="KRSM-RuleEdit-ActionLinks" p:align="right"/>
-                            <bean id="KRMS-Instruction-EditMessage" parent="Uif-MessageField"/>
-                            <bean id="KRMS-PreviewTree-Group" parent="Uif-VerticalBoxGroup" p:cssClasses="viewModeNode"
-                                  p:style="border: 1px solid #999999">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="KS-ViewTree-Section"/>
-                                    </list>
-                                </property>
-                            </bean>
+                            <bean parent="KS-ViewTree-Section"/>
                         </list>
                     </property>
                 </bean>
@@ -187,22 +188,12 @@
         </property>
     </bean>
 
-    <bean id="KRMS-RuleAdd-Template" parent="Uif-Disclosure-VerticalBoxSection">
-        <property name="disclosure.defaultOpen" value="false"/>
-        <property name="header">
-            <bean parent="Uif-HeaderThree"/>
-        </property>
+    <bean id="KRMS-RuleAdd-Section" parent="Uif-VerticalBoxSection" p:width="500px"
+          p:style="margin-left:1em">
         <property name="items">
             <list>
-                <bean id="KRMS-RuleAdd-Section" parent="Uif-VerticalBoxSection" p:width="500px"
-                      p:style="margin-left:1em">
-                    <property name="items">
-                        <list>
-                            <bean parent="KRMS-RuleAdd-Links" p:id="KRMS-RuleAdd-ActionLink" p:align="right"/>
-                            <bean id="KRMS-Instruction-AddMessage" parent="Uif-MessageField"/>
-                        </list>
-                    </property>
-                </bean>
+                <bean parent="KRMS-RuleAdd-Links" p:id="KRMS-RuleAdd-ActionLink" p:align="right"/>
+                <bean id="KRMS-Instruction-AddMessage" parent="Uif-MessageField"/>
             </list>
         </property>
     </bean>

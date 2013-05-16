@@ -2,13 +2,13 @@ package org.kuali.student.enrollment.class2.courseoffering.dto;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingClusterInfo;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.FormatOfferingInfo;
 import org.kuali.student.enrollment.courseofferingset.dto.SocInfo;
 import org.kuali.student.r2.common.util.constants.CourseOfferingSetServiceConstants;
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
 import org.kuali.student.r2.core.acal.dto.TermInfo;
+import org.kuali.student.r2.core.population.dto.PopulationInfo;
 import org.kuali.student.r2.core.scheduling.dto.ScheduleInfo;
 import org.kuali.student.r2.core.scheduling.dto.ScheduleRequestInfo;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
@@ -26,8 +26,7 @@ import java.util.List;
  *
  */
 public class ActivityOfferingWrapper implements Serializable{
-    //added for ARG
-    private ActivityOfferingClusterInfo aoCluster;
+
     private String aoClusterName;
     private String aoClusterID;
 
@@ -37,10 +36,13 @@ public class ActivityOfferingWrapper implements Serializable{
     private List<OfferingInstructorWrapper> instructors;
     private List<ScheduleComponentWrapper> scheduleComponentWrappers;
     private List<SeatPoolWrapper> seatpools;
+    private List<PopulationInfo> populationsForSPValidation;
     private boolean readOnlyView;
     private boolean isChecked;
     private boolean isCheckedByCluster;
     private String courseOfferingId;
+    private String populationsJSONString;
+
     // Tanveer 06/13/2012
     private String stateName;
     private String typeName;
@@ -93,6 +95,7 @@ public class ActivityOfferingWrapper implements Serializable{
     private boolean enableSuspendButton = false;
     private boolean enableCancelButton = false;
     private boolean enableReinstateButton = false;
+    private boolean enableMoveToButton = false;
     private boolean enableDeleteButton = false;
     private boolean enableCopyAOActionLink = false;
     private boolean enableEditAOActionLink = false;
@@ -100,6 +103,7 @@ public class ActivityOfferingWrapper implements Serializable{
     private boolean colocatedAO;
     private List<ColocatedActivity> colocatedActivities;
     private boolean maxEnrollmentShared;
+    private boolean hiddenMaxEnrollmentShared;
     private int sharedMaxEnrollment;
 
     private EditRenderHelper editRenderHelper;
@@ -113,6 +117,7 @@ public class ActivityOfferingWrapper implements Serializable{
         aoInfo = new ActivityOfferingInfo();
         instructors = new ArrayList<OfferingInstructorWrapper>();
         seatpools = new ArrayList<SeatPoolWrapper>();
+        populationsForSPValidation = new ArrayList<PopulationInfo>();
         aoInfo.setStateKey(LuiServiceConstants.LUI_AO_STATE_DRAFT_KEY);
         aoInfo.setTypeKey(LuiServiceConstants.LECTURE_ACTIVITY_OFFERING_TYPE_KEY);
         formatOffering = new FormatOfferingInfo();
@@ -135,14 +140,7 @@ public class ActivityOfferingWrapper implements Serializable{
         aoInfo = info;
         instructors = new ArrayList<OfferingInstructorWrapper>();
         seatpools = new ArrayList<SeatPoolWrapper>();
-    }
-
-    public ActivityOfferingClusterInfo getAoCluster() {
-        return aoCluster;
-    }
-
-    public void setAoCluster(ActivityOfferingClusterInfo aoCluster) {
-        this.aoCluster = aoCluster;
+        populationsForSPValidation = new ArrayList<PopulationInfo>();
     }
 
     public String getAoClusterName() {
@@ -191,6 +189,14 @@ public class ActivityOfferingWrapper implements Serializable{
 
     public void setEnableCancelButton(boolean enableCancelButton) {
         this.enableCancelButton = enableCancelButton;
+    }
+
+    public boolean isEnableMoveToButton() {
+        return enableMoveToButton;
+    }
+
+    public void setEnableMoveToButton(boolean enableMoveToButton) {
+        this.enableMoveToButton = enableMoveToButton;
     }
 
     public boolean isEnableReinstateButton() {
@@ -437,6 +443,14 @@ public class ActivityOfferingWrapper implements Serializable{
 
     public void setSeatpools(List<SeatPoolWrapper> seatpools) {
         this.seatpools = seatpools;
+    }
+
+    public List<PopulationInfo> getPopulationsForSPValidation() {
+        return populationsForSPValidation;
+    }
+
+    public void setPopulationsForSPValidation(List<PopulationInfo> populationsForSPValidation) {
+        this.populationsForSPValidation = populationsForSPValidation;
     }
 
     public String getFirstInstructorDisplayName() {
@@ -762,6 +776,14 @@ public class ActivityOfferingWrapper implements Serializable{
         this.colocatedAoInfo = colocatedAoInfo;
     }
 
+    public String getPopulationsJSONString() {
+        return populationsJSONString;
+    }
+
+    public void setPopulationsJSONString(String populationsJSONString) {
+        this.populationsJSONString = populationsJSONString;
+    }
+
     /**
      * This method returns a list of comma seperated alternate course codes.
      * This is used in create and edit course offerings screen.
@@ -809,6 +831,10 @@ public class ActivityOfferingWrapper implements Serializable{
 
     public void setMaxEnrollmentShared(boolean maxEnrollmentShared) {
         this.maxEnrollmentShared = maxEnrollmentShared;
+    }
+
+    public boolean getHiddenMaxEnrollmentShared(){
+        return maxEnrollmentShared;
     }
 
     public int getSharedMaxEnrollment() {
