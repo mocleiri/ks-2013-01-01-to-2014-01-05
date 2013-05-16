@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>
-		Kuali Student UIM Page Template :: Boilerplate
+		Kuali Student UIM Page Template :: Simple Confirm
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -155,7 +155,7 @@
     			</div>
     			<div id="page-footer" title="page-footer" class="container-fluid"></div>
     		</div>
-    		<div id="view-footer" title="view-footer" class="container navbar-fixed-bottom sticky">
+    		<div id="view-footer" title="view-footer" class="container navbar-fixed-bottom sticky hidden">
 				<div class="container">
     				<div class="container-fluid pull-right">
     					<form>
@@ -173,171 +173,21 @@
     	</div>
     	<div id="application-footer" title="application-footer" class="container-fluid navbar-fixed-bottom sticky"></div>
 	</div>
-	<!-- Lightbox: Advanced Select of Organization -->
-	<div id="lightbox-content" class="modal fade lightbox modal-large" tabindex="-1" role="dialog" aria-labelledby="lightboxLabel" aria-hidden="true">
+	<!-- Lightbox: Simple Donfirm -->
+	<div id="lightbox-content" class="modal fade lightbox" tabindex="-1" role="dialog" aria-labelledby="lightboxLabel" aria-hidden="true">
    	<div class="modal-header">
    		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-   		<h3 id="lightboxLabel">Organizational Lookup</h3>
+   		<h3 id="lightboxLabel">Confirm this action</h3>
    	</div>
-   	<div class="modal-body modal-body-large">
-			<div class="search-parameters">
-				<form id="search-organization" title="search-organization">
-					<div class="controls controls-row">
-						<div class="control-group span2">
-							<label class="control-label field-label">
-								Organization Name
-							</label>
-							<div class="controls">
-								<input class="span2" type="text" placeholder="e.g., Civil-Center" value="Civil Center">
-							</div>
-						</div>
-						<div class="control-group span4">
-							<label class="control-label field-label">
-								Abbreviation
-							</label>
-							<div class="controls">
-								<input class="span4" type="text" placeholder="e.g., Ctr Excellence on Proj Mgmt" value="">
-							</div>
-						</div>										
-						<div class="control-group span2">
-							<a class="btn btn-primary no-label">
-								Find Matches
-							</a>
-						</div>										
-					</div>
-				</form>
-			</div>
-			<div class="search-results clearfix">
-				<table class="table table-hover table-condensed">
-					<thead>
-						<tr>
-							<th class="span2">
-								ID 
-							</th>
-							<th class="span6">
-								Name
-							</th>
-							<th class="span4">
-								Abbreviation
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								1511461247 
-							</td>
-							<td>
-								AGNR-Dean-Joint Inst for Food Safety &amp; Applied Nutrition
-							</td>
-							<td>
-								Inst Food Safety &amp; Appl Nutr
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								1835615967 
-							</td>
-							<td>
-								AEXST-WT-Journalism
-							</td>
-							<td>
-								Winter Term-JOUR
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								31193503 
-							</td>
-							<td>
-								ENGR-Civil-Center for Excellence on Project Management
-							</td>
-							<td>
-								Ctr Excellence on Proj Mgmt
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								3392144313 
-							</td>
-							<td>
-								ARHU-Meyerhoff Program & Center for Jewish Studies
-							</td>
-							<td>
-								Meyerhoff Prg & Ctr Jewish Std
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								3506629388 
-							</td>
-							<td>
-								VPRGS-UMCAPS-Ctr for Criminal Justice Tech. Res.
-							</td>
-							<td>
-								UMCAPS-Ctr For Criminal Just.
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								4236812358 
-							</td>
-							<td>
-								JOUR-Philip Merrill College of Journalism
-							</td>
-							<td>
-								Philip Merrill Coll Journalism
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								4282297334 
-							</td>
-							<td>
-								ARHU-Women's Studies-Curric Transform Project
-							</td>
-							<td>
-								Wom Std-Curric Transform Proj
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								436661015 
-							</td>
-							<td>
-								CMNS-Astro-Joint Space Sciences Institute
-							</td>
-							<td>
-								Joint Space Sciences Inst
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								438750448 
-							</td>
-							<td>
-								EXST-FC-Journalism
-							</td>
-							<td>
-								Freshmen Connection-JOUR
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								53692544 
-							</td>
-							<td>
-								Joint Quantum Institute
-							</td>
-							<td>
-								CMNS-Physics-Joint Quantum Institute
-							</td>
-						</tr>
-					</tbody>
-				</table>
+   	<div class="modal-body">
+			<div id="confirm-consequences">
+				And jeepers falsely while less ineptly preparatory roughly barbarous much much rabidly up this astride locked much feeble oh a and ouch wherever that some through this cheeky dear fresh much misheard.
 			</div>
    	</div>
 		<div class="modal-footer">
+			<button type="submit" class="btn btn-primary">
+				Confirm
+			</button>
 			<a href="#" class="cancel" data-dismiss="modal" aria-hidden="true">Cancel</a>
 		</div>
    </div>
