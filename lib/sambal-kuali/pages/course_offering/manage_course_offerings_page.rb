@@ -81,10 +81,12 @@ class ManageCourseOfferings < BasePage
   element(:select_cluster) { |b| b.move_ao_cluster_popup_div.select(name: "clusterIdForAOMove") }
   element(:move_ao_button) { |b| b.move_ao_cluster_popup_div.button(text: "Move") }
   action(:complete_move_ao) { |b| b.move_ao_button.click; b.loading.wait_while_present }
+  element(:jgrowl){|b|b.frm.div(id:"jGrowl")}
 
   def approve_co_confirm
     approve_co_popup_div.checkbox(index: 0).click
     loading.wait_while_present(180)
+    wait_until jgrowl.include? "The selected course offering was successfully approved"
   end
 
   def approve_co_cancel
