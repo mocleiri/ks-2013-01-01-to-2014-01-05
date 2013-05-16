@@ -114,7 +114,13 @@
 	margin-top: .6em;
 	border-top: 4px solid #999;
 }
-
+.group, .section {
+	padding-top: 1.2em;
+	clear:both;
+}
+h2 {
+	font-size: 1.8em;
+}
 
 
 /************************************************************* FORMATING: KS Header */

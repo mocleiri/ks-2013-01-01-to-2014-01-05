@@ -13,6 +13,8 @@
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="assets/css/krad.css" rel="stylesheet">
     <link href="assets/css/kualistudent.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
+    <link href="assets/css/tables.css" rel="stylesheet">
     <!-- HTML5, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -116,42 +118,88 @@
 						</ul>
 	    			</div>
 				</div>
-    			<div id="page-header" title="page-header" class="container-fluid no-padding hidden">
+    			<div id="page-header" title="page-header" class="container-fluid  no-padding">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
 						<dl class="dl-horizontal">
-				    		<dt>Field 1</dt><dd>Lorum Ipsum</dd>
-				    		<dt>Field 2</dt><dd>Lorum Ipsum</dd>
-				    		<dt>Field 3</dt><dd>Lorum Ipsum</dd>
-				    		<dt>Field 4</dt><dd>Lorum Ipsum</dd>
-				    		<dt>Field 5</dt><dd>Lorum Ipsum</dd>
+				    		<dt>Field A</dt><dd>Lorum Ipsum</dd>
+				    		<dt>Field B</dt><dd>Lorum Ipsum</dd>
+				    		<dt>Field C</dt><dd>Lorum Ipsum</dd>
+				    		<dt>Field D</dt><dd>Lorum Ipsum</dd>
 				    	</dl>	
     				</div>
     			</div>
     			<div class="container-fluid group optional no-padding">
     				<div class="container-fluid group-header no-padding"></div>
-    				<div class="container-fluid validation group-error-validation-messaging"></div>
+    				<div class="container-fluid validation group-error-validation-messaging"><!-- error at group level ?--></div>
     				<div class="row-fluid no-padding">
     					<div class="container-fluid group span12 optional no-margin no-padding">
+    						<form id="#main-form">
+ 
+								<div>
+			  						<a name="section-personnel"></a>
+	 								<h2>
+	 									Section B
+	 								</h2>
+	   								<div class="control-group">
+	    								<label class="control-label collection-label">
+	    									Collection Label
+	    								</label>
+	    								<div class="controls inline">
+		    								<a id="add-person" class="btn btn-flat">
+		    									<i class="icon-plus-sign"></i>
+												Add a Record
+		    								</a>
+		    								<table class="table table-hover table-condensed table-col-4">
+		    									<thead>
+		    										<tr>
+		    											<th class="span3">
+		    												ID
+		    											</th>
+		    											<th class="span3">
+		    												Name
+		    											</th>
+		    											<th class="span3">
+		    												Affiliation <span class="required">*</span>
+		    											</th>
+		    											<th class="span3">
+		    											</th>
+		    										</tr>
+		    									</thead>
+		    									<tbody>
+		    										<tr id="add-person-fields">
+		    											<td>
+		    												<input class="input-medium" type="text" placeholder="e.g., 12345678" value="">
+					   									<span class="uif-constraintMessage"><a href="#advanced-select-personnel" role="link" data-toggle="modal">Find personnel ID</a></span>
+		    											</td>
+		    											<td>
+	    												
+		    											</td>
+		    											<td>
+				    										<select class="span10" required>
+				    											<option>
+				    												Instructor
+				    											</option>
+				    											<option>
+				    												Teaching Assistant
+				    											</option>
+				    										</select>
+		    											</td>
+		    											<td>
+	    												
+		    											</td>
+		    										</tr>
+		    										<tr id="no-person-data">
+		    											<td colspan="3">
+		    												No records have been selected
+		    											</td>
+		    										</tr>
+		    									</tbody>
+		    								</table>
+	    								</div>
+	 								</div>
+								</div>
 
-
-
-							<h3>Object Control</h3>
-							<ul>
-								<li><a href="single-page_edit.html">Single-Page Edit</a></li>
-								<li><a href="single-page_inspect.html">Single-Page Inspect</a></li>
-							</ul>
-							<h3>Task Initiation</h3>
-							<ul>
-								<li><a href="advanced_select.html">Advanced Select</a> (Lightbox)</li>
-							</ul>
-							<h3>Other Resources</h3>
-							<ul>
-								<li><a href="boilerplate.html">Boilerplate (no content)</a></li>
-								<li><a href="validation_example.html">Validation Example</a></li>
-							</ul>
-
-
-
+							</form>
    					</div>
     				</div>
     				<div class="container-fluid group-footer"></div>
@@ -168,7 +216,7 @@
     			</div>
     			<div id="page-footer" title="page-footer" class="container-fluid"></div>
     		</div>
-    		<div id="view-footer" title="view-footer" class="container navbar-fixed-bottom sticky hidden">
+    		<div id="view-footer" title="view-footer" class="container navbar-fixed-bottom sticky">
 				<div class="container">
     				<div class="container-fluid pull-right">
     					<form>
@@ -186,6 +234,149 @@
     	</div>
     	<div id="application-footer" title="application-footer" class="container-fluid navbar-fixed-bottom sticky"></div>
 	</div>
+	<!-- Lightbox: Advanced Select of Personnel -->
+	<div id="advanced-select-personnel" class="modal fade modal-medium" tabindex="-1" role="dialog" aria-labelledby="lightboxLabel-personnel" aria-hidden="true">
+   	<div class="modal-header">
+   		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+   		<h3 id="lightboxLabel-personnel">Personnel Lookup</h3>
+   	</div>
+   	<div class="modal-body modal-body-medium">
+			<div class="search-parameters">
+				<form id="search-personnel" title="search-personnel">
+					<div class="controls controls-row">
+						<div class="control-group span2">
+							<label class="control-label field-label">
+								Name
+							</label>
+							<div class="controls">
+								<input class="span2" type="text" placeholder="e.g., Johnson" value="Johnson">
+							</div>
+						</div>
+						<div class="control-group span2">
+							<label class="control-label field-label">
+								ID
+							</label>
+							<div class="controls">
+								<input class="span2" type="text" placeholder="e.g., rjohnson" value="">
+							</div>
+						</div>										
+						<div class="control-group span2">
+							<a class="btn btn-primary no-label">
+								Find Matches
+							</a>
+						</div>										
+					</div>
+				</form>
+			</div>
+			<div class="search-results clearfix">
+				<table class="table table-hover table-condensed">
+					<thead>
+						<tr>
+							<th class="span2">
+								Username 
+							</th>
+							<th class="span4">
+								Name
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.sarahh
+							</td>
+							<td>
+								JOHNSON, SARAH
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.michaelh10615
+							</td>
+							<td>
+								JOHNSON, SARAH
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.michaelh10615
+							</td>
+							<td>
+								JOHNSON, MICHAEL
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.michaelp
+							</td>
+							<td>
+								JOHNSON, MICHAEL
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.francisw
+							</td>
+							<td>
+								JOHNSON, FRANCIS
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.pimonet
+							</td>
+							<td>
+								JOHNSON, PIMONE
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.helens
+							</td>
+							<td>
+								JOHNSON, HELEN
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.barrettr
+							</td>
+							<td>
+								JOHNSON, BARRETT
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.markh
+							</td>
+							<td>
+								JOHNSON, MARK
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.garyh
+							</td>
+							<td>
+								JOHNSON, GARY
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.shangap
+							</td>
+							<td>
+								JOHNSON, SHANGA
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+   	</div>
+		<div class="modal-footer">
+			<a href="#" class="cancel" data-dismiss="modal" aria-hidden="true">Cancel</a>
+		</div>
+   </div>
 
 	<!-- Scripts -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -198,6 +389,7 @@
 	<script type="text/javascript">//<![CDATA[ 
 	$(document).ready(function() {
 		$(".collapse").collapse('hide');
+	   $('#advanced-select-personnel').modal();
 	});
 	//]]> </script>
 </body>

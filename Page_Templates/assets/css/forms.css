@@ -6,11 +6,6 @@
 
 
 /************************************************************* FORMATING: Forms */
-h2 {
-	font-size: 1.8em;
-	padding-top: 1.2em;
-	clear:both;
-}
 select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
 	padding: 5px 6px;
 	margin-bottom: 0px;
