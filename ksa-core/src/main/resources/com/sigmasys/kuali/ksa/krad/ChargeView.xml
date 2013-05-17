@@ -93,7 +93,7 @@
                     </property>
                     <property name="suggest">
                         <bean parent="Uif-Suggest">
-                            <property name="sourcePropertyName" value="id.id"/>
+                            <property name="valuePropertyName" value="id.id"/>
                             <property name="templateOptions" value="minLength:2,delay:0"/>
                             <property name="suggestQuery">
                                 <bean parent="Uif-AttributeQueryConfig">

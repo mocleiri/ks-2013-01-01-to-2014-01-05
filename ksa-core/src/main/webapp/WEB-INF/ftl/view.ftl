@@ -1,6 +1,6 @@
 <#--
 
-    Copyright 2005-2012 The Kuali Foundation
+    Copyright 2005-2013 The Kuali Foundation
 
     Licensed under the Educational Community License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -20,13 +20,24 @@
 <!-- VIEW -->
     <@krad.div component=view>
 
+    <!-- optional top group content above breadcrumbs -->
+        <#local topGroupWrapData=""/>
+        <#if view.stickyTopGroup>
+            <#local topGroupWrapData="data-sticky='true'"/>
+        </#if>
+    <div id="Uif-TopGroupWrapper" ${topGroupWrapData}>
+        <@krad.template component=view.topGroup/>
+    </div>
+
     <!-- VIEW HEADER -->
         <@krad.template component=view.header/>
 
     <!-- BREADCRUMBS -->
-        <#if view.renderBreadcrumbsInView>
-            <@krad.template component=view.breadcrumbs/>
+        <#local breadcrumbWrapData=""/>
+        <#if view.stickyBreadcrumbs>
+            <#local breadcrumbWrapData="data-sticky='true'"/>
         </#if>
+    <div id="Uif-BreadcrumbWrapper" ${breadcrumbWrapData}></div>
 
     <!-- VIEW CONTENT -->
     <div id="Uif-ViewContentWrapper" class="uif-viewContentWrapper">
@@ -44,9 +55,7 @@
     </div>
 
     <!-- VIEW FOOTER -->
-    <div id="viewfooter_div">
         <@krad.template component=view.footer/>
-    </div>
 
         <#if (view.dialogs?size > 0)>
         <!-- DIALOG LIST -->

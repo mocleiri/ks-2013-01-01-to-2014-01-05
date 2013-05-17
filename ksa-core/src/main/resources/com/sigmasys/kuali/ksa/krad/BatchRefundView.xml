@@ -65,7 +65,7 @@
                 <bean parent="Uif-InputField" p:label="Accounts" p:propertyName="newAccount">
                     <property name="suggest">
                         <bean parent="Uif-Suggest">
-                            <property name="sourcePropertyName" value="id"/>
+                            <property name="valuePropertyName" value="id"/>
                             <property name="templateOptions" value="minLength:2,delay:0"/>
                             <property name="suggestQuery">
                                 <bean parent="Uif-AttributeQueryConfig">
@@ -133,7 +133,7 @@
                 <bean parent="Uif-InputField" p:label="Tags" p:propertyName="newTag">
                     <property name="suggest">
                         <bean parent="Uif-Suggest">
-                            <property name="sourcePropertyName" value="code"/>
+                            <property name="valuePropertyName" value="code"/>
                             <property name="templateOptions" value="minLength:2,delay:0"/>
                             <property name="suggestQuery">
                                 <bean parent="Uif-AttributeQueryConfig">

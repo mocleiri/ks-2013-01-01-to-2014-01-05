@@ -50,6 +50,8 @@ KradResponse.prototype = {
             if (handlerFunc) {
                 handlerFunc(div, div.data());
             }
+
+            hideEmptyCells();
         });
     },
 
@@ -69,9 +71,6 @@ KradResponse.prototype = {
         // update page contents from response
         jQuery(pageInLayout).empty().append(page.find(">*"));
 
-        // process breadcrumbs
-        setPageBreadcrumb();
-
         pageValidatorReady = false;
         runHiddenScripts(jQuery(pageInLayout).attr("id"), false, true);
 
@@ -83,6 +82,15 @@ KradResponse.prototype = {
     updateDialogHandler: function (content, dataAttr) {
         var id = dataAttr.updatecomponentid;
         var component = jQuery("#" + id + "_update", content);
+
+        // remove old stuff
+        if (jQuery("#" + id + "_errors").length) {
+            jQuery("#" + id + "_errors").remove();
+        }
+
+        jQuery("input[data-for='" + id + "']").each(function () {
+            jQuery(this).remove();
+        });
 
         // replace component
         if (jQuery("#" + id).length) {
@@ -159,10 +167,8 @@ KradResponse.prototype = {
             jQuery(component).find("#" + id).addClass(kradVariables.PROGRESSIVE_DISCLOSURE_HIGHLIGHT_CLASS);
             newComponent.animate({backgroundColor:"transparent"}, 6000);
             jQuery(component).find("#" + id).animate({backgroundColor:"transparent"}, 6000);
-        }
+            }
         });
-
-
     },
 
     // performs a redirect to the URL found in the returned contents

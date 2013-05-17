@@ -26,7 +26,8 @@ function KradRequest(action) {
             this.ajaxSubmit = action.data("ajaxsubmit");
         }
 
-        this.additionalData = action.data("submitData");
+        this.additionalData = action.data(kradVariables.SUBMIT_DATA);
+
         this.methodToCall = this.additionalData['methodToCall'];
 
         if (action.data("successcallback") !== undefined) {
@@ -267,6 +268,14 @@ KradRequest.prototype = {
             writeHiddenToForm("clientViewState", jsonViewState);
         }
 
+        // check for file inputs and set encoding, this is handled for us with the ajax submits (using jqform)
+        var fileInputs = jQuery('input[type=file]:enabled[value!=""]', '#kualiForm');
+
+        var hasFileInputs = fileInputs.length > 0;
+        if (hasFileInputs) {
+            jQuery('#kualiForm').attr('enctype', 'multipart/form-data');
+        }
+
         // submit
         jQuery('#kualiForm').submit();
     },
@@ -294,12 +303,14 @@ KradRequest.prototype = {
                     showLoading(request.loadingMessage, request.elementToBlock, replaceElement);
                 }
             },
-            complete: function () {
+            complete: function (jqXHR, textStatus) {
                 // note that if you want to unblock simultaneous with showing the new retrieval
                 // you must do so in the successCallback
                 if (!request.disableBlocking) {
                     hideLoading(request.elementToBlock);
                 }
+
+                resetSessionTimers();
             },
             error: function () {
                 if (nonEmpty(request.elementToBlock) && request.elementToBlock.hasClass("uif-placeholder")) {
@@ -308,7 +319,17 @@ KradRequest.prototype = {
                 else if (!request.disableBlocking) {
                     hideLoading(request.elementToBlock);
                 }
-            }
+            },
+            statusCode: {403: function (jqXHR, textStatus) {
+                if (nonEmpty(request.elementToBlock) && request.elementToBlock.hasClass("uif-placeholder")) {
+                    request.elementToBlock.hide();
+                }
+                else if (!request.disableBlocking) {
+                    hideLoading(request.elementToBlock);
+                }
+
+                handleAjaxSessionTimeout(jqXHR.responseText);
+            }}
         };
 
         jQuery.extend(options, elementBlockingOptions);

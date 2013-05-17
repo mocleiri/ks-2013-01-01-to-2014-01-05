@@ -110,7 +110,7 @@
                                   p:maxLength="10" p:required="true">
                                 <property name="suggest">
                                     <bean parent="Uif-Suggest">
-                                        <property name="sourcePropertyName" value="id.id"/>
+                                        <property name="valuePropertyName" value="id.id"/>
                                         <property name="templateOptions">
                                             <map>
                                                 <entry key="minLength" value="2"/>

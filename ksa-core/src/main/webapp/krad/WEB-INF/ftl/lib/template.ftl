@@ -15,19 +15,30 @@
     limitations under the License.
 
 -->
-<#macro template component=[] body='' componentUpdate=false tmplParms...>
+<#macro template component=[] body='' componentUpdate=false includeSrc=false tmplParms...>
+  <#-- compress to avoid white space in tags -->
+  <#compress>
+
     <#if !(component!?size > 0)>
         <#return>
     </#if>
 
-<#-- check to see if the component should render, if this has progressiveDisclosure and not getting disclosed via ajax
-still render, but render in a hidden container -->
+    <#-- check to see if the component should render, if this has progressiveDisclosure and not getting disclosed via ajax
+         still render, but render in a hidden container -->
     <#if component.render || (component.progressiveRender?has_content && !component.progressiveRenderViaAJAX
-    && !component.progressiveRenderAndRefresh)>
+     && !component.progressiveRenderAndRefresh)>
+
+        <#if component.preRenderContent?has_content>
+            ${component.preRenderContent?html}
+        </#if>
 
         <#if component.selfRendered>
-        ${component.renderedHtmlOutput}
+            ${component.renderedHtmlOutput}
         <#else>
+            <#if includeSrc>
+                <#include "${component.template}" parse=true/>
+            </#if>
+
             <#local macroInvokeSrc="<" + "@.main.${component.templateName} ${component.componentTypeName}=component "/>
             <#list tmplParms?keys as parm>
                 <#local macroInvokeSrc="${macroInvokeSrc} ${parm}=tmplParms['${parm}']!"/>
@@ -43,25 +54,26 @@ still render, but render in a hidden container -->
             <@macroInvoke />
         </#if>
 
-    <#-- write data attributes -->
-        <@krad.script component=component role="dataScript" value="${component.complexDataAttributesJs}"/>
+        <#-- generate event code for component -->
+        <@krad.script component=component value="${component.eventHandlerScript}" />
 
-    <#-- generate event code for component -->
-        <@krad.eventScript component=component/>
+        <#if component.postRenderContent?has_content>
+            ${component.postRenderContent?html}
+        </#if>
     </#if>
 
     <#if componentUpdate>
         <#return>
     </#if>
 
-<#-- setup progressive render -->
+    <#-- setup progressive render -->
     <#if component.progressiveRender?has_content>
-    <#-- for progressive rendering requiring an ajax call, put in place holder div -->
+        <#-- for progressive rendering requiring an ajax call, put in place holder div -->
         <#if !component.render && (component.progressiveRenderViaAJAX || component.progressiveRenderAndRefresh)>
         <span id="${component.id}" data-role="placeholder" class="uif-placeholder"></span>
         </#if>
 
-    <#-- setup progressive handlers for each control which may satisfy a disclosure condition -->
+        <#-- setup progressive handlers for each control which may satisfy a disclosure condition -->
         <#list component.progressiveDisclosureControlNames as cName>
             <@krad.script value="var condition = function(){return (${component.progressiveDisclosureConditionJs});};
                   setupProgressiveCheck('${cName?js_string}', '${component.id}', '${component.baseId}', condition,
@@ -70,13 +82,13 @@ still render, but render in a hidden container -->
         <@script value="hiddenInputValidationToggle('${component.id}');"/>
     </#if>
 
-<#-- alternate ajax placeholder setup -->
+    <#-- alternate ajax placeholder setup -->
     <#if (component.progressiveRenderViaAJAX && !(component.progressiveRender!?length > 0))
     || (!component.render && component.disclosedByAction)>
         <span id="${component.id}" data-role="placeholder" class="uif-placeholder"></span>
     </#if>
 
-<#-- conditional Refresh setup -->
+    <#-- conditional Refresh setup -->
     <#if component.conditionalRefresh?has_content>
         <#list component.conditionalRefreshControlNames as cName>
             <@krad.script value="var condition = function(){return (${component.conditionalRefreshConditionJs});};
@@ -85,13 +97,14 @@ still render, but render in a hidden container -->
         </#list>
     </#if>
 
-<#-- refresh when changed setup -->
+    <#-- refresh when changed setup -->
     <#list component.refreshWhenChangedPropertyNames as cName>
         <@krad.script value="setupOnChangeRefresh('${cName?js_string}', '${component.id}',
         '${component.methodToCallOnRefresh!}');"/>
     </#list>
 
-<#-- generate tooltip for component -->
+    <#-- generate tooltip for component -->
     <@krad.tooltip component=component/>
 
+  </#compress>
 </#macro>

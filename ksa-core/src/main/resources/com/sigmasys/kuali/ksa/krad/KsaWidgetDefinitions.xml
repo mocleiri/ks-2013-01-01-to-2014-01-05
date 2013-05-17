@@ -9,11 +9,11 @@
 
     <!-- Breadcrumbs and History -->
     <bean id="Uif-KsaBreadcrumbs" parent="Uif-Breadcrumbs-parentBean">
-        <property name="homewardPathList">
+        <!--property name="homewardPathList">
             <list>
                 <bean parent="Uif-HistoryEntry" p:title="Home" p:url="../index.html"/>
             </list>
-        </property>
+        </property-->
     </bean>
 
     <bean id="Uif-KsaTheme" parent="Uif-KradTheme">
@@ -203,8 +203,7 @@
                 </property>
             </bean>
         </property>
-        <property name="header" ref="Uif-KsaHeader">
-        </property>
+        <property name="header.upperGroup" ref="Uif-KsaViewNavigation"/>
         <property name="navigation">
             <bean parent="Uif-KsaPageNavigation"/>
         </property>

@@ -19,42 +19,80 @@
 
     <@krad.script value="${KualiForm.growlScript!}"/>
 
-<div id="Uif-Application" style="display:none;" class="uif-application">
-
-    <@krad.backdoor/>
-
-    <@krad.form render=view.renderForm postUrl="${view.formPostUrl!KualiForm.formPostUrl}"
-    onSubmitScript="${view.onSubmitScript!}">
+    <div id="Uif-Application" style="display:none;" class="uif-application">
 
         <!-- APPLICATION HEADER -->
-        <@krad.template component=view.applicationHeader/>
+        <#if view.applicationHeader?has_content>
+            <#assign appHeaderData=""/>
+            <#if view.stickyApplicationHeader>
+                <#assign appHeaderData="data-sticky='true'"/>
+            </#if>
 
-        <#if view.renderForm>
-        <#-- write out view, page id as hidden so the view can be reconstructed if necessary -->
-            <@spring.formHiddenInput id="viewId" path="KualiForm.viewId"/>
-
-        <#-- all forms will be stored in session, this is the conversation key -->
-            <@spring.formHiddenInput id="formKey" path="KualiForm.formKey"/>
-
-        <#-- Based on the view setting, form elements will be checked for dirtyness -->
-            <@spring.formHiddenInput id="validateDirty" path="KualiForm.view.applyDirtyCheck"/>
-
-        <#-- Indicator which is set to true when content is being rendered inside a lightbox -->
-            <@spring.formHiddenInput id="renderedInLightBox" path="KualiForm.renderedInLightBox"/>
+            <div id="Uif-ApplicationHeader-Wrapper" ${appHeaderData}>
+                <@krad.template component=view.applicationHeader/>
+                <!-- Backdoor info (here to inherit stickyness with the header, if set) -->
+                <@krad.backdoor/>
+            </div>
+        <#else>
+            <!-- Backdoor info -->
+            <@krad.backdoor/>
         </#if>
 
-        <@krad.template component=view/>
-    </@krad.form>
+        <@krad.form render=view.renderForm postUrl="${view.formPostUrl!KualiForm.formPostUrl}"
+        onSubmitScript="${view.onSubmitScript!}" disableNativeAutocomplete=view.disableNativeAutocomplete>
 
-    <@krad.script value="${KualiForm.lightboxScript!}"/>
+            <#if view.renderForm>
+                <#-- write out view, page id as hidden so the view can be reconstructed if necessary -->
+                <@spring.formHiddenInput id="viewId" path="KualiForm.viewId"/>
 
-<#-- set focus and perform jump to -->
-    <@krad.script value="performFocusAndJumpTo(${view.currentPage.autoFocus?string}, true, true, '${KualiForm.focusId!}',
-                                      '${KualiForm.jumpToId!}', '${KualiForm.jumpToName!}');" component=Component/>
+                <#-- all forms will be stored in session, this is the conversation key -->
+                <@spring.formHiddenInput id="formKey" path="KualiForm.formKey"/>
 
-</div>
+                <#-- original form key requested, may differ from actual form key-->
+                <@spring.formHiddenInput id="requestedFormKey" path="KualiForm.requestedFormKey"/>
 
-<!-- APPLICATION FOOTER -->
-    <@krad.template component=view.applicationFooter/>
+                <#-- tracks the session, used to determine timeouts -->
+                <@spring.formHiddenInput id="sessionId" path="KualiForm.sessionId"/>
+
+                <#-- flow key to maintain a history flow -->
+                <@spring.formHiddenInput id="flowKey" path="KualiForm.flowKey"/>
+
+                <#-- based on the view setting, form elements will be checked for dirtyness -->
+                <@spring.formHiddenInput id="validateDirty" path="KualiForm.view.applyDirtyCheck"/>
+
+                <#-- indicator which is set to true when content is being rendered inside a lightbox -->
+                <@spring.formHiddenInput id="renderedInLightBox" path="KualiForm.renderedInLightBox"/>
+
+                <#-- indicator for single page view, used to drive script page handling logic -->
+                <@spring.formHiddenInput id="singlePageView" path="KualiForm.view.singlePageView"/>
+
+                <#-- indicator for disabling browser caching of the view -->
+                <@spring.formHiddenInput id="disableBrowserCache" path="KualiForm.view.disableBrowserCache"/>
+            </#if>
+
+            <@krad.template component=view/>
+        </@krad.form>
+
+        <@krad.script value="${KualiForm.lightboxScript!}"/>
+
+        <#-- set focus and perform jump to -->
+        <#if KualiForm.view.currentPage?has_content>
+            <@krad.script value="performFocusAndJumpTo(${KualiForm.view.currentPage.autoFocus?string}, true, true, '${KualiForm.focusId!}',
+                                          '${KualiForm.jumpToId!}', '${KualiForm.jumpToName!}');" component=Component/>
+        </#if>
+
+    </div>
+
+    <!-- APPLICATION FOOTER -->
+    <#if view.applicationFooter?has_content>
+        <#assign appFooterData=""/>
+        <#if view.stickyApplicationFooter>
+            <#assign appFooterData="data-sticky_footer='true'"/>
+        </#if>
+
+        <div id="Uif-ApplicationFooter-Wrapper" ${appFooterData}>
+            <@krad.template component=view.applicationFooter/>
+        </div>
+    </#if>
 
 </@krad.html>

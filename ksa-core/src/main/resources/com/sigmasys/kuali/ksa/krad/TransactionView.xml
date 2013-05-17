@@ -196,6 +196,7 @@
         <property name="renderAddBlankLineButton" value="false" />
         <property name="renderAddLine" value="false" />
         <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+        <!--<property name="layoutManager.ajaxDetailsRetrieval" value="true"/>-->
         <property name="layoutManager.richTable.disableTableSort" value="false"/>
         <property name="layoutManager.richTable.templateOptions">
             <map merge="true">
@@ -246,6 +247,7 @@
                 <property name="layoutManager.renderSequenceField" value="false"/>
                 <property name="renderAddBlankLineButton" value="false" />
                 <property name="renderAddLine" value="false" />
+                <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
                 <property name="layoutManager.applyDefaultCellWidths" value="false"/>
                 <property name="layoutManager.richTable.disableTableSort" value="false"/>
                 <property name="layoutManager.richTable.templateOptions">
@@ -420,7 +422,6 @@
                                         <property name="hidden" value="true"/>
                                         <property name="items">
                                             <list>
-                                                <bean parent="Uif-HeaderTwo" p:headerText="Transaction Details"/>
                                                 <ref bean="transactionDetail"/>
                                             </list>
                                         </property>
@@ -534,6 +535,7 @@
         <property name="layoutManager.sequencePropertyName" value="id" />
         <property name="layoutManager.richTable.render" value="true" />
         <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="renderAddLine" value="false" />
         <property name="style" value="width: 100%;"/>
         <!--<property name="style" value="background: #CCC;"/>-->
         <!--<property name="disclosure.collapseImageSrc" value="../images/alert.png"/>-->
@@ -559,11 +561,10 @@
                         <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');" p:linkText="@{#line.transactionType.description}" />
                         TJB -->
                         <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');" p:linkText="@{#line.transactionType.description}" />
-                        <bean id="transactionDetailLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
-                            <property name="hidden" value="true"/>
+                        <bean id="transactionDetailLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL"> <!-- p:progressiveRender="false">-->
+                            <property name="hidden" value="false"/>
                             <property name="items">
                                 <list>
-                                    <bean parent="Uif-HeaderTwo" p:headerText="Transaction Details"/>
                                     <ref bean="transactionDetail"/>
                                 </list>
                             </property>
@@ -671,13 +672,13 @@
 		<property name="hidden" value="true"/>
 		<property name="items">
 			<list>
-				<bean parent="Uif-HeaderTwo" p:headerText="Transaction Details"/>
+				<!--<bean parent="Uif-HeaderTwo" p:headerText="Transaction Details"/>-->
 				<ref bean="transactionDetail"/>
 			</list>
 		</property>
 	</bean>
 	
-    <bean id="transactionDetail" parent="Uif-VerticalBoxSection">
+    <bean id="transactionDetail" parent="Uif-VerticalBoxSection" p:headerText="Transaction Details">
         <property name="items">
             <list>
                 <ref bean="transactionDetailFields"/>
@@ -718,8 +719,7 @@
     <bean id="transactionDetailFields" parent="Uif-HorizontalBoxGroup">
         <property name="items">
             <list>
-
-                <bean parent="Uif-Disclosure-GridSection" p:style="width: 40%;"><property name="items"><list>
+                <bean parent="Uif-GridSection" p:style="width: 40%;" p:headerText="Hi"><property name="items"><list>
                     <bean parent="Uif-InputField" p:propertyName="transactionDisplayType" p:label="Transaction Type"/>
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.status" p:label="Status"/>
                     <bean parent="Uif-InputField" p:propertyName="idString" p:label="Transaction ID"/>
@@ -733,7 +733,7 @@
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.currency.code" p:label="Currency"/>
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.nativeAmount" p:label="Native Amount"/>
                 </list></property></bean>
-                <bean parent="Uif-Disclosure-GridSection" p:style="width: 55%;"><property name="items"><list>
+                <bean parent="Uif-GridSection" p:style="width: 55%;"><property name="items"><list>
                     <bean parent="Uif-InputField" p:propertyName="glEntryGenerated" p:label="General Ledger Entry"/>
                     <bean parent="Uif-InputField" p:propertyName="internal" p:label="Internal Transaction"/>
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.allocatedAmount" p:label="Allocated Amount"/>

@@ -17,7 +17,13 @@
 -->
 <#include "libInclude.ftl" parse=true/>
 
-<!--#compress-->
+<#compress>
+
+    <#if KualiForm.ajaxRequest && KualiForm.ajaxReturnType == "redirect">
+        <div data-returntype="redirect">
+            <#include "redirect.ftl" parse=true/>
+        </div>
+    </#if>
 
     <#if !KualiForm.ajaxRequest || (KualiForm.ajaxReturnType == "update-view")
          || (KualiForm.ajaxReturnType == "update-page")>
@@ -49,11 +55,6 @@
                 <#include "updatePage.ftl" parse=true/>
             </div>
 
-       <#elseif KualiForm.ajaxReturnType == "redirect">
-            <div data-returntype="redirect">
-                <#include "redirect.ftl" parse=true/>
-            </div>
-
        <#elseif KualiForm.ajaxReturnType == "display-lightbox">
             <div data-returntype="display-lightbox">
                 <#include "updateComponent.ftl" parse=true/>
@@ -70,4 +71,4 @@
         <#include "fullView.ftl" parse=true/>
     </#if>
 
-<!--/#compress-->
+</#compress>

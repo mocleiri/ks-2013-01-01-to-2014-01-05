@@ -62,7 +62,6 @@ h1.uif-headerText {
 	font-family: oswaldregular, Arial, Helvetica, sans-serif;
 	font-weight:;
 	font-size: 2em;
-	padding-left: 15px;
 	letter-spacing: .04em;
 	font-weight:normal;
 }
@@ -110,19 +109,20 @@ h6.uif-headerText {
 	font-family: Verdana, Geneva, sans-serif;
 }
 
-.uif-header.uif-subSectionHeader[data-headerfor="Uif-AdHocPersonCollection"] .uif-headerText,
-.uif-header.uif-subSectionHeader[data-headerfor="CollectionGroup_AdHocWorkgroup"] .uif-headerText {
+.uif-header.uif-subSectionHeader[data-header_for="Uif-AdHocPersonCollection"] .uif-headerText,
+.uif-header.uif-subSectionHeader[data-header_for="CollectionGroup_AdHocWorkgroup"] .uif-headerText {
 	background: #C3C3C3;
 	margin: 0px;
 	padding:4px;
 }
-.uif-header.uif-subSectionHeader[data-headerfor="CollectionGroup_AdHocWorkgroup"] .uif-headerText { margin-top:-10px;}
+.uif-header.uif-subSectionHeader[data-header_for="CollectionGroup_AdHocWorkgroup"] .uif-headerText { margin-top:-10px;}
+
+.uif-viewHeader-contentWrapper{
+    background: url(../../images/kns/masthead1.png);
+}
 
 .uif-viewHeader {
-	background: url(../../images/kns/masthead1.png);
-	margin: 0 0 15px;
-	padding-left: 15px;
-	padding: .8em;
+    padding: 1em 0 1em 15px;
 }
 .uif-viewHeader h1.uif-headerText {
 	margin-top: 0px;
@@ -697,4 +697,24 @@ span.uif-breadcrumbs a {
 	color: #999;
 	font-size: 0.85em;
 	font-style: italic;
+}
+
+/** Syntax highlighter  */
+.uif-syntaxHighlighter   {
+    position: relative;
+}
+
+.uif-syntaxHighlighter .uif-copyPaste  {
+    background: url("../../images/icon-copypaste.png") repeat scroll 0 0 #FFFFFF;
+    cursor: pointer;
+    display: none;
+    height: 26px;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    width: 26px;
+}
+
+.uif-syntaxHighlighter:hover .uif-copyPaste{
+    display : block;
 }

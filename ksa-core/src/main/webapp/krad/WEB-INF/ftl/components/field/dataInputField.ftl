@@ -27,12 +27,15 @@
                 <fieldset data-type="InputSet" aria-labelledby="${field.id}_label" id="${field.id}_fieldset">
                     <legend style="display: none">${field.label!}</legend>
             </#if>
+
             <#-- render field value (if read-only) or control (if edit) -->
             <#if readOnly>
 
                 <#local readOnlyDisplay>
                     <#-- if it is a textarea add a pre tag to preserve formatting-->
-                    <#if field.multiLineReadOnlyDisplay>
+                    <#if field.forcedValue?has_content>
+                        ${field.forcedValue}
+                    <#elseif field.multiLineReadOnlyDisplay>
                         <pre>
                             <#-- display replacement display value if set -->
                             <#if field.readOnlyDisplayReplacement?has_content>
@@ -107,8 +110,8 @@
 
         </@krad.fieldLbl>
 
-    <!-- placeholder for dynamic field markers -->
-    <span id="${field.id}_markers"></span>
+        <!-- placeholder for dynamic field markers -->
+        <span id="${field.id}_markers"></span>
 
         <#if !readOnly>
             <#-- render error container for field -->

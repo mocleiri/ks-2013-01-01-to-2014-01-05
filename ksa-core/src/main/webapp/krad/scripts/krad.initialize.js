@@ -13,12 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 // global vars
 var jq = jQuery.noConflict();
 
 // clear out blockUI css, using css class overrides
 jQuery.blockUI.defaults.css = {};
 jQuery.blockUI.defaults.overlayCSS = {};
+
+//stickyContent globals
+var stickyContent;
+var stickyContentOffset;
+var currentHeaderHeight = 0;
+var currentFooterHeight = 0;
+var stickyFooterContent;
+var applicationFooter;
 
 // validation init
 var pageValidatorReady = false;
@@ -27,7 +36,12 @@ var messageSummariesShown = false;
 var pauseTooltipDisplay = false;
 var haltValidationMessaging = false;
 var gAutoFocus = false;
+var clientErrorStorage = new Object();
+var summaryTextExistence = new Object();
+var clientErrorExistsCheck = false;
+var skipPageSetup = false;
 
+var originalPageTitle;
 var errorImage;
 var errorGreyImage;
 var warningImage;
@@ -36,21 +50,33 @@ var detailsOpenImage;
 var detailsCloseImage;
 var ajaxReturnHandlers = {};
 
+var gCurrentBubblePopupId;
+
+var activeDialogId;
+var sessionWarningTimer;
+var sessionTimeoutTimer;
+
 //delay function
-var delay = (function(){
-  var timer = 0;
-  return function(callback, ms){
-    clearTimeout (timer);
-    timer = setTimeout(callback, ms);
-  };
+var delay = (function () {
+    var timer = 0;
+    return function (callback, ms) {
+        clearTimeout(timer);
+        timer = setTimeout(callback, ms);
+    };
 })();
 
 // map of componentIds and refreshTimers
 var refreshTimerComponentMap = {};
 
+//setup handler for opening form content popups with errors
+jQuery(document).on(kradVariables.PAGE_LOAD_EVENT, function (event) {
+    openPopupContentsWithErrors();
+});
+
 // common event registering done here through JQuery ready event
 jQuery(document).ready(function () {
-    setPageBreadcrumb();
+    // determine whether we need to refresh or update the page
+    skipPageSetup = handlePageAndCacheRefreshing();
 
     // buttons
     jQuery("input:submit, input:button, a.button, .uif-dialogButtons").button();
@@ -58,9 +84,15 @@ jQuery(document).ready(function () {
 
     // common ajax setup
     jQuery.ajaxSetup({
-        error:function (jqXHR, textStatus, errorThrown) {
+        error: function (jqXHR, textStatus, errorThrown) {
             showGrowl(getMessage(kradVariables.MESSAGE_STATUS_ERROR, null, null, textStatus, errorThrown), getMessage(kradVariables.MESSAGE_SERVER_RESPONSE_ERROR), 'errorGrowl');
-        }
+        },
+        complete: function (jqXHR, textStatus) {
+            resetSessionTimers();
+        },
+        statusCode: {403: function (jqXHR, textStatus) {
+            handleAjaxSessionTimeout(jqXHR.responseText);
+        }}
     });
 
     // stop previous loading message
@@ -71,6 +103,7 @@ jQuery(document).ready(function () {
         hideLoading();
     });
 
+    //run all the scripts
     runHiddenScripts("");
 
     // show the page
@@ -79,6 +112,35 @@ jQuery(document).ready(function () {
     // setup the various event handlers for fields - THIS IS IMPORTANT
     initFieldHandlers();
 
+    //sticky(header) content variables must be initialized here to retain sticky location across page request
+    stickyContent = jQuery("[data-sticky='true']");
+    if (stickyContent.length) {
+        stickyContent.each(function () {
+            jQuery(this).data("offset", jQuery(this).offset())
+        });
+        stickyContentOffset = stickyContent.offset();
+        initStickyContent();
+    }
+
+    //find and initialize stickyFooters
+    stickyFooterContent = jQuery("[data-sticky_footer='true']");
+    applicationFooter = jQuery("#Uif-ApplicationFooter-Wrapper");
+    initStickyFooterContent();
+
+    //bind scroll and resize events to dynamically update sticky content positions
+    jQuery(window).bind("scroll", function () {
+        handleStickyContent();
+        handleStickyFooterContent();
+    });
+
+    jQuery(window).bind("resize", function () {
+        handleStickyContent();
+        handleStickyFooterContent();
+    });
+
+    hideEmptyCells();
+
+    // focus on first field
     performFocus("FIRST");
 });
 
@@ -88,17 +150,59 @@ jQuery(document).ready(function () {
  * on the client
  */
 function initFieldHandlers() {
-    // var HANDLE_FIELD_MESSAGES_EVENT = "handleFieldsetMessages";
     var validationTooltipOptions = {
-        position:"top",
-        align:"left",
-        distance:0,
-        manageMouseEvents:false,
-        themePath:"../krad/plugins/tooltip/jquerybubblepopup-theme/",
-        alwaysVisible:false,
-        tail:{align:"left"},
-        themeMargins:{total:"13px", difference:"2px"}
+        position: "top",
+        align: "left",
+        distance: 0,
+        manageMouseEvents: false,
+        themePath: "../krad/plugins/tooltip/jquerybubblepopup-theme/",
+        alwaysVisible: false,
+        tail: {align: "left"},
+        themeMargins: {total: "13px", difference: "2px"}
     };
+
+    //add global action handler
+    jQuery(document).on("click", "a[data-onclick], button[data-onclick], img[data-onclick], input[data-onclick]",
+            function(e){
+        var functionData = jQuery(this).data("onclick");
+        eval("var actionFunction = function(e) {" + functionData + "};");
+
+        return actionFunction.call(this, e);
+    });
+
+    //add a focus handler for scroll manipulation when there is a sticky header or footer, so content stays in view
+    jQuery("#Uif-PageContentWrapper").on("focus", "a[href], area[href], input:not([disabled]), "
+            + "select:not([disabled]), textarea:not([disabled]), button:not([disabled]), "
+            + "iframe, object, embed, *[tabindex], *[contenteditable]",
+            function () {
+                var element = jQuery(this);
+                var buffer = 10;
+                var elementHeight = element.outerHeight();
+                if(!elementHeight){
+                    elementHeight = 24;
+                }
+
+                if (stickyFooterContent && stickyFooterContent.length) {
+                    var footerOffset = stickyFooterContent.offset().top;
+                    if (element.offset().top + elementHeight > footerOffset) {
+                        var visibleContentSize = jQuery(window).height() - currentHeaderHeight - currentFooterHeight;
+                        jQuery(document).scrollTo(element.offset().top + elementHeight + buffer
+                                - currentHeaderHeight - visibleContentSize );
+                        return true;
+                    }
+                }
+
+                if (stickyContent && stickyContent.length) {
+                    var reversedStickyContent = jQuery(stickyContent.get().reverse());
+                    var headerOffset = reversedStickyContent.offset().top + reversedStickyContent.outerHeight();
+                    if (element.offset().top < headerOffset) {
+                        jQuery(document).scrollTo(element.offset().top - currentHeaderHeight - buffer);
+                        return true;
+                    }
+                }
+
+                return true;
+            });
 
     jQuery(document).on("mouseenter",
             "div[data-role='InputField'] input:not([type='image']),"
@@ -110,7 +214,7 @@ function initFieldHandlers() {
                     + "div[data-role='InputField'] textarea",
             function (event) {
                 var fieldId = jQuery(this).closest("div[data-role='InputField']").attr("id");
-                var data = jQuery("#" + fieldId).data("validationMessages");
+                var data = jQuery("#" + fieldId).data(kradVariables.VALIDATION_MESSAGES);
                 if (data && data.useTooltip) {
                     var elementInfo = getHoverElement(fieldId);
                     var element = elementInfo.element;
@@ -124,7 +228,7 @@ function initFieldHandlers() {
                                 || jQuery(element).filter("input").is(":focus");
                     }
 
-                    var hasMessages = jQuery("[data-messagesFor='" + fieldId + "']").children().length;
+                    var hasMessages = jQuery("[data-messages_for='" + fieldId + "']").children().length;
 
                     //only display the tooltip if not already focused or already showing
                     if (!focus && hasMessages && !jQuery(tooltipElement).IsBubblePopupOpen()) {
@@ -153,9 +257,9 @@ function initFieldHandlers() {
                         if (show) {
                             var data = jQuery("#" + fieldId).data(kradVariables.VALIDATION_MESSAGES);
                             validationTooltipOptions.themeName = data.tooltipTheme;
-                            validationTooltipOptions.innerHTML = jQuery("[data-messagesFor='" + fieldId + "']").html();
+                            validationTooltipOptions.innerHTML = jQuery("[data-messages_for='" + fieldId + "']").html();
                             //set the margin to offset it from the left appropriately
-                            validationTooltipOptions.divStyle = {margin:getTooltipMargin(tooltipElement)};
+                            validationTooltipOptions.divStyle = {margin: getTooltipMargin(tooltipElement)};
                             jQuery(tooltipElement).SetBubblePopupOptions(validationTooltipOptions, true);
                             jQuery(tooltipElement).SetBubblePopupInnerHtml(validationTooltipOptions.innerHTML, true);
                             jQuery(tooltipElement).ShowBubblePopup();
@@ -174,7 +278,7 @@ function initFieldHandlers() {
                     + "div[data-role='InputField'] textarea",
             function (event) {
                 var fieldId = jQuery(this).closest("div[data-role='InputField']").attr("id");
-                var data = jQuery("#" + fieldId).data("validationMessages");
+                var data = jQuery("#" + fieldId).data(kradVariables.VALIDATION_MESSAGES);
                 if (data && data.useTooltip) {
                     var elementInfo = getHoverElement(fieldId);
                     var element = elementInfo.element;
@@ -345,7 +449,7 @@ function initFieldHandlers() {
                                 //never had a client error before, so pop-up and delay close
                                 showMessageTooltip(id, true, true);
                             }
-                            else if (!mouseInTooltip){
+                            else if (!mouseInTooltip) {
                                 hideMessageTooltip(id);
                             }
                         }
@@ -373,21 +477,22 @@ function initFieldHandlers() {
                         //never had a client error before, so pop-up and delay
                         showMessageTooltip(id, true, true);
                     }
-                    else if (!mouseInTooltip){
+                    else if (!mouseInTooltip) {
                         hideMessageTooltip(id);
                     }
                 }
             });
 
-    jQuery(document).on("change", "table.dataTable div[data-role='InputField'][data-total='change'] :input", function(){
+    jQuery(document).on("change", "table.dataTable div[data-role='InputField'][data-total='change'] :input", function () {
         refreshDatatableCellRedraw(this);
     });
 
-    jQuery(document).on("keyup", "table.dataTable div[data-role='InputField'][data-total='keyup'] :input", function(){
+    jQuery(document).on("keyup", "table.dataTable div[data-role='InputField'][data-total='keyup'] :input", function () {
         var input = this;
-        delay(function(){refreshDatatableCellRedraw(input)}, 300);
+        delay(function () {
+            refreshDatatableCellRedraw(input)
+        }, 300);
     });
-
 }
 
 /**
@@ -401,9 +506,8 @@ function initFieldHandlers() {
 function initBubblePopups() {
     //CreateBubblePopup was modified to be additive on call, and now uses one handler per event type- kuali customization
     jQuery(document).CreateBubblePopup("input:not([type='hidden']):not([type='image']), input[data-role='help'], "
-                    + "select, textarea, .uif-tooltip", {   manageMouseEvents:false,
-                                        themePath:"../krad/plugins/tooltip/jquerybubblepopup-theme/"});
-
+            + "select, textarea, .uif-tooltip", {   manageMouseEvents: false,
+        themePath: "../krad/plugins/tooltip/jquerybubblepopup-theme/"});
 }
 
 function hideBubblePopups(element) {
@@ -421,9 +525,28 @@ function hideBubblePopups(element) {
  * Sets up the validator and the dirty check and other page scripts
  */
 function setupPage(validate) {
-    jQuery('#kualiForm').dirty_form({changedClass:kradVariables.DIRTY_CLASS, includeHidden:true});
+    //if we are skipping this page setup, reset the flag, and return (this logic is for redirects)
+    if (skipPageSetup) {
+        skipPageSetup = false;
+        return;
+    }
+
+    //update the support title
+    var supportTitleUpdate = jQuery("#Uif-SupportTitleUpdate").find("> span").detach();
+    if (supportTitleUpdate.length){
+        jQuery(".uif-supportTitle-wrapper").replaceWith(supportTitleUpdate);
+    }
+
+    jQuery('#kualiForm').dirty_form({changedClass: kradVariables.DIRTY_CLASS, includeHidden: true});
+    originalPageTitle = document.title;
 
     setupImages();
+
+    //reinitialize sticky footer content because page footer can be sticky
+    stickyFooterContent = jQuery("[data-sticky_footer='true']");
+    initStickyFooterContent();
+    handleStickyFooterContent();
+    initStickyContent();
 
     //Reset summary state before processing each field - summaries are shown if server messages
     // or on client page validation
@@ -432,13 +555,17 @@ function setupPage(validate) {
     //flag to turn off and on validation mechanisms on the client
     validateClient = validate;
 
-    //select current page
-    var pageId = jQuery("[name='view.currentPageId']").val();
-    jQuery("ul.uif-navigationMenu").selectMenuItem({selectPage:pageId});
-    jQuery("ul.uif-tabMenu").selectTab({selectPage:pageId});
+    // select current page
+    var pageId = getCurrentPageId();
+
+    jQuery("ul.uif-navigationMenu").selectMenuItem({selectPage: pageId});
+    jQuery("ul.uif-tabMenu").selectTab({selectPage: pageId});
+
+    // update URL to reflect the current page
+    updateRequestUrl(pageId);
 
     //skip input field iteration and validation message writing, if no server messages
-    var hasServerMessagesData = jQuery("[data-type='Page']").data("server-messages");
+    var hasServerMessagesData = jQuery("[data-type='Page']").data(kradVariables.SERVER_MESSAGES);
     if (hasServerMessagesData) {
         //Handle messages at field, if any
         jQuery("div[data-role='InputField']").each(function () {
@@ -479,7 +606,9 @@ function setupPage(validate) {
     });
 
     jQuery(document).trigger(kradVariables.VALIDATION_SETUP_EVENT);
+
     pageValidatorReady = true;
+
     jQuery(document).trigger(kradVariables.PAGE_LOAD_EVENT);
 
     jQuery.watermark.showAll();
@@ -520,12 +649,12 @@ function getConfigParam(paramName) {
 }
 
 jQuery.validator.setDefaults({
-    onsubmit:false,
-    ignore:".ignoreValid",
-    wrapper:"",
-    onfocusout:false,
-    onclick:false,
-    onkeyup:function (element) {
+    onsubmit: false,
+    ignore: ".ignoreValid",
+    wrapper: "",
+    onfocusout: false,
+    onclick: false,
+    onkeyup: function (element) {
         if (validateClient) {
             var id = getAttributeId(jQuery(element).attr('id'));
             var data = jQuery("#" + id).data(kradVariables.VALIDATION_MESSAGES);
@@ -536,11 +665,11 @@ jQuery.validator.setDefaults({
             }
         }
     },
-    highlight:function (element, errorClass, validClass) {
+    highlight: function (element, errorClass, validClass) {
         jQuery(element).addClass(errorClass).removeClass(validClass);
         jQuery(element).attr("aria-invalid", "true");
     },
-    unhighlight:function (element, errorClass, validClass) {
+    unhighlight: function (element, errorClass, validClass) {
         jQuery(element).removeClass(errorClass).addClass(validClass);
         jQuery(element).removeAttr("aria-invalid");
 
@@ -565,9 +694,9 @@ jQuery.validator.setDefaults({
             }
         }
     },
-    errorPlacement:function (error, element) {
+    errorPlacement: function (error, element) {
     },
-    showErrors:function (nameErrorMap, elementObjectList) {
+    showErrors: function (nameErrorMap, elementObjectList) {
         this.defaultShowErrors();
 
         for (var i in elementObjectList) {
@@ -607,7 +736,7 @@ jQuery.validator.setDefaults({
         }
 
     },
-    success:function (label) {
+    success: function (label) {
         var htmlFor = jQuery(label).attr('for');
         var id = "";
         if (htmlFor.indexOf("_control") >= 0) {

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * Common constants and variables for KRAD
  */
@@ -20,21 +21,9 @@ function JavascriptKradVariables () {
 }
 
 JavascriptKradVariables.prototype = {
-
-    // validation init
-//    var pageValidatorReady : false,
-//    var validateClient : true,
-//    var messageSummariesShown : false,
-//    var pauseTooltipDisplay : false,
-//
-//    var errorImage,
-//    var errorGreyImage,
-//    var warningImage,
-//    var infoImage,
-
-    // constants
      APPLICATION_CLASS  : "Uif-Application",
      APP_ID  : "Uif-Application",
+     CACHE_KEY : "cacheKey",
      CHANGED_HEADER_ICON_CLASS : "uif-changedHeaderIcon",
      CLEAR_FORM_METHOD_TO_CALL : "retrieveMessage",
      CLIENT_MESSAGE_ITEMS_CLASS : "uif-clientMessageItems",
@@ -44,22 +33,29 @@ JavascriptKradVariables.prototype = {
      COLLAPSED_WARNINGS_CLASS : "uif-collapsedWarnings",
      COLLECTION_ITEM_CLASS : "uif-collectionItem",
      CONTROL_CLASS : "Uif-Application",
+     COUNTDOWN_CLASS : "hasCountdown",
      DIRTY_CLASS : "dirty",
+     DISABLE_BROWSER_CACHE : "disableBrowserCache",
      ERROR_HIGHLIGHT_SECTION_CLASS : "uif-errorHighlight-section",
      ERROR_MESSAGE_ITEM_CLASS : "uif-errorMessageItem-field",
      FIELD_CLASS : "uif-field",
+     FORM_KEY : "formKey",
+     GRID_LAYOUT_CELL_CLASS : "uif-gridLayoutCell",
      HAS_ERROR_CLASS : "uif-hasError",
      HAS_INFO_CLASS : "uif-hasInfo",
      HAS_MODIFIED_ERROR_CLASS : "uif-hasError-modified",
      HAS_WARNING_CLASS : "uif-hasWarning",
      HEADER_TEXT_CLASS : "uif-headerText",
      IMAGE_LOCATION : "kradImageLocation",
+     PAGE_ID : "pageId",
      PORTAL_IFRAME_ID : "iframeportlet",
      INCIDENT_REPORT_VIEW_CLASS : "Uif-IncidentReportView",
      INFO_HIGHLIGHT_SECTION_CLASS : "uif-infoHighlight-section",
      INFO_MESSAGE_ITEM_CLASS : "uif-infoMessageItem-field",
      INPUT_FIELD_CLASS : "uif-inputField",
      INPUT_FIELD_SELECTOR : "[data-role:'InputField']",
+     KEEP_SESSION_ALIVE_METHOD_TO_CALL : "keepSessionAlive",
+     KRAD_URL : "kradUrl",
      KUALI_FORM : "kualiForm",
      MESSAGE_COUNT_CLASS : "uif-messageCount",
      MESSAGE_KEY_DIRTY_FIELDS : "message.dirtyFields",
@@ -89,6 +85,7 @@ JavascriptKradVariables.prototype = {
      MESSAGE_THE : "message.the",
      MESSAGE_THE_SECTION_HAS_COUNT : "message.theSectionHasCount",
      NAVIGATION_MENU_CLASS : "uif-navigationMenu",
+     NAVIGATE_METHOD_TO_CALL : "navigate",
      PAGE_CONTENT_HEADER_CLASS : "Uif-PageContentWrapper",
      PAGE_VALIDATION_HEADER_CLASS : "uif-pageValidationHeader",
      PAGE_VALIDATION_MESSAGE_ERROR_CLASS : "uif-pageValidationMessages-error",
@@ -98,16 +95,25 @@ JavascriptKradVariables.prototype = {
      REFRESH_METHOD_TO_CALL : "refresh",
      RETRIEVE_MESSAGE_METHOD_TO_CALL : "retrieveMessage",
      RETURN_TYPE_UPDATE_COMPONENT : "update-component",
+     RETURN_FROM_LIGHTBOX_METHOD_TO_CALL : "returnFromLightbox",
      REQUIRED_MESSAGE_CLASS : "uif-requiredMessage",
      SAVE_LINE_ACTION_CLASS : "uif-saveLineAction",
      SERVER_MESSAGE_ITEMS_CLASS : "uif-serverMessageItems",
+     SESSION_TIMEOUT_WARNING_DIALOG : "Uif-SessionTimeoutWarning-DialogGroup",
+     SESSION_TIMEOUT_DIALOG : "Uif-SessionTimeout-DialogGroup",
+     SESSION_TIMEOUT_WARNING_TIMER : "sessionTimeoutWarningTimer",
+     SESSION_TIMEOUT_TIMER : "sessionTimeoutTimer",
+     SHOW_DIALOG_EVENT : "showdialog.uif",
+     SINGLE_PAGE_VIEW : "singlePageView",
      STACKED_COLLECTION_LAYOUT_CLASS : "uif-stackedCollectionLayout",
+     SUCCESS_RESPONSE : "success",
      TABLE_COLLECTION_LAYOUT_CLASS : "uif-tableCollectionLayout",
      TAB_GROUP_CLASS : "Uif-TabGroup",
      TAB_MENU_CLASS : "uif-tabMenu",
      TOOLTIP_CLASS : "uif-tooltip",
      VALIDATION_IMAGE_CLASS : "uif-validationImage",
-     VALIDATION_MESSAGES : "validationMessages",
+     SERVER_MESSAGES : "server_messages",
+     VALIDATION_MESSAGES : "validation_messages",
      VALIDATION_MESSAGES_CLASS : "uif-validationMessagesList",
      VALIDATION_PAGE_HEADER_CLASS : "uif-pageValidationHeader",
      VALIDATION_SETUP_EVENT : "validationSetup",
@@ -118,7 +124,19 @@ JavascriptKradVariables.prototype = {
      WARNING_MESSAGE_ITEM_CLASS : "uif-warningMessageItem-field",
      GROUP_CLASS : "uif-group",
      ROW_DETAILS_CLASS : "uif-rowDetails",
-     NEXT_INPUT : "NEXT_INPUT:"
+     NEXT_INPUT : "NEXT_INPUT:",
+     SKIP_TOTAL : "skip_total",
+     ADD_CONTROLS : "add_controls",
+     SUBMIT_DATA : "submit_data",
+     DETAILS_DEFAULT_OPEN : "details_default_open",
+     FORM_BUBBLEPOPUP_DEFAULT_OPTIONS : {
+        position: 'bottom',
+        align: 'left',
+        tail: { align: 'left', hidden: false },
+        manageMouseEvents: false,
+        themePath: '../krad/plugins/tooltip/jquerybubblepopup-theme/',
+        themeName: 'popup-form'
+    }
 }
 
 var kradVariables = new JavascriptKradVariables();
