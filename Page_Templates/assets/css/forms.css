@@ -88,7 +88,16 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	font-style: italic;
 }
 
-
+/************************************************************ COMMAND BAR */
+#command-bar a {
+	width: 7.0em;
+	height: 4.0em;
+	padding-top: 0.5em;
+	padding-left: 0.1em;
+	padding-right: 0.1em;
+	text-align: center;
+	border-radius: 0;
+}
 
 /************************************************************* VALIDATION */
 .validation-error {

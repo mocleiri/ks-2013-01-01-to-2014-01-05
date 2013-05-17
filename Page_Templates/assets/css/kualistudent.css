@@ -113,8 +113,17 @@
 .actions {
 	text-align: right !important;
 }
+a.disabled:hover {
+	pointer-events: none;
+	cursor: default;
+	color: gray;
+}
 h2 {
 	font-size: 1.8em;
+}
+
+#end-of-scroll {
+	height: 280px;
 }
 
 

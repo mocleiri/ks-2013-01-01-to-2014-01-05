@@ -28,7 +28,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
   </head>
-  <body>
+  <body data-spy="scroll" data-target="#navigation-panel" data-offset="240">
     <div id="application-container" title="application-container" class="container">
     	<div id="application-header" title="application-header" class="container-fluid navbar navbar-inverse navbar-fixed-top sticky">
     		<div class="navbar-inner">
@@ -106,7 +106,7 @@
     	<div id="view-container" title="view-container" class="container-fluid">
     		<div id="navigation-panel" title="navigation-panel" class="container-fluid optional no-margin">
 	
-				<ul class="nav nav-tabs nav-stacked nav-panel">
+				<ul id="navigation-panel-menu" class="nav nav-list nav-tabs nav-stacked">
 					<li><a href="#section-A">Section A</a></li>
 					<li><a href="#section-B">Section B</a></li>
 					<li><a href="#section-C">Section C</a></li>
@@ -147,7 +147,7 @@
     					<div class="container-fluid group span12 optional no-margin no-padding">
 
 
-							<div class="section">
+							<div id="section-A" class="section">
 		  						<a name="section-A"></a>
  								<h2>
  									Section A
@@ -173,7 +173,7 @@
  								</div>
 							</div>
 
-							<div class="section">
+							<div id="section-B" class="section">
 		  						<a name="section-B"></a>
  								<h2>
  									Section B
@@ -198,7 +198,8 @@
 									</div>
  								</div>
 							</div>
-							<div class="section">
+							
+							<div id="section-C" class="section">
 		  						<a name="section-C"></a>
  								<h2>
  									Section C
@@ -223,7 +224,8 @@
 									</div>
  								</div>
 							</div>
-							<div class="section">
+							
+							<div id="section-D" class="section">
 		  						<a name="section-D"></a>
  								<h2>
  									Section D
@@ -248,7 +250,8 @@
 									</div>
  								</div>
 							</div>
-							<div class="section">
+							
+							<div id="section-E" class="section">
 		  						<a name="section-E"></a>
  								<h2>
  									Section E
@@ -274,8 +277,7 @@
  								</div>
 							</div>
 
-
-
+							<div id="end-of-scroll" class="section"></div>
 
    					</div>
     				</div>

@@ -14,13 +14,15 @@
 #page-container {
     padding-left: 220px; /* only needed if navigation-panel is not hidden */
 }
-.nav-panel {
+#navigation-panel-menu {
     margin-left: -20px !important;
 }
-.nav-panel a {
+#navigation-panel-menu > .active > a, #navigation-panel-menu > .active > a:hover, #navigation-panel-menu > .active > a:focus {
+    color: white;
+    cursor: default;
+    background-color: rgb(51, 51, 153);
+}
+#navigation-panel-menu a {
 	border-top-left-radius: 0 !important;
 	border-bottom-left-radius: 0 !important;
 }
-
-
-
