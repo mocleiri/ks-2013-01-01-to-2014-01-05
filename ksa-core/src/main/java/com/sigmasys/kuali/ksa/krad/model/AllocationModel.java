@@ -4,7 +4,10 @@ package com.sigmasys.kuali.ksa.krad.model;
 import com.sigmasys.kuali.ksa.model.Allocation;
 import com.sigmasys.kuali.ksa.model.Transaction;
 
-public class AllocationModel {
+import java.io.Serializable;
+
+
+public class AllocationModel implements Serializable {
 
     private Allocation allocation;
 
@@ -17,7 +20,6 @@ public class AllocationModel {
     public AllocationModel(Transaction t, Allocation a) {
         this.parentTransaction = t;
         this.allocation = a;
-
         this.setAllocatedTransaction();
     }
 
