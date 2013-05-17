@@ -17,7 +17,7 @@
 -->
 <#include "libInclude.ftl" parse=true/>
 
-<#compress>
+<!--#compress-->
 
     <#if KualiForm.ajaxRequest && KualiForm.ajaxReturnType == "redirect">
         <div data-returntype="redirect">
@@ -71,4 +71,4 @@
         <#include "fullView.ftl" parse=true/>
     </#if>
 
-</#compress>
+<!--/#compress-->
