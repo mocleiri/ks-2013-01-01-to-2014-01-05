@@ -17,7 +17,7 @@ end
 
 Then /^I do not have access to seat pools$/ do
   on ActivityOfferingMaintenance do |page|
-    page.seat_pools_table.present?.should be_false
+    page.seat_pools_table.button.present?.should be_false
   end
 end
 
@@ -473,7 +473,7 @@ end
 
 Then /^I have access to edit the credit type$/ do
   on CourseOfferingEdit do |page|
-    page.credits.enabled?.should be_true
+    page.credit_type_option_fixed.enabled?.should be_true
   end
 end
 
