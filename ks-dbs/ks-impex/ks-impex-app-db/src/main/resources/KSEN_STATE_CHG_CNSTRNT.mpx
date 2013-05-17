@@ -1,5 +1,7 @@
 STATE_CHG_ID,STATE_CNSTRNT_ID
 "kuali.statechange.activityoffering.approved.offered","kuali.stateconstraint.activityoffering.approved.offered"
+"kuali.statechange.activityoffering.approved.offered","kuali.stateconstraint.activityoffering.approved.offered.soc"
+"kuali.statechange.activityoffering.draft.offered","kuali.stateconstraint.activityoffering.draft.offered.soc"
 "kuali.statechange.courseoffering.draft.planned","kuali.stateconstraint.courseoffering.draft.planned"
 "kuali.statechange.courseoffering.offered.draft","kuali.stateconstraint.courseoffering.planned.draft"
 "kuali.statechange.courseoffering.planned.draft","kuali.stateconstraint.courseoffering.planned.draft"
