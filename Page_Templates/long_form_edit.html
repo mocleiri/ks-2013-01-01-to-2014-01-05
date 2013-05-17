@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>
-		Kuali Student UIM Page Template :: Boilerplate
+		Kuali Student UIM Page Template :: Long Form Edit
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -13,6 +13,9 @@
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="assets/css/krad.css" rel="stylesheet">
     <link href="assets/css/kualistudent.css" rel="stylesheet">
+    <link href="assets/css/navpanel.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
+    <link href="assets/css/tables.css" rel="stylesheet">
     <!-- HTML5, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -25,7 +28,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
   </head>
-  <body>
+  <body data-spy="scroll" data-target="#navigation-panel" data-offset="240">
     <div id="application-container" title="application-container" class="container">
     	<div id="application-header" title="application-header" class="container-fluid navbar navbar-inverse navbar-fixed-top sticky">
     		<div class="navbar-inner">
@@ -101,7 +104,16 @@
     		</div>
     	</div>
     	<div id="view-container" title="view-container" class="container-fluid">
-    		<div id="navigation-panel " title="navigation-panel " class="container-fluid optional no-margin hidden">
+    		<div id="navigation-panel" title="navigation-panel" class="container-fluid optional no-margin">
+	
+				<ul id="navigation-panel-menu" class="nav nav-list nav-tabs nav-stacked">
+					<li class="active"><a href="#section-A">Section A</a></li>
+					<li><a href="#section-B">Section B</a></li>
+					<li><a href="#section-C">Section C</a></li>
+					<li><a href="#section-D">Section D</a></li>
+					<li><a href="#section-E">Section E</a></li>
+				</ul>
+		
     		</div>
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
 				<div id="togglePageError" class="collapse in hidden">
@@ -135,9 +147,137 @@
     					<div class="container-fluid group span12 optional no-margin no-padding">
 
 
+							<div id="section-A" class="section">
+		  						<a name="section-A"></a>
+ 								<h2>
+ 									Section A
+ 								</h2>
+								<div class="control-group">
+									<label class="control-label field-label" for="inputEmail">Email</label>
+									<div class="controls">
+										<input type="text" id="inputEmail" placeholder="Email">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label field-label" for="inputPassword">Password</label>
+									<div class="controls">
+										<input type="password" id="inputPassword" placeholder="Password">
+									</div>
+								</div>
+								<div class="control-group">
+									<div class="controls">
+										<label class="checkbox">
+											<input type="checkbox"> Remember me
+										</label>
+									</div>
+ 								</div>
+							</div>
 
+							<div id="section-B" class="section">
+		  						<a name="section-B"></a>
+ 								<h2>
+ 									Section B
+ 								</h2>
+								<div class="control-group">
+									<label class="control-label field-label" for="inputEmail">Email</label>
+									<div class="controls">
+										<input type="text" id="inputEmail" placeholder="Email">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label field-label" for="inputPassword">Password</label>
+									<div class="controls">
+										<input type="password" id="inputPassword" placeholder="Password">
+									</div>
+								</div>
+								<div class="control-group">
+									<div class="controls">
+										<label class="checkbox">
+											<input type="checkbox"> Remember me
+										</label>
+									</div>
+ 								</div>
+							</div>
+							
+							<div id="section-C" class="section">
+		  						<a name="section-C"></a>
+ 								<h2>
+ 									Section C
+ 								</h2>
+								<div class="control-group">
+									<label class="control-label field-label" for="inputEmail">Email</label>
+									<div class="controls">
+										<input type="text" id="inputEmail" placeholder="Email">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label field-label" for="inputPassword">Password</label>
+									<div class="controls">
+										<input type="password" id="inputPassword" placeholder="Password">
+									</div>
+								</div>
+								<div class="control-group">
+									<div class="controls">
+										<label class="checkbox">
+											<input type="checkbox"> Remember me
+										</label>
+									</div>
+ 								</div>
+							</div>
+							
+							<div id="section-D" class="section">
+		  						<a name="section-D"></a>
+ 								<h2>
+ 									Section D
+ 								</h2>
+								<div class="control-group">
+									<label class="control-label field-label" for="inputEmail">Email</label>
+									<div class="controls">
+										<input type="text" id="inputEmail" placeholder="Email">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label field-label" for="inputPassword">Password</label>
+									<div class="controls">
+										<input type="password" id="inputPassword" placeholder="Password">
+									</div>
+								</div>
+								<div class="control-group">
+									<div class="controls">
+										<label class="checkbox">
+											<input type="checkbox"> Remember me
+										</label>
+									</div>
+ 								</div>
+							</div>
+							
+							<div id="section-E" class="section">
+		  						<a name="section-E"></a>
+ 								<h2>
+ 									Section E
+ 								</h2>
+								<div class="control-group">
+									<label class="control-label field-label" for="inputEmail">Email</label>
+									<div class="controls">
+										<input type="text" id="inputEmail" placeholder="Email">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label field-label" for="inputPassword">Password</label>
+									<div class="controls">
+										<input type="password" id="inputPassword" placeholder="Password">
+									</div>
+								</div>
+								<div class="control-group">
+									<div class="controls">
+										<label class="checkbox">
+											<input type="checkbox"> Remember me
+										</label>
+									</div>
+ 								</div>
+							</div>
 
-
+							<div id="end-of-scroll" class="section"></div>
 
    					</div>
     				</div>

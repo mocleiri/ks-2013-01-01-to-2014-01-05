@@ -100,7 +100,7 @@
     			</div>
     		</div>
     	</div>
-    	<div id="view-container" title="view-container" class="container-fluid">
+    	<div id="view-container" title="view-container" class="container-fluid normal">
     		<div id="navigation-panel " title="navigation-panel " class="container-fluid optional no-margin hidden">
     		</div>
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
@@ -127,45 +127,76 @@
 				    	</dl>	
     				</div>
     			</div>
-    			<div class="container-fluid group optional no-padding">
+    			<div class="container-fluid group optional no-padding hidden">
     				<div class="container-fluid group-header no-padding"></div>
     				<div class="container-fluid validation group-error-validation-messaging"></div>
     				<div class="row-fluid no-padding">
-    					<div class="container-fluid group span12 optional no-margin no-padding">
-
-
-
-							<h3>Object Control</h3>
+    					<div class="container-fluid group span12 optional no-margin no-padding show-border">
+  						</div>
+    				</div>
+    				<div class="container-fluid group-footer"></div>
+    			</div>
+    			<!-- Additional groups in columns -->
+    			<div class="container-fluid group optional">
+    				<div class="container-fluid group-header"></div>
+    				<div class="container-fluid validation group-error-validation-messaging optional"></div>
+    				<div class="row-fluid">
+    					<div class="container-fluid group span6 optional no-margin">
+    						
+ 							<h3>Object Control</h3>
 							<ul>
-								<li><a href="manage.html">Manage</a></li>
-								<li><a href="single-page_edit.html">Single-Page Edit</a></li>
-								<li><a href="multi-page_panel_edit.html">Multi-Page Panel Edit</a></li>
-								<li><a href="single-page_inspect.html">Single-Page Inspect</a></li>
+								<li class="done"><a href="manage.html">Manage</a>—Bulk operations on a collection with multiple items</li>
+								<li class="done"><a href="single-page_edit.html">Single-Page Edit</a>—Form collecting information through a small number of fields to update an existing record</li>
+								<li class="done"><a href="long_form_edit.html">Long Form Edit</a>—Form collecting information through a large number of fields to update an existing record, using a panel to navigate multiple sections</li>
+								<li class="done"><a href="multi-page_panel_edit.html">Multi-Page Panel Edit</a>—Long form distributed across multiple pages navigated from a sidebar panel, collecting information to update an existing record</li>
+								<li class="done"><a href="single-page_inspect.html">Single-Page Inspect</a>—A read-only display of record with a small number of attributes and related data</li>
+								<p><br />To-Do:</p>
+								<ul>
+									<li><a href="multi-page_inspect.html">Multi-Page Inspect</a>—A read-only display of record with a large number of attributes and related data, divided by tabs into segments visible one at a time.</li>
+									<li><a href="compare.html">Compare</a>—A two-column read-only display of a record and a previous version or a peer record for side-by-side comparison</li>
+
+									<li><a href="attach_file.html">Attach File</a> (Lightbox)—A dialog used to upload an associate a remote file to an existing record</li>
+									<li><a href="multi-page_tabbed_edit.html">Multi-Page Tabbed Edit</a>—Long form distributed across multiple pages navigated from tabs, collecting information to update an existing record</li>
+									<li><a href="quick_edit.html">Quick Edit</a> (Lightbox)—A dialog containing a brief set of critical fields used to collect information to update an existing record, as an as-needed change to information visible in the main view.</li>
+									<li><a href="quick_inspect.html">Quick Inspect</a> (Lightbox)—A dialog containing a brief excerpt of a read-only record, used as a reference to help complete a larger task in the main view.</li>
+								</ul>
 							</ul>
-							<h3>Task Initiation</h3>
+
+   					</div>
+    					<div class="container-fluid group span6 optional no-margin">
+    						
+ 							<h3>Task Initiation</h3>
 							<ul>
-								<li><a href="advanced_select.html">Advanced Select</a> (Lightbox)</li>
-								<li><a href="simple_confirm.html">Simple Confirm</a> (Lightbox)</li>
+								<li class="done"><a href="advanced_select.html">Advanced Select</a> (Lightbox)—A dialog to search for a record to return to a text input field in the main view's form.</li>
+								<li class="done"><a href="simple_confirm.html">Simple Confirm</a> (Lightbox)—A dialog spawned after a process has been requested, but before it is initiated, to communicate the consequences of that action.</li>
+								<p><br />To-Do:</p>
+								<ul>
+									<li><a href="simple_perform.html">Simple Perform</a>—Initiate a process that will alter or manipulate stored data.</li>
+									<li><a href="toggled_perform.html">Toggled Perform</a>—Present a choice between two paths to initiate a process that will alter or manipulate stored data.</li>
+
+									<li><a href="advanced_search.html">Advanced Search</a>—A navigational search for an object based on multiple criteria using more than one text input.</li>
+									<li><a href="faceted_search.html">Faceted Search</a>—A simple search whose results are filtered by selecting from attributes contained within that data.</li>
+									<li><a href="inspect_and_perform.html">Inspect &amp; Perform</a>—Review read-only record data before initiating an action on that record to change its state.</li>
+									<li><a href="interactive_review.html">Interactive Review</a>—An editable form allowing the scope or configuartion of a requested action to be changed or canceled before proceeding to initiate that process.</li>
+									<li><a href="preview.html">Preview</a> (Lightbox)—An optional dialog containing a read-only record of data that will result from a system process that has not yet begun, with a button to allow the action to be initiated from this screen.</li>
+									<li><a href="simple_search.html">Simple Search</a>—A navigational search for an object using only one text input to perform the most likely kind of search, sacrificing control to minimizes complexity for a user.</li>
+									<li><a href="start.html">Start</a>—A collection of information, quick functions and navigation that describe the key uses of a group of views.</li>
+									<li><a href="composite_search.html">Composite Search</a>—A navigational search for an object leveraging a single text area for input by selecting one of multiple search options in a dropdown.</li>
+								</ul>
 							</ul>
+
+   					</div>
+					</div>
+	    			<div class="row-fluid">
+    					<div class="container-fluid group span6 optional no-margin">
+    						
 							<h3>Other Resources</h3>
 							<ul>
 								<li><a href="boilerplate.html">Boilerplate (no content)</a></li>
 								<li><a href="validation_example.html">Validation Example</a></li>
 							</ul>
 
-
-
    					</div>
-    				</div>
-    				<div class="container-fluid group-footer"></div>
-    			</div>
-    			<!-- Additional groups in columns -->
-    			<div class="container-fluid group optional hidden">
-    				<div class="container-fluid group-header"></div>
-    				<div class="container-fluid validation group-error-validation-messaging optional"></div>
-    				<div class="row-fluid">
-    					<div class="container-fluid group span6 optional no-margin"></div>
-    					<div class="container-fluid group span6 optional no-margin"></div>
     				</div>
     				<div class="container-fluid group-footer"></div>
     			</div>

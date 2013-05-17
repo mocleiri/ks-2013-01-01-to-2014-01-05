@@ -26,3 +26,7 @@
 	border-top-left-radius: 0 !important;
 	border-bottom-left-radius: 0 !important;
 }
+
+.collapse { 
+	transition: height 0.01s !important; 
+}
