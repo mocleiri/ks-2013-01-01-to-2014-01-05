@@ -89,6 +89,8 @@
                       p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=MemosPage&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Generate 1098T" p:target="_self"
                       p:href="generate1098T?methodToCall=display1098TForm&amp;viewId=Generate1098TView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Refund" p:target="_self"
+                      p:href="accountRefund?methodToCall=displayInitialPage&amp;viewId=AccountRefundView&amp;userId=@{account.id}"/>
             </list>
         </property>
     </bean>

@@ -14,6 +14,7 @@ public class PotentialRefund {
     private TransactionModel transaction;
     private String      overrideDescription;
     private BigDecimal  refundAmount;
+    private boolean     selected;
 
     public PotentialRefund(){
     }
@@ -46,4 +47,11 @@ public class PotentialRefund {
         this.refundAmount = refundAmount;
     }
 
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 }
