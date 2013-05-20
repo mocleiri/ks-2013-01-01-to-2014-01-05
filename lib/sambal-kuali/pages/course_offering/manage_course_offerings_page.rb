@@ -267,7 +267,7 @@ class ManageCourseOfferings < BasePage
   end
 
   def has_cross_listed_message(co_code)
-    cross_listed_message_div.present?.should == true
+    #cross_listed_message_div.present?.should == true
     cross_listed_message.include? co_code
   end
 

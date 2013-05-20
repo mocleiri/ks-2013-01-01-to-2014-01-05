@@ -629,6 +629,25 @@ class CourseOffering
     end
   end
 
+  def clear_cross_listing
+    on ManageCourseOfferings do |page|
+      page.edit_course_offering
+    end
+    on CourseOfferingEdit do |page|
+      page.cross_listed_co_clear
+      page.submit
+    end
+  end
+
+  def set_cross_listing
+    on ManageCourseOfferings do |page|
+      page.edit_course_offering
+    end
+    on CourseOfferingEdit do |page|
+      page.cross_listed_co_set
+      page.submit
+    end
+  end
   #TODO - how is this different from delete_ao?
   def delete_ao_cross_list_value(opts)
     defaults = {

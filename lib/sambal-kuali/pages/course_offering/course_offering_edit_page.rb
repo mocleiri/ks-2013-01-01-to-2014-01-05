@@ -32,6 +32,8 @@ class CourseOfferingEdit < BasePage
   element(:cross_listed_as_label) { |b| b.frm.span(text:/Crosslisted as:/)}
   element(:cross_listed_co_check_boxes) { |b| b.frm.dvi(id:"KS-COEditListed-Checkbox-Group")}
   element(:cross_listed_co_check_box) { |b| b.checkbox(id: "KS-COEditListed-Checkbox-Group_control_0") }
+  action(:cross_listed_co_set) {|b| b.cross_listed_co_check_box.set; b.loading.wait_while_present   }
+  action(:cross_listed_co_clear) {|b| b.cross_listed_co_check_box.clear; b.loading.wait_while_present   }
 
   element(:delivery_formats_table) { |b| b.frm.div(id: "KS-CourseOfferingEdit-FormatOfferingSubSection").table }
   FORMAT_COLUMN = 0
