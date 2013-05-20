@@ -54,16 +54,16 @@ Then /^an error message is displayed about the duplicate population$/ do
 end
 
 When /^I add a seat pool without specifying a population$/ do
-  seatpool1 = make SeatPool, :population_name => "", :seats => 10, :priority => 2, :exp_add_succeed => false
-
+  seatpool1 = make SeatPool, :population_name => "", :seats => 10, :priority => 2, :exp_add_succeed => true
   @activity_offering = create ActivityOffering, :seat_pool_list => {"blank" => seatpool1}
+  @activity_offering.save
 end
 
 Then /^an error message is displayed about the required seat pool fields$/ do
   on ActivityOfferingMaintenance do |page|
     sleep 2 #TODO: required by headless
-    page.validation_error_dialog_text.should == "The form contains errors. Please correct these errors and try again."
-    page.close_validation_error_dialog
+    page.growltext.should == "The form contains errors. Please correct these errors and try again."
+#    page.close_validation_error_dialog
     #page.seatpool_first_msg.should match /.*Required*/
   end
   #remove blank to update expected

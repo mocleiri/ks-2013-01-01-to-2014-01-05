@@ -679,9 +679,6 @@ class SeatPool
         end
 
       end
-      on ActivityOfferingMaintenance do |page|
-        page.add_seat_pool
-      end
     end
   end
 end

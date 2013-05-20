@@ -62,6 +62,8 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   element(:add_inst_effort) { |b| b.personnel_table.rows[1].cells[INST_EFFORT_COLUMN].text_field() }
   action(:add_personnel_element) { |b| b.personnel_table.rows[1].cells[PERS_ACTION_COLUMN].button() }
   action(:add_personnel) { |b| b.add_personnel_element.click; b.adding.wait_while_present }
+  element(:jgrowl){|b|b.frm.div(id:"jGrowl")}
+  value(:growltext){|b| b.jgrowl.div(class:"jGrowl-message").text}
 
   TBA = 0
   DAYS = 1
