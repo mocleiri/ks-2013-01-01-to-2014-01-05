@@ -12,3 +12,7 @@ STATE_CNSTRNT_ID,REL_OBJ_STATE_ID
 "kuali.stateconstraint.courseoffering.planned.offered","kuali.lui.format.offering.state.offered"
 "kuali.stateconstraint.courseoffering.draft.planned","kuali.lui.format.offering.state.planned"
 "kuali.stateconstraint.courseoffering.planned.draft","kuali.lui.format.offering.state.planned"
+"kuali.stateconstraint.activityoffering.approved.offered.soc","kuali.soc.state.published"
+"kuali.stateconstraint.activityoffering.draft.offered.soc","kuali.soc.state.published"
+"kuali.stateconstraint.activityoffering.approved.offered.soc","kuali.soc.state.publishing"
+"kuali.stateconstraint.activityoffering.draft.offered.soc","kuali.soc.state.publishing"
