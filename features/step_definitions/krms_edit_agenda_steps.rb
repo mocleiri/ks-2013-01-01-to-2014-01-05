@@ -115,10 +115,24 @@ Then /^the text "(.*)" should be present in the text area$/ do |text|
   end
 end
 
-Then /^the preview section should have the text "(.*)"$/ do |text|
-  on EditAgenda do |page|
-    page.loading.wait_while_present
-    page.preview_tree_section.text.should match /.*#{Regexp.escape(text)}.*/
+Then /^the "(.*?)" preview section should have the text "(.*)"$/ do |section,text|
+  sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
+
+  test_text = @editAgenda.create_string_for_testing(section,text)
+  if( section == "agenda")
+    on ManageCOAgendas do |page|
+      page.loading.wait_while_present
+      page.agenda_management_section.text.should match /.*#{Regexp.escape(test_text)}.*/
+      puts test_text
+      puts text
+    end
+  else
+    on EditAgenda do |page|
+      page.loading.wait_while_present
+      page.send(sect[section]).text.should match /.*#{Regexp.escape(test_text)}.*/
+      puts test_text
+      puts text
+    end
   end
 end
 
@@ -144,7 +158,8 @@ When /^I select the "(.*)" option from the "(.*)" dropdown$/ do |rule, type|
 end
 
 When /^I enter "(.*)" in the "(.*)" field$/ do |cors, field|
-  types = {"course"=>:course_field, "free form text"=>:free_text_field, "courses"=>:courses_field}
+  types = {"course"=>:course_field, "free form text"=>:free_text_field, "courses"=>:courses_field,
+            "number of courses"=>:number_courses_field}
   on EditAgenda do |page|
     page.send(types[field]).when_present.set cors
   end
@@ -193,7 +208,7 @@ Then /^the loaded page should have "(.*)" as a heading$/ do |head|
 end
 
 When /^I click the "(.*)" button on Manage CO Agendas page$/ do |btn|
-  buttons = {"submit"=>:submit_btn, "cancel"=>:cancel_btn}
+  buttons = {"submit"=>:submit, "cancel"=>:cancel}
   on ManageCOAgendas do |page|
     page.send(buttons[btn])
   end
@@ -241,5 +256,26 @@ Then /^the old and new rule should be compared$/ do
   on EditAgenda do |page|
     page.loading.wait_while_present
     page.compare_rule_section.text.should match /Compare CLU and CO Rules/
+  end
+end
+
+When /^I set up the data for "(.*?)" for the course "(.*?)" with Advanced Search$/ do |section, course|
+  @editAgenda = make EditAgendaData
+  go_to_krms_manage_course_offerings
+  @editAgenda.create_data_advanced_search(section, course)
+end
+
+When /^I navigate to the agenda page for "(.*?)"$/ do |course|
+  go_to_krms_manage_course_offerings
+  @editAgenda.navigate(course)
+end
+
+Then /^the "(.*?)" rule should still exist$/ do |sect|
+  sections_click = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
+              "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
+              "Repeatable for Credit"=>:repeatable_credit, "Restricted for Credit"=>:resctricted_credit}
+  on ManageCOAgendas do |page|
+    page.send(sections_click[sect])
+    puts page.agenda_management_section.div(id:"u100081").div(id: "KRMS-PreviewTree-Group").text
   end
 end
