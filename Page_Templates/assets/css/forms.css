@@ -31,6 +31,9 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .collection-label {
 	font-weight: bold;
 }
+.read-only {
+	margin-top: 0.4em;
+}
 .form-child {
 	padding-left: 2.0em;
 }

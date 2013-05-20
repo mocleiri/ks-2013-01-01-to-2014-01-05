@@ -121,6 +121,12 @@
 .actions {
 	text-align: right !important;
 }
+.compare {
+	background-color: #eeeeee;
+	padding: .2em 1em;
+	border: 1px solid #ccc;
+	border-radius: 0.5em;
+}
 a.disabled:hover {
 	pointer-events: none;
 	cursor: default;
