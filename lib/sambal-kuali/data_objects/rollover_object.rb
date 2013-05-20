@@ -116,7 +116,7 @@ class Rollover
     end
 
     on RolloverDetails do |page|
-      raise "release to depts not completed" unless page.status_detail_msg =~ /have been released to the departments/
+      raise "release to depts not completed" unless page.status_detail_msg =~ /Released to Departments/
     end
   end
 
