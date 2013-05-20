@@ -56,11 +56,10 @@ public class OrgHierarchyEntity extends MetaEntity implements AttributeOwner<Org
     private Date effectiveDate;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", fetch = FetchType.EAGER, orphanRemoval = true)
     private final Set<OrgHierarchyAttributeEntity> attributes = new HashSet<OrgHierarchyAttributeEntity>();
-
     @ElementCollection
     @CollectionTable(name ="KSEN_ORG_HIRCHY_OORT",joinColumns = @JoinColumn(name = "ORG_HIRCHY_ID"))
     @Column(name="ORG_ORG_RELTN_TYPE_ID")
-    private Set<String> orgOrgRelationTypes = new HashSet<String>();
+    private final Set<String> orgOrgRelationTypes = new HashSet<String>();
 
     public OrgHierarchyEntity() {
     }
@@ -141,7 +140,10 @@ public class OrgHierarchyEntity extends MetaEntity implements AttributeOwner<Org
     }
 
     public void setOrgOrgRelationTypes(Set<String> orgOrgRelationTypes) {
-        this.orgOrgRelationTypes = orgOrgRelationTypes;
+        this.orgOrgRelationTypes.clear();
+        if(orgOrgRelationTypes != null) {
+            this.orgOrgRelationTypes.addAll(orgOrgRelationTypes);
+        }
     }
 
     @Override

@@ -30,6 +30,7 @@ import org.kuali.student.r2.core.organization.dao.OrgHierarchyDao;
 import org.kuali.student.r2.core.organization.dao.OrgOrgRelationDao;
 import org.kuali.student.r2.core.organization.dao.OrgPersonRelationDao;
 import org.kuali.student.r2.core.organization.dao.OrgPositionRestrictionDao;
+import org.kuali.student.r2.core.organization.model.OrgCodeEntity;
 import org.kuali.student.r2.core.organization.model.OrgEntity;
 import org.kuali.student.r2.core.organization.model.OrgHierarchyEntity;
 import org.kuali.student.r2.core.organization.model.OrgOrgRelationEntity;
@@ -52,7 +53,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @WebService(endpointInterface = "org.kuali.student.r2.core.organization.service.OrganizationService", serviceName = "OrganizationService", portName = "OrganizationService", targetNamespace = "http://student.kuali.org/wsdl/organization")
 @Transactional(readOnly = true, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
@@ -222,7 +227,13 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgHierarchyInfo createOrgHierarchy(String orgHierarchyTypeKey, OrgHierarchyInfo orgHierarchyInfo, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
+        //make sure that the root org exists if it is defined
+        if(orgHierarchyInfo.getRootOrgId() != null) {
+            getOrg(orgHierarchyInfo.getRootOrgId(), contextInfo);
+        }
+
         OrgHierarchyEntity entity = new OrgHierarchyEntity(orgHierarchyInfo);
         entity.setOrgHierarchyType(orgHierarchyTypeKey);
         entity.setEntityCreated(contextInfo);
@@ -231,31 +242,45 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgHierarchyInfo updateOrgHierarchy(String orgHierarchyId, OrgHierarchyInfo orgHierarchyInfo, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException {
-        if(!orgHierarchyId.equals(orgHierarchyInfo.getId())) {
-            throw new InvalidParameterException(orgHierarchyId + " does not match the id in the object " + orgHierarchyInfo.getId());
+        if (!orgHierarchyId.equals (orgHierarchyInfo.getId())) {
+            throw new ReadOnlyException("The id parameter does not match the id on the info object");
         }
+
+        //make sure that the root org exists if it is defined
+        if(orgHierarchyInfo.getRootOrgId() != null) {
+            getOrg(orgHierarchyInfo.getRootOrgId(), contextInfo);
+        }
+
         OrgHierarchyEntity entity = orgHierarchyDao.find(orgHierarchyId);
         if(null == entity) {
             throw new DoesNotExistException(orgHierarchyId);
         }
+
+        if(!orgHierarchyId.equals(entity.getId())) {
+            throw new ReadOnlyException(orgHierarchyId + " does not match the id in the entity " + entity.getId());
+        }
+
+        if(!entity.getOrgHierarchyType().equals(orgHierarchyInfo.getTypeKey())) {
+            throw new ReadOnlyException("The typekey in the updated object does not match the existing typekey");
+        }
+
         entity.fromDto(orgHierarchyInfo);
         entity.setEntityUpdated(contextInfo);
         entity = orgHierarchyDao.merge(entity);
-        orgHierarchyDao.getEm().flush();
         return entity.toDto();
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public StatusInfo deleteOrgHierarchy(String orgHierarchyId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         OrgHierarchyEntity entity = orgHierarchyDao.find(orgHierarchyId);
         if (null == entity) {
             throw new DoesNotExistException(orgHierarchyId);
         }
         orgHierarchyDao.remove(entity);
-        StatusInfo status = new StatusInfo();
-        status.setSuccess(Boolean.TRUE);
-        return status;
+        return new StatusInfo();
     }
 
     @Override
@@ -325,31 +350,56 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgInfo createOrg(String orgTypeKey, OrgInfo orgInfo, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
         OrgEntity entity = new OrgEntity(orgInfo);
         entity.setOrgType(orgTypeKey);
         entity.setEntityCreated(contextInfo);
+
+        for(OrgCodeEntity orgCodeEntity : entity.getOrgCodes()) {
+            orgCodeEntity.setEntityCreated(contextInfo);
+        }
+
         orgDao.persist(entity);
         return entity.toDto();
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgInfo updateOrg(String orgId, OrgInfo orgInfo, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException {
         if(!orgId.equals(orgInfo.getId())) {
-            throw new InvalidParameterException(orgId + " does not match the id in the object " + orgInfo.getId());
+            throw new ReadOnlyException(orgId + " does not match the id in the object " + orgInfo.getId());
         }
+
         OrgEntity entity = orgDao.find(orgId);
         if(null == entity) {
             throw new DoesNotExistException(orgId);
         }
+
+        if(!orgId.equals(entity.getId())) {
+            throw new ReadOnlyException(orgId + " does not match the id in the entity " + entity.getId());
+        }
+
+        if(!entity.getOrgType().equals(orgInfo.getTypeKey())) {
+            throw new ReadOnlyException("The typekey in the updated object does not match the existing typekey");
+        }
+
         entity.fromDto(orgInfo);
         entity.setEntityUpdated(contextInfo);
+
+        for(OrgCodeEntity orgCodeEntity : entity.getOrgCodes()) {
+            if(orgCodeEntity.getCreateTime() == null) {
+                orgCodeEntity.setEntityCreated(contextInfo);
+            } else {
+                orgCodeEntity.setEntityUpdated(contextInfo);
+            }
+        }
         entity = orgDao.merge(entity);
-        orgDao.getEm().flush();
         return entity.toDto();
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public StatusInfo deleteOrg(String orgId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         OrgEntity entity = orgDao.find(orgId);
         if (null == entity) {
@@ -357,9 +407,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
 
         orgDao.remove(entity);
-        StatusInfo status = new StatusInfo();
-        status.setSuccess(Boolean.TRUE);
-        return status;
+        return new StatusInfo();
     }
 
     @Override
@@ -464,27 +512,59 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgOrgRelationInfo createOrgOrgRelation(String orgId, String orgPeerId, String orgOrgRelationTypeKey, OrgOrgRelationInfo orgOrgRelationInfo, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        //Make sure that the orgs  actually exist
+        List<String> ids = new ArrayList<String>();
+        ids.add(orgId);
+        ids.add(orgPeerId);
+        getOrgsByIds(ids, contextInfo);
+
+        OrgOrgRelationEntity entity = new OrgOrgRelationEntity(orgOrgRelationInfo);
+        entity.setOrgId(orgId);
+        entity.setRelatedOrgId(orgPeerId);
+        entity.setOrgOrgRelationType(orgOrgRelationTypeKey);
+        entity.setEntityCreated(contextInfo);
+
+        orgOrgRelationDao.persist(entity);
+        return entity.toDto();
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgOrgRelationInfo updateOrgOrgRelation(String orgOrgRelationId, OrgOrgRelationInfo orgOrgRelationInfo, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException {
         if(!orgOrgRelationId.equals(orgOrgRelationInfo.getId())) {
-            throw new InvalidParameterException(orgOrgRelationId + " does not match the id in the object " + orgOrgRelationInfo.getId());
+            throw new ReadOnlyException(orgOrgRelationId + " does not match the id in the object " + orgOrgRelationInfo.getId());
         }
         OrgOrgRelationEntity entity = orgOrgRelationDao.find(orgOrgRelationId);
         if(null == entity) {
             throw new DoesNotExistException(orgOrgRelationId);
         }
+
+        if(!orgOrgRelationId.equals(entity.getId())) {
+            throw new ReadOnlyException(orgOrgRelationId + " does not match the id in the entity " + entity.getId());
+        }
+
+        if(!entity.getOrgOrgRelationType().equals(orgOrgRelationInfo.getTypeKey())) {
+            throw new ReadOnlyException("The typekey in the updated object does not match the existing typekey");
+        }
+
+        if(!entity.getOrgId().equals(orgOrgRelationInfo.getOrgId())) {
+            throw new ReadOnlyException("The orgId in the updated object does not match the existing orgId");
+        }
+
+        if(!entity.getRelatedOrgId().equals(orgOrgRelationInfo.getRelatedOrgId())) {
+            throw new ReadOnlyException("The relatedOrgId in the updated object does not match the existing relatedOrgId");
+        }
+
         entity.fromDto(orgOrgRelationInfo);
         entity.setEntityUpdated(contextInfo);
         entity = orgOrgRelationDao.merge(entity);
-        orgOrgRelationDao.getEm().flush();
         return entity.toDto();
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public StatusInfo deleteOrgOrgRelation(String orgOrgRelationId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         OrgOrgRelationEntity entity = orgOrgRelationDao.find(orgOrgRelationId);
         if (null == entity) {
@@ -603,36 +683,54 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgPersonRelationInfo createOrgPersonRelation(String orgId, String personId, String orgPersonRelationTypeKey, OrgPersonRelationInfo orgPersonRelationInfo, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        getOrg(orgId, contextInfo);
+
+        OrgPersonRelationEntity entity = new OrgPersonRelationEntity(orgPersonRelationInfo);
+        entity.setOrgId(orgId);
+        entity.setPersonId(personId);
+        entity.setOrgPersonRelationType(orgPersonRelationTypeKey);
+        orgPersonRelationDao.persist(entity);
+        return entity.toDto();
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgPersonRelationInfo updateOrgPersonRelation(String orgPersonRelationId, OrgPersonRelationInfo orgPersonRelationInfo, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException {
         if(!orgPersonRelationId.equals(orgPersonRelationInfo.getId())) {
-            throw new InvalidParameterException(orgPersonRelationId + " does not match the id in the object " + orgPersonRelationInfo.getId());
+            throw new ReadOnlyException(orgPersonRelationId + " does not match the id in the object " + orgPersonRelationInfo.getId());
         }
         OrgPersonRelationEntity entity = orgPersonRelationDao.find(orgPersonRelationId);
         if(null == entity) {
             throw new DoesNotExistException(orgPersonRelationId);
         }
+
+        if(!orgPersonRelationId.equals(entity.getId())) {
+            throw new ReadOnlyException(orgPersonRelationId + " does not match the id in the entity " + entity.getId());
+        }
+        if(!entity.getPersonId().equals(orgPersonRelationInfo.getPersonId())) {
+            throw new ReadOnlyException(orgPersonRelationInfo.getPersonId() + " does not match the person id in the entity " + entity.getPersonId());
+        }
+        if(!entity.getOrgPersonRelationType().equals(orgPersonRelationInfo.getTypeKey())) {
+            throw new ReadOnlyException(orgPersonRelationInfo.getTypeKey() + " does not match the typeKey in the entity " + entity.getOrgPersonRelationType());
+        }
+
         entity.fromDto(orgPersonRelationInfo);
         entity.setEntityUpdated(contextInfo);
         entity = orgPersonRelationDao.merge(entity);
-        orgPersonRelationDao.getEm().flush();
         return entity.toDto();
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public StatusInfo deleteOrgPersonRelation(String orgPersonRelationId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         OrgPersonRelationEntity entity = orgPersonRelationDao.find(orgPersonRelationId);
         if (null == entity) {
             throw new DoesNotExistException(orgPersonRelationId);
         }
         orgPersonRelationDao.remove(entity);
-        StatusInfo status = new StatusInfo();
-        status.setSuccess(Boolean.TRUE);
-        return status;
+        return new StatusInfo();
     }
 
     @Override
@@ -651,7 +749,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         for (OrgPositionRestrictionEntity entity : entities) {
             if (entity == null) {
                 // if one of the entities from "findByIds" is returned as null, then one of the keys in the list was not found
-                throw new DoesNotExistException();
+                throw new DoesNotExistException("One of the ids given is invalid and does not correspond to a valid OrgPositionRestriction");
             }
             result.add(entity.toDto());
         }
@@ -660,12 +758,12 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public List<String> getOrgPositionRestrictionIdsByType(String orgPersonRelationTypeKey, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return orgPositionRestrictionDao.getOrgPositionRestrictionIdsByType(orgPersonRelationTypeKey);
     }
 
     @Override
     public List<String> getOrgPositionRestrictionIdsByOrg(String orgId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return orgPositionRestrictionDao.getOrgPositionRestrictionIdsByOrg(orgId);
     }
 
     @Override
@@ -698,11 +796,20 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgPositionRestrictionInfo createOrgPositionRestriction(String orgId, String orgPersonRelationTypeKey, OrgPositionRestrictionInfo orgPositionRestrictionInfo, ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        getOrg(orgId, contextInfo);
+
+        OrgPositionRestrictionEntity entity = new OrgPositionRestrictionEntity(orgPositionRestrictionInfo);
+        entity.setOrgId(orgId);
+        entity.setOrgPersonRelationType(orgPersonRelationTypeKey);
+        entity.setEntityCreated(contextInfo);
+        orgPositionRestrictionDao.persist(entity);
+        return entity.toDto();
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgPositionRestrictionInfo updateOrgPositionRestriction(String orgPositionRestrictionId, OrgPositionRestrictionInfo orgPositionRestrictionInfo, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException {
         if(!orgPositionRestrictionId.equals(orgPositionRestrictionInfo.getId())) {
             throw new InvalidParameterException(orgPositionRestrictionId + " does not match the id in the object " + orgPositionRestrictionInfo.getId());
@@ -711,43 +818,185 @@ public class OrganizationServiceImpl implements OrganizationService {
         if(null == entity) {
             throw new DoesNotExistException(orgPositionRestrictionId);
         }
+
+        if(!orgPositionRestrictionId.equals(entity.getId())) {
+            throw new ReadOnlyException(orgPositionRestrictionId + " does not match the id in the entity " + entity.getId());
+        }
+
+        if(!entity.getOrgPersonRelationType().equals(orgPositionRestrictionInfo.getOrgPersonRelationTypeKey())) {
+            throw new ReadOnlyException(orgPositionRestrictionInfo.getOrgPersonRelationTypeKey() + " does not match the typeKey in the entity " + entity.getOrgPersonRelationType());
+        }
+
         entity.fromDto(orgPositionRestrictionInfo);
         entity.setEntityUpdated(contextInfo);
         entity = orgPositionRestrictionDao.merge(entity);
-        orgPositionRestrictionDao.getEm().flush();
         return entity.toDto();
     }
 
     @Override
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public StatusInfo deleteOrgPositionRestriction(String orgPositionRestrictionId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         OrgPositionRestrictionEntity entity = orgPositionRestrictionDao.find(orgPositionRestrictionId);
         if (null == entity) {
             throw new DoesNotExistException(orgPositionRestrictionId);
         }
         orgPositionRestrictionDao.remove(entity);
-        StatusInfo status = new StatusInfo();
-        status.setSuccess(Boolean.TRUE);
-        return status;
+        return new StatusInfo();
     }
 
     @Override
     public Boolean isDescendant(String orgId, String descendantOrgId, String orgHierarchyId, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        try {
+            OrgTreeViewInfo orgTree = getOrgTree(orgId, orgHierarchyId, Integer.MAX_VALUE, contextInfo);
+            if(searchTree(orgTree, descendantOrgId, new HashSet<String>())) {
+                return true;
+            }
+        } catch (DoesNotExistException e) {
+            throw new OperationFailedException("unable to determine if " + descendantOrgId + " is a descendant of " + orgId + " using hierarchy " + orgHierarchyId, e);
+        }
+
+        return false;
+    }
+
+    /*
+    * Recursively search the given orgTree for the given orgId.
+    */
+    private boolean searchTree(OrgTreeViewInfo orgTree, String orgId, Set<String> visitedOrgs) {
+        for(OrgTreeViewInfo child : orgTree.getChildren()) {
+            String childOrgId = child.getOrg().getId();
+            if(childOrgId.equals(orgId)) {
+                return true;
+            }
+            //only recurse if we have not already been there
+            if(visitedOrgs.add(childOrgId)) {
+                if(searchTree(child, orgId, visitedOrgs)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override
     public List<String> getAllDescendants(String orgId, String orgHierarchyId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        Set<String> ids = new HashSet<String>();
+        OrgTreeViewInfo descendantTree = getOrgTree(orgId, orgHierarchyId, Integer.MAX_VALUE, contextInfo);
+
+        addDescendantTree(descendantTree, ids);
+
+        return new ArrayList<String>(ids);
+    }
+
+    private void addDescendantTree(OrgTreeViewInfo orgTree, Set<String> ids) {
+        for(OrgTreeViewInfo child : orgTree.getChildren()) {
+            String childOrgId = child.getOrg().getId();
+            //only recurse if we have not already been there
+            if(ids.add(childOrgId)) {
+                addAncestorsTree(child, ids);
+            }
+        }
     }
 
     @Override
     public List<String> getAllAncestors(String orgId, String orgHierarchyId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        Set<String> ids = new HashSet<String>();
+        OrgTreeViewInfo ancestorTree = getOrgTree(orgId, orgHierarchyId, Integer.MIN_VALUE, contextInfo);
+
+        addAncestorsTree(ancestorTree, ids);
+
+        return new ArrayList<String>(ids);
+    }
+
+    private void addAncestorsTree(OrgTreeViewInfo orgTree, Set<String> ids) {
+        for(OrgTreeViewInfo parent : orgTree.getParents()) {
+            String parentOrgId = parent.getOrg().getId();
+            //only recurse if we have not already been there
+            if(ids.add(parentOrgId)) {
+                addAncestorsTree(parent, ids);
+            }
+        }
     }
 
     @Override
     public OrgTreeViewInfo getOrgTree(String rootOrgId, String orgHierarchyId, int maxLevels, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        OrgHierarchyInfo orgHierarchyInfo = getOrgHierarchy(orgHierarchyId, contextInfo);
+
+        OrgTreeViewInfo orgTree = new OrgTreeViewInfo();
+
+        OrgInfo org = getOrg(rootOrgId, contextInfo);
+        orgTree.setOrg(org);
+
+        Map<String, OrgTreeViewInfo> visitedNodes = new HashMap<String, OrgTreeViewInfo>();
+        if(maxLevels >= 0) {
+            buildOrgTree(orgTree, maxLevels, 0, orgHierarchyInfo.getOrgOrgRelationTypes(), visitedNodes, false, contextInfo);
+        }
+
+        if(maxLevels <= 0) {
+            buildOrgTree(orgTree, maxLevels, 0, orgHierarchyInfo.getOrgOrgRelationTypes(), visitedNodes, true, contextInfo);
+        }
+
+        return orgTree;
+    }
+
+    /*
+   * Build the OrgTree from the given Org tree going up or down (pulling the parent/child of the given OrgTree) recursively
+   */
+    private void buildOrgTree(OrgTreeViewInfo orgTree, int maxLevels, int currentLevel, List<String> validRelationTypes, Map<String, OrgTreeViewInfo> visitedNodes, boolean up, ContextInfo contextInfo)
+            throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
+        //only continue if we still need to go up/down the tree
+        if (maxLevels == 0 || Math.abs(currentLevel) < Math.abs(maxLevels)) {
+            visitedNodes.put(orgTree.getOrg().getId(), orgTree);
+
+            List<OrgOrgRelationInfo> relations = pullRelations(validRelationTypes, orgTree.getOrg().getId(), up, contextInfo);
+            for (OrgOrgRelationInfo relation : relations) {
+                String nextOrgId = (up ? relation.getOrgId() : relation.getRelatedOrgId());
+                OrgTreeViewInfo nextOrg = visitedNodes.get(nextOrgId);
+
+                if (nextOrg == null) {
+                    nextOrg = new OrgTreeViewInfo();
+                    nextOrg.setOrg(getOrg(nextOrgId, contextInfo));
+                }
+                if(up) {
+                    addToOrgTree(nextOrg, orgTree);
+                } else {
+                    addToOrgTree(orgTree, nextOrg);
+                }
+                //don't recurse on a node that we have already visited.
+                if (!visitedNodes.containsKey(nextOrgId)) {
+                    int nextLevel = currentLevel + (up ? -1 : 1);
+                    buildOrgTree(nextOrg, maxLevels, nextLevel, validRelationTypes, visitedNodes, up, contextInfo);
+                }
+            }
+        }
+    }
+
+    private List<OrgOrgRelationInfo> pullRelations(List<String> validRelationTypes, String orgId, boolean up, ContextInfo contextInfo) throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
+        List<OrgOrgRelationInfo> relations = new ArrayList<OrgOrgRelationInfo>();
+        for(String relationType : validRelationTypes) {
+            if(up) {
+                relations.addAll(getOrgOrgRelationsByTypeAndRelatedOrg(orgId, relationType, contextInfo));
+
+            } else {
+                relations.addAll(getOrgOrgRelationsByTypeAndOrg(orgId, relationType, contextInfo));
+            }
+        }
+
+        return relations;
+    }
+
+    private void addToOrgTree(OrgTreeViewInfo parent, OrgTreeViewInfo child) {
+        addToOrgTree(parent.getChildren(), child);
+        addToOrgTree(child.getParents(), parent);
+    }
+
+    private void addToOrgTree(List<OrgTreeViewInfo> orgTreeList, OrgTreeViewInfo orgTreeViewInfo) {
+        for(OrgTreeViewInfo currentTree : orgTreeList) {
+            if(currentTree.getOrg().getId().equals(orgTreeViewInfo.getOrg().getId())) {
+                return;
+            }
+        }
+        orgTreeList.add(orgTreeViewInfo);
     }
 
     @Override

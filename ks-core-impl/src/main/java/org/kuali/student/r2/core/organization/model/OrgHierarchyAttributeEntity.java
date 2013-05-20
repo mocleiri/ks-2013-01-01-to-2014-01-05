@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "")
+@Table(name = "KSEN_ORG_HIRCHY_ATTR")
 public class OrgHierarchyAttributeEntity extends BaseAttributeEntity<OrgHierarchyEntity> {
 
     public OrgHierarchyAttributeEntity() {

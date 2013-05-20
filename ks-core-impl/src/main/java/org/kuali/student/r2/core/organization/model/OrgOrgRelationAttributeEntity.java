@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "")
+@Table(name = "KSEN_ORG_ORG_REL_ATTR")
 public class OrgOrgRelationAttributeEntity extends BaseAttributeEntity<OrgOrgRelationEntity> {
     public OrgOrgRelationAttributeEntity() {
         super();

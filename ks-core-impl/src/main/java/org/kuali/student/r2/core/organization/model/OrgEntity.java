@@ -10,6 +10,7 @@ import org.kuali.student.r2.common.infc.Attribute;
 import org.kuali.student.r2.common.util.RichTextHelper;
 import org.kuali.student.r2.core.organization.dto.OrgInfo;
 import org.kuali.student.r2.core.organization.infc.Org;
+import org.kuali.student.r2.core.organization.infc.OrgCode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,6 +24,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -59,7 +61,8 @@ public class OrgEntity extends MetaEntity implements AttributeOwner<OrgAttribute
     private Date effectiveDate;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", fetch = FetchType.EAGER, orphanRemoval = true)
     private final Set<OrgAttributeEntity> attributes = new HashSet<OrgAttributeEntity>();
-    //BOOKMARK TODO - add orgCode mapping then modify necessary methods fromDto and toDto
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "orgId", fetch = FetchType.EAGER, orphanRemoval = true)
+    private final Set<OrgCodeEntity> orgCodes = new HashSet<OrgCodeEntity>();
 
 
     public  OrgEntity() {
@@ -173,6 +176,19 @@ public class OrgEntity extends MetaEntity implements AttributeOwner<OrgAttribute
         }
     }
 
+    public Set<OrgCodeEntity> getOrgCodes() {
+        return orgCodes;
+    }
+
+
+    public void setOrgCodes(Set<OrgCodeEntity> orgCodes) {
+        this.orgCodes.clear();
+        if (orgCodes != null) {
+            this.orgCodes.addAll(orgCodes);
+        }
+    }
+
+
     public void fromDto(Org org) {
         setOrgState(org.getStateKey());
         setLongName(org.getLongName());
@@ -189,10 +205,15 @@ public class OrgEntity extends MetaEntity implements AttributeOwner<OrgAttribute
         setExpirationDate(org.getExpirationDate());
         setEffectiveDate(org.getEffectiveDate());
 
-        this.attributes.clear();
+        attributes.clear();
         for (Attribute att : org.getAttributes()) {
             OrgAttributeEntity attEntity = new OrgAttributeEntity(att, this);
-            this.getAttributes().add(attEntity);
+            getAttributes().add(attEntity);
+        }
+
+        orgCodes.clear();
+        for(OrgCode code : org.getOrgCodes()) {
+            getOrgCodes().add(new OrgCodeEntity(code, this));
         }
     }
 
@@ -214,6 +235,10 @@ public class OrgEntity extends MetaEntity implements AttributeOwner<OrgAttribute
         for (OrgAttributeEntity att : getAttributes()) {
             AttributeInfo attInfo = att.toDto();
             info.getAttributes().add(attInfo);
+        }
+
+        for (OrgCodeEntity code : getOrgCodes()) {
+            info.getOrgCodes().add(code.toDto());
         }
 
         return info;

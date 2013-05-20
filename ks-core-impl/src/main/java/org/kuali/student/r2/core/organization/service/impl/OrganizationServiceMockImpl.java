@@ -201,14 +201,16 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,PermissionDeniedException
             ,ReadOnlyException
     {
-        // create
-        if (!orgHierarchyTypeKey.equals (orgHierarchyInfo.getTypeKey())) {
-            throw new InvalidParameterException ("The type parameter does not match the type on the info object");
+        //make sure that the root org exists if it is defined
+        if(orgHierarchyInfo.getRootOrgId() != null) {
+            getOrg(orgHierarchyInfo.getRootOrgId(), contextInfo);
         }
+
         OrgHierarchyInfo copy = new OrgHierarchyInfo(orgHierarchyInfo);
         if (copy.getId() == null) {
             copy.setId(UUIDHelper.genStringUUID());
         }
+        copy.setTypeKey(orgHierarchyTypeKey);
         copy.setMeta(newMeta(contextInfo));
         orgHierarchyMap.put(copy.getId(), copy);
         return new OrgHierarchyInfo(copy);
@@ -227,13 +229,24 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
     {
         // update
         if (!orgHierarchyId.equals (orgHierarchyInfo.getId())) {
-            throw new InvalidParameterException ("The id parameter does not match the id on the info object");
+            throw new ReadOnlyException("The id parameter does not match the id on the info object");
         }
-        OrgHierarchyInfo copy = new OrgHierarchyInfo(orgHierarchyInfo);
+
+        //make sure that the root org exists if it is defined
+        if(orgHierarchyInfo.getRootOrgId() != null) {
+            getOrg(orgHierarchyInfo.getRootOrgId(), contextInfo);
+        }
+
         OrgHierarchyInfo old = this.getOrgHierarchy(orgHierarchyInfo.getId(), contextInfo);
-        if (!old.getMeta().getVersionInd().equals(copy.getMeta().getVersionInd())) {
+
+        if(!old.getTypeKey().equals(orgHierarchyInfo.getTypeKey())) {
+            throw new ReadOnlyException("The typekey in the updated object does not match the existing typekey");
+        }
+
+        if (!old.getMeta().getVersionInd().equals(orgHierarchyInfo.getMeta().getVersionInd())) {
             throw new VersionMismatchException(old.getMeta().getVersionInd());
         }
+        OrgHierarchyInfo copy = new OrgHierarchyInfo(orgHierarchyInfo);
         copy.setMeta(updateMeta(copy.getMeta(), contextInfo));
         this.orgHierarchyMap .put(orgHierarchyInfo.getId(), copy);
         return new OrgHierarchyInfo(copy);
@@ -357,14 +370,12 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,PermissionDeniedException
             ,ReadOnlyException
     {
-        // create
-        if (!orgTypeKey.equals (orgInfo.getTypeKey())) {
-            throw new InvalidParameterException ("The type parameter does not match the type on the info object");
-        }
+
         OrgInfo copy = new OrgInfo(orgInfo);
         if (copy.getId() == null) {
             copy.setId(UUIDHelper.genStringUUID());
         }
+        copy.setTypeKey(orgTypeKey);
         copy.setMeta(newMeta(contextInfo));
         orgMap.put(copy.getId(), copy);
         return new OrgInfo(copy);
@@ -381,15 +392,24 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,ReadOnlyException
             ,VersionMismatchException
     {
-        // update
         if (!orgId.equals (orgInfo.getId())) {
-            throw new InvalidParameterException ("The id parameter does not match the id on the info object");
+            throw new ReadOnlyException("The id parameter does not match the id on the info object");
         }
-        OrgInfo copy = new OrgInfo(orgInfo);
+
         OrgInfo old = this.getOrg(orgInfo.getId(), contextInfo);
-        if (!old.getMeta().getVersionInd().equals(copy.getMeta().getVersionInd())) {
+
+        if (!orgId.equals(old.getId())) {
+            throw new ReadOnlyException("The id parameter does not match the id on the old object");
+        }
+
+        if(!old.getTypeKey().equals(orgInfo.getTypeKey())) {
+            throw new ReadOnlyException("The typekey in the updated object does not match the existing typekey");
+        }
+
+        if (!old.getMeta().getVersionInd().equals(orgInfo.getMeta().getVersionInd())) {
             throw new VersionMismatchException(old.getMeta().getVersionInd());
         }
+        OrgInfo copy = new OrgInfo(orgInfo);
         copy.setMeta(updateMeta(copy.getMeta(), contextInfo));
         this.orgMap .put(orgInfo.getId(), copy);
         return new OrgInfo(copy);
@@ -619,22 +639,20 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
             ,ReadOnlyException {
-        // create
-        if (!orgOrgRelationTypeKey.equals (orgOrgRelationInfo.getTypeKey())) {
-            throw new InvalidParameterException ("The type parameter does not match the type on the info object");
-        }
-        if(!orgId.equals(orgOrgRelationInfo.getOrgId())) {
-            throw new InvalidParameterException("The orgId parameter does not match the orgId given on the info object");
-        }
-        if(!orgPeerId.equals(orgOrgRelationInfo.getRelatedOrgId())) {
-            throw new InvalidParameterException("The orgPeerId parameter does not match the relatedOrgId given on the info object");
-        }
+        //Make sure that the orgs  actually exist
+        List<String> ids = new ArrayList<String>();
+        ids.add(orgId);
+        ids.add(orgPeerId);
+        getOrgsByIds(ids, contextInfo);
 
 
         OrgOrgRelationInfo copy = new OrgOrgRelationInfo(orgOrgRelationInfo);
         if (copy.getId() == null) {
             copy.setId(UUIDHelper.genStringUUID());
         }
+        copy.setTypeKey(orgOrgRelationTypeKey);
+        copy.setOrgId(orgId);
+        copy.setRelatedOrgId(orgPeerId);
         copy.setMeta(newMeta(contextInfo));
         orgOrgRelationMap.put(copy.getId(), copy);
         return new OrgOrgRelationInfo(copy);
@@ -653,13 +671,32 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
     {
         // update
         if (!orgOrgRelationId.equals (orgOrgRelationInfo.getId())) {
-            throw new InvalidParameterException ("The id parameter does not match the id on the info object");
+            throw new ReadOnlyException("The id parameter does not match the id on the info object");
         }
-        OrgOrgRelationInfo copy = new OrgOrgRelationInfo(orgOrgRelationInfo);
+
         OrgOrgRelationInfo old = this.getOrgOrgRelation(orgOrgRelationInfo.getId(), contextInfo);
-        if (!old.getMeta().getVersionInd().equals(copy.getMeta().getVersionInd())) {
+
+        if(!orgOrgRelationId.equals(old.getId())) {
+            throw new ReadOnlyException(orgOrgRelationId + " does not match the id in the old object " + old.getId());
+        }
+
+        if(!old.getTypeKey().equals(orgOrgRelationInfo.getTypeKey())) {
+            throw new ReadOnlyException("The typekey in the updated object does not match the existing typekey");
+        }
+
+        if(!old.getOrgId().equals(orgOrgRelationInfo.getOrgId())) {
+            throw new ReadOnlyException("The orgId in the updated object does not match the existing orgId");
+        }
+
+        if(!old.getRelatedOrgId().equals(orgOrgRelationInfo.getRelatedOrgId())) {
+            throw new ReadOnlyException("The relatedOrgId in the updated object does not match the existing relatedOrgId");
+        }
+
+        if (!old.getMeta().getVersionInd().equals(orgOrgRelationInfo.getMeta().getVersionInd())) {
             throw new VersionMismatchException(old.getMeta().getVersionInd());
         }
+
+        OrgOrgRelationInfo copy = new OrgOrgRelationInfo(orgOrgRelationInfo);
         copy.setMeta(updateMeta(copy.getMeta(), contextInfo));
         this.orgOrgRelationMap.put(orgOrgRelationInfo.getId(), copy);
         return new OrgOrgRelationInfo(copy);
@@ -909,21 +946,15 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,PermissionDeniedException
             ,ReadOnlyException
     {
-        // create
-        if (!orgPersonRelationTypeKey.equals (orgPersonRelationInfo.getTypeKey())) {
-            throw new InvalidParameterException ("The type parameter does not match the type on the info object");
-        }
-        if(!orgId.equals(orgPersonRelationInfo.getOrgId())) {
-            throw new InvalidParameterException ("The orgId parameter does not match the orgId on the info object");
-        }
-        if(!personId.equals(orgPersonRelationInfo.getPersonId())) {
-            throw new InvalidParameterException ("The personId parameter does not match the personId on the info object");
-        }
+        getOrg(orgId, contextInfo);
 
         OrgPersonRelationInfo copy = new OrgPersonRelationInfo(orgPersonRelationInfo);
         if (copy.getId() == null) {
             copy.setId(UUIDHelper.genStringUUID());
         }
+        copy.setTypeKey(orgPersonRelationTypeKey);
+        copy.setPersonId(personId);
+        copy.setOrgId(orgId);
         copy.setMeta(newMeta(contextInfo));
         orgPersonRelationMap.put(copy.getId(), copy);
         return new OrgPersonRelationInfo(copy);
@@ -940,12 +971,31 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,ReadOnlyException
             ,VersionMismatchException
     {
-        // update
         if (!orgPersonRelationId.equals (orgPersonRelationInfo.getId())) {
-            throw new InvalidParameterException ("The id parameter does not match the id on the info object");
+            throw new ReadOnlyException ("The id parameter does not match the id on the info object");
         }
-        OrgPersonRelationInfo copy = new OrgPersonRelationInfo(orgPersonRelationInfo);
+
         OrgPersonRelationInfo old = this.getOrgPersonRelation(orgPersonRelationInfo.getId(), contextInfo);
+
+        if(!orgPersonRelationId.equals(old.getId())) {
+            throw new ReadOnlyException(orgPersonRelationId + " does not match the id in the old object " + old.getId());
+        }
+
+
+
+        if(!old.getTypeKey().equals(orgPersonRelationInfo.getTypeKey())) {
+            throw new ReadOnlyException("The typekey in the updated object does not match the existing typekey");
+        }
+
+        if(!old.getPersonId().equals(orgPersonRelationInfo.getPersonId())) {
+            throw new ReadOnlyException("The personId in the updated object does not match the existing personId");
+        }
+        if(!old.getOrgId().equals(orgPersonRelationInfo.getOrgId())) {
+            throw new ReadOnlyException("The orgId in the updated object does not match the existing orgId");
+        }
+
+        OrgPersonRelationInfo copy = new OrgPersonRelationInfo(orgPersonRelationInfo);
+
         if (!old.getMeta().getVersionInd().equals(copy.getMeta().getVersionInd())) {
             throw new VersionMismatchException(old.getMeta().getVersionInd());
         }
@@ -1080,16 +1130,12 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
             ,ReadOnlyException {
-        if (!orgId.equals(orgPositionRestrictionInfo.getOrgId())) {
-            throw new InvalidParameterException("The orgId parameter does not match the orgId on the info object");
-        }
-        if (!orgPersonRelationTypeKey.equals(orgPositionRestrictionInfo.getOrgPersonRelationTypeKey())) {
-            throw new InvalidParameterException("The orgPersonRelationTypeKey parameter does not match the orgPersonRelationTypeKey on the info object");
-        }
         OrgPositionRestrictionInfo copy = new OrgPositionRestrictionInfo(orgPositionRestrictionInfo);
         if (copy.getId() == null) {
             copy.setId(UUIDHelper.genStringUUID());
         }
+        copy.setOrgId(orgId);
+        copy.setOrgPersonRelationTypeKey(orgPersonRelationTypeKey);
         copy.setMeta(newMeta(contextInfo));
         orgPositionRestrictionMap.put(copy.getId(), copy);
         return new OrgPositionRestrictionInfo(copy);
@@ -1108,13 +1154,26 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
     {
         // update
         if (!orgPositionRestrictionId.equals (orgPositionRestrictionInfo.getId())) {
-            throw new InvalidParameterException ("The id parameter does not match the id on the info object");
+            throw new ReadOnlyException ("The id parameter does not match the id on the info object");
         }
-        OrgPositionRestrictionInfo copy = new OrgPositionRestrictionInfo(orgPositionRestrictionInfo);
+
         OrgPositionRestrictionInfo old = this.getOrgPositionRestriction(orgPositionRestrictionInfo.getId(), contextInfo);
-        if (!old.getMeta().getVersionInd().equals(copy.getMeta().getVersionInd())) {
+        if(!orgPositionRestrictionId.equals(old.getId())) {
+            throw new ReadOnlyException(orgPositionRestrictionId + " does not match the id in the old object " + old.getId());
+        }
+
+        if(!old.getOrgPersonRelationTypeKey().equals(orgPositionRestrictionInfo.getOrgPersonRelationTypeKey())) {
+            throw new ReadOnlyException("The orgPersonRelationTypekey in the updated object does not match the existing orgPersonRelationTypekey");
+        }
+
+        if(!old.getOrgId().equals(orgPositionRestrictionInfo.getOrgId())) {
+            throw new ReadOnlyException("The orgId in the updated object does not match the existing orgId");
+        }
+
+        if (!old.getMeta().getVersionInd().equals(orgPositionRestrictionInfo.getMeta().getVersionInd())) {
             throw new VersionMismatchException(old.getMeta().getVersionInd());
         }
+        OrgPositionRestrictionInfo copy = new OrgPositionRestrictionInfo(orgPositionRestrictionInfo);
         copy.setMeta(updateMeta(copy.getMeta(), contextInfo));
         this.orgPositionRestrictionMap .put(orgPositionRestrictionInfo.getId(), copy);
         return new OrgPositionRestrictionInfo(copy);

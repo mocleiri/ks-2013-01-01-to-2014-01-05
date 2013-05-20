@@ -211,6 +211,8 @@ public class TestOrganizationServiceImpl {
         descr.setFormatted("Org Code 1 Desc");
         orgCode1.setDescr(descr);
         orgCode1.setValue("OrgCodeValue 1");
+        orgCode1.setStateKey("Active");
+        orgCode1.setTypeKey("kuali.org.organization.code.type.codeA");
         orgInfo.getOrgCodes().add(orgCode1);
 	
         OrgCodeInfo orgCode2 = new OrgCodeInfo();
@@ -219,6 +221,8 @@ public class TestOrganizationServiceImpl {
         codeDescr.setFormatted("Org Code 2 Desc");
         orgCode2.setDescr(codeDescr);
         orgCode2.setValue("OrgCodeValue 2");
+        orgCode2.setStateKey("Active");
+        orgCode2.setTypeKey("kuali.org.organization.code.type.codeA");
         orgInfo.getOrgCodes().add(orgCode2);
 	
         OrgInfo createOrg1 = orgService.createOrg("kuali.org.Program", orgInfo, callContext);

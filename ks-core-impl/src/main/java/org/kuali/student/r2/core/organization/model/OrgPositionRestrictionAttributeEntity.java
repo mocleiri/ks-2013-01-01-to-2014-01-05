@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "")
+@Table(name = "KSEN_ORG_POS_RESTR_ATTR")
 public class OrgPositionRestrictionAttributeEntity extends BaseAttributeEntity<OrgPositionRestrictionEntity> {
     public OrgPositionRestrictionAttributeEntity() {
         super();
