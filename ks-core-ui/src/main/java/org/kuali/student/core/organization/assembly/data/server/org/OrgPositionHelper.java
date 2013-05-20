@@ -104,11 +104,11 @@ public class OrgPositionHelper {
         data.set(Properties.MIN_NUM_RELATIONS.getKey(), value);
     }
     
-    public String getMaxNumRelations() {
+    public Integer getMaxNumRelations() {
         return data.get(Properties.MAX_NUM_RELATIONS.getKey());
     }
     
-    public void setMaxNumRelations(String value)  {
+    public void setMaxNumRelations(Integer value)  {
         data.set(Properties.MAX_NUM_RELATIONS.getKey(), value);
     }
     

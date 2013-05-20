@@ -127,9 +127,10 @@ public class CommonConfigurer {
                         // Initialize the Widget picker with specific widgets like pickers, drop-downs, etc
                         Widget widget = null;
                         if (field.getWidget() != null) {
-                            if (field.getWidget().equals("OrgLocateTree")) {
-                                widget = new OrgTree(section);
-                            }
+                            //TODO OSR
+                            //if (field.getWidget().equals("OrgLocateTree")) {
+                            //    widget = new OrgTree(section);
+                            //}
                             if (field.getWidget().equals("PositionTable")) {
                                 positionTable = new PositionTable();
                                 DOM.setElementAttribute(positionTable.getElement(), "id", "orgPositionsTable");

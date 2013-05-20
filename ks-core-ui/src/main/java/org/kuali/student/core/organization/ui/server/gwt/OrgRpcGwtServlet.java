@@ -226,6 +226,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
         return null;
     }
 
+    /*
     public List<OrgTreeInfo> getOrgDisplayTree(String orgId, String orgHierarchy, int maxLevels) {
         try {
             List<OrgTreeInfo> orgTrees = new ArrayList<OrgTreeInfo>();
@@ -236,6 +237,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
 		}
         return null;
     }
+    */
 
     public OrgInfo getOrganization(String orgId) {
         try {
@@ -473,7 +475,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
                 personRelationInfo.setOrgPersonRelationTypeKey(position.getOrgPersonRelationTypeKey());
                 personRelationInfo.setTitle(position.getTitle());
                 personRelationInfo.setDesc(position.getDescr().getPlain());
-                personRelationInfo.setMinNumRelations(position.getMinNumRelations().toString());
+                personRelationInfo.setMinNumRelations(position.getMinNumRelations());
                 personRelationInfo.setMaxNumRelations(position.getMaxNumRelations());
                 ArrayList<String> names = new ArrayList<String>();
                 for(OrgPersonRelationInfo relation: orgPersonRelations){
