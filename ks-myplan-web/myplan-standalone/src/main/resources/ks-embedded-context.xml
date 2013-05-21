@@ -204,6 +204,12 @@
                         method="getFromCache"/>
             <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.get*(..))"
                         method="getFromCache"/>
+            <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.update*(..))"
+                        method="invalidateCache"/>
+            <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.create*(..))"
+                        method="invalidateCache"/>
+               <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.delete*(..))"
+                        method="invalidateCache"/>
         </aop:aspect>
 
         <aop:aspect id="academicCalendarCacheAroundSearch" ref="academicCalendarCacheAdvisor">
