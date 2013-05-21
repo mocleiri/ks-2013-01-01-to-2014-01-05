@@ -8,7 +8,7 @@ import java.util.Date;
 
 
 /**
- * General Ledger transaction model.
+ * Abstract General Ledger entity.
  *
  * @author Michael Ivanov
  */

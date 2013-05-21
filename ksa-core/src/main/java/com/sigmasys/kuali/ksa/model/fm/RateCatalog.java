@@ -1,21 +1,18 @@
 package com.sigmasys.kuali.ksa.model.fm;
 
-import com.sigmasys.kuali.ksa.model.AuditableEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Set;
 
 /**
- * Rate catalog.
+ * Rate catalog model.
  * <p/>
  *
  * @author Michael Ivanov
  */
 @Entity
 @Table(name = "KSSA_RATE_CATALOG")
-@AttributeOverride(name = "code", column = @Column(name ="CODE", length = 20, nullable = false))
-public class RateCatalog extends AuditableEntity<Long> {
+public class RateCatalog extends AbstractRateEntity {
 
 
     private BigDecimal lowerBoundAmount;
@@ -26,21 +23,9 @@ public class RateCatalog extends AuditableEntity<Long> {
 
     private Boolean isAmountCapped;
 
-    private Boolean isTransactionTypeFinal;
-
-    private Boolean isTransactionDateTypeFinal;
-
     private Boolean isKeyPairFinal;
 
     private Boolean isRecognitionDateDefinable;
-
-    private String transactionTypeId;
-
-    private String transactionDateType;
-
-    private RateType rateType;
-
-    private Set<KeyPair> keyPairs;
 
 
     @Id
@@ -94,26 +79,6 @@ public class RateCatalog extends AuditableEntity<Long> {
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_TRANS_TYPE_FINAL")
-    public Boolean isTransactionTypeFinal() {
-        return isTransactionTypeFinal;
-    }
-
-    public void setTransactionTypeFinal(Boolean transactionTypeFinal) {
-        isTransactionTypeFinal = transactionTypeFinal;
-    }
-
-    @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_TRANS_DATE_TYPE_FINAL")
-    public Boolean isTransactionDateTypeFinal() {
-        return isTransactionDateTypeFinal != null ? isTransactionDateTypeFinal : false;
-    }
-
-    public void setTransactionDateTypeFinal(Boolean transactionDateTypeFinal) {
-        isTransactionDateTypeFinal = transactionDateTypeFinal;
-    }
-
-    @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_KEYPAIR_FINAL")
     public Boolean isKeyPairFinal() {
         return isKeyPairFinal != null ? isKeyPairFinal : false;
@@ -131,52 +96,6 @@ public class RateCatalog extends AuditableEntity<Long> {
 
     public void setRecognitionDateDefinable(Boolean recognitionDateDefinable) {
         isRecognitionDateDefinable = recognitionDateDefinable;
-    }
-
-    @Column(name = "TRANSACTION_TYPE_ID", length = 20)
-    public String getTransactionTypeId() {
-        return transactionTypeId;
-    }
-
-    public void setTransactionTypeId(String transactionTypeId) {
-        this.transactionTypeId = transactionTypeId;
-    }
-
-    @Column(name = "TRANS_DATE_TYPE", length = 10)
-    public String getTransactionDateType() {
-        return transactionDateType;
-    }
-
-    public void setTransactionDateType(String transactionDateType) {
-        this.transactionDateType = transactionDateType;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RATE_TYPE_ID_FK")
-    public RateType getRateType() {
-        return rateType;
-    }
-
-    public void setRateType(RateType rateType) {
-        this.rateType = rateType;
-    }
-
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "KSSA_RATE_CATALOG_KYPR",
-            joinColumns = {
-                    @JoinColumn(name = "RATE_CATALOG_ID_FK")
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "KYPR_ID_FK")
-            }
-    )
-    public Set<KeyPair> getKeyPairs() {
-        return keyPairs;
-    }
-
-    public void setKeyPairs(Set<KeyPair> keyPairs) {
-        this.keyPairs = keyPairs;
     }
 
 }

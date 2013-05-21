@@ -325,13 +325,22 @@ public interface RateService {
     boolean isRateValidWithCatalog(Rate rate, RateCatalog rateCatalog);
 
     /**
-     * Assigns the ATP ID to the rate catalog specified by ID.
+     * Assigns the array of ATP IDs to the rate catalog specified by ID.
      *
-     * @param atpId         ATP ID
      * @param rateCatalogId RateCatalog ID
+     * @param atpIds        Array of ATP IDs
      * @return RateCatalog instance
      */
-    RateCatalog assignAtpToRateCatalog(String atpId, Long rateCatalogId);
+    RateCatalog assignAtpsToRateCatalog(Long rateCatalogId, String... atpIds);
+
+    /**
+     * Remove the ATP IDs from the rate catalog specified by ID.
+     *
+     * @param rateCatalogId RateCatalog ID
+     * @param atpIds        Array of ATP IDs to be removed
+     * @return RateCatalog instance
+     */
+    RateCatalog removeAtpsToRateCatalog(Long rateCatalogId, String... atpIds);
 
     /**
      * Adds a new key pair to the rate catalog specified by ID.

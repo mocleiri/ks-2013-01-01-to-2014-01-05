@@ -61,13 +61,13 @@ alter table KSSA_POSTAL_ADDRESS_ACNT add constraint FKBDC431DE98518DD2 foreign k
 alter table KSSA_POSTAL_ADDRESS_ACNT add constraint FKBDC431DEF6AF9F26 foreign key (POSTAL_ADDRESS_ID_FK) references KSSA_POSTAL_ADDRESS;
 alter table KSSA_RATE add constraint FKB8FF45C912563F5 foreign key (DEFAULT_RATE_AMOUNT_ID_FK) references KSSA_RATE_AMOUNT;
 alter table KSSA_RATE add constraint FKB8FF45C9D3B40CF2 foreign key (RATE_CATALOG_ATP_ID_FK, RATE_CATALOG_CODE_FK) references KSSA_RATE_CATALOG_ATP;
+alter table KSSA_RATE add constraint FKB8FF45C913EF60F7 foreign key (RATE_TYPE_ID_FK) references KSSA_RATE_TYPE;
 alter table KSSA_RATE_AMOUNT add constraint FK4FC2978EB1D17704 foreign key (RATE_ID_FK) references KSSA_RATE;
 alter table KSSA_RATE_CATALOG add constraint FKFE1FFF8313EF60F7 foreign key (RATE_TYPE_ID_FK) references KSSA_RATE_TYPE;
 alter table KSSA_RATE_CATALOG_ATP add constraint FKE76AB3C1BA6CDBA3 foreign key (RATE_CATALOG_ID_FK) references KSSA_RATE_CATALOG;
+alter table KSSA_RATE_CATALOG_KYPR add constraint FK5F0632C6D2F925E foreign key (RATE_CATALOG_ID_FK) references KSSA_RATE;
 alter table KSSA_RATE_CATALOG_KYPR add constraint FK5F0632CBA6CDBA3 foreign key (RATE_CATALOG_ID_FK) references KSSA_RATE_CATALOG;
 alter table KSSA_RATE_CATALOG_KYPR add constraint FK5F0632C67B98119 foreign key (KYPR_ID_FK) references KSSA_KYPR;
-alter table KSSA_RATE_KYPR add constraint FK292018A667B98119 foreign key (KYPR_ID_FK) references KSSA_KYPR;
-alter table KSSA_RATE_KYPR add constraint FK292018A6B1D17704 foreign key (RATE_ID_FK) references KSSA_RATE;
 alter table KSSA_REFUND add constraint FK76773E217FC9D8F2 foreign key (REFUND_TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_REFUND add constraint FK76773E21D61AFDF9 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_REFUND add constraint FK76773E21A0B2BA5 foreign key (AUTHORIZED_BY_ID_FK) references KSSA_ACNT;

@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.jws.WebService;
 import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -737,18 +738,72 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     }
 
     /**
-     * Assigns the ATP ID to the rate catalog specified by ID.
+     * Assigns the array of ATP IDs to the rate catalog specified by ID.
      *
-     * @param atpId         ATP ID
      * @param rateCatalogId RateCatalog ID
+     * @param atpIds        Array of ATP IDs
      * @return RateCatalog instance
      */
     @Override
     @Transactional(readOnly = false)
-    public RateCatalog assignAtpToRateCatalog(String atpId, Long rateCatalogId) {
-        // TODO
-        return null;
+    public RateCatalog assignAtpsToRateCatalog(Long rateCatalogId, String... atpIds) {
+
+        // Trying to remove ATPs from the rate catalog first
+        RateCatalog rateCatalog = removeAtpsToRateCatalog(rateCatalogId, atpIds);
+
+        // Creating new RateCatalogAtp entities
+        for (String atpId : atpIds) {
+            RateCatalogAtp rateCatalogAtp = new RateCatalogAtp();
+            rateCatalogAtp.setId(new RateCatalogAtpId(rateCatalog.getCode(), atpId));
+            rateCatalogAtp.setRateCatalog(rateCatalog);
+            persistEntity(rateCatalogAtp);
+        }
+
+        return rateCatalog;
     }
+
+    /**
+     * Remove the ATP IDs from the rate catalog specified by ID.
+     *
+     * @param rateCatalogId RateCatalog ID
+     * @param atpIds        Array of ATP IDs to be removed
+     * @return RateCatalog instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public RateCatalog removeAtpsToRateCatalog(Long rateCatalogId, String... atpIds) {
+
+        RateCatalog rateCatalog = getRateCatalog(rateCatalogId);
+
+        if (rateCatalog == null) {
+            String errMsg = "RateCatalog with ID = " + rateCatalogId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidRateCatalogException(errMsg);
+        }
+
+        // Checking if there are any rates that use these ATPs
+        Query query = em.createQuery("select 1 from Rate where rateCatalogAtp.id.code = :code and " +
+                " rateCatalogAtp.id.atpId in (:atpIds)");
+        query.setParameter("code", rateCatalog.getCode());
+        query.setParameter("atpIds", Arrays.asList(atpIds));
+        query.setMaxResults(1);
+
+        if (CollectionUtils.isNotEmpty(query.getResultList())) {
+            String errMsg = "Cannot assign ATPs to a rate catalog with code '" + rateCatalog.getCode() +
+                    "' because they are being used by other rates";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        // Removing ATPs from rate catalogs with the same code
+        query = em.createQuery("delete from RateCatalogAtp where id.code = :code and id.atpId in (:atpIds)");
+        query.setParameter("code", rateCatalog.getCode());
+        query.setParameter("atpIds", Arrays.asList(atpIds));
+        query.executeUpdate();
+
+        return rateCatalog;
+    }
+
 
     /**
      * Adds a new key pair to the rate catalog specified by ID.
