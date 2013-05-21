@@ -41,6 +41,9 @@ public class TransactionForm extends AbstractViewModel {
     private BigDecimal allocatedTotal;
     private BigDecimal unallocatedTotal;
 
+    private String newTag;
+    private List<Tag> filterTags;
+
 
     // Not sure if any of these below this line are still used.
 
@@ -623,5 +626,21 @@ public class TransactionForm extends AbstractViewModel {
 
     public void subtractUnallocatedTotal(BigDecimal unallocatedTotal){
         this.unallocatedTotal = this.getUnallocatedTotal().subtract(unallocatedTotal);
+    }
+
+    public String getNewTag() {
+        return newTag;
+    }
+
+    public void setNewTag(String newTag) {
+        this.newTag = newTag;
+    }
+
+    public List<Tag> getFilterTags() {
+        return filterTags;
+    }
+
+    public void setFilterTags(List<Tag> filterTags) {
+        this.filterTags = filterTags;
     }
 }

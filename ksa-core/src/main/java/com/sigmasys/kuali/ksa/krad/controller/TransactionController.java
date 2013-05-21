@@ -78,9 +78,6 @@ public class TransactionController extends GenericSearchController {
         }
 
         String userId = request.getParameter("userId");
-        //if(userId == null){
-        //    userId = request.getParameter("actionParameters[userId]");
-        //}
 
         if (userId == null) {
             // Error out here
@@ -90,68 +87,8 @@ public class TransactionController extends GenericSearchController {
         form.setAccount(accountService.getFullAccount(userId));
 
         if ("ViewTransactions".equals(pageId) || "RollUpTransactions".equals(pageId) || "RunningBalanceTransactions".equals(pageId)) {
-            form.setAlerts(informationService.getAlerts(userId));
-            form.setFlags(informationService.getFlags(userId));
 
-            Date startDate = form.getStartingDate();
-            Date endDate = form.getEndingDate();
-
-            Date actualStartDate = startDate;
-            Date actualEndDate = endDate;
-
-            form.setStartingBalance(accountService.getBalance(userId, startDate));
-
-            form.setChargeTotal(BigDecimal.ZERO);
-            form.setPaymentTotal(BigDecimal.ZERO);
-            form.setDefermentTotal(BigDecimal.ZERO);
-            form.setAllocatedTotal(BigDecimal.ZERO);
-            form.setUnallocatedTotal(BigDecimal.ZERO);
-
-            // All transactions
-            List<Transaction> transactions = TransactionUtils.orderByEffectiveDate(transactionService.getTransactions(userId, startDate, endDate), true);
-            List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
-            for (Transaction t : transactions) {
-                Date effectiveDate = t.getEffectiveDate();
-                if (actualStartDate == null || (effectiveDate.before(actualStartDate))) {
-                    actualStartDate = effectiveDate;
-                }
-                if (actualEndDate == null || (effectiveDate.after(actualEndDate))) {
-                    actualEndDate = effectiveDate;
-                }
-
-                TransactionModel m = new TransactionModel(t);
-
-                // Set the list of allocations
-                m.setAllocations(transactionService.getAllocations(t.getId()));
-
-                // Add the memos
-                m.setMemos(informationService.getMemos(t.getId()));
-                models.add(m);
-
-                // Add appropriate Alerts
-                for (Alert a : form.getAlerts()) {
-                    Transaction alertTransaction = a.getTransaction();
-                    if (alertTransaction != null && alertTransaction.getId().equals(t.getId())) {
-                        m.addAlert(a);
-                    }
-                }
-
-                // Add appropriate flags
-                for (Flag f : form.getFlags()) {
-                    Transaction flagTransaction = f.getTransaction();
-                    if (flagTransaction != null && flagTransaction.getId().equals(t.getId())) {
-                        m.addFlag(f);
-                    }
-                }
-            }
-
-            if (startDate == null) {
-                form.setStartingDate(actualStartDate);
-            }
-            if (endDate == null) {
-                form.setEndingDate(actualEndDate);
-            }
-            this.populateRollups(form, models);
+            populateForm(form);
 
 
         } else if ("ViewAlerts".equals(pageId)) {
@@ -164,6 +101,143 @@ public class TransactionController extends GenericSearchController {
 
         return getUIFModelAndView(form);
     }
+
+    /**
+     *
+     * @param form
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterTags")
+    public ModelAndView filterTags(@ModelAttribute("KualiForm") TransactionForm form) {
+        String newTag = form.getNewTag();
+        Tag tag = auditableEntityService.getAuditableEntity(newTag, Tag.class);
+        List<Tag> tags = form.getFilterTags();
+        if(tags == null){
+            tags = new ArrayList<Tag>();
+            form.setFilterTags(tags);
+        }
+        if(tag != null){
+            tags.add(tag);
+        }
+
+        form.setNewTag("");
+        populateForm(form);
+        return getUIFModelAndView(form);
+    }
+
+    /**
+     *
+     * @param form
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeTag")
+    public ModelAndView removeTag(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+
+        String tagString = request.getParameter("actionParameters[tagId]");
+        Long tagId = Long.parseLong(tagString);
+        if (tagId != null) {
+            Tag tag = auditableEntityService.getAuditableEntity(tagId, Tag.class);
+
+            List<Tag> tags = form.getFilterTags();
+            if(tags == null){
+                tags = new ArrayList<Tag>();
+                form.setFilterTags(tags);
+            }
+            if(tag != null){
+                boolean removed = tags.remove(tag);
+                logger.info("Removed tag id: " + tagString + " - " + removed);
+                form.setFilterTags(tags);
+            }
+
+            form.setNewTag("");
+        }
+        populateForm(form);
+        return getUIFModelAndView(form);
+    }
+
+    private void populateForm(TransactionForm form) {
+        Account act = form.getAccount();
+        String userId = "";
+        if(act != null){
+            userId = act.getId();
+        } else {
+            form.setStatusMessage("No account in form");
+            return;
+        }
+
+        form.setAlerts(informationService.getAlerts(userId));
+        form.setFlags(informationService.getFlags(userId));
+
+        Date startDate = form.getStartingDate();
+        Date endDate = form.getEndingDate();
+
+        Date actualStartDate = startDate;
+        Date actualEndDate = endDate;
+
+        form.setStartingBalance(accountService.getBalance(userId, startDate));
+
+        form.setChargeTotal(BigDecimal.ZERO);
+        form.setPaymentTotal(BigDecimal.ZERO);
+        form.setDefermentTotal(BigDecimal.ZERO);
+        form.setAllocatedTotal(BigDecimal.ZERO);
+        form.setUnallocatedTotal(BigDecimal.ZERO);
+
+        // All transactions
+        List<Transaction> transactions = transactionService.getTransactions(userId, startDate, endDate);
+
+        List<Tag> tags = form.getFilterTags();
+
+        if(tags != null && tags.size() > 0){
+            transactions = TransactionUtils.filterByTag(transactions, tags);
+        }
+
+        transactions = TransactionUtils.orderByEffectiveDate(transactions, true);
+
+        List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
+        for (Transaction t : transactions) {
+            Date effectiveDate = t.getEffectiveDate();
+            if (actualStartDate == null || (effectiveDate.before(actualStartDate))) {
+                actualStartDate = effectiveDate;
+            }
+            if (actualEndDate == null || (effectiveDate.after(actualEndDate))) {
+                actualEndDate = effectiveDate;
+            }
+
+            TransactionModel m = new TransactionModel(t);
+
+            // Set the list of allocations
+            m.setAllocations(transactionService.getAllocations(t.getId()));
+
+            // Add the memos
+            m.setMemos(informationService.getMemos(t.getId()));
+            models.add(m);
+
+            // Add appropriate Alerts
+            for (Alert a : form.getAlerts()) {
+                Transaction alertTransaction = a.getTransaction();
+                if (alertTransaction != null && alertTransaction.getId().equals(t.getId())) {
+                    m.addAlert(a);
+                }
+            }
+
+            // Add appropriate flags
+            for (Flag f : form.getFlags()) {
+                Transaction flagTransaction = f.getTransaction();
+                if (flagTransaction != null && flagTransaction.getId().equals(t.getId())) {
+                    m.addFlag(f);
+                }
+            }
+        }
+
+        if (startDate == null) {
+            form.setStartingDate(actualStartDate);
+        }
+        if (endDate == null) {
+            form.setEndingDate(actualEndDate);
+        }
+        this.populateRollups(form, models);
+    }
+
 
     /**
      * perform Payment Application.

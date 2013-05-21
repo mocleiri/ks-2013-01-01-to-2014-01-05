@@ -24,10 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -78,7 +75,7 @@ public class TransactionTypeController extends GenericSearchController {
             List<TransactionType> entities = auditableEntityService.getAuditableEntities(TransactionType.class);
             logger.info("Transaction Type Count: " + entities.size());
 
-            Map<String, TransactionTypeGroupModel> map = form.getTransactionTypeGroups();
+            Map<String, TransactionTypeGroupModel> map = new HashMap<String, TransactionTypeGroupModel>();
 
             for (TransactionType tt : entities) {
                 TransactionTypeModel ttModel = new TransactionTypeModel(tt);
@@ -96,6 +93,8 @@ public class TransactionTypeController extends GenericSearchController {
                     ttModel.setGlBreakdowns(transactionService.getGlBreakdowns((DebitType) tt));
                 }
             }
+
+            form.setTransactionTypeGroups(map);
 
             //form.setTransactionTypes(entities);
         } else if ("TransactionTypeDetailsPage".equals(pageId)) {

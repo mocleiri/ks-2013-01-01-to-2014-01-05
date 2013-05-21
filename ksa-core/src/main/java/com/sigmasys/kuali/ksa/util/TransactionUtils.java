@@ -377,6 +377,20 @@ public class TransactionUtils {
         return newTransactions;
     }
 
+    public static List<Transaction> filterByTag(List<Transaction> transactions, List<Tag> tags) {
+        List<Transaction> newTransactions = new LinkedList<Transaction>();
+        for (Transaction transaction : transactions) {
+
+            List<Tag> transactionTags = new ArrayList<Tag>(transaction.getTags());
+
+            transactionTags.retainAll(tags);
+            if(transactionTags.size() > 0){
+                newTransactions.add(transaction);
+            }
+        }
+        return newTransactions;
+    }
+
     public static Map<Integer, List<Transaction>> sortTransactionsByYears(List<Transaction> transactions, Integer... years) {
         Map<Integer, List<Transaction>> transactionMap = new HashMap<Integer, List<Transaction>>(years.length);
         for (int year : years) {
