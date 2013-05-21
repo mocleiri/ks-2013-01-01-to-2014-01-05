@@ -38,24 +38,6 @@ Then /^the alias course does not exist$/ do
   on(ManageCourseOfferings).first_msg.should match /.*#{Regexp.escape(expected_errMsg)}.*/
 end
 
-When /^I create a Course Offering$/ do
-  @suffix_with_cl = "AFT#{random_alphanums(2)}".upcase
-  @suffix_without_cl = "NOCL"
-  @source_term = "201201"
-  @catalogue_course_code = "ENGL250"
-  @cross_listed_co_code = "WMST255"
-  #TODO - need to use appropriate course_offering 'create' method
-  @course_offering = make CourseOffering, :course => @catalogue_course_code, :suffix => @suffix_with_cl, :delivery_format => "Lecture"
-  @course_offering.start_create_by_search
-  on CreateCourseOffering do  |page|
-    page.suffix.set @suffix_with_cl
-    @course = "#{@catalogue_course_code}#{@suffix_with_cl}"
-    delivery_obj = make DeliveryFormat, :format=>"Lecture", :grade_format => "Course", :final_exam_driver => "Lecture"
-    delivery_obj.select_random_delivery_formats
-    page.create_offering
-  end
-end
-
 And /^I remove a cross-listed Course Offering$/ do
   @cross_listed_co.manage
   @cross_listed_co.clear_cross_listing
