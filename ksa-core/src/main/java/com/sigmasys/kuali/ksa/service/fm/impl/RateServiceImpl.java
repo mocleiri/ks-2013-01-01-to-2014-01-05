@@ -1,12 +1,10 @@
 package com.sigmasys.kuali.ksa.service.fm.impl;
 
 import com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException;
+import com.sigmasys.kuali.ksa.exception.InvalidRateException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateTypeException;
 import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.fm.Rate;
-import com.sigmasys.kuali.ksa.model.fm.RateCatalog;
-import com.sigmasys.kuali.ksa.model.fm.RateCatalogAtpId;
-import com.sigmasys.kuali.ksa.model.fm.RateType;
+import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
@@ -23,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebService;
 import javax.persistence.Query;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Fee Rate Service implementation.
@@ -46,23 +46,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
     @Autowired
     private AuditableEntityService auditableEntityService;
-
-
-    protected void validateRateType(RateType rateType) {
-
-        if (StringUtils.isBlank(rateType.getCode())) {
-            String errMsg = "RateType code is required";
-            logger.error(errMsg);
-            throw new InvalidRateTypeException(errMsg);
-        }
-
-        if (StringUtils.isBlank(rateType.getName())) {
-            String errMsg = "RateType name is required";
-            logger.error(errMsg);
-            throw new InvalidRateTypeException(errMsg);
-        }
-
-    }
 
 
     // Rate Type methods
@@ -167,6 +150,20 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     public RateType getRateTypeByCode(String rateTypeCode) {
         PermissionUtils.checkPermission(Permission.VIEW_RATE_TYPE);
         return auditableEntityService.getAuditableEntity(rateTypeCode, RateType.class);
+    }
+
+    /**
+     * Checks if the rate type specified by code exists.
+     *
+     * @param rateTypeCode RateType code
+     * @return true if the rate type exists, false - otherwise
+     */
+    @Override
+    public boolean rateTypeExists(String rateTypeCode) {
+        Query query = em.createQuery("select 1 from RateType where code = :code");
+        query.setParameter("code", rateTypeCode);
+        query.setMaxResults(1);
+        return CollectionUtils.isNotEmpty(query.getResultList());
     }
 
     /**
@@ -474,6 +471,232 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
     // Additional methods
 
+
+    /**
+     * Validates the given RateType instance and throws <code>InvalidRateTypeException</code> if the validation fails.
+     *
+     * @param rateType RateType instance
+     * @throws InvalidRateTypeException
+     */
+    @Override
+    public void validateRateType(RateType rateType) throws InvalidRateTypeException {
+
+        if (rateType == null) {
+            String errMsg = "RateType cannot be null";
+            logger.error(errMsg);
+            throw new InvalidRateTypeException(errMsg);
+        }
+
+        if (StringUtils.isBlank(rateType.getCode())) {
+            String errMsg = "RateType code is required";
+            logger.error(errMsg);
+            throw new InvalidRateTypeException(errMsg);
+        }
+
+        if (StringUtils.isBlank(rateType.getName())) {
+            String errMsg = "RateType name is required";
+            logger.error(errMsg);
+            throw new InvalidRateTypeException(errMsg);
+        }
+
+    }
+
+    /**
+     * Validates the given Rate instance and throws <code>InvalidRateException</code> if the validation fails.
+     *
+     * @param rate Rate instance
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
+     *
+     */
+    @Override
+    public void validateRate(Rate rate) throws InvalidRateException {
+
+        // TODO
+
+    }
+
+    protected void validateRateAndRateCatalog(Rate rate, RateCatalog rateCatalog) throws InvalidRateException {
+
+        if (rate == null) {
+            String errMsg = "Rate cannot be null";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        if (StringUtils.isBlank(rate.getCode())) {
+            String errMsg = "Rate code is required";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        if (StringUtils.isBlank(rate.getName())) {
+            String errMsg = "Rate name is required";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        Set<RateAmount> rateAmounts = rate.getRateAmounts();
+
+        if (CollectionUtils.isEmpty(rateAmounts)) {
+            String errMsg = "Rate must have at least one RateAmount";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        RateAmount defaultRateAmount = rate.getDefaultRateAmount();
+        if (defaultRateAmount == null) {
+            String errMsg = "Rate must have the default RateAmount";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        boolean defaultAmountIsPresent = false;
+        for (RateAmount rateAmount : rateAmounts) {
+            if (rateAmount.getId() == null) {
+                String errMsg = "RateAmount ID cannot be null";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+            if (rateAmount.getUnit() == null) {
+                String errMsg = "RateAmount unit cannot be null";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+            if (rateAmount.getAmount() == null) {
+                String errMsg = "RateAmount amount cannot be null";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+            if (!defaultAmountIsPresent && rateAmount.getId().equals(defaultRateAmount.getId())) {
+                defaultAmountIsPresent = true;
+            }
+        }
+
+        if (!defaultAmountIsPresent) {
+            String errMsg = "Default RateAmount must be one of existing Rate's amounts";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        if (rate.getTransactionDateType() != null && rate.getTransactionDate() == null) {
+            String errMsg = "Rate transaction date must not be null when transaction date type is set";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        if (rateCatalog != null) {
+
+            BigDecimal lowerBoundAmount = rateCatalog.getLowerBoundAmount();
+            BigDecimal upperBoundAmount = rateCatalog.getUpperBoundAmount();
+
+            if (lowerBoundAmount != null && lowerBoundAmount.compareTo(defaultRateAmount.getAmount()) > 0) {
+                String errMsg = "Default Rate amount cannot be less than the lower bound amount";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+
+            if (upperBoundAmount != null && upperBoundAmount.compareTo(defaultRateAmount.getAmount()) < 0) {
+                String errMsg = "Default Rate amount cannot be greater than the upper bound amount";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+
+            // TODO
+
+        }
+
+
+        // TODO
+
+    }
+
+    /**
+     * Validates the given RateCatalog instance and throws <code>InvalidRateCatalogException</code> if the validation fails.
+     *
+     * @param rateCatalog RateCatalog instance
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
+     *
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException
+     *
+     */
+    @Override
+    public void validateRateCatalog(RateCatalog rateCatalog) throws InvalidRateException, InvalidRateCatalogException {
+
+        if (rateCatalog == null) {
+            String errMsg = "RateCatalog cannot be null";
+            logger.error(errMsg);
+            throw new InvalidRateCatalogException(errMsg);
+        }
+
+        RateType rateType = rateCatalog.getRateType();
+
+        validateRateType(rateType);
+
+        if (!rateTypeExists(rateType.getCode())) {
+            String errMsg = "RateType does not exist with code = " + rateType.getCode();
+            logger.error(errMsg);
+            throw new InvalidRateTypeException(errMsg);
+        }
+
+        BigDecimal lowerBoundAmount = rateCatalog.getLowerBoundAmount();
+        BigDecimal upperBoundAmount = rateCatalog.getUpperBoundAmount();
+
+        if (lowerBoundAmount != null && upperBoundAmount != null) {
+            if (lowerBoundAmount.compareTo(upperBoundAmount) > 0) {
+                String errMsg = "Lower bound amount cannot be greater than upper bound amount";
+                logger.error(errMsg);
+                throw new InvalidRateCatalogException(errMsg);
+            }
+        }
+
+        // If the rate catalog exists we have to check all the rates associated with it
+        if (rateCatalog.getId() != null) {
+            Query query = em.createQuery("select rate from Rate rate " +
+                    "inner join rate.rateCatalogAtp rca " +
+                    "inner join rca.rateCatalog rc " +
+                    "where rc.id = :rateCatalogId");
+            query.setParameter("rateCatalogId", rateCatalog.getId());
+            List<Rate> rates = query.getResultList();
+            if (CollectionUtils.isNotEmpty(rates)) {
+                for (Rate rate : rates) {
+                    validateRate(rate);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Validates the Rate against the RateCatalog instance
+     * and throws <code>InvalidRateException</code> or <code>InvalidRateCatalogException</code> if the validation fails.
+     *
+     * @param rate        Rate instance
+     * @param rateCatalog RateCatalog instance
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
+     *
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException
+     *
+     */
+    @Override
+    public void validateRateWithCatalog(Rate rate, RateCatalog rateCatalog) throws InvalidRateException,
+            InvalidRateCatalogException {
+        // TODO
+    }
+
+
+    /**
+     * Checks if the rate type is valid.
+     *
+     * @param rateType RateType instance
+     * @return true if the rate is valid, otherwise false
+     */
+    @Override
+    public boolean isRateTypeValid(RateType rateType) {
+        // TODO
+        return false;
+    }
+
+
     /**
      * Checks if the rate is valid.
      *
@@ -494,11 +717,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public boolean isRateCatalogValid(RateCatalog rateCatalog) {
-
-        if (rateCatalog.getRateType() == null) {
-            logger.error("RateType is required");
-            return false;
-        }
 
         // TODO
 

@@ -7,14 +7,14 @@ import java.util.Date;
 import java.util.Set;
 
 /**
- * FM Rate model.
+ * Rate model.
  * <p/>
  *
  * @author Michael Ivanov
  */
 @Entity
 @Table(name = "KSSA_RATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE", "RATE_CATALOG_ATP_ID_FK"})})
-@AttributeOverride(name = "code", column = @Column(name ="CODE", length = 20, nullable = false))
+@AttributeOverride(name = "code", column = @Column(name = "CODE", length = 20, nullable = false))
 public class Rate extends AuditableEntity<Long> {
 
     private String atpId;
@@ -34,6 +34,10 @@ public class Rate extends AuditableEntity<Long> {
     private RateCatalogAtp rateCatalogAtp;
 
     private Set<KeyPair> keyPairs;
+
+    private Set<RateAmount> rateAmounts;
+
+    private RateAmount defaultRateAmount;
 
 
     @Id
@@ -147,4 +151,23 @@ public class Rate extends AuditableEntity<Long> {
         this.keyPairs = keyPairs;
     }
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "RATE_ID_FK")
+    public Set<RateAmount> getRateAmounts() {
+        return rateAmounts;
+    }
+
+    public void setRateAmounts(Set<RateAmount> rateAmounts) {
+        this.rateAmounts = rateAmounts;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DEFAULT_RATE_AMOUNT_ID_FK", nullable = false)
+    public RateAmount getDefaultRateAmount() {
+        return defaultRateAmount;
+    }
+
+    public void setDefaultRateAmount(RateAmount defaultRateAmount) {
+        this.defaultRateAmount = defaultRateAmount;
+    }
 }

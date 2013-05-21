@@ -1,6 +1,9 @@
 package com.sigmasys.kuali.ksa.service.fm;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
+import com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException;
+import com.sigmasys.kuali.ksa.exception.InvalidRateException;
+import com.sigmasys.kuali.ksa.exception.InvalidRateTypeException;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.fm.Rate;
 import com.sigmasys.kuali.ksa.model.fm.RateCatalog;
@@ -74,6 +77,14 @@ public interface RateService {
      * @return RateType instance
      */
     RateType getRateTypeByCode(String rateTypeCode);
+
+    /**
+     * Checks if the rate type specified by code exists.
+     *
+     * @param rateTypeCode RateType code
+     * @return true if the rate type exists, false - otherwise
+     */
+    boolean rateTypeExists(String rateTypeCode);
 
     /**
      * Returns the list of rate types by the given name pattern.
@@ -237,6 +248,56 @@ public interface RateService {
     List<Rate> getAllRates();
 
     // Additional methods
+
+    /**
+     * Validates the given RateType instance and throws <code>InvalidRateTypeException</code> if the validation fails.
+     *
+     * @param rateType RateType instance
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateTypeException
+     *
+     */
+    void validateRateType(RateType rateType) throws InvalidRateTypeException;
+
+    /**
+     * Validates the given Rate instance and throws <code>InvalidRateException</code> if the validation fails.
+     *
+     * @param rate Rate instance
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
+     *
+     */
+    void validateRate(Rate rate) throws InvalidRateException;
+
+    /**
+     * Validates the given RateCatalog instance and throws <code>InvalidRateCatalogException</code> if the validation fails.
+     *
+     * @param rateCatalog RateCatalog instance
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
+     *
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException
+     *
+     */
+    void validateRateCatalog(RateCatalog rateCatalog) throws InvalidRateException, InvalidRateCatalogException;
+
+    /**
+     * Validates the Rate against the RateCatalog instance
+     * and throws <code>InvalidRateException</code> or <code>InvalidRateCatalogException</code> if the validation fails.
+     *
+     * @param rate        Rate instance
+     * @param rateCatalog RateCatalog instance
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
+     *
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException
+     *
+     */
+    void validateRateWithCatalog(Rate rate, RateCatalog rateCatalog) throws InvalidRateException, InvalidRateCatalogException;
+
+    /**
+     * Checks if the rate type is valid.
+     *
+     * @param rateType RateType instance
+     * @return true if the rate is valid, otherwise false
+     */
+    boolean isRateTypeValid(RateType rateType);
 
     /**
      * Checks if the rate is valid.
