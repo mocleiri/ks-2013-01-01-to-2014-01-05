@@ -131,7 +131,6 @@ class EditAgendaData
         page.logic_tab.when_present.click
         page.loading.wait_while_present
         sleep 10   #adding a sleep - moving through the tree too fast causes a crash
-        puts "logic area: " + page.logic_text.text
 
         page.update_rule_btn
       end

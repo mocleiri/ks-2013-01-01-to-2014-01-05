@@ -123,15 +123,11 @@ Then /^the "(.*?)" preview section should have the text "(.*)"$/ do |section,tex
     on ManageCOAgendas do |page|
       page.loading.wait_while_present
       page.agenda_management_section.text.should match /.*#{Regexp.escape(test_text)}.*/
-      puts test_text
-      puts text
     end
   else
     on EditAgenda do |page|
       page.loading.wait_while_present
       page.send(sect[section]).text.should match /.*#{Regexp.escape(test_text)}.*/
-      puts test_text
-      puts text
     end
   end
 end
