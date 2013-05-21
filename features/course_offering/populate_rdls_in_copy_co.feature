@@ -1,4 +1,4 @@
-@pending
+@nightly
   Feature: populate RDLs in copy CO to target term
 
   MSR 1.2: As Central Administrator, I want actual delivery logistics on AOs in a source term to be copied to
@@ -14,6 +14,7 @@
     Then The new CO and AOs are Successfully created
     And The ADLs are Successfully copied to RDLs in the new AOs of the newly created CO
 
+@wip
   Scenario: Copy ADLs from source COs to RDLs of newly rolled over COs when performing a simple rollover
     When I roll over an term to a new target term
     Then The COs and AOs in the previous term are Successfully rolled over to the target term
