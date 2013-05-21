@@ -143,42 +143,4 @@ public abstract class AuditableEntity<T extends Serializable> implements Identif
                 ", lastUpdate=" + lastUpdate +
                 '}';
     }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        AuditableEntity other = (AuditableEntity) obj;
-
-        if (getId() == null) {
-            if (other.getId() != null) {
-                return false;
-            }
-        } else if (!getId().equals(other.getId())) {
-            return false;
-        }
-
-        if (getCode() == null) {
-            if (other.getCode() != null) {
-                return false;
-            }
-        } else if (!getCode().equals(other.getCode())) {
-            return false;
-        }
-
-        return true;
-    }
-
-
 }
