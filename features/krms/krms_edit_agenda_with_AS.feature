@@ -252,6 +252,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then there should be a new node with text "C. Must have successfully completed ENGL101"
 
   #KSENROLL-6953
+  @pending
   Scenario: Temporary scenario to test the setup of the data for every other scenario
     When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST110" with Advanced Search
     And I navigate to the agenda page for "HIST110"
@@ -284,7 +285,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "logic" preview section should have the text "Must have successfully completed HIST210"
 
   #ELIG9.2.EB1.2 (KSENROLL-6954)
-  @bug
+  @bug @KSENROLL-7044
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule two
     When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB1.2 (KSENROLL-6954)"
     And I click on the "Recommended Preparation" section
@@ -301,24 +302,24 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I search for the "course set" "CORE: Life Science Lab-Linked Courses (LL)"
     And I click the "add" button
     And I click the "Preview Change" button
-    Then the "edit" preview section should have the text "Must have successfully completed all courses from (HIST210, HIST110, BSCI124)"
+    Then the "edit" preview section should have the text "Must have successfully completed all courses from (HIST110, HIST210, BSCI124)"
     When I click the "Edit Rule Logic" tab
-    Then the "logic" preview section should have the text "Must have successfully completed all courses from,HIST210,HIST110,CORE: Life Science Lab-Linked Courses (LL)"
+    Then the "logic" preview section should have the text "Must have successfully completed all courses from,HIST110,HIST210,CORE: Life Science Lab-Linked Courses (LL)"
     When I click the "Update Rule" button
     #And I click on the "Recommended Preparation" section
-    Then the "agenda" preview section should have the text "Must have successfully completed all courses from,HIST210,HIST110,CORE: Life Science Lab-Linked Courses (LL)"
+    Then the "agenda" preview section should have the text "Must have successfully completed all courses from,HIST110,HIST210,CORE: Life Science Lab-Linked Courses (LL)"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page for ""
     And I click on the "Recommended Preparation" section
-    Then the "agenda" preview section should have the text "Must have successfully completed all courses from,HIST210,HIST110,CORE: Life Science Lab-Linked Courses (LL)"
+    Then the "agenda" preview section should have the text "Must have successfully completed all courses from,HIST110,HIST210,CORE: Life Science Lab-Linked Courses (LL)"
     When I click on the "Edit Rule" link
-    Then the "edit" preview section should have the text "Must have successfully completed all courses from (HIST210, HIST110, BSCI124)"
+    Then the "edit" preview section should have the text "Must have successfully completed all courses from (HIST110, HIST210, BSCI124)"
     When I click the "Edit Rule Logic" tab
-    Then the "logic" preview section should have the text "Must have successfully completed all courses from,HIST210,HIST110,CORE: Life Science Lab-Linked Courses (LL)"
+    Then the "logic" preview section should have the text "Must have successfully completed all courses from,HIST110,HIST210,CORE: Life Science Lab-Linked Courses (LL)"
 
   #ELIG9.2.EB1.3 (KSENROLL-6954)
-  @bug
+  @bug @KSENROLL-7044
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule three
     When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB1.3 (KSENROLL-6954)"
     And I click on the "Recommended Preparation" section
@@ -338,23 +339,23 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I search for the "course set" "CORE: Life Science Lab-Linked Courses (LL)"
     And I click the "add" button
     And I click the "Preview Change" button
-    Then the "edit" preview section should have the text "Must have successfully completed a minimum of 2 courses from (HIST208, HIST204, HIST213, BSCI124)"
+    Then the "edit" preview section should have the text "Must have successfully completed a minimum of 2 courses from (HIST204, HIST208, HIST213, BSCI124)"
     When I click the "Edit Rule Logic" tab
-    Then the "logic" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST208,HIST204,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
+    Then the "logic" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST204,HIST208,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
     When I click the "Update Rule" button
-    Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST208,HIST204,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
+    Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST204,HIST208,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page for ""
     And I click on the "Recommended Preparation" section
-    Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST208,HIST204,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
+    Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST204,HIST208,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
     When I click on the "Edit Rule" link
-    Then the "edit" preview section should have the text "Must have successfully completed a minimum of 2 courses from (HIST208, HIST204, HIST213, BSCI124)"
+    Then the "edit" preview section should have the text "Must have successfully completed a minimum of 2 courses from (HIST204, HIST208, HIST213, BSCI124)"
     When I click the "Edit Rule Logic" tab
-    Then the "logic" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST208,HIST204,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
+    Then the "logic" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST204,HIST208,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
 
   #ELIG9.2.EB1.4 (KSENROLL-6954)
-  @bug
+  @bug @KSENROLL-7044
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule four
     When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB1.4 (KSENROLL-6954)"
     And I click on the "Recommended Preparation" section
@@ -372,23 +373,23 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I search for the "course set" "General Education: Fundamental Studies-Professional Writing"
     And I click the "add" button
     And I click the "Preview Change" button
-    Then the "edit" preview section should have the text "Must have successfully completed a minimum of 2 courses from (HIST798, HIST250, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    Then the "edit" preview section should have the text "Must have successfully completed a minimum of 2 courses from (HIST250, HIST798, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
     When I click the "Edit Rule Logic" tab
-    Then the "logic" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    Then the "logic" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "Update Rule" button
-    Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page for ""
     And I click on the "Recommended Preparation" section
-    Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click on the "Edit Rule" link
-    Then the "edit" preview section should have the text "Must have successfully completed a minimum of 2 courses from (HIST798, HIST250, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    Then the "edit" preview section should have the text "Must have successfully completed a minimum of 2 courses from (HIST250, HIST798, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
     When I click the "Edit Rule Logic" tab
-    Then the "logic" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    Then the "logic" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
 
   #ELIG9.2.EB2 (KSENROLL-6954)
-  @bug
+  @pending
   Scenario: Confirm that the natural language displays all rules correctly for Antirequisite - rule one
     When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB2 (KSENROLL-6954)"
     And I click on the "Antirequisite" section
@@ -414,10 +415,13 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "logic" preview section should have the text "Must not have successfully completed HIST250"
 
   #ELIG9.2.EB3.1 (KSENROLL-6954)
+  @bug @KSENROLL-7044
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule one
     When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB3.1 (KSENROLL-6954)"
     And I click on the "Corequisite" section
-    And I click on the "Add Rule" link
+#    And I click on the "Add Rule" link
+    And I click on the "Edit Rule" link
+    And I select node "A" in the tree
     And I click the "Add Rule Statement" button
     And I select the "Must be concurrently enrolled in all courses from <courses>" option from the "rule" dropdown
     And I select the "Approved Courses" option from the "courses" dropdown
@@ -429,27 +433,29 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I search for the "course set" "General Education: Fundamental Studies-Professional Writing"
     And I click the "add" button
     And I click the "Preview Change" button
-    Then the "edit" preview section should have the text "Must be concurrently enrolled in all courses from (HIST798, HIST250, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    Then the "edit" preview section should have the text "Must be concurrently enrolled in all courses from (HIST250, HIST798, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
     When I click the "Edit Rule Logic" tab
-    Then the "logic" preview section should have the text "Must be concurrently enrolled in all courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    Then the "logic" preview section should have the text "Must be concurrently enrolled in all courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "Update Rule" button
-    And I click on the "Corequisite" section
-    Then the "agenda" preview section should have the text "Must be concurrently enrolled in all courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    #And I click on the "Corequisite" section
+    Then the "agenda" preview section should have the text "Must be concurrently enrolled in all courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page for ""
     And I click on the "Corequisite" section
-    Then the "agenda" preview section should have the text "Must be concurrently enrolled in all courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    Then the "agenda" preview section should have the text "Must be concurrently enrolled in all courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click on the "Edit Rule" link
-    Then the "edit" preview section should have the text "Must be concurrently enrolled in all courses from (HIST798, HIST250, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    Then the "edit" preview section should have the text "Must be concurrently enrolled in all courses from (HIST250, HIST798, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
     When I click the "Edit Rule Logic" tab
-    Then the "logic" preview section should have the text "Must be concurrently enrolled in all courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    Then the "logic" preview section should have the text "Must be concurrently enrolled in all courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
 
   #ELIG9.2.EB3.2 (KSENROLL-6954)
+  @bug @KSENROLL-7044
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule two
     When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB3.2 (KSENROLL-6954)"
     And I click on the "Corequisite" section
-    And I click on the "Add Rule" link
+    And I click on the "Edit Rule" link
+    And I select node "A" in the tree
     And I click the "Add Rule Statement" button
     And I select the "Must be concurrently enrolled in a minimum of <n> courses from <courses>" option from the "rule" dropdown
     And I enter "2" in the "number of courses" field
@@ -462,27 +468,29 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I search for the "course set" "General Education: Fundamental Studies-Professional Writing"
     And I click the "add" button
     And I click the "Preview Change" button
-    Then the "edit" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from (HIST798, HIST250, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    Then the "edit" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from (HIST250, HIST798, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
     When I click the "Edit Rule Logic" tab
-    Then the "logic" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    Then the "logic" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "Update Rule" button
-    And I click on the "Corequisite" section
-    Then the "agenda" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    #And I click on the "Corequisite" section
+    Then the "agenda" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page for ""
     And I click on the "Corequisite" section
-    Then the "agenda" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    Then the "agenda" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click on the "Edit Rule" link
-    Then the "edit" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from (HIST798, HIST250, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    Then the "edit" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from (HIST250, HIST798, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
     When I click the "Edit Rule Logic" tab
-    Then the "logic" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST798,HIST250,General Education: Fundamental Studies-Professional Writing"
+    Then the "logic" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
 
   #ELIG9.2.EB3.3 (KSENROLL-6954)
+  @pending
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule three
     When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB3.3 (KSENROLL-6954)"
     And I click on the "Corequisite" section
-    And I click on the "Add Rule" link
+    And I click on the "Edit Rule" link
+    And I select node "A" in the tree
     And I click the "Add Rule Statement" button
     And I select the "Must be concurrently enrolled in <course>" option from the "rule" dropdown
     And I search for the "course code" "HIST798"
