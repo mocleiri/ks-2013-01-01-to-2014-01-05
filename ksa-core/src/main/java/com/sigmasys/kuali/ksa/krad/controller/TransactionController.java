@@ -188,7 +188,7 @@ public class TransactionController extends GenericSearchController {
         List<Tag> tags = form.getFilterTags();
 
         if(tags != null && tags.size() > 0){
-            transactions = TransactionUtils.filterByTag(transactions, tags);
+            transactions = TransactionUtils.filterByTags(transactions, tags);
         }
 
         transactions = TransactionUtils.orderByEffectiveDate(transactions, true);

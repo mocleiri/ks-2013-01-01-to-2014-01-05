@@ -377,14 +377,16 @@ public class TransactionUtils {
         return newTransactions;
     }
 
-    public static List<Transaction> filterByTag(List<Transaction> transactions, List<Tag> tags) {
+    public static List<Transaction> filterByTags(List<Transaction> transactions, List<Tag> tags) {
+
         List<Transaction> newTransactions = new LinkedList<Transaction>();
         for (Transaction transaction : transactions) {
 
             List<Tag> transactionTags = new ArrayList<Tag>(transaction.getTags());
 
             transactionTags.retainAll(tags);
-            if(transactionTags.size() > 0){
+
+            if (!transactionTags.isEmpty()) {
                 newTransactions.add(transaction);
             }
         }
