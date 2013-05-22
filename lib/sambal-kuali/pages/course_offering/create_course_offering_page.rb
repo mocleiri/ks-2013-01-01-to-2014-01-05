@@ -27,7 +27,7 @@ class CreateCourseOffering < BasePage
   element(:add_final_exam_driver){|b| b.frm.div(data_label:"FINAL EXAM DRIVER ACTIVITY")}
   action(:add_format_btn) { |b| b.frm.button(text: "Add").click; b.loading.wait_while_present }
 
-  action(:create_from_existing_offering_tab) { |b| b.frm.link(text: /Create from Existing Offering/).click; b.loading.wait_while_present }
+  action(:create_from_existing_offering_tab) { |b| b.frm.link(text: /Create from Existing Offering/).click; b.loading.wait_while_present(120) }
   action(:configure_course_offering_copy_toggle) { |b| b.frm.link(id: "KS-ExistingOffering-ConfigureCopySubSection_toggle").click }
   element(:configure_course_offering_copy_element) { |b| b.frm.link(id: "KS-ExistingOffering-ConfigureCopySubSection_toggle") }
   element(:exclude_instructor_checkbox) { |b| b.frm.label(text: /Exclude instructor information/) }

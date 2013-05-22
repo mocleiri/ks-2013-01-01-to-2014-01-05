@@ -22,6 +22,7 @@ class ActivityOffering
 
   #type: string generally set using options hash
   attr_accessor :code,
+                :status,
                 :format,
                 :activity_type,
                 :max_enrollment,
@@ -48,6 +49,7 @@ class ActivityOffering
   #
   #  defaults = {
   #    :parent_course_offering => ""
+  #    :status => "Draft",
   #    :format => "Lecture Only",
   #    :activity_type => "Lecture",
   #    :max_enrollment => 100,
@@ -77,6 +79,7 @@ class ActivityOffering
 
     defaults = {
         :parent_course_offering => (make CourseOffering),
+        :status => "Draft",
         :format => "Lecture Only",
         :activity_type => "Lecture",
         :max_enrollment => 100,
@@ -205,38 +208,17 @@ class ActivityOffering
 
   def init_existing(ao_table_row, parent_co)
     @code =  ao_table_row.cells[ManageCourseOfferings::AO_CODE].text
+    @status = ao_table_row.cells[ManageCourseOfferings::AO_STATUS].text
     @activity_type = ao_table_row.cells[ManageCourseOfferings::AO_TYPE].text
     @max_enrollment = ao_table_row.cells[ManageCourseOfferings::AO_MAX_ENR].text
     delivery_days = ao_table_row.cells[ManageCourseOfferings::AO_DAYS].text
     if delivery_days != "" then
       #there are delivery logistics
-      isRdl = ao_table_row.cells[ManageCourseOfferings::AO_DAYS].span(index: 1).present? and ao_table_row.cells[ManageCourseOfferings::AO_DAYS].span(index: 1).attribute_value("class") == "uif-scheduled-dl"
-      dl_object = make DeliveryLogistics, :days => delivery_days
-      dl_object.start_time = ao_table_row.cells[ManageCourseOfferings::AO_ST_TIME].text.split[0]
-      st_time = ao_table_row.cells[ManageCourseOfferings::AO_ST_TIME].text
-      if st_time != "" then
-        dl_object.start_time = st_time.split[0]
-        dl_object.start_time_ampm = st_time.split[1]
-      else
-        dl_object.start_time = ""
-        dl_object.start_time_ampm = ""
-      end
-      end_time = ao_table_row.cells[ManageCourseOfferings::AO_END_TIME].text
-      if end_time != "" then
-        dl_object.end_time = end_time.split[0]
-        dl_object.end_time_ampm = end_time.split[1]
-      else
-        dl_object.end_time = ""
-        dl_object.end_time_ampm = ""
-      end
-      dl_object.facility_long_name = ao_table_row.cells[ManageCourseOfferings::AO_BLDG].text
-      dl_object.facility = ""
-      dl_object.room = ao_table_row.cells[ManageCourseOfferings::AO_ROOM].text
-      if isRdl then
-        dl_object.isRDL = true
+      dl_object = make DeliveryLogistics
+      dl_object.init_existing(ao_table_row)
+      if dl_object.isRDL then
         @requested_delivery_logistics_list[dl_object.dl_key] = dl_object
       else
-        dl_object.isRDL = false
         @actual_delivery_logistics_list[dl_object.dl_key] = dl_object
       end
     end
@@ -358,22 +340,6 @@ class ActivityOffering
     end
 
   end #END: edit_request_delivery_logistics
-
-  def change_rdl_days row_num
-    on ActivityOfferingMaintenance do |page|
-      page.view_requested_delivery_logistics
-      orig_days = page.get_requested_logistics_days(row_num).gsub!(/\s+/, "")
-      new_days = (orig_days=="SU")?"MWF":"SU"
-      page.edit_requested_delivery_logistics_row(row_num)
-      sleep 2
-      page.div(id: "rdl_days").text_field().set(new_days)
-      page.add_logistics_div.button(text: "Update").click
-      page.loading.wait_while_present
-      page.submit
-      return orig_days
-    end
-  end
-
 
   def edit_course_url opts={}
 
@@ -868,6 +834,30 @@ class DeliveryLogistics
       page.add_new_delivery_logistics
     end
   end
+
+  def init_existing(ao_table_row)
+    @isRDL = ao_table_row.cells[ManageCourseOfferings::AO_DAYS].span(index: 1).present? and ao_table_row.cells[ManageCourseOfferings::AO_DAYS].span(index: 1).attribute_value("class") == "uif-scheduled-dl"
+    @days = ao_table_row.cells[ManageCourseOfferings::AO_DAYS].text
+    st_time = ao_table_row.cells[ManageCourseOfferings::AO_ST_TIME].text
+    if st_time != "" then
+      @start_time = st_time.split[0]
+      @start_time_ampm = st_time.split[1]
+    else
+      @start_time = ""
+      @start_time_ampm = ""
+    end
+    end_time = ao_table_row.cells[ManageCourseOfferings::AO_END_TIME].text
+    if end_time != "" then
+      @end_time = end_time.split[0]
+      @end_time_ampm = end_time.split[1]
+    else
+      @end_time = ""
+      @end_time_ampm = ""
+    end
+    @facility_long_name = ao_table_row.cells[ManageCourseOfferings::AO_BLDG].text
+    @facility = ""
+    @room = ao_table_row.cells[ManageCourseOfferings::AO_ROOM].text
+   end
 
   # compares 2 instances of DeliveryLogistics for field-equality
   # note: by default, the comparison ignores the isRDL-field

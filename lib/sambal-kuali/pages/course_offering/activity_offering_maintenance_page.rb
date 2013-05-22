@@ -83,48 +83,6 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
     row.cells[ACTIONS].button(text: "Delete").click
   end
 
-  #
-  #def edit_requested_delivery_logistics_row(row_num)
-  #  requested_logistics_table[row_num][ACTIONS].link(text: "Edit").click
-  #end
-  #
-  #def days_for_requested_delivery_logistics_row(row_num)
-  #  requested_logistics_table[row_num][1].text_field.value
-  #end
-  #
-  #
-  #def days_for_actual_delivery_logistics_row(row_num)
-  #  actual_logistics_table[row_num][1].span.text
-  #end
-
-  ### THESE FUNCTIONS ARE NEEDED BY ADD_ACTIVITY_OFFERINGS.FEATURE -- PLEASE DON'T REMOVE UNTIL DELIVERY-LOGISTICS-REFACTOR IS COMPLETE (JIRA KSENROLL-6938)
-  ## get the ADL-data as an array of Sets (with table-header and "Actions" removed)
-  def get_actual_delivery_logistics_data_as_array_of_sets
-    get_delivery_logistics_data_as_set(false)
-  end
-  ## get the RDL-data as an array of Sets (with table-header and "Actions" removed)
-  def get_requested_delivery_logistics_data_as_array_of_sets
-    get_delivery_logistics_data_as_set(true)
-  end
-  ## private-helper to get delivery-data
-  def get_delivery_logistics_data_as_set(isTargetRDL)
-    result_set = []
-
-    delivery_logistics_table = actual_logistics_table
-    if(isTargetRDL)
-      delivery_logistics_table = requested_logistics_table
-    end
-    delivery_logistics_table.rows.each_with_index do |row, index|
-      next if index == 0 || row.nil? || row.text.empty? # 1st-row is table-header; empty-rows aren't wanted either
-      row_set = row.text.split(' ').to_set
-      row_set = row_set.delete('delete') #strip off the "Actions"-button
-      result_set << row_set
-    end
-
-    return result_set
-  end
-  private :get_delivery_logistics_data_as_set
-
   def get_inst_effort(id)
     target_person_row(id).cells[INST_EFFORT_COLUMN].text_field.value
   end

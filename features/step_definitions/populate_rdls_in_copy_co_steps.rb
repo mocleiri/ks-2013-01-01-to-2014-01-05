@@ -1,65 +1,41 @@
 When /^I copy an CO with AOs that have ADLs to a new CO in the different term with RDLs in its AOs$/ do
-  @source_term = "201212"
-  @target_term = Rollover::PUBLISHED_SOC_TERM
-  @catalogue_course_code = "ENGL222"
-  @course_offering = create CourseOffering, :term=> @target_term, :create_from_existing => (make CourseOffering, :term=> @source_term, :course => @catalogue_course_code)
+  @source_course_offering = make CourseOffering, :term=> Rollover::SOC_STATES_SOURCE_TERM, :course => "ENGL222"
+  @course_offering = create CourseOffering, :term=> Rollover::PUBLISHED_SOC_TERM , :create_from_existing => @source_course_offering
 end
 
 Then /^The new CO and AOs are Successfully created$/ do
-  #get the new CO data and at lease one AO schedule
   @course_offering.manage_and_init
-  @new_cluster_list = @course_offering.activity_offering_cluster_list
-  @ao_list = @new_cluster_list[0].ao_list
-
-  @new_total  = @ao_list.count
-  @aos = [@ao_list[0]]
-  @aos_matched = @course_offering.get_aos_by_status(:ao_status => "Draft", :aos => @aos)
-  if @aos_matched.length != 1
-    raise "AO status is not Draft: ao_code: @course_offering.ao_list[0]"
-  end
-  @new_schedule = @course_offering.ao_schedule_data :ao_code =>  @ao_list[0].code
-  #
-  @new_schedule_set = @new_schedule.split(' ').to_set
-  if @new_schedule_set.length < 7
-    raise "AO has no schedule copied: ao_code: @course_offering.ao_list[0]"
-  end
-
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit('A')
-  end
-
-  on ActivityOfferingMaintenance do |page|
-    page.view_requested_delivery_logistics
-    page.requested_logistics_table.rows.count != 0
-    @new_schedule_set = page.requested_logistics_table.rows[1].text.split(' ').to_set
-  end
-
-  #cleanup the newly copied CO
-  #@course_offering.delete_co_with_link :should_confirm_delete => true
-
+  tgt_activity_offering = @course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
+  tgt_activity_offering.status.should == "Draft"
+  tgt_activity_offering.requested_delivery_logistics_list.size.should_not == 0
 end
 
 And /^The ADLs are Successfully copied to RDLs in the new AOs of the newly created CO$/ do
-  @orig_course_offering = make CourseOffering, :term=> @source_term, :course => @catalogue_course_code
-  @orig_course_offering.suffix=""
-  @orig_course_offering.manage_and_init
+  @source_course_offering.manage_and_init
+  source_activity_offering = @source_course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
+  source_activity_offering.actual_delivery_logistics_list.size.should_not == 0
 
-  @orig_activity_offering = @orig_course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
-  @orig_activity_offering.edit
+  #now navigate to course offering copy and validate RDLs
+  @course_offering.manage
+  @course_offering.edit_ao :ao_code => "A"
 
   on ActivityOfferingMaintenance do |page|
-    page.actual_logistics_div.exists? == false
-    page.actual_logistics_table.exists? == false
-    page.view_requested_delivery_logistics
-    @orig_schedule_set = page.requested_logistics_table.rows[1].text.split(' ').to_set
-  end
+    page.actual_logistics_div.exists?.should == false  #should not be any ADLs
+    page.requested_logistics_table.rows.size.should be > 2 #should be more than header/footer rows
+    page.requested_logistics_table.rows[1..-2].each do |row|
+      days = page.get_requested_logistics_days(row).delete(' ')
+      start_time = page.get_requested_logistics_start_time(row).delete(' ')
+      dl_key = "#{days}#{start_time}"
+      #get the corresponding ADL by key
+      adl = source_activity_offering.actual_delivery_logistics_list[dl_key]
+      page.get_requested_logistics_days(row).delete(' ').should == adl.days
+      page.get_requested_logistics_start_time(row).delete(' ').should == "#{adl.start_time}#{adl.start_time_ampm}"
+      page.get_requested_logistics_end_time(row).delete(' ').should == "#{adl.end_time}#{adl.end_time_ampm}"
+      page.get_requested_logistics_facility(row).should == adl.facility_long_name
+      page.get_requested_logistics_room(row).should == adl.room
+    end
 
-  @result_set = @orig_schedule_set ^ @new_schedule_set
-  if @result_set.length != 0
-    raise "AO Schedule not copied properly."
   end
-
 end
 
 When /^I roll over an term to a new target term$/ do

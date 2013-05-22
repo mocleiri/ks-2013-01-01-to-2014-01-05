@@ -10,7 +10,19 @@ Then /^the new Activity Offering is shown in the list of AOs$/ do
 end
 
 
-When /^I copy an AO with "(Requested|Actual)" Delivery Logistics$/ do |delivery_logistics|
+When /^I copy an AO with Actual Delivery Logistics$/ do
+
+  # in ref-data this CO has ADLs but no RDLs (copy an ADL first if you need an RDL)
+  course_offering = make CourseOffering, :course => "CHEM277"
+  course_offering.manage_and_init
+
+  @ao_source = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
+  @ao_copy = create ActivityOffering, :create_by_copy => true,
+                    :code => @ao_source.code,
+                    :parent_course_offering => course_offering
+end
+
+When /^I copy an AO with Requested Delivery Logistics$/ do
 
   # in ref-data this CO has ADLs but no RDLs (copy an ADL first if you need an RDL)
   course_offering = make CourseOffering, :course => "CHEM277"
@@ -19,18 +31,9 @@ When /^I copy an AO with "(Requested|Actual)" Delivery Logistics$/ do |delivery_
   # get AOs that match the desired DL-type
   all_aos = course_offering.activity_offering_cluster_list[0].ao_list
   target_status = "Draft"
-  if delivery_logistics == "Actual"
-    target_status = "Offered"
-  end
+
   target_aos = course_offering.get_aos_by_status :aos => all_aos, :ao_status => target_status
-  if target_aos.empty?
-    case target_status
-      when "Offered"
-        raise "CO has no ADLs"
-      else
-        raise "CO has no RDLs"
-    end
-  end
+  target_aos.empty?.should_not be true
 
   # copy the first AO that matches the desired DL-type
   @ao_source = target_aos[0]
@@ -40,32 +43,30 @@ When /^I copy an AO with "(Requested|Actual)" Delivery Logistics$/ do |delivery_
 end
 
 
+
 Then /^the "(ADL|RDL)s" are successfully copied as RDLs in the new AO$/ do |source_delivery_logistics_type|
 
-  # capture sched for source-AO
-  ao_source_schedule = []
-  @ao_source.parent_course_offering.manage
-  @ao_source.edit
-  on ActivityOfferingMaintenance do |page|
-    if source_delivery_logistics_type == "ADL"
-      ao_source_schedule = page.get_actual_delivery_logistics_data_as_array_of_sets
-    else
-      ao_source_schedule = page.get_requested_delivery_logistics_data_as_array_of_sets
-    end
+  course_offering = @ao_source.parent_course_offering
+  course_offering.manage_and_init
+  if source_delivery_logistics_type == "ADL"
+    source_delivery_logistics = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code(@ao_source.code).actual_delivery_logistics_list.values[0]
+  else
+    source_delivery_logistics = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code(@ao_source.code).requested_delivery_logistics_list.values[0]
   end
+  source_delivery_logistics.nil?.should be_false
 
-  # capture sched for copy-AO
-  ao_copy_schedule = []
-  @ao_copy.parent_course_offering.manage
+  #@ao_copy.parent_course_offering.manage
   @ao_copy.edit
+
   on ActivityOfferingMaintenance do |page|
-    ao_copy_schedule = page.get_requested_delivery_logistics_data_as_array_of_sets
+    page.requested_logistics_table.rows.size.should be > 2 #should be more than header/footer rows
+    row = page.requested_logistics_table.rows[1]
+    page.get_requested_logistics_days(row).delete(' ').should == source_delivery_logistics.days
+    page.get_requested_logistics_start_time(row).delete(' ').should == "#{source_delivery_logistics.start_time}#{source_delivery_logistics.start_time_ampm}"
+    page.get_requested_logistics_end_time(row).delete(' ').should == "#{source_delivery_logistics.end_time}#{source_delivery_logistics.end_time_ampm}"
+    page.get_requested_logistics_facility(row).should == source_delivery_logistics.facility_long_name
+    page.get_requested_logistics_room(row).should == source_delivery_logistics.room
   end
-
-  # verify that both AOs have same DL-*details* (validation of DL-*type* is handled in the capture-blocks just prior to this)
-  diff = ao_source_schedule - ao_copy_schedule
-  diff.should be_empty
-
 end
 
 
