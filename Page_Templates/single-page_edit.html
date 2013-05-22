@@ -85,20 +85,19 @@
 		    				</div>
 					</div>
 					<div class="pull-right">
-		  				<div id="meta-data" title="meta-data" class="pull-right">
-								<span class="detail-modification">Last modified by Username on Friday, May 17 at 05:15 a.m.</span>
-								<span class="detail-status">Detail Status</span>
-						</div>
 	    				<div id="action-bar" class="pull-right">
-	    					<a href="#" class="action action-inspect"><i class="icon-file"></i>Inspect</a>
-	    					<a href="#" class="action action-manage"><i class="icon-wrench"></i>Manage</a>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
+	    					<a href="#" class="action action-copy hidden"><i class="icon-plus-sign"></i>Copy</a>
+	    					<a href="#" class="action action-comments hidden"><i class="icon-comment"></i>Comments</a>
+	    					<a href="#" class="action action-print hidden"><i class="icon-print"></i>Print</a>
 	    					<a href="#" class="action action-delete"><i class="icon-remove"></i>Delete</a>
-	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
-	    					<a href="#" class="action action-print"><i class="icon-print"></i>Print</a>
+	    					<a href="single-page_inspect.html" class="action action-inspect"><i class="icon-list-alt"></i>Inspect</a>
+	    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i>Manage</a>
 	    				</div>	
-                    </div>
+		  				<div id="meta-data" title="meta-data" class="pull-right">
+							<span class="detail-modification">Last modified by Username on Friday, May 17 at 05:15 a.m.</span>
+							<span class="detail-status">Detail Status</span>
+						</div>
+					</div>
     			</div>
     		</div>
     	</div>
@@ -115,7 +114,7 @@
 						<li data-messageitemfor="Demo-ValidationLayout-Section1" class="uif-errorMessageItem"><a href="#section-information">The "Information" section has 1 error</a></li>
 					</ul>
 				</div>
-    			<div id="page-header" title="page-header" class="container-fluid  no-padding">
+    			<div id="page-header" title="page-header" class="container-fluid no-padding gibberish hidden">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
 						<dl class="dl-horizontal">
 				    		<dt>Field 1</dt><dd>Remotely flung</dd>
@@ -125,24 +124,24 @@
 				    	</dl>	
     				</div>
     			</div>
-    			<div class="container-fluid group optional no-padding">
+    			<div class="container-fluid optional no-padding">
     				<div class="container-fluid group-header no-padding"></div>
     				<div class="container-fluid validation group-error-validation-messaging"><!-- error at group level ?--></div>
     				<div class="row-fluid no-padding">
-    					<div class="container-fluid group span12 optional no-margin no-padding gibberish">
+    					<div class="container-fluid group-top span12 optional no-margin no-padding gibberish">
     						<form id="#main-form">
-    							<div class="section">
+    							<div class="section-top">
 	   							<a name="section-information"></a>
     								<h2>
-    									Section A
+    									Section Assssssssssss
     								</h2>
-    								<div class="control-group inline">
+    								<div class="control-group">
 	    								<label class="control-label field-label">
 	    									Course Offering Code
 	    								</label>
-	    								<div class="controls pull-left inline">
-											<span>ENLG101</span>
-	    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini" placeholder="e.g. A" value="A">
+	    								<div class="controls">
+											ENLG101
+	    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini gibberish-block" placeholder="e.g. A" value="A">
 	    								</div>
     								</div>
 	   						</div>
@@ -188,10 +187,10 @@
 		    											</td>
 		    											<td>
 				    										<select class="span10" required>
-				    											<option>
+				    											<option class="gibberish-light">
 				    												Instructor
 				    											</option>
-				    											<option>
+				    											<option class="gibberish-light">
 				    												Teaching Assistant
 				    											</option>
 				    										</select>
@@ -221,7 +220,7 @@
 	    									Waitlist
 	    								</label>
 										<label class="checkbox">
- 											<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options" checked>
+ 											<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options" class="gibberish-light" checked>
  											This course offering has a waitlist
 										</label>
  									</div>
@@ -245,16 +244,16 @@
 		    								</label>
 		    								<div class="controls">
 	    										<select id="message-waitlistType" name="waitlistType" class="span2" required>
-	    											<option selected>
+	    											<option class="gibberish-light" selected>
 	    												Select a type ...
 	    											</option>
-	    											<option>
+	    											<option class="gibberish-light">
 	    												Automatic
 	    											</option>
-	    											<option>
+	    											<option class="gibberish-light">
 	    												Semi-automatic
 	    											</option>
-	    											<option>
+	    											<option class="gibberish-light">
 	    												Manual
 	    											</option>
 	    										</select> 
@@ -287,7 +286,7 @@
     						<button type="submit" class="btn btn-primary">
     							Save
     						</button>
-    						<button type="submit" class="btn secondary">
+    						<button type="submit" class="btn secondary hidden">
     							Save Progress
     						</button>
     						<a href="#" class="cancel">Cancel</a>

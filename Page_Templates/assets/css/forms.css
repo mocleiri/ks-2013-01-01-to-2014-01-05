@@ -34,6 +34,9 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .read-only {
 	margin-top: 0.4em;
 }
+.label-left {
+	text-align: left !important;
+}
 .form-child {
 	padding-left: 2.0em;
 }
@@ -89,6 +92,12 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 :-ms-input-placeholder {  
 	font-style: italic;
+}
+a.action i {
+	opacity: .5;
+}
+a:hover.action i {
+	opacity: 1;
 }
 
 /************************************************************ COMMAND BAR */

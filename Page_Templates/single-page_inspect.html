@@ -13,6 +13,7 @@
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="assets/css/krad.css" rel="stylesheet">
     <link href="assets/css/kualistudent.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
     <!-- HTML5, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -83,20 +84,19 @@
 		    				</div>
 					</div>
 					<div class="pull-right">
+	    				<div id="action-bar" class="pull-right">
+	    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
+	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
+	    					<a href="#" class="action action-print"><i class="icon-print"></i>Print</a>
+	    					<a href="#" class="action action-delete"><i class="icon-remove"></i>Delete</a>
+	    					<a href="single-page_edit.html" class="action action-edit"><i class="icon-edit"></i>Edit</a>
+	    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i>Manage</a>
+	    				</div>	
 		  				<div id="meta-data" title="meta-data" class="pull-right">
 								<span class="detail-modification">Last modified by Username on Friday, May 17 at 05:15 a.m.</span>
 								<span class="detail-status">Detail Status</span>
 						</div>
-	    				<div id="action-bar" class="pull-right">
-	    					<a href="#" class="action action-inspect"><i class="icon-edit"></i>Edit</a>
-	    					<a href="#" class="action action-manage"><i class="icon-wrench"></i>Manage</a>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
-	    					<a href="#" class="action action-delete"><i class="icon-remove"></i>Delete</a>
-	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
-	    					<a href="#" class="action action-print"><i class="icon-print"></i>Print</a>
-	    				</div>	
-                    </div>
+					</div>
     			</div>
     		</div>
     	</div>
@@ -116,7 +116,7 @@
 						</ul>
 	    			</div>
 				</div>
-    			<div id="page-header" title="page-header" class="container-fluid  no-padding">
+    			<div id="page-header" title="page-header" class="container-fluid no-padding gibberish hidden">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
 						<dl class="dl-horizontal">
 				    		<dt>Field 1</dt><dd>Much</dd>
@@ -132,15 +132,35 @@
     				</div>
     				<div class="container-fluid validation group-error-validation-messaging"></div>
     				<div class="row-fluid no-padding">
-    					<div class="container-fluid group span12 optional no-margin no-padding gibberish">
+    					<div class="container-fluid group-top span12 optional no-margin no-padding gibberish">
 
-							<div class="section">
-								<dl>
-						    		<dt>Field A</dt><dd>Piously from that snuffed after.</dd>
-						    		<dt>Field B</dt><dd>Parrot spilled more far oyster thirsty a belched but prior ouch well thanks or tersely instead sleazily as oh and much far.</dd>
-						    		<dt>Field C</dt><dd>Ouch jeez less hey stiffly left absently.
-									</dd>
-						    	</dl>	
+							<div class="section-top">
+								<form class="form-horizontal">
+    								<div class="control-group inline">
+	    								<label class="control-label field-label label-left">
+	    									Field A
+	    								</label>
+	    								<div class="controls read-only">
+											Piously from that snuffed after.
+	    								</div>
+    								</div>
+    								<div class="control-group inline">
+	    								<label class="control-label field-label label-left">
+	    									Field B
+	    								</label>
+	    								<div class="controls read-only">
+											Parrot spilled more far oyster thirsty a belched but prior ouch well thanks or tersely instead sleazily as oh and much far.
+	    								</div>
+    								</div>
+    								<div class="control-group inline">
+	    								<label class="control-label field-label label-left">
+	    									Field C
+	    								</label>
+	    								<div class="controls read-only">
+											Ouch jeez less hey stiffly left absently.
+	    								</div>
+    								</div>
+								</form>
 							</div>
 
 							<div class="section">
@@ -181,8 +201,8 @@
   												Luxuriant felt one.
   											</td>
   											<td class="actions">
-												<a href="#" class="action action-inspect"><i class="icon-edit"></i></a>
-						    					<a href="#" class="action action-manage"><i class="icon-wrench"></i></a>
+												<a href="single-page_edit.html" class="action action-edit"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
   											</td>
   										</tr>
   										<tr>
@@ -199,8 +219,8 @@
   												In unsaddled towards onto slit deer this much.
   											</td>
   											<td class="actions">
-												<a href="#" class="action action-inspect"><i class="icon-edit"></i></a>
-						    					<a href="#" class="action action-manage"><i class="icon-wrench"></i></a>
+												<a href="single-page_edit.html" class="action action-edit"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
   											</td>
   										</tr>
   										<tr>
@@ -217,8 +237,8 @@
   												Playful celestially.
   											</td>
   											<td class="actions">
-												<a href="#" class="action action-inspect"><i class="icon-edit"></i></a>
-						    					<a href="#" class="action action-manage"><i class="icon-wrench"></i></a>
+												<a href="single-page_edit.html" class="action action-edit"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
   											</td>
   										</tr>
   									</tbody>

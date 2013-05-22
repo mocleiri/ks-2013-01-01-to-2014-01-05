@@ -59,6 +59,9 @@
     font-style: normal;
 
 }
+.gibberish, .gibberish-bold, .gibberish-light, .gibberish-block {
+	font-size: 1.2em;
+}
 .gibberish {
 	font-family: redacted_scriptregular;
 }
@@ -169,6 +172,9 @@
 }
 .group, .section {
 	padding-top: 1.2em;
+}
+.group-top, .section-top {
+	padding-top: 0em;
 }
 .section {
 	clear:both;
@@ -321,7 +327,7 @@ h2 {
     font-size: 1.3em;
     line-height: 1.4em;
 }
-#action-bar {
+#action-bar, #meta-data {
     margin-top: 1.0em;
 	clear: right;
 }
@@ -333,7 +339,7 @@ h2 {
 	opacity: 1;
 }
 .action {
-    padding-right: 1.0em;
+    padding-right: 0.3em;
 }
 .action:last-child {
     padding-right: 0em;
