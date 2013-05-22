@@ -4,8 +4,8 @@ import com.sigmasys.kuali.ksa.krad.model.PotentialRefund;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.RefundStatus;
-import com.sigmasys.kuali.ksa.model.Tag;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,13 +26,13 @@ public class AccountRefundForm extends AbstractViewModel {
     /**
      * All possible values of Tag entity to filter on.
      */
-    private List<Tag> tags;
+    private List<String> filterTags;
 
     /**
      * Refund status to filter on.
      * A <code>null</code> refund status means "Show All Status Types".
      */
-    private RefundStatus refundStatus;
+    private RefundStatus refundStatusCode;
 
     /**
      * A list of PotentialRefund objects.
@@ -54,7 +54,31 @@ public class AccountRefundForm extends AbstractViewModel {
      */
     private boolean runPaymentApplicationEnabled;
 
+    /**
+     * Type of the Date range to find transactions.
+     * @see com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder
+     */
+    private String dateRangeType;
 
+    /**
+     * Start of the filtering date range. (Optional)
+     */
+    private Date filterDateFrom;
+
+    /**
+     * End of the filter date range
+     */
+    private Date filterDateTo;
+
+
+
+    public String getDateRangeType() {
+        return dateRangeType;
+    }
+
+    public void setDateRangeType(String dateRangeType) {
+        this.dateRangeType = dateRangeType;
+    }
 
     public Account getAccount() {
         return account;
@@ -64,20 +88,20 @@ public class AccountRefundForm extends AbstractViewModel {
         this.account = account;
     }
 
-    public List<Tag> getTags() {
-        return tags;
+    public List<String> getFilterTags() {
+        return filterTags;
     }
 
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
+    public void setFilterTags(List<String> filterTags) {
+        this.filterTags = filterTags;
     }
 
-    public RefundStatus getRefundStatus() {
-        return refundStatus;
+    public RefundStatus getRefundStatusCode() {
+        return refundStatusCode;
     }
 
-    public void setRefundStatus(RefundStatus refundStatus) {
-        this.refundStatus = refundStatus;
+    public void setRefundStatusCode(RefundStatus refundStatusCode) {
+        this.refundStatusCode = refundStatusCode;
     }
 
     public List<PotentialRefund> getPotentialRefunds() {
@@ -110,5 +134,21 @@ public class AccountRefundForm extends AbstractViewModel {
 
     public void setRunPaymentApplicationEnabled(boolean runPaymentApplicationEnabled) {
         this.runPaymentApplicationEnabled = runPaymentApplicationEnabled;
+    }
+
+    public Date getFilterDateFrom() {
+        return filterDateFrom;
+    }
+
+    public void setFilterDateFrom(Date filterDateFrom) {
+        this.filterDateFrom = filterDateFrom;
+    }
+
+    public Date getFilterDateTo() {
+        return filterDateTo;
+    }
+
+    public void setFilterDateTo(Date filterDateTo) {
+        this.filterDateTo = filterDateTo;
     }
 }

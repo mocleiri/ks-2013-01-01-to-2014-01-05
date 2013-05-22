@@ -1,14 +1,20 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.AccountRefundForm;
-import com.sigmasys.kuali.ksa.krad.form.ReportReconciliationForm;
 import com.sigmasys.kuali.ksa.krad.model.PotentialRefund;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
+import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
+import com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.model.Refund;
 import com.sigmasys.kuali.ksa.model.Tag;
+import com.sigmasys.kuali.ksa.model.Transaction;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.RefundService;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.krad.web.form.UifFormBase;
+import org.omg.dds.LivelinessLostStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,8 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,6 +48,9 @@ public class AccountRefundController extends DownloadController {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private RefundService refundService;
+
 
     /**
      * Generates an initial form object for the Account Refund page.
@@ -61,6 +71,16 @@ public class AccountRefundController extends DownloadController {
             form.setAccount(account);
         }
 
+        // Set the defaults:
+        Calendar calendar = Calendar.getInstance();
+
+        form.setDateRangeType(RefundDateRangeKeyValuesFinder.ALL);
+        form.setFilterDateTo(calendar.getTime());
+        calendar.add(Calendar.YEAR, -1);
+        form.setFilterDateFrom(calendar.getTime());
+        form.setPotentialRefunds(new ArrayList<PotentialRefund>());
+        form.setAllRefunds(new ArrayList<RefundModel>());
+
         return form;
     }
 
@@ -72,8 +92,10 @@ public class AccountRefundController extends DownloadController {
      * @throws Exception    If any errors occur.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=displayInitialPage")
-    public ModelAndView displayInitialPage(@ModelAttribute("KualiForm") AccountRefundForm form) throws Exception {
-        // TODO: Implement initial page population:
+    public ModelAndView displayInitialPage(@ModelAttribute("KualiForm") AccountRefundForm form,
+                                           @RequestParam("userId") String userId) throws Exception {
+        // Find all refunds:
+        findAllRefunds(form, userId);
 
         return getUIFModelAndView(form);
     }
@@ -87,8 +109,10 @@ public class AccountRefundController extends DownloadController {
      * @throws Exception    If there are any errors search for Refunds.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=searchForRefunds")
-    public ModelAndView searchForRefunds(@ModelAttribute("KualiForm") AccountRefundForm form) throws Exception {
-        // TODO: Implement search for refunds:
+    public ModelAndView searchForRefunds(@ModelAttribute("KualiForm") AccountRefundForm form,
+                                         @RequestParam("userId") String userId) throws Exception {
+        // Refresh the view with the updated filtering criteria:
+        findAllRefunds(form, userId);
 
         return getUIFModelAndView(form);
     }
@@ -140,27 +164,80 @@ public class AccountRefundController extends DownloadController {
 
 
     /**
-     * Searches for all potential Refunds and compiles a list of PotentialRefund objects.
+     * Searches for all Refunds and compiles a list of PotentialRefund and Refund objects.
+     * Sets the lists of Potential and all Refunds on the given form object.
      *
      * @param form  The form object.
-     * @return      A list of PotentialRefund objects.
      */
-    private List<PotentialRefund> findPotentialRefunds(AccountRefundForm form) {
-        // TODO: Find all potential Refunds and compile a list of table objects:
+    private void findAllRefunds(AccountRefundForm form, String userId) {
+        // Calculate the filtering date range:
+        String dateRangeType = form.getDateRangeType();
+        Date filterDateFrom = null;
+        Date filterDateTo = null;
 
-        return new ArrayList<PotentialRefund>();
+        if (StringUtils.equals(dateRangeType, RefundDateRangeKeyValuesFinder.RANGE)) {
+            filterDateFrom = (form.getFilterDateFrom() != null) ? form.getFilterDateFrom() : new Date(0);
+            filterDateTo = (form.getFilterDateTo() != null) ? form.getFilterDateTo() : new Date();
+        } else { // ALL Dates
+            filterDateFrom = new Date(0);
+            filterDateTo = new Date();
+        }
+
+        // Create model objects to display in the tables:
+        List<RefundModel> refundModels =  createRefundModelList(userId, filterDateFrom, filterDateTo);
+        List<PotentialRefund> potentialRefunds = createPotentialRefundList(userId, filterDateFrom, filterDateTo);
+
+        form.setAllRefunds(refundModels);
+        form.setPotentialRefunds(potentialRefunds);
     }
 
     /**
-     * Searches for all matching Refund objects based on the selected search criteria.
+     * Creates a list of RefundModel objects to be displayed in the "Refund Status" table.
      *
-     * @param form  The form object.
-     * @return      A list of all matching refunds based on the search criteria.
+     * @param userId    The current account Id.
+     * @param dateFrom  Filtering date from.
+     * @param dateTo    Filtering date to.
+     * @return
      */
-    private List<RefundModel> findRefunds(AccountRefundForm form) {
-        // TODO: Apply the search criteria and find all matching Refunds:
+    private List<RefundModel> createRefundModelList(String userId, Date dateFrom, Date dateTo) {
+        // Get all Refunds for the current Account:
+        List<Refund> refunds = refundService.checkForRefund(userId, dateFrom, dateTo);
 
-        return new ArrayList<RefundModel>();
+        // Create a list of RefundModel objects:
+        List<RefundModel> refundModels = new ArrayList<RefundModel>();
+
+        if (refunds != null) {
+            for (Refund refund : refunds) {
+                // Create a new RefundModel object:
+                RefundModel refundModel = new RefundModel();
+
+                refundModel.setRefund(refund);
+                refundModel.setRefundStatusDisplay(refund.getStatus().toString());
+                refundModels.add(refundModel);
+            }
+        }
+
+        return refundModels;
     }
 
+    /**
+     * Creates a list of PotentialRefund objects to be displayed in the "Refund Status" table.
+     *
+     * @param userId    The current account Id.
+     * @param dateFrom  Filtering date from.
+     * @param dateTo    Filtering date to.
+     * @return
+     */
+    private List<PotentialRefund> createPotentialRefundList(String userId, Date dateFrom, Date dateTo) {
+        // Get Transactions for the current account within the specified date range.
+        List<PotentialRefund> potentialRefunds = new ArrayList<PotentialRefund>();
+        List<Transaction> transactions = transactionService.getTransactions(userId, dateFrom, dateTo);
+
+        for(Transaction t: transactions){
+            // Add new PotentialRefund object:
+            potentialRefunds.add(new PotentialRefund(new TransactionModel(t)));
+        }
+
+        return potentialRefunds;
+    }
  }

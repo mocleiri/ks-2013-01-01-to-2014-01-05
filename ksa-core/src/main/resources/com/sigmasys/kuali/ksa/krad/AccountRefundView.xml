@@ -49,7 +49,7 @@
 	******************************* Account Refund Search section *********************************
 	
 	-->
-	<bean id="accountRefundSearchSection" parent="Uif-Disclosure-VerticalBoxSection" p:style="text-decoration:underline">
+	<bean id="accountRefundSearchSection" parent="Uif-Disclosure-VerticalBoxSection">
 		<property name="headerText" value="Filter Transactions"/>
 		<property name="items">
 			<list>
@@ -58,40 +58,69 @@
 					<property name="items">
 						<list>
 							<!-- Date Range combo box -->
+							<bean parent="Uif-InputField-LabelTop" p:propertyName="dateRangeType" p:label="Date Range" p:fieldLabel.renderColon="false">
+								<property name="control">
+									<bean parent="Uif-DropdownControl" p:width="100%"	/>
+								</property>
+								<property name="optionsFinder">
+									<bean class="com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder"/>
+								</property>
+							</bean>
+							
 							<!-- From datepicker -->
+							<bean parent="Uif-InputField" p:propertyName="filterDateFrom" p:labelPlacement="TOP" p:label="From"
+								  p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
+								<property name="control">
+									<bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+								</property>
+							</bean>
+							
 							<!-- To datepicker -->
+							<bean parent="Uif-InputField" p:propertyName="filterDateTo" p:labelPlacement="TOP" p:label="To"
+								  p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
+								<property name="control">
+									<bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+								</property>
+							</bean>
 						</list>
 					</property>
 				</bean>
 				
-				<!-- Tags multi-select list -->
-				<bean parent="Uif-InputField-LabelTop" p:propertyName="tags" p:label="Tags" p:fieldLabel.renderColon="false">
-					<property name="control">
-						<bean parent="Uif-MultiSelectControl" p:width="100%" p:size="5"/>
-					</property>
-					<property name="optionsFinder">
-						<bean class="com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder">
-							<constructor-arg>
-								<bean class="java.lang.Class" factory-method="forName">
-									<constructor-arg value="com.sigmasys.kuali.ksa.model.Tag"/>
-								</bean>
-							</constructor-arg>
-						</bean>
-					</property>
-				</bean>
-				
-				<!-- Status drop-down list -->
-				<bean id="refundStatusSelectControl" parent="Uif-InputField-LabelTop" p:propertyName="refundStatus" p:label="Status" p:fieldLabel.renderColon="false">
-					<property name="control">
-						<bean parent="Uif-DropdownControl" p:width="100%"	/>
-					</property>
-					<property name="optionsFinder">
-						<bean class="com.sigmasys.kuali.ksa.krad.util.RefundStatusKeyValuesFinder"/>
+				<bean parent="Uif-HorizontalBoxSection">
+					<property name="items">
+						<list>
+							<!-- Tags multi-select list -->
+							<bean parent="Uif-InputField-LabelTop" p:propertyName="filterTags" p:label="Tags" p:fieldLabel.renderColon="false">
+								<property name="control">
+									<bean parent="Uif-MultiSelectControl" p:width="100%" p:size="5"/>
+								</property>
+								<property name="optionsFinder">
+									<bean class="com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder" p:blankOption="false">
+										<constructor-arg>
+											<bean class="java.lang.Class" factory-method="forName">
+												<constructor-arg value="com.sigmasys.kuali.ksa.model.Tag"/>
+											</bean>
+										</constructor-arg>
+										<constructor-arg value="true"/>
+									</bean>
+								</property>
+							</bean>
+							
+							<!-- Status drop-down list -->
+							<bean id="refundStatusSelectControl" parent="Uif-InputField-LabelTop" p:propertyName="refundStatusCode" p:label="Status" p:fieldLabel.renderColon="false">
+								<property name="control">
+									<bean parent="Uif-DropdownControl" p:width="100%"	/>
+								</property>
+								<property name="optionsFinder">
+									<bean class="com.sigmasys.kuali.ksa.krad.util.RefundStatusKeyValuesFinder"/>
+								</property>
+							</bean>
+						</list>
 					</property>
 				</bean>
 				
 				<!-- The Search action -->
-				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Search" p:methodToCall="searchForRefunds"/>
+				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Refresh" p:methodToCall="searchForRefunds" p:onClickScript="writeHiddenToForm('userId', '@{account.id}');"/>
 			</list>
 		</property>
 	</bean>
@@ -105,6 +134,9 @@
 	<bean id="accountPotentialRefundsSection" parent="Uif-VerticalBoxSection" p:headerText="Potential Refunds">
 		<property name="items">
 			<list>
+				<!-- No Potential Refunds message -->
+				<bean parent="Uif-MessageField" p:messageText="No Potential Refunds found with supplied filter criteria" p:render="@{potentialRefunds.size() == 0}"/>
+				
 				<!-- The table of Potential Refunds -->
 				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="8" p:displayCollectionSize="10">
 					<property name="title" value="Potential Refunds"/>
@@ -158,6 +190,9 @@
 	<bean id="accountRefundStatusSection" parent="Uif-VerticalBoxSection" p:headerText="Refund Status">
 		<property name="items">
 			<list>
+				<!-- No Refunds message -->
+				<bean parent="Uif-MessageField" p:messageText="No Refunds found with supplied filter criteria" p:render="@{allRefunds.size() == 0}"/>
+				
 				<!-- The table of All Refunds -->
 				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="11" p:displayCollectionSize="10">
 					<property name="title" value="Refund Status"/>
