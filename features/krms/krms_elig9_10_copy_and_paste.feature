@@ -18,53 +18,51 @@ Feature: KRMS ELIG 9-10 Copy and paste
   Scenario: Confirm the copy and paste of rule statement is working as expected
     When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST111" with Advanced Search
     And I navigate to the agenda page for "HIST111"
-    Then the "Student Eligibility & Prerequisite" rule should still exist
+#    Then the "Student Eligibility & Prerequisite" rule should still exist
 #    When I navigate to the agenda page for "HIST111"
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
-    Then there should be a new node with text "A. Must meet 1 of the following"
+#    Then there should be a new node with text "A. Must meet 1 of the following"
     And I select node "G" in the tree
     And I click the "Copy" button
     And I select node "I" in the tree
     And I click the "Paste" button
     Then there should be a new node with text "J. Text"
     And there should be a dropdown with value "OR" before node "J."
-    And I click the "Edit Rule Logic" tab
+    When I click the "Edit Rule Logic" tab
     Then the text "A(B(C AND D(E OR F) AND G) OR H OR I OR J)" should be present in the text area
-
     # Edit existing prop type and change the value
+    When I click the "Edit Rule" tab
     And I select node "J" in the tree
     And I click the "Edit" button
     And I enter "edit copied prop type 1" in the "free form text" field
     And I click the "Preview Change" button
     Then there should be a new node with text "J. edit copied prop type 1"
-	Then there should be a new node with text "G. Text"
-
 	#Submit changes
     When I click the "Update Rule" button
-    When I click the "submit" button on Manage CO Agendas page
+    And I click the "submit" button on Manage CO Agendas page
     
   #krms_elig9_10_copy_and_paste
   @pending
   Scenario: Confirm the copy and paste of compound (group) rule statement is working as expected
-   When I navigate to the agenda page for "HIST111"
+    When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST111" with Advanced Search
+    And I navigate to the agenda page for "HIST111"
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
-    Then there should be a new node with text "A. Must meet 1 of the following"
+#    Then there should be a new node with text "A. Must meet 1 of the following"
     And I select node "D" in the tree
     And I click the "Copy" button
     And I select node "I" in the tree
     And I click the "Paste" button
     Then there should be a new node with text "K. Must meet 1 of the following"
-    Then there should be a new node with text "L. Must have successfully completed all courses from (ENGL478, HIST416)"
-    Then there should be a new node with text "M. Must have successfully completed a minimum of 1 course from (HIST210, HIST395)"
+    And there should be a new node with text "L. Must have successfully completed all courses from (ENGL478, HIST416)"
+    And there should be a new node with text "M. Must have successfully completed a minimum of 1 course from (HIST210, HIST395)"
     And there should be a dropdown with value "OR" before node "K."
-    And I click the "Edit Rule Logic" tab
+    When I click the "Edit Rule Logic" tab
     Then the text "A(B(C AND D(E OR F) AND G) OR H OR I OR K(L OR M) OR J)" should be present in the text area
-
     #Submit changes
     When I click the "Update Rule" button
-    When I click the "submit" button on Manage CO Agendas page
+    And I click the "submit" button on Manage CO Agendas page
     
 #    #krms_elig9_10_copy_and_paste
 #    @pending
@@ -74,4 +72,4 @@ Feature: KRMS ELIG 9-10 Copy and paste
 #    And I click on the "Edit Rule" link
 #    And I click the "Edit Rule Logic" tab
 #    # Issue with this, not sure why - seems like it has todo with the way the text string is copied
-#    Then the text "A(B(C AND D(E AND F)) AND G AND H(I AND J AND K(L AND M) AND N))" should be present in the text area
+#    Then the text "A(B(Cï¿½ANDï¿½D(Eï¿½ANDï¿½F))ï¿½ANDï¿½Gï¿½ANDï¿½H(Iï¿½ANDï¿½Jï¿½ANDï¿½K(Lï¿½ANDï¿½M)ï¿½ANDï¿½N))" should be present in the text area
