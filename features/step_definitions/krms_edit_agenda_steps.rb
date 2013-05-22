@@ -132,6 +132,23 @@ Then /^the "(.*?)" preview section should have the text "(.*)"$/ do |section,tex
   end
 end
 
+Then /^the "(.*?)" preview section should not have the text "(.*)"$/ do |section,text|
+  sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
+
+  test_text = @editAgenda.create_string_for_testing(section,text)
+  if( section == "agenda")
+    on ManageCOAgendas do |page|
+      page.loading.wait_while_present
+      page.agenda_management_section.text.should_not match /.*#{Regexp.escape(test_text)}.*/
+    end
+  else
+    on EditAgenda do |page|
+      page.loading.wait_while_present
+      page.send(sect[section]).text.should_not match /.*#{Regexp.escape(test_text)}.*/
+    end
+  end
+end
+
 Then /^the word "(.*)" should exist before node "(.*)"$/ do |text, node|
   on EditAgenda do |page|
     page.loading.wait_while_present
