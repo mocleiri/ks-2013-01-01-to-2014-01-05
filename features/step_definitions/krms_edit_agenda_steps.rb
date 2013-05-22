@@ -279,6 +279,7 @@ When /^I set up the data for "(.*?)" for the course "(.*?)" with Advanced Search
 end
 
 When /^I navigate to the agenda page for "(.*?)"$/ do |course|
+  @editAgenda = make EditAgendaData
   go_to_krms_manage_course_offerings
   @editAgenda.navigate(course)
 end
@@ -295,4 +296,10 @@ end
 
 When /^I am busy with "(.*?)"$/ do |scenario|
   puts "Testing: " + scenario
+end
+
+When /^I want to wait$/ do 
+  on ManageCOAgendas do |page|
+    sleep 5
+  end
 end
