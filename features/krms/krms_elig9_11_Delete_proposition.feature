@@ -1,3 +1,4 @@
+# cucumber -r features features/krms/krms_elig9_11_Delete_proposition.feature
 Feature: KRMS ELIG9.11 Delete proposition
 
   Background:
