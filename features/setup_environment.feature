@@ -1,5 +1,5 @@
 @data_setup
-Feature: Setup Environment
+Feature: data_setup.Setup Environment
 
   Setup required data for test run
 
