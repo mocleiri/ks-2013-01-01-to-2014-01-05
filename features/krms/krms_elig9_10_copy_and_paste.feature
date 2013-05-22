@@ -18,12 +18,10 @@ Feature: KRMS ELIG 9-10 Copy and paste
   Scenario: Confirm the copy and paste of rule statement is working as expected
     When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST111" with Advanced Search
     And I navigate to the agenda page for "HIST111"
-#    Then the "Student Eligibility & Prerequisite" rule should still exist
-#    When I navigate to the agenda page for "HIST111"
-    And I click on the "Student Eligibility & Prerequisite" section
-    And I click on the "Edit Rule" link
-#    Then there should be a new node with text "A. Must meet 1 of the following"
-    And I select node "G" in the tree
+    Then the "Student Eligibility & Prerequisite" rule should still exist
+    When I click on the "Edit Rule" link
+    Then there should be a new node with text "A. Must meet 1 of the following"
+    When I select node "G" in the tree
     And I click the "Copy" button
     And I select node "I" in the tree
     And I click the "Paste" button
@@ -49,8 +47,8 @@ Feature: KRMS ELIG 9-10 Copy and paste
     And I navigate to the agenda page for "HIST111"
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
-#    Then there should be a new node with text "A. Must meet 1 of the following"
-    And I select node "D" in the tree
+    Then there should be a new node with text "A. Must meet 1 of the following"
+    When I select node "D" in the tree
     And I click the "Copy" button
     And I select node "I" in the tree
     And I click the "Paste" button
