@@ -11,6 +11,7 @@ import com.sigmasys.kuali.ksa.model.fm.RateType;
 
 import javax.jws.WebService;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Fee Rate Service.
@@ -247,6 +248,14 @@ public interface RateService {
      */
     List<Rate> getAllRates();
 
+    /**
+     * Retrieves a set of ATP IDs for the rate catalog specified by ID.
+     *
+     * @param rateCatalogId RateCatalog ID
+     * @return a set of ATP IDs
+     */
+    Set<String> getAtpsForRateCatalog(Long rateCatalogId);
+
     // Additional methods
 
     /**
@@ -332,6 +341,16 @@ public interface RateService {
      * @return RateCatalog instance
      */
     RateCatalog assignAtpsToRateCatalog(Long rateCatalogId, String... atpIds);
+
+    /**
+     * Adds new and/or transfer the existing array of ATP IDs
+     * from another rate catalog (if other rate catalogs use them) the to the rate catalog specified by ID.
+     *
+     * @param rateCatalogId RateCatalog ID
+     * @param atpIds        Array of ATP IDs
+     * @return RateCatalog instance
+     */
+    RateCatalog transferAtpsToRateCatalog(Long rateCatalogId, String... atpIds);
 
     /**
      * Remove the ATP IDs from the rate catalog specified by ID.

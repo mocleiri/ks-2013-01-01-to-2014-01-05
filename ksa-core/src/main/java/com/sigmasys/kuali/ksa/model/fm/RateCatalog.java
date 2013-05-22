@@ -19,13 +19,11 @@ public class RateCatalog extends AbstractRateEntity {
 
     private BigDecimal upperBoundAmount;
 
-    private BigDecimal cappedAmount;
-
-    private Boolean isAmountCapped;
-
     private Boolean isKeyPairFinal;
 
     private Boolean isRecognitionDateDefinable;
+
+    private Boolean isTransactionDateTypeFinal;
 
 
     @Id
@@ -59,25 +57,6 @@ public class RateCatalog extends AbstractRateEntity {
         this.upperBoundAmount = upperBoundAmount;
     }
 
-    @Column(name = "CAPPED_AMOUNT")
-    public BigDecimal getCappedAmount() {
-        return cappedAmount;
-    }
-
-    public void setCappedAmount(BigDecimal cappedAmount) {
-        this.cappedAmount = cappedAmount;
-    }
-
-    @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_AMOUNT_CAPPED")
-    public Boolean isAmountCapped() {
-        return isAmountCapped != null ? isAmountCapped : false;
-    }
-
-    public void setAmountCapped(Boolean amountCapped) {
-        isAmountCapped = amountCapped;
-    }
-
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_KEYPAIR_FINAL")
     public Boolean isKeyPairFinal() {
@@ -98,4 +77,13 @@ public class RateCatalog extends AbstractRateEntity {
         isRecognitionDateDefinable = recognitionDateDefinable;
     }
 
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_TRANS_DATE_TYPE_FINAL")
+    public Boolean isTransactionDateTypeFinal() {
+        return isTransactionDateTypeFinal != null ? isTransactionDateTypeFinal : false;
+    }
+
+    public void setTransactionDateTypeFinal(Boolean transactionDateTypeFinal) {
+        isTransactionDateTypeFinal = transactionDateTypeFinal;
+    }
 }

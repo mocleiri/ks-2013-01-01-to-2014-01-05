@@ -40,7 +40,7 @@ public class Rate extends AbstractRateEntity {
         return id;
     }
 
-    @Column(name = "RATE_CATALOG_ATP_ID_FK", insertable = false, updatable = false, length = 45)
+    @Column(name = "RATE_CATALOG_ATP_ID_FK", insertable = false, updatable = false, nullable = false, length = 45)
     public String getAtpId() {
         return atpId;
     }

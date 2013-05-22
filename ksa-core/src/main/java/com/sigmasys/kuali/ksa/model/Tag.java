@@ -8,7 +8,7 @@ import javax.persistence.*;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_TAG")
+@Table(name = "KSSA_TAG", uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE"})})
 public class Tag extends AuditableEntity<Long> {
 
     /**

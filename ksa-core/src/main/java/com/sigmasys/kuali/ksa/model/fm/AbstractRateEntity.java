@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.model.AuditableEntity;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -25,6 +26,8 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> {
     private RateType rateType;
 
     private Set<KeyPair> keyPairs;
+
+    private BigDecimal cappedAmount;
 
     private TransactionDateType transactionDateType;
 
@@ -87,6 +90,15 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> {
         this.keyPairs = keyPairs;
     }
 
+    @Column(name = "CAPPED_AMOUNT")
+    public BigDecimal getCappedAmount() {
+        return cappedAmount;
+    }
+
+    public void setCappedAmount(BigDecimal cappedAmount) {
+        this.cappedAmount = cappedAmount;
+    }
+
     @Column(name = "TRANS_DATE_TYPE", length = 10)
     protected String getTransactionDateTypeCode() {
         return transactionDateTypeCode;
@@ -105,6 +117,11 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> {
     public void setTransactionDateType(TransactionDateType transactionDateType) {
         this.transactionDateType = transactionDateType;
         transactionDateTypeCode = transactionDateType.getId();
+    }
+
+    @Transient
+    public Boolean isAmountCapped() {
+        return cappedAmount != null;
     }
 
 }

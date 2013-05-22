@@ -3,17 +3,22 @@ package com.sigmasys.kuali.ksa.service.fm.impl;
 import com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateTypeException;
+import com.sigmasys.kuali.ksa.exception.InvalidTransactionTypeException;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
+import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.core.atp.infc.Atp;
 import org.kuali.student.r2.core.atp.service.AtpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.jws.WebService;
 import javax.persistence.Query;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Fee Rate Service implementation.
@@ -44,6 +47,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
     @Autowired
     private AtpService atpService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @Autowired
     private AuditableEntityService auditableEntityService;
@@ -470,8 +476,21 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         return null;
     }
 
-    // Additional methods
+    /**
+     * Retrieves a set of ATP IDs for the rate catalog specified by ID.
+     *
+     * @param rateCatalogId RateCatalog ID
+     * @return a set of ATP IDs
+     */
+    @Override
+    public Set<String> getAtpsForRateCatalog(Long rateCatalogId) {
+        Query query = em.createQuery("select rca.atpId from RateCatalogAtp rca where rca.rateCatalog.id = :id");
+        query.setParameter("id", rateCatalogId);
+        return new HashSet<String>(query.getResultList());
+    }
 
+
+    // Additional methods
 
     /**
      * Validates the given RateType instance and throws <code>InvalidRateTypeException</code> if the validation fails.
@@ -514,6 +533,25 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         // TODO
 
+    }
+
+    private ContextInfo getAtpContextInfo() {
+        String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        ContextInfo contextInfo = new ContextInfo();
+        contextInfo.setAuthenticatedPrincipalId(userId);
+        contextInfo.setPrincipalId(userId);
+        return contextInfo;
+    }
+
+    private boolean isTransactionTypeValid(String transactionTypeId, Date date) {
+        boolean isTransactionTypeValid;
+        try {
+            isTransactionTypeValid =
+                    transactionService.getTransactionType(transactionTypeId, date) != null;
+        } catch (InvalidTransactionTypeException e) {
+            isTransactionTypeValid = false;
+        }
+        return isTransactionTypeValid;
     }
 
     protected void validateRateAndRateCatalog(Rate rate, RateCatalog rateCatalog) throws InvalidRateException {
@@ -568,6 +606,32 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                 logger.error(errMsg);
                 throw new InvalidRateException(errMsg);
             }
+            String transactionTypeId = rateAmount.getTransactionTypeId();
+            if (transactionTypeId == null) {
+                String errMsg = "RateAmount's transaction type cannot be null";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+            if (rate.getTransactionDate() != null) {
+                if (!isTransactionTypeValid(transactionTypeId, rate.getTransactionDate())) {
+                    String errMsg = "RateAmount's transaction type is invalid";
+                    logger.error(errMsg);
+                    throw new InvalidRateException(errMsg);
+                }
+            } else {
+                try {
+                    Atp atp = atpService.getAtp(rate.getAtpId(), getAtpContextInfo());
+                    if (!isTransactionTypeValid(transactionTypeId, atp.getStartDate()) ||
+                            !isTransactionTypeValid(transactionTypeId, atp.getEndDate())) {
+                        String errMsg = "RateAmount's transaction type is invalid";
+                        logger.error(errMsg);
+                        throw new InvalidRateException(errMsg);
+                    }
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
+                    throw new IllegalStateException(e.getMessage(), e);
+                }
+            }
             if (!defaultAmountIsPresent && rateAmount.getId().equals(defaultRateAmount.getId())) {
                 defaultAmountIsPresent = true;
             }
@@ -581,6 +645,13 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         if (rate.getTransactionDateType() != null && rate.getTransactionDate() == null) {
             String errMsg = "Rate transaction date must not be null when transaction date type is set";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        if (rate.isTransactionTypeFinal() &&
+                !defaultRateAmount.getTransactionTypeId().equals(rate.getTransactionTypeId())) {
+            String errMsg = "Default RateAmount must have the same transaction type as Rate";
             logger.error(errMsg);
             throw new InvalidRateException(errMsg);
         }
@@ -602,7 +673,58 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                 throw new InvalidRateException(errMsg);
             }
 
-            // TODO
+            if (rateCatalog.isTransactionTypeFinal() && !rate.isTransactionTypeFinal()) {
+                String errMsg = "Rate's transaction type must be final as forced by RateCatalog";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+
+            if (rateCatalog.isTransactionTypeFinal() &&
+                    !rate.getTransactionTypeId().equals(rateCatalog.getTransactionTypeId())) {
+                String errMsg = "Rate must have the same transaction type as RateCatalog";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+
+            if (rateCatalog.isAmountFinal() && !rate.isAmountFinal()) {
+                String errMsg = "Rate's amount must be final as forced by RateCatalog";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+
+            if (!rateCatalog.isRecognitionDateDefinable() && rate.getRecognitionDate() != null) {
+                String errMsg = "Rate's recognition date is not definable and must not be set";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+
+            Set<KeyPair> catalogKeyPairs = rateCatalog.getKeyPairs();
+
+            if (CollectionUtils.isNotEmpty(catalogKeyPairs)) {
+
+                Set<KeyPair> rateKeyPairs = rate.getKeyPairs();
+
+                if (CollectionUtils.isEmpty(rateKeyPairs)) {
+                    String errMsg = "Rate's set of key pairs cannot be empty";
+                    logger.error(errMsg);
+                    throw new InvalidRateException(errMsg);
+                }
+
+                if (!rateKeyPairs.containsAll(catalogKeyPairs)) {
+                    String errMsg = "Rate's set of key pairs must be a sub-collection of RateCatalog's set of key pairs";
+                    logger.error(errMsg);
+                    throw new InvalidRateException(errMsg);
+                }
+
+                if (rateCatalog.isKeyPairFinal() && catalogKeyPairs.size() != rateKeyPairs.size()) {
+                    String errMsg = "Rate's and RateCatalog's sets of key pairs must be the same";
+                    logger.error(errMsg);
+                    throw new InvalidRateException(errMsg);
+                }
+
+
+            }
+
 
         }
 
@@ -762,6 +884,68 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         return rateCatalog;
     }
 
+
+    /**
+     * Adds new and/or transfer the existing array of ATP IDs
+     * from another rate catalog (if other rate catalogs use them) the to the rate catalog specified by ID.
+     *
+     * @param rateCatalogId RateCatalog ID
+     * @param atpIds        Array of ATP IDs
+     * @return RateCatalog instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public RateCatalog transferAtpsToRateCatalog(Long rateCatalogId, String... atpIds) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG, Permission.UPDATE_RATE);
+
+        RateCatalog rateCatalog = getRateCatalog(rateCatalogId);
+
+        if (rateCatalog == null) {
+            String errMsg = "RateCatalog with ID = " + rateCatalogId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidRateCatalogException(errMsg);
+        }
+
+        Set<String> newAtpIds = new HashSet<String>(Arrays.asList(atpIds));
+
+        // Retrieving rates by RateCatalog code and ATP IDs
+        Query query = em.createQuery("select r from Rate r where r.rateCatalogAtp.id.code = :code and " +
+                " r.rateCatalogAtp.id.atpId in (:atpIds) and r.rateCatalogAtp.rateCatalog.id <> :id");
+        query.setParameter("code", rateCatalog.getCode());
+        query.setParameter("atpIds", newAtpIds);
+        query.setParameter("id", rateCatalog.getId());
+
+        List<Rate> rates = query.getResultList();
+
+        // Validating each rate with the rate catalog
+        if (CollectionUtils.isNotEmpty(rates)) {
+            for (Rate rate : rates) {
+                validateRateWithCatalog(rate, rateCatalog);
+            }
+        }
+
+        // Retrieving the existing ATP IDs and merge them with the new ones
+        Set<String> oldAtpIds = getAtpsForRateCatalog(rateCatalog.getId());
+        if (CollectionUtils.isNotEmpty(oldAtpIds)) {
+            newAtpIds.addAll(oldAtpIds);
+            // Removing the old ATP IDs from RateCatalogAtp by the rate catalog ID
+            query = em.createQuery("delete from RateCatalogAtp where rateCatalogAtp.rateCatalog.id = :id");
+            query.setParameter("id", rateCatalog.getId());
+            query.executeUpdate();
+        }
+
+        // Creating and persisting the new RateCatalogAtp instances the ATP IDs and rate catalog ID
+        for (String atpId : newAtpIds) {
+            RateCatalogAtp rateCatalogAtp = new RateCatalogAtp();
+            rateCatalogAtp.setId(new RateCatalogAtpId(rateCatalog.getCode(), atpId));
+            rateCatalogAtp.setRateCatalog(rateCatalog);
+            persistEntity(rateCatalogAtp);
+        }
+
+        return rateCatalog;
+    }
+
     /**
      * Remove the ATP IDs from the rate catalog specified by ID.
      *
@@ -772,6 +956,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     @Transactional(readOnly = false)
     public RateCatalog removeAtpsToRateCatalog(Long rateCatalogId, String... atpIds) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG);
 
         RateCatalog rateCatalog = getRateCatalog(rateCatalogId);
 
