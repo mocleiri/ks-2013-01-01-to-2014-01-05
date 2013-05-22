@@ -40,7 +40,7 @@ class EditAgenda < BasePage
   element(:course_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.courseInfo\.code/)}
   element(:free_text_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.termParameter/)}
   element(:courses_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.cluSet\.clus\'\]\.code/)}
-  element(:number_courses_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.parameters\[1\]\.value/)}
+  element(:integer_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.parameters\[1\]\.value/)}
 
   element(:lookup_section) { |b| b.frm_popup.div(id: "CourseLookupView")}
   element(:lookup_results) { |b| b.frm_popup.div(id: "uLookupResults")}

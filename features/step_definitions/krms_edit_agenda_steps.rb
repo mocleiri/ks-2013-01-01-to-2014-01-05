@@ -275,3 +275,7 @@ Then /^the "(.*?)" rule should still exist$/ do |sect|
     puts page.agenda_management_section.div(id:"u100081").div(id: "KRMS-PreviewTree-Group").text
   end
 end
+
+When /^I am busy with "(.*?)"$/ do |scenario|
+  puts "Testing: " + scenario
+end

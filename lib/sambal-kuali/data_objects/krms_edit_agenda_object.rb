@@ -63,7 +63,7 @@ class EditAgendaData
   def create_data_advanced_search( sect, course)
     sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
                 "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
-                "Repeatable for Credit"=>:repeatable_credit, "Restricted for Credit"=>:resctricted_credit}
+                "Repeatable for Credit"=>:repeatable_credit, "Course that Restricts Credits"=>:resctricted_credit}
 
     navigate(course)
 
@@ -79,12 +79,28 @@ class EditAgendaData
 
       on EditAgenda do |page|
         page.add_btn
-        page.rule_dropdown.when_present.select /Must have successfully completed <course>/
+        if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
+          page.rule_dropdown.when_present.select /Must have successfully completed <course>/
+        elsif( sect == "Antirequisite" || sect == "Course that Restricts Credits")
+          page.rule_dropdown.when_present.select /Must not have successfully completed <course>/
+        elsif( sect == "Corequisite")
+          page.rule_dropdown.when_present.select /Must be concurrently enrolled in <course>/
+        elsif( sect == "Repeatable for Credit")
+          #page.rule_dropdown.when_present.select /Must have successfully completed <course>/
+        end
         advanced_search("course code", "ENGL101")
         page.preview_btn
 
         page.add_btn
-        page.rule_dropdown.when_present.select /Must have successfully completed <course>/
+        if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
+          page.rule_dropdown.when_present.select /Must have successfully completed <course>/
+        elsif( sect == "Antirequisite" || sect == "Course that Restricts Credits")
+          page.rule_dropdown.when_present.select /Must not have successfully completed <course>/
+        elsif( sect == "Corequisite")
+          page.rule_dropdown.when_present.select /Must be concurrently enrolled in <course>/
+        elsif( sect == "Repeatable for Credit")
+          #page.rule_dropdown.when_present.select /Must have successfully completed <course>/
+        end
         advanced_search("course code", "HIST639")
         page.preview_btn
 
@@ -95,13 +111,19 @@ class EditAgendaData
 
         page.edit_tree_section.span(:text => /.*A\..*/).when_present.click
         page.group_btn
-        page.rule_dropdown.when_present.select /Must have successfully completed all courses from <courses>/
+        if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
+          page.rule_dropdown.when_present.select /Must have successfully completed all courses from <courses>/
+        elsif( sect == "Antirequisite" || sect == "Course that Restricts Credits")
+          page.rule_dropdown.when_present.select /Must not have successfully completed any courses from <courses>/
+        elsif( sect == "Corequisite")
+          page.rule_dropdown.when_present.select /Must be concurrently enrolled in all courses from <courses>/
+        elsif( sect == "Repeatable for Credit")
+          #page.rule_dropdown.when_present.select /Must have successfully completed <course>/
+        end
         page.multi_course_dropdown.when_present.select /Approved Courses/
         advanced_search("course code", "ENGL478")
-        #sleep 2   #adding a sleep - moving through the tree too fast causes a crash
         page.add_line_btn
         advanced_search("course code", "HIST416")
-        #sleep 2   #adding a sleep - moving through the tree too fast causes a crash
         page.add_line_btn
         page.preview_btn
 
@@ -112,26 +134,31 @@ class EditAgendaData
 
         page.edit_tree_section.span(:text => /.*F\..*/).when_present.click
         page.group_btn
-        page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> courses from <courses>/
-        page.number_courses_field.when_present.set "1"
+        if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
+          page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> courses from <courses>/
+          page.integer_field.when_present.set "1"
+        elsif( sect == "Antirequisite")
+          page.rule_dropdown.when_present.select /Must successfully complete no more than <n> credits from <courses>/
+          page.integer_field.when_present.set "4"
+        elsif( sect == "Corequisite")
+          page.rule_dropdown.when_present.select /Must be concurrently enrolled in a minimum of <n> courses from <courses>/
+          page.integer_field.when_present.set "1"
+        elsif( sect == "Repeatable for Credit")
+          #page.rule_dropdown.when_present.select /Must have successfully completed <course>/
+        elsif( sect == "Course that Restricts Credits")
+          page.rule_dropdown.when_present.select /Must not have successfully completed any courses from <courses>/
+        end
         page.multi_course_dropdown.when_present.select /Approved Courses/
         advanced_search("course code", "HIST395")
-        #sleep 2   #adding a sleep - moving through the tree too fast causes a crash
         page.add_line_btn
         advanced_search("course code", "HIST210")
-        #sleep 2   #adding a sleep - moving through the tree too fast causes a crash
         page.add_line_btn
         page.preview_btn
 
         page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_2_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
 
-        #check if correct
-        page.loading.wait_while_present
-        page.logic_tab.when_present.click
-        page.loading.wait_while_present
         sleep 10   #adding a sleep - moving through the tree too fast causes a crash
-
         page.update_rule_btn
       end
 
