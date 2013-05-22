@@ -19,10 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/transactionView")
@@ -144,8 +141,8 @@ public class TransactionController extends GenericSearchController {
                 form.setFilterTags(tags);
             }
             if(tag != null){
-                boolean removed = tags.remove(tag);
-                logger.info("Removed tag id: " + tagString + " - " + removed);
+
+                this.removeTag(tags, tag);
                 form.setFilterTags(tags);
             }
 
@@ -442,4 +439,12 @@ public class TransactionController extends GenericSearchController {
         form.setDeferments(defermentModelList);
     }
 
+    private void removeTag(List<Tag> tags, Tag tagToRemove) {
+        for ( Tag tag : new HashSet<Tag>(tags) ) {
+            if ( tag.getCode().equals(tagToRemove.getCode())) {
+                tags.remove(tag);
+                break;
+            }
+        }
+    }
 }
