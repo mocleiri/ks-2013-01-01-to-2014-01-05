@@ -63,7 +63,7 @@ NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR
 "KS-KRMS-NL-TMPL-1071","en","KS-KRMS-NL-USAGE-1004","10058","May not repeat any of  <courses>","0"
 "KS-KRMS-NL-TMPL-1072","en","KS-KRMS-NL-USAGE-1004","10034","Permission of instructor required","0"
 "KS-KRMS-NL-TMPL-1073","en","KS-KRMS-NL-USAGE-1004","10031","Free Form Text","0"
-"KS-KRMS-NL-TMPL-1075","en","KS-KRMS-NL-USAGE-1004","10035","Student cannot drop course without permission of <administering org>","0"
+"KS-KRMS-NL-TMPL-1075","en","KS-KRMS-NL-USAGE-1004","10035","Permission of <administering org> required","0"
 "KS-KRMS-NL-TMPL-1076","en","KS-KRMS-NL-USAGE-1004","10042","If student is <attribute> AND upon drop total credit hours would be less than <min credit hours>, prevent drop","0"
 "KS-KRMS-NL-TMPL-1077","en","KS-KRMS-NL-USAGE-1004","10043","If upon drop, total credit hours would be less than <min credit hours>, prevent course drop","0"
 "KS-KRMS-NL-TMPL-1078","en","KS-KRMS-NL-USAGE-1004","10044","Course has more than <n> minutes overlap with already enrolled course","0"
