@@ -408,9 +408,6 @@ class ActivityOfferingMaintenanceBase < BasePage
     target_person_row(id).cells[AFFILIATION_COLUMN].text
   end
 
-  element(:seat_pools_div) { |b| b.frm.div(id: "ao-seatpoolgroup") }
-  element(:seat_pools_table) { |b| b.seat_pools_div.table() }
-
   PRIORITY_COLUMN = 0
   SEATS_COLUMN = 1
   PERCENT_COLUMN = 2
@@ -427,6 +424,7 @@ class ActivityOfferingMaintenanceBase < BasePage
   value(:percent_seats_remaining) { |b| b.seats_remaining_span.text[/\d+(?=%)/] }
   value(:seat_count_remaining) { |b| b.seats_remaining_span.text[/\d+(?=.S)/] }
   value(:max_enrollment_count) { |b| b.frm.div(id: "seatsRemaining").text[/\d+(?=\))/] }
+  value(:seatpoolname){|b| b.frm.div(id: "ao-seatpoolgroup").table.rows[1].cells[3].text_field.value}
 
   private
 
@@ -434,9 +432,6 @@ class ActivityOfferingMaintenanceBase < BasePage
     personnel_table.row(text: /#{Regexp.escape(id.to_s)}/)
   end
 
-  def target_pool_row(pop_name)
-    seat_pools_table.row(text: /#{Regexp.escape(pop_name)}/)
-  end
 end
 
 class RegistrationWindowsBase < BasePage

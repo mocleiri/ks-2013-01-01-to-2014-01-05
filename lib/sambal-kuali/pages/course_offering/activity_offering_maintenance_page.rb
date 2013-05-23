@@ -122,17 +122,38 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   element(:add_pool_element) { |b| b.seat_pools_table.rows[1].cells[SEATS_ACTION_COLUMN].button()}
   action(:add_seat_pool) { |b| b.seat_pools_table.rows[1].cells[SEATS_ACTION_COLUMN].button().click; b.loading.wait_while_present }
 
+  element(:seat_pools_div) { |b| b.frm.div(id: "ao-seatpoolgroup") }
+  element(:seat_pools_table) { |b| b.frm.table(id: "ao-seatpoolgroup-table") }
+
+  def target_pool_row(pop_name)
+    #seat_pools_table.row(text: /#{Regexp.escape(pop_name)}/)
+    i = 0
+    seat_pools_table.rows.each do |row|
+      if i > 0
+       # newvalue =
+       # secvalue = pop_name
+        if (row.cells[POP_NAME_COLUMN].text_field.value =~ /#{pop_name}/)
+          return row
+        end
+      end
+      i+=1
+    end
+  end
+
+
   def remove_seatpool(pop_name)
     target_pool_row(pop_name).button(text: "delete").click
     loading.wait_while_present
   end
 
   def update_priority(pop_name, priority)
-    target_pool_row(pop_name).text_field(name: /processingPriority/).set priority
+    target_pool_row(pop_name).cells[PRIORITY_COLUMN].text_field.set priority
+    target_pool_row(pop_name).cells[PRIORITY_COLUMN].text_field.fire_event "onchange"
   end
 
   def update_seats(pop_name, seats)
-    target_pool_row(pop_name).text_field(name: /seatLimit/).set seats
+    target_pool_row(pop_name).cells[SEATS_COLUMN].text_field.set seats
+    target_pool_row(pop_name).cells[SEATS_COLUMN].text_field.fire_event "onchange"
   end
 
   def update_expiration_milestone(pop_name, milestone)
