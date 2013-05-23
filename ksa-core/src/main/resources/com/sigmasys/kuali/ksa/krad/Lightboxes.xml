@@ -10,7 +10,7 @@
         <property name="items">
         <list>
 
-            <bean parent="Uif-ImageField" p:source="../images/alert.png"  p:style="margin-top: 15px; cursor:pointer;" p:altText="Alerts" p:title=""
+            <bean parent="Uif-ImageField" p:source="../images/alert.png"  p:style="margin-top: 10px; cursor:pointer;" p:altText="Alerts" p:title=""
                   p:onClickScript="showLightboxComponent('alertLightbox');">
                 <property name="toolTip">
                     <bean parent="Uif-Tooltip" p:tooltipContent="@{alertTooltip}"/>
@@ -27,7 +27,7 @@
                 </property>
             </bean>
 
-            <bean parent="Uif-Message" p:style="margin-top: 15px;">
+            <bean parent="Uif-Message" p:style="margin-top: 10px;">
                 <property name="messageText" value="(@{alerts.size()})" />
             </bean>
         </list>
@@ -80,7 +80,7 @@
     <bean id="Ksa-TransactionFlags" parent="Uif-HorizontalBoxGroup">
         <property name="items">
         <list>
-            <bean parent="Uif-ImageField" p:source="../images/flag.png" p:style="margin-top: 15px; cursor:pointer;" p:altText="" p:title=""
+            <bean parent="Uif-ImageField" p:source="../images/flag.png" p:style="margin-top: 10px; cursor:pointer;" p:altText="" p:title=""
                   p:onClickScript="showLightboxComponent('flagLightbox');">
                 <property name="toolTip">
                     <bean parent="Uif-Tooltip" p:tooltipContent="@{flagTooltip}"/>
@@ -97,7 +97,7 @@
                 </property>
             </bean>
 
-            <bean parent="Uif-Message"  p:style="margin-top: 15px;">
+            <bean parent="Uif-Message"  p:style="margin-top: 10px;">
                 <property name="messageText" value="(@{flags.size()})"/>
             </bean>
         </list>

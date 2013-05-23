@@ -1,6 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
-import com.sigmasys.kuali.ksa.krad.model.PotentialRefund;
+import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.RefundStatus;
@@ -15,7 +15,7 @@ import java.util.List;
  * Time: 7:52 PM
  * To change this template use File | Settings | File Templates.
  */
-public class AccountRefundForm extends AbstractViewModel {
+public class AccountRefundForm extends TransactionForm {
 
 
     /**
@@ -24,20 +24,15 @@ public class AccountRefundForm extends AbstractViewModel {
     private Account account;
 
     /**
-     * All possible values of Tag entity to filter on.
-     */
-    private List<String> filterTags;
-
-    /**
      * Refund status to filter on.
      * A <code>null</code> refund status means "Show All Status Types".
      */
     private RefundStatus refundStatusCode;
 
     /**
-     * A list of PotentialRefund objects.
+     * A list of PotentialRefundModel objects.
      */
-    private List<PotentialRefund> potentialRefunds;
+    private List<PotentialRefundModel> potentialRefunds;
 
     /**
      * A list of all Refunds displayed on the "Refund Status" tab.
@@ -88,14 +83,6 @@ public class AccountRefundForm extends AbstractViewModel {
         this.account = account;
     }
 
-    public List<String> getFilterTags() {
-        return filterTags;
-    }
-
-    public void setFilterTags(List<String> filterTags) {
-        this.filterTags = filterTags;
-    }
-
     public RefundStatus getRefundStatusCode() {
         return refundStatusCode;
     }
@@ -104,11 +91,11 @@ public class AccountRefundForm extends AbstractViewModel {
         this.refundStatusCode = refundStatusCode;
     }
 
-    public List<PotentialRefund> getPotentialRefunds() {
+    public List<PotentialRefundModel> getPotentialRefunds() {
         return potentialRefunds;
     }
 
-    public void setPotentialRefunds(List<PotentialRefund> potentialRefunds) {
+    public void setPotentialRefunds(List<PotentialRefundModel> potentialRefunds) {
         this.potentialRefunds = potentialRefunds;
     }
 

@@ -1,5 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
+import com.sigmasys.kuali.ksa.model.Transaction;
+
 import java.math.BigDecimal;
 
 /**
@@ -9,26 +11,22 @@ import java.math.BigDecimal;
  * Time: 1:07 PM
  * To change this template use File | Settings | File Templates.
  */
-public class PotentialRefund {
+public class PotentialRefundModel extends TransactionModel {
 
-    private TransactionModel transaction;
     private String      overrideDescription;
     private BigDecimal  refundAmount;
     private boolean     selected;
 
-    public PotentialRefund(){
+    public PotentialRefundModel(){
     }
 
-    public PotentialRefund(TransactionModel t){
-        this.transaction = t;
+    public PotentialRefundModel(Transaction t){
+        super(t);
+        this.refundAmount = t.getUnallocatedAmount();
     }
 
-    public TransactionModel getTransaction() {
-        return transaction;
-    }
-
-    public void setTransaction(TransactionModel transaction) {
-        this.transaction = transaction;
+    public String getDescription () {
+        return getStatementText();
     }
 
     public String getOverrideDescription() {

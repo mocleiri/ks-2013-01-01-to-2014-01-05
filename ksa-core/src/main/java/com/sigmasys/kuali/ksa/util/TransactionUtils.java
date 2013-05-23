@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.util;
 
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -506,6 +507,37 @@ public class TransactionUtils {
             Integer matrixScore1 = (t1.getMatrixScore() != null) ? t1.getMatrixScore() : 0;
             Integer matrixScore2 = (t2.getMatrixScore() != null) ? t2.getMatrixScore() : 0;
             return matrixScore1.compareTo(matrixScore2);
+        }
+    }
+
+    /**
+     * Safely prefetches KSA Transaction associations. If any of the associations
+     * or their attributes is null, this method ignores them.
+     *
+     * @param ksaTransaction A KSA Transaction.
+     */
+    public static void safePrefetchKsaTransactionAssociations(Transaction ksaTransaction) {
+        if (ksaTransaction != null) {
+            // Prefetch associations of Transaction:
+            Currency currency = ksaTransaction.getCurrency();
+            TransactionType transactionType = ksaTransaction.getTransactionType();
+            Rollup rollup = ksaTransaction.getRollup();
+            GeneralLedgerType generalLedgerType = ksaTransaction.getGeneralLedgerType();
+
+            // Prefetch attributes of associations:
+            if (currency != null) {
+                currency.getCode();
+            }
+            if (transactionType != null) {
+                transactionType.getDescription();
+                ksaTransaction.getTransactionType().getId().getId();
+            }
+            if (rollup != null) {
+                rollup.getDescription();
+            }
+            if (generalLedgerType != null) {
+                generalLedgerType.getDescription();
+            }
         }
     }
 

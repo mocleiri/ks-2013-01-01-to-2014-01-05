@@ -198,7 +198,7 @@
                 <bean parent="Uif-MessageField" p:messageText="No Potential Refunds found with supplied filter criteria" p:render="@{potentialRefunds.size() == 0}"/>
                 <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="8">
                     <property name="title" value="Potential Refunds"/>
-                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PotentialRefund"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel"/>
                     <property name="propertyName" value="potentialRefunds"/>
                     <property name="layoutManager.sequencePropertyName" value="transaction.id"/>
                     <property name="layoutManager.richTable.render" value="true"/>

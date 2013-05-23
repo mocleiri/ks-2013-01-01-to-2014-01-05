@@ -397,7 +397,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
         if (CollectionUtils.size(ksaTransactions) == 1) {
             // Prefetch associated properties:
             ksaTransaction = (Transaction)CollectionUtils.get(ksaTransactions, 0);
-            safePrefetchKsaTransactionAssociations(ksaTransaction);
+            TransactionUtils.safePrefetchKsaTransactionAssociations(ksaTransaction);
 
             // Create a new GeneralLedgerTransactionModel object:
             glTransactionModel = new GeneralLedgerTransactionModel(ksaTransaction);
@@ -422,37 +422,6 @@ public class GeneralLedgerController extends ReportReconciliationController {
 
         if (adjustGlAccountTotal) {
             glAccountModel.setTotalAmount(glAccountModel.getTotalAmount().add(adjustmentAmount));
-        }
-    }
-
-    /**
-     * Safely prefetches KSA Transaction associations. If any of the associations
-     * or their attributes is null, this method ignores them.
-     *
-     * @param ksaTransaction A KSA Transaction.
-     */
-    private void safePrefetchKsaTransactionAssociations(Transaction ksaTransaction) {
-        if (ksaTransaction != null) {
-            // Prefetch associations of Transaction:
-            Currency currency = ksaTransaction.getCurrency();
-            TransactionType transactionType = ksaTransaction.getTransactionType();
-            Rollup rollup = ksaTransaction.getRollup();
-            GeneralLedgerType generalLedgerType = ksaTransaction.getGeneralLedgerType();
-
-            // Prefetch attributes of associations:
-            if (currency != null) {
-                currency.getCode();
-            }
-            if (transactionType != null) {
-                transactionType.getDescription();
-                ksaTransaction.getTransactionType().getId().getId();
-            }
-            if (rollup != null) {
-                rollup.getDescription();
-            }
-            if (generalLedgerType != null) {
-                generalLedgerType.getDescription();
-            }
         }
     }
 

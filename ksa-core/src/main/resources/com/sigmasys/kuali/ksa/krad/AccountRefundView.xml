@@ -17,9 +17,22 @@
             <list merge="true">
 				<!-- Account Refund Main Page -->
 				<bean parent="Uif-Page" p:id="AccountRefundPage" p:title="Refund">
-					<property name="headerText" value="@{account.defaultPersonName.displayValue}"/>
+					<!-- <property name="headerText" value="@{account.compositeDefaultPersonName}"/> -->
 					<property name="items">
                         <list>
+							<!-- Header -->
+                            <bean id="viewAccountRefundInfo" parent="Uif-HorizontalBoxSection">
+                                <property name="items">
+                                <list>
+                                    <bean parent="Uif-HeaderTwo" p:headerText="@{account.compositeDefaultPersonName}"/>
+                                    <bean parent="Uif-Message" p:messageText="(@{account.id})" p:style="margin-top: 10px;"/>
+                                    <ref bean="Ksa-TransactionAlerts"/>
+                                    <ref bean="Ksa-TransactionFlags"/>
+
+                                </list>
+                                </property>
+                            </bean>
+							
 							<!-- Search Refunds section -->
 							<ref bean="accountRefundSearchSection"/>
 									
@@ -140,7 +153,7 @@
 				<!-- The table of Potential Refunds -->
 				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="8" p:displayCollectionSize="10">
 					<property name="title" value="Potential Refunds"/>
-					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PotentialRefund"/>
+					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel"/>
 					<property name="propertyName" value="potentialRefunds" />
 					<property name="layoutManager.generateAutoSequence" value="false" />
 					<property name="layoutManager.richTable.render" value="true"/>
@@ -157,12 +170,20 @@
 									<bean parent="Uif-CheckboxControl"/>
 								</property>
 							</bean>
-                            <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="transaction.effectiveDate" p:readOnly="true"/>
-                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="transaction.statementText" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="effectiveDate" p:readOnly="true"/>
+							<bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 50%;">
+								<property name="items">
+									<list>
+										<bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" 
+												p:linkText="@{#line.description}" p:style="width: 100%;"/>
+										<ref bean="transactionDetailLightboxRunningTotal"/>
+									</list>
+								</property>
+							</bean>
                             <bean parent="Uif-InputField" p:label="Override Description" p:propertyName="overrideDescription" p:readOnly="false"/>
-                            <bean parent="Uif-InputField" p:propertyName="transaction.paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
-                            <bean parent="Uif-InputField" p:propertyName="transaction.allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
-                            <bean parent="Uif-InputField" p:propertyName="transaction.unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
                             <bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Amount to Refund" p:style="text-align: right; width: 10%;" p:readOnly="false"/>
 						</list>
 					</property>

@@ -1,6 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
-import com.sigmasys.kuali.ksa.krad.model.PotentialRefund;
+import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.model.Refund;
 import com.sigmasys.kuali.ksa.model.Tag;
 
@@ -18,7 +18,7 @@ public class BatchRefundForm extends AbstractViewModel {
     private String newTag;
 
     private List<Refund> refunds;
-    private List<PotentialRefund> potentialRefunds;
+    private List<PotentialRefundModel> potentialRefundModels;
 
     public String getNewAccount() {
         return newAccount;
@@ -68,11 +68,11 @@ public class BatchRefundForm extends AbstractViewModel {
         this.refunds = refunds;
     }
 
-    public List<PotentialRefund> getPotentialRefunds() {
-        return potentialRefunds;
+    public List<PotentialRefundModel> getPotentialRefundModels() {
+        return potentialRefundModels;
     }
 
-    public void setPotentialRefunds(List<PotentialRefund> potentialRefunds) {
-        this.potentialRefunds = potentialRefunds;
+    public void setPotentialRefundModels(List<PotentialRefundModel> potentialRefundModels) {
+        this.potentialRefundModels = potentialRefundModels;
     }
 }

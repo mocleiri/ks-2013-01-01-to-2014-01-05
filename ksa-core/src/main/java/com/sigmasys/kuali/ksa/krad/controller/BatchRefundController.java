@@ -1,7 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.BatchRefundForm;
-import com.sigmasys.kuali.ksa.krad.model.PotentialRefund;
+import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Refund;
@@ -123,7 +123,7 @@ public class BatchRefundController extends GenericSearchController {
     private void populateForm(BatchRefundForm form){
         form.setNewAccount("");
         form.setRefunds(new ArrayList<Refund>());
-        form.setPotentialRefunds(new ArrayList<PotentialRefund>());
+        form.setPotentialRefundModels(new ArrayList<PotentialRefundModel>());
 
         List<Account> accounts = form.getAccounts();
         if(accounts == null || accounts.size() == 0){
@@ -153,7 +153,7 @@ public class BatchRefundController extends GenericSearchController {
         List<Refund> refunds = refundService.checkForRefund(accountList, startDate, endDate);
         form.setRefunds(refunds);
 
-        List<PotentialRefund> potentialRefunds = form.getPotentialRefunds();
+        List<PotentialRefundModel> potentialRefundModels = form.getPotentialRefundModels();
 
         for(String userid : accountList){
             logger.info("Retrieving transactions for '" + userid + "' From: " + startDate.toString() + " to: " + endDate.toString());
@@ -161,7 +161,7 @@ public class BatchRefundController extends GenericSearchController {
             logger.info("Count: " + transactions.size());
 
             for(Transaction t: transactions){
-                potentialRefunds.add(new PotentialRefund(new TransactionModel(t)));
+                potentialRefundModels.add(new PotentialRefundModel(new TransactionModel(t)));
             }
         }
 
