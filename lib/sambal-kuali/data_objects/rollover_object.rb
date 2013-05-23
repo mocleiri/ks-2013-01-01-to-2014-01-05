@@ -61,9 +61,8 @@ class Rollover
   def perform_rollover
     go_to_perform_rollover
     on PerformRollover do |page|
-      @target_term = page.select_terms(@target_term,@source_term)
-      raise "source_term_code issue: #{page.source_term_code}" unless  page.source_term_code == @source_term
-      raise "target_term_code issue: #{page.target_term_code}" unless  page.target_term_code == @target_term
+      page.source_term.set @source_term
+      page.target_term.set @target_term
 
       puts "Rollover initiated - source term: #{@source_term}"
       puts "Rollover initiated - target term: #{@target_term}"
@@ -81,12 +80,12 @@ class Rollover
       page.term.set @target_term
       page.go
       poll_ctr = 0
-      while page.status != "Finished" and poll_ctr < 160     #will wait 80 mins
+      while page.status.upcase != "FINISHED" and poll_ctr < 160     #will wait 80 mins
         poll_ctr = poll_ctr + 1
         sleep 30
         page.go
       end
-      if page.status == "Finished"
+      if page.status.upcase == "FINISHED"
         puts "Completed: Rollover duration: #{page.rollover_duration}"
         puts "Course Offerings transitioned: #{page.course_offerings_transitioned}"
         puts "Course Offerings exceptions: #{page.course_offerings_exceptions}"
@@ -116,7 +115,7 @@ class Rollover
     end
 
     on RolloverDetails do |page|
-      raise "release to depts not completed" unless page.status_detail_msg =~ /Released to Departments/
+      raise "release to depts not completed" unless page.status_detail_msg =~ /released to the departments/
     end
   end
 

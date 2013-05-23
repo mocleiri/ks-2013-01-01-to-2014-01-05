@@ -9,7 +9,7 @@ class PerformRollover < BasePage
   element(:source_term) { |b| b.frm.text_field(name: "sourceTermCode") }
 
   element(:target_term_input_div) { |b| b.frm.div(data_label: "Target Term")}
-  action(:target_term_go) { |b| b.target_term_input_div.button(text: "Go").click; b.loading.wait_while_present }
+  #action(:target_term_go) { |b| b.target_term_input_div.button(text: "Go").click; b.loading.wait_while_present }
 
   value(:target_term_code) { |b| b.frm.div(data_label: "Term Code", index: 1).span(index: 2).text }
   value(:target_term_start_date) { |b| b.frm.div(data_label: "Term Start Date", index: 1).span(index: 2).text }
@@ -19,8 +19,8 @@ class PerformRollover < BasePage
   value(:target_term_first_validation_msg) { |b| b.target_term_validation_msg_list.link.text }
 
   element(:source_term_input_div) { |b| b.frm.div(data_label: "Source Term")}
-  element(:source_term_go_element) { |b| b.source_term_input_div.button(text: "Go") }
-  action(:source_term_go) { |b| b.source_term_go_element.click; b.loading.wait_while_present }
+  #element(:source_term_go_element) { |b| b.source_term_input_div.button(text: "Go") }
+  #action(:source_term_go) { |b| b.source_term_go_element.click; b.loading.wait_while_present }
 
   element(:source_term_validation_msg_list)  { |b| b.source_term_input_div.div(class: "uif-validationMessages uif-groupValidationMessages").ul }
   value(:source_term_first_validation_msg) { |b| b.source_term_validation_msg_list.link.text }

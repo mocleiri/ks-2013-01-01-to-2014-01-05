@@ -8,9 +8,11 @@ class RolloverDetails < BasePage
   element(:term) { |b| b.frm.text_field(name: "rolloverTargetTermCode") }
   action(:go) { |b| b.frm.button(text: "Go").click; b.loading.wait_while_present(300) }
 
+
+  element(:rollover_results_div) { |b| b.frm.div(id: "KS-RolloverResultsInfoSection") }
   value(:status) { |b| b.frm.div(data_label: "Status").span(index: 0).text } #status shows after rollover initiated
 
-  value(:status_detail_msg) { |b| b.frm.div(id: "KS-RolloverResultsInfoSection").table.rows[1].text }
+  value(:status_detail_msg) { |b| b.frm.span(id: "KS-RolloverResultsInfoSectionMsg_span").text }
   element(:release_to_departments_button) { |b| b.frm.button(text: "Release Courses") }
   action(:release_to_departments) { |b| b.release_to_departments_button.click; b.loading.wait_while_present }
   action(:re_do_rollover_link) { |b| b.frm.link(text: "Re-do Rollover").click; b.loading.wait_while_present }
