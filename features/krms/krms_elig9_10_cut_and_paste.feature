@@ -24,7 +24,6 @@ Feature: KRMS ELIG 9-10 Cut and paste
     And I enter "edit copied prop type" in the "free form text" field
     And I click the "Preview Change" button
     Then there should be a new node with text "G. edit copied prop type"
-  #Submit changes
     When I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
 
