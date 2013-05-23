@@ -19,7 +19,6 @@ import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.course.util.CreditsFormatter;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.AcademicRecordDataObject;
-import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
 import org.kuali.student.myplan.plan.dataobject.PlannedCourseDataObject;
 import org.kuali.student.myplan.plan.dataobject.PlannedTerm;
 import org.kuali.student.myplan.plan.util.AtpHelper;
@@ -57,7 +56,6 @@ public class PlannedTermsHelperBase {
         if (isServiceUp) {
             globalCurrentAtpId = AtpHelper.getCurrentAtpId();
         } else {
-//            globalCurrentAtpId = AtpHelper.populateAtpIdFromCalender().get(0).getId();
             globalCurrentAtpId = AtpHelper.getCurrentAtpIdFromCalender();
         }
         if (StringUtils.isEmpty(focusAtpId)) {
@@ -506,9 +504,8 @@ public class PlannedTermsHelperBase {
                 for (PlanItemInfo planItem : planItemList) {
                     String luType = planItem.getRefObjectType();
                     if (PlanConstants.SECTION_TYPE.equalsIgnoreCase(luType)) {
-                        DeconstructedCourseCode deconstructedCourseCode = getCourseHelper().getCourseDivisionAndNumber(planItem.getRefObjectId());
                         CourseOfferingInfo courseOfferingInfo = null;
-                        String courseOfferingId = getCourseHelper().joinStringsByDelimiter('=', yearTerm.getYearAsString(), yearTerm.getTermAsID(), deconstructedCourseCode.getSubject(), deconstructedCourseCode.getNumber(), deconstructedCourseCode.getSection());
+                        String courseOfferingId = planItem.getRefObjectId();
                         try {
                             courseOfferingInfo = getCourseOfferingService().getCourseOffering(courseOfferingId, CourseSearchConstants.CONTEXT_INFO);
                         } catch (DoesNotExistException e) {
@@ -516,12 +513,13 @@ public class PlannedTermsHelperBase {
                             continue;
                         }
                         if (courseOfferingInfo != null) {
+                            String key = generateKey(courseOfferingInfo.getSubjectArea(), courseOfferingInfo.getCourseNumberSuffix());
                             if (courseSectionCreditsMap.containsKey(courseOfferingInfo.getCourseCode())) {
-                                courseSectionCreditsMap.get(deconstructedCourseCode.getSubject() + ":" + deconstructedCourseCode.getNumber()).add(courseOfferingInfo.getCreditOptionName());
+                                courseSectionCreditsMap.get(key).add(courseOfferingInfo.getCreditOptionName());
                             } else {
                                 List<String> credits = new ArrayList<String>();
                                 credits.add(courseOfferingInfo.getCreditOptionName());
-                                courseSectionCreditsMap.put(deconstructedCourseCode.getSubject() + ":" + deconstructedCourseCode.getNumber(), credits);
+                                courseSectionCreditsMap.put(key, credits);
                             }
                         }
                     } else if (PlanConstants.COURSE_TYPE.equalsIgnoreCase(luType)) {
@@ -530,7 +528,8 @@ public class PlannedTermsHelperBase {
                 }
                 for (PlanItemInfo planItemInfo : plannedCourses) {
                     CourseInfo courseInfo = getCourseHelper().getCourseInfo(planItemInfo.getRefObjectId());
-                    List<String> sectionCreditRangeList = courseSectionCreditsMap.get(courseInfo.getSubjectArea().trim() + ":" + courseInfo.getCourseNumberSuffix());
+                    String key = generateKey(courseInfo.getSubjectArea().trim(), courseInfo.getCourseNumberSuffix());
+                    List<String> sectionCreditRangeList = courseSectionCreditsMap.get(key);
                     String credit = null;
                     if (sectionCreditRangeList != null && sectionCreditRangeList.size() > 0) {
                         credit = unionCreditList(sectionCreditRangeList);
@@ -557,6 +556,17 @@ public class PlannedTermsHelperBase {
 
         String credits = sumCreditList(creditList);
         return credits;
+    }
+
+    /**
+     * returns a key in format 'subject=number', eg: CHEM=152
+     *
+     * @param subject
+     * @param courseNumber
+     * @return
+     */
+    private String generateKey(String subject, String courseNumber) {
+        return getCourseHelper().joinStringsByDelimiter('=', subject, courseNumber);
     }
 
 }

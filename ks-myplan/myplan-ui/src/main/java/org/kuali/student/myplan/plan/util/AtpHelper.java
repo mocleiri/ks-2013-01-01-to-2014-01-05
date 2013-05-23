@@ -14,7 +14,9 @@ import org.kuali.student.enrollment.academicrecord.dto.StudentCourseRecordInfo;
 import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
+import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
+import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
@@ -51,7 +53,20 @@ public class AtpHelper {
 
     private static transient AcademicRecordService academicRecordService;
 
+    private static transient CourseHelper courseHelper;
+
     private static Map<String, String> atpCache;
+
+    public static CourseHelper getCourseHelper() {
+        if (courseHelper == null) {
+            courseHelper = new CourseHelperImpl();
+        }
+        return courseHelper;
+    }
+
+    public static void setCourseHelper(CourseHelper courseHelper) {
+        AtpHelper.courseHelper = courseHelper;
+    }
 
     public static AtpService getAtpService() {
         if (atpService == null) {
@@ -356,11 +371,10 @@ public class AtpHelper {
         boolean isCourseOfferedInTerm = false;
 
         try {
-            //TODO: This needs to be spring injected
-            CourseHelperImpl courseHelper = new CourseHelperImpl();
-            DeconstructedCourseCode courseCode = courseHelper.getCourseDivisionAndNumber(course);
-            List<String> offerings = getCourseOfferingService().getCourseOfferingIdsByTermAndSubjectArea(atp, courseCode.getSubject(), CourseSearchConstants.CONTEXT_INFO);
-            if (offerings != null && offerings.contains(course)) {
+            DeconstructedCourseCode courseCode = getCourseHelper().getCourseDivisionAndNumber(course);
+            String courseId = getCourseHelper().getCourseId(courseCode.getSubject(), courseCode.getNumber());
+            List<CourseOfferingInfo> offerings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(courseId, atp, CourseSearchConstants.CONTEXT_INFO);
+            if (offerings != null && !offerings.isEmpty()) {
                 isCourseOfferedInTerm = true;
             }
         } catch (Exception e) {
@@ -541,6 +555,10 @@ public class AtpHelper {
 
         public String getYearAsString() {
             return Integer.toString(getYear());
+        }
+
+        public String getTermAsString() {
+            return Integer.toString(getTerm());
         }
 
         public int getTerm() {

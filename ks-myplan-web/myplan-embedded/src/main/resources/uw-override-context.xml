@@ -36,7 +36,7 @@
 
     <bean id="coreDictionaryService"
           class="org.kuali.student.common.dictionary.service.impl.DictionaryServiceImpl">
-        <constructor-arg index="0" value="${uw.ks.core.dictionary.serviceContextLocations}" />
+        <constructor-arg index="0" value="${uw.ks.core.dictionary.serviceContextLocations}"/>
     </bean>
 
 
@@ -61,7 +61,16 @@
     </bean>
 
     <!-- Override ks-enroll CourseOfferingService bean with UW implementation -->
-    <bean id="coService" class="edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl">
+    <bean id="coService" class="edu.uw.kuali.student.service.impl.UwSolrCourseOfferingServiceImpl">
+        <property name="offeringServiceUtils" ref="offeringServiceUtil"/>
+        <property name="solrSeviceClient" ref="solrServiceClient"/>
+        <property name="nextDecorator" ref="swsCoService"/>
+    </bean>
+
+    <bean id="offeringServiceUtil" class="edu.uw.kuali.student.myplan.util.CourseOfferingServiceUtils"/>
+
+    <bean id="swsCoService" class="edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl">
+        <property name="offeringServiceUtils" ref="offeringServiceUtil"/>
         <property name="studentServiceClient" ref="studentServiceClient"/>
     </bean>
 
@@ -121,7 +130,7 @@
         <property name="crossSearchManager" ref="lumCrossServiceSearchManager"/>
     </bean>
 
-     <!-- Setup mail service -->
+    <!-- Setup mail service -->
     <bean id="mailer" class="org.kuali.rice.krad.config.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="mailer"/>
     </bean>
@@ -161,6 +170,12 @@
         </constructor-arg>
         <constructor-arg>
             <value>${uw.truststore.password}</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="solrServiceClient" class="${uw.solrservice.impl}">
+        <constructor-arg>
+            <value>${uw.myplan.solr.url}</value>
         </constructor-arg>
     </bean>
 
@@ -229,7 +244,8 @@
         </property>
     </bean>
 
-    <bean id="myplanDataSourceXAPool" class="org.kuali.rice.core.framework.persistence.jdbc.datasource.XAPoolDataSource">
+    <bean id="myplanDataSourceXAPool"
+          class="org.kuali.rice.core.framework.persistence.jdbc.datasource.XAPoolDataSource">
         <property name="transactionManager" ref="transactionManagerXAPool"/>
         <property name="driverClassName" value="${ks.myplan.datasource.driver.name}"/>
         <property name="url" value="${ks.myplan.datasource.url}"/>
