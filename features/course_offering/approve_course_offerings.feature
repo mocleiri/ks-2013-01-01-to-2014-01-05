@@ -1,5 +1,5 @@
 @nightly
-Feature: Approve COs and their AOs for scheduling
+Feature: WC.Approve COs and their AOs for scheduling
 
   CO12.1: As a Departmental Administrator, I want to indicate that I have finished creating and editing all of the Course Offerings in my department
   so that the departmental set of Course Offerings and their Activity Offerings will be available for Scheduling

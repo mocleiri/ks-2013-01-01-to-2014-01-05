@@ -1,5 +1,5 @@
 @wip
-Feature: Toolbar state
+Feature: EC.Toolbar state
 
   Background:
     Given I am logged in as a Schedule Coordinator

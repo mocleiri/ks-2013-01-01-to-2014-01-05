@@ -1,5 +1,5 @@
 @nightly
-Feature: Schedule Coordinator Authorization
+Feature: EC.Schedule Coordinator Authorization
 
   Background:
     Given I am logged in as a Schedule Coordinator

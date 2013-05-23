@@ -1,5 +1,5 @@
 @nightly
-Feature: Edit AO delivery logistics
+Feature: WC.Edit AO delivery logistics
 
   As a schedule coordinator, I want to edit the requested delivery logistics of an AO
   and then confirm that those changes have been persisted

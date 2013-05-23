@@ -1,5 +1,5 @@
 @nightly
-Feature: Student Authorization
+Feature: EC.Student Authorization
 
   Background:
     Given I am logged in as a Student

@@ -1,5 +1,5 @@
 @nightly
-Feature: Department Schedule Coordinator Authorization SOC state Published
+Feature: EC.Department Schedule Coordinator Authorization SOC state Published
 
   Background:
     Given I am logged in as a Department Schedule Coordinator

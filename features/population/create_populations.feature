@@ -1,5 +1,5 @@
 @nightly
-Feature: Create Populations
+Feature: EC.Create Populations
 
 In order to reserve seats in a course offering for a group of students 
 I want to create populations by using rules, and based on other populations

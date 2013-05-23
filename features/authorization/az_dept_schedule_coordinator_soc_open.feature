@@ -1,6 +1,6 @@
 @nightly
-Feature: Department Schedule Coordinator Authorization SOC state Open
-#TODO - cover list vs single CO view
+Feature: EC.Department Schedule Coordinator Authorization SOC state Open
+
   Background:
     Given I am logged in as a Department Schedule Coordinator
     And I am working on a term in "Open" SOC state
@@ -81,7 +81,6 @@ Feature: Department Schedule Coordinator Authorization SOC state Open
     When I manage the course offering
     Then I do not have access to delete the course offering
 
-  @bug
   Scenario: AZ 3.1/AZ 4.1B/Full_open.5 - Verify Department Schedule Coordinator edit activity offering access (within admin org) in SOC state Open
     When I attempt to edit an activity offering for a course offering in my admin org
     Then I have access to edit the activity code
@@ -102,6 +101,7 @@ Feature: Department Schedule Coordinator Authorization SOC state Open
     And I have access to edit an activity offering
     And I have access to copy an activity offering
     And I have access to approve an activity offering
+    #TODO - approve step needs to be more specific re: AO status approved vs draft
 
   Scenario: AZ 5.1A/Full_open.7 Department Schedule Coordinator Carol has limited access to delete AOs in a Open State
     Given there is a "Draft" course offering in my admin org

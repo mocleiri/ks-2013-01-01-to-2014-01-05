@@ -1,5 +1,5 @@
 @nightly
-Feature: Edit seat pools
+Feature: EC.Edit seat pools
 
 As an Administrator, I want to modify attributes of one of the seat pools for the 
 Activity Offering so that the seat pool reflects current business needs.

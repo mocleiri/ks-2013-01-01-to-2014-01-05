@@ -1,5 +1,5 @@
 @nightly
-Feature: Create and remove cross-listings
+Feature: WC.Create and remove cross-listings
 
     This feature contains 4 scenarios
       1) Remove cross-listing, check owner CO to see that checkbox is clear and cross-listed message is absent

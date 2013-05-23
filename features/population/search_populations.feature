@@ -1,5 +1,5 @@
 @nightly
-Feature: Search for an existing population
+Feature: EC.Search for an existing population
 
 In order to avoid creating a duplicate population (alternate: In order to modify an existing population)
 I want to search for a population

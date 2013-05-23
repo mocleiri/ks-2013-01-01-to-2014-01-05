@@ -1,5 +1,5 @@
 @nightly
-Feature: Department Schedule Coordinator Authorization SOC state Locked
+Feature: EC.Department Schedule Coordinator Authorization SOC state Locked
 
   Background:
     Given I am logged in as a Department Schedule Coordinator

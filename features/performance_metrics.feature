@@ -1,5 +1,5 @@
 @nightly
-Feature: Simple Performance Metrics
+Feature: EC.Simple Performance Metrics
 
   Background:
     Given I am logged in as a Schedule Coordinator

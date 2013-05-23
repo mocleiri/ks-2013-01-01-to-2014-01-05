@@ -1,5 +1,5 @@
 @nightly
-Feature: Remove seat pools
+Feature: EC.Remove seat pools
 
 As an Administrator, I want to remove one of the seat pools from the Activity Offering 
 since this seat pool is no longer needed.

@@ -1,5 +1,5 @@
 @nightly
-Feature: Create Course Offerings
+Feature: WC.Create Course Offerings
 Background:
   Given I am logged in as a Schedule Coordinator
 

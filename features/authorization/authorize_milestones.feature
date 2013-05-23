@@ -1,5 +1,5 @@
 @nightly
-Feature: Authorize Milestones Feature
+Feature: EC.Authorize Milestones Feature
 
   Background:
     Given I am logged in as a Department Schedule Coordinator

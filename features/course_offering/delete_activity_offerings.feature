@@ -1,5 +1,5 @@
 @nightly
-Feature: delete activity offerings
+Feature: WC.delete activity offerings
 
   CO 24.12, As a user, I want to Delete Activity Offerings from the Manage Course Offerings process
             by means of a Toolbar Button so I can more easily manage my Course Offerings.

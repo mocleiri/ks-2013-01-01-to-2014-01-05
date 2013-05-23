@@ -1,5 +1,5 @@
 @nightly
-Feature: Edit Activity Offering Attributes
+Feature: WC.Edit Activity Offering Attributes
 
   Background:
     Given I am logged in as a Schedule Coordinator

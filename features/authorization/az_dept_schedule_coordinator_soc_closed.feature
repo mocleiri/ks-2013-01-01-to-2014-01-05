@@ -1,5 +1,5 @@
 @wip
-Feature: Department Schedule Coordinator Authorization SOC state Closed
+Feature: EC.Department Schedule Coordinator Authorization SOC state Closed
 #TODO - cover list vs single CO view
   Background:
     Given I am logged in as a Department Schedule Coordinator

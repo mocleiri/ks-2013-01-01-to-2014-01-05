@@ -1,5 +1,5 @@
 @nightly
-Feature: Holiday Calendar CRED
+Feature: WC.Holiday Calendar CRED
 
   Background:
     Given I am logged in as a Schedule Coordinator

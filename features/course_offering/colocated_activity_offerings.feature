@@ -1,6 +1,6 @@
 @nightly
 @brandon.gresham
-Feature: Co-location of Activity Offerings
+Feature: WC.Co-location of Activity Offerings
 
 Background:
   Given I am logged in as a Schedule Coordinator

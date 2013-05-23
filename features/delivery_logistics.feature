@@ -1,5 +1,5 @@
 @draft
-Feature: Delivery logistics
+Feature: EC.Delivery logistics
 
   As a Central Administrator or Dept Administrator, I want to edit an Activity Offering so that I can change the AO's actual delivery logistics (KSENROLL-2595)
 

@@ -1,6 +1,6 @@
 @nightly
 @brandon.gresham
-Feature: Jointly-defined Course Offering
+Feature: WC.Jointly-defined Course Offering
 
   Background:
     Given I am logged in as a Schedule Coordinator

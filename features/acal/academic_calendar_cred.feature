@@ -1,5 +1,5 @@
 @nightly
-Feature: Academic Calendar CRED
+Feature: WC.Academic Calendar CRED
 
   Background:
     Given I am logged in as a Schedule Coordinator

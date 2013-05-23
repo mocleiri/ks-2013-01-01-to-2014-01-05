@@ -1,5 +1,5 @@
 @nightly
-Feature: Search for a registration window
+Feature: WC.Search for a registration window
 
   Background:
     Given I am logged in as a Schedule Coordinator
