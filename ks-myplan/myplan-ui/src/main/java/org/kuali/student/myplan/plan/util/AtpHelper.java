@@ -352,7 +352,14 @@ public class AtpHelper {
      * @return
      */
     public static boolean isAtpCompletedTerm(String atpId) {
-        YearTerm currentYT = atpToYearTerm(getCurrentAtpId());
+        String currentAtpId = null;
+        for (String term : getPublishedTerms()) {
+            if (isAtpSetToPlanning(term)) {
+                currentAtpId = term;
+                break;
+            }
+        }
+        YearTerm currentYT = atpToYearTerm(currentAtpId);
         YearTerm yt = atpToYearTerm(atpId);
 
         boolean isAtpCompletedTerm = yt.getValue() < currentYT.getValue();

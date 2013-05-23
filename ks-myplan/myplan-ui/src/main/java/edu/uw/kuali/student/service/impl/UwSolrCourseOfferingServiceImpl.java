@@ -177,7 +177,12 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
         try {
             String xml = solrSeviceClient.getSectionById(courseOfferingId);
             if (StringUtils.hasText(xml)) {
-                secondaryDoc = offeringServiceUtils.newDocument(offeringServiceUtils.getSectionDataFromSolrXML(xml));
+                String responseXml = offeringServiceUtils.getSectionDataFromSolrXML(xml);
+                if (responseXml != null) {
+                    secondaryDoc = offeringServiceUtils.newDocument(responseXml);
+                } else {
+                    failOver = true;
+                }
             } else {
                 failOver = true;
             }
@@ -320,7 +325,12 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
             // Skips section ID if it fails
             String xml = solrSeviceClient.getSectionById(activityOfferingId);
             if (StringUtils.hasText(xml)) {
-                doc = offeringServiceUtils.newDocument(offeringServiceUtils.getSectionDataFromSolrXML(xml));
+                String responseXml = offeringServiceUtils.getSectionDataFromSolrXML(xml);
+                if (responseXml != null) {
+                    doc = offeringServiceUtils.newDocument(responseXml);
+                } else {
+                    failOver = true;
+                }
             } else {
                 failOver = true;
             }

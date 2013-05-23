@@ -477,7 +477,11 @@ public class CourseOfferingServiceUtils {
             logger.error(e);
         }
         Element element = (Element) solrPath.selectSingleNode(solrDocument);
-        return element.getText();
+        if (element != null) {
+            return element.getText();
+        } else {
+            return null;
+        }
     }
 
 
