@@ -89,14 +89,14 @@ end
 
 Then /^there should be a new node with text "(.*)"$/ do |text|
   on EditAgenda do |page|
-    page.loading.wait_while_present
+    page.edit_loading.wait_while_present
     page.edit_tree_section.text.should match /.*#{Regexp.escape(text)}.*/
   end
 end
 
 Then /^there should be a dropdown with value "(.*)" before node "(.*)"$/ do |drop, node|
   on EditAgenda do |page|
-    page.loading.wait_while_present
+    page.edit_loading.wait_while_present
     page.edit_tree_section.text.should match /.*#{Regexp.escape(drop)}.*#{Regexp.escape(node)}.*/m
   end
 end
@@ -110,7 +110,7 @@ end
 
 Then /^the text "(.*)" should be present in the text area$/ do |text|
   on EditAgenda do |page|
-    page.loading.wait_while_present
+    page.edit_loading.wait_while_present
     page.logic_text.text.should == text
   end
 end

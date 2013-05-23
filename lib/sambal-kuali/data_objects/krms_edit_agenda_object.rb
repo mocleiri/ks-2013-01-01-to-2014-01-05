@@ -38,7 +38,7 @@ class EditAgendaData
         #TODO - find a way to return course code randomly when searching for title or description
       end
     end
-    sleep 3   #adding a sleep - moving through the tree too fast causes a crash
+    sleep 2 #adding sleep, moving through the tree too fast causes test to crash
   end
 
   def navigate( course)
@@ -134,6 +134,12 @@ class EditAgendaData
 
         page.edit_tree_section.span(:text => /.*F\..*/).when_present.click
         page.group_btn
+        page.rule_dropdown.when_present.select /Free Form Text/
+        page.free_text_field.when_present.set "Text to copy"
+        page.preview_btn
+
+        page.edit_tree_section.span(:text => /.*D\..*/).when_present.click
+        page.add_btn
         if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
           page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> courses from <courses>/
           page.integer_field.when_present.set "1"
@@ -155,10 +161,12 @@ class EditAgendaData
         page.add_line_btn
         page.preview_btn
 
+        page.loading.wait_while_present
         page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "OR"
+        page.edit_loading.wait_while_present
         page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_2_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
 
-        sleep 10   #adding a sleep - moving through the tree too fast causes a crash
+        page.edit_loading.wait_while_present
         page.update_rule_btn
       end
 
