@@ -61,7 +61,16 @@
     </bean>
 
     <!-- Override ks-enroll CourseOfferingService bean with UW implementation -->
-    <bean id="coService" class="edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl">
+    <bean id="coService" class="edu.uw.kuali.student.service.impl.UwSolrCourseOfferingServiceImpl">
+        <property name="offeringServiceUtils" ref="offeringServiceUtil"/>
+        <property name="solrSeviceClient" ref="solrServiceClient"/>
+        <property name="nextDecorator" ref="swsCoService"/>
+    </bean>
+
+    <bean id="offeringServiceUtil" class="edu.uw.kuali.student.myplan.util.CourseOfferingServiceUtils"/>
+
+    <bean id="swsCoService" class="edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl">
+        <property name="offeringServiceUtils" ref="offeringServiceUtil"/>
         <property name="studentServiceClient" ref="studentServiceClient"/>
     </bean>
 
@@ -161,6 +170,12 @@
         </constructor-arg>
         <constructor-arg>
             <value>${uw.truststore.password}</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="solrServiceClient" class="${uw.solrservice.impl}">
+        <constructor-arg>
+            <value>${uw.myplan.solr.url}</value>
         </constructor-arg>
     </bean>
 
