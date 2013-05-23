@@ -116,11 +116,11 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   element(:add_pool_seats) { |b| b.seat_pools_table.rows[1].cells[SEATS_COLUMN].text_field() }
   value(:add_pool_name)  { |b| b.seat_pools_table.rows[1].cells[POP_NAME_COLUMN].text_field().text }
   
-  action(:lookup_population_name) { |b| b.seat_pools_table.button(title: "Search Field").click; b.loading.wait_while_present }
+  action(:lookup_population_name) { |priority, b| b.seat_pools_table.rows[priority].button(title: "Search Field").click; b.loading.wait_while_present }
   
   element(:add_pool_expiration_milestone) { |b| b.seat_pools_table.rows[1].cells[EXP_MILESTONE_COLUMN].select() }
-  element(:add_pool_element) { |b| b.seat_pools_table.rows[1].cells[SEATS_ACTION_COLUMN].button()}
-  action(:add_seat_pool) { |b| b.seat_pools_table.rows[1].cells[SEATS_ACTION_COLUMN].button().click; b.loading.wait_while_present }
+  element(:add_pool_element) { |b| b.frm.button(text: "Add Another Seat Pool")}
+  action(:add_seat_pool) { |b| b.add_pool_element.click; b.loading.wait_while_present }
 
   element(:seat_pools_div) { |b| b.frm.div(id: "ao-seatpoolgroup") }
   element(:seat_pools_table) { |b| b.frm.table(id: "ao-seatpoolgroup-table") }
@@ -130,8 +130,6 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
     i = 0
     seat_pools_table.rows.each do |row|
       if i > 0
-       # newvalue =
-       # secvalue = pop_name
         if (row.cells[POP_NAME_COLUMN].text_field.value =~ /#{pop_name}/)
           return row
         end

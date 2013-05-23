@@ -621,10 +621,11 @@ class SeatPool
   # @param [Array] list of populations used in seatpools already added
   def add_seatpool(pops_used_list)
     on ActivityOfferingMaintenance do |page|
-      page.add_pool_priority.set @priority
-      page.add_pool_seats.set @seats
+      if @priority > 1
+        page.add_seat_pool
+      end
       if @population_name != ""
-        page.lookup_population_name
+        page.lookup_population_name(@priority)
 
         #TODO should really call Population.search_for_pop
         on ActivePopulationLookup do |page|
@@ -645,6 +646,9 @@ class SeatPool
         end
 
       end
+      page.update_priority(@population_name, @priority)
+      page.update_seats(@population_name, @seats)
+      page.update_expiration_milestone(@population_name, @expiration_milestone)
     end
   end
 end
