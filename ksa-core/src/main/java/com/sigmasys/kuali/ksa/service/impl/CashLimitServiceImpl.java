@@ -135,7 +135,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     @Override
     public List<CashLimitEvent> getCashLimitEvents(String userId, CashLimitEventStatus status) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_IRS_8300);
+        PermissionUtils.checkPermission(Permission.READ_IRS_8300);
 
         Query query = em.createQuery("select cle from CashLimitEvent cle " +
                 " left outer join fetch cle.xmlDocument xml " +
@@ -155,7 +155,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     @Override
     public CashLimitEvent getCashLimitEvent(Long id) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_IRS_8300);
+        PermissionUtils.checkPermission(Permission.READ_IRS_8300);
 
         Query query = em.createQuery("select cle from CashLimitEvent cle " +
                 " left outer join fetch cle.xmlDocument xml " +

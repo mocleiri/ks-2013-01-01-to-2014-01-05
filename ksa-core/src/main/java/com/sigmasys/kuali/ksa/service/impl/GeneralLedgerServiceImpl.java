@@ -99,7 +99,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     public List<GeneralLedgerType> getGeneralLedgerTypes() {
 
-        PermissionUtils.checkPermission(Permission.VIEW_GL_TYPE);
+        PermissionUtils.checkPermission(Permission.READ_GL_TYPE);
 
         return getEntities(GeneralLedgerType.class, new Pair<String, SortOrder>("creationDate", SortOrder.ASC),
                 new Pair<String, SortOrder>("id", SortOrder.ASC));
@@ -311,7 +311,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     public GeneralLedgerType getGeneralLedgerType(String glTypeCode) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_GL_TYPE);
+        PermissionUtils.checkPermission(Permission.READ_GL_TYPE);
 
         Query query = em.createQuery("select t from GeneralLedgerType t where t.code = :code");
         query.setParameter("code", glTypeCode);
@@ -333,7 +333,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     @WebMethod(exclude = true)
     public GeneralLedgerType getGeneralLedgerType(Long glTypeId) {
-        PermissionUtils.checkPermission(Permission.VIEW_GL_TYPE);
+        PermissionUtils.checkPermission(Permission.READ_GL_TYPE);
         return getEntity(glTypeId, GeneralLedgerType.class);
     }
 
@@ -344,7 +344,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     public GeneralLedgerType getDefaultGeneralLedgerType() {
-        PermissionUtils.checkPermission(Permission.VIEW_GL_TYPE);
+        PermissionUtils.checkPermission(Permission.READ_GL_TYPE);
         String defaultGlTypeCode = configService.getParameter(DEFAULT_GL_TYPE);
         if (StringUtils.isBlank(defaultGlTypeCode)) {
             String errMsg = "Configuration parameter '" + DEFAULT_GL_TYPE + "' is required";
@@ -605,7 +605,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @WebMethod(exclude = true)
     public List<GlTransmission> getGlTransmissionsForBatch(String batchId, GlTransmissionStatus... statuses) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_GL_TRANSMISSION);
+        PermissionUtils.checkPermission(Permission.READ_GL_TRANSMISSION);
 
         List<String> statusCodes = new ArrayList<String>(statuses.length);
 
@@ -664,7 +664,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     public List<GlTransaction> getGlTransactions(Date startDate, Date endDate, String glAccountId) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_GL_TRANSACTION);
+        PermissionUtils.checkPermission(Permission.READ_GL_TRANSACTION);
 
         if (startDate == null || endDate == null) {
             String errMsg = "Start Date and End Date cannot be null";
@@ -719,7 +719,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     public List<GlTransaction> getGlTransactionsByStatus(GlTransactionStatus status) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_GL_TRANSACTION);
+        PermissionUtils.checkPermission(Permission.READ_GL_TRANSACTION);
 
         if (status == null) {
             String errMsg = "Status cannot be null";
@@ -749,7 +749,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @WebMethod(exclude = true)
     public List<GlTransaction> getGlTransactionsForBatch(String batchId) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_GL_TRANSACTION);
+        PermissionUtils.checkPermission(Permission.READ_GL_TRANSACTION);
 
         if (StringUtils.isBlank(batchId)) {
             String errMsg = "Batch ID cannot be empty or null";
@@ -777,7 +777,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @WebMethod(exclude = true)
     public List<GlTransmission> getGlTransmissionsByStatuses(GlTransmissionStatus... statuses) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_GL_TRANSMISSION);
+        PermissionUtils.checkPermission(Permission.READ_GL_TRANSMISSION);
 
         List<String> statusCodes = new ArrayList<String>(statuses.length);
 

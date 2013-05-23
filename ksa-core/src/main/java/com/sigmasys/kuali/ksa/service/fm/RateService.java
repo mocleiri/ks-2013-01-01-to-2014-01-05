@@ -295,10 +295,8 @@ public interface RateService {
      * @param rateCatalog RateCatalog instance
      * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
      *
-     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException
-     *
      */
-    void validateRateWithCatalog(Rate rate, RateCatalog rateCatalog) throws InvalidRateException, InvalidRateCatalogException;
+    void validateRateWithCatalog(Rate rate, RateCatalog rateCatalog) throws InvalidRateException;
 
     /**
      * Checks if the rate type is valid.

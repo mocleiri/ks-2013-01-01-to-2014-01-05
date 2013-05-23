@@ -251,7 +251,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
     private com.sigmasys.kuali.ksa.model.Irs1098T getIrs1098T(Long id) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_IRS_1098_T);
+        PermissionUtils.checkPermission(Permission.READ_IRS_1098_T);
 
         Query query = em.createQuery("select irs from Irs1098T irs " +
                 " left outer join fetch irs.account account " +

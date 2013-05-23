@@ -351,7 +351,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public BigDecimal getBalance(String userId, Date toDate) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_BALANCE);
+        PermissionUtils.checkPermission(Permission.READ_BALANCE);
 
         if (toDate == null) {
             return BigDecimal.ZERO;
@@ -398,7 +398,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
     public BigDecimal getBalance(String userId, boolean ignoreDeferment, boolean notYetEffective) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_BALANCE);
+        PermissionUtils.checkPermission(Permission.READ_BALANCE);
 
         final String sign = notYetEffective ? ">" : "<=";
         Query query = em.createQuery("select t from Transaction t " +
@@ -447,7 +447,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public BigDecimal getUnallocatedBalance(String userId) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_BALANCE);
+        PermissionUtils.checkPermission(Permission.READ_BALANCE);
 
         List<Payment> payments = transactionService.getPayments(userId);
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -524,7 +524,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public Account getFullAccount(String userId) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         Query query = em.createQuery("select a from Account a " +
                 "left outer join fetch a.personNames pn " +
@@ -546,7 +546,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public List<Account> getFullAccounts() {
 
-        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         Query query = em.createQuery(GET_FULL_ACCOUNTS_QUERY);
         return query.getResultList();
@@ -561,7 +561,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public List<Account> getAccountsByNamePattern(String pattern) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         Query query = em.createQuery(GET_FULL_ACCOUNTS_QUERY + " and upper(a.id) like upper(:pattern)");
         query.setParameter("pattern", "%" + pattern + "%");
@@ -581,7 +581,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Transactional(readOnly = false)
     public Account getOrCreateAccount(String userId) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         Account account = getEntity(userId, Account.class);
         if (account == null) {
@@ -874,7 +874,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public Ach getAch(String userId) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_ACH);
+        PermissionUtils.checkPermission(Permission.READ_ACH);
 
         String errMsg = "ACH Account with ID = " + userId + " does not exist";
 
@@ -967,7 +967,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public List<Account> findAccountsByNamePattern(String namePattern) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         boolean patternIsNotEmpty = (namePattern != null) && !namePattern.isEmpty();
 
@@ -998,7 +998,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     public List<Account> findAccountsByExpandedSearchPatterns(String... searchPatterns) {
 
-        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT);
+        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         // Remove empty elements resulted from extra spaces in the search string:
         searchPatterns = removeEmptyStrings(searchPatterns);

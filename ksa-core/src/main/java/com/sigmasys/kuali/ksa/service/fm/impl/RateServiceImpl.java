@@ -44,6 +44,13 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
     private static final Log logger = LogFactory.getLog(RateServiceImpl.class);
 
+    private static final String GET_RATE_JOIN = "select r from Rate r " +
+            " inner join fetch r.rateType rt " +
+            " inner join fetch r.rateCatalogAtp rca " +
+            " left outer join fetch r.defaultRateAmount dra " +
+            " left outer join fetch r.keyPairs kp " +
+            " left outer join fetch r.rateAmounts ra ";
+
 
     @Autowired
     private AtpService atpService;
@@ -143,7 +150,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public RateType getRateType(Long rateTypeId) {
-        PermissionUtils.checkPermission(Permission.VIEW_RATE_TYPE);
+        PermissionUtils.checkPermission(Permission.READ_RATE_TYPE);
         return auditableEntityService.getAuditableEntity(rateTypeId, RateType.class);
     }
 
@@ -155,7 +162,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public RateType getRateTypeByCode(String rateTypeCode) {
-        PermissionUtils.checkPermission(Permission.VIEW_RATE_TYPE);
+        PermissionUtils.checkPermission(Permission.READ_RATE_TYPE);
         return auditableEntityService.getAuditableEntity(rateTypeCode, RateType.class);
     }
 
@@ -181,7 +188,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<RateType> getRateTypesByNamePattern(String namePattern) {
-        PermissionUtils.checkPermission(Permission.VIEW_RATE_TYPE);
+        PermissionUtils.checkPermission(Permission.READ_RATE_TYPE);
         return auditableEntityService.getAuditableEntitiesByNamePattern(namePattern, RateType.class);
     }
 
@@ -192,7 +199,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<RateType> getAllRateTypes() {
-        PermissionUtils.checkPermission(Permission.VIEW_RATE_TYPE);
+        PermissionUtils.checkPermission(Permission.READ_RATE_TYPE);
         return auditableEntityService.getAuditableEntities(RateType.class);
     }
 
@@ -262,7 +269,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public RateCatalog getRateCatalog(Long rateCatalogId) {
-        PermissionUtils.checkPermission(Permission.VIEW_RATE_CATALOG);
+        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
@@ -281,7 +288,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public RateCatalog getRateCatalogByCodeAndAtpId(String rateCatalogCode, String atpId) {
-        PermissionUtils.checkPermission(Permission.VIEW_RATE_CATALOG);
+        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rca.rateCatalog from RateCatalogAtp rca " +
                 " inner join fetch rca.rateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
@@ -300,7 +307,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<RateCatalog> getRateCatalogsByCode(String rateCatalogCode) {
-        PermissionUtils.checkPermission(Permission.VIEW_RATE_CATALOG);
+        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
@@ -317,7 +324,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<RateCatalog> getRateCatalogsByAtpId(String atpId) {
-        PermissionUtils.checkPermission(Permission.VIEW_RATE_CATALOG);
+        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rca.rateCatalog from RateCatalogAtp rca " +
                 " inner join fetch rca.rateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
@@ -335,11 +342,11 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<RateCatalog> getRateCatalogsByNamePattern(String namePattern) {
-        PermissionUtils.checkPermission(Permission.VIEW_RATE_CATALOG);
+        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
-                " where upper(rc.name) like upper (:namePattern)");
+                " where upper(rc.name) like upper(:namePattern)");
         query.setParameter("namePattern", "%" + namePattern + "%");
         return query.getResultList();
     }
@@ -351,7 +358,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<RateCatalog> getAllRateCatalogs() {
-        PermissionUtils.checkPermission(Permission.VIEW_RATE_CATALOG);
+        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
@@ -387,10 +394,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     @Transactional(readOnly = false)
     public Long persistRate(Rate rate) {
-
-        // TODO
-
-        return null;
+        PermissionUtils.checkPermission(Permission.UPDATE_RATE);
+        validateRate(rate);
+        return persistEntity(rate);
     }
 
     /**
@@ -401,7 +407,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     @Transactional(readOnly = false)
     public void deleteRate(Long rateId) {
-        // TODO
+        PermissionUtils.checkPermission(Permission.DELETE_RATE);
+        deleteEntity(rateId, Rate.class);
     }
 
     /**
@@ -412,8 +419,11 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public Rate getRate(Long rateId) {
-        // TODO
-        return null;
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+        Query query = em.createQuery(GET_RATE_JOIN + " where r.id = :id");
+        query.setParameter("id", rateId);
+        List<Rate> rates = query.getResultList();
+        return CollectionUtils.isNotEmpty(rates) ? rates.get(0) : null;
     }
 
     /**
@@ -425,8 +435,12 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public Rate getRateByCodeAndAtpId(String rateCode, String atpId) {
-        // TODO
-        return null;
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+        Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :rateCode and rca.id.atpId = :atpId");
+        query.setParameter("rateCode", rateCode);
+        query.setParameter("atpId", atpId);
+        List<Rate> rates = query.getResultList();
+        return CollectionUtils.isNotEmpty(rates) ? rates.get(0) : null;
     }
 
     /**
@@ -437,8 +451,10 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<Rate> getRatesByCode(String rateCode) {
-        // TODO
-        return null;
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+        Query query = em.createQuery(GET_RATE_JOIN + " where rca.id.code = :code");
+        query.setParameter("code", rateCode);
+        return query.getResultList();
     }
 
     /**
@@ -449,8 +465,10 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<Rate> getRatesByAtpId(String atpId) {
-        // TODO
-        return null;
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+        Query query = em.createQuery(GET_RATE_JOIN + " where rca.id.atpId = :atpId");
+        query.setParameter("atpId", atpId);
+        return query.getResultList();
     }
 
     /**
@@ -461,8 +479,10 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<Rate> getRatesByNamePattern(String namePattern) {
-        // TODO
-        return null;
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+        Query query = em.createQuery(GET_RATE_JOIN + " where upper(r.name) like upper(:namePattern)");
+        query.setParameter("namePattern", "%" + namePattern + "%");
+        return query.getResultList();
     }
 
     /**
@@ -472,8 +492,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<Rate> getAllRates() {
-        // TODO
-        return null;
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+        Query query = em.createQuery(GET_RATE_JOIN + " order by r.id desc");
+        return query.getResultList();
     }
 
     /**
@@ -530,9 +551,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public void validateRate(Rate rate) throws InvalidRateException {
-
-        // TODO
-
+        RateCatalogAtp rateCatalogAtp = rate.getRateCatalogAtp();
+        validateRateWithCatalog(rate, (rateCatalogAtp != null) ? rateCatalogAtp.getRateCatalog() : null);
     }
 
     private ContextInfo getAtpContextInfo() {
@@ -554,7 +574,74 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         return isTransactionTypeValid;
     }
 
-    protected void validateRateAndRateCatalog(Rate rate, RateCatalog rateCatalog) throws InvalidRateException {
+
+    /**
+     * Validates the given RateCatalog instance and throws <code>InvalidRateCatalogException</code> if the validation fails.
+     *
+     * @param rateCatalog RateCatalog instance
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
+     *
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException
+     *
+     */
+    @Override
+    public void validateRateCatalog(RateCatalog rateCatalog) throws InvalidRateException, InvalidRateCatalogException {
+
+        if (rateCatalog == null) {
+            String errMsg = "RateCatalog cannot be null";
+            logger.error(errMsg);
+            throw new InvalidRateCatalogException(errMsg);
+        }
+
+        RateType rateType = rateCatalog.getRateType();
+
+        validateRateType(rateType);
+
+        if (!rateTypeExists(rateType.getCode())) {
+            String errMsg = "RateType does not exist with code = " + rateType.getCode();
+            logger.error(errMsg);
+            throw new InvalidRateTypeException(errMsg);
+        }
+
+        BigDecimal lowerBoundAmount = rateCatalog.getLowerBoundAmount();
+        BigDecimal upperBoundAmount = rateCatalog.getUpperBoundAmount();
+
+        if (lowerBoundAmount != null && upperBoundAmount != null) {
+            if (lowerBoundAmount.compareTo(upperBoundAmount) > 0) {
+                String errMsg = "Lower bound amount cannot be greater than upper bound amount";
+                logger.error(errMsg);
+                throw new InvalidRateCatalogException(errMsg);
+            }
+        }
+
+        // If the rate catalog exists we have to check all the rates associated with it
+        if (rateCatalog.getId() != null) {
+            Query query = em.createQuery("select rate from Rate rate " +
+                    "inner join rate.rateCatalogAtp rca " +
+                    "inner join rca.rateCatalog rc " +
+                    "where rc.id = :rateCatalogId");
+            query.setParameter("rateCatalogId", rateCatalog.getId());
+            List<Rate> rates = query.getResultList();
+            if (CollectionUtils.isNotEmpty(rates)) {
+                for (Rate rate : rates) {
+                    validateRate(rate);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Validates the Rate against the RateCatalog instance
+     * and throws <code>InvalidRateException</code> or <code>InvalidRateCatalogException</code> if the validation fails.
+     *
+     * @param rate        Rate instance
+     * @param rateCatalog RateCatalog instance
+     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
+     *
+     */
+    @Override
+    public void validateRateWithCatalog(Rate rate, RateCatalog rateCatalog) throws InvalidRateException {
 
         if (rate == null) {
             String errMsg = "Rate cannot be null";
@@ -725,85 +812,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
             }
 
-
         }
-
-
-        // TODO
-
-    }
-
-    /**
-     * Validates the given RateCatalog instance and throws <code>InvalidRateCatalogException</code> if the validation fails.
-     *
-     * @param rateCatalog RateCatalog instance
-     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
-     *
-     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException
-     *
-     */
-    @Override
-    public void validateRateCatalog(RateCatalog rateCatalog) throws InvalidRateException, InvalidRateCatalogException {
-
-        if (rateCatalog == null) {
-            String errMsg = "RateCatalog cannot be null";
-            logger.error(errMsg);
-            throw new InvalidRateCatalogException(errMsg);
-        }
-
-        RateType rateType = rateCatalog.getRateType();
-
-        validateRateType(rateType);
-
-        if (!rateTypeExists(rateType.getCode())) {
-            String errMsg = "RateType does not exist with code = " + rateType.getCode();
-            logger.error(errMsg);
-            throw new InvalidRateTypeException(errMsg);
-        }
-
-        BigDecimal lowerBoundAmount = rateCatalog.getLowerBoundAmount();
-        BigDecimal upperBoundAmount = rateCatalog.getUpperBoundAmount();
-
-        if (lowerBoundAmount != null && upperBoundAmount != null) {
-            if (lowerBoundAmount.compareTo(upperBoundAmount) > 0) {
-                String errMsg = "Lower bound amount cannot be greater than upper bound amount";
-                logger.error(errMsg);
-                throw new InvalidRateCatalogException(errMsg);
-            }
-        }
-
-        // If the rate catalog exists we have to check all the rates associated with it
-        if (rateCatalog.getId() != null) {
-            Query query = em.createQuery("select rate from Rate rate " +
-                    "inner join rate.rateCatalogAtp rca " +
-                    "inner join rca.rateCatalog rc " +
-                    "where rc.id = :rateCatalogId");
-            query.setParameter("rateCatalogId", rateCatalog.getId());
-            List<Rate> rates = query.getResultList();
-            if (CollectionUtils.isNotEmpty(rates)) {
-                for (Rate rate : rates) {
-                    validateRate(rate);
-                }
-            }
-        }
-
-    }
-
-    /**
-     * Validates the Rate against the RateCatalog instance
-     * and throws <code>InvalidRateException</code> or <code>InvalidRateCatalogException</code> if the validation fails.
-     *
-     * @param rate        Rate instance
-     * @param rateCatalog RateCatalog instance
-     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateException
-     *
-     * @throws com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException
-     *
-     */
-    @Override
-    public void validateRateWithCatalog(Rate rate, RateCatalog rateCatalog) throws InvalidRateException,
-            InvalidRateCatalogException {
-        // TODO
     }
 
 
@@ -815,8 +824,12 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public boolean isRateTypeValid(RateType rateType) {
-        // TODO
-        return false;
+        try {
+            validateRateType(rateType);
+            return true;
+        } catch (InvalidRateTypeException e) {
+            return false;
+        }
     }
 
 
@@ -828,8 +841,12 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public boolean isRateValid(Rate rate) {
-        // TODO
-        return false;
+        try {
+            validateRate(rate);
+            return true;
+        } catch (InvalidRateException e) {
+            return false;
+        }
     }
 
     /**
@@ -840,10 +857,14 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public boolean isRateCatalogValid(RateCatalog rateCatalog) {
-
-        // TODO
-
-        return false;
+        try {
+            validateRateCatalog(rateCatalog);
+            return true;
+        } catch (InvalidRateException e) {
+            return false;
+        } catch (InvalidRateCatalogException ce) {
+            return false;
+        }
     }
 
     /**
@@ -855,8 +876,14 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public boolean isRateValidWithCatalog(Rate rate, RateCatalog rateCatalog) {
-        // TODO
-        return false;
+        try {
+            validateRateWithCatalog(rate, rateCatalog);
+            return true;
+        } catch (InvalidRateException e) {
+            return false;
+        } catch (InvalidRateCatalogException ce) {
+            return false;
+        }
     }
 
     /**
