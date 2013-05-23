@@ -298,7 +298,7 @@
                 <property name="layoutManager.renderSequenceField" value="false"/>
                 <property name="renderAddBlankLineButton" value="false" />
                 <property name="renderAddLine" value="false" />
-                <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
+                <!--<property name="layoutManager.ajaxDetailsRetrieval" value="true"/>-->
                 <property name="layoutManager.applyDefaultCellWidths" value="false"/>
                 <property name="layoutManager.richTable.disableTableSort" value="false"/>
                 <property name="layoutManager.richTable.templateOptions">
