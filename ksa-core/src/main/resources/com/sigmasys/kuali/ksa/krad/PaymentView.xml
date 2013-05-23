@@ -80,8 +80,7 @@
 
                 <bean parent="Uif-Disclosure-VerticalBoxSection" >
                     <property name="headerText" value="Receipt"/>
-                    <!-- disclosure fixed in Rice 2.2.1, disabling for now: https://jira.kuali.org/browse/KULRICE-8938 -->
-                    <!--<property name="disclosure.defaultOpen" value="false" />-->
+                    <property name="disclosure.defaultOpen" value="false" />
                     <property name="items">
                         <list>
                             <bean parent="Uif-InputField" p:propertyName="printReceipt" p:label="Print receipt" p:defaultValue="false" p:fieldLabel.renderColon="true">
