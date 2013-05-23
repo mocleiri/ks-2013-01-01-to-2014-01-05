@@ -4,23 +4,49 @@ When /^I manage course offerings for a subject code$/ do
   @course_offering.search_by_subjectcode
 end
 
-When /^I manage course offerings for subject code ENGL$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :course=>"ENGL", :term=>@term_for_test
-  @course_offering.search_by_subjectcode
-end
-
-When /^I manage course offerings for subject code ENGL206$/ do
+When /^I manage course offerings for a course with the first activity offering in draft state and the second activity offering in approved state$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = make CourseOffering, :course=>"ENGL206", :term=>@term_for_test
   @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.copy("A")
+    if page.ao_status("B") != "Approved"
+      if page.select_ao("B") then
+        page.approve_activity_button.wait_until_present(5)
+        page.approve_activity
+      end
+    end
+  end
 end
 
-When /^I manage course offerings for subject code ENGL245$/ do
+When /^I manage course offerings for a course with the first activity offering in draft state and the second activity offering in draft state$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :course=>"ENGL243", :term=>@term_for_test
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.copy("A")
+  end
+end
+
+When /^I manage course offerings for a course with the first activity offering in approved state$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = make CourseOffering, :course=>"ENGL245", :term=>@term_for_test
   @course_offering.manage
+  on ManageCourseOfferings do |page|
+    if page.ao_status("A") != "Approved"
+      if page.select_ao("A") then
+        page.approve_activity_button.wait_until_present(5)
+        page.approve_activity
+      end
+    end
+  end
 end
+
+#When /^I manage course offerings for a course with 2 activity offerings present$/ do
+#  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+#  @course_offering = make CourseOffering, :course=>"ENGL245", :term=>@term_for_test
+#  @course_offering.manage
+#end
 
 When /^I manage a course offering in the specified state$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
@@ -67,7 +93,7 @@ Then /^I have access to create a new joint offered course offering$/ do
   end
 end
 
-Then /^the expected state of the toolbar is: Create: "([^"]*)"; Approve: "([^"]*)"; Delete: "([^"]*)"$/ do |create_button_state, approve_button_state, delete_button_state|
+Then /^the expected state of the CO toolbar is: Create: "([^"]*)"; Approve: "([^"]*)"; Delete: "([^"]*)"$/ do |create_button_state, approve_button_state, delete_button_state|
   on ManageCourseOfferingList do |page|
     if create_button_state == "enabled"
       page.create_course_offering_button.enabled?.should be_true

@@ -398,10 +398,20 @@ When /^there is a Planned course offering with 2 activity offerings present/ do
   @course_offering.approve_co
   @course_offering.manage
   on ManageCourseOfferings do |page|
+    page.copy("A")
     if page.cluster_select_all_aos("CL 1") then
       page.draft_activity_button.wait_until_present(5)
       page.draft_activity
     end
+  end
+end
+
+When /^there is a Draft course offering with 2 activity offerings present/ do
+  step "I am logged in as a Schedule Coordinator"
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL245", :term=>@term_for_test)
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.copy("A")
   end
 end
 
