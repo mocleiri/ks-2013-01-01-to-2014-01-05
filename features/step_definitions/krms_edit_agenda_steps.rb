@@ -294,12 +294,18 @@ Then /^the "(.*?)" rule should still exist$/ do |sect|
   end
 end
 
-When /^I am busy with "(.*?)"$/ do |scenario|
-  puts "Testing: " + scenario
-end
-
 When /^I want to wait$/ do 
   on ManageCOAgendas do |page|
     sleep 5
+  end
+end
+
+Then /^the "(.*?)" link should exist on the Manage CO Agendas page$/ do |link|
+  on ManageCOAgendas do |page|
+    if page.agenda_management_section.a(:text => /#{Regexp.escape(link)}/).exists?
+      true
+    else
+      false
+    end
   end
 end

@@ -27,6 +27,7 @@ class EditAgendaData
 
   def advanced_search(field, code)
     fields = {"course code"=>:lookup_course_code, "course title"=>:lookup_course_title, "course set"=>:lookup_set_name}
+    sleep 3 #adding sleep, moving through the tree too fast causes test to crash
     on EditAgenda do |page|
       page.search_link
       page.send(fields[field]).when_present.set code
@@ -38,7 +39,7 @@ class EditAgendaData
         #TODO - find a way to return course code randomly when searching for title or description
       end
     end
-    sleep 2 #adding sleep, moving through the tree too fast causes test to crash
+    sleep 3 #adding sleep, moving through the tree too fast causes test to crash
   end
 
   def navigate( course)
@@ -123,8 +124,10 @@ class EditAgendaData
         page.multi_course_dropdown.when_present.select /Approved Courses/
         advanced_search("course code", "ENGL478")
         page.add_line_btn
+        page.adding.wait_while_present;
         advanced_search("course code", "HIST416")
         page.add_line_btn
+        page.adding.wait_while_present;
         page.preview_btn
 
         page.add_btn
@@ -157,8 +160,10 @@ class EditAgendaData
         page.multi_course_dropdown.when_present.select /Approved Courses/
         advanced_search("course code", "HIST395")
         page.add_line_btn
+        page.adding.wait_while_present;
         advanced_search("course code", "HIST210")
         page.add_line_btn
+        page.adding.wait_while_present;
         page.preview_btn
 
         page.loading.wait_while_present
