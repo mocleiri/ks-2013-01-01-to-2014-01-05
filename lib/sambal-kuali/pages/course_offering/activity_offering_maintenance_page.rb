@@ -146,12 +146,12 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   def update_priority(pop_name, priority)
     target_pool_row(pop_name).cells[PRIORITY_COLUMN].text_field.set priority
-    target_pool_row(pop_name).cells[PRIORITY_COLUMN].text_field.fire_event "onchange"
+    target_pool_row(pop_name).cells[PRIORITY_COLUMN].text_field.fire_event "onblur"
   end
 
   def update_seats(pop_name, seats)
     target_pool_row(pop_name).cells[SEATS_COLUMN].text_field.set seats
-    target_pool_row(pop_name).cells[SEATS_COLUMN].text_field.fire_event "onchange"
+    target_pool_row(pop_name).cells[SEATS_COLUMN].text_field.fire_event "onblur"
   end
 
   def update_expiration_milestone(pop_name, milestone)
