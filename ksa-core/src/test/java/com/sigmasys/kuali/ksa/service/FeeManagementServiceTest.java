@@ -405,6 +405,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 
     @Test
     public void testCreateKeyPairWithNewName() throws Exception {
+
         // Test objects:
         createTestFeeBase();
         String name = "absolutely new name";
