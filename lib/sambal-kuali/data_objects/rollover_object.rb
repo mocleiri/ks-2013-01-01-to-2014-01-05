@@ -67,7 +67,7 @@ class Rollover
       puts "Rollover initiated - source term: #{@source_term}"
       puts "Rollover initiated - target term: #{@target_term}"
       page.rollover_course_offerings
-      raise "rollover issue" unless page.status == "In Progress"
+      raise "rollover issue" unless page.status.upcase == "IN PROGRESS"
     end
   end
 
