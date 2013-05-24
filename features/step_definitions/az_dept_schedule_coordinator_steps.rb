@@ -446,6 +446,15 @@ When /^I edit a course offering in my admin org$/ do
   end
 end
 
+When /^I edit a course offering in my admin org that has multiple credit types$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL369D"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+end
+
 When /^I attempt to edit a course offering in my admin org$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL206"
