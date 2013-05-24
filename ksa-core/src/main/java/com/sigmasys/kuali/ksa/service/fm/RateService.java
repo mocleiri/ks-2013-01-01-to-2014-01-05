@@ -5,11 +5,10 @@ import com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateTypeException;
 import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.fm.Rate;
-import com.sigmasys.kuali.ksa.model.fm.RateCatalog;
-import com.sigmasys.kuali.ksa.model.fm.RateType;
+import com.sigmasys.kuali.ksa.model.fm.*;
 
 import javax.jws.WebService;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -111,6 +110,38 @@ public interface RateService {
      * @return RateCatalog instance with the new ID
      */
     RateCatalog createRateCatalog(RateCatalog rateCatalog);
+
+    /**
+     * Creates a new RateCatalog persistent instance from the set of given parameters.
+     *
+     * @param rateCatalogCode            RateCatalog code
+     * @param rateTypeCode               RateType code
+     * @param transactionDateType        TransactionDateType enum value
+     * @param lowerBoundAmount           Minimum transaction amount
+     * @param upperBoundAmount           Maximum transaction amount
+     * @param cappedAmount               Capped amount
+     * @param atpIds                     list of ATP IDs
+     * @param keyPairs                   list of KeyPair instances
+     * @param isTransactionTypeFinal     Indicates whether the transaction type is final
+     * @param isTransactionDateTypeFinal Indicates whether the transaction date type is final
+     * @param isRecognitionDateDefinable Indicates whether the recognition date can be set
+     * @param isAmountFinal              Indicates whether the transaction amount is final
+     * @param isKeyPairFinal             Indicates whether the set of KeyPairs is immutable
+     * @return a new RateCatalog instance
+     */
+    RateCatalog createRateCatalog(String rateCatalogCode,
+                                  String rateTypeCode,
+                                  TransactionDateType transactionDateType,
+                                  BigDecimal lowerBoundAmount,
+                                  BigDecimal upperBoundAmount,
+                                  BigDecimal cappedAmount,
+                                  List<String> atpIds,
+                                  List<KeyPair> keyPairs,
+                                  boolean isTransactionTypeFinal,
+                                  boolean isTransactionDateTypeFinal,
+                                  boolean isRecognitionDateDefinable,
+                                  boolean isAmountFinal,
+                                  boolean isKeyPairFinal);
 
     /**
      * Persists RateCatalog in the database.
@@ -255,6 +286,14 @@ public interface RateService {
      * @return a set of ATP IDs
      */
     Set<String> getAtpsForRateCatalog(Long rateCatalogId);
+
+    /**
+     * Checks with the ATP service whether the given ATP ID exists in the system.
+     *
+     * @param atpId ATP ID to check
+     * @return true if the ATP ID exists, false - otherwise
+     */
+    boolean atpExists(String atpId);
 
     // Additional methods
 

@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.core.atp.infc.Atp;
 import org.kuali.student.r2.core.atp.service.AtpService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -227,6 +228,109 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         return rateCatalog;
     }
+
+
+    /**
+     * Creates a new RateCatalog persistent instance from the set of given parameters.
+     *
+     * @param rateCatalogCode            RateCatalog code
+     * @param rateTypeCode               RateType code
+     * @param transactionDateType        TransactionDateType enum value
+     * @param lowerBoundAmount           Minimum transaction amount
+     * @param upperBoundAmount           Maximum transaction amount
+     * @param cappedAmount               Capped amount
+     * @param atpIds                     list of ATP IDs
+     * @param keyPairs                   list of KeyPair instances
+     * @param isTransactionTypeFinal     Indicates whether the transaction type is final
+     * @param isTransactionDateTypeFinal Indicates whether the transaction date type is final
+     * @param isRecognitionDateDefinable Indicates whether the recognition date can be set
+     * @param isAmountFinal              Indicates whether the transaction amount is final
+     * @param isKeyPairFinal             Indicates whether the set of KeyPairs is immutable
+     * @return a new RateCatalog instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public RateCatalog createRateCatalog(String rateCatalogCode,
+                                         String rateTypeCode,
+                                         TransactionDateType transactionDateType,
+                                         BigDecimal lowerBoundAmount,
+                                         BigDecimal upperBoundAmount,
+                                         BigDecimal cappedAmount,
+                                         List<String> atpIds,
+                                         List<KeyPair> keyPairs,
+                                         boolean isTransactionTypeFinal,
+                                         boolean isTransactionDateTypeFinal,
+                                         boolean isRecognitionDateDefinable,
+                                         boolean isAmountFinal,
+                                         boolean isKeyPairFinal) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_RATE_CATALOG);
+
+        if (StringUtils.isBlank(rateCatalogCode)) {
+            String errMsg = "RateCatalog code cannot be empty";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        RateType rateType = getRateTypeByCode(rateTypeCode);
+        if (rateType == null) {
+            String errMsg = "RateType with code = " + rateTypeCode;
+            logger.error(errMsg);
+            throw new InvalidRateTypeException(errMsg);
+        }
+
+        RateCatalog rateCatalog = new RateCatalog();
+        rateCatalog.setCode(rateCatalogCode);
+        rateCatalog.setRateType(rateType);
+        rateCatalog.setTransactionDateType(transactionDateType);
+        rateCatalog.setLowerBoundAmount(lowerBoundAmount);
+        rateCatalog.setUpperBoundAmount(upperBoundAmount);
+        rateCatalog.setCappedAmount(cappedAmount);
+
+        Set<String> atpIdSet = new HashSet<String>(atpIds);
+        if (CollectionUtils.isNotEmpty(atpIdSet)) {
+
+            // Checking if there are other rate catalogs with the same code and any ATP IDs from the list
+            Query query = em.createQuery("select 1 from RateCatalogAtp where id.code = :code and id.atpId in (:atpIds)");
+            query.setParameter("code", rateCatalogCode);
+            query.setParameter("atpIds", atpIdSet);
+            query.setMaxResults(1);
+
+            if (CollectionUtils.isNotEmpty(query.getResultList())) {
+                String errMsg = "The same ATP IDs cannot be associated with the other rate catalogs with the same code";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+
+            for (String atpId : atpIds) {
+                // Checking if the ATP ID exists using AtpService
+                if (!atpExists(atpId)) {
+                    String errMsg = "ATP with ID = " + atpId + " does not exist";
+                    logger.error(errMsg);
+                    throw new IllegalArgumentException(errMsg);
+                }
+            }
+        }
+
+        Set<KeyPair> keyPairSet = new HashSet<KeyPair>(keyPairs);
+        if (CollectionUtils.isNotEmpty(keyPairSet)) {
+            for (KeyPair keyPair : keyPairSet) {
+                persistEntity(keyPair);
+            }
+            rateCatalog.setKeyPairs(keyPairSet);
+        }
+
+        rateCatalog.setTransactionTypeFinal(isTransactionTypeFinal);
+        rateCatalog.setTransactionDateTypeFinal(isTransactionDateTypeFinal);
+        rateCatalog.setRecognitionDateDefinable(isRecognitionDateDefinable);
+        rateCatalog.setAmountFinal(isAmountFinal);
+        rateCatalog.setKeyPairFinal(isKeyPairFinal);
+
+        persistRateCatalog(rateCatalog);
+
+        return rateCatalog;
+    }
+
 
     /**
      * Persists RateCatalog in the database.
@@ -508,6 +612,28 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         Query query = em.createQuery("select rca.atpId from RateCatalogAtp rca where rca.rateCatalog.id = :id");
         query.setParameter("id", rateCatalogId);
         return new HashSet<String>(query.getResultList());
+    }
+
+    /**
+     * Checks with the ATP service whether the given ATP ID exists in the system.
+     *
+     * @param atpId ATP ID to check
+     * @return true if the ATP ID exists, false - otherwise
+     */
+    @Override
+    public boolean atpExists(String atpId) {
+        // Checking if the ATP ID exists using AtpService
+        boolean atpExists = false;
+        try {
+            atpExists = atpService.getAtp(atpId, getAtpContextInfo()) != null;
+        } catch (DoesNotExistException e) {
+            logger.error(e.getMessage(), e);
+            atpExists = false;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return atpExists;
     }
 
 
@@ -1029,6 +1155,34 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     @Transactional(readOnly = false)
     public RateCatalog addKeyPairToRateCatalog(String key, String value, Long rateCatalogId) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG);
+
+        RateCatalog rateCatalog = getRateCatalog(rateCatalogId);
+
+        if (rateCatalog == null) {
+            String errMsg = "RateCatalog with ID = " + rateCatalogId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidRateCatalogException(errMsg);
+        }
+
+        KeyPair newKeyPair = new KeyPair(key, value);
+
+        Set<KeyPair> catalogKeyPairs = rateCatalog.getKeyPairs();
+
+        if (!CollectionUtils.isEmpty(catalogKeyPairs)) {
+            for (KeyPair keyPair : catalogKeyPairs) {
+                if (keyPair.getName().equals(newKeyPair.getName())) {
+                    newKeyPair.setPreviousValue(keyPair.getValue());
+                    persistEntity(newKeyPair);
+                }
+            }
+            catalogKeyPairs.add(newKeyPair);
+        } else {
+            persistEntity(newKeyPair);
+            rateCatalog.setKeyPairs(new HashSet<KeyPair>(Arrays.asList(newKeyPair)));
+        }
+
         // TODO
         return null;
     }

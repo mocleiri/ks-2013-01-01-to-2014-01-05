@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * This entity represents a "key-value" pair used to perform tuition Fee Assessment.
- * 
+ *
  * @author Sergey
  */
 @Entity
@@ -28,27 +28,34 @@ import org.apache.commons.lang.StringUtils;
 public class KeyPair implements Identifiable {
 
 
-	
-	/**
-	 * The unique identifier.
-	 */
-	private Long id;
-	
-	/**
-	 * The name of the key in a pair.
-	 */
-	private String name;
-	
-	/**
-	 * The value of the given key.
-	 */
-	private String value;
-	
-	/**
-	 * If the key had a value before reassignment, the previous value.
-	 */
-	private String previousValue;
-	
+    /**
+     * The unique identifier.
+     */
+    private Long id;
+
+    /**
+     * The name of the key in a pair.
+     */
+    private String name;
+
+    /**
+     * The value of the given key.
+     */
+    private String value;
+
+    /**
+     * If the key had a value before reassignment, the previous value.
+     */
+    private String previousValue;
+
+
+    public KeyPair() {
+    }
+
+    public KeyPair(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
@@ -58,47 +65,47 @@ public class KeyPair implements Identifiable {
             valueColumnName = "SEQ_VALUE",
             pkColumnValue = "KEYPAIR_SEQ")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_KEYPAIR")
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-    @Column(name="NAME", length=45)
-	public String getName() {
-		return name;
-	}
+    @Column(name = "NAME", length = 45, nullable = false, unique = true)
+    public String getName() {
+        return name;
+    }
 
-    @Column(name="VALUE", length=256)
-	public String getValue() {
-		return value;
-	}
+    @Column(name = "VALUE", length = 256)
+    public String getValue() {
+        return value;
+    }
 
-    @Column(name="PREV_VALUE", length=256)
-	public String getPreviousValue() {
-		return previousValue;
-	}
+    @Column(name = "PREV_VALUE", length = 256)
+    public String getPreviousValue() {
+        return previousValue;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setValue(String value) {
-		// Store the old value into the "previousValue" property if different:
-		if (!StringUtils.equals(value, this.value)) {  
-			setPreviousValue(this.value);
-			
-			// Reassign the "value" property to the new value:
-			this.value = value;
-		}
-	}
+    public void setValue(String value) {
+        // Store the old value into the "previousValue" property if different:
+        if (!StringUtils.equals(value, this.value)) {
+            setPreviousValue(this.value);
 
-	public void setPreviousValue(String previousValue) {
-		this.previousValue = previousValue;
-	}
+            // Reassign the "value" property to the new value:
+            this.value = value;
+        }
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setPreviousValue(String previousValue) {
+        this.previousValue = previousValue;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @Override
     public boolean equals(Object o) {
