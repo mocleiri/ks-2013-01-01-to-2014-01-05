@@ -9,7 +9,6 @@ import javax.persistence.TemporalType;
 
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
@@ -27,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sigmasys.kuali.ksa.service.FeeManagementService;
 
-
+@Deprecated
 @Service("feeManagementService")
 @Transactional(timeout = 600)
 @SuppressWarnings("unchecked")
@@ -93,8 +92,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return Account's student data.
      */
     @Override
-    public List<KeyPair> getStudentData(String accountId) {
-        return findKeyPairs(accountId, KeyPair.class, KeyPairType.KEY_PAIR);
+    public List<DeprecatedKeyPair> getStudentData(String accountId) {
+        return findKeyPairs(accountId, DeprecatedKeyPair.class, KeyPairType.KEY_PAIR);
     }
 
     /**
@@ -140,7 +139,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             throw new UserNotFoundException(errMsg);
         }
 
-        List<KeyPair> studentData = getStudentData(accountId);
+        List<DeprecatedKeyPair> studentData = getStudentData(accountId);
         List<PeriodKeyPair> periodData = getLearningPeriodData(accountId);
         List<LearningUnit> study = getLearningUnits(accountId);
 
@@ -200,8 +199,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return The newly created <code>KeyPair</code>.
      */
     @Override
-    public KeyPair createKeyPair(FeeBase feeBase, String name, String value) {
-        return createFeeBaseKeyPairInternal(feeBase, name, value, null, KeyPair.class);
+    public DeprecatedKeyPair createKeyPair(FeeBase feeBase, String name, String value) {
+        return createFeeBaseKeyPairInternal(feeBase, name, value, null, DeprecatedKeyPair.class);
     }
 
     /**
@@ -227,7 +226,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return The newly created <code>KeyPair</code>.
      */
     @Override
-    public KeyPair setKeyPair(LearningUnit learningUnit, String name, String value) {
+    public DeprecatedKeyPair setKeyPair(LearningUnit learningUnit, String name, String value) {
 
         // Validate the input:
         validateInputParameters(learningUnit, name, value);
@@ -236,10 +235,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         try {
 
             // Create and persist a new KeyPair:
-            KeyPair newKeyPair = setKeyPairInternal(name, value, null, KeyPair.class);
+            DeprecatedKeyPair newKeyPair = setKeyPairInternal(name, value, null, DeprecatedKeyPair.class);
 
             // Add the new KeyPair to the LearningUnit's set of KeyPairs if it does not already exist there
-            Set<KeyPair> keyPairs = learningUnit.getKeyPairs();
+            Set<DeprecatedKeyPair> keyPairs = learningUnit.getKeyPairs();
             if (keyPairs != null) {
                 if (keyPairs.contains(newKeyPair)) {
                     keyPairs.remove(newKeyPair);
@@ -280,7 +279,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         validateInputParameters(feeBase, name);
 
         // Try to find a KeyPair in the StudentData:
-        KeyPair keyPair = getKeyPairInternal(feeBase.getStudentData(), name);
+        DeprecatedKeyPair keyPair = getKeyPairInternal(feeBase.getStudentData(), name);
 
         // If not found, try to find in PeriodData:
         if (keyPair == null) {
@@ -311,7 +310,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         // Iterate through the "extended" attribute of the "learningUnit"
         // to find the one that has the "name" attribute equals to the argument:
-        for (KeyPair keyPair : learningUnit.getKeyPairs()) {
+        for (DeprecatedKeyPair keyPair : learningUnit.getKeyPairs()) {
             if (StringUtils.equalsIgnoreCase(keyPair.getName(), name)) {
                 return keyPair.getValue();
             }
@@ -330,10 +329,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     @Override
     public void updateKeyPair(FeeBase feeBase, String name, String newValue) {
         // Validate the input:
-        validateInputParameters(feeBase, name, newValue, null, KeyPair.class);
+        validateInputParameters(feeBase, name, newValue, null, DeprecatedKeyPair.class);
 
         // Update the KeyPair value:
-        updateKeyPairInternal(feeBase.getStudentData(), name, newValue, null, KeyPair.class);
+        updateKeyPairInternal(feeBase.getStudentData(), name, newValue, null, DeprecatedKeyPair.class);
     }
 
     /**
@@ -367,7 +366,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         validateInputParameters(learningUnit, name, newValue);
 
         // Update the KeyPair value:
-        updateKeyPairInternal(learningUnit.getKeyPairs(), name, newValue, null, KeyPair.class);
+        updateKeyPairInternal(learningUnit.getKeyPairs(), name, newValue, null, DeprecatedKeyPair.class);
     }
 
     /**
@@ -382,8 +381,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         validateInputParameters(feeBase, name);
 
         // Find the KeyPair to remove in "studentData":
-        List<? extends KeyPair> removeFrom = feeBase.getStudentData();
-        KeyPair removeKeyPair = getKeyPairInternal(removeFrom, name);
+        List<? extends DeprecatedKeyPair> removeFrom = feeBase.getStudentData();
+        DeprecatedKeyPair removeKeyPair = getKeyPairInternal(removeFrom, name);
 
         // If not found in the "studentData", find in the "periodData":
         if (removeKeyPair == null) {
@@ -1367,7 +1366,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param resultClass Class of an object to load.
      * @return Associated objects.
      */
-    private <T extends KeyPair> List<T> findKeyPairs(String accountId, Class<T> resultClass, KeyPairType keyPairType) {
+    private <T extends DeprecatedKeyPair> List<T> findKeyPairs(String accountId, Class<T> resultClass, KeyPairType keyPairType) {
         // Since associations between Account and KeyPair/PeriodKeyPair are not defined
         // neither in Account nor KeyPair/PeriodKeyPair, we have to load them using
         // the physical association table join.
@@ -1387,7 +1386,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param entityClass The type of the new object to create.
      * @return The newly created object.
      */
-    private <T extends KeyPair> T createFeeBaseKeyPairInternal(FeeBase feeBase, String name, String value, LearningPeriod period, Class<T> entityClass) {
+    private <T extends DeprecatedKeyPair> T createFeeBaseKeyPairInternal(FeeBase feeBase, String name, String value, LearningPeriod period, Class<T> entityClass) {
         // Validate the input:
         validateInputParameters(feeBase, name, value, period, entityClass);
         validateKeyPairNameUnique(feeBase, name);
@@ -1428,7 +1427,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param entityClass The type of the new object to create.
      * @return The newly created object.
      */
-    private <T extends KeyPair> T setKeyPairInternal(String name, String value, LearningPeriod period, Class<T> entityClass) throws Exception {
+    private <T extends DeprecatedKeyPair> T setKeyPairInternal(String name, String value, LearningPeriod period, Class<T> entityClass) throws Exception {
 
         Query query = em.createQuery("select kp from KeyPair kp where kp.name = :name");
         query.setParameter("name", name);
@@ -1461,7 +1460,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param keyPair KeyPair to associate with an Account.
      * @throws Exception If there are errors creating a new association record.
      */
-    private void createKeyPairAssociationRecord(Account account, KeyPair keyPair) throws Exception {
+    private void createKeyPairAssociationRecord(Account account, DeprecatedKeyPair keyPair) throws Exception {
         createKeyPairAssociationRecord(account.getId(), keyPair);
     }
 
@@ -1472,7 +1471,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param keyPair   KeyPair to associate with an Account ID.
      * @throws Exception If there are errors creating a new association record.
      */
-    private void createKeyPairAssociationRecord(String accountId, KeyPair keyPair) throws Exception {
+    private void createKeyPairAssociationRecord(String accountId, DeprecatedKeyPair keyPair) throws Exception {
         // Create and execute an INSERT statement:
         Query query = em.createNativeQuery("insert into ksa.kssa_acnt_kypr (acnt_id_fk, kypr_id_fk) values (:accountId, :keypairId)");
         query.setParameter("accountId", accountId).setParameter("keypairId", keyPair.getId());
@@ -1487,7 +1486,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param keyPair KeyPair to disassociate from the given Account.
      * @throws Exception If a persistent storage operation error occurs.
      */
-    private void removeKeyPairAssociationRecord(Account account, KeyPair keyPair) throws Exception {
+    private void removeKeyPairAssociationRecord(Account account, DeprecatedKeyPair keyPair) throws Exception {
         removeKeyPairAssociationRecord(account.getId(), keyPair);
     }
 
@@ -1498,7 +1497,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param keyPair   KeyPair to disassociate from the given Account ID.
      * @throws Exception If a persistent storage operation error occurs.
      */
-    private void removeKeyPairAssociationRecord(String accountId, KeyPair keyPair) throws Exception {
+    private void removeKeyPairAssociationRecord(String accountId, DeprecatedKeyPair keyPair) throws Exception {
         // Create an execute a DELETE statement:
         Query query = em.createNativeQuery("delete from ksa.kssa_acnt_kypr where acnt_id_fk = :accountId and kypr_id_fk = :keypairId")
                 .setParameter("accountId", accountId).setParameter("keypairId", keyPair.getId());
@@ -1516,7 +1515,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param newPeriod   The new "period" attribute for PeriodKeyPairs.
      * @param keyPairType Type of the KeyPair.
      */
-    private <T extends KeyPair> void updateKeyPairInternal(Collection<T> keyPairs, String name, String newValue, LearningPeriod newPeriod, Class<T> keyPairType) {
+    private <T extends DeprecatedKeyPair> void updateKeyPairInternal(Collection<T> keyPairs, String name, String newValue, LearningPeriod newPeriod, Class<T> keyPairType) {
         // Get the KeyPairs, find the one with the given name and set the new value:
         boolean isPeriodKeyPair = keyPairType.equals(PeriodKeyPair.class);
 
@@ -1547,7 +1546,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return The KeyPair that has been removed or <code>null</code> if no such KeyPair with
      *         the specified "name" attribute exists in the given Collection.
      */
-    private <T extends KeyPair> T removeKeyPairInternal(Collection<T> keyPairs, String name) {
+    private <T extends DeprecatedKeyPair> T removeKeyPairInternal(Collection<T> keyPairs, String name) {
         T keyPair = getKeyPairInternal(keyPairs, name);
 
         if (keyPair != null) {
@@ -1564,7 +1563,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param name     Name of a KeyPair to check.
      * @return true if exists, false otherwise.
      */
-    private <T extends KeyPair> boolean containsKeyPairInternal(Collection<T> keyPairs, String name) {
+    private <T extends DeprecatedKeyPair> boolean containsKeyPairInternal(Collection<T> keyPairs, String name) {
         return (getKeyPairInternal(keyPairs, name) != null);
     }
 
@@ -1576,7 +1575,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return The KeyPair with the given name found in the given Collection or <code>null</code>
      *         if a KeyPair with such a name does not exist.
      */
-    private <T extends KeyPair> T getKeyPairInternal(Collection<T> keyPairs, String name) {
+    private <T extends DeprecatedKeyPair> T getKeyPairInternal(Collection<T> keyPairs, String name) {
         for (T keyPair : keyPairs) {
             if (StringUtils.equalsIgnoreCase(keyPair.getName(), name)) {
                 return keyPair;
@@ -1621,7 +1620,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
       *
       * *****************************************************************************/
 
-    private void validateInputParameters(FeeBase feeBase, String name, String value, LearningPeriod period, Class<? extends KeyPair> keyPairType) {
+    private void validateInputParameters(FeeBase feeBase, String name, String value, LearningPeriod period, Class<? extends DeprecatedKeyPair> keyPairType) {
 
         validateInputParameters(feeBase, name);
 

@@ -1,24 +1,14 @@
 package com.sigmasys.kuali.ksa.model.fm;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
 import com.sigmasys.kuali.ksa.model.Identifiable;
-import org.apache.commons.lang.StringUtils;
+import com.sigmasys.kuali.ksa.model.KeyPairType;
+
+import javax.persistence.*;
 
 /**
- * This entity represents a "key-value" pair used to perform tuition Fee Assessment.
+ * This entity represents a "key-value" pair used by RateService
  *
- * @author Sergey
+ * @author Michael Ivanov
  */
 @Entity
 @Table(name = "KSSA_KYPR")
@@ -36,44 +26,43 @@ public class KeyPair implements Identifiable {
     /**
      * The name of the key in a pair.
      */
-    private String name;
+    private String key;
 
     /**
      * The value of the given key.
      */
     private String value;
 
-    /**
-     * If the key had a value before reassignment, the previous value.
-     */
-    private String previousValue;
-
 
     public KeyPair() {
     }
 
-    public KeyPair(String name, String value) {
-        this.name = name;
+    public KeyPair(String key, String value) {
+        this.key = key;
         this.value = value;
     }
 
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_KEYPAIR",
+    @TableGenerator(name = "TABLE_GEN_KYPR",
             table = "KSSA_SEQUENCE_TABLE",
             pkColumnName = "SEQ_NAME",
             valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "KEYPAIR_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_KEYPAIR")
+            pkColumnValue = "KYPR_SEQ")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_KYPR")
     @Override
     public Long getId() {
         return id;
     }
 
-    @Column(name = "NAME", length = 45)
-    public String getName() {
-        return name;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Column(name = "KEY", nullable = false, unique = true, length = 45)
+    public String getKey() {
+        return key;
     }
 
     @Column(name = "VALUE", length = 256)
@@ -81,31 +70,12 @@ public class KeyPair implements Identifiable {
         return value;
     }
 
-    @Column(name = "PREV_VALUE", length = 256)
-    public String getPreviousValue() {
-        return previousValue;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public void setValue(String value) {
-        // Store the old value into the "previousValue" property if different:
-        if (!StringUtils.equals(value, this.value)) {
-            setPreviousValue(this.value);
-
-            // Reassign the "value" property to the new value:
-            this.value = value;
-        }
-    }
-
-    public void setPreviousValue(String previousValue) {
-        this.previousValue = previousValue;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        this.value = value;
     }
 
     @Override
@@ -121,14 +91,14 @@ public class KeyPair implements Identifiable {
 
         KeyPair keyPair = (KeyPair) o;
 
-        return !(name != null ? !name.equals(keyPair.name) : keyPair.name != null) && !(value != null ?
+        return !(key != null ? !key.equals(keyPair.key) : keyPair.key != null) && !(value != null ?
                 !value.equals(keyPair.value) : keyPair.value != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = key != null ? key.hashCode() : 0;
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
     }

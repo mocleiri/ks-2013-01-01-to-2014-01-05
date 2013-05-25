@@ -102,4 +102,17 @@ public class Rate extends AbstractRateEntity {
         this.defaultRateAmount = defaultRateAmount;
     }
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "KSSA_RATE_KYPR",
+            joinColumns = {
+                    @JoinColumn(name = "RATE_ID_FK")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "RATE_KYPR_ID_FK")
+            }
+    )
+    public Set<KeyPair> getKeyPairs() {
+        return keyPairs;
+    }
+
 }

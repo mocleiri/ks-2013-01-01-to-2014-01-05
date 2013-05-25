@@ -23,6 +23,7 @@ drop table KSSA_CASH_LIMIT_EVENT_TRANS cascade constraints;
 drop table KSSA_CASH_LIMIT_PARAMETER cascade constraints;
 drop table KSSA_CREDIT_PERMISSION cascade constraints;
 drop table KSSA_CURRENCY cascade constraints;
+drop table KSSA_DEPRECATED_KYPR cascade constraints;
 drop table KSSA_DOCUMENT cascade constraints;
 drop table KSSA_ELECTRONIC_CONTACT cascade constraints;
 drop table KSSA_ELECTRONIC_CONTACT_ACNT cascade constraints;

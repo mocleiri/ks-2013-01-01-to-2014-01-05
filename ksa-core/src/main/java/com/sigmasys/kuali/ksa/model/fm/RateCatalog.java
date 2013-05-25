@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.model.fm;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Set;
 
 /**
  * Rate catalog model.
@@ -86,4 +87,18 @@ public class RateCatalog extends AbstractRateEntity {
     public void setTransactionDateTypeFinal(Boolean transactionDateTypeFinal) {
         isTransactionDateTypeFinal = transactionDateTypeFinal;
     }
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "KSSA_RATE_CATALOG_KYPR",
+            joinColumns = {
+                    @JoinColumn(name = "RATE_CATALOG_ID_FK")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "KYPR_ID_FK")
+            }
+    )
+    public Set<KeyPair> getKeyPairs() {
+        return keyPairs;
+    }
+
 }

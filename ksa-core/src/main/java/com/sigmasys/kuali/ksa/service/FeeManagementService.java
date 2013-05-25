@@ -5,10 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.fm.KeyPair;
-import com.sigmasys.kuali.ksa.model.fm.LearningPeriod;
-import com.sigmasys.kuali.ksa.model.fm.LearningUnit;
-import com.sigmasys.kuali.ksa.model.fm.PeriodKeyPair;
+import com.sigmasys.kuali.ksa.model.DeprecatedKeyPair;
+import com.sigmasys.kuali.ksa.model.LearningPeriod;
+import com.sigmasys.kuali.ksa.model.LearningUnit;
+import com.sigmasys.kuali.ksa.model.PeriodKeyPair;
 
 /**
  * This interface represents a service object to work with Fee Assessments of ChargeableAccounts.
@@ -21,6 +21,7 @@ import com.sigmasys.kuali.ksa.model.fm.PeriodKeyPair;
  * @author Michael Ivanov
  * @version 1.0
  */
+@Deprecated
 public interface FeeManagementService {
 
     /**
@@ -37,7 +38,7 @@ public interface FeeManagementService {
      * @param accountId Id of an account for which to get its student data.
      * @return Account's student data.
      */
-    List<KeyPair> getStudentData(String accountId);
+    List<DeprecatedKeyPair> getStudentData(String accountId);
 
     /**
      * Returns an account's Set of learning period data in form of PeriodKeyPair objects.
@@ -93,7 +94,7 @@ public interface FeeManagementService {
      * @param value   Value of the new <code>KeyPair</code>.
      * @return The newly created <code>KeyPair</code>.
      */
-    KeyPair createKeyPair(FeeBase feeBase, String name, String value);
+    DeprecatedKeyPair createKeyPair(FeeBase feeBase, String name, String value);
 
     /**
      * Creates a new <code>PeriodKeyPair</code> object for the specified <code>FeeBase</code>
@@ -114,7 +115,7 @@ public interface FeeManagementService {
      * @param value        Value of the new <code>KeyPair</code>.
      * @return The newly created <code>KeyPair</code>.
      */
-    KeyPair setKeyPair(LearningUnit learningUnit, String name, String value);
+    DeprecatedKeyPair setKeyPair(LearningUnit learningUnit, String name, String value);
 
     /**
      * Returns the value of a <code>KeyPair</code> with the specified name within the given <code>FeeBase</code>.

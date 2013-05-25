@@ -104,14 +104,6 @@ public interface RateService {
     // Rate Catalog methods
 
     /**
-     * Creates and persists a new RateCatalog instance.
-     *
-     * @param rateCatalog RateCatalog instance
-     * @return RateCatalog instance with the new ID
-     */
-    RateCatalog createRateCatalog(RateCatalog rateCatalog);
-
-    /**
      * Creates a new RateCatalog persistent instance from the set of given parameters.
      *
      * @param rateCatalogCode            RateCatalog code

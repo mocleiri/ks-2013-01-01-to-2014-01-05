@@ -5,6 +5,7 @@ package com.sigmasys.kuali.ksa.model;
  *
  * @author Michael Ivanov
  */
+@Deprecated
 public enum FeeDetailAmountType implements Identifiable {
 
     FLAT,

@@ -207,30 +207,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     // Rate Catalog methods
 
     /**
-     * Creates and persists a new RateCatalog instance.
-     *
-     * @param rateCatalog RateCatalog instance
-     * @return RateCatalog instance with the new ID
-     */
-    @Override
-    @Transactional(readOnly = false)
-    public RateCatalog createRateCatalog(RateCatalog rateCatalog) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_RATE_CATALOG);
-
-        if (!isRateCatalogValid(rateCatalog)) {
-            String errMsg = "RateCatalog (code=" + rateCatalog.getCode() + ") is invalid";
-            logger.error(errMsg);
-            throw new InvalidRateCatalogException(errMsg);
-        }
-
-        auditableEntityService.persistAuditableEntity(rateCatalog);
-
-        return rateCatalog;
-    }
-
-
-    /**
      * Creates a new RateCatalog persistent instance from the set of given parameters.
      *
      * @param rateCatalogCode            RateCatalog code
@@ -1170,18 +1146,15 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         Set<KeyPair> catalogKeyPairs = rateCatalog.getKeyPairs();
 
-        if (!CollectionUtils.isEmpty(catalogKeyPairs)) {
-            for (KeyPair keyPair : catalogKeyPairs) {
-                if (keyPair.getName().equals(newKeyPair.getName())) {
-                    newKeyPair.setPreviousValue(keyPair.getValue());
-                    persistEntity(newKeyPair);
-                }
-            }
-            catalogKeyPairs.add(newKeyPair);
-        } else {
-            persistEntity(newKeyPair);
-            rateCatalog.setKeyPairs(new HashSet<KeyPair>(Arrays.asList(newKeyPair)));
+        persistEntity(newKeyPair);
+
+        if (catalogKeyPairs == null) {
+            catalogKeyPairs = new HashSet<KeyPair>();
         }
+
+        catalogKeyPairs.add(newKeyPair);
+
+        rateCatalog.setKeyPairs(catalogKeyPairs);
 
         // TODO
         return null;

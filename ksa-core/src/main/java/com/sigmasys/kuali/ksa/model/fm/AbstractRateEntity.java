@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.model.AuditableEntity;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -17,22 +18,31 @@ import java.util.Set;
 @AttributeOverride(name = "code", column = @Column(name = "CODE", length = 20, nullable = false))
 public abstract class AbstractRateEntity extends AuditableEntity<Long> {
 
-    private Boolean isAmountFinal;
+    protected Boolean isAmountFinal;
 
-    private Boolean isTransactionTypeFinal;
+    protected Boolean isTransactionTypeFinal;
 
-    private String transactionTypeId;
+    protected String transactionTypeId;
 
-    private RateType rateType;
+    protected RateType rateType;
 
-    private Set<KeyPair> keyPairs;
+    protected Set<KeyPair> keyPairs;
 
-    private BigDecimal cappedAmount;
+    protected BigDecimal cappedAmount;
 
-    private TransactionDateType transactionDateType;
+    protected TransactionDateType transactionDateType;
 
-    private String transactionDateTypeCode;
+    protected String transactionDateTypeCode;
 
+
+    @Transient
+    @XmlTransient
+    public abstract Set<KeyPair> getKeyPairs();
+
+
+    public void setKeyPairs(Set<KeyPair> keyPairs) {
+        this.keyPairs = keyPairs;
+    }
 
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_AMOUNT_FINAL")
@@ -71,23 +81,6 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> {
 
     public void setRateType(RateType rateType) {
         this.rateType = rateType;
-    }
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "KSSA_RATE_CATALOG_KYPR",
-            joinColumns = {
-                    @JoinColumn(name = "RATE_CATALOG_ID_FK")
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "KYPR_ID_FK")
-            }
-    )
-    public Set<KeyPair> getKeyPairs() {
-        return keyPairs;
-    }
-
-    public void setKeyPairs(Set<KeyPair> keyPairs) {
-        this.keyPairs = keyPairs;
     }
 
     @Column(name = "CAPPED_AMOUNT")

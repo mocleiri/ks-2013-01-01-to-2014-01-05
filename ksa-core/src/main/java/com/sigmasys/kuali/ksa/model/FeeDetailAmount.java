@@ -9,6 +9,7 @@ import java.math.BigDecimal;
  *
  * @author Michael Ivanov
  */
+@Deprecated
 @Entity
 @Table(name = "KSSA_FEE_DETAIL_AMOUNT")
 public class FeeDetailAmount implements Identifiable {

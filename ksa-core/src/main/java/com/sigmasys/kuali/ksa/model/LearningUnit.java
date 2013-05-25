@@ -1,4 +1,4 @@
-package com.sigmasys.kuali.ksa.model.fm;
+package com.sigmasys.kuali.ksa.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -18,9 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import com.sigmasys.kuali.ksa.model.Account;
-import com.sigmasys.kuali.ksa.model.AccountIdAware;
-import com.sigmasys.kuali.ksa.model.Identifiable;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -31,6 +28,7 @@ import org.apache.commons.lang.time.DateUtils;
  * @author Sergey
  * @version 1.0
  */
+@Deprecated
 @Entity
 @Table(name = "KSSA_LU")
 public class LearningUnit extends AccountIdAware implements Identifiable {
@@ -91,7 +89,7 @@ public class LearningUnit extends AccountIdAware implements Identifiable {
 	/**
 	 * A set of PeriodKeyPair that represent extended elements of the LearningUnit.
 	 */
-	private Set<KeyPair> keyPairs;
+	private Set<DeprecatedKeyPair> keyPairs;
 	
 	/**
 	 * The Account associated with this LearningUnit.
@@ -168,7 +166,7 @@ public class LearningUnit extends AccountIdAware implements Identifiable {
                     @JoinColumn(name = "KYPR_ID_FK")
             }
     )
-	public Set<KeyPair> getKeyPairs() {
+	public Set<DeprecatedKeyPair> getKeyPairs() {
 		return keyPairs;
 	}
 
@@ -214,7 +212,7 @@ public class LearningUnit extends AccountIdAware implements Identifiable {
 		this.status = status;
 	}
 
-	public void setKeyPairs(Set<KeyPair> keyPairs) {
+	public void setKeyPairs(Set<DeprecatedKeyPair> keyPairs) {
 		this.keyPairs = keyPairs;
 	}
 

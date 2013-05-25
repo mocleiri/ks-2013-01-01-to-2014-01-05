@@ -1,6 +1,4 @@
-package com.sigmasys.kuali.ksa.model.fm;
-
-import com.sigmasys.kuali.ksa.model.AuditableEntity;
+package com.sigmasys.kuali.ksa.model;
 
 import java.util.Date;
 
@@ -22,7 +20,7 @@ import javax.persistence.TableGenerator;
  * @author Sergey
  * @version 1.0
  */
-
+@Deprecated
 @Entity
 @Table(name = "KSSA_LEARNING_PERIOD")
 public class LearningPeriod extends AuditableEntity<Long> {

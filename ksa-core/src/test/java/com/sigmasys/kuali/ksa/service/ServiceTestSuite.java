@@ -33,7 +33,6 @@ import org.junit.runners.Suite;
         ConfigServiceTest.class,
         UserPreferenceServiceTest.class,
         GeneralLedgerServiceTest.class,
-        FeeManagementServiceTest.class,
         PaymentServiceTest.class,
         TransactionUtilsTest.class,
         TemplateControllerTest.class,

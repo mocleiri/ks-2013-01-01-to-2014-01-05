@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.sigmasys.kuali.ksa.model.fm.KeyPair;
-import com.sigmasys.kuali.ksa.model.fm.LearningUnit;
-import com.sigmasys.kuali.ksa.model.fm.PeriodKeyPair;
 import com.sigmasys.kuali.ksa.service.FeeManagementService;
 
 /**
@@ -24,6 +21,7 @@ import com.sigmasys.kuali.ksa.service.FeeManagementService;
  *
  * @author Sergey
  */
+@Deprecated
 public class FeeBase implements Serializable {
 
     /**
@@ -34,7 +32,7 @@ public class FeeBase implements Serializable {
     /**
      * Non-period student data in form of KeyPair objects.
      */
-    private List<KeyPair> studentData;
+    private List<DeprecatedKeyPair> studentData;
 
     /**
      * Period data in form of PeriodKeyPair objects.
@@ -63,11 +61,11 @@ public class FeeBase implements Serializable {
         this.account = account;
     }
 
-    public List<KeyPair> getStudentData() {
+    public List<DeprecatedKeyPair> getStudentData() {
         return studentData;
     }
 
-    public void setStudentData(List<KeyPair> studentData) {
+    public void setStudentData(List<DeprecatedKeyPair> studentData) {
         this.studentData = studentData;
     }
 

@@ -1,4 +1,4 @@
-package com.sigmasys.kuali.ksa.model.fm;
+package com.sigmasys.kuali.ksa.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
@@ -17,9 +17,10 @@ import org.apache.commons.lang.ObjectUtils;
  * @author Sergey
  * @version 1.0
  */
+@Deprecated
 @Entity
 @DiscriminatorValue(KeyPairType.PERIOD_KEY_PAIR_CODE)
-public class PeriodKeyPair extends KeyPair {
+public class PeriodKeyPair extends DeprecatedKeyPair {
 
     /**
      * Due to the need to store different values by period, this is a key

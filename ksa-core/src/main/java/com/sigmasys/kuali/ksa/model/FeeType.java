@@ -7,6 +7,7 @@ import javax.persistence.*;
  * <p/>
  * @author Michael Ivanov
  */
+@Deprecated
 @Entity
 @Table(name = "KSSA_FEE_TYPE")
 public class FeeType extends AuditableEntity<Long> {

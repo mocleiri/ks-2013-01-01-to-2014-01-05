@@ -1,6 +1,5 @@
 package com.sigmasys.kuali.ksa.model;
 
-import com.sigmasys.kuali.ksa.model.fm.KeyPair;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 
@@ -15,6 +14,7 @@ import java.util.Set;
  *
  * @author Michael Ivanov
  */
+@Deprecated
 @Entity
 @Table(name = "KSSA_FEE_DETAIL")
 public class FeeDetail extends AuditableEntity<Long> {
@@ -35,7 +35,7 @@ public class FeeDetail extends AuditableEntity<Long> {
 
     private Date defaultTransactionDate;
 
-    private Set<KeyPair> keyPairs;
+    private Set<DeprecatedKeyPair> keyPairs;
 
     private Set<FeeDetailAmount> amounts;
 
@@ -154,11 +154,11 @@ public class FeeDetail extends AuditableEntity<Long> {
                     @JoinColumn(name = "KYPR_ID_FK")
             }
     )
-    public Set<KeyPair> getKeyPairs() {
+    public Set<DeprecatedKeyPair> getKeyPairs() {
         return keyPairs;
     }
 
-    public void setKeyPairs(Set<KeyPair> keyPairs) {
+    public void setKeyPairs(Set<DeprecatedKeyPair> keyPairs) {
         this.keyPairs = keyPairs;
     }
 

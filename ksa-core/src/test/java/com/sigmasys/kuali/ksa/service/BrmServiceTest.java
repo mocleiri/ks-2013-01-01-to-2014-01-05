@@ -50,7 +50,7 @@ public class BrmServiceTest extends AbstractServiceTest {
         accountService.getOrCreateAccount(userId);
     }
 
-    @Test
+    //@Test
     public void fireFeeAssessmentRules1() throws Exception {
 
         // Importing accounts for Fee Management which is rule-based
@@ -73,7 +73,7 @@ public class BrmServiceTest extends AbstractServiceTest {
 
     }
 
-    @Test
+    //@Test
     public void fireFeeAssessmentRules2() throws Exception {
 
         // Importing accounts for Fee Management which is rule-based

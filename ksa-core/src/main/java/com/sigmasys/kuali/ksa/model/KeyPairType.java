@@ -1,4 +1,4 @@
-package com.sigmasys.kuali.ksa.model.fm;
+package com.sigmasys.kuali.ksa.model;
 
 /**
  * This enumeration represents possible values of KeyPair class and subclass types. 
@@ -7,6 +7,7 @@ package com.sigmasys.kuali.ksa.model.fm;
  * @author Sergey
  *
  */
+@Deprecated
 public enum KeyPairType {
 
 	KEY_PAIR(KeyPairType.KEY_PAIR_CODE),
