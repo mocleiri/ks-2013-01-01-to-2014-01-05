@@ -86,10 +86,10 @@ public class KSCreateConformanceTestMojo extends AbstractKSMojo {
     public static void main (String [] args) {
         System.out.println("execute");
         List<String> srcDirs = new ArrayList<String>();
-        srcDirs.add("C:/Users/mahtabme.CC4NPBS1/kuali/student/enrollment/aggregate/branches/services/ks-api/ks-common-api/src/main/java"); // common
-        srcDirs.add("C:/Users/mahtabme.CC4NPBS1/kuali/student/enrollment/aggregate/branches/services/ks-api/ks-core-api/src/main"); // core
-        srcDirs.add("C:/Users/mahtabme.CC4NPBS1/kuali/student/enrollment/aggregate/branches/services/ks-api/ks-lum-api/src/main/java"); // lum
-        srcDirs.add("C:/Users/mahtabme.CC4NPBS1/kuali/student/enrollment/aggregate/branches/services/ks-api/ks-enroll-api/src/main/java"); // enroll
+        srcDirs.add("C:/Users/mahtabme/kuali/student/enrollment/aggregate/branches/services/ks-api/ks-common-api/src/main/java"); // common
+        srcDirs.add("C:/Users/mahtabme/kuali/student/enrollment/aggregate/branches/services/ks-api/ks-core-api/src/main"); // core
+        srcDirs.add("C:/Users/mahtabme/kuali/student/enrollment/aggregate/branches/services/ks-api/ks-lum-api/src/main/java"); // lum
+        srcDirs.add("C:/Users/mahtabme/kuali/student/enrollment/aggregate/branches/services/ks-api/ks-enroll-api/src/main/java"); // enroll
         KSCreateConformanceTestMojo instance = new KSCreateConformanceTestMojo();
         Map pluginContext = new HashMap();
         MavenProject project = new MavenProject();
