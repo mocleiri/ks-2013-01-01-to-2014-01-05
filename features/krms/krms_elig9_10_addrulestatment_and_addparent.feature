@@ -6,7 +6,7 @@ Feature: KRMS ELIG 9-10 Confirm Add Rule Statment and Add Parent is working as e
 
   #krms_elig9_10_addrulestatment_and_addparent (KSENROLL-7049)
   @pending
-  Scenario: Setup one level of data using "Add Rule Statement" button
+  Scenario: Setup one level of data using Add Rule Statement button
     When I navigate to the agenda page for "ENGL304"
     And I click on the "Corequisite" section
     And I click on the "Add Rule" link

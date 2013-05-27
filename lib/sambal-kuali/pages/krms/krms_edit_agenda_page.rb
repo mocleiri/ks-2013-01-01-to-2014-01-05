@@ -6,16 +6,16 @@ class EditAgenda < BasePage
   krms_frame_elements
 
   element(:rule_maintenance_section) { |b| b.frm.div(id: "KRMS-RuleMaintenance-Page")}
-  element(:tab_section) { |b| b.frm.div(id: "KS-RuleEdit-TabSection_tabs")}
+  element(:tab_section) { |b| b.frm.div(id: "KRMS-RuleEdit-TabSection_tabs")}
   element(:edit_tree_section) { |b| b.frm.div(id: "RuleStudentEditorView-TreeGroup")}
-  element(:logic_tab_section) { |b| b.frm.div(id: "KS-EditWithLogic-EditGroup")}
+  element(:logic_tab_section) { |b| b.frm.div(id: "KRMS-EditWithLogic-EditGroup")}
   element(:preview_tree_section) { |b| b.frm.div(id: "LogicPreview-Tree")}
   element(:compare_rule_section) { |b| b.frm.div(id: "compareRuleLightBox")}
-  element(:preview_rule_section) { |b| b.frm.div(id: "KS-RulePreview-Links")}
+  element(:preview_rule_section) { |b| b.frm.div(id: "KRMS-RulePreview-Links")}
 
   element(:background_div) { |b| b.frm.li(:id => /^u\d+_node_0_parent_root$/)}
-  element(:logic_tab) { |b| b.tab_section.a(:text => "Edit Rule Logic")}
-  element(:object_tab) { |b| b.tab_section.a(:text => "Edit Rule")}
+  element(:logic_tab) { |b| b.tab_section.a(:text => /Edit Rule Logic/)}
+  element(:object_tab) { |b| b.tab_section.a(:text => /Edit Rule/)}
   element(:logic_text) { |b| b.tab_section.text_field(id: "LogicArea_InputField_control")}
 
   action(:add_btn) { |b| b.frm.button(:text => /Add Rule Statement/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
