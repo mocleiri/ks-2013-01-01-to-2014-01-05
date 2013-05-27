@@ -109,10 +109,13 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Open
     And I have access to delete an activity offering in "Approved" status for the course offering
     #TODO - tests for offered, suspended, cancelled
 
+
+  @bug @KSENROLL-7167
   Scenario: CCO AZ - Department schedule Coordinator does not have access to create joint defined courses not in their admin org
     When I attempt to create a joint offered course offering for a subject in my admin org
     Then I do not have access to create a new joint offered course offering
 
+  @bug @KSENROLL-7167
   Scenario: CCO AZ - Department Schedule Coordinator does not have access to co-located DL's
     Given there is a course with a co-located DL in my admin org
     Then I do not have access to edit the co-located Activity Offering
