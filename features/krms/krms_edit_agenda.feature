@@ -60,7 +60,7 @@ Feature: KRMS Edit Agenda
     And I click the "Preview Change" button
     And I click the "Edit Rule Logic" tab
     Then the text "A(B AND G AND C(D OR E) AND F)" should be present in the text area
-    And the preview section should have the text "G. Must have successfully completed ENGL101"
+    And the "logic" preview section should have the text "G. Must have successfully completed ENGL101"
     And the word "AND" should exist before node "G"
 
   #ELIG9.5.1.EB1 (KSENROLL-5818)

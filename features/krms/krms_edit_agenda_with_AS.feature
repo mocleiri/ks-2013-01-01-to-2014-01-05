@@ -513,8 +513,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
 
   #ELIG9.11.EB1 (KSENROLL-7084)
   Scenario: Confirm that the Delete button works as expected
-    When I am busy with "ELIG9.11.EB1 (KSENROLL-7084)"
-    And I set up the data for "Student Eligibility & Prerequisite" for the course "HIST110" with Advanced Search
+    When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST110" with Advanced Search
     And I navigate to the agenda page for "HIST110"
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
@@ -526,8 +525,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
 
   #ELIG9.11.EB2 (KSENROLL-7084)
   Scenario: Confirm that the Submit button persists the data after Delete
-    When I am busy with "ELIG9.11.EB2 (KSENROLL-7084)"
-    And I set up the data for "Student Eligibility & Prerequisite" for the course "HIST110" with Advanced Search
+    When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST110" with Advanced Search
     And I navigate to the agenda page for "HIST110"
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
@@ -543,3 +541,34 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "edit" preview section should not have the text "Must have successfully completed a minimum of 1 course from (HIST210, HIST395)"
     When I click the "Edit Rule Logic" tab
     Then the "logic" preview section should not have the text "Must have successfully completed a minimum of 1 course from,HIST210,HIST395"
+
+  #KSENROLL-6958
+  Scenario: Test whether using multiple course sets in a rule persists to the DB
+    When I go to the Manage Course Offering Agendas page for "KSENROLL-6958"
+    And I click on the "Student Eligibility & Prerequisite" section
+    And I click on the "Add Rule" link
+    And I click the "Add Rule Statement" button
+    And I select the "Must have successfully completed all courses from <courses>" option from the "rule" dropdown
+    And I select the "Course Sets" option from the "courses" dropdown
+    And I search for the "course set" "CORE: Life Science Lab-Linked Courses (LL)"
+    And I click the "add" button
+    And I search for the "course set" "General Education: Fundamental Studies-Professional Writing"
+    And I click the "add" button
+    And I search for the "course set" "General Education: Fundamental Studies-Academic Writing"
+    And I click the "add" button
+    And I click the "Preview Change" button
+    Then the "edit" preview section should have the text "Must have successfully completed all courses from (BSCI124, ENGL101, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I click the "Edit Rule Logic" tab
+    Then the "logic" preview section should have the text "Must have successfully completed all courses from,CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Academic Writing,General Education: Fundamental Studies-Professional Writing"
+    When I click the "Update Rule" button
+    And I click on the "Student Eligibility & Prerequisite" section
+    Then the "agenda" preview section should have the text "Must have successfully completed all courses from,CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Academic Writing,General Education: Fundamental Studies-Professional Writing"
+    When I click the "submit" button on Manage CO Agendas page
+    And I go to the Main Menu from Manage CO Agendas
+    And I go to the Manage Course Offering Agendas page for ""
+    And I click on the "Student Eligibility & Prerequisite" section
+    Then the "agenda" preview section should have the text "Must have successfully completed all courses from,General Education: Fundamental Studies-Academic Writing,CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing"
+    When I click on the "Edit Rule" link
+    Then the "edit" preview section should have the text "Must have successfully completed all courses from (ENGL101, BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I click the "Edit Rule Logic" tab
+    Then the "logic" preview section should have the text "Must have successfully completed all courses from,General Education: Fundamental Studies-Academic Writing,CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing"
