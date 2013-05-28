@@ -378,6 +378,46 @@
 
                 <!--End Activity Types Page-->
 
+                <!--Begin Activity Types Page-->
+
+                <bean parent="Uif-Page" p:id="SystemConfigurationPage" p:title="System Configuration">
+                    <property name="headerText" value="System Configuration"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-Message" p:messageText="Changing system configuration parameters may cause system instability."/>
+                            <bean parent="Uif-Disclosure-TableCollectionSection"
+                                  p:layoutManager.numberOfColumns="4"
+                                  p:width="85%">
+                                <property name="title" value="System Configuration"/>
+                                <property name="readOnly" value="false"/>
+                                <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.ConfigParameter"/>
+                                <property name="propertyName" value="configParameters"/>
+                                <property name="layoutManager.sequencePropertyName" value="name"/>
+                                <property name="layoutManager.richTable.render" value="true"/>
+                                <property name="layoutManager.renderSequenceField" value="false"/>
+                                <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                                <property name="layoutManager.richTable.disableTableSort" value="false"/>
+                                <property name="layoutManager.richTable.templateOptions">
+                                    <map merge="true">
+                                        <entry key="bPaginate" value="true"/>
+                                        <entry key="iDisplayLength" value="20"/>
+                                    </map>
+                                </property>
+
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-InputField" p:label="Name" p:propertyName="name"/>
+                                        <bean parent="Uif-InputField" p:label="Value" p:propertyName="value"/>
+                                    </list>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-PrimaryActionButton" p:ajaxSubmit="true" p:actionLabel="Save" p:methodToCall="updateSystemConfig"/>
+
+                        </list>
+                    </property>
+                </bean>
+
+                <!--End Activity Types Page-->
 
             </list>
         </property>
@@ -416,6 +456,8 @@
                       p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=FlagTypePage"/>
                 <bean parent="Uif-Link" p:linkText="Activity Types" p:target="_self"
                       p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=ActivityTypePage"/>
+                <bean parent="Uif-Link" p:linkText="System Configuration" p:target="_self"
+                      p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=SystemConfigurationPage"/>
             </list>
         </property>
     </bean>

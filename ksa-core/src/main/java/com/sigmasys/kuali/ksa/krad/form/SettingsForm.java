@@ -2,8 +2,6 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.krad.model.AuditableEntityModel;
 import com.sigmasys.kuali.ksa.model.*;
-import org.kuali.rice.krad.uif.component.BindingInfo;
-import org.kuali.rice.krad.uif.component.DataBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +17,11 @@ public class SettingsForm extends AbstractViewModel {
    private AuditableEntityModel auditableEntity;
 
    private String statusMessage;
+    private List<ConfigParameter> configParameters;
 
-   /*
-     Get/Set methods
-   */
+    /*
+      Get/Set methods
+    */
 
    public Account getAccount() {
       return account;
@@ -105,4 +104,12 @@ public class SettingsForm extends AbstractViewModel {
    public void setStatusMessage(String statusMessage) {
       this.statusMessage = statusMessage;
    }
+
+    public List<ConfigParameter> getConfigParameters(){
+        return this.configParameters;
+    }
+    
+    public void setConfigParameters(List<ConfigParameter> parameters) {
+        this.configParameters = parameters;
+    }
 }

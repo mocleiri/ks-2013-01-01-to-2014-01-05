@@ -1,11 +1,14 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
+import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.krad.form.SettingsForm;
 import com.sigmasys.kuali.ksa.krad.model.AuditableEntityModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 /**
@@ -27,6 +31,10 @@ public class SettingsController extends GenericSearchController {
 
     @Autowired
     private AuditableEntityService auditableEntityService;
+
+    @Autowired
+    protected ConfigService configService;
+
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -137,6 +145,9 @@ public class SettingsController extends GenericSearchController {
                 throw new IllegalArgumentException("'entityId' request parameter must be specified");
             }
             form.setAuditableEntity(auditableEntityService.getAuditableEntity(Long.valueOf(entityId), GeneralLedgerType.class));
+        } else if("SystemConfigurationPage".equals(pageId)){
+            List<ConfigParameter> parameters = configService.getParameters();
+            form.setConfigParameters(parameters);
         }
 
         return getUIFModelAndView(form);
@@ -264,5 +275,27 @@ public class SettingsController extends GenericSearchController {
 
         return getUIFModelAndView(form);
     }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=updateSystemConfig")
+    public ModelAndView updateSystemConfig(@ModelAttribute("KualiForm") SettingsForm form) {
+
+       List<ConfigParameter> parameters = form.getConfigParameters();
+
+        try {
+            configService.updateParameters(parameters);
+            // success in updating the currency.
+            String statusMsg = "System Parameters updated.";
+            GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            logger.info(statusMsg);
+        } catch (Exception e) {
+            // failed to update the currency. Leave the currency information in the view
+            String statusMsg = "System Parameters did not update. " + e.getMessage();
+            GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            logger.error(statusMsg);
+        }
+
+        return getUIFModelAndView(form);
+    }
+
 
 }
