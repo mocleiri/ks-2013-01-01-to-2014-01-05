@@ -190,14 +190,8 @@ class EditAgendaData
     if( text !~ /.*\(.+,.+\).*/)
       array = text.split(/,/)
 
-      if( section == "logic")
-        new_text = array.shift + "\nedit"
-      else
-        new_text = array.shift
-      end
-
       array.each do |elem|
-        new_text += "\n" + elem
+        new_text += ".*" + elem
       end
 
       return new_text

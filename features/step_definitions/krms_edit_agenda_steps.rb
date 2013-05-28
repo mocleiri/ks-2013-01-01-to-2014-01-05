@@ -1,5 +1,4 @@
-When /^I go to the Manage Course Offering Agendas page for "(.*)"$/ do |test|
-  puts test
+When /^I go to the Manage Course Offering Agendas page$/ do
   @editAgenda = make EditAgendaData
   go_to_manage_co_agendas
 end
@@ -118,16 +117,21 @@ end
 Then /^the "(.*?)" preview section should have the text "(.*)"$/ do |section,text|
   sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
 
-  test_text = @editAgenda.create_string_for_testing(section,text)
   if( section == "agenda")
     on ManageCOAgendas do |page|
       page.loading.wait_while_present
-      page.agenda_management_section.text.should match /.*#{Regexp.escape(test_text)}.*/
+      test_text = text.split(/,/)
+      test_text.each do |elem|
+        page.agenda_management_section.text.should match /.*#{Regexp.escape(elem)}.*/
+      end
     end
   else
     on EditAgenda do |page|
       page.loading.wait_while_present
-      page.send(sect[section]).text.should match /.*#{Regexp.escape(test_text)}.*/
+      test_text = text.split(/,/)
+      test_text.each do |elem|
+        page.send(sect[section]).text.should match /.*#{Regexp.escape(elem)}.*/
+      end
     end
   end
 end
@@ -172,7 +176,7 @@ end
 
 When /^I enter "(.*)" in the "(.*)" field$/ do |cors, field|
   types = {"course"=>:course_field, "free form text"=>:free_text_field, "courses"=>:courses_field,
-            "number of courses"=>:number_courses_field}
+            "number"=>:integer_field}
   on EditAgenda do |page|
     page.send(types[field]).when_present.set cors
   end
