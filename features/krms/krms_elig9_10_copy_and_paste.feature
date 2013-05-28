@@ -1,10 +1,9 @@
-# cucumber -r features features/krms/krms_elig9_10_copy_and_paste.feature
-Feature: KRMS ELIG 9-10 Copy and paste
+Feature: KRMS ELIG9.10 Copy and Paste
 
   Background:
     Given I am logged in as admin
 
-  #krms_elig9_10_copy_and_paste
+  #ELIG9.10.EB1 (KSENROLL-7051)
   @pending
   Scenario: Confirm the copy and paste of rule statement is working as expected
     When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST111" with Advanced Search
@@ -27,8 +26,8 @@ Feature: KRMS ELIG 9-10 Copy and paste
     Then there should be a new node with text "K. edit copied prop type 1"
     When I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
-    
-  #krms_elig9_10_copy_and_paste
+
+  #ELIG9.10.EB2 (KSENROLL-7051)
   @bug @KSENROLL7110
   Scenario: Confirm the copy and paste of compound (group) rule statement is working as expected
     When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST111" with Advanced Search
