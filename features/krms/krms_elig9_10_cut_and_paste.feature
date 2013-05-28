@@ -1,10 +1,9 @@
-# cucumber -r features features/krms/krms_elig9_10_cut_and_paste.feature
-Feature: KRMS ELIG 9-10 Cut and paste
+Feature: KRMS ELIG9.10 Cut and Paste
 
   Background:
     Given I am logged in as admin
 
-  #krms_elig9_10_cut_and_paste
+  #ELIG9.10.EB1 (KSENROLL-7052)
   @pending
   Scenario: Confirm the cut and paste of a rule statement is working as expected
     When I set up the data for "Corequisite" for the course "ENGL304" with Advanced Search
@@ -27,7 +26,7 @@ Feature: KRMS ELIG 9-10 Cut and paste
     When I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
 
-  #krms_elig9_10_cut_and_paste
+  #ELIG9.10.EB2 (KSENROLL-7052)
   @pending
   Scenario: Confirm the cut and paste of compound (group) rule statement is working as expected
     When I set up the data for "Corequisite" for the course "ENGL304" with Advanced Search
