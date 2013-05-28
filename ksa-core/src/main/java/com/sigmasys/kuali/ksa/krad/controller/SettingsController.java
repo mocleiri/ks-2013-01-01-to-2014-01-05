@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -290,25 +291,19 @@ public class SettingsController extends GenericSearchController {
     public ModelAndView updateSystemConfig(@ModelAttribute("KualiForm") SettingsForm form) {
 
         List<ConfigParameter> parameters = form.getConfigParameters();
-        for (ConfigParameter parameter : parameters) {
-            if (parameter.isReadOnly()) {
-                String errMsg = "Read-only parameters cannot be updated";
-                logger.error(errMsg);
-                throw new IllegalStateException(errMsg);
-            }
-        }
 
         try {
-            configService.updateParameters(parameters);
-            // success in updating the currency.
+            Integer count = configService.updateParameters(parameters);
             String statusMsg = "System Parameters updated.";
             GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.info(statusMsg);
         } catch (Exception e) {
-            // failed to update the currency. Leave the currency information in the view
-            String statusMsg = "System Parameters did not update. " + e.getMessage();
+            String statusMsg = "System Parameters did not update. ";
+            if(e instanceof DuplicateKeyException){
+                statusMsg += "Duplicate Names not allowed.";
+            }
             GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
-            logger.error(statusMsg);
+            logger.error(statusMsg + " " + e.getMessage());
         }
 
         return getUIFModelAndView(form);
