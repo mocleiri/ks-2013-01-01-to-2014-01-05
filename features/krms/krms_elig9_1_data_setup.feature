@@ -1,4 +1,4 @@
-Feature: KRMS Data Setup
+Feature: KRMS ELIG9.1 Data Setup
 
   Background:
     Given I am logged in as admin
