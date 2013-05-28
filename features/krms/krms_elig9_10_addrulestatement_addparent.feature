@@ -1,9 +1,9 @@
-Feature: KRMS ELIG 9-10 Confirm Add Rule Statment and Add Parent is working as expected
+Feature: KRMS ELIG9.10 Add Rule Statement and Add Parent
 
   Background:
     Given I am logged in as admin
 
-  #KSENROLL-7049
+  #ELIG9.10.EB1 (KSENROLL-7049)
   @pending
   Scenario: Setup one level of data using "Add Rule Statement" button
     When I navigate to the agenda page for "ENGL304"
@@ -28,7 +28,7 @@ Feature: KRMS ELIG 9-10 Confirm Add Rule Statment and Add Parent is working as e
     When I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
 
-  #KSENROLL-7049
+  #ELIG9.10.EB2 (KSENROLL-7049)
   @pending
   Scenario: Setup second level of data (Groups) using "Add Parent" button
     When I navigate to the agenda page for "ENGL304"
