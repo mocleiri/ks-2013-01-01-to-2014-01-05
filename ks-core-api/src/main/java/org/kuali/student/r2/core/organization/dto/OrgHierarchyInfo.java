@@ -82,7 +82,7 @@ public class OrgHierarchyInfo
         if (orgHierarchy != null) {
             this.rootOrgId = orgHierarchy.getRootOrgId();
             this.effectiveDate = orgHierarchy.getEffectiveDate() == null ? null : new Date (orgHierarchy.getEffectiveDate().getTime ());
-            this.effectiveDate = orgHierarchy.getExpirationDate() == null ? null : new Date (orgHierarchy.getExpirationDate().getTime ());
+            this.expirationDate = orgHierarchy.getExpirationDate() == null ? null : new Date (orgHierarchy.getExpirationDate().getTime ());
             this.orgOrgRelationTypes = orgHierarchy.getOrgOrgRelationTypes() == null ? null : new ArrayList (orgHierarchy.getOrgOrgRelationTypes());
         }
     }
