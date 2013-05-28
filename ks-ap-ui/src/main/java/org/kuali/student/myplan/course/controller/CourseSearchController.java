@@ -367,6 +367,7 @@ public class CourseSearchController extends UifControllerBase {
 			c.add(f.getSearchQuery());
 			c.add(f.getSearchTerm());
 			c.addAll(f.getCampusSelect());
+			c.addAll(f.getAdditionalCriteria());
 			criteria = Collections.unmodifiableList(c);
 		}
 
