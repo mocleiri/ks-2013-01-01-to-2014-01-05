@@ -14,6 +14,7 @@
  */
 package org.kuali.student.myplan.course.form;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.kuali.rice.krad.web.form.UifFormBase;
@@ -167,6 +168,11 @@ public class CourseSearchFormImpl extends UifFormBase implements
 
 	public List<String> getCampusSelect() {
 		return campusSelect;
+	}
+
+	@Override
+	public List<String> getAdditionalCriteria() {
+		return Collections.emptyList();
 	}
 
 	@Override

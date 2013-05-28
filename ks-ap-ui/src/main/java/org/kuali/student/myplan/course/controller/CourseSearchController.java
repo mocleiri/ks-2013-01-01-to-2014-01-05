@@ -1434,20 +1434,16 @@ public class CourseSearchController extends UifControllerBase {
 	}
 
 	@RequestMapping(value = "/course/search")
-	public void getJsonResponse(HttpServletResponse response,
-			final HttpServletRequest request) throws IOException {
+	public void getJsonResponse(
+			@ModelAttribute("KualiForm") final CourseSearchForm form,
+			HttpServletResponse response, final HttpServletRequest request)
+			throws IOException {
 
 		// Parse incoming jQuery datatables inputs
 		final DataTablesInputs dataTablesInputs = new DataTablesInputs(request);
 		if (LOG.isDebugEnabled())
 			LOG.debug(dataTablesInputs);
 
-		// Populate search form from HTTP request
-		final CourseSearchForm form = searcher.createSearchForm();
-		form.setSearchQuery(request.getParameter("queryText"));
-		form.setCampusSelect(Arrays.asList(request.getParameter("campusParam")
-				.split("\\s*,\\s*")));
-		form.setSearchTerm(request.getParameter("termParam"));
 		if (LOG.isDebugEnabled())
 			LOG.debug("Search form : " + form);
 
@@ -1533,14 +1529,9 @@ public class CourseSearchController extends UifControllerBase {
 
 	@RequestMapping(value = "/course/facetValues")
 	public void getFacetValues(HttpServletResponse response,
+			@ModelAttribute("KualiForm") final CourseSearchForm form,
 			final HttpServletRequest request) throws IOException {
 
-		// Populate search form from HTTP request
-		final CourseSearchForm form = searcher.createSearchForm();
-		form.setSearchQuery(request.getParameter("queryText"));
-		form.setCampusSelect(Arrays.asList(request.getParameter("campusParam")
-				.split("\\s*,\\s*")));
-		form.setSearchTerm(request.getParameter("termParam"));
 		if (LOG.isDebugEnabled())
 			LOG.debug("Search form : " + form);
 

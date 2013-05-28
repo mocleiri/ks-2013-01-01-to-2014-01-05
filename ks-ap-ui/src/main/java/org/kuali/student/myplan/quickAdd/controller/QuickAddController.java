@@ -3,6 +3,7 @@ package org.kuali.student.myplan.quickAdd.controller;
 import static org.kuali.rice.core.api.criteria.PredicateFactory.equalIgnoreCase;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
@@ -1329,9 +1331,21 @@ public class QuickAddController extends UifControllerBase {
 
         // Populate search form from HTTP request
         CourseSearchForm form = KsapFrameworkServiceLocator.getCourseSearchStrategy().createSearchForm();
-        form.setSearchQuery(quickAddForm.getCourseCd());
-        form.setSearchTerm("any");
-        if (LOG.isDebugEnabled())
+				try {
+								PropertyUtils.setProperty(form, "searchQuery",
+																quickAddForm.getCourseCd());
+								PropertyUtils.setProperty(form, "searchTerm", "any");
+				} catch (IllegalAccessException e) {
+								throw new IllegalStateException("CourseSearchForm is not mutable "
+																+ form, e);
+				} catch (InvocationTargetException e) {
+								throw new IllegalStateException("CourseSearchForm is not mutable "
+																+ form, e);      
+				} catch (NoSuchMethodException e) {      
+								throw new IllegalStateException("CourseSearchForm is not mutable "
+																+ form, e);      
+				}                                        
+				if (LOG.isDebugEnabled())
             LOG.debug("Search form : " + form);
 
         // Check HTTP session for cached search results
