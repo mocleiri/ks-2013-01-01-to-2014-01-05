@@ -1,4 +1,4 @@
-Feature: KRMS Natural Language
+Feature: KRMS ELIG9.2 Natural Language
 
   Background:
     Given I am logged in as admin
