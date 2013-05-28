@@ -15,7 +15,7 @@ Feature: KRMS ELIG9.11 Delete proposition
     And I click the "Delete" button
     Then there should be no node with letter "F."
     And I click the "Edit Rule Logic" tab
-    Then the text "A(B(C AND D(E) AND G) OR H OR I)" should be present in the text area
+    Then the text "A(B(C AND D(E) AND G) OR H OR I OR J)" should be present in the text area
 
   #ELIG9.11.EB2 (KSENROLL-7084)
   @pending
@@ -24,7 +24,7 @@ Feature: KRMS ELIG9.11 Delete proposition
     And I navigate to the agenda page for "HIST110"
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
-    And I select node "F" in the tree
+    And I select node "J" in the tree
     And I click the "Delete" button
     And I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
