@@ -28,8 +28,9 @@
 	<context:annotation-config/>
 
     <import resource="classpath:META-INF/default-property-config-context-test.xml"/>
-    <import resource="classpath:ks-enroll-api-data-dictionary-services-configuration.xml"/>
-	<import resource="classpath:ks-enroll-api-data-dictionary-validator-configuration.xml"/>
+    <!-- TODO OSR -->
+    <!--<import resource="classpath:ks-core-impl-test-data-dictionary-services-configuration.xml"/>
+    <import resource="classpath:ks-core-impl-test-data-dictionary-validator-configuration.xml"/>-->
 	<import resource="classpath:search-test-context.xml"/>
 	
 	<!--  Preloaded data -->
@@ -105,21 +106,90 @@
     <bean id="entityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean" autowire-candidate="false" autowire="no">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
-    
-    <!-- Organization Service -->
-    <bean id="orgDao" class="org.kuali.student.r1.core.organization.dao.impl.OrganizationDaoImpl">
-        <property name="em" ref="entityManager" />
+
+
+    <bean id="enrollSearchableDao" class="org.kuali.student.r2.common.dao.impl.SearchableCrudDaoImpl">
+        <property name="em" ref="entityManager"/>
     </bean>
-    
-    <bean id="extendedOrgDao" class="org.kuali.student.r2.core.class1.organization.dao.ExtendedOrgDao">
+
+    <bean id="searchService" class="org.kuali.student.r2.common.class1.search.SearchServiceDispatcherImpl">
+        <property name="searchServices">
+            <list>
+                <ref bean="orgSearchServiceImpl" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="typeDao" class="org.kuali.student.r2.common.class1.type.dao.TypeDao"/>
+    <bean id="typeTypeRelationDao" class="org.kuali.student.r2.common.class1.type.dao.TypeTypeRelationDao"/>
+
+    <bean id="typeServiceImpl" class="org.kuali.student.r2.common.class1.type.service.TypeServiceImpl">
+        <property name="typeDao" ref="typeDao"/>
+        <property name="typeTypeRelationDao" ref="typeTypeRelationDao"/>
+    </bean>
+
+    <!-- Organization Service -->
+    <bean id="orgDao"
+          class="org.kuali.student.r2.core.organization.dao.OrgDao">
         <property name="em" ref="entityManager" />
     </bean>
 
-    <bean id="orgServiceImpl" class="org.kuali.student.r2.core.class1.organization.service.impl.OrganizationServiceImpl">
-        <property name="organizationDao" ref="orgDao" />
-        <property name="extendedOrgDao" ref="extendedOrgDao" />
-        <property name="dictionaryServiceDelegate" ref="dictionaryServiceDelegate"/>
-        <property name="criteriaLookupService" ref="criteriaLookupService"/>
+    <bean id="orgHierarchyDao"
+          class="org.kuali.student.r2.core.organization.dao.OrgHierarchyDao">
+        <property name="em" ref="entityManager" />
+    </bean>
+
+    <bean id="orgOrgRelationDao"
+          class="org.kuali.student.r2.core.organization.dao.OrgOrgRelationDao">
+        <property name="em" ref="entityManager" />
+    </bean>
+
+    <bean id="orgPersonRelationDao"
+          class="org.kuali.student.r2.core.organization.dao.OrgPersonRelationDao">
+        <property name="em" ref="entityManager" />
+    </bean>
+
+    <bean id="orgPositionRestrictionDao"
+          class="org.kuali.student.r2.core.organization.dao.OrgPositionRestrictionDao">
+        <property name="em" ref="entityManager" />
+    </bean>
+
+    <bean id="organizationHierarchySearch"
+          class="org.kuali.student.r1.core.organizationsearch.service.impl.OrganizationHierarchySearch">
+        <property name="orgDao" ref="orgDao"/>
+        <property name="orgOrgRelationDao" ref="orgOrgRelationDao" />
+    </bean>
+
+    <bean id="orgSearchManager"
+          class="org.kuali.student.r2.common.class1.search.SearchManagerImpl">
+        <constructor-arg index="0" value="classpath:organization-search-config.xml" />
+        <property name="dao" ref="enrollSearchableDao"/>
+    </bean>
+
+    <bean id="orgSearchServiceImpl"
+          class="org.kuali.student.r2.core.class1.search.OrganizationSearchServiceImpl">
+        <property name="searchManager" ref="orgSearchManager" />
+        <property name="searchOperations">
+            <map>
+                <entry key="org.search.orgQuickViewByRelationTypeOrgTypeRelatedOrgIds" value-ref="organizationHierarchySearch"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="orgServiceImpl"
+          class="org.kuali.student.r2.core.organization.service.impl.OrganizationServiceImpl">
+        <property name="orgDao" ref="orgDao" />
+        <property name="orgHierarchyDao" ref="orgHierarchyDao" />
+        <property name="orgOrgRelationDao" ref="orgOrgRelationDao"/>
+        <property name="orgPersonRelationDao" ref="orgPersonRelationDao"/>
+        <property name="orgPositionRestrictionDao" ref="orgPositionRestrictionDao"/>
+        <property name="orgCriteriaLookupService" ref="criteriaLookupService"/>
+        <property name="orgHierarchyCriteriaLookupService" ref="criteriaLookupService"/>
+        <property name="orgOrgRelationCriteriaLookupService" ref="criteriaLookupService"/>
+        <property name="orgPersonRelationCriteriaLookupService" ref="criteriaLookupService"/>
+        <property name="orgPositionRestrictionCriteriaLookupService" ref="criteriaLookupService"/>
+        <property name="typeService"  ref="typeServiceImpl" />
+        <property name="searchService" ref="searchService" />
     </bean>
     
     <bean id="dictionaryServiceDelegate" class="org.kuali.student.r1.common.dictionary.service.impl.old.DictionaryServiceSpringImpl">

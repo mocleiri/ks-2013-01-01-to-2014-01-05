@@ -53,7 +53,6 @@ public interface OrgRpcService extends RemoteService, BaseDataOrchestrationRpcSe
     public List<TypeInfo> getOrgTypes();
     public List<OrgPositionRestrictionInfo> getPositionRestrictionsByOrg(String orgId);
     public OrgPositionRestrictionInfo addPositionRestrictionToOrg(OrgPositionRestrictionInfo orgPositionRestrictionInfo);
-    public List<OrgTreeInfo> getOrgDisplayTree(String orgId, String orgHierarchy, int maxLevels);
     public OrgInfo updateOrganization(OrgInfo orgInfo);
     public OrgPositionRestrictionInfo updatePositionRestrictionForOrg(OrgPositionRestrictionInfo orgPositionRestrictionInfo);
     public OrgOrgRelationInfo updateOrgOrgRelation(OrgOrgRelationInfo orgOrgRelationInfo);
