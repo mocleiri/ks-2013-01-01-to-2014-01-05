@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+		Kuali Student UIM Page Template :: Single-Page Edit
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/krad.css" rel="stylesheet">
+    <link href="assets/css/kualistudent.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
+    <link href="assets/css/tables.css" rel="stylesheet">
+    <!-- HTML5, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
+      </script>
+    <![endif]-->
+    <!-- fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+  <body>
+    <div id="application-container" title="application-container" class="container">
+    	<div id="application-header" title="application-header" class="container-fluid navbar navbar-inverse navbar-fixed-top sticky">
+    		<div class="navbar-inner">
+    			<a id="application-header-logo" title="application-header-logo" class="brand ks-project" href="#"><img src="assets/img/ks_logo_white.png" alt="Kuali Student Logo">Student</a>
+    			<ul id="application-header-user" title="application-header-user" class="nav pull-right">
+					<li>
+					<a href="#">Action List</a>
+    				<li class="dropdown">
+    					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+    						<i class="icon-user icon-white"></i>
+    						Username
+    						<b class="caret"></b>
+    					</a>
+						<ul class="dropdown-menu">
+    						<li>
+    							<a href="#">Logout</a>
+    						</li>    						
+    					</ul>	
+    				</li>
+    			</ul>
+    		</div>
+    		<div id="view-top-group" title="view-top-group" class="container-fluid sticky optional">
+    			<span id="view-term" title="view-term" class="view-term">
+	    			<a id="term-picker">Term Year</a>
+			    </span>
+    			<span id="view-term-state" title="view-term-state">term state</span>
+    		</div>
+    		<div id="view-breadcrumbs" title="view-breadcrumbs" class="container-fluid sticky optional">
+    			<ul class="breadcrumb">
+    				<li class="home">
+    					<a href="index.html"><span class="">Home</span></a>
+    				</li>
+    				<li id="node1" class="node1">
+    					<a href="">Module</a>
+  					</li>
+    				<li id="node2" class="node2">
+    					<a href=""><span class="">Node 2</span></a>
+    				</li>
+    				<li id="node3" class="node3">
+    					<a href=""><span class="">Node 3</span></a>
+    				</li>
+    				<li id="node4" class="node4 active">
+    					Node 4
+    				</li>
+    			</ul>
+    		</div>
+    		<div id="view-header" title="view-header" class="container sticky">
+    			<div id="page-title" class="container-fluid">
+					<div class="pull-left">
+		    				<div id="page-title-main">
+		    					Search Form Layout
+		    				</div>
+		    				<div id="page-title-support">
+		    					Support Title
+		    				</div>
+					</div>
+					<div class="pull-right hidden">
+	    				<div id="action-bar" class="pull-right">
+	    					<a href="#" class="action action-copy hidden"><i class="icon-plus-sign"></i>Copy</a>
+	    					<a href="#" class="action action-comments hidden"><i class="icon-comment"></i>Comments</a>
+	    					<a href="#" class="action action-print hidden"><i class="icon-print"></i>Print</a>
+	    					<a href="#" class="action action-delete"><i class="icon-remove"></i>Delete</a>
+	    					<a href="single-page_inspect.html" class="action action-inspect"><i class="icon-list-alt"></i>Inspect</a>
+	    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i>Manage</a>
+	    				</div>	
+		  				<div id="meta-data" title="meta-data" class="pull-right">
+							<span class="detail-modification">Last modified by Username on Friday, May 17 at 05:15 a.m.</span>
+							<span class="detail-status">Detail Status</span>
+						</div>
+					</div>
+    			</div>
+    		</div>
+    	</div>
+    	<div id="view-container" title="view-container" class="container-fluid">
+    		<div id="navigation-panel " title="navigation-panel " class="container-fluid optional no-margin hidden">
+    		</div>
+    		<div id="page-container" title="page-container" class="container-fluid no-margin">
+    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error hidden">
+					<h4 class="uif-pageValidationHeader" id="pageValidationHeader">
+						<img src="assets/img/error.png" width="16" height="16" alt="Error" class="hidden">
+						This page has N errors
+					</h4>
+					<ul id="pageValidationList" class="uif-validationMessagesList" aria-labelledby="pageValidationHeader">
+						<li data-messageitemfor="Demo-ValidationLayout-Section1" class="uif-errorMessageItem"><a href="#section-information">The "Information" section has 1 error</a></li>
+					</ul>
+				</div>
+    			<div id="page-header" title="page-header" class="container-fluid no-padding gibberish hidden">
+    				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
+						<dl class="dl-horizontal">
+				    		<dt>Field 1</dt><dd>Remotely flung</dd>
+				    		<dt>Another Field 2</dt><dd>Less this one wherever the much lemming</dd>
+				    		<dt>Small, Small Field 3</dt><dd>Bought</dd>
+				    		<dt>A Field 4</dt><dd>Far bird when this off sang naked</dd>
+				    	</dl>	
+    				</div>
+    			</div>
+    			<div class="container-fluid optional no-padding">
+    				<div class="container-fluid group-header no-padding"></div>
+    				<div class="container-fluid validation group-error-validation-messaging"><!-- error at group level ?--></div>
+    				<div class="row-fluid no-padding">
+    					<div class="container-fluid group span12 optional no-margin no-padding">
+    						<form id="#main-form" class="form-inline">
+	
+  								<label class="control-label field-label">
+  									Keyword
+  								</label>
+								<input id="message-courseSufix" type="text" name="courseSufix" class="span2 gibberish" placeholder="e.g. Topic">
+	    						<a class="btn btn-primary" data-toggle="collapse" data-target="#search_results">
+	    							Find
+	    						</a>
+
+  							</form>
+
+							<div id="search_results" class="collapse in search-results gibberish clearfix">
+								<table class="table table-hover table-condensed">
+									<thead>
+										<tr>
+											<th class="span2">
+												ID 
+											</th>
+											<th class="span6">
+												Name
+											</th>
+											<th class="span4">
+												Abbreviation
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr data-dismiss="modal" aria-hidden="true">
+											<td>
+												1511461247 
+											</td>
+											<td>
+												AGNR-Dean-Joint Inst for Food Safety &amp; Applied Nutrition
+											</td>
+											<td>
+												Inst Food Safety &amp; Appl Nutr
+											</td>
+										</tr>
+										<tr data-dismiss="modal" aria-hidden="true">
+											<td>
+												1835615967 
+											</td>
+											<td>
+												AEXST-WT-Journalism
+											</td>
+											<td>
+												Winter Term-JOUR
+											</td>
+										</tr>
+										<tr data-dismiss="modal" aria-hidden="true">
+											<td>
+												31193503 
+											</td>
+											<td>
+												ENGR-Civil-Center for Excellence on Project Management
+											</td>
+											<td>
+												Ctr Excellence on Proj Mgmt
+											</td>
+										</tr>
+										<tr data-dismiss="modal" aria-hidden="true">
+											<td>
+												3392144313 
+											</td>
+											<td>
+												ARHU-Meyerhoff Program & Center for Jewish Studies
+											</td>
+											<td>
+												Meyerhoff Prg & Ctr Jewish Std
+											</td>
+										</tr>
+										<tr data-dismiss="modal" aria-hidden="true">
+											<td>
+												3506629388 
+											</td>
+											<td>
+												VPRGS-UMCAPS-Ctr for Criminal Justice Tech. Res.
+											</td>
+											<td>
+												UMCAPS-Ctr For Criminal Just.
+											</td>
+										</tr>
+										<tr data-dismiss="modal" aria-hidden="true">
+											<td>
+												4236812358 
+											</td>
+											<td>
+												JOUR-Philip Merrill College of Journalism
+											</td>
+											<td>
+												Philip Merrill Coll Journalism
+											</td>
+										</tr>
+										<tr data-dismiss="modal" aria-hidden="true">
+											<td>
+												4282297334 
+											</td>
+											<td>
+												ARHU-Women's Studies-Curric Transform Project
+											</td>
+											<td>
+												Wom Std-Curric Transform Proj
+											</td>
+										</tr>
+										<tr data-dismiss="modal" aria-hidden="true">
+											<td>
+												436661015 
+											</td>
+											<td>
+												CMNS-Astro-Joint Space Sciences Institute
+											</td>
+											<td>
+												Joint Space Sciences Inst
+											</td>
+										</tr>
+										<tr data-dismiss="modal" aria-hidden="true">
+											<td>
+												438750448 
+											</td>
+											<td>
+												EXST-FC-Journalism
+											</td>
+											<td>
+												Freshmen Connection-JOUR
+											</td>
+										</tr>
+										<tr data-dismiss="modal" aria-hidden="true">
+											<td>
+												53692544 
+											</td>
+											<td>
+												Joint Quantum Institute
+											</td>
+											<td>
+												CMNS-Physics-Joint Quantum Institute
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+    					</div>
+    				</div>
+    				<div class="container-fluid group-footer"></div>
+    			</div>
+    			<!-- Additional groups in columns -->
+    			<div class="container-fluid group optional hidden">
+    				<div class="container-fluid group-header"></div>
+    				<div class="container-fluid validation group-error-validation-messaging optional"></div>
+    				<div class="row-fluid">
+    					<div class="container-fluid group span6 optional no-margin"></div>
+    					<div class="container-fluid group span6 optional no-margin"></div>
+    				</div>
+    				<div class="container-fluid group-footer"></div>
+    			</div>
+    			<div id="page-footer" title="page-footer" class="container-fluid"></div>
+    		</div>
+    		<div id="view-footer" title="view-footer" class="container navbar-fixed-bottom sticky hidden">
+				<div class="container">
+    				<div class="container-fluid pull-right">
+    					<form>
+    						<button type="submit" class="btn btn-primary">
+    							Save
+    						</button>
+    						<button type="submit" class="btn secondary hidden">
+    							Save Progress
+    						</button>
+    						<a href="#" class="cancel">Cancel</a>
+    					</form>
+    				</div>
+				</div>
+    		</div>
+    	</div>
+    	<div id="application-footer" title="application-footer" class="container-fluid navbar-fixed-bottom sticky"></div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="assets/js/bootstrap.js"></script>
+	<script type='text/javascript'>//<![CDATA[ 
+	$(window).load(function(){
+
+	});//]]>  
+	</script>
+	<script type="text/javascript">//<![CDATA[ 
+	$(document).ready(function() {
+		$(".collapse").collapse();
+	});
+	//]]> </script>
+</body>
+</html>
