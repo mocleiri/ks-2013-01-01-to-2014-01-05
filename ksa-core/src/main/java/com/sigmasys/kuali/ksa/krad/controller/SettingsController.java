@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedList;
 import java.util.List;
 
 
 /**
+ * TODO: Tim, this controller needs refactoring -> especially checks on null of entity and parentEntity objects (Mike)
+ * <p/>
  * Created by: dmulderink on 10/10/12 at 8:06 PM
  */
 @Controller
@@ -145,9 +148,16 @@ public class SettingsController extends GenericSearchController {
                 throw new IllegalArgumentException("'entityId' request parameter must be specified");
             }
             form.setAuditableEntity(auditableEntityService.getAuditableEntity(Long.valueOf(entityId), GeneralLedgerType.class));
-        } else if("SystemConfigurationPage".equals(pageId)){
+        } else if ("SystemConfigurationPage".equals(pageId)) {
+            // Only non read-only parameters can be edited
             List<ConfigParameter> parameters = configService.getParameters();
-            form.setConfigParameters(parameters);
+            List<ConfigParameter> modifiableParameters = new LinkedList<ConfigParameter>();
+            for (ConfigParameter parameter : parameters) {
+                if (!parameter.isReadOnly()) {
+                    modifiableParameters.add(parameter);
+                }
+            }
+            form.setConfigParameters(modifiableParameters);
         }
 
         return getUIFModelAndView(form);
@@ -279,7 +289,14 @@ public class SettingsController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=updateSystemConfig")
     public ModelAndView updateSystemConfig(@ModelAttribute("KualiForm") SettingsForm form) {
 
-       List<ConfigParameter> parameters = form.getConfigParameters();
+        List<ConfigParameter> parameters = form.getConfigParameters();
+        for (ConfigParameter parameter : parameters) {
+            if (parameter.isReadOnly()) {
+                String errMsg = "Read-only parameters cannot be updated";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+        }
 
         try {
             configService.updateParameters(parameters);
