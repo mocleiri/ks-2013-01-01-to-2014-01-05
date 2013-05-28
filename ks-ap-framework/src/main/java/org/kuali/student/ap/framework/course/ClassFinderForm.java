@@ -12,8 +12,7 @@ public interface ClassFinderForm {
 	 * Enumerates course level criteria for class finder.
 	 */
 	public enum CourseLevel {
-		UNDERGRADUATE("Undergraduate"), GRADUATE("Graduate"), PROFESSIONAL(
-				"Professional");
+		UNDERGRADUATE("Undergraduate"), GRADUATE("Graduate");
 		private final String descr;
 
 		private CourseLevel(String descr) {
