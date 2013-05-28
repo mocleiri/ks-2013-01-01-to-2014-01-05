@@ -284,16 +284,6 @@ When /^I navigate to the agenda page for "(.*?)"$/ do |course|
   @editAgenda.navigate(course)
 end
 
-Then /^the "(.*?)" rule should still exist$/ do |sect|
-  sections_click = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
-              "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
-              "Repeatable for Credit"=>:repeatable_credit, "Restricted for Credit"=>:resctricted_credit}
-  on ManageCOAgendas do |page|
-    page.send(sections_click[sect])
-    puts page.agenda_management_section.div(id:"u100081").div(id: "KRMS-PreviewTree-Group").text
-  end
-end
-
 When /^I want to wait$/ do 
   on ManageCOAgendas do |page|
     sleep 5
