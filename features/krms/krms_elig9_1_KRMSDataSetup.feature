@@ -3,7 +3,7 @@ Feature: KRMS Data Setup
   Background:
     Given I am logged in as admin
 
-  #KSENROLL-6953
+  #ELIG9.1.EB1 (KSENROLL-6953)
   @pending
   Scenario: Test whether data is created and persisted to the DB
     When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST110" with Advanced Search
