@@ -107,12 +107,13 @@ class Rollover
       page.go
       raise "rollover details - release to depts not enabled" unless page.release_to_departments_button.enabled?
       page.release_to_departments
+      page.release_to_depts_dialog_confirm
     end
 
-    on RolloverConfirmReleaseToDepts do |page|
-      page.confirm
-      page.release_to_departments
-    end
+    #on RolloverConfirmReleaseToDepts do |page|
+    #  page.confirm
+    #  page.release_to_departments
+    #end
 
     on RolloverDetails do |page|
       raise "release to depts not completed" unless page.status_detail_msg =~ /released to the departments/

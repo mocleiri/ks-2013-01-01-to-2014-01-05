@@ -15,6 +15,16 @@ class RolloverDetails < BasePage
   value(:status_detail_msg) { |b| b.frm.span(id: "KS-RolloverResultsInfoSectionMsg_span").text }
   element(:release_to_departments_button) { |b| b.frm.button(text: "Release Courses") }
   action(:release_to_departments) { |b| b.release_to_departments_button.click; b.loading.wait_while_present }
+
+  #release to dept dialog
+  element(:release_to_depts_dialog_div)  { |b| b.frm.div(class: "fancybox-wrap fancybox-desktop fancybox-type-html fancybox-opened") }
+  element(:release_to_depts_dialog_confirm_button) { |b| b.release_to_depts_dialog_div.button }
+  element(:release_to_depts_dialog_confirm) { |b| b.release_to_depts_dialog_confirm_button.click; b.loading.wait_while_present }
+  element(:release_to_depts_dialog_cancel_link) { |b| b.release_to_depts_dialog_div.link }
+  element(:release_to_depts_dialog_cancel) { |b| b.release_to_depts_dialog_cancel_link.click; b.loading.wait_while_present }
+  #end - release to dept dialog
+
+
   action(:re_do_rollover_link) { |b| b.frm.link(text: "Re-do Rollover").click; b.loading.wait_while_present }
   action(:re_do_rollover) { |b| b.re_do_rollover_link.click; b.loading.wait_while_present }
 
