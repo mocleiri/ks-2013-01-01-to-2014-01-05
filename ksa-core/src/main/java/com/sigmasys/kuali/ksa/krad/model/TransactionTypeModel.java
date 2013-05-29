@@ -2,11 +2,16 @@ package com.sigmasys.kuali.ksa.krad.model;
 
 import com.sigmasys.kuali.ksa.krad.util.HighPrecisionPercentageFormatter;
 import com.sigmasys.kuali.ksa.model.*;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * User: timb
@@ -251,5 +256,37 @@ public class TransactionTypeModel implements Serializable {
         }
 
         this.setGlBreakdownTooltip(tooltip);
+    }
+
+    public String getAuditTooltip(){
+        StringBuilder tooltip = new StringBuilder();
+        DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+
+        tooltip.append("<h4>Audit Information</h4><br/>");
+
+        String user = parentEntity.getCreatorId();
+        if(user != null){
+            tooltip.append("<b>Created by (user):</b> ").append(user).append("<br/>");
+            PersonService personService = KimApiServiceLocator.getPersonService();
+            Person person = personService.getPersonByPrincipalName(user);
+            String name = null;
+            if (person != null) {
+                tooltip.append("<b>Created by (name):</b> ").append(person.getName()).append("<br/>");
+                tooltip.append("<b>Contact Phone:</b> ").append(person.getPhoneNumber()).append("<br/>");
+                tooltip.append("<b>Contact Email:</b> ").append(person.getEmailAddress()).append("<br/>");
+            }
+        }
+
+        Date createDate = parentEntity.getCreationDate();
+        if(createDate != null){
+            tooltip.append("<b>Creation Date:</b> ").append(df.format(createDate)).append("<br/>");
+        }
+
+        Date updateDate = parentEntity.getLastUpdate();
+        if(updateDate != null){
+            tooltip.append("<b>Last Updated:</b> ").append(df.format(updateDate)).append("<br/>");
+        }
+
+        return tooltip.toString();
     }
 }
