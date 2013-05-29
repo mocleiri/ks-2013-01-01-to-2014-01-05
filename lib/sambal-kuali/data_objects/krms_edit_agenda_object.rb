@@ -47,6 +47,13 @@ class EditAgendaData
       page.term.when_present.set "201301"
       page.input_code.when_present.set course
       page.show
+    end
+    on KRMSManageCourseOfferingList do |page|
+      if page.target_row(course).link(:text => /Manage/).exists?
+        page.target_row(course).link(:text => /Manage/).when_present.click
+      end
+    end
+    on KRMSManageCourseOfferings do |page|
       page.manage_course_offering_requisites
     end
   end
@@ -177,11 +184,14 @@ class EditAgendaData
 
       on ManageCOAgendas do |page|
         page.submit
-        page.main_menu
       end
-    else
+
+      on KRMSManageCourseOfferings do |page|
+        page.manage_course_offering_requisites
+      end
+
       on ManageCOAgendas do |page|
-        page.main_menu
+        page.send(sections[sect])
       end
     end
   end

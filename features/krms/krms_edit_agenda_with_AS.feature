@@ -6,7 +6,8 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.1.2.EB3 (KSENROLL-5776)
   @pending
   Scenario: A new item with the selected rule and new node identifier should appear
-    When I go to the Manage Course Offering Agendas page for "ELIG9.1.2.EB3 (KSENROLL-5776)"
+    When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST110" with Advanced Search
+    And I navigate to the agenda page for "HIST110"
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -20,7 +21,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.1.2.EB4 (KSENROLL-5776)
   @pending
   Scenario: AS - Changes should be viewable in the Edit with Logic tab
-    When I go to the Manage Course Offering Agendas page for "ELIG9.1.2.EB4 (KSENROLL-5776)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -36,7 +37,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.7.1.EB1 (KSENROLL-5777)
   @bug @KSENROLL-6609
   Scenario: AS - The droplist value should be able to be changed
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.1.EB1 (KSENROLL-5777)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -55,7 +56,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.7.1.EB2 (KSENROLL-5777)
   @bug @KSENROLL-6609
   Scenario: AS - The changes should be applied to the rule view on the Edit with Logic tab
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.1.EB2 (KSENROLL-5777)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -75,7 +76,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.7.3.EB1 (KSENROLL-6308)
   @bug @KSENROLL-6609 @KSENROLL-6779
   Scenario: AS - Confirm changes to the tree is shown in the sections of the Logic tab
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.3.EB1 (KSENROLL-6308)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -102,7 +103,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.7.4.EB1 (KSENROLL-6309)
   @bug @KSENROLL-6609
   Scenario: AS - Confirm changes to the preview text area are made successfully after clicking the preview button
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.4.EB1 (KSENROLL-6309)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -134,7 +135,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.7.5.EB1 (KSENROLL-6310)
   @bug @KSENROLL-6609
   Scenario: AS - Move a node in a group left and confirm that it leaves the group
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.5.EB1 (KSENROLL-6310)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -156,7 +157,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.7.5.EB2 (KSENROLL-6310)
   @bug @KSENROLL-6609
   Scenario: AS - Move a node right and confirm that nothing happens
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.5.EB2 (KSENROLL-6310)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -179,7 +180,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.7.5.EB3 (KSENROLL-6310)
   @bug @KSENROLL-6609
   Scenario: AS - Move a node up and confirm that node is moved one position up
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.5.EB3 (KSENROLL-6310)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -202,7 +203,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.7.5.EB4 (KSENROLL-6310)
   @bug @KSENROLL-6609
   Scenario: AS - Move a node up then right and confirm that it moves into the group below
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.5.EB4 (KSENROLL-6310)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -226,7 +227,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #KSENROLL-6383
   @pending
   Scenario: Test with AS whether the Preview Change button works for Antirequisites
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6383"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Antirequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -242,7 +243,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #KSENROLL-6387
   @pending
   Scenario: Confirm by using AS whether the changes made with the Edit button persists
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6387"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "C" in the tree
@@ -251,17 +252,10 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     And I click the "Preview Change" button
     Then there should be a new node with text "C. Must have successfully completed ENGL101"
 
-  #KSENROLL-6953
-  @pending
-  Scenario: Temporary scenario to test the setup of the data for every other scenario
-    When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST110" with Advanced Search
-    And I navigate to the agenda page for "HIST110"
-    Then the "Student Eligibility & Prerequisite" rule should still exist
-
   #ELIG9.2.EB1.1 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule one
-    When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB1.1 (KSENROLL-6954)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -276,7 +270,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "agenda" preview section should have the text "Must have successfully completed HIST210"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     Then the "agenda" preview section should have the text "Must have successfully completed HIST210"
     When I click on the "Edit Rule" link
@@ -287,7 +281,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.2.EB1.2 (KSENROLL-6954)
   @bug @KSENROLL-7044
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule two
-    When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB1.2 (KSENROLL-6954)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     And I click on the "Edit Rule" link
     And I select node "A" in the tree
@@ -310,7 +304,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "agenda" preview section should have the text "Must have successfully completed all courses from,HIST110,HIST210,CORE: Life Science Lab-Linked Courses (LL)"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     Then the "agenda" preview section should have the text "Must have successfully completed all courses from,HIST110,HIST210,CORE: Life Science Lab-Linked Courses (LL)"
     When I click on the "Edit Rule" link
@@ -321,7 +315,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.2.EB1.3 (KSENROLL-6954)
   @bug @KSENROLL-7044
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule three
-    When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB1.3 (KSENROLL-6954)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     And I click on the "Edit Rule" link
     And I select node "A" in the tree
@@ -346,7 +340,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST204,HIST208,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST204,HIST208,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
     When I click on the "Edit Rule" link
@@ -357,7 +351,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.2.EB1.4 (KSENROLL-6954)
   @bug @KSENROLL-7044
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule four
-    When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB1.4 (KSENROLL-6954)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     And I click on the "Edit Rule" link
     And I select node "A" in the tree
@@ -380,7 +374,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click on the "Edit Rule" link
@@ -391,7 +385,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.2.EB2 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Antirequisite - rule one
-    When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB2 (KSENROLL-6954)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Antirequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -406,7 +400,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "agenda" preview section should have the text "Must not have successfully completed HIST250"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Antirequisite" section
     Then the "agenda" preview section should have the text "Must not have successfully completed HIST250"
     When I click on the "Edit Rule" link
@@ -417,7 +411,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.2.EB3.1 (KSENROLL-6954)
   @bug @KSENROLL-7044
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule one
-    When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB3.1 (KSENROLL-6954)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Corequisite" section
 #    And I click on the "Add Rule" link
     And I click on the "Edit Rule" link
@@ -441,7 +435,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in all courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Corequisite" section
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in all courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click on the "Edit Rule" link
@@ -452,7 +446,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.2.EB3.2 (KSENROLL-6954)
   @bug @KSENROLL-7044
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule two
-    When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB3.2 (KSENROLL-6954)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "A" in the tree
@@ -476,7 +470,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Corequisite" section
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click on the "Edit Rule" link
@@ -487,7 +481,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
   #ELIG9.2.EB3.3 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule three
-    When I go to the Manage Course Offering Agendas page for "ELIG9.2.EB3.3 (KSENROLL-6954)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "A" in the tree
@@ -503,7 +497,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in HIST798"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Corequisite" section
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in HIST798"
     When I click on the "Edit Rule" link
@@ -544,7 +538,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
 
   #KSENROLL-6958
   Scenario: Test whether using multiple course sets in a rule persists to the DB
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6958"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -565,7 +559,7 @@ Feature: KRMS Edit Agenda with Advanced Search (AS)
     Then the "agenda" preview section should have the text "Must have successfully completed all courses from,CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Academic Writing,General Education: Fundamental Studies-Professional Writing"
     When I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     Then the "agenda" preview section should have the text "Must have successfully completed all courses from,General Education: Fundamental Studies-Academic Writing,CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing"
     When I click on the "Edit Rule" link

@@ -6,7 +6,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.1.1 (KSENROLL-5774)
   @pending
   Scenario: Confirm when selecting proposition in tree that the color changes to blue
-    When I go to the Manage Course Offering Agendas page for "ELIG9.1.1 (KSENROLL-5774)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "A" in the tree
@@ -15,7 +15,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.1.2.EB1 (KSENROLL-5776)
   @pending
   Scenario: UI must change to allow the user to select rule type
-    When I go to the Manage Course Offering Agendas page for "ELIG9.1.2.EB1 (KSENROLL-5776)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -25,7 +25,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.1.2.EB2 (KSENROLL-5776)
   @pending
   Scenario: UI must change to allow the user to fill in the course
-    When I go to the Manage Course Offering Agendas page for "ELIG9.1.2.EB2 (KSENROLL-5776)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -36,7 +36,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.1.2.EB3 (KSENROLL-5776)
   @bug @KSENROLL-6381
   Scenario: A new item with the selected rule and new node identifier should appear
-    When I go to the Manage Course Offering Agendas page for "ELIG9.1.2.EB3 (KSENROLL-5776)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -50,7 +50,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.1.2.EB4 (KSENROLL-5776)
   @bug @KSENROLL-6381
   Scenario: Changes should be viewable in the Edit with Logic tab
-    When I go to the Manage Course Offering Agendas page for "ELIG9.1.2.EB4 (KSENROLL-5776)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -66,7 +66,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.5.1.EB1 (KSENROLL-5818)
   @pending
   Scenario: UI must change to allow the user to fill in text
-    When I go to the Manage Course Offering Agendas page for "ELIG9.5.1.EB1 (KSENROLL-5818)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -77,7 +77,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.5.1.EB2 (KSENROLL-5818)
   @pending
   Scenario: A new item with the Free Form text description should appear
-    When I go to the Manage Course Offering Agendas page for "ELIG9.5.1.EB2 (KSENROLL-5818)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -91,7 +91,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.7.1.EB1 (KSENROLL-5777)
   @bug @KSENROLL-6381
   Scenario: The droplist value should be able to be changed
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.1.EB1 (KSENROLL-5777)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -110,7 +110,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.7.1.EB2 (KSENROLL-5777)
   @bug @KSENROLL-6381
   Scenario: The changes should be applied to the rule view on the Edit with Logic tab
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.1.EB2 (KSENROLL-5777)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -130,7 +130,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.7.2.EB1 (KSENROLL-5861)
   @bug @KSENROLL-6609
   Scenario: Confirm that the Group Button is working as expected
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.2.EB1 (KSENROLL-5861)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -149,7 +149,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.7.2.EB2 (KSENROLL-5861)
   @bug @KSENROLL-6609
   Scenario: The newly created group should be visible in the Edit with Logic tab
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.2.EB1 (KSENROLL-5861)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -172,7 +172,7 @@ Feature: KRMS Edit Agenda
   #KSENROLL-5880
   @pending
   Scenario: The group should change depending on the AND/OR operator
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-5880"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -186,7 +186,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.7.3.EB1 (KSENROLL-6308)
   @bug @KSENROLL-6381
   Scenario: Confirm changes to the tree is shown in the sections of the Logic tab
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.3.EB1 (KSENROLL-6308)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -213,7 +213,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.7.4.EB1 (KSENROLL-6309)
   @bug @KSENROLL-6381
   Scenario: Confirm changes to the preview text area are made successfully after clicking the preview button
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.4.EB1 (KSENROLL-6309)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -245,7 +245,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.7.5.EB1 (KSENROLL-6310)
   @bug @KSENROLL-6381
   Scenario: Move a node in a group left and confirm that it leaves the group
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.5.EB1 (KSENROLL-6310)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -267,7 +267,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.7.5.EB2 (KSENROLL-6310)
   @bug @KSENROLL-6381
   Scenario: Move a node right and confirm that nothing happens
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.5.EB2 (KSENROLL-6310)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -290,7 +290,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.7.5.EB3 (KSENROLL-6310)
   @bug @KSENROLL-6381
   Scenario: Move a node up and confirm that node is moved one position up
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.5.EB3 (KSENROLL-6310)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -313,7 +313,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.7.5.EB4 (KSENROLL-6310)
   @bug @KSENROLL-6381
   Scenario: Move a node up then right and confirm that it moves into the group below
-    When I go to the Manage Course Offering Agendas page for "ELIG9.7.5.EB4 (KSENROLL-6310)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -348,7 +348,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.10.2.EB1 (KSENROLL-6335)
   @pending
   Scenario: Confirm that the Copy and Paste buttons works as expected
-    When I go to the Manage Course Offering Agendas page for "ELIG9.10.2.EB1 (KSENROLL-6335)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
@@ -363,7 +363,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.10.2.EB2 (KSENROLL-6335)
   @pending
   Scenario: Confirm that the Update Rule after Copy & Paste loads the Agenda Maintenance page
-    When I go to the Manage Course Offering Agendas page for "ELIG9.10.2.EB2 (KSENROLL-6335)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
@@ -376,7 +376,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.10.2.EB3 (KSENROLL-6335)
   @pending
   Scenario: Confirm that the Submit button persists the data after Copy & Paste
-    When I go to the Manage Course Offering Agendas page for "ELIG9.10.2.EB3 (KSENROLL-6335)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
@@ -386,14 +386,14 @@ Feature: KRMS Edit Agenda
     And I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     Then the new node "Permission of instructor required" should be after an "AND" operator
 
   #ELIG9.10.3.EB1 (KSENROLL-6336)
   @pending
   Scenario: Confirm that the Cut and Paste buttons works as expected
-    When I go to the Manage Course Offering Agendas page for "ELIG9.10.3.EB1 (KSENROLL-6336)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
@@ -408,7 +408,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.10.3.EB2 (KSENROLL-6336)
   @bug @KSENROLL-6609
   Scenario: Confirm that the Update Rule after Cut & Paste loads the Agenda Maintenance page
-    When I go to the Manage Course Offering Agendas page for "ELIG9.10.3.EB2 (KSENROLL-6336)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
@@ -421,7 +421,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.10.3.EB3 (KSENROLL-6336)
   @bug @KSENROLL-6609
   Scenario: Confirm that the Submit button persists the data after Cut & Paste
-    When I go to the Manage Course Offering Agendas page for "ELIG9.10.3.EB3 (KSENROLL-6336)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
@@ -431,14 +431,14 @@ Feature: KRMS Edit Agenda
     And I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     Then the new node "Permission of instructor required" should be after an "AND" operator
 
   #ELIG9.10.4.EB1 (KSENROLL-6337)
   @bug @KSENROLL-6485 @KSENROLL-6609
   Scenario: Confirm that the Delete button works as expected
-    When I go to the Manage Course Offering Agendas page for "ELIG9.10.4.EB1 (KSENROLL-6337)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
@@ -450,7 +450,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.10.4.EB2 (KSENROLL-6337)
   @bug @KSENROLL-6485 @KSENROLL-6609
   Scenario: Confirm that the Update Rule after Delete loads the Agenda Maintenance page
-    When I go to the Manage Course Offering Agendas page for "ELIG9.10.4.EB2 (KSENROLL-6337)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
@@ -461,7 +461,7 @@ Feature: KRMS Edit Agenda
   #ELIG9.10.4.EB3 (KSENROLL-6337)
   @bug @KSENROLL-6485 @KSENROLL-6609
   Scenario: Confirm that the Submit button persists the data after Delete
-    When I go to the Manage Course Offering Agendas page for "ELIG9.10.4.EB2 (KSENROLL-6337)"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
@@ -469,14 +469,14 @@ Feature: KRMS Edit Agenda
     And I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
     And I go to the Main Menu from Manage CO Agendas
-    And I go to the Manage Course Offering Agendas page for ""
+    And I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     Then there should be no node "Some free text goes here." before an "OR" operator
 
   #KSENROLL-6383
   @bug @KSENROLL-6381
   Scenario: Test whether the Preview Change button works for Antirequisites
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6383"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Antirequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -492,7 +492,7 @@ Feature: KRMS Edit Agenda
   #KSENROLL-6384
   @pending
   Scenario: Test whether the free form text rule works for Corequisites
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6384"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Corequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -504,7 +504,7 @@ Feature: KRMS Edit Agenda
   #KSENROLL-6389
   @pending
   Scenario: Test whether the Compare to Original on an empty tree works as expected
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6389"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Antirequisite" section
     And I click on the "Add Rule" link
     And I click on the "Compare to Canonical" link on the Edit Agenda page
@@ -513,7 +513,7 @@ Feature: KRMS Edit Agenda
   #KSENROLL-6387
   @bug @KSENROLL-6381
   Scenario: Confirm whether the changes made with the Edit button persists
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6387"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "C" in the tree
@@ -525,7 +525,7 @@ Feature: KRMS Edit Agenda
   #KSENROLL-6391
   @pending
   Scenario: Confirm whether the cancel button works in edit proposition on Antirequisite page
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6391"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Antirequisite" section
     And I click on the "Add Rule" link
     And I click on the "Cancel" link on the Edit Agenda page
@@ -534,7 +534,7 @@ Feature: KRMS Edit Agenda
   #KSENROLL-6393
   @pending
   Scenario: Confirm whether creating a second group does not cause the page to crash
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6393"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -552,7 +552,7 @@ Feature: KRMS Edit Agenda
   #KSENROLL-6491
   @bug @KSENROLL-6609
   Scenario: Confirm that the page does not crash when moving nodes around and adding a group
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6491"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -568,7 +568,7 @@ Feature: KRMS Edit Agenda
   #KSENROLL-6473
   @pending
   Scenario: Confirm that the the compare to original works after a new rule is added
-    When I go to the Manage Course Offering Agendas page for "KSENROLL-6473"
+    When I go to the Manage Course Offering Agendas page
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree

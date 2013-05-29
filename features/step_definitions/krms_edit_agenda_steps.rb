@@ -303,3 +303,9 @@ Then /^the "(.*?)" link should exist on the Manage CO Agendas page$/ do |link|
     end
   end
 end
+
+And /^I click the Manage Course Offering Requisites link$/ do
+  on KRMSManageCourseOfferings do |page|
+    page.manage_course_offering_requisites
+  end
+end
