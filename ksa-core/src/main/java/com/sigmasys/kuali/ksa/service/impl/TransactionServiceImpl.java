@@ -1621,6 +1621,13 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new InvalidTransactionTypeException(errMsg);
         }
 
+        // Removing all existing GL breakdowns for the same transaction and GL types
+        Query query = em.createQuery("delete from GlBreakdown " +
+                " where debitType.id = :debitTypeId and generalLedgerType.id = :glTypeId");
+        query.setParameter("debitTypeId", transactionTypeId);
+        query.setParameter("glTypeId", glTypeId);
+        query.executeUpdate();
+
         boolean hasZeroPercent = false;
         BigDecimal totalPercentage = BigDecimal.ZERO;
 
