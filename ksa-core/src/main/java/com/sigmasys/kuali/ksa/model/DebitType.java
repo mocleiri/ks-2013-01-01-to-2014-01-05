@@ -11,9 +11,7 @@ import javax.persistence.*;
  * <p/>
  * <p/>
  * <p/>
- * User: mike
- * Date: 1/22/12
- * Time: 4:13 PM
+ * @author Michael Ivanov
  */
 @Entity
 @DiscriminatorValue(TransactionType.DEBIT_TYPE)

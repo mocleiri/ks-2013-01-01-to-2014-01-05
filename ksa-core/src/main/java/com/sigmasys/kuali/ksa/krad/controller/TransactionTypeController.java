@@ -77,9 +77,9 @@ public class TransactionTypeController extends GenericSearchController {
 
             Map<String, TransactionTypeGroupModel> map = new HashMap<String, TransactionTypeGroupModel>();
 
-            for (TransactionType tt : entities) {
-                TransactionTypeModel ttModel = new TransactionTypeModel(tt);
-                String id = tt.getId().getId();
+            for (TransactionType transactionType : entities) {
+                TransactionTypeModel ttModel = new TransactionTypeModel(transactionType);
+                String id = transactionType.getId().getId();
                 TransactionTypeGroupModel group = map.get(id);
                 if (group == null) {
                     group = new TransactionTypeGroupModel();
@@ -89,8 +89,8 @@ public class TransactionTypeController extends GenericSearchController {
 
                 group.addTransactionType(ttModel);
 
-                if (tt instanceof DebitType) {
-                    ttModel.setGlBreakdowns(transactionService.getGlBreakdowns((DebitType) tt));
+                if (transactionType instanceof DebitType) {
+                    ttModel.setGlBreakdowns(transactionService.getGlBreakdowns(transactionType.getId()));
                 }
             }
 
@@ -217,7 +217,8 @@ public class TransactionTypeController extends GenericSearchController {
 
 
         List<Tag> tags = form.getTags();
-        tt = transactionService.addTagsToTransactionType(tt.getId(), tags);
+        this.persistTags(tags);
+        tt.setTags(tags);
 
         Long rollupId;
         try {
@@ -331,38 +332,58 @@ public class TransactionTypeController extends GenericSearchController {
         return new AuditableEntityKeyValuesFinder<Rollup>(Rollup.class);
     }
 
+    /**
+     * Loop through all tags in the collection and make sure that they're saved to the database and the ID is updated
+     *
+     * @param tags
+     */
+    private void persistTags(List<Tag> tags) {
+        //If the tag already has an id then it has been previously persisted.
+        for (Tag tag : tags) {
+            if (tag.getId() <= 0) {
+                Long id = auditableEntityService.persistAuditableEntity(tag);
+                tag.setId(id);
+            }
+        }
+    }
+
     private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType ttSource) {
-        List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>();
+
         form.setType((ttSource instanceof CreditType ? "C" : "D"));
+
         form.setCode(ttSource.getId().getId());
         form.setStartDate(new Date());
         form.setDescription(ttSource.getDescription());
+
         if (ttSource.getRollup() != null) {
             form.setRollupId(ttSource.getRollup().getId().toString());
         }
-        ArrayList<Tag> tags = new ArrayList<Tag>();
-        for (Tag t : ttSource.getTags()) {
-            tags.add(t);
+
+        form.setTags(new ArrayList<Tag>(ttSource.getTags()));
+
+        if (ttSource instanceof DebitType) {
+
+            List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns(ttSource.getId());
+
+            List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>(sourceBreakdowns.size());
+
+            for (GlBreakdown sourceBreakdown : sourceBreakdowns) {
+                GlBreakdownModel breakdownModel = new GlBreakdownModel();
+                breakdownModel.setGlAccount(sourceBreakdown.getGlAccount());
+                breakdownModel.setOperation(sourceBreakdown.getGlOperation().getId());
+                breakdownModel.setBreakdown(sourceBreakdown.getBreakdown());
+                breakdowns.add(breakdownModel);
+            }
+
+            form.setGlBreakdowns(breakdowns);
+
+        } else {
+            form.setGlBreakdowns(Collections.<GlBreakdownModel>emptyList());
         }
-
-        form.setTags(tags);
-        //form.setGlBreakdowns(ttSource.get);
-
-        List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns((DebitType) ttSource);
-
-        for (GlBreakdown sourceBreakdown : sourceBreakdowns) {
-            GlBreakdownModel breakdownModel = new GlBreakdownModel();
-            breakdownModel.setGlAccount(sourceBreakdown.getGlAccount());
-            breakdownModel.setOperation(sourceBreakdown.getGlOperation().getId());
-            breakdownModel.setBreakdown(sourceBreakdown.getBreakdown());
-            breakdowns.add(breakdownModel);
-        }
-        form.setGlBreakdowns(breakdowns);
-
-
     }
 
     public boolean validateBreakdowns(List<GlBreakdown> breakdowns, TransactionTypeForm form, GeneralLedgerType defaultGlType) {
+
         boolean errors = false;
         String type = form.getType();
         if (!"D".equals(type)) {
@@ -376,6 +397,7 @@ public class TransactionTypeController extends GenericSearchController {
         boolean zeroRow = false;
 
         for (GlBreakdownModel breakdownModel : form.getGlBreakdowns()) {
+
             GlBreakdown breakdown = new GlBreakdown();
             breakdowns.add(breakdown);
 
@@ -427,8 +449,7 @@ public class TransactionTypeController extends GenericSearchController {
             errors = true;
         }
 
-        GeneralLedgerType defatulGlType = glService.getDefaultGeneralLedgerType();
-        if (defatulGlType == null || defatulGlType.getId() == null) {
+        if (glService.getDefaultGeneralLedgerType() == null) {
             GlobalVariables.getMessageMap().putError("glBreakdownList", RiceKeyConstants.ERROR_CUSTOM, "No default GL Type configured");
             errors = true;
         }

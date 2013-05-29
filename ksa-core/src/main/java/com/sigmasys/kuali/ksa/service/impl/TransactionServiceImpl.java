@@ -1621,11 +1621,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new InvalidTransactionTypeException(errMsg);
         }
 
-        // Removing all existing GL breakdowns for the same transaction and GL types
-        Query query = em.createQuery("delete from GlBreakdown " +
-                " where debitType.id = :debitTypeId and generalLedgerType.id = :glTypeId");
+        // Removing all existing GL breakdowns for the same transaction type
+        Query query = em.createQuery("delete from GlBreakdown where debitType.id = :debitTypeId");
         query.setParameter("debitTypeId", transactionTypeId);
-        query.setParameter("glTypeId", glTypeId);
         query.executeUpdate();
 
         boolean hasZeroPercent = false;
@@ -3093,23 +3091,37 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Retrieve a list of all GL Breakdowns for a given transaction type
+     * Retrieve a list of all GL Breakdowns for a given debit type ID
      *
-     * @param transactionType Transaction Type to search
-     * @return list of GlBreakdown
+     * @param debitTypeId Debit Type ID
+     * @return a list of GlBreakdown instances
      */
     @Override
-    public List<GlBreakdown> getGlBreakdowns(DebitType transactionType) {
+    public List<GlBreakdown> getGlBreakdowns(TransactionTypeId debitTypeId) {
 
         PermissionUtils.checkPermission(Permission.READ_GL_BREAKDOWN);
 
         Query query = em.createQuery("select g from GlBreakdown g " +
+                " left outer join fetch g.debitType dt " +
                 " left outer join fetch g.generalLedgerType glt " +
-                " where g.debitType =  :debitType " +
+                " where dt.id =  :debitTypeId " +
                 " order by g.breakdown desc");
 
-        query.setParameter("debitType", transactionType);
+        query.setParameter("debitTypeId", debitTypeId);
         return query.getResultList();
+    }
+
+    /**
+     * Returns the number of all transactions associated with the given Transaction Type ID (code and sub-code)
+     *
+     * @param transactionTypeId TransactionType ID
+     * @return the number of transactions
+     */
+    @Override
+    public long getNumberOfTransactions(TransactionTypeId transactionTypeId) {
+        Query query = em.createQuery("select count(id) from Transaction where transactionType.id = :transactionTypeId");
+        query.setParameter("transactionTypeId", transactionTypeId);
+        return (Long) query.getSingleResult();
     }
 
     private List<Tag> removeTags(Long[] tagIdsToRemove, List<Tag> tags) {

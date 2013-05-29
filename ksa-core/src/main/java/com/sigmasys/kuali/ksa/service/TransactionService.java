@@ -906,11 +906,20 @@ public interface TransactionService {
 
 
     /**
-     * Retrieve a list of all GL Breakdowns for a given transaction type
+     * Retrieve a list of all GL Breakdowns for a given debit type ID
      *
-     * @param transactionType Transaction Type to search
-     * @return list of GlBreakdown
+     * @param debitTypeId Debit Type ID
+     * @return a list of GlBreakdown instances
      */
-    List<GlBreakdown> getGlBreakdowns(DebitType transactionType);
+    List<GlBreakdown> getGlBreakdowns(TransactionTypeId debitTypeId);
+
+
+    /**
+     * Returns the number of all transactions associated with the given Transaction Type ID (code and sub-code)
+     *
+     * @param transactionTypeId TransactionType ID
+     * @return the number of transactions
+     */
+    long getNumberOfTransactions(TransactionTypeId transactionTypeId);
 
 }

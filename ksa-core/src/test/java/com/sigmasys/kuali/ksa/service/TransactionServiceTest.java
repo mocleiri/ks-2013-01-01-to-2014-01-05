@@ -1465,18 +1465,16 @@ public class TransactionServiceTest extends AbstractServiceTest {
         String id = "1001";
         Integer subCode = 1;
 
-        TransactionTypeId ttId = new TransactionTypeId(id, subCode);
+        TransactionTypeId debitTypeId = new TransactionTypeId(id, subCode);
 
-        TransactionType tt = transactionService.getTransactionType(ttId);
+        TransactionType transactionType = transactionService.getTransactionType(debitTypeId);
 
-        Assert.isTrue(tt instanceof DebitType, "Transaction Type must be a DebitType");
+        Assert.isTrue(transactionType instanceof DebitType, "Transaction Type must be a DebitType");
 
-        List<GlBreakdown> breakdowns = transactionService.getGlBreakdowns((DebitType) tt);
+        List<GlBreakdown> breakdowns = transactionService.getGlBreakdowns(debitTypeId);
 
         Assert.notNull(breakdowns);
         Assert.notEmpty(breakdowns);
-        Assert.isTrue(breakdowns.size() == 1);
-
     }
 
     @Test
@@ -1553,6 +1551,26 @@ public class TransactionServiceTest extends AbstractServiceTest {
         notNull(deferment.getId());
 
         isTrue(TransactionStatus.EXPIRED.equals(transaction.getStatus()));
+
+    }
+
+    @Test
+    public void getNumberOfTransactions() throws Exception {
+
+        TransactionTypeId transactionTypeId = new TransactionTypeId("1001", 1);
+
+        Date effectiveDate = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse("01/27/2012");
+
+        Transaction transaction = transactionService.createTransaction("1001", TEST_USER_ID, effectiveDate, new BigDecimal(99));
+
+        notNull(transaction);
+        notNull(transaction.getId());
+
+        long numberOfTransactions = transactionService.getNumberOfTransactions(transactionTypeId);
+
+        logger.info("Number of transactions = " + numberOfTransactions);
+
+        isTrue(numberOfTransactions > 0);
 
     }
 

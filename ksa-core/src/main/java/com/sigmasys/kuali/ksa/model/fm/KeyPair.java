@@ -1,7 +1,6 @@
 package com.sigmasys.kuali.ksa.model.fm;
 
 import com.sigmasys.kuali.ksa.model.Identifiable;
-import com.sigmasys.kuali.ksa.model.KeyPairType;
 
 import javax.persistence.*;
 
@@ -12,9 +11,6 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "KSSA_KYPR")
-@DiscriminatorColumn(name = "TYPE")
-@DiscriminatorValue(KeyPairType.KEY_PAIR_CODE)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class KeyPair implements Identifiable {
 
 
@@ -60,7 +56,7 @@ public class KeyPair implements Identifiable {
         this.id = id;
     }
 
-    @Column(name = "KEY", nullable = false, unique = true, length = 45)
+    @Column(name = "KEY", nullable = false, length = 45)
     public String getKey() {
         return key;
     }
