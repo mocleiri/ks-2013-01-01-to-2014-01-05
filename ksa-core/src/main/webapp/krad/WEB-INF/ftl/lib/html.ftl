@@ -21,6 +21,8 @@
 <html lang="en">
 <head>
 
+    <link rel="shortcut icon" href="${request.contextPath}/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="${request.contextPath}/favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
 
     <title>

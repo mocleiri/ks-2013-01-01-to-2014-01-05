@@ -20,6 +20,8 @@
 <html>
 <head>
     <title>Login</title>
+    <link rel="shortcut icon" href="${ConfigProperties.application.url}/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="${ConfigProperties.application.url}/favicon.ico" type="image/x-icon">
     <c:forEach items="${fn:split(ConfigProperties.portal.css.files, ',')}" var="cssFile">
         <c:if test="${fn:length(fn:trim(cssFile)) > 0}">
             <link href="${pageContext.request.contextPath}/${fn:trim(cssFile)}" rel="stylesheet" type="text/css"/>
