@@ -7,8 +7,6 @@ Feature: KRMS ELIG9.10 Copy and Paste
   @pending
   Scenario: Confirm the copy and paste of rule statement is working as expected
     When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST111" with Advanced Search
-    And I navigate to the agenda page for "HIST111"
-    And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "G" in the tree
     And I click the "Copy" button
@@ -31,8 +29,6 @@ Feature: KRMS ELIG9.10 Copy and Paste
   @bug @KSENROLL7110
   Scenario: Confirm the copy and paste of compound (group) rule statement is working as expected
     When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST111" with Advanced Search
-    And I navigate to the agenda page for "HIST111"
-    And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
     And I click the "Copy" button
@@ -46,8 +42,7 @@ Feature: KRMS ELIG9.10 Copy and Paste
     Then the text "A(B(C AND D(E OR F) AND G) OR H OR I OR L(M OR N) OR J OR K)" should be present in the text area
     When I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
-    And I navigate to the agenda page for "HIST111"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Edit Rule" link
     And I click the "Edit Rule Logic" tab
