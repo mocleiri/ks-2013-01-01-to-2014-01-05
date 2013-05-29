@@ -370,8 +370,8 @@
     </bean>
 
     <util:list id="TransactionTypeList">
-        <bean parent="Uif-KeyLabelPair" p:key="C" p:value="Credit"/>
-        <bean parent="Uif-KeyLabelPair" p:key="D" p:value="Debit"/>
+        <bean parent="Uif-KeyLabelPair" p:key="C" p:value="Credit (Payment)"/>
+        <bean parent="Uif-KeyLabelPair" p:key="D" p:value="Debit (Charge)"/>
     </util:list>
 
 
