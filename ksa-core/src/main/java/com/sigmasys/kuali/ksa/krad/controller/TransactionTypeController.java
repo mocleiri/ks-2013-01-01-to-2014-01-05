@@ -217,8 +217,7 @@ public class TransactionTypeController extends GenericSearchController {
 
 
         List<Tag> tags = form.getTags();
-        this.persistTags(tags);
-        tt.setTags(tags);
+        tt = transactionService.addTagsToTransactionType(tt.getId(), tags);
 
         Long rollupId;
         try {
@@ -330,21 +329,6 @@ public class TransactionTypeController extends GenericSearchController {
         // Don't cache the values finder or else new entries will not show when added
 
         return new AuditableEntityKeyValuesFinder<Rollup>(Rollup.class);
-    }
-
-    /**
-     * Loop through all tags in the collection and make sure that they're saved to the database and the ID is updated
-     *
-     * @param tags
-     */
-    private void persistTags(List<Tag> tags) {
-        //If the tag already has an id then it has been previously persisted.
-        for (Tag tag : tags) {
-            if (tag.getId() <= 0) {
-                Long id = auditableEntityService.persistAuditableEntity(tag);
-                tag.setId(id);
-            }
-        }
     }
 
     private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType ttSource) {
