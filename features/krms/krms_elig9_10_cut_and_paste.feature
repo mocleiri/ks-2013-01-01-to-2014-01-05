@@ -7,8 +7,6 @@ Feature: KRMS ELIG9.10 Cut and Paste
   @pending
   Scenario: Confirm the cut and paste of a rule statement is working as expected
     When I set up the data for "Corequisite" for the course "ENGL304" with Advanced Search
-    And I navigate to the agenda page for "ENGL304"
-    And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "G" in the tree
     And I click the "Cut" button
@@ -30,8 +28,6 @@ Feature: KRMS ELIG9.10 Cut and Paste
   @pending
   Scenario: Confirm the cut and paste of compound (group) rule statement is working as expected
     When I set up the data for "Corequisite" for the course "ENGL304" with Advanced Search
-    And I navigate to the agenda page for "ENGL304"
-    And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
     And I click the "Cut" button
@@ -42,8 +38,7 @@ Feature: KRMS ELIG9.10 Cut and Paste
     Then the text "A(C OR G OR H OR I OR J OR D(E OR F))" should be present in the text area
     When I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
-    And I navigate to the agenda page for "ENGL304"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I click the "Edit Rule Logic" tab
