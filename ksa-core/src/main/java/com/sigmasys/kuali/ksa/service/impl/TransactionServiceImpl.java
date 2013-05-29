@@ -377,6 +377,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         transactionType.setStartDate(CalendarUtils.removeTime(startDate));
         transactionType.setPriority(priority);
         transactionType.setDescription(description);
+        transactionType.setCreationDate(new Date());
+        transactionType.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
 
         persistTransactionType(transactionType);
 
