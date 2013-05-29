@@ -28,6 +28,7 @@ so that I can reserve seats in this Activity Offering for one or more population
   Scenario:  Attempt to add a seat pool using a population that is already used for that activity offering
     When I add a seat pool using a population that is already used for that activity offering
     Then an error message is displayed about the duplicate population
+    And I remove the seat pool that is in error
     And the activity offering is updated when saved
     And the seat pool is not saved with the activity offering
 

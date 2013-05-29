@@ -24,8 +24,8 @@ end
 
 When /^I create seat pools for an activity offering and priorities are duplicated and not sequential$/ do
   seatpool_hash = {}
-  seatpool_hash[1] = make SeatPool, :population_name => "Core", :seats => 10, :priority => 2, :priority_after_reseq => 2
-  seatpool_hash[2] = make SeatPool, :population_name => "DSS", :seats => 11, :priority => 2, :priority_after_reseq => 1
+  seatpool_hash[1] = make SeatPool, :population_name => "Core", :seats => 10, :priority => 2, :priority_after_reseq => 1
+  seatpool_hash[2] = make SeatPool, :population_name => "DSS", :seats => 11, :priority => 2, :priority_after_reseq => 2
   seatpool_hash[3] = make SeatPool, :population_name => "Fraternity/Sorority", :seats => 12, :priority => 4, :priority_after_reseq => 3
 
   @activity_offering = create ActivityOffering, :seat_pool_list => seatpool_hash
@@ -45,13 +45,21 @@ When /^I add a seat pool using a population that is already used for that activi
   seatpool_hash["dup"] = make SeatPool, :population_name => "Core", :seats => 11, :priority => 2, :exp_add_succeed => false
 
   @activity_offering = create ActivityOffering,  :seat_pool_list => seatpool_hash
+  @activity_offering.save
 end
 
 Then /^an error message is displayed about the duplicate population$/ do
   on ActivityOfferingMaintenance do |page|
-    page.seatpool_first_msg.should match /.*'#{@activity_offering.seat_pool_list.values[0].population_name}' is already added.*/
+    page.seatpool_first_msg.should match /.*#{@activity_offering.seat_pool_list.values.last.population_name} is already in use.*/
   end
 end
+
+Then /^I remove the seat pool that is in error$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.remove_seatpool_by_index 2
+  end
+end
+
 
 When /^I add a seat pool without specifying a population$/ do
   seatpool1 = make SeatPool, :population_name => "", :seats => 10, :priority => 2, :exp_add_succeed => true
@@ -65,7 +73,9 @@ Then /^an error message is displayed about the required seat pool fields$/ do
     page.growltext.should == "The form contains errors. Please correct these errors and try again."
 #    page.close_validation_error_dialog
     #page.seatpool_first_msg.should match /.*Required*/
-  end
+
   #remove blank to update expected
-  @activity_offering.seat_pool_list.delete("blank")
+   page.remove_seatpool_by_index 1
+  end
+  #@activity_offering.seat_pool_list.delete("blank")
 end

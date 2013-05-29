@@ -108,15 +108,15 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   SEATS_ACTION_COLUMN = 5
 
   #seat pool validation elements
-  element(:seatpool_error_list) { |b| b.seat_pools_div.ul(class: "uif-validationMessagesList") }
-  element(:seatpool_info_list) { |b| b.seat_pools_div.ul(class: "uif-validationMessagesList") }
+  element(:seatpool_error_list) { |b| b.frm.ul(class: "uif-validationMessagesList") }
+  element(:seatpool_info_list) { |b| b.frm.ul(class: "uif-validationMessagesList") }
   value(:seatpool_first_msg) { |b| b.seatpool_info_list.li.text }
 
   element(:add_pool_priority) { |b| b.seat_pools_table.rows[1].cells[PRIORITY_COLUMN].text_field() }
   element(:add_pool_seats) { |b| b.seat_pools_table.rows[1].cells[SEATS_COLUMN].text_field() }
   value(:add_pool_name)  { |b| b.seat_pools_table.rows[1].cells[POP_NAME_COLUMN].text_field().text }
   
-  action(:lookup_population_name) { |priority, b| b.seat_pools_table.rows[priority].button(title: "Search Field").click; b.loading.wait_while_present }
+  action(:lookup_population_name) { |index, b| b.seat_pools_table.rows[index].button(title: "Search Field").click; b.loading.wait_while_present }
   
   element(:add_pool_expiration_milestone) { |b| b.seat_pools_table.rows[1].cells[EXP_MILESTONE_COLUMN].select() }
   element(:add_pool_element) { |b| b.frm.button(text: "Add Another Seat Pool")}
@@ -127,20 +127,37 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   def target_pool_row(pop_name)
     #seat_pools_table.row(text: /#{Regexp.escape(pop_name)}/)
-    i = 0
-    seat_pools_table.rows.each do |row|
-      if i > 0
+   # i = 0
+   # seat_pools_table.rows.each do |row|
+   #   if i > 0
+    seat_pools_table.rows[1..seat_pools_table.rows.count].each do |row|
         if (row.cells[POP_NAME_COLUMN].text_field.value =~ /#{pop_name}/)
           return row
         end
       end
-      i+=1
-    end
+      #i+=1
+    #end
   end
 
+  def add_pool_row_index
+   add_seat_pool
+   sp_index=1
+   seat_pools_table.rows[1..seat_pools_table.rows.count].each do |row|
+        if (row.cells[POP_NAME_COLUMN].text_field.value == "")
+          return sp_index
+        end
+     sp_index+=1
+   end
+   return sp_index
+  end
 
   def remove_seatpool(pop_name)
     target_pool_row(pop_name).button(text: "delete").click
+    loading.wait_while_present
+  end
+
+  def remove_seatpool_by_index(sp_index)
+    seat_pools_table.rows[sp_index].button(text: "delete").click
     loading.wait_while_present
   end
 
@@ -149,13 +166,28 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
     target_pool_row(pop_name).cells[PRIORITY_COLUMN].text_field.fire_event "onblur"
   end
 
+  def update_priority_by_index(sp_index, priority)
+    seat_pools_table.rows[sp_index].cells[PRIORITY_COLUMN].text_field.set priority
+    seat_pools_table.rows[sp_index].cells[PRIORITY_COLUMN].text_field.fire_event "onblur"
+  end
+
   def update_seats(pop_name, seats)
     target_pool_row(pop_name).cells[SEATS_COLUMN].text_field.set seats
     target_pool_row(pop_name).cells[SEATS_COLUMN].text_field.fire_event "onblur"
   end
 
+  def update_seats_by_index(sp_index, seats)
+    seat_pools_table.rows[sp_index].cells[SEATS_COLUMN].text_field.set seats
+    seat_pools_table.rows[sp_index].cells[SEATS_COLUMN].text_field.fire_event "onblur"
+  end
+
+
   def update_expiration_milestone(pop_name, milestone)
     target_pool_row(pop_name).cells[EXP_MILESTONE_COLUMN].select.select(milestone)
+  end
+
+  def update_expiration_milestone_by_index(sp_index, milestone)
+    seat_pools_table.rows[sp_index].cells[EXP_MILESTONE_COLUMN].select.select(milestone)
   end
 
   def get_priority(pop_name)

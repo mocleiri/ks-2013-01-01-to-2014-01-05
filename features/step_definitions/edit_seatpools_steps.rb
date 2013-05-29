@@ -64,7 +64,7 @@ end
 #checks the read only page after submit, and then reopens in edit mode to check persistence
 Then /^the activity offering is updated when saved$/ do
 
-  @activity_offering.save
+
 
   #TODO - uncomment this code when KSENROLL-5974 is fixed
   #on ActivityOfferingMaintenanceView do |page|
@@ -118,7 +118,7 @@ Then /^the activity offering is updated when saved$/ do
 
   #seat_pool priorities are resequenced when you go back into to edit AO
   @activity_offering.resequence_expected_seatpool_priorities()
-
+  @activity_offering.save
   #reopens activity offering in edit mode to recheck everything persisted
   @activity_offering.parent_course_offering.manage
   on ManageCourseOfferings do |page|
