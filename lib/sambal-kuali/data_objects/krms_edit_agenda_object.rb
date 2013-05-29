@@ -44,22 +44,18 @@ class EditAgendaData
 
   def navigate( course)
     on KRMSManageCourseOfferings do |page|
+      page.loading.wait_while_present
       page.term.when_present.set "201301"
       page.input_code.when_present.set course
       page.show
-    end
-    on KRMSManageCourseOfferingList do |page|
-      if page.target_row(course).link(:text => /Manage/).exists?
-        page.target_row(course).link(:text => /Manage/).when_present.click
-      end
-    end
-    on KRMSManageCourseOfferings do |page|
+      page.loading.wait_while_present
       page.manage_course_offering_requisites
     end
   end
 
   def check_data_existence
     on ManageCOAgendas do |page|
+      page.loading.wait_while_present
       if page.rule_edit_links.exists?
         return 1
       else
@@ -76,6 +72,7 @@ class EditAgendaData
     navigate(course)
 
     on ManageCOAgendas do |page|
+      page.loading.wait_while_present
       page.send(sections[sect])
     end
 
