@@ -80,12 +80,15 @@ class Rollover
       page.term.set @target_term
       page.go
       poll_ctr = 0
-      while page.status.upcase != "FINISHED" and poll_ctr < 160     #will wait 80 mins
+      actual_status = page.completed_status unless !page.completed_status_element.exists?
+
+      while actual_status.upcase != "COMPLETE" and poll_ctr < 160     #will wait 80 mins
         poll_ctr = poll_ctr + 1
         sleep 30
         page.go
+        actual_status = page.completed_status unless !page.completed_status_element.exists?
       end
-      if page.status.upcase == "FINISHED"
+      if actual_status.upcase == "COMPLETE"
         puts "Completed: Rollover duration: #{page.rollover_duration}"
         puts "Course Offerings transitioned: #{page.course_offerings_transitioned}"
         puts "Course Offerings exceptions: #{page.course_offerings_exceptions}"
