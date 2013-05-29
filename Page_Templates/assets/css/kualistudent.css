@@ -60,7 +60,7 @@
 
 }
 .gibberish, .gibberish-bold, .gibberish-light, .gibberish-block {
-	font-size: 1.2em;
+	font-size: 1.6em;
 }
 .gibberish {
 	font-family: redacted_scriptregular;
@@ -74,7 +74,6 @@
 .gibberish-block {
 	font-family: redactedregular;
 }
-
 
 /************************************************************* STRUCTURE */
 #application-container {

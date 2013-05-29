@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>
-		Kuali Student UIM Page Template :: Single-Page Edit
+		Kuali Student UIM Page Template :: Common Form Layout
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -114,13 +114,13 @@
 						<li data-messageitemfor="Demo-ValidationLayout-Section1" class="uif-errorMessageItem"><a href="#section-information">The "Information" section has 1 error</a></li>
 					</ul>
 				</div>
-    			<div id="page-header" title="page-header" class="container-fluid no-padding gibberish hidden">
+    			<div id="page-header" title="page-header" class="container-fluid no-padding hidden">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
 						<dl class="dl-horizontal">
-				    		<dt>Field 1</dt><dd>Remotely flung</dd>
-				    		<dt>Another Field 2</dt><dd>Less this one wherever the much lemming</dd>
-				    		<dt>Small, Small Field 3</dt><dd>Bought</dd>
-				    		<dt>A Field 4</dt><dd>Far bird when this off sang naked</dd>
+				    		<dt>Field 1</dt><dd class="gibberish-light">Remotely flung</dd>
+				    		<dt>Another Field 2</dt><dd class="gibberish-light">Less this one wherever the much lemming</dd>
+				    		<dt>Field 3</dt><dd class="gibberish-light">Bought</dd>
+				    		<dt>Final Field 4</dt><dd class="gibberish-light">Far bird when this off sang naked</dd>
 				    	</dl>	
     				</div>
     			</div>
@@ -128,7 +128,7 @@
     				<div class="container-fluid group-header no-padding"></div>
     				<div class="container-fluid validation group-error-validation-messaging"><!-- error at group level ?--></div>
     				<div class="row-fluid no-padding">
-    					<div class="container-fluid group span12 optional no-margin no-padding gibberish">
+    					<div class="container-fluid group span12 optional no-margin no-padding">
     						<form id="#main-form">
 	
  								<p>
@@ -137,33 +137,33 @@
 
    								<div class="control-group">
     								<label class="control-label field-label">
-    									Course Code
+    									Field 1
     								</label>
  	   								<div class="controls">
-	    									<input id="message-courseSufix" type="text" name="courseSufix" class="span1 gibberish" placeholder="e.g. A" value="A">
+	    									<input id="message-courseSufix" type="text" name="courseSufix" class="span1 gibberish-light" placeholder="e.g. A" value="A">
 	    								</div>
     								</div>
    								<div class="control-group">
 	    								<label class="control-label field-label">
-	    									Course Name
+	    									Field 2
 	    								</label>
 	    								<div class="controls">
-	    									<input id="message-courseSufix" type="text" name="courseSufix" class="span6 gibberish" placeholder="e.g. A" value="A">
+	    									<input id="message-courseSufix" type="text" name="courseSufix" class="span6 gibberish-light" placeholder="e.g. Alligator" value="Alligator">
 	    								</div>
     								</div>
    								<div class="control-group">
 	    								<label class="control-label field-label">
-	    									Course Description
+	    									Field 3
 	    								</label>
 	    								<div class="controls">
-											<textarea rows="3" class="span6 gibberish" placeholder="e.g. A"></textarea>
+											<textarea rows="3" class="span6 gibberish-light" placeholder="e.g. A">When collections are present in a form mixed with other input types, the primary button controls should be in the page footer, regardless of length of the form.</textarea>
 	    								</div>
     								</div>
    								<div class="control-group">
 		    							<label class="control-label field-label">
-	    									Waitlist
+	    									Field 4
 	    								</label>
-		    							<div class="controls">
+		    							<div class="controls gibberish-light">
 											<label class="checkbox">
 												<input type="checkbox" name="vehicle" value="Waitlist" class="gibberish-light" checked>
 												This course offering has a waitlist
@@ -172,9 +172,9 @@
     								</div>
    								<div class="control-group">
 	   								<label class="control-label field-label">
-	   									Waitlist Level
+	   									Field 5
 	   								</label>
-		    							<div class="controls">
+		    							<div class="controls gibberish-light">
 	   									<label class="radio">
 	   										<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
 	   										Course Offering
@@ -187,20 +187,20 @@
     								</div>
    								<div class="control-group">
 	    								<label class="control-label field-label">
-	    									Waitlist Type
+	    									Field 6
 	    								</label>
 	    								<div class="controls">
-	   										<select id="message-waitlistType" name="waitlistType" class="span2" required>
-	   											<option class="gibberish-light" selected>
+	   										<select id="message-waitlistType" name="waitlistType" class="span2 gibberish-light" required>
+	   											<option selected>
 	   												Select a type ...
 	   											</option>
-	   											<option class="gibberish-light">
+	   											<option>
 	   												Automatic
 	   											</option>
-	   											<option class="gibberish-light">
+	   											<option>
 	   												Semi-automatic
 	   											</option>
-	   											<option class="gibberish-light">
+	   											<option>
 	   												Manual
 	   											</option>
 	   										</select> 
@@ -243,7 +243,7 @@
     												
 	    											</td>
 	    											<td>
-			    										<select class="span10" required>
+			    										<select class="span10 gibberish-light" required>
 			    											<option class="gibberish-light">
 			    												Instructor
 			    											</option>
@@ -347,7 +347,7 @@
 							</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody class="gibberish-light">
 						<tr data-dismiss="modal" aria-hidden="true">
 							<td>
 								 j.sarahh

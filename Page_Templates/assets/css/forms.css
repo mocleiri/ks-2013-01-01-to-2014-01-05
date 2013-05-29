@@ -34,6 +34,9 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .read-only {
 	margin-top: 0.4em;
 }
+.data-entry label {
+	text-align: left !important;
+}
 .label-left {
 	text-align: left !important;
 }

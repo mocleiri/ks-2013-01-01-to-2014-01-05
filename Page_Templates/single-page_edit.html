@@ -114,13 +114,13 @@
 						<li data-messageitemfor="Demo-ValidationLayout-Section1" class="uif-errorMessageItem"><a href="#section-information">The "Information" section has 1 error</a></li>
 					</ul>
 				</div>
-    			<div id="page-header" title="page-header" class="container-fluid no-padding gibberish hidden">
+    			<div id="page-header" title="page-header" class="container-fluid no-padding hidden">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
 						<dl class="dl-horizontal">
-				    		<dt>Field 1</dt><dd>Remotely flung</dd>
-				    		<dt>Another Field 2</dt><dd>Less this one wherever the much lemming</dd>
-				    		<dt>Small, Small Field 3</dt><dd>Bought</dd>
-				    		<dt>A Field 4</dt><dd>Far bird when this off sang naked</dd>
+				    		<dt>Field 1</dt><dd class="gibberish-light">Remotely flung</dd>
+				    		<dt>Another Field 2</dt><dd class="gibberish-light">Less this one wherever the much lemming</dd>
+				    		<dt>Field 3</dt><dd class="gibberish-light">Bought</dd>
+				    		<dt>Final Field 4</dt><dd class="gibberish-light">Far bird when this off sang naked</dd>
 				    	</dl>	
     				</div>
     			</div>
@@ -128,21 +128,20 @@
     				<div class="container-fluid group-header no-padding"></div>
     				<div class="container-fluid validation group-error-validation-messaging"><!-- error at group level ?--></div>
     				<div class="row-fluid no-padding">
-    					<div class="container-fluid group span12 optional no-margin no-padding gibberish">
+    					<div class="container-fluid group span12 optional no-margin no-padding">
     						<form id="#main-form">
     								<div class="control-group">
 	    								<label class="control-label field-label">
-	    									Course Offering Code
+	    									Field 1
 	    								</label>
 	    								<div class="controls">
-											ENLG101
-	    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini gibberish-block" placeholder="e.g. A" value="A">
+	    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini-block" placeholder="e.g. A" value="A">
 	    								</div>
     								</div>
 
    								<div class="control-group">
 	    								<label class="control-label collection-label">
-	    									Collection Label
+	    									Collection A
 	    								</label>
 	    								<div class="controls inline">
 		    								<a id="add-person" class="btn btn-flat">
@@ -200,43 +199,43 @@
 
  									<div class="control-group">
  	    								<label class="control-label field-label">
-	    									Waitlist
+	    									Field 2
 	    								</label>
-										<label class="checkbox">
- 											<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options" class="gibberish-light" checked>
+										<label class="checkbox gibberish-light" >
+ 											<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options" checked>
  											This course offering has a waitlist
 										</label>
  									</div>
 									<div id="waitlist-options" class="collapse form-child">
 	    								<div class="control-group">
 	    									<label class="control-label field-label">
-	    										Waitlist Level
+	    										Field 3
 	    									</label>
-	    									<label class="radio">
+	    									<label class="radio gibberish-light">
 	    										<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
 	    										Course Offering
 	    									</label>
-	    									<label class="radio">
+	    									<label class="radio gibberish-light">
 	    										<input type="radio" name="optionsRadios" id="optionsRadios2" value="Activity Offering">
 	    										Activity Offering
 	    									</label>
 	    								</div>
 	    								<div class="control-group">
 		    								<label class="control-label field-label">
-		    									Waitlist Type
+		    									Field 4
 		    								</label>
 		    								<div class="controls">
-	    										<select id="message-waitlistType" name="waitlistType" class="span2" required>
-	    											<option class="gibberish-light" selected>
+	    										<select id="message-waitlistType" name="waitlistType" class="span2 gibberish-light" required>
+	    											<option selected>
 	    												Select a type ...
 	    											</option>
-	    											<option class="gibberish-light">
+	    											<option>
 	    												Automatic
 	    											</option>
-	    											<option class="gibberish-light">
+	    											<option>
 	    												Semi-automatic
 	    											</option>
-	    											<option class="gibberish-light">
+	    											<option>
 	    												Manual
 	    											</option>
 	    										</select> 
@@ -336,7 +335,7 @@
 							</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody class="gibberish-light">
 						<tr data-dismiss="modal" aria-hidden="true">
 							<td>
 								 j.sarahh
@@ -433,174 +432,6 @@
 			<a href="#" class="cancel" data-dismiss="modal" aria-hidden="true">Cancel</a>
 		</div>
    </div>
-	<!-- Lightbox: Advanced Select of Organization -->
-	<div id="advanced-select-organization" class="modal hide fade lightbox modal-large" tabindex="-1" role="dialog" aria-labelledby="lightboxLabel-organization" aria-hidden="true">
-   	<div class="modal-header">
-   		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-   		<h3 id="lightboxLabel-organization">Organizational Lookup</h3>
-   	</div>
-   	<div class="modal-body modal-body-large">
-			<div class="search-parameters">
-				<form id="search-organization" title="search-organization">
-					<div class="controls controls-row">
-						<div class="control-group span2">
-							<label class="control-label field-label">
-								Organization Name
-							</label>
-							<div class="controls">
-								<input class="span2" type="text" placeholder="e.g., Civil-Center" value="Civil Center">
-							</div>
-						</div>
-						<div class="control-group span4">
-							<label class="control-label field-label">
-								Abbreviation
-							</label>
-							<div class="controls">
-								<input class="span4" type="text" placeholder="e.g., Ctr Excellence on Proj Mgmt" value="">
-							</div>
-						</div>										
-						<div class="control-group span2">
-							<a class="btn btn-primary no-label">
-								Find Matches
-							</a>
-						</div>										
-					</div>
-				</form>
-			</div>
-			<div class="search-results clearfix">
-				<table class="table table-hover table-condensed">
-					<thead>
-						<tr>
-							<th class="span2">
-								ID 
-							</th>
-							<th class="span6">
-								Name
-							</th>
-							<th class="span4">
-								Abbreviation
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								1511461247 
-							</td>
-							<td>
-								AGNR-Dean-Joint Inst for Food Safety &amp; Applied Nutrition
-							</td>
-							<td>
-								Inst Food Safety &amp; Appl Nutr
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								1835615967 
-							</td>
-							<td>
-								AEXST-WT-Journalism
-							</td>
-							<td>
-								Winter Term-JOUR
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								31193503 
-							</td>
-							<td>
-								ENGR-Civil-Center for Excellence on Project Management
-							</td>
-							<td>
-								Ctr Excellence on Proj Mgmt
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								3392144313 
-							</td>
-							<td>
-								ARHU-Meyerhoff Program & Center for Jewish Studies
-							</td>
-							<td>
-								Meyerhoff Prg & Ctr Jewish Std
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								3506629388 
-							</td>
-							<td>
-								VPRGS-UMCAPS-Ctr for Criminal Justice Tech. Res.
-							</td>
-							<td>
-								UMCAPS-Ctr For Criminal Just.
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								4236812358 
-							</td>
-							<td>
-								JOUR-Philip Merrill College of Journalism
-							</td>
-							<td>
-								Philip Merrill Coll Journalism
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								4282297334 
-							</td>
-							<td>
-								ARHU-Women's Studies-Curric Transform Project
-							</td>
-							<td>
-								Wom Std-Curric Transform Proj
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								436661015 
-							</td>
-							<td>
-								CMNS-Astro-Joint Space Sciences Institute
-							</td>
-							<td>
-								Joint Space Sciences Inst
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								438750448 
-							</td>
-							<td>
-								EXST-FC-Journalism
-							</td>
-							<td>
-								Freshmen Connection-JOUR
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								53692544 
-							</td>
-							<td>
-								Joint Quantum Institute
-							</td>
-							<td>
-								CMNS-Physics-Joint Quantum Institute
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-   	</div>
-		<div class="modal-footer">
-			<a href="#" class="cancel" data-dismiss="modal" aria-hidden="true">Cancel</a>
-		</div>
-   </div>
 
 	<!-- Scripts -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -613,57 +444,11 @@
 	<script type="text/javascript">//<![CDATA[ 
 	$(document).ready(function() {
 		$(".collapse").collapse('hide');
-		$("#node1").popover({
-			placement: 'bottom'
-		});
-		$("#node3").popover({
-			placement: 'bottom'
-		});
-		$("#node4").popover({
-			placement: 'bottom'
-		});
-		$("#term-picker").popover({
-			placement: 'bottom'
-		});
-		$("#detail-more").popover({
-			placement: 'bottom'
-		});
-		$('#term-picker').on('show', function () {
-			$("#node1").popover('hide');
-			$("#node3").popover('hide');
-			$("#node4").popover('hide');
-    	});
-		$('#node1').on('show', function () {
-			$("#term-picker").popover('hide');
-			$("#node3").popover('hide');
-			$("#node4").popover('hide');
-    	});
-		$('#node3').on('show', function () {
-			$("#term-picker").popover('hide');
-			$("#node1").popover('hide');
-			$("#node4").popover('hide');
-    	});
-		$('#node4').on('show', function () {
-			$("#term-picker").popover('hide');
-			$("#node1").popover('hide');
-			$("#node3").popover('hide');
-    	});
-		$('#add-delivery').click(function () {
-			$("#no-delivery-data").hide();
-			$("#add-delivery-fields").show();
-    	});
 		$('#add-person').click(function () {
 			$("#no-person-data").hide();
 			$("#add-person-fields").show();
     	});
-		$('#add-organization').click(function () {
-			$("#no-organization-data").hide();
-			$("#add-organization-fields").show();
-    	});
 	   $('#advanced-select-personnel').modal({
-			show: false
-		});
-	   $('#advanced-select-organization').modal({
 			show: false
 		});
 	});
