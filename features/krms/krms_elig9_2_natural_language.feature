@@ -6,7 +6,8 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB1.1 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule one
-    When I go to the Manage Course Offering Agendas page
+    When I navigate to the agenda page for "ENGL304"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Recommended Preparation" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -19,7 +20,6 @@ Feature: KRMS ELIG9.2 Natural Language
     When I click the "Update Rule" button
     Then the "agenda" preview section should have the text "Must have successfully completed HIST210"
     When I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     Then the "agenda" preview section should have the text "Must have successfully completed HIST210"
@@ -31,7 +31,8 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB1.2 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule two
-    When I go to the Manage Course Offering Agendas page
+    When I navigate to the agenda page for "ENGL304"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Recommended Preparation" section
     And I click on the "Edit Rule" link
     And I select node "A" in the tree
@@ -52,7 +53,6 @@ Feature: KRMS ELIG9.2 Natural Language
     When I click the "Update Rule" button
     Then the "agenda" preview section should have the text "Must have successfully completed all courses from,HIST110,HIST210,CORE: Life Science Lab-Linked Courses (LL)"
     When I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     Then the "agenda" preview section should have the text "Must have successfully completed all courses from,HIST110,HIST210,CORE: Life Science Lab-Linked Courses (LL)"
@@ -64,7 +64,8 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB1.3 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule three
-    When I go to the Manage Course Offering Agendas page
+    When I navigate to the agenda page for "ENGL304"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Recommended Preparation" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -88,7 +89,6 @@ Feature: KRMS ELIG9.2 Natural Language
     When I click the "Update Rule" button
     Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST204,HIST208,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
     When I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST204,HIST208,HIST213,CORE: Life Science Lab-Linked Courses (LL)"
@@ -100,7 +100,8 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB1.4 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule four
-    When I go to the Manage Course Offering Agendas page
+    When I navigate to the agenda page for "ENGL304"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Recommended Preparation" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -122,7 +123,6 @@ Feature: KRMS ELIG9.2 Natural Language
     When I click the "Update Rule" button
     Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page
     And I click on the "Recommended Preparation" section
     Then the "agenda" preview section should have the text "Must have successfully completed a minimum of 2 courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
@@ -134,7 +134,8 @@ Feature: KRMS ELIG9.2 Natural Language
 #ELIG9.2.EB2 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Antirequisite - rule one
-    When I go to the Manage Course Offering Agendas page
+    When I navigate to the agenda page for "ENGL304"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Antirequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -147,7 +148,6 @@ Feature: KRMS ELIG9.2 Natural Language
     When I click the "Update Rule" button
     Then the "agenda" preview section should have the text "Must not have successfully completed HIST250"
     When I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page
     And I click on the "Antirequisite" section
     Then the "agenda" preview section should have the text "Must not have successfully completed HIST250"
@@ -159,7 +159,8 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB3.1 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule one
-    When I go to the Manage Course Offering Agendas page
+    When I navigate to the agenda page for "ENGL304"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Corequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -179,7 +180,6 @@ Feature: KRMS ELIG9.2 Natural Language
     When I click the "Update Rule" button
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in all courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page
     And I click on the "Corequisite" section
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in all courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
@@ -191,7 +191,8 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB3.2 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule two
-    When I go to the Manage Course Offering Agendas page
+    When I navigate to the agenda page for "ENGL304"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "A" in the tree
@@ -213,7 +214,6 @@ Feature: KRMS ELIG9.2 Natural Language
     When I click the "Update Rule" button
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST111,HIST210,General Education: Fundamental Studies-Professional Writing"
     When I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page
     And I click on the "Corequisite" section
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in a minimum of 2 courses from,HIST111,HIST210,General Education: Fundamental Studies-Professional Writing"
@@ -225,7 +225,8 @@ Feature: KRMS ELIG9.2 Natural Language
 #ELIG9.2.EB3.3 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule three
-    When I go to the Manage Course Offering Agendas page
+    When I navigate to the agenda page for "ENGL304"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -239,7 +240,6 @@ Feature: KRMS ELIG9.2 Natural Language
     When I click the "Update Rule" button
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in HIST798"
     When I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
     And I go to the Manage Course Offering Agendas page
     And I click on the "Corequisite" section
     Then the "agenda" preview section should have the text "Must be concurrently enrolled in HIST798"

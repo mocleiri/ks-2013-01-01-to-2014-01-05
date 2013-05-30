@@ -1,5 +1,5 @@
 When /^I go to the Manage Course Offering Agendas page$/ do
-  @editAgenda = make ManageCORequisitesData
+  @manageCOR = make ManageCORequisitesData
   go_to_manage_co_agendas
 end
 
@@ -141,16 +141,21 @@ end
 Then /^the "(.*?)" preview section should not have the text "(.*)"$/ do |section,text|
   sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
 
-  test_text = @editAgenda.create_string_for_testing(section,text)
   if( section == "agenda")
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
-      page.agenda_management_section.text.should_not match /.*#{Regexp.escape(test_text)}.*/
+      test_text = text.split(/,/)
+      test_text.each do |elem|
+        page.agenda_management_section.text.should_not match /.*#{Regexp.escape(elem)}.*/
+      end
     end
   else
     on ManageCORequisites do |page|
       page.loading.wait_while_present
-      page.send(sect[section]).text.should_not match /.*#{Regexp.escape(test_text)}.*/
+      test_text = text.split(/,/)
+      test_text.each do |elem|
+        page.send(sect[section]).text.should_not match /.*#{Regexp.escape(elem)}.*/
+      end
     end
   end
 end
@@ -262,7 +267,7 @@ Then /^there should be no node "(.*)" before an "(.*)" operator$/ do |text, oper
 end
 
 When /^I search for the "(.*)" "(.*)"$/ do |field, code|
-  @editAgenda.advanced_search(field, code)
+  @manageCOR.advanced_search(field, code)
 end
 
 When /^I click on the "(.*)" link on the Edit Agenda page$/ do |link|
