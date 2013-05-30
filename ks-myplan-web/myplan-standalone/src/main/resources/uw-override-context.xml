@@ -61,7 +61,7 @@
     </bean>
 
     <!-- Override ks-enroll CourseOfferingService bean with UW implementation -->
-    <bean id="coService" class="edu.uw.kuali.student.service.impl.UwSolrCourseOfferingServiceImpl">
+    <bean id="coService" class="edu.uw.kuali.student.web.UwSolrCourseOfferingServiceImpl">
         <property name="offeringServiceUtils" ref="offeringServiceUtil"/>
         <property name="solrSeviceClient" ref="solrServiceClient"/>
         <property name="nextDecorator" ref="swsCoService"/>

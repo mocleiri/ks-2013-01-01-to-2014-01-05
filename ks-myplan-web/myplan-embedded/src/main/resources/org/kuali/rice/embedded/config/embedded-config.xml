@@ -230,7 +230,7 @@
     <!-- UW SWS Service Impl -->
     <param name="uw.studentservice.impl">edu.uw.kuali.student.lib.client.studentservice.StudentServiceClientImpl</param>
 
-    <param name="uw.solrservice.impl">edu.uw.kuali.student.lib.client.studentservice.SolrServiceClientImpl</param>
+    <param name="uw.solrservice.impl">edu.uw.kuali.student.web.SolrServiceClientImpl</param>
 
     <!-- Base URL for the course search servlet -->
     <param name="courseSearchBaseUrl">${application.url}</param>
