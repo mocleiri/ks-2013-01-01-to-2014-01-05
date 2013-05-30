@@ -99,6 +99,7 @@ module Workflows
   end
 
   def log_in(user, pwd)
+    current_user = ""
     if !$distributed_env then
       visit PortalMenu do |page|
         current_user = page.current_logged_in_user_id
@@ -112,11 +113,11 @@ module Workflows
         end
       end
     else
-      current_user = ""
       visit LUMMainPage do |page|
         current_user = page.current_logged_in_user_id
         if current_user == :no_user
           page.login_with user, pwd
+          sleep 2 #workaround for problem loading LUMMainPage first time
         elsif current_user != user
           page.logout
           visit Login do |page|
