@@ -5,7 +5,7 @@ end
 
 When /^I go to the Manage Course Offerings page for "(.*)"$/ do |test|
   puts test
-  @editAgenda = make ManageCORequisitesData
+  @manageCOR = make ManageCORequisitesData
   go_to_krms_manage_course_offerings
 end
 
@@ -63,9 +63,10 @@ Then /^the background color should change to "(.*)"$/ do |color|
 end
 
 When /^I click the "(.*)" button$/ do |btn|
-  buttons = {"Add Rule Statement"=>:add_btn, "Add Parent"=>:group_btn, "Update Rule"=>:update_rule_btn, "Move Down"=>:down_btn,
-             "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move Left"=>:left_btn, "Copy"=>:copy_btn,
-             "Cut"=>:cut_btn, "Paste"=>:paste_btn, "Delete"=>:del_btn, "add"=>:add_line_btn, "Edit"=>:edit_btn}
+  buttons = {"Add Rule Statement"=>:add_btn, "Create Group"=>:group_btn, "Update Rule"=>:update_rule_btn,
+             "Move Down"=>:down_btn, "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move In"=>:right_btn,
+             "Move Out"=>:left_btn, "Copy"=>:copy_btn, "Cut"=>:cut_btn, "Paste"=>:paste_btn, "Delete"=>:del_btn,
+             "add"=>:add_line_btn, "Edit"=>:edit_btn}
   on ManageCORequisites do |page|
     page.send(buttons[btn])
   end
@@ -103,6 +104,7 @@ end
 When /^I click the "(.*)" tab$/ do |tab|
   tabs = {"Edit Rule Logic"=>:logic_tab, "Edit Rule"=>:object_tab}
   on ManageCORequisites do |page|
+    page.edit_loading.wait_while_present
     page.send(tabs[tab]).when_present.click
   end
 end
@@ -162,7 +164,7 @@ end
 
 When /^I select "(.*)" from the dropdown before node "(.*)" on the "(.*)"$/ do |cond, node, comp|
   on ManageCORequisites do |page|
-    id = @editAgenda.find_krms_before_element("edit_tree",'select',node, comp)
+    id = @manageCOR.find_krms_before_element("edit_tree",'select',node, comp)
     page.edit_tree_section.select(:id => id).when_present.select cond
   end
 end
@@ -204,6 +206,7 @@ Then /^the node "(.*)" should be a primary node in the tree$/ do |node|
 end
 
 Then /^node "(.*)" should be after node "(.*)"$/ do |second,first|
+  sleep 10
   on ManageCORequisites do |page|
     page.loading.wait_while_present
     page.edit_tree_section.text.should match /.*#{Regexp.escape(first)}\..+#{Regexp.escape(second)}\..*/m
@@ -277,14 +280,14 @@ Then /^the old and new rule should be compared$/ do
 end
 
 When /^I set up the data for "(.*?)" for the course "(.*?)" with Advanced Search$/ do |section, course|
-  @editAgenda = make ManageCORequisitesData
-  @editAgenda.create_data_advanced_search(section, course)
+  @manageCOR = make ManageCORequisitesData
+  @manageCOR.create_data_advanced_search(section, course)
 end
 
 When /^I navigate to the agenda page for "(.*?)"$/ do |course|
-  @editAgenda = make ManageCORequisitesData
-  go_to_manage_course_offerings
-  @editAgenda.navigate(course)
+  @manageCOR = make ManageCORequisitesData
+  @course_offering = make CourseOffering, {:course => course, :term => "201301"}
+  @course_offering.manage
 end
 
 When /^I want to wait$/ do 

@@ -24,8 +24,8 @@ class ManageCORequisites < BasePage
   action(:update_rule_btn) { |b| b.frm.button(:text => /Update Rule/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:down_btn) { |b| b.frm.button(:text => /Move Down/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:up_btn) { |b| b.frm.button(:text => /Move Up/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:left_btn) { |b| b.frm.button(:text => /Move In/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:right_btn) { |b| b.frm.button(:text => /Move Out/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:left_btn) { |b| b.frm.button(:text => /Move Out/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:right_btn) { |b| b.frm.button(:text => /Move In/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:preview_btn) { |b| b.frm.button(:text => /Preview Change/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:copy_btn) { |b| b.frm.button(:text => /Copy/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:cut_btn) { |b| b.frm.button(:text => /Cut/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}

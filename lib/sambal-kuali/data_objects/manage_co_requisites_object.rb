@@ -59,7 +59,7 @@ class ManageCORequisitesData
         #TODO - find a way to return course code randomly when searching for title or description
       end
     end
-    sleep 3 #adding sleep, moving through the tree too fast causes test to crash
+    #sleep 3 #adding sleep, moving through the tree too fast causes test to crash
   end
 
   def check_data_existence
