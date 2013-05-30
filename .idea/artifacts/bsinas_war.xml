@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="bsinas:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="bsinas.war">
+      <element id="artifact" artifact-name="bsinas:war exploded" />
+    </root>
+  </artifact>
+</component>

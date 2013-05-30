@@ -1,0 +1,64 @@
+<web-app
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+        version="3.0">
+
+    <!-- Default page to serve -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:/META-INF/bsinas-context.xml</param-value>
+    </context-param>
+
+
+    <listener>
+        <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>com.sigmasys.bsinas.servlet.WebappContextLoaderListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>com.sigmasys.bsinas.servlet.RequestContextListener</listener-class>
+    </listener>
+
+
+    <servlet>
+        <servlet-name>springDispatcher</servlet-name>
+        <servlet-class>com.sigmasys.bsinas.servlet.WebServiceDispatcherServlet</servlet-class>
+        <!--  Tell this servlet to use ROOT spring context -->
+        <init-param>
+            <param-name>contextAttribute</param-name>
+            <param-value>org.springframework.web.context.WebApplicationContext.ROOT</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+
+    <servlet-mapping>
+        <servlet-name>springDispatcher</servlet-name>
+        <url-pattern>*.service</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>springDispatcher</servlet-name>
+        <url-pattern>*.webservice</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>coreFilter</filter-name>
+        <filter-class>com.sigmasys.bsinas.servlet.CoreFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>coreFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+</web-app>

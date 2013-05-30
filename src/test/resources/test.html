@@ -1,0 +1,230 @@
+
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>
+Kuali </title>
+<link href="/ksa/krad/css/krad_2.2.0-M4-SNAPSHOT.min.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/css/global/fss-base-context.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/css/global/fss-base-global.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/css/global/fss-layout.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/css/global/fss-text.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/css/ks/fss-theme-krad.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/css/ks/theme-krad.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/css/global/fss-reset.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/jqueryUI/jquery-ui-1.8.23.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/jgrowl/jquery.jgrowl.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/rice/datatables/demo_table.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/rice/datatables/TableTools.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/rice/datatables/jquery.dataTables.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/fancybox/jquery.fancybox.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/fancybox/jquery.fancybox.pack.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/fancybox/helpers/jquery.fancybox-buttons.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/fancybox/helpers/jquery.fancybox-media.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/fancybox/helpers/jquery.fancybox-thumbs.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/rice/textpopout/popoutTextarea.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/jqueryUI/jquery.autocomplete.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/rice/menu/tabs.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/rice/spinner/smartspinner.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/tooltip/jquery.bubblepopup.v2.3.1.css" rel="stylesheet" type="text/css"/>
+<link href="/ksa/krad/plugins/tooltip/jquery.tools.tooltip.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript"
+src="/ksa/krad/scripts/krad_2.2.0-M4-SNAPSHOT.min.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/scripts/krad.ajax.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/scripts/krad.initialize.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/scripts/krad.message.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/scripts/krad.request.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/scripts/krad.response.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/scripts/krad.utility.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/scripts/krad.validate.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/scripts/krad.variables.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/scripts/krad.widget.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/scripts/portal.initialize.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/jquery/jquery-1.8.0.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/jqueryUI/jquery-ui-1.8.23.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/cookie/jquery.cookie.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/postmsg/jquery.ba-postmessage.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/jgrowl/jquery.jgrowl.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/blockUI/jquery.blockUI.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/watermark/jquery.watermark.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/validate/jquery.validate.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/validate/additional_validations.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/rice/spinner/smartspinner.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/rice/menu/krad.navigationMenu.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/rice/menu/krad.tabMenu.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/rice/textpopout/krad.textareaPopout.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/dirtyform/jquery.dirtyform.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/scrollto/jquery.scrollTo-1.4.2-min.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/rice/datatables/jquery.dataTables.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/rice/datatables/TableTools.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/jstree/jquery.jstree.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/jqform/jquery.form.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/fancybox/jquery.fancybox.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/fancybox/helpers/jquery.fancybox-buttons.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/fancybox/helpers/jquery.fancybox-media.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/easydrag/jquery.easydrag.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/easing/jquery.easing-1.3.pack.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/json/jquery.json-2.2.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/infusion/infusion-1.4.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/infusion/infusion.reorderer.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/color/jquery.color.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/tooltip/jquery.bubblepopup.v2.3.1.js"></script>
+<script type="text/javascript"
+src="/ksa/krad/plugins/tooltip/jquery.tools.min.js"></script>
+<!-- preload script (server variables) -->
+<script type="text/javascript">
+setGrowlDefaults({position:'top-right',sticky:false,life:7000});setBlockUIDefaults({fadeIn:400,fadeOut:800,blockingImage:'http://localhost:8080/ksa/krad/images/loading.gif'}, 'navigation');setBlockUIDefaults({fadeIn:400,fadeOut:800,blockingImage:'http://localhost:8080/ksa/krad/images/loader.gif'}, 'refresh');initializeViewState({'u11':{defaultOpen:true},'u26':{defaultOpen:true},'u25':{defaultOpen:true}});setConfigParam('kradImageLocation','http://localhost:8080/ksa/krad/images/');setConfigParam('kradUrl','http://localhost:8080/ksa/kr-krad');
+</script>
+<!-- custom script for the view -->
+</head>
+<body>
+<div id="Uif-Application" class="uif-application">
+<!-- APPLICATION HEADER -->
+<form id="kualiForm" action="http://localhost:8080/ksa/uif/transOvrVw" method="post" enctype="multipart/form-data" onsubmit="">
+<a id="topOfForm"></a>
+<input id="viewId" type="hidden" name="viewId" value="StudentTransactionOverview" >
+<input id="formKey" type="hidden" name="formKey" value="b842740b-d1bd-4960-8a3a-191f41efef5d" >
+<input id="validateDirty" type="hidden" name="view.applyDirtyCheck" value="true" >
+<input id="renderedInLightBox" type="hidden" name="renderedInLightBox" value="false" >
+<!-- VIEW -->
+<div id="StudentTransactionOverview" class="uif-view uif-formView" title="Student Transaction Overview" >
+<!-- BREADCRUMBS -->
+<label id="breadcrumb_label" class="offScreen">Breadcrumbs</label>
+<span class="uif-breadcrumbs">
+<ol id="breadcrumbs" role="navigation" aria-labelledby="breadcrumb_label">
+<li><a href="../index.jsp">Home</a><span role="presentation"> &raquo; </span></li>
+<span class="kr-current" id="current_breadcrumb_span"></span>
+<a style="display:none;" id="current_breadcrumb_anchor" href="http://localhost:8080/ksa/uif/transOvrVw?methodToCall=get&viewId=StudentTransactionOverview&formKey=b842740b-d1bd-4960-8a3a-191f41efef5d&showHome=false&history=%24%5E%24null%5E%24%5Enull%5E%24%5EHome%5E%24%5E..%2Findex.jsp%5E%24%5Enull"></a>
+</ol>
+</span>
+<!-- VIEW HEADER -->
+<div id="u7" class="uif-header uif-viewHeader" data-headerFor="StudentTransactionOverview">
+</div>
+<!-- VIEW CONTENT -->
+<div id="Uif-ViewContentWrapper" class="uif-viewContentWrapper">
+<!-- VIEW NAVIGATION -->
+<div id="Uif-Navigation">
+<!-- NAVIGATION -->
+<ul id="KSATransOvrVwNav" role="navigation">
+<li>
+<div id="u1" class="uif-header" >
+<h2 class="uif-headerText"><span class="uif-headerText-span">KSA Navigation</span>
+</h2>
+</div>
+</li>
+<li>
+<a id="u2" href="#bursaQuickMenuOptionsPage" name="bursaQuickMenuOptionsPage" onclick="return false;" class="uif-action uif-actionLink uif-navigationActionLink"
+tabindex=0 data-loadingmessage="Loading..." data-disableblocking="false" data-ajaxsubmit="true" data-validate="false">
+Quick Options
+</a>
+<input name="script" type="hidden" data-role="dataScript" data-for="u2" value="jQuery('#u2').data('submitData', {&quot;methodToCall&quot;:&quot;navigate&quot;,&quot;actionParameters[navigateToPageId]&quot;:&quot;bursaQuickMenuOptionsPage&quot;,&quot;showHistory&quot;:&quot;false&quot;,&quot;showHome&quot;:&quot;false&quot;,&quot;jumpToId&quot;:&quot;TOP&quot;});"/>
+<input name="script" type="hidden" data-role="script" data-for="u2" value="jQuery('#' + 'u2').click(function(e) {
+e.preventDefault();if(jQuery(this).hasClass('disabled')){ return false; }if (checkDirty(e) == false) { actionInvokeHandler(this); ; }
+});"/>
+</li>
+</ul>
+<input name="script" type="hidden" data-role="script" value="var options = {};
+options.currentPage = 'bursaQuickMenuOptionsPage';
+createNavigation('KSATransOvrVwNav', 'VERTICAL_MENU', options);"/>
+</div>
+<!-- PAGE CONTENT -->
+<div id="Uif-PageContentWrapper" class="uif-pageContentWrapper">
+<div id="bursaQuickMenuOptionsPage" class="uif-page" title="Quick Options" data-server-messages="false" data-parent="StudentTransactionOverview" data-type="Page">
+<div id="u14" class="uif-header uif-pageHeader clearfix" data-headerFor="bursaQuickMenuOptionsPage">
+</div>
+<div id="u15" class="uif-validationMessages uif-groupValidationMessages uif-pageValidationMessages" style="display: none;" data-messagesFor="bursaQuickMenuOptionsPage">
+</div>
+<div id="u13_boxLayout" class="uif-boxLayout uif-verticalBoxLayout clearfix">
+<div id="bursaQuickOptions" class="uif-group uif-boxGroup uif-verticalBoxGroup uif-boxSection uif-boxLayoutVerticalItem clearfix" title="Find accounts by name" data-parent="bursaQuickMenuOptionsPage">
+<div id="u19" class="uif-header uif-sectionHeader" data-headerFor="bursaQuickOptions">
+</div>
+<div id="u20" class="uif-validationMessages uif-groupValidationMessages" style="display: none;" data-messagesFor="bursaQuickOptions">
+</div>
+<span id="u100001_span" class="uif-message uif-instructionalMessage" data-parent="bursaQuickOptions">
+Select a quick navigation link from the options listed here. </span>
+<div id="u18_boxLayout" class="uif-boxLayout uif-verticalBoxLayout clearfix">
+<a id="u22" href="transOvrVw?methodToCall=get&viewId=StudentTransactionOverview&pageId=bursaPersonLookupPage" target="_self"
+class="uif-link uif-boxLayoutVerticalItem clearfix" >Transactions for a Person</a>
+<a id="u23" href="transOvrVw?methodToCall=get&viewId=StudentTransactionOverview&pageId=bursaCurrencyPage" target="_self"
+class="uif-link uif-boxLayoutVerticalItem clearfix" >Currency Type</a>
+<a id="u24" href="transOvrVw?methodToCall=get&viewId=StudentTransactionOverview&pageId=bursaActivityPage" target="_self"
+class="uif-link uif-boxLayoutVerticalItem clearfix" >Activity</a>
+</div>
+</div>
+<input name="script" type="hidden" data-role="dataScript" data-for="bursaQuickOptions" value="jQuery('#bursaQuickOptions').data('validationMessages', {summarize:true,displayMessages:true,collapseFieldMessages:true,displayLabel:true,hasOwnMessages:false,pageLevel:false,forceShow:false,sections:[],order:[],serverErrors:[],serverWarnings:[],serverInfo:[]});"/>
+</div>
+</div>
+<!-- PAGE RELATED VARS -->
+<input id="pageId" type="hidden" name="view.currentPageId" value="bursaQuickMenuOptionsPage" >
+<input id="pageTitle" type="hidden" name="view.currentPage.header.headerText" value="&nbsp;" >
+<input id="historyParameterString" type="hidden" name="formHistory.historyParameterString" value="null%5E%24%5Enull%5E%24%5EHome%5E%24%5E..%2Findex.jsp%5E%24%5Enull%24%5E%24StudentTransactionOverview%5E%24%5Enull%5E%24%5E%5E%24%5Ehttp%3A%2F%2Flocalhost%3A8080%2Fksa%2Fuif%2FtransOvrVw%3FmethodToCall%3Dget%26viewId%3DStudentTransactionOverview%26formKey%3Db842740b-d1bd-4960-8a3a-191f41efef5d%26showHome%3Dfalse%5E%24%5Eb842740b-d1bd-4960-8a3a-191f41efef5d" >
+<input name="script" type="hidden" data-role="dataScript" data-for="bursaQuickMenuOptionsPage" value="jQuery('#bursaQuickMenuOptionsPage').data('validationMessages', {summarize:true,displayMessages:true,collapseFieldMessages:true,displayLabel:true,hasOwnMessages:false,pageLevel:true,forceShow:true,sections:['bursaQuickOptions'],order:['s$bursaQuickOptions'],serverErrors:[],serverWarnings:[],serverInfo:[]});"/>
+<input name="script" type="hidden" data-role="script" data-for="bursaQuickMenuOptionsPage" value="jQuery(document).ready(function(e) {
+setupPage(true);
+});"/>
+</div>
+</div>
+<!-- VIEW FOOTER -->
+<div id="viewfooter_div">
+</div>
+</div>
+<input name="script" type="hidden" data-role="script" data-for="StudentTransactionOverview" value="jQuery(document).ready(function(e) {
+jQuery.extend(jQuery.validator.messages, {
+required: 'Required',
+minExclusive: 'Value must be greater than {0}',
+maxInclusive: 'Value cannot be greater than {0}',
+minLengthConditional: 'Must be at least {0} characters',
+maxLengthConditional: 'Must be at most {0} characters'});
+});"/>
+<span id="formComplete"></span>
+</form>
+<input name="script" type="hidden" data-role="script" value="performFocusAndJumpTo(true, true, true, '',
+'', '');"/>
+</div>
+<!-- APPLICATION FOOTER -->
+</body>
+</html>

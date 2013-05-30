@@ -1,0 +1,8 @@
+<endpoints xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime" version="2.0">
+
+    <!--  TransactionService WS Endpoint -->
+    <!--endpoint name="TransactionService"
+              implementation="com.sigmasys.bsinas.service.impl.TransactionServiceImpl"
+              url-pattern="/transaction.webservice"/-->
+
+</endpoints>

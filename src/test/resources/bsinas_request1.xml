@@ -1,0 +1,924 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<needAnalysisInput CollegeCode="CollegeCode8" AwardYear="2012" CreatedDate="2011-07-25"
+                   xmlns="http://INAS.collegeboard.org/2012/Input/"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <NeedAnalysisData xmlns="http://INAS.collegeboard.org/2012/Input/">
+        <StudentInputData>
+            <RecordIdentifier>ImrOnlyTestCase1</RecordIdentifier>
+            <FMRData>
+                <FMR>
+                    <Student>
+                        <LastName xsi:nil="true"/>
+                        <FirstName xsi:nil="true"/>
+                        <MiddleInitial xsi:nil="true"/>
+                        <ResidencyStateProvinceCode xsi:nil="true"/>
+                        <StateProvinceCode xsi:nil="true"/>
+                        <ZipCode xsi:nil="true"/>
+                        <BirthDate xsi:nil="true"/>
+                        <CitizenshipStatusCode xsi:nil="true"/>
+                        <CitizenshipSsaFlag xsi:nil="true"/>
+                        <AlienRegistrationId xsi:nil="true"/>
+                        <SsnMatchIndicator xsi:nil="true"/>
+                        <MaritalStatusCode xsi:nil="true"/>
+                        <MaritalStatusDate xsi:nil="true"/>
+                        <YearInCollegeCode xsi:nil="true"/>
+                        <MembersInFamily xsi:nil="true"/>
+                        <NumberInCollege xsi:nil="true"/>
+                        <BornPriorIndicator xsi:nil="true"/>
+                        <WorkOnGraduateDegreeInd xsi:nil="true"/>
+                        <MarriedIndicator xsi:nil="true"/>
+                        <HaveChildrenYouSupportIndicator xsi:nil="true"/>
+                        <LegalDependentsIndicator xsi:nil="true"/>
+                        <OrphanWardOfCourtIndicator xsi:nil="true"/>
+                        <VeteranIndicator xsi:nil="true"/>
+                        <ActiveDutyIndicator xsi:nil="true"/>
+                        <EmancipatedMinorIndicator xsi:nil="true"/>
+                        <InLegalGuardianshipIndicator xsi:nil="true"/>
+                        <UnaccompaniedYouthBySchoolIndicator xsi:nil="true"/>
+                        <UnaccompaniedYouthByHUDIndicator xsi:nil="true"/>
+                        <AtRiskHomelessIndicator xsi:nil="true"/>
+                        <TaxReturnStatusCode xsi:nil="true"/>
+                        <TaxFormTypeCode xsi:nil="true"/>
+                        <EligibleToFile1040AOr1040EZ xsi:nil="true"/>
+                        <ReceiveSSI xsi:nil="true"/>
+                        <ReceiveFoodStamps xsi:nil="true"/>
+                        <ReceiveFreeLunch xsi:nil="true"/>
+                        <ReceiveTANF xsi:nil="true"/>
+                        <ReceiveWIC xsi:nil="true"/>
+                        <DislocatedWorker xsi:nil="true"/>
+                        <AdjustedGrossIncome xsi:nil="true"/>
+                        <IncomeTaxPaid xsi:nil="true"/>
+                        <ExemptionsClaimed xsi:nil="true"/>
+                        <StudentEarnedIncome xsi:nil="true"/>
+                        <SpouseEarnedIncome xsi:nil="true"/>
+                        <CashSavingsChecking xsi:nil="true"/>
+                        <InvestmentNetworth xsi:nil="true"/>
+                        <BusinessFarmNetworth xsi:nil="true"/>
+                        <EducationCredits xsi:nil="true"/>
+                        <ChildSupportPaid xsi:nil="true"/>
+                        <NeedBasedEmployment xsi:nil="true"/>
+                        <GrantsScholarshipsResources xsi:nil="true"/>
+                        <CombatPay xsi:nil="true"/>
+                        <CoOpEarnings xsi:nil="true"/>
+                        <PensionPayments xsi:nil="true"/>
+                        <IraPayments xsi:nil="true"/>
+                        <ChildSupportReceived xsi:nil="true"/>
+                        <InterestDividendIncome xsi:nil="true"/>
+                        <IraDistributions xsi:nil="true"/>
+                        <UntaxedPensionPayments xsi:nil="true"/>
+                        <MilitaryClergyAllowances xsi:nil="true"/>
+                        <VeteranNonEducationBenefits xsi:nil="true"/>
+                        <OtherUntaxedIncome xsi:nil="true"/>
+                        <OtherNonReportedMoney xsi:nil="true"/>
+                    </Student>
+                    <Parents>
+                        <FatherData>
+                            <LastName xsi:nil="true"/>
+                            <BirthDate xsi:nil="true"/>
+                            <SSN xsi:nil="true"/>
+                            <SSNMatchFlag xsi:nil="true"/>
+                        </FatherData>
+                        <MotherData>
+                            <LastName xsi:nil="true"/>
+                            <BirthDate xsi:nil="true"/>
+                            <SSN xsi:nil="true"/>
+                            <SSNMatchFlag xsi:nil="true"/>
+                        </MotherData>
+                        <MaritalStatusCode xsi:nil="true"/>
+                        <ResidencyStateProvinceCode xsi:nil="true"/>
+                        <MembersInFamily xsi:nil="true"/>
+                        <NumberInCollege xsi:nil="true"/>
+                        <ReceiveSSI xsi:nil="true"/>
+                        <ReceiveFoodStamps xsi:nil="true"/>
+                        <ReceiveFreeLunch xsi:nil="true"/>
+                        <ReceiveTANF xsi:nil="true"/>
+                        <ReceiveWIC xsi:nil="true"/>
+                        <TaxReturnStatusCode xsi:nil="true"/>
+                        <TaxFormTypeCode xsi:nil="true"/>
+                        <EligibleToFile1040AOr1040EZ xsi:nil="true"/>
+                        <DislocatedWorker xsi:nil="true"/>
+                        <AdjustedGrossIncome xsi:nil="true"/>
+                        <IncomeTaxPaid xsi:nil="true"/>
+                        <ExemptionsClaimed xsi:nil="true"/>
+                        <FatherEarnedIncome xsi:nil="true"/>
+                        <MotherEarnedIncome xsi:nil="true"/>
+                        <CashSavingsChecking xsi:nil="true"/>
+                        <InvestmentNetworth xsi:nil="true"/>
+                        <BusinessFarmNetworth xsi:nil="true"/>
+                        <EducationCredits xsi:nil="true"/>
+                        <ChildSupportPaid xsi:nil="true"/>
+                        <NeedBasedEmployment xsi:nil="true"/>
+                        <GrantsScholarshipsResources xsi:nil="true"/>
+                        <CombatPay xsi:nil="true"/>
+                        <CoOpEarnings xsi:nil="true"/>
+                        <PensionPayments xsi:nil="true"/>
+                        <IraPayments xsi:nil="true"/>
+                        <ChildSupportReceived xsi:nil="true"/>
+                        <InterestDividendIncome xsi:nil="true"/>
+                        <IraDistributions xsi:nil="true"/>
+                        <UntaxedPensionPayments xsi:nil="true"/>
+                        <MilitaryClergyAllowances xsi:nil="true"/>
+                        <VeteranNonEducationBenefits xsi:nil="true"/>
+                        <OtherUntaxedIncome xsi:nil="true"/>
+                    </Parents>
+                    <Other>
+                        <DependencyStatus xsi:nil="true"/>
+                        <DependencyStatusOverride xsi:nil="true"/>
+                        <ProfessionalJudgment xsi:nil="true"/>
+                        <ApplicationReceiptDate xsi:nil="true"/>
+                        <ApplicationCompleteDate xsi:nil="true"/>
+                        <ApplicationSignedBy xsi:nil="true"/>
+                    </Other>
+                    <Assumptions>
+                        <Assumption1ParentNumberInCollegeOverride xsi:nil="true"/>
+                        <Assumption2ParentAdjustedGrossIncomeOverride xsi:nil="true"/>
+                        <Assumption3StudentNumberInCollegeOverride xsi:nil="true"/>
+                        <Assumption4StudentAdjustedGrossIncomeOverride xsi:nil="true"/>
+                        <Assumption5ParentAdditionalDataOverride xsi:nil="true"/>
+                        <Assumption6StudentAdditonalDataOverride xsi:nil="true"/>
+                    </Assumptions>
+                    <Rejects>
+                        <RejectCode xsi:nil="true"/>
+                        <RejectCode xsi:nil="true"/>
+                        <RejectCode xsi:nil="true"/>
+                        <RejectCode xsi:nil="true"/>
+                        <RejectCode xsi:nil="true"/>
+                        <RejectCode xsi:nil="true"/>
+                        <RejectCode xsi:nil="true"/>
+                        <Reject3StudentTaxPaidOverride xsi:nil="true"/>
+                        <Reject12ParentTaxPaidOverride xsi:nil="true"/>
+                        <Reject20NonTaxFilerOverride xsi:nil="true"/>
+                        <RejectADateOfBirthOldOverride xsi:nil="true"/>
+                        <RejectBDateOfBirthYoungOverride xsi:nil="true"/>
+                        <RejectCParentIndepedentTaxPaidComplexOverride xsi:nil="true"/>
+                        <RejectGDependentTaxPaidComplexOverride xsi:nil="true"/>
+                        <RejectJFatherSsnOveride xsi:nil="true"/>
+                        <RejectKMotherSsnOverride xsi:nil="true"/>
+                        <RejectNIncompleteNameOverride xsi:nil="true"/>
+                        <RejectWHighFamilyMemberOverride xsi:nil="true"/>
+                    </Rejects>
+                </FMR>
+                <FMRExtension>
+                    <BudgetDuration xsi:nil="true"/>
+                    <ForceStudentToIndependentStatus xsi:nil="true"/>
+                    <StudentCalculateUsTax xsi:nil="true"/>
+                    <ParentCalculateUsTax xsi:nil="true"/>
+                    <CalculateParentContributionForIndependent xsi:nil="true"/>
+                    <ParentNumberInCollegeOverride xsi:nil="true"/>
+                    <RejectRStudentSsnMatchOverride xsi:nil="true"/>
+                    <RejectSDependentAndFathersBirthDateOverride xsi:nil="true"/>
+                    <RejectTDependentAndMotherBirthDateOverride xsi:nil="true"/>
+                    <RejectDFirstAndLastNameMatchOverride xsi:nil="true"/>
+                    <RejectEDependentAndFathersNameOverride xsi:nil="true"/>
+                    <RejectFDependentAndMotherNameDateOverride xsi:nil="true"/>
+                    <StudentAllowance xsi:nil="true"/>
+                    <ParentAllowance xsi:nil="true"/>
+                </FMRExtension>
+            </FMRData>
+            <IMRData>
+                <IMR>
+                    <Student>
+                        <ApplicationType>D</ApplicationType>
+                        <ApplicationReceiptDate>2011-12-10</ApplicationReceiptDate>
+                        <BirthDate>1994-05-05</BirthDate>
+                        <StateProvinceCode>MA</StateProvinceCode>
+                        <PostalCode>02421</PostalCode>
+                        <ResidencyStateProvinceCode>MA</ResidencyStateProvinceCode>
+                        <ForeignAddressIndicator>N</ForeignAddressIndicator>
+                        <CountryCode xsi:nil="true"/>
+                        <YearInCollegeCode>1</YearInCollegeCode>
+                        <CitizenshipStatusCode>1</CitizenshipStatusCode>
+                        <MaritalStatusCode>1</MaritalStatusCode>
+                        <VeteranIndicator>N</VeteranIndicator>
+                        <OrphanWardOfCourtIndicator>N</OrphanWardOfCourtIndicator>
+                        <OrphanFosterWardAfter13Indicator>N</OrphanFosterWardAfter13Indicator>
+                        <HomelessIndicator>N</HomelessIndicator>
+                        <LegalDependentsIndicator>N</LegalDependentsIndicator>
+                        <MeansTestedBenefits xsi:nil="true"/>
+                        <DislocatedWorker xsi:nil="true"/>
+                        <MembersInFamily xsi:nil="true"/>
+                        <NumberInCollege xsi:nil="true"/>
+                        <TaxReturnStatusCode>3</TaxReturnStatusCode>
+                        <TaxFormTypeCode xsi:nil="true"/>
+                        <ExemptionsClaimed xsi:nil="true"/>
+                        <AdjustedGrossIncome xsi:nil="true"/>
+                        <IncomeTaxPaid xsi:nil="true"/>
+                        <EducationCredits xsi:nil="true"/>
+                        <ItemizedDeductions xsi:nil="true"/>
+                        <StudentEarnedIncome>0</StudentEarnedIncome>
+                        <SpouseEarnedIncome xsi:nil="true"/>
+                        <CombatPay xsi:nil="true"/>
+                        <InterestDividendIncome>0</InterestDividendIncome>
+                        <SocialSecurityBenefits xsi:nil="true"/>
+                        <TANF xsi:nil="true"/>
+                        <ChildSupportReceived xsi:nil="true"/>
+                        <EarnedIncomeCredit xsi:nil="true"/>
+                        <OtherUntaxedIncome>0</OtherUntaxedIncome>
+                        <TaxableFinancialAid>0</TaxableFinancialAid>
+                        <ChildSupportPaid xsi:nil="true"/>
+                        <MedicalDentalExpenses xsi:nil="true"/>
+                        <VeteransBenefitsMonthlyAmount>0</VeteransBenefitsMonthlyAmount>
+                        <NumberMonthsReceiveVABenefits>0</NumberMonthsReceiveVABenefits>
+                        <SummerEarnedIncome>500</SummerEarnedIncome>
+                        <SchoolYearEarnedIncome>0</SchoolYearEarnedIncome>
+                        <SpouseSummerEarnedIncome xsi:nil="true"/>
+                        <SpouseSchoolYearEarnedIncome xsi:nil="true"/>
+                        <SummerOtherTaxedIncome xsi:nil="true"/>
+                        <SchoolYearOtherTaxedIncome xsi:nil="true"/>
+                        <SummerUntaxedIncome xsi:nil="true"/>
+                        <SchoolYearUntaxedIncome xsi:nil="true"/>
+                        <GrantsScholarshipsResources>0</GrantsScholarshipsResources>
+                        <TuitionBenefits>0</TuitionBenefits>
+                        <ParentContributionOffer>12000</ParentContributionOffer>
+                        <RelativesContributionOffer>0</RelativesContributionOffer>
+                        <CashSavingsChecking>1000</CashSavingsChecking>
+                        <IRAKeogh>0</IRAKeogh>
+                        <InvestmentValue>0</InvestmentValue>
+                        <InvestmentDebt>0</InvestmentDebt>
+                        <TrustFund>0</TrustFund>
+                        <HomeValue xsi:nil="true"/>
+                        <HomeDebt xsi:nil="true"/>
+                        <HomePurchaseYear xsi:nil="true"/>
+                        <HomePurchasePrice xsi:nil="true"/>
+                        <OtherRealEstateValue xsi:nil="true"/>
+                        <OtherRealEstateDebt xsi:nil="true"/>
+                        <LargeBusinessIndicator xsi:nil="true"/>
+                        <LiveOnFarmIndicator xsi:nil="true"/>
+                        <BusinessFarmValue xsi:nil="true"/>
+                        <BusinessFarmDebt xsi:nil="true"/>
+                    </Student>
+                    <Parents>
+                        <NaturalParentsMaritalStatus>1</NaturalParentsMaritalStatus>
+                        <StudentLivesWith xsi:nil="true"/>
+                        <StudentReceivesSupportFrom xsi:nil="true"/>
+                        <MaritalStatusCode>2</MaritalStatusCode>
+                        <Parent1Type>1</Parent1Type>
+                        <Parent1BirthDate>1961-10-02</Parent1BirthDate>
+                        <Parent2Type>2</Parent2Type>
+                        <Parent2BirthDate>1964-11-21</Parent2BirthDate>
+                        <ResidencyStateProvinceCode>MA</ResidencyStateProvinceCode>
+                        <CountryOfResidenceCode>US</CountryOfResidenceCode>
+                        <CountryCoefficient>1.0000000</CountryCoefficient>
+                        <MeansTestedBenefits>N</MeansTestedBenefits>
+                        <DislocatedWorker>N</DislocatedWorker>
+                        <ReceiveTANF>N</ReceiveTANF>
+                        <ReceiveSSI>N</ReceiveSSI>
+                        <MembersInFamily>4</MembersInFamily>
+                        <NumberInCollege>1</NumberInCollege>
+                        <TaxReturnStatusCode>2</TaxReturnStatusCode>
+                        <TaxFormTypeCode>1</TaxFormTypeCode>
+                        <ExemptionsClaimed>4</ExemptionsClaimed>
+                        <WagesSalariesTips>123000</WagesSalariesTips>
+                        <InterestIncome>400</InterestIncome>
+                        <DividendIncome>2000</DividendIncome>
+                        <BusinessFarmIncome>123000</BusinessFarmIncome>
+                        <OtherTaxableIncome>-3000</OtherTaxableIncome>
+                        <AdjustmentsToIncome>28000</AdjustmentsToIncome>
+                        <AdjustedGrossIncome>95000</AdjustedGrossIncome>
+                        <IncomeTaxPaid>25000</IncomeTaxPaid>
+                        <EducationCredits>0</EducationCredits>
+                        <ItemizedDeductions>21000</ItemizedDeductions>
+                        <FathersEarnedIncome>113000</FathersEarnedIncome>
+                        <MothersEarnedIncome>10000</MothersEarnedIncome>
+                        <CombatPay>5500</CombatPay>
+                        <SocialSecurityBenefits>0</SocialSecurityBenefits>
+                        <TANF>0</TANF>
+                        <ChildSupportReceived>0</ChildSupportReceived>
+                        <IRAKeoghDeductions>14000</IRAKeoghDeductions>
+                        <UntaxedIRADistribution>111</UntaxedIRADistribution>
+                        <PensionSavingsDeductions>0</PensionSavingsDeductions>
+                        <TuitionFeeDeduction>0</TuitionFeeDeduction>
+                        <MedicalSpendingAccount>0</MedicalSpendingAccount>
+                        <EarnedIncomeCredit>0</EarnedIncomeCredit>
+                        <AdditionalChildTaxCredit>333</AdditionalChildTaxCredit>
+                        <LivingAllowance>0</LivingAllowance>
+                        <MilitaryHousingAllowance>444</MilitaryHousingAllowance>
+                        <TaxExemptInterestIncome>0</TaxExemptInterestIncome>
+                        <ForeignIncomeExclusion>0</ForeignIncomeExclusion>
+                        <OtherUntaxedIncome>0</OtherUntaxedIncome>
+                        <IMOtherUntaxedIncome>555</IMOtherUntaxedIncome>
+                        <FamilySupportIncome xsi:nil="true"/>
+                        <UntaxedPensionDistribution>222</UntaxedPensionDistribution>
+                        <VaNonEducationalBenefits>987</VaNonEducationalBenefits>
+                        <CashSavingsChecking>30800</CashSavingsChecking>
+                        <AssetsInSiblingsNames>0</AssetsInSiblingsNames>
+                        <InvestmentValue>165000</InvestmentValue>
+                        <InvestmentDebt>0</InvestmentDebt>
+                        <HomeValue>464000</HomeValue>
+                        <HomeDebt>43000</HomeDebt>
+                        <HomePurchaseYear>1992</HomePurchaseYear>
+                        <HomePurchasePrice>253000</HomePurchasePrice>
+                        <OtherRealEstateValue>0</OtherRealEstateValue>
+                        <OtherRealEstateDebt>0</OtherRealEstateDebt>
+                        <OtherRealEstatePurchaseYear xsi:nil="true"/>
+                        <OtherRealEstatePurchasePrice>0</OtherRealEstatePurchasePrice>
+                        <BusinessValue>1000000</BusinessValue>
+                        <BusinessDebt>275000</BusinessDebt>
+                        <LiveOnFarmIndicator>N</LiveOnFarmIndicator>
+                        <FarmValue>91000</FarmValue>
+                        <FarmDebt>18500</FarmDebt>
+                        <NumberOfEmployeesIndicator>N</NumberOfEmployeesIndicator>
+                        <ChildSupportPaid>0</ChildSupportPaid>
+                        <MedicalDentalExpenses>12000</MedicalDentalExpenses>
+                        <PrivateTuitionPaid>0</PrivateTuitionPaid>
+                        <NumberOfChildrenTuitionPaid>0</NumberOfChildrenTuitionPaid>
+                        <ExpectedChildSupportPaid>0</ExpectedChildSupportPaid>
+                        <ExpectedMedicalDentalExpenses>14000</ExpectedMedicalDentalExpenses>
+                        <ExpectedPrivateTuitionPaid>0</ExpectedPrivateTuitionPaid>
+                        <ExpectedNumberOfChildrenTuitionPaid>0</ExpectedNumberOfChildrenTuitionPaid>
+                        <PriorAdjustedGrossIncome>95165</PriorAdjustedGrossIncome>
+                        <PriorIncomeTaxPaid>25406</PriorIncomeTaxPaid>
+                        <PriorItemizedDeductions>19195</PriorItemizedDeductions>
+                        <PriorOtherUntaxedIncome>13859</PriorOtherUntaxedIncome>
+                        <ExpectedFathersEarnedIncome>113000</ExpectedFathersEarnedIncome>
+                        <ExpectedMothersEarnedIncome>10000</ExpectedMothersEarnedIncome>
+                        <ExpectedOtherTaxableIncome>2500</ExpectedOtherTaxableIncome>
+                        <ExpectedOtherUntaxedIncome>14000</ExpectedOtherUntaxedIncome>
+                    </Parents>
+                    <FamilyMemberList>
+                        <FamilyMember>
+                            <RelationshipCode>3</RelationshipCode>
+                            <Age>13</Age>
+                            <AttendCollegeCode>N</AttendCollegeCode>
+                            <CollegeTypeCode xsi:nil="true"/>
+                        </FamilyMember>
+                        <FamilyMember>
+                            <RelationshipCode xsi:nil="true"/>
+                            <Age xsi:nil="true"/>
+                            <AttendCollegeCode xsi:nil="true"/>
+                            <CollegeTypeCode xsi:nil="true"/>
+                        </FamilyMember>
+                        <FamilyMember>
+                            <RelationshipCode xsi:nil="true"/>
+                            <Age xsi:nil="true"/>
+                            <AttendCollegeCode xsi:nil="true"/>
+                            <CollegeTypeCode xsi:nil="true"/>
+                        </FamilyMember>
+                        <FamilyMember>
+                            <RelationshipCode xsi:nil="true"/>
+                            <Age xsi:nil="true"/>
+                            <AttendCollegeCode xsi:nil="true"/>
+                            <CollegeTypeCode xsi:nil="true"/>
+                        </FamilyMember>
+                        <FamilyMember>
+                            <RelationshipCode xsi:nil="true"/>
+                            <Age xsi:nil="true"/>
+                            <AttendCollegeCode xsi:nil="true"/>
+                            <CollegeTypeCode xsi:nil="true"/>
+                        </FamilyMember>
+                        <FamilyMember>
+                            <RelationshipCode xsi:nil="true"/>
+                            <Age xsi:nil="true"/>
+                            <AttendCollegeCode xsi:nil="true"/>
+                            <CollegeTypeCode xsi:nil="true"/>
+                        </FamilyMember>
+                        <FamilyMember>
+                            <RelationshipCode xsi:nil="true"/>
+                            <Age xsi:nil="true"/>
+                            <AttendCollegeCode xsi:nil="true"/>
+                            <CollegeTypeCode xsi:nil="true"/>
+                        </FamilyMember>
+                    </FamilyMemberList>
+                    <NonCustodialParentInformation>
+                        <NCPContributionOffer xsi:nil="true"/>
+                    </NonCustodialParentInformation>
+                </IMR>
+                <IMRExtension>
+                    <DependencyOverride xsi:nil="true"/>
+                    <DefaultBudgetDuration xsi:nil="true"/>
+                    <CalculateParentContributionForIndependents xsi:nil="true"/>
+                    <SkipFamilyMembersOnAge xsi:nil="true"/>
+                    <UseStudentProjectedYearIncome xsi:nil="true"/>
+                    <UseParentProjectedYearIncome xsi:nil="true"/>
+                    <UseStateTaxAllowance xsi:nil="true"/>
+                    <ExcludeWorkstudyEarnings xsi:nil="true"/>
+                    <ExcludeTuitionDeduction xsi:nil="true"/>
+                    <MaximumTuitionAllowance xsi:nil="true"/>
+                    <StudentMedicalAllowancePercent xsi:nil="true"/>
+                    <StudentMedicalAllowanceAmount xsi:nil="true"/>
+                    <ParentMedicalAllowancePercent xsi:nil="true"/>
+                    <ParentMedicalAllowanceAmount xsi:nil="true"/>
+                    <StudentEmploymentAllowance xsi:nil="true"/>
+                    <ParentEmploymentAllowance xsi:nil="true"/>
+                    <StudentFicaAllowance xsi:nil="true"/>
+                    <ParentFicaAllowance xsi:nil="true"/>
+                    <StudentAdditionalIncomeAllowance xsi:nil="true"/>
+                    <ParentAdditionalIncomeAllowance xsi:nil="true"/>
+                    <ParentColaIndex xsi:nil="true"/>
+                    <LimitInternationalParentIncomeProtectionAllowance xsi:nil="true"/>
+                    <ParentIncomeProtectionAllowance xsi:nil="true"/>
+                    <StudentFederalTaxPaid xsi:nil="true"/>
+                    <ParentFederalTaxPaid xsi:nil="true"/>
+                    <StudentCalculatedFederalTaxPaidBehavior xsi:nil="true"/>
+                    <ParentCalculatedFederalTaxPaidBehavior xsi:nil="true"/>
+                    <StudentProjectedFederalTaxPaid xsi:nil="true"/>
+                    <ParentProjectedFederalTaxPaid xsi:nil="true"/>
+                    <StudentLocalTaxPaid xsi:nil="true"/>
+                    <ParentLocalTaxPaid xsi:nil="true"/>
+                    <StudentLocalTaxPercent xsi:nil="true"/>
+                    <ParentLocalTaxPercent xsi:nil="true"/>
+                    <AddStudentEducationCredit xsi:nil="true"/>
+                    <AddParentEducationCredit xsi:nil="true"/>
+                    <IndependentStudentIncomeAssessmentPercent xsi:nil="true"/>
+                    <AllowBusinessFarmLosses xsi:nil="true"/>
+                    <AllowOtherLosses xsi:nil="true"/>
+                    <StudentAdditionalAssets xsi:nil="true"/>
+                    <ParentAdditionalAssets xsi:nil="true"/>
+                    <StudentAdditionalAssetAllowance xsi:nil="true"/>
+                    <ParentAdditionalAssetAllowance xsi:nil="true"/>
+                    <StudentProjectHomeValue xsi:nil="true"/>
+                    <ParentProjectHomeValue xsi:nil="true"/>
+                    <StudentCapHomeValue xsi:nil="true"/>
+                    <ParentCapHomeValue xsi:nil="true"/>
+                    <StudentImputeAssets xsi:nil="true"/>
+                    <ParentImputeAssets xsi:nil="true"/>
+                    <StudentIraKeoghPercent xsi:nil="true"/>
+                    <CalculateContributionsFromAssetsUsingCountryCoefficient xsi:nil="true"/>
+                    <StudentAssetAssessmentRate xsi:nil="true"/>
+                    <ParentAssetAssessmentRate xsi:nil="true"/>
+                    <AddStudentAssetsToParentAssets xsi:nil="true"/>
+                    <CapStudentHomeEquity xsi:nil="true"/>
+                    <CapParentHomeEquity xsi:nil="true"/>
+                    <MinimumStudentContributionFromIncome xsi:nil="true"/>
+                    <MinimumParentContributionFromIncome xsi:nil="true"/>
+                    <MinimumStudentContributionFromAssets xsi:nil="true"/>
+                    <MinimumParentContributionFromAssets xsi:nil="true"/>
+                    <PriorYearStudentContribution xsi:nil="true"/>
+                    <PriorYearParentContribution xsi:nil="true"/>
+                    <ImputeStudentContributionPercent xsi:nil="true"/>
+                    <ImputeParentContributionPercent xsi:nil="true"/>
+                    <PerformStudentContributionUsingNewMethodology xsi:nil="true"/>
+                    <LimitSiblingShareOfParentContribution xsi:nil="true"/>
+                    <CanStudentImFallBelowFm xsi:nil="true"/>
+                    <CanParentImFallBelowFm xsi:nil="true"/>
+                    <UseNonCustodialParentContribution xsi:nil="true"/>
+                    <StudentTotalBudget xsi:nil="true"/>
+                    <StudentNumberInCollegeOverride xsi:nil="true"/>
+                    <ParentNumberInCollegeOverride xsi:nil="true"/>
+                    <StudentHousingMultiplierOverride xsi:nil="true"/>
+                    <ParentHousingMultiplierOverride xsi:nil="true"/>
+                    <ReleaseIsirToImrMigration xsi:nil="true"/>
+                    <ReleaseImrToIsirMigration xsi:nil="true"/>
+                    <LockIsir xsi:nil="true"/>
+                    <LockImr xsi:nil="true"/>
+                    <LockStudentYearInSchoolIsir xsi:nil="true"/>
+                    <LockStudentYearInSchoolImr xsi:nil="true"/>
+                    <LockStudentWardOfCourtIsir xsi:nil="true"/>
+                    <LockStudentWardOfCourtImr xsi:nil="true"/>
+                    <LockStudentLegalDependentsIsir xsi:nil="true"/>
+                    <LockStudentLegalDependentsImr xsi:nil="true"/>
+                    <LockStudentDateOfBirthIsir xsi:nil="true"/>
+                    <LockStudentDateOfBirthImr xsi:nil="true"/>
+                    <LockStudentMaritalStatusIsir xsi:nil="true"/>
+                    <LockStudentMaritalStatusImr xsi:nil="true"/>
+                    <LockStudentHouseholdSizeIsir xsi:nil="true"/>
+                    <LockStudentHouseholdSizeImr xsi:nil="true"/>
+                    <LockStudentNumberInCollegeSizeIsir xsi:nil="true"/>
+                    <LockStudentNumberInCollegeSizeImr xsi:nil="true"/>
+                    <LockStudentStateOfResidenceIsir xsi:nil="true"/>
+                    <LockStudentStateOfResidenceImr xsi:nil="true"/>
+                    <LockStudentTaxReturnTypeIsir xsi:nil="true"/>
+                    <LockStudentTaxReturnTypeImr xsi:nil="true"/>
+                    <LockStudentNumberOfExemptionsIsir xsi:nil="true"/>
+                    <LockStudentNumberOfExemptionsImr xsi:nil="true"/>
+                    <LockStudentAgiIsir xsi:nil="true"/>
+                    <LockStudentAgiImr xsi:nil="true"/>
+                    <LockStudentFedTaxPaidIsir xsi:nil="true"/>
+                    <LockStudentFedTaxPaidImr xsi:nil="true"/>
+                    <LockStudentIncomeIsir xsi:nil="true"/>
+                    <LockStudentIncomeImr xsi:nil="true"/>
+                    <LockStudentSpouseIncomeIsir xsi:nil="true"/>
+                    <LockStudentSpouseIncomeImr xsi:nil="true"/>
+                    <LockStudentCombatPayIsir xsi:nil="true"/>
+                    <LockStudentCombatPayImr xsi:nil="true"/>
+                    <LockStudentTaxableAidtIsir xsi:nil="true"/>
+                    <LockStudentTaxableAidImr xsi:nil="true"/>
+                    <LockStudentCashIsir xsi:nil="true"/>
+                    <LockStudentCashImr xsi:nil="true"/>
+                    <LockStudentInvestmentNetWorthIsir xsi:nil="true"/>
+                    <LockStudentInvestmentNetWorthImr xsi:nil="true"/>
+                    <LockStudentBusinessFarmNetWorthIsir xsi:nil="true"/>
+                    <LockStudentVeteranStatusIsir xsi:nil="true"/>
+                    <LockStudentVeteranStatusImr xsi:nil="true"/>
+                    <LockStudentCitizenStatusIsir xsi:nil="true"/>
+                    <LockStudentCitizenStatusImr xsi:nil="true"/>
+                    <LockStudentFederalTaxReturnStatusIsir xsi:nil="true"/>
+                    <LockStudentFederalTaxReturnStatusImr xsi:nil="true"/>
+                    <LockStudentChildSupportReceivedIsir xsi:nil="true"/>
+                    <LockStudentChildSupportReceivedImr xsi:nil="true"/>
+                    <LockStudentChildSupportPaidIsir xsi:nil="true"/>
+                    <LockStudentChildSupportPaidImr xsi:nil="true"/>
+                    <LockStudentSpouseDislocatedWorkerIsir xsi:nil="true"/>
+                    <LockStudentSpouseDislocatedWorkerImr xsi:nil="true"/>
+                    <LockStudentEducationCreditsIsir xsi:nil="true"/>
+                    <LockStudentEducationCreditsImr xsi:nil="true"/>
+                    <LockStudentHomelessRiskIsir xsi:nil="true"/>
+                    <LockStudentHomelessRiskImr xsi:nil="true"/>
+                    <LockStudentOrphanFosterWardAfter13Isir xsi:nil="true"/>
+                    <LockStudentOrphanFosterWardAfter13Imr xsi:nil="true"/>
+                    <LockParentMaritalStatusIsir xsi:nil="true"/>
+                    <LockParentMaritalStatusImr xsi:nil="true"/>
+                    <LockParentHouseholdSizeIsir xsi:nil="true"/>
+                    <LockParentHouseholdSizeImr xsi:nil="true"/>
+                    <LockParentNumberInCollegeIsir xsi:nil="true"/>
+                    <LockParentNumberInCollegeImr xsi:nil="true"/>
+                    <LockParentStateOfResidenceIsir xsi:nil="true"/>
+                    <LockParentStateOfResidenceImr xsi:nil="true"/>
+                    <LockParentTaxReturnTypeIsir xsi:nil="true"/>
+                    <LockParentTaxReturnTypeImr xsi:nil="true"/>
+                    <LockParentNumberOfExemptionsIsir xsi:nil="true"/>
+                    <LockParentNumberOfExemptionsImr xsi:nil="true"/>
+                    <LockParentAgiIsir xsi:nil="true"/>
+                    <LockParentAgiImr xsi:nil="true"/>
+                    <LockParentFedTaxPaidIsir xsi:nil="true"/>
+                    <LockParentFedTaxPaidImr xsi:nil="true"/>
+                    <LockFatherIncomeIsir xsi:nil="true"/>
+                    <LockFatherIncomeImr xsi:nil="true"/>
+                    <LockMotherIncomeIsir xsi:nil="true"/>
+                    <LockMotherIncomeImr xsi:nil="true"/>
+                    <LockParentUntaxedIraDistributionIsir xsi:nil="true"/>
+                    <LockParentUntaxedIraDistributionImr xsi:nil="true"/>
+                    <LockParentUntaxedPensionDistributionIsir xsi:nil="true"/>
+                    <LockParentUntaxedPensionDistributionImr xsi:nil="true"/>
+                    <LockParentCashIsir xsi:nil="true"/>
+                    <LockParentCashImr xsi:nil="true"/>
+                    <LockParentInvestmentNetWorthIsir xsi:nil="true"/>
+                    <LockParentInvestmentNetWorthImr xsi:nil="true"/>
+                    <LockParentBusinessFarmNetWorthIsir xsi:nil="true"/>
+                    <LockParentBusinessFarmNetWorthImr xsi:nil="true"/>
+                    <LockParentFederalTaxReturnStatusIsir xsi:nil="true"/>
+                    <LockParentFederalTaxReturnStatusImr xsi:nil="true"/>
+                    <LockParentDateOfBirthIsir xsi:nil="true"/>
+                    <LockParentDateOfBirthImr xsi:nil="true"/>
+                    <LockParentChildSupportReceivedIsir xsi:nil="true"/>
+                    <LockParentChildSupportReceivedImr xsi:nil="true"/>
+                    <LockParentChildSupportPaidIsir xsi:nil="true"/>
+                    <LockParentChildSupportPaidImr xsi:nil="true"/>
+                    <LockParentIraPaymentsIsir xsi:nil="true"/>
+                    <LockParentIraPaymentsImr xsi:nil="true"/>
+                    <LockParentPensionPaymentsIsir xsi:nil="true"/>
+                    <LockParentPensionPaymentsImr xsi:nil="true"/>
+                    <LockParentMilitaryClergyAllowancesIsir xsi:nil="true"/>
+                    <LockParentMilitaryClergyAllowancesImr xsi:nil="true"/>
+                    <LockInterestIncomeIsir xsi:nil="true"/>
+                    <LockInterestIncomeImr xsi:nil="true"/>
+                    <LockParentEducationCreditsIsir xsi:nil="true"/>
+                    <LockParentEducationCreditsImr xsi:nil="true"/>
+                    <LockParentDislocatedWorkerIsir xsi:nil="true"/>
+                    <LockParentDislocatedWorkerImr xsi:nil="true"/>
+                    <LockParentCombatPayIsir xsi:nil="true"/>
+                    <LockParentCombatPayImr xsi:nil="true"/>
+                    <LockParentVaNonEducationalBenefitsIsir xsi:nil="true"/>
+                    <LockParentVaNonEducationalBenefitsImr xsi:nil="true"/>
+                    <LockParentOtherUntaxedIncomeIsir xsi:nil="true"/>
+                    <LockParentOtherUntaxedIncomeImr xsi:nil="true"/>
+                    <MigrationDirection xsi:nil="true"/>
+                    <ActualStudentAgi xsi:nil="true"/>
+                    <ActualParentAgi xsi:nil="true"/>
+                    <ActualStudentUntaxedIncome xsi:nil="true"/>
+                    <ActualParentUntaxedIncome xsi:nil="true"/>
+                    <ParentAgiUsage xsi:nil="true"/>
+                    <UseStudentEfmProjectedYearIncome xsi:nil="true"/>
+                    <UseParentEfmProjectedYearIncome xsi:nil="true"/>
+                    <StudentEfmHouseholdSize xsi:nil="true"/>
+                    <ParentEfmHouseholdSize xsi:nil="true"/>
+                    <StudentEfmNumberInCollege xsi:nil="true"/>
+                    <ParentEfmNumberInCollege xsi:nil="true"/>
+                    <OperationalControl xsi:nil="true"/>
+                </IMRExtension>
+            </IMRData>
+        </StudentInputData>
+
+        <GlobalOptions>
+            <OperationalOptions>
+                <ActivateStudentImrIsirComparison xsi:nil="true"/>
+                <ActivateParentImrIsirComparison xsi:nil="true"/>
+                <ActivateDataMigration xsi:nil="true"/>
+                <DataToMigrate xsi:nil="true"/>
+                <LimitReportingBasedOnToleranceLimits xsi:nil="true"/>
+                <GenerateProfileEditMessages xsi:nil="true"/>
+                <InstDefaultResidencyState xsi:nil="true"/>
+            </OperationalOptions>
+            <FmOptions>
+                <CalculateStudentEstimatedIncomeTax xsi:nil="true"/>
+                <CalculateParentEstimatedIncomeTax xsi:nil="true"/>
+                <FmIndependentBudgetDuration xsi:nil="true"/>
+                <FmDependentBudgetDuration xsi:nil="true"/>
+                <FmCalculateParentContributionForIndependents xsi:nil="true"/>
+            </FmOptions>
+            <EfmOptions>
+                <UseStudentImputedAssets xsi:nil="true"/>
+                <UseParentImputedAssets xsi:nil="true"/>
+                <UseStudentProjectedYearIncome xsi:nil="true"/>
+                <UseParentProjectedYearIncome xsi:nil="true"/>
+                <UseStudentIncomeOverrides xsi:nil="true"/>
+                <UseParentIncomeOverrides xsi:nil="true"/>
+                <UseProfileAssumptions xsi:nil="true"/>
+            </EfmOptions>
+            <ImOptions>
+                <IndependentBudgetDuration xsi:nil="true"/>
+                <DependentBudgetDuration xsi:nil="true"/>
+                <CalculateParentContributionForIndependents xsi:nil="true"/>
+                <MaximumHouseholdAgeLimit xsi:nil="true"/>
+                <MaximumAgeInCollegeLimit xsi:nil="true"/>
+                <UseImStudentProjectedYearIncome xsi:nil="true"/>
+                <UseImParentProjectedYearIncome xsi:nil="true"/>
+                <UseNewAvailableIncomeTable xsi:nil="true"/>
+                <ExcludeTuitionFeeDeduction xsi:nil="true"/>
+                <UseParentStateTaxAllowance xsi:nil="true"/>
+                <MaximumTuitionAllowance xsi:nil="true"/>
+                <StudentMedicalAllowancePercent xsi:nil="true"/>
+                <ParentMedicalAllowancePercent xsi:nil="true"/>
+                <StudentEmploymentAllowancePercent xsi:nil="true"/>
+                <StudentEmploymentAllowanceLimit xsi:nil="true"/>
+                <ParentEmploymentAllowancePercent xsi:nil="true"/>
+                <ParentEmploymentAllowanceLimit xsi:nil="true"/>
+                <StudentCalculateUSTaxesPaid xsi:nil="true"/>
+                <ParentCalculateUSTaxesPaid xsi:nil="true"/>
+                <UseFmStudentLocalTaxTable xsi:nil="true"/>
+                <UseFmParentLocalTaxTable xsi:nil="true"/>
+                <IndependentStudentAssessmentRate xsi:nil="true"/>
+                <AdjustIpaByCostOfLiving xsi:nil="true"/>
+                <AllowBusinessFarmLosses xsi:nil="true"/>
+                <AllowOtherLosses xsi:nil="true"/>
+                <AdjustedGrossIncomeUsage xsi:nil="true"/>
+                <AvailableIncomeAssessmentRate xsi:nil="true"/>
+                <UseStudentLifetimeLearningCredit xsi:nil="true"/>
+                <UseParentLifetimeLearningCredit xsi:nil="true"/>
+                <UseAnnualSavingsGoal xsi:nil="true"/>
+                <UseLowIncomeAssetAllowance xsi:nil="true"/>
+                <AdjustEraByCostOfLiving xsi:nil="true"/>
+                <HomeProjectionParents>
+                    <Option xsi:nil="true"/>
+                    <Tolerance xsi:nil="true"/>
+                    <CapHousingPercent xsi:nil="true"/>
+                </HomeProjectionParents>
+                <HomeProjectionIndependent>
+                    <Option xsi:nil="true"/>
+                    <Tolerance xsi:nil="true"/>
+                    <CapHousingPercent xsi:nil="true"/>
+                </HomeProjectionIndependent>
+                <StudentCapHomeEquityFactor xsi:nil="true"/>
+                <ParentCapHomeEquityFactor xsi:nil="true"/>
+                <AssetProjectionParents>
+                    <Option xsi:nil="true"/>
+                    <CashYield1 xsi:nil="true"/>
+                    <CashLimit xsi:nil="true"/>
+                    <CashYield2 xsi:nil="true"/>
+                    <CashTolerance xsi:nil="true"/>
+                    <InvestmentYield1 xsi:nil="true"/>
+                    <InvestmentLimit xsi:nil="true"/>
+                    <InvestmentYield2 xsi:nil="true"/>
+                    <InvestmentTolerance xsi:nil="true"/>
+                </AssetProjectionParents>
+                <AssetProjectionIndependent>
+                    <Option xsi:nil="true"/>
+                    <CashYield1 xsi:nil="true"/>
+                    <CashLimit xsi:nil="true"/>
+                    <CashYield2 xsi:nil="true"/>
+                    <CashTolerance xsi:nil="true"/>
+                    <InvestmentYield1 xsi:nil="true"/>
+                    <InvestmentLimit xsi:nil="true"/>
+                    <InvestmentYield2 xsi:nil="true"/>
+                    <InvestmentTolerance xsi:nil="true"/>
+                </AssetProjectionIndependent>
+                <AssetProjectionDependents>
+                    <Option xsi:nil="true"/>
+                    <CashYield1 xsi:nil="true"/>
+                    <CashLimit xsi:nil="true"/>
+                    <CashYield2 xsi:nil="true"/>
+                    <CashTolerance xsi:nil="true"/>
+                    <InvestmentYield1 xsi:nil="true"/>
+                    <InvestmentLimit xsi:nil="true"/>
+                    <InvestmentYield2 xsi:nil="true"/>
+                    <InvestmentTolerance xsi:nil="true"/>
+                </AssetProjectionDependents>
+                <AdjustAssetsForIraKeogh xsi:nil="true"/>
+                <AddStudentAssetsToParent xsi:nil="true"/>
+                <AssetAssessmentRateDependentStudent xsi:nil="true"/>
+                <AssetAssessmentRateIndependentNoDependentsSingle xsi:nil="true"/>
+                <AssetAssessmentRateIndependentNoDependentsMarried xsi:nil="true"/>
+                <AssetAssessmentRateIndependentWithDependents xsi:nil="true"/>
+                <AssetAssessmentRateParents xsi:nil="true"/>
+                <ParentMinimumAssetContribution xsi:nil="true"/>
+                <StudentMinimumAssetContribution xsi:nil="true"/>
+                <FirstYearNeverAttendedStudentMinimumContribution>
+                    <DependentContribution xsi:nil="true"/>
+                    <IndependentContribution xsi:nil="true"/>
+                </FirstYearNeverAttendedStudentMinimumContribution>
+                <FirstYearPreviousAttendedStudentMinimumContribution>
+                    <DependentContribution xsi:nil="true"/>
+                    <IndependentContribution xsi:nil="true"/>
+                </FirstYearPreviousAttendedStudentMinimumContribution>
+                <SecondYearStudentMinimumContribution>
+                    <DependentContribution xsi:nil="true"/>
+                    <IndependentContribution xsi:nil="true"/>
+                </SecondYearStudentMinimumContribution>
+                <ThirdYearStudentMinimumContribution>
+                    <DependentContribution xsi:nil="true"/>
+                    <IndependentContribution xsi:nil="true"/>
+                </ThirdYearStudentMinimumContribution>
+                <FourthYearStudentMinimumContribution>
+                    <DependentContribution xsi:nil="true"/>
+                    <IndependentContribution xsi:nil="true"/>
+                </FourthYearStudentMinimumContribution>
+                <FifthYearStudentMinimumContribution>
+                    <DependentContribution xsi:nil="true"/>
+                    <IndependentContribution xsi:nil="true"/>
+                </FifthYearStudentMinimumContribution>
+                <IndependentGraduateFirstYearStudentMinimumContribution xsi:nil="true"/>
+                <IndependentGraduateSecondYearStudentMinimumContribution xsi:nil="true"/>
+                <IndependentGraduateThirdYearStudentMinimumContribution xsi:nil="true"/>
+                <IndependentGraduateFourthYearStudentMinimumContribution xsi:nil="true"/>
+                <MinimumParentContributionList>
+                    <MinimumParentContributionSet>
+                        <UpperIncomeLevel xsi:nil="true"/>
+                        <MinimumParentContribution xsi:nil="true"/>
+                    </MinimumParentContributionSet>
+                    <MinimumParentContributionSet>
+                        <UpperIncomeLevel xsi:nil="true"/>
+                        <MinimumParentContribution xsi:nil="true"/>
+                    </MinimumParentContributionSet>
+                    <MinimumParentContributionSet>
+                        <UpperIncomeLevel xsi:nil="true"/>
+                        <MinimumParentContribution xsi:nil="true"/>
+                    </MinimumParentContributionSet>
+                    <MinimumParentContributionSet>
+                        <UpperIncomeLevel xsi:nil="true"/>
+                        <MinimumParentContribution xsi:nil="true"/>
+                    </MinimumParentContributionSet>
+                    <MinimumParentContributionSet>
+                        <UpperIncomeLevel xsi:nil="true"/>
+                        <MinimumParentContribution xsi:nil="true"/>
+                    </MinimumParentContributionSet>
+                    <MinimumParentContributionSet>
+                        <UpperIncomeLevel xsi:nil="true"/>
+                        <MinimumParentContribution xsi:nil="true"/>
+                    </MinimumParentContributionSet>
+                    <MinimumParentContributionSet>
+                        <UpperIncomeLevel xsi:nil="true"/>
+                        <MinimumParentContribution xsi:nil="true"/>
+                    </MinimumParentContributionSet>
+                </MinimumParentContributionList>
+                <ImputeStudentContributionIncreasePercent xsi:nil="true"/>
+                <ImputeParentContributionIncreasePercent xsi:nil="true"/>
+                <UseNoncustodialParentContribution xsi:nil="true"/>
+                <MinimumStudentContributionFromIncomeCalculation xsi:nil="true"/>
+                <TwoInCollegeAdjustment xsi:nil="true"/>
+                <ThreeInCollegeAdjustment xsi:nil="true"/>
+                <FourOrMoreInCollegeAdjustment xsi:nil="true"/>
+                <PreventStudentImLowerThanFm xsi:nil="true"/>
+                <PreventParentImLowerThanFm xsi:nil="true"/>
+                <UseVolunteeredParentContribution xsi:nil="true"/>
+                <MultipleChildrenCollegesAllocationPercentages xsi:nil="true"/>
+                <UseBusinessFarmNetWorthList xsi:nil="true"/>
+                <BusinessFarmNetWorthList>
+                    <BusinessFarmNetWorthEntry>
+                        <NetWorthFrom xsi:nil="true"/>
+                        <NetWorthTo xsi:nil="true"/>
+                        <BaseAmount xsi:nil="true"/>
+                        <PercentToApply xsi:nil="true"/>
+                    </BusinessFarmNetWorthEntry>
+                    <BusinessFarmNetWorthEntry>
+                        <NetWorthFrom xsi:nil="true"/>
+                        <NetWorthTo xsi:nil="true"/>
+                        <BaseAmount xsi:nil="true"/>
+                        <PercentToApply xsi:nil="true"/>
+                    </BusinessFarmNetWorthEntry>
+                    <BusinessFarmNetWorthEntry>
+                        <NetWorthFrom xsi:nil="true"/>
+                        <NetWorthTo xsi:nil="true"/>
+                        <BaseAmount xsi:nil="true"/>
+                        <PercentToApply xsi:nil="true"/>
+                    </BusinessFarmNetWorthEntry>
+                    <BusinessFarmNetWorthEntry>
+                        <NetWorthFrom xsi:nil="true"/>
+                        <NetWorthTo xsi:nil="true"/>
+                        <BaseAmount xsi:nil="true"/>
+                        <PercentToApply xsi:nil="true"/>
+                    </BusinessFarmNetWorthEntry>
+                </BusinessFarmNetWorthList>
+                <FirstAlternativeMcpaTable>
+                    <AllocationPercent1 xsi:nil="true"/>
+                    <AllocationPercent2 xsi:nil="true"/>
+                    <AllocationPercent3 xsi:nil="true"/>
+                </FirstAlternativeMcpaTable>
+                <YearInCollegeToApplySecondMcpaTable xsi:nil="true"/>
+                <SecondAlternativeMcpaTable>
+                    <AllocationPercent1 xsi:nil="true"/>
+                    <AllocationPercent2 xsi:nil="true"/>
+                    <AllocationPercent3 xsi:nil="true"/>
+                </SecondAlternativeMcpaTable>
+                <UseIncomeProtectionAllowanceTable xsi:nil="true"/>
+                <FamilySize1>
+                    <OneInCollege xsi:nil="true"/>
+                    <TwoInCollege xsi:nil="true"/>
+                    <ThreeInCollege xsi:nil="true"/>
+                    <FourInCollege xsi:nil="true"/>
+                    <FiveInCollege xsi:nil="true"/>
+                </FamilySize1>
+                <FamilySize2>
+                    <OneInCollege xsi:nil="true"/>
+                    <TwoInCollege xsi:nil="true"/>
+                    <ThreeInCollege xsi:nil="true"/>
+                    <FourInCollege xsi:nil="true"/>
+                    <FiveInCollege xsi:nil="true"/>
+                </FamilySize2>
+                <FamilySize3>
+                    <OneInCollege xsi:nil="true"/>
+                    <TwoInCollege xsi:nil="true"/>
+                    <ThreeInCollege xsi:nil="true"/>
+                    <FourInCollege xsi:nil="true"/>
+                    <FiveInCollege xsi:nil="true"/>
+                </FamilySize3>
+                <FamilySize4>
+                    <OneInCollege xsi:nil="true"/>
+                    <TwoInCollege xsi:nil="true"/>
+                    <ThreeInCollege xsi:nil="true"/>
+                    <FourInCollege xsi:nil="true"/>
+                    <FiveInCollege xsi:nil="true"/>
+                </FamilySize4>
+                <FamilySize5>
+                    <OneInCollege xsi:nil="true"/>
+                    <TwoInCollege xsi:nil="true"/>
+                    <ThreeInCollege xsi:nil="true"/>
+                    <FourInCollege xsi:nil="true"/>
+                    <FiveInCollege xsi:nil="true"/>
+                </FamilySize5>
+                <AdditionalIncomeProtectionAllowance xsi:nil="true"/>
+                <AdjustedIncomeProtectionAllowance xsi:nil="true"/>
+                <MonthlyAdjustmentForIndependentNonEnrollmentPeriod xsi:nil="true"/>
+                <MonthlyAdjustmentForSingleStudentNonEnrollmentPeriod xsi:nil="true"/>
+                <MonthlyAdjustmentForIndependentStudentChildNonEnrollmentPeriod xsi:nil="true"/>
+                <AvailableIncomeBudgetDurationAdjustment xsi:nil="true"/>
+                <LimitOtherSiblingsShareOfParentalContribution xsi:nil="true"/>
+                <AverageBudget2YearPublic xsi:nil="true"/>
+                <AverageBudget2YearPrivate xsi:nil="true"/>
+                <AverageBudget4YearPublic xsi:nil="true"/>
+                <AverageBudget4YearPrivate xsi:nil="true"/>
+                <AverageBudgetGraduateProfessional xsi:nil="true"/>
+                <AverageBudgetProprietary xsi:nil="true"/>
+                <BudgetPercentForHalfTimeAttendance xsi:nil="true"/>
+                <InStateUndergraduateAverageBudget xsi:nil="true"/>
+                <OutStateUndergraduateAverageBudget xsi:nil="true"/>
+                <InStateGraduateAverageBudget xsi:nil="true"/>
+                <OutStateGraduateAverageBudget xsi:nil="true"/>
+                <ForceHousingProjection xsi:nil="true"/>
+            </ImOptions>
+            <CompareOptions>
+                <CompareStudentMaritalStatus xsi:nil="true"/>
+                <CompareParentMaritalStatus xsi:nil="true"/>
+                <CompareStudentStateOfResidency xsi:nil="true"/>
+                <CompareParentStateOfResidency xsi:nil="true"/>
+                <CompareStudentTaxForm xsi:nil="true"/>
+                <CompareParentTaxForm xsi:nil="true"/>
+                <CompareStudentYearInCollege xsi:nil="true"/>
+                <CompareStudentWardOfCourt xsi:nil="true"/>
+                <CompareStudentCitizenStatus xsi:nil="true"/>
+                <CompareOldestParentDateOfBirth xsi:nil="true"/>
+                <CompareStudentDateOfBirth xsi:nil="true"/>
+                <CompareStudentHomelessStatus xsi:nil="true"/>
+                <CompareStudentDislocatedWorker xsi:nil="true"/>
+                <CompareParentDislocatedWorker xsi:nil="true"/>
+                <CompareStudentOrphanAfter13 xsi:nil="true"/>
+                <StudentNumberInCollegeTolerance xsi:nil="true"/>
+                <ParentNumberInCollegeTolerance xsi:nil="true"/>
+                <StudentFamilySizeTolerance xsi:nil="true"/>
+                <ParentFamilySizeTolerance xsi:nil="true"/>
+                <StudentNumberOfExemptionsTolerance xsi:nil="true"/>
+                <ParentNumberOfExemptionsTolerance xsi:nil="true"/>
+                <StudentAgiTolerance xsi:nil="true"/>
+                <ParentAgiTolerance xsi:nil="true"/>
+                <StudentFederalTaxesPaidTolerance xsi:nil="true"/>
+                <ParentFederalTaxesPaidTolerance xsi:nil="true"/>
+                <StudentWageTolerance xsi:nil="true"/>
+                <FatherWageTolerance xsi:nil="true"/>
+                <StudentSpouseWageTolerance xsi:nil="true"/>
+                <MotherWageTolerance xsi:nil="true"/>
+                <StudentCashTolerance xsi:nil="true"/>
+                <ParentCashTolerance xsi:nil="true"/>
+                <StudentInvestmentNetWorthTolerance xsi:nil="true"/>
+                <ParentInvestmentNetWorthTolerance xsi:nil="true"/>
+                <StudentBusinessFarmNetWorthTolerance xsi:nil="true"/>
+                <ParentBusinessFarmNetWorthTolerance xsi:nil="true"/>
+                <StudentOtherUntaxedIncomeTolerance xsi:nil="true"/>
+                <ParentOtherUntaxedIncomeTolerance xsi:nil="true"/>
+                <StudentChildSupportPaidTolerance xsi:nil="true"/>
+                <ParentChildSupportPaidTolerance xsi:nil="true"/>
+                <StudentChildSupportReceivedTolerance xsi:nil="true"/>
+                <ParentChildSupportReceivedTolerance xsi:nil="true"/>
+                <StudentEducationCreditsTolerance xsi:nil="true"/>
+                <ParentEducationCreditsTolerance xsi:nil="true"/>
+                <ParentIraPaymentsTolerance xsi:nil="true"/>
+                <ParentPensionPaymentsTolerance xsi:nil="true"/>
+                <ParentLivingAllowanceTolerance xsi:nil="true"/>
+                <ParentInterestIncomeTolerance xsi:nil="true"/>
+                <StudentCombatPayTolerance xsi:nil="true"/>
+                <ParentCombatPayTolerance xsi:nil="true"/>
+                <ParentUntaxedIraDistributionTolerance xsi:nil="true"/>
+                <ParentUntaxedPensionDistributionTolerance xsi:nil="true"/>
+                <ParentVeteranNonEducationalBenefits xsi:nil="true"/>
+            </CompareOptions>
+        </GlobalOptions>
+    </NeedAnalysisData>
+</needAnalysisInput>

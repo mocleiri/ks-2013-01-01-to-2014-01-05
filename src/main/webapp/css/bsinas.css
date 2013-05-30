@@ -1,0 +1,484 @@
+* {
+    font-family: arial, helvetica, tahoma, sans-serif;
+}
+
+#demo-theme {
+    float: right;
+    padding-top: 5px;
+    padding-right: 8px;
+}
+
+#demo-title {
+    color: white;
+    font-family: tahoma, arial, sans-serif;
+    font-size: 16px;
+    font-size-adjust: none;
+    font-stretch: normal;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: normal;
+    padding: 6 0 8 6px;
+}
+
+#uif-application {
+    margin: 0 auto;
+    width: 100%;
+}
+
+#bsinas-shortcut img {
+    width: 42px;
+    height: 42px;
+    background-image: url(../images/icons/at-icon.png) !important;
+}
+
+#accessControl-shortcut img {
+    width: 40px;
+    height: 40px;
+    background-image: url(../images/icons/users.png) !important;
+}
+
+#at-shortcut img {
+    width: 42px;
+    height: 42px;
+    background-image: url(../images/icons/at-icon.png) !important;
+}
+
+#sos-shortcut img {
+    width: 40px;
+    height: 41px;
+    background-image: url(../images/icons/surveillance-40x40.png) !important;
+}
+
+#sonar-shortcut img {
+    width: 40px;
+    height: 40px;
+    background-image: url(../images/icons/sonar-icon.png) !important;
+}
+
+
+.sample-box {
+    float: left;
+    width: 135px;
+    margin: 0 5px;
+    text-align: center;
+    height: 114px;
+    cursor: default;
+    color: #444;
+    overflow: hidden;
+}
+
+.sample-over div {
+    color: #1860A8;
+}
+
+.sample-box img {
+    width: 120px;
+    height: 90px;
+    margin-bottom: 2px;
+    margin-top: 5px;
+}
+
+.sample-box div, #sample-box div a {
+    font-size: 10px;
+    line-height: 12px;
+    font-family: tahoma, arial, sans-serif;
+}
+
+.sample-box dt a {
+    border: 0 none !important;
+}
+
+.x-view-over {
+    background: #EFEFEF url(../images/default/grid/row-over.gif) repeat-x scroll left top;
+    border: 1px solid #DDDDDD;
+    padding: 4px;
+}
+
+.x-view-selected {
+    border: 1px solid #99BBE8;
+    padding: 4px;
+}
+
+.x-view-selected .thumb {
+    background: transparent none repeat scroll 0%;
+}
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+
+.text-link {
+    font-size: 11px;
+    font-weight: bold;
+    color: blue;
+    cursor: pointer;
+}
+
+.icon-app-view-list {
+    background-image: url(../images/icons/fam/application_view_list.png) !important;
+}
+
+.menu-icon-collapse {
+    background-image: url(../images/icons/minus.png) !important;
+}
+
+.menu-icon-expand {
+    background-image: url(../images/icons/plus.png) !important;
+}
+
+.icon-calendar {
+    background-image: url(../images/icons/calendar-16x16.gif) !important;
+}
+
+.icon-calculator {
+    background-image: url(../images/icons/calculator.png) !important;
+}
+
+.icon-coins {
+    background-image: url(../images/icons/coins.png) !important;
+}
+
+.icon-card {
+    background-image: url(../images/icons/credit_card.png) !important;
+}
+
+.icon-owner {
+    background-image: url(../images/icons/icon-owner.png) !important;
+}
+
+.icon-assignee {
+    background-image: url(../images/icons/icon-assignee.png) !important;
+}
+
+.icon-collapse {
+    background: url(../images/icons/plus.png) no-repeat;
+}
+
+.icon-expand {
+    background: url(../images/icons/minus.png) no-repeat;
+}
+
+.icon-save {
+    background-image: url(../images/icons/save.png) !important;
+}
+
+.icon-upload {
+    background-image: url(../images/icons/upload-16x16.gif) !important;
+}
+
+.icon-download {
+    background-image: url(../images/icons/download-16x16.png) !important;
+}
+
+
+.icon-copy {
+    background-image: url(../images/icons/document.gif) !important;
+}
+
+.icon-help {
+    background-image: url(../images/icons/quote.gif) !important;
+}
+
+.icon-alert {
+    background-image: url(../images/icons/promote.png) !important;
+}
+
+.icon-close-alert {
+    background-image: url(../images/icons/close.png) !important;
+}
+
+.icon-drill-down {
+    background-image: url(../images/icons/drilldown.png) !important;
+}
+
+.icon-accordion {
+    background-image: url(../images/icons/accordion.gif) !important;
+}
+
+.icon-open-folder {
+    background-image: url(../images/icons/open-16x16.png) !important;
+}
+
+.icon-cognos {
+    background-image: url(../images/icons/icon-cognos.png) !important;
+}
+
+.icon-html {
+    background-image: url(../images/icons/format/html_icon.gif) !important;
+}
+
+.icon-trade {
+    background-image: url(../images/icons/trade.gif) !important;
+}
+
+.icon-quote {
+    background-image: url(../images/icons/quote.gif) !important;
+}
+
+.icon-history {
+    background-image: url(../images/icons/icon_history.gif) !important;
+}
+
+.icon-memo {
+    background-image: url(../images/icons/memo.gif) !important;
+}
+
+.icon-user {
+    background-image: url(../images/icons/fam/user.png) !important;
+}
+
+.user-orange {
+    background-image: url(../images/icons/fam/user_orange.png) !important;
+}
+
+.icon-lock {
+    background-image: url(../images/icons/lock.png) !important;
+}
+
+.icon-document {
+    background-image: url(../images/icons/document.gif) !important;
+}
+
+.icon-add {
+    background-image: url(../images/icons/add-16x16.gif) !important;
+}
+
+.icon-plugin {
+    background-image: url(../images/icons/plugin.png) !important;
+}
+
+.icon-search {
+    background-image: url(../images/icons/search.gif) !important;
+}
+
+.icon-undo {
+    background-image: url(../images/icons/undo-16x16.png) !important;
+}
+
+.icon-check {
+    background-image: url(../images/icons/check-16x16.png) !important;
+}
+
+.icon-delete {
+    background-image: url(../images/icons/delete-16x16.png) !important;
+}
+
+.icon-edit-pen {
+    background-image: url(../images/icons/edit-pen-16x16.png) !important;
+}
+
+.icon-cancel {
+    background-image: url(../images/icons/cancel-16x16.png) !important;
+}
+
+.icon-next {
+    background-image: url(../images/icons/page-next.gif) !important;
+}
+
+.icon-page {
+    background: url(../images/icons/document.gif) no-repeat;
+}
+
+.icon-comments {
+    background-image: url(../images/icons/document.gif) !important;
+}
+
+.icon-checked {
+    background-image: url(../images/icons/checked.gif) !important;
+}
+
+.icon-unchecked {
+    background-image: url(../images/icons/unchecked.gif) !important;
+}
+
+.icon-checkin {
+    background-image: url(../images/icons/checkin-16x16.png) !important;
+}
+
+.icon-checkout {
+    background-image: url(../images/icons/checkout-16x16.png) !important;
+}
+
+.icon-retire {
+    background-image: url(../images/icons/retire-16x16.png) !important;
+}
+
+.icon-print {
+    background-image: url(../images/icons/icon-print-16x16.gif) !important;
+}
+
+.text {
+    font-size: 12px;
+}
+
+.medium-text {
+    font-size: 10px;
+}
+
+.small-text {
+    font-size: 8px;
+}
+
+.pad-text {
+    font-size: 12px;
+    padding: 5px;
+}
+
+.text, .text p {
+
+}
+
+.icon-chart-organization {
+    background-image: url(../images/icons/chart_organisation.png);
+}
+
+.icon-refresh {
+    background-image: url(../images/icons/refresh.png) !important;
+}
+
+.icon-tag-green {
+    background-image: url(../images/icons/icon-tag-green.png) !important;
+}
+
+.icon-arrow-down-blue {
+    background-image: url(../images/icons/icon-arrow-down-blue.png) !important;
+}
+
+/*
+	MRW demo
+*/
+
+.icon-toolbox {
+    background-image: url(../images/icons/toolbox.gif) !important;
+}
+
+.icon-pdf {
+    background-image: url(../images/icons/pdf-icon.png) !important;
+}
+
+.icon-xls {
+    background-image: url(../images/icons/xls-icon.png) !important;
+}
+
+.icon-xlsx {
+    background-image: url(../images/icons/xlsx-icon.gif) !important;
+}
+
+.icon-grid {
+    background-image: url(../images/icons/grid16x16.gif) !important;
+}
+
+.icon-sos {
+    background-image: url(../images/icons/surveillance-16x16.png) !important;
+}
+
+.icon-word {
+    background-image: url(../images/icons/word-icon.jpg) !important;
+}
+
+/* extjs fixes */
+.text-label {
+    font-size: 11px;
+}
+
+.text-label-bold {
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.text-form-label {
+    font-size: 12px;
+}
+
+.text-form-label-bold {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.label-on-form {
+    PADDING-RIGHT: 6px;
+    PADDING-LEFT: 2px;
+    PADDING-BOTTOM: 0px;
+    PADDING-TOP: 0px;
+    white-space: nowrap;
+}
+
+.table-to-wrap {
+    white-space: nowrap;
+}
+
+.icon-select-all {
+    background-image: url(../images/icons/icon-select-all-tp-3.png) !important;
+}
+
+.yellow-label {
+    background-color: #FFFF80 !important;
+}
+
+.bold-btn button {
+    font-weight: bold;
+}
+
+.icon-help {
+    background-image: url(../images/icons/help.gif) !important;
+}
+
+.icon-flag {
+    width: 16px;
+    height: 16px;
+    background-image: url(../images/icons/flag.gif) !important;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px;
+}
+
+.icon-flag-warning {
+    width: 16px;
+    height: 16px;
+    background-image: url(../images/icons/flag-warning.gif) !important;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px;
+}
+
+/* GXT fixes */
+.x-panel-body {
+    background-color: transparent !important;
+}
+
+/* Equation Editor */
+.expander-content {
+    font-size: 11px;
+}
+
+.theta-view-factor-icon {
+    background-image: url(../images/icons/icon-view-factor-def.gif);
+    margin-left: 1px;
+    text-decoration: none !important;
+}
+
+.theta-info-cell td, .theta-info-cell th {
+    PADDING-LEFT: 20px;
+}
+
+/* the rest of classes */
+.bg-white {
+    margin: 0;
+    padding: 0;
+    background-image: none;
+    background-color: #FFFFFF;
+    background: #FFFFFF;
+}
+
+.id-print-dialog-padded-left {
+    padding-left: 20px;
+}

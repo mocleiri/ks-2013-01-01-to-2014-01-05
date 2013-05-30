@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+             http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" version="1.0">
+
+    <persistence-unit name="prosam" transaction-type="JTA">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <!-- jta-data-source>KsaDS</jta-data-source -->
+        <properties>
+            <property name="hibernate.default_schema" value="SIGMA"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
+            <property name="hibernate.jdbc.fetch_size" value="1000"/>
+            <property name="hibernate.transaction.manager_lookup_class"
+                      value="com.sigmasys.bsinas.service.jta.AtomikosTransactionManagerLookup"/>
+            <property name="hibernate.ejb.interceptor" value="com.sigmasys.bsinas.service.AuditTrailInterceptor"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>

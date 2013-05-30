@@ -1,0 +1,1887 @@
+---[HTTP request - http://developmentpc01.sigmasys.com/bsinas3/2013/NeedAnalysis.svc]---
+        Content-type: text/xml;charset="utf-8"
+        Soapaction: "http://INAS.collegeboard.org/2013/INeedAnalysisXmlEngine/RunNeedAnalysis"
+        Accept: text/xml, multipart/related, text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+
+        <?xml version='1.0' encoding='UTF-8'?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Body>
+        <ns2:RunNeedAnalysis xmlns="http://INAS.collegeboard.org/2013/Output/"
+                             xmlns:ns2="http://INAS.collegeboard.org/2013/"
+                             xmlns:ns3="http://INAS.collegeboard.org/2013/Input/"
+                             xmlns:ns4="http://INAS.collegeboard.org/faults/"
+                             xmlns:ns5="http://schemas.microsoft.com/2003/10/Serialization/">
+            <ns2:input CreatedDate="2013-05-23" AwardYear="2013" CollegeCode="Sigma ProSAM">
+                <ns3:NeedAnalysisData>
+                    <ns3:StudentInputData>
+                        <ns3:RecordIdentifier>81088121</ns3:RecordIdentifier>
+                        <ns3:FMRData>
+                            <ns3:FMR>
+                                <ns3:Student>
+                                    <ns3:LastName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:FirstName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                                    <ns3:MiddleInitial xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                                    <ns3:ResidencyStateProvinceCode
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:StateProvinceCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:ZipCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:BirthDate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                                    <ns3:CitizenshipStatusCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                    <ns3:CitizenshipSsaFlag xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:AlienRegistrationId xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:SsnMatchIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:MaritalStatusCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:MaritalStatusDate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:YearInCollegeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:MembersInFamily xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:NumberInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:BornPriorIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:WorkOnGraduateDegreeInd xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                    <ns3:MarriedIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:HaveChildrenYouSupportIndicator
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:LegalDependentsIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                    <ns3:OrphanWardOfCourtIndicator
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:VeteranIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:ActiveDutyIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:EmancipatedMinorIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                    <ns3:InLegalGuardianshipIndicator
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:UnaccompaniedYouthBySchoolIndicator
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:UnaccompaniedYouthByHUDIndicator
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:AtRiskHomelessIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                    <ns3:TaxReturnStatusCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:TaxFormTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:EligibleToFile1040AOr1040EZ
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:ReceiveSSI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:ReceiveFoodStamps xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:ReceiveFreeLunch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:ReceiveTANF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                    <ns3:ReceiveWIC xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:DislocatedWorker xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:AdjustedGrossIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:IncomeTaxPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                                    <ns3:ExemptionsClaimed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:StudentEarnedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:SpouseEarnedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:CashSavingsChecking xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:InvestmentNetworth xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:BusinessFarmNetworth xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                    <ns3:EducationCredits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:ChildSupportPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:NeedBasedEmployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:GrantsScholarshipsResources
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:CombatPay xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                                    <ns3:CoOpEarnings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                    <ns3:PensionPayments xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:IraPayments xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                    <ns3:ChildSupportReceived xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                    <ns3:InterestDividendIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:IraDistributions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:UntaxedPensionPayments xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:MilitaryClergyAllowances xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                    <ns3:VeteranNonEducationBenefits
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:OtherUntaxedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:OtherNonReportedMoney xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                </ns3:Student>
+                                <ns3:Parents>
+                                    <ns3:FatherData>
+                                        <ns3:LastName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                        <ns3:BirthDate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                                        <ns3:SSN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                        <ns3:SSNMatchFlag xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    </ns3:FatherData>
+                                    <ns3:MotherData>
+                                        <ns3:LastName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                        <ns3:BirthDate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                                        <ns3:SSN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                        <ns3:SSNMatchFlag xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    </ns3:MotherData>
+                                    <ns3:MaritalStatusCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:ResidencyStateProvinceCode
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:MembersInFamily xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:NumberInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:ReceiveSSI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:ReceiveFoodStamps xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:ReceiveFreeLunch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:ReceiveTANF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                    <ns3:ReceiveWIC xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:TaxReturnStatusCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:TaxFormTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:EligibleToFile1040AOr1040EZ
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:DislocatedWorker xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:AdjustedGrossIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:IncomeTaxPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                                    <ns3:ExemptionsClaimed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:FatherEarnedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:MotherEarnedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:CashSavingsChecking xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:InvestmentNetworth xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:BusinessFarmNetworth xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                    <ns3:EducationCredits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:ChildSupportPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:NeedBasedEmployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:GrantsScholarshipsResources
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:CombatPay xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                                    <ns3:CoOpEarnings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                    <ns3:PensionPayments xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:IraPayments xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                    <ns3:ChildSupportReceived xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                    <ns3:InterestDividendIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:IraDistributions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:UntaxedPensionPayments xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:MilitaryClergyAllowances xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                    <ns3:VeteranNonEducationBenefits
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:OtherUntaxedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                </ns3:Parents>
+                                <ns3:Other>
+                                    <ns3:DependencyStatus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:DependencyStatusOverride xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                    <ns3:ProfessionalJudgment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                    <ns3:ApplicationReceiptDate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:ApplicationCompleteDate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                    <ns3:ApplicationSignedBy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                </ns3:Other>
+                                <ns3:Assumptions>
+                                    <ns3:Assumption1ParentNumberInCollegeOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:Assumption2ParentAdjustedGrossIncomeOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:Assumption3StudentNumberInCollegeOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:Assumption4StudentAdjustedGrossIncomeOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:Assumption5ParentAdditionalDataOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:Assumption6StudentAdditonalDataOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                </ns3:Assumptions>
+                                <ns3:Rejects>
+                                    <ns3:RejectCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:RejectCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:RejectCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:RejectCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:RejectCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:RejectCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:RejectCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:Reject3StudentTaxPaidOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:Reject12ParentTaxPaidOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:Reject20NonTaxFilerOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:RejectADateOfBirthOldOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:RejectBDateOfBirthYoungOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:RejectCParentIndepedentTaxPaidComplexOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:RejectGDependentTaxPaidComplexOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:RejectJFatherSsnOveride xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                    <ns3:RejectKMotherSsnOverride xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                    <ns3:RejectNIncompleteNameOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:RejectWHighFamilyMemberOverride
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                </ns3:Rejects>
+                            </ns3:FMR>
+                            <ns3:FMRExtension>
+                                <ns3:BudgetDuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                <ns3:ForceStudentToIndependentStatus
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:StudentCalculateUsTax xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                <ns3:ParentCalculateUsTax xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                <ns3:CalculateParentContributionForIndependent
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ParentNumberInCollegeOverride xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:RejectRStudentSsnMatchOverride
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:RejectSDependentAndFathersBirthDateOverride
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:RejectTDependentAndMotherBirthDateOverride
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:RejectDFirstAndLastNameMatchOverride
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:RejectEDependentAndFathersNameOverride
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:RejectFDependentAndMotherNameDateOverride
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:StudentAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                <ns3:ParentAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                            </ns3:FMRExtension>
+                        </ns3:FMRData>
+                        <ns3:IMRData>
+                            <ns3:IMR>
+                                <ns3:Student>
+                                    <ns3:ApplicationType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:ApplicationReceiptDate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:BirthDate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                                    <ns3:StateProvinceCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:PostalCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:ResidencyStateProvinceCode
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:ForeignAddressIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                    <ns3:CountryCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                    <ns3:YearInCollegeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:CitizenshipStatusCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                    <ns3:MaritalStatusCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:VeteranIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:OrphanWardOfCourtIndicator
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:OrphanFosterWardAfter13Indicator
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:HomelessIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:LegalDependentsIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                    <ns3:DislocatedWorker xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:MembersInFamily>0</ns3:MembersInFamily>
+                                    <ns3:NumberInCollege>0</ns3:NumberInCollege>
+                                    <ns3:ReceiveTANF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                    <ns3:ReceiveSSI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:ReceiveFoodStamps xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:ReceiveFreeLunch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:ReceiveWIC xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:TaxReturnStatusCode>3</ns3:TaxReturnStatusCode>
+                                    <ns3:TaxFormTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:ExemptionsClaimed>0</ns3:ExemptionsClaimed>
+                                    <ns3:AdjustedGrossIncome>0</ns3:AdjustedGrossIncome>
+                                    <ns3:IncomeTaxPaid>0</ns3:IncomeTaxPaid>
+                                    <ns3:EducationCredits>0</ns3:EducationCredits>
+                                    <ns3:ItemizedDeductions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:StudentEarnedIncome>600</ns3:StudentEarnedIncome>
+                                    <ns3:SpouseEarnedIncome>0</ns3:SpouseEarnedIncome>
+                                    <ns3:CombatPay>0</ns3:CombatPay>
+                                    <ns3:InterestDividendIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:SocialSecurityBenefits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:TANF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:ChildSupportReceived>0</ns3:ChildSupportReceived>
+                                    <ns3:EarnedIncomeCredit>0</ns3:EarnedIncomeCredit>
+                                    <ns3:OtherUntaxedIncome>0</ns3:OtherUntaxedIncome>
+                                    <ns3:TaxableFinancialAid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:ChildSupportPaid>0</ns3:ChildSupportPaid>
+                                    <ns3:MedicalDentalExpenses>0</ns3:MedicalDentalExpenses>
+                                    <ns3:VeteransBenefitsMonthlyAmount
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:NumberMonthsReceiveVABenefits
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:SummerEarnedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:SchoolYearEarnedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:SpouseSummerEarnedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                    <ns3:SpouseSchoolYearEarnedIncome
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:SummerOtherTaxedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:SchoolYearOtherTaxedIncome
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:SummerUntaxedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:SchoolYearUntaxedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                    <ns3:GrantsScholarshipsResources
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:TuitionBenefits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:ParentContributionOffer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                    <ns3:RelativesContributionOffer
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:CashSavingsChecking>1400</ns3:CashSavingsChecking>
+                                    <ns3:IRAKeogh>0</ns3:IRAKeogh>
+                                    <ns3:InvestmentValue>621</ns3:InvestmentValue>
+                                    <ns3:InvestmentDebt>0</ns3:InvestmentDebt>
+                                    <ns3:TrustFund>3429</ns3:TrustFund>
+                                    <ns3:HomeValue>0</ns3:HomeValue>
+                                    <ns3:HomeDebt>0</ns3:HomeDebt>
+                                    <ns3:HomePurchaseYear xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:HomePurchasePrice>0</ns3:HomePurchasePrice>
+                                    <ns3:OtherRealEstateValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                    <ns3:OtherRealEstateDebt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:LargeBusinessIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:LiveOnFarmIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:BusinessFarmValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:BusinessFarmDebt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                </ns3:Student>
+                                <ns3:Parents>
+                                    <ns3:NaturalParentsMaritalStatus
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:StudentLivesWith xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:MaritalStatusCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:Parent1Type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                    <ns3:Parent1BirthDate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:Parent2Type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                    <ns3:Parent2BirthDate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:ResidencyStateProvinceCode
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:CountryOfResidenceCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:CountryCoefficient xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:DislocatedWorker xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:ReceiveTANF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                    <ns3:ReceiveSSI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:ReceiveFoodStamps xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                    <ns3:ReceiveFreeLunch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:ReceiveWIC xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:MembersInFamily>3</ns3:MembersInFamily>
+                                    <ns3:NumberInCollege>1</ns3:NumberInCollege>
+                                    <ns3:TaxReturnStatusCode>2</ns3:TaxReturnStatusCode>
+                                    <ns3:TaxFormTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                    <ns3:ExemptionsClaimed>3</ns3:ExemptionsClaimed>
+                                    <ns3:WagesSalariesTips>84000</ns3:WagesSalariesTips>
+                                    <ns3:InterestIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                    <ns3:DividendIncome>0</ns3:DividendIncome>
+                                    <ns3:BusinessFarmIncome>10000</ns3:BusinessFarmIncome>
+                                    <ns3:OtherTaxableIncome>0</ns3:OtherTaxableIncome>
+                                    <ns3:AdjustmentsToIncome>1500</ns3:AdjustmentsToIncome>
+                                    <ns3:AdjustedGrossIncome>92750</ns3:AdjustedGrossIncome>
+                                    <ns3:IncomeTaxPaid>11000</ns3:IncomeTaxPaid>
+                                    <ns3:EducationCredits>0</ns3:EducationCredits>
+                                    <ns3:ItemizedDeductions>18000</ns3:ItemizedDeductions>
+                                    <ns3:FathersEarnedIncome>10000</ns3:FathersEarnedIncome>
+                                    <ns3:MothersEarnedIncome>84000</ns3:MothersEarnedIncome>
+                                    <ns3:CombatPay>0</ns3:CombatPay>
+                                    <ns3:SocialSecurityBenefits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:TANF>0</ns3:TANF>
+                                    <ns3:ChildSupportReceived>0</ns3:ChildSupportReceived>
+                                    <ns3:IRAKeoghDeductions>0</ns3:IRAKeoghDeductions>
+                                    <ns3:UntaxedIRADistribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                    <ns3:PensionSavingsDeductions>11153</ns3:PensionSavingsDeductions>
+                                    <ns3:TuitionFeeDeduction>0</ns3:TuitionFeeDeduction>
+                                    <ns3:EarnedIncomeCredit>0</ns3:EarnedIncomeCredit>
+                                    <ns3:AdditionalChildTaxCredit>0</ns3:AdditionalChildTaxCredit>
+                                    <ns3:LivingAllowance>0</ns3:LivingAllowance>
+                                    <ns3:MilitaryHousingAllowance>0</ns3:MilitaryHousingAllowance>
+                                    <ns3:TaxExemptInterestIncome>0</ns3:TaxExemptInterestIncome>
+                                    <ns3:ForeignIncomeExclusion>0</ns3:ForeignIncomeExclusion>
+                                    <ns3:OtherUntaxedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:IMOtherUntaxedIncome>0</ns3:IMOtherUntaxedIncome>
+                                    <ns3:FamilySupportIncome>0</ns3:FamilySupportIncome>
+                                    <ns3:UntaxedPensionDistribution>0</ns3:UntaxedPensionDistribution>
+                                    <ns3:VaNonEducationalBenefits>0</ns3:VaNonEducationalBenefits>
+                                    <ns3:FSAHealthCare xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                                    <ns3:FSADependentCare xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:HealthSavingsAccount xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                    <ns3:CashSavingsChecking>2000</ns3:CashSavingsChecking>
+                                    <ns3:AssetsInSiblingsNames>0</ns3:AssetsInSiblingsNames>
+                                    <ns3:InvestmentValue>8139</ns3:InvestmentValue>
+                                    <ns3:InvestmentDebt>0</ns3:InvestmentDebt>
+                                    <ns3:HomeValue>425000</ns3:HomeValue>
+                                    <ns3:HomeDebt>0</ns3:HomeDebt>
+                                    <ns3:HomePurchaseYear xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:HomePurchasePrice>230000</ns3:HomePurchasePrice>
+                                    <ns3:OtherRealEstateValue>0</ns3:OtherRealEstateValue>
+                                    <ns3:OtherRealEstateDebt>0</ns3:OtherRealEstateDebt>
+                                    <ns3:OtherRealEstatePurchaseYear
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:OtherRealEstatePurchasePrice>0</ns3:OtherRealEstatePurchasePrice>
+                                    <ns3:BusinessValue>0</ns3:BusinessValue>
+                                    <ns3:BusinessDebt>0</ns3:BusinessDebt>
+                                    <ns3:LiveOnFarmIndicator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    <ns3:FarmValue>0</ns3:FarmValue>
+                                    <ns3:FarmDebt>0</ns3:FarmDebt>
+                                    <ns3:NumberOfEmployeesIndicator
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:ChildSupportPaid>0</ns3:ChildSupportPaid>
+                                    <ns3:MedicalDentalExpenses>0</ns3:MedicalDentalExpenses>
+                                    <ns3:PrivateTuitionPaid>0</ns3:PrivateTuitionPaid>
+                                    <ns3:NumberOfChildrenTuitionPaid>0</ns3:NumberOfChildrenTuitionPaid>
+                                    <ns3:ExpectedChildSupportPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                    <ns3:ExpectedMedicalDentalExpenses
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:ExpectedPrivateTuitionPaid
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:ExpectedNumberOfChildrenTuitionPaid
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:PriorAdjustedGrossIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                    <ns3:PriorIncomeTaxPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                    <ns3:PriorItemizedDeductions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                    <ns3:PriorOtherUntaxedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                    <ns3:ExpectedFathersEarnedIncome
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:ExpectedMothersEarnedIncome
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:ExpectedOtherTaxableIncome
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                    <ns3:ExpectedOtherUntaxedIncome
+                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                </ns3:Parents>
+                                <ns3:FamilyMemberList>
+                                    <ns3:FamilyMember>
+                                        <ns3:RelationshipCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                        <ns3:Age xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                        <ns3:AttendCollegeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                        <ns3:CollegeTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    </ns3:FamilyMember>
+                                    <ns3:FamilyMember>
+                                        <ns3:RelationshipCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                        <ns3:Age xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                        <ns3:AttendCollegeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                        <ns3:CollegeTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    </ns3:FamilyMember>
+                                    <ns3:FamilyMember>
+                                        <ns3:RelationshipCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                        <ns3:Age xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                        <ns3:AttendCollegeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                        <ns3:CollegeTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    </ns3:FamilyMember>
+                                    <ns3:FamilyMember>
+                                        <ns3:RelationshipCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                        <ns3:Age xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                        <ns3:AttendCollegeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                        <ns3:CollegeTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    </ns3:FamilyMember>
+                                    <ns3:FamilyMember>
+                                        <ns3:RelationshipCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                        <ns3:Age xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                        <ns3:AttendCollegeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                        <ns3:CollegeTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    </ns3:FamilyMember>
+                                    <ns3:FamilyMember>
+                                        <ns3:RelationshipCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                        <ns3:Age xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                        <ns3:AttendCollegeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                        <ns3:CollegeTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    </ns3:FamilyMember>
+                                    <ns3:FamilyMember>
+                                        <ns3:RelationshipCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                        <ns3:Age xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                        <ns3:AttendCollegeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                        <ns3:CollegeTypeCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                    </ns3:FamilyMember>
+                                </ns3:FamilyMemberList>
+                                <ns3:NonCustodialParentInformation>
+                                    <ns3:NCPContributionOffer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                </ns3:NonCustodialParentInformation>
+                            </ns3:IMR>
+                            <ns3:IMRExtension>
+                                <ns3:DependencyOverride xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:DefaultBudgetDuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                <ns3:CalculateParentContributionForIndependents
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:SkipFamilyMembersOnAge xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                <ns3:UseStudentProjectedYearIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:UseParentProjectedYearIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                <ns3:UseStateTaxAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                <ns3:ExcludeWorkstudyEarnings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                <ns3:ExcludeTuitionDeduction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                <ns3:MaximumTuitionAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                <ns3:StudentMedicalAllowancePercent
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:StudentMedicalAllowanceAmount xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:ParentMedicalAllowancePercent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:ParentMedicalAllowanceAmount xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                <ns3:StudentEmploymentAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:ParentEmploymentAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:StudentFicaAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                <ns3:ParentFicaAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                <ns3:StudentAdditionalIncomeAllowance
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ParentAdditionalIncomeAllowance
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ParentColaIndex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                <ns3:LimitInternationalParentIncomeProtectionAllowance
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ParentIncomeProtectionAllowance
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:StudentFederalTaxPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                <ns3:ParentFederalTaxPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                <ns3:StudentCalculatedFederalTaxPaidBehavior
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ParentCalculatedFederalTaxPaidBehavior
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:StudentProjectedFederalTaxPaid
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ParentProjectedFederalTaxPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:StudentLocalTaxPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                <ns3:ParentLocalTaxPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:StudentLocalTaxPercent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                <ns3:ParentLocalTaxPercent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                <ns3:AddStudentEducationCredit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:AddParentEducationCredit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                <ns3:IndependentStudentIncomeAssessmentPercent
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:AllowBusinessFarmLosses xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                <ns3:AllowOtherLosses xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                <ns3:StudentAdditionalAssets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                <ns3:ParentAdditionalAssets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                <ns3:StudentAdditionalAssetAllowance
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ParentAdditionalAssetAllowance
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:StudentProjectHomeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                <ns3:ParentProjectHomeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                <ns3:StudentCapHomeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                <ns3:ParentCapHomeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:StudentImputeAssets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                <ns3:ParentImputeAssets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:StudentIraKeoghPercent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                <ns3:CalculateContributionsFromAssetsUsingCountryCoefficient
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:StudentAssetAssessmentRate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:ParentAssetAssessmentRate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:AddStudentAssetsToParentAssets
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:CapStudentHomeEquity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                <ns3:CapParentHomeEquity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                <ns3:MinimumStudentContributionFromIncome
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:MinimumParentContributionFromIncome
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:MinimumStudentContributionFromAssets
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:MinimumParentContributionFromAssets
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:PriorYearStudentContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                <ns3:PriorYearParentContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:ImputeStudentContributionPercent
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ImputeParentContributionPercent
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:PerformStudentContributionUsingNewMethodology
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LimitSiblingShareOfParentContribution
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:CanStudentImFallBelowFm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                <ns3:CanParentImFallBelowFm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                <ns3:UseNonCustodialParentContribution
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:StudentTotalBudget xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:StudentNumberInCollegeOverride
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ParentNumberInCollegeOverride xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:StudentHousingMultiplierOverride
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ParentHousingMultiplierOverride
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ReleaseIsirToImrMigration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:ReleaseImrToIsirMigration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:LockIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentYearInSchoolIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockStudentYearInSchoolImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:LockStudentWardOfCourtIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:LockStudentWardOfCourtImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:LockStudentLegalDependentsIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentLegalDependentsImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:LockStudentDateOfBirthIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:LockStudentDateOfBirthImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:LockStudentMaritalStatusIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                <ns3:LockStudentMaritalStatusImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockStudentHouseholdSizeIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                <ns3:LockStudentHouseholdSizeImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockStudentNumberInCollegeSizeIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentNumberInCollegeSizeImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentStateOfResidenceIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentStateOfResidenceImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentTaxReturnTypeIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                <ns3:LockStudentTaxReturnTypeImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockStudentNumberOfExemptionsIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentNumberOfExemptionsImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentAgiIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:LockStudentAgiImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                                <ns3:LockStudentFedTaxPaidIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:LockStudentFedTaxPaidImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                <ns3:LockStudentIncomeIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                <ns3:LockStudentIncomeImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                <ns3:LockStudentSpouseIncomeIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockStudentSpouseIncomeImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:LockStudentCombatPayIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                <ns3:LockStudentCombatPayImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                <ns3:LockStudentTaxableAidtIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:LockStudentTaxableAidImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                <ns3:LockStudentCashIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                <ns3:LockStudentCashImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:LockStudentInvestmentNetWorthIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentInvestmentNetWorthImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentBusinessFarmNetWorthIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentVeteranStatusIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                <ns3:LockStudentVeteranStatusImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockStudentCitizenStatusIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                <ns3:LockStudentCitizenStatusImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockStudentFederalTaxReturnStatusIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentFederalTaxReturnStatusImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentChildSupportReceivedIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentChildSupportReceivedImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentChildSupportPaidIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentChildSupportPaidImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentSpouseDislocatedWorkerIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentSpouseDislocatedWorkerImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentEducationCreditsIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentEducationCreditsImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentHomelessRiskIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockStudentHomelessRiskImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:LockStudentOrphanFosterWardAfter13Isir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockStudentOrphanFosterWardAfter13Imr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentMaritalStatusIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockParentMaritalStatusImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:LockParentHouseholdSizeIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockParentHouseholdSizeImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:LockParentNumberInCollegeIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:LockParentNumberInCollegeImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                <ns3:LockParentStateOfResidenceIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentStateOfResidenceImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:LockParentTaxReturnTypeIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                                <ns3:LockParentTaxReturnTypeImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:LockParentNumberOfExemptionsIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentNumberOfExemptionsImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentAgiIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                                <ns3:LockParentAgiImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                <ns3:LockParentFedTaxPaidIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                <ns3:LockParentFedTaxPaidImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                <ns3:LockFatherIncomeIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                <ns3:LockFatherIncomeImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                <ns3:LockMotherIncomeIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                <ns3:LockMotherIncomeImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                                <ns3:LockParentUntaxedIraDistributionIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentUntaxedIraDistributionImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentUntaxedPensionDistributionIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentUntaxedPensionDistributionImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentCashIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:LockParentCashImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                                <ns3:LockParentInvestmentNetWorthIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentInvestmentNetWorthImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentBusinessFarmNetWorthIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentBusinessFarmNetWorthImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentFederalTaxReturnStatusIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentFederalTaxReturnStatusImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentDateOfBirthIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:LockParentDateOfBirthImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                <ns3:LockParentChildSupportReceivedIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentChildSupportReceivedImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentChildSupportPaidIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentChildSupportPaidImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:LockParentIraPaymentsIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:LockParentIraPaymentsImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                <ns3:LockParentPensionPaymentsIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:LockParentPensionPaymentsImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                                <ns3:LockParentMilitaryClergyAllowancesIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentMilitaryClergyAllowancesImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockInterestIncomeIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                <ns3:LockInterestIncomeImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                                <ns3:LockParentEducationCreditsIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentEducationCreditsImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:LockParentDislocatedWorkerIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentDislocatedWorkerImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                <ns3:LockParentCombatPayIsir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                <ns3:LockParentCombatPayImr xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                <ns3:LockParentVaNonEducationalBenefitsIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentVaNonEducationalBenefitsImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentOtherUntaxedIncomeIsir
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:LockParentOtherUntaxedIncomeImr
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:MigrationDirection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:ActualStudentAgi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                <ns3:ActualParentAgi xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                <ns3:ActualStudentUntaxedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                                <ns3:ActualParentUntaxedIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:ParentAgiUsage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                <ns3:UseStudentEfmProjectedYearIncome
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:UseParentEfmProjectedYearIncome
+                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:StudentEfmHouseholdSize xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                                <ns3:ParentEfmHouseholdSize xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                                <ns3:StudentEfmNumberInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                                <ns3:ParentEfmNumberInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                                <ns3:OperationalControl xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                            </ns3:IMRExtension>
+                        </ns3:IMRData>
+                    </ns3:StudentInputData>
+                    <ns3:GlobalOptions>
+                        <ns3:OperationalOptions>
+                            <ns3:ActivateStudentImrIsirComparison xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                            <ns3:ActivateParentImrIsirComparison xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                            <ns3:ActivateDataMigration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                            <ns3:DataToMigrate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:LimitReportingBasedOnToleranceLimits
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:GenerateProfileEditMessages xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                            <ns3:InstDefaultResidencyState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                        </ns3:OperationalOptions>
+                        <ns3:FmOptions>
+                            <ns3:CalculateStudentEstimatedIncomeTax
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:CalculateParentEstimatedIncomeTax xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                            <ns3:FmIndependentBudgetDuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                            <ns3:FmDependentBudgetDuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:FmCalculateParentContributionForIndependents
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ns3:FmOptions>
+                        <ns3:EfmOptions>
+                            <ns3:UseStudentImputedAssets>Y</ns3:UseStudentImputedAssets>
+                            <ns3:UseParentImputedAssets>Y</ns3:UseParentImputedAssets>
+                            <ns3:UseStudentProjectedYearIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                            <ns3:UseParentProjectedYearIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                            <ns3:UseStudentIncomeOverrides xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:UseParentIncomeOverrides xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                            <ns3:UseProfileAssumptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                        </ns3:EfmOptions>
+                        <ns3:ImOptions>
+                            <ns3:IndependentBudgetDuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:DependentBudgetDuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                            <ns3:CalculateParentContributionForIndependents>Y
+                            </ns3:CalculateParentContributionForIndependents>
+                            <ns3:MaximumHouseholdAgeLimit>23</ns3:MaximumHouseholdAgeLimit>
+                            <ns3:MaximumAgeInCollegeLimit>23</ns3:MaximumAgeInCollegeLimit>
+                            <ns3:UseImStudentProjectedYearIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                            <ns3:UseImParentProjectedYearIncome xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                            <ns3:UseNewAvailableIncomeTable xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:ExcludeTuitionFeeDeduction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:UseParentStateTaxAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:MaximumTuitionAllowance>7500</ns3:MaximumTuitionAllowance>
+                            <ns3:StudentMedicalAllowancePercent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                            <ns3:ParentMedicalAllowancePercent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                            <ns3:StudentEmploymentAllowancePercent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                            <ns3:StudentEmploymentAllowanceLimit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                            <ns3:ParentEmploymentAllowancePercent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                            <ns3:ParentEmploymentAllowanceLimit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                            <ns3:StudentCalculateUSTaxesPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                            <ns3:ParentCalculateUSTaxesPaid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:UseFmStudentLocalTaxTable xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:UseFmParentLocalTaxTable xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                            <ns3:IndependentStudentAssessmentRate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                            <ns3:AdjustIpaByCostOfLiving xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                            <ns3:AllowBusinessFarmLosses>Y</ns3:AllowBusinessFarmLosses>
+                            <ns3:AllowOtherLosses>Y</ns3:AllowOtherLosses>
+                            <ns3:AdjustedGrossIncomeUsage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                            <ns3:AvailableIncomeAssessmentRate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                            <ns3:UseStudentLifetimeLearningCredit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                            <ns3:UseParentLifetimeLearningCredit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                            <ns3:UseAnnualSavingsGoal xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                            <ns3:UseLowIncomeAssetAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:AdjustEraByCostOfLiving xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                            <ns3:HomeProjectionParents>
+                                <ns3:Option>3</ns3:Option>
+                                <ns3:Tolerance>5000</ns3:Tolerance>
+                                <ns3:CapHousingPercent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                            </ns3:HomeProjectionParents>
+                            <ns3:HomeProjectionIndependent>
+                                <ns3:Option>3</ns3:Option>
+                                <ns3:Tolerance>5000</ns3:Tolerance>
+                                <ns3:CapHousingPercent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                            </ns3:HomeProjectionIndependent>
+                            <ns3:StudentCapHomeEquityFactor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:ParentCapHomeEquityFactor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:AssetProjectionParents>
+                                <ns3:Option>C</ns3:Option>
+                                <ns3:CashYield1>40</ns3:CashYield1>
+                                <ns3:CashLimit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:CashYield2>40</ns3:CashYield2>
+                                <ns3:CashTolerance>5000</ns3:CashTolerance>
+                                <ns3:InvestmentYield1 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                <ns3:InvestmentLimit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                <ns3:InvestmentYield2 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                <ns3:InvestmentTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                            </ns3:AssetProjectionParents>
+                            <ns3:AssetProjectionIndependent>
+                                <ns3:Option>C</ns3:Option>
+                                <ns3:CashYield1>40</ns3:CashYield1>
+                                <ns3:CashLimit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:CashYield2>40</ns3:CashYield2>
+                                <ns3:CashTolerance>5000</ns3:CashTolerance>
+                                <ns3:InvestmentYield1 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                <ns3:InvestmentLimit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                <ns3:InvestmentYield2 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                <ns3:InvestmentTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                            </ns3:AssetProjectionIndependent>
+                            <ns3:AssetProjectionDependents>
+                                <ns3:Option>C</ns3:Option>
+                                <ns3:CashYield1>40</ns3:CashYield1>
+                                <ns3:CashLimit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:CashYield2>40</ns3:CashYield2>
+                                <ns3:CashTolerance>5000</ns3:CashTolerance>
+                                <ns3:InvestmentYield1 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                <ns3:InvestmentLimit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                                <ns3:InvestmentYield2 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                <ns3:InvestmentTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                         xsi:nil="true"/>
+                            </ns3:AssetProjectionDependents>
+                            <ns3:AdjustAssetsForIraKeogh>100</ns3:AdjustAssetsForIraKeogh>
+                            <ns3:AddStudentAssetsToParent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                            <ns3:AssetAssessmentRateDependentStudent
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:AssetAssessmentRateIndependentNoDependentsSingle
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:AssetAssessmentRateIndependentNoDependentsMarried
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:AssetAssessmentRateIndependentWithDependents
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:AssetAssessmentRateParents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:ParentMinimumAssetContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                            <ns3:StudentMinimumAssetContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                            <ns3:FirstYearNeverAttendedStudentMinimumContribution>
+                                <ns3:DependentContribution>2400</ns3:DependentContribution>
+                                <ns3:IndependentContribution>2400</ns3:IndependentContribution>
+                            </ns3:FirstYearNeverAttendedStudentMinimumContribution>
+                            <ns3:FirstYearPreviousAttendedStudentMinimumContribution>
+                                <ns3:DependentContribution>2500</ns3:DependentContribution>
+                                <ns3:IndependentContribution>2500</ns3:IndependentContribution>
+                            </ns3:FirstYearPreviousAttendedStudentMinimumContribution>
+                            <ns3:SecondYearStudentMinimumContribution>
+                                <ns3:DependentContribution>2500</ns3:DependentContribution>
+                                <ns3:IndependentContribution>2500</ns3:IndependentContribution>
+                            </ns3:SecondYearStudentMinimumContribution>
+                            <ns3:ThirdYearStudentMinimumContribution>
+                                <ns3:DependentContribution>2500</ns3:DependentContribution>
+                                <ns3:IndependentContribution>2500</ns3:IndependentContribution>
+                            </ns3:ThirdYearStudentMinimumContribution>
+                            <ns3:FourthYearStudentMinimumContribution>
+                                <ns3:DependentContribution>2500</ns3:DependentContribution>
+                                <ns3:IndependentContribution>2500</ns3:IndependentContribution>
+                            </ns3:FourthYearStudentMinimumContribution>
+                            <ns3:FifthYearStudentMinimumContribution>
+                                <ns3:DependentContribution>2500</ns3:DependentContribution>
+                                <ns3:IndependentContribution>2500</ns3:IndependentContribution>
+                            </ns3:FifthYearStudentMinimumContribution>
+                            <ns3:IndependentGraduateFirstYearStudentMinimumContribution>2200
+                            </ns3:IndependentGraduateFirstYearStudentMinimumContribution>
+                            <ns3:IndependentGraduateSecondYearStudentMinimumContribution>2200
+                            </ns3:IndependentGraduateSecondYearStudentMinimumContribution>
+                            <ns3:IndependentGraduateThirdYearStudentMinimumContribution>2200
+                            </ns3:IndependentGraduateThirdYearStudentMinimumContribution>
+                            <ns3:IndependentGraduateFourthYearStudentMinimumContribution>2200
+                            </ns3:IndependentGraduateFourthYearStudentMinimumContribution>
+                            <ns3:MinimumParentContributionList>
+                                <ns3:MinimumParentContributionSet>
+                                    <ns3:UpperIncomeLevel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:MinimumParentContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                </ns3:MinimumParentContributionSet>
+                                <ns3:MinimumParentContributionSet>
+                                    <ns3:UpperIncomeLevel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:MinimumParentContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                </ns3:MinimumParentContributionSet>
+                                <ns3:MinimumParentContributionSet>
+                                    <ns3:UpperIncomeLevel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:MinimumParentContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                </ns3:MinimumParentContributionSet>
+                                <ns3:MinimumParentContributionSet>
+                                    <ns3:UpperIncomeLevel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:MinimumParentContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                </ns3:MinimumParentContributionSet>
+                                <ns3:MinimumParentContributionSet>
+                                    <ns3:UpperIncomeLevel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:MinimumParentContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                </ns3:MinimumParentContributionSet>
+                                <ns3:MinimumParentContributionSet>
+                                    <ns3:UpperIncomeLevel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:MinimumParentContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                </ns3:MinimumParentContributionSet>
+                                <ns3:MinimumParentContributionSet>
+                                    <ns3:UpperIncomeLevel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                                    <ns3:MinimumParentContribution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                                </ns3:MinimumParentContributionSet>
+                            </ns3:MinimumParentContributionList>
+                            <ns3:ImputeStudentContributionIncreasePercent
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:ImputeParentContributionIncreasePercent
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:MinimumStudentContributionFromIncomeCalculation>N
+                            </ns3:MinimumStudentContributionFromIncomeCalculation>
+                            <ns3:TwoInCollegeAdjustment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                            <ns3:ThreeInCollegeAdjustment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                            <ns3:FourOrMoreInCollegeAdjustment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                            <ns3:PreventStudentImLowerThanFm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                            <ns3:PreventParentImLowerThanFm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:UseVolunteeredParentContribution>Y</ns3:UseVolunteeredParentContribution>
+                            <ns3:MultipleChildrenCollegesAllocationPercentages
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:UseBusinessFarmNetWorthList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                            <ns3:BusinessFarmNetWorthList>
+                                <ns3:BusinessFarmNetWorthEntry>
+                                    <ns3:NetWorthFrom xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                    <ns3:NetWorthTo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:BaseAmount xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:PercentToApply xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                </ns3:BusinessFarmNetWorthEntry>
+                                <ns3:BusinessFarmNetWorthEntry>
+                                    <ns3:NetWorthFrom xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                    <ns3:NetWorthTo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:BaseAmount xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:PercentToApply xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                </ns3:BusinessFarmNetWorthEntry>
+                                <ns3:BusinessFarmNetWorthEntry>
+                                    <ns3:NetWorthFrom xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                    <ns3:NetWorthTo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:BaseAmount xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:PercentToApply xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                </ns3:BusinessFarmNetWorthEntry>
+                                <ns3:BusinessFarmNetWorthEntry>
+                                    <ns3:NetWorthFrom xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                                    <ns3:NetWorthTo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:BaseAmount xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                    <ns3:PercentToApply xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                </ns3:BusinessFarmNetWorthEntry>
+                            </ns3:BusinessFarmNetWorthList>
+                            <ns3:FirstAlternativeMcpaTable>
+                                <ns3:AllocationPercent1 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:AllocationPercent2 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:AllocationPercent3 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                            </ns3:FirstAlternativeMcpaTable>
+                            <ns3:YearInCollegeToApplySecondMcpaTable
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:SecondAlternativeMcpaTable>
+                                <ns3:AllocationPercent1 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:AllocationPercent2 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                                <ns3:AllocationPercent3 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                            </ns3:SecondAlternativeMcpaTable>
+                            <ns3:UseIncomeProtectionAllowanceTable xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                            <ns3:FamilySize1>
+                                <ns3:OneInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:TwoInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ThreeInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                <ns3:FourInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                                <ns3:FiveInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                            </ns3:FamilySize1>
+                            <ns3:FamilySize2>
+                                <ns3:OneInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:TwoInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ThreeInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                <ns3:FourInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                                <ns3:FiveInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                            </ns3:FamilySize2>
+                            <ns3:FamilySize3>
+                                <ns3:OneInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:TwoInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ThreeInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                <ns3:FourInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                                <ns3:FiveInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                            </ns3:FamilySize3>
+                            <ns3:FamilySize4>
+                                <ns3:OneInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:TwoInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ThreeInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                <ns3:FourInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                                <ns3:FiveInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                            </ns3:FamilySize4>
+                            <ns3:FamilySize5>
+                                <ns3:OneInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:TwoInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                                <ns3:ThreeInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                                <ns3:FourInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                                <ns3:FiveInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                   xsi:nil="true"/>
+                            </ns3:FamilySize5>
+                            <ns3:AdditionalIncomeProtectionAllowance
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:AdjustedIncomeProtectionAllowance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                            <ns3:MonthlyAdjustmentForIndependentNonEnrollmentPeriod
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:MonthlyAdjustmentForSingleStudentNonEnrollmentPeriod
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:MonthlyAdjustmentForIndependentStudentChildNonEnrollmentPeriod
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:AvailableIncomeBudgetDurationAdjustment
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:LimitOtherSiblingsShareOfParentalContribution>3
+                            </ns3:LimitOtherSiblingsShareOfParentalContribution>
+                            <ns3:AverageBudget2YearPublic>2500</ns3:AverageBudget2YearPublic>
+                            <ns3:AverageBudget2YearPrivate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:AverageBudget4YearPublic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                            <ns3:AverageBudget4YearPrivate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:AverageBudgetGraduateProfessional>6000</ns3:AverageBudgetGraduateProfessional>
+                            <ns3:AverageBudgetProprietary>6000</ns3:AverageBudgetProprietary>
+                            <ns3:BudgetPercentForHalfTimeAttendance>50</ns3:BudgetPercentForHalfTimeAttendance>
+                            <ns3:InStateUndergraduateAverageBudget>42000</ns3:InStateUndergraduateAverageBudget>
+                            <ns3:OutStateUndergraduateAverageBudget>42000</ns3:OutStateUndergraduateAverageBudget>
+                            <ns3:InStateGraduateAverageBudget>42000</ns3:InStateGraduateAverageBudget>
+                            <ns3:OutStateGraduateAverageBudget>42000</ns3:OutStateGraduateAverageBudget>
+                            <ns3:ForceHousingProjection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                        xsi:nil="true"/>
+                        </ns3:ImOptions>
+                        <ns3:CompareOptions>
+                            <ns3:CompareStudentMaritalStatus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                            <ns3:CompareParentMaritalStatus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:CompareStudentStateOfResidency xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                            <ns3:CompareParentStateOfResidency xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                            <ns3:CompareStudentTaxForm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                       xsi:nil="true"/>
+                            <ns3:CompareParentTaxForm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                            <ns3:CompareStudentYearInCollege xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                            <ns3:CompareStudentWardOfCourt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:CompareStudentCitizenStatus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                            <ns3:CompareOldestParentDateOfBirth xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                            <ns3:CompareStudentDateOfBirth xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:CompareStudentHomelessStatus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                              xsi:nil="true"/>
+                            <ns3:CompareStudentDislocatedWorker xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                            <ns3:CompareParentDislocatedWorker xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                            <ns3:CompareStudentOrphanAfter13 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                             xsi:nil="true"/>
+                            <ns3:StudentNumberInCollegeTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                            <ns3:ParentNumberInCollegeTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                            <ns3:StudentFamilySizeTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:ParentFamilySizeTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:StudentNumberOfExemptionsTolerance
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:ParentNumberOfExemptionsTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                            <ns3:StudentAgiTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                            <ns3:ParentAgiTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                    xsi:nil="true"/>
+                            <ns3:StudentFederalTaxesPaidTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                            <ns3:ParentFederalTaxesPaidTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                            <ns3:StudentWageTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                            <ns3:FatherWageTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                            <ns3:StudentSpouseWageTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:MotherWageTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                            <ns3:StudentCashTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                      xsi:nil="true"/>
+                            <ns3:ParentCashTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                     xsi:nil="true"/>
+                            <ns3:StudentInvestmentNetWorthTolerance
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:ParentInvestmentNetWorthTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                            <ns3:StudentBusinessFarmNetWorthTolerance
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:ParentBusinessFarmNetWorthTolerance
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:StudentOtherUntaxedIncomeTolerance
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:ParentOtherUntaxedIncomeTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                   xsi:nil="true"/>
+                            <ns3:StudentChildSupportPaidTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                            <ns3:ParentChildSupportPaidTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                            <ns3:StudentChildSupportReceivedTolerance
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:ParentChildSupportReceivedTolerance
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:StudentEducationCreditsTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                  xsi:nil="true"/>
+                            <ns3:ParentEducationCreditsTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                 xsi:nil="true"/>
+                            <ns3:ParentIraPaymentsTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                            xsi:nil="true"/>
+                            <ns3:ParentPensionPaymentsTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                            <ns3:ParentLivingAllowanceTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                                xsi:nil="true"/>
+                            <ns3:ParentInterestIncomeTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                               xsi:nil="true"/>
+                            <ns3:StudentCombatPayTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                           xsi:nil="true"/>
+                            <ns3:ParentCombatPayTolerance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xsi:nil="true"/>
+                            <ns3:ParentUntaxedIraDistributionTolerance
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:ParentUntaxedPensionDistributionTolerance
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                            <ns3:ParentVeteranNonEducationalBenefits
+                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        </ns3:CompareOptions>
+                    </ns3:GlobalOptions>
+                </ns3:NeedAnalysisData>
+            </ns2:input>
+        </ns2:RunNeedAnalysis>
+    </S:Body>
+</S:Envelope>
+
+
+        ---[HTTP response - http://developmentpc01.sigmasys.com/bsinas3/2013/NeedAnalysis.svc - 200]---
+        null: HTTP/1.1 200 OK
+        Content-type: text/xml; charset=utf-8
+        Content-length: 11041
+        X-powered-by: ASP.NET
+        Server: Microsoft-IIS/7.5
+        Date: Thu, 30 May 2013 00:30:43 GMT
+
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <RunNeedAnalysisResponse xmlns="http://INAS.collegeboard.org/2013/">
+        <RunNeedAnalysisResult CollegeCode="Sigma ProSAM" AwardYear="2013" CreatedDate="2013-05-30">
+            <NeedAnalysisData xmlns="http://INAS.collegeboard.org/2013/Output/">
+                <CalculationOverview>
+                    <InarScenario>P</InarScenario>
+                    <ImFormula>1</ImFormula>
+                    <EfmFormula>1</EfmFormula>
+                    <FmFormula>0</FmFormula>
+                </CalculationOverview>
+                <StudentIdentifier>81088121</StudentIdentifier>
+                <ImStudent>
+                    <AwardYearCalculatedAge>18</AwardYearCalculatedAge>
+                    <SystemCalculatedAge>18</SystemCalculatedAge>
+                    <YearInCollegeCode>1</YearInCollegeCode>
+                    <MembersInFamily xsi:nil="true"/>
+                    <MaritalStatusCode>1</MaritalStatusCode>
+                    <NumberInCollege xsi:nil="true"/>
+                    <AesaChildren xsi:nil="true"/>
+                    <CesaAges xsi:nil="true"/>
+                    <TaxFilerIndicator>N</TaxFilerIndicator>
+                    <ResidencyStateProvinceCode>FC</ResidencyStateProvinceCode>
+                    <DataSufficient>Y</DataSufficient>
+                    <BudgetDuration>9.0</BudgetDuration>
+                    <ParentContributionOffer xsi:nil="true"/>
+                </ImStudent>
+                <ImParents>
+                    <MaritalStatusCode xsi:nil="true"/>
+                    <MembersInFamily>3</MembersInFamily>
+                    <NumberInCollege>1</NumberInCollege>
+                    <AesaChildren xsi:nil="true"/>
+                    <CesaAges xsi:nil="true"/>
+                    <TaxFilerIndicator>Y</TaxFilerIndicator>
+                    <ResidencyStateProvinceCode>NR</ResidencyStateProvinceCode>
+                    <PostalCode xsi:nil="true"/>
+                    <CountryOfResidenceCode>US</CountryOfResidenceCode>
+                    <DataSufficient>Y</DataSufficient>
+                    <CalculationIndicator>Y</CalculationIndicator>
+                    <CountryCoefficient>1.0000000</CountryCoefficient>
+                </ImParents>
+                <NeedAnalysisResultSet>
+                    <NeedAnalysisResult>
+                        <ResultType>2</ResultType>
+                        <Methodology>R</Methodology>
+                        <AdjustedGrossIncome>92750</AdjustedGrossIncome>
+                        <UntaxedIncome>11153</UntaxedIncome>
+                        <IncomeAdjustments>0</IncomeAdjustments>
+                        <TotalIncome>103903</TotalIncome>
+                        <USIncomeTax>8633</USIncomeTax>
+                        <StateIncomeTax>8312</StateIncomeTax>
+                        <FICA>5311</FICA>
+                        <MedicalDentalExpenses>0</MedicalDentalExpenses>
+                        <PrivateTuitionPaid xsi:nil="true"/>
+                        <EmploymentAllowance>4130</EmploymentAllowance>
+                        <IncomeProtectionAllowance>25000</IncomeProtectionAllowance>
+                        <OtherAllowance xsi:nil="true"/>
+                        <TotalAllowances>51386</TotalAllowances>
+                        <CalculatedAvailableIncome>52517</CalculatedAvailableIncome>
+                        <AvailableIncome>52517</AvailableIncome>
+                        <CashSavingsChecking>2000</CashSavingsChecking>
+                        <IRAKeogh xsi:nil="true"/>
+                        <HomeEquity>425000</HomeEquity>
+                        <RealEstateInvestmentEquity>8139</RealEstateInvestmentEquity>
+                        <AdjustedBusinessFarmEquity>0</AdjustedBusinessFarmEquity>
+                        <ValueOfTrusts xsi:nil="true"/>
+                        <ValueOfOtherAssets xsi:nil="true"/>
+                        <NetWorth>435139</NetWorth>
+                        <AssetProtectionAllowance xsi:nil="true"/>
+                        <OtherAssetAllowance xsi:nil="true"/>
+                        <DiscretionaryNetWorth>387189</DiscretionaryNetWorth>
+                        <IncomeSupplement xsi:nil="true"/>
+                        <AdjustedAvailableIncome xsi:nil="true"/>
+                        <TotalContribution>33688</TotalContribution>
+                        <ImAllocationPercent>0.01</ImAllocationPercent>
+                        <FmNumberInCollegeAllocation xsi:nil="true"/>
+                        <ContributionForStudent>33688</ContributionForStudent>
+                        <ContributionFromIncome>15341</ContributionFromIncome>
+                        <ContributionFromAssets>18347</ContributionFromAssets>
+                        <AesaAllowance xsi:nil="true"/>
+                        <AssetsInSiblingsNames>0</AssetsInSiblingsNames>
+                        <EmergencyReserveAllowance>24050</EmergencyReserveAllowance>
+                        <CesaAllowance>23900</CesaAllowance>
+                        <LowIncomeAllowance>0</LowIncomeAllowance>
+                    </NeedAnalysisResult>
+                    <NeedAnalysisResult>
+                        <ResultType>4</ResultType>
+                        <Methodology>R</Methodology>
+                        <AdjustedGrossIncome>600</AdjustedGrossIncome>
+                        <UntaxedIncome>0</UntaxedIncome>
+                        <IncomeAdjustments>0</IncomeAdjustments>
+                        <TotalIncome>600</TotalIncome>
+                        <USIncomeTax>0</USIncomeTax>
+                        <StateIncomeTax>0</StateIncomeTax>
+                        <FICA>34</FICA>
+                        <MedicalDentalExpenses xsi:nil="true"/>
+                        <PrivateTuitionPaid xsi:nil="true"/>
+                        <EmploymentAllowance xsi:nil="true"/>
+                        <IncomeProtectionAllowance xsi:nil="true"/>
+                        <OtherAllowance xsi:nil="true"/>
+                        <TotalAllowances>34</TotalAllowances>
+                        <CalculatedAvailableIncome>566</CalculatedAvailableIncome>
+                        <AvailableIncome>566</AvailableIncome>
+                        <CashSavingsChecking>1400</CashSavingsChecking>
+                        <IRAKeogh>0</IRAKeogh>
+                        <HomeEquity>0</HomeEquity>
+                        <RealEstateInvestmentEquity>621</RealEstateInvestmentEquity>
+                        <AdjustedBusinessFarmEquity>0</AdjustedBusinessFarmEquity>
+                        <ValueOfTrusts>3429</ValueOfTrusts>
+                        <ValueOfOtherAssets xsi:nil="true"/>
+                        <NetWorth>5450</NetWorth>
+                        <AssetProtectionAllowance xsi:nil="true"/>
+                        <OtherAssetAllowance xsi:nil="true"/>
+                        <DiscretionaryNetWorth>5450</DiscretionaryNetWorth>
+                        <IncomeSupplement xsi:nil="true"/>
+                        <AdjustedAvailableIncome xsi:nil="true"/>
+                        <TotalContribution>3763</TotalContribution>
+                        <ImAllocationPercent>0.01</ImAllocationPercent>
+                        <FmNumberInCollegeAllocation xsi:nil="true"/>
+                        <ContributionForStudent>3763</ContributionForStudent>
+                        <ContributionFromIncome>2400</ContributionFromIncome>
+                        <ContributionFromAssets>1363</ContributionFromAssets>
+                        <AesaAllowance xsi:nil="true"/>
+                        <AssetsInSiblingsNames xsi:nil="true"/>
+                        <EmergencyReserveAllowance xsi:nil="true"/>
+                        <CesaAllowance xsi:nil="true"/>
+                        <LowIncomeAllowance xsi:nil="true"/>
+                    </NeedAnalysisResult>
+                    <NeedAnalysisResult>
+                        <ResultType>5</ResultType>
+                        <Methodology>R</Methodology>
+                        <AdjustedGrossIncome>92750</AdjustedGrossIncome>
+                        <UntaxedIncome>11153</UntaxedIncome>
+                        <IncomeAdjustments>0</IncomeAdjustments>
+                        <TotalIncome>103903</TotalIncome>
+                        <USIncomeTax>8633</USIncomeTax>
+                        <StateIncomeTax>1039</StateIncomeTax>
+                        <FICA>7191</FICA>
+                        <MedicalDentalExpenses xsi:nil="true"/>
+                        <PrivateTuitionPaid xsi:nil="true"/>
+                        <EmploymentAllowance>3500</EmploymentAllowance>
+                        <IncomeProtectionAllowance>21290</IncomeProtectionAllowance>
+                        <OtherAllowance xsi:nil="true"/>
+                        <TotalAllowances>41653</TotalAllowances>
+                        <CalculatedAvailableIncome xsi:nil="true"/>
+                        <AvailableIncome>62250</AvailableIncome>
+                        <CashSavingsChecking>2000</CashSavingsChecking>
+                        <IRAKeogh xsi:nil="true"/>
+                        <HomeEquity xsi:nil="true"/>
+                        <RealEstateInvestmentEquity>8139</RealEstateInvestmentEquity>
+                        <AdjustedBusinessFarmEquity>0</AdjustedBusinessFarmEquity>
+                        <ValueOfTrusts xsi:nil="true"/>
+                        <ValueOfOtherAssets xsi:nil="true"/>
+                        <NetWorth>10139</NetWorth>
+                        <AssetProtectionAllowance>36200</AssetProtectionAllowance>
+                        <OtherAssetAllowance xsi:nil="true"/>
+                        <DiscretionaryNetWorth>-26061</DiscretionaryNetWorth>
+                        <ConversionPercent>0.12</ConversionPercent>
+                        <IncomeSupplement>0</IncomeSupplement>
+                        <AdjustedAvailableIncome>62250</AdjustedAvailableIncome>
+                        <TotalContribution>23093</TotalContribution>
+                        <FmNumberInCollegeAllocation>1</FmNumberInCollegeAllocation>
+                        <ContributionForStudent>23093</ContributionForStudent>
+                        <ContributionFromIncome>23093</ContributionFromIncome>
+                        <ContributionFromAssets>0</ContributionFromAssets>
+                        <AesaAllowance xsi:nil="true"/>
+                        <AssetsInSiblingsNames xsi:nil="true"/>
+                        <EmergencyReserveAllowance xsi:nil="true"/>
+                        <CesaAllowance xsi:nil="true"/>
+                        <LowIncomeAllowance xsi:nil="true"/>
+                    </NeedAnalysisResult>
+                    <NeedAnalysisResult>
+                        <ResultType>6</ResultType>
+                        <Methodology>R</Methodology>
+                        <AdjustedGrossIncome>600</AdjustedGrossIncome>
+                        <UntaxedIncome>0</UntaxedIncome>
+                        <IncomeAdjustments>0</IncomeAdjustments>
+                        <TotalIncome>600</TotalIncome>
+                        <USIncomeTax>0</USIncomeTax>
+                        <StateIncomeTax>12</StateIncomeTax>
+                        <FICA>46</FICA>
+                        <MedicalDentalExpenses xsi:nil="true"/>
+                        <PrivateTuitionPaid xsi:nil="true"/>
+                        <EmploymentAllowance xsi:nil="true"/>
+                        <IncomeProtectionAllowance>6130</IncomeProtectionAllowance>
+                        <OtherAllowance xsi:nil="true"/>
+                        <TotalAllowances>6188</TotalAllowances>
+                        <CalculatedAvailableIncome>-5588</CalculatedAvailableIncome>
+                        <AvailableIncome>0</AvailableIncome>
+                        <CashSavingsChecking>1400</CashSavingsChecking>
+                        <IRAKeogh xsi:nil="true"/>
+                        <HomeEquity xsi:nil="true"/>
+                        <RealEstateInvestmentEquity>4050</RealEstateInvestmentEquity>
+                        <AdjustedBusinessFarmEquity>0</AdjustedBusinessFarmEquity>
+                        <ValueOfTrusts xsi:nil="true"/>
+                        <ValueOfOtherAssets xsi:nil="true"/>
+                        <NetWorth>5450</NetWorth>
+                        <AssetProtectionAllowance xsi:nil="true"/>
+                        <OtherAssetAllowance xsi:nil="true"/>
+                        <DiscretionaryNetWorth>5450</DiscretionaryNetWorth>
+                        <ConversionPercent>0.2</ConversionPercent>
+                        <IncomeSupplement>1090</IncomeSupplement>
+                        <AdjustedAvailableIncome xsi:nil="true"/>
+                        <TotalContribution>1090</TotalContribution>
+                        <FmNumberInCollegeAllocation xsi:nil="true"/>
+                        <ContributionForStudent>1090</ContributionForStudent>
+                        <ContributionFromIncome>0</ContributionFromIncome>
+                        <ContributionFromAssets>1090</ContributionFromAssets>
+                        <AesaAllowance xsi:nil="true"/>
+                        <AssetsInSiblingsNames xsi:nil="true"/>
+                        <EmergencyReserveAllowance xsi:nil="true"/>
+                        <CesaAllowance xsi:nil="true"/>
+                        <LowIncomeAllowance xsi:nil="true"/>
+                    </NeedAnalysisResult>
+                </NeedAnalysisResultSet>
+                <MessageList>
+                    <Message>
+                        <MessageCode>S01A</MessageCode>
+                        <MessageText>Date of birth blank or &gt; 1997: Date of birth set to 1/1/95</MessageText>
+                    </Message>
+                    <Message>
+                        <MessageCode>S03F</MessageCode>
+                        <MessageText>Student reports blank marital status: assumed single</MessageText>
+                    </Message>
+                    <Message>
+                        <MessageCode>S09</MessageCode>
+                        <MessageText>Student's AGI set to sum of student and spouse's income plus interest/dividend
+                            income
+                        </MessageText>
+                    </Message>
+                    <Message>
+                        <MessageCode>S47</MessageCode>
+                        <MessageText>Year in college = 1 because value not reported</MessageText>
+                    </Message>
+                    <Message>
+                        <MessageCode>P03C</MessageCode>
+                        <MessageText>Parents assumed to be married based on reported income from father and mother
+                        </MessageText>
+                    </Message>
+                    <Message>
+                        <MessageCode>P11D</MessageCode>
+                        <MessageText>AGI option 1B: Use highest of reported or calculated</MessageText>
+                    </Message>
+                    <Message>
+                        <MessageCode>P100</MessageCode>
+                        <MessageText>Parents' country of residence is blank; country set to US</MessageText>
+                    </Message>
+                    <Message>
+                        <MessageCode>P19B</MessageCode>
+                        <MessageText>Lower of calc'd or reported taxes used on an estimated return (Op 1B)</MessageText>
+                    </Message>
+                    <Message>
+                        <MessageCode>P36</MessageCode>
+                        <MessageText>Age of older parent assumed to be 45 because neither age reported</MessageText>
+                    </Message>
+                </MessageList>
+                <MiscCalculations>
+                    <SiblingCount>1</SiblingCount>
+                    <AdjustedContributionFromIncome xsi:nil="true"/>
+                    <AdjustedContributionFromAssets xsi:nil="true"/>
+                    <TotalAdjustedContribution xsi:nil="true"/>
+                    <TotalAssetAllowanceBeforeAdjustment>47950</TotalAssetAllowanceBeforeAdjustment>
+                    <StudentTotalAssetContributionBeforeAdjustment>1363</StudentTotalAssetContributionBeforeAdjustment>
+                    <StudentTotalIncomeContributionBeforeAdjustment>283</StudentTotalIncomeContributionBeforeAdjustment>
+                    <ParentTotalAssetContributionBeforeAdjustment>18347</ParentTotalAssetContributionBeforeAdjustment>
+                    <ParentTotalIncomeContributionBeforeAdjustment>15341</ParentTotalIncomeContributionBeforeAdjustment>
+                    <FisapTotalIncome xsi:nil="true"/>
+                    <ParentImStateTaxRateUsed>8.0</ParentImStateTaxRateUsed>
+                    <ParentEfmStateTaxRateUsed>1.0</ParentEfmStateTaxRateUsed>
+                    <StudentImStateTaxRateUsed>0.0</StudentImStateTaxRateUsed>
+                    <StudentEfmStateTaxRateUsed>2.0</StudentEfmStateTaxRateUsed>
+                    <NumberOfChildrenTuitionPaid xsi:nil="true"/>
+                    <StudentEducationCreditAmountAppliedUsed xsi:nil="true"/>
+                    <ParentEducationCreditAmountAppliedUsed xsi:nil="true"/>
+                    <UniqueProcessingIdentifier>f73db1dc-97ad-4d07-8f39-be428a886455</UniqueProcessingIdentifier>
+                    <InasVersion>IM.a 09/28/12</InasVersion>
+                    <InasReturnCode>0</InasReturnCode>
+                </MiscCalculations>
+            </NeedAnalysisData>
+        </RunNeedAnalysisResult>
+    </RunNeedAnalysisResponse>
+</s:Body>
+</s:Envelope>

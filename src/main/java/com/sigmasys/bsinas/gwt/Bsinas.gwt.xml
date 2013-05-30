@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to="bsinas">
+
+    <!-- Desktop -->
+    <inherits name='com.extjs.gxt.desktop.WebDesktop'/>
+
+    <!-- GXT -->
+    <inherits name='com.extjs.gxt.ui.GXT'/>
+
+    <!-- Add gwt-log support -->
+    <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG"/>
+
+    <set-property name="log_DivLogger" value="DISABLED"/>
+
+    <!-- set-property name="user.agent" value="safari,gecko1_8,ie8"/ -->
+
+    <!-- Specify the app entry point class.                   -->
+    <entry-point class="com.sigmasys.bsinas.gwt.client.BsinasEntryPoint"/>
+
+
+</module>

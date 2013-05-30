@@ -1,0 +1,3131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" readonly="true" id="afe2ac17-7cf3-401d-90dc-64da56fa2ac8" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/wsdl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/INeedAnalysisXmlEngine.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/INeedAnalysisXmlEngineRunNeedAnalysisInvalidXmlSchemaFaultFaultFaultMessage.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/INeedAnalysisXmlEngineRunNeedAnalysisServerFaultFaultFaultMessage.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/INeedAnalysisXmlEngineRunNeedAnalysisUnsupportedYearFaultFaultFaultMessage.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/NeedAnalysisXmlEngine.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/ObjectFactory.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/RunNeedAnalysis.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/RunNeedAnalysisResponse.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ActivateDataMigrationType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/AdditionalAllowanceType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/AdjustByCostOfLivingType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/AppSignedByType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ApplicationTypeType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ArrayOfBusinessFarmNetWorthEntryType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ArrayOfFamilyMemberType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ArrayOfMinimumParentContributionSetType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/AssetProjectionOptionType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/AssetProjectionType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/AttendCollegeCodeType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/BusinessFarmNetWorthEntryType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/CompareOptionsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/DataToMigrateType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/DepIndMinContributionType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/DependencyOverrideType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/DependencyStatusType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/EfmOptionsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FamilyMemberType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FatherMotherType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FmAssumptionsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FmOptionsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FmOtherType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FmParentsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FmRejectsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FmStudentType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FmrDataType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FmrExtensionType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/FmrType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/GlobalOptionsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/HomeProjectionType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ImOptionsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ImrDataType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ImrExtensionType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ImrType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/IncomeProtectionAllowanceTableType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/LockType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/MigrationDirectionType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/MinimumParentContributionSetType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/MultipleChildProtectionAllocationType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/NeedAnalysisInput.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/NeedsAnalysisRecordType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/NoncustodialParentInfoType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ObjectFactory.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/OperationalControlType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/OperationalOptionsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ParentIdentityDataType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ParentImputeAssetsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/ParentsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/SOType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/StateProvinceType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/StudentImputeAssetsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/StudentInputDataType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/StudentLivesWithType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/StudentType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/UOrRType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/YesNoType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/package-info.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/ArrayOfMessageType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/ArrayOfNeedAnalysisResultType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/CalculationOverviewType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/CustodialParentType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/FmOutputType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/FmParentsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/FmStudentType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/HomeValueEquityOptionUsageType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/ImParentsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/ImStudentType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/ImrExtensionType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/InarScenarioType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/MessageType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/MethodologyType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/MiscCalculationsType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/NeedAnalysisDataType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/NeedAnalysisOutput.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/NeedAnalysisResultType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/ObjectFactory.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/YesNoType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/package-info.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/package-info.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/wsdl/bsinas_2012.wsdl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/wsdl/bsinas_2013.wsdl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/wsdl/http_pipe_dump.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/resources/xsd" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_extjs_gxt_2_2_5_gwt22.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_extjs_gxt_2_2_5_gwt22.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/BSINAS_Tomcat_7.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/BSINAS_Tomcat_7.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/service/GwtBsinasService.java" afterPath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/service/GwtBsinasService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/service/GwtBsinasServiceAsync.java" afterPath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/service/GwtBsinasServiceAsync.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/view/BsinasPanel.java" afterPath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/view/BsinasPanel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/server/impl/GwtBsinasServiceImpl.java" afterPath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/server/impl/GwtBsinasServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/Constants.java" afterPath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/Constants.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/service/BsinasService.java" afterPath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/service/BsinasService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/service/impl/BsinasServiceImpl.java" afterPath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/service/impl/BsinasServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/util/ErrorUtils.java" afterPath="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/util/ErrorUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/bsinas.properties" afterPath="$PROJECT_DIR$/src/main/resources/bsinas.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/sigmasys/bsinas/service/BsinasEngineTest.java" afterPath="$PROJECT_DIR$/src/test/java/com/sigmasys/bsinas/service/BsinasEngineTest.java" />
+    </list>
+    <ignored path="ksa.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="DebuggerManager">
+    <line_breakpoints>
+      <breakpoint url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/3.1.2.RELEASE/spring-beans-3.1.2.RELEASE-sources.jar!/org/springframework/beans/BeanWrapperImpl.java" line="1153" class="org.springframework.beans.BeanWrapperImpl" package="org.springframework.beans">
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="propertyName.equals(&quot;maxLength&quot;) &amp;&amp; &quot;80&quot;.equals(originalValue)&#13;org.kuali.rice.krad.datadictionary.AttributeDefinition&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+      <breakpoint url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/3.1.2.RELEASE/spring-beans-3.1.2.RELEASE-sources.jar!/org/springframework/beans/factory/support/BeanDefinitionValueResolver.java" line="309" class="org.springframework.beans.factory.support.BeanDefinitionValueResolver" package="org.springframework.beans.factory.support">
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="propertyName.equals(&quot;maxLength&quot;) &amp;&amp; &quot;80&quot;.equals(originalValue)&#13;org.kuali.rice.krad.datadictionary.AttributeDefinition&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+      <breakpoint url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/3.1.2.RELEASE/spring-webmvc-3.1.2.RELEASE-sources.jar!/org/springframework/web/servlet/mvc/annotation/AnnotationMethodHandlerAdapter.java" line="430" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" package="org.springframework.web.servlet.mvc.annotation">
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+      <breakpoint url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/3.1.2.RELEASE/spring-webmvc-3.1.2.RELEASE-sources.jar!/org/springframework/web/servlet/mvc/annotation/AnnotationMethodHandlerAdapter.java" line="664" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.ServletHandlerMethodResolver" package="org.springframework.web.servlet.mvc.annotation">
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+      <breakpoint url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/3.1.2.RELEASE/spring-webmvc-3.1.2.RELEASE-sources.jar!/org/springframework/web/servlet/mvc/annotation/AnnotationMethodHandlerAdapter.java" line="560" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.ServletHandlerMethodResolver" package="org.springframework.web.servlet.mvc.annotation">
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="&#13;&#13;JAVA" />
+        <option name="LOG_MESSAGE" value="&#13;&#13;JAVA" />
+      </breakpoint>
+    </line_breakpoints>
+    <breakpoint_any>
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </breakpoint_any>
+    <breakpoint_rules />
+    <ui_properties>
+      <property name="line_breakpoints_groupByMethods" value="false" />
+      <property name="line_breakpoints_viewId" value="TREE" />
+      <property name="exception_breakpoints_flattenPackages" value="true" />
+      <property name="method_breakpoints_flattenPackages" value="true" />
+      <property name="field_breakpoints_flattenPackages" value="true" />
+      <property name="exception_breakpoints_groupByMethods" value="false" />
+      <property name="line_breakpoints_groupByClasses" value="true" />
+      <property name="method_breakpoints_viewId" value="TABLE" />
+      <property name="field_breakpoints_groupByMethods" value="false" />
+      <property name="line_breakpoints_flattenPackages" value="true" />
+      <property name="field_breakpoints_groupByClasses" value="true" />
+      <property name="method_breakpoints_groupByClasses" value="true" />
+      <property name="exception_breakpoints_viewId" value="TABLE" />
+      <property name="exception_breakpoints_groupByClasses" value="true" />
+      <property name="field_breakpoints_viewId" value="TABLE" />
+      <property name="method_breakpoints_groupByMethods" value="false" />
+    </ui_properties>
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="ksa" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="NeedAnalysisInput.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/NeedAnalysisInput.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="35" column="15" selection-start="1345" selection-end="1345" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NeedAnalysisInput.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2012/input/NeedAnalysisInput.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="38" column="115" selection-start="1422" selection-end="1422" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NeedAnalysisOutput.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2012/output/NeedAnalysisOutput.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="35" column="0" selection-start="1221" selection-end="1236" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NeedAnalysisOutput.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/NeedAnalysisOutput.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="75" column="80" selection-start="2600" selection-end="2600" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BsinasServiceImpl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/service/impl/BsinasServiceImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="27" column="84" selection-start="924" selection-end="924" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1016#1046#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BsinasPanel.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/view/BsinasPanel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="144" column="102" selection-start="6155" selection-end="6155" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#2827#3647#0" expanded="true" />
+                <element signature="e#3636#3637#0" expanded="true" />
+                <element signature="e#5555#5893#0" expanded="true" />
+                <element signature="e#5882#5883#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="http_pipe_dump.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/wsdl/http_pipe_dump.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="15" column="145" selection-start="1038" selection-end="1038" vertical-scroll-proportion="0.23219815">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TableData.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/com/extjs/gxt/2.2.5-gwt22/gxt-2.2.5-gwt22.jar!/com/extjs/gxt/ui/client/widget/layout/TableData.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="166" column="14" selection-start="3223" selection-end="3223" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LayoutContainer.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/com/extjs/gxt/2.2.5-gwt22/gxt-2.2.5-gwt22.jar!/com/extjs/gxt/ui/client/widget/LayoutContainer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="127" column="17" selection-start="3998" selection-end="3998" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="INeedAnalysisXmlEngine.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/INeedAnalysisXmlEngine.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="44" column="30" selection-start="1981" selection-end="1981" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="false" />
+    </FindUsagesManager>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XagEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XamEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XapEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XcmEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XcpEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XcrEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XfcEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XidEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XmmEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XpmEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XpsEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XrgEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XsaEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XssEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/prosam/XxaEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/config/InitialParameterConfigurer.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/wsdl/bsinas_2013.wsdl" />
+        <option value="$PROJECT_DIR$/src/main/resources/wsdl/bsinas_2012.wsdl" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/service/GwtBsinasService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/service/GwtBsinasServiceAsync.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/service/BsinasService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/server/impl/GwtBsinasServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/Constants.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/bsinas.properties" />
+        <option value="$PROJECT_DIR$/src/test/java/com/sigmasys/bsinas/service/BsinasEngineTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/util/ErrorUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/NeedAnalysisInput.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/NeedAnalysisOutput.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/service/impl/BsinasServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/view/BsinasPanel.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/wsdl/http_pipe_dump.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="false" />
+    <option name="FILTER_DEBUG" value="false" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="snapshotUpdatePolicy" value="DO_NOT_UPDATE" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="createModulesForAggregators" value="false" />
+        <option name="downloadSourcesAutomatically" value="true" />
+        <option name="importAutomatically" value="true" />
+        <option name="keepSourceFolders" value="false" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="BSINAS webapp" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="BSINAS webapp" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Lifecycle" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$LifecycleNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+      </PATH>
+    </treeState>
+  </component>
+  <component name="MavenRunner">
+    <option name="vmOptions" value="-mx512m -ms256m" />
+  </component>
+  <component name="ModuleEditorState">
+    <option name="LAST_EDITED_MODULE_NAME" />
+    <option name="LAST_EDITED_TAB_NAME" />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="width" value="1920" />
+    <option name="height" value="1165" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Abstraction issues</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <OptionsSetting value="true" id="Undo Check Out" />
+    <OptionsSetting value="true" id="Get Latest Version" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="META-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="service" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WEB-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="css" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="wsdl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="META-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="inas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="faults" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="inas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="service" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="service" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="model" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="view" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="util" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="service" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="serialization" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bsinas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Favorites" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="OverrideImplement.combined" value="true" />
+    <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="recentsLimit" value="5" />
+    <property name="options.lastSelected" value="preferences.externalTools" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ksa/ksa-core/src/main/java/com/sigmasys/kuali/ksa/model" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="GoToClass.includeJavaFiles" value="false" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="GoToClass.includeLibraries" value="false" />
+    <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="dynamic.classpath" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.sigmasys.bsinas.gwt.server.impl" />
+      <recent name="com.sigmasys.bsinas.gwt.client.service" />
+      <recent name="com.sigmasys.bsinas.service" />
+      <recent name="com.sigmasys.bsinas.service.impl" />
+      <recent name="com.sigmasys.kuali.ksa.service.drools" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/wsdl" />
+      <recent name="$PROJECT_DIR$/ksa-core/src/test/resources/drools" />
+      <recent name="$PROJECT_DIR$/ksa-core/src/main/resources/com/sigmasys/kuali/ksa/krad" />
+      <recent name="$PROJECT_DIR$/ksa-core/src/main/java/com/sigmasys/kuali/ksa/gwt" />
+      <recent name="$PROJECT_DIR$/ksa-core/src/main/java/com/sigmasys/kuali/ksa/annotation" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/ksa-core/src/main/resources/org/kuali/rice/kim/impl/role" />
+      <recent name="$PROJECT_DIR$/ksa-core/src/main/resources" />
+      <recent name="$PROJECT_DIR$/ksa-core/src/test/resources/xliff" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+      <recent name="com.sigmasys.kuali.ksa.service" />
+    </key>
+    <key name="ImportMappingsDialog.RecentPackages">
+      <recent name="com.sigmasys.bsinas.model.prosam" />
+      <recent name="" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Tomcat Server.BSINAS Tomcat 7">
+    <configuration default="false" name="DroolsServiceTest.fireFeeAssessmentRules" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.sigmasys.kuali.ksa.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="ksa" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="PACKAGE_NAME" value="com.sigmasys.kuali.ksa.service" />
+      <option name="MAIN_CLASS_NAME" value="com.sigmasys.kuali.ksa.service.DroolsServiceTest" />
+      <option name="METHOD_NAME" value="fireFeeAssessmentRules" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-Xmx768m -Xms512m -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="DroolsServiceTest.fireFeeAssessmentRules2" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.sigmasys.kuali.ksa.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="ksa" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="PACKAGE_NAME" value="com.sigmasys.kuali.ksa.service" />
+      <option name="MAIN_CLASS_NAME" value="com.sigmasys.kuali.ksa.service.DroolsServiceTest" />
+      <option name="METHOD_NAME" value="fireFeeAssessmentRules2" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-Xmx768m -Xms512m -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="DroolsServiceTest.fireFeeAssessmentRules1" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.sigmasys.kuali.ksa.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="ksa" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="PACKAGE_NAME" value="com.sigmasys.kuali.ksa.service" />
+      <option name="MAIN_CLASS_NAME" value="com.sigmasys.kuali.ksa.service.DroolsServiceTest" />
+      <option name="METHOD_NAME" value="fireFeeAssessmentRules1" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-Xmx768m -Xms512m -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="BsinasEngineTest.runEngine1" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.sigmasys.bsinas.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="bsinas" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="PACKAGE_NAME" value="com.sigmasys.bsinas.service" />
+      <option name="MAIN_CLASS_NAME" value="com.sigmasys.bsinas.service.BsinasEngineTest" />
+      <option name="METHOD_NAME" value="runEngine1" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-Xmx768m -Xms512m -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Default" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console" temporary="true">
+      <option name="VM_PARAMETERS" value="" />
+      <option name="USER_CFG_CLASS" />
+      <option name="CONTEXT_PROVIDER" />
+      <method />
+    </configuration>
+    <configuration default="true" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings">
+          <MavenGeneralSettings>
+            <option name="checksumPolicy" value="FAIL" />
+            <option name="failureBehavior" value="FAST" />
+            <option name="localRepository" value="" />
+            <option name="mavenHome" value="" />
+            <option name="nonRecursive" value="false" />
+            <option name="outputLevel" value="INFO" />
+            <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
+            <option name="printErrorStackTraces" value="false" />
+            <option name="snapshotUpdatePolicy" value="ALWAYS_UPDATE" />
+            <option name="usePluginRegistry" value="false" />
+            <option name="userSettingsFile" value="" />
+            <option name="workOffline" value="false" />
+          </MavenGeneralSettings>
+        </option>
+        <option name="myRunnerSettings">
+          <MavenRunnerSettings>
+            <option name="jreName" value="1.6" />
+            <option name="mavenProperties">
+              <map />
+            </option>
+            <option name="runMavenInBackground" value="true" />
+            <option name="skipTests" value="false" />
+            <option name="vmOptions" value="" />
+          </MavenRunnerSettings>
+        </option>
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list />
+            </option>
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="workingDirPath" value="" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="PhingTarget" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="PhingTarget" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="FlexUnitRunConfigurationType" factoryName="FlexUnit" class_name="" method_name="" output_log_level="" package_name="" scope="Class">
+      <option name="BCName" value="" />
+      <option name="launcherParameters">
+        <LauncherParameters>
+          <option name="browserFamily" value="FIREFOX" />
+          <option name="launcherType" value="OSDefault" />
+          <option name="playerPath" value="/usr/bin/flashplayerdebugger" />
+        </LauncherParameters>
+      </option>
+      <option name="moduleName" value="" />
+      <option name="trusted" value="true" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="PhingTarget" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="PhingTarget" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="PhingTarget" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JavascriptDebugSession" factoryName="Remote">
+      <JSRemoteDebuggerConfigurationSettings>
+        <option name="engineId" value="embedded" />
+        <option name="fileUrl" />
+      </JSRemoteDebuggerConfigurationSettings>
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JavascriptDebugSession" factoryName="Local">
+      <JSDebuggerConfigurationSettings>
+        <option name="engineId" value="embedded" />
+        <option name="fileUrl" />
+      </JSDebuggerConfigurationSettings>
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-Xmx768m -Xms512m -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256m" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="PhingTarget" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GWT.ConfigurationType" factoryName="GWT Configuration">
+      <module name="" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console">
+      <option name="VM_PARAMETERS" value="" />
+      <option name="USER_CFG_CLASS" />
+      <option name="CONTEXT_PROVIDER" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local">
+      <deployment />
+      <server-settings />
+      <predefined_log_file id="TOMCAT_LOCALHOST_LOG_ID" enabled="true" />
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <list size="7">
+      <item index="0" class="java.lang.String" itemvalue="GWT Configuration.BSINAS" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.DroolsServiceTest.fireFeeAssessmentRules" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.DroolsServiceTest.fireFeeAssessmentRules2" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.DroolsServiceTest.fireFeeAssessmentRules1" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.BsinasEngineTest.runEngine1" />
+      <item index="5" class="java.lang.String" itemvalue="Query Language Console.Default" />
+      <item index="6" class="java.lang.String" itemvalue="Tomcat Server.BSINAS Tomcat 7" />
+    </list>
+    <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
+      <Host>localhost</Host>
+      <Port>5050</Port>
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="true">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="DETECT_NESTED_COPIES" value="true" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <configuration useDefault="false">$USER_HOME$/.subversion_IDEA</configuration>
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+    <supportedVersion>125</supportedVersion>
+  </component>
+  <component name="SvnConfiguration17" maxAnnotateRevisions="500" myUseAcceleration="nothing">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="DETECT_NESTED_COPIES" value="true" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <configuration useDefault="false">$USER_HOME$/.subversion_IDEA</configuration>
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+    <supportedVersion>125</supportedVersion>
+  </component>
+  <component name="SvnFileUrlMappingImpl">
+    <option name="myMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="$PROJECT_DIR$" />
+          <option name="myCopyRoot" value="$PROJECT_DIR$" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+    <option name="myMoreRealMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="$PROJECT_DIR$" />
+          <option name="myCopyRoot" value="$PROJECT_DIR$" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+  </component>
+  <component name="SvnFileUrlMappingImpl17">
+    <option name="myMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="$PROJECT_DIR$" />
+          <option name="myCopyRoot" value="$PROJECT_DIR$" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+    <option name="myMoreRealMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="$PROJECT_DIR$" />
+          <option name="myCopyRoot" value="$PROJECT_DIR$" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="afe2ac17-7cf3-401d-90dc-64da56fa2ac8" name="Default" comment="" />
+      <created>1324301300780</created>
+      <updated>1324301300780</updated>
+    </task>
+    <task id="LOCAL-00001" summary="switched to &quot;admin&quot; user, DB config is needed">
+      <created>1333367991105</created>
+      <updated>1333367991105</updated>
+    </task>
+    <task id="LOCAL-00002" summary="added login functionality">
+      <created>1333431310101</created>
+      <updated>1333431310101</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added currency list view/form/controller">
+      <created>1333513744101</created>
+      <updated>1333513744101</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Refactoring, added currency service test">
+      <created>1333591057102</created>
+      <updated>1333591057102</updated>
+    </task>
+    <task id="LOCAL-00005" summary="restored merge">
+      <created>1333679133100</created>
+      <updated>1333679133100</updated>
+    </task>
+    <task id="LOCAL-00006" summary="added delete">
+      <created>1333770579101</created>
+      <updated>1333770579101</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Initial commit of the transaction service impl">
+      <created>1333775473101</created>
+      <updated>1333775473101</updated>
+    </task>
+    <task id="LOCAL-00008" summary="renamed the scripts">
+      <created>1333827286101</created>
+      <updated>1333827286101</updated>
+    </task>
+    <task id="LOCAL-00009" summary="added a few transaction tests">
+      <created>1333827790102</created>
+      <updated>1333827790102</updated>
+    </task>
+    <task id="LOCAL-00010" summary="added getCharges() method">
+      <created>1333905975101</created>
+      <updated>1333905975101</updated>
+    </task>
+    <task id="LOCAL-00011" summary="added one JUNit test for charges">
+      <created>1333907027101</created>
+      <updated>1333907027101</updated>
+    </task>
+    <task id="LOCAL-00012" summary="updated tests">
+      <created>1333909389101</created>
+      <updated>1333909389101</updated>
+    </task>
+    <task id="LOCAL-00013" summary="added SearchCriteria and TransactionTypeValue enum">
+      <created>1333945883101</created>
+      <updated>1333945883101</updated>
+    </task>
+    <task id="LOCAL-00014" summary="added SearchCriteria and TransactionTypeValue enum">
+      <created>1333945981100</created>
+      <updated>1333945981100</updated>
+    </task>
+    <task id="LOCAL-00015" summary="added SearchCriteria and TransactionTypeValue enum">
+      <created>1333946037101</created>
+      <updated>1333946037101</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Added getCharge(), getPayment() and getDeferment() methods, replaced lazy fetching with eager">
+      <created>1334022622101</created>
+      <updated>1334022622101</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Added getCharge(), getPayment() and getDeferment() methods, replaced lazy fetching with eager">
+      <created>1334023702102</created>
+      <updated>1334023702102</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Restored &quot;localhost&quot; as the majority are using locally installed Oracle">
+      <created>1334062988101</created>
+      <updated>1334062988101</updated>
+    </task>
+    <task id="LOCAL-00019" summary="switched to Rice 2.1.0-M2 release">
+      <created>1334285285101</created>
+      <updated>1334285285101</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Added getCharges(String userId)">
+      <created>1334458727101</created>
+      <updated>1334458727101</updated>
+    </task>
+    <task id="LOCAL-00021" summary="refactoring">
+      <created>1334515686101</created>
+      <updated>1334515686101</updated>
+    </task>
+    <task id="LOCAL-00022" summary="refactoring">
+      <created>1334515789101</created>
+      <updated>1334515789101</updated>
+    </task>
+    <task id="LOCAL-00023" summary="refactoring">
+      <created>1334515809101</created>
+      <updated>1334515809101</updated>
+    </task>
+    <task id="LOCAL-00024" summary="refactoring">
+      <created>1334625557101</created>
+      <updated>1334625557101</updated>
+    </task>
+    <task id="LOCAL-00025" summary="refactoring">
+      <created>1334625766101</created>
+      <updated>1334625766101</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Implemented rebalance">
+      <created>1334806811100</created>
+      <updated>1334806811100</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Refactoring: made Transaction associations lazily fetched, rewrote the queries for retrieving the list of transactions using &quot;left outer join fetch&quot;">
+      <created>1334808684101</created>
+      <updated>1334808684101</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Refactoring: made Transaction associations lazily fetched, rewrote the queries for retrieving the list of transactions using &quot;left outer join fetch&quot;">
+      <created>1334808986101</created>
+      <updated>1334808986101</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Big fixing, cleanup">
+      <created>1335105474101</created>
+      <updated>1335105474101</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Big fixing, cleanup">
+      <created>1335105531101</created>
+      <updated>1335105531101</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Provided the correct webapp context">
+      <created>1335139813101</created>
+      <updated>1335139813101</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Added UiFWidgetDefinitions with the corrected breadcrumbs, removed Struts config file">
+      <created>1335236401101</created>
+      <updated>1335236401101</updated>
+    </task>
+    <task id="LOCAL-00033" summary="added ErrorUtils">
+      <created>1335580779101</created>
+      <updated>1335580779101</updated>
+    </task>
+    <task id="LOCAL-00034" summary="added ErrorUtils">
+      <created>1335580793101</created>
+      <updated>1335580793101</updated>
+    </task>
+    <task id="LOCAL-00035" summary="added ProxyEntity">
+      <created>1335580979101</created>
+      <updated>1335580979101</updated>
+    </task>
+    <task id="LOCAL-00036" summary="added ProxyEntity">
+      <created>1335581036101</created>
+      <updated>1335581036101</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Added GWT Account model">
+      <created>1335586104101</created>
+      <updated>1335586104101</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Added GWT Account model">
+      <created>1335644960101</created>
+      <updated>1335644960101</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Added ServiceFactory and AccountListPanel">
+      <created>1335674647101</created>
+      <updated>1335674647101</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Added ReferenceData, KsaDesktop, KsaEntryPoint, AccountCompositePanel,GwtConfigService">
+      <created>1335715090101</created>
+      <updated>1335715090101</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Added KSA GWT module config and 2 service impl classes">
+      <created>1335718932102</created>
+      <updated>1335718932102</updated>
+    </task>
+    <task id="LOCAL-00042" summary="GWT/GXT progress....">
+      <created>1335845095102</created>
+      <updated>1335845095102</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Bug fixing">
+      <created>1335845522101</created>
+      <updated>1335845522101</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Bug fixing">
+      <created>1335845945101</created>
+      <updated>1335845945101</updated>
+    </task>
+    <task id="LOCAL-00045" summary="changed L&amp;F">
+      <created>1336018047102</created>
+      <updated>1336018047102</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Bug fixing">
+      <created>1336095904101</created>
+      <updated>1336095904101</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Overloaded createTransaction() adding externalId argument">
+      <created>1336183799103</created>
+      <updated>1336183799103</updated>
+    </task>
+    <task id="LOCAL-00048" summary="added getActivities() by Account ID">
+      <created>1336184584102</created>
+      <updated>1336184584102</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Provided additional bean property values in createTransaction(), had to add @UseWebContext annotation to TransactionServiceTest">
+      <created>1336449786101</created>
+      <updated>1336449786101</updated>
+    </task>
+    <task id="LOCAL-00050" summary="Provided additional bean property values in createTransaction()">
+      <created>1336450870102</created>
+      <updated>1336450870103</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Bug fixing: Fixed SearchCriteria parameter types and their form bindings">
+      <created>1337303700102</created>
+      <updated>1337303700102</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Fixed the grid style and NotSerializable exception for AbstractRangeValue, minor bug fixing">
+      <created>1337311069105</created>
+      <updated>1337311069105</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Set borders and auto-fill for the grid">
+      <created>1337311651101</created>
+      <updated>1337311651102</updated>
+    </task>
+    <task id="LOCAL-00054" summary="Implemented generic type support for DroolsService, added the resource upload mechanism for reading Rule files from the classpath, created DroolsServiceTest and currency.drl XML-based rule set, added JVM parameters for GWT compiler and Maven JUnit plugin to increase memory consumption required by Rice, added Janino Maven dependency for Drools.">
+      <created>1337752935104</created>
+      <updated>1337752935104</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Added &quot;DEF&quot; deferment type to the test data script, implemented JUnit tests for createMemo() and deferTransaction()">
+      <created>1337830880114</created>
+      <updated>1337830880115</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Restored">
+      <created>1337907888103</created>
+      <updated>1337907888103</updated>
+    </task>
+    <task id="LOCAL-00057" summary="a little cleanup">
+      <created>1337912530101</created>
+      <updated>1337912530101</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Implemented addPersonName(Account ID, PersonName) and the corresponding JUnit test">
+      <created>1337918494101</created>
+      <updated>1337918494101</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Removed ksa.locale as it is defined by ksa.locale.lang and ksa.locale.country">
+      <created>1338045343122</created>
+      <updated>1338045343122</updated>
+    </task>
+    <task id="LOCAL-00060" summary="Implemented to support GWT services - AuditableEntityModel, CurrencyModel, GwtCurrencyService, GwtCurrencyServiceAsync, GwtCurrencyServiceImpl, provided URL mapping, added the currency service instantiation to ServiceFactory, placed the GWT compiler jar-files in front of the others in the classpath to prevent &quot;java.lang.NoSuchFieldError: warningThreshold GWT compiler&quot;">
+      <created>1338138008101</created>
+      <updated>1338138008101</updated>
+    </task>
+    <task id="LOCAL-00061" summary="Renamed currency.drl to currency.xdrl to emphasize that it is in XML format">
+      <created>1338138345101</created>
+      <updated>1338138345101</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Added a few JUnit tests for GwtCurrencyService to the Maven build process">
+      <created>1338170185226</created>
+      <updated>1338170185226</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Refactoring: moved createMemo() factory-methods to InformationService, added InformationServiceTest class.">
+      <created>1338179826101</created>
+      <updated>1338179826101</updated>
+    </task>
+    <task id="LOCAL-00064" summary="Implemented various types of createFlag() and createAlert() methods">
+      <created>1338261967101</created>
+      <updated>1338261967102</updated>
+    </task>
+    <task id="LOCAL-00065" summary="Added AopBeanpostProcessor class, AopPoxy interface, provided AOP-based logging mechanism">
+      <created>1338466511102</created>
+      <updated>1338466511102</updated>
+    </task>
+    <task id="LOCAL-00066" summary="Added getClientIpAddress() to RequestUtils class, implemented a few methods in AuditTrailInterceptor to capture Hibernate entity lifecycle events">
+      <created>1338519556103</created>
+      <updated>1338519556103</updated>
+    </task>
+    <task id="LOCAL-00067" summary="Upgraded Rice from 2.1.0-M3 to 2.1.0 release">
+      <created>1338864824138</created>
+      <updated>1338864824138</updated>
+    </task>
+    <task id="LOCAL-00068" summary="Modified KSA configuration and fixed maven dependencies to provide KIM UI application context, changed web.xml">
+      <created>1338958565101</created>
+      <updated>1338958565101</updated>
+    </task>
+    <task id="LOCAL-00069" summary="fixed the config">
+      <created>1338960752101</created>
+      <updated>1338960752101</updated>
+    </task>
+    <task id="LOCAL-00070" summary="used the service locator to retrieve PersonService">
+      <created>1338960810102</created>
+      <updated>1338960810102</updated>
+    </task>
+    <task id="LOCAL-00071" summary="Fixed the Maven repository locations">
+      <created>1339038220106</created>
+      <updated>1339038220106</updated>
+    </task>
+    <task id="LOCAL-00072" summary="Bug fixing">
+      <created>1339230190102</created>
+      <updated>1339230190102</updated>
+    </task>
+    <task id="LOCAL-00073" summary="Added 2 more tables to drop">
+      <created>1339714623131</created>
+      <updated>1339714623131</updated>
+    </task>
+    <task id="LOCAL-00074" summary="LocalizationService initial commit">
+      <created>1339992714102</created>
+      <updated>1339992714102</updated>
+    </task>
+    <task id="LOCAL-00075" summary="Included Woodstox Stax2 implementation in pom.xml, added getResourceAsString() method to CommonUtils, solved XLIFF parsing and XML schema validation issues, JUnit testing">
+      <created>1340080918103</created>
+      <updated>1340080918103</updated>
+    </task>
+    <task id="LOCAL-00076" summary="Added a few comments">
+      <created>1340165201103</created>
+      <updated>1340165201103</updated>
+    </task>
+    <task id="LOCAL-00077" summary="Bug fixing in the XML parser">
+      <created>1340232075111</created>
+      <updated>1340232075111</updated>
+    </task>
+    <task id="LOCAL-00078" summary="Added localized parameters to ReferenceData to make it available on UI, implemented getLocalizedParameters() method in ConfigService and GwtConfigService, added LocalizationServiceTest to ServiceTestSuite (now it is part of the KSA build)">
+      <created>1340332411118</created>
+      <updated>1340332411118</updated>
+    </task>
+    <task id="LOCAL-00079" summary="Fixed Localization JAX WS service return types and LocalizationWebServiceTest">
+      <created>1340847047103</created>
+      <updated>1340847047103</updated>
+    </task>
+    <task id="LOCAL-00080" summary="FIXED the datasource settings again">
+      <created>1341272604103</created>
+      <updated>1341272604103</updated>
+    </task>
+    <task id="LOCAL-00081" summary="Excluded the failing test method">
+      <created>1341273289101</created>
+      <updated>1341273289101</updated>
+    </task>
+    <task id="LOCAL-00082" summary="Refactoring">
+      <created>1341283084102</created>
+      <updated>1341283084102</updated>
+    </task>
+    <task id="LOCAL-00083" summary="Implemented BatchReceipt class and BatchReceiptStatus enum, added persistBatchReceipt() and getBatchReceipt methods to TransactionImportService, made the corresponding changes to KSA DDL scripts, fixed Dave's errors in TransactionImportServiceImpl">
+      <created>1341429744103</created>
+      <updated>1341429744103</updated>
+    </task>
+    <task id="LOCAL-00084" summary="Implemented Refund, RefundStatus and RefundType, provided JPA mapping, modified DDL scripts">
+      <created>1341465444101</created>
+      <updated>1341465444101</updated>
+    </task>
+    <task id="LOCAL-00085" summary="Bug fixing">
+      <created>1341581321127</created>
+      <updated>1341581321127</updated>
+    </task>
+    <task id="LOCAL-00086" summary="Initial commit of Access Control service">
+      <created>1341781668102</created>
+      <updated>1341781668103</updated>
+    </task>
+    <task id="LOCAL-00087" summary="Implemented getAllowedTransactionTypeMasks(), getRoleNames() and isTransactionTypeAllowed() of AccessControlService">
+      <created>1341803967102</created>
+      <updated>1341803967102</updated>
+    </task>
+    <task id="LOCAL-00088" summary="Fixed the RegExp logic">
+      <created>1341804092102</created>
+      <updated>1341804092102</updated>
+    </task>
+    <task id="LOCAL-00089" summary="Made the code compilable, fixed errors, cleanup">
+      <created>1341878468102</created>
+      <updated>1341878468103</updated>
+    </task>
+    <task id="LOCAL-00090" summary="Bug fixing">
+      <created>1341879566102</created>
+      <updated>1341879566102</updated>
+    </task>
+    <task id="LOCAL-00091" summary="cleanup">
+      <created>1341879792101</created>
+      <updated>1341879792101</updated>
+    </task>
+    <task id="LOCAL-00092" summary="cleanup">
+      <created>1341882742101</created>
+      <updated>1341882742101</updated>
+    </task>
+    <task id="LOCAL-00093" summary="Implemented XmlDocument JPA model, added @Auditable annotation, added references to XmlDocument from BatchReceipt for incoming and outgoing XMLs, refactored AccessControlServiceImpl, added logging, created a few more tests in AccessControlServiceTest class, modified KSA DDL scripts">
+      <created>1341969233102</created>
+      <updated>1341969233102</updated>
+    </task>
+    <task id="LOCAL-00094" summary="Implemented UserPreference and its composite JPA primary key UserPreferenceId, modified KSA DDL scripts">
+      <created>1342370601102</created>
+      <updated>1342370601102</updated>
+    </task>
+    <task id="LOCAL-00095" summary="Reimplemented TransactionImportServiceImpl, fixed TransactionImportServiceTest, added it to the Maven build, added UserPreferenceService interface">
+      <created>1342674498103</created>
+      <updated>1342674498103</updated>
+    </task>
+    <task id="LOCAL-00096" summary="Added &quot;code&quot; property to AuditableEntity, removed &quot;iso&quot; from Currency JPA entity, modified the dependent services and UI components, changed KSA DDL and DML scripts, JUnit testing/debugging">
+      <created>1342742079103</created>
+      <updated>1342742079103</updated>
+    </task>
+    <task id="LOCAL-00097" summary="Worked on transaction import validation, implemented isRefundRuleValid() and isTransactionTypeAllowed() methods, fixed issues with AccessControl Spring's injection, added PersistenceInterface, exposed TransactionImportService as a web service on KSB">
+      <created>1342756318102</created>
+      <updated>1342756318102</updated>
+    </task>
+    <task id="LOCAL-00098" summary="Worked on transaction import validation, implemented isRefundRuleValid() and isTransactionTypeAllowed() methods, fixed issues with AccessControl Spring's injection, added PersistenceInterface, exposed TransactionImportService as a web service on KSB">
+      <created>1342756337101</created>
+      <updated>1342756337101</updated>
+    </task>
+    <task id="LOCAL-00099" summary="Fixed TransactionImportService web service annotations">
+      <created>1342758050101</created>
+      <updated>1342758050101</updated>
+    </task>
+    <task id="LOCAL-00100" summary="Implemented multiple versions of canPay() in TransactionService, added RegExp matching for allowable debit types, provided validation, fixed JAX WS annotations, debugging">
+      <created>1343187644118</created>
+      <updated>1343187644118</updated>
+    </task>
+    <task id="LOCAL-00101" summary="added new statements to KSA DDL and DML scripts">
+      <created>1343875968117</created>
+      <updated>1343875968117</updated>
+    </task>
+    <task id="LOCAL-00102" summary="Added several constructor to KSA exception classes, move isTransactionAllowed() to TransactionService class, implemented &quot;doesAccountExist&quot; in AccountService,made the appropriate changes to TransactionImportService, added &quot;recognitionDate&quot; to Transaction class, modified JPA mapping and KSA DDL scripts">
+      <created>1345085051132</created>
+      <updated>1345085051132</updated>
+    </task>
+    <task id="LOCAL-00103" summary="Updated docs">
+      <created>1345211093102</created>
+      <updated>1345211093102</updated>
+    </task>
+    <task id="LOCAL-00104" summary="Created GlOperationType enum, made use of it in CreditType, modified JPA mapping and GlTransaction class">
+      <created>1345260627102</created>
+      <updated>1345260627102</updated>
+    </task>
+    <task id="LOCAL-00105" summary="Added TransactionNotAllowedException, set recognitionDate to effectiveDate in createTransaction() of TransactionServiceImpl class">
+      <created>1345262186102</created>
+      <updated>1345262186102</updated>
+    </task>
+    <task id="LOCAL-00106" summary="Commented out the GWT Maven plugin">
+      <created>1345262370102</created>
+      <updated>1345262370102</updated>
+    </task>
+    <task id="LOCAL-00107" summary="Added @Auditable to AccountProtectedInfo class">
+      <created>1345434965123</created>
+      <updated>1345434965123</updated>
+    </task>
+    <task id="LOCAL-00108" summary="Initial commit for GeneralLedgerService and GeneralLedgerServiceImpl classes, moved getGlTransactionType() from TransactionService to GeneralLedgerService, implemented createGlTransaction() methods, started working on summarizeGlTransactions() logic, changed the association between GlTransaction and Transaction JPA entities, created KSSA_GL_TRANS_TRANSACTION association table, modified KSA DDL scripts">
+      <created>1345503979101</created>
+      <updated>1345503979101</updated>
+    </task>
+    <task id="LOCAL-00109" summary="Made progress on summarizeGlTransactions() functionality">
+      <created>1345522485101</created>
+      <updated>1345522485101</updated>
+    </task>
+    <task id="LOCAL-00110" summary="Changed createTransaction() functionality, added default general ledger type and &quot;overrideBlocks&quot; argument, added isTransactionAllowed() and isTransactionTypeAllowed() to createTransaction() method, added default GL type and &quot;admin&quot; transaction type mask to ksa_test_data_dml.sql, created AllocationNotFoundException, CurrencyNotFountException, InvalidGeneralLedgerTypeException and TransactionTypeNotAllowedException classes">
+      <created>1346033275102</created>
+      <updated>1346033275102</updated>
+    </task>
+    <task id="LOCAL-00111" summary="Bug fixing and cleanup in TransactionListUtils class">
+      <created>1346202316101</created>
+      <updated>1346202316101</updated>
+    </task>
+    <task id="LOCAL-00112" summary="Changed createAllocation + general ledger logic, provided enums for GL operation values in GlBreakdown and GeneralLedgerType classes, made the corresponding changes to TransactionService API and its implementation">
+      <created>1346203354101</created>
+      <updated>1346203354101</updated>
+    </task>
+    <task id="LOCAL-00113" summary="Implemented getStreamAsString() in CommonUtils, fixed Dave's AdminLiaisonController class, provided web services annotations in TransactionServiceImpl class, changed the level of Tomcat logging in logging.properties, added LedgerGeneralService's JUnit tests to ServiceTestSuite">
+      <created>1346265577100</created>
+      <updated>1346265577101</updated>
+    </task>
+    <task id="LOCAL-00114" summary="Implemented CompositeAllocation class that holds references to Allocation and GL transactions, used CompositeAllocation in TransactionService in createAllocation() methods, made changes to Pair and TransactionServiceTest classes">
+      <created>1346332451101</created>
+      <updated>1346332451101</updated>
+    </task>
+    <task id="LOCAL-00115" summary="Modified canPay() methods to accept Credit/Debit types instead of Payment/Charge, added records to DML scripts (KSSA_CREDIT_PERMISSION) for DEF transaction type, changed TransactionServiceTest&#10;">
+      <created>1346365387101</created>
+      <updated>1346365387101</updated>
+    </task>
+    <task id="LOCAL-00116" summary="Renamed UifKSADefinations.xml to UifKsaDefinitions.xml&#10;">
+      <created>1346394587101</created>
+      <updated>1346394587101</updated>
+    </task>
+    <task id="LOCAL-00117" summary="Completed removeAllocation() logic, Implemented LocaleUtils, AbstractForm classes, added ConfigService interface, inherited all KRAD model classes from AbstractForm to provide KRAD UI components with locale-aware resources, changed the logic for obtaining the JTA transaction manager in AtomikosTransactionManagerLookup to prevent &quot;ContextNotInitializedException&quot;, made the appropriate changes to ksa-datasource.xml context, added a few sample records to KSSA_UI_STRING table, replaced Spring's ApplicationContext with BeanFactory in ContextUtils and AbstractServiceTest classes, testing &#10;">
+      <created>1346810425102</created>
+      <updated>1346810425102</updated>
+    </task>
+    <task id="LOCAL-00118" summary="Added &quot;ksa&quot; to the label names&#10;">
+      <created>1346856982101</created>
+      <updated>1346856982101</updated>
+    </task>
+    <task id="LOCAL-00119" summary="Renamed AbstractForm to AbstractViewModel, implemented user-scoped localization support based on user preferences, added a few test data to KSA DML scripts.&#10;">
+      <created>1346902006101</created>
+      <updated>1346902006101</updated>
+    </task>
+    <task id="LOCAL-00120" summary="Rice 2.2.0-M3 upgrade">
+      <created>1347469969102</created>
+      <updated>1347469969102</updated>
+    </task>
+    <task id="LOCAL-00121" summary="a bit of refactoring">
+      <created>1347546576101</created>
+      <updated>1347546576101</updated>
+    </task>
+    <task id="LOCAL-00122" summary="implemented prepareGlTransmission(), added &quot;amount&quot; property to GlTransmission JPA entity, refactored EnumUtils class, added a few names to Constants class, removed associations from ChargeableAccount entity, modified DDL scripts.">
+      <created>1347672465102</created>
+      <updated>1347672465102</updated>
+    </task>
+    <task id="LOCAL-00123" summary="import cleanup">
+      <created>1347735177102</created>
+      <updated>1347735177102</updated>
+    </task>
+    <task id="LOCAL-00124" summary="code cleanup, refactoring">
+      <created>1348113911102</created>
+      <updated>1348113911102</updated>
+    </task>
+    <task id="LOCAL-00125" summary="Introduced a new UI navigation system, customized KRAD freemarker templates, placed breadcrumbs below the view navigation, changed layout managers and CSSs">
+      <created>1348185925104</created>
+      <updated>1348185925104</updated>
+    </task>
+    <task id="LOCAL-00126" summary="Created AbstractGlBreakdown class, modified GlBreakdown and GlBreakdownOverride classes, moved &quot;isGlOverridden&quot; to Transaction class, continued working on &quot;makeEffective&quot; business logic, changed GeneralLedgerServiceTest class, applied JPA mapping changes tio Debit, AccountIdAware and TransactionService, debugging">
+      <created>1348279115101</created>
+      <updated>1348279115101</updated>
+    </task>
+    <task id="LOCAL-00127" summary="Initial commit for GenericController, modified KsaStudentAccountsController and KsaStudentAccountsForm">
+      <created>1348318431101</created>
+      <updated>1348318431101</updated>
+    </task>
+    <task id="LOCAL-00128" summary="reverted Tim's changes due to compilation errors">
+      <created>1348362676101</created>
+      <updated>1348362676101</updated>
+    </task>
+    <task id="LOCAL-00129" summary="Added FeeAssessmentTest to ServiceTestSuite class and made it part of the build, cleaned up CustomerServiceController">
+      <created>1348428629101</created>
+      <updated>1348428629102</updated>
+    </task>
+    <task id="LOCAL-00130" summary="Worked on GenericSearchController and views, fixed getAch() method, modified UIF definitions and view model classes, debugging">
+      <created>1348531484102</created>
+      <updated>1348531484102</updated>
+    </task>
+    <task id="LOCAL-00131" summary="Customized the KRAD view template fullView.ftl for the KSA search toolbar, refactored the account properties, moved calculation of composite address and person name to transient methods of Account class, changed KsaWidgetDefinitions to apply the changes above.">
+      <created>1348546062101</created>
+      <updated>1348546062101</updated>
+    </task>
+    <task id="LOCAL-00132" summary="Renamed doesAccountExist() to accountExists()">
+      <created>1348581101101</created>
+      <updated>1348581101101</updated>
+    </task>
+    <task id="LOCAL-00133" summary="Initial commit for &quot;reverseTransaction&quot; logic, added getDefaultMemoLevel() method to InformationService, gerDefauldGeneralLedgerMode() to GeneralLedgerService, completed makeEffective() method of TransactionService">
+      <created>1348610191101</created>
+      <updated>1348610191101</updated>
+    </task>
+    <task id="LOCAL-00134" summary="Implemented reverseTransaction and expireDeferment methods">
+      <created>1348691057101</created>
+      <updated>1348691057101</updated>
+    </task>
+    <task id="LOCAL-00135" summary="Made lots of changes related to the new deferment logic, modified Transaction JPA hierarchy, TransactionService, controllers, UIF forms, KSA DML and DDL scripts, fixed JUnit tests">
+      <created>1348703516101</created>
+      <updated>1348703516101</updated>
+    </task>
+    <task id="LOCAL-00136" summary="Got rid of PersonPostal class since Account class has the same transient methods">
+      <created>1348710675101</created>
+      <updated>1348710675101</updated>
+    </task>
+    <task id="LOCAL-00137" summary="cleanup">
+      <created>1348711649101</created>
+      <updated>1348711649101</updated>
+    </task>
+    <task id="LOCAL-00138" summary="added KRAD's &quot;model&quot; package">
+      <created>1348768083102</created>
+      <updated>1348768083102</updated>
+    </task>
+    <task id="LOCAL-00139" summary="Added a custom header.ftl for KsaFormView, implemented custom KsaHeader and KsaFormView, bug fixing">
+      <created>1348780318102</created>
+      <updated>1348780318102</updated>
+    </task>
+    <task id="LOCAL-00140" summary="refactoring">
+      <created>1348782751101</created>
+      <updated>1348782751101</updated>
+    </task>
+    <task id="LOCAL-00141" summary="Pointed &quot;entryPageId&quot; to AccountSearchPage">
+      <created>1348791267101</created>
+      <updated>1348791267101</updated>
+    </task>
+    <task id="LOCAL-00142" summary="Changed makeEffective(), reverseTransaction(), create/removeAllocation() methods to reflect the new deferment functionality">
+      <created>1348869022101</created>
+      <updated>1348869022101</updated>
+    </task>
+    <task id="LOCAL-00143" summary="Fixed the datasource default settings">
+      <created>1348869129102</created>
+      <updated>1348869129102</updated>
+    </task>
+    <task id="LOCAL-00144" summary="Implemented getMemos(transactionId) method in InformationService">
+      <created>1348889241101</created>
+      <updated>1348889241101</updated>
+    </task>
+    <task id="LOCAL-00145" summary="Implemented writeOffTransaction() and getRollupByCode() methods of TransactionService, refactoring">
+      <created>1349025045101</created>
+      <updated>1349025045101</updated>
+    </task>
+    <task id="LOCAL-00146" summary="Implemented getAuditableEntityByCode() in GenericPersistenceService, refactored TransactionServiceImpl">
+      <created>1349107681102</created>
+      <updated>1349107681102</updated>
+    </task>
+    <task id="LOCAL-00147" summary="Removed reduceDeferment() method">
+      <created>1349110379102</created>
+      <updated>1349110379102</updated>
+    </task>
+    <task id="LOCAL-00148" summary="removed responsibleEntity property from Information">
+      <created>1349120805101</created>
+      <updated>1349120805102</updated>
+    </task>
+    <task id="LOCAL-00149" summary="Added JUnit tests for makeEffective(), expireDeferment(), reverseTransaction(), createDeferment(), writeOffTransaction() methods, fixed bugs in TransactionServiceImpl and GeneralLedgerServiceImpl classes.">
+      <created>1349133243102</created>
+      <updated>1349133243102</updated>
+    </task>
+    <task id="LOCAL-00150" summary="cleanup">
+      <created>1349145852101</created>
+      <updated>1349145852101</updated>
+    </task>
+    <task id="LOCAL-00151" summary="cleanup">
+      <created>1349146167101</created>
+      <updated>1349146167102</updated>
+    </task>
+    <task id="LOCAL-00152" summary="renamed the parameter">
+      <created>1349146722101</created>
+      <updated>1349146722102</updated>
+    </task>
+    <task id="LOCAL-00153" summary="cleanup">
+      <created>1349189870101</created>
+      <updated>1349189870101</updated>
+    </task>
+    <task id="LOCAL-00154" summary="fixed the comments&#10;">
+      <created>1349197674102</created>
+      <updated>1349197674102</updated>
+    </task>
+    <task id="LOCAL-00155" summary="Initial commit of PaymentService, added getCreditPermissions() methods to TransactionService">
+      <created>1349234312101</created>
+      <updated>1349234312101</updated>
+    </task>
+    <task id="LOCAL-00156" summary="Removed &quot;ALL&quot; option from the drop down">
+      <created>1349234903101</created>
+      <updated>1349234903101</updated>
+    </task>
+    <task id="LOCAL-00157" summary="cleanup">
+      <created>1349236183101</created>
+      <updated>1349236183101</updated>
+    </task>
+    <task id="LOCAL-00158" summary="refactored accountExists() method">
+      <created>1349236641101</created>
+      <updated>1349236641101</updated>
+    </task>
+    <task id="LOCAL-00159" summary="refactoring of createInitialForm()">
+      <created>1349295374101</created>
+      <updated>1349295374102</updated>
+    </task>
+    <task id="LOCAL-00160" summary="refactored">
+      <created>1349295408101</created>
+      <updated>1349295408101</updated>
+    </task>
+    <task id="LOCAL-00161" summary="Implemented some logic in applyPayments() method of PaymentService, added a new overridden createAllocation() to TransactionService, implemented getGlTransactions() method in CompositeAllocation class">
+      <created>1349312983102</created>
+      <updated>1349312983102</updated>
+    </task>
+    <task id="LOCAL-00162" summary="Fixed the datasource default settings">
+      <created>1349313208101</created>
+      <updated>1349313208102</updated>
+    </task>
+    <task id="LOCAL-00163" summary="Removed NoSuchAccountException, used existing UserNotFoundException instead">
+      <created>1349351288101</created>
+      <updated>1349351288101</updated>
+    </task>
+    <task id="LOCAL-00164" summary="added the direct reference to breadcrumbs">
+      <created>1349370638101</created>
+      <updated>1349370638101</updated>
+    </task>
+    <task id="LOCAL-00165" summary="Completed applyPayments() in PaymentService, created a few JUnit tests, fixed canPay() and createAllocation() methods">
+      <created>1349392889101</created>
+      <updated>1349392889101</updated>
+    </task>
+    <task id="LOCAL-00166" summary="refactored">
+      <created>1349395989101</created>
+      <updated>1349395989101</updated>
+    </task>
+    <task id="LOCAL-00167" summary="changed the default page">
+      <created>1349396641101</created>
+      <updated>1349396641101</updated>
+    </task>
+    <task id="LOCAL-00168" summary="Made the account search case-insensitive">
+      <created>1349441904101</created>
+      <updated>1349441904101</updated>
+    </task>
+    <task id="LOCAL-00169" summary="Refactored DroolsService adding DSL support, created a simple DSL example and JUnit test, made changes to ksa.properties, added fee1.dslr and ksa.dsl">
+      <created>1349452165101</created>
+      <updated>1349452165101</updated>
+    </task>
+    <task id="LOCAL-00170" summary="Reverted Dave's settings. Dave, what the fuck? How many more times?">
+      <created>1349472902102</created>
+      <updated>1349472902102</updated>
+    </task>
+    <task id="LOCAL-00171" summary="cleanup">
+      <created>1349473051102</created>
+      <updated>1349473051102</updated>
+    </task>
+    <task id="LOCAL-00172" summary="Bug fixing">
+      <created>1349473141101</created>
+      <updated>1349473141102</updated>
+    </task>
+    <task id="LOCAL-00173" summary="Refactoring, added isActive() and getDisplayValue() methods to Information, removed AlertsFlagsMemos class.">
+      <created>1349495886101</created>
+      <updated>1349495886101</updated>
+    </task>
+    <task id="LOCAL-00174" summary="Fixed logging">
+      <created>1349570255101</created>
+      <updated>1349570255102</updated>
+    </task>
+    <task id="LOCAL-00175" summary="added one more containsKeyPair() method">
+      <created>1349628782101</created>
+      <updated>1349628782102</updated>
+    </task>
+    <task id="LOCAL-00176" summary="Added containsAtLeastOneStudyCode() and containsAtLeastOneMajorCode() methods">
+      <created>1349630570101</created>
+      <updated>1349630570101</updated>
+    </task>
+    <task id="LOCAL-00177" summary="Added a few more DSL mappings to ksa.dsl, added global parameters support to DroolsService, refactoring">
+      <created>1349633067101</created>
+      <updated>1349633067101</updated>
+    </task>
+    <task id="LOCAL-00178" summary="Added RulesController, RulesForm, RulesView.xml. Provided DB support in DroolsService, added KSSA_RULE_SET to KSA DDL scripts, implemented a few JUnit tests">
+      <created>1349674135103</created>
+      <updated>1349674135104</updated>
+    </task>
+    <task id="LOCAL-00179" summary="Style fixing, minor UI changes">
+      <created>1349676772102</created>
+      <updated>1349676772103</updated>
+    </task>
+    <task id="LOCAL-00180" summary="Added ageDebts() for all KSA accounts to AccountService, implemented a JUnit test.">
+      <created>1349726499106</created>
+      <updated>1349726499107</updated>
+    </task>
+    <task id="LOCAL-00181" summary="Changes to AccountService to allow accountID to be used in the search, RulesForm and RulesController. Implemented validateRules() in DroolsService, modified DroolsServiceTest.">
+      <created>1349786514102</created>
+      <updated>1349786514102</updated>
+    </task>
+    <task id="LOCAL-00182" summary="Bug fixing, included audit information in persistInformation() method, refactored DroolsService">
+      <created>1349814745106</created>
+      <updated>1349814745107</updated>
+    </task>
+    <task id="LOCAL-00183" summary="Disabled &quot;#compress&quot; Freemarker directive in uifRender.ftl, fixed RulesView.xml and RulesController class, modified KSA DDL scripts">
+      <created>1349816920101</created>
+      <updated>1349816920102</updated>
+    </task>
+    <task id="LOCAL-00184" summary="Updated the test data script with rule sets, switched to the DB-based Drools storage in DroolsService, modified DroolsServiceTest">
+      <created>1349877382101</created>
+      <updated>1349877382102</updated>
+    </task>
+    <task id="LOCAL-00185" summary="Renamed &quot;Study&quot; to &quot;LearningUnits&quot;, &quot;ledgerDate&quot; to &quot;creationDate&quot;, modified the rest of the code and DML scripts, added the creation date to TransactionService.">
+      <created>1349885685101</created>
+      <updated>1349885685101</updated>
+    </task>
+    <task id="LOCAL-00186" summary="renamed &quot;ledgerDate&quot; to &quot;creationDate&quot; everywhere">
+      <created>1349886378101</created>
+      <updated>1349886378101</updated>
+    </task>
+    <task id="LOCAL-00187" summary="Refactored DroolsService">
+      <created>1349895306101</created>
+      <updated>1349895306101</updated>
+    </task>
+    <task id="LOCAL-00188" summary="Fixed te issue with CLOB values in AuditTrailInterceptor class, replaced the JPA mapping for @Lob columns.">
+      <created>1349907453101</created>
+      <updated>1349907453101</updated>
+    </task>
+    <task id="LOCAL-00189" summary="Switched to the current user ID in isTransactionTypeAllowed() of TransactionImportService">
+      <created>1349914984101</created>
+      <updated>1349914984101</updated>
+    </task>
+    <task id="LOCAL-00190" summary="Updated the Drools DSL grammar, added new methods to FeeManagementService, modified the DSRL rule test sets.">
+      <created>1349981950101</created>
+      <updated>1349981950102</updated>
+    </task>
+    <task id="LOCAL-00191" summary="Extended Fee Management DSL grammar, added a couple of new rules for testing, implemented additional methods in FeeManagementService to be used by Drools.">
+      <created>1350007832101</created>
+      <updated>1350007832102</updated>
+    </task>
+    <task id="LOCAL-00192" summary="refactored getDisplayValue()">
+      <created>1350046412101</created>
+      <updated>1350046412101</updated>
+    </task>
+    <task id="LOCAL-00193" summary="added multiple extensions to the Drools DSL grammar, implemented the necessary methods in FeeManagementService">
+      <created>1350079135101</created>
+      <updated>1350079135101</updated>
+    </task>
+    <task id="LOCAL-00194" summary="Fixed one of the DSL tests">
+      <created>1350080283101</created>
+      <updated>1350080283102</updated>
+    </task>
+    <task id="LOCAL-00195" summary="Added new predicates to DSL grammar and implemented the corresponding methods in FeeManagementService">
+      <created>1350099312101</created>
+      <updated>1350099312102</updated>
+    </task>
+    <task id="LOCAL-00196" summary="refactoring">
+      <created>1350099611101</created>
+      <updated>1350099611102</updated>
+    </task>
+    <task id="LOCAL-00197" summary="Added &quot;[keyword][]equals = ==&quot; to the DSL definitions">
+      <created>1350099722101</created>
+      <updated>1350099722101</updated>
+    </task>
+    <task id="LOCAL-00198" summary="Implemented reloadRuleSet() and refresh() methods in DroolsService">
+      <created>1350100774101</created>
+      <updated>1350100774101</updated>
+    </task>
+    <task id="LOCAL-00199" summary="Added comments and removed htmlEscape() method call">
+      <created>1350101159101</created>
+      <updated>1350101159102</updated>
+    </task>
+    <task id="LOCAL-00200" summary="cleanup">
+      <created>1350170257100</created>
+      <updated>1350170257101</updated>
+    </task>
+    <task id="LOCAL-00201" summary="moved drools resources from test to the main branch">
+      <created>1350171257101</created>
+      <updated>1350171257101</updated>
+    </task>
+    <task id="LOCAL-00202" summary="Updated the Drools test data and applied a few fixes to DroolsService">
+      <created>1350186712101</created>
+      <updated>1350186712101</updated>
+    </task>
+    <task id="LOCAL-00203" summary="Updated the test data">
+      <created>1350492009102</created>
+      <updated>1350492009103</updated>
+    </task>
+    <task id="LOCAL-00204" summary="Refactored CoreFilter, FeeManagementService. Fixed login.jsp and KSA DDL script">
+      <created>1350598842101</created>
+      <updated>1350598842102</updated>
+    </task>
+    <task id="LOCAL-00205" summary="Refactored forms/controllers and KRAD views to comply with the established naming conventions">
+      <created>1350605369101</created>
+      <updated>1350605369101</updated>
+    </task>
+    <task id="LOCAL-00206" summary="refactored">
+      <created>1350605530101</created>
+      <updated>1350605530102</updated>
+    </task>
+    <task id="LOCAL-00207" summary="Refactoring">
+      <created>1350606252102</created>
+      <updated>1350606252102</updated>
+    </task>
+    <task id="LOCAL-00208" summary="Created BsinasService and added the first JUNIT test, refactoring">
+      <created>1351036599101</created>
+      <updated>1351036599101</updated>
+    </task>
+    <task id="LOCAL-00209" summary="Created a simple web app with a GXT-based UI to send/receive XMLs to/from BSINAS service">
+      <created>1351057219101</created>
+      <updated>1351057219101</updated>
+    </task>
+    <task id="LOCAL-00210" summary="added 2 examples of the XML request">
+      <created>1351117791101</created>
+      <updated>1351117791101</updated>
+    </task>
+    <task id="LOCAL-00211" summary="Fixed the error handling">
+      <created>1351120220101</created>
+      <updated>1351120220101</updated>
+    </task>
+    <task id="LOCAL-00212" summary="Added another example">
+      <created>1351140216101</created>
+      <updated>1351140216101</updated>
+    </task>
+    <task id="LOCAL-00213" summary="Added ProSAM datasource, configured bsinas-datasource.xml and bsinas-persistence.xml files, created ProSAM JPA entities, set @Id to PK columns">
+      <created>1353973394125</created>
+      <updated>1353973394126</updated>
+    </task>
+    <task id="LOCAL-00214" summary="Fixed InitialParameterConfigurer">
+      <created>1353975094107</created>
+      <updated>1353975094107</updated>
+    </task>
+    <option name="localTasksCounter" value="215" />
+    <servers />
+  </component>
+  <component name="TodoView" selected-index="0">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1920" height="1165" extended-state="0" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32677165" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Persistence" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21221864" sideWeight="0.4035433" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.49311024" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41446725" sideWeight="0.4989282" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.63779527" sideWeight="0.49732047" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18327974" sideWeight="0.43307087" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21259843" sideWeight="0.0" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42322835" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297244" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13558413" sideWeight="0.52952754" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13558413" sideWeight="0.52952754" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47047246" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Phing Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297561" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="SVN Repositories" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.076771654" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="true" />
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="CHECK_NEW_TODO" value="true" />
+    <option name="myTodoPanelSettings">
+      <value>
+        <are-packages-shown value="false" />
+        <are-modules-shown value="false" />
+        <flatten-packages value="false" />
+        <is-autoscroll-to-source value="false" />
+      </value>
+    </option>
+    <option name="PERFORM_UPDATE_IN_BACKGROUND" value="true" />
+    <option name="PERFORM_COMMIT_IN_BACKGROUND" value="true" />
+    <option name="PERFORM_EDIT_IN_BACKGROUND" value="true" />
+    <option name="PERFORM_CHECKOUT_IN_BACKGROUND" value="true" />
+    <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
+    <option name="PERFORM_ROLLBACK_IN_BACKGROUND" value="false" />
+    <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="false" />
+    <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
+    <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
+    <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="true" />
+    <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
+    <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
+    <option name="SHORT_DIFF_HORISONTALLY" value="true" />
+    <option name="SHORT_DIFF_EXTRA_LINES" value="2" />
+    <option name="SOFT_WRAPS_IN_SHORT_DIFF" value="true" />
+    <option name="INCLUDE_TEXT_INTO_PATCH" value="false" />
+    <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
+    <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
+    <option name="SHOW_FILE_HISTORY_DETAILS" value="true" />
+    <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
+    <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed InitialParameterConfigurer" />
+    <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="REFORMAT_BEFORE_FILE_COMMIT" value="false" />
+    <option name="FILE_HISTORY_DIALOG_COMMENTS_SPLITTER_PROPORTION" value="0.8" />
+    <option name="FILE_HISTORY_DIALOG_SPLITTER_PROPORTION" value="0.5" />
+    <option name="ACTIVE_VCS_NAME" />
+    <option name="UPDATE_GROUP_BY_PACKAGES" value="false" />
+    <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
+    <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
+    <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
+    <MESSAGE value="Created BsinasService and added the first JUNIT test, refactoring" />
+    <MESSAGE value="Created a simple web app with a GXT-based UI to send/receive XMLs to/from BSINAS service" />
+    <MESSAGE value="added 2 examples of the XML request" />
+    <MESSAGE value="Fixed the error handling" />
+    <MESSAGE value="Added another example" />
+    <MESSAGE value="Added ProSAM datasource, configured bsinas-datasource.xml and bsinas-persistence.xml files, created ProSAM JPA entities, set @Id to PK columns" />
+    <MESSAGE value="Fixed InitialParameterConfigurer" />
+  </component>
+  <component name="VssConfiguration">
+    <option name="CLIENT_PATH" value="" />
+    <option name="SRCSAFEINI_PATH" value="" />
+    <option name="USER_NAME" value="" />
+    <option name="PWD" value="" />
+    <CheckoutOptions>
+      <option name="COMMENT" value="" />
+      <option name="DO_NOT_GET_LATEST_VERSION" value="false" />
+      <option name="REPLACE_WRITABLE" value="false" />
+      <option name="RECURSIVE" value="false" />
+    </CheckoutOptions>
+    <CheckinOptions>
+      <option name="COMMENT" value="" />
+      <option name="KEEP_CHECKED_OUT" value="false" />
+      <option name="RECURSIVE" value="false" />
+    </CheckinOptions>
+    <AddOptions>
+      <option name="STORE_ONLY_LATEST_VERSION" value="false" />
+      <option name="CHECK_OUT_IMMEDIATELY" value="false" />
+    </AddOptions>
+    <UndocheckoutOptions>
+      <option name="MAKE_WRITABLE" value="false" />
+      <option name="REPLACE_LOCAL_COPY" value="2" />
+      <option name="RECURSIVE" value="false" />
+    </UndocheckoutOptions>
+    <GetOptions>
+      <option name="REPLACE_WRITABLE" value="0" />
+      <option name="MAKE_WRITABLE" value="false" />
+      <option name="ANSWER_NEGATIVELY" value="false" />
+      <option name="ANSWER_POSITIVELY" value="false" />
+      <option name="RECURSIVE" value="false" />
+      <option name="VERSION" />
+    </GetOptions>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2012/RunNeedAnalysis.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="37" selection-start="898" selection-end="898" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/view/BsinasWindow.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="20" selection-start="637" selection-end="637" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/extjs/gxt/2.2.5-gwt22/gxt-2.2.5-gwt22.jar!/com/extjs/gxt/ui/client/store/ListStore.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="11" selection-start="469" selection-end="469" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/extjs/gxt/2.2.5-gwt22/gxt-2.2.5-gwt22.jar!/com/extjs/gxt/ui/client/store/ListStore.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="153" column="9" selection-start="4835" selection-end="4835" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/model/StringModelData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="23" selection-start="226" selection-end="241" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/extjs/gxt/2.2.5-gwt22/gxt-2.2.5-gwt22.jar!/com/extjs/gxt/ui/client/widget/form/ComboBox.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="653" column="14" selection-start="15820" selection-end="15820" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/RunNeedAnalysisResponse.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="13" selection-start="1061" selection-end="1061" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/RunNeedAnalysis.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="56" selection-start="496" selection-end="496" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/service/GwtBsinasServiceAsync.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="48" selection-start="314" selection-end="314" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/service/GwtBsinasService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="23" selection-start="418" selection-end="418" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/service/BsinasService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="72" selection-start="227" selection-end="510" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/server/impl/GwtBsinasServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="48" selection-start="546" selection-end="546" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/extjs/gxt/2.2.5-gwt22/gxt-2.2.5-gwt22.jar!/com/extjs/gxt/ui/client/widget/form/SimpleComboBox.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="79" selection-start="728" selection-end="728" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#1102#1146#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/sigmasys/bsinas/service/BsinasEngineTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="85" selection-start="671" selection-end="671" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/view/widget/PageSizeSelectableToolBar.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="109" selection-start="1270" selection-end="1270" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#1347#1356#0" expanded="true" />
+            <element signature="e#1954#2252#0" expanded="true" />
+            <element signature="e#2052#2082#1" expanded="true" />
+            <element signature="e#2241#2242#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/util/ErrorUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="17" selection-start="1282" selection-end="1282" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/model/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="11" selection-start="444" selection-end="444" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/bsinas.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="23" selection-start="155" selection-end="155" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/wsdl/bsinas_2012.wsdl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="702" column="103" selection-start="55985" selection-end="55985" vertical-scroll-proportion="-3.2">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/wsdl/bsinas_2013.wsdl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="677" column="69" selection-start="54709" selection-end="54709" vertical-scroll-proportion="-3.04">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2012/INeedAnalysisXmlEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="30" selection-start="1981" selection-end="1981" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/input/NeedAnalysisInput.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="15" selection-start="1345" selection-end="1345" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2012/input/NeedAnalysisInput.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="115" selection-start="1422" selection-end="1422" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2012/output/NeedAnalysisOutput.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="0" selection-start="1221" selection-end="1236" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/output/NeedAnalysisOutput.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="75" column="80" selection-start="2600" selection-end="2600" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/collegeboard/inas/_2013/INeedAnalysisXmlEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="30" selection-start="1981" selection-end="1981" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/service/impl/BsinasServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="84" selection-start="924" selection-end="924" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1016#1046#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/extjs/gxt/2.2.5-gwt22/gxt-2.2.5-gwt22.jar!/com/extjs/gxt/ui/client/widget/LayoutContainer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="127" column="17" selection-start="3998" selection-end="3998" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/extjs/gxt/2.2.5-gwt22/gxt-2.2.5-gwt22.jar!/com/extjs/gxt/ui/client/widget/layout/TableData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="166" column="14" selection-start="3223" selection-end="3223" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/sigmasys/bsinas/gwt/client/view/BsinasPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="144" column="102" selection-start="6155" selection-end="6155" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2827#3647#0" expanded="true" />
+            <element signature="e#3636#3637#0" expanded="true" />
+            <element signature="e#5555#5893#0" expanded="true" />
+            <element signature="e#5882#5883#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/wsdl/http_pipe_dump.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="145" selection-start="1038" selection-end="1038" vertical-scroll-proportion="0.23219815">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <last-edited>bsinas:war</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.5" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>GWT</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.6</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>JPA|bsinas</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.6</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.20000003" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>gwt-user</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
+

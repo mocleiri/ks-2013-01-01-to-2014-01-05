@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+       default-lazy-init="true">
+
+    <!-- Atomikos UserTransaction implementation -->
+    <bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp"/>
+
+    <!-- Atomikos JTA TransactionManager implementation -->
+    <bean id="atomikosTransactionManager"
+          class="com.sigmasys.bsinas.service.jta.AtomikosTransactionManagerLookup"
+          factory-method="getTransactionManager"/>
+
+    <!--  Spring JTA TransactionManager -->
+    <bean id="transactionManager" class="com.sigmasys.bsinas.service.jta.JtaTransactionManager">
+        <property name="userTransaction" ref="atomikosUserTransaction"/>
+        <property name="transactionManager" ref="atomikosTransactionManager"/>
+    </bean>
+
+
+    <!-- XA data source definitions -->
+    <bean id="xaDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" abstract="true">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="minPoolSize" value="10"/>
+        <property name="poolSize" value="10"/>
+        <property name="maxPoolSize" value="10"/>
+        <property name="testQuery" value="select 1 from dual"/>
+    </bean>
+
+    <bean id="proSamDataSource" class="com.sigmasys.bsinas.service.jta.AtomikosDataSourceBean" parent="xaDataSource">
+        <property name="uniqueResourceName" value="proSamDataSource"/>
+        <property name="url" value="jdbc:oracle:thin:@10.0.2.14:1521:OraDev"/>
+        <property name="user" value="SIGMA"/>
+        <property name="password" value="ssiDevZ9"/>
+    </bean>
+
+
+</beans>
