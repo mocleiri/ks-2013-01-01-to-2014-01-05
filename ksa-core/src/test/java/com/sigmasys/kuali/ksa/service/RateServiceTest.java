@@ -61,6 +61,7 @@ public class RateServiceTest extends AbstractServiceTest {
     private RateCatalog _createRateCatalog(String rateCatalogCode) {
 
         String rateTypeCode = "RT_2013";
+        String transactionTypeId = "cash";
         TransactionDateType dateType = TransactionDateType.ALWAYS;
         BigDecimal lowerBound = new BigDecimal(10.99);
         BigDecimal upperBound = new BigDecimal(300000.67);
@@ -68,8 +69,8 @@ public class RateServiceTest extends AbstractServiceTest {
         List<String> atpIds = Arrays.asList("19871", "19872", "19873", "19874");
         List<KeyPair> keyPairs = Arrays.asList(new KeyPair("key1", "value1"));
 
-        RateCatalog rateCatalog = rateService.createRateCatalog(rateCatalogCode, rateTypeCode, dateType, lowerBound,
-                upperBound, cappedAmount, atpIds, keyPairs, false, false, false, false, false);
+        RateCatalog rateCatalog = rateService.createRateCatalog(rateCatalogCode, rateTypeCode, transactionTypeId,
+                dateType, lowerBound, upperBound, cappedAmount, atpIds, keyPairs, false, false, false, false, false);
 
         Assert.notNull(rateCatalog);
         Assert.notNull(rateCatalog.getId());

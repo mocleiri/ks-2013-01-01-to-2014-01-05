@@ -9,6 +9,7 @@ import com.sigmasys.kuali.ksa.model.fm.*;
 
 import javax.jws.WebService;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -108,6 +109,7 @@ public interface RateService {
      *
      * @param rateCatalogCode            RateCatalog code
      * @param rateTypeCode               RateType code
+     * @param transactionTypeId          TransactionType ID
      * @param transactionDateType        TransactionDateType enum value
      * @param lowerBoundAmount           Minimum transaction amount
      * @param upperBoundAmount           Maximum transaction amount
@@ -117,12 +119,13 @@ public interface RateService {
      * @param isTransactionTypeFinal     Indicates whether the transaction type is final
      * @param isTransactionDateTypeFinal Indicates whether the transaction date type is final
      * @param isRecognitionDateDefinable Indicates whether the recognition date can be set
-     * @param isAmountFinal              Indicates whether the transaction amount is final
+     * @param isAmountFinal              Indicates whether the rate amount is final
      * @param isKeyPairFinal             Indicates whether the set of KeyPairs is immutable
      * @return a new RateCatalog instance
      */
     RateCatalog createRateCatalog(String rateCatalogCode,
                                   String rateTypeCode,
+                                  String transactionTypeId,
                                   TransactionDateType transactionDateType,
                                   BigDecimal lowerBoundAmount,
                                   BigDecimal upperBoundAmount,
@@ -199,6 +202,38 @@ public interface RateService {
     List<RateCatalog> getAllRateCatalogs();
 
     // Rate methods
+
+    /**
+     * Creates a new persistent Rate instance based on the given parameters.
+     *
+     * @param rateCode                Rate code
+     * @param rateName                Rate name
+     * @param rateCatalogCode         RateCatalog code
+     * @param transactionTypeId       Rate TransactionType ID
+     * @param amountTransactionTypeId RateAmount TransactionType ID
+     * @param transactionDateType     TransactionDateType enum value
+     * @param defaultRateAmount       Default Rate amount
+     * @param cappedAmount            Capped amount
+     * @param transactionDate         Transaction date
+     * @param recognitionDate         Recognition date
+     * @param atpId                   ATP ID
+     * @param isTransactionTypeFinal  Indicates whether the transaction type is final
+     * @param isAmountFinal           Indicates whether the rate amount is final
+     * @return a new Rate instance
+     */
+    Rate createRate(String rateCode,
+                    String rateName,
+                    String rateCatalogCode,
+                    String transactionTypeId,
+                    String amountTransactionTypeId,
+                    TransactionDateType transactionDateType,
+                    BigDecimal defaultRateAmount,
+                    BigDecimal cappedAmount,
+                    Date transactionDate,
+                    Date recognitionDate,
+                    String atpId,
+                    boolean isTransactionTypeFinal,
+                    boolean isAmountFinal);
 
     /**
      * Creates a new Rate instance and persists it in the database.

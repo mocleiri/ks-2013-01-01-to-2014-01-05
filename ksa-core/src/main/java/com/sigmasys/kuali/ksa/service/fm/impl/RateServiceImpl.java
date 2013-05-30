@@ -12,6 +12,7 @@ import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
+import com.sigmasys.kuali.ksa.util.BeanUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -211,6 +212,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      *
      * @param rateCatalogCode            RateCatalog code
      * @param rateTypeCode               RateType code
+     * @param transactionTypeId          TransactionType ID
      * @param transactionDateType        TransactionDateType enum value
      * @param lowerBoundAmount           Minimum transaction amount
      * @param upperBoundAmount           Maximum transaction amount
@@ -220,7 +222,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @param isTransactionTypeFinal     Indicates whether the transaction type is final
      * @param isTransactionDateTypeFinal Indicates whether the transaction date type is final
      * @param isRecognitionDateDefinable Indicates whether the recognition date can be set
-     * @param isAmountFinal              Indicates whether the transaction amount is final
+     * @param isAmountFinal              Indicates whether the rate amount is final
      * @param isKeyPairFinal             Indicates whether the set of KeyPairs is immutable
      * @return a new RateCatalog instance
      */
@@ -228,6 +230,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Transactional(readOnly = false)
     public RateCatalog createRateCatalog(String rateCatalogCode,
                                          String rateTypeCode,
+                                         String transactionTypeId,
                                          TransactionDateType transactionDateType,
                                          BigDecimal lowerBoundAmount,
                                          BigDecimal upperBoundAmount,
@@ -258,6 +261,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         RateCatalog rateCatalog = new RateCatalog();
         rateCatalog.setCode(rateCatalogCode);
         rateCatalog.setRateType(rateType);
+        rateCatalog.setTransactionTypeId(transactionTypeId);
         rateCatalog.setTransactionDateType(transactionDateType);
         rateCatalog.setLowerBoundAmount(lowerBoundAmount);
         rateCatalog.setUpperBoundAmount(upperBoundAmount);
@@ -442,6 +446,18 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         return query.getResultList();
     }
 
+    protected RateCatalogAtp getRateCatalogAtp(String rateCatalogCode, String atpId) {
+        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
+        Query query = em.createQuery("select rca from RateCatalogAtp rca " +
+                " inner join fetch rca.rateCatalog rc " +
+                " left outer join fetch rc.rateType rt " +
+                " left outer join fetch rc.keyPairs kp " +
+                " where rca.id = :id");
+        query.setParameter("id", new RateCatalogAtpId(rateCatalogCode, atpId));
+        List<RateCatalogAtp> results = query.getResultList();
+        return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+    }
+
     /**
      * Returns the list of rate catalogs by the given name pattern.
      *
@@ -475,6 +491,126 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     }
 
     // Rate methods
+
+    /**
+     * Creates a new persistent Rate instance based on the given parameters.
+     *
+     * @param rateCode                Rate code
+     * @param rateName                Rate name
+     * @param rateCatalogCode         RateCatalog code
+     * @param transactionTypeId       Rate TransactionType ID
+     * @param amountTransactionTypeId RateAmount TransactionType ID
+     * @param transactionDateType     TransactionDateType enum value
+     * @param defaultRateAmount       Default Rate amount
+     * @param cappedAmount            Capped amount
+     * @param transactionDate         Transaction date
+     * @param recognitionDate         Recognition date
+     * @param atpId                   ATP ID
+     * @param isTransactionTypeFinal  Indicates whether the transaction type is final
+     * @param isAmountFinal           Indicates whether the rate amount is final
+     * @return a new Rate instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Rate createRate(String rateCode,
+                           String rateName,
+                           String rateCatalogCode,
+                           String transactionTypeId,
+                           String amountTransactionTypeId,
+                           TransactionDateType transactionDateType,
+                           BigDecimal defaultRateAmount,
+                           BigDecimal cappedAmount,
+                           Date transactionDate,
+                           Date recognitionDate,
+                           String atpId,
+                           boolean isTransactionTypeFinal,
+                           boolean isAmountFinal) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_RATE);
+
+        if (StringUtils.isBlank(rateCatalogCode)) {
+            String errMsg = "RateCatalog code cannot be empty";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (StringUtils.isBlank(atpId)) {
+            String errMsg = "ATP ID cannot be empty";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (!atpExists(atpId)) {
+            String errMsg = "ATP ID = " + atpId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        RateCatalogAtp rateCatalogAtp = getRateCatalogAtp(rateCatalogCode, atpId);
+        if (rateCatalogAtp == null || rateCatalogAtp.getRateCatalog() == null) {
+            String errMsg = "RateCatalog does not exist with code = " + rateCatalogCode + " and ATP ID = " + atpId;
+            logger.error(errMsg);
+            throw new InvalidRateCatalogException(errMsg);
+        }
+
+        RateCatalog rateCatalog = rateCatalogAtp.getRateCatalog();
+
+        if (isTransactionTypeFinal) {
+            amountTransactionTypeId = transactionTypeId;
+        }
+
+        // Creating a new Rate instance
+        Rate rate = new Rate();
+        rate.setCode(rateCode);
+        rate.setName(rateName);
+        rate.setRateType(rateCatalog.getRateType());
+        rate.setRateCatalogAtp(rateCatalogAtp);
+        rate.setAtpId(atpId);
+        rate.setTransactionDate(transactionDate);
+        rate.setTransactionDateType(transactionDateType);
+        rate.setRecognitionDate(recognitionDate);
+        rate.setCappedAmount(cappedAmount);
+
+        rate.setAmountFinal(isAmountFinal);
+        rate.setTransactionTypeFinal(isTransactionTypeFinal);
+
+        // Creating a new RateAmount instance
+        RateAmount rateAmount = new RateAmount();
+        rateAmount.setAmount(defaultRateAmount);
+        rateAmount.setTransactionTypeId(amountTransactionTypeId);
+        rateAmount.setUnit(0);
+        rateAmount.setUnitFraction(0);
+
+        // Persisting RateAmount
+        persistEntity(rateAmount);
+
+        rate.setDefaultRateAmount(rateAmount);
+        rate.setRateAmounts(new HashSet<RateAmount>(Arrays.asList(rateAmount)));
+
+        // Copying the key pairs from RateCatalog
+        Set<KeyPair> catalogKeyPairs = rateCatalog.getKeyPairs();
+        if (CollectionUtils.isNotEmpty(catalogKeyPairs)) {
+            Set<KeyPair> rateKeyPairs = new HashSet<KeyPair>(catalogKeyPairs.size());
+            for (KeyPair keyPair : catalogKeyPairs) {
+                // Making a KeyPair deep copy and make sure it is new (setting its ID to null)
+                KeyPair keyPairCopy = BeanUtils.getDeepCopy(keyPair);
+                keyPairCopy.setId(null);
+                rateKeyPairs.add(keyPairCopy);
+            }
+            rate.setKeyPairs(rateKeyPairs);
+        }
+
+        // Validating the new rate with the rate catalog
+        validateRateWithCatalog(rate, rateCatalog);
+
+        // Persisting the new Rate instance
+        auditableEntityService.persistAuditableEntity(rate);
+
+        // Setting the persistent Rate reference in RateAmount
+        rateAmount.setRate(rate);
+
+        return rate;
+    }
 
     /**
      * Creates a new Rate instance and persists it in the database.
@@ -627,7 +763,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     public boolean atpExists(String atpId) {
         // Checking if the ATP ID exists using AtpService
-        boolean atpExists = false;
+        boolean atpExists;
         try {
             atpExists = atpService.getAtp(atpId, getAtpContextInfo()) != null;
         } catch (DoesNotExistException e) {
@@ -860,6 +996,12 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new InvalidRateException(errMsg);
         }
 
+        if (rate.getCappedAmount() != null && rate.getCappedAmount().compareTo(defaultRateAmount.getAmount()) < 0) {
+            String errMsg = "Rate capped amount cannot be less than the default Rate amount";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
         if (rate.getTransactionDateType() != null && rate.getTransactionDate() == null) {
             String errMsg = "Rate transaction date must not be null when transaction date type is set";
             logger.error(errMsg);
@@ -938,7 +1080,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                     logger.error(errMsg);
                     throw new InvalidRateException(errMsg);
                 }
-
 
             }
 
