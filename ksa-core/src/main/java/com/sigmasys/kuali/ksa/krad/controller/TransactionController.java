@@ -152,6 +152,27 @@ public class TransactionController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+    /**
+     *
+     * @param form
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeTransactionTag")
+    public ModelAndView removeTransactionTag(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+        String tagString = request.getParameter("actionParameters[tagId]");
+        String transactionIdString = request.getParameter("actionParameters[currentTagParent]");
+
+
+        Long tagId = Long.parseLong(tagString);
+        Long transactionId = Long.parseLong(transactionIdString);
+
+        if (tagId != null && transactionId != null) {
+            transactionService.removeTagsFromTransaction(transactionId, tagId);
+        }
+        populateForm(form);
+        return getUIFModelAndView(form);
+    }
+
     private void populateForm(TransactionForm form) {
         Account act = form.getAccount();
         String userId = "";
