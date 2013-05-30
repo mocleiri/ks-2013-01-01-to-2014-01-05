@@ -15,7 +15,7 @@ class RolloverDetails < BasePage
   value(:completed_status) { |b| b.completed_status_element.row.cells[1].text } #status shows after rollover initiated
 
 
-  value(:status_detail_msg) { |b| b.frm.span(id: "KS-RolloverResultsInfoSectionMsg_span").text }
+  value(:status_detail_msg) { |b| b.frm.span(id: "KS-RolloverResultsInfoSectionMsg1_span").text }
   element(:release_to_departments_button) { |b| b.frm.button(text: "Release Courses") }
   action(:release_to_departments) { |b| b.release_to_departments_button.click; b.loading.wait_while_present }
 
