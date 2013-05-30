@@ -1,4 +1,4 @@
-class ManageCOAgendas < BasePage
+class CourseOfferingRequisites < BasePage
 
   expected_element :cancel_btn
 

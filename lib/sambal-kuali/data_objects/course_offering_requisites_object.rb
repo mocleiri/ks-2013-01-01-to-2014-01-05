@@ -1,4 +1,4 @@
-class ManageCOAgendasData
+class CORequisitesData
   include Foundry
   include DataFactory
 

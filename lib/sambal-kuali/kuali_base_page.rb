@@ -48,7 +48,8 @@ class BasePage < PageFactory
     end
 
     def krms_frame_elements
-      element(:frm) { |b| b.frame(:id=>/easyXDM_default\d+_provider/).frame(id: "iframeportlet") }
+      #element(:frm) { |b| b.frame(:id=>/easyXDM_default\d+_provider/).frame(id: "iframeportlet") }
+      element(:frm) { |b| b }
       element(:frm_popup) { |b| b.frame(:class=>"fancybox-iframe")}
     end
   end

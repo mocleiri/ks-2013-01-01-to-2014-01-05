@@ -35,9 +35,7 @@ Feature: KRMS ELIG9.11 Delete
   @pending
   Scenario: Confirm that the Delete Rule link on Agenda Preview page deletes the tree
     When I set up the data for "Student Eligibility & Prerequisite" for the course "ENGL101S" with Advanced Search
-    And I click on the "Student Eligibility & Prerequisite" section
     And I click on the "Delete Rule" link
-    And I click on the "Student Eligibility & Prerequisite" section
     Then the "Add Rule" link should exist on the Manage CO Agendas page
     And I click the "submit" button on Manage CO Agendas page
     And I click the Manage Course Offering Requisites link

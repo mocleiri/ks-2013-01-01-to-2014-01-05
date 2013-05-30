@@ -1,4 +1,4 @@
-class EditAgenda < BasePage
+class ManageCORequisites < BasePage
 
   expected_element :object_tab
 

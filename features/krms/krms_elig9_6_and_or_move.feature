@@ -3,33 +3,6 @@ Feature: KRMS ELIG9.6 AND, OR and Move
   Background:
     Given I am logged in as admin
 
-  #ELIG9.7.3.EB1 (KSENROLL-6308)
-  @bug @KSENROLL-6381
-  Scenario: Confirm changes to the tree is shown in the sections of the Logic tab
-    When I go to the Manage Course Offering Agendas page
-    And I click on the "Student Eligibility & Prerequisite" section
-    And I click on the "Edit Rule" link
-    And I select node "B" in the tree
-    And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
-    And I enter "ENGL101" in the "course" field
-    And I click the "Preview Change" button
-    And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "free form text input value" in the "free form text" field
-    And I click the "Preview Change" button
-    And I click the "Add Parent" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Text" in the "free form text" field
-    And I click the "Preview Change" button
-    And I select node "B" in the tree
-    And I click the "Move Down" button
-    And I select node "H" in the tree
-    And I click the "Move Up" button
-    And I select "OR" from the dropdown before node "4" on the "outer compound"
-    And I click the "Edit Rule Logic" tab
-    Then the text "A(E OR B(C OR D) OR G(H OR F))" should be present in the text area
-
   #ELIG9.7.5.EB1 (KSENROLL-6310)
   @bug @KSENROLL-6381
   Scenario: Move a node in a group left and confirm that it leaves the group
@@ -190,33 +163,6 @@ Feature: KRMS ELIG9.6 AND, OR and Move
     And I select "OR" from the dropdown before node "2" on the "outer compound"
     And I click the "Edit Rule Logic" tab
     Then the text "A(B(C OR D) OR F OR E)" should be present in the text area
-
-  #ELIG9.7.3.EB1 (KSENROLL-6308)
-  @bug @KSENROLL-6381
-  Scenario: Confirm changes to the tree is shown in the sections of the Logic tab
-    When I go to the Manage Course Offering Agendas page
-    And I click on the "Student Eligibility & Prerequisite" section
-    And I click on the "Edit Rule" link
-    And I select node "B" in the tree
-    And I click the "Add Rule Statement" button
-    And I select the "Must have successfully completed <course>" option from the "rule" dropdown
-    And I enter "ENGL101" in the "course" field
-    And I click the "Preview Change" button
-    And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "free form text input value" in the "free form text" field
-    And I click the "Preview Change" button
-    And I click the "Add Parent" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Text" in the "free form text" field
-    And I click the "Preview Change" button
-    And I select node "B" in the tree
-    And I click the "Move Down" button
-    And I select node "H" in the tree
-    And I click the "Move Up" button
-    And I select "OR" from the dropdown before node "4" on the "outer compound"
-    And I click the "Edit Rule Logic" tab
-    Then the text "A(E OR B(C OR D) OR G(H OR F))" should be present in the text area
 
   #ELIG9.7.3.EB1 (KSENROLL-6308)
   @bug @KSENROLL-6609 @KSENROLL-6779
