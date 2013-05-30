@@ -6,7 +6,8 @@ Feature: KRMS ELIG9.10 Add Rule Statement and Add Parent
   #ELIG9.10.EB1 (KSENROLL-7049)
   @pending
   Scenario: Setup one level of data using "Add Rule Statement" button
-    When I navigate to the agenda page for "ENGL304"
+    When I navigate to the agenda page for "HIST210"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Corequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -30,29 +31,29 @@ Feature: KRMS ELIG9.10 Add Rule Statement and Add Parent
 
   #ELIG9.10.EB2 (KSENROLL-7049)
   @pending
-  Scenario: Setup second level of data (Groups) using "Add Parent" button
-    When I navigate to the agenda page for "ENGL304"
+  Scenario: Setup second level of data (Groups) using Create Group button
+    When I navigate to the agenda page for "HIST210"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
-    And I click the "Add Parent" button
+    And I click the "Create Group" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Free Text 1b" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "D" in the tree
-    And I click the "Add Parent" button
+    And I click the "Create Group" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Free Text 2b" in the "free form text" field
     And I click the "Preview Change" button
     And I select node "F" in the tree
-    And I click the "Add Parent" button
+    And I click the "Create Group" button
     And I select the "Free Form Text" option from the "rule" dropdown
     And I enter "Free Text 2c" in the "free form text" field
     And I click the "Preview Change" button
     And I click the "Update Rule" button
     And I click the "submit" button on Manage CO Agendas page
-    And I go to the Main Menu from Manage CO Agendas
-    And I navigate to the agenda page for "ENGL304"
+    And I click the Manage Course Offering Requisites link
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     Then there should be a new node with text "A. Must meet all of the following"
