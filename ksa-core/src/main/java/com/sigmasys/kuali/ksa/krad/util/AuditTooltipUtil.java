@@ -12,25 +12,24 @@ import java.util.Locale;
 
 public class AuditTooltipUtil {
 
-    public static String getAuditTooltip(TransactionTypeModel ttModel){
+    public static String getAuditTooltip(TransactionTypeModel ttModel) {
         return getAuditTooltip(ttModel.getTransactionType());
     }
 
-    public static String getAuditTooltip(TransactionType tt){
+    public static String getAuditTooltip(TransactionType tt) {
         return getAuditTooltip(tt.getCreatorId(), tt.getCreationDate(), tt.getLastUpdate());
     }
 
-    private static String getAuditTooltip(String userId, Date createDate, Date updateDate){
+    private static String getAuditTooltip(String userId, Date createDate, Date updateDate) {
         StringBuilder tooltip = new StringBuilder();
         DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
 
         tooltip.append("<h4>Audit Information</h4><br/>");
 
-        if(userId != null){
+        if (userId != null) {
             tooltip.append("<b>Created by (user):</b> ").append(userId).append("<br/>");
             PersonService personService = KimApiServiceLocator.getPersonService();
             Person person = personService.getPersonByPrincipalName(userId);
-            String name = null;
             if (person != null) {
                 tooltip.append("<b>Created by (name):</b> ").append(person.getName()).append("<br/>");
                 tooltip.append("<b>Contact Phone:</b> ").append(person.getPhoneNumber()).append("<br/>");
@@ -38,11 +37,11 @@ public class AuditTooltipUtil {
             }
         }
 
-        if(createDate != null){
+        if (createDate != null) {
             tooltip.append("<b>Creation Date:</b> ").append(df.format(createDate)).append("<br/>");
         }
 
-       if(updateDate != null){
+        if (updateDate != null) {
             tooltip.append("<b>Last Updated:</b> ").append(df.format(updateDate)).append("<br/>");
         }
 
