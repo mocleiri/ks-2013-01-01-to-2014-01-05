@@ -41,7 +41,7 @@ Feature: data_setup.Setup Environment
     Then I verify that Publish button is there for next action
     And I Publish the SOC
     Then I verify that Close button is there for next action
-    And I verify the related object state changes for Publish action
+#    And I verify the related object state changes for Publish action
 
 
   Scenario: Set up a term in published state
@@ -60,7 +60,7 @@ Feature: data_setup.Setup Environment
     Then I verify that Publish button is there for next action
     And I Publish the SOC
     Then I verify that Close button is there for next action
-    And I verify the related object state changes for Publish action
+#    And I verify the related object state changes for Publish action
 
   Scenario: Set up a term in final edits state
     When I initiate a rollover to create a term in final edits state EC
