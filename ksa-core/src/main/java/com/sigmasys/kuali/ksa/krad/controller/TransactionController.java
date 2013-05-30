@@ -173,6 +173,42 @@ public class TransactionController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+    /**
+     *
+     * @param form
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=addTransactionTag")
+    public ModelAndView addTransactionTag(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+        String transactionIdString = request.getParameter("actionParameters[currentParent]");
+
+        Long transactionId;
+        try{
+            transactionId = Long.parseLong(transactionIdString);
+        } catch(NumberFormatException e){
+            logger.error("Invalid transaction id passed to addTransactionTag: '" + transactionIdString + "'");
+            return getUIFModelAndView(form);
+        }
+
+        // Need to loop through the form's 'allTransactions' to figure out which one we're talking about.
+        for(TransactionModel tm : form.getAllTransactions()){
+            if(tm.getId().equals(transactionId)){
+                String tagString = tm.getNewTag();
+
+                Tag tag = auditableEntityService.getAuditableEntity(tagString, Tag.class);
+                List<Tag> tags = new ArrayList<Tag>();
+                if(tag != null){
+                    tags.add(tag);
+                    transactionService.addTagsToTransaction(transactionId, tags);
+                }
+                break;
+            }
+        }
+
+        populateForm(form);
+        return getUIFModelAndView(form);
+    }
+
     private void populateForm(TransactionForm form) {
         Account act = form.getAccount();
         String userId = "";

@@ -159,58 +159,53 @@
                             </list>
                         </property>
                     </bean>
-                    </list>
-                </property>
-            </bean>
-            <bean parent="Uif-HorizontalBoxSection">
-                <property name="items">
-                    <list>
-                        <bean parent="Uif-InputField" p:label="Tags" p:propertyName="newTag">
-                            <property name="suggest">
-                                <bean parent="Uif-Suggest">
-                                    <property name="valuePropertyName" value="code"/>
-                                    <property name="templateOptions" value="minLength:2,delay:0"/>
-                                    <property name="suggestQuery">
-                                        <bean parent="Uif-AttributeQueryConfig">
-                                            <property name="queryMethodToCall" value="getTagsForSuggest"/>
+                    <bean parent="Uif-HorizontalBoxSection">
+                        <property name="items">
+                            <list>
+                                <bean parent="Uif-InputField" p:label="Tags" p:propertyName="newTag">
+                                    <property name="suggest">
+                                        <bean parent="Uif-Suggest">
+                                            <property name="valuePropertyName" value="code"/>
+                                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                                            <property name="suggestQuery">
+                                                <bean parent="Uif-AttributeQueryConfig">
+                                                    <property name="queryMethodToCall" value="getTagsForSuggest"/>
+                                                </bean>
+                                            </property>
                                         </bean>
                                     </property>
                                 </bean>
-                            </property>
-                        </bean>
-                        <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="filterTags" p:actionLabel="Add this Tag"/>
-                        <bean parent="Uif-ListCollectionGroup" >
-                            <property name="title" value="Filter by Selected Tags"/>
-                            <property name="readOnly" value="true"/>
-                            <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Tag"/>
-                            <property name="propertyName" value="filterTags"/>
-                            <property name="items">
-                                <list>
-                                    <bean parent="Uif-HorizontalFieldGroup">
-                                        <property name="items">
-                                            <list>
-                                                <bean parent="Uif-InputField" p:propertyName="code"/>
-                                                <bean parent="Uif-ActionLink" p:actionLabel="Remove" p:methodToCall="removeTag" p:actionParameters="tagId:@{#line.id}">
-                                                    <property name="actionImage">
-                                                        <bean parent="Uif-Image"
-                                                              p:source="../images/remove.png"/>
-                                                    </property>
-                                                </bean>
-                                                <!--
-                                                <bean parent="Uif-LinkField" p:linkText="Remove" p:target="_self"
-                                                      p:href="transactionView?methodToCall=removeTag&amp;viewId=TransactionView&amp;userId=@{account.id}&amp;tagId=@{#line.id}"/>
-                                                -->
-                                            </list>
-                                        </property>
-                                    </bean>
-                                </list>
-                            </property>
-                        </bean>
+                                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="filterTags" p:actionLabel="Add this Tag"/>
+                                <bean parent="Uif-ListCollectionGroup" >
+                                    <property name="title" value="Filter by Selected Tags"/>
+                                    <property name="readOnly" value="true"/>
+                                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Tag"/>
+                                    <property name="propertyName" value="filterTags"/>
+                                    <property name="items">
+                                        <list>
+                                            <bean parent="Uif-HorizontalFieldGroup">
+                                                <property name="items">
+                                                    <list>
+                                                        <bean parent="Uif-InputField" p:propertyName="code"/>
+                                                        <bean parent="Uif-ActionLink" p:actionLabel="Remove" p:methodToCall="removeTag" p:actionParameters="tagId:@{#line.id}">
+                                                            <property name="actionImage">
+                                                                <bean parent="Uif-Image"
+                                                                      p:source="../images/remove.png"/>
+                                                            </property>
+                                                        </bean>
+                                                    </list>
+                                                </property>
+                                            </bean>
+                                        </list>
+                                    </property>
+                                </bean>
 
+                            </list>
+                        </property>
+                    </bean>
                     </list>
                 </property>
             </bean>
-
         </list>
         </property>
 
@@ -324,7 +319,7 @@
                         <bean id="transactionViewDescriptionField" parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
                             <property name="items">
                                 <list>
-                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />
+                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />
                                     <ref bean="transactionDetailLightboxRunningTotal"/>
 
                                     <bean parent="Uif-ImageField" p:source="../images/refund.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
@@ -413,7 +408,6 @@
                                         <property name="hidden" value="true"/>
                                         <property name="items">
                                             <list>
-                                                <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Tags"/>
                                                 <ref bean="transactionTags"/>
 
                                             </list>
@@ -468,7 +462,7 @@
                         <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
                             <property name="items">
                                 <list>
-                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotalDeferment@{#lineSuffix}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />
+                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotalDeferment@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />
                                     <bean id="transactionDetailLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                                         <property name="hidden" value="true"/>
                                         <property name="items">
@@ -521,7 +515,6 @@
                                         <property name="hidden" value="true"/>
                                         <property name="items">
                                             <list>
-                                                <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Tags"/>
                                                 <ref bean="transactionTags"/>
 
                                             </list>
@@ -608,10 +601,7 @@
                 <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
                     <property name="items">
                     <list>
-                        <!-- TJB
-                        <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');" p:linkText="@{#line.transactionType.description}" />
-                        TJB -->
-                        <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');" p:linkText="@{#line.transactionType.description}" />
+                        <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.transactionType.description}" />
                         <bean id="transactionDetailLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL"> <!-- p:progressiveRender="false">-->
                             <property name="hidden" value="true"/>
                             <property name="items">
@@ -663,7 +653,6 @@
                             <property name="hidden" value="true"/>
                             <property name="items">
                                 <list>
-                                    <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Tags"/>
                                     <ref bean="transactionTags"/>
 
                                 </list>
@@ -733,7 +722,21 @@
         <property name="items">
             <list>
                 <ref bean="transactionDetailFields"/>
-                <ref bean="tagGroup"/>
+                <bean parent="Uif-InputField" p:label="Tags" p:propertyName="newTag" p:readOnly="false">
+                    <property name="suggest">
+                        <bean parent="Uif-Suggest">
+                            <property name="valuePropertyName" value="code"/>
+                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                            <property name="suggestQuery">
+                                <bean parent="Uif-AttributeQueryConfig">
+                                    <property name="queryMethodToCall" value="getTagsForSuggest"/>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="addTransactionTag" p:actionLabel="Add Tag"/>
+                <ref bean="transactionTags"/>
                 <bean parent="Uif-Disclosure-VerticalBoxSection" >
                     <property name="headerText" value="Memos"/>
                     <property name="disclosure.defaultOpen" value="false" />
@@ -812,30 +815,35 @@
         </property>
     </bean>
 
-    <bean id="transactionTags" parent="Uif-ListCollectionGroup" >
-        <property name="title" value="Transaction Tags"/>
-        <property name="readOnly" value="true"/>
-        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Tag"/>
-        <property name="propertyName" value="tags"/>
-        <property name="items">
-            <list>
-                <bean parent="Uif-HorizontalFieldGroup">
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-InputField" p:propertyName="code"/>
-                            <bean parent="Uif-ActionLink" p:methodToCall="removeTransactionTag"
-                                  p:actionParameters="tagId:@{#line.id}">
-                                <property name="actionImage">
-                                    <bean parent="Uif-Image"
-                                          p:source="../images/remove.png"/>
-                                </property>
-                            </bean>
-                        </list>
-                    </property>
-                </bean>
-            </list>
-        </property>
+    <bean id="transactionTags" parent="Uif-VerticalBoxSection" p:headerText="Transaction Tags">
+    <property name="items">
+    <list>
+        <bean parent="Uif-ListCollectionGroup" >
+            <property name="title" value="Transaction Tags"/>
+            <property name="readOnly" value="true"/>
+            <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Tag"/>
+            <property name="propertyName" value="tags"/>
+            <property name="items">
+                <list>
+                    <bean parent="Uif-HorizontalFieldGroup">
+                        <property name="items">
+                            <list>
+                                <bean parent="Uif-InputField" p:propertyName="code"/>
+                                <bean parent="Uif-ActionLink" p:methodToCall="removeTransactionTag"
+                                      p:actionParameters="tagId:@{#line.id}">
+                                    <property name="actionImage">
+                                        <bean parent="Uif-Image"
+                                              p:source="../images/remove.png"/>
+                                    </property>
+                                </bean>
+                            </list>
+                        </property>
+                    </bean>
+                </list>
+            </property>
+        </bean>
+    </list>
+    </property>
     </bean>
-
 
 </beans>

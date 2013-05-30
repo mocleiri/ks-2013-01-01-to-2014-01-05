@@ -58,6 +58,7 @@ public class TransactionModel extends Transaction {
 
     private List<Tag> tags;
     private String tagList;
+    private String newTag;
 
     private List<Alert> alerts;
     private List<Flag> flags;
@@ -710,5 +711,13 @@ public class TransactionModel extends Transaction {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getNewTag() {
+        return newTag;
+    }
+
+    public void setNewTag(String newTag) {
+        this.newTag = newTag;
     }
 }
