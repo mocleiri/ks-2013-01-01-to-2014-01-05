@@ -46,8 +46,8 @@ Given /^all activity offerings are assigned to the ARG cluster$/ do
   on ManageCourseOfferings do |page|
     page.cluster_div_list.each do |cluster|
       private_name = page.cluster_div_private_name(cluster)
-      puts "private name: #{private_name}"
-      puts "#{private_name} list: #{page.get_cluster_assigned_ao_list(private_name)}"
+      #puts "private name: #{private_name}"
+      #puts "#{private_name} list: #{page.get_cluster_assigned_ao_list(private_name)}"
       page.view_cluster_reg_groups(private_name)
     end
   end

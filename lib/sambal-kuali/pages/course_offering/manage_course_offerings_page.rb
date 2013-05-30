@@ -8,9 +8,6 @@ class ManageCourseOfferings < BasePage
 
   expected_element :term
 
-  #deprecated, for better pattern, refer to: course_offering_cross-listed_steps.rb > "Then the owner Course Offering and all it's aliases are deleted"
-  #element(:error_message_course_not_found) { |b| b.frm.li(class: "uif-errorMessageItem") }
-
   element(:previous_course_link){ |b| b.frm.link(id: "LoadPrev") } # Persistent ID needed!
   element(:list_all_course_link){ |b| b.frm.link(id: "ListAll") } # Persistent ID needed!
   element(:next_course_link){ |b| b.frm.link(id: "LoadNext") }     # Persistent ID needed!
@@ -85,17 +82,17 @@ class ManageCourseOfferings < BasePage
   action(:complete_move_ao) { |b| b.move_ao_button.click; b.loading.wait_while_present }
   element(:jgrowl){|b|b.frm.div(id:"jGrowl")}
 
-  def approve_co_confirm
-    approve_co_popup_div.checkbox(index: 0).click
-    loading.wait_while_present(180)
-    wait_until jgrowl.include? "The selected course offering was successfully approved"
-  end
+  #def approve_co_confirm
+  #  approve_co_popup_div.checkbox(index: 0).click
+  #  loading.wait_while_present(180)
+  #  wait_until jgrowl.include? "The selected course offering was successfully approved"
+  #end
 
-  def approve_co_cancel
-    puts "exists? #{approve_co_popup_div.checkbox(index: 1).exists?}"
-    approve_co_popup_div.checkbox(index: 1).click
-    loading.wait_while_present(180)
-  end
+  #def approve_co_cancel
+  #  puts "exists? #{approve_co_popup_div.checkbox(index: 1).exists?}"
+  #  approve_co_popup_div.checkbox(index: 1).click
+  #  loading.wait_while_present(180)
+  #end
 
   element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AOClustersCollection") }
 
@@ -139,10 +136,7 @@ class ManageCourseOfferings < BasePage
     raise "error in target_row: #{cluster_private_name}.#{code} not found"
   end
 
-  def course_list_returned?()
-    create_co_button.exists?
-  end
-
+  #for future use
   def ao_db_id(code, cluster_private_name = :default_cluster)
     target_row(code, cluster_private_name).cells[AO_CODE].link.attribute_value("href").scan(/aoInfo.id=(.*)&dataObjectClassName/)[0][0]
   end
@@ -151,13 +145,14 @@ class ManageCourseOfferings < BasePage
     target_row(code, cluster_private_name).cells[AO_STATUS].text
   end
 
-  def row_by_status(aostatus, cluster_private_name = :default_cluster)
-    activity_offering_results_table(cluster_private_name).row(text: /\b#{Regexp.escape(aostatus)}\b/)
+  #gets the first row for a given status
+  def row_by_status(ao_status, cluster_private_name = :default_cluster)
+    activity_offering_results_table(cluster_private_name).row(text: /\b#{Regexp.escape(ao_status)}\b/)
   end
 
-
-  def select_ao_by_status(aostatus, cluster_private_name = :default_cluster)
-    row = row_by_status(aostatus, cluster_private_name)
+  #selects the first row for a given status
+  def select_ao_by_status(ao_status, cluster_private_name = :default_cluster)
+    row = row_by_status(ao_status, cluster_private_name)
     if row.exists? then
       row.checkbox.set
       return row.cells[AO_CODE].text
@@ -180,11 +175,6 @@ class ManageCourseOfferings < BasePage
   def edit(code, cluster_private_name = :default_cluster)
     begin
       edit_link(code, cluster_private_name).click
-
-      #if browser.alert.exists?
-      #  browser.alert.ok
-      #end
-
     rescue Timeout::Error => e
       puts "rescued target_row edit"
     end
@@ -204,21 +194,20 @@ class ManageCourseOfferings < BasePage
   end
 
   def select_ao(code, cluster_private_name = :default_cluster)
-    row = target_row(code, cluster_private_name)
-      target_row(code, cluster_private_name).checkbox.set
+    select_aos([code], cluster_private_name)
   end
 
   def deselect_ao(code, cluster_private_name = :default_cluster)
-      target_row(code, cluster_private_name).checkbox.clear
+    deselect_aos([code], cluster_private_name)
   end
 
-  #def ao_status(code, status, cluster_private_name = :default_cluster)
-  #  row_text = target_row(code, cluster_private_name).text
-  #  row_text.include? status
-  #end
+  def cluster_select_all_aos(cluster_private_name = :default_cluster)
+    target_cluster(cluster_private_name).table.row.checkbox.set
+  end
 
-  def ao_schedule_data(aoCode, cluster_private_name = :default_cluster)
-    target_row(aoCode).text
+  def cluster_deselect_all_aos(cluster_private_name = :default_cluster)
+    target_cluster(cluster_private_name).table.row.checkbox.set
+    target_cluster(cluster_private_name).table.row.checkbox.clear
   end
 
   def codes_list(cluster_private_name = :default_cluster)
@@ -229,49 +218,49 @@ class ManageCourseOfferings < BasePage
     codes
   end
 
-  #TODO - this code is duplicate - see ActivityOffering data object
-  def add_ao input_format, input_quantity
-    format.select(input_format)
-    loading.wait_while_present(120)
-    activity_type.select(activity_type.options[0].text)
-    loading.wait_while_present(120)
-    cluster.select(cluster.options[0].text)
-    loading.wait_while_present(120)
-    quantity.set(input_quantity)
-    complete_add_activity
-  end
+  ##TODO - this code is duplicate - see ActivityOffering data object
+  #def add_ao input_format, input_quantity
+  #  format.select(input_format)
+  #  loading.wait_while_present(120)
+  #  activity_type.select(activity_type.options[0].text)
+  #  loading.wait_while_present(120)
+  #  cluster.select(cluster.options[0].text)
+  #  loading.wait_while_present(120)
+  #  quantity.set(input_quantity)
+  #  complete_add_activity
+  #end
 
   #def cross_listed_as(crossListedCoCode)
   #
   #  course_title
   #end
 
-  def check_all_ao_status(aoStatus, cluster_private_name = :default_cluster)
-    retVal = true
-    activity_offering_results_table(cluster_private_name).rows.each {|row|
-      if !(row[AO_STATUS].text.eql? aoStatus)
-        retVal = false
-        break
-      end
-    }
-    retVal
-  end
+  #def check_all_ao_status(aoStatus, cluster_private_name = :default_cluster)
+  #  retVal = true
+  #  activity_offering_results_table(cluster_private_name).rows.each {|row|
+  #    if !(row[AO_STATUS].text.eql? aoStatus)
+  #      retVal = false
+  #      break
+  #    end
+  #  }
+  #  retVal
+  #end
 
-  def check_aos_status(aoStatus, aos, cluster_private_name = :default_cluster)
-    retVal = true
-    aos.each { |code|
-      if(!ao_status(code, aoStatus, cluster_private_name))
-        retVal = false
-        break
-      end
-    }
-    retVal
-  end
+  #def check_aos_status(aoStatus, aos, cluster_private_name = :default_cluster)
+  #  retVal = true
+  #  aos.each { |code|
+  #    if(!ao_status(code, aoStatus, cluster_private_name))
+  #      retVal = false
+  #      break
+  #    end
+  #  }
+  #  retVal
+  #end
 
-  def has_cross_listed_message(co_code)
-    #cross_listed_message_div.present?.should == true
-    cross_listed_message.include? co_code
-  end
+  #def has_cross_listed_message(co_code)
+  #  #cross_listed_message_div.present?.should == true
+  #  cross_listed_message.include? co_code
+  #end
 
   ########################## cluster tab
 
@@ -321,10 +310,6 @@ class ManageCourseOfferings < BasePage
   #  #full_name.slice(full_name.index('(')+1..-2)
   #end
 
-  def cluster_select_all_aos(private_name)
-    target_cluster(private_name).table.row.checkbox.set unless !target_cluster(private_name).table.exists?
-  end
-
   def remove_cluster_link(private_name)
     target_cluster(private_name).link(text: /Delete/)
   end
@@ -337,7 +322,6 @@ class ManageCourseOfferings < BasePage
   def rename_cluster_link(private_name)
     target_cluster(private_name).link(text: /Rename/)
   end
-
 
   def rename_cluster(private_name)
     rename_cluster_link(private_name).click
@@ -381,6 +365,7 @@ class ManageCourseOfferings < BasePage
   def get_cluster_div_ao_row(cluster_div, ao_code)
     cluster_div.table.row(text: /\b#{Regexp.escape(ao_code)}\b/)
   end
+  private :get_cluster_div_ao_row
 
   def get_cluster_div_ao_rows(cluster_div)
     return cluster_div.table.rows[1..-2] unless !cluster_div.table.exists?

@@ -17,12 +17,12 @@ end
 And /^I delete the joint\-defined Course Offering$/ do
   @course_offering.search_by_subjectcode
   #get to the delete CO confirmation page  and verify the CO is joint-defined CO
-  warning_message = @course_offering.delete_co_warning_message :code_list => [@course_offering.course]
+  warning_message = @course_offering.delete_co_list :code_list => [@course_offering.course]
   has_joint_defined = warning_message.include? "Joint-Defined Course Warning"
   has_joint_defined.should == true
-  @course_offering.search_by_subjectcode
+  #@course_offering.search_by_subjectcode
   #delete
-  @course_offering.delete_co :code_list => [@course_offering.course], :should_confirm_delete=>true
+  #@course_offering.delete_co_list :code_list => [@course_offering.course], :should_confirm_delete=>true
 end
 
 

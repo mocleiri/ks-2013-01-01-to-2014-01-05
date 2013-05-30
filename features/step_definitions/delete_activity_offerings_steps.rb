@@ -67,13 +67,13 @@ And /^I delete the AO with Draft state$/ do
   new_total.should == @total_number + 1
   @total_number = @course_offering.activity_offering_cluster_list[0].ao_list.count
   @ao_code_list = [@course_offering.activity_offering_cluster_list[0].ao_list[new_total-1].code]
-  confirm_message = @course_offering.delete_ao_cross_list_value :code_list =>  @ao_code_list
+  confirm_message = @course_offering.delete_ao_list :code_list =>  @ao_code_list
   expect_result = "Crosslisted as: WMST255"
   message_text = confirm_message.text
   cross_listed_in_page = message_text.include? expect_result
   cross_listed_in_page.should == true
-  @course_offering.manage_and_init
-  @course_offering.delete_ao_list :code_list =>  @ao_code_list
+  #@course_offering.manage_and_init
+  #@course_offering.delete_ao_list :code_list =>  @ao_code_list
 end
 
 Then /^The AO is Successfully deleted$/ do

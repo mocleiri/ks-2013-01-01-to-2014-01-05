@@ -44,6 +44,11 @@ class ActivityOffering
   #type ActivityOffering object - generally set using options hash
   attr_accessor :parent_course_offering
 
+  # [String]
+  OFFERED_STATUS = "Offered"
+  # [String]
+  DRAFT_STATUS = "Draft"
+
 
   # provides default data:
   #
@@ -109,25 +114,24 @@ class ActivityOffering
     @code <=> other.code
   end
 
-  #create one or many simple aos without details.
+
+
+  #create one or many simple aos without details
+  #
+  #   @example
+  #   @activity_offering.create_simple :number_aos_to_create => 3 (defaults is 1)
+  #
+  #
+  #   @param opts [Hash] :number_aos_to_create => integer (1 or more)
+  #   @returns list of AO codes created
   def create_simple  opts={}
 
-    @number_aos_to_add = "1"
-    if opts[:number_aos_to_create] != nil
-      @number_aos_to_add = opts[:number_aos_to_create]
-    end
+    defaults = {
+        :number_aos_to_create => 1
+    }
+    options = defaults.merge(opts)
 
     @parent_course_offering.manage
-
-    if @create_by_copy then
-      on ManageCourseOfferings do |page|
-        pre_copy_list = page.get_cluster_assigned_ao_list(@aoc_private_name)
-        page.copy(@code, @aoc_private_name)
-        post_copy_list = page.get_cluster_assigned_ao_list(@aoc_private_name)
-        @code = (post_copy_list - pre_copy_list).first
-        return
-      end
-    end
 
     on ManageCourseOfferings do |page|
       begin
@@ -144,7 +148,7 @@ class ActivityOffering
       page.loading.wait_while_present
       sleep 2
       page.activity_type.select @activity_type
-      page.quantity.set @number_aos_to_add
+      page.quantity.set options[:number_aos_to_create]
       page.complete_add_activity
       post_add_ao_list = page.codes_list
       #end
@@ -154,7 +158,7 @@ class ActivityOffering
         new_code =  post_add_ao_list
       end
 
-      @code = new_code
+      new_code
     end
   end
 

@@ -1,4 +1,4 @@
-# note: this test has been code-reviewed here: https://fisheye.kuali.org/cru/ks-370
+#TODO: check this jira - still relevant?
 # additional notes about future-refactoring were left in this jira: https://jira.kuali.org/browse/KSENROLL-5895
 
 
@@ -52,6 +52,11 @@ class CourseOffering
   attr_accessor :cross_listed
 
 
+  DRAFT_STATUS = "Draft"
+  PLANNED_STATUS = "Planned"
+  OFFERED_STATUS = "Offered"
+
+
 
   # provides default data:
   #  defaults = {
@@ -74,6 +79,7 @@ class CourseOffering
   #    :search_by_subj => false,
   #    :create_by_copy => nil,
   #    :cross_listed => false,  (applies only to create from catalog)
+  #    :joint_co_to_create
   #  }
   # initialize is generally called using TestFactory Foundry .make or .create methods
   def initialize(browser, opts={})
@@ -144,7 +150,7 @@ class CourseOffering
 
   def create_joint_co()
 
-    # this is hardcoded to create joint-co from row-1;
+    # TODO: this is hardcoded to create joint-co from row-1;
     # needs to be parameterized using the @joint_co_to_create
     # variable
     on CreateCourseOffering do |page|
@@ -153,6 +159,7 @@ class CourseOffering
     end
 
   end
+  private :create_joint_co
 
   # searches for and edits an existing course offering course_code matching @course attribute
   # @example
@@ -417,11 +424,22 @@ class CourseOffering
   end
 
 
+  # approves CourseOffering
+  # @example
+  #  @course_offering.approve_co
+  #
+  #
+  # @param
   def approve_co
     #search_by_subjectcode
     approve_co_list :co_obj_list => [ self ]
   end
 
+  # approves list of CourseOffering objects
+  # @example
+  #  @course_offering.approve_co_list
+  #
+  # @param opts [Hash] :co_obj_list => [co_obj1, co_obj2, ...]
   def approve_co_list(opts)
     search_by_subjectcode
     on ManageCourseOfferingList do |page|
@@ -430,13 +448,27 @@ class CourseOffering
           page.select_co(co.course.upcase)
         end
         page.approve_course_offering
-        page.approve_yes
+        #page.approve_yes
+        page.approve_yes_element.click #TODO - needs to be reverted once KSENROLL-6884 is fixed
+        while page.alert.exists?  #TODO - needs to be reverted once KSENROLL-6884 is fixed
+          page.alert.ok            #TODO - needs to be reverted once KSENROLL-6884 is fixed
+        end                      #TODO - needs to be reverted once KSENROLL-6884 is fixed
+                                       #loading.wait_while_present(300)   #TODO - needs to be reverted once KSENROLL-6884 is fixed
+        sleep 60 #TODO - needs to be reverted once KSENROLL-6884 is fixed
+
       rescue Timeout::Error => e
         puts "rescued target_row edit"
       end
     end
   end
 
+
+  # approves subject code for CourseOffering e.g. ENGL202, approves ENGL subject code
+  # @example
+  #  @course_offering.approve_subject_code
+  #
+  #
+  # @param none
   def approve_subject_code
     search_by_subjectcode
     on ManageCourseOfferingList do |page|
@@ -469,24 +501,35 @@ class CourseOffering
 
   #delete specified activity offering
   #
-  #@param  opts [Hash] {:ao_code => "code"}
+  # @course_offering.delete_ao :ao_code => "A"
+  #
+  #@param  opts [Hash] {:ao_code => "code", :cluster_private_name => "cluster_name", :confirm_delete => true/false}
+  #@returns confirmation_message (from delete confirmation dialog)
   def delete_ao(opts)
 
     defaults = {
-        :cluster_private_name => :default_cluster
+        :cluster_private_name => :default_cluster,
+        :confirm_delete => true
     }
     options = defaults.merge(opts)
-
-    delete_ao_list( {:code_list => [ options[:ao_code]], :cluster_private_name => options[:cluster_private_name] })
+    options[:code_list] = [options[:ao_code]]
+    delete_ao_list(options)
   end
 
   #delete specified activity offerings
   #
-  #@param  opts [Hash] {:code_list => ["code1","code2", ...]}
+  #   @example
+  #   @course_offering.delete_ao_list :code_list => ["A","B"]
+  #        :cluster_private_name default value is first cluster
+  #
+  #
+  #@param  opts [Hash] {:code_list => ["code1","code2", ...], :cluster_private_name => "cluster_name", :confirm_delete => true/false}
+  #@returns confirmation_message (from delete confirmation dialog)
   def delete_ao_list(opts)
 
     defaults = {
-        :cluster_private_name => :default_cluster
+        :cluster_private_name => :default_cluster,
+        :confirm_delete => true
     }
     options = defaults.merge(opts)
 
@@ -495,39 +538,59 @@ class CourseOffering
       page.delete_aos
     end
 
+    confirmation_message = ""
     on ActivityOfferingConfirmDelete do |page|
-      page.delete_activity_offering
+      confirmation_message = page.delete_confirm_message
+      if options[:confirm_delete] then
+        page.delete_activity_offering
+      else
+        page.cancel
+      end
     end
 
+    #update expected object data
     options[:code_list].each do |ao_code|
       ao_cluster = get_cluster_obj_by_private_name(options[:cluster_private_name])
       ao_obj = ao_cluster.get_ao_obj_by_code(ao_code)
       ao_cluster.ao_list.delete(ao_obj)
     end
+
+    confirmation_message
   end
 
-  def delete_top_n_aos(num_aos_to_delete_from_top)
-    last_index_to_delete = num_aos_to_delete_from_top.to_i - 1
+  #this method is not used
+  #delete specified number of activity offerings
+  #
+  #def delete_top_n_aos(num_aos_to_delete_from_top)
+  #  last_index_to_delete = num_aos_to_delete_from_top.to_i - 1
+  #
+  #  manage
+  #
+  #  aos_to_delete = Array.new
+  #  ao_list[0..last_index_to_delete].each do |ao|
+  #    aos_to_delete << ao
+  #  end
+  #
+  #  delete_ao_list :code_list => aos_to_delete
+  #end
 
-    manage
-
-    aos_to_delete = Array.new
-    ao_list[0..last_index_to_delete].each do |ao|
-      aos_to_delete << ao
-    end
-
-    delete_ao_list :code_list => aos_to_delete
-  end
-
-  def attempt_ao_delete_by_status(aostate, cluster_private_name = :default_cluster)
+  # checks to see if AOs of a specific status can be deleted (for Authorization testing)
+  # @example
+  #  @course_offering.attempt_ao_delete_by_status(ActivityOffering::OFFERED_STATUS)
+  #    :cluster_private_name default value is first cluster
+  #
+  # @param opts [Hash] :co_obj_list => [co_obj1, co_obj2, ...]
+  # @returns boolean - delete opertion was available
+  def attempt_ao_delete_by_status(ao_state, cluster_private_name = :default_cluster)
     on ManageCourseOfferings do |page|
-      if page.row_by_status(aostate, cluster_private_name).exists?
-        ao = page.select_ao_by_status(aostate, cluster_private_name)
+      if page.row_by_status(ao_state, cluster_private_name).exists?
+        ao = page.select_ao_by_status(ao_state, cluster_private_name)
         if page.delete_aos_button.enabled?
           page.delete_aos
           on ActivityOfferingConfirmDelete do |page|
             delete_present = page.delete_activity_offering_button.present?
             page.cancel
+            page.deselect_ao(ao)
             return delete_present
           end
         else
@@ -546,19 +609,28 @@ class CourseOffering
           on ActivityOfferingConfirmDelete do |page|
             delete_present = page.delete_activity_offering_button.present?
             page.cancel
+            page.deselect_ao(new_ao)
             return delete_present
           end
         else
-          page.deselect_ao(ao)
+          page.deselect_ao(new_ao)
           return false
         end
       end
     end
   end
 
-  def attempt_co_delete_by_status(aostate)
+
+  # checks to see if COs of a specific status can be deleted (for Authorization testing)
+  # @example
+  #  @course_offering.attempt_co_delete_by_status(CourseOffering::OFFERED_STATUS)
+  #    :cluster_private_name default value is first cluster
+  #
+  # @param opts [Hash] :co_obj_list => [co_obj1, co_obj2, ...]
+  # @returns boolean - delete opertion was available
+  def attempt_co_delete_by_status(co_state)
     on ManageCourseOfferingList do |page|
-      @course = page.select_co_by_status(aostate)
+      @course = page.select_co_by_status(co_state)
       if page.delete_cos_button.enabled?
         page.delete_cos
       else
@@ -571,7 +643,11 @@ class CourseOffering
     end
   end
 
-  #approve specified activity offerings
+  #approve list of activity offerings
+  #
+  #   @example
+  #   @course_offering.approve_ao_list :code_list => [ao_obj1, ao_obj2]
+  #        :cluster_private_name default value is first cluster
   #
   #@param  opts [Hash] {:ao_obj_list => [activity_offering1,activity_offering2, ...], :cluster_private_name => "priv_name"}
   def approve_ao_list(opts)
@@ -590,9 +666,12 @@ class CourseOffering
   end
 
 
-  #create a new specified list of activity offerings
+  #create a new list of activity offerings
   #
-  #@param opts[:number_aos_to_create]
+  #  @example
+  #  @course_offering.create_list_aos :number_aos_to_create => 3, :ao_object => ao_obj
+  #
+  #@param opts [Hash] {:number_aos_to_create => int, :ao_object => ao_obj }
   def create_list_aos(opts)
     activity_offering_object = opts[:ao_object]
     activity_offering_object.parent_course_offering = self
@@ -600,6 +679,9 @@ class CourseOffering
   end
 
   #create a new specified activity offering
+  #
+  # @example
+  #  @course_offering.create_ao(activity_offering_object)
   #
   #@param opts ActivityOffering object
   def create_ao(activity_offering_object)
@@ -611,6 +693,10 @@ class CourseOffering
   end
 
   #copy the specified activity offering
+  #
+  # @example
+  #  @course_offering.copy_ao :ao_code => "CODE", :cluster_private_name => "private_name"
+  #       :cluster_private_name default value is first cluster
   #
   #@param  opts [Hash] {:ao_code => "CODE", :cluster_private_name => "private_name" (see default value = :default_cluster)}
   def copy_ao(opts)
@@ -640,20 +726,21 @@ class CourseOffering
   end
 
   #TODO - how is this different from delete_ao?
-  def delete_ao_cross_list_value(opts)
-    defaults = {
-        :cluster_private_name => :default_cluster
-    }
-    options = defaults.merge(opts)
-
-    on ManageCourseOfferings do |page|
-      page.select_aos(options[:code_list], options[:cluster_private_name])
-      page.delete_aos
-    end
-    on ActivityOfferingConfirmDelete do |page|
-      page.delete_confirm_message
-    end
-  end
+  #merged with delete_ao
+  #def delete_ao_cross_list_value(opts)
+  #  defaults = {
+  #      :cluster_private_name => :default_cluster
+  #  }
+  #  options = defaults.merge(opts)
+  #
+  #  on ManageCourseOfferings do |page|
+  #    page.select_aos(options[:code_list], options[:cluster_private_name])
+  #    page.delete_aos
+  #  end
+  #  on ActivityOfferingConfirmDelete do |page|
+  #    page.delete_confirm_message
+  #  end
+  #end
 
   # returns a list of AOs matching a given state
   # note: can return an empty array but not nil
@@ -682,36 +769,46 @@ class CourseOffering
     retVal
   end
 
-  def ao_schedule_data(ao_code)
-    retVal = nil
-    aoCode = ao_code[:ao_code]
-    on ManageCourseOfferings do |page|
-      retVal = page.ao_schedule_data(aoCode)
-    end
+  #TODO: this method is not used
+  #
+  #def cross_listed_co_data(co_code)
+  #  retVal = nil
+  #  on ManageCourseOfferings do |page|
+  #    retVal = page.course_title
+  #  end
+  #
+  #  retVal
+  #end
 
-    retVal
-  end
-
-  #TODO: this method does not use parameter?
-  def cross_listed_co_data(co_code)
-    retVal = nil
-    on ManageCourseOfferings do |page|
-      retVal = page.course_title
-    end
-
-    retVal
-  end
-
+  # add/create an ao_cluster to the CourseOffering
+  # @example
+  #  @course_offering.add_ao_cluster(ao_cluster_object)
+  #
+  #
+  # @param ao_cluster [ActivityOfferingCluster]
   def add_ao_cluster(ao_cluster)
     ao_cluster.create
     @activity_offering_cluster_list << ao_cluster
   end
 
+  # delete an ao_cluster from the CourseOffering
+  # @example
+  #  @course_offering.delete_ao_cluster(ao_cluster_object)
+  #
+  #
+  # @param ao_cluster [ActivityOfferingCluster]
   def delete_ao_cluster(ao_cluster)
     ao_cluster.delete
     @activity_offering_cluster_list.delete(get_cluster_obj_by_private_name(ao_cluster.private_name))
   end
 
+  # delete an ao_cluster from the CourseOffering
+  # @example
+  #  @course_offering.get_cluster_obj_by_private_name(cluster_private_name)
+  #
+  #
+  # @param cluster_private_name [String]
+  # @returns  ActivityOfferingCluster object
   def get_cluster_obj_by_private_name(cluster_private_name)
     return @activity_offering_cluster_list[0] unless cluster_private_name != :default_cluster
     @activity_offering_cluster_list.select {|cluster| cluster.private_name == cluster_private_name}[0]
@@ -777,6 +874,8 @@ class CourseOffering
   end
   private :create_co_copy
 
+
+  #TODO:  see  KSENROLL-7232, need to be fixed with delete_co.feature refactoring - add rdoc when complete
   def total_co_list(course_code)
     go_to_manage_course_offerings
     on ManageCourseOfferings do |page|
@@ -787,10 +886,14 @@ class CourseOffering
     on(ManageCourseOfferingList).co_list
   end
 
-  # deletes CO from the subject-code view using the toolbar
+  # deletes a list of COs from the subject-code view using the toolbar
   #
-  # @param opts [Hash] {:should_confirm_delete => false}
-  def delete_co(opts={})
+  # @example
+  #   @course_offering.delete_co_list :code_list => ["ENGL222, ..."]
+  #
+  # @param opts [Hash] {:should_confirm_delete => false (default is true), :code_list => ["ENGL222, ..."]}
+  # @returns delete confirmation/warning message
+  def delete_co_list(opts={})
     defaults = {
         :should_confirm_delete => true
     }
@@ -801,13 +904,17 @@ class CourseOffering
       page.select_cos(co_code_list)
       page.delete_cos
     end
+
+    confirmation_message = ""
     on DeleteCourseOffering do |page|
+      confirmation_message = page.delete_warning_message
       if opts[:should_confirm_delete]
         page.confirm_delete
       else
         page.cancel_delete
       end
     end
+    confirmation_message
   end
 
   # deletes CO from the single-CO view using the link
@@ -831,27 +938,29 @@ class CourseOffering
     end
   end
 
-  def delete_co_warning_message(args={})
 
-    co_code_list = args[:code_list]
-    on ManageCourseOfferingList do |page|
-      page.select_cos(co_code_list)
-      page.delete_cos
-    end
-    on DeleteCourseOffering do |page|
-      delete_warning = page.delete_warning_message
-      page.cancel_delete
-      return delete_warning
-    end
-  end
+  # merged with delete_co
+  #def delete_co_warning_message(args={})
+  #
+  #  co_code_list = args[:code_list]
+  #  on ManageCourseOfferingList do |page|
+  #    page.select_cos(co_code_list)
+  #    page.delete_cos
+  #  end
+  #  on DeleteCourseOffering do |page|
+  #    delete_warning = page.delete_warning_message
+  #    page.cancel_delete
+  #    return delete_warning
+  #  end
+  #end
 
   def full_ao_list
     #TODO - required for existing validations
   end
 
+  #TODO - this method is not used
   def reset_ao_clusters
     #move all aos back first cluster - NB init_existing needs to be run first
-
     @activity_offering_cluster_list[1..-1].each do |cluster|
       puts "reset cluster name: #{cluster.private_name}"
       cluster.move_all_aos_to_another_cluster(@activity_offering_cluster_list[0])

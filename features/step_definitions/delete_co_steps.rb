@@ -7,7 +7,7 @@ end
 And /^I cancel the deletion of a Course Offering in Course Offering Code view$/ do
 
   @course_offering.search_by_subjectcode
-  @course_offering.delete_co :code_list => [@course_offering.course], :should_confirm_delete=>false
+  @course_offering.delete_co_list :code_list => [@course_offering.course], :should_confirm_delete=>false
 end
 
 And /^the Course Offering is not deleted$/ do
@@ -21,7 +21,7 @@ end
 And /^I delete this Course Offering$/ do
   @course_offering.search_by_subjectcode
   #delete
-  @course_offering.delete_co :code_list => [@course_offering.course], :should_confirm_delete=>true
+  @course_offering.delete_co_list :code_list => [@course_offering.course], :should_confirm_delete=>true
 end
 
 
@@ -57,7 +57,7 @@ end
 
 And /^I cancel the deletion of the Course Offerings in Course Offering Code view$/ do
   @course_offering_ENGL250.search_by_subjectcode
-  @course_offering_ENGL250.delete_co :code_list => @co_code_list, :should_confirm_delete=>false
+  @course_offering_ENGL250.delete_co_list :code_list => @co_code_list, :should_confirm_delete=>false
 end
 
 And /^the Course Offerings are not deleted$/ do
@@ -66,7 +66,7 @@ end
 
 And /^I delete these Course Offerings$/ do
   @course_offering_ENGL250.search_by_subjectcode
-  @course_offering_ENGL250.delete_co :code_list => @co_code_list, :should_confirm_delete=>true
+  @course_offering_ENGL250.delete_co_list :code_list => @co_code_list, :should_confirm_delete=>true
 end
 
 

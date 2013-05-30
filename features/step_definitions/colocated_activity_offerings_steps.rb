@@ -83,12 +83,6 @@ And /^I delete the fully colocated AO$/ do
 end
 
 Then /^The AO is successfully deleted$/ do
-puts 'here'
-puts @activity_offering.code
-puts @activity_offering.parent_course_offering
-puts @activity_offering.parent_course_offering.course
-puts 'continuing...'
-
   @activity_offering.parent_course_offering.manage
   begin
     on(ManageCourseOfferings).codes_list # this line is broken
