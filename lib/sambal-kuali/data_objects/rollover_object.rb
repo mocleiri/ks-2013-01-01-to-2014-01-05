@@ -80,6 +80,7 @@ class Rollover
       page.term.set @target_term
       page.go
       poll_ctr = 0
+      actual_status = ""
       actual_status = page.completed_status unless !page.completed_status_element.exists?
 
       while actual_status.upcase != "COMPLETE" and poll_ctr < 160     #will wait 80 mins
