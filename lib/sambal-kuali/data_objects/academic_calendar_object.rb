@@ -255,8 +255,8 @@ class KeyDate
         end_time: "05:00",
         start_time_ampm: "am",
         end_time_ampm: "pm",
-        all_day: false,
-        date_range: true,
+        all_day: true,
+        date_range: false,
         term_index: 0,
         key_date_group: 0
     }
@@ -270,14 +270,13 @@ class KeyDate
     on AcademicTermPage do |page|
       page.key_date_dropdown_addline(@term_index,0).select @key_date_type
       page.key_date_start_date_addline(@term_index,0).set @start_date
-      page.key_date_end_date_addline(@term_index,0).set @end_date
       page.key_date_allday_addline(@term_index,0).set @all_day
       page.key_date_daterange_addline(@term_index,0).set @date_range
 
+      page.key_date_end_date_addline(@term_index,0).set @end_date if @date_range
+
       page.key_date_add(@term_index,0)
-
       page.make_term_official(@term_index)
-
     end
 
   end
@@ -299,13 +298,6 @@ class KeyDate
       end
     end
 
-    if options[:end_date] != nil
-      on AcademicTermPage  do |page|
-        page.key_date_end_date_edit(@term_index,@key_date_group,0).set options[:end_date]
-        @end_date = options[:end_date]
-      end
-    end
-
     if options[:all_day] != nil
       on AcademicTermPage  do |page|
         page.key_date_allday_edit(@term_index,@key_date_group,0).set options[:all_day]
@@ -317,6 +309,13 @@ class KeyDate
       on AcademicTermPage  do |page|
         page.key_date_daterange_edit(@term_index,@key_date_group,0).set options[:date_range]
         @date_range = options[:date_range]
+      end
+    end
+
+    if options[:end_date] != nil
+      on AcademicTermPage  do |page|
+        page.key_date_end_date_edit(@term_index,@key_date_group,0).set options[:end_date] if @date_range
+        @end_date = options[:end_date]
       end
     end
 

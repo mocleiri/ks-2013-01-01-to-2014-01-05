@@ -40,9 +40,9 @@ Given /^It is "Before" the first day of classes and "Before" the first day to ad
 
     if page.key_date_exist(@tindex,1,0) and page.key_date_type(@tindex,1,0) == "Registration Period 1"
       @keydate2 = make KeyDate
-      @keydate2.edit :key_date_type => "Registration Period 1", :start_date => (Date.today + 1).strftime("%m/%d/%Y"), :end_date=>(Date.today + 4).strftime("%m/%d/%Y"), :term_index=> @tindex, :key_date_group=> 1
+      @keydate2.edit :key_date_type => "Registration Period 1", :start_date => (Date.today + 1).strftime("%m/%d/%Y"), :end_date=>(Date.today + 4).strftime("%m/%d/%Y"), :term_index=> @tindex, :key_date_group=> 1, :date_range => true
     else
-      @keydate2 = make KeyDate, :key_date_type => "Registration Period 1", :start_date => (Date.today + 1).strftime("%m/%d/%Y"), :end_date=>(Date.today + 4).strftime("%m/%d/%Y"), :term_index=> @tindex
+      @keydate2 = make KeyDate, :key_date_type => "Registration Period 1", :start_date => (Date.today + 1).strftime("%m/%d/%Y"), :end_date=>(Date.today + 4).strftime("%m/%d/%Y"), :term_index=> @tindex, :date_range => true
       @keydategroup = make KeyDateGroup,:key_date_group_type=> "Registration", :key_dates=>Array.new(1){@keydate2}, :term_index=> @tindex
       @keydategroup.create
     end

@@ -588,11 +588,11 @@ class CourseOffering
         if page.delete_aos_button.enabled?
           page.delete_aos
           on ActivityOfferingConfirmDelete do |page|
-            delete_present = page.delete_activity_offering_button.present?
+            @delete_present = page.delete_activity_offering_button.present?
             page.cancel
-            page.deselect_ao(ao)
-            return delete_present
           end
+          page.deselect_ao(ao)
+          return @delete_present
         else
           page.deselect_ao(ao)
           return false
@@ -607,11 +607,11 @@ class CourseOffering
         if page.delete_aos_button.enabled?
           page.delete_aos
           on ActivityOfferingConfirmDelete do |page|
-            delete_present = page.delete_activity_offering_button.present?
+            @delete_present = page.delete_activity_offering_button.present?
             page.cancel
-            page.deselect_ao(new_ao)
-            return delete_present
           end
+          page.deselect_ao(new_ao)
+          return @delete_present
         else
           page.deselect_ao(new_ao)
           return false
