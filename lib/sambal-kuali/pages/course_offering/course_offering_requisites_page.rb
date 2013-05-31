@@ -30,6 +30,8 @@ class CourseOfferingRequisites < BasePage
   element(:rule_add_link) { |b| b.frm.a(:text => /Add Rule/)}
   action(:rule_add) { |b| b.rule_add_link.click; b.loading.wait_while_present }
 
+  element(:compare_section) { |b| b.frm.div(id: "compareRuleLightBox")}
+
   element(:submit_btn) { |b| b.frm.button(:text => /submit/)}
   action(:submit) { |b| b.submit_btn.click; b.loading.wait_while_present }
   element(:cancel_btn) { |b| b.frm.a(:text => /cancel/)}

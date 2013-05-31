@@ -73,12 +73,12 @@ class ManageCORequisitesData
     end
   end
 
-  def create_data_advanced_search( sect, course)
+  def create_data_advanced_search( sect, term, course)
     sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
                 "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
                 "Repeatable for Credit"=>:repeatable_credit, "Course that Restricts Credits"=>:resctricted_credit}
 
-    @course_offering = make CourseOffering, {:course => course, :term => "201301"}
+    @course_offering = make CourseOffering, {:course => course, :term => term}
     @course_offering.manage
 
     on ManageCourseOfferings do |page|
@@ -119,7 +119,6 @@ class ManageCORequisitesData
         page.edit_loading.wait_while_present
         page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_2_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_loading.wait_while_present
-        sleep 20
         page.update_rule_btn
       end
 
@@ -134,6 +133,60 @@ class ManageCORequisitesData
       on CourseOfferingRequisites do |page|
         page.send(sections[sect])
       end
+    end
+  end
+
+  def edit_data_advanced_search( sect, term, course)
+    sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
+                "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
+                "Repeatable for Credit"=>:repeatable_credit, "Course that Restricts Credits"=>:resctricted_credit}
+
+    @course_offering = make CourseOffering, {:course => course, :term => term}
+    @course_offering.manage
+
+    on ManageCourseOfferings do |page|
+      page.manage_course_offering_requisites
+    end
+
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      page.send(sections[sect])
+      page.rule_edit
+    end
+
+    on ManageCORequisites do |page|
+      page.edit_tree_section.span(:text => /.*C\..*/).when_present.click
+      page.add_btn
+      create_course_rule( "ENGL101", sect)
+      page.group_btn
+      create_text_rule( "free form text input value")
+      page.edit_tree_section.span(:text => /.*B\..*/).when_present.click
+      page.group_btn
+      create_all_courses_rule(  ["ENGL478", "HIST416"], sect)
+      page.add_btn
+      create_text_rule( "Text")
+      page.edit_tree_section.span(:text => /.*F\..*/).when_present.click
+      page.group_btn
+      create_number_courses_rule( ["HIST395", "HIST210"], sect)
+      page.loading.wait_while_present
+      page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "AND"
+      page.edit_loading.wait_while_present
+      page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
+      page.edit_loading.wait_while_present
+      sleep 30
+      page.update_rule_btn
+    end
+
+    on CourseOfferingRequisites do |page|
+      page.submit
+    end
+
+    on ManageCourseOfferings do |page|
+      page.manage_course_offering_requisites
+    end
+
+    on CourseOfferingRequisites do |page|
+      page.send(sections[sect])
     end
   end
 

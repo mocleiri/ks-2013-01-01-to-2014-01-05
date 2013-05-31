@@ -284,14 +284,14 @@ Then /^the old and new rule should be compared$/ do
   end
 end
 
-When /^I set up the data for "(.*?)" for the course "(.*?)" with Advanced Search$/ do |section, course|
+When /^I set up the data for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |section, term, course|
   @manageCOR = make ManageCORequisitesData
-  @manageCOR.create_data_advanced_search(section, course)
+  @manageCOR.create_data_advanced_search(section, term, course)
 end
 
-When /^I navigate to the agenda page for "(.*?)"$/ do |course|
+When /^I navigate to the agenda page for term "(.*?)" and course "(.*?)"$/ do |term, course|
   @manageCOR = make ManageCORequisitesData
-  @course_offering = make CourseOffering, {:course => course, :term => "201301"}
+  @course_offering = make CourseOffering, {:course => course, :term => term}
   @course_offering.manage
 end
 
@@ -301,7 +301,7 @@ When /^I want to wait$/ do
   end
 end
 
-Then /^the "(.*?)" link should exist on the Manage CO Agendas page$/ do |link|
+Then /^the "(.*?)" link should exist on the Course Offering Requisites page$/ do |link|
   on CourseOfferingRequisites do |page|
     if page.agenda_management_section.a(:text => /#{Regexp.escape(link)}/).exists?
       true
@@ -311,8 +311,19 @@ Then /^the "(.*?)" link should exist on the Manage CO Agendas page$/ do |link|
   end
 end
 
-And /^I click the Manage Course Offering Requisites link$/ do
+When /^I click the Manage Course Offering Requisites link$/ do
   on ManageCourseOfferings do |page|
     page.manage_course_offering_requisites
   end
+end
+
+Then /^the CO and CLU should both have text "(.*?)"/ do |text|
+  on CourseOfferingRequisites do |page|
+    #page.
+  end
+end
+
+When /^I edit the existing data for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |section, term, course|
+  @manageCOR = make ManageCORequisitesData
+  @manageCOR.edit_data_advanced_search(section, term, course)
 end
