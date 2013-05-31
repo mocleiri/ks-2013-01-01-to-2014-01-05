@@ -392,6 +392,25 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     }
 
     /**
+     * Retrieves the RateCatalog instance specified by Rate ID from the persistence store.
+     *
+     * @param rateId Rate ID
+     * @return RateCatalog instance
+     */
+    @Override
+    public RateCatalog getRateCatalogByRateId(Long rateId) {
+        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
+        Query query = em.createQuery("select rca.rateCatalog from RateCatalogAtp rca, Rate r " +
+                " inner join fetch rca.rateCatalog rc " +
+                " left outer join fetch rc.rateType rt " +
+                " left outer join fetch rc.keyPairs kp " +
+                " where rca.id = r.rateCatalogAtp.id and rate.id = :rateId");
+        query.setParameter("rateId", rateId);
+        List<RateCatalog> results = query.getResultList();
+        return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+    }
+
+    /**
      * Retrieves the RateCatalog instance specified by code and ATP ID from the persistence store.
      *
      * @param rateCatalogCode RateCatalog code
@@ -564,6 +583,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         rate.setCode(rateCode);
         rate.setName(rateName);
         rate.setRateType(rateCatalog.getRateType());
+        rate.setTransactionTypeId(transactionTypeId);
         rate.setRateCatalogAtp(rateCatalogAtp);
         rate.setAtpId(atpId);
         rate.setTransactionDate(transactionDate);
@@ -610,23 +630,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         rateAmount.setRate(rate);
 
         return rate;
-    }
-
-    /**
-     * Creates a new Rate instance and persists it in the database.
-     *
-     * @param rate Rate instance
-     * @return Rate instance with the new ID
-     */
-    @Override
-    @Transactional(readOnly = false)
-    public Rate createRate(Rate rate) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_RATE);
-
-        // TODO
-
-        return null;
     }
 
     /**
@@ -712,6 +715,20 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         PermissionUtils.checkPermission(Permission.READ_RATE);
         Query query = em.createQuery(GET_RATE_JOIN + " where rca.id.atpId = :atpId");
         query.setParameter("atpId", atpId);
+        return query.getResultList();
+    }
+
+    /**
+     * Returns the list of rates by RateCatalog ID.
+     *
+     * @param rateCatalogId Rate catalog ID
+     * @return a list of Rate instances
+     */
+    @Override
+    public List<Rate> getRatesByCatalogId(Long rateCatalogId) {
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+        Query query = em.createQuery(GET_RATE_JOIN + " where rca.rateCatalog.id = :rateCatalogId");
+        query.setParameter("rateCatalogId", rateCatalogId);
         return query.getResultList();
     }
 
@@ -1046,7 +1063,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             }
 
             if (rateCatalog.isAmountFinal() && !rate.isAmountFinal()) {
-                String errMsg = "Rate's amount must be final as forced by RateCatalog";
+                String errMsg = "Rate's amount must be final as dictated by RateCatalog";
                 logger.error(errMsg);
                 throw new InvalidRateException(errMsg);
             }
@@ -1325,6 +1342,14 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         rateCatalog.setKeyPairs(catalogKeyPairs);
 
+        // Adding the key pair to all dependent rates
+        List<Rate> rates = getRatesByCatalogId(rateCatalogId);
+        if (CollectionUtils.isNotEmpty(rates)) {
+            for (Rate rate : rates) {
+                addKeyPairToRate(key, value, rate.getId(), false);
+            }
+        }
+
         return rateCatalog;
     }
 
@@ -1349,9 +1374,123 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new InvalidRateCatalogException(errMsg);
         }
 
+        Set<KeyPair> catalogKeyPairs = rateCatalog.getKeyPairs();
 
-        // TODO
-        return null;
+        if (CollectionUtils.isNotEmpty(catalogKeyPairs)) {
+            for (KeyPair keyPair : new HashSet<KeyPair>(catalogKeyPairs)) {
+                if (keyPair.getKey().equals(key)) {
+                    catalogKeyPairs.remove(keyPair);
+                    deleteEntity(keyPair.getId(), KeyPair.class);
+                }
+            }
+        }
+
+        // Removing the key pair from all dependent rates
+        List<Rate> rates = getRatesByCatalogId(rateCatalogId);
+        if (CollectionUtils.isNotEmpty(rates)) {
+            for (Rate rate : rates) {
+                removeKeyPairFromRate(key, rate.getId(), false);
+            }
+        }
+
+        return rateCatalog;
+    }
+
+    protected Rate addKeyPairToRate(String key, String value, Long rateId, boolean checkRestrictions) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_RATE);
+
+        if (checkRestrictions) {
+
+            RateCatalog rateCatalog = getRateCatalogByRateId(rateId);
+            if (rateCatalog == null) {
+                String errMsg = "Rate (ID=" + rateId + ") is not associated with any RateCatalog";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+
+            if (rateCatalog.isKeyPairFinal()) {
+                String errMsg = "Rate's set of key pairs cannot be modified";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+        }
+
+        Rate rate = getRate(rateId);
+
+        if (rate == null) {
+            String errMsg = "Rate with ID = " + rateId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        KeyPair newKeyPair = new KeyPair(key, value);
+
+        Set<KeyPair> rateKeyPairs = rate.getKeyPairs();
+
+        persistEntity(newKeyPair);
+
+        if (rateKeyPairs == null) {
+            rateKeyPairs = new HashSet<KeyPair>();
+        }
+
+        rateKeyPairs.add(newKeyPair);
+
+        rate.setKeyPairs(rateKeyPairs);
+
+        return rate;
+
+    }
+
+    protected Rate removeKeyPairFromRate(String key, Long rateId, boolean checkRestrictions) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_RATE);
+
+        Rate rate = getRate(rateId);
+
+        if (rate == null) {
+            String errMsg = "Rate with ID = " + rateId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        Set<KeyPair> rateKeyPairs = rate.getKeyPairs();
+
+        boolean keyPairExists = false;
+        if (CollectionUtils.isNotEmpty(rateKeyPairs)) {
+            for (KeyPair keyPair : new HashSet<KeyPair>(rateKeyPairs)) {
+                if (keyPair.getKey().equals(key)) {
+                    rateKeyPairs.remove(keyPair);
+                    if (!keyPairExists) {
+                        keyPairExists = true;
+                    }
+                }
+            }
+        }
+
+        if (checkRestrictions) {
+
+            if (!keyPairExists) {
+                String errMsg = "KeyPair (key=" + key + ") does not exist in Rate (ID=" + rateId + ")";
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+
+            RateCatalog rateCatalog = getRateCatalogByRateId(rateId);
+            if (rateCatalog == null) {
+                String errMsg = "Rate (ID=" + rateId + ") is not associated with any RateCatalog";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+
+            if (rateCatalog.isKeyPairFinal()) {
+                String errMsg = "Rate's set of key pairs cannot be modified";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+        }
+
+        return rate;
     }
 
     /**
@@ -1365,8 +1504,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     @Transactional(readOnly = false)
     public Rate addKeyPairToRate(String key, String value, Long rateId) {
-        // TODO
-        return null;
+        return addKeyPairToRate(key, value, rateId, true);
     }
 
     /**
@@ -1379,8 +1517,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     @Transactional(readOnly = false)
     public Rate removeKeyPairFromRate(String key, Long rateId) {
-        // TODO
-        return null;
+        return removeKeyPairFromRate(key, rateId, true);
     }
 
 }

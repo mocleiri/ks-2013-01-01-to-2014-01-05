@@ -162,6 +162,14 @@ public interface RateService {
     RateCatalog getRateCatalog(Long rateCatalogId);
 
     /**
+     * Retrieves the RateCatalog instance specified by Rate ID from the persistence store.
+     *
+     * @param rateId Rate ID
+     * @return RateCatalog instance
+     */
+    RateCatalog getRateCatalogByRateId(Long rateId);
+
+    /**
      * Retrieves the RateCatalog instance specified by code and ATP ID from the persistence store.
      *
      * @param rateCatalogCode RateCatalog code
@@ -236,14 +244,6 @@ public interface RateService {
                     boolean isAmountFinal);
 
     /**
-     * Creates a new Rate instance and persists it in the database.
-     *
-     * @param rate Rate instance
-     * @return Rate instance with the new ID
-     */
-    Rate createRate(Rate rate);
-
-    /**
      * Persists the Rate instance in the database.
      *
      * @param rate Rate instance
@@ -290,6 +290,14 @@ public interface RateService {
      * @return a list of Rate instances
      */
     List<Rate> getRatesByAtpId(String atpId);
+
+    /**
+     * Returns the list of rates by RateCatalog ID.
+     *
+     * @param rateCatalogId Rate catalog ID
+     * @return a list of Rate instances
+     */
+    List<Rate> getRatesByCatalogId(Long rateCatalogId);
 
     /**
      * Returns the list of rates by name pattern.

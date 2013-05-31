@@ -1,11 +1,10 @@
 package com.sigmasys.kuali.ksa.service;
 
 
-import com.sigmasys.kuali.ksa.model.fm.KeyPair;
-import com.sigmasys.kuali.ksa.model.fm.RateCatalog;
-import com.sigmasys.kuali.ksa.model.fm.RateType;
-import com.sigmasys.kuali.ksa.model.fm.TransactionDateType;
+import com.sigmasys.kuali.ksa.model.Constants;
+import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +14,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -91,6 +92,68 @@ public class RateServiceTest extends AbstractServiceTest {
 
     }
 
+    private Rate _createRate(String rateCode, String rateCatalogCode) throws Exception {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
+
+        Date transactionDate = dateFormat.parse("05/23/2012");
+        Date recognitionDate = null;
+
+        String rateName = rateCode + " name";
+        String transactionTypeId = "cash";
+        String amountTransactionTypeId = "cash";
+        TransactionDateType dateType = TransactionDateType.ALWAYS;
+        BigDecimal cappedAmount = new BigDecimal(7776000.1111);
+        BigDecimal rateAmount = new BigDecimal(200.88);
+
+        String atpId = "19874";
+
+        Rate rate = rateService.createRate(rateCode, rateName, rateCatalogCode, transactionTypeId,
+                amountTransactionTypeId, dateType, rateAmount, cappedAmount, transactionDate, recognitionDate, atpId,
+                false, false);
+
+        Assert.notNull(rate);
+        Assert.notNull(rate.getId());
+        Assert.notNull(rate.getAtpId());
+        Assert.notNull(rate.getCode());
+        Assert.notNull(rate.getRateCatalogAtp());
+
+        RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+        Assert.notNull(rateCatalog);
+        Assert.notNull(rate.getRateCatalogAtp().getId());
+        Assert.isTrue(rateCatalogCode.equals(rateCatalog.getCode()));
+        Assert.isTrue(rateCatalogCode.equals(rate.getRateCatalogAtp().getId().getCode()));
+        Assert.notNull(rate.getDefaultRateAmount());
+        Assert.notNull(rate.getDefaultRateAmount().getAmount());
+        Assert.isTrue(rate.getDefaultRateAmount().getAmount().compareTo(rateAmount) == 0);
+        Assert.notNull(rate.getKeyPairs());
+        Assert.notEmpty(rate.getKeyPairs());
+        Assert.notNull(rate.getTransactionDateType());
+        Assert.notNull(rate.getTransactionTypeId());
+
+        if (!rateCatalog.isRecognitionDateDefinable()) {
+            Assert.isNull(rate.getRecognitionDate());
+        }
+
+        if (rateCatalog.isTransactionDateTypeFinal()) {
+            Assert.isTrue(rate.getTransactionDateType() == rateCatalog.getTransactionDateType());
+        }
+
+        if (rateCatalog.isTransactionTypeFinal()) {
+            Assert.isTrue(rate.getTransactionTypeId().equals(rateCatalog.getTransactionTypeId()));
+        }
+
+        if (rateCatalog.getKeyPairs() != null && rateCatalog.isKeyPairFinal()) {
+            Assert.isTrue(CollectionUtils.isEqualCollection(rate.getKeyPairs(), rateCatalog.getKeyPairs()));
+        }
+
+        Assert.isTrue(!rateCatalog.isAmountFinal() || (rateCatalog.isAmountFinal() && rate.isAmountFinal()));
+
+        return rate;
+
+    }
+
     @Test
     public void createRateType() {
         _createRateType("RT_2013_1", "RateType_2013_1", "2013 Rate type description");
@@ -141,5 +204,18 @@ public class RateServiceTest extends AbstractServiceTest {
 
         Assert.isNull(rateCatalog);
     }
+
+    @Test
+    public void creteRate() throws Exception {
+
+        String rateCatalogCode = "RC_2013";
+
+        _createRateCatalog(rateCatalogCode);
+
+        String rateCode = "R_2013";
+
+        _createRate(rateCode, rateCatalogCode);
+    }
+
 
 }
