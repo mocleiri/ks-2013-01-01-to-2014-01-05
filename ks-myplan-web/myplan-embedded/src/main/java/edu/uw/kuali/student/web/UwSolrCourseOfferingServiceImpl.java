@@ -1,7 +1,7 @@
-package edu.uw.kuali.student.service.impl;
+package edu.uw.kuali.student.web;
 
 import edu.uw.kuali.student.lib.client.studentservice.ServiceException;
-import edu.uw.kuali.student.lib.client.studentservice.SolrSeviceClient;
+import edu.uw.kuali.student.web.SolrSeviceClient;
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
 import edu.uw.kuali.student.myplan.util.CourseOfferingServiceUtils;
 import org.apache.log4j.Logger;

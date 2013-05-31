@@ -1,4 +1,6 @@
-package edu.uw.kuali.student.lib.client.studentservice;
+package edu.uw.kuali.student.web;
+
+import edu.uw.kuali.student.lib.client.studentservice.ServiceException;
 
 import java.util.List;
 

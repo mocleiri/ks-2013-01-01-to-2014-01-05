@@ -1,5 +1,6 @@
-package edu.uw.kuali.student.lib.client.studentservice;
+package edu.uw.kuali.student.web;
 
+import edu.uw.kuali.student.lib.client.studentservice.ServiceException;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
