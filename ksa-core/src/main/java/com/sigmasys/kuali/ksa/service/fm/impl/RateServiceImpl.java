@@ -400,11 +400,10 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     public RateCatalog getRateCatalogByRateId(Long rateId) {
         PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
-        Query query = em.createQuery("select rca.rateCatalog from RateCatalogAtp rca, Rate r " +
-                " inner join fetch rca.rateCatalog rc " +
+        Query query = em.createQuery("select rc from RateCatalog rc, RateCatalogAtp rca, Rate r " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
-                " where rca.id = r.rateCatalogAtp.id and rate.id = :rateId");
+                " where rc.id = rca.rateCatalog.id and rca.id = r.rateCatalogAtp.id and r.id = :rateId");
         query.setParameter("rateId", rateId);
         List<RateCatalog> results = query.getResultList();
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
@@ -420,11 +419,10 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     public RateCatalog getRateCatalogByCodeAndAtpId(String rateCatalogCode, String atpId) {
         PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
-        Query query = em.createQuery("select rca.rateCatalog from RateCatalogAtp rca " +
-                " inner join fetch rca.rateCatalog rc " +
+        Query query = em.createQuery("select rc from RateCatalog rc, RateCatalogAtp rca " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
-                " where rca.id = :id");
+                " where rca.id = :id and rc.id = rca.rateCatalog.id");
         query.setParameter("id", new RateCatalogAtpId(rateCatalogCode, atpId));
         List<RateCatalog> results = query.getResultList();
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
@@ -456,11 +454,10 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     public List<RateCatalog> getRateCatalogsByAtpId(String atpId) {
         PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
-        Query query = em.createQuery("select rca.rateCatalog from RateCatalogAtp rca " +
-                " inner join fetch rca.rateCatalog rc " +
+        Query query = em.createQuery("select rc from RateCatalog rc, RateCatalogAtp rca " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
-                " where rca.id.atpId = :atpId");
+                " where rca.id.atpId = :atpId and rc.id = rca.rateCatalog.id");
         query.setParameter("atpId", atpId);
         return query.getResultList();
     }

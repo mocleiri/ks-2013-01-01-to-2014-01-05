@@ -217,5 +217,62 @@ public class RateServiceTest extends AbstractServiceTest {
         _createRate(rateCode, rateCatalogCode);
     }
 
+    @Test
+    public void assignAtpsToRateCatalog() {
+
+        String rateCatalogCode = "RC_2013";
+
+        String[] atpIds = {"19875", "19876", "19877"};
+
+        RateCatalog rateCatalog = _createRateCatalog(rateCatalogCode);
+
+        rateCatalog = rateService.assignAtpsToRateCatalog(rateCatalog.getId(), atpIds);
+
+        Assert.notNull(rateCatalog);
+
+        for (String atpId : atpIds) {
+
+            RateCatalog rateCatalog1 = rateService.getRateCatalogByCodeAndAtpId(rateCatalogCode, atpId);
+
+            Assert.notNull(rateCatalog1);
+
+            Assert.isTrue(rateCatalog1.getId().equals(rateCatalog.getId()));
+        }
+
+
+        Set<String> atpIdSet = rateService.getAtpsForRateCatalog(rateCatalog.getId());
+
+        Assert.notNull(atpIdSet);
+        Assert.notEmpty(atpIdSet);
+
+        Assert.isTrue(atpIdSet.containsAll(Arrays.asList(atpIds)));
+
+    }
+
+    @Test
+    public void addKeyPairToRate() throws Exception {
+
+        String rateCatalogCode = "RC_2013";
+
+        _createRateCatalog(rateCatalogCode);
+
+        String rateCode = "R_2013";
+
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        Assert.notNull(rate);
+        Assert.notNull(rate.getId());
+
+        rate = rateService.addKeyPairToRate("key_45", "value_45", rate.getId());
+
+        Set<KeyPair> keyPairs = rate.getKeyPairs();
+
+        Assert.notNull(keyPairs);
+        Assert.notEmpty(keyPairs);
+
+        Assert.isTrue(keyPairs.contains(new KeyPair("key_45", "value_45")));
+
+    }
+
 
 }
