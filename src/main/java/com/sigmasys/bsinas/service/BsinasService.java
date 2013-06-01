@@ -15,5 +15,7 @@ public interface BsinasService {
      */
     String runEngine(String inputXml, int awardYear);
 
+    String runDispatchEngine(String inputXml);
+
 
 }

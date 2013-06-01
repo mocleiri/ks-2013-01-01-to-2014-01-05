@@ -22,12 +22,20 @@ import java.util.GregorianCalendar;
 @Transactional
 public class BsinasEngineTest extends AbstractServiceTest {
 
+    private static final String DEFAULT_REQUEST_2012 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<needAnalysisInput CreatedDate=\"2012-10-23\" AwardYear=\"2012\" xmlns=\"http://INAS.collegeboard.org/2012/Input/\">\n" +
+            "</needAnalysisInput>\n";
+
+    private static final String DEFAULT_REQUEST_2013 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<needAnalysisInput CreatedDate=\"2013-05-23\" AwardYear=\"2013\" xmlns=\"http://INAS.collegeboard.org/2013/Input/\">\n" +
+            "</needAnalysisInput>\n";
+
     @Autowired
     private BsinasService bsinasService;
 
 
     @Test
-    public void runEngine1() throws Exception {
+    public void runEngine() throws Exception {
 
         // TODO -> add tests
 
@@ -49,4 +57,12 @@ public class BsinasEngineTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void runDispatchEngine() throws Exception {
+
+        String response = bsinasService.runDispatchEngine(DEFAULT_REQUEST_2012);
+
+        logger.info("Engine response:\n" + response);
+
+    }
 }
