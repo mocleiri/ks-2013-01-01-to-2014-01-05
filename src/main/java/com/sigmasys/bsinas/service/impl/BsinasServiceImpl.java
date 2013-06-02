@@ -68,7 +68,7 @@ public class BsinasServiceImpl extends GenericPersistenceService implements Bsin
             documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
             transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
             messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
