@@ -10,12 +10,8 @@ public interface BsinasService {
      * Runs NeedAnalysisXmlEngine and returns the result.
      *
      * @param inputXml NeedAnalysisInput's XML representation
-     * @param awardYear Award Year
      * @return NeedAnalysisOutput's XML representation
      */
-    String runEngine(String inputXml, int awardYear);
-
-    String runDispatchEngine(String inputXml);
-
+    String runEngine(String inputXml);
 
 }

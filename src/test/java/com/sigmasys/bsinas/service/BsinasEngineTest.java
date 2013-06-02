@@ -60,7 +60,7 @@ public class BsinasEngineTest extends AbstractServiceTest {
     @Test
     public void runDispatchEngine() throws Exception {
 
-        String response = bsinasService.runDispatchEngine(DEFAULT_REQUEST_2012);
+        String response = bsinasService.runEngine(DEFAULT_REQUEST_2012);
 
         logger.info("Engine response:\n" + response);
 

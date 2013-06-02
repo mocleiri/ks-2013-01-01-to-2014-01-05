@@ -32,7 +32,7 @@ public class GwtBsinasServiceImpl extends AbstractRemoteService implements GwtBs
     @Override
     public String runEngine(String inputXml, int year) throws GwtError {
         try {
-            return bsinasService.runEngine(inputXml, year);
+            return bsinasService.runEngine(inputXml);
         } catch (Throwable t) {
             logger.error(t.getMessage(), t);
             throw new GwtError(ErrorUtils.getMessage(t));
