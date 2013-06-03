@@ -69,7 +69,7 @@ And /^I delete the AO with Draft state$/ do
   @ao_code_list = [@course_offering.activity_offering_cluster_list[0].ao_list[new_total-1].code]
   confirm_message = @course_offering.delete_ao_list :code_list =>  @ao_code_list
   expect_result = "Crosslisted as: WMST255"
-  message_text = confirm_message.text
+  message_text = confirm_message
   cross_listed_in_page = message_text.include? expect_result
   cross_listed_in_page.should == true
   #@course_offering.manage_and_init
