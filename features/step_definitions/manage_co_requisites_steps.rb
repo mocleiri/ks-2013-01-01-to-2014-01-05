@@ -116,6 +116,13 @@ Then /^the text "(.*)" should be present in the text area$/ do |text|
   end
 end
 
+Then /^there should be no text in the text area$/ do
+  on ManageCORequisites do |page|
+    page.edit_loading.wait_while_present
+    page.logic_text.text.should == ""
+  end
+end
+
 Then /^the "(.*?)" preview section should have the text "(.*)"$/ do |section,text|
   @manageCOR.test_multiline_text(section, text, true)
 end
@@ -257,6 +264,9 @@ When /^I navigate to the agenda page for term "(.*?)" and course "(.*?)"$/ do |t
   @manageCOR = make ManageCORequisitesData
   @course_offering = make CourseOffering, {:course => course, :term => term}
   @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.manage_course_offering_requisites
+  end
 end
 
 When /^I want to wait$/ do 
@@ -297,8 +307,51 @@ When /^I edit the existing data for "(.*?)" for term "(.*?)" and course "(.*?)"$
 end
 
 Then /^the info message "(.*?)" should be present$/ do |mess|
-  sleep 20
   on ManageCORequisites do |page|
     page.info_message.text.should match /#{Regexp.escape(mess)}/
+  end
+end
+
+When /^I want to edit the "(.*?)" section$/ do |sect|
+  sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
+              "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
+              "Repeatable for Credit"=>:repeatable_credit, "Course that Restricts Credits"=>:resctricted_credit}
+  on CourseOfferingRequisites do |page|
+    page.loading.wait_while_present
+    page.send(sections[sect])
+    page.rule_edit
+  end
+end
+
+When /^I delete node "(.*?)" in the tree$/ do |node|
+  on ManageCORequisites do |page|
+    page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+    page.del_btn
+  end
+end
+
+When /^I commit changes made to the proposition and return to see the changes$/ do
+  on ManageCORequisites do |page|
+    page.update_rule_btn
+  end
+  on CourseOfferingRequisites do |page|
+    page.submit
+  end
+  on ManageCourseOfferings do |page|
+    page.manage_course_offering_requisites
+  end
+end
+
+Then /^the tree for "(.*?)" should be empty$/ do |sect|
+  sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq_section, "Antirequisite"=>:antirequisite_section,
+                      "Corequisite"=>:corequisite_section, "Recommended Preparation"=>:recommended_prep_section,
+                      "Repeatable for Credit"=>:repeatable_credit_section, "Course that Restricts Credits"=>:resctricted_credit_section}
+
+  on CourseOfferingRequisites do |page|
+    page.loading.wait_while_present
+    if( page.send(sections[sect]).element(:tag_name, 'img').attribute_value('alt') != "expand")
+      page.send(sections[sect]).when_present.click
+    end
+    page.agenda_management_section.text.should match /.*Edit Rule.*in order to enroll\.\nCredit Constraints.*/m
   end
 end
