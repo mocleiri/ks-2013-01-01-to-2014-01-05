@@ -6,7 +6,7 @@ Feature: KRMS ELIG9.10 Cut and Paste
   #ELIG9.10.EB1 (KSENROLL-7052)
   @pending
   Scenario: Confirm the cut and paste of a rule statement is working as expected
-    When I set up the data for "Corequisite" for the course "ENGL101X" with Advanced Search
+    When I set up the data for "Corequisite" for term "201301" and course "ENGL101X"
     And I click on the "Edit Rule" link
     And I select node "G" in the tree
     And I click the "Cut" button
@@ -27,7 +27,7 @@ Feature: KRMS ELIG9.10 Cut and Paste
   #ELIG9.10.EB2 (KSENROLL-7052)
   @pending
   Scenario: Confirm the cut and paste of compound (group) rule statement is working as expected
-    When I set up the data for "Corequisite" for the course "ENGL101X" with Advanced Search
+    When I set up the data for "Corequisite" for term "201301" and course "ENGL101X"
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
     And I click the "Cut" button
