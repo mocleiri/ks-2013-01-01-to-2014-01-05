@@ -6,8 +6,7 @@ Feature: KRMS ELIG9.4 Free Text
   #ELIG9.4.EB1 (KSENROLL-7049)
   @pending
   Scenario: Setup one level of data using Add Rule Statement button
-    When I navigate to the agenda page for "ENGL201"
-    And I click the Manage Course Offering Requisites link
+    When I navigate to the agenda page for term "201301" and course "ENGL201"
     And I click on the "Corequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -32,8 +31,7 @@ Feature: KRMS ELIG9.4 Free Text
 #ELIG9.4.EB2 (KSENROLL-7049)
   @pending
   Scenario: Setup second level of data (Groups) using Create Group button
-    When I navigate to the agenda page for "ENGL201"
-    And I click the Manage Course Offering Requisites link
+    When I navigate to the agenda page for term "201301" and course "ENGL201"
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
