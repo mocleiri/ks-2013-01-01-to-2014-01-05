@@ -6,7 +6,7 @@ Feature: KRMS ELIG9.11 Delete
   #ELIG9.11.EB1 (KSENROLL-7084)
   @pending
   Scenario: Confirm that the Delete button works as expected
-    When I set up the data for "Student Eligibility & Prerequisite" for the course "ENGL101S" with Advanced Search
+    When I set up the data for "Student Eligibility & Prerequisite" for term "201301" and course "ENGL101S"
     And I click on the "Edit Rule" link
     And I select node "F" in the tree
     And I click the "Delete" button
@@ -17,7 +17,7 @@ Feature: KRMS ELIG9.11 Delete
   #ELIG9.11.EB2 (KSENROLL-7084)
   @pending
   Scenario: Confirm that the Submit button persists the data after Delete
-    When I set up the data for "Student Eligibility & Prerequisite" for the course "ENGL101S" with Advanced Search
+    When I set up the data for "Student Eligibility & Prerequisite" for term "201301" and course "ENGL101S"
     And I click on the "Edit Rule" link
     And I select node "J" in the tree
     And I click the "Delete" button
@@ -34,10 +34,10 @@ Feature: KRMS ELIG9.11 Delete
   #ELIG9.11.EB3 (KSENROLL-7089)
   @pending
   Scenario: Confirm that the Delete Rule link on Agenda Preview page deletes the tree
-    When I set up the data for "Student Eligibility & Prerequisite" for the course "ENGL101S" with Advanced Search
+    When I set up the data for "Student Eligibility & Prerequisite" for term "201301" and course "ENGL101S"
     And I click on the "Delete Rule" link
-    Then the "Add Rule" link should exist on the Manage CO Agendas page
+    Then the "Add Rule" link should exist on the Course Offering Requisites page
     And I click the "submit" button on Manage CO Agendas page
     And I click the Manage Course Offering Requisites link
     And I click on the "Student Eligibility & Prerequisite" section
-    Then the "Add Rule" link should exist on the Manage CO Agendas page
+    Then the "Add Rule" link should exist on the Course Offering Requisites page
