@@ -600,9 +600,9 @@ class CourseOffering
       else
         new_ao = copy_ao :ao_code => "A"
         page.select_ao(new_ao.code)
-        if aostate == "Approved"
+        if ao_state == "Approved"
           page.approve_activity
-          ao = page.select_ao_by_status(aostate)
+          ao = page.select_ao_by_status(ao_state)
         end
         if page.delete_aos_button.enabled?
           page.delete_aos
