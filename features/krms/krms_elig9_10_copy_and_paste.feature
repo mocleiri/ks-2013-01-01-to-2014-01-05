@@ -6,7 +6,7 @@ Feature: KRMS ELIG9.10 Copy and Paste
   #ELIG9.10.EB1 (KSENROLL-7051)
   @pending
   Scenario: Confirm the copy and paste of rule statement is working as expected
-    When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST111" with Advanced Search
+    When I set up the data for "Student Eligibility & Prerequisite" for term "201301" and course "HIST111"
     And I click on the "Edit Rule" link
     And I select node "G" in the tree
     And I click the "Copy" button
@@ -28,7 +28,7 @@ Feature: KRMS ELIG9.10 Copy and Paste
   #ELIG9.10.EB2 (KSENROLL-7051)
   @bug @KSENROLL7110
   Scenario: Confirm the copy and paste of compound (group) rule statement is working as expected
-    When I set up the data for "Student Eligibility & Prerequisite" for the course "HIST111" with Advanced Search
+    When I set up the data for "Student Eligibility & Prerequisite" for term "201301" and course "HIST111"
     And I click on the "Edit Rule" link
     And I select node "D" in the tree
     And I click the "Copy" button
