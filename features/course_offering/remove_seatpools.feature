@@ -16,6 +16,7 @@ since this seat pool is no longer needed.
     And the seat pool is removed
     And the seat pool priorities are re-sequenced
 
+  @bug @KSENROLL-7196
   Scenario: Remove all seat pools
     When I edit an existing activity offering with 3 seat pools
     And I remove all seat pools
