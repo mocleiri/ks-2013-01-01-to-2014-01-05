@@ -376,6 +376,7 @@ public class QuickAddController extends UifControllerBase {
         String studentId = UserSessionHelper.getStudentId();
 
         LearningPlan plan = null;
+        // Synchronized is used to ensure only one learning plan is created for a given student Id
         synchronized (studentId) {
             try {
                 //  If something goes wrong with the query then a RuntimeException will be thrown. Otherwise, the method
@@ -388,8 +389,6 @@ public class QuickAddController extends UifControllerBase {
             /*
             *  Create a default learning plan if there isn't one already and skip querying for plan items.
             */
-            // TODO: There is a potential (small) for multiple plan's created in this model coz of multi threading. There should be a check
-            // at the db level to restrict a single plan of a given type to a student
             if (plan == null) {
                 try {
                     plan = createDefaultLearningPlan(studentId);

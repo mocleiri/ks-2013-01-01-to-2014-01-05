@@ -849,6 +849,7 @@ public class PlanController extends UifControllerBase {
         String studentId = UserSessionHelper.getStudentId();
 
         LearningPlan plan = null;
+        // Synchronized is used to ensure only one learning plan is created for a given student Id
         synchronized (studentId) {
             try {
                 //  If something goes wrong with the query then a RuntimeException will be thrown. Otherwise, the method
@@ -861,8 +862,6 @@ public class PlanController extends UifControllerBase {
             /*
             *  Create a default learning plan if there isn't one already and skip querying for plan items.
             */
-            // TODO: There is a potential (small) for multiple plan's created in this model coz of multi threading. There should be a check
-            // at the db level to restrict a single plan of a given type to a student
             if (plan == null) {
                 try {
                     plan = createDefaultLearningPlan(studentId);
@@ -1064,6 +1063,7 @@ public class PlanController extends UifControllerBase {
         List<LearningPlanInfo> plan = new ArrayList<LearningPlanInfo>();
         try {
             String studentId = UserSessionHelper.getStudentId();
+            // Synchronized is used to ensure only one learning plan is created for a given student Id
             synchronized (studentId) {
                 plan = getAcademicPlanService().getLearningPlansForStudentByType(studentId, PlanConstants.LEARNING_PLAN_TYPE_PLAN, PlanConstants.CONTEXT_INFO);
                 if (plan.size() > 0) {
@@ -1212,6 +1212,7 @@ public class PlanController extends UifControllerBase {
 
         String studentId = UserSessionHelper.getStudentId();
         LearningPlan plan = null;
+        // Synchronized is used to ensure only one learning plan is created for a given student Id
         synchronized (studentId) {
             try {
                 //  Throws RuntimeException is there is a problem. Otherwise, returns a plan or null.
