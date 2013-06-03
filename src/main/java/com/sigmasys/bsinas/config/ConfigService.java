@@ -13,17 +13,17 @@ import java.util.*;
  */
 public interface ConfigService {
 
-    public String getInitialParameter(String name);
+    public String getParameter(String name);
 
-    public Map<String, String> getInitialParameters();
+    public Map<String, String> getParameters();
 
-    public Integer updateInitialParameters(List<InitialParameter> params);
+    public Integer updateParameters(List<InitialParameter> params);
 
-    public Integer deleteInitialParameters(Set<String> paramNames);
+    public Integer deleteParameters(Set<String> paramNames);
 
-    public List<InitialParameter> getInitialParameterList();
+    public List<InitialParameter> getParameterList();
 
-    public Map<String, String> refreshInitialParameters();
+    public Map<String, String> refreshParameters();
 
     public void changeLoggingLevel(Map<String, String> loggers);
 

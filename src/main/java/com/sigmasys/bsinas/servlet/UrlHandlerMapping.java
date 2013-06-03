@@ -8,9 +8,8 @@ import java.util.Map;
 
 /**
  * Lazy-init UrlHandlerMapping.
- * User: ivanovm
- * Date: Mar 3, 2009
- * Time: 5:37:58 PM
+ *
+ * @author Michael Ivanov
  */
 @Service(DispatcherServlet.HANDLER_MAPPING_BEAN_NAME)
 public class UrlHandlerMapping extends SimpleUrlHandlerMapping {

@@ -55,7 +55,7 @@ public class CoreFilter implements Filter {
 
     private void initTrustedUrls() {
         ConfigService configService = ContextUtils.getBean(ConfigService.class);
-        String trustedUrls = configService.getInitialParameter(TRUSTED_URLS_PARAM_NAME);
+        String trustedUrls = configService.getParameter(TRUSTED_URLS_PARAM_NAME);
         if (trustedUrls != null && !trustedUrls.isEmpty()) {
             String[] patterns = trustedUrls.split(",");
             for (String pattern : patterns) {

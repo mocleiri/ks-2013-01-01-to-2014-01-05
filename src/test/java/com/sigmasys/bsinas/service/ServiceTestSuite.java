@@ -14,7 +14,6 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses(value = {
-        DatabaseUtilsTest.class,
         ConfigServiceTest.class})
 public class ServiceTestSuite extends AbstractServiceTest {
 

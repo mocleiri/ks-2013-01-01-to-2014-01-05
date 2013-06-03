@@ -16,12 +16,13 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <!-- process @Transactional to create transaction proxies -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+
+    <!--bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 
     <bean id="loadTimeWeaver" class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
 
-    <!-- child modules can define their our bean with this name and list of
-         core and their packages containing jpa entities -->
     <bean id="bsinasEntityFinder" class="com.sigmasys.bsinas.util.PackageMappingPostProcessor">
         <property name="packageNames">
             <list>
@@ -45,6 +46,8 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="persistenceUnitPostProcessors" ref="bsinasEntityFinder"/>
         <property name="loadTimeWeaver" ref="loadTimeWeaver"/>
     </bean>
+
+    -->
 
     <import resource="classpath:/META-INF/bsinas-datasource.xml"/>
 

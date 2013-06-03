@@ -51,7 +51,7 @@ public class GenericPersistenceService implements PersistenceService {
     public List<Advice> getAdvices(BeanFactory beanFactory) {
         LinkedList<Advice> advices = new LinkedList<Advice>();
         if (configService != null &&
-                Boolean.valueOf(configService.getInitialParameter(Constants.LOGGING_ENABLED_PARAM_NAME))) {
+                Boolean.valueOf(configService.getParameter(Constants.LOGGING_ENABLED_PARAM_NAME))) {
             // Setting up the logging interceptor
             LoggingInterceptor loggingInterceptor = beanFactory.getBean(LoggingInterceptor.class);
             loggingInterceptor.setTargetObject(this);

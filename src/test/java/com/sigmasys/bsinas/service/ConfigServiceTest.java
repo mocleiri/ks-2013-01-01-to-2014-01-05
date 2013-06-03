@@ -7,14 +7,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_CONTEXT})
-@Transactional
 public class ConfigServiceTest extends AbstractServiceTest {
 
     @Autowired
@@ -24,7 +22,7 @@ public class ConfigServiceTest extends AbstractServiceTest {
     @Test
     public void getInitialParameters() throws Exception {
 
-        Map<String, String> params = configService.getInitialParameters();
+        Map<String, String> params = configService.getParameters();
 
         Assert.notNull(params);
         Assert.notEmpty(params);

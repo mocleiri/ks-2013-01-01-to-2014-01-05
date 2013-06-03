@@ -20,7 +20,8 @@ import java.util.*;
  * It is used in Spring context to set parameter values in ${...} variables and
  * also by ConfigService to populate reference data.
  * <p/>
- * # @author Michael Ivanov
+ *
+ * @author Michael Ivanov
  */
 @SuppressWarnings("unchecked")
 @Transactional
@@ -34,6 +35,13 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
     private String schemaPrefix;
     private NamedParameterJdbcTemplate jdbcTemplate;
 
+    public InitialParameterConfigurer() {
+        this(null);
+    }
+
+    public InitialParameterConfigurer(int order) {
+        this(null, order);
+    }
 
     public InitialParameterConfigurer(String schemaName) {
         this(schemaName, Ordered.LOWEST_PRECEDENCE);

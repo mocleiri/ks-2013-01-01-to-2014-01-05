@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.*;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -39,9 +38,8 @@ import java.util.Map;
  * @author Michael Ivanov
  */
 @Service("bsinasService")
-@Transactional(readOnly = true)
 @SuppressWarnings("unchecked")
-public class BsinasServiceImpl extends GenericPersistenceService implements BsinasService {
+public class BsinasServiceImpl implements BsinasService {
 
     private static final Log logger = LogFactory.getLog(BsinasServiceImpl.class);
 
@@ -154,7 +152,7 @@ public class BsinasServiceImpl extends GenericPersistenceService implements Bsin
         Dispatch<SOAPMessage> dispatch = dispatches.get(awardYear);
         if (dispatch == null) {
             String urlParamName = "bsinas.endpoint." + awardYear;
-            String endpointUrl = configService.getInitialParameter(urlParamName);
+            String endpointUrl = configService.getParameter(urlParamName);
             if (endpointUrl == null || endpointUrl.trim().isEmpty()) {
                 String errMsg = "Configuration parameter '" + urlParamName + "' is required";
                 logger.error(errMsg);
@@ -205,8 +203,6 @@ public class BsinasServiceImpl extends GenericPersistenceService implements Bsin
 
             // Saving the changes made to the SOAP message
             soapMessage.saveChanges();
-
-            logger.info("SOAP request:\n" + nodeToString(soapMessage.getSOAPPart()));
 
             // Getting the corresponding SOAP Dispatch instance for the current award year
             // and invoke the BSINAS service

@@ -34,8 +34,6 @@ public class BsinasPanel extends LayoutContainer {
             "<needAnalysisInput CreatedDate=\"2013-05-23\" AwardYear=\"2013\" xmlns=\"http://INAS.collegeboard.org/2013/Input/\">\n" +
             "</needAnalysisInput>\n";
 
-    private static final int DEFAULT_YEAR = 2012;
-
     private TextArea requestTextArea;
     private TextArea responseTextArea;
     private SimpleComboBox<Integer> yearComboBox;
@@ -50,7 +48,7 @@ public class BsinasPanel extends LayoutContainer {
         requestTextArea = new TextArea();
         requestTextArea.setWidth(750);
         requestTextArea.setHeight(600);
-        requestTextArea.setValue(DEFAULT_REQUEST_2012);
+        requestTextArea.setValue(DEFAULT_REQUEST_2013);
 
         responseTextArea = new TextArea();
         responseTextArea.setWidth(750);
@@ -60,10 +58,10 @@ public class BsinasPanel extends LayoutContainer {
 
         yearComboBox = new SimpleComboBox<Integer>();
 
-        yearComboBox.add(DEFAULT_YEAR);
+        yearComboBox.add(2012);
         yearComboBox.add(2013);
 
-        yearComboBox.setSimpleValue(DEFAULT_YEAR);
+        yearComboBox.setSimpleValue(2013);
         yearComboBox.setTriggerAction(ComboBox.TriggerAction.ALL);
         yearComboBox.setAllowBlank(false);
         yearComboBox.setEditable(false);
@@ -131,9 +129,9 @@ public class BsinasPanel extends LayoutContainer {
         resetButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
             public void componentSelected(ButtonEvent event) {
                 responseTextArea.unmask();
-                requestTextArea.setValue(DEFAULT_REQUEST_2012);
+                requestTextArea.setValue(DEFAULT_REQUEST_2013);
                 responseTextArea.setValue("");
-                yearComboBox.setSimpleValue(DEFAULT_YEAR);
+                yearComboBox.setSimpleValue(2013);
             }
         });
 
@@ -153,7 +151,8 @@ public class BsinasPanel extends LayoutContainer {
         buttonPanel.add(resetButton, btd);
 
         panel.add(WidgetFactory.createText("XML Request:"), td);
-        panel.add(yearPanel);
+        //panel.add(yearPanel);
+        panel.add(WidgetFactory.createText(""));
         panel.add(WidgetFactory.createText("XML Response:"), td);
 
         panel.add(requestTextArea, td);

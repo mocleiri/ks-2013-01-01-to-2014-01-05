@@ -65,4 +65,6 @@ public class BsinasEngineTest extends AbstractServiceTest {
         logger.info("Engine response:\n" + response);
 
     }
+
+
 }
