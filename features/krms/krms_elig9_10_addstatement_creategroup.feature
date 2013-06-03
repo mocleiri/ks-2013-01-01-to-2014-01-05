@@ -1,13 +1,12 @@
-Feature: KRMS ELIG9.10 Add Rule Statement and Add Parent
+Feature: KRMS ELIG9.10 Add Statement and Create Group
 
   Background:
     Given I am logged in as admin
 
   #ELIG9.10.EB1 (KSENROLL-7049)
   @pending
-  Scenario: Setup one level of data using "Add Rule Statement" button
-    When I navigate to the agenda page for "HIST210"
-    And I click the Manage Course Offering Requisites link
+  Scenario: Setup one level of data using Add Statement button
+    When I navigate to the agenda page for term "201301" and course "HIST210"
     And I click on the "Corequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -32,8 +31,7 @@ Feature: KRMS ELIG9.10 Add Rule Statement and Add Parent
   #ELIG9.10.EB2 (KSENROLL-7049)
   @pending
   Scenario: Setup second level of data (Groups) using Create Group button
-    When I navigate to the agenda page for "HIST210"
-    And I click the Manage Course Offering Requisites link
+    When I navigate to the agenda page for term "201301" and course "HIST210"
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
