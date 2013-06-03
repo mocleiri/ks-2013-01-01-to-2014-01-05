@@ -5,6 +5,7 @@ Feature: WC.Academic Calendar CRED
     Given I am logged in as a Schedule Coordinator
     And I create an Academic Calendar
 
+  @bug @KSENROLL-7152
   Scenario: Create and save academic calendar from blank
     Then the Make Official button should become active
 
@@ -16,17 +17,17 @@ Feature: WC.Academic Calendar CRED
     When I make the calendar official
     And I search for the calendar
     Then the calendar should be set to Official
-  @bug @KSENROLL-3442
+
   Scenario: Copy an Academic Calendar
     And I copy the Academic Calendar
     Then the Make Official button should become active
-  @bug @KSENROLL-3442
+
   Scenario: Update Academic Calendar
     When I update the Academic Calendar
     And I search for the calendar
     Then the calendar should reflect the updates
-  @bug @KSENROLL-3443
-  Scenario: Delete Academic Calendar
+
+  Scenario: Delete Draft Academic Calendar
     When I delete the Academic Calendar draft
     And I search for the calendar
     Then the calendar should not appear in search results
@@ -40,7 +41,7 @@ Feature: WC.Academic Calendar CRED
     Then the calendar should appear in search results
 
   @pending
-  Scenario: Add a term to the academic calendar
+  Scenario: Add a term to the academic calendar (acad calender must be official before can make term official)
     When I add a spring term and save
     Then I verify that the term added to the calendar
     And Make Official button for the term is enabled
@@ -52,7 +53,7 @@ Feature: WC.Academic Calendar CRED
     Then the term should be set to Official on edit
 
   @pending
-  Scenario: Delete Academic Term
+  Scenario: Delete Draft Academic Term
     When I add a summer term and save
     And I delete the Academic Term draft
     Then the term should not appear in search results
