@@ -284,12 +284,12 @@ class CourseOffering
     end
 
     if options[:cross_listed] != nil
-        on ManageCourseOfferings do |page|
-          page.edit_course_offering
-        end
-        on CourseOfferingEdit do |page|
-          options[:cross_listed] ? page.cross_listed_co_set : page.cross_listed_co_clear
-          page.submit
+      on ManageCourseOfferings do |page|
+        page.edit_course_offering
+      end
+      on CourseOfferingEdit do |page|
+        options[:cross_listed] ? page.cross_listed_co_set : page.cross_listed_co_clear
+        page.submit
       end
     end
   end
@@ -401,7 +401,7 @@ class CourseOffering
     end
   end
 
-  # checks to see if course offering in the same is in specified state, otherwise creates a new course offering
+  # checks to see if course offering specified state is present, otherwise creates a new course offering
   # @example
   #  @course_offering.check_course_in_status
   # updates the course code
@@ -418,6 +418,31 @@ class CourseOffering
         @course = create_co_copy(@course, @term)
         if co_status == "Offered" or co_status == "Planned"
           approve_co
+        end
+      end
+    end
+  end
+
+
+  # work in progress
+  # checks to see if an activity offering in the specified state is present, otherwise creates a new activity offering
+  # @example
+  #  @course_offering.select_activity_offering_in_status
+  # updates the course code
+  #
+  # @param co_status [String] "Offered", "Draft", Approved
+  #TODO: use constants here for status
+  def select_activity_offering_in_status(ao_status)
+    manage_and_init
+    ao_code = ""
+    on ManageCourseOfferings do |page|
+      ao_code = page.select_ao_by_status(ao_status)
+      if ao_code == nil
+        ao_obj = ActivityOffering.make
+        ao_code = ao_obj.create_simple
+        ao_obj.code = ao_code
+        if ao_status == "Offered" or co_status == "Planned"
+          approve_ao :ao_obj => ao_obj
         end
       end
     end
@@ -453,7 +478,7 @@ class CourseOffering
         while page.alert.exists?  #TODO - needs to be reverted once KSENROLL-6884 is fixed
           page.alert.ok            #TODO - needs to be reverted once KSENROLL-6884 is fixed
         end                      #TODO - needs to be reverted once KSENROLL-6884 is fixed
-                                       #loading.wait_while_present(300)   #TODO - needs to be reverted once KSENROLL-6884 is fixed
+        #loading.wait_while_present(300)   #TODO - needs to be reverted once KSENROLL-6884 is fixed
         sleep 60 #TODO - needs to be reverted once KSENROLL-6884 is fixed
 
       rescue Timeout::Error => e
@@ -479,7 +504,7 @@ class CourseOffering
       while page.alert.exists?  #TODO - needs to be reverted once KSENROLL-6884 is fixed
         page.alert.ok            #TODO - needs to be reverted once KSENROLL-6884 is fixed
       end                      #TODO - needs to be reverted once KSENROLL-6884 is fixed
-      #loading.wait_while_present(300)   #TODO - needs to be reverted once KSENROLL-6884 is fixed
+                                     #loading.wait_while_present(300)   #TODO - needs to be reverted once KSENROLL-6884 is fixed
       sleep 60 #TODO - needs to be reverted once KSENROLL-6884 is fixed
     end
     approved = false
@@ -643,10 +668,29 @@ class CourseOffering
     end
   end
 
+  #approve activity offering
+  #
+  #   @example
+  #   @course_offering.approve_ao :ao_obj=> ao_obj1
+  #        :cluster_private_name default value is first cluster
+  #
+  #@param  opts [Hash] {:ao_obj => activity_offering1, :cluster_private_name => "priv_name"}
+  def approve_ao(opts)
+
+    defaults = {
+        :cluster_private_name => :default_cluster
+    }
+    options = defaults.merge(opts)
+
+    approve_ao_list :ao_obj_list => [ options[:ao_obj] ], :cluster_private_name => options[:cluster_private_name]
+  end
+
+
+
   #approve list of activity offerings
   #
   #   @example
-  #   @course_offering.approve_ao_list :code_list => [ao_obj1, ao_obj2]
+  #   @course_offering.approve_ao_list :ao_obj_list => [ao_obj1, ao_obj2]
   #        :cluster_private_name default value is first cluster
   #
   #@param  opts [Hash] {:ao_obj_list => [activity_offering1,activity_offering2, ...], :cluster_private_name => "priv_name"}

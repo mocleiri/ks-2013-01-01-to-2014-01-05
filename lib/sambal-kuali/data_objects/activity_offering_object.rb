@@ -48,6 +48,8 @@ class ActivityOffering
   OFFERED_STATUS = "Offered"
   # [String]
   DRAFT_STATUS = "Draft"
+  # [String]
+  APPROVED_STATUS = "Approved"
 
 
   # provides default data:

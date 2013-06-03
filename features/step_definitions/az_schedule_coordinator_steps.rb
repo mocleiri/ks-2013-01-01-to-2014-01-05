@@ -28,18 +28,11 @@ When /^I manage course offerings for a course with the first activity offering i
   end
 end
 
-When /^I manage course offerings for a course with the first activity offering in approved state$/ do
+When /^I manage a course offering with activity offerings in approved and draft status$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = make CourseOffering, :course=>"ENGL245", :term=>@term_for_test
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    if page.ao_status("A") != "Approved"
-      if page.select_ao("A") then
-        page.approve_activity_button.wait_until_present(5)
-        page.approve_activity
-      end
-    end
-  end
+  @course_offering.ensure_activity_offering_in_status("Draft")
+  @course_offering.ensure_activity_offering_in_status("Approved")
 end
 
 #When /^I manage course offerings for a course with 2 activity offerings present$/ do
@@ -50,7 +43,7 @@ end
 
 When /^I manage a course offering in the specified state$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering.manage
+  @course_offering.manage :term=>@term_for_test
 end
 
 When /^I manage a course offering for a subject code in "Draft" state$/ do
@@ -93,7 +86,7 @@ Then /^I have access to create a new joint offered course offering$/ do
   end
 end
 
-Then /^the expected state of the CO toolbar is: Create: "([^"]*)"; Approve: "([^"]*)"; Delete: "([^"]*)"$/ do |create_button_state, approve_button_state, delete_button_state|
+Then /^the expected.*state of the CO toolbar is: Create: "([^"]*)"; Approve: "([^"]*)"; Delete: "([^"]*)"$/ do |create_button_state, approve_button_state, delete_button_state|
   on ManageCourseOfferingList do |page|
     if create_button_state == "enabled"
       page.create_course_offering_button.enabled?.should be_true
@@ -118,6 +111,7 @@ Then /^the expected state of the CO toolbar is: Create: "([^"]*)"; Approve: "([^
     else
       raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
     end
+    page.d
   end
 end
 
@@ -170,6 +164,7 @@ Then /^the expected state of the AO toolbar is: Create: "([^"]*)"; Approve: "([^
     else
       raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
     end
+    page.cluster_deselect_all_aos
   end
 end
 
@@ -181,9 +176,9 @@ When /^I set the activity offering as draft$/ do
   end
 end
 
-When /^I select the first activity offering$/ do
+When /^I select an activity offering in "[^"]*" status$/ do |ao_status|
   on ManageCourseOfferings do |page|
-    page.select_ao("A")
+    page.select_ao_by_status(ao_status)
   end
 end
 

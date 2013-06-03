@@ -142,10 +142,14 @@ class ManageCourseOfferingList < BasePage
   end
 
   def select_all_cos()
-    course_offering_results_table.rows[1].checkbox.set
     course_offering_results_table.rows[0].checkbox.set
-    #TODO:remove first checkbox set since it will not be needed once AZ is implemented
   end
+
+  def deselect_all_cos()
+    course_offering_results_table.rows[0].checkbox.set
+    course_offering_results_table.rows[0].checkbox.clear
+  end
+
 
   def deselect_cos(code_list)
     code_list.each do |code|
