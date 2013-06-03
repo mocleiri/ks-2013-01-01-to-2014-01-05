@@ -62,7 +62,7 @@ end
 
 
 When /^I add a seat pool without specifying a population$/ do
-  seatpool1 = make SeatPool, :population_name => "", :seats => 10, :priority => 2, :exp_add_succeed => true
+  seatpool1 = make SeatPool, :population_name => "", :seats => 10, :priority => 2, :exp_add_succeed => false
   @activity_offering = create ActivityOffering, :seat_pool_list => {"blank" => seatpool1}
   @activity_offering.save
 end
