@@ -18,7 +18,7 @@ class ManageCORequisites < BasePage
   element(:object_tab) { |b| b.tab_section.a(:text => /Edit Rule/)}
   element(:logic_text) { |b| b.tab_section.text_field(id: "LogicArea_InputField_control")}
 
-  action(:add_btn) { |b| b.frm.button(:text => /Add Rule Statement/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:add_btn) { |b| b.frm.button(:text => /Add Statement/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:edit_btn) { |b| b.frm.button(:text => /Edit/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:group_btn) { |b| b.frm.button(:text => /Create Group/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:update_rule_btn) { |b| b.frm.button(:text => /Update Rule/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}

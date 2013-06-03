@@ -63,7 +63,7 @@ Then /^the background color should change to "(.*)"$/ do |color|
 end
 
 When /^I click the "(.*)" button$/ do |btn|
-  buttons = {"Add Rule Statement"=>:add_btn, "Create Group"=>:group_btn, "Update Rule"=>:update_rule_btn,
+  buttons = {"Add Statement"=>:add_btn, "Create Group"=>:group_btn, "Update Rule"=>:update_rule_btn,
              "Move Down"=>:down_btn, "Move Up"=>:up_btn, "Preview Change"=>:preview_btn, "Move In"=>:right_btn,
              "Move Out"=>:left_btn, "Copy"=>:copy_btn, "Cut"=>:cut_btn, "Paste"=>:paste_btn, "Delete"=>:del_btn,
              "add"=>:add_line_btn, "Edit"=>:edit_btn}
