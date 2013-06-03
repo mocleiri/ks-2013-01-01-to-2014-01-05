@@ -48,8 +48,8 @@ class ManageCORequisites < BasePage
   element(:lookup_course_code) { |b| b.frm_popup.text_field(name: "lookupCriteria[code]")}
   element(:lookup_description) { |b| b.frm_popup.text_field(name: "lookupCriteria[description]")}
   element(:lookup_set_name) { |b| b.frm_popup.text_field(name: "lookupCriteria[name]")}
-
   action(:lookup_search_button) { |b| b.frm_popup.button(id: "button_search").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
 
+  element(:info_message) { |b| b.rule_maintenance_section.li(class: "uif-infoMessageItem")}
   element(:edit_loading) { |b| b.rule_maintenance_section.image(alt: "Loading...") }
 end

@@ -260,4 +260,39 @@ class ManageCORequisitesData
       page.preview_btn
     end
   end
+
+  def test_multiline_text(section, text, boolean)
+    sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
+    test_text = text.split(/,/)
+    test_text.each do |elem|
+      if( section == "agenda")
+        on CourseOfferingRequisites do |page|
+          page.loading.wait_while_present
+          if boolean == true
+            page.agenda_management_section.text.should =~ /.*#{Regexp.escape(elem)}.*/
+          else
+            page.agenda_management_section.text.should_not =~ /.*#{Regexp.escape(elem)}.*/
+          end
+        end
+      elsif section == "compare"
+        on CourseOfferingRequisites do |page|
+          page.loading.wait_while_present
+          if boolean == true
+            page.compare_tree.text.should =~ /.*#{Regexp.escape(elem)}.*\n.*#{Regexp.escape(elem)}.*/m
+          else
+            page.compare_tree.text.should_not =~ /.*#{Regexp.escape(elem)}.*\n.*#{Regexp.escape(elem)}.*/m
+          end
+        end
+      else
+        on ManageCORequisites do |page|
+          page.loading.wait_while_present
+          if boolean == true
+            page.send(sect[section]).text.should =~ /.*#{Regexp.escape(elem)}.*/
+          else
+            page.send(sect[section]).text.should_not =~ /.*#{Regexp.escape(elem)}.*/
+          end
+        end
+      end
+    end
+  end
 end

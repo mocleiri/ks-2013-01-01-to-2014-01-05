@@ -117,47 +117,11 @@ Then /^the text "(.*)" should be present in the text area$/ do |text|
 end
 
 Then /^the "(.*?)" preview section should have the text "(.*)"$/ do |section,text|
-  sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
-
-  if( section == "agenda")
-    on CourseOfferingRequisites do |page|
-      page.loading.wait_while_present
-      test_text = text.split(/,/)
-      test_text.each do |elem|
-        page.agenda_management_section.text.should match /.*#{Regexp.escape(elem)}.*/
-      end
-    end
-  else
-    on ManageCORequisites do |page|
-      page.loading.wait_while_present
-      test_text = text.split(/,/)
-      test_text.each do |elem|
-        page.send(sect[section]).text.should match /.*#{Regexp.escape(elem)}.*/
-      end
-    end
-  end
+  @manageCOR.test_multiline_text(section, text, true)
 end
 
 Then /^the "(.*?)" preview section should not have the text "(.*)"$/ do |section,text|
-  sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
-
-  if( section == "agenda")
-    on CourseOfferingRequisites do |page|
-      page.loading.wait_while_present
-      test_text = text.split(/,/)
-      test_text.each do |elem|
-        page.agenda_management_section.text.should_not match /.*#{Regexp.escape(elem)}.*/
-      end
-    end
-  else
-    on ManageCORequisites do |page|
-      page.loading.wait_while_present
-      test_text = text.split(/,/)
-      test_text.each do |elem|
-        page.send(sect[section]).text.should_not match /.*#{Regexp.escape(elem)}.*/
-      end
-    end
-  end
+  @manageCOR.test_multiline_text(section, text, false)
 end
 
 Then /^the word "(.*)" should exist before node "(.*)"$/ do |text, node|
@@ -319,11 +283,22 @@ end
 
 Then /^the CO and CLU should both have text "(.*?)"/ do |text|
   on CourseOfferingRequisites do |page|
-    #page.
+    @manageCOR.test_multiline_text("compare", text, true)
   end
+end
+
+Then /^the CO and CLU should differ with text "(.*?)"/ do |text|
+  @manageCOR.test_multiline_text("compare", text, false)
 end
 
 When /^I edit the existing data for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |section, term, course|
   @manageCOR = make ManageCORequisitesData
   @manageCOR.edit_data_advanced_search(section, term, course)
+end
+
+Then /^the info message "(.*?)" should be present$/ do |mess|
+  sleep 20
+  on ManageCORequisites do |page|
+    page.info_message.text.should match /#{Regexp.escape(mess)}/
+  end
 end

@@ -31,6 +31,9 @@ class CourseOfferingRequisites < BasePage
   action(:rule_add) { |b| b.rule_add_link.click; b.loading.wait_while_present }
 
   element(:compare_section) { |b| b.frm.div(id: "compareRuleLightBox")}
+  element(:compare_tree) { |b| b.compare_section.div( id: "KRMS-CompareTree-Section")}
+  element(:compare_cancel_link) { |b| b.compare_section.a(:text => /Cancel/)}
+  action(:compare_cancel) { |b| b.compare_cancel_link.click; b.loading.wait_while_present}
 
   element(:submit_btn) { |b| b.frm.button(:text => /submit/)}
   action(:submit) { |b| b.submit_btn.click; b.loading.wait_while_present }
