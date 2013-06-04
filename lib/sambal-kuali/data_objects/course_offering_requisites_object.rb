@@ -18,7 +18,9 @@ class CORequisitesData
   end
 
   def navigate(term, course)
+    @manageCORdata = make ManageCORequisitesData
     @course_offering = make CourseOffering, {:course => course, :term => term}
+
     @course_offering.manage
     on ManageCourseOfferings do |page|
       page.manage_course_offering_requisites
@@ -34,15 +36,15 @@ class CORequisitesData
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
       page.send(sections[sect])
-      if change == "add"
-        check = check_data_existence
+      if change == "setup"
+        check = @manageCORdata.check_data_existence
         if( check == 0)
           page.rule_add
-          @manageCOR.create_data_advanced_search(sect)
+          @manageCORdata.create_data_advanced_search(sect)
         end
       else
         page.rule_edit
-        @manageCOR.edit_data_advanced_search(sect)
+        @manageCORdata.edit_data_advanced_search(sect)
       end
       page.submit
     end

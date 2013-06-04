@@ -203,21 +203,25 @@ class ManageCORequisitesData
 
   def test_multiline_text(section, text, boolean)
     sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
-    array = text.split(/,/)
-    test_text = array.shift
-    array.each do |elem|
-      if section == "compare"
-        on CourseOfferingRequisites do |page|
-          page.loading.wait_while_present
-          if boolean == true
-            page.compare_tree.text.should =~ /.*#{Regexp.escape(elem)}.*\n.*#{Regexp.escape(elem)}.*/m
-          else
-            page.compare_tree.text.should_not =~ /.*#{Regexp.escape(elem)}.*\n.*#{Regexp.escape(elem)}.*/m
+    if section != "edit"
+      array = text.split(/,/)
+      test_text = array.shift
+      array.each do |elem|
+        if section == "compare"
+          on CourseOfferingRequisites do |page|
+            page.loading.wait_while_present
+            if boolean == true
+              page.compare_tree.text.should =~ /.*#{Regexp.escape(elem)}.*\n.*#{Regexp.escape(elem)}.*/m
+            else
+              page.compare_tree.text.should_not =~ /.*#{Regexp.escape(elem)}.*\n.*#{Regexp.escape(elem)}.*/m
+            end
           end
+        else
+          test_text += "\n" + elem
         end
-      else
-        test_text += "\n" + elem
       end
+    else
+      test_text = text
     end
 
     if( section == "agenda")
@@ -229,7 +233,7 @@ class ManageCORequisitesData
           page.agenda_management_section.text.should_not =~ /.*#{Regexp.escape(test_text)}.*/m
         end
       end
-    elsif section != "compare"
+    elsif section == "edit" || section == "logic"
       on ManageCORequisites do |page|
         page.loading.wait_while_present
         if boolean == true
