@@ -10,11 +10,15 @@
 # Methods:
 #  @advanced_search(field, code)
 #  @check_data_existence
-#  @create_data_advanced_search( sect, course)
+#  @create_data_advanced_search( sect)
+#  @edit_data_advanced_search( sect)
 #  @create_course_rule( course, sect)
 #  @create_text_rule( text)
 #  @create_all_courses_rule( courses, sect)
 #  @create_number_courses_rule( courses, sect)
+#  @test_multiline_text(section, text, boolean)
+#  @edit_existing_node(node, field, code)
+#  @add_new_node(field, node, code)
 #
 # Note the use of the ruby options hash pattern re: setting attribute values
 
@@ -34,6 +38,7 @@ class ManageCORequisitesData
 
     set_options(options)
   end
+
   #this method will be removed at some point
   def find_krms_before_element( section, tag, node, comp)
     sect = {"edit_tree"=>:edit_tree_section,"preview_tree"=>:preview_tree_section}
@@ -73,87 +78,35 @@ class ManageCORequisitesData
     end
   end
 
-  def create_data_advanced_search( sect, term, course)
-    sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
-                "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
-                "Repeatable for Credit"=>:repeatable_credit, "Course that Restricts Credits"=>:resctricted_credit}
-
-    @course_offering = make CourseOffering, {:course => course, :term => term}
-    @course_offering.manage
-
-    on ManageCourseOfferings do |page|
-      page.manage_course_offering_requisites
-    end
-
-    on CourseOfferingRequisites do |page|
+  def create_data_advanced_search( sect)
+    on ManageCORequisites do |page|
+      page.add_btn
+      create_course_rule( "ENGL101", sect)
+      page.add_btn
+      create_course_rule( "HIST639", sect)
+      page.add_btn
+      create_text_rule( "free form text input value")
+      page.edit_tree_section.span(:text => /.*A\..*/).when_present.click
+      page.group_btn
+      create_all_courses_rule(  ["ENGL478", "HIST416"], sect)
+      page.add_btn
+      create_text_rule( "Text")
+      page.edit_tree_section.span(:text => /.*F\..*/).when_present.click
+      page.group_btn
+      create_text_rule( "Text to copy")
+      page.edit_tree_section.span(:text => /.*D\..*/).when_present.click
+      page.add_btn
+      create_number_courses_rule( ["HIST395", "HIST210"], sect)
       page.loading.wait_while_present
-      page.send(sections[sect])
-    end
-
-    check = check_data_existence
-    if( check == 0)
-      on CourseOfferingRequisites do |page|
-        page.rule_add
-      end
-
-      on ManageCORequisites do |page|
-        page.add_btn
-        create_course_rule( "ENGL101", sect)
-        page.add_btn
-        create_course_rule( "HIST639", sect)
-        page.add_btn
-        create_text_rule( "free form text input value")
-        page.edit_tree_section.span(:text => /.*A\..*/).when_present.click
-        page.group_btn
-        create_all_courses_rule(  ["ENGL478", "HIST416"], sect)
-        page.add_btn
-        create_text_rule( "Text")
-        page.edit_tree_section.span(:text => /.*F\..*/).when_present.click
-        page.group_btn
-        create_text_rule( "Text to copy")
-        page.edit_tree_section.span(:text => /.*D\..*/).when_present.click
-        page.add_btn
-        create_number_courses_rule( ["HIST395", "HIST210"], sect)
-        page.loading.wait_while_present
-        page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "OR"
-        page.edit_loading.wait_while_present
-        page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_2_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
-        page.edit_loading.wait_while_present
-        page.update_rule_btn
-      end
-
-      on CourseOfferingRequisites do |page|
-        page.submit
-      end
-
-      on ManageCourseOfferings do |page|
-        page.manage_course_offering_requisites
-      end
-
-      on CourseOfferingRequisites do |page|
-        page.send(sections[sect])
-      end
+      page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "OR"
+      page.edit_loading.wait_while_present
+      page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_2_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
+      page.edit_loading.wait_while_present
+      page.update_rule_btn
     end
   end
 
-  def edit_data_advanced_search( sect, term, course)
-    sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
-                "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
-                "Repeatable for Credit"=>:repeatable_credit, "Course that Restricts Credits"=>:resctricted_credit}
-
-    @course_offering = make CourseOffering, {:course => course, :term => term}
-    @course_offering.manage
-
-    on ManageCourseOfferings do |page|
-      page.manage_course_offering_requisites
-    end
-
-    on CourseOfferingRequisites do |page|
-      page.loading.wait_while_present
-      page.send(sections[sect])
-      page.rule_edit
-    end
-
+  def edit_data_advanced_search( sect)
     on ManageCORequisites do |page|
       page.edit_tree_section.span(:text => /.*C\..*/).when_present.click
       page.add_btn
@@ -174,18 +127,6 @@ class ManageCORequisitesData
       page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
       page.update_rule_btn
-    end
-
-    on CourseOfferingRequisites do |page|
-      page.submit
-    end
-
-    on ManageCourseOfferings do |page|
-      page.manage_course_offering_requisites
-    end
-
-    on CourseOfferingRequisites do |page|
-      page.send(sections[sect])
     end
   end
 
@@ -262,18 +203,10 @@ class ManageCORequisitesData
 
   def test_multiline_text(section, text, boolean)
     sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
-    test_text = text.split(/,/)
-    test_text.each do |elem|
-      if( section == "agenda")
-        on CourseOfferingRequisites do |page|
-          page.loading.wait_while_present
-          if boolean == true
-            page.agenda_management_section.text.should =~ /.*#{Regexp.escape(elem)}.*/
-          else
-            page.agenda_management_section.text.should_not =~ /.*#{Regexp.escape(elem)}.*/
-          end
-        end
-      elsif section == "compare"
+    array = text.split(/,/)
+    test_text = array.shift
+    array.each do |elem|
+      if section == "compare"
         on CourseOfferingRequisites do |page|
           page.loading.wait_while_present
           if boolean == true
@@ -283,14 +216,59 @@ class ManageCORequisitesData
           end
         end
       else
-        on ManageCORequisites do |page|
-          page.loading.wait_while_present
-          if boolean == true
-            page.send(sect[section]).text.should =~ /.*#{Regexp.escape(elem)}.*/
-          else
-            page.send(sect[section]).text.should_not =~ /.*#{Regexp.escape(elem)}.*/
-          end
+        test_text += "\n" + elem
+      end
+    end
+
+    if( section == "agenda")
+      on CourseOfferingRequisites do |page|
+        page.loading.wait_while_present
+        if boolean == true
+          page.agenda_management_section.text.should =~ /.*#{Regexp.escape(test_text)}.*/m
+        else
+          page.agenda_management_section.text.should_not =~ /.*#{Regexp.escape(test_text)}.*/m
         end
+      end
+    elsif section != "compare"
+      on ManageCORequisites do |page|
+        page.loading.wait_while_present
+        if boolean == true
+          page.send(sect[section]).text.should =~ /.*#{Regexp.escape(test_text)}.*/m
+        else
+          page.send(sect[section]).text.should_not =~ /.*#{Regexp.escape(test_text)}.*/m
+        end
+      end
+    end
+  end
+
+  def edit_existing_node(node, field, code)
+    on ManageCORequisites do |page|
+      page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+      page.edit_btn
+      if field == "course"
+        advanced_search("course code", code)
+      elsif field == "courses"
+        page.multi_course_dropdown.when_present.select /Approved Courses/
+        advanced_search("course code", code)
+        page.add_line_btn
+      elsif field == "text"
+        page.free_text_field.when_present.set code
+      end
+      page.preview_btn
+    end
+  end
+
+  def add_new_node(sect, field, node, code)
+    on ManageCORequisites do |page|
+      page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+      page.add_btn
+      if field == "course"
+        create_course_rule( code, sect)
+      elsif field == "courses"
+        courses = code.split(/,/)
+        create_all_courses_rule( courses, sect)
+      elsif field == "text"
+        create_text_rule( code)
       end
     end
   end

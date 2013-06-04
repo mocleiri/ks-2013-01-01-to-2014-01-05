@@ -255,18 +255,16 @@ Then /^the old and new rule should be compared$/ do
   end
 end
 
-When /^I set up the data for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |section, term, course|
+When /^I "(.*?)" the data for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |change, section, term, course|
   @manageCOR = make ManageCORequisitesData
-  @manageCOR.create_data_advanced_search(section, term, course)
+  @courseOR = make CORequisitesData
+  @courseOR.data_setup(change, section, term, course)
 end
 
 When /^I navigate to the agenda page for term "(.*?)" and course "(.*?)"$/ do |term, course|
   @manageCOR = make ManageCORequisitesData
-  @course_offering = make CourseOffering, {:course => course, :term => term}
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.manage_course_offering_requisites
-  end
+  @courseOR = make CORequisitesData
+  @courseOR.navigate(term, course)
 end
 
 When /^I want to wait$/ do 
@@ -292,18 +290,11 @@ When /^I click the Manage Course Offering Requisites link$/ do
 end
 
 Then /^the CO and CLU should both have text "(.*?)"/ do |text|
-  on CourseOfferingRequisites do |page|
-    @manageCOR.test_multiline_text("compare", text, true)
-  end
+  @manageCOR.test_multiline_text("compare", text, true)
 end
 
 Then /^the CO and CLU should differ with text "(.*?)"/ do |text|
   @manageCOR.test_multiline_text("compare", text, false)
-end
-
-When /^I edit the existing data for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |section, term, course|
-  @manageCOR = make ManageCORequisitesData
-  @manageCOR.edit_data_advanced_search(section, term, course)
 end
 
 Then /^the info message "(.*?)" should be present$/ do |mess|
@@ -317,6 +308,7 @@ When /^I want to edit the "(.*?)" section$/ do |sect|
               "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
               "Repeatable for Credit"=>:repeatable_credit, "Course that Restricts Credits"=>:resctricted_credit}
   on CourseOfferingRequisites do |page|
+    @courseOR.section = sect
     page.loading.wait_while_present
     page.send(sections[sect])
     page.rule_edit
@@ -328,6 +320,14 @@ When /^I delete node "(.*?)" in the tree$/ do |node|
     page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
     page.del_btn
   end
+end
+
+When /^I edit node "(.*?)" in the tree by changing the "(.*?)" to "(.*?)"$/ do |node, field, change|
+  @manageCOR.edit_existing_node(node, field, change)
+end
+
+When /^I add a "(.*?)" statement after node "(.*?)" with (?:|courses|course|text) "(.*?)"$/ do |field, node, course|
+  @manageCOR.add_new_node(@courseOR.section, field, node, course)
 end
 
 When /^I commit changes made to the proposition and return to see the changes$/ do

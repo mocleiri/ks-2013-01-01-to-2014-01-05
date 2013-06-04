@@ -32,6 +32,7 @@ class ManageCORequisites < BasePage
   action(:paste_btn) { |b| b.frm.button(:text => /Paste/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:del_btn) { |b| b.frm.button(:text => /Delete/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:add_line_btn) { |b| b.frm.button(:text => /add/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:delete_line_btn) { |b| b.frm.button(:text => /delete/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
 
   action(:search_link) { |b| b.edit_tree_section.a(:text => /Advanced Search/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
 
