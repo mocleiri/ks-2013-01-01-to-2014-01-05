@@ -1377,6 +1377,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             for (KeyPair keyPair : new HashSet<KeyPair>(catalogKeyPairs)) {
                 if (keyPair.getKey().equals(key)) {
                     catalogKeyPairs.remove(keyPair);
+                    em.flush();
                     deleteEntity(keyPair.getId(), KeyPair.class);
                 }
             }
@@ -1458,6 +1459,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             for (KeyPair keyPair : new HashSet<KeyPair>(rateKeyPairs)) {
                 if (keyPair.getKey().equals(key)) {
                     rateKeyPairs.remove(keyPair);
+                    em.flush();
+                    deleteEntity(keyPair.getId(), KeyPair.class);
                     if (!keyPairExists) {
                         keyPairExists = true;
                     }

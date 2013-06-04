@@ -263,7 +263,8 @@ public class RateServiceTest extends AbstractServiceTest {
         Assert.notNull(rate);
         Assert.notNull(rate.getId());
 
-        rate = rateService.addKeyPairToRate("key_45", "value_45", rate.getId());
+        rateService.addKeyPairToRate("key_45", "value_45", rate.getId());
+        rate = rateService.getRate(rate.getId());
 
         Set<KeyPair> keyPairs = rate.getKeyPairs();
 
@@ -271,6 +272,153 @@ public class RateServiceTest extends AbstractServiceTest {
         Assert.notEmpty(keyPairs);
 
         Assert.isTrue(keyPairs.contains(new KeyPair("key_45", "value_45")));
+
+    }
+
+    @Test
+    public void removeKeyPairFromRate() throws Exception {
+
+        String rateCatalogCode = "RC_2013";
+
+        _createRateCatalog(rateCatalogCode);
+
+        String rateCode = "R_2013";
+
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        Assert.notNull(rate);
+        Assert.notNull(rate.getId());
+
+        rateService.addKeyPairToRate("key_48", "value_48", rate.getId());
+        rate = rateService.getRate(rate.getId());
+
+        Set<KeyPair> keyPairs = rate.getKeyPairs();
+
+        Assert.notNull(keyPairs);
+        Assert.notEmpty(keyPairs);
+
+        Assert.isTrue(keyPairs.contains(new KeyPair("key_48", "value_48")));
+
+        int keyPairsSize = keyPairs.size();
+
+        rateService.removeKeyPairFromRate("key_48", rate.getId());
+        rate = rateService.getRate(rate.getId());
+
+        keyPairs = rate.getKeyPairs();
+
+        Assert.notNull(keyPairs);
+        Assert.notEmpty(keyPairs);
+
+        Assert.isTrue(!keyPairs.contains(new KeyPair("key_48", "value_48")));
+
+        Assert.isTrue(keyPairsSize - keyPairs.size() == 1);
+
+    }
+
+    @Test
+    public void addKeyPairToRateCatalog() throws Exception {
+
+        String rateCatalogCode = "RC_2013";
+
+        RateCatalog catalog = _createRateCatalog(rateCatalogCode);
+
+        Assert.notNull(catalog);
+        Assert.notNull(catalog.getId());
+
+        String rateCode = "R_2013";
+
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        Assert.notNull(rate);
+        Assert.notNull(rate.getId());
+
+        rateService.addKeyPairToRateCatalog("key_49", "value_49", catalog.getId());
+
+        catalog = rateService.getRateCatalog(catalog.getId());
+        rate = rateService.getRate(rate.getId());
+
+        Set<KeyPair> catalogKeyPairs = catalog.getKeyPairs();
+
+        Assert.notNull(catalogKeyPairs);
+        Assert.notEmpty(catalogKeyPairs);
+        Assert.isTrue(catalogKeyPairs.contains(new KeyPair("key_49", "value_49")));
+        Assert.isTrue(catalogKeyPairs.contains(new KeyPair("key1", "value1")));
+
+        Set<KeyPair> rateKeyPairs = rate.getKeyPairs();
+
+        Assert.notNull(rateKeyPairs);
+        Assert.notEmpty(rateKeyPairs);
+        Assert.isTrue(rateKeyPairs.contains(new KeyPair("key_49", "value_49")));
+        Assert.isTrue(rateKeyPairs.contains(new KeyPair("key1", "value1")));
+
+        Assert.isTrue(catalogKeyPairs.size() == rateKeyPairs.size());
+        Assert.isTrue(catalogKeyPairs.size() == 2);
+
+        Assert.isTrue(CollectionUtils.isEqualCollection(catalogKeyPairs, rateKeyPairs));
+
+    }
+
+    @Test
+    public void removeKeyPairFromRateCatalog() throws Exception {
+
+        String rateCatalogCode = "RC_2013";
+
+        RateCatalog catalog = _createRateCatalog(rateCatalogCode);
+
+        Assert.notNull(catalog);
+        Assert.notNull(catalog.getId());
+
+        String rateCode = "R_2013";
+
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        Assert.notNull(rate);
+        Assert.notNull(rate.getId());
+
+        rateService.addKeyPairToRateCatalog("key_49", "value_49", catalog.getId());
+
+        catalog = rateService.getRateCatalog(catalog.getId());
+        rate = rateService.getRate(rate.getId());
+
+        Set<KeyPair> catalogKeyPairs = catalog.getKeyPairs();
+
+        Assert.notNull(catalogKeyPairs);
+        Assert.notEmpty(catalogKeyPairs);
+        Assert.isTrue(catalogKeyPairs.contains(new KeyPair("key_49", "value_49")));
+        Assert.isTrue(catalogKeyPairs.contains(new KeyPair("key1", "value1")));
+
+        Set<KeyPair> rateKeyPairs = rate.getKeyPairs();
+
+        Assert.notNull(rateKeyPairs);
+        Assert.notEmpty(rateKeyPairs);
+        Assert.isTrue(rateKeyPairs.contains(new KeyPair("key_49", "value_49")));
+        Assert.isTrue(rateKeyPairs.contains(new KeyPair("key1", "value1")));
+
+        Assert.isTrue(catalogKeyPairs.size() == rateKeyPairs.size());
+        Assert.isTrue(catalogKeyPairs.size() == 2);
+
+        Assert.isTrue(CollectionUtils.isEqualCollection(catalogKeyPairs, rateKeyPairs));
+
+        rateService.removeKeyPairFromRateCatalog("key_49", catalog.getId());
+        catalog = rateService.getRateCatalog(catalog.getId());
+
+        catalogKeyPairs = catalog.getKeyPairs();
+
+        Assert.notNull(catalogKeyPairs);
+        Assert.notEmpty(catalogKeyPairs);
+        Assert.isTrue(catalogKeyPairs.size() == 1);
+
+        Assert.isTrue(!catalogKeyPairs.contains(new KeyPair("key_49", "value_49")));
+
+        rate = rateService.getRate(rate.getId());
+
+        rateKeyPairs = rate.getKeyPairs();
+
+        Assert.notNull(rateKeyPairs);
+        Assert.notEmpty(rateKeyPairs);
+        Assert.isTrue(rateKeyPairs.size() == 1);
+
+        Assert.isTrue(!catalogKeyPairs.contains(new KeyPair("key_49", "value_49")));
 
     }
 
