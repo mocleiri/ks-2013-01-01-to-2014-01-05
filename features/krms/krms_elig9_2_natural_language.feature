@@ -218,7 +218,7 @@ Feature: KRMS ELIG9.2 Natural Language
 #ELIG9.2.EB3.3 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule three
-    When I navigate to the agenda page for term "201208" and course "ENGL304"
+    When I navigate to the agenda page for term "201301" and course "ENGL304"
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
