@@ -37,7 +37,12 @@ public class BsinasClientTest extends AbstractServiceTest {
         writer.flush();
         writer.close();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+        int responseCode = connection.getResponseCode();
+
+        InputStream inputStream = (responseCode == HttpURLConnection.HTTP_OK) ?
+                connection.getInputStream() : connection.getErrorStream();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 
         String line;
         StringBuilder builder = new StringBuilder();
@@ -47,6 +52,10 @@ public class BsinasClientTest extends AbstractServiceTest {
         }
 
         reader.close();
+
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            logger.info("Error code: " + responseCode);
+        }
 
         logger.info("Output:\n" + builder.toString());
 
