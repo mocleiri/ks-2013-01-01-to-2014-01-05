@@ -7,7 +7,6 @@ Feature: KRMS ELIG9.2 Natural Language
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule one
     When I navigate to the agenda page for term "201301" and course "ENGL304"
-    And I click the Manage Course Offering Requisites link
     And I click on the "Recommended Preparation" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -31,8 +30,7 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB1.2 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule two
-    When I navigate to the agenda page for "ENGL304"
-    And I click the Manage Course Offering Requisites link
+    When I navigate to the agenda page for term "201301" and course "ENGL304"
     And I click on the "Recommended Preparation" section
     And I click on the "Edit Rule" link
     And I select node "A" in the tree
@@ -64,8 +62,7 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB1.3 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule three
-    When I navigate to the agenda page for "ENGL304"
-    And I click the Manage Course Offering Requisites link
+    When I navigate to the agenda page for term "201301" and course "ENGL304"
     And I click on the "Recommended Preparation" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -100,8 +97,7 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB1.4 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Recommended Preparation - rule four
-    When I navigate to the agenda page for "ENGL304"
-    And I click the Manage Course Offering Requisites link
+    When I navigate to the agenda page for term "201301" and course "ENGL304"
     And I click on the "Recommended Preparation" section
     And I click on the "Edit Rule" link
     And I select node "B" in the tree
@@ -134,8 +130,7 @@ Feature: KRMS ELIG9.2 Natural Language
 #ELIG9.2.EB2 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Antirequisite - rule one
-    When I navigate to the agenda page for "ENGL304"
-    And I click the Manage Course Offering Requisites link
+    When I navigate to the agenda page for term "201301" and course "ENGL304"
     And I click on the "Antirequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -159,8 +154,7 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB3.1 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule one
-    When I navigate to the agenda page for "ENGL304"
-    And I click the Manage Course Offering Requisites link
+    When I navigate to the agenda page for term "201301" and course "ENGL304"
     And I click on the "Corequisite" section
     And I click on the "Add Rule" link
     And I click the "Add Rule Statement" button
@@ -191,8 +185,7 @@ Feature: KRMS ELIG9.2 Natural Language
   #ELIG9.2.EB3.2 (KSENROLL-6954)
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule two
-    When I navigate to the agenda page for "ENGL304"
-    And I click the Manage Course Offering Requisites link
+    When I navigate to the agenda page for term "201301" and course "ENGL304"
     And I click on the "Corequisite" section
     And I click on the "Edit Rule" link
     And I select node "A" in the tree
