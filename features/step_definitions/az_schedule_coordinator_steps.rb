@@ -41,9 +41,12 @@ end
 #  @course_offering.manage
 #end
 
-When /^I manage a course offering in the specified state$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering.manage :term=>@term_for_test
+When /^I manage a course offering in the specified states?$/ do
+  @course_offering.manage
+end
+
+When /^I manage course offerings the specified subject code$/ do
+  @course_offering.search_by_subjectcode
 end
 
 When /^I manage a course offering for a subject code in "Draft" state$/ do
@@ -111,11 +114,11 @@ Then /^the expected.*state of the CO toolbar is: Create: "([^"]*)"; Approve: "([
     else
       raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
     end
-    page.d
+    page.deselect_all_cos
   end
 end
 
-Then /^the expected state of the AO toolbar is: Create: "([^"]*)"; Approve: "([^"]*)"; SetAsDraft: "([^"]*)"; Delete: "([^"]*)"; AddCluster: "([^"]*)"; Move: "([^"]*)"$/ do |create_button_state, approve_button_state, setasdraft_button_state, delete_button_state, addcluster_button_state, move_button_state|
+Then /^the expected.*state of the AO toolbar is: Create: "([^"]*)"; Approve: "([^"]*)"; SetAsDraft: "([^"]*)"; Delete: "([^"]*)"; AddCluster: "([^"]*)"; Move: "([^"]*)"$/ do |create_button_state, approve_button_state, setasdraft_button_state, delete_button_state, addcluster_button_state, move_button_state|
   on ManageCourseOfferings do |page|
     if create_button_state == "enabled"
       page.add_activity_button.enabled?.should be_true
@@ -176,7 +179,13 @@ When /^I set the activity offering as draft$/ do
   end
 end
 
-When /^I select an activity offering in "[^"]*" status$/ do |ao_status|
+When /^I select a course offering in "([^"]*)" status$/ do |co_status|
+  on ManageCourseOfferingList do |page|
+    page.select_co_by_status(co_status)
+  end
+end
+
+When /^I select an activity offering in "([^"]*)" status$/ do |ao_status|
   on ManageCourseOfferings do |page|
     page.select_ao_by_status(ao_status)
   end
