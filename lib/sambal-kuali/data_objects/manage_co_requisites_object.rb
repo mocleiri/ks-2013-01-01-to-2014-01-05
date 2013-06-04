@@ -173,7 +173,6 @@ class ManageCORequisitesData
       page.edit_loading.wait_while_present
       page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
-      sleep 30
       page.update_rule_btn
     end
 
