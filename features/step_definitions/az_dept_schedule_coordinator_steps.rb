@@ -708,16 +708,10 @@ When /^there is a course with a co-located DL in my admin org/ do
   step "I am logged in as a Schedule Coordinator"
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL462", :term=>@term_for_test)
   @course_offering.manage_and_init
-  @course_offering.edit_ao :ao_code =>"A"
-  on ActivityOfferingMaintenance do |page|
-    page.select_colocated_checkbox
-    page.colocated_co_input_field.set "ENGL295"
-    page.colocated_ao_input_field.set "A"
-    page.add_colocated
-    page.select_jointly_share_enrollment_radio
-    page.colocated_shared_max_enrollment_input_field.set 25
-    page.submit
-  end
+  @course_offering.activity_offering_cluster_list[0].ao_list[0].edit :colocate_ao_list => Array.new(1){make ActivityOffering, :code=> "A", :parent_course_offering => (make CourseOffering, :course => "ENGL295", :term => @term_for_test)},
+                                                                     :max_enrollment=>25,
+                                                                     :colocate_shared_enrollment=> true
+  @course_offering.activity_offering_cluster_list[0].ao_list[0].save
   step "I am logged in as a Department Schedule Coordinator"
 end
 
