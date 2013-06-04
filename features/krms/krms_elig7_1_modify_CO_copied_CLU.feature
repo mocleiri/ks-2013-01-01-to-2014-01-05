@@ -1,3 +1,4 @@
+@pending
 Feature: KRMS ELIG7.1 Modify CO copied from CLU
 
   Background:
