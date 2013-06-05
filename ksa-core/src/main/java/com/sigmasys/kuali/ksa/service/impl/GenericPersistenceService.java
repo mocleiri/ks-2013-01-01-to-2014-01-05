@@ -2,7 +2,6 @@ package com.sigmasys.kuali.ksa.service.impl;
 
 import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.PersistenceService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import com.sigmasys.kuali.ksa.service.aop.LoggingInterceptor;
@@ -69,7 +68,10 @@ public class GenericPersistenceService implements PersistenceService {
      */
     @Override
     public <T extends Identifiable> T getEntity(Serializable id, Class<T> entityClass) {
-        return em.find(entityClass, id);
+        Query query = em.createQuery("select i from " + entityClass.getSimpleName() + " i where i.id = :id");
+        query.setParameter("id", id);
+        List<T> entities = query.getResultList();
+        return !CollectionUtils.isEmpty(entities) ? entities.get(0) : null;
     }
 
     /**
@@ -81,8 +83,7 @@ public class GenericPersistenceService implements PersistenceService {
     @Override
     @Transactional(readOnly = false)
     public <T extends Identifiable> boolean deleteEntity(Serializable id, Class<T> entityClass) {
-        String entityName = entityClass.getSimpleName();
-        Query query = em.createQuery("delete from " + entityName + " where id = :id");
+        Query query = em.createQuery("delete from " + entityClass.getSimpleName() + " where id = :id");
         query.setParameter("id", id);
         int updatedRows = query.executeUpdate();
         return updatedRows > 0;

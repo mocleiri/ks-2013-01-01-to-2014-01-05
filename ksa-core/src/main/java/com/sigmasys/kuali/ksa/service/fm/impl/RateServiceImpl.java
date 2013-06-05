@@ -297,7 +297,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             query.setMaxResults(1);
 
             if (CollectionUtils.isNotEmpty(query.getResultList())) {
-                String errMsg = "The same ATP IDs cannot be associated with the other rate catalogs with the same code";
+                String errMsg = "The same ATP IDs cannot be associated with 2 different catalogs with the same code";
                 logger.error(errMsg);
                 throw new IllegalStateException(errMsg);
             }
@@ -651,7 +651,37 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     @Transactional(readOnly = false)
     public void deleteRate(Long rateId) {
+
         PermissionUtils.checkPermission(Permission.DELETE_RATE);
+
+        Rate rate = getRate(rateId);
+        if (rate == null) {
+            String errMsg = "Rate with ID = " + rateId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        // Removing Rate key pairs
+        Set<KeyPair> keyPairs = rate.getKeyPairs();
+        if ( CollectionUtils.isNotEmpty(keyPairs)) {
+            for ( KeyPair keyPair : new HashSet<KeyPair>(keyPairs)) {
+                keyPairs.remove(keyPair);
+                em.flush();
+                deleteEntity(keyPair.getId(), KeyPair.class);
+            }
+        }
+
+        Set<RateAmount> rateAmounts = rate.getRateAmounts();
+        if (CollectionUtils.isNotEmpty(rateAmounts)) {
+            for (RateAmount rateAmount : new HashSet<RateAmount>(rateAmounts)) {
+                rateAmounts.remove(rateAmount);
+            }
+        }
+
+        Query query = em.createQuery("delete from RateAmount where rate.id = :rateId");
+        query.setParameter("rateId", rateId);
+        query.executeUpdate();
+
         deleteEntity(rateId, Rate.class);
     }
 

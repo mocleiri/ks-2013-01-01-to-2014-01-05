@@ -59,7 +59,7 @@ public class RateServiceTest extends AbstractServiceTest {
         return rateType;
     }
 
-    private RateCatalog _createRateCatalog(String rateCatalogCode) {
+    private RateCatalog _createRateCatalog(String rateCatalogCode, String... atpIds) {
 
         String rateTypeCode = "RT_2013";
         String transactionTypeId = "cash";
@@ -67,11 +67,11 @@ public class RateServiceTest extends AbstractServiceTest {
         BigDecimal lowerBound = new BigDecimal(10.99);
         BigDecimal upperBound = new BigDecimal(300000.67);
         BigDecimal cappedAmount = new BigDecimal(200.88);
-        List<String> atpIds = Arrays.asList("19871", "19872", "19873", "19874");
         List<KeyPair> keyPairs = Arrays.asList(new KeyPair("key1", "value1"));
 
         RateCatalog rateCatalog = rateService.createRateCatalog(rateCatalogCode, rateTypeCode, transactionTypeId,
-                dateType, lowerBound, upperBound, cappedAmount, atpIds, keyPairs, false, false, false, false, false);
+                dateType, lowerBound, upperBound, cappedAmount, Arrays.asList(atpIds), keyPairs,
+                false, false, false, false, false);
 
         Assert.notNull(rateCatalog);
         Assert.notNull(rateCatalog.getId());
@@ -92,7 +92,11 @@ public class RateServiceTest extends AbstractServiceTest {
 
     }
 
-    private Rate _createRate(String rateCode, String rateCatalogCode) throws Exception {
+    private RateCatalog _createRateCatalog(String rateCatalogCode) {
+        return _createRateCatalog(rateCatalogCode, "19871", "19872", "19873", "19874");
+    }
+
+    private Rate _createRate(String rateCode, String rateCatalogCode, String atpId) throws Exception {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
 
@@ -105,8 +109,6 @@ public class RateServiceTest extends AbstractServiceTest {
         TransactionDateType dateType = TransactionDateType.ALWAYS;
         BigDecimal cappedAmount = new BigDecimal(7776000.1111);
         BigDecimal rateAmount = new BigDecimal(200.88);
-
-        String atpId = "19874";
 
         Rate rate = rateService.createRate(rateCode, rateName, rateCatalogCode, transactionTypeId,
                 amountTransactionTypeId, dateType, rateAmount, cappedAmount, transactionDate, recognitionDate, atpId,
@@ -154,9 +156,157 @@ public class RateServiceTest extends AbstractServiceTest {
 
     }
 
+    private Rate _createRate(String rateCode, String rateCatalogCode) throws Exception {
+        return _createRate(rateCode, rateCatalogCode, "19874");
+    }
+
     @Test
     public void createRateType() {
         _createRateType("RT_2013_1", "RateType_2013_1", "2013 Rate type description");
+    }
+
+    @Test
+    public void persistRateType() {
+
+        RateType rateType = _createRateType("RT_2013_3", "RateType_2013_3", "2013 3 Rate type description");
+
+        Assert.notNull(rateType);
+        Assert.notNull(rateType.getId());
+
+        Assert.isTrue("RT_2013_3".equals(rateType.getCode()));
+        Assert.isTrue("RateType_2013_3".equals(rateType.getName()));
+
+        rateType.setCode("RT_2013_4");
+        rateType.setName("RateType_2013_4");
+
+        Long rateTypeId = rateService.persistRateType(rateType);
+
+        Assert.notNull(rateTypeId);
+        Assert.isTrue(rateTypeId.equals(rateType.getId()));
+
+        Assert.isTrue("RT_2013_4".equals(rateType.getCode()));
+        Assert.isTrue("RateType_2013_4".equals(rateType.getName()));
+
+        Assert.notNull(rateType.getLastUpdate());
+        Assert.notNull(rateType.getEditorId());
+        Assert.isTrue(rateType.getLastUpdate().after(rateType.getCreationDate()));
+
+    }
+
+    @Test
+    public void deleteRateType() {
+
+        RateType rateType = _createRateType("RT_2013_3", "RateType_2013_3", "2013 3 Rate type description");
+
+        Assert.notNull(rateType);
+        Assert.notNull(rateType.getId());
+
+        Assert.isTrue("RT_2013_3".equals(rateType.getCode()));
+        Assert.isTrue("RateType_2013_3".equals(rateType.getName()));
+
+        rateService.deleteRateType(rateType.getId());
+
+        Assert.isNull(rateService.getRateType(rateType.getId()));
+        Assert.isNull(rateService.getRateTypeByCode(rateType.getCode()));
+
+    }
+
+    @Test
+    public void deleteRateTypeByCode() {
+
+        RateType rateType = _createRateType("RT_2013_3", "RateType_2013_3", "2013 3 Rate type description");
+
+        Assert.notNull(rateType);
+        Assert.notNull(rateType.getId());
+
+        Assert.isTrue("RT_2013_3".equals(rateType.getCode()));
+        Assert.isTrue("RateType_2013_3".equals(rateType.getName()));
+
+        rateService.deleteRateTypeByCode(rateType.getCode());
+
+        Assert.isNull(rateService.getRateType(rateType.getId()));
+        Assert.isNull(rateService.getRateTypeByCode(rateType.getCode()));
+
+    }
+
+    @Test
+    public void getRateTypesByNamePattern() {
+
+        RateType rateType1 = _createRateType("RT-###^_111", "RateType_2013_##-456", "2013 3 Rate type description");
+
+        RateType rateType2 = _createRateType("RT-##X_112", "RateType_2013_##-999", "2013 3 Rate type description");
+
+        List<RateType> rateTypes = rateService.getRateTypesByNamePattern("##-");
+
+        Assert.notNull(rateTypes);
+        Assert.notEmpty(rateTypes);
+
+        logger.debug("Number of rate types = " + rateTypes.size());
+
+        Assert.isTrue(rateTypes.size() == 2);
+
+        boolean rateType1Exists = false;
+        boolean rateType2Exists = false;
+
+        for (RateType rateType : rateTypes) {
+
+            Assert.notNull(rateType);
+
+            Assert.notNull(rateType.getId());
+
+            Assert.notNull(rateType.getCode());
+
+            logger.debug("RateType code = " + rateType.getCode());
+
+            if (rateType.getId().equals(rateType1.getId())) {
+                rateType1Exists = true;
+            } else if (rateType.getId().equals(rateType2.getId())) {
+                rateType2Exists = true;
+            }
+        }
+
+        Assert.isTrue(rateType1Exists);
+        Assert.isTrue(rateType2Exists);
+    }
+
+    @Test
+    public void getAllRateTypes() {
+
+        RateType rateType1 = _createRateType("RT-###^_111", "RateType_2013_##-456", "2013 3 Rate type description");
+
+        RateType rateType2 = _createRateType("RT-##X_112", "RateType_2013_##-999", "2013 3 Rate type description");
+
+        List<RateType> rateTypes = rateService.getAllRateTypes();
+
+        Assert.notNull(rateTypes);
+        Assert.notEmpty(rateTypes);
+
+        logger.debug("Number of rate types = " + rateTypes.size());
+
+        Assert.isTrue(rateTypes.size() >= 2);
+
+        boolean rateType1Exists = false;
+        boolean rateType2Exists = false;
+
+        for (RateType rateType : rateTypes) {
+
+            Assert.notNull(rateType);
+
+            Assert.notNull(rateType.getId());
+
+            Assert.notNull(rateType.getCode());
+
+            logger.debug("RateType code = " + rateType.getCode());
+
+            if (rateType.getId().equals(rateType1.getId())) {
+                rateType1Exists = true;
+            } else if (rateType.getId().equals(rateType2.getId())) {
+                rateType2Exists = true;
+            }
+        }
+
+        Assert.isTrue(rateType1Exists);
+        Assert.isTrue(rateType2Exists);
     }
 
     @Test
@@ -206,7 +356,141 @@ public class RateServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void creteRate() throws Exception {
+    public void getRateCatalogsByCode() {
+
+        String code = "RC_2013_EXT";
+
+        RateCatalog rateCatalog1 = _createRateCatalog(code, "19871", "19872");
+
+        Assert.notNull(rateCatalog1);
+        Assert.notNull(rateCatalog1.getId());
+
+        RateCatalog rateCatalog2 = _createRateCatalog(code, "19873", "19874");
+
+        Assert.notNull(rateCatalog2);
+        Assert.notNull(rateCatalog2.getId());
+
+        List<RateCatalog> rateCatalogs = rateService.getRateCatalogsByCode(code);
+
+        Assert.notNull(rateCatalogs);
+        Assert.notEmpty(rateCatalogs);
+        Assert.isTrue(rateCatalogs.size() == 2);
+
+        boolean rateCatalog1Exists = false;
+        boolean rateCatalog2Exists = false;
+
+        for (RateCatalog rateCatalog : rateCatalogs) {
+
+            Assert.notNull(rateCatalog);
+
+            Assert.notNull(rateCatalog.getId());
+
+            Assert.notNull(rateCatalog.getCode());
+
+            logger.debug("RateCatalog code = " + rateCatalog.getCode() + ", ID = " + rateCatalog.getId());
+
+            if (rateCatalog.getId().equals(rateCatalog1.getId())) {
+                rateCatalog1Exists = true;
+            } else if (rateCatalog.getId().equals(rateCatalog2.getId())) {
+                rateCatalog2Exists = true;
+            }
+        }
+
+        Assert.isTrue(rateCatalog1Exists);
+        Assert.isTrue(rateCatalog2Exists);
+
+    }
+
+    @Test
+    public void getRateCatalogsByAtpId() {
+
+        RateCatalog rateCatalog1 = _createRateCatalog("RC_2013_EXT_1", "19871", "19872");
+
+        Assert.notNull(rateCatalog1);
+        Assert.notNull(rateCatalog1.getId());
+
+        RateCatalog rateCatalog2 = _createRateCatalog("RC_2013_EXT_2", "19871", "19872");
+
+        Assert.notNull(rateCatalog2);
+        Assert.notNull(rateCatalog2.getId());
+
+        List<RateCatalog> rateCatalogs = rateService.getRateCatalogsByAtpId("19871");
+
+        Assert.notNull(rateCatalogs);
+        Assert.notEmpty(rateCatalogs);
+        Assert.isTrue(rateCatalogs.size() >= 2);
+
+        boolean rateCatalog1Exists = false;
+        boolean rateCatalog2Exists = false;
+
+        for (RateCatalog rateCatalog : rateCatalogs) {
+
+            Assert.notNull(rateCatalog);
+
+            Assert.notNull(rateCatalog.getId());
+
+            Assert.notNull(rateCatalog.getCode());
+
+            logger.debug("RateCatalog code = " + rateCatalog.getCode() + ", ID = " + rateCatalog.getId());
+
+            if (rateCatalog.getId().equals(rateCatalog1.getId())) {
+                rateCatalog1Exists = true;
+            } else if (rateCatalog.getId().equals(rateCatalog2.getId())) {
+                rateCatalog2Exists = true;
+            }
+        }
+
+        Assert.isTrue(rateCatalog1Exists);
+        Assert.isTrue(rateCatalog2Exists);
+
+    }
+
+    @Test
+    public void getAllRateCatalogs() {
+
+        RateCatalog rateCatalog1 = _createRateCatalog("RC_2013_EXT_3", "19871", "19872");
+
+        Assert.notNull(rateCatalog1);
+        Assert.notNull(rateCatalog1.getId());
+
+        RateCatalog rateCatalog2 = _createRateCatalog("RC_2013_EXT_4", "19871", "19872");
+
+        Assert.notNull(rateCatalog2);
+        Assert.notNull(rateCatalog2.getId());
+
+        List<RateCatalog> rateCatalogs = rateService.getAllRateCatalogs();
+
+        Assert.notNull(rateCatalogs);
+        Assert.notEmpty(rateCatalogs);
+        Assert.isTrue(rateCatalogs.size() >= 2);
+
+        boolean rateCatalog1Exists = false;
+        boolean rateCatalog2Exists = false;
+
+        for (RateCatalog rateCatalog : rateCatalogs) {
+
+            Assert.notNull(rateCatalog);
+
+            Assert.notNull(rateCatalog.getId());
+
+            Assert.notNull(rateCatalog.getCode());
+
+            logger.debug("RateCatalog code = " + rateCatalog.getCode() + ", ID = " + rateCatalog.getId());
+
+            if (rateCatalog.getId().equals(rateCatalog1.getId())) {
+                rateCatalog1Exists = true;
+            } else if (rateCatalog.getId().equals(rateCatalog2.getId())) {
+                rateCatalog2Exists = true;
+            }
+        }
+
+        Assert.isTrue(rateCatalog1Exists);
+        Assert.isTrue(rateCatalog2Exists);
+
+    }
+
+    @Test
+    public void createRate() throws Exception {
 
         String rateCatalogCode = "RC_2013";
 
@@ -215,6 +499,53 @@ public class RateServiceTest extends AbstractServiceTest {
         String rateCode = "R_2013";
 
         _createRate(rateCode, rateCatalogCode);
+    }
+
+    @Test
+    public void deleteRate() throws Exception {
+
+        String rateCatalogCode = "RC_2013";
+
+        _createRateCatalog(rateCatalogCode);
+
+        String rateCode = "R_2013_TO_DELETE";
+
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        Assert.notNull(rate);
+        Assert.notNull(rate.getId());
+
+        rateService.deleteRate(rate.getId());
+
+        rate = rateService.getRate(rate.getId());
+
+        Assert.isNull(rate);
+    }
+
+    @Test
+    public void getRateByCodeAndAtpId() throws Exception {
+
+        String rateCatalogCode = "RC_2013_ATP";
+
+        _createRateCatalog(rateCatalogCode, "19871", "19872");
+
+        String rateCode = "R_2013_ATP";
+
+        Rate rate = _createRate(rateCode, rateCatalogCode, "19872");
+
+        Assert.notNull(rate);
+
+        Long rateId = rate.getId();
+
+        Assert.notNull(rateId);
+
+        rate = rateService.getRateByCodeAndAtpId(rateCode, "19872");
+
+        Assert.notNull(rate);
+        Assert.notNull(rate.getId());
+        Assert.isTrue(rateId.equals(rate.getId()));
+        Assert.isTrue(rateCode.equals(rate.getCode()));
+
     }
 
     @Test
