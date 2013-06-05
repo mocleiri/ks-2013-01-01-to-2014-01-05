@@ -974,7 +974,7 @@ public class RateServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void deleteAmount() throws Exception {
+    public void deleteRateAmount() throws Exception {
 
         String rateCatalogCode = "RC_2013_AMOUNT";
         String rateCode = "R_2013_AMOUNT";
