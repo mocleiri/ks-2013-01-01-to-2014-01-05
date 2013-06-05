@@ -334,6 +334,67 @@ a:focus {
 }
 
 /* Overwrite KRAD Styles ########################################################################### */
+.uif-pageValidationMessages {
+    border: solid 1px transparent;
+    background: none;
+    line-height: 18px;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    text-shadow: 1px 1px 1px #ffffff;
+    padding: 10px;
+    margin: 0 0 10px 0;
+}
+
+.uif-pageValidationMessages h3 {
+    display: none;
+}
+
+.uif-pageValidationMessages ul,
+.uif-pageValidationMessages ul li {
+    display: block;
+    list-style: none;
+}
+
+.uif-pageValidationMessages ul li:before {
+    content: '';
+}
+
+.uif-pageValidationMessages ul {
+    padding: 0 0 0 20px;
+    background-repeat: no-repeat;
+    margin: 0;
+}
+
+.uif-pageValidationMessages-warning {
+    color: #000;
+    border-color: #feea49;
+    background-color: #faf5ca;
+}
+
+.uif-pageValidationMessages-warning ul {
+    background-image: url('../images/iconWarning16.png');
+}
+
+.uif-pageValidationMessages-error {
+    color: #cc0000;
+    border-color: #fcd5e4;
+    background-color: #fce9f1;
+}
+
+.uif-pageValidationMessages-error ul {
+    background-image: url('../images/iconError16.png');
+}
+
+.uif-pageValidationMessages ul li {
+    margin: 1em 0 0 0;
+}
+
+.uif-pageValidationMessages ul li:first-child {
+    margin: 0;
+}
+
+
 .myplan-view #Uif-PageContentWrapper,
 .myplan-view #viewfooter_div {
     margin: 0;
