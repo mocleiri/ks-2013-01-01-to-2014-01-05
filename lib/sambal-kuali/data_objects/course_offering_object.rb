@@ -627,7 +627,7 @@ class CourseOffering
         page.select_ao(new_ao.code)
         if ao_state == "Approved"
           page.approve_activity
-          ao = page.select_ao_by_status(ao_state)
+          new_ao = page.select_ao_by_status(ao_state)
         end
         if page.delete_aos_button.enabled?
           page.delete_aos
