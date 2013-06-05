@@ -1,3 +1,7 @@
+$sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq_section, "Antirequisite"=>:antirequisite_section,
+             "Corequisite"=>:corequisite_section, "Recommended Preparation"=>:recommended_prep_section,
+             "Repeatable for Credit"=>:repeatable_credit_section, "Course that Restricts Credits"=>:resctricted_credit_section}
+
 When /^I go to the Manage Course Offering Agendas page$/ do
   @manageCOR = make ManageCORequisitesData
   go_to_manage_co_agendas
@@ -36,9 +40,9 @@ When /^I click on the "(.*)" link on Manage CO page$/ do |link|
   end
 end
 
-When /^I click on the "(.*)" section$/ do |sect|
+When /^I click on the edited section$/ do
   on CourseOfferingRequisites do |page|
-    page.agenda_management_section.span(text: sect).when_present.click
+    page.agenda_management_section.span(text: @courseOR.section).when_present.click
   end
 end
 
@@ -257,13 +261,13 @@ end
 
 When /^I (?:|setup|edit) the data for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |section, term, course|
   @manageCOR = make ManageCORequisitesData
-  @courseOR = make CORequisitesData
+  @courseOR = make CORequisitesData, :section => section
   @courseOR.data_setup(section, term, course)
 end
 
-When /^I navigate to the agenda page for term "(.*?)" and course "(.*?)"$/ do |term, course|
+When /^I navigate to the agenda page for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |section, term, course|
   @manageCOR = make ManageCORequisitesData
-  @courseOR = make CORequisitesData
+  @courseOR = make CORequisitesData, :section => section
   @courseOR.navigate(term, course)
 end
 
@@ -303,14 +307,10 @@ Then /^the info message "(.*?)" should be present$/ do |mess|
   end
 end
 
-When /^I want to edit the "(.*?)" section$/ do |sect|
-  sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
-              "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
-              "Repeatable for Credit"=>:repeatable_credit, "Course that Restricts Credits"=>:resctricted_credit}
+When /^I want to edit the previously edited section$/ do
   on CourseOfferingRequisites do |page|
-    @courseOR.section = sect
     page.loading.wait_while_present
-    page.send(sections[sect])
+    page.send($sections[@courseOR.section]).when_present.click
     page.rule_edit
   end
 end
@@ -341,17 +341,17 @@ When /^I commit changes made to the proposition$/ do
   @courseOR.commit_changes
 end
 
-Then /^the tree for "(.*?)" should be empty$/ do |sect|
-  sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq_section, "Antirequisite"=>:antirequisite_section,
-                      "Corequisite"=>:corequisite_section, "Recommended Preparation"=>:recommended_prep_section,
-                      "Repeatable for Credit"=>:repeatable_credit_section, "Course that Restricts Credits"=>:resctricted_credit_section}
-
+Then /^the tree in the edited section should be empty$/ do
+  section_regex = {"Antirequisite"=>"Corequisite", "Corequisite"=>"Recommended Preparation",
+                   "Recommended Preparation"=>"Student Eligibility & Prerequisite",
+                   "Student Eligibility & Prerequisite"=>"Credit Constraints",
+                   "Repeatable for Credit"=>"Course that Restricts Credits", "Course that Restricts Credits"=>""}
   on CourseOfferingRequisites do |page|
     page.loading.wait_while_present
-    if( page.send(sections[sect]).element(:tag_name, 'img').attribute_value('alt') != "expand")
-      page.send(sections[sect]).when_present.click
+    if( page.send($sections[@courseOR.section]).element(:tag_name, 'img').attribute_value('alt') != "expand")
+      page.send($sections[@courseOR.section]).when_present.click
     end
-    page.agenda_management_section.text.should match /.*Edit Rule.*in order to enroll\.\nCredit Constraints.*/m
+    page.agenda_management_section.text.should match /.*#{@courseOR.section}.*Rule.*\.\n#{section_regex[@courseOR.section]}.*/m
   end
 end
 
@@ -362,5 +362,15 @@ Then /^there should be no node "(.*?)" on both tabs$/ do |node|
     page.logic_tab
     page.edit_loading.wait_while_present
     page.logic_text.text.should_not =~ /.*#{Regexp.escape(node)}.*/
+  end
+end
+
+When /^I delete the tree in the edited section$/ do
+  on CourseOfferingRequisites do |page|
+    page.loading.wait_while_present
+    if( page.send($sections[@courseOR.section]).element(:tag_name, 'img').attribute_value('alt') != "expand")
+      page.send($sections[@courseOR.section]).when_present.click
+    end
+    page.rule_delete
   end
 end

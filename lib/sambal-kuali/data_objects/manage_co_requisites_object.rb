@@ -86,7 +86,7 @@ class ManageCORequisitesData
       array = text.split('(')
       page.object_tab.click
       page.edit_loading.wait_while_present
-      if array.length >= 4
+      if array.length >= 3
         return 1
       else
         return 0
