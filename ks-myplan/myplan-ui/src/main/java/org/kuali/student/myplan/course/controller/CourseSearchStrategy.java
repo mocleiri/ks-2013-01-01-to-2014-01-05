@@ -244,7 +244,7 @@ public class CourseSearchStrategy {
         }
     }
 
-    public List<SearchRequest> queryToRequests(CourseSearchForm form, boolean isAcademicCalenderServiceUp)
+    public List<SearchRequest> queryToRequests(CourseSearchForm form)
             throws Exception {
         logger.info("Start Of Method queryToRequests in CourseSearchStrategy:" + System.currentTimeMillis());
         String query = form.getSearchQuery().toUpperCase();
@@ -270,7 +270,7 @@ public class CourseSearchStrategy {
         addFullTextSearches(query, requests);
         addCampusParams(requests, form);
         ArrayList processedRequests = processRequests(requests, form);
-        addVersionDateParam(processedRequests, isAcademicCalenderServiceUp);
+        addVersionDateParam(processedRequests);
         return processedRequests;
     }
 
@@ -425,17 +425,12 @@ public class CourseSearchStrategy {
         return orderedRequests;
     }
 
-    private void addVersionDateParam(List<SearchRequest> searchRequests, boolean isAcademicCalenderServiceUp) {
+    private void addVersionDateParam(List<SearchRequest> searchRequests) {
 //        String currentTerm = null;
         String lastScheduledTerm = null;
 
-        if (isAcademicCalenderServiceUp) {
 //            currentTerm = AtpHelper.getCurrentAtpId();
             lastScheduledTerm = AtpHelper.getLastScheduledAtpId();
-        } else {
-//            currentTerm = AtpHelper.populateAtpIdFromCalender().get(0).getId();
-            lastScheduledTerm = AtpHelper.getCurrentAtpIdFromCalender();
-        }
         for (SearchRequest searchRequest : searchRequests) {
             // TODO: Fix when version issue for course is addressed
 //            searchRequest.addParam("currentTerm", currentTerm);

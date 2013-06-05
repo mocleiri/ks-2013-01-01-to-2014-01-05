@@ -162,13 +162,6 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      * @return
      */
     public CourseSummaryDetails retrieveCourseSummaryById(String courseId) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        ServicesStatusDataObject servicesStatusDataObject = (ServicesStatusDataObject) request.getSession().getAttribute(CourseSearchConstants.SWS_SERVICES_STATUS);
-        if (!servicesStatusDataObject.isCourseOfferingServiceUp() || !servicesStatusDataObject.isAcademicCalendarServiceUp() || !servicesStatusDataObject.isAcademicRecordServiceUp()) {
-            AtpHelper.addServiceError("curriculumTitle");
-        }
-
-
         /**
          * If version identpendent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
@@ -190,11 +183,6 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         if (null == course) {
             return null;
         }
-
-        // Check for status of the services
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        ServicesStatusDataObject servicesStatusDataObject = (ServicesStatusDataObject) request.getSession().getAttribute(CourseSearchConstants.SWS_SERVICES_STATUS);
-
 
         String subject = course.getSubjectArea().trim();
 
@@ -290,7 +278,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
 
         //  Fetch the available terms from the Academic Calendar Service.
-        if (servicesStatusDataObject.isAcademicCalendarServiceUp() && servicesStatusDataObject.isCourseOfferingServiceUp()) {
+
             try {
                 QueryByCriteria predicates = QueryByCriteria.Builder.fromPredicates(equalIgnoreCase("query", PlanConstants.PUBLISHED));
                 List<TermInfo> termInfos = getAcademicCalendarService().searchForTerms(predicates, CourseSearchConstants.CONTEXT_INFO);
@@ -303,9 +291,6 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             } catch (Exception e) {
                 logger.error("Web service call failed.", e);
             }
-        } else {
-            logger.info("Could not load scheduled terms. AcademicCalServiceStatus:" + servicesStatusDataObject.isAcademicCalendarServiceUp() + " CourseOfferingServiceStatus:" + servicesStatusDataObject.isCourseOfferingServiceUp());
-        }
 
         Collections.sort(courseDetails.getScheduledTerms(), new Comparator<String>() {
             @Override
@@ -317,7 +302,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
         // Last Offered
         //  If course not scheduled for future terms, Check for the last term when course was offered
-        if (servicesStatusDataObject.isCourseOfferingServiceUp()) {
+
             CourseOfferingService cos = getCourseOfferingService();
 
             if (courseDetails.getScheduledTerms().isEmpty()) {
@@ -342,11 +327,10 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                     }
                 } catch (Exception e) {
                     String[] params = {};
-                    GlobalVariables.getMessageMap().putWarningForSectionId(CourseSearchConstants.COURSE_SEARCH_PAGE, PlanConstants.ERROR_TECHNICAL_PROBLEMS, params);
                     logger.error("Could not load courseOfferingInfo list.", e);
                 }
             }
-        }
+
 
         return courseDetails;
 

@@ -3,16 +3,13 @@ package org.kuali.student.myplan.quickAdd.controller;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.krad.datadictionary.exception.DuplicateEntryException;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
 import org.kuali.rice.krad.web.form.UifFormBase;
-import org.kuali.student.common.search.dto.SearchRequest;
 import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
-import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.lum.lu.service.LuService;
 import org.kuali.student.lum.lu.service.LuServiceConstants;
@@ -25,10 +22,8 @@ import org.kuali.student.myplan.course.controller.CourseSearchController;
 import org.kuali.student.myplan.course.dataobject.CourseSummaryDetails;
 import org.kuali.student.myplan.course.service.CourseDetailsInquiryHelperImpl;
 import org.kuali.student.myplan.course.util.CourseHelper;
-import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
-import org.kuali.student.myplan.plan.dataobject.ServicesStatusDataObject;
 import org.kuali.student.myplan.plan.service.PlannedTermsHelperBase;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.quickAdd.QuickAddConstants;
@@ -50,11 +45,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-import java.io.IOException;
 import java.util.*;
 
-import static org.apache.commons.lang.StringUtils.*;
-import static org.kuali.rice.core.api.criteria.PredicateFactory.equalIgnoreCase;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.kuali.student.myplan.academicplan.service.AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP;
 import static org.kuali.student.myplan.academicplan.service.AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED;
 import static org.kuali.student.myplan.plan.PlanConstants.*;
@@ -73,12 +66,6 @@ public class QuickAddController extends UifControllerBase {
     public final Logger logger = Logger.getLogger(QuickAddController.class);
 
     private CourseSearchController searchController = new CourseSearchController();
-
-    private transient boolean isAcademicCalendarServiceUp = true;
-
-    private transient boolean isAcademicRecordServiceUp = true;
-
-    private transient boolean isCourseOfferingServiceUp = true;
 
     private transient CourseOfferingService courseOfferingService;
 
@@ -143,30 +130,6 @@ public class QuickAddController extends UifControllerBase {
         return academicPlanService;
     }
 
-    public boolean isAcademicCalendarServiceUp() {
-        return isAcademicCalendarServiceUp;
-    }
-
-    public void setAcademicCalendarServiceUp(boolean academicCalendarServiceUp) {
-        isAcademicCalendarServiceUp = academicCalendarServiceUp;
-    }
-
-    public boolean isAcademicRecordServiceUp() {
-        return isAcademicRecordServiceUp;
-    }
-
-    public void setAcademicRecordServiceUp(boolean academicRecordServiceUp) {
-        isAcademicRecordServiceUp = academicRecordServiceUp;
-    }
-
-    public boolean isCourseOfferingServiceUp() {
-        return isCourseOfferingServiceUp;
-    }
-
-    public void setCourseOfferingServiceUp(boolean courseOfferingServiceUp) {
-        isCourseOfferingServiceUp = courseOfferingServiceUp;
-    }
-
     protected CourseOfferingService getCourseOfferingService() {
         if (this.courseOfferingService == null) {
             //   TODO: Use constants for namespace.
@@ -212,13 +175,6 @@ public class QuickAddController extends UifControllerBase {
     public ModelAndView start(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
                               HttpServletRequest request, HttpServletResponse response) {
         super.start(form, result, request, response);
-        ServicesStatusDataObject servicesStatusDataObject = (ServicesStatusDataObject) request.getSession().getAttribute(CourseSearchConstants.SWS_SERVICES_STATUS);
-        if (!servicesStatusDataObject.isCourseOfferingServiceUp() || !servicesStatusDataObject.isAcademicCalendarServiceUp() || !servicesStatusDataObject.isAcademicRecordServiceUp()) {
-            AtpHelper.addServiceError("courseCd");
-            setAcademicCalendarServiceUp(servicesStatusDataObject.isAcademicCalendarServiceUp());
-            setAcademicRecordServiceUp(servicesStatusDataObject.isAcademicRecordServiceUp());
-            setCourseOfferingServiceUp(servicesStatusDataObject.isCourseOfferingServiceUp());
-        }
         QuickAddForm searchForm = (QuickAddForm) form;
         if (hasText(searchForm.getAtpId()) && hasText(searchForm.getPlanType())) {
             String termYear = AtpHelper.atpIdToTermName(searchForm.getAtpId());

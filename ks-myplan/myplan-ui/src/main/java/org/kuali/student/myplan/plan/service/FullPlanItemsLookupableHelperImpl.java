@@ -47,13 +47,6 @@ public class FullPlanItemsLookupableHelperImpl extends PlanItemLookupableHelperB
     protected List<FullPlanItemsDataObject> getSearchResults(LookupForm lookupForm, Map<String, String> fieldValues, boolean unbounded) {
 
         /*Setting the Warning message if isServiceStatusOK is false*/
-        boolean isServiceStatusOK = true;
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        ServicesStatusDataObject servicesStatusDataObject = (ServicesStatusDataObject) request.getSession().getAttribute(CourseSearchConstants.SWS_SERVICES_STATUS);
-        if (!servicesStatusDataObject.isAcademicCalendarServiceUp() || !servicesStatusDataObject.isAcademicRecordServiceUp()) {
-            isServiceStatusOK = false;
-            AtpHelper.addServiceError("qtrYear");
-        }
         String studentId = UserSessionHelper.getStudentId();
         /*************PlannedCourseList**************/
         List<PlannedCourseDataObject> plannedCoursesList = new ArrayList<PlannedCourseDataObject>();
@@ -73,7 +66,7 @@ public class FullPlanItemsLookupableHelperImpl extends PlanItemLookupableHelperB
         }
 
 
-        List<PlannedTerm> perfectPlannedTerms = PlannedTermsHelperBase.populatePlannedTerms(plannedCoursesList, null, studentCourseRecordInfos, null, isServiceStatusOK, 1, true);
+        List<PlannedTerm> perfectPlannedTerms = PlannedTermsHelperBase.populatePlannedTerms(plannedCoursesList, null, studentCourseRecordInfos, null, 1, true);
         List<FullPlanItemsDataObject> fullPlanItemsDataObjectList = new ArrayList<FullPlanItemsDataObject>();
         int size = perfectPlannedTerms.size();
         for (int i = 0; size > 0; i++) {

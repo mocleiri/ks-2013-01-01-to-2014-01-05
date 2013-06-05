@@ -49,15 +49,13 @@ public class PlannedTermsHelperBase {
 
     private transient CourseHelper courseHelper;
 
-    public static List<PlannedTerm> populatePlannedTerms(List<PlannedCourseDataObject> plannedCoursesList, List<PlannedCourseDataObject> backupCoursesList, List<StudentCourseRecordInfo> studentCourseRecordInfos, String focusAtpId, boolean isServiceUp, int futureTerms, boolean fullPlanView) {
+    public static List<PlannedTerm> populatePlannedTerms(List<PlannedCourseDataObject> plannedCoursesList, List<PlannedCourseDataObject> backupCoursesList, List<StudentCourseRecordInfo> studentCourseRecordInfos, String focusAtpId, int futureTerms, boolean fullPlanView) {
 
         String[] focusQuarterYear = new String[2];
         String globalCurrentAtpId = null;
-        if (isServiceUp) {
-            globalCurrentAtpId = AtpHelper.getCurrentAtpId();
-        } else {
-            globalCurrentAtpId = AtpHelper.getCurrentAtpIdFromCalender();
-        }
+
+        globalCurrentAtpId = AtpHelper.getCurrentAtpId();
+
         if (StringUtils.isEmpty(focusAtpId)) {
             focusAtpId = globalCurrentAtpId;
         }
@@ -242,21 +240,21 @@ public class PlannedTermsHelperBase {
             List<PlannedTerm> plannedTermList = new ArrayList<PlannedTerm>();
             populateFutureData(globalCurrentAtpId, plannedTermList, futureTerms);
             /*Implementation to set the conditional flags based on each plannedTerm atpId*/
-            if (isServiceUp) {
-                for (PlannedTerm pl : plannedTermList) {
 
-                    if (AtpHelper.isAtpSetToPlanning(pl.getAtpId())) {
-                        pl.setOpenForPlanning(true);
-                    }
-                    if (AtpHelper.isAtpCompletedTerm(pl.getAtpId())) {
-                        pl.setCompletedTerm(true);
-                    }
-                    if (globalCurrentAtpId.equalsIgnoreCase(pl.getAtpId())) {
-                        pl.setCurrentTermForView(true);
-                    }
+            for (PlannedTerm pl : plannedTermList) {
 
+                if (AtpHelper.isAtpSetToPlanning(pl.getAtpId())) {
+                    pl.setOpenForPlanning(true);
                 }
+                if (AtpHelper.isAtpCompletedTerm(pl.getAtpId())) {
+                    pl.setCompletedTerm(true);
+                }
+                if (globalCurrentAtpId.equalsIgnoreCase(pl.getAtpId())) {
+                    pl.setCurrentTermForView(true);
+                }
+
             }
+
             populateHelpIconFlags(plannedTermList);
             populateSingleQuarterAtpIds(plannedTermList);
             return plannedTermList;
