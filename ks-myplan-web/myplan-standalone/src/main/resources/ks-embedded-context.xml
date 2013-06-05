@@ -227,9 +227,6 @@
 
         <aop:aspect id="courseOfferingAroundSearch" ref="courseOfferingSearchMethodCacheAdvisor">
             <aop:around
-                    pointcut="execution(*  edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl.getActivityOffering(..))"
-                    method="getFromCache"/>
-            <aop:around
                     pointcut="execution(*  edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl.searchForCourseOfferings(..))"
                     method="getFromCache"/>
             <aop:around
@@ -241,6 +238,13 @@
             <aop:around
                     pointcut="execution(*  edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl.getActivityOfferingDisplaysForCourseOffering(..))"
                     method="getFromCache"/>
+            <aop:around
+                    pointcut="execution(*  edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl.getCourseOffering(..))"
+                    method="getFromCache"/>
+            <aop:around
+                    pointcut="execution(*  edu.uw.kuali.student.service.impl.UwCourseOfferingServiceImpl.getActivityOfferingDisplay(..))"
+                    method="getFromCache"/>
+
         </aop:aspect>
 
 

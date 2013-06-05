@@ -21,4 +21,6 @@ public interface SolrSeviceClient {
 
     public List<String> getPrimaryAndSecondarySections(String primarySectionId) throws ServiceException;
 
+    public List<String> getActivityIds(String year, String term, String curriculumAbbreviation) throws ServiceException;
+
 }
