@@ -29,6 +29,7 @@ Before do
   if browser == nil
     puts "debug -- creating new browser"
     browser = Watir::Browser.new :firefox, :http_client => client
+    puts "debug -- browser.nil? #{browser.nil?}"
   end
   @browser = browser
 end
