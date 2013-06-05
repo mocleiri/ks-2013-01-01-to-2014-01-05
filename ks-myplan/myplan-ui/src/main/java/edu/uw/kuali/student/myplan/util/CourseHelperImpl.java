@@ -33,6 +33,7 @@ import org.kuali.student.r2.common.dto.AttributeInfo;
 import javax.xml.namespace.QName;
 import java.io.StringReader;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class CourseHelperImpl implements CourseHelper {
 
@@ -355,6 +356,17 @@ public class CourseHelperImpl implements CourseHelper {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public boolean isCourseInOfferingIds(String subjectArea, String courseNumber, Set<String> courseOfferingIds) {
+        // UW Implementation checks by breaking down courseOfferingId. KSAP should use courseOffering service to accomplish the same
+        for(String offeringId : courseOfferingIds) {
+            if(offeringId.contains( subjectArea + ":" + courseNumber)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
