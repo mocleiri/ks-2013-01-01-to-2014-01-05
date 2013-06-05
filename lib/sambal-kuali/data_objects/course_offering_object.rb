@@ -427,21 +427,21 @@ class CourseOffering
   # work in progress
   # checks to see if an activity offering in the specified state is present, otherwise creates a new activity offering
   # @example
-  #  @course_offering.select_activity_offering_in_status
+  #  @course_offering.check_activity_offering_in_status
   # updates the course code
   #
-  # @param co_status [String] "Offered", "Draft", Approved
+  # @param co_status [String] "Offered", "Draft", "Approved"
   #TODO: use constants here for status
-  def select_activity_offering_in_status(ao_status)
+  def check_activity_offering_in_status(ao_status)
     manage_and_init
     ao_code = ""
     on ManageCourseOfferings do |page|
       ao_code = page.select_ao_by_status(ao_status)
       if ao_code == nil
-        ao_obj = ActivityOffering.make
+        ao_obj = make ActivityOffering, :parent_course_offering => self
         ao_code = ao_obj.create_simple
-        ao_obj.code = ao_code
-        if ao_status == "Offered" or co_status == "Planned"
+        ao_obj.code = ao_code[0]
+        if ao_status == "Offered" or ao_status == "Planned"
           approve_ao :ao_obj => ao_obj
         end
       end

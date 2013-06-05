@@ -4,36 +4,36 @@ When /^I manage course offerings for a subject code$/ do
   @course_offering.search_by_subjectcode
 end
 
-When /^I manage course offerings for a course with the first activity offering in draft state and the second activity offering in approved state$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :course=>"ENGL206", :term=>@term_for_test
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.copy("A")
-    if page.ao_status("B") != "Approved"
-      if page.select_ao("B") then
-        page.approve_activity_button.wait_until_present(5)
-        page.approve_activity
-      end
-    end
-  end
-end
+#When /^I manage course offerings for a course with the first activity offering in draft state and the second activity offering in approved state$/ do
+#  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+#  @course_offering = make CourseOffering, :course=>"ENGL206", :term=>@term_for_test
+#  @course_offering.manage
+#  on ManageCourseOfferings do |page|
+#    page.copy("A")
+#    if page.ao_status("B") != "Approved"
+#      if page.select_ao("B") then
+#        page.approve_activity_button.wait_until_present(5)
+#        page.approve_activity
+#      end
+#    end
+#  end
+#end
 
-When /^I manage course offerings for a course with the first activity offering in draft state and the second activity offering in draft state$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :course=>"ENGL243", :term=>@term_for_test
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.copy("A")
-  end
-end
+#When /^I manage course offerings for a course with the first activity offering in draft state and the second activity offering in draft state$/ do
+#  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+#  @course_offering = make CourseOffering, :course=>"ENGL243", :term=>@term_for_test
+#  @course_offering.manage
+#  on ManageCourseOfferings do |page|
+#    page.copy("A")
+#  end
+#end
 
-When /^I manage a course offering with activity offerings in approved and draft status$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :course=>"ENGL245", :term=>@term_for_test
-  @course_offering.ensure_activity_offering_in_status("Draft")
-  @course_offering.ensure_activity_offering_in_status("Approved")
-end
+#When /^I manage a course offering with activity offerings in approved and draft status$/ do
+#  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+#  @course_offering = make CourseOffering, :course=>"ENGL245", :term=>@term_for_test
+#  @course_offering.ensure_activity_offering_in_status("Draft")
+#  @course_offering.ensure_activity_offering_in_status("Approved")
+#end
 
 #When /^I manage course offerings for a course with 2 activity offerings present$/ do
 #  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
@@ -45,7 +45,7 @@ When /^I manage a course offering in the specified states?$/ do
   @course_offering.manage
 end
 
-When /^I manage course offerings the specified subject code$/ do
+When /^I manage course offerings for the specified subject code$/ do
   @course_offering.search_by_subjectcode
 end
 

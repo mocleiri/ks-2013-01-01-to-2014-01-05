@@ -6,7 +6,9 @@ Feature: EC.Toolbar state
 
   Scenario: TB_Published.1 Validate CO toolbar button state for published SOC
     Given I am working on a term in "Published" SOC state
-    When I manage course offerings for a subject code
+    And there is an "Offered" course offering present
+    And there is an "Draft" course offering present
+    When I manage course offerings for the specified subject code
     Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
     When I select a course offering in "Offered" status
     Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
@@ -15,44 +17,21 @@ Feature: EC.Toolbar state
 
   Scenario: TB_FinalEdits.1 Validate CO toolbar button state for final edits SOC
     Given I am working on a term in "Final Edits" SOC state
-    When I manage course offerings for a subject code
-    Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
-    Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
-    When I select a course offering in "Planned" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
-    When I select a course offering in "Draft" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
-
-  Scenario: TB_Locked.1 Validate CO toolbar button state for locked SOC
-    Given I am working on a term in "Locked" SOC state
-    When I manage course offerings for a subject code
-    Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
-    When I select a course offering in "Planned" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
-    When I select a course offering in "Draft" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
-    When I select a course offering in "Draft" status
-    And I select a course offering in "Planned" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
-
-  Scenario: TB_Open.1 Validate initial CO toolbar button state for open SOC
-    Given I am working on a term in "Open" SOC state
-    When I manage course offerings for a subject code
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
-    When I select a course offering in "Planned" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
-    When I select a course offering in "Draft" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
-    When I select a course offering in "Draft" status
-    And I select a course offering in "Planned" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
-
-  Scenario: TB_Draft.1 Validate initial CO toolbar button state for draft SOC - failed
-    Given I am working on a term in "Draft" SOC state
-    #When I manage course offerings for a subject code
     And there is an "Planned" course offering present
     And there is an "Draft" course offering present
-    When I manage course offerings the specified subject code
+    When I manage course offerings for the specified subject code
+    Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
+    When I select a course offering in "Planned" status
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
+    When I select a course offering in "Draft" status
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
+
+  @bug @KSENROLL-7309
+  Scenario: TB_Locked.1 Validate CO toolbar button state for locked SOC
+    Given I am working on a term in "Locked" SOC state
+    And there is an "Planned" course offering present
+    And there is an "Draft" course offering present
+    When I manage course offerings for the specified subject code
     Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
     When I select a course offering in "Planned" status
     Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
@@ -62,7 +41,37 @@ Feature: EC.Toolbar state
     And I select a course offering in "Planned" status
     Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
 
-  Scenario: TB_Published.2A Validate AO toolbar buttons for a CO in Offered status and SOC state Published KK
+  @bug @KSENROLL-7309
+  Scenario: TB_Open.1 Validate initial CO toolbar button state for open SOC
+    Given I am working on a term in "Open" SOC state
+    And there is an "Planned" course offering present
+    And there is an "Draft" course offering present
+    When I manage course offerings for the specified subject code
+    Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
+    When I select a course offering in "Planned" status
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
+    When I select a course offering in "Draft" status
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
+    When I select a course offering in "Draft" status
+    And I select a course offering in "Planned" status
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
+
+  @bug @KSENROLL-7309
+  Scenario: TB_Draft.1 Validate initial CO toolbar button state for draft SOC - failed recheck Planned button status
+    Given I am working on a term in "Draft" SOC state
+    And there is an "Planned" course offering present
+    And there is an "Draft" course offering present
+    When I manage course offerings for the specified subject code
+    Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
+    When I select a course offering in "Planned" status
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
+    When I select a course offering in "Draft" status
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
+    When I select a course offering in "Draft" status
+    And I select a course offering in "Planned" status
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
+
+  Scenario: TB_Published.2A Validate AO toolbar buttons for a CO in Offered status and SOC state Published
     Given I am working on a term in "Published" SOC state
     And there is an "Offered" course offering present
     When I manage a course offering in the specified state
@@ -70,98 +79,74 @@ Feature: EC.Toolbar state
     When I select an activity offering in "Offered" status
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
 
-  Scenario: TB_Published.2B Validate AO toolbar buttons for a CO in Draft status and SOC state Published KK
+  Scenario: TB_Published.2B Validate AO toolbar buttons for a CO in Draft status and SOC state Published
     Given I am working on a term in "Published" SOC state
     And there is a "Draft" course offering present
     When I manage a course offering in the specified state
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
+    Given there is an activity in "Draft" status
     When I select an activity offering in "Draft" status
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
 
-  Scenario: TB_FinalEdits.2A Validate AO toolbar buttons for a CO in Offered status and SOC state Final Edits KK
+  Scenario: TB_FinalEdits.2A Validate AO toolbar buttons for a CO in Offered status and SOC state Final Edits
     Given I am working on a term in "Final Edits" SOC state
     And there is a "Planned" course offering present
     When I manage a course offering in the specified state
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
+    Given there is an activity in "Approved" status
     When I select an activity offering in "Approved" status
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
 
-  Scenario: TB_FinalEdits.2B Validate AO toolbar buttons for a CO in Draft status and SOC state Final Edits KK
+  Scenario: TB_FinalEdits.2B Validate AO toolbar buttons for a CO in Draft status and SOC state Final Edits
     Given I am working on a term in "Final Edits" SOC state
     And there is a "Draft" course offering present
     When I manage a course offering in the specified state
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
+    Given there is an activity in "Draft" status
     When I select an activity offering in "Draft" status
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
 
-  Scenario: TB_Locked.2A Validate AO toolbar buttons for a CO in Planned status and SOC state Locked KK
+  Scenario: TB_Locked.2A Validate AO toolbar buttons for a CO in Planned status and SOC state Locked
     Given I am working on a term in "Locked" SOC state
     And there is a "Planned" course offering present
     When I manage a course offering in the specified state
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
+    Given there is an activity in "Approved" status
     When I select an activity offering in "Approved" status
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
 
-    #TODO - add multiple selection to one of the locked tests
-  Scenario: TB_Locked.2B Validate AO toolbar buttons for a CO in Draft status and SOC state Locked for multiple AO statuses KK
+  Scenario: TB_Locked.2B - Validate AO toolbar buttons for a CO in Planned status and SOC state Locked for multiple AO statuses
     Given I am working on a term in "Locked" SOC state
+    And there is a "Planned" course offering present
+    When I manage a course offering in the specified state
+    Then the expected initial state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
+    Given there is an activity in "Approved" status
+    Given there is an activity in "Draft" status
+    When I select an activity offering in "Draft" status
+    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
+    When I select an activity offering in "Draft" status
+    When I select an activity offering in "Approved" status
+    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
+
+  Scenario: TB_Draft.2A - Validate AO toolbar buttons for a CO in Planned status and SOC state Draft for multiple AO statuses
+    Given I am working on a term in "Draft" SOC state
+    And there is a "Planned" course offering present
+    When I manage a course offering in the specified state
+    Then the expected initial state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
+    Given there is an activity in "Approved" status
+    Given there is an activity in "Draft" status
+    When I select an activity offering in "Draft" status
+    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
+    When I select an activity offering in "Draft" status
+    When I select an activity offering in "Approved" status
+    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
+
+  Scenario: TB_Draft.2B Validate AO toolbar buttons for a CO in Draft status and SOC state Draft for multiple AO statuses
+    Given I am working on a term in "Draft" SOC state
     And there is a "Draft" course offering present
     When I manage a course offering in the specified state
     Then the expected initial state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
+    Given there is an activity in "Draft" status
     When I select an activity offering in "Draft" status
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
 
-  Scenario: TB_Locked.2B - in progress Validate AO toolbar buttons for a CO in Planned status and SOC state Locked for multiple AO statuses
-    When I manage a course offering with activity offerings in approved and draft status
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
-    #When I select an activity offering in "Approved" status
-    When I select an activity offering in "Draft" status
-     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    And I select the second activity offering
-    And I deselect the second activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-
-  Scenario: Validate AO toolbar button for initial state and with multiple AOs selected and changed AO status for open SOC
-    Given I am working on a term in "Open" SOC state
-    When I manage course offerings for a course with the first activity offering in draft state and the second activity offering in approved state
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
-    When I select the first activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    When I select the second activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    When I deselect the first activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    Then I deselect the second activity offering
-    When I manage course offerings for a course with the first activity offering in draft state and the second activity offering in draft state
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
-    When I select the first activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    When I approve the first Activity Offering for scheduling
-    And I select the first activity offering
-    And I select the second activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    When I deselect the second activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-
-  Scenario: Validate AO toolbar button for initial state and with multiple AOs selected and changed AO status for draft SOC
-    Given I am working on a term in "Draft" SOC state
-    And there is a Planned course offering with 2 activity offerings present
-    When I manage a course offering in the specified state
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
-    When I select the first activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    When I approve the first Activity Offering for scheduling
-    And I select the first activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    When I select the second activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    And there is a Draft course offering with 2 activity offerings present
-    When I manage a course offering in the specified state
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "disabled"; AddCluster: "enabled"; Move: "disabled"
-    When I select the first activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    When I approve the first Activity Offering for scheduling
-    When I select the first activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
-    And I select the second activity offering
-    Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"

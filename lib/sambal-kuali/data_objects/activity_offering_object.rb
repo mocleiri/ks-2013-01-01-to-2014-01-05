@@ -155,12 +155,12 @@ class ActivityOffering
       post_add_ao_list = page.codes_list
       #end
       if(pre_add_ao_list != nil )
-        new_code =  post_add_ao_list - pre_add_ao_list
+        new_code_list =  post_add_ao_list - pre_add_ao_list
       else
-        new_code =  post_add_ao_list
+        new_code_list =  post_add_ao_list
       end
 
-      new_code
+      return new_code_list
     end
   end
 

@@ -391,6 +391,11 @@ When /^there is an? "([^"]*)" course offering present/ do |co_status|
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
   @course_offering.check_course_in_status(co_status)
 end
+
+When /^there is an activity in "([^"]*)" status/ do |ao_status|
+  @course_offering.check_activity_offering_in_status(ao_status)
+end
+
 # About "CL 1", probably should not hard-code, but how to get the private name?
 When /^there is a Planned course offering with 2 activity offerings present/ do
   step "I am logged in as a Schedule Coordinator"

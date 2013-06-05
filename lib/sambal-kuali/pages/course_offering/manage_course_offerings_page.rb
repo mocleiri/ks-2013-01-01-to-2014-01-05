@@ -156,6 +156,8 @@ class ManageCourseOfferings < BasePage
     if row.exists? then
       row.checkbox.set
       return row.cells[AO_CODE].text
+    else
+      return nil
     end
   end
 
