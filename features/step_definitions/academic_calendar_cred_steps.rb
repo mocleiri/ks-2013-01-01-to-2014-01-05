@@ -5,7 +5,7 @@ end
 
 Then /^the Make Official button should become active$/ do
   on EditAcademicCalendar do |page|
-    page.make_official_button.enabled?.should == true # TODO: Figure out why ".should_be enabled" does not work.
+    page.make_official_chkbox.enabled?.should == true # TODO: Figure out why ".should_be enabled" does not work.
   end
 end
 
@@ -85,7 +85,7 @@ end
 When /^I delete the Academic Calendar draft$/ do
   on EditAcademicCalendar do |page|
     page.delete_draft
-    page.alert.ok
+    page.confirm_delete
   end
 end
 
