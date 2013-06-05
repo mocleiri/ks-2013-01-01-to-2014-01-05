@@ -663,8 +663,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         // Removing Rate key pairs
         Set<KeyPair> keyPairs = rate.getKeyPairs();
-        if ( CollectionUtils.isNotEmpty(keyPairs)) {
-            for ( KeyPair keyPair : new HashSet<KeyPair>(keyPairs)) {
+        if (CollectionUtils.isNotEmpty(keyPairs)) {
+            for (KeyPair keyPair : new HashSet<KeyPair>(keyPairs)) {
                 keyPairs.remove(keyPair);
                 em.flush();
                 deleteEntity(keyPair.getId(), KeyPair.class);
@@ -709,11 +709,21 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public Rate getRateByCodeAndAtpId(String rateCode, String atpId) {
+
         PermissionUtils.checkPermission(Permission.READ_RATE);
+
+        if (!atpExists(atpId)) {
+            String errMsg = "ATP ID = " + atpId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
         Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :rateCode and rca.id.atpId = :atpId");
         query.setParameter("rateCode", rateCode);
         query.setParameter("atpId", atpId);
+
         List<Rate> rates = query.getResultList();
+
         return CollectionUtils.isNotEmpty(rates) ? rates.get(0) : null;
     }
 
@@ -726,7 +736,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     public List<Rate> getRatesByCode(String rateCode) {
         PermissionUtils.checkPermission(Permission.READ_RATE);
-        Query query = em.createQuery(GET_RATE_JOIN + " where rca.id.code = :code");
+        Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :code");
         query.setParameter("code", rateCode);
         return query.getResultList();
     }
@@ -739,9 +749,18 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<Rate> getRatesByAtpId(String atpId) {
+
         PermissionUtils.checkPermission(Permission.READ_RATE);
+
+        if (!atpExists(atpId)) {
+            String errMsg = "ATP ID = " + atpId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
         Query query = em.createQuery(GET_RATE_JOIN + " where rca.id.atpId = :atpId");
         query.setParameter("atpId", atpId);
+
         return query.getResultList();
     }
 
@@ -1009,6 +1028,11 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                 logger.error(errMsg);
                 throw new InvalidRateException(errMsg);
             }
+            if (rate.isTransactionTypeFinal() && !transactionTypeId.equals(rate.getTransactionTypeId())) {
+                String errMsg = "RateAmount must have the same transaction type as Rate";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
             if (rate.getTransactionDate() != null) {
                 if (!isTransactionTypeValid(transactionTypeId, rate.getTransactionDate())) {
                     String errMsg = "RateAmount's transaction type is invalid";
@@ -1077,7 +1101,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             }
 
             if (rateCatalog.isTransactionTypeFinal() && !rate.isTransactionTypeFinal()) {
-                String errMsg = "Rate's transaction type must be final as forced by RateCatalog";
+                String errMsg = "Rate's transaction type must be final as dictated by RateCatalog";
                 logger.error(errMsg);
                 throw new InvalidRateException(errMsg);
             }
@@ -1212,15 +1236,43 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Transactional(readOnly = false)
     public RateCatalog assignAtpsToRateCatalog(Long rateCatalogId, String... atpIds) {
 
+        PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG);
+
         // Trying to remove ATPs from the rate catalog first
-        RateCatalog rateCatalog = removeAtpsToRateCatalog(rateCatalogId, atpIds);
+        RateCatalog rateCatalog = removeAtpsFromRateCatalog(rateCatalogId, atpIds);
+
+        // Retrieving rates by RateCatalog code and ATP IDs to see if there are other rates
+        // with the same rate catalog code
+        Query query = em.createQuery("select r from Rate r where r.rateCatalogAtp.id.code = :code and " +
+                " r.rateCatalogAtp.id.atpId in (:atpIds) and r.rateCatalogAtp.rateCatalog.id <> :id");
+        query.setParameter("code", rateCatalog.getCode());
+        query.setParameter("atpIds", Arrays.asList(atpIds));
+        query.setParameter("id", rateCatalog.getId());
+
+        List<Rate> rates = query.getResultList();
+
+        // If there are other dependent rates we have to throw an exception
+        if (CollectionUtils.isNotEmpty(rates)) {
+            String errMsg = "There are other rates with the same RateCatalog code = " + rateCatalog.getCode();
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
 
         // Creating new RateCatalogAtp entities
         for (String atpId : atpIds) {
+
+            if (!atpExists(atpId)) {
+                String errMsg = "ATP with ID = " + atpId + " does not exist";
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+
             RateCatalogAtp rateCatalogAtp = new RateCatalogAtp();
             rateCatalogAtp.setId(new RateCatalogAtpId(rateCatalog.getCode(), atpId));
             rateCatalogAtp.setRateCatalog(rateCatalog);
+
             persistEntity(rateCatalogAtp);
+
         }
 
         return rateCatalog;
@@ -1239,7 +1291,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Transactional(readOnly = false)
     public RateCatalog transferAtpsToRateCatalog(Long rateCatalogId, String... atpIds) {
 
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG, Permission.UPDATE_RATE);
+        PermissionUtils.checkPermissions(Permission.UPDATE_RATE_CATALOG, Permission.UPDATE_RATE);
 
         RateCatalog rateCatalog = getRateCatalog(rateCatalogId);
 
@@ -1267,22 +1319,27 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             }
         }
 
-        // Retrieving the existing ATP IDs and merge them with the new ones
+        // Retrieving the existing ATP IDs to preserve them while adding the new ones
         Set<String> oldAtpIds = getAtpsForRateCatalog(rateCatalog.getId());
-        if (CollectionUtils.isNotEmpty(oldAtpIds)) {
-            newAtpIds.addAll(oldAtpIds);
-            // Removing the old ATP IDs from RateCatalogAtp by the rate catalog ID
-            query = em.createQuery("delete from RateCatalogAtp where rateCatalogAtp.rateCatalog.id = :id");
-            query.setParameter("id", rateCatalog.getId());
-            query.executeUpdate();
-        }
 
         // Creating and persisting the new RateCatalogAtp instances the ATP IDs and rate catalog ID
         for (String atpId : newAtpIds) {
-            RateCatalogAtp rateCatalogAtp = new RateCatalogAtp();
-            rateCatalogAtp.setId(new RateCatalogAtpId(rateCatalog.getCode(), atpId));
-            rateCatalogAtp.setRateCatalog(rateCatalog);
-            persistEntity(rateCatalogAtp);
+
+            if (!oldAtpIds.contains(atpId)) {
+
+                if (!atpExists(atpId)) {
+                    String errMsg = "ATP with ID = " + atpId + " does not exist";
+                    logger.error(errMsg);
+                    throw new IllegalArgumentException(errMsg);
+                }
+
+                RateCatalogAtp rateCatalogAtp = new RateCatalogAtp();
+                rateCatalogAtp.setId(new RateCatalogAtpId(rateCatalog.getCode(), atpId));
+                rateCatalogAtp.setRateCatalog(rateCatalog);
+
+                // Updating the existing or creating a new association between RateCatalog and ATPs
+                persistEntity(rateCatalogAtp);
+            }
         }
 
         return rateCatalog;
@@ -1297,7 +1354,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
-    public RateCatalog removeAtpsToRateCatalog(Long rateCatalogId, String... atpIds) {
+    public RateCatalog removeAtpsFromRateCatalog(Long rateCatalogId, String... atpIds) {
 
         PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG);
 
@@ -1548,6 +1605,91 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Transactional(readOnly = false)
     public Rate removeKeyPairFromRate(String key, Long rateId) {
         return removeKeyPairFromRate(key, rateId, true);
+    }
+
+    /**
+     * Adds new amounts to the rate specified by ID
+     *
+     * @param rateId      Rate ID
+     * @param rateAmounts list of RateAmount instances
+     * @return Rate instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Rate addAmountsToRate(Long rateId, List<RateAmount> rateAmounts) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_RATE);
+
+        Rate rate = getRate(rateId);
+
+        if (rate == null) {
+            String errMsg = "Rate with ID = " + rateId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        Set<RateAmount> newRateAmounts = new HashSet<RateAmount>(rateAmounts);
+
+        // Persisting new rate amounts
+        for (RateAmount rateAmount : newRateAmounts) {
+            persistEntity(rateAmount);
+            rateAmount.setRate(rate);
+        }
+
+        // Merging old and new rate amounts
+        Set<RateAmount> oldRateAmounts = rate.getRateAmounts();
+        if (CollectionUtils.isNotEmpty(oldRateAmounts)) {
+            newRateAmounts.addAll(oldRateAmounts);
+        }
+
+        rate.setRateAmounts(newRateAmounts);
+
+        validateRate(rate);
+
+        return rate;
+    }
+
+    /**
+     * Removes the rate amount from the persistence store by ID.
+     *
+     * @param rateAmountId RateAmount ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public void deleteRateAmount(Long rateAmountId) {
+
+        RateAmount rateAmount = getEntity(rateAmountId, RateAmount.class);
+        if (rateAmount == null) {
+            String errMsg = "RateAmount with ID = " + rateAmountId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Rate rate = rateAmount.getRate();
+        if (rate == null) {
+            String errMsg = "RateAmount (ID=" + rateAmountId + ") does not have any rates associated with it";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        RateAmount defaultRateAmount = rate.getDefaultRateAmount();
+        if (defaultRateAmount != null && defaultRateAmount.getId().equals(rateAmountId)) {
+            String errMsg = "Default RateAmount (ID=" + rateAmountId + ") cannot be deleted";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        Set<RateAmount> rateAmounts = rate.getRateAmounts();
+        if (CollectionUtils.isNotEmpty(rateAmounts)) {
+            for (RateAmount amount : new HashSet<RateAmount>(rateAmounts)) {
+                if (amount.getId().equals(rateAmountId)) {
+                    rateAmounts.remove(amount);
+                }
+            }
+        } else {
+            deleteEntity(rateAmountId, RateAmount.class);
+        }
+
     }
 
 }

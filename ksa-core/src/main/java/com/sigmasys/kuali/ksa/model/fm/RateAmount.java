@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_RATE_AMOUNT")
+@Table(name = "KSSA_RATE_AMOUNT",  uniqueConstraints = {@UniqueConstraint(columnNames = {"RATE_ID_FK", "UNIT", "UNIT_FRACTION"})})
 public class RateAmount implements Identifiable {
 
     private Long id;

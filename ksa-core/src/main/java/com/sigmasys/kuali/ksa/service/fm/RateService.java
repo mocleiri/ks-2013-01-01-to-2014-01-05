@@ -431,7 +431,7 @@ public interface RateService {
      * @param atpIds        Array of ATP IDs to be removed
      * @return RateCatalog instance
      */
-    RateCatalog removeAtpsToRateCatalog(Long rateCatalogId, String... atpIds);
+    RateCatalog removeAtpsFromRateCatalog(Long rateCatalogId, String... atpIds);
 
     /**
      * Adds a new key pair to the rate catalog specified by ID.
@@ -470,5 +470,24 @@ public interface RateService {
      * @return Rate instance
      */
     Rate removeKeyPairFromRate(String key, Long rateId);
+
+
+    /**
+     * Adds new amounts to the rate specified by ID
+     *
+     * @param rateId      Rate ID
+     * @param rateAmounts list of RateAmount instances
+     * @return Rate instance
+     */
+    Rate addAmountsToRate(Long rateId, List<RateAmount> rateAmounts);
+
+
+    /**
+     * Removes the rate amount from the persistence store by ID.
+     *
+     * @param rateAmountId RateAmount ID
+     */
+    void deleteRateAmount(Long rateAmountId);
+
 
 }

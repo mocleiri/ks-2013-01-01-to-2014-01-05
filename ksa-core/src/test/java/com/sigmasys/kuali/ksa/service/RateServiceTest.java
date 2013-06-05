@@ -15,10 +15,7 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * RateService tests.
@@ -549,13 +546,167 @@ public class RateServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void getRatesByCode() throws Exception {
+
+        String rateCatalogCode = "RC_2013_CODE";
+
+        String rateCode = "R_2013_CODE";
+
+        _createRateCatalog(rateCatalogCode, "19871");
+        _createRateCatalog(rateCatalogCode, "19872");
+
+        Rate rate1 = _createRate(rateCode, rateCatalogCode, "19871");
+
+        Assert.notNull(rate1);
+        Assert.notNull(rate1.getCode());
+        Assert.notNull(rate1.getAtpId());
+
+        Rate rate2 = _createRate(rateCode, rateCatalogCode, "19872");
+
+        Assert.notNull(rate2);
+        Assert.notNull(rate2.getCode());
+        Assert.notNull(rate2.getAtpId());
+
+        List<Rate> rates = rateService.getRatesByCode(rateCode);
+
+        Assert.notNull(rates);
+        Assert.notEmpty(rates);
+
+        Assert.isTrue(rates.size() == 2);
+
+        boolean rate1Exists = false;
+        boolean rate2Exists = false;
+
+        for (Rate rate : rates) {
+
+            Assert.notNull(rate.getCode());
+            Assert.notNull(rate.getAtpId());
+
+            Assert.isTrue(rate.getCode().equals(rateCode));
+
+            logger.debug("Rate ATP ID = '" + rate.getAtpId() + "'");
+
+            if (rate.getId().equals(rate1.getId())) {
+
+                rate1Exists = true;
+
+                Assert.isTrue("19871".equals(rate.getAtpId()));
+
+            } else if (rate.getId().equals(rate2.getId())) {
+
+                rate2Exists = true;
+
+                Assert.isTrue("19872".equals(rate.getAtpId()));
+            }
+        }
+
+        Assert.isTrue(rate1Exists);
+        Assert.isTrue(rate2Exists);
+
+    }
+
+    @Test
+    public void getRatesByAtpId() throws Exception {
+
+        _createRateCatalog("RC_2013_ATP_1", "19874");
+        _createRateCatalog("RC_2013_ATP_2", "19874");
+
+        Rate rate1 = _createRate("R_2013_ATP_1", "RC_2013_ATP_1");
+
+        Assert.notNull(rate1);
+        Assert.notNull(rate1.getCode());
+        Assert.notNull(rate1.getAtpId());
+
+        Rate rate2 = _createRate("R_2013_ATP_2", "RC_2013_ATP_2");
+
+        Assert.notNull(rate2);
+        Assert.notNull(rate2.getCode());
+        Assert.notNull(rate2.getAtpId());
+
+        List<Rate> rates = rateService.getRatesByAtpId("19874");
+
+        Assert.notNull(rates);
+        Assert.notEmpty(rates);
+
+        Assert.isTrue(rates.size() >= 2);
+
+        boolean rate1Exists = false;
+        boolean rate2Exists = false;
+
+        for (Rate rate : rates) {
+
+            Assert.notNull(rate.getCode());
+            Assert.notNull(rate.getAtpId());
+
+            Assert.isTrue(rate.getAtpId().equals("19874"));
+
+            if (rate.getId().equals(rate1.getId())) {
+
+                rate1Exists = true;
+
+                Assert.isTrue("R_2013_ATP_1".equals(rate.getCode()));
+
+            } else if (rate.getId().equals(rate2.getId())) {
+
+                rate2Exists = true;
+
+                Assert.isTrue("R_2013_ATP_2".equals(rate.getCode()));
+            }
+        }
+
+        Assert.isTrue(rate1Exists);
+        Assert.isTrue(rate2Exists);
+
+    }
+
+
+    @Test
+    public void transferAtpsToRateCatalog() {
+
+        String rateCatalogCode = "RC_2013";
+
+        RateCatalog rateCatalog1 = _createRateCatalog(rateCatalogCode, "19871", "19872");
+
+        Assert.notNull(rateCatalog1);
+
+        RateCatalog rateCatalog2 = _createRateCatalog(rateCatalogCode, "19873");
+
+        Assert.notNull(rateCatalog2);
+
+        rateCatalog2 = rateService.transferAtpsToRateCatalog(rateCatalog2.getId(), "19871", "19872", "19874");
+
+        Assert.notNull(rateCatalog2);
+
+        Set<String> atpIds = rateService.getAtpsForRateCatalog(rateCatalog2.getId());
+
+        Assert.notNull(atpIds);
+        Assert.notEmpty(atpIds);
+
+        logger.debug("Number of ATPs = " + atpIds.size());
+        for (String atpId : atpIds) {
+            logger.debug("ATP ID = " + atpId);
+        }
+
+        Assert.isTrue(atpIds.size() == 4);
+
+        Assert.isTrue(atpIds.containsAll(Arrays.asList("19871", "19872", "19873", "19874")));
+
+        atpIds = rateService.getAtpsForRateCatalog(rateCatalog1.getId());
+
+        Assert.notNull(atpIds);
+
+        Assert.isTrue(atpIds.size() == 0);
+
+    }
+
+    @Test
     public void assignAtpsToRateCatalog() {
 
         String rateCatalogCode = "RC_2013";
 
-        String[] atpIds = {"19875", "19876", "19877"};
+        String[] atpIds = {"19872", "19873"};
 
-        RateCatalog rateCatalog = _createRateCatalog(rateCatalogCode);
+        RateCatalog rateCatalog = _createRateCatalog(rateCatalogCode, "19871");
 
         rateCatalog = rateService.assignAtpsToRateCatalog(rateCatalog.getId(), atpIds);
 
@@ -570,11 +721,12 @@ public class RateServiceTest extends AbstractServiceTest {
             Assert.isTrue(rateCatalog1.getId().equals(rateCatalog.getId()));
         }
 
-
         Set<String> atpIdSet = rateService.getAtpsForRateCatalog(rateCatalog.getId());
 
         Assert.notNull(atpIdSet);
         Assert.notEmpty(atpIdSet);
+
+        Assert.isTrue(atpIdSet.contains("19871"));
 
         Assert.isTrue(atpIdSet.containsAll(Arrays.asList(atpIds)));
 
@@ -750,6 +902,154 @@ public class RateServiceTest extends AbstractServiceTest {
         Assert.isTrue(rateKeyPairs.size() == 1);
 
         Assert.isTrue(!catalogKeyPairs.contains(new KeyPair("key_49", "value_49")));
+
+    }
+
+    @Test
+    public void addAmountsToRate() throws Exception {
+
+        String rateCatalogCode = "RC_2013_AMOUNT";
+        String rateCode = "R_2013_AMOUNT";
+
+        _createRateCatalog(rateCatalogCode);
+
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        Assert.notNull(rate);
+        Assert.notNull(rate.getId());
+
+        RateAmount defaultRateAmount = rate.getDefaultRateAmount();
+
+        Assert.notNull(defaultRateAmount);
+
+        List<RateAmount> amounts = new LinkedList<RateAmount>();
+
+        RateAmount amount1 = new RateAmount();
+        amount1.setAmount(new BigDecimal(200.00));
+        amount1.setUnit(3);
+        amount1.setUnitFraction(6);
+        amount1.setTransactionTypeId(rate.getTransactionTypeId());
+        amounts.add(amount1);
+
+        RateAmount amount2 = new RateAmount();
+        amount2.setAmount(new BigDecimal(100.00));
+        amount2.setUnit(1);
+        amount2.setUnitFraction(5);
+        amount2.setTransactionTypeId(rate.getTransactionTypeId());
+        amounts.add(amount2);
+
+        rate = rateService.addAmountsToRate(rate.getId(), amounts);
+
+        Set<RateAmount> rateAmounts = rate.getRateAmounts();
+
+        Assert.notNull(rateAmounts);
+        Assert.notEmpty(rateAmounts);
+        Assert.isTrue(rateAmounts.size() == 3);
+
+        boolean defaultAmountExists = false;
+        boolean amount1Exists = false;
+        boolean amount2Exists = false;
+
+        for (RateAmount rateAmount : rateAmounts) {
+
+            Assert.notNull(rateAmount);
+            Assert.notNull(rateAmount.getId());
+            Assert.notNull(rateAmount.getRate());
+            Assert.isTrue(rateAmount.getRate().getId().equals(rate.getId()));
+
+            if (rateAmount.getId().equals(defaultRateAmount.getId())) {
+                defaultAmountExists = true;
+            } else if (rateAmount.getId().equals(amount1.getId())) {
+                amount1Exists = true;
+            } else if (rateAmount.getId().equals(amount2.getId())) {
+                amount2Exists = true;
+            }
+
+        }
+
+        Assert.isTrue(defaultAmountExists);
+        Assert.isTrue(amount1Exists);
+        Assert.isTrue(amount2Exists);
+
+    }
+
+    @Test
+    public void deleteAmount() throws Exception {
+
+        String rateCatalogCode = "RC_2013_AMOUNT";
+        String rateCode = "R_2013_AMOUNT";
+
+        _createRateCatalog(rateCatalogCode);
+
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        Assert.notNull(rate);
+        Assert.notNull(rate.getId());
+
+        RateAmount defaultRateAmount = rate.getDefaultRateAmount();
+
+        Assert.notNull(defaultRateAmount);
+
+        List<RateAmount> amounts = new LinkedList<RateAmount>();
+
+        RateAmount amount1 = new RateAmount();
+        amount1.setAmount(new BigDecimal(200.00));
+        amount1.setUnit(3);
+        amount1.setUnitFraction(6);
+        amount1.setTransactionTypeId(rate.getTransactionTypeId());
+        amounts.add(amount1);
+
+        RateAmount amount2 = new RateAmount();
+        amount2.setAmount(new BigDecimal(100.00));
+        amount2.setUnit(1);
+        amount2.setUnitFraction(5);
+        amount2.setTransactionTypeId(rate.getTransactionTypeId());
+        amounts.add(amount2);
+
+        rate = rateService.addAmountsToRate(rate.getId(), amounts);
+
+        Set<RateAmount> rateAmounts = rate.getRateAmounts();
+
+        Assert.notNull(rateAmounts);
+        Assert.notEmpty(rateAmounts);
+        Assert.isTrue(rateAmounts.size() == 3);
+
+        for (RateAmount rateAmount : new HashSet<RateAmount>(rateAmounts)) {
+
+            Assert.notNull(rateAmount);
+            Assert.notNull(rateAmount.getId());
+            Assert.notNull(rateAmount.getRate());
+            Assert.isTrue(rateAmount.getRate().getId().equals(rate.getId()));
+
+            if (rateAmount.getUnit() == 1) {
+                rateService.deleteRateAmount(rateAmount.getId());
+            }
+
+        }
+
+        rate = rateService.getRate(rate.getId());
+
+        rateAmounts = rate.getRateAmounts();
+
+        Assert.notNull(rateAmounts);
+        Assert.notEmpty(rateAmounts);
+        Assert.isTrue(rateAmounts.size() == 2);
+
+        boolean defaultAmountExists = false;
+
+        for (RateAmount rateAmount : rateAmounts) {
+
+            Assert.notNull(rateAmount);
+            Assert.notNull(rateAmount.getId());
+            Assert.notNull(rateAmount.getRate());
+            Assert.isTrue(rateAmount.getRate().getId().equals(rate.getId()));
+
+            if (rateAmount.getId().equals(defaultRateAmount.getId())) {
+                defaultAmountExists = true;
+            }
+        }
+
+        Assert.isTrue(defaultAmountExists);
 
     }
 
