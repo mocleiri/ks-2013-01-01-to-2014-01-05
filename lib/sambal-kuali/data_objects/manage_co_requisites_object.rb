@@ -203,43 +203,58 @@ class ManageCORequisitesData
 
   def test_multiline_text(section, text, boolean)
     sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
+    $test_text = nil
     if section != "edit"
       array = text.split(/,/)
-      test_text = array.shift
-      array.each do |elem|
+      if array.length > 1
+        $test_text = array.shift
+        array.each do |elem|
+          if section == "compare"
+            on CourseOfferingRequisites do |page|
+              page.loading.wait_while_present
+              if boolean == true
+                page.compare_tree.text.should =~ /.*#{Regexp.escape(elem)}\n#{Regexp.escape(elem)}.*/m
+              else
+                page.compare_tree.text.should_not =~ /.*#{Regexp.escape(elem)}\n#{Regexp.escape(elem)}.*/m
+              end
+            end
+          else
+            $test_text += "\n" + elem
+          end
+        end
+      else
+        $test_text = text
         if section == "compare"
           on CourseOfferingRequisites do |page|
             page.loading.wait_while_present
             if boolean == true
-              page.compare_tree.text.should =~ /.*#{Regexp.escape(elem)}.*\n.*#{Regexp.escape(elem)}.*/m
+              page.compare_tree.text.should =~ /.*#{Regexp.escape($test_text)}\n#{Regexp.escape($test_text)}.*/m
             else
-              page.compare_tree.text.should_not =~ /.*#{Regexp.escape(elem)}.*\n.*#{Regexp.escape(elem)}.*/m
+              page.compare_tree.text.should_not =~ /.*#{Regexp.escape($test_text)}\n#{Regexp.escape($test_text)}.*/m
             end
           end
-        else
-          test_text += "\n" + elem
         end
       end
     else
-      test_text = text
+      $test_text = text
     end
 
     if( section == "agenda")
       on CourseOfferingRequisites do |page|
         page.loading.wait_while_present
         if boolean == true
-          page.agenda_management_section.text.should =~ /.*#{Regexp.escape(test_text)}.*/m
+          page.agenda_management_section.text.should =~ /.*#{Regexp.escape($test_text)}.*/m
         else
-          page.agenda_management_section.text.should_not =~ /.*#{Regexp.escape(test_text)}.*/m
+          page.agenda_management_section.text.should_not =~ /.*#{Regexp.escape($test_text)}.*/m
         end
       end
     elsif section == "edit" || section == "logic"
       on ManageCORequisites do |page|
         page.loading.wait_while_present
         if boolean == true
-          page.send(sect[section]).text.should =~ /.*#{Regexp.escape(test_text)}.*/m
+          page.send(sect[section]).text.should =~ /.*#{Regexp.escape($test_text)}.*/m
         else
-          page.send(sect[section]).text.should_not =~ /.*#{Regexp.escape(test_text)}.*/m
+          page.send(sect[section]).text.should_not =~ /.*#{Regexp.escape($test_text)}.*/m
         end
       end
     end

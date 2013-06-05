@@ -57,4 +57,17 @@ class CORequisitesData
       page.send(sections[sect])
     end
   end
+
+  def commit_changes
+    begin
+      on ManageCORequisites do |page|
+        page.update_rule_btn
+      end
+    rescue Watir::Wait::TimeoutError
+      #means Update Rule button already clicked
+    end
+    on CourseOfferingRequisites do |page|
+      page.submit
+    end
+  end
 end

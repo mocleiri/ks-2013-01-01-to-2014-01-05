@@ -331,15 +331,14 @@ When /^I add a "(.*?)" statement after node "(.*?)" with (?:|courses|course|text
 end
 
 When /^I commit changes made to the proposition and return to see the changes$/ do
-  on ManageCORequisites do |page|
-    page.update_rule_btn
-  end
-  on CourseOfferingRequisites do |page|
-    page.submit
-  end
+  @courseOR.commit_changes
   on ManageCourseOfferings do |page|
     page.manage_course_offering_requisites
   end
+end
+
+When /^I commit changes made to the proposition$/ do
+  @courseOR.commit_changes
 end
 
 Then /^the tree for "(.*?)" should be empty$/ do |sect|
