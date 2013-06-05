@@ -77,7 +77,23 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                                                                  @WebParam(name = "context") ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        throw new RuntimeException("Not implemented");
+        List<String> courseOfferingIds = new ArrayList<String>();
+        boolean failOver = false;
+        try {
+            YearTerm yt = AtpHelper.atpToYearTerm(termId);
+            String year = yt.getYearAsString();
+            String term = yt.getTermAsID();
+            courseOfferingIds = solrSeviceClient.getActivityIds(year, term, subjectArea);
+        } catch (Exception e) {
+            logger.error("Call to the student service failed.", e);
+            failOver = true;
+        }
+        if (!failOver) {
+            return courseOfferingIds;
+        } else {
+            return getNextDecorator().getCourseOfferingIdsByTermAndSubjectArea(termId, subjectArea, context);
+        }
+
     }
 
     @Override
@@ -588,7 +604,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
             String number = courseInfo.getCourseNumberSuffix();
 
             List<String> sectionXMLs = solrSeviceClient.getPrimarySections(year, quarter, curriculumAbbreviation, number);
-            if (sectionXMLs != null && !sectionXMLs.isEmpty()) {
+            if (sectionXMLs != null) {
                 for (String sectionData : sectionXMLs) {
                     Document sectionDoc;
                     sectionDoc = offeringServiceUtils.newDocument(sectionData);
@@ -596,8 +612,9 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                     list.add(info);
                 }
             } else {
-                return getNextDecorator().getCourseOfferingsByCourseAndTerm(courseId, termId, context);
+                failOver = true;
             }
+
         } catch (Exception e) {
             logger.error(e);
             failOver = true;
@@ -616,13 +633,9 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
         boolean failOver = false;
         try {
             List<String> sectionList = new ArrayList<String>();
-            try {
-                sectionList = solrSeviceClient.getPrimaryAndSecondarySections(courseOfferingID);
-            } catch (ServiceException e) {
-                logger.warn(e);
-            }
+            sectionList = solrSeviceClient.getPrimaryAndSecondarySections(courseOfferingID);
 
-            if (sectionList!=null && !sectionList.isEmpty()) {
+            if (sectionList != null) {
                 for (String xml : sectionList) {
                     Document doc = null;
                     try {
@@ -637,7 +650,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                     }
                 }
             } else {
-                return getNextDecorator().getActivityOfferingDisplaysForCourseOffering(courseOfferingID, contextInfo);
+                failOver = true;
             }
         } catch (Exception e) {
             e.printStackTrace();

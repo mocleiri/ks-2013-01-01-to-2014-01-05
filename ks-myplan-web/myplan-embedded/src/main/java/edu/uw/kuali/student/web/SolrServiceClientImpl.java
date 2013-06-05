@@ -23,6 +23,7 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
 
     private Client client;
     private String solrBaseUrl;
+    private SolrServer server;
 
     public Client getClient() {
         return client;
@@ -42,7 +43,16 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
 
     public SolrServiceClientImpl(String baseUrl) {
         setSolrBaseUrl(baseUrl);
+        setServer(new HttpSolrServer(baseUrl));
         client = new Client(Protocol.HTTP);
+    }
+
+    public SolrServer getServer() {
+        return server;
+    }
+
+    public void setServer(SolrServer server) {
+        this.server = server;
     }
 
     /**
@@ -133,10 +143,38 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
 
     }
 
+    /**
+     * returns all the activityIds for given params
+     *
+     * @param year
+     * @param term
+     * @param curriculumAbbreviation
+     * @return
+     * @throws ServiceException
+     */
+    public List<String> getActivityIds(String year, String term, String curriculumAbbreviation) throws ServiceException {
+        ModifiableSolrParams params = new ModifiableSolrParams();
+        params.set("q", "section.year:" + year + " AND section.term:" + term + " AND section.curriculum.abbreviation:" + curriculumAbbreviation + " AND section.primary:true");
+        params.set("fl", "section.id");
+        params.set("sort", "section.id asc");
+        params.set("rows", "9999");
+        List<SolrDocument> documents = sendQuery(params);
+        List<String> activityIds = new ArrayList<String>();
+        for (SolrDocument document : documents) {
+            activityIds.add(document.getFieldValue("section.id").toString());
+        }
+        return activityIds;
+    }
+
+    /**
+     * @param params
+     * @return
+     * @throws ServiceException
+     */
     public List<SolrDocument> sendQuery(ModifiableSolrParams params) throws ServiceException {
         List<SolrDocument> documents = new ArrayList<SolrDocument>();
         try {
-            SolrServer server = new HttpSolrServer(solrBaseUrl);
+            server.ping();
             QueryResponse queryResponse = server.query(params);
             documents = queryResponse.getResults();
 
