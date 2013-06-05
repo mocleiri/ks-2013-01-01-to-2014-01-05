@@ -71,6 +71,57 @@
     </bean>
 
     <bean id="myplanInterceptor" class="edu.uw.kuali.student.myplan.util.MyplanInterceptor">
+        <property name="viewSwsResourceMapping">
+            <map>
+                <entry key="CourseSearch-FormView">
+                    <list>
+                        <value>/v4/public/section</value>
+                        <value>/v4/public/term/current</value>
+                    </list>
+                </entry>
+                <entry key="CourseDetails-InquiryView">
+                    <list>
+                        <value>/v4/public/section</value>
+                        <value>/v4/public/term/current</value>
+                        <value>/v4/enrollment</value>
+                        <value>/v4/registration/</value>
+                    </list>
+                </entry>
+                <entry key="PlannedCourses-FormView">
+                    <list>
+                        <value>/v4/public/section</value>
+                        <value>/v4/public/term/current</value>
+                        <value>/v4/enrollment</value>
+                        <value>/v4/registration/</value>
+                    </list>
+                </entry>
+                <entry key="SavedCoursesDetail-LookupView">
+                    <list>
+                        <value>/v4/public/section</value>
+                        <value>/v4/public/term/current</value>
+                        <value>/v4/enrollment</value>
+                        <value>/v4/registration/</value>
+                    </list>
+                </entry>
+                <entry key="DegreeAudit-FormView">
+                    <list>
+                        <value>/v5/degreeaudit</value>
+                        <value>/v4/public/section</value>
+                        <value>/v4/public/term/current</value>
+                        <value>/v4/enrollment</value>
+                        <value>/v4/registration/</value>
+                    </list>
+                </entry>
+                <entry key="SingleTerm-InquiryView">
+                    <list>
+                        <value>/v4/public/section</value>
+                        <value>/v4/public/term/current</value>
+                        <value>/v4/enrollment</value>
+                        <value>/v4/registration/</value>
+                    </list>
+                </entry>
+            </map>
+        </property>
         <property name="studentServiceClient" ref="StudentService"/>
     </bean>
 
