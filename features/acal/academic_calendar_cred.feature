@@ -1,11 +1,10 @@
 @nightly
-Feature: WC.Academic Calendar CRED
+Feature: EC.Academic Calendar CRED
 
   Background:
     Given I am logged in as a Schedule Coordinator
     And I create an Academic Calendar
 
-  @bug @KSENROLL-7152
   Scenario: Create and save academic calendar from blank
     Then the Make Official button should become active
 
@@ -13,6 +12,7 @@ Feature: WC.Academic Calendar CRED
     And I search for the calendar
     Then the calendar should appear in search results
 
+    @bug @KSENROLL-7298
   Scenario: Make Academic Calendar Official
     When I make the calendar official
     And I search for the calendar
