@@ -78,6 +78,22 @@ class ManageCORequisitesData
     end
   end
 
+  def check_new_data_existence
+    on ManageCORequisites do |page|
+      page.logic_tab.click
+      page.edit_loading.wait_while_present
+      text = page.logic_text.text
+      array = text.split('(')
+      page.object_tab.click
+      page.edit_loading.wait_while_present
+      if array.length >= 4
+        return 1
+      else
+        return 0
+      end
+    end
+  end
+
   def create_data_advanced_search( sect)
     on ManageCORequisites do |page|
       page.add_btn
@@ -126,7 +142,6 @@ class ManageCORequisitesData
       page.edit_loading.wait_while_present
       page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
-      page.update_rule_btn
     end
   end
 

@@ -255,10 +255,10 @@ Then /^the old and new rule should be compared$/ do
   end
 end
 
-When /^I "(.*?)" the data for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |change, section, term, course|
+When /^I (?:|setup|edit) the data for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |section, term, course|
   @manageCOR = make ManageCORequisitesData
   @courseOR = make CORequisitesData
-  @courseOR.data_setup(change, section, term, course)
+  @courseOR.data_setup(section, term, course)
 end
 
 When /^I navigate to the agenda page for term "(.*?)" and course "(.*?)"$/ do |term, course|
@@ -330,7 +330,7 @@ When /^I add a "(.*?)" statement after node "(.*?)" with (?:|courses|course|text
   @manageCOR.add_new_node(@courseOR.section, field, node, course)
 end
 
-When /^I commit changes made to the proposition and return to see the changes$/ do
+When /^I commit and return to see the changes made to the proposition$/ do
   @courseOR.commit_changes
   on ManageCourseOfferings do |page|
     page.manage_course_offering_requisites
@@ -352,5 +352,15 @@ Then /^the tree for "(.*?)" should be empty$/ do |sect|
       page.send(sections[sect]).when_present.click
     end
     page.agenda_management_section.text.should match /.*Edit Rule.*in order to enroll\.\nCredit Constraints.*/m
+  end
+end
+
+Then /^there should be no node "(.*?)" on both tabs$/ do |node|
+  on ManageCORequisites do |page|
+    page.loading.wait_while_present
+    page.edit_tree_section.text.should_not =~ /.*#{Regexp.escape(node)}\..*/
+    page.logic_tab
+    page.edit_loading.wait_while_present
+    page.logic_text.text.should_not =~ /.*#{Regexp.escape(node)}.*/
   end
 end

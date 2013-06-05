@@ -27,7 +27,7 @@ class CORequisitesData
     end
   end
 
-  def data_setup(change, sect, term, course)
+  def data_setup(sect, term, course)
     sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
                 "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
                 "Repeatable for Credit"=>:repeatable_credit, "Course that Restricts Credits"=>:resctricted_credit}
@@ -36,25 +36,25 @@ class CORequisitesData
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
       page.send(sections[sect])
-      if change == "setup"
-        check = @manageCORdata.check_data_existence
-        if( check == 0)
-          page.rule_add
-          @manageCORdata.create_data_advanced_search(sect)
-        end
+      check = @manageCORdata.check_data_existence
+      if( check == 0)
+        page.rule_add
+        @manageCORdata.create_data_advanced_search
       else
         page.rule_edit
-        @manageCORdata.edit_data_advanced_search(sect)
+        check_new = @manageCORdata.check_new_data_existence
+        if( check_new == 0)
+          @manageCORdata.edit_data_advanced_search(sect)
+        end
+        on ManageCORequisites do |page|
+          page.update_rule_btn
+        end
       end
       page.submit
     end
 
     on ManageCourseOfferings do |page|
       page.manage_course_offering_requisites
-    end
-
-    on CourseOfferingRequisites do |page|
-      page.send(sections[sect])
     end
   end
 

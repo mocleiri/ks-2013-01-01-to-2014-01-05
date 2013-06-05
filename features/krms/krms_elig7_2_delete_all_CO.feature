@@ -9,5 +9,5 @@ Feature: KRMS ELIG7.2 Delete all statements of CO copied from CLU
     When I navigate to the agenda page for term "201208" and course "ENGL313"
     And I want to edit the "Student Eligibility & Prerequisite" section
     And I delete node "A" in the tree
-    When I commit changes made to the proposition and return to see the changes
+    When I commit and return to see the changes made to the proposition
     Then the tree for "Student Eligibility & Prerequisite" should be empty
