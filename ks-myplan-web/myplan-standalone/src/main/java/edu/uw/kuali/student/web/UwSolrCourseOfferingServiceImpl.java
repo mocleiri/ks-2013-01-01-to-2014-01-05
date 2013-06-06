@@ -85,7 +85,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
             String term = yt.getTermAsID();
             courseOfferingIds = solrSeviceClient.getActivityIds(year, term, subjectArea);
         } catch (Exception e) {
-            logger.error("Call to the student service failed.", e);
+            logger.error("Call to the student service failed." + e.getMessage());
             failOver = true;
         }
         if (!failOver) {
@@ -187,11 +187,11 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                 failOver = true;
             }
         } catch (ServiceException e) {
-            logger.warn(e);
+            logger.error("Exception loading the course offering info" + e.getMessage());
             failOver = true;
             // Skip this section ID if it fails
         } catch (DocumentException e) {
-            logger.warn(e);
+            logger.error("Exception loading the course offering info" + e.getMessage());
             failOver = true;
         }
         if (!failOver) {
@@ -330,7 +330,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                 failOver = true;
             }
         } catch (Exception e) {
-            logger.warn(e);
+            logger.error("Exception loading the activity offering info" + e.getMessage());
             failOver = true;
         }
         if (!failOver) {
@@ -616,7 +616,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
             }
 
         } catch (Exception e) {
-            logger.error(e);
+            logger.error("Exception loading the course offering infos" + e.getMessage());
             failOver = true;
         }
         if (!failOver) {
@@ -641,7 +641,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                     try {
                         doc = offeringServiceUtils.newDocument(xml);
                     } catch (Exception e) {
-                        logger.warn(e);
+                        logger.error("Exception loading the activity offerings" + e.getMessage());
                         continue;
                     }
                     ActivityOfferingDisplayInfo info = offeringServiceUtils.buildActivityOfferingDisplayInfo(doc);
@@ -653,7 +653,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                 failOver = true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception loading the activity offerings" + e.getMessage());
             failOver = true;
         }
         if (!failOver) {
