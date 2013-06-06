@@ -188,29 +188,6 @@ public class CourseSearchControllerTest {
     }
 
     @Test
-    public void testIsCourseOffered() {
-
-        CourseSearchForm form = new CourseSearchForm();
-        CourseSearchItem course = new CourseSearchItem();
-        CourseSearchController controller = getSearchController();
-
-        try {
-            form.setSearchTerm(CourseSearchForm.SEARCH_TERM_ANY_ITEM);
-
-            assertTrue(controller.isCourseOffered(form, course));
-
-            form.setSearchTerm("fake");
-            course.setCode("CHEM");
-            assertTrue(controller.isCourseOffered(form, course));
-
-            course.setCode("FAKE");
-            assertFalse(controller.isCourseOffered(form, course));
-        } catch (Exception e) {
-            fail("failed!");
-        }
-    }
-
-    @Test
     public void testProcessSearchRequests() {
 
         CourseSearchForm form = new CourseSearchForm();
