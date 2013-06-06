@@ -54,7 +54,7 @@ public class Information extends AccountIdAware implements Identifiable {
     /**
      * Access Level
      */
-    private Integer accessLevel;
+    private InformationAccessLevel accessLevel;
 
     /**
      * Transaction
@@ -94,12 +94,13 @@ public class Information extends AccountIdAware implements Identifiable {
         this.id = id;
     }
 
-    @Column(name = "ACCESS_LEVEL")
-    public Integer getAccessLevel() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACCESS_LEVEL_ID_FK")
+    public InformationAccessLevel getAccessLevel() {
         return accessLevel;
     }
 
-    public void setAccessLevel(Integer accessLevel) {
+    public void setAccessLevel(InformationAccessLevel accessLevel) {
         this.accessLevel = accessLevel;
     }
 
@@ -193,19 +194,6 @@ public class Information extends AccountIdAware implements Identifiable {
         Date curDate = new Date();
         return effectiveDate != null && effectiveDate.compareTo(curDate) <= 0 &&
                 (expirationDate == null || expirationDate.after(curDate));
-    }
-
-    /**
-     * TODO: Remove this eventually.  This is a hack because Uif-HorizontalRadioControl can only deal with Strings.
-     * Discussion on KRAD list: https://groups.google.com/a/kuali.org/d/topic/rice.usergroup.krad/I2x9Z55amBw/discussion
-     */
-    @Transient
-    public String getAccessLevelString() {
-        return (accessLevel != null) ? accessLevel.toString() : "";
-    }
-
-    public void setAccessLevelString(String accessLevelValue) {
-        accessLevel = StringUtils.isNotBlank(accessLevelValue) ? Integer.parseInt(accessLevelValue) : null;
     }
 
     /**

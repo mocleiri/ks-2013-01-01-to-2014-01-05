@@ -1,9 +1,6 @@
 package com.sigmasys.kuali.ksa.service;
 
-import com.sigmasys.kuali.ksa.model.Alert;
-import com.sigmasys.kuali.ksa.model.Flag;
-import com.sigmasys.kuali.ksa.model.Information;
-import com.sigmasys.kuali.ksa.model.Memo;
+import com.sigmasys.kuali.ksa.model.*;
 
 import java.util.Date;
 import java.util.List;
@@ -134,15 +131,14 @@ public interface InformationService {
      * transaction instantiations will generate a memo as soon as they are
      * created.
      *
-     * @param transactionId  Transaction ID
-     * @param memoText       Memo text
-     * @param accessLevel    Access level
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
-     * @param prevMemoId     Previous Memo ID
-     * @return new Memo instance
+     * @param transactionId   Transaction ID
+     * @param memoText        Memo text
+     * @param accessLevelCode InformationAccessLevel code
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date
+     * @param prevMemoId      Previous Memo ID    @return new Memo instance
      */
-    Memo createMemo(Long transactionId, String memoText, Integer accessLevel,
+    Memo createMemo(Long transactionId, String memoText, String accessLevelCode,
                     Date effectiveDate, Date expirationDate, Long prevMemoId);
 
     /**
@@ -153,76 +149,72 @@ public interface InformationService {
      * transaction instantiations will generate a memo as soon as they are
      * created.
      *
-     * @param accountId      Account ID
-     * @param memoText       Memo text
-     * @param accessLevel    Access level
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
-     * @param prevMemoId     Previous Memo ID
-     * @return new Memo instance
+     * @param accountId       Account ID
+     * @param memoText        Memo text
+     * @param accessLevelCode InformationAccessLevel code
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date
+     * @param prevMemoId      Previous Memo ID    @return new Memo instance
      */
-    Memo createMemo(String accountId, String memoText, Integer accessLevel,
+    Memo createMemo(String accountId, String memoText, String accessLevelCode,
                     Date effectiveDate, Date expirationDate, Long prevMemoId);
 
 
     /**
      * Creates a new flag based on the given parameters
      *
-     * @param transactionId  Transaction ID
-     * @param flagTypeId     Flag Type ID
-     * @param accessLevel    Access level
-     * @param severity       Severity
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
-     * @return new Flag instance
+     * @param transactionId   Transaction ID
+     * @param flagTypeId      Flag Type ID
+     * @param accessLevelCode InformationAccessLevel code
+     * @param severity        Severity
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date    @return new Flag instance
      */
-    Flag createFlag(Long transactionId, Long flagTypeId, Integer accessLevel,
+    Flag createFlag(Long transactionId, Long flagTypeId, String accessLevelCode,
                     Integer severity, Date effectiveDate, Date expirationDate);
 
     /**
      * Creates a new flag based on the given parameters
      *
-     * @param accountId      Account ID
-     * @param flagTypeId     Flag Type ID
-     * @param accessLevel    Access level
-     * @param severity       Severity
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
-     * @return new Flag instance
+     * @param accountId       Account ID
+     * @param flagTypeId      Flag Type ID
+     * @param accessLevelCode InformationAccessLevel code
+     * @param severity        Severity
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date    @return new Flag instance
      */
-    Flag createFlag(String accountId, Long flagTypeId, Integer accessLevel,
+    Flag createFlag(String accountId, Long flagTypeId, String accessLevelCode,
                     Integer severity, Date effectiveDate, Date expirationDate);
 
     /**
      * Creates a new alert based on the given parameters
      *
-     * @param transactionId  Transaction ID
-     * @param alertText      Alert text
-     * @param accessLevel    Access level
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
-     * @return new Alert instance
+     * @param transactionId   Transaction ID
+     * @param alertText       Alert text
+     * @param accessLevelCode InformationAccessLevel code
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date   @return new Alert instance
      */
-    Alert createAlert(Long transactionId, String alertText, Integer accessLevel, Date effectiveDate, Date expirationDate);
+    Alert createAlert(Long transactionId, String alertText, String accessLevelCode, Date effectiveDate, Date expirationDate);
 
     /**
      * Creates a new alert based on the given parameters
      *
-     * @param accountId      Account ID
-     * @param alertText      Alert text
-     * @param accessLevel    Access level
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
+     * @param accountId       Account ID
+     * @param alertText       Alert text
+     * @param accessLevelCode InformationAccessLevel code
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date
      * @return new Alert instance
      */
-    Alert createAlert(String accountId, String alertText, Integer accessLevel, Date effectiveDate, Date expirationDate);
+    Alert createAlert(String accountId, String alertText, String accessLevelCode, Date effectiveDate, Date expirationDate);
 
     /**
-     * Returns the default memo level.
+     * Returns the default Memo's InformationAccessLevel code.
      *
-     * @return level number
+     * @return InformationAccessLevel code
      */
-    Integer getDefaultMemoLevel();
+    String getDefaultMemoLevel();
 
     /**
      * Associates the information represented by Information ID with the given Account ID
@@ -242,5 +234,20 @@ public interface InformationService {
      */
     Information associateWithTransaction(Long informationId, Long transactionId);
 
+    /**
+     * Returns InformationAccessLevel instance by code.
+     *
+     * @param code InformationAccessLevel code
+     * @return InformationAccessLevel instance
+     */
+    InformationAccessLevel getInformationAccessLevel(String code);
+
+    /**
+     * Returns InformationAccessLevel instance by ID.
+     *
+     * @param id InformationAccessLevel ID
+     * @return InformationAccessLevel instance
+     */
+    InformationAccessLevel getInformationAccessLevel(Long id);
 
 }

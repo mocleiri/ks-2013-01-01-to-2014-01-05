@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.service;
 
 
 import com.sigmasys.kuali.ksa.model.*;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +41,11 @@ public class InformationServiceTest extends AbstractServiceTest {
     @Test
     public void getInformations() throws Exception {
 
-        informationService.createMemo("admin", "New memo for 1020", 0, new Date(), null, null);
+        String memoAccessLevelCode = informationService.getDefaultMemoLevel();
+
+        Assert.isTrue(StringUtils.isNotBlank(memoAccessLevelCode));
+
+        informationService.createMemo("admin", "New memo for 1020", memoAccessLevelCode, new Date(), null, null);
 
         List<Information> informations = informationService.getInformations();
 
@@ -139,14 +144,18 @@ public class InformationServiceTest extends AbstractServiceTest {
 
     private Memo createMemoForTransaction(String transactionId) throws Exception {
 
+        String memoAccessLevelCode = informationService.getDefaultMemoLevel();
+
+        Assert.isTrue(StringUtils.isNotBlank(memoAccessLevelCode));
+
         Transaction transaction = transactionService.createTransaction(transactionId, "admin", new Date(),
                 new BigDecimal(10e8));
 
         Assert.notNull(transaction);
         Assert.notNull(transaction.getId());
 
-        Memo memo = informationService.createMemo(transaction.getId(), "New memo for " + transactionId, 0,
-                new Date(), null, null);
+        Memo memo = informationService.createMemo(transaction.getId(), "New memo for " + transactionId,
+                memoAccessLevelCode, new Date(), null, null);
 
         Assert.notNull(memo);
         Assert.notNull(memo.getId());
@@ -159,7 +168,10 @@ public class InformationServiceTest extends AbstractServiceTest {
         Assert.isTrue(new Date().compareTo(memo.getEffectiveDate()) >= 0);
         Assert.isTrue(new Date().compareTo(memo.getCreationDate()) >= 0);
 
-        Assert.isTrue(0 == memo.getAccessLevel());
+        Assert.notNull(memo.getAccessLevel());
+        Assert.notNull(memo.getAccessLevel().getCode());
+
+        Assert.isTrue(memoAccessLevelCode.equals(memo.getAccessLevel().getCode()));
 
         Assert.isNull(memo.getExpirationDate());
         Assert.isNull(memo.getPreviousMemo());
@@ -173,12 +185,17 @@ public class InformationServiceTest extends AbstractServiceTest {
 
         String id = "1020";
 
+        String memoAccessLevelCode = informationService.getDefaultMemoLevel();
+
+        Assert.isTrue(StringUtils.isNotBlank(memoAccessLevelCode));
+
         Transaction transaction = transactionService.createTransaction(id, "admin", new Date(), new BigDecimal(10e8));
 
         Assert.notNull(transaction);
         Assert.notNull(transaction.getId());
 
-        Alert alert = informationService.createAlert(transaction.getId(), "New alert for 1020", 0, new Date(), null);
+        Alert alert = informationService.createAlert(transaction.getId(), "New alert for 1020", memoAccessLevelCode,
+                new Date(), null);
 
         Assert.notNull(alert);
         Assert.notNull(alert.getId());
@@ -191,7 +208,10 @@ public class InformationServiceTest extends AbstractServiceTest {
         Assert.isTrue(new Date().compareTo(alert.getEffectiveDate()) >= 0);
         Assert.isTrue(new Date().compareTo(alert.getCreationDate()) >= 0);
 
-        Assert.isTrue(0 == alert.getAccessLevel());
+        Assert.notNull(alert.getAccessLevel());
+        Assert.notNull(alert.getAccessLevel().getCode());
+
+        Assert.isTrue(memoAccessLevelCode.equals(alert.getAccessLevel().getCode()));
 
         Assert.isNull(alert.getExpirationDate());
 
@@ -202,12 +222,16 @@ public class InformationServiceTest extends AbstractServiceTest {
 
         String id = "1020";
 
+        String memoAccessLevelCode = informationService.getDefaultMemoLevel();
+
+        Assert.isTrue(StringUtils.isNotBlank(memoAccessLevelCode));
+
         Transaction transaction = transactionService.createTransaction(id, "admin", new Date(), new BigDecimal(10e8));
 
         Assert.notNull(transaction);
         Assert.notNull(transaction.getId());
 
-        Flag flag = informationService.createFlag(transaction.getId(), 1L, 1, 1, new Date(), null);
+        Flag flag = informationService.createFlag(transaction.getId(), 1L, memoAccessLevelCode, 1, new Date(), null);
 
         Assert.notNull(flag);
         Assert.notNull(flag.getId());
@@ -219,7 +243,7 @@ public class InformationServiceTest extends AbstractServiceTest {
         Assert.isTrue(new Date().compareTo(flag.getEffectiveDate()) >= 0);
         Assert.isTrue(new Date().compareTo(flag.getCreationDate()) >= 0);
 
-        Assert.isTrue(1 == flag.getAccessLevel());
+        Assert.notNull(flag.getAccessLevel());
 
         Assert.isNull(flag.getExpirationDate());
     }
@@ -246,6 +270,10 @@ public class InformationServiceTest extends AbstractServiceTest {
 
         String userId = "admin";
 
+        String memoAccessLevelCode = informationService.getDefaultMemoLevel();
+
+        Assert.isTrue(StringUtils.isNotBlank(memoAccessLevelCode));
+
         Transaction transaction1 = transactionService.createTransaction("chip", userId, new Date(), new BigDecimal(44.9));
 
         Assert.notNull(transaction1);
@@ -256,7 +284,7 @@ public class InformationServiceTest extends AbstractServiceTest {
         Assert.notNull(transaction2);
         Assert.notNull(transaction2.getId());
 
-        Flag flag = informationService.createFlag(transaction1.getId(), 1L, 1, 1, new Date(), null);
+        Flag flag = informationService.createFlag(transaction1.getId(), 1L, memoAccessLevelCode, 1, new Date(), null);
 
         Assert.notNull(flag);
         Assert.notNull(flag.getId());

@@ -34,6 +34,7 @@ alter table KSSA_FD_KYPR add constraint FKDD4CD148C694D113 foreign key (KYPR_ID_
 alter table KSSA_FD_KYPR add constraint FKDD4CD148C0260932 foreign key (FD_ID_FK) references KSSA_FEE_DETAIL;
 alter table KSSA_FEE_DETAIL add constraint FKF349E9739BE8AA30 foreign key (FEE_TYPE_ID_FK) references KSSA_FEE_TYPE;
 alter table KSSA_FEE_DETAIL_AMOUNT add constraint FK295260A4309F229E foreign key (FEE_DETAIL_ID_FK) references KSSA_FEE_DETAIL;
+alter table KSSA_FLAG_TYPE add constraint FKC2EF34E4DC4F9C14 foreign key (ACCESS_LEVEL_ID_FK) references KSSA_ACCESS_LEVEL;
 alter table KSSA_GL_BATCH_BASELINE add constraint FK3C33E61BFA70171C foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
 alter table KSSA_GL_BREAKDOWN add constraint FKF48BE710AE27AC92 foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSSA_TRANSACTION_TYPE;
 alter table KSSA_GL_BREAKDOWN add constraint FKF48BE710FA70171C foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
@@ -47,6 +48,7 @@ alter table KSSA_INFORMATION add constraint FKD2A2E003DBB2002A foreign key (FLAG
 alter table KSSA_INFORMATION add constraint FKD2A2E00316BC312E foreign key (NEXT_ID) references KSSA_INFORMATION;
 alter table KSSA_INFORMATION add constraint FKD2A2E00395ACD1EE foreign key (PREV_ID) references KSSA_INFORMATION;
 alter table KSSA_INFORMATION add constraint FKD2A2E00398518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
+alter table KSSA_INFORMATION add constraint FKD2A2E003DC4F9C14 foreign key (ACCESS_LEVEL_ID_FK) references KSSA_ACCESS_LEVEL;
 alter table KSSA_INFORMATION add constraint FKD2A2E003FE6E074B foreign key (TRN_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_IRS_1098T add constraint FKCD8EF71887CB7AAA foreign key (STUDENT_POSTAL_ADDRESS_ID_FK) references KSSA_POSTAL_ADDRESS;
 alter table KSSA_IRS_1098T add constraint FKCD8EF71898518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;

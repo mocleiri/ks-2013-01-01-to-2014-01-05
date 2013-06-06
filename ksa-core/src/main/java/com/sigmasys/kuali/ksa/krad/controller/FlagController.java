@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.krad.form.FlagForm;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Flag;
 import com.sigmasys.kuali.ksa.model.FlagType;
+import com.sigmasys.kuali.ksa.model.InformationAccessLevel;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
+ * TODO -> handle InformationAccessLevel
+ * <p/>
  * Created by: dmulderink on 10/6/12 at 2:29 PM
  */
 @Controller
@@ -58,9 +61,9 @@ public class FlagController extends GenericSearchController {
     }
 
     /**
-     * @param form
-     * @param request
-     * @return
+     * @param form    FlagForm
+     * @param request HttpServletRequest
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
     public ModelAndView get(@ModelAttribute("KualiForm") FlagForm form, HttpServletRequest request) {
@@ -86,15 +89,22 @@ public class FlagController extends GenericSearchController {
             }
             form.setAeInstructionalText("Add a flag");
 
+            // TODO: get InformationAccessLevel
+            InformationAccessLevel accessLevel = new InformationAccessLevel();
+
+
             Flag flag = new Flag();
             // set default values
             FlagType flagType = new FlagType();
-            flagType.setAccessLevel(0);
+
+            flagType.setAccessLevel(accessLevel);
+
             // Text is not saved if the type is not set
             // we need a list of flags for the view so the user can make a choice
             flag.setType(flagType);
+
             flag.setAccount(accountService.getFullAccount(userId));
-            flag.setAccessLevel(0);
+            flag.setAccessLevel(accessLevel);
             flag.setSeverity(0);
 
             form.setFlagModel(flag);
@@ -120,8 +130,8 @@ public class FlagController extends GenericSearchController {
     }
 
     /**
-     * @param form
-     * @return
+     * @param form FlagForm
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insertFlag")
     public ModelAndView insertFlag(@ModelAttribute("KualiForm") FlagForm form) {

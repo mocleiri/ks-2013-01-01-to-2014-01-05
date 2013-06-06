@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.MemoForm;
 import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.model.InformationAccessLevel;
 import com.sigmasys.kuali.ksa.model.Memo;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import org.apache.commons.logging.Log;
@@ -21,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * TODO -> handle InformationAccessLevel logic
+ * <p/>
  * Created by: dmulderink on 10/4/12 at 7:53 AM
  */
 @Controller
@@ -105,7 +108,7 @@ public class MemoController extends GenericSearchController {
             memo.setAccountId(accountId);
             memo.setEffectiveDate(new Date());
             memo.setText("");
-            memo.setAccessLevel(0);
+            memo.setAccessLevel(new InformationAccessLevel());
 
             form.setMemoModel(memo);
 
@@ -240,9 +243,7 @@ public class MemoController extends GenericSearchController {
         // do insert stuff...
 
         String viewId = request.getParameter("viewId");
-        // example user1
         String userId = request.getParameter("userId");
-        String userIdap = request.getParameter("actionParameters[userId]");
 
         logger.info("View: " + viewId + " User: " + userId);
 
@@ -252,7 +253,9 @@ public class MemoController extends GenericSearchController {
 
         String accountId = memoModel.getAccountId();
         String memoText = memoModel.getText();
-        Integer accessLevel = memoModel.getAccessLevel();
+
+        String accessLevelCode = (memoModel.getAccessLevel() != null) ? memoModel.getAccessLevel().getCode() : null;
+
         Date effectiveDate = memoModel.getEffectiveDate();
         Date expirationDate = memoModel.getExpirationDate();
         Memo previousMemo = memoModel.getPreviousMemo();
@@ -260,7 +263,7 @@ public class MemoController extends GenericSearchController {
 
         try {
 
-            Memo memo = informationService.createMemo(accountId, memoText, accessLevel, effectiveDate, expirationDate, previousMemoId);
+            Memo memo = informationService.createMemo(accountId, memoText, accessLevelCode, effectiveDate, expirationDate, previousMemoId);
 
             Long persistResult = informationService.persistInformation(memo);
 
@@ -338,8 +341,9 @@ public class MemoController extends GenericSearchController {
             Memo memo = informationService.getMemo(new Long(memoId));
 
             if (memo != null) {
+
                 Memo memoModel = form.getMemoModel();
-                Integer accessLevel = memoModel.getAccessLevel();
+                InformationAccessLevel accessLevel = memoModel.getAccessLevel();
                 memo.setEffectiveDate(memoModel.getEffectiveDate());
                 memo.setExpirationDate(memoModel.getExpirationDate());
                 memo.setText(memoModel.getText());

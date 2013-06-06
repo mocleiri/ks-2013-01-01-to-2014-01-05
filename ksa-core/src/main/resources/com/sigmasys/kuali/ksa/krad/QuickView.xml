@@ -583,7 +583,7 @@
                         <bean parent="Uif-DateControl" p:size="11"/>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="memoModel.accessLevelString" p:label="Level">
+                <bean parent="Uif-InputField" p:propertyName="memoModel.accessLevel.code" p:label="Level">
                     <property name="control">
                         <bean parent="Uif-HorizontalRadioControl">
                             <property name="options">

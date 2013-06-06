@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AccountService;
+import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
@@ -37,6 +38,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
     private static final String GET_INFORMATION_JOIN =
             " left outer join fetch i.account a " +
+                    " left outer join fetch i.accessLevel al " +
                     " left outer join fetch i.transaction t ";
 
 
@@ -45,6 +47,9 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private AuditableEntityService auditableEntityService;
 
 
     private <T extends Information> T getInformation(Long id, Class<T> entityType) {
@@ -243,17 +248,16 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     /**
      * Creates a new memo based on the given parameters
      *
-     * @param transactionId  Transaction ID
-     * @param memoText       Memo text
-     * @param accessLevel    Access level
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
-     * @param prevMemoId     Previous Memo ID
-     * @return new Memo instance
+     * @param transactionId   Transaction ID
+     * @param memoText        Memo text
+     * @param accessLevelCode InformationAccessLevel code
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date
+     * @param prevMemoId      Previous Memo ID    @return new Memo instance
      */
     @Override
     @Transactional(readOnly = false)
-    public Memo createMemo(Long transactionId, String memoText, Integer accessLevel,
+    public Memo createMemo(Long transactionId, String memoText, String accessLevelCode,
                            Date effectiveDate, Date expirationDate, Long prevMemoId) {
 
         Transaction transaction = transactionService.getTransaction(transactionId);
@@ -263,7 +267,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             throw new IllegalArgumentException(errMsg);
         }
 
-        Memo memo = createMemo(transaction.getAccount().getId(), memoText, accessLevel,
+        Memo memo = createMemo(transaction.getAccount().getId(), memoText, accessLevelCode,
                 effectiveDate, expirationDate, prevMemoId);
 
         memo.setTransaction(transaction);
@@ -275,17 +279,16 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     /**
      * Creates a new memo based on the given parameters
      *
-     * @param accountId      Account ID
-     * @param memoText       Memo text
-     * @param accessLevel    Access level
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
-     * @param prevMemoId     Previous Memo ID
-     * @return new Memo instance
+     * @param accountId       Account ID
+     * @param memoText        Memo text
+     * @param accessLevelCode InformationAccessLevel code
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date
+     * @param prevMemoId      Previous Memo ID    @return new Memo instance
      */
     @Override
     @Transactional(readOnly = false)
-    public Memo createMemo(String accountId, String memoText, Integer accessLevel,
+    public Memo createMemo(String accountId, String memoText, String accessLevelCode,
                            Date effectiveDate, Date expirationDate, Long prevMemoId) {
 
         if (accountId == null) {
@@ -299,6 +302,13 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             String errMsg = "Account with ID = " + accountId + " does not exist";
             logger.error(errMsg);
             throw new UserNotFoundException(errMsg);
+        }
+
+        InformationAccessLevel accessLevel = getInformationAccessLevel(accessLevelCode);
+        if (accessLevel == null) {
+            String errMsg = "InformationAccessLevel with code = " + accessLevelCode + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
         }
 
         Memo newMemo = new Memo();
@@ -338,17 +348,16 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     /**
      * Creates a new flag based on the given parameters
      *
-     * @param transactionId  Transaction ID
-     * @param flagTypeId     Flag Type ID
-     * @param accessLevel    Access level
-     * @param severity       Severity
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
-     * @return new Flag instance
+     * @param transactionId   Transaction ID
+     * @param flagTypeId      Flag Type ID
+     * @param accessLevelCode InformationAccessLevel code
+     * @param severity        Severity
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date    @return new Flag instance
      */
     @Override
     @Transactional(readOnly = false)
-    public Flag createFlag(Long transactionId, Long flagTypeId, Integer accessLevel,
+    public Flag createFlag(Long transactionId, Long flagTypeId, String accessLevelCode,
                            Integer severity, Date effectiveDate, Date expirationDate) {
 
         Transaction transaction = transactionService.getTransaction(transactionId);
@@ -358,7 +367,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             throw new IllegalArgumentException(errMsg);
         }
 
-        Flag flag = createFlag(transaction.getAccount().getId(), flagTypeId, accessLevel, severity,
+        Flag flag = createFlag(transaction.getAccount().getId(), flagTypeId, accessLevelCode, severity,
                 effectiveDate, expirationDate);
 
         flag.setTransaction(transaction);
@@ -370,17 +379,16 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     /**
      * Creates a new flag based on the given parameters
      *
-     * @param accountId      Account ID
-     * @param flagTypeId     Flag Type ID
-     * @param accessLevel    Access level
-     * @param severity       Severity
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
-     * @return new Flag instance
+     * @param accountId       Account ID
+     * @param flagTypeId      Flag Type ID
+     * @param accessLevelCode InformationAccessLevel code
+     * @param severity        Severity
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date    @return new Flag instance
      */
     @Override
     @Transactional(readOnly = false)
-    public Flag createFlag(String accountId, Long flagTypeId, Integer accessLevel,
+    public Flag createFlag(String accountId, Long flagTypeId, String accessLevelCode,
                            Integer severity, Date effectiveDate, Date expirationDate) {
 
         if (accountId == null) {
@@ -403,6 +411,12 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             throw new IllegalArgumentException(errMsg);
         }
 
+        InformationAccessLevel accessLevel = getInformationAccessLevel(accessLevelCode);
+        if (accessLevel == null) {
+            String errMsg = "InformationAccessLevel with code = " + accessLevelCode + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
 
         Flag flag = new Flag();
         flag.setType(flagType);
@@ -427,16 +441,15 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     /**
      * Creates a new alert based on the given parameters
      *
-     * @param transactionId  Transaction ID
-     * @param alertText      Alert text
-     * @param accessLevel    Access level
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
-     * @return new Alert instance
+     * @param transactionId   Transaction ID
+     * @param alertText       Alert text
+     * @param accessLevelCode InformationAccessLevel code
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date   @return new Alert instance
      */
     @Override
     @Transactional(readOnly = false)
-    public Alert createAlert(Long transactionId, String alertText, Integer accessLevel, Date effectiveDate,
+    public Alert createAlert(Long transactionId, String alertText, String accessLevelCode, Date effectiveDate,
                              Date expirationDate) {
 
         Transaction transaction = transactionService.getTransaction(transactionId);
@@ -446,7 +459,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             throw new IllegalArgumentException(errMsg);
         }
 
-        Alert alert = createAlert(transaction.getAccount().getId(), alertText, accessLevel,
+        Alert alert = createAlert(transaction.getAccount().getId(), alertText, accessLevelCode,
                 effectiveDate, expirationDate);
 
         alert.setTransaction(transaction);
@@ -458,16 +471,16 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     /**
      * Creates a new alert based on the given parameters
      *
-     * @param accountId      Account ID
-     * @param alertText      Alert text
-     * @param accessLevel    Access level
-     * @param effectiveDate  Effective date
-     * @param expirationDate Expiration date
+     * @param accountId       Account ID
+     * @param alertText       Alert text
+     * @param accessLevelCode InformationAccessLevel code
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date
      * @return new Alert instance
      */
     @Override
     @Transactional(readOnly = false)
-    public Alert createAlert(String accountId, String alertText, Integer accessLevel, Date effectiveDate,
+    public Alert createAlert(String accountId, String alertText, String accessLevelCode, Date effectiveDate,
                              Date expirationDate) {
 
         if (accountId == null) {
@@ -481,6 +494,13 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             String errMsg = "Account with ID = " + accountId + " does not exist";
             logger.error(errMsg);
             throw new UserNotFoundException(errMsg);
+        }
+
+        InformationAccessLevel accessLevel = getInformationAccessLevel(accessLevelCode);
+        if (accessLevel == null) {
+            String errMsg = "InformationAccessLevel with code = " + accessLevelCode + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
         }
 
         Alert alert = new Alert();
@@ -503,19 +523,19 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
 
     /**
-     * Returns the default memo level.
+     * Returns the default Memo's InformationAccessLevel code.
      *
-     * @return level number
+     * @return InformationAccessLevel code
      */
     @Override
-    public Integer getDefaultMemoLevel() {
+    public String getDefaultMemoLevel() {
         String defaultMemoLevel = configService.getParameter(Constants.DEFAULT_MEMO_LEVEL);
         if (StringUtils.isBlank(defaultMemoLevel)) {
             String errMsg = "Configuration parameter '" + Constants.DEFAULT_MEMO_LEVEL + "' is required";
             logger.error(errMsg);
             throw new ConfigurationException(errMsg);
         }
-        return Integer.valueOf(defaultMemoLevel);
+        return defaultMemoLevel;
     }
 
     /**
@@ -577,6 +597,29 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         information.setTransaction(transaction);
 
         return information;
+    }
+
+
+    /**
+     * Returns InformationAccessLevel instance by code.
+     *
+     * @param code InformationAccessLevel code
+     * @return InformationAccessLevel instance
+     */
+    @Override
+    public InformationAccessLevel getInformationAccessLevel(String code) {
+        return auditableEntityService.getAuditableEntity(code, InformationAccessLevel.class);
+    }
+
+    /**
+     * Returns InformationAccessLevel instance by ID.
+     *
+     * @param id InformationAccessLevel ID
+     * @return InformationAccessLevel instance
+     */
+    @Override
+    public InformationAccessLevel getInformationAccessLevel(Long id) {
+        return auditableEntityService.getAuditableEntity(id, InformationAccessLevel.class);
     }
 
 }

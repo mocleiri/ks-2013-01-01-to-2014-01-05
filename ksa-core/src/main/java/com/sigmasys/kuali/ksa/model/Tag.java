@@ -3,18 +3,13 @@ package com.sigmasys.kuali.ksa.model;
 import javax.persistence.*;
 
 /**
- * Tag.
+ * A very simple Tag.
  *
  * @author Michael Ivanov
  */
 @Entity
 @Table(name = "KSSA_TAG", uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE"})})
 public class Tag extends AuditableEntity<Long> {
-
-    /**
-     * Access level
-     */
-    private Integer accessLevel;
 
     /**
      * Indicates whether the Tag is administrative or not.
@@ -32,15 +27,6 @@ public class Tag extends AuditableEntity<Long> {
     @Override
     public Long getId() {
         return id;
-    }
-
-    @Column(name = "ACCESS_LEVEL")
-    public Integer getAccessLevel() {
-        return accessLevel;
-    }
-
-    public void setAccessLevel(Integer accessLevel) {
-        this.accessLevel = accessLevel;
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")

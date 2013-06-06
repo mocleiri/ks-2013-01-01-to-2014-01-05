@@ -466,7 +466,7 @@
                     </property>
                 </bean>
                 <!--<bean parent="Uif-InputField" p:label="Description" p:propertyName="description" p:readOnly="@{!#empty(#line.id)}"/>-->
-                <!--<bean parent="Uif-InputField" p:label="Level" p:propertyName="accessLevel" p:readOnly="@{!#empty(#line.id)}"/>-->
+                <!--<bean parent="Uif-InputField" p:label="Level" p:propertyName="accessLevel.code" p:readOnly="@{!#empty(#line.id)}"/>-->
             </list>
         </property>
     </bean>

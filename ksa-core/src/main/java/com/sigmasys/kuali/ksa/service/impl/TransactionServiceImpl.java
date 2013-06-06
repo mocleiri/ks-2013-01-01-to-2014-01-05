@@ -1986,9 +1986,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             // Creating memo
             if (memoText != null && !memoText.trim().isEmpty()) {
-                Integer defaultMemoLevel = informationService.getDefaultMemoLevel();
+                String memoAccessLevelCode = informationService.getDefaultMemoLevel();
                 Date effectiveDate = new Date();
-                informationService.createMemo(transactionId, memoText, defaultMemoLevel, effectiveDate, null, null);
+                informationService.createMemo(transactionId, memoText, memoAccessLevelCode, effectiveDate, null, null);
             }
 
             return reversedTransaction;
@@ -2413,9 +2413,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         // Creating memo
         if (memoText != null && !memoText.trim().isEmpty()) {
-            Integer defaultMemoLevel = informationService.getDefaultMemoLevel();
+            String memoAccessLevelCode = informationService.getDefaultMemoLevel();
             Date effectiveDate = new Date();
-            informationService.createMemo(transactionId, memoText, defaultMemoLevel, effectiveDate, null, null);
+            informationService.createMemo(transactionId, memoText, memoAccessLevelCode, effectiveDate, null, null);
         }
 
         return writeOffTransaction;
@@ -2989,8 +2989,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         createLockedAllocation(deferment.getId(), chargeId, charge.getAmount());
 
         // Creating a memo
-        Integer memoLevel = informationService.getDefaultMemoLevel();
-        informationService.createMemo(deferment.getId(), memoText, memoLevel, new Date(), expirationDate, null);
+        String memoAccessLevelCode = informationService.getDefaultMemoLevel();
+        informationService.createMemo(deferment.getId(), memoText, memoAccessLevelCode, new Date(), expirationDate, null);
     }
 
     /**

@@ -6,7 +6,6 @@ import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.InformationService;
-import com.sigmasys.kuali.ksa.service.PaymentService;
 import com.sigmasys.kuali.ksa.util.InformationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +21,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
+ * TODO -> handle InformationAccessLevel logic
+ * <p/>
  * Created by: dmulderink on 9/28/12 at 2:25 PM
  */
 @Controller
@@ -38,10 +39,6 @@ public class QuickViewController extends GenericSearchController {
 
     @Autowired
     private FeeManagementService feeManagementService;
-
-    @Autowired
-    private PaymentService paymentService;
-
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -110,7 +107,7 @@ public class QuickViewController extends GenericSearchController {
                 memo.setAccountId(accountId);
                 memo.setEffectiveDate(new Date());
                 memo.setText("");
-                memo.setAccessLevel(0);
+                memo.setAccessLevel(new InformationAccessLevel());
 
                 form.setMemoModel(memo);
 
@@ -210,7 +207,9 @@ public class QuickViewController extends GenericSearchController {
 
         String accountId = memoModel.getAccountId();
         String memoText = memoModel.getText();
-        Integer accessLevel = memoModel.getAccessLevel();
+
+        String accessLevelCode = (memoModel.getAccessLevel() != null) ? memoModel.getAccessLevel().getCode() : null;
+
         Date effectiveDate = memoModel.getEffectiveDate();
         Date expirationDate = memoModel.getExpirationDate();
         Memo previousMemo = memoModel.getPreviousMemo();
@@ -218,7 +217,7 @@ public class QuickViewController extends GenericSearchController {
 
         try {
 
-            Memo memo = informationService.createMemo(accountId, memoText, accessLevel, effectiveDate, expirationDate, previousMemoId);
+            Memo memo = informationService.createMemo(accountId, memoText, accessLevelCode, effectiveDate, expirationDate, previousMemoId);
 
             Long persistResult = informationService.persistInformation(memo);
 
@@ -344,12 +343,12 @@ public class QuickViewController extends GenericSearchController {
 
         List<Memo> memos = informationService.getMemos(userId);
 
-        Iterator<Memo> iter = memos.iterator();
+        Iterator<Memo> iterator = memos.iterator();
         Date today = new Date();
-        while (iter.hasNext()) {
-            Date expire = iter.next().getExpirationDate();
+        while (iterator.hasNext()) {
+            Date expire = iterator.next().getExpirationDate();
             if (expire != null && expire.before(today)) {
-                iter.remove();
+                iterator.remove();
             }
         }
 

@@ -8,6 +8,7 @@ drop table KSSA_CONFIG cascade constraints;
 
 -- KSA tables dropping
 
+drop table KSSA_ACCESS_LEVEL cascade constraints;
 drop table KSSA_ACNT cascade constraints;
 drop table KSSA_ACNT_PROTECTED_INFO cascade constraints;
 drop table KSSA_ACNT_STATUS_TYPE cascade constraints;

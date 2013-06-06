@@ -217,7 +217,7 @@
                         <bean parent="Uif-DateControl" p:size="11" />
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="alert.accessLevel"
+                <bean parent="Uif-InputField" p:propertyName="alert.accessLevel.code"
                       p:label="Level">
                     <property name="control">
                         <bean parent="Uif-HorizontalRadioControl">
@@ -397,7 +397,7 @@
                         <bean parent="Uif-DateControl" p:size="11" />
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="alert.accessLevel"
+                <bean parent="Uif-InputField" p:propertyName="alert.accessLevel.code"
                       p:label="Level"
                       p:maxLength="2"
                       p:labelPlacement="LEFT"

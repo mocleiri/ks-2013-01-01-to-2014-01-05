@@ -54,6 +54,7 @@ insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('RATE_TYPE_SEQ', 1
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('RATE_CATALOG_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('RATE_AMOUNT_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('KYPR_SEQ', 1001);
+insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('ACCESS_LEVEL_SEQ', 1001);
 
 --  SYSTEM CONFIGURATION PARAMETERS --
 -- Rice-specific parameters --
@@ -94,7 +95,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.tls.enabled', 'true');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.address.from', 'ksa.sigmasys@gmail.com');
 
 -- Memo settings
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.memo.level', '2');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.memo.level', 'DEF_MEMO_LEVEL_CD');
 
 -- Account settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.account.status.type', 'N/A');

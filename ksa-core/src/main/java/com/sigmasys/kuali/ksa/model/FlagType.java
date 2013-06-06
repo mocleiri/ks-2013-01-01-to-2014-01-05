@@ -15,7 +15,7 @@ public class FlagType extends AuditableEntity<Long> {
     /**
      * Access Level
      */
-    private Integer accessLevel;
+    private InformationAccessLevel accessLevel;
 
 
     @Id
@@ -31,12 +31,13 @@ public class FlagType extends AuditableEntity<Long> {
         return id;
     }
 
-    @Column(name = "ACCESS_LEVEL")
-    public Integer getAccessLevel() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACCESS_LEVEL_ID_FK")
+    public InformationAccessLevel getAccessLevel() {
         return accessLevel;
     }
 
-    public void setAccessLevel(Integer accessLevel) {
+    public void setAccessLevel(InformationAccessLevel accessLevel) {
         this.accessLevel = accessLevel;
     }
 

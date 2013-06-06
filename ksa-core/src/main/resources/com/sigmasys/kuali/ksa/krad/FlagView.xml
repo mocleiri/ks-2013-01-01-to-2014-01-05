@@ -219,7 +219,7 @@
                         <bean parent="Uif-DateControl" p:size="11" />
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="flagModel.accessLevelString"
+                <bean parent="Uif-InputField" p:propertyName="flagModel.accessLevel.code"
                       p:label="Level">
                     <property name="control">
                         <bean parent="Uif-HorizontalRadioControl">
@@ -399,7 +399,7 @@
                         <bean parent="Uif-DateControl" p:size="11" />
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="flagModel.accessLevel"
+                <bean parent="Uif-InputField" p:propertyName="flagModel.accessLevel.code"
                       p:label="Level"
                       p:labelPlacement="LEFT"
                       p:fieldLabel.renderColon="true">
