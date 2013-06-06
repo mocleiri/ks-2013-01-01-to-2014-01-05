@@ -1,42 +1,31 @@
 package edu.uw.kuali.student.web;
 
 import edu.uw.kuali.student.lib.client.studentservice.ServiceException;
-import edu.uw.kuali.student.web.SolrSeviceClient;
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
 import edu.uw.kuali.student.myplan.util.CourseOfferingServiceUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.dom4j.xpath.DefaultXPath;
-import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.student.enrollment.class2.courseoffering.service.decorators.CourseOfferingServiceDecorator;
 import org.kuali.student.enrollment.courseoffering.dto.*;
-import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.lum.course.dto.CourseInfo;
 import org.kuali.student.lum.course.service.CourseService;
 import org.kuali.student.lum.course.service.CourseServiceConstants;
 import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.AtpHelper.YearTerm;
-import org.kuali.student.myplan.utils.TimeStringMillisConverter;
 import org.kuali.student.r2.common.dto.*;
 import org.kuali.student.r2.common.exceptions.*;
-import org.kuali.student.r2.core.room.dto.BuildingInfo;
-import org.kuali.student.r2.core.room.dto.RoomInfo;
-import org.kuali.student.r2.core.scheduling.dto.TimeSlotInfo;
 import org.kuali.student.r2.core.type.dto.TypeInfo;
 import org.springframework.util.StringUtils;
 
 import javax.jws.WebParam;
 import javax.xml.namespace.QName;
-import java.io.StringReader;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA.
@@ -96,7 +85,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
             String term = yt.getTermAsID();
             courseOfferingIds = solrSeviceClient.getActivityIds(year, term, subjectArea);
         } catch (Exception e) {
-            logger.error("Call to the student service failed.", e);
+            logger.error("Call to the student service failed." + e.getMessage());
             failOver = true;
         }
         if (!failOver) {
@@ -198,11 +187,11 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                 failOver = true;
             }
         } catch (ServiceException e) {
-            logger.warn(e);
+            logger.error("Exception loading the course offering info" + e.getMessage());
             failOver = true;
             // Skip this section ID if it fails
         } catch (DocumentException e) {
-            logger.warn(e);
+            logger.error("Exception loading the course offering info" + e.getMessage());
             failOver = true;
         }
         if (!failOver) {
@@ -341,7 +330,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                 failOver = true;
             }
         } catch (Exception e) {
-            logger.warn(e);
+            logger.error("Exception loading the activity offering info" + e.getMessage());
             failOver = true;
         }
         if (!failOver) {
@@ -627,7 +616,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
             }
 
         } catch (Exception e) {
-            logger.error(e);
+            logger.error("Exception loading the course offering infos" + e.getMessage());
             failOver = true;
         }
         if (!failOver) {
@@ -652,7 +641,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                     try {
                         doc = offeringServiceUtils.newDocument(xml);
                     } catch (Exception e) {
-                        logger.warn(e);
+                        logger.error("Exception loading the activity offerings" + e.getMessage());
                         continue;
                     }
                     ActivityOfferingDisplayInfo info = offeringServiceUtils.buildActivityOfferingDisplayInfo(doc);
@@ -664,7 +653,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                 failOver = true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception loading the activity offerings" + e.getMessage());
             failOver = true;
         }
         if (!failOver) {
