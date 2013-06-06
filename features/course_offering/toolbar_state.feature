@@ -1,4 +1,4 @@
-@wip
+@nightly
 Feature: EC.Toolbar state
 
   Background:
