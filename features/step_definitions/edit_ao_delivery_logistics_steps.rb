@@ -3,7 +3,7 @@ When /^I revise an AO's requested delivery logistics$/ do
   # create test-data and capture ref to the AO
   course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201208", :course=>"ENGL222")
   course_offering.manage_and_init
-  @activity_offering = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
+  @activity_offering = course_offering.get_ao_obj_by_code("A")
 
   # capture the RDLs; ensure values are not already what we are going to edit to
   rdl = @activity_offering.requested_delivery_logistics_list.values[0]

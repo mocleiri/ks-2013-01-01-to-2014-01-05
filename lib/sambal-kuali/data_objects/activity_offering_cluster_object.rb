@@ -100,9 +100,9 @@ class ActivityOfferingCluster
     code_list
   end
 
-  def get_ao_obj_by_code(ao_code)
-    @ao_list.select{|ao| ao.code == ao_code}[0]
-  end
+  #def get_ao_obj_by_code(ao_code)
+  #  @ao_list.select{|ao| ao.code == ao_code}[0]
+  #end
 
   # moves activity offering from cluster to target cluster
   #
@@ -116,7 +116,7 @@ class ActivityOfferingCluster
       page.select_cluster.select(target_cluster.private_name)
       page.complete_move_ao
     end
-    moved_ao = get_ao_obj_by_code(ao_code)
+    moved_ao = @ao_list.select{|ao| ao.code == ao_code}[0]
     target_cluster.ao_list.push(moved_ao)
     @ao_list.delete(moved_ao)
   end

@@ -141,7 +141,7 @@ end
 
 Then /^I have access to approve course offerings for scheduling$/ do
   on ManageCourseOfferingList do |page|
-    @course_offering.check_course_in_status("Draft")
+    @course_offering.check_course_in_status(CourseOffering::DRAFT_STATUS)
     page.approve_course_offering_button.enabled?.should be_true
     page.deselect_cos([@course_offering.course])
   end

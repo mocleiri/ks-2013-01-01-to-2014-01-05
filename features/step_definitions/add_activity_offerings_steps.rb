@@ -16,7 +16,7 @@ When /^I copy an AO with Actual Delivery Logistics$/ do
   course_offering = make CourseOffering, :course => "CHEM277"
   course_offering.manage_and_init
 
-  @ao_source = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
+  @ao_source = course_offering.get_ao_obj_by_code("A")
   @ao_copy = create ActivityOffering, :create_by_copy => true,
                     :code => @ao_source.code,
                     :parent_course_offering => course_offering
@@ -30,7 +30,7 @@ When /^I copy an AO with Requested Delivery Logistics$/ do
 
   # get AOs that match the desired DL-type
   all_aos = course_offering.activity_offering_cluster_list[0].ao_list
-  target_status = "Draft"
+  target_status = ActivityOffering::DRAFT_STATUS
 
   target_aos = course_offering.get_aos_by_status :aos => all_aos, :ao_status => target_status
   target_aos.empty?.should_not be true
@@ -49,9 +49,9 @@ Then /^the "(ADL|RDL)s" are successfully copied as RDLs in the new AO$/ do |sour
   course_offering = @ao_source.parent_course_offering
   course_offering.manage_and_init
   if source_delivery_logistics_type == "ADL"
-    source_delivery_logistics = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code(@ao_source.code).actual_delivery_logistics_list.values[0]
+    source_delivery_logistics = course_offering.get_ao_obj_by_code(@ao_source.code).actual_delivery_logistics_list.values[0]
   else
-    source_delivery_logistics = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code(@ao_source.code).requested_delivery_logistics_list.values[0]
+    source_delivery_logistics = course_offering.get_ao_obj_by_code(@ao_source.code).requested_delivery_logistics_list.values[0]
   end
   source_delivery_logistics.nil?.should be_false
 

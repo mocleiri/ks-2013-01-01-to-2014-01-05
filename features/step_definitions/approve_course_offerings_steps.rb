@@ -34,7 +34,7 @@ Then /^the Activity Offerings of these two COs should be in Approved state$/ do
   ao_list = new_cluster_list[0].ao_list
   ao_list.each do |ao|
     on ManageCourseOfferings do |page|
-      page.ao_status(ao.code).should == "Approved"
+      page.ao_status(ao.code).should == ActivityOffering::APPROVED_STATUS
     end
   end
   @course_offering_ENGL202.manage_and_init
@@ -42,7 +42,7 @@ Then /^the Activity Offerings of these two COs should be in Approved state$/ do
   ao_list = new_cluster_list[0].ao_list
   ao_list.each do |ao|
     on ManageCourseOfferings do |page|
-      page.ao_status(ao.code).should == "Approved"
+      page.ao_status(ao.code).should == ActivityOffering::APPROVED_STATUS
     end
   end
 end
@@ -52,7 +52,7 @@ Then /^the Activity Offerings should be in Approved state$/ do
   ao_list = @course_offering.activity_offering_cluster_list[0].ao_list
   ao_list.each do |ao|
     on ManageCourseOfferings do |page|
-      page.ao_status(ao.code).should == "Approved"
+      page.ao_status(ao.code).should == ActivityOffering::APPROVED_STATUS
     end
   end
 end
@@ -61,7 +61,7 @@ Then /^the selected Activity Offerings should be in Approved state$/ do
   @course_offering.manage
   @selected_ao_list.each do |ao|
     on ManageCourseOfferings do |page|
-      page.ao_status(ao.code).should == "Approved"
+      page.ao_status(ao.code).should == ActivityOffering::APPROVED_STATUS
     end
   end
 end

@@ -1,7 +1,7 @@
 When /^I create a Course Offering with Draft Activity Offerings$/ do
   #setup
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering)
-  @course_offering.check_course_in_status("Draft")
+  @course_offering.check_course_in_status(CourseOffering::DRAFT_STATUS)
 end
 
 And /^I cancel the deletion of a Course Offering in Course Offering Code view$/ do

@@ -5,14 +5,14 @@ end
 
 Then /^The new CO and AOs are Successfully created$/ do
   @course_offering.manage_and_init
-  tgt_activity_offering = @course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
-  tgt_activity_offering.status.should == "Draft"
+  tgt_activity_offering = @course_offering.get_ao_obj_by_code("A")
+  tgt_activity_offering.status.should == ActivityOffering::DRAFT_STATUS
   tgt_activity_offering.requested_delivery_logistics_list.size.should_not == 0
 end
 
 And /^The ADLs are Successfully copied to RDLs in the new AOs of the newly created CO$/ do
   @source_course_offering.manage_and_init
-  source_activity_offering = @source_course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
+  source_activity_offering = @source_course_offering.get_ao_obj_by_code("A")
   source_activity_offering.actual_delivery_logistics_list.size.should_not == 0
 
   #now navigate to course offering copy and validate RDLs

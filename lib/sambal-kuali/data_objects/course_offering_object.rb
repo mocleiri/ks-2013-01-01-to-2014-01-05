@@ -407,7 +407,6 @@ class CourseOffering
   # updates the course code
   #
   # @param co_status [String] "Offered", "Draft"
-  #TODO: use constants here for status
   def check_course_in_status(co_status)
     search_by_subjectcode
     on ManageCourseOfferingList do |page|
@@ -416,7 +415,7 @@ class CourseOffering
         @course = existing_co
       else
         @course = create_co_copy(@course, @term)
-        if co_status == "Offered" or co_status == "Planned"
+        if co_status == OFFERED_STATUS or co_status == PLANNED_STATUS
           approve_co
         end
       end
@@ -431,7 +430,6 @@ class CourseOffering
   # updates the course code
   #
   # @param co_status [String] "Offered", "Draft", "Approved"
-  #TODO: use constants here for status
   def check_activity_offering_in_status(ao_status)
     manage_and_init
     ao_code = ""
@@ -441,7 +439,7 @@ class CourseOffering
         ao_obj = make ActivityOffering, :parent_course_offering => self
         ao_code = ao_obj.create_simple
         ao_obj.code = ao_code[0]
-        if ao_status == "Offered" or ao_status == "Planned"
+        if ao_status == ActivityOffering::OFFERED_STATUS
           approve_ao :ao_obj => ao_obj
         end
       end
@@ -510,7 +508,7 @@ class CourseOffering
     approved = false
     on ManageCourseOfferingList do |page|
       sleep 1
-      approved = page.course_offering_results_table.rows[2].cells[ManageCourseOfferingList::CO_STATUS_COLUMN].text == "Planned"
+      approved = page.course_offering_results_table.rows[2].cells[ManageCourseOfferingList::CO_STATUS_COLUMN].text == PLANNED_STATUS
     end
     #to avoid data setup failure retry approve subject
     if !approved then
@@ -576,7 +574,7 @@ class CourseOffering
     #update expected object data
     options[:code_list].each do |ao_code|
       ao_cluster = get_cluster_obj_by_private_name(options[:cluster_private_name])
-      ao_obj = ao_cluster.get_ao_obj_by_code(ao_code)
+      ao_obj = get_ao_obj_by_code(ao_code)
       ao_cluster.ao_list.delete(ao_obj)
     end
 
@@ -625,7 +623,7 @@ class CourseOffering
       else
         new_ao = copy_ao :ao_code => "A"
         page.select_ao(new_ao.code)
-        if ao_state == "Approved"
+        if ao_state == ActivityOffering::APPROVED_STATUS
           page.approve_activity
           new_ao = page.select_ao_by_status(ao_state)
         end
@@ -797,7 +795,7 @@ class CourseOffering
     defaults = {
         :cluster_private_name => :default_cluster,
         :aos => [],
-        :ao_status => "Draft"
+        :ao_status => ActivityOffering::DRAFT_STATUS
     }
     options = defaults.merge(opts)
 
@@ -856,6 +854,11 @@ class CourseOffering
   def get_cluster_obj_by_private_name(cluster_private_name)
     return @activity_offering_cluster_list[0] unless cluster_private_name != :default_cluster
     @activity_offering_cluster_list.select {|cluster| cluster.private_name == cluster_private_name}[0]
+  end
+
+
+  def get_ao_obj_by_code(ao_code, cluster_private_name = :default_cluster)
+   get_cluster_obj_by_private_name(cluster_private_name).ao_list.select{|ao| ao.code == ao_code}[0]
   end
 
   def create_from_existing_course(course, term)

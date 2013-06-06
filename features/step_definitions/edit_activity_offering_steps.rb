@@ -56,7 +56,7 @@ end
 
 # Get activity offering A and force flags to false, so we can be sure that setting them to true later is a valid test
 Given /^I edit an Activity Offering$/ do
-  @activity_offering = @course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
   @prev_req_ev = @activity_offering.requires_evaluation
   @prev_hon_flg = @activity_offering.honors_course
 end

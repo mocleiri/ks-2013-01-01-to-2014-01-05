@@ -68,7 +68,7 @@ When /^I approve the "(.*)" subject code for scheduling in the target term$/ do 
   @course_offering.approve_subject_code
   on ManageCourseOfferingList do |page|
     sleep 1
-    page.course_offering_results_table.rows[2].cells[ManageCourseOfferingList::CO_STATUS_COLUMN].text.should == "Planned"
+    page.course_offering_results_table.rows[2].cells[ManageCourseOfferingList::CO_STATUS_COLUMN].text.should == CourseOffering::PLANNED_STATUS
   end
 end
 
