@@ -22,7 +22,7 @@ public class FacetIndexBuilder extends
 
 		private FacetIndexImpl(Map<String, Map<String, Map<String, KeyValue>>> m) {
 			this.m = Collections.synchronizedMap(Collections
-					.unmodifiableMap(this));
+					.unmodifiableMap(m));
 		}
 
 		@Override
