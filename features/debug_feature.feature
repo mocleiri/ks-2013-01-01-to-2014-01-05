@@ -6,18 +6,13 @@ debug feature
 
   Scenario: Debug
 	Given I am logged in as a Schedule Coordinator
-    When I approve the "HIST" subject code for scheduling in the target term
-    When I approve the "WMST" subject code for scheduling in the target term
-    #When I manage registration groups for a course offering
+    When I manage registration groups for a course offering
 
 
  Scenario: clean up aos
    Given I am logged in as a Schedule Coordinator
    Then I cleanup AOs
 
-  Scenario: delivery logistics
-    Given I am logged in as a Schedule Coordinator
-    Then I read adl rdl
 
 	#When I setup the debug object
   Scenario: Successfully display schedule of classes by subject code and display individual course details
