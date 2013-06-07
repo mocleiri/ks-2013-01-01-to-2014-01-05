@@ -696,6 +696,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      * @return InformationAccessLevel instance
      */
     @Override
+    @Transactional(readOnly = false)
     public InformationAccessLevel createInformationAccessLevel(String code,
                                                                String name,
                                                                String description,
@@ -746,6 +747,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      * @return InformationAccessLevel instance
      */
     @Override
+    @Transactional(readOnly = false)
     public InformationAccessLevel createAlertAccessLevel(String code, String name, String description) {
         return createInformationAccessLevel(code, name, description, Permission.CREATE_ALERT.name(),
                 Permission.READ_ALERT.name(), Permission.UPDATE_ALERT.name(),
@@ -761,6 +763,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      * @return InformationAccessLevel instance
      */
     @Override
+    @Transactional(readOnly = false)
     public InformationAccessLevel createFlagAccessLevel(String code, String name, String description) {
         return createInformationAccessLevel(code, name, description, Permission.CREATE_FLAG.name(),
                 Permission.READ_FLAG.name(), Permission.UPDATE_FLAG.name(),
