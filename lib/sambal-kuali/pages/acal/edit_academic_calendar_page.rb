@@ -36,7 +36,7 @@ class EditAcademicCalendar < BasePage
   action(:make_official) { |b| b.make_official_chkbox.set; b.loading.wait_while_present }
 
   action(:save) { |b| b.sticky_footer_div.button(text: "Save").click; b.loading.wait_while_present } # Persistent ID needed!
-  action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete Draft").click } # Persistent ID needed!
+  action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete Draft").click; b.loading.wait_while_present } # Persistent ID needed!
   action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click }
 
   ###### confirm make official dialog
