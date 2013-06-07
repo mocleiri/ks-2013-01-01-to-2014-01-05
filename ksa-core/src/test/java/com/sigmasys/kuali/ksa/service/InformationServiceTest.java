@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.service;
 
 
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -335,6 +336,112 @@ public class InformationServiceTest extends AbstractServiceTest {
         //Assert.isTrue(info.getAccountId().equals(info.getAccount().getId()));
 
         Assert.isTrue(info.getAccount().getId().equals(userId2));
+    }
+
+    @Test
+    public void createInformationAccessLevel() {
+
+        String code = "IAL_01";
+        String name = "Information_Access_Level 1";
+        String description = "IAL_01 Description";
+
+        InformationAccessLevel accessLevel = informationService.createInformationAccessLevel(code, name, description,
+                Permission.CREATE_MEMO.name(), Permission.READ_MEMO.name(), Permission.UPDATE_MEMO.name(),
+                Permission.DELETE_MEMO.name(), Permission.EXPIRE_MEMO.name());
+
+        Assert.notNull(accessLevel);
+        Assert.notNull(accessLevel.getId());
+        Assert.notNull(accessLevel.getCode());
+        Assert.notNull(accessLevel.getName());
+        Assert.notNull(accessLevel.getDescription());
+
+        Assert.notNull(accessLevel.getCreationDate());
+        Assert.notNull(accessLevel.getCreatorId());
+
+        Assert.isTrue(Permission.CREATE_MEMO.name().equals(accessLevel.getCreatePermission()));
+        Assert.isTrue(Permission.READ_MEMO.name().equals(accessLevel.getReadPermission()));
+        Assert.isTrue(Permission.UPDATE_MEMO.name().equals(accessLevel.getUpdatePermission()));
+        Assert.isTrue(Permission.DELETE_MEMO.name().equals(accessLevel.getDeletePermission()));
+        Assert.isTrue(Permission.EXPIRE_MEMO.name().equals(accessLevel.getExpirePermission()));
+
+    }
+
+    @Test
+    public void createMemoAccessLevel() {
+
+        String code = "IAL_01_Memo";
+        String name = "Information_Access_Level 1 Memo";
+        String description = "IAL_01 Description Memo";
+
+        InformationAccessLevel accessLevel = informationService.createMemoAccessLevel(code, name, description);
+
+        Assert.notNull(accessLevel);
+        Assert.notNull(accessLevel.getId());
+        Assert.notNull(accessLevel.getCode());
+        Assert.notNull(accessLevel.getName());
+        Assert.notNull(accessLevel.getDescription());
+
+        Assert.notNull(accessLevel.getCreationDate());
+        Assert.notNull(accessLevel.getCreatorId());
+
+        Assert.isTrue(Permission.CREATE_MEMO.name().equals(accessLevel.getCreatePermission()));
+        Assert.isTrue(Permission.READ_MEMO.name().equals(accessLevel.getReadPermission()));
+        Assert.isTrue(Permission.UPDATE_MEMO.name().equals(accessLevel.getUpdatePermission()));
+        Assert.isTrue(Permission.DELETE_MEMO.name().equals(accessLevel.getDeletePermission()));
+        Assert.isTrue(Permission.EXPIRE_MEMO.name().equals(accessLevel.getExpirePermission()));
+
+    }
+
+    @Test
+    public void createAlertAccessLevel() {
+
+        String code = "IAL_01_Alert";
+        String name = "Information_Access_Level 1 Alert";
+        String description = "IAL_01 Description Alert";
+
+        InformationAccessLevel accessLevel = informationService.createAlertAccessLevel(code, name, description);
+
+        Assert.notNull(accessLevel);
+        Assert.notNull(accessLevel.getId());
+        Assert.notNull(accessLevel.getCode());
+        Assert.notNull(accessLevel.getName());
+        Assert.notNull(accessLevel.getDescription());
+
+        Assert.notNull(accessLevel.getCreationDate());
+        Assert.notNull(accessLevel.getCreatorId());
+
+        Assert.isTrue(Permission.CREATE_ALERT.name().equals(accessLevel.getCreatePermission()));
+        Assert.isTrue(Permission.READ_ALERT.name().equals(accessLevel.getReadPermission()));
+        Assert.isTrue(Permission.UPDATE_ALERT.name().equals(accessLevel.getUpdatePermission()));
+        Assert.isTrue(Permission.DELETE_ALERT.name().equals(accessLevel.getDeletePermission()));
+        Assert.isTrue(Permission.EXPIRE_ALERT.name().equals(accessLevel.getExpirePermission()));
+
+    }
+
+    @Test
+    public void createFlagAccessLevel() {
+
+        String code = "IAL_01_Flag";
+        String name = "Information_Access_Level 1 Flag";
+        String description = "IAL_01 Description Flag";
+
+        InformationAccessLevel accessLevel = informationService.createFlagAccessLevel(code, name, description);
+
+        Assert.notNull(accessLevel);
+        Assert.notNull(accessLevel.getId());
+        Assert.notNull(accessLevel.getCode());
+        Assert.notNull(accessLevel.getName());
+        Assert.notNull(accessLevel.getDescription());
+
+        Assert.notNull(accessLevel.getCreationDate());
+        Assert.notNull(accessLevel.getCreatorId());
+
+        Assert.isTrue(Permission.CREATE_FLAG.name().equals(accessLevel.getCreatePermission()));
+        Assert.isTrue(Permission.READ_FLAG.name().equals(accessLevel.getReadPermission()));
+        Assert.isTrue(Permission.UPDATE_FLAG.name().equals(accessLevel.getUpdatePermission()));
+        Assert.isTrue(Permission.DELETE_FLAG.name().equals(accessLevel.getDeletePermission()));
+        Assert.isTrue(Permission.EXPIRE_FLAG.name().equals(accessLevel.getExpirePermission()));
+
     }
 
 
