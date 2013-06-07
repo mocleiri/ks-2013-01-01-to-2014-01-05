@@ -99,7 +99,7 @@ public class CourseSearchController extends UifControllerBase {
     @Autowired
     private CourseSearchStrategy searcher = new CourseSearchStrategy();
 
-    @Autowired
+
     private CourseHelper courseHelper;
 
     private CampusSearch campusSearch = new CampusSearch();
@@ -476,6 +476,7 @@ public class CourseSearchController extends UifControllerBase {
     }
     //  Load scheduled terms.
     //  Fetch the available terms from the Academic Calendar Service.
+
     private void loadScheduledTerms(List<CourseSearchItem> courses, Set<String> subjectSet) {
         try {
 
@@ -826,6 +827,9 @@ public class CourseSearchController extends UifControllerBase {
     }
 
     public CourseHelper getCourseHelper() {
+        if (courseHelper == null) {
+            courseHelper = new CourseHelperImpl();
+        }
         return courseHelper;
     }
 
