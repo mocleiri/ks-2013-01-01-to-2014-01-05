@@ -708,6 +708,11 @@ class CourseOffering
   end
 
 
+  def get_ao_list(cluster_private_name = :default_cluster)
+   get_cluster_obj_by_private_name(cluster_private_name).ao_list
+  end
+
+
   #create a new list of activity offerings
   #
   #  @example
@@ -853,7 +858,7 @@ class CourseOffering
   # @returns  ActivityOfferingCluster object
   def get_cluster_obj_by_private_name(cluster_private_name)
     return @activity_offering_cluster_list[0] unless cluster_private_name != :default_cluster
-    @activity_offering_cluster_list.select {|cluster| cluster.private_name == cluster_private_name}[0]
+    @activity_offering_cluster_list.select{|cluster| cluster.private_name == cluster_private_name}[0]
   end
 
 

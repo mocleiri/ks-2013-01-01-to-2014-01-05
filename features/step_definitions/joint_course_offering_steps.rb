@@ -56,7 +56,7 @@ Then /^The joint course offerings are created.$/ do
 
     joint_co.create_list_aos :ao_object => @activity_offering, :number_aos_to_create=>2
     joint_co.manage_and_init
-    total_number = joint_co.activity_offering_cluster_list[0].ao_list.count
+    total_number = joint_co.get_ao_list.count
     total_number.should == 2
   end
 

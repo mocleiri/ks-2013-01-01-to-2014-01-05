@@ -31,15 +31,16 @@ end
 Then /^the Activity Offerings of these two COs should be in Approved state$/ do
   @course_offering_ENGL221.manage_and_init
   new_cluster_list = @course_offering_ENGL221.activity_offering_cluster_list
-  ao_list = new_cluster_list[0].ao_list
+  ao_list = @course_offering_ENGL221.get_ao_list
+  #ao_list = new_cluster_list[0].ao_list
   ao_list.each do |ao|
     on ManageCourseOfferings do |page|
       page.ao_status(ao.code).should == ActivityOffering::APPROVED_STATUS
     end
   end
   @course_offering_ENGL202.manage_and_init
-  new_cluster_list = @course_offering_ENGL202.activity_offering_cluster_list
-  ao_list = new_cluster_list[0].ao_list
+  #new_cluster_list = @course_offering_ENGL202.activity_offering_cluster_list
+  ao_list = @course_offering_ENGL202.get_ao_list
   ao_list.each do |ao|
     on ManageCourseOfferings do |page|
       page.ao_status(ao.code).should == ActivityOffering::APPROVED_STATUS
@@ -49,8 +50,7 @@ end
 
 Then /^the Activity Offerings should be in Approved state$/ do
   @course_offering.manage_and_init
-  ao_list = @course_offering.activity_offering_cluster_list[0].ao_list
-  ao_list.each do |ao|
+  @course_offering.get_ao_list.each do |ao|
     on ManageCourseOfferings do |page|
       page.ao_status(ao.code).should == ActivityOffering::APPROVED_STATUS
     end
