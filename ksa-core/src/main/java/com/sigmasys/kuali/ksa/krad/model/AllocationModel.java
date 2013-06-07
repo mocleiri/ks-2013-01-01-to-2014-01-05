@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.krad.model;
 
 
 import com.sigmasys.kuali.ksa.model.Allocation;
+import com.sigmasys.kuali.ksa.model.Memo;
 import com.sigmasys.kuali.ksa.model.Transaction;
 
 import java.io.Serializable;
@@ -13,6 +14,8 @@ public class AllocationModel implements Serializable {
 
     private Transaction parentTransaction;
     private Transaction allocatedTransaction;
+
+    private Memo memoModel;
 
     public AllocationModel() {
     }
@@ -57,5 +60,13 @@ public class AllocationModel implements Serializable {
                 this.allocatedTransaction = this.allocation.getFirstTransaction();
             }
         }
+    }
+
+    public Memo getMemoModel() {
+        return memoModel;
+    }
+
+    public void setMemoModel(Memo memoModel) {
+        this.memoModel = memoModel;
     }
 }

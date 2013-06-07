@@ -316,7 +316,7 @@
                 <property name="items">
                     <list>
                         <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective" p:style="width: 10%;"/>
-                        <bean id="transactionViewDescriptionField" parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
+                        <bean id="transactionViewDescriptionField" parent="Uif-HorizontalFieldGroup" p:label="Description">
                             <property name="items">
                                 <list>
                                     <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />
@@ -688,13 +688,6 @@
                 <entry key="bFilter" value="false"/>
             </map>
         </property>
-        <!--
-        <property name="layoutManager.columnCalculations">
-            <list>
-                <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="allocation.amount" p:showTotal="true"/>
-            </list>
-        </property>
-        -->
         <property name="items">
             <list>
                 <bean parent="Uif-InputField" p:propertyName="allocatedTransaction.transactionType.description" p:label="Description" p:style="width: 50%"/>
@@ -704,6 +697,37 @@
                         <bean parent="Uif-Tooltip" p:tooltipContent="Transaction is @{#line.allocation.isLocked() ? 'locked' : 'unlocked'}"/>
                     </property>
                 </bean>
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Remove">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-ActionField" p:methodToCall="removeAllocation" p:render="@{!#line.allocation.isLocked()}"
+                                  p:actionParameters="transactionId:@{#line.parentTransaction.id},allocationId:@{#line.allocatedTransaction.id},locked:@{#line.allocation.isLocked()}">
+                                <property name="actionImage">
+                                    <bean parent="Uif-Image" p:source="../images/remove.png"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-ImageField" p:source="../images/remove.png" p:style="cursor:pointer;"
+                                  p:onClickScript="showLightboxComponent('addRemoveAllocationLightbox@{#lineSuffix}');" p:render="@{#line.allocation.isLocked()}" />
+                            <bean id="addRemoveAllocationLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                <property name="hidden" value="true"/>
+                                <property name="readOnly" value="false"/>
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-HeaderTwo" p:headerText="Remove locked allocation"/>
+                                        <ref bean="addMemoSection"/>
+                                        <bean parent="Uif-ActionField" p:actionLabel="Remove" p:methodToCall="removeAllocation"
+                                              p:actionParameters="transactionId:@{#line.parentTransaction.id},allocationId:@{#line.allocatedTransaction.id},locked:@{#line.allocation.isLocked()}">
+                                        </bean>
+                                    </list>
+                                </property>
+                            </bean>
+
+                        </list>
+                    </property>
+                </bean>
+
+
+
             </list>
         </property>
     </bean>

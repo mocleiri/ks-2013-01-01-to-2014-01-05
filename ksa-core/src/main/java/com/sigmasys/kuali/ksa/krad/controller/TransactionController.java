@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.TransactionForm;
+import com.sigmasys.kuali.ksa.krad.model.AllocationModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
@@ -398,6 +399,85 @@ public class TransactionController extends GenericSearchController {
         }
 
         return getUIFModelAndView(form);
+    }
+
+    /**
+     * perform Payment Application.
+     *
+     * @param form Kuali form instance
+     * @return ModelAndView
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeAllocation")
+    public ModelAndView removeAllocation(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+
+        String transactionIdString = request.getParameter("actionParameters[transactionId]");
+        String allocationIdString = request.getParameter("actionParameters[allocationId]");
+        String lockedString = request.getParameter("actionParameters[locked]");
+
+        Boolean locked = Boolean.parseBoolean(lockedString);
+
+
+        String errorMessage = "";
+        Long transactionId;
+        Long allocationId;
+        try{
+            transactionId = Long.parseLong(transactionIdString);
+            allocationId = Long.parseLong(allocationIdString);
+        } catch(NumberFormatException e){
+            errorMessage = "Invalid ID passed to removeAllocation";
+            GlobalVariables.getMessageMap().putError("transactionView", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        if(locked) {
+            // Save the memo attached to this.
+            if(this.saveAllocationMemos(form, transactionId, allocationId)){
+                transactionService.removeLockedAllocation(transactionId, allocationId);
+            } else {
+                errorMessage = "Memo is required for locked allocations";
+                GlobalVariables.getMessageMap().putError("TransactionView", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            }
+        }  else {
+            transactionService.removeAllocation(transactionId, allocationId);
+        }
+
+        Properties props = new Properties();
+        String refreshLocation = request.getParameter("refresh");
+        if (refreshLocation == null) {
+            refreshLocation = "transactionView";
+        }
+
+        if (refreshLocation.equals("quickView")) {
+            props.put("viewId", "QuickView");
+
+        } else {
+            props.put("pageId", "ViewTransactions");
+            props.put("viewId", "TransactionView");
+        }
+        props.put("methodToCall", "get");
+        props.put("userId", form.getAccount().getId());
+
+        return performRedirect(form, refreshLocation, props);
+    }
+
+    private boolean saveAllocationMemos(TransactionForm form, Long transactionId, Long allocationId) {
+        List<TransactionModel> allTransactions = form.getAllTransactions();
+
+        for(TransactionModel model : allTransactions){
+            if(transactionId.equals(model.getId()) || allocationId.equals(model.getId())){
+                List<AllocationModel> allocations = model.getAllocations();
+                for(AllocationModel allocation : allocations){
+                    Memo memo = allocation.getMemoModel();
+                    if(memo != null && memo.getText() != null){
+                        memo = informationService.createMemo(transactionId, memo.getText(), "DEF_MEMO_LEVEL_CD", memo.getEffectiveDate(), memo.getExpirationDate(), null);
+                        return true;
+                    }
+                }
+
+            }
+        }
+
+        return false;
     }
 
     private void populateRollups(TransactionForm form, List<TransactionModel> transactions) {
