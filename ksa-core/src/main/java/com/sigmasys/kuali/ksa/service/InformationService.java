@@ -250,4 +250,56 @@ public interface InformationService {
      */
     InformationAccessLevel getInformationAccessLevel(Long id);
 
+    /**
+     * Creates and persists a new InformationAccessLevel instance.
+     *
+     * @param code             InformationAccessLevel code
+     * @param name             InformationAccessLevel name
+     * @param description      InformationAccessLevel description
+     * @param createPermission InformationAccessLevel Create permission
+     * @param readPermission   InformationAccessLevel Read permission
+     * @param updatePermission InformationAccessLevel Update permission
+     * @param deletePermission InformationAccessLevel Delete permission
+     * @param expirePermission InformationAccessLevel Expire permission
+     * @return InformationAccessLevel instance
+     */
+    InformationAccessLevel createInformationAccessLevel(String code,
+                                                        String name,
+                                                        String description,
+                                                        String createPermission,
+                                                        String readPermission,
+                                                        String updatePermission,
+                                                        String deletePermission,
+                                                        String expirePermission);
+
+    /**
+     * Creates and persists a new InformationAccessLevel instance.
+     *
+     * @param code        InformationAccessLevel code
+     * @param name        InformationAccessLevel name
+     * @param description InformationAccessLevel description
+     * @return InformationAccessLevel instance
+     */
+    InformationAccessLevel createMemoAccessLevel(String code, String name, String description);
+
+    /**
+     * Creates and persists a new InformationAccessLevel instance.
+     *
+     * @param code        InformationAccessLevel code
+     * @param name        InformationAccessLevel name
+     * @param description InformationAccessLevel description
+     * @return InformationAccessLevel instance
+     */
+    InformationAccessLevel createAlertAccessLevel(String code, String name, String description);
+
+    /**
+     * Creates and persists a new InformationAccessLevel instance.
+     *
+     * @param code        InformationAccessLevel code
+     * @param name        InformationAccessLevel name
+     * @param description InformationAccessLevel description
+     * @return InformationAccessLevel instance
+     */
+    InformationAccessLevel createFlagAccessLevel(String code, String name, String description);
+
 }

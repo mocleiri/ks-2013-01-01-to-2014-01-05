@@ -94,6 +94,12 @@ public enum Permission {
     DELETE_FLAG,
     EXPIRE_FLAG,
 
+    // InformationAccessLevel permissions
+    READ_ACCESS_LEVEL,
+    CREATE_ACCESS_LEVEL,
+    UPDATE_ACCESS_LEVEL,
+    DELETE_ACCESS_LEVEL,
+
     // Transaction permissions
     IMPORT_TRANSACTIONS,
     CREATE_CHARGE,

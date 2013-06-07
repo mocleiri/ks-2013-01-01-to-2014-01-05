@@ -682,6 +682,91 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         return auditableEntityService.getAuditableEntity(id, InformationAccessLevel.class);
     }
 
+    /**
+     * Creates and persists a new InformationAccessLevel instance.
+     *
+     * @param code             InformationAccessLevel code
+     * @param name             InformationAccessLevel name
+     * @param description      InformationAccessLevel description
+     * @param createPermission InformationAccessLevel Create permission
+     * @param readPermission   InformationAccessLevel Read permission
+     * @param updatePermission InformationAccessLevel Update permission
+     * @param deletePermission InformationAccessLevel Delete permission
+     * @param expirePermission InformationAccessLevel Expire permission
+     * @return InformationAccessLevel instance
+     */
+    @Override
+    public InformationAccessLevel createInformationAccessLevel(String code,
+                                                               String name,
+                                                               String description,
+                                                               String createPermission,
+                                                               String readPermission,
+                                                               String updatePermission,
+                                                               String deletePermission,
+                                                               String expirePermission) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_ACCESS_LEVEL);
+
+        InformationAccessLevel accessLevel = new InformationAccessLevel();
+        accessLevel.setCode(code);
+        accessLevel.setName(name);
+        accessLevel.setDescription(description);
+        accessLevel.setCreatePermission(createPermission);
+        accessLevel.setReadPermission(readPermission);
+        accessLevel.setUpdatePermission(updatePermission);
+        accessLevel.setDeletePermission(deletePermission);
+        accessLevel.setExpirePermission(expirePermission);
+
+        persistEntity(accessLevel);
+
+        return accessLevel;
+    }
+
+    /**
+     * Creates and persists a new InformationAccessLevel instance.
+     *
+     * @param code        InformationAccessLevel code
+     * @param name        InformationAccessLevel name
+     * @param description InformationAccessLevel description
+     * @return InformationAccessLevel instance
+     */
+    @Override
+    public InformationAccessLevel createMemoAccessLevel(String code, String name, String description) {
+        return createInformationAccessLevel(code, name, description, Permission.CREATE_MEMO.name(),
+                Permission.READ_MEMO.name(), Permission.UPDATE_MEMO.name(),
+                Permission.DELETE_MEMO.name(), Permission.EXPIRE_MEMO.name());
+    }
+
+    /**
+     * Creates and persists a new InformationAccessLevel instance.
+     *
+     * @param code        InformationAccessLevel code
+     * @param name        InformationAccessLevel name
+     * @param description InformationAccessLevel description
+     * @return InformationAccessLevel instance
+     */
+    @Override
+    public InformationAccessLevel createAlertAccessLevel(String code, String name, String description) {
+        return createInformationAccessLevel(code, name, description, Permission.CREATE_ALERT.name(),
+                Permission.READ_ALERT.name(), Permission.UPDATE_ALERT.name(),
+                Permission.DELETE_ALERT.name(), Permission.EXPIRE_ALERT.name());
+    }
+
+    /**
+     * Creates and persists a new InformationAccessLevel instance.
+     *
+     * @param code        InformationAccessLevel code
+     * @param name        InformationAccessLevel name
+     * @param description InformationAccessLevel description
+     * @return InformationAccessLevel instance
+     */
+    @Override
+    public InformationAccessLevel createFlagAccessLevel(String code, String name, String description) {
+        return createInformationAccessLevel(code, name, description, Permission.CREATE_FLAG.name(),
+                Permission.READ_FLAG.name(), Permission.UPDATE_FLAG.name(),
+                Permission.DELETE_FLAG.name(), Permission.EXPIRE_FLAG.name());
+    }
+
     protected void checkInformationPermission(Information information, InformationPermission permission) {
 
         InformationAccessLevel accessLevel = information.getAccessLevel();
