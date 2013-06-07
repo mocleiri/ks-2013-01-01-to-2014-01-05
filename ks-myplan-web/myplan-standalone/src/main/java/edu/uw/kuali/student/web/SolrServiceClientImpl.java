@@ -86,7 +86,7 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
      */
     public List<String> getPrimarySections(String year, String term, String curriculumAbbreviation, String courseNumber) throws ServiceException {
         ModifiableSolrParams params = new ModifiableSolrParams();
-        params.set("q", "section.year:" + year + " AND section.term:" + term + " AND section.curriculum.abbreviation:" + curriculumAbbreviation + " AND section.course.number:" + courseNumber + " AND section.primary:true");
+        params.set("q", "section.year:" + year + " AND section.term:" + term + " AND section.curriculum.abbreviation:\"" + curriculumAbbreviation + "\" AND section.course.number:" + courseNumber + " AND section.primary:true");
         params.set("fl", "section.data");
         params.set("sort", "section.id asc");
         params.set("rows", "9999");
@@ -154,7 +154,7 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
      */
     public List<String> getActivityIds(String year, String term, String curriculumAbbreviation) throws ServiceException {
         ModifiableSolrParams params = new ModifiableSolrParams();
-        params.set("q", "section.year:" + year + " AND section.term:" + term + " AND section.curriculum.abbreviation:" + curriculumAbbreviation + " AND section.primary:true");
+        params.set("q", "section.year:" + year + " AND section.term:" + term + " AND section.curriculum.abbreviation:\"" + curriculumAbbreviation + "\" AND section.primary:true");
         params.set("fl", "section.id");
         params.set("sort", "section.id asc");
         params.set("rows", "9999");
