@@ -12,7 +12,6 @@ Feature: EC.Academic Calendar CRED
     And I search for the calendar
     Then the calendar should appear in search results
 
-    @bug @KSENROLL-7298
   Scenario: Make Academic Calendar Official
     When I make the calendar official
     And I search for the calendar
