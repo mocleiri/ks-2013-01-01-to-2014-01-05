@@ -11,7 +11,10 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "KSSA_ACCESS_LEVEL")
-@AttributeOverride(name = "code", column = @Column(name = "CODE", length = 20, nullable = false, unique = true))
+@AttributeOverrides({
+        @AttributeOverride(name = "code", column = @Column(name = "CODE", length = 20, nullable = false, unique = true)),
+        @AttributeOverride(name = "name", column = @Column(name = "NAME", length = 45, nullable = false, unique = true))
+})
 public class InformationAccessLevel extends AuditableEntity<Long> {
 
 
@@ -26,18 +29,18 @@ public class InformationAccessLevel extends AuditableEntity<Long> {
     private String readPermission;
 
     /**
-        * Permission that is required to be able to update this level of information.
-        */
+     * Permission that is required to be able to update this level of information.
+     */
     private String updatePermission;
 
     /**
-        * Permission that is required to be able to delete this level of information.
-        */
+     * Permission that is required to be able to delete this level of information.
+     */
     private String deletePermission;
 
     /**
-        * Permission that is required to be able to expire this level of information.
-        */
+     * Permission that is required to be able to expire this level of information.
+     */
     private String expirePermission;
 
 
