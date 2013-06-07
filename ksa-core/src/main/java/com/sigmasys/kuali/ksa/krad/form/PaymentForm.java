@@ -1,12 +1,14 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.CreditType;
-import com.sigmasys.kuali.ksa.model.Currency;
+import com.sigmasys.kuali.ksa.model.Memo;
 import com.sigmasys.kuali.ksa.model.Payment;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -16,7 +18,7 @@ public class PaymentForm extends AbstractViewModel {
 
    private Account account;
 
-   private Payment payment;
+   private TransactionModel payment;
 
    private String paymentTransactionTypeId;
 
@@ -36,17 +38,20 @@ public class PaymentForm extends AbstractViewModel {
 
    private String transactionTypeMessage;
 
-   private String systemCurrency;
+    private List<TransactionModel> allocations;
+
+    private String systemCurrency;
     private KeyValuesFinder currencyOptionsFinder;
     private KeyValuesFinder rollupOptionsFinder;
     private String currencyId;
     private String systemCurrencyId;
     private String rollupId;
 
+    private Memo memoModel;
     private boolean ageAccount;
     private boolean allocatePayment;
-    private boolean addMemoToPayment;
     private boolean addAdditionalPayment;
+
 
     /*
       Get / Set methods
@@ -61,14 +66,14 @@ public class PaymentForm extends AbstractViewModel {
       this.account = account;
    }
 
-   public Payment getPayment() {
+   public TransactionModel getPayment() {
        if(payment == null){
-           payment = new Payment();
+           payment = new TransactionModel(new Payment());
        }
       return payment;
    }
 
-   public void setPayment(Payment payment) {
+   public void setPayment(TransactionModel payment) {
       this.payment = payment;
    }
 
@@ -265,19 +270,27 @@ public class PaymentForm extends AbstractViewModel {
         this.allocatePayment = allocatePayment;
     }
 
-    public boolean isAddMemoToPayment() {
-        return addMemoToPayment;
-    }
-
-    public void setAddMemoToPayment(boolean addMemoToPayment) {
-        this.addMemoToPayment = addMemoToPayment;
-    }
-
     public boolean isAddAdditionalPayment() {
         return addAdditionalPayment;
     }
 
     public void setAddAdditionalPayment(boolean addAdditionalPayment) {
         this.addAdditionalPayment = addAdditionalPayment;
+    }
+
+    public Memo getMemoModel() {
+        return memoModel;
+    }
+
+    public void setMemoModel(Memo memoModel) {
+        this.memoModel = memoModel;
+    }
+
+    public List<TransactionModel> getAllocations(){
+        return this.allocations;
+    }
+
+    public void setAllocations(List<TransactionModel> models) {
+        this.allocations = models;
     }
 }

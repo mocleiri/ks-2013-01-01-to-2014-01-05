@@ -1,9 +1,11 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.PaymentForm;
+import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.InformationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
@@ -19,7 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -33,8 +37,15 @@ public class PaymentController extends GenericSearchController {
 
     private static final Log logger = LogFactory.getLog(PaymentController.class);
 
+    private static final String PAYMENT_VIEW = "PaymentView";
+    private static final String ADD_PAYMENT_PAGE = "AddPaymentPage";
+    private static final String ALLOCATE_PAYMENT_PAGE = "AllocatePaymentPage";
+
     @Autowired
     private AuditableEntityService auditableEntityService;
+
+    @Autowired
+    private InformationService informationService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -105,7 +116,7 @@ public class PaymentController extends GenericSearchController {
         payment.setAccount(account);
         payment.setAccountId(accountId);
         payment.setEffectiveDate(new Date());
-        form.setPayment(payment);
+        form.setPayment(new TransactionModel(payment));
         form.setCurrencyOptionsFinder(this.getCurrencyOptionsFinder());
         form.setRollupOptionsFinder(this.getRollupOptionsFinder());
 
@@ -164,19 +175,107 @@ public class PaymentController extends GenericSearchController {
         // do submit stuff...
 
         String viewId = request.getParameter("viewId");
-        // example user1
-        String userId = request.getParameter("userId");
+
+        String userId = form.getAccount().getId();
 
         logger.info("View: " + viewId + " User: " + userId);
 
-        if (savePayment(form)) {
-            initPayment(form);
+        if (!savePayment(form)) {
+            return getUIFModelAndView(form);
         }
 
-        Payment payment = form.getPayment();
+        TransactionModel model = form.getPayment();
+        Payment payment = (Payment)model.getParentTransaction();
 
         if (payment != null && payment.getId() != null && form.isAgeAccount()) {
             accountService.ageDebt(payment.getAccount().getId(), false);
+        }
+
+        // determine next screen and set up data
+        if(form.isAllocatePayment()){
+            form.setPageId(ALLOCATE_PAYMENT_PAGE);
+            List<Transaction> transactions = transactionService.getTransactions(userId);
+
+            List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
+            for (Transaction t : transactions) {
+                if(transactionService.canPay(payment, t)){
+                    TransactionModel m = new TransactionModel(t);
+                    models.add(m);
+                }
+            }
+            form.setAllocations(models);
+
+        } else if(form.isAddAdditionalPayment()){
+            // clean out the form
+            initPayment(form);
+            form.setPageId(ADD_PAYMENT_PAGE);
+        }
+
+        return getUIFModelAndView(form);
+    }
+
+    /**
+     * Form submitting method
+     *
+     * @param form    PaymentForm
+     * @param request HttpServletRequest
+     * @return ModelAndView
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=allocate")
+    @Transactional(readOnly = false)
+    public ModelAndView allocate(@ModelAttribute("KualiForm") PaymentForm form, HttpServletRequest request) {
+
+
+        TransactionModel paymentModel = form.getPayment();
+        Payment payment = (Payment)paymentModel.getParentTransaction();
+
+        if(payment == null){
+            String statusMsg = "Unknown payment.  Unable to process allocations.";
+            GlobalVariables.getMessageMap().putError("", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            logger.error(statusMsg);
+
+            return getUIFModelAndView(form);
+        }
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        List<TransactionModel> allocations = form.getAllocations();
+        for(TransactionModel model : allocations){
+            BigDecimal amount = model.getNewAllocation();
+
+            if(amount != null){
+                if(amount.compareTo(model.getUnallocatedAmount()) > 0){
+                    String statusMsg = "Allocation amount of " + amount + " cannot be greater than the unallocated amount of " + model.getUnallocatedAmount() + " for " + model.getParentTransaction().getTransactionType().getDescription();
+                    GlobalVariables.getMessageMap().putError(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+                }
+                total = total.add(amount);
+            }
+        }
+
+        // Total of allocations can't be greater than the payment amount
+        if(total.compareTo(payment.getAmount()) > 0) {
+            String statusMsg = "Allocations cannot add up to more than the payment amount";
+            GlobalVariables.getMessageMap().putError(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            logger.error(statusMsg);
+
+            return getUIFModelAndView(form);
+        }
+
+        if(!GlobalVariables.getMessageMap().hasErrors()) {
+            for(TransactionModel model : allocations) {
+                BigDecimal amount = model.getNewAllocation();
+                if(amount != null && (amount.compareTo(BigDecimal.ZERO) > 0)) {
+                    transactionService.createAllocation(payment.getId(), model.getParentTransaction().getId(), amount);
+                }
+            }
+
+            String statusMsg = "Payment successfully allocated";
+            GlobalVariables.getMessageMap().putInfo(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+
+            if(form.isAddAdditionalPayment()){
+                this.initPayment(form);
+                form.setPageId(ADD_PAYMENT_PAGE);
+            }
         }
 
         return getUIFModelAndView(form);
@@ -197,7 +296,8 @@ public class PaymentController extends GenericSearchController {
         boolean saveResult = false;
         boolean errors = false;
         String statusMsg = "";
-        Payment payment = form.getPayment();
+        TransactionModel model = form.getPayment();
+        Payment payment = (Payment)model.getParentTransaction();
         payment.setAccount(form.getAccount());
 
         String typeIdString = form.getPaymentTransactionTypeId();
@@ -221,18 +321,18 @@ public class PaymentController extends GenericSearchController {
             amount = nativeAmount;
             nativeAmount = null;
         } else {
-            Currency curr = auditableEntityService.getCurrency(currencyId);
+            Currency curr = auditableEntityService.getAuditableEntity(Long.parseLong(currencyId), Currency.class);
             payment.setCurrency(curr);
         }
 
         if (amount == null) {
             statusMsg = "Amount must be a numerical value";
-            GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            GlobalVariables.getMessageMap().putError(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
             errors = true;
         } else if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             statusMsg = "Amount must be a positive value";
-            GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            GlobalVariables.getMessageMap().putError(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
             errors = true;
         }
@@ -248,12 +348,12 @@ public class PaymentController extends GenericSearchController {
         if (tt == null) {
             // Error handler here.
             statusMsg = "Invalid Payment Type";
-            GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            GlobalVariables.getMessageMap().putError(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
             errors = true;
         } else if (!(tt instanceof CreditType)) {
             statusMsg = "Payment Type must be a credit type";
-            GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            GlobalVariables.getMessageMap().putError(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
             errors = true;
         }
@@ -279,16 +379,27 @@ public class PaymentController extends GenericSearchController {
                     transactionService.persistTransaction(payment);
                 }
 
-                form.setPayment(payment);
+                Memo memo = form.getMemoModel();
+                if(memo != null){
+                    String text = memo.getText();
+                    if(text != null && !"".equals(text.trim())){
+                        Long memoId = informationService.persistInformation(memo);
+                        if(memoId != null){
+                            informationService.associateWithTransaction(memoId, payment.getId());
+                        }
+                    }
+                }
+
+                form.setPayment(new TransactionModel(payment));
                 statusMsg = tt.getDescription() + " Payment saved";
-                GlobalVariables.getMessageMap().putInfo("PaymentView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+                GlobalVariables.getMessageMap().putInfo(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
                 logger.info(statusMsg);
                 saveResult = true;
             }
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            GlobalVariables.getMessageMap().putError("PaymentView", RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+            GlobalVariables.getMessageMap().putError(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
 
         }
 
@@ -305,6 +416,6 @@ public class PaymentController extends GenericSearchController {
         payment.setAccount(account);
         payment.setAccountId(accountId);
         payment.setEffectiveDate(new Date());
-        form.setPayment(payment);
+        form.setPayment(new TransactionModel(payment));
     }
 }

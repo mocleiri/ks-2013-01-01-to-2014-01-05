@@ -94,6 +94,8 @@ public class TransactionModel extends Transaction {
 
     private BigDecimal runningBalance;
 
+    private BigDecimal newAllocation;
+
     // checkboxes
     private String paymentBilling;
 
@@ -719,5 +721,13 @@ public class TransactionModel extends Transaction {
 
     public void setNewTag(String newTag) {
         this.newTag = newTag;
+    }
+
+    public BigDecimal getNewAllocation() {
+        return newAllocation;
+    }
+
+    public void setNewAllocation(BigDecimal newAllocation) {
+        this.newAllocation = newAllocation;
     }
 }
