@@ -5,10 +5,12 @@ import com.sigmasys.kuali.ksa.exception.InformationNotFoundException;
 import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
+import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -36,6 +38,16 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
     private static final Log logger = LogFactory.getLog(InformationServiceImpl.class);
 
+
+    private static enum InformationPermission {
+        CREATE,
+        READ,
+        UPDATE,
+        DELETE,
+        EXPIRE
+    }
+
+
     private static final String GET_INFORMATION_JOIN =
             " left outer join fetch i.account a " +
                     " left outer join fetch i.accessLevel al " +
@@ -59,9 +71,15 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
         query.setParameter("id", id);
 
-        List<T> transactions = query.getResultList();
+        List<T> entities = query.getResultList();
 
-        return CollectionUtils.isNotEmpty(transactions) ? transactions.get(0) : null;
+        T entity = null;
+        if (CollectionUtils.isNotEmpty(entities)) {
+            entity = entities.get(0);
+            checkReadPermission(entity);
+        }
+
+        return entity;
     }
 
     private <T extends Information> List<T> getInformations(String userId, Class<T> entityType) {
@@ -74,7 +92,14 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             query.setParameter("userId", userId);
         }
 
-        return query.getResultList();
+        List<T> entities = query.getResultList();
+        if (CollectionUtils.isNotEmpty(entities)) {
+            for (T entity : entities) {
+                checkReadPermission(entity);
+            }
+        }
+
+        return entities;
     }
 
 
@@ -202,13 +227,23 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public List<Memo> getMemos(Long transactionId) {
+
         Query query = em.createQuery("select i from Memo i " + GET_INFORMATION_JOIN +
                 " left outer join fetch i.nextMemo nm " +
                 " left outer join fetch i.previousMemo pm " +
                 " where i.transaction.id = :transactionId order by " +
                 " i.creationDate desc, i.effectiveDate desc");
+
         query.setParameter("transactionId", transactionId);
-        return query.getResultList();
+
+        List<Memo> memos = query.getResultList();
+        if (CollectionUtils.isNotEmpty(memos)) {
+            for (Memo memo : memos) {
+                checkReadPermission(memo);
+            }
+        }
+
+        return memos;
     }
 
     /**
@@ -221,8 +256,12 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     @Override
     @Transactional(readOnly = false)
     public Long persistInformation(Information information) {
+
+        checkUpdatePermission(information);
+
         String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
         Date currentDate = new Date();
+
         if (information.getId() != null) {
             information.setEditorId(userId);
             information.setLastUpdate(currentDate);
@@ -230,6 +269,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             information.setCreatorId(userId);
             information.setCreationDate(currentDate);
         }
+
         return persistEntity(information);
     }
 
@@ -242,6 +282,16 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     @Override
     @Transactional(readOnly = false)
     public boolean deleteInformation(Long id) {
+
+        Information entity = getInformation(id);
+        if (entity == null) {
+            String errMsg = "Information with ID = " + id + " does not exist";
+            logger.error(errMsg);
+            throw new InformationNotFoundException(errMsg);
+        }
+
+        checkDeletePermission(entity);
+
         return deleteEntity(id, Information.class);
     }
 
@@ -335,6 +385,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         newMemo.setCreationDate(curDate);
         newMemo.setEffectiveDate(effectiveDate != null ? effectiveDate : curDate);
         newMemo.setExpirationDate(expirationDate);
+
+        checkCreatePermission(newMemo);
 
         persistEntity(newMemo);
 
@@ -432,6 +484,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         flag.setEffectiveDate(effectiveDate != null ? effectiveDate : curDate);
         flag.setExpirationDate(expirationDate);
 
+        checkCreatePermission(flag);
+
         persistEntity(flag);
 
         return flag;
@@ -516,6 +570,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         alert.setEffectiveDate(effectiveDate != null ? effectiveDate : curDate);
         alert.setExpirationDate(expirationDate);
 
+        checkCreatePermission(alert);
+
         persistEntity(alert);
 
         return alert;
@@ -565,6 +621,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
         information.setAccount(account);
 
+        checkUpdatePermission(information);
+
         return information;
 
     }
@@ -596,6 +654,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
         information.setTransaction(transaction);
 
+        checkUpdatePermission(information);
+
         return information;
     }
 
@@ -620,6 +680,61 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     @Override
     public InformationAccessLevel getInformationAccessLevel(Long id) {
         return auditableEntityService.getAuditableEntity(id, InformationAccessLevel.class);
+    }
+
+    protected void checkInformationPermission(Information information, InformationPermission permission) {
+
+        InformationAccessLevel accessLevel = information.getAccessLevel();
+
+        if (accessLevel != null) {
+
+            String permissionName;
+
+            switch (permission) {
+                case CREATE:
+                    permissionName = accessLevel.getCreatePermission();
+                    break;
+                case READ:
+                    permissionName = accessLevel.getReadPermission();
+                    break;
+                case UPDATE:
+                    permissionName = accessLevel.getUpdatePermission();
+                    break;
+                case DELETE:
+                    permissionName = accessLevel.getDeletePermission();
+                    break;
+                case EXPIRE:
+                    permissionName = accessLevel.getExpirePermission();
+                    break;
+                default:
+                    String errMsg = "Unknown permission name '" + permission.name() + "'";
+                    logger.error(errMsg);
+                    throw new IllegalArgumentException(errMsg);
+
+            }
+
+            PermissionUtils.checkPermission(permissionName != null ? Permission.valueOf(permissionName) : null);
+        }
+    }
+
+    protected void checkCreatePermission(Information information) {
+        checkInformationPermission(information, InformationPermission.CREATE);
+    }
+
+    protected void checkReadPermission(Information information) {
+        checkInformationPermission(information, InformationPermission.READ);
+    }
+
+    protected void checkUpdatePermission(Information information) {
+        checkInformationPermission(information, InformationPermission.UPDATE);
+    }
+
+    protected void checkDeletePermission(Information information) {
+        checkInformationPermission(information, InformationPermission.DELETE);
+    }
+
+    protected void checkExpirePermission(Information information) {
+        checkInformationPermission(information, InformationPermission.EXPIRE);
     }
 
 }

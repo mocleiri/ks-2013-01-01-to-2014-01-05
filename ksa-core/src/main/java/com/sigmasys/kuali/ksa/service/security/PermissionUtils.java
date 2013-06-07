@@ -36,6 +36,10 @@ public class PermissionUtils {
     }
 
     public static boolean hasPermission(Permission permission) {
+        if (permission == null) {
+            String userId = getUserSessionManager().getUserId(RequestUtils.getThreadRequest());
+            throw new PermissionDeniedException(userId);
+        }
         return getAccessControlService().hasPermission(permission);
     }
 

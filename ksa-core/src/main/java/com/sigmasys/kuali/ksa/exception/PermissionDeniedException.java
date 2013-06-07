@@ -13,6 +13,11 @@ public class PermissionDeniedException extends GenericException {
     private String userId;
     private Permission permission;
 
+    public PermissionDeniedException(String userId) {
+        super("No permission found for user '" + userId + "'");
+        this.userId = userId;
+    }
+
     public PermissionDeniedException(String userId, Permission permission) {
         super("User '" + userId + "' does not have permission '" + permission.name() + "'");
         this.userId = userId;

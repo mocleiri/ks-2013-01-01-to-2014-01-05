@@ -76,14 +76,23 @@ public enum Permission {
     // Memo permissions
     READ_MEMO,
     CREATE_MEMO,
-    EDIT_MEMO,
-    EDIT_MEMO_TEXT,
+    UPDATE_MEMO,
+    DELETE_MEMO,
+    EXPIRE_MEMO,
 
     // Alert permissions
     READ_ALERT,
     CREATE_ALERT,
-    EDIT_ALERT,
-    EDIT_ALERT_TEXT,
+    UPDATE_ALERT,
+    DELETE_ALERT,
+    EXPIRE_ALERT,
+
+     // Flag permissions
+    READ_FLAG,
+    CREATE_FLAG,
+    UPDATE_FLAG,
+    DELETE_FLAG,
+    EXPIRE_FLAG,
 
     // Transaction permissions
     IMPORT_TRANSACTIONS,
