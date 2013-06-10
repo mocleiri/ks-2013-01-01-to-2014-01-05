@@ -362,7 +362,7 @@ public class CourseHelperImpl implements CourseHelper {
     public boolean isCourseInOfferingIds(String subjectArea, String courseNumber, Set<String> courseOfferingIds) {
         // UW Implementation checks by breaking down courseOfferingId. KSAP should use courseOffering service to accomplish the same
         for(String offeringId : courseOfferingIds) {
-            if(offeringId.contains( subjectArea + ":" + courseNumber)) {
+            if (offeringId.contains(":" + subjectArea + ":" + courseNumber)) {
                 return true;
             }
         }
