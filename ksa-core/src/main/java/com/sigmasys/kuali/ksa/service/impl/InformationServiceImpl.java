@@ -668,6 +668,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public InformationAccessLevel getInformationAccessLevel(String code) {
+        PermissionUtils.checkPermission(Permission.READ_ACCESS_LEVEL);
         return auditableEntityService.getAuditableEntity(code, InformationAccessLevel.class);
     }
 
@@ -679,8 +680,23 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public InformationAccessLevel getInformationAccessLevel(Long id) {
+        PermissionUtils.checkPermission(Permission.READ_ACCESS_LEVEL);
         return auditableEntityService.getAuditableEntity(id, InformationAccessLevel.class);
     }
+
+    /**
+     * Persists InformationAccessLevel instance in the persistence store.
+     *
+     * @param accessLevel InformationAccessLevel instance to persist
+     * @return InformationAccessLevel ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Long persistInformationAccessLevel(InformationAccessLevel accessLevel) {
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCESS_LEVEL);
+        return auditableEntityService.persistAuditableEntity(accessLevel);
+    }
+
 
     /**
      * Creates and persists a new InformationAccessLevel instance.
@@ -768,6 +784,19 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         return createInformationAccessLevel(code, name, description, Permission.CREATE_FLAG.name(),
                 Permission.READ_FLAG.name(), Permission.UPDATE_FLAG.name(),
                 Permission.DELETE_FLAG.name(), Permission.EXPIRE_FLAG.name());
+    }
+
+    /**
+     * Removes InformationAccessLevel entity from the persistence store by ID.
+     *
+     * @param id InformationAccessLevel ID
+     * @return true if InformationAccessLevel entity has been deleted
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public boolean deleteInformationAccessLevel(Long id) {
+        PermissionUtils.checkPermission(Permission.DELETE_ACCESS_LEVEL);
+        return deleteEntity(id, InformationAccessLevel.class);
     }
 
     protected void checkInformationPermission(Information information, InformationPermission permission) {

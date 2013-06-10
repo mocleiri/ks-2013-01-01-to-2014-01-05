@@ -251,6 +251,14 @@ public interface InformationService {
     InformationAccessLevel getInformationAccessLevel(Long id);
 
     /**
+     * Persists InformationAccessLevel instance in the persistence store.
+     *
+     * @param accessLevel InformationAccessLevel instance to persist
+     * @return InformationAccessLevel ID
+     */
+    Long persistInformationAccessLevel(InformationAccessLevel accessLevel);
+
+    /**
      * Creates and persists a new InformationAccessLevel instance.
      *
      * @param code             InformationAccessLevel code
@@ -301,5 +309,13 @@ public interface InformationService {
      * @return InformationAccessLevel instance
      */
     InformationAccessLevel createFlagAccessLevel(String code, String name, String description);
+
+    /**
+     * Removes InformationAccessLevel entity from the persistence store by ID.
+     *
+     * @param id InformationAccessLevel ID
+     * @return true if InformationAccessLevel entity has been deleted
+     */
+    boolean deleteInformationAccessLevel(Long id);
 
 }
