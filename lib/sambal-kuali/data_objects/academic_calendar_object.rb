@@ -278,7 +278,8 @@ class KeyDate
       page.key_date_end_date_addline(@term_index,0).set @end_date if @date_range
 
       page.key_date_add(@term_index,0)
-      page.make_term_official(@term_index)
+      page.save
+
     end
 
   end
@@ -350,7 +351,8 @@ class KeyDate
     end
 
     on AcademicTermPage  do |page|
-      page.make_term_official(@term_index)
+      page.save
+      #page.make_term_official(@term_index)
     end
 
     end

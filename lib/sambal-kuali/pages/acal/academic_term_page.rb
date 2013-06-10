@@ -65,5 +65,10 @@ class AcademicTermPage < BasePage
 
   action(:get_term_index) { |term_name, b| b.frm.text_field(value:"#{term_name}").name[/\d+/]}
   action(:get_key_date_group_index) { |group_name, b| b.frm.div(text:"#{group_name}").span(index:0).id}
+
+  element(:sticky_footer_div) { |b| b.frm.div(class: "uif-footer uif-stickyFooter uif-stickyButtonFooter") } # Persistent ID needed!
+  action(:save) { |b| b.sticky_footer_div.button(text: "Save").click; b.loading.wait_while_present } # Persistent ID needed!
+  action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click }
+
 end
 

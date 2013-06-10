@@ -614,7 +614,7 @@ class CourseOffering
             @delete_present = page.delete_activity_offering_button.present?
             page.cancel
           end
-          page.deselect_ao(ao)
+          on(ManageCourseOfferings).deselect_ao(ao)
           return @delete_present
         else
           page.deselect_ao(ao)
@@ -633,7 +633,7 @@ class CourseOffering
             @delete_present = page.delete_activity_offering_button.present?
             page.cancel
           end
-          page.deselect_ao(new_ao)
+          on(ManageCourseOfferings).deselect_ao(new_ao)
           return @delete_present
         else
           page.deselect_ao(new_ao)
