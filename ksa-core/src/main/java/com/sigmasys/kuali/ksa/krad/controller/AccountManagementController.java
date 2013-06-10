@@ -178,16 +178,18 @@ public class AccountManagementController extends GenericSearchController {
       * Populates the given form for an existing Account.
       */
     protected void populateForExistingAccount(AdminForm form, Account account, boolean addBlankOption) {
+
         // Set the Account attributes:
         String accountId = account.getId();
         AccountInformationHolder accountInfo = new AccountInformationHolder();
+
         AccountProtectedInfo accountProtectedInfo = accountService.getAccountProtectedInfo(accountId);
         List<UserPreference> userPreferences = userPreferenceService.getUserPreferences(accountId);
 
         accountInfo.setAccountProtectedInfo(accountProtectedInfo);
         accountInfo.setDateOfBirth(getAccountDateOfBirth(account));
         accountInfo.setUserPreferences(userPreferences);
-        accountInfo.setAccountType(getAccountType(account).getCode());
+        accountInfo.setAccountType(getAccountType(account).getId());
 
         // Set the form's objects:
         form.setAccountInfo(accountInfo);

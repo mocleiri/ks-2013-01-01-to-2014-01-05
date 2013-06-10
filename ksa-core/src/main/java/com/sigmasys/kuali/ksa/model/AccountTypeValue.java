@@ -6,7 +6,7 @@ package com.sigmasys.kuali.ksa.model;
  *
  * @author Michael Ivanov
  */
-public enum AccountTypeValue {
+public enum AccountTypeValue implements Identifiable {
 
     DIRECT_CHARGE(AccountTypeValue.DIRECT_CHARGE_CODE),
     DELEGATE(AccountTypeValue.DELEGATE_CODE);
@@ -14,14 +14,14 @@ public enum AccountTypeValue {
     public static final String DIRECT_CHARGE_CODE = "ACD";
     public static final String DELEGATE_CODE = "AND";
 
-    private String code;
+    private String id;
 
-    private AccountTypeValue(String code) {
-        this.code = code;
+    private AccountTypeValue(String id) {
+        this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -32,6 +32,6 @@ public enum AccountTypeValue {
             case DELEGATE:
                 return "Delegate";
         }
-        throw new IllegalStateException("No account type description found for " + name() + " value");
+        throw new IllegalStateException("No account type found for " + name() + " value");
     }
 }

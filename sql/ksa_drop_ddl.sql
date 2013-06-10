@@ -12,6 +12,7 @@ drop table KSSA_ACCESS_LEVEL cascade constraints;
 drop table KSSA_ACNT cascade constraints;
 drop table KSSA_ACNT_PROTECTED_INFO cascade constraints;
 drop table KSSA_ACNT_STATUS_TYPE cascade constraints;
+drop table KSSA_ACNT_TYPE cascade constraints;
 drop table KSSA_ACTIVITY cascade constraints;
 drop table KSSA_ACTIVITY_TYPE cascade constraints;
 drop table KSSA_ALLOCATION cascade constraints;
