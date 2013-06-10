@@ -299,8 +299,7 @@ public class CourseSearchController extends UifControllerBase {
 
             loadScheduledTerms(courseList, subjectArea);
             if (!CourseSearchForm.SEARCH_TERM_ANY_ITEM.equals(form.getSearchTerm())) {
-                List<CourseSearchItem> filteredCourses = new ArrayList<CourseSearchItem>();
-                filteredCourses = filterCoursesByTerm(courseList, form.getSearchTerm());
+                List<CourseSearchItem> filteredCourses = filterCoursesByTerm(courseList, form.getSearchTerm());
                 populateFacets(form, filteredCourses);
                 logger.error(String.format("SEARCH: %s  : %s CAMPUS : %s : %s", form.getSearchQuery(), form.getSearchTerm(), form.getCampusSelect(), String.valueOf(hits.size())));
                 return filteredCourses;
