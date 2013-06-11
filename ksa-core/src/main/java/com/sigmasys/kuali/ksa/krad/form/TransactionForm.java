@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.config.ConfigService;
+import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
@@ -20,8 +21,8 @@ public class TransactionForm extends AbstractViewModel {
     private String statusMessage;
 
 
-    private List<Alert> alerts;
-    private List<Flag> flags;
+    private List<InformationModel> alerts;
+    private List<InformationModel> flags;
     private List<Memo> memos;
     private Tree<Memo, String> memoTree = new Tree<Memo, String>();
 
@@ -332,9 +333,9 @@ public class TransactionForm extends AbstractViewModel {
         this.account = account;
     }
 
-    public List<Alert> getAlerts() {
+    public List<InformationModel> getAlerts() {
         if (alerts == null) {
-            alerts = new ArrayList<Alert>();
+            alerts = new ArrayList<InformationModel>();
         }
         return alerts;
     }
@@ -368,12 +369,16 @@ public class TransactionForm extends AbstractViewModel {
     }
 
     public void setAlerts(List<Alert> alerts) {
-        this.alerts = alerts;
+        List<InformationModel> models = new ArrayList<InformationModel>(alerts.size());
+        for(Alert alert : alerts){
+            models.add(new InformationModel(alert));
+        }
+        this.alerts = models;
     }
 
-    public List<Flag> getFlags() {
+    public List<InformationModel> getFlags() {
         if (flags == null) {
-            flags = new ArrayList<Flag>();
+            flags = new ArrayList<InformationModel>();
         }
         return flags;
     }
@@ -407,7 +412,11 @@ public class TransactionForm extends AbstractViewModel {
     }
 
     public void setFlags(List<Flag> flags) {
-        this.flags = flags;
+        List<InformationModel> models = new ArrayList<InformationModel>(flags.size());
+        for(Flag flag : flags){
+            models.add(new InformationModel(flag));
+        }
+        this.flags = models;
     }
 
     public List<TransactionModel> getRollupTransactions() {

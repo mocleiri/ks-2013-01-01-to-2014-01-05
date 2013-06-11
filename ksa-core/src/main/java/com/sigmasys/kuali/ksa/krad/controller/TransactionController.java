@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.TransactionForm;
 import com.sigmasys.kuali.ksa.krad.model.AllocationModel;
+import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
@@ -268,7 +269,8 @@ public class TransactionController extends GenericSearchController {
             models.add(m);
 
             // Add appropriate Alerts
-            for (Alert a : form.getAlerts()) {
+            for (InformationModel im : form.getAlerts()) {
+                Alert a = (Alert)im.getParentEntity();
                 Transaction alertTransaction = a.getTransaction();
                 if (alertTransaction != null && alertTransaction.getId().equals(t.getId())) {
                     m.addAlert(a);
@@ -276,7 +278,8 @@ public class TransactionController extends GenericSearchController {
             }
 
             // Add appropriate flags
-            for (Flag f : form.getFlags()) {
+            for (InformationModel im : form.getFlags()) {
+                Flag f = (Flag)im.getParentEntity();
                 Transaction flagTransaction = f.getTransaction();
                 if (flagTransaction != null && flagTransaction.getId().equals(t.getId())) {
                     m.addFlag(f);

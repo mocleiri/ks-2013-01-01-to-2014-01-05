@@ -2,9 +2,11 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 
 import com.sigmasys.kuali.ksa.krad.form.TransactionForm;
-import com.sigmasys.kuali.ksa.krad.form.TransactionTypeForm;
+import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
-import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.Alert;
+import com.sigmasys.kuali.ksa.model.Flag;
+import com.sigmasys.kuali.ksa.model.Transaction;
 import com.sigmasys.kuali.ksa.service.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -126,12 +128,12 @@ public class TransactionControllerTest extends AbstractServiceTest {
         Assert.notNull(modelAndView);
         Assert.notNull(form);
 
-        List<Alert> formAlerts = form.getAlerts();
+        List<InformationModel> formAlerts = form.getAlerts();
         Assert.notNull(alerts);
         Assert.notNull(formAlerts);
         for(Alert a : alerts){
             boolean found = false;
-            for(Alert formA : formAlerts){
+            for(InformationModel formA : formAlerts){
                 if(formA.getText().equals(a.getText())){
                     found = true;
                     break;
@@ -141,12 +143,12 @@ public class TransactionControllerTest extends AbstractServiceTest {
             Assert.isTrue(found, a.getText() + " not found in form Alerts");
         }
 
-        List<Flag> formFlags = form.getFlags();
+        List<InformationModel> formFlags = form.getFlags();
         Assert.notNull(flags);
         Assert.notNull(formFlags);
         for(Flag f : flags){
             boolean found = false;
-            for(Flag formF : formFlags){
+            for(InformationModel formF : formFlags){
                 if(formF.getText().equals(f.getText())){
                     found = true;
                     break;

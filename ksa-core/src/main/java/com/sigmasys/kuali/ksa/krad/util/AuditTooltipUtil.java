@@ -1,6 +1,8 @@
 package com.sigmasys.kuali.ksa.krad.util;
 
 import com.sigmasys.kuali.ksa.krad.model.TransactionTypeModel;
+import com.sigmasys.kuali.ksa.model.Information;
+import com.sigmasys.kuali.ksa.model.InformationAccessLevel;
 import com.sigmasys.kuali.ksa.model.TransactionType;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
@@ -18,6 +20,16 @@ public class AuditTooltipUtil {
 
     public static String getAuditTooltip(TransactionType tt) {
         return getAuditTooltip(tt.getCreatorId(), tt.getCreationDate(), tt.getEditorId(), tt.getLastUpdate(), tt.getStartDate(), tt.getEndDate(), null);
+    }
+
+    public static String getAuditTooltip(Information information){
+        InformationAccessLevel level = information.getAccessLevel();
+        String accessCode = null;
+        if(level != null){
+            accessCode = level.getName();
+        }
+        return getAuditTooltip(information.getCreatorId(), information.getCreationDate(), information.getEditorId(), information.getLastUpdate(),
+                information.getEffectiveDate(), information.getExpirationDate(), accessCode);
     }
 
     private static String getAuditTooltip(String userId, Date createDate, String updateUserId, Date updateDate, Date effectiveDate, Date expirationDate, String viewLevel) {

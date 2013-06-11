@@ -36,7 +36,7 @@
 
     <bean id="alertLightboxTable" parent="Uif-Disclosure-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:width="85%">
         <property name="readOnly" value="true"/>
-        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Alert"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.InformationModel"/>
         <property name="propertyName" value="alerts"/>
         <property name="layoutManager.sequencePropertyName" value="id"/>
         <property name="layoutManager.richTable.render" value="true"/>
@@ -53,21 +53,20 @@
 
         <property name="items">
             <list>
-                <bean parent="Uif-ImageField" p:source="../images/alert.png" p:altText="Alerts" p:title="" />
-                <bean parent="Uif-InputField" p:label="Effective Date"
-                      p:propertyName="effectiveDate"
-                      p:width="10%">
-                    <property name="control">
-                        <bean parent="Uif-TextControl"
-                              p:size="11" p:maxLength="10"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-InputField" p:label="Alert Text"
-                      p:propertyName="text"
-                      p:width="15%">
-                    <property name="control">
-                        <bean parent="Uif-TextControl"
-                              p:size="20" p:maxLength="100"/>
+                <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="effectiveDate" p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="Access Level" p:propertyName="accessLevel"/>
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Alert Text">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-ImageField" p:source="../images/alert.png" p:altText="Alerts" p:title="" />
+                            <bean parent="Uif-InputField" p:propertyName="text"/>
+                            <bean parent="Uif-ImageField" p:source="../images/audit_guy.png" p:style="float: right;" p:altText="" p:title="">
+                                <property name="toolTip">
+                                    <bean parent="Uif-Tooltip" p:tooltipContent="@{#line.auditTooltip}"/>
+                                </property>
+                            </bean>
+
+                        </list>
                     </property>
                 </bean>
                 <!--<bean parent="Uif-LinkField" p:label="Edit" p:linkText="Edit" p:target="_self" p:width="10%"
@@ -106,7 +105,7 @@
 
     <bean id="flagLightboxTable" parent="Uif-Disclosure-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:width="85%">
         <property name="readOnly" value="true"/>
-        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Flag"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.InformationModel"/>
         <property name="propertyName" value="flags"/>
         <property name="layoutManager.sequencePropertyName" value="id"/>
         <property name="layoutManager.richTable.render" value="true"/>
@@ -123,21 +122,20 @@
 
         <property name="items">
             <list>
-                <bean parent="Uif-ImageField" p:source="../images/flag.png" p:altText="Flags" p:title="" />
-                <bean parent="Uif-InputField" p:label="Effective Date"
-                      p:propertyName="effectiveDate"
-                      p:width="10%">
-                    <property name="control">
-                        <bean parent="Uif-TextControl"
-                              p:size="11" p:maxLength="10"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-InputField" p:label="Flag Text"
-                      p:propertyName="text"
-                      p:width="15%">
-                    <property name="control">
-                        <bean parent="Uif-TextControl"
-                              p:size="20" p:maxLength="100"/>
+                <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="effectiveDate" p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="Access Level" p:propertyName="accessLevel"/>
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Flag Text">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-ImageField" p:source="../images/flag.png" p:altText="Alerts" p:title="" />
+                            <bean parent="Uif-InputField" p:propertyName="text"/>
+                            <bean parent="Uif-ImageField" p:source="../images/audit_guy.png" p:style="float: right;" p:altText="" p:title="">
+                                <property name="toolTip">
+                                    <bean parent="Uif-Tooltip" p:tooltipContent="@{#line.auditTooltip}"/>
+                                </property>
+                            </bean>
+
+                        </list>
                     </property>
                 </bean>
                 <!--<bean parent="Uif-LinkField" p:label="Edit" p:linkText="Edit" p:target="_self" p:width="10%"
