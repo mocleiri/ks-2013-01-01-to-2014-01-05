@@ -1,24 +1,33 @@
 # Created data used for testing
 #
-# ManageCORequisitesData contains CourseOffering
-#
 # class attributes are initialized with default data unless values are explicitly provided
 #
 # Typical usage: (with optional setting of explicit data value in  )
-#  @editAgenda = make ManageCORequisitesData
+#  @manageCOR = make ManageCORequisitesData
 #  @editAgenda.create_data_advanced_search(section, course)
 # Methods:
 #  @advanced_search(field, code)
 #  @check_data_existence
+#  @check_new_data_existence
 #  @create_data_advanced_search( sect)
 #  @edit_data_advanced_search( sect)
 #  @create_course_rule( course, sect)
 #  @create_text_rule( text)
 #  @create_all_courses_rule( courses, sect)
 #  @create_number_courses_rule( courses, sect)
-#  @test_multiline_text(section, text, boolean)
 #  @edit_existing_node(node, field, code)
 #  @add_new_node(field, node, code)
+#  @create_new_group(sect, field, node, course, set)
+#  @switch_tabs
+#  @check_text_correct( text, correct, section)
+#  @convert_text( text, page)
+#  @test_multiline_text(section, text, boolean)
+#  @test_single_line_text( section, test_text, boolean)
+#  @test_popup_text( text, boolean)
+#  @change_operator(level, operator)
+#  @test_node_level( level, node)
+#  @move_around( node, direction)
+#  @copy_cut_paste( node, node_after, action)
 #
 # Note the use of the ruby options hash pattern re: setting attribute values
 
@@ -37,17 +46,6 @@ class ManageCORequisitesData
     options = defaults.merge(opts)
 
     set_options(options)
-  end
-
-  #this method will be removed at some point
-  def find_krms_before_element( section, tag, node, comp)
-    sect = {"edit_tree"=>:edit_tree_section,"preview_tree"=>:preview_tree_section}
-    compounds = {"outer compound"=>"_parent_node_0_parent_root_control"}
-    on ManageCORequisites do |page|
-      node_i = node.to_i
-      node_i -= 1
-      return page.send(sect[section]).element(:tag_name => tag, :id => /.*node_#{node_i}#{Regexp.escape(compounds[comp])}.*/).id
-    end
   end
 
   def advanced_search(field, code)
@@ -104,7 +102,7 @@ class ManageCORequisitesData
       create_text_rule( "free form text input value")
       page.edit_tree_section.span(:text => /.*A\..*/).when_present.click
       page.group_btn
-      create_all_courses_rule(  ["ENGL478", "HIST416"], sect)
+      create_all_courses_rule(  ["ENGL478", "HIST416"], "", sect)
       page.add_btn
       create_text_rule( "Text")
       page.edit_tree_section.span(:text => /.*F\..*/).when_present.click
@@ -112,7 +110,7 @@ class ManageCORequisitesData
       create_text_rule( "Text to copy")
       page.edit_tree_section.span(:text => /.*D\..*/).when_present.click
       page.add_btn
-      create_number_courses_rule( ["HIST395", "HIST210"], sect)
+      create_number_courses_rule( ["HIST395", "HIST210"], "", sect)
       page.loading.wait_while_present
       page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
@@ -131,12 +129,12 @@ class ManageCORequisitesData
       create_text_rule( "free form text input value")
       page.edit_tree_section.span(:text => /.*B\..*/).when_present.click
       page.group_btn
-      create_all_courses_rule(  ["ENGL478", "HIST416"], sect)
+      create_all_courses_rule(  ["ENGL478", "HIST416"], "", sect)
       page.add_btn
       create_text_rule( "Text")
       page.edit_tree_section.span(:text => /.*F\..*/).when_present.click
       page.group_btn
-      create_number_courses_rule( ["HIST395", "HIST210"], sect)
+      create_number_courses_rule( ["HIST395", "HIST210"], "", sect)
       page.loading.wait_while_present
       page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "AND"
       page.edit_loading.wait_while_present
@@ -169,7 +167,7 @@ class ManageCORequisitesData
     end
   end
 
-  def create_all_courses_rule( courses, sect)
+  def create_all_courses_rule( courses, set, sect)
     on ManageCORequisites do |page|
       if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
         page.rule_dropdown.when_present.select /Must have successfully completed all courses from <courses>/
@@ -186,11 +184,17 @@ class ManageCORequisitesData
         page.add_line_btn
         page.adding.wait_while_present
       end
+      if set != "" && set != nil
+        page.multi_course_dropdown.when_present.select /Course Sets/
+        advanced_search("course set", set)
+        page.add_line_btn
+        page.adding.wait_while_present
+      end
       page.preview_btn
     end
   end
 
-  def create_number_courses_rule( courses, sect)
+  def create_number_courses_rule( courses, set, sect)
     on ManageCORequisites do |page|
       if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
         page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> courses from <courses>/
@@ -212,66 +216,13 @@ class ManageCORequisitesData
         page.add_line_btn
         page.adding.wait_while_present
       end
+      if set != "" && set != nil
+        page.multi_course_dropdown.when_present.select /Course Sets/
+        advanced_search("course set", set)
+        page.add_line_btn
+        page.adding.wait_while_present
+      end
       page.preview_btn
-    end
-  end
-
-  def test_multiline_text(section, text, boolean)
-    sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
-    $test_text = nil
-    if section != "edit"
-      array = text.split(/,/)
-      if array.length > 1
-        $test_text = array.shift
-        array.each do |elem|
-          if section == "compare"
-            on CourseOfferingRequisites do |page|
-              page.loading.wait_while_present
-              if boolean == true
-                page.compare_tree.text.should =~ /.*#{Regexp.escape(elem)}\n#{Regexp.escape(elem)}.*/m
-              else
-                page.compare_tree.text.should_not =~ /.*#{Regexp.escape(elem)}\n#{Regexp.escape(elem)}.*/m
-              end
-            end
-          else
-            $test_text += "\n" + elem
-          end
-        end
-      else
-        $test_text = text
-        if section == "compare"
-          on CourseOfferingRequisites do |page|
-            page.loading.wait_while_present
-            if boolean == true
-              page.compare_tree.text.should =~ /.*#{Regexp.escape($test_text)}\n#{Regexp.escape($test_text)}.*/m
-            else
-              page.compare_tree.text.should_not =~ /.*#{Regexp.escape($test_text)}\n#{Regexp.escape($test_text)}.*/m
-            end
-          end
-        end
-      end
-    else
-      $test_text = text
-    end
-
-    if( section == "agenda")
-      on CourseOfferingRequisites do |page|
-        page.loading.wait_while_present
-        if boolean == true
-          page.agenda_management_section.text.should =~ /.*#{Regexp.escape($test_text)}.*/m
-        else
-          page.agenda_management_section.text.should_not =~ /.*#{Regexp.escape($test_text)}.*/m
-        end
-      end
-    elsif section == "edit" || section == "logic"
-      on ManageCORequisites do |page|
-        page.loading.wait_while_present
-        if boolean == true
-          page.send(sect[section]).text.should =~ /.*#{Regexp.escape($test_text)}.*/m
-        else
-          page.send(sect[section]).text.should_not =~ /.*#{Regexp.escape($test_text)}.*/m
-        end
-      end
     end
   end
 
@@ -292,18 +243,228 @@ class ManageCORequisitesData
     end
   end
 
-  def add_new_node(sect, field, node, code)
+  def add_new_node(sect, field, node, course, set)
     on ManageCORequisites do |page|
-      page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+      if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
+        page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+      end
       page.add_btn
       if field == "course"
-        create_course_rule( code, sect)
+        create_course_rule( course, sect)
       elsif field == "courses"
-        courses = code.split(/,/)
-        create_all_courses_rule( courses, sect)
+        courses = course.split(/,/)
+        create_all_courses_rule( courses, set, sect)
       elsif field == "text"
-        create_text_rule( code)
+        create_text_rule( course)
+      elsif field == "number of courses"
+        courses = course.split(/,/)
+        create_number_courses_rule( courses, set, sect)
       end
+    end
+  end
+
+  def create_new_group(sect, field, node, course, set)
+    on ManageCORequisites do |page|
+      page.loading.wait_while_present
+      if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
+        page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+        page.group_btn
+        if field == "course"
+          create_course_rule( course, sect)
+        elsif field == "courses"
+          courses = course.split(/,/)
+          create_all_courses_rule( courses, set, sect)
+        elsif field == "text"
+          create_text_rule( course)
+        elsif field == "number of courses"
+          courses = course.split(/,/)
+          create_number_courses_rule( courses, set, sect)
+        end
+      end
+    end
+  end
+
+  def switch_tabs
+    on ManageCORequisites do |page|
+      tab = page.tab_section.li(class: "ui-state-default ui-corner-top ui-tabs-active ui-state-active").text
+      if tab == "Edit Rule"
+        page.logic_tab.when_present.click
+      else
+        page.object_tab.when_present.click
+      end
+    end
+  end
+
+  def check_text_correct( text, correct, section)
+    @courseORdata = make CORequisitesData, :section => section
+    on ManageCORequisites do |page|
+      test_multiline_text("edit", convert_text( text, "edit"), correct)
+      page.logic_tab.click
+      page.edit_loading.wait_while_present
+      test_multiline_text("logic", convert_text( text, "logic"), correct)
+      page.update_rule_btn
+    end
+
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      test_multiline_text("agenda", convert_text( text, "agenda"), correct)
+    end
+
+    @courseORdata.commit_changes( true)
+
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      test_multiline_text("agenda", convert_text( text, "agenda"), correct)
+      page.rule_edit
+    end
+
+    on ManageCORequisites do |page|
+      page.loading.wait_while_present
+      test_multiline_text("edit", convert_text( text, "edit"), correct)
+      page.logic_tab.click
+      page.edit_loading.wait_while_present
+      test_multiline_text("logic", convert_text( text, "logic"), correct)
+    end
+  end
+
+  def convert_text( text, page)
+    if page == "agenda" || page == "logic"
+      if text =~ /^(.+)\((.+)\)$/
+        converted = $1
+        array = $2.split(/, /)
+        array.each do |elem|
+          converted += "," + elem
+        end
+      else
+        converted = text
+      end
+    else
+      converted = text
+    end
+    return converted
+  end
+
+  def test_multiline_text( section, text, boolean)
+    if section == "edit" || text !~ /,/
+      test_single_line_text( section, text, boolean)
+    else
+      array = text.split(/,/)
+      array.each do |elem|
+        if section == "compare"
+          test_popup_text( elem, boolean)
+        else
+          #TODO: need to find a way to test the array in the correct order
+          test_single_line_text( section, elem, boolean)
+        end
+      end
+    end
+  end
+
+  def test_single_line_text( section, test_text, boolean)
+    if section == "agenda"
+      on CourseOfferingRequisites do |page|
+        page.loading.wait_while_present
+        if boolean == true
+          page.agenda_management_section.text.should =~ /.*#{Regexp.escape(test_text)}.*/m
+        else
+          page.agenda_management_section.text.should_not =~ /.*#{Regexp.escape(test_text)}.*/m
+        end
+      end
+    elsif section == "compare"
+      test_popup_text( test_text, boolean)
+    else
+      sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
+      on ManageCORequisites do |page|
+        page.loading.wait_while_present
+        if boolean == true
+          page.send(sect[section]).text.should =~ /.*#{Regexp.escape(test_text)}.*/m
+        else
+          page.send(sect[section]).text.should_not =~ /.*#{Regexp.escape(test_text)}.*/m
+        end
+      end
+    end
+  end
+
+  def test_popup_text( text, boolean)
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      if boolean == true
+        page.compare_tree.text.should =~ /.*#{Regexp.escape(text)}\n#{Regexp.escape(text)}.*/m
+      else
+        page.compare_tree.text.should_not =~ /.*#{Regexp.escape(text)}\n#{Regexp.escape(text)}.*/m
+      end
+    end
+  end
+
+  def change_operator(level, operator)
+    on ManageCORequisites do |page|
+      if level == "primary"
+        page.edit_tree_section.select(:id => /u\d\d\d_node_\d_parent_node_0_parent_root_control/).when_present.select operator
+      elsif level == "secondary"
+        page.edit_tree_section.select(:id => /u\d\d\d_node_\d_parent_node_\d_parent_node_0_parent_root_control/).when_present.select operator
+      elsif level == "tertiary"
+        page.edit_tree_section.select(:id => /u\d\d\d_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_control/).when_present.select operator
+      end
+    end
+  end
+
+  def test_node_level( level, node)
+    on ManageCORequisites do |page|
+      page.loading.wait_while_present
+      if level == "primary"
+        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should match /u\d\d\d_node_\d_parent_node_0_parent_root_span/
+      elsif level == "secondary"
+        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should match /u\d\d\d_node_\d_parent_node_\d_parent_node_0_parent_root_span/
+      elsif level == "tertiary"
+        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should match /u\d\d\d_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_span/
+      end
+
+    end
+  end
+
+  def move_around( node, direction)
+    on ManageCORequisites do |page|
+      if page.edit_tree_section.html =~ /li.+class.+ruleBlockSelected/
+        selection = page.edit_tree_section.li(:class => /ruleBlockSelected/).text
+        if selection !~ /.*#{Regexp.escape(node)}\..*/
+          page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+        end
+      else
+        page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+      end
+      if direction == "down"
+        page.down_btn
+      elsif direction == "up"
+        page.up_btn
+      elsif direction == "out"
+        page.left_btn
+      elsif direction == "in"
+        page.right_btn
+      elsif direction == "out in"
+        page.left_btn
+        page.right_btn
+      elsif direction == "out up in"
+        page.left_btn
+        page.up_btn
+        page.right_btn
+      end
+    end
+  end
+
+  def copy_cut_paste( node, node_after, action)
+    on ManageCORequisites do |page|
+      if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
+        page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+      end
+      if action == "copy"
+        page.copy_btn
+      elsif action == "cut"
+        page.cut_btn
+      end
+      if node_after != "" && node_after != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node_after)}\..*/).exists?
+        page.edit_tree_section.span(:text => /.*#{Regexp.escape(node_after)}\..*/).when_present.click
+      end
+      page.paste_btn
     end
   end
 end

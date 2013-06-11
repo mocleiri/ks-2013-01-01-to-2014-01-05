@@ -2,62 +2,34 @@ Feature: KRMS ELIG9.10 Add Statement and Create Group
 
   Background:
     Given I am logged in as admin
+    And I have navigated to the agenda page for "Corequisite" for term "201301" and course "HIST210"
 
   #ELIG9.10.EB1 (KSENROLL-7049)
   @pending
   Scenario: Setup one level of data using Add Statement button
-    When I navigate to the agenda page for term "201301" and course "HIST210"
-    And I click on the "Corequisite" section
-    And I click on the "Add Rule" link
-    And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Free Text 1" in the "free form text" field
-    And I click the "Preview Change" button
-    And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Free Text 2" in the "free form text" field
-    And I click the "Preview Change" button
-    And I click the "Add Rule Statement" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Free Text 3" in the "free form text" field
-    And I click the "Preview Change" button
-    Then there should be a new node with text "B. Must meet all of the following"
-    And there should be a new node with text "A. Free Text 1"
-    And there should be a new node with text "C. Free Text 2"
-    And there should be a new node with text "D. Free Text 3"
-    When I click the "Update Rule" button
-    And I click the "submit" button on Manage CO Agendas page
+    When I want to add a new statement to the selected agenda section
+    And I add a new "text" statement with text "Free Text 1"
+    And I add a "text" statement after node "A" with text "Free Text 2"
+    And I add a "text" statement after node "C" with text "Free Text 3"
+    Then the "edit" tab should have the text "B. Must meet all of the following"
+    And the "edit" tab should have the text "A. Free Text 1"
+    And the "edit" tab should have the text "C. Free Text 2"
+    And the "edit" tab should have the text "D. Free Text 3"
+    When I commit changes made to the proposition
 
   #ELIG9.10.EB2 (KSENROLL-7049)
   @pending
   Scenario: Setup second level of data (Groups) using Create Group button
-    When I navigate to the agenda page for term "201301" and course "HIST210"
-    And I click on the "Corequisite" section
-    And I click on the "Edit Rule" link
-    And I select node "B" in the tree
-    And I click the "Create Group" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Free Text 1b" in the "free form text" field
-    And I click the "Preview Change" button
-    And I select node "D" in the tree
-    And I click the "Create Group" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Free Text 2b" in the "free form text" field
-    And I click the "Preview Change" button
-    And I select node "F" in the tree
-    And I click the "Create Group" button
-    And I select the "Free Form Text" option from the "rule" dropdown
-    And I enter "Free Text 2c" in the "free form text" field
-    And I click the "Preview Change" button
-    And I click the "Update Rule" button
-    And I click the "submit" button on Manage CO Agendas page
-    And I click the Manage Course Offering Requisites link
-    And I click on the "Corequisite" section
-    And I click on the "Edit Rule" link
-    Then there should be a new node with text "A. Must meet all of the following"
-    And there should be a new node with text "B. Must meet all of the following"
-    And there should be a new node with text "D. Must meet all of the following"
-    And there should be a new node with text "H. Must meet all of the following"
-    And there should be a new node with text "E. Free Text 1b"
-    And there should be a new node with text "F. Free Text 2c"
-    And there should be a new node with text "J. Free Text 2b"
+    When I want to edit the selected agenda section
+    And I create a group with node "B" by adding a "text" statement with text "Free Text 1b"
+    And I create a group with node "D" by adding a "text" statement with text "Free Text 2b"
+    And I create a group with node "F" by adding a "text" statement with text "Free Text 2c"
+    When I commit and return to see the changes made to the proposition
+    And I want to edit the selected agenda section
+    Then the "edit" tab should have the text "A. Must meet all of the following"
+    And the "edit" tab should have the text "B. Must meet all of the following"
+    And the "edit" tab should have the text "D. Must meet all of the following"
+    And the "edit" tab should have the text "H. Must meet all of the following"
+    And the "edit" tab should have the text "E. Free Text 1b"
+    And the "edit" tab should have the text "F. Free Text 2c"
+    And the "edit" tab should have the text "J. Free Text 2b"
