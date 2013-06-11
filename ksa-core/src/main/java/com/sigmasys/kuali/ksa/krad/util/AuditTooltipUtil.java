@@ -17,10 +17,10 @@ public class AuditTooltipUtil {
     }
 
     public static String getAuditTooltip(TransactionType tt) {
-        return getAuditTooltip(tt.getCreatorId(), tt.getCreationDate(), tt.getLastUpdate());
+        return getAuditTooltip(tt.getCreatorId(), tt.getCreationDate(), tt.getEditorId(), tt.getLastUpdate(), tt.getStartDate(), tt.getEndDate(), null);
     }
 
-    private static String getAuditTooltip(String userId, Date createDate, Date updateDate) {
+    private static String getAuditTooltip(String userId, Date createDate, String updateUserId, Date updateDate, Date effectiveDate, Date expirationDate, String viewLevel) {
         StringBuilder tooltip = new StringBuilder();
         DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
 
@@ -41,8 +41,24 @@ public class AuditTooltipUtil {
             tooltip.append("<b>Creation Date:</b> ").append(df.format(createDate)).append("<br/>");
         }
 
+        if(updateUserId != null){
+            tooltip.append("<b>Last Update By:</b> ").append(updateUserId).append("<br/>");
+        }
+
         if (updateDate != null) {
             tooltip.append("<b>Last Updated:</b> ").append(df.format(updateDate)).append("<br/>");
+        }
+
+        if (effectiveDate != null) {
+            tooltip.append("<b>Effective Date:</b> ").append(df.format(effectiveDate)).append("<br/>");
+        }
+
+        if (expirationDate != null) {
+            tooltip.append("<b>Expiration Date:</b> ").append(df.format(expirationDate)).append("<br/>");
+        }
+
+        if(viewLevel != null){
+            tooltip.append("<b>View Level:</b> ").append(viewLevel).append("<br/>");
         }
 
         return tooltip.toString();
