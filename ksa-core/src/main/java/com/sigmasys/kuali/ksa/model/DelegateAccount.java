@@ -10,7 +10,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue(AccountTypeValue.DELEGATE_CODE)
-public class DelegateAccount extends Account {
+public class DelegateAccount extends NonChargeableAccount {
 
 
 }
