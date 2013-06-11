@@ -115,7 +115,6 @@ class AcademicCalendar
   def make_official
     on EditAcademicCalendar do |page|
       page.make_official
-      page.save
       page.make_offical_confirm
     end
   end

@@ -30,10 +30,11 @@ class EditAcademicCalendar < BasePage
   element(:date_range) { |b| b.frm.checkbox(name: "newCollectionLines['events'].dateRange") }
   element(:add_event) { |b| b.frm.button(id: "u177_add") } # Persistent ID needed! Note that there can be multiple Adds on the page. Element identifiers for all need to be helpful
 
-  element(:sticky_footer_div) { |b| b.frm.div(class: "uif-footer uif-stickyFooter uif-stickyButtonFooter") } # Persistent ID needed!
-  element(:make_official_chkbox) { |b| b.sticky_footer_div.checkbox } # Persistent ID needed!
+  element(:make_official_link) { |b| b.frm.link(id: "acal_Official") }
+  action(:make_official) { |b| b.make_official_link.click; b.loading.wait_while_present }
 
-  action(:make_official) { |b| b.make_official_chkbox.set; b.loading.wait_while_present }
+
+  element(:sticky_footer_div) { |b| b.frm.div(class: "uif-footer uif-stickyFooter uif-stickyButtonFooter") } # Persistent ID needed!
 
   action(:save) { |b| b.sticky_footer_div.button(text: "Save").click; b.loading.wait_while_present } # Persistent ID needed!
   action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete Draft").click; b.loading.wait_while_present } # Persistent ID needed!

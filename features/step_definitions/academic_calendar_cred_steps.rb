@@ -5,7 +5,7 @@ end
 
 Then /^the Make Official button should become active$/ do
   on EditAcademicCalendar do |page|
-    page.make_official_chkbox.enabled?.should == true # TODO: Figure out why ".should_be enabled" does not work.
+    page.make_official_link.present?.should == true # TODO: Figure out why ".should_be enabled" does not work.
   end
 end
 
