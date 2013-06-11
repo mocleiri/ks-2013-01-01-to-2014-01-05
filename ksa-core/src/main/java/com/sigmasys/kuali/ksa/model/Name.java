@@ -3,8 +3,6 @@ package com.sigmasys.kuali.ksa.model;
 import javax.persistence.*;
 import java.util.Date;
 
-import static com.sigmasys.kuali.ksa.util.CommonUtils.nvl;
-
 /**
  * Generic KSA Name model.
  * <p/>
@@ -16,7 +14,7 @@ import static com.sigmasys.kuali.ksa.util.CommonUtils.nvl;
 @Table(name = "KSSA_NAME")
 @DiscriminatorColumn(name = "TYPE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class Name implements Identifiable {
+public abstract class Name implements Identifiable {
 
     /**
      * Name ID
