@@ -121,20 +121,15 @@ And /^I delete the alias Course Offering$/ do
                                             :should_confirm_delete => true
 end
 
-Then /^the owner Course Offering and all it's aliases are deleted$/ do
-
-  expected_errMsg = "Cannot find any course offering"
-
-  @cross_listed_co.manage
-  on(ManageCourseOfferings).first_msg.should match /.*#{Regexp.escape(expected_errMsg)}.*/
-
-  @cross_listed_co.cross_listed_codes.each do |code|
-    cross_listed_co_alias = make CourseOffering, :course => code,
-                                 :term => @cross_listed_co.term
-    cross_listed_co_alias.manage
-    on(ManageCourseOfferings).first_msg.should match /.*#{Regexp.escape(expected_errMsg)}.*/
+Then /^the owner Course Offering and all its aliases are deleted$/ do
+  @cross_listed_co.search_by_subjectcode
+  on ManageCourseOfferingList do |page|
+    co_list = page.co_list
+    co_list.should_not include #{@cross_listed_co.course}
+    @cross_listed_co.cross_listed_codes.each do |code|
+      co_list.should_not include #{code}
+    end
   end
-
 end
 
 When(/^I edit the course offering$/) do

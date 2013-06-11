@@ -10,7 +10,7 @@ Feature: WC.Delete cross-listed COs
   Scenario: Deletion of a cross-listing results in both the CLU and the non-CLU being deleted
     When I create a cross-listed Course Offering
     And I delete the alias Course Offering
-    Then the owner Course Offering and all it's aliases are deleted
+    Then the owner Course Offering and all its aliases are deleted
 
 
 
