@@ -125,9 +125,9 @@ Then /^the owner Course Offering and all its aliases are deleted$/ do
   @cross_listed_co.search_by_subjectcode
   on ManageCourseOfferingList do |page|
     co_list = page.co_list
-    co_list.should_not include #{@cross_listed_co.course}
+    co_list.should_not include @cross_listed_co.course
     @cross_listed_co.cross_listed_codes.each do |code|
-      co_list.should_not include #{code}
+      co_list.should_not include code
     end
   end
 end
