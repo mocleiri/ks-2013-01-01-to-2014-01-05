@@ -233,7 +233,7 @@ public class Account implements Identifiable {
     }
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "KSSA_PERSON_NAME_ACNT",
+    @JoinTable(name = "KSSA_ACNT_PERSON_NAME",
             joinColumns = {
                     @JoinColumn(name = "ACNT_ID_FK")
             },
@@ -250,7 +250,7 @@ public class Account implements Identifiable {
     }
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "KSSA_ELECTRONIC_CONTACT_ACNT",
+    @JoinTable(name = "KSSA_ACNT_ELECTRONIC_CONTACT",
             joinColumns = {
                     @JoinColumn(name = "ACNT_ID_FK")
             },
@@ -267,7 +267,7 @@ public class Account implements Identifiable {
     }
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "KSSA_POSTAL_ADDRESS_ACNT",
+    @JoinTable(name = "KSSA_ACNT_POSTAL_ADDRESS",
             joinColumns = {
                     @JoinColumn(name = "ACNT_ID_FK")
             },

@@ -1,7 +1,6 @@
 package com.sigmasys.kuali.ksa.model;
 
 import javax.persistence.*;
-import java.util.Date;
 
 import static com.sigmasys.kuali.ksa.util.CommonUtils.nvl;
 
@@ -12,22 +11,10 @@ import static com.sigmasys.kuali.ksa.util.CommonUtils.nvl;
  * <p/>
  *
  * @author Michael Ivanov
- *         Date: 3/13/12
- *         Time: 3:56 PM
  */
 @Entity
-@Table(name = "KSSA_PERSON_NAME")
-public class PersonName implements Identifiable {
-
-    /**
-     * Person name ID
-     */
-    private Long id;
-
-    /**
-     * KIM Entity name type
-     */
-    private String kimNameType;
+@DiscriminatorValue(NameType.PERSON_CODE)
+public class PersonName extends Name {
 
     /**
      * First name
@@ -55,51 +42,10 @@ public class PersonName implements Identifiable {
     private String title;
 
     /**
-     * Creator user ID
-     */
-    private String creatorId;
-
-    /**
-     * Editor user ID
-     */
-    private String editorId;
-
-    /**
-     * Timestamp
-     */
-    private Date lastUpdate;
-
-    /**
      * Indicates whether this person name is default
      */
     private Boolean isDefault;
 
-
-    @Id
-    @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_PERSON",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "PERSON_NAME_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_PERSON")
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Column(name = "KIM_NAME_TYPE", length = 45)
-    public String getKimNameType() {
-        return kimNameType;
-    }
-
-    public void setKimNameType(String kimNameType) {
-        this.kimNameType = kimNameType;
-    }
 
     @Column(name = "FIRST_NAME", length = 100)
     public String getFirstName() {
@@ -144,33 +90,6 @@ public class PersonName implements Identifiable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    @Column(name = "CREATOR_ID", length = 45)
-    public String getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
-    }
-
-    @Column(name = "EDITOR_ID", length = 45)
-    public String getEditorId() {
-        return editorId;
-    }
-
-    public void setEditorId(String editorId) {
-        this.editorId = editorId;
-    }
-
-    @Column(name = "LAST_UPDATE")
-    public Date getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(Date lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")

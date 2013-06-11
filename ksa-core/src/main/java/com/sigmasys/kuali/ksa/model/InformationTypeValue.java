@@ -1,8 +1,8 @@
 package com.sigmasys.kuali.ksa.model;
 
 /**
- * Transaction type value enum.
- * It is used to distinguish different transaction types in the KSA code and UI forms
+ * Information type value enum.
+ * It is used to distinguish different information types in the KSA code and UI forms
  *
  * @author Michael Ivanov
  */
@@ -36,6 +36,6 @@ public enum InformationTypeValue {
             case MEMO:
                 return "Memo";
         }
-        throw new IllegalStateException("No information type description found for " + name() + " value");
+        throw new IllegalStateException("No information type found for " + name() + " value");
     }
 }

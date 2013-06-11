@@ -88,7 +88,7 @@ public class PostalAddress implements Identifiable {
             table = "KSSA_SEQUENCE_TABLE",
             pkColumnName = "SEQ_NAME",
             valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "ADDRESS_NAME_SEQ")
+            pkColumnValue = "ADDRESS_SEQ")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_ADDRESS")
     @Override
     public Long getId() {
