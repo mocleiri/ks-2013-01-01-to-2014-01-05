@@ -8,50 +8,47 @@ import java.util.Date;
 
 
 public class InformationModel {
-    private Information parentEntity;
+
+    private Information information;
 
     public InformationModel() {
 
     }
 
-    public InformationModel(Information i){
-        parentEntity = i;
+    public InformationModel(Information information) {
+        this.information = information;
     }
 
     public Information getParentEntity() {
-        return parentEntity;
+        return information;
     }
 
     public void setParentEntity(Information parentEntity) {
-        this.parentEntity = parentEntity;
+        this.information = parentEntity;
     }
 
-    public Long getId(){
-        return parentEntity.getId();
+    public Long getId() {
+        return information.getId();
     }
 
-    public String getText(){
-        return parentEntity.getText();
+    public String getText() {
+        return information.getText();
     }
 
-    public String getDisplayValue(){
-        return parentEntity.getDisplayValue();
+    public String getDisplayValue() {
+        return information.getDisplayValue();
     }
 
-    public Date getEffectiveDate(){
-        return parentEntity.getEffectiveDate();
+    public Date getEffectiveDate() {
+        return information.getEffectiveDate();
     }
 
-    public String getAccessLevel(){
-        InformationAccessLevel level = parentEntity.getAccessLevel();
-        String accessLevel = "";
-        if(level != null){
-            accessLevel = level.getName();
-        }
-        return accessLevel;
+    public String getAccessLevel() {
+        InformationAccessLevel level = information.getAccessLevel();
+        return (level != null) ? level.getName() : "";
     }
 
-    public String getAuditTooltip(){
-        return AuditTooltipUtil.getAuditTooltip(parentEntity);
+    public String getAuditTooltip() {
+        return AuditTooltipUtil.getAuditTooltip(information);
     }
 }
