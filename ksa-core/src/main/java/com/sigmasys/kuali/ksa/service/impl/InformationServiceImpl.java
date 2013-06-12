@@ -76,7 +76,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         T entity = null;
         if (CollectionUtils.isNotEmpty(entities)) {
             entity = entities.get(0);
-            checkReadPermission(entity);
+            checkReadPermission(entity.getAccessLevel());
         }
 
         return entity;
@@ -95,7 +95,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         List<T> entities = query.getResultList();
         if (CollectionUtils.isNotEmpty(entities)) {
             for (T entity : entities) {
-                checkReadPermission(entity);
+                checkReadPermission(entity.getAccessLevel());
             }
         }
 
@@ -239,7 +239,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         List<Memo> memos = query.getResultList();
         if (CollectionUtils.isNotEmpty(memos)) {
             for (Memo memo : memos) {
-                checkReadPermission(memo);
+                checkReadPermission(memo.getAccessLevel());
             }
         }
 
@@ -257,7 +257,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     @Transactional(readOnly = false)
     public Long persistInformation(Information information) {
 
-        checkUpdatePermission(information);
+        checkUpdatePermission(information.getAccessLevel());
 
         String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
         Date currentDate = new Date();
@@ -290,7 +290,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             throw new InformationNotFoundException(errMsg);
         }
 
-        checkDeletePermission(entity);
+        checkDeletePermission(entity.getAccessLevel());
 
         return deleteEntity(id, Information.class);
     }
@@ -361,6 +361,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             throw new IllegalArgumentException(errMsg);
         }
 
+        checkCreatePermission(accessLevel);
+
         Memo newMemo = new Memo();
         newMemo.setText(memoText);
         newMemo.setAccount(account);
@@ -385,8 +387,6 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         newMemo.setCreationDate(curDate);
         newMemo.setEffectiveDate(effectiveDate != null ? effectiveDate : curDate);
         newMemo.setExpirationDate(expirationDate);
-
-        checkCreatePermission(newMemo);
 
         persistEntity(newMemo);
 
@@ -456,19 +456,16 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             throw new UserNotFoundException(errMsg);
         }
 
-        FlagType flagType = getEntity(flagTypeId, FlagType.class);
-        if (flagType == null) {
-            String errMsg = "FlagType with ID = " + flagTypeId + " does not exist";
-            logger.error(errMsg);
-            throw new IllegalArgumentException(errMsg);
-        }
-
         InformationAccessLevel accessLevel = getInformationAccessLevel(accessLevelCode);
         if (accessLevel == null) {
             String errMsg = "InformationAccessLevel with code = " + accessLevelCode + " does not exist";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
+
+        checkCreatePermission(accessLevel);
+
+        FlagType flagType = getFlagType(flagTypeId);
 
         Flag flag = new Flag();
         flag.setType(flagType);
@@ -483,8 +480,6 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         flag.setCreationDate(curDate);
         flag.setEffectiveDate(effectiveDate != null ? effectiveDate : curDate);
         flag.setExpirationDate(expirationDate);
-
-        checkCreatePermission(flag);
 
         persistEntity(flag);
 
@@ -557,6 +552,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             throw new IllegalArgumentException(errMsg);
         }
 
+        checkCreatePermission(accessLevel);
+
         Alert alert = new Alert();
         alert.setText(alertText);
         alert.setAccount(account);
@@ -570,11 +567,103 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         alert.setEffectiveDate(effectiveDate != null ? effectiveDate : curDate);
         alert.setExpirationDate(expirationDate);
 
-        checkCreatePermission(alert);
-
         persistEntity(alert);
 
         return alert;
+    }
+
+    /**
+     * Creates a new FlagType based on the given parameters
+     *
+     * @param code            FlagType code
+     * @param name            FlagType name
+     * @param description     FlagType description
+     * @param accessLevelCode InformationAccessLevel code
+     * @return new FlagType instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public FlagType createFlagType(String code, String name, String description, String accessLevelCode) {
+
+        InformationAccessLevel accessLevel = getInformationAccessLevel(accessLevelCode);
+        if (accessLevel == null) {
+            String errMsg = "InformationAccessLevel with code = " + accessLevelCode + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        checkCreatePermission(accessLevel);
+
+        FlagType flagType = new FlagType();
+        flagType.setCode(code);
+        flagType.setName(name);
+        flagType.setDescription(description);
+        flagType.setAccessLevel(accessLevel);
+
+        auditableEntityService.persistAuditableEntity(flagType);
+
+        return flagType;
+    }
+
+    /**
+     * Persists FlagType instance in the persistence store.
+     *
+     * @param flagType FlagType instance to persist
+     * @return FlagType ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Long persistFlagType(FlagType flagType) {
+        checkUpdatePermission(flagType.getAccessLevel());
+        return auditableEntityService.persistAuditableEntity(flagType);
+    }
+
+    /**
+     * Removes FlagType entity from the persistence store.
+     *
+     * @param flagTypeId FlagType ID
+     * @return true if FlagType entity has been deleted
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public boolean deleteFlagType(Long flagTypeId) {
+
+        FlagType flagType = getFlagType(flagTypeId);
+        if (flagType == null) {
+            String errMsg = "FlagType with ID = " + flagTypeId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        checkDeletePermission(flagType.getAccessLevel());
+
+        return auditableEntityService.deleteAuditableEntity(flagTypeId, FlagType.class);
+
+    }
+
+    /**
+     * Retrieves FlagType entity from the persistence store by ID.
+     *
+     * @param flagTypeId FlagType ID
+     * @return FlagType instance
+     */
+    @Override
+    public FlagType getFlagType(Long flagTypeId) {
+
+        Query query = em.createQuery("select ft from FlagType ft " +
+                " left outer join fetch ft.accessLevel " +
+                " where ft.id = :id");
+
+        query.setParameter("id", flagTypeId);
+
+        List<FlagType> flagTypes = query.getResultList();
+        if (CollectionUtils.isNotEmpty(flagTypes)) {
+            FlagType flagType = flagTypes.get(0);
+            checkReadPermission(flagType.getAccessLevel());
+            return flagType;
+        }
+
+        return null;
     }
 
 
@@ -621,7 +710,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
         information.setAccount(account);
 
-        checkUpdatePermission(information);
+        checkUpdatePermission(information.getAccessLevel());
 
         return information;
 
@@ -654,7 +743,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
         information.setTransaction(transaction);
 
-        checkUpdatePermission(information);
+        checkUpdatePermission(information.getAccessLevel());
 
         return information;
     }
@@ -799,9 +888,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         return deleteEntity(id, InformationAccessLevel.class);
     }
 
-    protected void checkInformationPermission(Information information, InformationPermission permission) {
-
-        InformationAccessLevel accessLevel = information.getAccessLevel();
+    protected void checkInformationPermission(InformationAccessLevel accessLevel, InformationPermission permission) {
 
         if (accessLevel != null) {
 
@@ -834,24 +921,24 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         }
     }
 
-    protected void checkCreatePermission(Information information) {
-        checkInformationPermission(information, InformationPermission.CREATE);
+    protected void checkCreatePermission(InformationAccessLevel accessLevel) {
+        checkInformationPermission(accessLevel, InformationPermission.CREATE);
     }
 
-    protected void checkReadPermission(Information information) {
-        checkInformationPermission(information, InformationPermission.READ);
+    protected void checkReadPermission(InformationAccessLevel accessLevel) {
+        checkInformationPermission(accessLevel, InformationPermission.READ);
     }
 
-    protected void checkUpdatePermission(Information information) {
-        checkInformationPermission(information, InformationPermission.UPDATE);
+    protected void checkUpdatePermission(InformationAccessLevel accessLevel) {
+        checkInformationPermission(accessLevel, InformationPermission.UPDATE);
     }
 
-    protected void checkDeletePermission(Information information) {
-        checkInformationPermission(information, InformationPermission.DELETE);
+    protected void checkDeletePermission(InformationAccessLevel accessLevel) {
+        checkInformationPermission(accessLevel, InformationPermission.DELETE);
     }
 
-    protected void checkExpirePermission(Information information) {
-        checkInformationPermission(information, InformationPermission.EXPIRE);
+    protected void checkExpirePermission(InformationAccessLevel accessLevel) {
+        checkInformationPermission(accessLevel, InformationPermission.EXPIRE);
     }
 
 }

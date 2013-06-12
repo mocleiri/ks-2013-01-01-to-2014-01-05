@@ -87,12 +87,18 @@ public enum Permission {
     DELETE_ALERT,
     EXPIRE_ALERT,
 
-     // Flag permissions
+    // Flag permissions
     READ_FLAG,
     CREATE_FLAG,
     UPDATE_FLAG,
     DELETE_FLAG,
     EXPIRE_FLAG,
+
+    // FlagType permissions
+    READ_FLAG_TYPE,
+    CREATE_FLAG_TYPE,
+    UPDATE_FLAG_TYPE,
+    DELETE_FLAG_TYPE,
 
     // InformationAccessLevel permissions
     READ_ACCESS_LEVEL,

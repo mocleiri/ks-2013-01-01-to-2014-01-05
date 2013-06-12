@@ -10,6 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "KSSA_FLAG_TYPE")
+@AttributeOverride(name = "code", column = @Column(name ="CODE", length = 20, nullable = false, unique = true))
 public class FlagType extends AuditableEntity<Long> {
 
     /**

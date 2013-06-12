@@ -67,7 +67,7 @@ public abstract class AuditableEntity<T extends Serializable> implements Identif
         this.id = id;
     }
 
-    @Column(name = "CODE", length = 50)
+    @Column(name = "CODE", length = 45)
     public String getCode() {
         return code;
     }

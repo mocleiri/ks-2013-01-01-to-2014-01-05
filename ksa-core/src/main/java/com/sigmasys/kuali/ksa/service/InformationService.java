@@ -136,7 +136,8 @@ public interface InformationService {
      * @param accessLevelCode InformationAccessLevel code
      * @param effectiveDate   Effective date
      * @param expirationDate  Expiration date
-     * @param prevMemoId      Previous Memo ID    @return new Memo instance
+     * @param prevMemoId      Previous Memo ID
+     * @return new Memo instance
      */
     Memo createMemo(Long transactionId, String memoText, String accessLevelCode,
                     Date effectiveDate, Date expirationDate, Long prevMemoId);
@@ -154,7 +155,8 @@ public interface InformationService {
      * @param accessLevelCode InformationAccessLevel code
      * @param effectiveDate   Effective date
      * @param expirationDate  Expiration date
-     * @param prevMemoId      Previous Memo ID    @return new Memo instance
+     * @param prevMemoId      Previous Memo ID
+     * @return new Memo instance
      */
     Memo createMemo(String accountId, String memoText, String accessLevelCode,
                     Date effectiveDate, Date expirationDate, Long prevMemoId);
@@ -168,7 +170,8 @@ public interface InformationService {
      * @param accessLevelCode InformationAccessLevel code
      * @param severity        Severity
      * @param effectiveDate   Effective date
-     * @param expirationDate  Expiration date    @return new Flag instance
+     * @param expirationDate  Expiration date
+     * @return new Flag instance
      */
     Flag createFlag(Long transactionId, Long flagTypeId, String accessLevelCode,
                     Integer severity, Date effectiveDate, Date expirationDate);
@@ -181,7 +184,8 @@ public interface InformationService {
      * @param accessLevelCode InformationAccessLevel code
      * @param severity        Severity
      * @param effectiveDate   Effective date
-     * @param expirationDate  Expiration date    @return new Flag instance
+     * @param expirationDate  Expiration date
+     * @return new Flag instance
      */
     Flag createFlag(String accountId, Long flagTypeId, String accessLevelCode,
                     Integer severity, Date effectiveDate, Date expirationDate);
@@ -193,7 +197,8 @@ public interface InformationService {
      * @param alertText       Alert text
      * @param accessLevelCode InformationAccessLevel code
      * @param effectiveDate   Effective date
-     * @param expirationDate  Expiration date   @return new Alert instance
+     * @param expirationDate  Expiration date
+     * @return new Alert instance
      */
     Alert createAlert(Long transactionId, String alertText, String accessLevelCode, Date effectiveDate, Date expirationDate);
 
@@ -208,6 +213,41 @@ public interface InformationService {
      * @return new Alert instance
      */
     Alert createAlert(String accountId, String alertText, String accessLevelCode, Date effectiveDate, Date expirationDate);
+
+    /**
+     * Creates a new FlagType based on the given parameters
+     *
+     * @param code            FlagType code
+     * @param name            FlagType name
+     * @param description     FlagType description
+     * @param accessLevelCode InformationAccessLevel code
+     * @return new FlagType instance
+     */
+    FlagType createFlagType(String code, String name, String description, String accessLevelCode);
+
+    /**
+     * Persists FlagType instance in the persistence store.
+     *
+     * @param flagType FlagType instance to persist
+     * @return FlagType ID
+     */
+    Long persistFlagType(FlagType flagType);
+
+    /**
+     * Removes FlagType entity from the persistence store.
+     *
+     * @param flagTypeId FlagType ID
+     * @return true if FlagType entity has been deleted
+     */
+    boolean deleteFlagType(Long flagTypeId);
+
+    /**
+     * Retrieves FlagType entity from the persistence store by ID.
+     *
+     * @param flagTypeId FlagType ID
+     * @return FlagType instance
+     */
+    FlagType getFlagType(Long flagTypeId);
 
     /**
      * Returns the default Memo's InformationAccessLevel code.

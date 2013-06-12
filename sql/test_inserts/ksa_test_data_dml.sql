@@ -483,10 +483,10 @@ Insert into KSSA_ALLOCATION (ID,ACNT_ID_FK,AMOUNT,IS_LOCKED,TRN_ID_1_FK,TRN_ID_2
 --   DATA FOR TABLE KSSA_FLAG_TYPE
 --   FILTER = none used
 ---------------------------------------------------
-Insert into KSSA_FLAG_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (1,'pheald','Account has been taken over allowable credit limit.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Over Limit');
-Insert into KSSA_FLAG_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (2,'pheald','The address on the account has been flagged as invalid. Please verify.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Bad Address');
-Insert into KSSA_FLAG_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (3,'pheald','The user has passed a bad check to the office.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Bad Check');
-Insert into KSSA_FLAG_TYPE (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (4,'pheald','This account is past due. Prompt payment is required.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Account Late');
+Insert into KSSA_FLAG_TYPE (ID,CODE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (1,'OverLimit', 'pheald','Account has been taken over allowable credit limit.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Over Limit');
+Insert into KSSA_FLAG_TYPE (ID,CODE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (2,'BadAddress','pheald','The address on the account has been flagged as invalid. Please verify.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Bad Address');
+Insert into KSSA_FLAG_TYPE (ID,CODE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (3,'BadCheck', 'pheald','The user has passed a bad check to the office.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Bad Check');
+Insert into KSSA_FLAG_TYPE (ID,CODE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME) values (4,'LateAccount', 'pheald','This account is past due. Prompt payment is required.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Account Late');
 
 ---------------------------------------------------
 --   END DATA FOR TABLE KSSA_FLAG_TYPE
