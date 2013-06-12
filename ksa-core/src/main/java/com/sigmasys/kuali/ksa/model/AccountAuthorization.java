@@ -41,7 +41,7 @@ public class AccountAuthorization implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNER_ID_FK")
+    @JoinColumn(name = "AUTHZ_ACNT_ID_FK")
     public Account getAuthorizedAccount() {
         return authorizedAccount;
     }
@@ -51,7 +51,7 @@ public class AccountAuthorization implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RECEIVER_ID_FK")
+    @JoinColumn(name = "DEPENDENT_ACNT_ID_FK")
     public Account getDependentAccount() {
         return dependentAccount;
     }

@@ -41,7 +41,7 @@ public class BillReceiver implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNER_ID_FK")
+    @JoinColumn(name = "OWNER_ACNT_ID_FK")
     public Account getOwner() {
         return owner;
     }
@@ -51,7 +51,7 @@ public class BillReceiver implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RECEIVER_ID_FK")
+    @JoinColumn(name = "RECEIVER_ACNT_ID_FK")
     public Account getReceiver() {
         return receiver;
     }

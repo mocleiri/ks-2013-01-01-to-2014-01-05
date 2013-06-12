@@ -28,8 +28,6 @@ import com.sigmasys.kuali.ksa.util.BeanUtils;
  * <p/>
  *
  * @author Michael Ivanov
- *         Date: 3/13/12
- *         Time: 3:56 PM
  */
 @Auditable
 @Entity
@@ -92,6 +90,11 @@ public class Account implements Identifiable {
      * Late period
      */
     protected LatePeriod latePeriod;
+
+    /**
+     * Organization name (For non-personal accounts only)
+     */
+    protected OrgName orgName;
 
     /**
      * Collection of associated person names
@@ -230,6 +233,16 @@ public class Account implements Identifiable {
 
     public void setLatePeriod(LatePeriod latePeriod) {
         this.latePeriod = latePeriod;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ORG_NAME_ID_FK")
+    public OrgName getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(OrgName orgName) {
+        this.orgName = orgName;
     }
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
