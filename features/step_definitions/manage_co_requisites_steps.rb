@@ -22,11 +22,11 @@ Then /^the "(.*?)" link should exist on the Course Offering Requisites page$/ do
 end
 
 Then /^the CO and CLU should both have text "(.*?)"/ do |text|
-  @manageCOR.test_multiline_text("compare", text, true)
+  @manageCOR.test_text("compare", text, true)
 end
 
 Then /^the CO and CLU should differ with text "(.*?)"/ do |text|
-  @manageCOR.test_multiline_text("compare", text, false)
+  @manageCOR.test_text("compare", text, false)
 end
 
 Then /^the info message "(.*?)" should be present$/ do |mess|
@@ -72,6 +72,10 @@ When /^I add a new "(.*?)" statement with courses "([^\"]+)" and course set "(.*
   @manageCOR.add_new_node(@courseOR.section, field, "", course, set)
 end
 
+When /^I add a new "(.*?)" statement with course sets "([^\"]+)"$/ do |field, set|
+  @manageCOR.add_new_node(@courseOR.section, field, "", "", set)
+end
+
 When /^I add a new "(.*?)" statement with (?:|courses|course|text) "([^\"]+)"$/ do |field, course|
   @manageCOR.add_new_node(@courseOR.section, field, "", course, "")
 end
@@ -93,7 +97,7 @@ When /^I commit changes made to the proposition$/ do
 end
 
 Then /^the tree in the selected agenda section should be empty$/ do
-  @courseOR.assert_agenda_tree_contents( @courseOR.section)
+  @courseOR.assert_agenda_tree_contents
 end
 
 Then /^there should be no node "(.*?)" on both tabs$/ do |node|
@@ -117,14 +121,14 @@ Then /^the "(.*?)" (?:|page|tab) should have the text "(.*)"$/ do |page,text|
   if page == "agenda"
     @courseOR.open_agenda_section
   end
-  @manageCOR.test_multiline_text(page, text, true)
+  @manageCOR.test_text(page, text, true)
 end
 
 Then /^the "(.*?)" (?:|page|tab) should not have the text "(.*)"$/ do |page,text|
   if page == "agenda"
     @courseOR.open_agenda_section
   end
-  @manageCOR.test_multiline_text(page, text, false)
+  @manageCOR.test_text(page, text, false)
 end
 
 When /^I switch to the other tab on the page$/ do

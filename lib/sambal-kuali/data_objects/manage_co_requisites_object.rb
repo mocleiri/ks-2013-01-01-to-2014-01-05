@@ -21,7 +21,8 @@
 #  @switch_tabs
 #  @check_text_correct( text, correct, section)
 #  @convert_text( text, page)
-#  @test_multiline_text(section, text, boolean)
+#  @test_text(section, text, boolean)
+#  @test_multi_line_text( section, test_string, boolean)
 #  @test_single_line_text( section, test_text, boolean)
 #  @test_popup_text( text, boolean)
 #  @change_operator(level, operator)
@@ -178,11 +179,13 @@ class ManageCORequisitesData
       elsif( sect == "Repeatable for Credit")
         page.rule_dropdown.when_present.select /May not repeat any of <courses>/
       end
-      page.multi_course_dropdown.when_present.select /Approved Courses/
-      courses.each do |course|
-        advanced_search("course code", course)
-        page.add_line_btn
-        page.adding.wait_while_present
+      if courses != "" && courses != nil
+        page.multi_course_dropdown.when_present.select /Approved Courses/
+        courses.each do |course|
+          advanced_search("course code", course)
+          page.add_line_btn
+          page.adding.wait_while_present
+        end
       end
       if set != "" && set != nil
         page.multi_course_dropdown.when_present.select /Course Sets/
@@ -210,11 +213,13 @@ class ManageCORequisitesData
       elsif( sect == "Course that Restricts Credits")
         page.rule_dropdown.when_present.select /Must not have successfully completed any courses from <courses>/
       end
-      page.multi_course_dropdown.when_present.select /Approved Courses/
-      courses.each do |course|
-        advanced_search("course code", course)
-        page.add_line_btn
-        page.adding.wait_while_present
+      if courses != "" and courses != nil
+        page.multi_course_dropdown.when_present.select /Approved Courses/
+        courses.each do |course|
+          advanced_search("course code", course)
+          page.add_line_btn
+          page.adding.wait_while_present
+        end
       end
       if set != "" && set != nil
         page.multi_course_dropdown.when_present.select /Course Sets/
@@ -252,7 +257,10 @@ class ManageCORequisitesData
       if field == "course"
         create_course_rule( course, sect)
       elsif field == "courses"
-        courses = course.split(/,/)
+        courses = ""
+        if course != "" && course != nil
+          courses = course.split(/,/)
+        end
         create_all_courses_rule( courses, set, sect)
       elsif field == "text"
         create_text_rule( course)
@@ -298,32 +306,32 @@ class ManageCORequisitesData
   def check_text_correct( text, correct, section)
     @courseORdata = make CORequisitesData, :section => section
     on ManageCORequisites do |page|
-      test_multiline_text("edit", convert_text( text, "edit"), correct)
+      test_text("edit", convert_text( text, "edit"), correct)
       page.logic_tab.click
       page.edit_loading.wait_while_present
-      test_multiline_text("logic", convert_text( text, "logic"), correct)
+      test_text("logic", convert_text( text, "logic"), correct)
       page.update_rule_btn
     end
 
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
-      test_multiline_text("agenda", convert_text( text, "agenda"), correct)
+      test_text("agenda", convert_text( text, "agenda"), correct)
     end
 
     @courseORdata.commit_changes( true)
 
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
-      test_multiline_text("agenda", convert_text( text, "agenda"), correct)
+      test_text("agenda", convert_text( text, "agenda"), correct)
       page.rule_edit
     end
 
     on ManageCORequisites do |page|
       page.loading.wait_while_present
-      test_multiline_text("edit", convert_text( text, "edit"), correct)
+      test_text("edit", convert_text( text, "edit"), correct)
       page.logic_tab.click
       page.edit_loading.wait_while_present
-      test_multiline_text("logic", convert_text( text, "logic"), correct)
+      test_text("logic", convert_text( text, "logic"), correct)
     end
   end
 
@@ -344,17 +352,47 @@ class ManageCORequisitesData
     return converted
   end
 
-  def test_multiline_text( section, text, boolean)
+  def test_text( section, text, boolean)
+    status = false
+    string = ".*"
     if section == "edit" || text !~ /,/
       test_single_line_text( section, text, boolean)
+      status = true
     else
       array = text.split(/,/)
       array.each do |elem|
         if section == "compare"
           test_popup_text( elem, boolean)
+          status = true
         else
-          #TODO: need to find a way to test the array in the correct order
-          test_single_line_text( section, elem, boolean)
+          string += elem + ".*"
+          status = false
+        end
+      end
+    end
+    if status == false
+      test_multi_line_text( section, Regexp.new(string, Regexp::MULTILINE), boolean)
+    end
+  end
+
+  def test_multi_line_text( section, test_string, boolean)
+    if section == "agenda"
+      on CourseOfferingRequisites do |page|
+        page.loading.wait_while_present
+        if boolean == true
+          page.agenda_management_section.text.should =~ test_string
+        else
+          page.agenda_management_section.text.should_not =~ test_string
+        end
+      end
+    else
+      sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
+      on ManageCORequisites do |page|
+        page.loading.wait_while_present
+        if boolean == true
+          page.send(sect[section]).text.should =~ test_string
+        else
+          page.send(sect[section]).text.should_not =~ test_string
         end
       end
     end
