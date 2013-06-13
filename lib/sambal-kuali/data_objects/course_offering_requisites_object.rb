@@ -65,31 +65,27 @@ class CORequisitesData
         if( check_new == 0)
           @manageCORdata.edit_data_advanced_search( sect)
         end
-        on ManageCORequisites do |page|
-          page.update_rule_btn
-        end
       end
-      page.submit
     end
-
-    on ManageCourseOfferings do |page|
-      page.manage_course_offering_requisites
-    end
+    commit_changes( true)
   end
 
   def commit_changes( back)
     begin
       on ManageCORequisites do |page|
+        page.loading.wait_while_present
         page.update_rule_btn
       end
     rescue Watir::Wait::TimeoutError
       #means Update Rule button already clicked
     end
     on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
       page.submit
     end
     if back == true
       on ManageCourseOfferings do |page|
+        page.loading.wait_while_present
         page.manage_course_offering_requisites
       end
       open_agenda_section

@@ -22,7 +22,7 @@ Feature: KRMS ELIG7.4 Compare to Canonical
   Scenario: Confirm that the selected course's CO and CLU have the same text
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201208" and course "BSCI202"
     And I want to compare the CO to the CLU for the selected agenda section
-    Then the CO and CLU should both have text "Must meet 1 of the following,Must have successfully completed BSCI201,Permission of CMNS-Biology required"
+    Then the CO and CLU should both have text "Must meet 1 of the following:,Must have successfully completed BSCI201,Permission of CMNS-Biology required"
 
   #ELIG7.4.EB4 (KSENROLL-7174)
   @pending
