@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "KSSA_ACCESS_LEVEL")
 @AttributeOverrides({
-        @AttributeOverride(name = "code", column = @Column(name = "CODE", length = 20, nullable = false, unique = true)),
+        @AttributeOverride(name = "code", column = @Column(name = "CODE", length = 45, nullable = false, unique = true)),
         @AttributeOverride(name = "name", column = @Column(name = "NAME", length = 45, nullable = false, unique = true))
 })
 public class InformationAccessLevel extends AuditableEntity<Long> {

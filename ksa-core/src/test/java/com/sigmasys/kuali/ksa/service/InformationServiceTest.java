@@ -445,4 +445,99 @@ public class InformationServiceTest extends AbstractServiceTest {
     }
 
 
+    private FlagType createFlagType(String code, String name, String description) {
+
+        String accessLevelCode = "DEF_FLAG_TYPE_LEVEL_CD";
+
+        InformationAccessLevel accessLevel = informationService.getInformationAccessLevel(accessLevelCode);
+
+        Assert.notNull(accessLevel);
+        Assert.notNull(accessLevel.getId());
+        Assert.notNull(accessLevel.getCode());
+
+        FlagType flagType = informationService.createFlagType(code, name, description, accessLevelCode);
+
+        Assert.notNull(flagType);
+        Assert.notNull(flagType.getId());
+        Assert.notNull(flagType.getCode());
+        Assert.notNull(flagType.getName());
+        Assert.notNull(flagType.getDescription());
+
+        Assert.notNull(flagType.getCreationDate());
+        Assert.notNull(flagType.getCreatorId());
+
+        Assert.notNull(flagType.getAccessLevel());
+        Assert.notNull(flagType.getAccessLevel().getCode());
+        Assert.isTrue(flagType.getAccessLevel().getCode().equals(accessLevelCode));
+
+        Assert.isTrue(Permission.CREATE_FLAG_TYPE.name().equals(accessLevel.getCreatePermission()));
+        Assert.isTrue(Permission.READ_FLAG_TYPE.name().equals(accessLevel.getReadPermission()));
+        Assert.isTrue(Permission.UPDATE_FLAG_TYPE.name().equals(accessLevel.getUpdatePermission()));
+        Assert.isTrue(Permission.DELETE_FLAG_TYPE.name().equals(accessLevel.getDeletePermission()));
+
+        return flagType;
+    }
+
+    @Test
+    public void createFlagType() {
+
+        String code = "01_Flag_Type";
+        String name = "1 Flag Type";
+        String description = "1 Description FlagType";
+
+        createFlagType(code, name, description);
+    }
+
+    @Test
+    public void persistFlagType() {
+
+        String code = "02_Flag_Type";
+        String name = "2 Flag Type";
+        String description = "2 Description FlagType";
+
+        FlagType flagType = createFlagType(code, name, description);
+
+        Assert.notNull(flagType);
+
+        Long flagTypeId = flagType.getId();
+
+        Assert.notNull(flagTypeId);
+
+        flagType.setName("New FlagType Name");
+
+        informationService.persistFlagType(flagType);
+
+        Assert.notNull(flagType.getId());
+
+        flagType = informationService.getFlagType(flagTypeId);
+
+        Assert.notNull(flagType);
+
+        Assert.isTrue(flagTypeId.equals(flagType.getId()));
+
+        Assert.isTrue("New FlagType Name".equals(flagType.getName()));
+
+    }
+
+    @Test
+    public void deleteFlagType() {
+
+        String code = "Del_Flag_Type";
+        String name = "Del Flag Type";
+        String description = "Del Description FlagType";
+
+        FlagType flagType = createFlagType(code, name, description);
+
+        Assert.notNull(flagType);
+        Assert.notNull(flagType.getId());
+
+        informationService.deleteFlagType(flagType.getId());
+
+        flagType = informationService.getFlagType(flagType.getId());
+
+        Assert.isNull(flagType);
+
+    }
+
+
 }
