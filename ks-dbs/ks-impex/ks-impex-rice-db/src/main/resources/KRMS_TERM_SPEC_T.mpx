@@ -16,3 +16,4 @@ TERM_SPEC_ID,NM,TYP,ACTV,VER_NBR,DESC_TXT,NMSPC_CD
 "10014","InstructorPermissionRequired","java.lang.Boolean","Y","1","Instructor Permission Required","KS-SYS"
 "10015","NumberOfEnrollmentsForCourse","java.lang.Integer","Y","1","Number of enrollments for course","KS-SYS"
 "10016","HasProgramCourseCampus","java.lang.Boolean","Y","1","Has program offered at the course campus","KS-SYS"
+"10018","ClassStanding","java.lang.Boolean","Y","1","Class Standing in which student must be in","KS-SYS"
