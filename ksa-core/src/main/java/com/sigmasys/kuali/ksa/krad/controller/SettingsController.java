@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.krad.form.SettingsForm;
 import com.sigmasys.kuali.ksa.krad.model.AuditableEntityModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.InformationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
@@ -38,6 +39,9 @@ public class SettingsController extends GenericSearchController {
 
     @Autowired
     protected ConfigService configService;
+
+    @Autowired
+    protected InformationService informationService;
 
 
     /**
@@ -127,12 +131,12 @@ public class SettingsController extends GenericSearchController {
             form.setAuditableEntity(auditableEntityService.getAuditableEntity(Long.valueOf(entityId), AccountStatusType.class));
         } else if ("FlagTypePage".equals(pageId)) {
             form.setAuditableEntity(new FlagType());
-            form.setAuditableEntities(auditableEntityService.getAuditableEntities(FlagType.class));
+            form.setAuditableEntities(informationService.getFlagTypes());
         } else if ("FlagTypeDetailsPage".equals(pageId)) {
             if (entityId == null || entityId.trim().isEmpty()) {
                 throw new IllegalArgumentException("'entityId' request parameter must be specified");
             }
-            form.setAuditableEntity(auditableEntityService.getAuditableEntity(Long.valueOf(entityId), FlagType.class));
+            form.setAuditableEntity(informationService.getFlagType(Long.valueOf(entityId)));
         } else if ("ActivityTypePage".equals(pageId)) {
             form.setAuditableEntity(new ActivityType());
             form.setAuditableEntities(auditableEntityService.getAuditableEntities(ActivityType.class));
