@@ -74,6 +74,7 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Open
     Then I have access to delete the course offering
   #TODO not yet implemented - access to offered suspended and cancelled states
 
+  @bug @KSENROLL-7423
   Scenario: AZ 5.1B/Full_open.4A Department Schedule Coordinator Carol has access to delete Co's (not in admin org) in SOC state Open
     Given there is a "Planned" course offering not in my admin org
     When I list the course offerings for that subject code
