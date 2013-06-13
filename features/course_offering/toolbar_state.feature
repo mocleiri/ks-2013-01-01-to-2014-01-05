@@ -79,6 +79,7 @@ Feature: EC.Toolbar state
     When I select an activity offering in "Offered" status
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "disabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
 
+  @bug @KSENROLL-7434
   Scenario: TB_Published.2B Validate AO toolbar buttons for a CO in Draft status and SOC state Published
     Given I am working on a term in "Published" SOC state
     And there is a "Draft" course offering present
@@ -97,6 +98,7 @@ Feature: EC.Toolbar state
     When I select an activity offering in "Approved" status
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
 
+  @bug @KSENROLL-7434
   Scenario: TB_FinalEdits.2B Validate AO toolbar buttons for a CO in Draft status and SOC state Final Edits
     Given I am working on a term in "Final Edits" SOC state
     And there is a "Draft" course offering present
@@ -115,6 +117,7 @@ Feature: EC.Toolbar state
     When I select an activity offering in "Approved" status
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "disabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
 
+  @bug @KSENROLL-7434
   Scenario: TB_Locked.2B - Validate AO toolbar buttons for a CO in Planned status and SOC state Locked for multiple AO statuses
     Given I am working on a term in "Locked" SOC state
     And there is a "Planned" course offering present
@@ -141,6 +144,7 @@ Feature: EC.Toolbar state
     When I select an activity offering in "Approved" status
     Then the expected state of the AO toolbar is: Create: "enabled"; Approve: "enabled"; SetAsDraft: "enabled"; Delete: "enabled"; AddCluster: "enabled"; Move: "enabled"
 
+  @bug @KSENROLL-7434
   Scenario: TB_Draft.2B Validate AO toolbar buttons for a CO in Draft status and SOC state Draft for multiple AO statuses
     Given I am working on a term in "Draft" SOC state
     And there is a "Draft" course offering present
