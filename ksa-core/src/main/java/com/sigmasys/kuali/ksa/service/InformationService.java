@@ -250,6 +250,13 @@ public interface InformationService {
     FlagType getFlagType(Long flagTypeId);
 
     /**
+     * Returns all existing flag types from the persistence store.
+     *
+     * @return list of FlagType instances
+     */
+    List<FlagType> getFlagTypes();
+
+    /**
      * Returns the default Memo's InformationAccessLevel code.
      *
      * @return InformationAccessLevel code

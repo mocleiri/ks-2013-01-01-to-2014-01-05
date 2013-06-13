@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -664,6 +665,28 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         }
 
         return null;
+    }
+
+    /**
+     * Returns all existing flag types from the persistence store.
+     *
+     * @return list of FlagType instances
+     */
+    @Override
+    public List<FlagType> getFlagTypes() {
+
+        Query query = em.createQuery("select ft from FlagType ft " +
+                " left outer join fetch ft.accessLevel " +
+                " order by ft.code desc");
+
+        List<FlagType> flagTypes = query.getResultList();
+        if (CollectionUtils.isNotEmpty(flagTypes)) {
+            for (FlagType flagType : flagTypes) {
+                checkReadPermission(flagType.getAccessLevel());
+            }
+        }
+
+        return flagTypes;
     }
 
 

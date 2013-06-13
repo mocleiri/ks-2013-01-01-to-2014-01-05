@@ -539,5 +539,29 @@ public class InformationServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void getFlagTypes() {
+
+        String code = "Flag_Type_";
+        String name = "Flag Type_";
+        String description = "Del Description FlagType ";
+
+        for (int i = 0; i < 10; i++) {
+
+            FlagType flagType = createFlagType(code + i, name + i, description + i);
+
+            Assert.notNull(flagType);
+            Assert.notNull(flagType.getId());
+
+        }
+
+        List<FlagType> flagTypes = informationService.getFlagTypes();
+
+        Assert.notNull(flagTypes);
+        Assert.notEmpty(flagTypes);
+        Assert.isTrue(flagTypes.size() >= 10);
+
+    }
+
 
 }
