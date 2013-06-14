@@ -293,7 +293,8 @@ class ManageCORequisitesData
 
   def switch_tabs
     on ManageCORequisites do |page|
-      tab = page.tab_section.li(class: "ui-state-default ui-corner-top ui-tabs-active ui-state-active").text
+      page.edit_loading.wait_while_present
+      tab = page.tab_section.li(:class => /ui-state-default ui-corner-top ui-tabs-active ui-state-active/).text
       if tab == "Edit Rule"
         page.logic_tab.when_present.click
       else
@@ -435,12 +436,13 @@ class ManageCORequisitesData
 
   def change_operator(level, operator)
     on ManageCORequisites do |page|
+      page.loading.wait_while_present
       if level == "primary"
-        page.edit_tree_section.select(:id => /u\d\d\d_node_\d_parent_node_0_parent_root_control/).when_present.select operator
+        page.edit_tree_section.select(:id => /u\d+_node_\d_parent_node_0_parent_root_control/).when_present.select operator
       elsif level == "secondary"
-        page.edit_tree_section.select(:id => /u\d\d\d_node_\d_parent_node_\d_parent_node_0_parent_root_control/).when_present.select operator
+        page.edit_tree_section.select(:id => /u\d+_node_\d_parent_node_\d_parent_node_0_parent_root_control/).when_present.select operator
       elsif level == "tertiary"
-        page.edit_tree_section.select(:id => /u\d\d\d_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_control/).when_present.select operator
+        page.edit_tree_section.select(:id => /u\d+_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_control/).when_present.select operator
       end
     end
   end
@@ -449,11 +451,11 @@ class ManageCORequisitesData
     on ManageCORequisites do |page|
       page.loading.wait_while_present
       if level == "primary"
-        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should match /u\d\d\d_node_\d_parent_node_0_parent_root_span/
+        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should =~ /u\d+_node_\d_parent_node_0_parent_root_span/
       elsif level == "secondary"
-        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should match /u\d\d\d_node_\d_parent_node_\d_parent_node_0_parent_root_span/
+        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should =~ /u\d+_node_\d_parent_node_\d_parent_node_0_parent_root_span/
       elsif level == "tertiary"
-        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should match /u\d\d\d_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_span/
+        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should =~ /u\d+_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_span/
       end
 
     end
