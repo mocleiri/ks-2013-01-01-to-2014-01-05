@@ -103,6 +103,12 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
     protected Boolean internal;
 
     /**
+     * This flag indicates whether the transaction has been offset by another one or more transactions, for example
+     * by reverseTransaction() method.
+     */
+    protected Boolean isOffset;
+
+    /**
      * This is the amount of the transaction that has been allocated. For example, if a $1000 payment is put towards a $2000 charge,
      * the $1000 will have a $1000 allocation amount, and the $2000 charge will have a $1000 allocation amount. The PA module is
      * responsible for allocating charges to payments.
@@ -314,7 +320,17 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_INTERNAL_TRN")
     public Boolean isInternal() {
-        return internal;
+        return internal != null ? internal : false;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_OFFSET")
+    public Boolean isOffset() {
+        return isOffset != null ? isOffset : false;
+    }
+
+    public void setOffset(Boolean offset) {
+        isOffset = offset;
     }
 
     /**

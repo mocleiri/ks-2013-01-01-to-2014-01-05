@@ -1886,7 +1886,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return null;
     }
 
-
     /**
      * If the reverse method is called, the system will generate a negative
      * transaction for the type of the original transaction. A memo transaction
@@ -1899,14 +1898,39 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *
      * @param transactionId   Transaction ID
      * @param memoText        Text of the memo to be created
-     * @param partialAmount   Partial amount
+     * @param reversalAmount  Reversal amount
      * @param statementPrefix Statement prefix that will be added to the existing Transaction statement
-     * @return a newly created reversed transaction
+     * @return a created reversed transaction
+     */
+    @Override
+    @WebMethod(exclude = true)
+    @Transactional(readOnly = false)
+    public Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount,
+                                          String statementPrefix) {
+        return reverseTransaction(transactionId, null, memoText, reversalAmount, statementPrefix);
+    }
+
+    /**
+     * If the reverse method is called, the system will generate a negative
+     * transaction for the type of the original transaction. A memo transaction
+     * will be generated, and the transactions will be locked together. Subject
+     * to user customization, the transactions may be marked as hidden. (likely
+     * that credits will not be hidden, debits will.) A charge to an account may
+     * be reversed when a mistake is made, or a refund is issued. A payment may
+     * be reversed when a payment bounces, or for some other reason is entered
+     * on to the account and is not payable.
+     *
+     * @param transactionId             Transaction ID
+     * @param reversalTransactionTypeId Transaction Type ID of the reverse transaction
+     * @param memoText                  Text of the memo to be created
+     * @param reversalAmount            Reversal amount
+     * @param statementPrefix           Statement prefix that will be added to the existing Transaction statement
+     * @return a created reversed transaction
      */
     @Override
     @Transactional(readOnly = false)
-    public Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal partialAmount,
-                                          String statementPrefix) {
+    public Transaction reverseTransaction(Long transactionId, String reversalTransactionTypeId, String memoText,
+                                          BigDecimal reversalAmount, String statementPrefix) {
 
         PermissionUtils.checkPermission(Permission.REVERSE_TRANSACTION);
 
@@ -1929,77 +1953,133 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new IllegalStateException(errMsg);
         }
 
-        // Removing all the transaction allocations
-        removeAllAllocations(transactionId);
-
-
-        BigDecimal lockedAllocatedAmount = transaction.getLockedAllocatedAmount();
-
-        // If partialAmount is not null OR transaction does not have any locked allocated amount
-        if (partialAmount != null ||
-                lockedAllocatedAmount == null || lockedAllocatedAmount.compareTo(BigDecimal.ZERO) == 0) {
-
-            BigDecimal reversedAmount;
-
-            if (partialAmount != null) {
-                if (partialAmount.compareTo(getUnallocatedAmount(transaction)) > 0) {
-                    String errMsg = "Partial amount is greater than transaction unallocated amount";
-                    logger.error(errMsg);
-                    throw new IllegalStateException(errMsg);
-                }
-                reversedAmount = partialAmount.negate();
-            } else {
-                reversedAmount = transaction.getAmount().negate();
-            }
-
-            // Creating a new reversed transaction
-            String transactionTypeId = transaction.getTransactionType().getId().getId();
-            Transaction reversedTransaction = createTransaction(transactionTypeId, transaction.getAccountId(),
-                    transaction.getEffectiveDate(), reversedAmount);
-
-            boolean updateReversed = false;
-            boolean updateOriginal = false;
-
-            if (statementPrefix != null && transaction.getStatementText() != null) {
-                String statement = statementPrefix + " " + transaction.getStatementText();
-                reversedTransaction.setStatementText(statement);
-                updateReversed = true;
-            }
-
-            if (transaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE) {
-                transaction.setInternal(true);
-                reversedTransaction.setInternal(true);
-                updateOriginal = true;
-                updateReversed = true;
-            }
-
-            // Creating a locked allocation between the original and reversed transactions
-            createLockedAllocation(transaction.getId(), reversedTransaction.getId(), partialAmount);
-
-            if (updateOriginal) {
-                persistEntity(transaction);
-            }
-
-            if (updateReversed) {
-                persistEntity(reversedTransaction);
-            }
-
-            // Creating memo
-            if (memoText != null && !memoText.trim().isEmpty()) {
-                String memoAccessLevelCode = informationService.getDefaultMemoLevel();
-                Date effectiveDate = new Date();
-                informationService.createMemo(transactionId, memoText, memoAccessLevelCode, effectiveDate, null, null);
-            }
-
-            return reversedTransaction;
-
-        } else {
-            // TODO: Check if the locked allocated amount comes from a deferment
-            String errMsg = "Transaction with ID = " + transactionId + " has locked allocation";
+        if (reversalAmount == null) {
+            String errMsg = "Reversal amount cannot be null";
             logger.error(errMsg);
-            throw new LockedAllocationException(errMsg);
+            throw new IllegalStateException(errMsg);
         }
+
+        final TransactionStatus transactionStatus = transaction.getStatus();
+        if (transactionStatus == null) {
+            String errMsg = "Transaction status must not be null";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        if (transactionStatus == TransactionStatus.RECIPROCAL_OFFSET ||
+                transactionStatus == TransactionStatus.REFUND_REQUESTED) {
+            String errMsg = "Transactions in status " + transactionStatus.name() + " cannot be reversed";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        if (transactionStatus != TransactionStatus.ACTIVE) {
+
+            if (reversalAmount.compareTo(transaction.getAmount()) != 0) {
+                String errMsg = "Reversal amount must equal transaction amount";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+
+            List<Allocation> allocations = getAllocations(transactionId);
+            if (CollectionUtils.isNotEmpty(allocations)) {
+                for (Allocation allocation : allocations) {
+
+                    Transaction transaction1 = allocation.getFirstTransaction();
+                    Transaction transaction2 = allocation.getSecondTransaction();
+
+                    // Getting the other (implicated) transaction from the mutual allocation
+                    Transaction implicatedTransaction = transaction1.getId().equals(transactionId) ?
+                            transaction2 : transaction1;
+
+                    // Removing the allocation between the original and implicated transactions
+                    removeAllocation(allocation, true);
+
+                    boolean isAllocatedToNonActiveTransaction = false;
+
+                    List<Allocation> implicatedAllocations = getAllocations(implicatedTransaction.getId());
+                    if (CollectionUtils.isNotEmpty(implicatedAllocations)) {
+                        for (Allocation implicatedAllocation : implicatedAllocations) {
+
+                            Transaction implicatedTransaction1 = implicatedAllocation.getFirstTransaction();
+                            Transaction implicatedTransaction2 = implicatedAllocation.getSecondTransaction();
+
+                            // Getting the other transaction from the allocation with the implicated transaction
+                            Transaction transactionToCheck =
+                                    implicatedTransaction.getId().equals(implicatedTransaction1.getId()) ?
+                                            implicatedTransaction2 : implicatedTransaction1;
+
+                            // If the implicated transaction has allocations with any other transaction with non-active
+                            // status then set its "isOffset" property to true
+                            if (!transactionToCheck.getId().equals(transactionId) &&
+                                    transactionToCheck.getStatus() != TransactionStatus.ACTIVE) {
+                                isAllocatedToNonActiveTransaction = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Setting "isOffset" property of the implicated transaction
+                    implicatedTransaction.setOffset(isAllocatedToNonActiveTransaction);
+                }
+            }
+        }
+
+        if (reversalAmount.compareTo(getUnallocatedAmount(transaction)) > 0) {
+
+            // Removing all regular allocations which the transaction is involved in
+            removeAllAllocations(transactionId);
+
+            // Updating the transaction instance
+            transaction = getTransaction(transactionId);
+
+            // Checking the unallocated amount again
+            if (reversalAmount.compareTo(getUnallocatedAmount(transaction)) > 0) {
+                String errMsg = "Reversal amount cannot be than transaction unallocated amount";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+        }
+
+        String transactionTypeId = (reversalTransactionTypeId != null) ? reversalTransactionTypeId :
+                transaction.getTransactionType().getId().getId();
+
+        // Creating a new reversed transaction with the negated amount of the original transaction
+        Transaction reversedTransaction = createTransaction(transactionTypeId, transaction.getAccountId(),
+                transaction.getEffectiveDate(), reversalAmount.negate());
+
+        List<Tag> transactionTags = transaction.getTags();
+        if (CollectionUtils.isNotEmpty(transactionTags)) {
+            reversedTransaction.setTags(new ArrayList<Tag>(transactionTags));
+        }
+
+        reversedTransaction.setGlOverridden(transaction.isGlOverridden());
+        reversedTransaction.setRollup(transaction.getRollup());
+
+        if (StringUtils.isNotBlank(statementPrefix) && StringUtils.isNotBlank(transaction.getStatementText())) {
+            reversedTransaction.setStatementText(statementPrefix + " " + transaction.getStatementText());
+        }
+
+        if (transactionStatus == TransactionStatus.ACTIVE) {
+            transaction.setOffset(true);
+            reversedTransaction.setStatus(TransactionStatus.REVERSED_OFFSET);
+        } else {
+            transaction.setStatus(TransactionStatus.RECIPROCAL_OFFSET);
+            reversedTransaction.setStatus(TransactionStatus.RECIPROCAL_OFFSET);
+        }
+
+        // Creating a locked allocation between the original and reversed transactions
+        createLockedAllocation(transaction.getId(), reversedTransaction.getId(), reversalAmount);
+
+        // Creating memo
+        if (StringUtils.isNotBlank(memoText)) {
+            String memoAccessLevelCode = informationService.getDefaultMemoLevel();
+            informationService.createMemo(transactionId, memoText, memoAccessLevelCode, new Date(), null, null);
+        }
+
+        return reversedTransaction;
     }
+
 
     protected void expireDeferment(Deferment deferment) {
 

@@ -630,11 +630,33 @@ public interface TransactionService {
      *
      * @param transactionId   Transaction ID
      * @param memoText        Text of the memo to be created
-     * @param partialAmount   Partial amount
+     * @param reversalAmount  Reversal amount
      * @param statementPrefix Statement prefix that will be added to the existing Transaction statement
-     * @return a newly created reversed transaction
+     * @return a created reversal transaction
      */
-    Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal partialAmount, String statementPrefix);
+    @WebMethod(exclude = true)
+    Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount, String statementPrefix);
+
+
+    /**
+     * If the reverse method is called, the system will generate a negative
+     * transaction for the type of the original transaction. A memo transaction
+     * will be generated, and the transactions will be locked together. Subject
+     * to user customization, the transactions may be marked as hidden. (likely
+     * that credits will not be hidden, debits will.) A charge to an account may
+     * be reversed when a mistake is made, or a refund is issued. A payment may
+     * be reversed when a payment bounces, or for some other reason is entered
+     * on to the account and is not payable.
+     *
+     * @param transactionId             Transaction ID
+     * @param reversalTransactionTypeId Transaction Type ID of the reverse transaction
+     * @param memoText                  Text of the memo to be created
+     * @param reversalAmount            Reversal amount
+     * @param statementPrefix           Statement prefix that will be added to the existing Transaction statement
+     * @return a created reversal transaction
+     */
+    Transaction reverseTransaction(Long transactionId, String reversalTransactionTypeId, String memoText,
+                                   BigDecimal reversalAmount, String statementPrefix);
 
 
     /**
@@ -695,8 +717,8 @@ public interface TransactionService {
      * @param statementPrefix   Transaction statement prefix
      * @return a write-off transaction instance
      */
-    Transaction writeOffTransaction(Long transactionId, TransactionTypeId transactionTypeId,
-                                    String memoText, String statementPrefix);
+    Transaction writeOffTransaction(Long transactionId, TransactionTypeId transactionTypeId, String memoText,
+                                    String statementPrefix);
 
 
     /**
