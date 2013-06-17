@@ -2431,43 +2431,46 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * ledger account, instead of the original, permitting the writing off to a general "bad debt" account, if they
      * so choose.
      *
-     * @param transactionId     Transaction ID
-     * @param transactionTypeId TransactionType ID
-     * @param memoText          Memo test
-     * @param statementPrefix   Transaction statement prefix
+     * @param transaction     Transaction instance
+     * @param transactionType TransactionType instance
+     * @param memoText        Memo test
+     * @param statementPrefix Transaction statement prefix
      * @return a write-off transaction instance
      */
-    @Override
-    @Transactional(readOnly = false)
-    public Transaction writeOffTransaction(Long transactionId, TransactionTypeId transactionTypeId,
-                                           String memoText, String statementPrefix) {
+    protected Transaction writeOffTransaction(Transaction transaction, TransactionType transactionType,
+                                              String memoText, String statementPrefix) {
 
         PermissionUtils.checkPermission(Permission.WRITE_OFF_TRANSACTION);
 
-        Transaction transaction = getTransaction(transactionId);
-        if (transaction == null) {
-            String errMsg = "Transaction with ID = " + transactionId + " does not exist";
+        if (transactionType == null) {
+            String errMsg = "Transaction Type cannot be null";
             logger.error(errMsg);
-            throw new TransactionNotFoundException(errMsg);
+            throw new IllegalArgumentException(errMsg);
         }
 
         if (transaction.getTransactionTypeValue() != TransactionTypeValue.CHARGE) {
-            String errMsg = "Transaction must be a charge, ID = " + transactionId;
+            String errMsg = "Transaction must be a charge, Transaction ID = " + transaction.getId();
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
 
-        TransactionType transactionType = (transactionTypeId != null) ?
-                getTransactionType(transactionTypeId) : transaction.getTransactionType();
+        if (transaction.getStatus() != TransactionStatus.ACTIVE) {
+            String errMsg = "Transaction must be active, Transaction ID = " + transaction.getId();
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
 
         Query query = em.createQuery("select a from Allocation a " +
                 " join fetch a.firstTransaction t1 " +
                 " join fetch a.secondTransaction t2 " +
                 " where (a.firstTransaction.id = :transactionId or " +
                 " a.secondTransaction.id = :transactionId) and a.locked = true");
-        query.setParameter("transactionId", transactionId);
+
+        query.setParameter("transactionId", transaction.getId());
+
         List<Allocation> lockedAllocations = query.getResultList();
-        if (lockedAllocations != null) {
+
+        if (CollectionUtils.isNotEmpty(lockedAllocations)) {
             for (Allocation allocation : lockedAllocations) {
                 Transaction firstTransaction = allocation.getFirstTransaction();
                 Transaction secondTransaction = allocation.getSecondTransaction();
@@ -2482,20 +2485,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         BigDecimal writeOffAmount = getUnallocatedAmount(transaction);
 
-        // Creating a new transaction with the negate writeOffAmount
-        Transaction writeOffTransaction = createTransaction(transactionType.getId().getId(), transaction.getAccountId(),
-                transaction.getEffectiveDate(), writeOffAmount.negate());
+        // Reverse the transaction
+        Transaction writeOffTransaction = reverseTransaction(transaction, transactionType.getId().getId(), memoText,
+                writeOffAmount, statementPrefix);
 
-        // Creating a new locked allocation between the original and write-off transactions
-        createLockedAllocation(transaction.getId(), writeOffTransaction.getId(), writeOffAmount);
-
-        String statementText = transaction.getStatementText();
-        if (statementPrefix != null && !statementPrefix.isEmpty()) {
-            statementText = statementPrefix + " " + statementText;
-        }
-
-        writeOffTransaction.setStatementText(statementText);
-
+        // Getting the default WriteOff Rollup code
         String rollupCode = configService.getParameter(Constants.DEFAULT_WRITE_OFF_ROLLUP);
 
         if (StringUtils.isNotBlank(rollupCode)) {
@@ -2507,17 +2501,60 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         writeOffTransaction.setStatus(TransactionStatus.WRITTEN_OFF);
 
-        persistTransaction(writeOffTransaction);
+        return writeOffTransaction;
+    }
 
-        // Creating memo
-        if (memoText != null && !memoText.trim().isEmpty()) {
-            String memoAccessLevelCode = informationService.getDefaultMemoLevel();
-            Date effectiveDate = new Date();
-            informationService.createMemo(transactionId, memoText, memoAccessLevelCode, effectiveDate, null, null);
+    /**
+     * The logic of this is very similar to reverseTransaction(), except a partial write off is allowed, and only
+     * credits can be written off. Also, the institution can choose to write off charges to a different general
+     * ledger account, instead of the original, permitting the writing off to a general "bad debt" account, if they
+     * so choose.
+     *
+     * @param transactionId     Transaction ID
+     * @param transactionTypeId TransactionType ID
+     * @param memoText          Memo test
+     * @param statementPrefix   Transaction statement prefix
+     * @return a write-off transaction instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Transaction writeOffTransaction(Long transactionId, TransactionTypeId transactionTypeId,
+                                           String memoText, String statementPrefix) {
+
+        Transaction transaction = getTransaction(transactionId);
+        if (transaction == null) {
+            String errMsg = "Transaction with ID = " + transactionId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
         }
 
-        return writeOffTransaction;
+        return writeOffTransaction(transaction, getTransactionType(transactionTypeId), memoText, statementPrefix);
+    }
 
+    /**
+     * The logic of this is very similar to reverseTransaction(), except a partial write off is allowed, and only
+     * credits can be written off. Also, the institution can choose to write off charges to a different general
+     * ledger account, instead of the original, permitting the writing off to a general "bad debt" account, if they
+     * so choose.
+     *
+     * @param transactionId   Transaction ID
+     * @param memoText        Memo test
+     * @param statementPrefix Transaction statement prefix
+     * @return a write-off transaction instance
+     */
+    @Override
+    @WebMethod(exclude = true)
+    @Transactional(readOnly = false)
+    public Transaction writeOffTransaction(Long transactionId, String memoText, String statementPrefix) {
+
+        Transaction transaction = getTransaction(transactionId);
+        if (transaction == null) {
+            String errMsg = "Transaction with ID = " + transactionId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        return writeOffTransaction(transaction, transaction.getTransactionType(), memoText, statementPrefix);
     }
 
     private Rollup getRollupByCode(String code) {

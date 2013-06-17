@@ -541,7 +541,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         notNull(transaction.getEffectiveDate());
         notNull(transaction.getRecognitionDate());
 
-        transaction = transactionService.writeOffTransaction(transaction.getId(), null, "Memo text", "Write-off");
+        transaction = transactionService.writeOffTransaction(transaction.getId(), "Memo text", "Write-off");
 
         notNull(transaction);
         notNull(transaction.getId());

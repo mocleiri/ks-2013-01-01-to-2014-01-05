@@ -720,6 +720,20 @@ public interface TransactionService {
     Transaction writeOffTransaction(Long transactionId, TransactionTypeId transactionTypeId, String memoText,
                                     String statementPrefix);
 
+    /**
+     * The logic of this is very similar to reverseTransaction(), except a partial write off is allowed, and only
+     * credits can be written off. Also, the institution can choose to write off charges to a different general
+     * ledger account, instead of the original, permitting the writing off to a general "bad debt" account, if they
+     * so choose.
+     *
+     * @param transactionId   Transaction ID
+     * @param memoText        Memo test
+     * @param statementPrefix Transaction statement prefix
+     * @return a write-off transaction instance
+     */
+    @WebMethod(exclude = true)
+    Transaction writeOffTransaction(Long transactionId, String memoText, String statementPrefix);
+
 
     /**
      * Checks if Transactions that meet the specified search criteria exist.
