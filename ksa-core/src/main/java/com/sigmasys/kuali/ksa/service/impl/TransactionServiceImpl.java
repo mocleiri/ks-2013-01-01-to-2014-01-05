@@ -3071,19 +3071,38 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new TransactionNotFoundException(errMsg);
         }
 
-        if (!TransactionStatus.ACTIVE.equals(charge.getStatus())) {
+        if (charge.getStatus() != TransactionStatus.ACTIVE) {
             String errMsg = "Charge must be active, ID = " + chargeId;
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
 
-        BigDecimal cancellationAmount = getCancellationAmount(chargeId);
-
-        if (cancellationAmount != null && cancellationAmount.compareTo(BigDecimal.ZERO) != 0) {
-            reverseTransaction(chargeId, memoText, cancellationAmount, null);
+        List<Allocation> allocations = getAllocations(chargeId);
+        if (CollectionUtils.isNotEmpty(allocations)) {
+            for (Allocation allocation : allocations) {
+                for (Transaction transaction : allocation.getTransactions()) {
+                    if (transaction.getStatus() == TransactionStatus.CANCELLED) {
+                        String errMsg = "Transaction is allocated with another transaction with " +
+                                TransactionStatus.CANCELLED + " status";
+                        logger.error(errMsg);
+                        throw new IllegalStateException(errMsg);
+                    }
+                }
+            }
         }
 
-        charge.setStatus(TransactionStatus.CANCELLED);
+        BigDecimal cancellationAmount = getCancellationAmount(chargeId);
+        BigDecimal unallocatedAmount = getUnallocatedAmount(charge);
+
+        if (unallocatedAmount.compareTo(cancellationAmount) < 0) {
+            String errMsg = "Unallocated amount cannot be less than cancellation amount";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        Transaction reverseTransaction = reverseTransaction(chargeId, memoText, cancellationAmount, null);
+
+        reverseTransaction.setStatus(TransactionStatus.CANCELLED);
     }
 
 

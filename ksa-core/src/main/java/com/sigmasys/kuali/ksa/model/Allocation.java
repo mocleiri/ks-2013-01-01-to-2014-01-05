@@ -2,6 +2,8 @@ package com.sigmasys.kuali.ksa.model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -125,6 +127,11 @@ public class Allocation extends AccountIdAware implements Identifiable {
 
     public void setInternallyLocked(Boolean isInternallyLocked) {
         this.isInternallyLocked = isInternallyLocked;
+    }
+
+    @Transient
+    public List<Transaction> getTransactions() {
+        return Arrays.asList(getFirstTransaction(), getSecondTransaction());
     }
 }
 	
