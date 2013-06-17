@@ -1,7 +1,7 @@
 When /^I add an Activity Offering to an existing Course Offering$/ do
-  course_offering = make CourseOffering, :course=>"CHEM277"
+  course_offering = make CourseOffering, :course=>"CHEM276"
   course_offering.manage_and_init
-  @new_ao = course_offering.create_ao(make ActivityOffering, :format => "Lecture/Lab")
+  @new_ao = course_offering.create_ao(make ActivityOffering, :format => "Lecture/Discussion")
 end
 
 
@@ -13,7 +13,7 @@ end
 When /^I copy an AO with Actual Delivery Logistics$/ do
 
   # in ref-data this CO has ADLs but no RDLs (copy an ADL first if you need an RDL)
-  course_offering = make CourseOffering, :course => "CHEM277"
+  course_offering = make CourseOffering, :course => "CHEM276"
   course_offering.manage_and_init
 
   @ao_source = course_offering.get_ao_obj_by_code("A")
@@ -25,7 +25,7 @@ end
 When /^I copy an AO with Requested Delivery Logistics$/ do
 
   # in ref-data this CO has ADLs but no RDLs (copy an ADL first if you need an RDL)
-  course_offering = make CourseOffering, :course => "CHEM277"
+  course_offering = make CourseOffering, :course => "CHEM276"
   course_offering.manage_and_init
 
   # get AOs that match the desired DL-type
@@ -74,7 +74,7 @@ end
 ### CREATE DUMMY DATA
 ### This data should already exist in the DB, having been put in there manually
 #When /^I create some dummy test data to speed up AFT development for activity offerings$/ do
-#  course_offering = make CourseOffering, :course => "CHEM277"
+#  course_offering = make CourseOffering, :course => "CHEM276"
 #  course_offering.manage_and_init
 
 #  @ao_source = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("D")
