@@ -115,8 +115,8 @@ public interface RefundService {
      * Performs refund validation.
      * Sets the refundStatus to {@link RefundStatus#VERIFIED} and the authorizedBy to the current user.
      *
-     * @param refundId
-     * @return
+     * @param refundId Refund ID
+     * @return Refund instance
      */
     Refund validateRefund(Long refundId);
 

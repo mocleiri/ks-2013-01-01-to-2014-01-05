@@ -319,8 +319,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * Performs refund validation.
      * Sets the refundStatus to {@link RefundStatus#VERIFIED} and the authorizedBy to the current user.
      *
-     * @param refundId
-     * @return
+     * @param refundId Refund ID
+     * @return Refund instance
      */
     @Override
     public Refund validateRefund(Long refundId) {
@@ -713,47 +713,51 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         // Get the Refund object:
         Refund refund = getRefund(refundId, false);
-        RefundStatus status = refund.getStatus();
+        RefundStatus refundStatus = refund.getStatus();
 
-        // Check different statuses that lead to different results:
-        if (status == RefundStatus.CANCELED) {
-            throw new RefundCancelledException("Refund with ID [" + refundId + "] is already canceled.");
-        } else if (status == RefundStatus.FAILED) {
-            throw new RefundFailedException("Refund with ID [" + refundId + "] is already failed.");
-        } else if ((status == RefundStatus.VERIFIED) || (status == RefundStatus.UNVERIFIED)) {
-            refund.setStatus(RefundStatus.CANCELED);
-        } else if (status == RefundStatus.REFUNDED) {
-            // Check all Refunds belonging to the same refund group, cancel them and reverse all Transactions.
-            // If there is no refund group, cancel only the refund and reverse its Transaction:
-            String refundGroup = refund.getRefundGroup();
-            List<Refund> refundsToCancel = new ArrayList<Refund>();
+        switch (refundStatus) {
+            case CANCELLED:
+                throw new RefundCancelledException("Refund with ID [" + refundId + "] is already canceled");
+            case FAILED:
+                throw new RefundFailedException("Refund with ID [" + refundId + "] is already failed");
+            case VERIFIED:
+            case UNVERIFIED:
+                refund.setStatus(RefundStatus.CANCELLED);
+                break;
+            case REFUNDED:
 
-            refundsToCancel.add(refund);
+                // Check all Refunds belonging to the same refund group, cancel them and reverse all Transactions.
+                // If there is no refund group, cancel only the refund and reverse its Transaction:
+                String refundGroup = refund.getRefundGroup();
 
-            if (StringUtils.isNotBlank(refundGroup)) {
+                List<Refund> refundsToCancel = new LinkedList<Refund>();
 
-                // Get all Refunds with the same group ID:
-                String sql = "select r from Refund r " +
-                        " inner join fetch r.transaction rt " +
-                        " inner join fetch r.refundTransaction rrt " +
-                        " where r.refundGroup = :refundGroup and r.id <> :id";
+                refundsToCancel.add(refund);
 
-                Query query = em.createQuery(sql).setParameter("refundGroup", refundGroup);
-                query.setParameter("id", refund.getId());
+                if (StringUtils.isNotBlank(refundGroup)) {
 
-                refundsToCancel.addAll(query.getResultList());
-            }
+                    // Get all Refunds with the same group ID:
+                    String sql = "select r from Refund r " +
+                            " inner join fetch r.transaction rt " +
+                            " inner join fetch r.refundTransaction rrt " +
+                            " where r.refundGroup = :refundGroup and r.id <> :id";
 
-            // Cancel all Refunds and reverse their Transactions:
-            for (Refund refundToCancel : refundsToCancel) {
-                Transaction transaction = refundToCancel.getTransaction();
-                transaction.setStatus(TransactionStatus.ACTIVE);
-                Transaction refundTransaction = refundToCancel.getRefundTransaction();
-                BigDecimal amount = refund.getAmount();
-                transactionService.reverseTransaction(refundTransaction.getId(), memo, amount, "Refund Cancellation");
-                refundToCancel.setStatus(RefundStatus.CANCELED);
-                persistEntity(refundToCancel);
-            }
+                    Query query = em.createQuery(sql).setParameter("refundGroup", refundGroup);
+                    query.setParameter("id", refund.getId());
+
+                    refundsToCancel.addAll(query.getResultList());
+                }
+
+                // Cancel all Refunds and reverse their Transactions:
+                for (Refund refundToCancel : refundsToCancel) {
+                    Transaction transaction = refundToCancel.getTransaction();
+                    transaction.setStatus(TransactionStatus.ACTIVE);
+                    Transaction refundTransaction = refundToCancel.getRefundTransaction();
+                    BigDecimal amount = refund.getAmount();
+                    transactionService.reverseTransaction(refundTransaction.getId(), memo, amount, "Refund Cancellation");
+                    refundToCancel.setStatus(RefundStatus.CANCELLED);
+                    persistEntity(refundToCancel);
+                }
         }
 
         return refund;
@@ -998,6 +1002,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
             // Get the new Rollup:
             String checkRollupCode = configService.getParameter(Constants.REFUND_CHECK_GROUP_ROLLUP);
+            if (StringUtils.isBlank(checkRollupCode)) {
+                String errMsg = "Configuration parameter '" + Constants.REFUND_CHECK_GROUP_ROLLUP + " is required";
+                logger.error(errMsg);
+                throw new ConfigurationException(errMsg);
+            }
 
             Rollup checkRollup = getAuditableEntityByCode(checkRollupCode, Rollup.class);
 
@@ -1106,19 +1115,21 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      *                                    and the <code>Refund</code> has a status different than {@link RefundStatus#VERIFIED}
      */
     private Refund getRefund(Long refundId, boolean checkVerified) {
+
         // Get the Refund object by its identifier:
         Refund refund = getEntity(refundId, Refund.class);
 
         if (refund == null) {
-            throw new RefundNotFoundException(refundId, "Refund with ID [" + refundId + "] was found in the system.");
+            throw new RefundNotFoundException(refundId, "Refund with ID [" + refundId + "] was found in the system");
         }
 
         // Check the status of the Refund:
         if (checkVerified) {
+
             RefundStatus refundStatus = refund.getStatus();
 
             if (refundStatus != RefundStatus.VERIFIED) {
-                throw new RefundNotVerifiedException("Refund with ID [" + refundId + "] is not verified.");
+                throw new RefundNotVerifiedException("Refund with ID [" + refundId + "] is not verified");
             }
         }
 
@@ -1141,6 +1152,17 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         // Create a charge transaction on the account referenced through the original transaction
         // Of type referenced in the refundType, of the amount of the refund:
         Transaction originalTransaction = refund.getTransaction();
+        if (originalTransaction == null) {
+            String errMsg = "Cannot find transaction being refunded, Refund ID = " + refundId;
+            logger.error(errMsg);
+            throw new InvalidRefundException(errMsg);
+        }
+
+        if (originalTransaction.getStatus() != TransactionStatus.REFUND_REQUESTED) {
+            String errMsg = "Refund transaction must be in " + TransactionStatus.REFUND_REQUESTED + " status";
+            logger.error(errMsg);
+            throw new InvalidRefundException(errMsg);
+        }
 
         Account account = originalTransaction.getAccount();
         String userId = StringUtils.isNotBlank(accountId) ? accountId : account.getId();
@@ -1148,9 +1170,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         Date effectiveDate = new Date();
         BigDecimal amount = refund.getAmount();
 
+        // TODO -> Use reverseTransaction() method to create a new transaction reversal, allocation and memo
+
         Transaction refundTransaction = transactionService.createTransaction(refundTransactionTypeId, userId, effectiveDate, amount);
 
-        // Create a lockedAllocation between the refund and the original transaction in the amount of the refund:
+        // Creating a locked allocation between the refund and the original transaction in the amount of the refund:
         Allocation allocation = new Allocation();
 
         allocation.setAccount(account);
@@ -1158,9 +1182,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         allocation.setSecondTransaction(refundTransaction);
         allocation.setAmount(amount);
         allocation.setLocked(true);
+
+        // Persisting the new allocation
         persistEntity(allocation);
 
-        // Update the Refund object with the modified values:
+        // Updating the Refund object with the modified values:
         refund.setRefundDate(effectiveDate);
         refund.setRefundTransaction(refundTransaction);
         refund.setStatus(RefundStatus.REFUNDED);

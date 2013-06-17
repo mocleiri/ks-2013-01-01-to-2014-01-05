@@ -3066,7 +3066,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         Charge charge = getCharge(chargeId);
         if (charge == null) {
-            String errMsg = "Charge does not exist for the given ID = " + chargeId;
+            String errMsg = "Charge with ID = " + chargeId + " does not exist";
             logger.error(errMsg);
             throw new TransactionNotFoundException(errMsg);
         }
@@ -3100,7 +3100,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new IllegalStateException(errMsg);
         }
 
-        Transaction reverseTransaction = reverseTransaction(chargeId, memoText, cancellationAmount, null);
+        String chargeTypeId = charge.getTransactionType().getId().getId();
+
+        Transaction reverseTransaction = reverseTransaction(charge, chargeTypeId, memoText, cancellationAmount, null);
 
         reverseTransaction.setStatus(TransactionStatus.CANCELLED);
     }
@@ -3122,7 +3124,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         Charge charge = getCharge(chargeId);
         if (charge == null) {
-            String errMsg = "Charge does not exist for the given ID = " + chargeId;
+            String errMsg = "Charge with ID = " + chargeId + " does not exist";
             logger.error(errMsg);
             throw new TransactionNotFoundException(errMsg);
         }
@@ -3145,6 +3147,45 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         // Creating a memo
         String memoAccessLevelCode = informationService.getDefaultMemoLevel();
         informationService.createMemo(deferment.getId(), memoText, memoAccessLevelCode, new Date(), expirationDate, null);
+    }
+
+    /**
+     * Bounces a payment by ID.
+     *
+     * @param paymentId Payment ID
+     * @param memoText  Memo text
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public void bouncePayment(Long paymentId, String memoText) {
+
+        PermissionUtils.checkPermission(Permission.BOUNCE_PAYMENT);
+
+        Payment payment = getPayment(paymentId);
+        if (payment == null) {
+            String errMsg = "Payment with ID = " + paymentId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        if (payment.getStatus() != TransactionStatus.ACTIVE) {
+            String errMsg = "Payment must be active, ID = " + paymentId;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        // Removing all regular payment allocations
+        removeAllocations(paymentId);
+
+        String paymentTypeId = payment.getTransactionType().getId().getId();
+
+        BigDecimal reversalAmount = payment.getAmount();
+
+        Transaction reverseTransaction = reverseTransaction(payment, paymentTypeId, memoText, reversalAmount, null);
+
+        reverseTransaction.setStatus(TransactionStatus.BOUNCED);
+
+        // TODO: Use business rules to decide if a charge is to be made for the bounced transaction
     }
 
     /**

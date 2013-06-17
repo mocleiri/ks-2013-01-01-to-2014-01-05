@@ -895,6 +895,14 @@ public interface TransactionService {
     void contestCharge(Long chargeId, Date expirationDate, String memoText);
 
     /**
+     * Bounces a payment by ID.
+     *
+     * @param paymentId Payment ID
+     * @param memoText  Memo text
+     */
+    void bouncePayment(Long paymentId, String memoText);
+
+    /**
      * This method persists new GL breakdowns and associates them with the given GL and transaction types.
      * It also provides validation of the breakdowns.
      *

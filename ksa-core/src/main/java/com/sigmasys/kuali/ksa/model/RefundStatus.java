@@ -10,7 +10,7 @@ public enum RefundStatus implements Identifiable {
     UNVERIFIED(RefundStatus.UNVERIFIED_CODE),
     VERIFIED(RefundStatus.VERIFIED_CODE),
     REFUNDED(RefundStatus.REFUNDED_CODE),
-    CANCELED(RefundStatus.CANCELED_CODE),
+    CANCELLED(RefundStatus.CANCELED_CODE),
     FAILED(RefundStatus.FAILED_CODE);
 
     public static final String UNVERIFIED_CODE = "U";
@@ -39,8 +39,8 @@ public enum RefundStatus implements Identifiable {
                 return "Verified";
             case REFUNDED:
                 return "Refunded";
-            case CANCELED:
-            	return "Canceled";
+            case CANCELLED:
+            	return "Cancelled";
             case FAILED:
                 return "Failed";
         }
