@@ -31,9 +31,7 @@ class PerformRollover < BasePage
 
   element(:rollover_button) { |b| b.frm.button(text: /Rollover/) }
 
-  action(:rollover_course_offerings) { |b| b.rollover_button.click; b.loading.wait_while_present }
-
-  value(:status) { |b| b.frm.div(data_label: "Status").span(index: 0).text } #status shows after rollover initiated
+  action(:rollover_course_offerings) { |b| b.rollover_button.click; b.loading.wait_while_present; sleep 2 }
 
 
 # looks for next available target term in the one specified is used (if select_next_available_term = true, default is false) - returns actual target term code used

@@ -6,11 +6,13 @@ class RolloverDetails < BasePage
   expected_element :term
 
   element(:term) { |b| b.frm.text_field(name: "rolloverTargetTermCode") }
-  action(:go) { |b| b.frm.button(text: "Go").click; b.loading.wait_while_present(300) }
 
+  element(:go_button) { |b| b.frm.button(text: "Go") }
+  action(:go) { |b| b.go_button.click; b.loading.wait_while_present(300) }
 
   element(:rollover_results_div) { |b| b.frm.div(id: "KS-RolloverResultsInfoSection") }
-  value(:status) { |b| b.frm.div(data_label: "Status").span(index: 0).text } #status shows after rollover initiated
+  value(:status) { |b| b.frm.div(id: "rollover-status").span(index: 0).text } #status shows after rollover initiated
+
   element(:completed_status_element) { |b| b.rollover_results_div.table.rows[1].table } #status shows after rollover initiated
   value(:completed_status) { |b| b.completed_status_element.row.cells[1].text } #status shows after rollover initiated
 

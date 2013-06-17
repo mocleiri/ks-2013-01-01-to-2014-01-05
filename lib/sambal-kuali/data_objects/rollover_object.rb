@@ -67,8 +67,12 @@ class Rollover
       puts "Rollover initiated - source term: #{@source_term}"
       puts "Rollover initiated - target term: #{@target_term}"
       page.rollover_course_offerings
+    end
+
+    on RolloverDetails do |page|
       raise "rollover issue" unless page.status.upcase == "IN PROGRESS"
     end
+
   end
 
   #polls rollover status for 20 mins
@@ -86,7 +90,13 @@ class Rollover
       while actual_status.upcase != "COMPLETE" and poll_ctr < 160     #will wait 80 mins
         poll_ctr = poll_ctr + 1
         sleep 30
-        page.go
+        begin
+          page.go
+        rescue
+          puts "rescued timeout on rollover status poll"
+          sleep 60
+          page.go
+        end
         actual_status = page.completed_status unless !page.completed_status_element.exists?
       end
       if actual_status.upcase == "COMPLETE"
