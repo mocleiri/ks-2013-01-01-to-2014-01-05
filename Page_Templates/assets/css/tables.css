@@ -33,5 +33,17 @@
 	max-width: 60%;
 }
 
-
+/************************************************************* FORMATING: Search Results */
+.search-results table {
+	border-bottom: thin solid #999999;
+	margin-bottom: 0.2em;
+}
+#search-results-filter {
+	background-color: #eeeeee;
+	padding: 0.4em 1.0em;
+	margin-bottom: 0.5em;
+}
+#search-results-pagination {
+	
+}
 

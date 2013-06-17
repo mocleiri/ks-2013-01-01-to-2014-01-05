@@ -13,6 +13,8 @@
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="assets/css/krad.css" rel="stylesheet">
     <link href="assets/css/kualistudent.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
+    <link href="assets/css/tables.css" rel="stylesheet">
     <!-- HTML5, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -82,7 +84,7 @@
 		    					Support Title
 		    				</div>
 					</div>
-					<div class="pull-right">
+					<div class="pull-right hidden">
 	    				<div id="action-bar" class="pull-right">
 	    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
 	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
@@ -115,7 +117,7 @@
 						</ul>
 	    			</div>
 				</div>
-    			<div id="page-header" title="page-header" class="container-fluid  no-padding">
+    			<div id="page-header" title="page-header" class="container-fluid no-padding hidden">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
 						<dl class="dl-horizontal">
 				    		<dt>Field 1</dt><dd class="gibberish-light">Remotely flung</dd>
@@ -132,10 +134,202 @@
     				<div class="row-fluid no-padding">
     					<div class="container-fluid group span12 optional no-margin no-padding">
 
-
-
-
-
+							<div class="search-parameters">
+								<form id="search-personnel" title="search-personnel">
+									<div class="controls controls-row">
+										<div class="control-group span3">
+											<label class="control-label field-label">
+												Keyword
+											</label>
+											<div class="controls">
+												<input type="text" placeholder="e.g., Johnson" value="Johnson">
+											</div>
+										</div>
+										<div class="control-group span3">
+											<a class="btn btn-primary no-label">
+												Find Matches
+											</a>
+										</div>										
+									</div>
+								</form>
+							</div>
+							<div class="search-results clearfix">
+								<h2>Search Results</h2>
+				    			<div id="search-results-filter" title="search-results-filter" class="container-fluid no-padding">
+				    				Filters: <a href="#">Filter A</a>, <a href="#">Filter B</a>, <a href="#">Filter C</a>
+				    			</div>
+								<table class="table table-hover table-condensed">
+									<thead>
+										<tr>
+											<th class="span2">
+												ID 
+											</th>
+											<th class="span3">
+												Name 
+											</th>
+											<th class="span5">
+												Description
+											</th>
+											<th class="span2"></th>
+										</tr>
+									</thead>
+									<tbody class="gibberish-light">
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 JOHNSON, SARAHSARAH
+											</td>
+											<td>
+												The faithful basic far far knew goodness crud under fuhful basic far far knew goodness crud under fussily eager behind near knowingly alas learned
+											</td>
+  											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+  											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 SARAH, SARAH
+											</td>
+											<td>
+												The faitThe faithful basic far far knew goodness crud under fusscrud under fussily eager behind near knowingly alas learned
+											</td>
+  											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+  											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 JOHSARAHON, SARAH
+											</td>
+											<td>
+												ily eager behind near knowingly alas learned
+											</td>
+  											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+  											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 JOSARAHSARAHN, SAR
+											</td>
+											<td>
+												far far knew goodness crud under	The faithful basic far far knew goodness crud under fussily eager behind near knowingly alas learned
+											</td>
+  											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+  											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 SARAHSARAHSARAH, dsdfsd
+											</td>
+											<td>
+												The faithful basic  fussily eager behind near knowingly alas learned
+											</td>
+  											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+  											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 SARAHSARAH, safe
+											</td>
+											<td>
+												The faithful basunder fussily eager behind near knowingly alasfar far knew goodness crud 
+											</td>
+  											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+  											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 JOHNSON, SARAH
+											</td>
+											<td>
+												The faithful basic far far knew goodness crud under fussily eager behind near knowingly alas learned far far knew goodness crud under fussily eager
+											</td>
+  											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+  											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 JSARAHOHNSON, sdfsdf
+											</td>
+											<td>
+												under fussily eager behind near knowingly The faithful basic far far knew goodness crud 
+											</td>
+  											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+  											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 dsfd, sdfsdfsdfsdfs
+											</td>
+											<td>
+												The faithful basic far far knew go behind near knowingly alas learned
+											</td>
+  											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+  											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 sdfsdfsdfsdfsdfs, sdfsd
+											</td>
+											<td>
+												The faithful basic  behind near knowingly alas learned
+											</td>
+  											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+  											</td>
+										</tr>
+									</tbody>
+								</table>
+				    			<div id="search-results-pagination" title="search-results-pagination" class="container-fluid pull-right">
+				    				<a href="#">&laquo;</a> <a href="#">1</a> ... <a href="#">4</a> 5 <a href="#">6</a> ... <a href="#">9</a> <a href="#">&raquo;</a>
+				    			</div>
+							</div>
 
    					</div>
     				</div>
@@ -153,7 +347,7 @@
     			</div>
     			<div id="page-footer" title="page-footer" class="container-fluid"></div>
     		</div>
-    		<div id="view-footer" title="view-footer" class="container navbar-fixed-bottom sticky">
+    		<div id="view-footer" title="view-footer" class="container navbar-fixed-bottom sticky hidden">
 				<div class="container">
     				<div class="container-fluid pull-right">
     					<form>
