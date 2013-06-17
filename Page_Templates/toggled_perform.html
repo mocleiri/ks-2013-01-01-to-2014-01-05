@@ -13,6 +13,7 @@
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="assets/css/krad.css" rel="stylesheet">
     <link href="assets/css/kualistudent.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
     <!-- HTML5, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -82,7 +83,7 @@
 		    					Support Title
 		    				</div>
 					</div>
-					<div class="pull-right">
+					<div class="pull-right hidden">
 	    				<div id="action-bar" class="pull-right">
 	    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
 	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
@@ -115,7 +116,7 @@
 						</ul>
 	    			</div>
 				</div>
-    			<div id="page-header" title="page-header" class="container-fluid  no-padding">
+    			<div id="page-header" title="page-header" class="container-fluid no-padding hidden">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
 						<dl class="dl-horizontal">
 				    		<dt>Field 1</dt><dd class="gibberish-light">Remotely flung</dd>
@@ -132,9 +133,199 @@
     				<div class="row-fluid no-padding">
     					<div class="container-fluid group span12 optional no-margin no-padding">
 
+							<p class="gibberish-light">
+								The faithful basic far far knew goodness crud under fussily eager behind near knowingly alas learned yet across bid hatchet a by advantageously jeez faultily shook far much this hello jeepers a paternal hyena beneath waved winsomely far goodness this excellently stern coherent some bald evident this because cockatoo off that a meant jeez grimy during some inadvertent nimble much fell much save a.
+							</p>
 
 
+					    	<ul class="nav nav-tabs">
+						    	<li><a href="#perform-main" data-toggle="tab">Main Method </a></li>
+						    	<li><a href="#perform-alternative" data-toggle="tab">Optional Method</a></li>
+					    	</ul>
+							<div class="tab-content">
+								<div class="tab-pane active" id="perform-main">
+		    						<form id="#main-form">
+		   							<div class="control-group">
+		    								<label class="control-label field-label">
+		    									Field 1
+		    								</label>
+		    								<div class="controls">
+		    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini-block" placeholder="e.g. A" value="A">
+		    								</div>
+		   								</div>
 
+											<div class="control-group">
+			    								<label class="control-label field-label">
+		    									Field 2
+		    								</label>
+											<label class="checkbox gibberish-light" >
+													<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#main-options">
+													This course offering has a waitlist
+											</label>
+										</div>
+										<div id="main-options" class="collapse in form-child">
+		    								<div class="control-group">
+		    									<label class="control-label field-label">
+		    										Field 3
+		    									</label>
+		    									<label class="radio gibberish-light">
+		    										<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
+		    										Course Offering
+		    									</label>
+		    									<label class="radio gibberish-light">
+		    										<input type="radio" name="optionsRadios" id="optionsRadios2" value="Activity Offering">
+		    										Activity Offering
+		    									</label>
+		    								</div>
+		    								<div class="control-group">
+			    								<label class="control-label field-label">
+			    									Field 4
+			    								</label>
+			    								<div class="controls">
+		    										<select id="message-waitlistType" name="waitlistType" class="span2 gibberish-light" required>
+		    											<option selected>
+		    												Select a type ...
+		    											</option>
+		    											<option>
+		    												Automatic
+		    											</option>
+		    											<option>
+		    												Semi-automatic
+		    											</option>
+		    											<option>
+		    												Manual
+		    											</option>
+		    										</select> 
+			    								</div>
+		    								</div>
+										</div>
+		  							</form>
+								</div>
+								<div class="tab-pane" id="perform-alternative">
+		    						<form id="#main-form">
+		   							<div class="control-group">
+		    								<label class="control-label field-label">
+		    									Field 1
+		    								</label>
+		    								<div class="controls">
+		    									<input id="message-field-1" type="text" name="field-1" class="input-block" placeholder="e.g. Alabaster" value="">
+		    								</div>
+		   							</div>
+		   							<div class="control-group">
+		    								<label class="control-label field-label">
+		    									Field 2
+		    								</label>
+		    								<div class="controls">
+		    									<input id="message-field-2" type="text" name="field-2" class="input-block" placeholder="e.g. John Smith, Doctor" value="">
+		    								</div>
+		   							</div>
+
+		   							<div class="control-group">
+		    								<label class="control-label collection-label">
+		    									Collection Label
+		    								</label>
+		    								<div class="controls inline">
+												<fieldset>
+			    								<table class="table table-hover table-condensed table-col-4">
+			    									<thead>
+			  											<th class="span1">
+															<label class="checkbox">
+																<input type="checkbox" name="select-all" class="checkall" checked>
+															</label>
+			  											</th>
+			  											<th class="span2">
+			  												ID
+			  											</th>
+			  											<th class="span2">
+			  												Name
+			  											</th>
+			  											<th class="span2">
+			  												Affiliation
+			  											</th>
+			  											<th class="span3">
+			  												Description
+			  											</th>
+			  											<th class="span2">
+			  											</th>
+			    									</thead>
+			    									<tbody class="gibberish-light">
+				  										<tr>
+				  											<td>
+																<label class="checkbox">
+																	<input type="checkbox" name="selected" value="0000001" checked>
+																</label>
+				  											</td>
+				  											<td>
+				  												<a href="#quick-inspect" role="link" data-toggle="modal">0000001</a>
+				  											</td>
+				  											<td>
+				  												Incredibly 
+				  											</td>
+				  											<td>
+				  												This past
+				  											</td>
+				  											<td >
+				  												Luxuriant felt one.
+				  											</td>
+				  											<td class="actions">
+																<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+										    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+				  											</td>
+				  										</tr>
+				  										<tr>
+				  											<td>
+																<label class="checkbox">
+																	<input type="checkbox" name="selected" value="0000321" checked>
+																</label>
+				  											</td>
+				  											<td>
+				  												<a href="#quick-inspect" role="link" data-toggle="modal">0000321</a>
+				  											</td>
+				  											<td>
+				  												Wherever  
+				  											</td>
+				  											<td>
+				  												Less picked
+				  											</td>
+				  											<td>
+				  												In unsaddled towards onto slit deer this much.
+				  											</td>
+				  											<td class="actions">
+																<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+										    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+				  											</td>
+				  										</tr>
+				  										<tr>
+				  											<td>
+																<label class="checkbox">
+																	<input type="checkbox" name="selected" value="0034243" checked>
+																</label>
+				  											</td>
+				  											<td>
+				  												<a href="#quick-inspect" role="link" data-toggle="modal">0034243</a>
+				  											</td>
+				  											<td>
+				  												Contrary  
+				  											</td>
+				  											<td>
+				  												Less in
+				  											</td>
+				  											<td>
+				  												Playful celestially.
+				  											</td>
+				  											<td class="actions">
+																<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+										    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+				  											</td>
+				  										</tr>
+			    									</tbody>
+			    								</table>
+												</fieldset>
+		    								</div>
+	    								</div>
+		  							</form>
+								</div>
+							</div>
 
 
    					</div>
@@ -158,10 +349,7 @@
     				<div class="container-fluid pull-right">
     					<form>
     						<button type="submit" class="btn btn-primary">
-    							Save
-    						</button>
-    						<button type="submit" class="btn secondary">
-    							Save Progress
+    							Begin Process
     						</button>
     						<a href="#" class="cancel">Cancel</a>
     					</form>
@@ -183,6 +371,10 @@
 	<script type="text/javascript">//<![CDATA[ 
 	$(document).ready(function() {
 		$(".collapse").collapse('hide');
+		/* Select All from http://briancray.com/posts/check-all-jquery-javascript */
+		$('.checkall').on('click', function () {
+			$(this).closest('fieldset').find(':checkbox').prop('checked', this.checked);
+		});
 	});
 	//]]> </script>
 </body>

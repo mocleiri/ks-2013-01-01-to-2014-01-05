@@ -13,6 +13,7 @@
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="assets/css/krad.css" rel="stylesheet">
     <link href="assets/css/kualistudent.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
     <!-- HTML5, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -82,7 +83,7 @@
 		    					Support Title
 		    				</div>
 					</div>
-					<div class="pull-right">
+					<div class="pull-right hidden">
 	    				<div id="action-bar" class="pull-right">
 	    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
 	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
@@ -130,16 +131,68 @@
     				</div>
     				<div class="container-fluid validation group-error-validation-messaging"></div>
     				<div class="row-fluid no-padding">
-    					<div class="container-fluid group span12 optional no-margin no-padding gibberish-light">
+    					<div class="container-fluid group span12 optional no-margin no-padding">
 
-							<p>
+							<p class="gibberish-light">
 								The faithful basic far far knew goodness crud under fussily eager behind near knowingly alas learned yet across bid hatchet a by advantageously jeez faultily shook far much this hello jeepers a paternal hyena beneath waved winsomely far goodness this excellently stern coherent some bald evident this because cockatoo off that a meant jeez grimy during some inadvertent nimble much fell much save a.
-							</p><p>
-								Before that that garish belched trout opposite much jeepers this conspicuous emphatically excluding robin hellish besides hey far so irksome hot besides ouch in however dazedly froze opposite manifest along blinked spoiled astride and much astride and yikes much lied ouch rethought crud dear against tepidly seagull arrogantly much giggled that dear subconsciously express dreamed caudal punctiliously upon alas far much warthog outside bucolic pointed yikes and bawled furrowed manta much however seagull lighted ouch yikes juggled unavoidably more far jeepers up unlike that cut the much crud wow as far lucky sardonically goodness gasped mongoose.
 							</p>
 
+    						<form id="#main-form">
+   							<div class="control-group">
+    								<label class="control-label field-label">
+    									Field 1
+    								</label>
+    								<div class="controls">
+    									<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini-block" placeholder="e.g. A" value="A">
+    								</div>
+   								</div>
 
-
+									<div class="control-group">
+	    								<label class="control-label field-label">
+    									Field 2
+    								</label>
+									<label class="checkbox gibberish-light" >
+											<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options">
+											This course offering has a waitlist
+									</label>
+								</div>
+								<div id="waitlist-options" class="collapse in form-child">
+    								<div class="control-group">
+    									<label class="control-label field-label">
+    										Field 3
+    									</label>
+    									<label class="radio gibberish-light">
+    										<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
+    										Course Offering
+    									</label>
+    									<label class="radio gibberish-light">
+    										<input type="radio" name="optionsRadios" id="optionsRadios2" value="Activity Offering">
+    										Activity Offering
+    									</label>
+    								</div>
+    								<div class="control-group">
+	    								<label class="control-label field-label">
+	    									Field 4
+	    								</label>
+	    								<div class="controls">
+    										<select id="message-waitlistType" name="waitlistType" class="span2 gibberish-light" required>
+    											<option selected>
+    												Select a type ...
+    											</option>
+    											<option>
+    												Automatic
+    											</option>
+    											<option>
+    												Semi-automatic
+    											</option>
+    											<option>
+    												Manual
+    											</option>
+    										</select> 
+	    								</div>
+    								</div>
+								</div>
+  							</form>
 
    					</div>
     				</div>
