@@ -87,7 +87,13 @@ end
 
 Then /^a cluster error message appears stating "(.*?)"$/ do |errMsg|
   on ManageCourseOfferings do |page|
-    page.first_msg.include? errMsg
+    page.get_cluster_error_msgs.should include errMsg
+  end
+end
+
+Then /^a cluster warning message appears stating "(.*?)"$/ do |errMsg|
+  on ManageCourseOfferings do |page|
+    page.get_cluster_warning_msgs.should include errMsg
   end
 end
 
@@ -122,6 +128,11 @@ Then /^the Manage Course Offerings page is displayed$/ do
   on ManageCourseOfferings do |page|
     page.term.present?.should be_true
   end
+end
+
+Given /^I manage registration groups for a new course offering with multiple AO types and only one lecture activity$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM237", :term=>"201301")
+  @course_offering.manage_and_init
 end
 
 Given /^I manage registration groups for a new course offering$/ do
@@ -206,7 +217,7 @@ When /^I edit the Activity Offering$/ do
   @course_offering.edit_ao :ao_code =>"A"
 end
 
-When /^I move a lab activity offering to the new cluster$/ do
+When /^I move a lecture activity offering to the new cluster$/ do
   @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("A", @course_offering.activity_offering_cluster_list[1])
 end
 

@@ -334,7 +334,7 @@ class ManageCourseOfferings < BasePage
     target_cluster(private_name).div(id: /KS-ManageRegistrationGroups-StateAndActionLinks_line/).span.text()
   end
 
-  def get_cluster_first_error_msg(private_name)
+  def get_cluster_first_error_msg(private_name = :default_cluster)
     target_cluster(private_name).li(class: "uif-errorMessageItem").text()
   end
 
@@ -346,7 +346,7 @@ class ManageCourseOfferings < BasePage
     msg_list.to_s
   end
 
-  def get_cluster_first_warning_msg(private_name)
+  def get_cluster_first_warning_msg(private_name = :default_cluster)
     target_cluster(private_name).li(class: "uif-warningMessageItem").text()
   end
 

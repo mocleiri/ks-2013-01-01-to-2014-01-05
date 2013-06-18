@@ -32,11 +32,11 @@ As an Administrator, I want to create registration groups for a Course Offering
     And a cluster error message appears stating "The cluster private name is already in use"
     Then I remove the newly created cluster
 
-  Scenario: ARG 6.4C When an AO cluster does not have all AO types represented, a warning message should appear
-    Given I manage registration groups for a new course offering
+  Scenario: ARG 6.4C When an AO cluster does not have all AO types represented a warning message should appear
+    Given I manage registration groups for a new course offering with multiple AO types and only one lecture activity
     When I create an activity offering cluster
-    And I move a lab activity offering to the new cluster
-    Then a cluster error message appears stating "The cluster private name is already in use"
+    And I move a lecture activity offering to the new cluster
+    Then a cluster warning message appears stating "You must add Lecture to form reg groups"
 
   Scenario: ARG 6.5 When deleting an AOC delete all associated AOs as well
     Given I manage registration groups for a new course offering
