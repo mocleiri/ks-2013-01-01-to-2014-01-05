@@ -23,6 +23,27 @@ if ENV['HEADLESS']
   require 'headless'
   headless = Headless.new :destroy_at_exit => false
   headless.start
+
+  #to avoid nil browser error, retry initial browser connect in headless env
+  retry_ctr = 0
+  while browser.nil? and retry_ctr < 10
+    retry_ctr += 1
+    puts "debug env.rb - browser init - attempt #{retry_ctr}"
+    begin
+      browser = Watir::Browser.new :firefox, :http_client => client
+      browser.goto("#{$test_site}/login.jsp")
+      sleep 2
+      raise "connect failed" unless  browser.text_field(id: "j_username").exists?
+      browser.close
+      puts "debug env.rb - success: browser connection attempt #{retry_ctr}"
+    rescue
+      puts "debug env.rb - connect failed"
+      browser.close unless browser.nil?
+      browser = nil
+      sleep 30
+    end
+  end
+  browser = nil
 end
 
 #re-use browser for each scenario
