@@ -6,8 +6,9 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.restlet.Client;
+import org.restlet.ext.net.HttpClientHelper;
 import org.restlet.data.Protocol;
+import org.restlet.Client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,17 +22,8 @@ import java.util.List;
  */
 public class SolrServiceClientImpl implements SolrSeviceClient {
 
-    private Client client;
     private String solrBaseUrl;
     private SolrServer server;
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
 
     public String getSolrBaseUrl() {
         return solrBaseUrl;
@@ -44,7 +36,6 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
     public SolrServiceClientImpl(String baseUrl) {
         setSolrBaseUrl(baseUrl);
         setServer(new HttpSolrServer(baseUrl));
-        client = new Client(Protocol.HTTP);
     }
 
     public SolrServer getServer() {
