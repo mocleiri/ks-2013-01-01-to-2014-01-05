@@ -637,6 +637,27 @@ public interface TransactionService {
     @WebMethod(exclude = true)
     Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount, String statementPrefix);
 
+    /**
+     * If the reverse method is called, the system will generate a negative
+     * transaction for the type of the original transaction. A memo transaction
+     * will be generated, and the transactions will be locked together. Subject
+     * to user customization, the transactions may be marked as hidden. (likely
+     * that credits will not be hidden, debits will.) A charge to an account may
+     * be reversed when a mistake is made, or a refund is issued. A payment may
+     * be reversed when a payment bounces, or for some other reason is entered
+     * on to the account and is not payable.
+     *
+     * @param transactionId   Transaction ID
+     * @param memoText        Text of the memo to be created
+     * @param reversalAmount  Reversal amount
+     * @param statementPrefix Statement prefix that will be added to the existing Transaction statement
+     * @param reversalStatus  Transaction status of the reversal (can be null)
+     * @return a created reversal transaction
+     */
+    @WebMethod(exclude = true)
+    Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount,
+                                   String statementPrefix, TransactionStatus reversalStatus);
+
 
     /**
      * If the reverse method is called, the system will generate a negative
@@ -653,10 +674,11 @@ public interface TransactionService {
      * @param memoText                  Text of the memo to be created
      * @param reversalAmount            Reversal amount
      * @param statementPrefix           Statement prefix that will be added to the existing Transaction statement
+     * @param reversalStatus            Transaction status of the reversal (can be null)
      * @return a created reversal transaction
      */
     Transaction reverseTransaction(Long transactionId, String reversalTransactionTypeId, String memoText,
-                                   BigDecimal reversalAmount, String statementPrefix);
+                                   BigDecimal reversalAmount, String statementPrefix, TransactionStatus reversalStatus);
 
 
     /**
@@ -881,8 +903,9 @@ public interface TransactionService {
      *
      * @param chargeId Charge ID
      * @param memoText Memo text
+     * @return Charge instance
      */
-    void cancelCharge(Long chargeId, String memoText);
+    Charge cancelCharge(Long chargeId, String memoText);
 
     /**
      * Creates a deferment using createTransaction() and the default contest payment type as the transaction type.
@@ -891,16 +914,30 @@ public interface TransactionService {
      * @param chargeId       Charge ID
      * @param expirationDate Deferment expiration date
      * @param memoText       Memo text
+     * @return Charge instance
      */
-    void contestCharge(Long chargeId, Date expirationDate, String memoText);
+    Charge contestCharge(Long chargeId, Date expirationDate, String memoText);
+
+    /**
+     * Performs the charge reversal and sets the status of the reversing transaction to DISCOUNTING.
+     *
+     * @param chargeId          Charge ID
+     * @param transactionTypeId Transaction Type ID of the reversing transaction
+     * @param amount            Charge amount
+     * @param memoText          Memo text
+     * @param statementPrefix   Transaction statement prefix
+     * @return a discounted Charge instance
+     */
+    Charge discountCharge(Long chargeId, String transactionTypeId, BigDecimal amount, String memoText, String statementPrefix);
 
     /**
      * Bounces a payment by ID.
      *
      * @param paymentId Payment ID
      * @param memoText  Memo text
+     * @return Payment instance
      */
-    void bouncePayment(Long paymentId, String memoText);
+    Payment bouncePayment(Long paymentId, String memoText);
 
     /**
      * This method persists new GL breakdowns and associates them with the given GL and transaction types.

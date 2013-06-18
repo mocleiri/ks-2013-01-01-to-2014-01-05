@@ -1887,7 +1887,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     protected Transaction reverseTransaction(Transaction transaction, String reversalTransactionTypeId, String memoText,
-                                             BigDecimal reversalAmount, String statementPrefix) {
+                                             BigDecimal reversalAmount, String statementPrefix, TransactionStatus reversalStatus) {
 
         PermissionUtils.checkPermission(Permission.REVERSE_TRANSACTION);
 
@@ -1997,32 +1997,39 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             }
         }
 
-        // Creating a new reversed transaction with the negated amount of the original transaction
-        Transaction reversedTransaction = createTransaction(reversalTransactionTypeId, transaction.getAccountId(),
+        // Creating a new reverse transaction with the negated amount of the original transaction
+        Transaction reverseTransaction = createTransaction(reversalTransactionTypeId, transaction.getAccountId(),
                 transaction.getEffectiveDate(), reversalAmount.negate());
 
         List<Tag> transactionTags = transaction.getTags();
         if (CollectionUtils.isNotEmpty(transactionTags)) {
-            reversedTransaction.setTags(new ArrayList<Tag>(transactionTags));
+            reverseTransaction.setTags(new ArrayList<Tag>(transactionTags));
         }
 
-        reversedTransaction.setGlOverridden(transaction.isGlOverridden());
-        reversedTransaction.setRollup(transaction.getRollup());
+        reverseTransaction.setGlOverridden(transaction.isGlOverridden());
+        reverseTransaction.setRollup(transaction.getRollup());
 
         if (StringUtils.isNotBlank(statementPrefix) && StringUtils.isNotBlank(transaction.getStatementText())) {
-            reversedTransaction.setStatementText(statementPrefix + " " + transaction.getStatementText());
+            reverseTransaction.setStatementText(statementPrefix + " " + transaction.getStatementText());
+        }
+
+        if (reversalStatus != null) {
+            reverseTransaction.setStatus(reversalStatus);
+        } else {
+            reverseTransaction.setStatus(
+                    transactionStatus == TransactionStatus.ACTIVE ?
+                            TransactionStatus.REVERSING :
+                            TransactionStatus.RECIPROCAL_OFFSET);
         }
 
         if (transactionStatus == TransactionStatus.ACTIVE) {
             transaction.setOffset(true);
-            reversedTransaction.setStatus(TransactionStatus.REVERSING);
         } else {
             transaction.setStatus(TransactionStatus.RECIPROCAL_OFFSET);
-            reversedTransaction.setStatus(TransactionStatus.RECIPROCAL_OFFSET);
         }
 
         // Creating a locked allocation between the original and reversed transactions
-        createLockedAllocation(transaction.getId(), reversedTransaction.getId(), reversalAmount);
+        createLockedAllocation(transaction.getId(), reverseTransaction.getId(), reversalAmount);
 
         // Creating memo
         if (StringUtils.isNotBlank(memoText)) {
@@ -2030,7 +2037,42 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             informationService.createMemo(transaction.getId(), memoText, memoAccessLevelCode, new Date(), null, null);
         }
 
-        return reversedTransaction;
+        return reverseTransaction;
+    }
+
+    /**
+     * If the reverse method is called, the system will generate a negative
+     * transaction for the type of the original transaction. A memo transaction
+     * will be generated, and the transactions will be locked together. Subject
+     * to user customization, the transactions may be marked as hidden. (likely
+     * that credits will not be hidden, debits will.) A charge to an account may
+     * be reversed when a mistake is made, or a refund is issued. A payment may
+     * be reversed when a payment bounces, or for some other reason is entered
+     * on to the account and is not payable.
+     *
+     * @param transactionId   Transaction ID
+     * @param memoText        Text of the memo to be created
+     * @param reversalAmount  Reversal amount
+     * @param statementPrefix Statement prefix that will be added to the existing Transaction statement
+     * @param reversalStatus  Transaction status of the reversal (can be null)
+     * @return a created reversed transaction
+     */
+    @Override
+    @WebMethod(exclude = true)
+    @Transactional(readOnly = false)
+    public Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount,
+                                          String statementPrefix, TransactionStatus reversalStatus) {
+
+        Transaction transaction = getTransaction(transactionId);
+        if (transaction == null) {
+            String errMsg = "Transaction with ID = " + transactionId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        String transactionTypeId = transaction.getTransactionType().getId().getId();
+
+        return reverseTransaction(transaction, transactionTypeId, memoText, reversalAmount, statementPrefix, reversalStatus);
     }
 
     /**
@@ -2055,16 +2097,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     public Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount,
                                           String statementPrefix) {
 
-        Transaction transaction = getTransaction(transactionId);
-        if (transaction == null) {
-            String errMsg = "Transaction with ID = " + transactionId + " does not exist";
-            logger.error(errMsg);
-            throw new TransactionNotFoundException(errMsg);
-        }
-
-        String transactionTypeId = transaction.getTransactionType().getId().getId();
-
-        return reverseTransaction(transaction, transactionTypeId, memoText, reversalAmount, statementPrefix);
+        return reverseTransaction(transactionId, memoText, reversalAmount, statementPrefix, null);
     }
 
     /**
@@ -2082,12 +2115,13 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @param memoText                  Text of the memo to be created
      * @param reversalAmount            Reversal amount
      * @param statementPrefix           Statement prefix that will be added to the existing Transaction statement
+     * @param reversalStatus            Transaction status of the reversal (can be null)
      * @return a created reversed transaction
      */
     @Override
     @Transactional(readOnly = false)
     public Transaction reverseTransaction(Long transactionId, String reversalTransactionTypeId, String memoText,
-                                          BigDecimal reversalAmount, String statementPrefix) {
+                                          BigDecimal reversalAmount, String statementPrefix, TransactionStatus reversalStatus) {
 
         Transaction transaction = getTransaction(transactionId);
         if (transaction == null) {
@@ -2096,7 +2130,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new TransactionNotFoundException(errMsg);
         }
 
-        return reverseTransaction(transaction, reversalTransactionTypeId, memoText, reversalAmount, statementPrefix);
+        return reverseTransaction(transaction, reversalTransactionTypeId, memoText, reversalAmount, statementPrefix, reversalStatus);
     }
 
     protected void expireDeferment(Deferment deferment) {
@@ -2487,7 +2521,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         // Reverse the transaction
         Transaction writeOffTransaction = reverseTransaction(transaction, transactionType.getId().getId(), memoText,
-                writeOffAmount, statementPrefix);
+                writeOffAmount, statementPrefix, TransactionStatus.WRITING_OFF);
 
         // Getting the default WriteOff Rollup code
         String rollupCode = configService.getParameter(Constants.DEFAULT_WRITE_OFF_ROLLUP);
@@ -2498,8 +2532,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 writeOffTransaction.setRollup(rollup);
             }
         }
-
-        writeOffTransaction.setStatus(TransactionStatus.WRITING_OFF);
 
         return writeOffTransaction;
     }
@@ -3057,10 +3089,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *
      * @param chargeId Charge ID
      * @param memoText Memo text
+     * @return Charge instance
      */
     @Override
     @Transactional(readOnly = false)
-    public void cancelCharge(Long chargeId, String memoText) {
+    public Charge cancelCharge(Long chargeId, String memoText) {
 
         PermissionUtils.checkPermission(Permission.CANCEL_CHARGE);
 
@@ -3102,9 +3135,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         String chargeTypeId = charge.getTransactionType().getId().getId();
 
-        Transaction reverseTransaction = reverseTransaction(charge, chargeTypeId, memoText, cancellationAmount, null);
+        // Creating a charge reversal for the cancellation amount
+        reverseTransaction(charge, chargeTypeId, memoText, cancellationAmount, null,
+                TransactionStatus.CANCELLING);
 
-        reverseTransaction.setStatus(TransactionStatus.CANCELLING);
+        return charge;
     }
 
 
@@ -3115,10 +3150,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @param chargeId       Charge ID
      * @param expirationDate Deferment expiration date
      * @param memoText       Memo text
+     * @return Charge instance
      */
     @Override
     @Transactional(readOnly = false)
-    public void contestCharge(Long chargeId, Date expirationDate, String memoText) {
+    public Charge contestCharge(Long chargeId, Date expirationDate, String memoText) {
 
         PermissionUtils.checkPermission(Permission.CONTEST_CHARGE);
 
@@ -3147,6 +3183,38 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         // Creating a memo
         String memoAccessLevelCode = informationService.getDefaultMemoLevel();
         informationService.createMemo(deferment.getId(), memoText, memoAccessLevelCode, new Date(), expirationDate, null);
+
+        return charge;
+    }
+
+    /**
+     * Performs the charge reversal and sets the status of the reversing transaction to DISCOUNTING.
+     *
+     * @param chargeId          Charge ID
+     * @param transactionTypeId Transaction Type ID of the reversing transaction
+     * @param amount            Charge amount
+     * @param memoText          Memo text
+     * @param statementPrefix   Transaction statement prefix
+     * @return a discounted Charge instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Charge discountCharge(Long chargeId, String transactionTypeId, BigDecimal amount, String memoText,
+                                 String statementPrefix) {
+
+        PermissionUtils.checkPermission(Permission.DISCOUNT_CHARGE);
+
+        Charge charge = getCharge(chargeId);
+        if (charge == null) {
+            String errMsg = "Charge with ID = " + chargeId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        // Creating a charge reversal for the given amount
+        reverseTransaction(charge, transactionTypeId, memoText, amount, statementPrefix, TransactionStatus.DISCOUNTING);
+
+        return charge;
     }
 
     /**
@@ -3154,10 +3222,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *
      * @param paymentId Payment ID
      * @param memoText  Memo text
+     * @return Payment instance
      */
     @Override
     @Transactional(readOnly = false)
-    public void bouncePayment(Long paymentId, String memoText) {
+    public Payment bouncePayment(Long paymentId, String memoText) {
 
         PermissionUtils.checkPermission(Permission.BOUNCE_PAYMENT);
 
@@ -3181,11 +3250,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         BigDecimal reversalAmount = payment.getAmount();
 
-        Transaction reverseTransaction = reverseTransaction(payment, paymentTypeId, memoText, reversalAmount, null);
-
-        reverseTransaction.setStatus(TransactionStatus.BOUNCING);
+        // Creating a payment reversal for the payment amount
+        reverseTransaction(payment, paymentTypeId, memoText, payment.getAmount(), null, TransactionStatus.BOUNCING);
 
         // TODO: Use business rules to decide if a charge is to be made for the bounced transaction
+
+        return payment;
     }
 
     /**
