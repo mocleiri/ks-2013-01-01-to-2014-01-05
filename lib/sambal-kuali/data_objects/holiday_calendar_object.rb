@@ -60,7 +60,7 @@ class HolidayCalendar
       page.calendar_name.set @name
       page.start_date.set @start_date
       page.end_date.set @end_date
-      page.organization.select @organization
+      #page.organization.select @organization
       @holiday_types.each do |holiday|
         if holiday[:type] == "random"
           page.holiday_type.select page.select_random_holiday
