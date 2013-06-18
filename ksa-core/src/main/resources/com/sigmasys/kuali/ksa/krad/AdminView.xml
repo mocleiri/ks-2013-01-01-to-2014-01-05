@@ -129,10 +129,34 @@
                     <property name="headerText" value="System Roles &amp; Users"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-HorizontalBoxSection">
+                            <bean parent="Uif-TabGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="Uif-MessageField" p:messageText="Placeholder: Text"/>
+                                        <bean parent="Uif-VerticalBoxSection" p:headerText="Person Lookup">
+                                            <property name="items"><list>
+                                                <bean parent="Uif-Iframe" p:width="100%" p:height="550px" p:source="@{getContext()}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.rice.kim.api.identity.Person&amp;docFormKey=88888888&amp;returnLocation=index.jsp&amp;hideReturnLink=true&amp;showMaintenanceLinks=true"/>
+                                            </list></property>
+                                        </bean>
+                                        <bean parent="Uif-VerticalBoxSection" p:headerText="Group Lookup">
+                                            <property name="items"><list>
+                                                <bean parent="Uif-Iframe" p:width="100%" p:height="550px" p:source="@{getContext()}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.rice.kim.impl.group.GroupBo&amp;docFormKey=88888888&amp;returnLocation=portal.do&amp;hideReturnLink=true&amp;showMaintenanceLinks=true"/>
+                                            </list></property>
+                                        </bean>
+                                        <bean parent="Uif-VerticalBoxSection" p:headerText="Responsibility Lookup">
+                                            <property name="items"><list>
+                                                <bean parent="Uif-Iframe" p:width="100%" p:height="550px" p:source="@{getContext()}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.rice.kim.impl.responsibility.UberResponsibilityBo&amp;docFormKey=88888888&amp;returnLocation=portal.do&amp;hideReturnLink=true&amp;showMaintenanceLinks=true"/>
+                                            </list></property>
+                                        </bean>
+                                        <bean parent="Uif-VerticalBoxSection" p:headerText="Role  Lookup">
+                                            <property name="items"><list>
+                                                <bean parent="Uif-Iframe" p:width="100%" p:height="550px" p:source="@{getContext()}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.rice.kim.impl.role.RoleBo&amp;docFormKey=88888888&amp;returnLocation=portal.do&amp;hideReturnLink=true&amp;showMaintenanceLinks=true"/>
+                                            </list></property>
+                                        </bean>
+                                        <bean parent="Uif-VerticalBoxSection" p:headerText="Permission Lookup">
+                                            <property name="items"><list>
+                                                <bean parent="Uif-Iframe" p:width="100%" p:height="550px" p:source="@{getContext()}/kr/lookup.do?methodToCall=start&amp;businessObjectClassName=org.kuali.rice.kim.impl.permission.UberPermissionBo&amp;docFormKey=88888888&amp;returnLocation=portal.do&amp;hideReturnLink=true&amp;showMaintenanceLinks=true"/>
+                                            </list></property>
+                                        </bean>
                                     </list>
                                 </property>
                             </bean>
