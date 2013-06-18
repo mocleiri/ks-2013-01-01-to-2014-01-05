@@ -426,3 +426,9 @@ h2 {
 	background-color: #eeeeee;
 	height: 300px;
 }
+.carousel-caption {
+	padding: 0.5em 1.0em;
+}
+.carousel-inner img {
+	width: 100%;
+}
