@@ -57,7 +57,7 @@ Feature: EC.Toolbar state
     Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
 
   @bug @KSENROLL-7309
-  Scenario: TB_Draft.1 Validate initial CO toolbar button state for draft SOC - failed recheck Planned button status
+  Scenario: TB_Draft.1 Validate initial CO toolbar button state for draft SOC
     Given I am working on a term in "Draft" SOC state
     And there is an "Planned" course offering present
     And there is an "Draft" course offering present

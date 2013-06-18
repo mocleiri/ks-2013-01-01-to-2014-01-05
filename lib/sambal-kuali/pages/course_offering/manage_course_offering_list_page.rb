@@ -146,8 +146,11 @@ class ManageCourseOfferingList < BasePage
   end
 
   def deselect_all_cos()
-    course_offering_results_table.rows[0].checkbox.set
-    course_offering_results_table.rows[0].checkbox.clear
+    #TODO - revert if KSENROLL-7434 fixed
+    #course_offering_results_table.rows[0].checkbox.set
+    #course_offering_results_table.rows[0].checkbox.clear
+    code_list = co_list
+    deselect_cos(code_list)
   end
 
 
