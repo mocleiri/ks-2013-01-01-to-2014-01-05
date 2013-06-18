@@ -3,9 +3,10 @@ class DeleteCourseOffering < BasePage
   wrapper_elements
   frame_element
 
-  expected_element :term
+  expected_element :info_div
 
-  element(:term) { |b| b.frm.text_field(name: "termCode") }
+  element(:info_div) { |b| b.frm.div(id: "KS-coDeleteConfirmation-Message") }
+  #element(:term) { |b| b.frm.text_field(name: "termCode") }
   element(:course_offering_code) { |b| b.frm.radio(value: "courseOfferingCode") }
   element(:confirm_delete_button) { |b| b.frm.button(id: "coDeleteConfirmationResultSection_confirmDeleteButton") }
 
