@@ -105,6 +105,7 @@
     		<div id="navigation-panel " title="navigation-panel " class="container-fluid optional no-margin hidden">
     		</div>
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
+				<a name="search-results"></a>
 				<div id="togglePageError" class="collapse in hidden">
 					<!-- NOTE: This is added only to allow for a toggle of this message and is not part of the template otherwise -->
 	    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
@@ -135,6 +136,7 @@
     					<div class="container-fluid group span12 optional no-margin no-padding">
 
 							<div class="search-parameters">
+								<br />
 								<form id="search-personnel" title="search-personnel">
 									<div class="controls controls-row">
 										<div class="control-group span3">
@@ -146,16 +148,17 @@
 											</div>
 										</div>
 										<div class="control-group span3">
-											<a class="btn btn-primary no-label">
+											<a href="#search-results" class="btn btn-primary no-label">
 												Find Matches
 											</a>
 										</div>										
 									</div>
 								</form>
+								<br /><br />
 							</div>
 							<div class="search-results clearfix">
 								<h2>Search Results</h2>
-				    			<div id="search-results-filter" title="search-results-filter" class="container-fluid no-padding">
+				    			<div id="search-results-filter" title="search-results-filter" class="container-fluid no-padding hidden">
 				    				Filters: <a href="#">Filter A</a>, <a href="#">Filter B</a>, <a href="#">Filter C</a>
 				    			</div>
 								<table class="table table-hover table-condensed">

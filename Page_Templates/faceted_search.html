@@ -13,6 +13,8 @@
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="assets/css/krad.css" rel="stylesheet">
     <link href="assets/css/kualistudent.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
+    <link href="assets/css/tables.css" rel="stylesheet">
     <!-- HTML5, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -82,7 +84,7 @@
 		    					Support Title
 		    				</div>
 					</div>
-					<div class="pull-right">
+					<div class="pull-right hidden">
 	    				<div id="action-bar" class="pull-right">
 	    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
 	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
@@ -115,7 +117,7 @@
 						</ul>
 	    			</div>
 				</div>
-    			<div id="page-header" title="page-header" class="container-fluid  no-padding">
+    			<div id="page-header" title="page-header" class="container-fluid no-padding hidden">
     				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
 						<dl class="dl-horizontal">
 				    		<dt>Field 1</dt><dd class="gibberish-light">Remotely flung</dd>
@@ -132,13 +134,284 @@
     				<div class="row-fluid no-padding">
     					<div class="container-fluid group span12 optional no-margin no-padding">
 
-
-
-
-
+							<div class="search-parameters">
+								<form id="search-personnel" title="search-personnel">
+									<div class="controls">
+	   								<div class="control-group">
+		    								<label class="control-label field-label">
+		    									Field 1
+		    								</label>
+											<a name="search-results"></a>
+	 	   								<div class="controls">
+		    									<input id="message-courseSufix" type="text" name="courseSufix" class="span4 gibberish-light" placeholder="e.g. A" value="">
+		    								</div>
+	    								</div>
+	   								<div class="control-group">
+		    								<label class="control-label field-label">
+		    									Field 2
+		    								</label>
+		    								<div class="controls">
+		    									<input id="message-courseSufix" type="text" name="courseSufix" class="span4 gibberish-light" placeholder="e.g. Alligator" value="">
+		    								</div>
+	    								</div>
+										<div class="control-group">
+											<a href="#search-results" class="btn btn-primary no-label">
+												Find Matches
+											</a>
+										</div>										
+									</div>
+								</form>
+							</div>
 
    					</div>
-    				</div>
+					</div>
+
+    				<div class="row-fluid no-padding">
+    					<div class="container-fluid group span12 optional no-margin no-padding">
+							<h2>Search Results</h2>
+						</div>
+					</div>
+    				<div class="row-fluid no-padding">
+    					<div class="container-fluid group span3 optional no-margin no-padding">
+							<div class="faceted">
+								<label class="checkbox facet-group">
+						    		<input type="checkbox" id="inlineCheckbox1" value="option1" checked> <strong>All Facet A</strong>
+									<div class="facet-child">
+										<label class="checkbox">
+								    		<input type="checkbox" id="inlineCheckbox1" value="option1"> Facet A1
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="inlineCheckbox2" value="option2"> Facet A2
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="inlineCheckbox3" value="option3"> Facet A3
+										</label>
+									</div>
+								</label>
+								<label class="checkbox facet-group">
+						    		<input type="checkbox" id="inlineCheckbox1" value="option1"> All Facet B
+									<div class="facet-child">
+										<label class="checkbox">
+								    		<input type="checkbox" id="inlineCheckbox1" value="option1"> Facet B1
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="inlineCheckbox2" value="option2" checked> <strong>Facet B2 (1)</strong>
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="inlineCheckbox3" value="option3"> Facet B3
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="inlineCheckbox3" value="option3" checked> <strong>Facet B4 (10)</strong>
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="inlineCheckbox3" value="option3" checked> <strong>Facet B5 (2)</strong>
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="inlineCheckbox3" value="option3"> Facet B6
+										</label>
+									</div>
+								</label>
+								<label class="checkbox facet-group">
+						    		<input type="checkbox" id="inlineCheckbox1" value="option1"> All Facet C
+									<div class="facet-child">
+										<label class="checkbox">
+								    		<input type="checkbox" id="inlineCheckbox1" value="option1"> Facet C1
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="inlineCheckbox2" value="option2" checked> <strong>Facet C2 (3)</strong>
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="inlineCheckbox3" value="option3" checked> <strong>Facet C3 (2)</strong>
+										</label>
+										<label class="checkbox">
+											<input type="checkbox" id="inlineCheckbox3" value="option3"> Facet C4
+										</label>
+									</div>
+								</label>
+							</div>
+    					</div>
+    					<div class="container-fluid group span9 optional no-margin no-padding">
+
+							<div class="search-results">
+				    			<div id="search-results-filter" title="search-results-filter" class="container-fluid no-padding">
+				    				Filter to include: <a href="#">All Facet A</a>, <a href="#">Facet B2</a>, <a href="#">Facet B4</a>, <a href="#">Facet B5</a>, <a href="#">Facet C2</a>, <a href="#">Facet C3</a>
+				    			</div>
+								<table class="table table-hover table-condensed">
+									<thead>
+										<tr>
+											<th class="span2">
+												ID 
+											</th>
+											<th class="span3">
+												Name 
+											</th>
+											<th class="span5">
+												Description
+											</th>
+											<th class="span2"></th>
+										</tr>
+									</thead>
+									<tbody class="gibberish-light">
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 JOHNSON, SARAHSARAH
+											</td>
+											<td>
+												The faithful basic far far knew goodness crud under fuhful basic far far knew goodness crud under fussily eager behind near knowingly alas learned
+											</td>
+											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 SARAH, SARAH
+											</td>
+											<td>
+												The faitThe faithful basic far far knew goodness crud under fusscrud under fussily eager behind near knowingly alas learned
+											</td>
+											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 JOHSARAHON, SARAH
+											</td>
+											<td>
+												ily eager behind near knowingly alas learned
+											</td>
+											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 JOSARAHSARAHN, SAR
+											</td>
+											<td>
+												far far knew goodness crud under	The faithful basic far far knew goodness crud under fussily eager behind near knowingly alas learned
+											</td>
+											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 SARAHSARAHSARAH, dsdfsd
+											</td>
+											<td>
+												The faithful basic  fussily eager behind near knowingly alas learned
+											</td>
+											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 SARAHSARAH, safe
+											</td>
+											<td>
+												The faithful basunder fussily eager behind near knowingly alasfar far knew goodness crud 
+											</td>
+											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 JOHNSON, SARAH
+											</td>
+											<td>
+												The faithful basic far far knew goodness crud under fussily eager behind near knowingly alas learned far far knew goodness crud under fussily eager
+											</td>
+											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 JSARAHOHNSON, sdfsdf
+											</td>
+											<td>
+												under fussily eager behind near knowingly The faithful basic far far knew goodness crud 
+											</td>
+											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 dsfd, sdfsdfsdfsdfs
+											</td>
+											<td>
+												The faithful basic far far knew go behind near knowingly alas learned
+											</td>
+											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												 12345
+											</td>
+											<td>
+												 sdfsdfsdfsdfsdfs, sdfsd
+											</td>
+											<td>
+												The faithful basic  behind near knowingly alas learned
+											</td>
+											<td class="actions">
+												<a href="single-page_edit.html" class="action action-inspect"><i class="icon-edit"></i></a>
+						    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i></a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+				    			<div id="search-results-pagination" title="search-results-pagination" class="container-fluid pull-right hidden">
+				    				<a href="#">&laquo;</a> <a href="#">1</a> ... <a href="#">4</a> 5 <a href="#">6</a> ... <a href="#">9</a> <a href="#">&raquo;</a>
+				    			</div>
+							</div>
+							
+    					</div>
+
+   				</div>
     				<div class="container-fluid group-footer"></div>
     			</div>
     			<!-- Additional groups in columns -->
@@ -153,7 +426,7 @@
     			</div>
     			<div id="page-footer" title="page-footer" class="container-fluid"></div>
     		</div>
-    		<div id="view-footer" title="view-footer" class="container navbar-fixed-bottom sticky">
+    		<div id="view-footer" title="view-footer" class="container navbar-fixed-bottom sticky hidden">
 				<div class="container">
     				<div class="container-fluid pull-right">
     					<form>
