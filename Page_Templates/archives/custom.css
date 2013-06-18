@@ -426,6 +426,12 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .error {
 	border: 2px solid #ff2300 !important;
 }
+.validation-warning {
+	background-color: #F4E271;
+}
+.warning {
+	border: 2px solid #FF9900 !important;
+}
 .required {
 	color: #ff2300;
 	font-size: 1.2em;

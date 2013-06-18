@@ -13,6 +13,8 @@
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="assets/css/krad.css" rel="stylesheet">
     <link href="assets/css/kualistudent.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
+    <link href="assets/css/tables.css" rel="stylesheet">
     <!-- HTML5, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -88,7 +90,7 @@
 	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
 	    					<a href="#" class="action action-print"><i class="icon-print"></i>Print</a>
 	    					<a href="#" class="action action-delete"><i class="icon-remove"></i>Delete</a>
-	    					<a href="single-page_edit.html" class="action action-edit"><i class="icon-edit"></i>Edit</a>
+	    					<a href="single-page_inspect.html" class="action action-inspect"><i class="icon-list-alt"></i>Inspect</a>
 	    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i>Manage</a>
 	    				</div>	
 		  				<div id="meta-data" title="meta-data" class="pull-right">
@@ -105,7 +107,7 @@
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
 				<div id="togglePageError" class="collapse in hidden">
 					<!-- NOTE: This is added only to allow for a toggle of this message and is not part of the template otherwise -->
-	    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
+	    			<div id="page-validation-messaging" title="page-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
 						<h4 class="uif-pageValidationHeader" id="pageValidationHeader">
 							<img src="assets/img/error.png" width="16" height="16" alt="Error" class="hidden">
 							This page has N errors
@@ -116,7 +118,7 @@
 	    			</div>
 				</div>
     			<div id="page-header" title="page-header" class="container-fluid  no-padding">
-    				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
+    				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-padding">
 						<dl class="dl-horizontal">
 				    		<dt>Field 1</dt><dd class="gibberish-light">Remotely flung</dd>
 				    		<dt>Another Field 2</dt><dd class="gibberish-light">Less this one wherever the much lemming</dd>
@@ -133,6 +135,166 @@
     					<div class="container-fluid group span12 optional no-margin no-padding">
 
 
+					    	<ul class="nav nav-tabs">
+						    	<li><a href="#inspect-overview" data-toggle="tab">Section A</a></li>
+						    	<li><a href="#inspect-alternative" data-toggle="tab">Section B</a></li>
+						    	<li><a href="#inspect-details" data-toggle="tab">Section C</a></li>
+						    	<li><a href="#inspect-more-detail" data-toggle="tab">Section D</a></li>
+						    	<li><a href="#inspect-collection" data-toggle="tab">Section E</a></li>
+					    	</ul>
+							<div class="tab-content">
+								<div class="tab-pane active" id="inspect-overview">
+									<form>
+										<div class="control-group">
+											<label class="control-label field-label" for="inputEmail">Field 1</label>
+											<div class="controls">
+												<input type="text" id="inputEmail" placeholder="e.g., Keyword" class="span2">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label field-label" for="inputPassword">Field 2</label>
+											<div class="controls">
+												<input type="password" id="inputPassword" placeholder="e.g., Keyword" class="span4">
+											</div>
+										</div>
+										<div class="control-group">
+											<div class="controls">
+												<label class="checkbox gibberish-light">
+													<input type="checkbox"> Remember me
+												</label>
+											</div>
+		 								</div>
+									</form>
+								</div>
+								<div class="tab-pane" id="inspect-alternative">
+									<form>
+										<div class="control-group">
+											<label class="control-label field-label" for="inputEmail">Field 3</label>
+											<div class="controls">
+												<input type="text" id="inputEmail" placeholder="e.g., Keyword" class="span6">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label field-label" for="inputPassword">Field 4</label>
+											<div class="controls">
+												<input type="password" id="inputPassword" placeholder="e.g., Keyword" class="span6">
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class="tab-pane" id="inspect-details">
+									<form>
+										<div class="control-group">
+											<label class="control-label field-label" for="inputEmail">Field 5</label>
+											<div class="controls">
+												<input type="text" id="inputEmail" placeholder="e.g., Keyword" class="span2">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label field-label" for="inputPassword">Field 6</label>
+											<div class="controls">
+												<input type="password" id="inputPassword" placeholder="e.g., Keyword" class="span4">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label field-label" for="inputPassword">Field 7</label>
+											<div class="controls">
+												<input type="password" id="inputPassword" placeholder="e.g., Keyword" class="span4">
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class="tab-pane" id="inspect-more-detail">
+									<form>
+										<div class="control-group">
+											<label class="control-label field-label" for="inputEmail">Field 8</label>
+											<div class="controls">
+												<input type="text" id="inputEmail" placeholder="e.g., Keyword" class="span2">
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label field-label" for="inputPassword">Field 9</label>
+											<div class="controls">
+												<input type="password" id="inputPassword" placeholder="e.g., Keyword" class="span4">
+											</div>
+										</div>
+		 								<div class="control-group">
+		 									<label class="control-label field-label">
+		 										Field 10
+		 									</label>
+		 									<label class="radio gibberish-light">
+		 										<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
+		 										Course Offering
+		 									</label>
+		 									<label class="radio gibberish-light">
+		 										<input type="radio" name="optionsRadios" id="optionsRadios2" value="Activity Offering">
+		 										Activity Offering
+		 									</label>
+		 								</div>
+									</form>
+								</div>
+								<div class="tab-pane" id="inspect-collection">
+									<form>
+										<div class="control-group">
+		    								<label class="control-label collection-label">
+		    									Collection A
+		    								</label>
+		    								<div class="controls inline">
+			    								<a id="add-person" class="btn btn-flat">
+			    									<i class="icon-plus-sign"></i>
+													Add a Record
+			    								</a>
+			    								<table class="table table-hover table-condensed table-col-4">
+			    									<thead>
+			    										<tr>
+			    											<th class="span3">
+			    												ID
+			    											</th>
+			    											<th class="span3">
+			    												Name
+			    											</th>
+			    											<th class="span3">
+			    												Affiliation <span class="required">*</span>
+			    											</th>
+			    											<th class="span3">
+			    											</th>
+			    										</tr>
+			    									</thead>
+			    									<tbody>
+			    										<tr id="add-person-fields">
+			    											<td>
+			    												<input class="input-medium" type="text" placeholder="e.g., 12345678" value="">
+						   									<span class="uif-constraintMessage"><a href="#advanced-select-personnel" role="link" data-toggle="modal">Find personnel ID</a></span>
+			    											</td>
+			    											<td>
+
+			    											</td>
+			    											<td>
+					    										<select class="span10" required>
+					    											<option class="gibberish-light">
+					    												Instructor
+					    											</option>
+					    											<option class="gibberish-light">
+					    												Teaching Assistant
+					    											</option>
+					    										</select>
+			    											</td>
+			    											<td>
+
+			    											</td>
+			    										</tr>
+			    										<tr id="no-person-data">
+			    											<td colspan="3">
+			    												No records have been selected
+			    											</td>
+			    										</tr>
+			    									</tbody>
+			    								</table>
+		    								</div>
+										</div>
+									</form>
+								</div>
+							</div>
 
 
 
@@ -171,6 +333,149 @@
     	</div>
     	<div id="application-footer" title="application-footer" class="container-fluid navbar-fixed-bottom sticky"></div>
 	</div>
+	<!-- Lightbox: Advanced Select of Personnel -->
+	<div id="advanced-select-personnel" class="modal hide fade modal-medium" tabindex="-1" role="dialog" aria-labelledby="lightboxLabel-personnel" aria-hidden="true">
+   	<div class="modal-header">
+   		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+   		<h3 id="lightboxLabel-personnel">Personnel Lookup</h3>
+   	</div>
+   	<div class="modal-body modal-body-medium">
+			<div class="search-parameters">
+				<form id="search-personnel" title="search-personnel">
+					<div class="controls controls-row">
+						<div class="control-group span2">
+							<label class="control-label field-label">
+								Name
+							</label>
+							<div class="controls">
+								<input class="span2" type="text" placeholder="e.g., Johnson" value="Johnson">
+							</div>
+						</div>
+						<div class="control-group span2">
+							<label class="control-label field-label">
+								ID
+							</label>
+							<div class="controls">
+								<input class="span2" type="text" placeholder="e.g., rjohnson" value="">
+							</div>
+						</div>										
+						<div class="control-group span2">
+							<a class="btn btn-primary no-label">
+								Find Matches
+							</a>
+						</div>										
+					</div>
+				</form>
+			</div>
+			<div class="search-results clearfix">
+				<table class="table table-hover table-condensed">
+					<thead>
+						<tr>
+							<th class="span2">
+								Username 
+							</th>
+							<th class="span4">
+								Name
+							</th>
+						</tr>
+					</thead>
+					<tbody class="gibberish-light">
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.sarahh
+							</td>
+							<td>
+								JOHNSON, SARAH
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.michaelh10615
+							</td>
+							<td>
+								JOHNSON, SARAH
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.michaelh10615
+							</td>
+							<td>
+								JOHNSON, MICHAEL
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.michaelp
+							</td>
+							<td>
+								JOHNSON, MICHAEL
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.francisw
+							</td>
+							<td>
+								JOHNSON, FRANCIS
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.pimonet
+							</td>
+							<td>
+								JOHNSON, PIMONE
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.helens
+							</td>
+							<td>
+								JOHNSON, HELEN
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.barrettr
+							</td>
+							<td>
+								JOHNSON, BARRETT
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.markh
+							</td>
+							<td>
+								JOHNSON, MARK
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.garyh
+							</td>
+							<td>
+								JOHNSON, GARY
+							</td>
+						</tr>
+						<tr data-dismiss="modal" aria-hidden="true">
+							<td>
+								 j.shangap
+							</td>
+							<td>
+								JOHNSON, SHANGA
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+   	</div>
+		<div class="modal-footer">
+			<a href="#" class="cancel" data-dismiss="modal" aria-hidden="true">Cancel</a>
+		</div>
+   </div>
 
 	<!-- Scripts -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -183,6 +488,13 @@
 	<script type="text/javascript">//<![CDATA[ 
 	$(document).ready(function() {
 		$(".collapse").collapse('hide');
+		$('#add-person').click(function () {
+			$("#no-person-data").hide();
+			$("#add-person-fields").show();
+    	});
+	   $('#advanced-select-personnel').modal({
+			show: false
+		});
 	});
 	//]]> </script>
 </body>

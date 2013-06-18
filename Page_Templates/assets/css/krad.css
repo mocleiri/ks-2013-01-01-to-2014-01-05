@@ -37,9 +37,6 @@
 	border-radius: 3px;
 	color: rgb(180, 25, 0);
 }
-.uif-pageValidationMessages-error a {
-	color: rgb(180, 25, 0);
-}
 .uif-pageValidationMessages-warning {
 	border: 1px solid #FF9900;
 	border-radius: 3px;
@@ -47,4 +44,7 @@
 .uif-pageValidationMessages-info {
 	border: 1px solid #3366CC;
 	border-radius: 3px;
+}
+.uif-pageValidationMessages-error a {
+	color: rgb(180, 25, 0);
 }

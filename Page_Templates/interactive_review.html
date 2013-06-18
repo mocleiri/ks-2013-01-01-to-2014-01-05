@@ -13,6 +13,8 @@
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="assets/css/krad.css" rel="stylesheet">
     <link href="assets/css/kualistudent.css" rel="stylesheet">
+    <link href="assets/css/forms.css" rel="stylesheet">
+    <link href="assets/css/tables.css" rel="stylesheet">
     <!-- HTML5, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -82,7 +84,7 @@
 		    					Support Title
 		    				</div>
 					</div>
-					<div class="pull-right">
+					<div class="pull-right hidden">
 	    				<div id="action-bar" class="pull-right">
 	    					<a href="#" class="action action-copy"><i class="icon-plus-sign"></i>Copy</a>
 	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
@@ -100,23 +102,26 @@
     		</div>
     	</div>
     	<div id="view-container" title="view-container" class="container-fluid">
-    		<div id="navigation-panel " title="navigation-panel " class="container-fluid optional no-margin hidden">
+    		<div id="navigation-panel" title="navigation-panel " class="container-fluid optional no-margin hidden">
     		</div>
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
-				<div id="togglePageError" class="collapse in hidden">
+				<div id="togglePageError" class="collapse">
 					<!-- NOTE: This is added only to allow for a toggle of this message and is not part of the template otherwise -->
-	    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
+	    			<div id="page-validation-messaging" title="page-validation-messaging" class="container-fluid validation-warning  uif-pageValidationMessages-warning">
 						<h4 class="uif-pageValidationHeader" id="pageValidationHeader">
-							<img src="assets/img/error.png" width="16" height="16" alt="Error" class="hidden">
-							This page has N errors
+							<img src="assets/img/warning.png" width="16" height="16" alt="Warning" class="hidden">
+							You are now being warned of the consequence of this action
 						</h4>
-						<ul id="pageValidationList" class="uif-validationMessagesList" aria-labelledby="pageValidationHeader">
+						<p class="gibberish-light">
+							The faithful basic far far knew goodness crud under fussily eager behind near knowingly alas learned yet across bid hatchet a by advantageously jeez faultily shook far.
+						</p>
+						<ul id="pageValidationList" class="uif-validationMessagesList hidden" aria-labelledby="pageValidationHeader">
 							<li data-messageitemfor="Demo-ValidationLayout-Section1" class="uif-errorMessageItem"><a href="#section-information">The "Information" section has 1 error</a></li>
 						</ul>
 	    			</div>
 				</div>
-    			<div id="page-header" title="page-header" class="container-fluid  no-padding">
-    				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
+    			<div id="page-header" title="page-header" class="container-fluid  no-padding hidden">
+    				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-padding">
 						<dl class="dl-horizontal">
 				    		<dt>Field 1</dt><dd class="gibberish-light">Remotely flung</dd>
 				    		<dt>Another Field 2</dt><dd class="gibberish-light">Less this one wherever the much lemming</dd>
@@ -132,11 +137,152 @@
     				<div class="row-fluid no-padding">
     					<div class="container-fluid group span12 optional no-margin no-padding">
 
+							<form id="#main-form">
 
+								<div class="section">
+									<a name="section-A"></a>
+									<h2>
+										List of Affected Records
+									</h2>
+										<div class="control-group">
+										<label class="control-label collection-label">
+											Collection Label
+										</label>
+										<div class="controls inline">
+											<div id="command-bar" title="command-bar" class="hidden">
+												<a id="command-add-record" class="btn btn-flat">
+													<i class="icon-plus"></i><br />
+													Add a Record
+												</a>
+												<i class="icon-spacer"></i>
+												<a id="command-approve" class="btn btn-flat disabled">
+													<i class="icon-ok"></i><br />
+													Approve
+												</a><a id="command-set-as-draft" class="btn btn-flat disabled">
+													<i class="icon-file"></i><br />
+													Set as Draft
+												</a>
+												<i class="icon-spacer"></i>
+												<a id="command-suspend" class="btn btn-flat disabled">
+													<i class="icon-time"></i><br />
+													Suspend
+												</a><a id="command-cancel" class="btn btn-flat disabled">
+													<i class="icon-ban-circle"></i><br />
+													Cancel
+												</a><a id="command-reinstate" class="btn btn-flat disabled">
+													<i class="icon-repeat"></i><br />
+													Reinstate
+												</a><a id="command-delete" class="btn btn-flat disabled">
+													<i class="icon-remove"></i><br />
+													Delete
+												</a>
+											</div>
+											<fieldset>
+											<table class="table table-hover table-condensed">
+												<thead>
+													<th class="span1">
+														<label class="checkbox">
+															<input type="checkbox" name="select-all" class="checkall" checked>
+														</label>
+													</th>
+													<th class="span2">
+														ID
+													</th>
+													<th class="span2">
+														Name
+													</th>
+													<th class="span2">
+														Affiliation
+													</th>
+													<th class="span5">
+														Description
+													</th>
+												</thead>
+												<tbody class="gibberish-light">
+													<tr>
+														<td>
+															<label class="checkbox">
+																<input type="checkbox" name="selected" value="0000001" checked>
+															</label>
+														</td>
+														<td>
+															<a href="#quick-inspect" role="link" data-toggle="modal">0000001</a>
+														</td>
+														<td>
+															Incredibly 
+														</td>
+														<td>
+															This past
+														</td>
+														<td >
+															Luxuriant felt one.
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<label class="checkbox">
+																<input type="checkbox" name="selected" value="0000321" checked>
+															</label>
+														</td>
+														<td>
+															<a href="#quick-inspect" role="link" data-toggle="modal">0000321</a>
+														</td>
+														<td>
+															Wherever  
+														</td>
+														<td>
+															Less picked
+														</td>
+														<td>
+															In unsaddled towards onto slit deer this much.
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<label class="checkbox">
+																<input type="checkbox" name="selected" value="0034243" checked>
+															</label>
+														</td>
+														<td>
+															<a href="#quick-inspect" role="link" data-toggle="modal">0034243</a>
+														</td>
+														<td>
+															Contrary  
+														</td>
+														<td>
+															Less in
+														</td>
+														<td>
+															Playful celestially.
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<label class="checkbox">
+																<input type="checkbox" name="selected" value="0000001" checked>
+															</label>
+														</td>
+														<td>
+															<a href="#quick-inspect" role="link" data-toggle="modal">0000001</a>
+														</td>
+														<td>
+															Incredibly 
+														</td>
+														<td>
+															This past
+														</td>
+														<td >
+															Luxuriant felt one.
+														</td>
+													</tr>
+												</tbody>
+											</table>
+											</fieldset>
+										</div>
+									</div>
+								</div>
 
-
-
-
+							</form>
    					</div>
     				</div>
     				<div class="container-fluid group-footer"></div>
@@ -158,10 +304,7 @@
     				<div class="container-fluid pull-right">
     					<form>
     						<button type="submit" class="btn btn-primary">
-    							Save
-    						</button>
-    						<button type="submit" class="btn secondary">
-    							Save Progress
+    							Confirm
     						</button>
     						<a href="#" class="cancel">Cancel</a>
     					</form>
@@ -183,6 +326,10 @@
 	<script type="text/javascript">//<![CDATA[ 
 	$(document).ready(function() {
 		$(".collapse").collapse('hide');
+		/* Select All from http://briancray.com/posts/check-all-jquery-javascript */
+		$('.checkall').on('click', function () {
+			$(this).closest('fieldset').find(':checkbox').prop('checked', this.checked);
+		});
 	});
 	//]]> </script>
 </body>

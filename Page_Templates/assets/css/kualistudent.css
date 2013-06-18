@@ -362,7 +362,7 @@ h2 {
 
 
 /************************************************************* FORMATING: Page Header Group (overview) */
-#page-header-group {
+#page-header-group, .page-header-group {
     background-color: #ebebeb;
     padding: 0.6em 1.2em;
 	border-radius: 3px;
@@ -398,3 +398,31 @@ h2 {
 }
 
 
+
+/************************************************************* VALIDATION */
+.validation-error {
+	background-color: #ffeaf0;
+}
+.error {
+	border: 2px solid #ff2300 !important;
+}
+.validation-warning {
+	background-color: #F4E271;
+}
+.warning {
+	border: 2px solid #FF9900 !important;
+}
+.required {
+	color: #ff2300;
+	font-size: 1.2em;
+}
+
+
+
+/**************************************************************** START */
+.directory {
+	padding: 0.5em 1.0em;
+	border: 2px solid #666666;
+	background-color: #eeeeee;
+	height: 300px;
+}

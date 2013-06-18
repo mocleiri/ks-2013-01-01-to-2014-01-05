@@ -88,7 +88,7 @@
 	    					<a href="#" class="action action-comments"><i class="icon-comment"></i>Comments</a>
 	    					<a href="#" class="action action-print"><i class="icon-print"></i>Print</a>
 	    					<a href="#" class="action action-delete"><i class="icon-remove"></i>Delete</a>
-	    					<a href="single-page_edit.html" class="action action-edit"><i class="icon-edit"></i>Edit</a>
+	    					<a href="single-page_inspect.html" class="action action-inspect"><i class="icon-list-alt"></i>Inspect</a>
 	    					<a href="manage.html" class="action action-manage"><i class="icon-wrench"></i>Manage</a>
 	    				</div>	
 		  				<div id="meta-data" title="meta-data" class="pull-right">
@@ -105,7 +105,7 @@
     		<div id="page-container" title="page-container" class="container-fluid no-margin">
 				<div id="togglePageError" class="collapse in hidden">
 					<!-- NOTE: This is added only to allow for a toggle of this message and is not part of the template otherwise -->
-	    			<div id="page-error-validation-messaging" title="page-error-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
+	    			<div id="page-validation-messaging" title="page-validation-messaging" class="container-fluid validation-error  uif-pageValidationMessages-error">
 						<h4 class="uif-pageValidationHeader" id="pageValidationHeader">
 							<img src="assets/img/error.png" width="16" height="16" alt="Error" class="hidden">
 							This page has N errors
@@ -116,7 +116,7 @@
 	    			</div>
 				</div>
     			<div id="page-header" title="page-header" class="container-fluid  no-padding">
-    				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-pad">
+    				<div id="page-header-group" title="page-header-group" class="container-fluid optional no-padding">
 						<dl class="dl-horizontal">
 				    		<dt>Field 1</dt><dd class="gibberish-light">Remotely flung</dd>
 				    		<dt>Another Field 2</dt><dd class="gibberish-light">Less this one wherever the much lemming</dd>
@@ -133,7 +133,9 @@
     					<div class="container-fluid group span12 optional no-margin no-padding">
 
 
-
+							<p>
+								<a href="#lightbox-content" role="link" data-toggle="modal">Quickly edit a record</a> that has some relevance to the task of editing this object.
+							</p>
 
 
 
@@ -172,170 +174,74 @@
     	<div id="application-footer" title="application-footer" class="container-fluid navbar-fixed-bottom sticky"></div>
 	</div>
 	<!-- Lightbox: Advanced Select of Organization -->
-	<div id="lightbox-content" class="modal fade lightbox modal-large" tabindex="-1" role="dialog" aria-labelledby="lightboxLabel" aria-hidden="true">
+	<div id="lightbox-content" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="lightboxLabel" aria-hidden="true">
    	<div class="modal-header">
    		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-   		<h3 id="lightboxLabel">Organizational Lookup</h3>
+   		<h3 id="lightboxLabel">Quick Edit</h3>
    	</div>
-   	<div class="modal-body modal-body-large">
-			<div class="search-parameters">
-				<form id="search-organization" title="search-organization">
-					<div class="controls controls-row">
-						<div class="control-group span2">
-							<label class="control-label field-label">
-								Organization Name
-							</label>
-							<div class="controls">
-								<input class="span2" type="text" placeholder="e.g., Civil-Center" value="Civil Center">
-							</div>
-						</div>
-						<div class="control-group span4">
-							<label class="control-label field-label">
-								Abbreviation
-							</label>
-							<div class="controls">
-								<input class="span4" type="text" placeholder="e.g., Ctr Excellence on Proj Mgmt" value="">
-							</div>
-						</div>										
-						<div class="control-group span2">
-							<a class="btn btn-primary no-label">
-								Find Matches
-							</a>
-						</div>										
+   	<div class="modal-body">
+			<form id="#main-form">
+				<div class="control-group">
+					<label class="control-label field-label">
+						Field 1
+					</label>
+					<div class="controls">
+						<input id="message-courseSufix" type="text" name="courseSufix" class="input-mini-block" placeholder="e.g. A" value="A">
 					</div>
-				</form>
-			</div>
-			<div class="search-results clearfix">
-				<table class="table table-hover table-condensed">
-					<thead>
-						<tr>
-							<th class="span2">
-								ID 
-							</th>
-							<th class="span6">
-								Name
-							</th>
-							<th class="span4">
-								Abbreviation
-							</th>
-						</tr>
-					</thead>
-					<tbody class="gibberish-light">
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								1511461247 
-							</td>
-							<td>
-								AGNR-Dean-Joint Inst for Food Safety &amp; Applied Nutrition
-							</td>
-							<td>
-								Inst Food Safety &amp; Appl Nutr
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								1835615967 
-							</td>
-							<td>
-								AEXST-WT-Journalism
-							</td>
-							<td>
-								Winter Term-JOUR
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								31193503 
-							</td>
-							<td>
-								ENGR-Civil-Center for Excellence on Project Management
-							</td>
-							<td>
-								Ctr Excellence on Proj Mgmt
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								3392144313 
-							</td>
-							<td>
-								ARHU-Meyerhoff Program & Center for Jewish Studies
-							</td>
-							<td>
-								Meyerhoff Prg & Ctr Jewish Std
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								3506629388 
-							</td>
-							<td>
-								VPRGS-UMCAPS-Ctr for Criminal Justice Tech. Res.
-							</td>
-							<td>
-								UMCAPS-Ctr For Criminal Just.
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								4236812358 
-							</td>
-							<td>
-								JOUR-Philip Merrill College of Journalism
-							</td>
-							<td>
-								Philip Merrill Coll Journalism
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								4282297334 
-							</td>
-							<td>
-								ARHU-Women's Studies-Curric Transform Project
-							</td>
-							<td>
-								Wom Std-Curric Transform Proj
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								436661015 
-							</td>
-							<td>
-								CMNS-Astro-Joint Space Sciences Institute
-							</td>
-							<td>
-								Joint Space Sciences Inst
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								438750448 
-							</td>
-							<td>
-								EXST-FC-Journalism
-							</td>
-							<td>
-								Freshmen Connection-JOUR
-							</td>
-						</tr>
-						<tr data-dismiss="modal" aria-hidden="true">
-							<td>
-								53692544 
-							</td>
-							<td>
-								Joint Quantum Institute
-							</td>
-							<td>
-								CMNS-Physics-Joint Quantum Institute
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+				</div>    					
+
+				<div class="control-group">
+					<label class="control-label field-label">
+						Field 2
+					</label>
+					<label class="checkbox gibberish-light" >
+						<input type="checkbox" name="vehicle" value="Waitlist" data-toggle="collapse" data-target="#waitlist-options" checked>
+						This course offering has a waitlist
+					</label>
+				</div>
+				<div id="waitlist-options" class="collapse form-child">
+					<div class="control-group">
+						<label class="control-label field-label">
+							Field 3
+						</label>
+						<label class="radio gibberish-light">
+							<input type="radio" name="optionsRadios" id="optionsRadios1" value="Course Offering" checked>
+							Course Offering
+						</label>
+						<label class="radio gibberish-light">
+							<input type="radio" name="optionsRadios" id="optionsRadios2" value="Activity Offering">
+							Activity Offering
+						</label>
+					</div>
+					<div class="control-group">
+						<label class="control-label field-label">
+							Field 4
+						</label>
+						<div class="controls">
+							<select id="message-waitlistType" name="waitlistType" class="span2 gibberish-light" required>
+								<option selected>
+									Select a type ...
+								</option>
+								<option>
+									Automatic
+								</option>
+								<option>
+									Semi-automatic
+								</option>
+								<option>
+									Manual
+								</option>
+							</select> 
+						</div>
+					</div>
+				</div>
+			</form>
+
    	</div>
 		<div class="modal-footer">
+			<button type="submit" data-dismiss="modal" class="btn btn-primary">
+				Save
+			</button>
 			<a href="#" class="cancel" data-dismiss="modal" aria-hidden="true">Cancel</a>
 		</div>
    </div>
