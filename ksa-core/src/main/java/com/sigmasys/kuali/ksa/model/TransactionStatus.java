@@ -9,14 +9,14 @@ package com.sigmasys.kuali.ksa.model;
 public enum TransactionStatus implements Identifiable {
 
     ACTIVE,
-    BOUNCED,
-    REFUNDED,
+    BOUNCING,
+    REFUNDING,
     REFUND_REQUESTED,
     EXPIRED,
-    CANCELLED,
-    WRITTEN_OFF,
-    RECIPROCAL_OFFSET,
-    REVERSED_OFFSET;
+    CANCELLING,
+    WRITING_OFF,
+    REVERSING,
+    RECIPROCAL_OFFSET;
 
 
     @Override
@@ -29,22 +29,22 @@ public enum TransactionStatus implements Identifiable {
         switch (this) {
             case ACTIVE:
                 return "Active";
-            case BOUNCED:
-                return "Bounced";
-            case REFUNDED:
-                return "Refunded";
+            case BOUNCING:
+                return "Bouncing";
+            case REFUNDING:
+                return "Refunding";
             case REFUND_REQUESTED:
                 return "Refund Requested";
             case EXPIRED:
                 return "Expired";
-            case CANCELLED:
-                return "Cancelled";
-            case WRITTEN_OFF:
-                return "Written Off";
+            case CANCELLING:
+                return "Cancelling";
+            case WRITING_OFF:
+                return "Writing Off";
+            case REVERSING:
+                return "Reversing";
             case RECIPROCAL_OFFSET:
                 return "Reciprocal Offset";
-            case REVERSED_OFFSET:
-                return "Reversed Offset";
         }
         throw new IllegalStateException("No Transaction status found for " + name() + " value");
     }

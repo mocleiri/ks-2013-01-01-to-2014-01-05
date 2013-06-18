@@ -724,7 +724,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             case UNVERIFIED:
                 refund.setStatus(RefundStatus.CANCELLED);
                 break;
-            case REFUNDED:
+            case ACTIVE:
 
                 // Check all Refunds belonging to the same refund group, cancel them and reverse all Transactions.
                 // If there is no refund group, cancel only the refund and reverse its Transaction:
@@ -1165,33 +1165,28 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         }
 
         Account account = originalTransaction.getAccount();
+
         String userId = StringUtils.isNotBlank(accountId) ? accountId : account.getId();
+
         String refundTransactionTypeId = refund.getRefundType().getDebitTypeId();
+
         Date effectiveDate = new Date();
+
         BigDecimal amount = refund.getAmount();
 
-        // TODO -> Use reverseTransaction() method to create a new transaction reversal, allocation and memo
-
+        // Creating a new refund transaction with the same amount
         Transaction refundTransaction = transactionService.createTransaction(refundTransactionTypeId, userId, effectiveDate, amount);
 
-        // Creating a locked allocation between the refund and the original transaction in the amount of the refund:
-        Allocation allocation = new Allocation();
-
-        allocation.setAccount(account);
-        allocation.setFirstTransaction(originalTransaction);
-        allocation.setSecondTransaction(refundTransaction);
-        allocation.setAmount(amount);
-        allocation.setLocked(true);
-
-        // Persisting the new allocation
-        persistEntity(allocation);
+        // Creating a locked allocation between the refund and the original transaction in the amount of the refund
+        transactionService.createLockedAllocation(originalTransaction.getId(), refundTransaction.getId(), refund.getAmount());
 
         // Updating the Refund object with the modified values:
         refund.setRefundDate(effectiveDate);
         refund.setRefundTransaction(refundTransaction);
-        refund.setStatus(RefundStatus.REFUNDED);
+        refund.setStatus(RefundStatus.ACTIVE);
 
-        originalTransaction.setStatus(TransactionStatus.REFUNDED);
+        originalTransaction.setStatus(TransactionStatus.ACTIVE);
+        originalTransaction.setOffset(true);
 
         if (StringUtils.isNotBlank(batch)) {
             refund.setBatchId(batch);

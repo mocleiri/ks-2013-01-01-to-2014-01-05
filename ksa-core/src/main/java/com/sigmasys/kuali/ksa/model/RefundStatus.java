@@ -9,13 +9,13 @@ public enum RefundStatus implements Identifiable {
 
     UNVERIFIED(RefundStatus.UNVERIFIED_CODE),
     VERIFIED(RefundStatus.VERIFIED_CODE),
-    REFUNDED(RefundStatus.REFUNDED_CODE),
+    ACTIVE(RefundStatus.ACTIVE_CODE),
     CANCELLED(RefundStatus.CANCELED_CODE),
     FAILED(RefundStatus.FAILED_CODE);
 
     public static final String UNVERIFIED_CODE = "U";
     public static final String VERIFIED_CODE = "V";
-    public static final String REFUNDED_CODE = "R";
+    public static final String ACTIVE_CODE = "A";
     public static final String CANCELED_CODE = "C";
     public static final String FAILED_CODE = "F";
 
@@ -37,10 +37,10 @@ public enum RefundStatus implements Identifiable {
                 return "Unverified";
             case VERIFIED:
                 return "Verified";
-            case REFUNDED:
-                return "Refunded";
+            case ACTIVE:
+                return "Active";
             case CANCELLED:
-            	return "Cancelled";
+                return "Cancelled";
             case FAILED:
                 return "Failed";
         }

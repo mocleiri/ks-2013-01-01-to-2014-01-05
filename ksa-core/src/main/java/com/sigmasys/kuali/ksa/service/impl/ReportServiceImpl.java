@@ -1008,7 +1008,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         for (Transaction transaction : transactionWithinDateRange) {
             BigDecimal unallocatedTransactionAmount = transaction.getUnallocatedAmount();
             if (transaction instanceof Debit) {
-                if (TransactionStatus.WRITTEN_OFF.equals(transaction.getStatus())) {
+                if (TransactionStatus.WRITING_OFF.equals(transaction.getStatus())) {
                     writtenOffAmount = writtenOffAmount.add(transaction.getAmount());
                 }
                 netBalance = netBalance.add(unallocatedTransactionAmount);

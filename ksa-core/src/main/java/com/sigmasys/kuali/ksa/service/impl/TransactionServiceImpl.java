@@ -2015,7 +2015,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         if (transactionStatus == TransactionStatus.ACTIVE) {
             transaction.setOffset(true);
-            reversedTransaction.setStatus(TransactionStatus.REVERSED_OFFSET);
+            reversedTransaction.setStatus(TransactionStatus.REVERSING);
         } else {
             transaction.setStatus(TransactionStatus.RECIPROCAL_OFFSET);
             reversedTransaction.setStatus(TransactionStatus.RECIPROCAL_OFFSET);
@@ -2499,7 +2499,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             }
         }
 
-        writeOffTransaction.setStatus(TransactionStatus.WRITTEN_OFF);
+        writeOffTransaction.setStatus(TransactionStatus.WRITING_OFF);
 
         return writeOffTransaction;
     }
@@ -3008,7 +3008,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         String cancellationRule = charge.getCancellationRule();
-        if (TransactionStatus.CANCELLED.equals(charge.getStatus()) || StringUtils.isBlank(cancellationRule) ||
+        if (TransactionStatus.CANCELLING.equals(charge.getStatus()) || StringUtils.isBlank(cancellationRule) ||
                 charge.getAmount() == null || charge.getAmount().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
@@ -3081,9 +3081,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         if (CollectionUtils.isNotEmpty(allocations)) {
             for (Allocation allocation : allocations) {
                 for (Transaction transaction : allocation.getTransactions()) {
-                    if (transaction.getStatus() == TransactionStatus.CANCELLED) {
+                    if (transaction.getStatus() == TransactionStatus.CANCELLING) {
                         String errMsg = "Transaction is allocated with another transaction with " +
-                                TransactionStatus.CANCELLED + " status";
+                                TransactionStatus.CANCELLING + " status";
                         logger.error(errMsg);
                         throw new IllegalStateException(errMsg);
                     }
@@ -3104,7 +3104,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         Transaction reverseTransaction = reverseTransaction(charge, chargeTypeId, memoText, cancellationAmount, null);
 
-        reverseTransaction.setStatus(TransactionStatus.CANCELLED);
+        reverseTransaction.setStatus(TransactionStatus.CANCELLING);
     }
 
 
@@ -3183,7 +3183,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         Transaction reverseTransaction = reverseTransaction(payment, paymentTypeId, memoText, reversalAmount, null);
 
-        reverseTransaction.setStatus(TransactionStatus.BOUNCED);
+        reverseTransaction.setStatus(TransactionStatus.BOUNCING);
 
         // TODO: Use business rules to decide if a charge is to be made for the bounced transaction
     }

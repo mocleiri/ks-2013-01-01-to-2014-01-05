@@ -25,7 +25,7 @@ public class RefundStatusKeyValuesFinder extends GenericKeyValuesFinder {
         result.add(new ConcreteKeyValue("", "Show All Status Types"));
         result.add(new ConcreteKeyValue(RefundStatus.UNVERIFIED_CODE, RefundStatus.UNVERIFIED.toString()));
         result.add(new ConcreteKeyValue(RefundStatus.VERIFIED_CODE, RefundStatus.VERIFIED.toString()));
-        result.add(new ConcreteKeyValue(RefundStatus.REFUNDED_CODE, RefundStatus.REFUNDED.toString()));
+        result.add(new ConcreteKeyValue(RefundStatus.ACTIVE_CODE, RefundStatus.ACTIVE.toString()));
         result.add(new ConcreteKeyValue(RefundStatus.CANCELED_CODE, RefundStatus.CANCELLED.toString()));
         result.add(new ConcreteKeyValue(RefundStatus.FAILED_CODE, RefundStatus.FAILED.toString()));
 

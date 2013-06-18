@@ -287,7 +287,7 @@ public class RefundServiceTest extends AbstractServiceTest {
         notNull(refund.getRefundTransaction());
         notNull(refund.getTransaction().getStatus());
 
-        isTrue(refund.getTransaction().getStatus() == TransactionStatus.REFUNDED);
+        isTrue(refund.getTransaction().getStatus() == TransactionStatus.REFUNDING);
 
         refund = refundService.cancelRefund(refund.getId(), "Refund for payment 'cash' has been cancelled");
 
