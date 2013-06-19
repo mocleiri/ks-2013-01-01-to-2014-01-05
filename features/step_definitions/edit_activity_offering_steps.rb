@@ -7,6 +7,12 @@ end
 
 Then /^I am able to submit the changes$/ do
   @activity_offering.save
+
+  #validate the success-growl is being shown
+  on ManageCourseOfferings do |page|
+    sleep 2 #TODO: required by headless
+    page.growltext.should == "Activity Offering modified."
+  end
 end
 
 
@@ -46,7 +52,6 @@ And /^verify that the changes of Miscellaneous have persisted$/ do
     page.requires_evaluation.set?.should_not == @prev_req_ev
     page.honors_flag.set?.should_not == @prev_hon_flg
   end
-
 end
 
 Given /^I manage a given Course Offering$/ do

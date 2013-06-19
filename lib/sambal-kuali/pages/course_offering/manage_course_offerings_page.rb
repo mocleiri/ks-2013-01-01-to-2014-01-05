@@ -81,6 +81,7 @@ class ManageCourseOfferings < BasePage
   element(:move_ao_button) { |b| b.move_ao_cluster_popup_div.button(text: "Move") }
   action(:complete_move_ao) { |b| b.move_ao_button.click; b.loading.wait_while_present }
   element(:jgrowl){|b|b.frm.div(id:"jGrowl")}
+  value(:growltext){|b| b.jgrowl.div(class:"jGrowl-message").text}
 
   #def approve_co_confirm
   #  approve_co_popup_div.checkbox(index: 0).click
