@@ -29,7 +29,7 @@ Feature: KRMS ELIG7.4 Compare to Canonical
   Scenario: Confirm that there is a warning message after editing CO
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201208" and course "BSCI202"
     And I want to edit the selected agenda section
-    And I add a "course" statement after node "B" with course "HIST210"
+    And I add a course statement after node "B" with course "HIST210"
     Then the info message "Course Offering Rule now differs from Canonical Rule" should be present
     When I commit changes made to the proposition
 

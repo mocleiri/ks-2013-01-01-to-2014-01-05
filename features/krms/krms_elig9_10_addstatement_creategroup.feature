@@ -8,9 +8,9 @@ Feature: KRMS ELIG9.10 Add Statement and Create Group
   @pending
   Scenario: Setup one level of data using Add Statement button
     When I want to add a new statement to the selected agenda section
-    And I add a new "text" statement with text "Free Text 1"
-    And I add a "text" statement after node "A" with text "Free Text 2"
-    And I add a "text" statement after node "C" with text "Free Text 3"
+    And I add a new free form text statement with text "Free Text 1"
+    And I add a free form text statement after node "A" with text "Free Text 2"
+    And I add a free form text statement after node "C" with text "Free Text 3"
     Then the "edit" tab should have the text "B. Must meet all of the following"
     And the "edit" tab should have the text "A. Free Text 1"
     And the "edit" tab should have the text "C. Free Text 2"
@@ -21,9 +21,9 @@ Feature: KRMS ELIG9.10 Add Statement and Create Group
   @pending
   Scenario: Setup second level of data (Groups) using Create Group button
     When I want to edit the selected agenda section
-    And I create a group with node "B" by adding a "text" statement with text "Free Text 1b"
-    And I create a group with node "D" by adding a "text" statement with text "Free Text 2b"
-    And I create a group with node "F" by adding a "text" statement with text "Free Text 2c"
+    And I group free form text statement with node "B" with text "Free Text 1b"
+    And I group free form text statement with node "D" with text "Free Text 2b"
+    And I group free form text statement with node "F" with text "Free Text 2c"
     When I commit and return to see the changes made to the proposition
     And I want to edit the selected agenda section
     Then the "edit" tab should have the text "A. Must meet all of the following"

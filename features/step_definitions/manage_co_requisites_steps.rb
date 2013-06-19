@@ -60,32 +60,184 @@ When /^I edit node "(.*?)" in the tree by changing the "(.*?)" to "(.*?)"$/ do |
   @manageCOR.edit_existing_node(node, field, change)
 end
 
-When /^I add a "(.*?)" statement after node "(.*?)" with courses "([^\"]+)" and course set "(.*?)"$/ do |field, node, course, set|
-  @manageCOR.add_new_node(@courseOR.section, field, node, course, set)
+When /^I add a course statement after node "(.)" with course "([^\"]+)"$/ do |node, course|
+  @manageCOR.create_course_rule( "add", node, course, @courseOR.section)
 end
 
-When /^I add a "(.*?)" statement after node "(.*?)" with (?:|courses|course|text) "([^\"]+)"$/ do |field, node, course|
-  @manageCOR.add_new_node(@courseOR.section, field, node, course, "")
+When /^I add a free form text statement after node "(.)" with text "([^\"]+)"$/ do |node, text|
+  @manageCOR.create_text_rule( "add", node, text)
 end
 
-When /^I add a new "(.*?)" statement with courses "([^\"]+)" and course set "(.*?)"$/ do |field, course, set|
-  @manageCOR.add_new_node(@courseOR.section, field, "", course, set)
+When /^I add a courses statement after node "(.)" with courses "([^\"]+)" and course sets "([^\"]+)"$/ do |node, course, set|
+  @manageCOR.create_all_courses_rule( "add", node, course, set, "", @courseOR.section)
 end
 
-When /^I add a new "(.*?)" statement with course sets "([^\"]+)"$/ do |field, set|
-  @manageCOR.add_new_node(@courseOR.section, field, "", "", set)
+When /^I add a courses statement after node "(.)" with courses "([^\"]+)"$/ do |node, course|
+  @manageCOR.create_all_courses_rule( "add", node, course, "", "", @courseOR.section)
 end
 
-When /^I add a new "(.*?)" statement with (?:|courses|course|text) "([^\"]+)"$/ do |field, course|
-  @manageCOR.add_new_node(@courseOR.section, field, "", course, "")
+When /^I add a courses statement after node "(.)" with course sets "([^\"]+)"$/ do |node, set|
+  @manageCOR.create_all_courses_rule( "add", node, "", set, "", @courseOR.section)
 end
 
-When /^I create a group with node "(.*?)" by adding a "(.*?)" statement with courses "([^\"]+)" and course set "(.*?)"$/ do |node, field, course, set|
-  @manageCOR.create_new_group(@courseOR.section, field, node, course, set)
+When /^I add a number of courses statement after node "(.)" with number "(\d+)" and courses "([^\"]+)" and course sets "([^\"]+)"$/ do |node, number, course, set|
+  @manageCOR.create_number_courses_rule( "add", node, number, course, set, "", @courseOR.section)
 end
 
-When /^I create a group with node "(.*?)" by adding a "(.*?)" statement with (?:|courses|course|text) "([^\"]+)"$/ do |node, field, course|
-  @manageCOR.create_new_group(@courseOR.section, field, node, course, "")
+When /^I add a number of courses statement after node "(.)" with number "(\d+)" and courses "([^\"]+)"$/ do |node, number, course|
+  @manageCOR.create_number_courses_rule( "add", node, number, course, "", "", @courseOR.section)
+end
+
+When /^I add a number of courses statement after node "(.)" with number "(\d+)" and course sets "([^\"]+)"$/ do |node, number, set|
+  @manageCOR.create_number_courses_rule( "add", node, number, "", set, "", @courseOR.section)
+end
+
+When /^I add a repeated for credits statement after node "(.)" with "(\d+)" credits$/ do |node, number|
+  @manageCOR.create_repeated_credit_rule( "add", node, number)
+end
+
+When /^I add a grade and courses statement after node "(.)" with courses "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |node, course, type, grade|
+  @manageCOR.create_grade_courses_rule( "add", node, course, "", "", type, grade, @courseOR.section)
+end
+
+When /^I add a grade and courses statement after node "(.)" with course sets "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |node, set, type, grade|
+  @manageCOR.create_grade_courses_rule( "add", node, "", set, "", type, grade, @courseOR.section)
+end
+
+When /^I add a grade and number of courses statement after node "(.)" with number "(\d+)" and courses "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |node, number, course, type, grade|
+  @manageCOR.create_grade_number_courses_rule( "add", node, course, "", "", type, grade, number)
+end
+
+When /^I add a grade and number of courses statement after node "(.)" with number "(\d+)" and course sets "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |node, number, set, type, grade|
+  @manageCOR.create_grade_number_courses_rule( "add", node, "", set, "", type, grade, number)
+end
+
+When /^I add a gpa and courses statement after node "(.)" with courses "([^\"]+)" and GPA of "([^\"]+)"$/ do |node, course, gpa|
+  @manageCOR.create_gpa_courses_rule( "add", node, course, "", "", gpa)
+end
+
+When /^I add a gpa and courses statement after node "(.)" with course sets "([^\"]+)" and GPA of "([^\"]+)"$/ do |node, set, gpa|
+  @manageCOR.create_gpa_courses_rule( "add", node, "", set, "", gpa)
+end
+
+When /^I add a new course statement with course "([^\"]+)"$/ do |course|
+  @manageCOR.create_course_rule( "add", "", course, @courseOR.section)
+end
+
+When /^I add a new free form text statement with text "([^\"]+)"$/ do |text|
+  @manageCOR.create_text_rule( "add", "", text)
+end
+
+When /^I add a new courses statement with courses "([^\"]+)" and course sets "([^\"]+)"$/ do |course, set|
+  @manageCOR.create_all_courses_rule( "add", "", course, set, "", @courseOR.section)
+end
+
+When /^I add a new courses statement with courses "([^\"]+)"$/ do |course|
+  @manageCOR.create_all_courses_rule( "add", "", course, "", "", @courseOR.section)
+end
+
+When /^I add a new courses statement with course sets "([^\"]+)"$/ do |set|
+  @manageCOR.create_all_courses_rule( "add", "", "", set, "", @courseOR.section)
+end
+
+When /^I add a new number of courses statement with number "(\d+)" and courses "([^\"]+)" and course sets "([^\"]+)"$/ do |number, course, set|
+  @manageCOR.create_number_courses_rule( "add", "", number, course, set, "", @courseOR.section)
+end
+
+When /^I add a new number of courses statement with number "(\d+)" and courses "([^\"]+)"$/ do |number, course|
+  @manageCOR.create_number_courses_rule( "add", "", number, course, "", "", @courseOR.section)
+end
+
+When /^I add a new number of courses statement with number "(\d+)" and course sets "([^\"]+)"$/ do |number, set|
+  @manageCOR.create_number_courses_rule( "add", "", number, "", set, "", @courseOR.section)
+end
+
+When /^I add a new repeated for credits statement with "(\d+)" credits$/ do |number|
+  @manageCOR.create_repeated_credit_rule( "add", "", number)
+end
+
+When /^I add a new grade and courses statement with courses "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |course, type, grade|
+  @manageCOR.create_grade_courses_rule( "add", "", course, "", "", type, grade, @courseOR.section)
+end
+
+When /^I add a new grade and courses statement with course sets "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |set, type, grade|
+  @manageCOR.create_grade_courses_rule( "add", "", "", set, "", type, grade, @courseOR.section)
+end
+
+When /^I add a new grade and number of courses statement with number "(\d+)" and courses "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |number, course, type, grade|
+  @manageCOR.create_grade_number_courses_rule( "add", "", course, "", "", type, grade, number)
+end
+
+When /^I add a new grade and number of courses statement with number "(\d+)" and course sets "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |number, set, type, grade|
+  @manageCOR.create_grade_number_courses_rule( "add", "", "", set, "", type, grade, number)
+end
+
+When /^I add a new gpa and courses statement with courses "([^\"]+)" and GPA of "([^\"]+)"$/ do |course, gpa|
+  @manageCOR.create_gpa_courses_rule( "add", "", course, "", "", gpa)
+end
+
+When /^I add a new gpa and courses statement with course sets "([^\"]+)" and GPA of "([^\"]+)"$/ do |set, gpa|
+  @manageCOR.create_gpa_courses_rule( "add", "", "", set, "", gpa)
+end
+
+When /^I add a new gpa and duration statement with GPA of "([\d\.]+)" and duration type "([^\"]+)" with duration "(\d+)"$/ do |gpa, type, duration|
+  @manageCOR.create_gpa_duration_rule( "add", "", gpa, type, duration)
+end
+
+When /^I add a new program statement with program code "(.*?)"$/ do |program|
+  @manageCOR.create_program_rule( "add", "", program)
+end
+
+When /^I group course statement with node "(.)" with course "([^\"]+)"$/ do |node, course|
+  @manageCOR.create_course_rule( "group", node, course, @courseOR.section)
+end
+
+When /^I group free form text statement with node "(.)" with text "([^\"]+)"$/ do |node, text|
+  @manageCOR.create_text_rule( "group", node, text)
+end
+
+When /^I group courses statement with node "(.)" with courses "([^\"]+)"$/ do |node, course|
+  @manageCOR.create_all_courses_rule( "group", node, course, "", "", @courseOR.section)
+end
+
+When /^I group courses statement with node "(.)" with course sets "([^\"]+)"$/ do |node, set|
+  @manageCOR.create_all_courses_rule( "group", node, "", set, "", @courseOR.section)
+end
+
+When /^I group number of courses statement with node "(.)" with number "(\d+)" and courses "([^\"]+)"$/ do |node, number, course|
+  @manageCOR.create_number_courses_rule( "group", node, number, course, "", "", @courseOR.section)
+end
+
+When /^I group number of courses statement with node "(.)" with number "(\d+)" and course sets "([^\"]+)"$/ do |node, number, set|
+  @manageCOR.create_number_courses_rule( "group", node, number, "", set, "", @courseOR.section)
+end
+
+When /^I group repeated for credits statement with node "(.)" with "(\d+)" credits$/ do |node, number|
+  @manageCOR.create_repeated_credit_rule( "group", node, number)
+end
+
+When /^I group grade and courses statement with node "(.)" with courses "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |node, course, type, grade|
+  @manageCOR.create_grade_courses_rule( "group", node, course, "", "", type, grade, @courseOR.section)
+end
+
+When /^I group grade and courses statement with node "(.)" with course sets "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |node, set, type, grade|
+  @manageCOR.create_grade_courses_rule( "group", node, "", set, "", type, grade, @courseOR.section)
+end
+
+When /^I group grade and number of courses statement with node "(.)" with number "(\d+)" and courses "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |node, number, course, type, grade|
+  @manageCOR.create_grade_number_courses_rule( "group", node, course, "", "", type, grade, number)
+end
+
+When /^I group grade and number of courses statement with node "(.)" with number "(\d+)" and course sets "([^\"]+)" and grade type "([^\"]+)" with grade "([^\"]+)"$/ do |node, number, set, type, grade|
+  @manageCOR.create_grade_number_courses_rule( "group", node, "", set, "", type, grade, number)
+end
+
+When /^I group gpa and courses statement with node "(.)" with courses "([^\"]+)" and GPA of "([^\"]+)"$/ do |node, course, gpa|
+  @manageCOR.create_gpa_courses_rule( "group", node, course, "", "", gpa)
+end
+
+When /^I group gpa and courses statement with node "(.)" with course sets "([^\"]+)" and GPA of "([^\"]+)"$/ do |node, set, gpa|
+  @manageCOR.create_gpa_courses_rule( "group", node, "", set, "", gpa)
 end
 
 When /^I commit and return to see the changes made to the proposition$/ do

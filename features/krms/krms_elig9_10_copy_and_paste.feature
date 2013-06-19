@@ -19,12 +19,12 @@ Feature: KRMS ELIG9.10 Copy and Paste
     When I commit changes made to the proposition
 
   #ELIG9.10.EB2 (KSENROLL-7051)
-  @bug @KSENROLL7110
+  @bug @KSENROLL-7110
   Scenario: Confirm the copy and paste of compound (group) rule statement is working as expected
     When I want to edit the selected agenda section
     And I copy node "D" and paste it after node "I"
     Then the "edit" tab should have the text "L. Must meet 1 of the following"
-    And the "edit" tab should have the text "M. Must have successfully completed all courses from (ENGL478, HIST416)"
+    And the "edit" tab should have the text "M. Must have successfully completed all courses from (HIST416, ENGL478)"
     And the "edit" tab should have the text "N. Text to copy"
     And there should be a dropdown with value "OR" before node "L."
     When I switch to the other tab on the page

@@ -42,6 +42,12 @@ class ManageCORequisites < BasePage
   element(:free_text_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.termParameter/)}
   element(:courses_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.cluSet\.clus\'\]\.code/)}
   element(:integer_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.parameters\[1\]\.value/)}
+  element(:grade_dropdown) { |b| b.frm.select(:name => /.*editTree.*proposition\.termParameter/)}
+  element(:duration_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.duration/)}
+  element(:duration_dropdown) { |b| b.frm.select(:name => /.*editTree.*proposition\.durationType/)}
+  element(:program_dropdown) { |b| b.frm.select(:name => /.*editTree.*proposition\.programType/)}
+
+  element(:grade_fieldset) { |b| b.edit_tree_section.fieldset(:id => /KRMS-GradeScale-Field_node_\d+_parent_root_fieldset/)}
 
   element(:lookup_section) { |b| b.frm_popup.div(id: "CourseLookupView")}
   element(:lookup_results) { |b| b.frm_popup.div(id: "uLookupResults")}

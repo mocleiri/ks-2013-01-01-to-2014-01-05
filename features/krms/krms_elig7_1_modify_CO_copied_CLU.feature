@@ -16,7 +16,7 @@ Feature: KRMS ELIG7.1 Modify CO copied from CLU
   @pending
   Scenario: Test whether adding new statement to existing statements persists to the database
     When I want to edit the selected agenda section
-    And I add a "courses" statement after node "C" with courses "HIST110,ENGL313"
+    And I add a courses statement after node "C" with courses "HIST110,ENGL313"
     And I commit and return to see the changes made to the proposition
     Then the "agenda" page should have the text "Must have successfully completed all courses from,ENGL313,HIST110"
 

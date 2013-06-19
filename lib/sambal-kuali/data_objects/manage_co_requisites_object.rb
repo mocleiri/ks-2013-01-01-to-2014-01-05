@@ -50,14 +50,15 @@ class ManageCORequisitesData
   end
 
   def advanced_search(field, code)
-    fields = {"course code"=>:lookup_course_code, "course title"=>:lookup_course_title, "course set"=>:lookup_set_name}
+    fields = {"course code"=>:lookup_course_code, "course title"=>:lookup_course_title, "course set"=>:lookup_set_name,
+              "course range"=>"????", }  ##############################################
     on ManageCORequisites do |page|
       page.edit_loading.wait_while_present
       page.search_link
       page.send(fields[field]).when_present.set code
       page.lookup_search_button
       page.loading.wait_while_present
-      if( field == "course code" || field == "course set")
+      if field == "course code" || field == "course set"#####################################
         page.lookup_results.a(:title => /.*#{Regexp.escape(code)}.*/).click
       else
         #TODO - find a way to return course code randomly when searching for title or description
@@ -95,23 +96,13 @@ class ManageCORequisitesData
 
   def create_data_advanced_search( sect)
     on ManageCORequisites do |page|
-      page.add_btn
-      create_course_rule( "ENGL101", sect)
-      page.add_btn
-      create_course_rule( "HIST639", sect)
-      page.add_btn
-      create_text_rule( "free form text input value")
-      page.edit_tree_section.span(:text => /.*A\..*/).when_present.click
-      page.group_btn
-      create_all_courses_rule(  ["ENGL478", "HIST416"], "", sect)
-      page.add_btn
-      create_text_rule( "Text")
-      page.edit_tree_section.span(:text => /.*F\..*/).when_present.click
-      page.group_btn
-      create_text_rule( "Text to copy")
-      page.edit_tree_section.span(:text => /.*D\..*/).when_present.click
-      page.add_btn
-      create_number_courses_rule( ["HIST395", "HIST210"], "", sect)
+      create_course_rule( "add", "", "ENGL101", sect)
+      create_course_rule( "add", "", "HIST639", sect)
+      create_text_rule( "add", "", "free form text input value")
+      create_all_courses_rule( "group", "A", ["ENGL478", "HIST416"], "", "", sect)
+      create_text_rule( "add", "", "Text")
+      create_text_rule( "group", "F", "Text to copy")
+      create_number_courses_rule( "add", "D", ["HIST395", "HIST210"], "", sect)
       page.loading.wait_while_present
       page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
@@ -122,19 +113,11 @@ class ManageCORequisitesData
 
   def edit_data_advanced_search( sect)
     on ManageCORequisites do |page|
-      page.edit_tree_section.span(:text => /.*C\..*/).when_present.click
-      page.add_btn
-      create_course_rule( "ENGL101", sect)
-      page.group_btn
-      create_text_rule( "free form text input value")
-      page.edit_tree_section.span(:text => /.*B\..*/).when_present.click
-      page.group_btn
-      create_all_courses_rule(  ["ENGL478", "HIST416"], "", sect)
-      page.add_btn
-      create_text_rule( "Text")
-      page.edit_tree_section.span(:text => /.*F\..*/).when_present.click
-      page.group_btn
-      create_number_courses_rule( ["HIST395", "HIST210"], "", sect)
+      create_course_rule( "add", "C", "ENGL101", sect)
+      create_text_rule( "group", "", "free form text input value")
+      create_all_courses_rule( "add", "B", ["ENGL478", "HIST416"], "", "", sect)
+      create_text_rule( "add", "", "Text")
+      create_number_courses_rule( "group", "F", "1", ["HIST395", "HIST210"], "", "", sect)
       page.loading.wait_while_present
       page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "AND"
       page.edit_loading.wait_while_present
@@ -143,7 +126,8 @@ class ManageCORequisitesData
     end
   end
 
-  def create_course_rule( course, sect)
+  def create_course_rule( group, node, course, sect)
+    add_new_node( group, node)
     on ManageCORequisites do |page|
       if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
         page.rule_dropdown.when_present.select /Must have successfully completed <course>/
@@ -159,7 +143,8 @@ class ManageCORequisitesData
     end
   end
 
-  def create_text_rule( text)
+  def create_text_rule( group, node, text)
+    add_new_node( group, node)
     on ManageCORequisites do |page|
       page.rule_dropdown.when_present.select /Free Form Text/
       page.free_text_field.when_present.set text
@@ -167,7 +152,8 @@ class ManageCORequisitesData
     end
   end
 
-  def create_all_courses_rule( courses, set, sect)
+  def create_all_courses_rule( group, node, course, set, range, sect)
+    add_new_node( group, node)
     on ManageCORequisites do |page|
       if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
         page.rule_dropdown.when_present.select /Must have successfully completed all courses from <courses>/
@@ -175,58 +161,138 @@ class ManageCORequisitesData
         page.rule_dropdown.when_present.select /Must not have successfully completed any courses from <courses>/
       elsif( sect == "Corequisite")
         page.rule_dropdown.when_present.select /Must be concurrently enrolled in all courses from <courses>/
-      elsif( sect == "Repeatable for Credit")
-        page.rule_dropdown.when_present.select /May not repeat any of <courses>/
       end
-      if courses != "" && courses != nil
-        page.multi_course_dropdown.when_present.select /Approved Courses/
-        courses.each do |course|
-          advanced_search("course code", course)
-          page.add_line_btn
-          page.adding.wait_while_present
-        end
-      end
-      if set != "" && set != nil
-        page.multi_course_dropdown.when_present.select /Course Sets/
-        advanced_search("course set", set)
-        page.add_line_btn
-        page.adding.wait_while_present
-      end
+      add_courses( course, set, range)
       page.preview_btn
     end
   end
 
-  def create_number_courses_rule( courses, set, sect)
+  def create_number_courses_rule( group, node, number, course, set, range, sect)
+    add_new_node( group, node)
     on ManageCORequisites do |page|
       if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
         page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> courses from <courses>/
-        page.integer_field.when_present.set "1"
-      elsif( sect == "Antirequisite")
-        page.rule_dropdown.when_present.select /Must successfully complete no more than <n> credits from <courses>/
-        page.integer_field.when_present.set "4"
+        page.integer_field.when_present.set number
       elsif( sect == "Corequisite")
         page.rule_dropdown.when_present.select /Must be concurrently enrolled in a minimum of <n> courses from <courses>/
-        page.integer_field.when_present.set "1"
-      elsif( sect == "Repeatable for Credit")
-        page.rule_dropdown.when_present.select /May not repeat any of <courses>/
-      elsif( sect == "Course that Restricts Credits")
-        page.rule_dropdown.when_present.select /Must not have successfully completed any courses from <courses>/
+        page.integer_field.when_present.set number
       end
-      if courses != "" and courses != nil
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_repeated_credit_rule( group, node, number)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /May be repeated for a maximum of <n> credits/
+      page.integer_field.when_present.set number
+      page.preview_btn
+    end
+  end
+
+  def create_grade_courses_rule( group, node, course, set, range, type, grade, sect)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
+        page.rule_dropdown.when_present.select /Must have earned a minimum grade of <gradeType> <grade> in <courses>/
+      elsif( sect == "Antirequisite")
+        page.rule_dropdown.when_present.select /Must not have earned a grade of <gradeType> <grade> or higher in <courses>/
+      end
+      page.grade_fieldset.label(:text => /#{Regexp.escape(type)}/).when_present.click
+      page.grade_dropdown.when_present.select grade
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_grade_number_courses_rule( group, node, course, set, range, type, grade, number)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must successfully complete a minimum of <n> courses from <courses> with a minimum grade of <gradeType> <grade>/
+      page.integer_field.when_present.set number
+      page.grade_fieldset.label(:text => /#{Regexp.escape(type)}/).when_present.click
+      page.grade_dropdown.when_present.select grade
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_gpa_courses_rule( group, node, course, set, range, gpa)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have earned a minimum GPA of <GPA> in <courses>/
+      page.integer_field.when_present.set gpa
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_gpa_duration_rule( group, node, gpa, type, duration)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have earned a minimum Cumulative GPA of <GPA> in <duration><durationType>/
+      page.integer_field.when_present.set gpa
+      page.duration_field.when_present.set duration
+      page.duration_dropdown.when_present.select type
+      page.preview_btn
+    end
+  end
+
+  def create_program_rule( group, node, program)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
+        page.rule_dropdown.when_present.select /Must have been admitted to the <Program> Program/
+      elsif( sect == "Antirequisite")
+        page.rule_dropdown.when_present.select /Must not have been admitted to the <Program> Program/
+      end
+      page.program_dropdown.when_present.select /Approved Programs/
+      add_program( program)
+      page.preview_btn
+    end
+  end
+
+  def add_courses( course, set, range)
+    on ManageCORequisites do |page|
+      courses = create_array( course)
+      if courses != "" && courses != nil
         page.multi_course_dropdown.when_present.select /Approved Courses/
-        courses.each do |course|
-          advanced_search("course code", course)
+        courses.each do |elem|
+          advanced_search("course code", elem)
           page.add_line_btn
           page.adding.wait_while_present
         end
       end
-      if set != "" && set != nil
+      sets = create_array( set)
+      if sets != "" && sets != nil
         page.multi_course_dropdown.when_present.select /Course Sets/
-        advanced_search("course set", set)
+        sets.each do |elem|
+          advanced_search("course set", elem)
+          page.add_line_btn
+          page.adding.wait_while_present
+        end
+      end
+      if range != "" && range != nil         ###FIX##################################
+        page.multi_course_dropdown.when_present.select /Course Ranges/
+        advanced_search("course range", range)
         page.add_line_btn
         page.adding.wait_while_present
+      end                              ######################################
+    end
+  end
+
+  def add_program( program)
+    on ManageCORequisites do |page|
+      programs = create_array( program)
+      if programs != "" && programs != nil
+        page.program_dropdown.when_present.select /Approved Programs/
+        programs.each do |elem|
+          advanced_search("course code", elem)
+          page.add_line_btn
+          page.adding.wait_while_present
+        end
       end
-      page.preview_btn
     end
   end
 
@@ -247,54 +313,69 @@ class ManageCORequisitesData
     end
   end
 
-  def add_new_node(sect, field, node, course, set)
+  def add_new_node( group, node)
     on ManageCORequisites do |page|
       if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
         page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
       end
-      page.add_btn
-      if field == "course"
-        create_course_rule( course, sect)
-      elsif field == "courses"
-        courses = ""
-        if course != "" && course != nil
-          courses = course.split(/,/)
-        end
-        create_all_courses_rule( courses, set, sect)
-      elsif field == "text"
-        create_text_rule( course)
-      elsif field == "number of courses"
-        courses = course.split(/,/)
-        create_number_courses_rule( courses, set, sect)
+      if group == "group"
+        page.group_btn
+      else
+        page.add_btn
       end
     end
   end
 
-  def create_new_group(sect, field, node, course, set)
-    on ManageCORequisites do |page|
-      page.loading.wait_while_present
-      if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
-        page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
-        page.group_btn
-        if field == "course"
-          create_course_rule( course, sect)
-        elsif field == "courses"
-          courses = course.split(/,/)
-          create_all_courses_rule( courses, set, sect)
-        elsif field == "text"
-          create_text_rule( course)
-        elsif field == "number of courses"
-          courses = course.split(/,/)
-          create_number_courses_rule( courses, set, sect)
-        end
-      end
+  #def add_new_gradetype_node(sect, field, node, course, set, range, type, grade)
+  #  on ManageCORequisites do |page|
+  #    if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
+  #      page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+  #    end
+  #    page.add_btn
+  #    courses = create_array(course)
+  #    sets = create_array(set)
+  #    if field == "courses"
+  #      create_grade_courses_rule( courses, sets, range, type, grade, sect)
+  #    elsif field == "number of courses"
+  #      create_grade_number_courses_rule( courses, sets, range, type, grade, sect)
+  #    end
+  #  end
+  #end
+
+  def create_array( string)
+    if string != "" && string != nil && string !~ /.*\(.+\).*/
+      strings = string.split(/,/)
+    else
+      strings = string
     end
+    return strings
   end
+
+  #def create_new_group(sect, field, node, course, set, range)
+  #  on ManageCORequisites do |page|
+  #    page.loading.wait_while_present
+  #    if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
+  #      page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+  #      page.group_btn
+  #      if field == "course"
+  #        create_course_rule( course, sect)
+  #      elsif field == "courses"
+  #        courses = course.split(/,/)
+  #        create_all_courses_rule( courses, set, range, sect)
+  #      elsif field == "text"
+  #        create_text_rule( course)
+  #      elsif field == "number of courses"
+  #        courses = course.split(/,/)
+  #        create_number_courses_rule( courses, set, range, sect)
+  #      end
+  #    end
+  #  end
+  #end
 
   def switch_tabs
     on ManageCORequisites do |page|
       page.edit_loading.wait_while_present
-      tab = page.tab_section.li(:class => /ui-state-default ui-corner-top ui-tabs-active ui-state-active/).text
+      tab = page.tab_section.li(:class => /ui-state-active/).text
       if tab == "Edit Rule"
         page.logic_tab.when_present.click
       else
