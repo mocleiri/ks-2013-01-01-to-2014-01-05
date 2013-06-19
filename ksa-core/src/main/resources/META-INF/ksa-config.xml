@@ -37,7 +37,7 @@
 
     <!--  Bus Configuration  -->
     <param name="dev.mode">false</param>
-    <param name="message.enable">false</param>
+    <param name="message.enable">true</param>
     <param name="message.persistence">false</param>
     <param name="message.delivery">async</param>
     <param name="Routing.ImmediateExceptionRouting">false</param>
