@@ -3278,9 +3278,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         String paymentTypeId = payment.getTransactionType().getId().getId();
 
-        BigDecimal reversalAmount = payment.getAmount();
-
-        // Creating a payment reversal for the payment amount
+        // Creating a payment reversal with the original payment type and the whole payment amount
         reverseTransaction(payment, paymentTypeId, memoText, payment.getAmount(), null, TransactionStatus.BOUNCING);
 
         // TODO: Use business rules to decide if a charge is to be made for the bounced transaction

@@ -579,6 +579,79 @@ public class TransactionServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void bouncePayment() throws Exception {
+
+        String id = "cash";
+
+        Transaction transaction = transactionService.createTransaction(id, "admin", new Date(), new BigDecimal(10e5));
+
+        notNull(transaction);
+        isTrue(transaction instanceof Payment);
+        isTrue(transaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getTransactionType().getId());
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        transaction = transactionService.bouncePayment(transaction.getId(), "Memo text");
+
+        notNull(transaction);
+        isTrue(transaction instanceof Payment);
+        isTrue(transaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        isTrue(transaction.isOffset());
+        isTrue(transaction.getStatus() == TransactionStatus.ACTIVE);
+
+        List<Allocation> allocations = transactionService.getAllocations(transaction.getId());
+
+        notNull(allocations);
+        notEmpty(allocations);
+
+        boolean bouncingTransactionExists = false;
+
+        for (Allocation allocation : allocations) {
+
+            notNull(allocation);
+            notNull(allocation.getId());
+            notNull(allocation.getTransactions());
+            notEmpty(allocation.getTransactions());
+            isTrue(allocation.getTransactions().size() == 2);
+
+            for (Transaction allocatedTransaction : allocation.getTransactions()) {
+
+                notNull(allocatedTransaction);
+
+                if (allocatedTransaction.getStatus() == TransactionStatus.BOUNCING) {
+
+                    bouncingTransactionExists = true;
+
+                    logger.info("Original payment amount = " + transaction.getAmount());
+                    logger.info("Bouncing payment amount = " + allocatedTransaction.getAmount());
+
+                    isTrue(allocatedTransaction instanceof Payment);
+                    notNull(allocatedTransaction.getAmount());
+                    isTrue(allocatedTransaction.getAmount().compareTo(BigDecimal.ZERO) < 0);
+                    isTrue(allocatedTransaction.getAmount().negate().compareTo(transaction.getAmount()) == 0);
+
+                }
+
+            }
+
+        }
+
+        isTrue(bouncingTransactionExists);
+    }
+
+    @Test
     public void createDeferment() throws Exception {
 
         // Must be a credit type 'C'
