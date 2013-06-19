@@ -99,14 +99,14 @@ class ManageCORequisitesData
       create_course_rule( "add", "", "ENGL101", sect)
       create_course_rule( "add", "", "HIST639", sect)
       create_text_rule( "add", "", "free form text input value")
-      create_all_courses_rule( "group", "A", ["ENGL478", "HIST416"], "", "", sect)
+      create_all_courses_rule( "group", "A", "ENGL478,HIST416", "", "", sect)
       create_text_rule( "add", "", "Text")
       create_text_rule( "group", "F", "Text to copy")
-      create_number_courses_rule( "add", "D", ["HIST395", "HIST210"], "", sect)
+      create_number_courses_rule( "add", "D", "1", "HIST395,HIST210", "", "", sect)
       page.loading.wait_while_present
-      page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "OR"
+      page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
-      page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_2_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
+      page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
     end
   end
@@ -115,13 +115,13 @@ class ManageCORequisitesData
     on ManageCORequisites do |page|
       create_course_rule( "add", "C", "ENGL101", sect)
       create_text_rule( "group", "", "free form text input value")
-      create_all_courses_rule( "add", "B", ["ENGL478", "HIST416"], "", "", sect)
+      create_all_courses_rule( "add", "B", "ENGL478,HIST416", "", "", sect)
       create_text_rule( "add", "", "Text")
-      create_number_courses_rule( "group", "F", "1", ["HIST395", "HIST210"], "", "", sect)
+      create_number_courses_rule( "group", "F", "1", "HIST395,HIST210", "", "", sect)
       page.loading.wait_while_present
-      page.edit_tree_section.select(:id => /u\d+_node_3_parent_node_0_parent_root_control/).when_present.select "AND"
+      page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "AND"
       page.edit_loading.wait_while_present
-      page.edit_tree_section.select(:id => /u\d+_node_1_parent_node_0_parent_node_0_parent_root_control/).when_present.select "OR"
+      page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
     end
   end
@@ -239,7 +239,7 @@ class ManageCORequisitesData
     end
   end
 
-  def create_program_rule( group, node, program)
+  def create_program_rule( group, node, program, sect)
     add_new_node( group, node)
     on ManageCORequisites do |page|
       if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
@@ -306,6 +306,7 @@ class ManageCORequisitesData
         page.multi_course_dropdown.when_present.select /Approved Courses/
         advanced_search("course code", code)
         page.add_line_btn
+        page.adding.wait_while_present
       elsif field == "text"
         page.free_text_field.when_present.set code
       end

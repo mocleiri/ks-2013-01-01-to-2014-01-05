@@ -185,7 +185,7 @@ When /^I add a new gpa and duration statement with GPA of "([\d\.]+)" and durati
 end
 
 When /^I add a new program statement with program code "(.*?)"$/ do |program|
-  @manageCOR.create_program_rule( "add", "", program)
+  @manageCOR.create_program_rule( "add", "", program, @courseOR.section)
 end
 
 When /^I group course statement with node "(.)" with course "([^\"]+)"$/ do |node, course|
