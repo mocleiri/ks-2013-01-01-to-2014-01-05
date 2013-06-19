@@ -405,6 +405,180 @@ public class TransactionServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void contestCharge() throws Exception {
+
+        String id = "1020";
+
+        Transaction transaction = transactionService.createTransaction(id, "admin", new Date(), new BigDecimal(10e5));
+
+        notNull(transaction);
+        isTrue(transaction instanceof Charge);
+        isTrue(transaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getTransactionType().getId());
+
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        transaction = transactionService.contestCharge(transaction.getId(), new Date(), "Memo text");
+
+        notNull(transaction);
+        isTrue(transaction instanceof Charge);
+        isTrue(transaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        List<Allocation> allocations = transactionService.getAllocations(transaction.getId());
+
+        notNull(allocations);
+        notEmpty(allocations);
+
+        boolean chargeExists = false;
+        boolean defermentExists = false;
+
+        for (Allocation allocation : allocations) {
+
+            notNull(allocation);
+            notNull(allocation.getId());
+            notNull(allocation.getTransactions());
+            notEmpty(allocation.getTransactions());
+            isTrue(allocation.getTransactions().size() == 2);
+
+            for (Transaction allocatedTransaction : allocation.getTransactions()) {
+
+                notNull(allocatedTransaction);
+
+                if (transaction.getId().equals(allocatedTransaction.getId())) {
+                    chargeExists = true;
+                } else if (allocatedTransaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT) {
+                    defermentExists = true;
+                }
+
+            }
+
+        }
+
+        isTrue(chargeExists);
+        isTrue(defermentExists);
+
+    }
+
+    @Test
+    public void cancelCharge() throws Exception {
+
+        String id = "1020";
+
+        Transaction transaction = transactionService.createTransaction(id, "admin", new Date(), new BigDecimal(10e5));
+
+        notNull(transaction);
+        isTrue(transaction instanceof Charge);
+        isTrue(transaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getTransactionType().getId());
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        transaction = transactionService.cancelCharge(transaction.getId(), "Memo text");
+
+        notNull(transaction);
+        isTrue(transaction instanceof Charge);
+        isTrue(transaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        // TODO: provide charges with cancellation rules so that a cancellation will not be 0 and check the result of
+        // TODO: reverseTransaction() method call
+
+        //isTrue(transaction.isOffset());
+        //isTrue(transaction.getStatus() == TransactionStatus.ACTIVE);
+
+    }
+
+    @Test
+    public void discountCharge() throws Exception {
+
+        String discountTransactionTypeId = "1020";
+
+        Transaction transaction = transactionService.createTransaction("1020", "admin", new Date(), new BigDecimal(10e5));
+
+        notNull(transaction);
+        isTrue(transaction instanceof Charge);
+        isTrue(transaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getTransactionType().getId());
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        transaction = transactionService.discountCharge(transaction.getId(), discountTransactionTypeId,
+                new BigDecimal(240.99), "Memo text", "Statement Prefix");
+
+        notNull(transaction);
+        isTrue(transaction instanceof Charge);
+        isTrue(transaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        isTrue(transaction.isOffset());
+        isTrue(transaction.getStatus() == TransactionStatus.ACTIVE);
+
+        List<Allocation> allocations = transactionService.getAllocations(transaction.getId());
+
+        notNull(allocations);
+        notEmpty(allocations);
+
+        boolean discountingTransactionExists = false;
+
+        for (Allocation allocation : allocations) {
+
+            notNull(allocation);
+            notNull(allocation.getId());
+            notNull(allocation.getTransactions());
+            notEmpty(allocation.getTransactions());
+            isTrue(allocation.getTransactions().size() == 2);
+
+            for (Transaction allocatedTransaction : allocation.getTransactions()) {
+
+                notNull(allocatedTransaction);
+
+                if (allocatedTransaction.getStatus() == TransactionStatus.DISCOUNTING) {
+
+                    discountingTransactionExists = true;
+
+                    isTrue(allocatedTransaction instanceof Charge);
+                    notNull(allocatedTransaction.getAmount());
+                    isTrue(allocatedTransaction.getAmount().compareTo(BigDecimal.ZERO) < 0);
+
+                }
+
+            }
+
+        }
+
+        isTrue(discountingTransactionExists);
+    }
+
+    @Test
     public void createDeferment() throws Exception {
 
         // Must be a credit type 'C'
@@ -666,6 +840,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
     @Test
     public void testTransactionExistsByTransactionType() throws Exception {
+
         // Create a new Transaction:
         String transactionTypeId = "1020";
         String accountId = "admin";
@@ -717,6 +892,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
     @Test
     public void testTransactionExistsByTransactionTypeAndAmount() throws Exception {
+
         // Create a new Transaction:
         String transactionTypeId = "1020";
         String accountId = "admin";
@@ -782,6 +958,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
     @Test
     public void testTransactionExistsByTransactionTypeAndEffectiveDate() throws Exception {
+
         // Create a new Transaction:
         String transactionTypeId = "1020";
         String accountId = "admin";
@@ -875,6 +1052,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
     @Test
     public void testTransactionExistsByTransactionTypeAmountAndEffectiveDate() throws Exception {
+
         // Create a new Transaction:
         String transactionTypeId = "1020";
         String accountId = "admin";

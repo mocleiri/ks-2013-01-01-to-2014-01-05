@@ -1897,6 +1897,14 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new IllegalArgumentException(errMsg);
         }
 
+        // TODO: ask Paul whether we have to use the current date or transaction effective date
+        TransactionType reversalTransactionType = getTransactionType(reversalTransactionTypeId, new Date());
+        if (reversalTransactionType == null) {
+            String errMsg = "Invalid Transaction Type, ID = " + reversalTransactionTypeId;
+            logger.error(errMsg);
+            throw new InvalidTransactionTypeException(errMsg);
+        }
+
         if (transaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT) {
             String errMsg = "Transaction is a deferment and cannot be reversed, ID = " + transaction.getId();
             logger.error(errMsg);
@@ -1909,8 +1917,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new IllegalStateException(errMsg);
         }
 
-        if (reversalAmount == null) {
-            String errMsg = "Reversal amount cannot be null";
+        if (reversalAmount == null || BigDecimal.ZERO.compareTo(reversalAmount) == 0) {
+            String errMsg = "Reversal amount cannot be null or 0";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
@@ -1997,9 +2005,15 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             }
         }
 
+        // If the given Transaction Type is the same as Original Transaction's type then we have to negate
+        // the reversal amount
+        if (reversalTransactionType.getClass().equals(transaction.getTransactionType().getClass())) {
+            reversalAmount = reversalAmount.negate();
+        }
+
         // Creating a new reverse transaction with the negated amount of the original transaction
         Transaction reverseTransaction = createTransaction(reversalTransactionTypeId, transaction.getAccountId(),
-                transaction.getEffectiveDate(), reversalAmount.negate());
+                transaction.getEffectiveDate(), reversalAmount);
 
         List<Tag> transactionTags = transaction.getTags();
         if (CollectionUtils.isNotEmpty(transactionTags)) {
@@ -2029,7 +2043,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         // Creating a locked allocation between the original and reversed transactions
-        createLockedAllocation(transaction.getId(), reverseTransaction.getId(), reversalAmount);
+        createLockedAllocation(transaction.getId(), reverseTransaction.getId(), reversalAmount.abs());
 
         // Creating memo
         if (StringUtils.isNotBlank(memoText)) {
@@ -3125,19 +3139,27 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         BigDecimal cancellationAmount = getCancellationAmount(chargeId);
-        BigDecimal unallocatedAmount = getUnallocatedAmount(charge);
 
-        if (unallocatedAmount.compareTo(cancellationAmount) < 0) {
-            String errMsg = "Unallocated amount cannot be less than cancellation amount";
-            logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
+        if (cancellationAmount.compareTo(BigDecimal.ZERO) != 0) {
+
+            BigDecimal unallocatedAmount = getUnallocatedAmount(charge);
+
+            if (unallocatedAmount.compareTo(cancellationAmount) < 0) {
+                String errMsg = "Unallocated amount cannot be less than cancellation amount";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+
+            String chargeTypeId = charge.getTransactionType().getId().getId();
+
+            // Creating a charge reversal for the cancellation amount
+            reverseTransaction(charge, chargeTypeId, memoText, cancellationAmount, null,
+                    TransactionStatus.CANCELLING);
+
+        } else {
+            logger.warn("Cancellation amount is 0, Charge ID = " + chargeId +
+                    ", Cancellation rule = " + charge.getCancellationRule());
         }
-
-        String chargeTypeId = charge.getTransactionType().getId().getId();
-
-        // Creating a charge reversal for the cancellation amount
-        reverseTransaction(charge, chargeTypeId, memoText, cancellationAmount, null,
-                TransactionStatus.CANCELLING);
 
         return charge;
     }
