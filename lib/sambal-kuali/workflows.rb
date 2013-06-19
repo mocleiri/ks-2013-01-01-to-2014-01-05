@@ -98,6 +98,12 @@ module Workflows
     end
   end
 
+  def go_to_state_propagation
+    visit PortalMenu do |page|
+      page.test_state_propagation
+    end
+  end
+
   def log_in(user, pwd)
     current_user = ""
     if !$distributed_env then
