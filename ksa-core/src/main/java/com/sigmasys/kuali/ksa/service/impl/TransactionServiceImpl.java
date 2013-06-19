@@ -581,7 +581,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         } else {
             DebitType debitType = (DebitType) transactionType;
             Charge charge = (Charge) transaction;
-            String cancellationRule = debitType.getCancellationRule();
+            String cancellationRule = (debitType.getCancellationRule() != null) ?
+                    debitType.getCancellationRule() : getDefaultChargeCancellationRule();
             if (cancellationRule != null) {
                 charge.setCancellationRule(calculateCancellationRule(cancellationRule, effectiveDate));
             }
@@ -590,6 +591,10 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         persistTransaction(transaction);
 
         return transaction;
+    }
+
+    protected String getDefaultChargeCancellationRule() {
+        return configService.getParameter(Constants.CHARGE_DEFAULT_CANCELLATION_RULE);
     }
 
 
@@ -3053,7 +3058,10 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new TransactionNotFoundException(errMsg);
         }
 
-        String cancellationRule = charge.getCancellationRule();
+        // Getting the cancellation rule
+        String cancellationRule = (charge.getCancellationRule() != null) ?
+                charge.getCancellationRule() : getDefaultChargeCancellationRule();
+
         if (TransactionStatus.CANCELLING.equals(charge.getStatus()) || StringUtils.isBlank(cancellationRule) ||
                 charge.getAmount() == null || charge.getAmount().compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;

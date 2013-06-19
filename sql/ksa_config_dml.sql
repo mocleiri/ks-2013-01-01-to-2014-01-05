@@ -162,6 +162,9 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.ach.bank.type', 'ACH')
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.source.type', 'cash');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.method', 'RefundMethod1');
 
+-- Charge constants
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.charge.cancellation.rule', 'DAYS(10)PERCENTAGE(50)');
+
 -- BRM (Drools) rule types
 insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (1, 'DSL', 'Drools DSL');
 insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (2, 'DRL', 'Drools Rule Language');

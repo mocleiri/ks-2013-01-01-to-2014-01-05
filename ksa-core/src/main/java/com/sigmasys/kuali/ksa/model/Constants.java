@@ -36,6 +36,9 @@ public interface Constants {
     String CASH_TRACKING_EMAIL_RECIPIENT = "ksa.cash.tracking.email.recipient";
     String CASH_TRACKING_EMAIL_SUBJECT = "ksa.cash.tracking.email.subject";
 
+    // Charge constants
+    String CHARGE_DEFAULT_CANCELLATION_RULE = "ksa.charge.cancellation.rule";
+
     // Drools parameters
     String DROOLS_CLASSPATH = "drools";
     String DROOLS_FM_RULE_SET_NAME = "Fee Management";
