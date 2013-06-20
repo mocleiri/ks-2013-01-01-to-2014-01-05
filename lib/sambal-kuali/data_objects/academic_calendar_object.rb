@@ -273,6 +273,7 @@ class KeyDate
       page.key_date_start_date_addline(@term_index,0).set @start_date
       page.key_date_allday_addline(@term_index,0).set @all_day
       page.key_date_daterange_addline(@term_index,0).set @date_range
+      page.loading.wait_while_present
 
       page.key_date_end_date_addline(@term_index,0).set @end_date if @date_range
 
