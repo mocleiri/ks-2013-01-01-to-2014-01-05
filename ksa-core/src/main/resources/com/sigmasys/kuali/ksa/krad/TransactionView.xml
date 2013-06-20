@@ -796,7 +796,7 @@
     <bean id="transactionDetailFields" parent="Uif-HorizontalBoxGroup">
         <property name="items">
             <list>
-                <bean parent="Uif-GridSection" p:style="width: 40%;"><property name="items"><list>
+                <bean parent="Uif-VerticalBoxSection" p:style="width: 40%;"><property name="items"><list>
                     <bean parent="Uif-InputField" p:propertyName="transactionDisplayType" p:label="Transaction Type"/>
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.status" p:label="Status"/>
                     <bean parent="Uif-InputField" p:propertyName="idString" p:label="Transaction ID"/>
@@ -810,7 +810,7 @@
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.currency.code" p:label="Currency"/>
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.nativeAmount" p:label="Native Amount"/>
                 </list></property></bean>
-                <bean parent="Uif-GridSection" p:style="width: 55%;"><property name="items"><list>
+                <bean parent="Uif-VerticalBoxSection" p:style="width: 55%;"><property name="items"><list>
                     <bean parent="Uif-InputField" p:propertyName="glEntryGenerated" p:label="General Ledger Entry"/>
                     <bean parent="Uif-InputField" p:propertyName="internal" p:label="Internal Transaction"/>
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.allocatedAmount" p:label="Allocated Amount"/>
