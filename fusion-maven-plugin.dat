@@ -1,0 +1,10 @@
+# module = http://svn.kuali.org/repos/student/enrollment/ks-api/branches/M6 branch Path = ks-api revision = 39810
+http://svn.kuali.org/repos/student/enrollment/ks-api/branches/M6::ks-api::UNKNOWN
+# module = http://svn.kuali.org/repos/student/enrollment/ks-core/trunk branch Path = ks-core revision = 39810
+http://svn.kuali.org/repos/student/enrollment/ks-core/trunk::ks-core::UNKNOWN
+# module = http://svn.kuali.org/repos/student/enrollment/ks-lum/trunk branch Path = ks-lum revision = 39810
+http://svn.kuali.org/repos/student/enrollment/ks-lum/trunk::ks-lum::UNKNOWN
+# module = http://svn.kuali.org/repos/student/enrollment/ks-enroll/trunk branch Path = ks-enroll revision = 39810
+http://svn.kuali.org/repos/student/enrollment/ks-enroll/trunk::ks-enroll::UNKNOWN
+# module = http://svn.kuali.org/repos/student/enrollment/ks-deployments/branches/umd-enr-data branch Path = ks-deployments revision = 39810
+http://svn.kuali.org/repos/student/enrollment/ks-deployments/branches/umd-enr-data::ks-deployments::UNKNOWN
