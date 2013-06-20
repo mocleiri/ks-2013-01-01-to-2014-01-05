@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module rename-to="org.kuali.student.lum.lu.ui.main.LUMMain">
+  	<inherits name="org.kuali.student.lum.lu.ui.main.LumUI"/>
+	
+  	<entry-point class="org.kuali.student.lum.lu.ui.main.client.LUMMainEntryPoint"/>
+    
+    <replace-with class="edu.kuali.config.lum.lu.ui.client.course.configuration.SampleCourseAdminConfigurer">
+        <when-type-is class="org.kuali.student.lum.lu.ui.course.client.configuration.CourseAdminConfigurer"/>
+    </replace-with>
+    
+    <replace-with class="edu.kuali.config.lum.lu.ui.client.course.configuration.SampleCourseAdminWithoutVersionConfigurer">
+        <when-type-is class="org.kuali.student.lum.lu.ui.course.client.configuration.CourseAdminWithoutVersionConfigurer"/>
+    </replace-with>
+    
+    <replace-with class="edu.kuali.config.lum.lu.ui.client.theme.SampleCssImpl">
+        <when-type-is class="org.kuali.student.lum.ui.theme.standard.client.LumCssImpl"/>
+    </replace-with>
+
+    <set-property name="user.agent" value="gecko1_8" />
+	<set-property name="locale" value="default" />    
+</module>

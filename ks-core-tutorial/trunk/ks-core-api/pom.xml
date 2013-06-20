@@ -1,0 +1,100 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ks-core-api</artifactId>
+	<name>KS Core API</name>
+	<description>KS core-api</description>
+	<parent>
+		<groupId>org.kuali.student.core</groupId>
+		<artifactId>ks-core</artifactId>
+		<version>1.1.0-tutorial</version>
+	</parent>
+	<dependencies>
+		<dependency>
+			<groupId>org.kuali.student.common</groupId>
+			<artifactId>ks-common-api</artifactId>
+			<version>1.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kuali.rice</groupId>
+			<artifactId>rice-api</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.kuali.student.mojo</groupId>
+				<artifactId>maven-kscontract-plugin</artifactId>
+				<version>0.0.3-SNAPSHOT</version>
+
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<!--<phase>none</phase>-->
+						<goals>
+							<goal>contractToJava</goal>
+						</goals>
+
+						<configuration>
+							<contractURL>https://wiki.kuali.org/display/KULSTU/Academic+Time+Period+Service</contractURL>
+							<jsessionId>87DB96376263E5C56A28ED7733C8624C</jsessionId>
+							<outputDirectory>
+								src/main/java
+							</outputDirectory>
+							<packageName>org.kuali.student.core.atp</packageName>
+							<serviceName>AtpService</serviceName>
+							<namespace>http://student.kuali.org/wsdl/atp</namespace>
+							<excludeClasses>
+								<className>Attribute</className>
+								<className>AttributeInfo</className>
+								<className>CriteriaSetInfo</className>
+								<className>CriterionInfo</className>
+								<className>Date</className>
+								<className>Long</className>
+								<className>MetaInfo</className>
+								<className>QueryParamValue</className>
+								<className>RichTextInfo</className>
+								<className>StatusInfo</className>
+								<className>SearchIndexedTypeInfo</className>
+								<className>SearchRelationshipInfo</className>
+								<className>TypeAttributeInfo</className>
+								<className>ValidationResultInfo</className>
+							</excludeClasses>
+							<!-- <transformFile> src/main/resources/interface.xml </transformFile> <messageTransformFile> src/main/resources/messageInterface.xml </messageTransformFile> -->
+						</configuration>
+
+					</execution>
+				</executions>
+
+			</plugin>
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-java2ws-plugin</artifactId>
+				<version>2.2.12</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.kuali.student.common</groupId>
+						<artifactId>ks-common-api</artifactId>
+						<version>1.1.0-SNAPSHOT</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<!-- removed until needed <execution> <id>role-type-wsdl</id> <phase>${ks.java2ws.phase}</phase> <configuration> <className> org.kuali.student.core.role.service.QualifierHierarchyRoleTypeService </className> 
+						<serviceName>QHRoleTypeService</serviceName> </configuration> <goals> <goal>java2ws</goal> </goals> </execution> -->
+
+					<execution>
+						<id>atp-wsdl</id>
+						<phase>${ks.java2ws.phase}</phase>
+						<configuration>
+							<className>org.kuali.student.core.atp.service.AtpService</className>
+							<serviceName>AtpService</serviceName>
+							<targetNameSpace>http://student.kuali.org/wsdl/atp</targetNameSpace>
+						</configuration>
+						<goals>
+							<goal>java2ws</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
