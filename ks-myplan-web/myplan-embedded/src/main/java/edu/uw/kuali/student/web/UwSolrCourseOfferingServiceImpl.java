@@ -203,7 +203,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                 throw new DoesNotExistException();
             }
             CourseOfferingInfo info = new CourseOfferingInfo();
-            info = offeringServiceUtils.buildCourseOfferingInfo(secondaryDoc);
+            info = offeringServiceUtils.buildCourseOfferingInfo(secondaryDoc, null);
             return info;
         } else {
             return getNextDecorator().getCourseOffering(courseOfferingId, context);
@@ -599,7 +599,8 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
             String quarter = yt.getTermAsID();
 
             CourseService courseService = getCourseService();
-            CourseInfo courseInfo = courseService.getCourse(courseId);
+            String courseVersionId = getCourseHelper().getCourseVersionIdByTerm(courseId, termId);
+            CourseInfo courseInfo = courseService.getCourse(courseVersionId);
             String curriculumAbbreviation = courseInfo.getSubjectArea().trim();
             String number = courseInfo.getCourseNumberSuffix();
 
@@ -608,7 +609,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                 for (String sectionData : sectionXMLs) {
                     Document sectionDoc;
                     sectionDoc = offeringServiceUtils.newDocument(sectionData);
-                    CourseOfferingInfo info = offeringServiceUtils.buildCourseOfferingInfo(sectionDoc);
+                    CourseOfferingInfo info = offeringServiceUtils.buildCourseOfferingInfo(sectionDoc, courseInfo);
                     list.add(info);
                 }
             } else {

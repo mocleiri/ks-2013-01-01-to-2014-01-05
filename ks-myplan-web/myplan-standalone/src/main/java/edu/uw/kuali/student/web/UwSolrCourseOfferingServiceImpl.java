@@ -203,7 +203,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                 throw new DoesNotExistException();
             }
             CourseOfferingInfo info = new CourseOfferingInfo();
-            info = offeringServiceUtils.buildCourseOfferingInfo(secondaryDoc);
+            info = offeringServiceUtils.buildCourseOfferingInfo(secondaryDoc, null);
             return info;
         } else {
             return getNextDecorator().getCourseOffering(courseOfferingId, context);
@@ -608,7 +608,7 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                 for (String sectionData : sectionXMLs) {
                     Document sectionDoc;
                     sectionDoc = offeringServiceUtils.newDocument(sectionData);
-                    CourseOfferingInfo info = offeringServiceUtils.buildCourseOfferingInfo(sectionDoc);
+                    CourseOfferingInfo info = offeringServiceUtils.buildCourseOfferingInfo(sectionDoc, courseInfo);
                     list.add(info);
                 }
             } else {
