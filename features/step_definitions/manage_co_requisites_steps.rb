@@ -291,7 +291,6 @@ Then /^the text "(.*)" should be present in the text area$/ do |text|
   on ManageCORequisites do |page|
     page.edit_loading.wait_while_present
     page.logic_text.text.should == text
-    puts "been here successfully"
   end
 end
 

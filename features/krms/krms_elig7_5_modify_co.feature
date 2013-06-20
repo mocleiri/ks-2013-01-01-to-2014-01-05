@@ -21,4 +21,4 @@ Feature: KRMS ELIG7.3 Adding CO to empty CLU
     When I want to edit the selected agenda section
     Then the "edit" tab should have the text "Must have successfully completed a minimum of 1 course from (HIST210, HIST395)"
     When I switch to the other tab on the page
-    Then the text "A(B(C OR D OR E) AND F AND G(H AND I(J AND K)))" should be present in the text area
+    Then the text "A(B(C OR D(E AND F) OR G) AND H AND I AND J)" should be present in the text area

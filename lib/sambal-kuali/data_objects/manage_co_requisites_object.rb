@@ -114,10 +114,10 @@ class ManageCORequisitesData
   def edit_data_advanced_search( sect)
     on ManageCORequisites do |page|
       create_course_rule( "add", "C", "ENGL101", sect)
-      create_text_rule( "group", "", "free form text input value")
-      create_all_courses_rule( "add", "B", "ENGL478,HIST416", "", "", sect)
-      create_text_rule( "add", "", "Text")
-      create_number_courses_rule( "group", "F", "1", "HIST395,HIST210", "", "", sect)
+      create_text_rule( "group", "B", "free form text input value")
+      create_all_courses_rule( "add", "", "ENGL478,HIST416", "", "", sect)
+      create_text_rule( "group", "F", "Text")
+      create_number_courses_rule( "add", "D", "1", "HIST395,HIST210", "", "", sect)
       page.loading.wait_while_present
       page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "AND"
       page.edit_loading.wait_while_present
@@ -258,8 +258,14 @@ class ManageCORequisitesData
       courses = create_array( course)
       if courses != "" && courses != nil
         page.multi_course_dropdown.when_present.select /Approved Courses/
-        courses.each do |elem|
-          advanced_search("course code", elem)
+        if courses.length > 1
+          courses.each do |elem|
+            advanced_search("course code", elem)
+            page.add_line_btn
+            page.adding.wait_while_present
+          end
+        else
+          advanced_search("course code", course)
           page.add_line_btn
           page.adding.wait_while_present
         end
@@ -267,18 +273,24 @@ class ManageCORequisitesData
       sets = create_array( set)
       if sets != "" && sets != nil
         page.multi_course_dropdown.when_present.select /Course Sets/
-        sets.each do |elem|
-          advanced_search("course set", elem)
+        if sets.length > 1
+          sets.each do |elem|
+            advanced_search("course set", elem)
+            page.add_line_btn
+            page.adding.wait_while_present
+          end
+        else
+          advanced_search("course set", set)
           page.add_line_btn
           page.adding.wait_while_present
         end
       end
-      if range != "" && range != nil         ###FIX##################################
-        page.multi_course_dropdown.when_present.select /Course Ranges/
-        advanced_search("course range", range)
-        page.add_line_btn
-        page.adding.wait_while_present
-      end                              ######################################
+      #if range != "" && range != nil         ###FIX##################################
+      #  page.multi_course_dropdown.when_present.select /Course Ranges/
+      #  advanced_search("course range", range)
+      #  page.add_line_btn
+      #  page.adding.wait_while_present
+      #end                              ######################################
     end
   end
 
@@ -344,7 +356,7 @@ class ManageCORequisitesData
   #end
 
   def create_array( string)
-    if string != "" && string != nil && string !~ /.*\(.+\).*/
+    if string != "" && string != nil
       strings = string.split(/,/)
     else
       strings = string

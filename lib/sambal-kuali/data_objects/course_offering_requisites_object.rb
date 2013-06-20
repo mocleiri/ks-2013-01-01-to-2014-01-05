@@ -42,6 +42,7 @@ class CORequisitesData
 
     @course_offering.manage
     on ManageCourseOfferings do |page|
+      page.loading.wait_while_present
       page.manage_course_offering_requisites
     end
   end
