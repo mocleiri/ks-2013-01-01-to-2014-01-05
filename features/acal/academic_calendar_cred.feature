@@ -31,6 +31,34 @@ Feature: EC.Academic Calendar CRED
     And I search for the calendar
     Then the calendar should not appear in search results
 
+  @wip
+  Scenario: Add events on an Academic Calendar
+    When I add events to the Academic Calendar
+    Then the events are listed when I view the Academic Calendar
+
+  @wip
+  Scenario: Update events on an Academic Calendar
+    Given I add events to the Academic Calendar
+    When I update the event dates
+    Then the updated event dates are listed when I view the Academic Calendar
+
+  @wip
+  Scenario: Delete events on an Academic Calendar
+    Given I add events to the Academic Calendar
+    When I remove the events from the Academic Calendar
+    Then the event list is updated when I view the Academic Calendar
+
+  @wip
+  Scenario: Add a Holiday Calendar to an Academic Calendar
+    When I add a Holiday Calendar to the Academic Calendar
+    Then the Holiday Calendar is listed when I view the Academic Calendar
+
+  @wip
+  Scenario: Remove a Holiday Calendar from an Academic Calendar
+    Given I add a Holiday Calendar to the Academic Calendar
+    When I remove the Holiday Calendar
+    Then the Holiday Calendar is not listed when I view the Academic Calendar
+
   Scenario: Search for Academic Calendar using wildcards
     When I search for the Academic Calendar using wildcards
     Then the calendar should appear in search results
@@ -38,22 +66,4 @@ Feature: EC.Academic Calendar CRED
   Scenario: Search for Academic Calendar using partial name
     When I search for the Academic Calendar using partial name
     Then the calendar should appear in search results
-
-  @pending
-  Scenario: Add a term to the academic calendar (acad calender must be official before can make term official)
-    When I add a spring term and save
-    Then I verify that the term added to the calendar
-    And Make Official button for the term is enabled
-
-  @pending
-  Scenario: Make Academic Term Official
-    When I add a winter term and save
-    And I make the term official
-    Then the term should be set to Official on edit
-
-  @pending
-  Scenario: Delete Draft Academic Term
-    When I add a summer term and save
-    And I delete the Academic Term draft
-    Then the term should not appear in search results
 
