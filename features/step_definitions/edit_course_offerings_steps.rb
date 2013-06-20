@@ -44,6 +44,13 @@ Then /^I can submit and the course offering is updated$/ do
   on CourseOfferingEdit do |page|
     page.submit
   end
+
+  #validate the success-growl is being shown
+  on ManageCourseOfferings do |page|
+    sleep 2 #TODO: required by headless
+    page.growltext.should include "#{@course_offering.course} was successfully updated"
+  end
+
   @course_offering.search_by_subjectcode
        @course_offering.view_course_details
        on ManageCourseDetails do  |page|
