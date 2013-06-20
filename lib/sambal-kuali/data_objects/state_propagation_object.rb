@@ -62,14 +62,14 @@ class StatePropagation
         end
       end
 
-      #puts "#{page.rg_invalid_results_table_header.text}"
-      #page.rg_invalid_results_table.rows.each do |row|
-      #  if row.cells[StatePropagationTest::RG_TABLE_STATUS_COLUMN].text == "fail"
-      #    puts "From #{row.cells[StatePropagationTest::RG_INVALID_TABLE_FROM_COLUMN].text} to #{row.cells[StatePropagationTest::RG_INVALID_TABLE_TO_COLUMN].text}"
-      #    test_passed = false
-      #    fail_count += 1
-      #  end
-      #end
+      puts "#{page.rg_invalid_results_table_header.text}"
+      page.rg_invalid_results_table.rows.each do |row|
+        if row.cells[StatePropagationTest::RG_INVALID_TABLE_STATUS_COLUMN].text == "fail"
+          puts "From #{row.cells[StatePropagationTest::RG_INVALID_TABLE_FROM_COLUMN].text} to #{row.cells[StatePropagationTest::RG_INVALID_TABLE_TO_COLUMN].text}"
+          test_passed = false
+          fail_count += 1
+        end
+      end
 
     end
 

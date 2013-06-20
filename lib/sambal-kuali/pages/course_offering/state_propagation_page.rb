@@ -23,11 +23,11 @@ class StatePropagationTest < BasePage
   element(:co_results_table_header) { |b| b.co_results_table_div.span(class: "uif-headerText-span") }
   element(:co_results_table) { |b| b.co_results_table_div.table }
 
-  element(:rg_ao_results_table_div) { |b| b.frm.div(id: "rgTestResultsSection") }
+  element(:rg_ao_results_table_div) { |b| b.frm.div(id: "rgAoListTestResultsSection") }
   element(:rg_ao_results_table_header) { |b| b.rg_ao_results_table_div.span(class: "uif-headerText-span") }
   element(:rg_ao_results_table) { |b| b.rg_ao_results_table_div.table }
 
-  element(:rg_invalid_results_table_div) { |b| b.frm.div(id: "rgTestResultsSection") }
+  element(:rg_invalid_results_table_div) { |b| b.frm.div(id: "rgInvalidTestResultsSection") }
   element(:rg_invalid_results_table_header) { |b| b.rg_invalid_results_table_div.span(class: "uif-headerText-span") }
   element(:rg_invalid_results_table) { |b| b.rg_invalid_results_table_div.table }
 
