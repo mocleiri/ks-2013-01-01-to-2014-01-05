@@ -59,6 +59,7 @@ Feature: EC.Academic Calendar CRED
     When I remove the Holiday Calendar
     Then the Holiday Calendar is not listed when I view the Academic Calendar
 
+  @bug @KSENROLL-7637
   Scenario: Search for Academic Calendar using wildcards
     When I search for the Academic Calendar using wildcards
     Then the calendar should appear in search results
