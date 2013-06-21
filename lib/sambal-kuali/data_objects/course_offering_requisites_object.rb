@@ -39,7 +39,6 @@ class CORequisitesData
   def navigate(term, course)
     @manageCORdata = make ManageCORequisitesData
     @course_offering = make CourseOffering, {:course => course, :term => term}
-
     @course_offering.manage
     on ManageCourseOfferings do |page|
       page.loading.wait_while_present
@@ -48,14 +47,10 @@ class CORequisitesData
   end
 
   def data_setup(sect, term, course)
-    sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq, "Antirequisite"=>:antirequisite,
-                "Corequisite"=>:corequisite, "Recommended Preparation"=>:recommended_prep,
-                "Repeatable for Credit"=>:repeatable_credit, "Course that Restricts Credits"=>:resctricted_credit}
     navigate(term, course)
-
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
-      page.send(sections[sect])
+      open_agenda_section
       check = @manageCORdata.check_data_existence
       if( check == 0)
         page.rule_add
@@ -71,7 +66,7 @@ class CORequisitesData
     commit_changes( true)
   end
 
-  def commit_changes( back)
+  def commit_changes( return_to_edit_page = false )
     begin
       on ManageCORequisites do |page|
         page.loading.wait_while_present
@@ -84,7 +79,7 @@ class CORequisitesData
       page.loading.wait_while_present
       page.submit
     end
-    if back == true
+    if return_to_edit_page == true
       on ManageCourseOfferings do |page|
         page.loading.wait_while_present
         page.manage_course_offering_requisites
@@ -101,7 +96,10 @@ class CORequisitesData
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
       open_agenda_section
-      page.agenda_management_section.text.should =~ /.*#{@section}.*Rule.*\.\n#{section_regex[section]}.*/m
+      regex = /.*#{@section}.*Rule.*\.\n#{section_regex[section]}.*/m
+      if page.agenda_management_section.text !~ regex
+        raise "\nError: Text did not match\n" + regex.to_s
+      end
     end
   end
 
@@ -111,7 +109,6 @@ class CORequisitesData
                 "Recommended Preparation"=>:recommended_prep_section,
                 "Repeatable for Credit"=>:repeatable_credit_section,
                 "Course that Restricts Credits"=>:resctricted_credit_section}
-
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
       if( page.send(sections[@section]).element(:tag_name, 'img').attribute_value('alt') != "expand")

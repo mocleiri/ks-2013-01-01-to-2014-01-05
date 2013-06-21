@@ -474,9 +474,13 @@ class ManageCORequisitesData
       on CourseOfferingRequisites do |page|
         page.loading.wait_while_present
         if boolean == true
-          page.agenda_management_section.text.should =~ test_string
+          if page.agenda_management_section.text !~ test_string
+            raise "\nError: Text did not match\n" + test_string.to_s
+          end
         else
-          page.agenda_management_section.text.should_not =~ test_string
+          if page.agenda_management_section.text =~ test_string
+            raise "\nError: Text did match\n" + test_string.to_s
+          end
         end
       end
     else
@@ -484,9 +488,13 @@ class ManageCORequisitesData
       on ManageCORequisites do |page|
         page.loading.wait_while_present
         if boolean == true
-          page.send(sect[section]).text.should =~ test_string
+          if page.send(sect[section]).text !~ test_string
+            raise "\nError: Text did not match\n" + test_string.to_s
+          end
         else
-          page.send(sect[section]).text.should_not =~ test_string
+          if page.send(sect[section]).text =~ test_string
+            raise "\nError: Text did match\n" + test_string.to_s
+          end
         end
       end
     end
@@ -496,10 +504,15 @@ class ManageCORequisitesData
     if section == "agenda"
       on CourseOfferingRequisites do |page|
         page.loading.wait_while_present
+        test_string = /.*#{Regexp.escape(test_text)}.*/m
         if boolean == true
-          page.agenda_management_section.text.should =~ /.*#{Regexp.escape(test_text)}.*/m
+          if page.agenda_management_section.text !~ test_string
+            raise "\nError: Text did not match\n" + test_string.to_s
+          end
         else
-          page.agenda_management_section.text.should_not =~ /.*#{Regexp.escape(test_text)}.*/m
+          if page.agenda_management_section.text =~ test_string
+            raise "\nError: Text did match\n" + test_string.to_s
+          end
         end
       end
     elsif section == "compare"
@@ -508,10 +521,15 @@ class ManageCORequisitesData
       sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
       on ManageCORequisites do |page|
         page.loading.wait_while_present
+        test_string = /.*#{Regexp.escape(test_text)}.*/m
         if boolean == true
-          page.send(sect[section]).text.should =~ /.*#{Regexp.escape(test_text)}.*/m
+          if page.send(sect[section]).text !~ test_string
+            raise "\nError: Text did not match\n" + test_string.to_s
+          end
         else
-          page.send(sect[section]).text.should_not =~ /.*#{Regexp.escape(test_text)}.*/m
+          if page.send(sect[section]).text =~ test_string
+            raise "\nError: Text did match\n" + test_string.to_s
+          end
         end
       end
     end
@@ -520,10 +538,15 @@ class ManageCORequisitesData
   def test_popup_text( text, boolean)
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
+      test_string = /.*#{Regexp.escape(text)}\n#{Regexp.escape(text)}.*/m
       if boolean == true
-        page.compare_tree.text.should =~ /.*#{Regexp.escape(text)}\n#{Regexp.escape(text)}.*/m
+        if page.compare_tree.text !~ test_string
+          raise "\nError: Text did not match\n" + test_string.to_s
+        end
       else
-        page.compare_tree.text.should_not =~ /.*#{Regexp.escape(text)}\n#{Regexp.escape(text)}.*/m
+        if page.compare_tree.text =~ test_string
+          raise "\nError: Text did match\n" + test_string.to_s
+        end
       end
     end
   end
@@ -544,12 +567,22 @@ class ManageCORequisitesData
   def test_node_level( level, node)
     on ManageCORequisites do |page|
       page.loading.wait_while_present
+      id = page.edit_tree_section.span(:text => /.*#{node}\..*/).id
       if level == "primary"
-        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should =~ /u\d+_node_\d_parent_node_0_parent_root_span/
+        test_primary = /u\d+_node_\d_parent_node_0_parent_root_span/
+        if id !~ test_primary
+          raise "\nError: ID did not match primary level\n" + test_primary.to_s
+        end
       elsif level == "secondary"
-        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should =~ /u\d+_node_\d_parent_node_\d_parent_node_0_parent_root_span/
+        test_secondary = /u\d+_node_\d_parent_node_\d_parent_node_0_parent_root_span/
+        if id !~ test_secondary
+          raise "\nError: ID did not match secondary level\n" + test_secondary.to_s
+        end
       elsif level == "tertiary"
-        page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should =~ /u\d+_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_span/
+        test_tertiary = /u\d+_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_span/
+        if id !~ test_tertiary
+          raise "\nError: ID did not match tertiary level\n" + test_tertiary.to_s
+        end
       end
 
     end

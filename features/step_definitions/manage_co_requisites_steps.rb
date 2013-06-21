@@ -241,11 +241,11 @@ When /^I group gpa and courses statement with node "(.)" with course sets "([^\"
 end
 
 When /^I commit and return to see the changes made to the proposition$/ do
-  @courseOR.commit_changes( true)
+  @courseOR.commit_changes( true)  #:return_to_edit_page =>
 end
 
 When /^I commit changes made to the proposition$/ do
-  @courseOR.commit_changes( false)
+  @courseOR.commit_changes
 end
 
 Then /^the tree in the selected agenda section should be empty$/ do
