@@ -41,7 +41,7 @@ public interface CashLimitService {
                                                 String authorityName, String xmlElement);
 
     /**
-     * Persists the given cash limit parameter in the persistence store
+     * Persists the given cash limit parameter in the persistent store
      *
      * @param cashLimitParameter CashLimitParameter instance
      * @return Cash limit parameter ID

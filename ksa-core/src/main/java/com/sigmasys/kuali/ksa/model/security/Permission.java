@@ -165,7 +165,15 @@ public enum Permission {
 
     // Transfer type permissions
     CREATE_TRANSFER_TYPE,
-    EDIT_TRANSFER_TYPE,
+    READ_TRANSFER_TYPE,
+    UPDATE_TRANSFER_TYPE,
+    DELETE_TRANSFER_TYPE,
+
+    // Transaction Transfer permissions
+    CREATE_TRANSACTION_TRANSFER,
+    READ_TRANSACTION_TRANSFER,
+    UPDATE_TRANSACTION_TRANSFER,
+    DELETE_TRANSACTION_TRANSFER,
 
     // Refund permissions
     REQUEST_REFUND,

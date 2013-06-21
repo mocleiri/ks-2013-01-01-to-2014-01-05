@@ -10,7 +10,9 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "KSSA_TRANSFER_TYPE")
+@AttributeOverride(name = "code", column = @Column(name ="CODE", length = 20, nullable = false, unique = true))
 public class TransferType extends AuditableEntity<Long> {
+
 
     private GeneralLedgerType generalLedgerType;
 

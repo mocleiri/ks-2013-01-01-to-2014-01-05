@@ -4,7 +4,7 @@ package com.sigmasys.kuali.ksa.event;
 
 /**
  * LoadConfigListener can be set by KSA services to do necessary actions
- * right after the configuration parameters have been loaded from the persistence store and initialized.
+ * right after the configuration parameters have been loaded from the persistent store and initialized.
  *
  * @author Michael Ivanov
  */

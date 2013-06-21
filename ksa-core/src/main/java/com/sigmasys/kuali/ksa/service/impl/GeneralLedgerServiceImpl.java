@@ -78,7 +78,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     }
 
     /**
-     * Persists GeneralLedgerType instance in the persistence store.
+     * Persists GeneralLedgerType instance in the persistent store.
      *
      * @param glType GL type
      * @return GL type ID

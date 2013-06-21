@@ -607,7 +607,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Persists FlagType instance in the persistence store.
+     * Persists FlagType instance in the persistent store.
      *
      * @param flagType FlagType instance to persist
      * @return FlagType ID
@@ -620,7 +620,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Removes FlagType entity from the persistence store.
+     * Removes FlagType entity from the persistent store.
      *
      * @param flagTypeId FlagType ID
      * @return true if FlagType entity has been deleted
@@ -643,7 +643,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Retrieves FlagType entity from the persistence store by ID.
+     * Retrieves FlagType entity from the persistent store by ID.
      *
      * @param flagTypeId FlagType ID
      * @return FlagType instance
@@ -668,7 +668,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Returns all existing flag types from the persistence store.
+     * Returns all existing flag types from the persistent store.
      *
      * @return list of FlagType instances
      */
@@ -797,7 +797,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Persists InformationAccessLevel instance in the persistence store.
+     * Persists InformationAccessLevel instance in the persistent store.
      *
      * @param accessLevel InformationAccessLevel instance to persist
      * @return InformationAccessLevel ID
@@ -899,7 +899,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Removes InformationAccessLevel entity from the persistence store by ID.
+     * Removes InformationAccessLevel entity from the persistent store by ID.
      *
      * @param id InformationAccessLevel ID
      * @return true if InformationAccessLevel entity has been deleted

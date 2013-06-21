@@ -1005,7 +1005,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     }
 
     /**
-     * Retrieves FeeDetail instance from a persistence store by code.
+     * Retrieves FeeDetail instance from a persistent store by code.
      *
      * @param code FeeDetail code
      * @param date FeeDetail date. Can be null.
@@ -1048,7 +1048,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     }
 
     /**
-     * Retrieves FeeDetail instances from a persistence store by a date range
+     * Retrieves FeeDetail instances from a persistent store by a date range
      *
      * @param code      FeeDetail code
      * @param startDate FeeDetail start date. Can be null.

@@ -50,21 +50,21 @@ public interface RateService {
     Long persistRateType(RateType rateType);
 
     /**
-     * Removes the RateType instance specified by ID from the persistence store.
+     * Removes the RateType instance specified by ID from the persistent store.
      *
      * @param rateTypeId RateType ID
      */
     void deleteRateType(Long rateTypeId);
 
     /**
-     * Removes the RateType instance specified by code from the persistence store
+     * Removes the RateType instance specified by code from the persistent store
      *
      * @param rateTypeCode RateType code
      */
     void deleteRateTypeByCode(String rateTypeCode);
 
     /**
-     * Retrieves the RateType instance from the persistence store by ID.
+     * Retrieves the RateType instance from the persistent store by ID.
      *
      * @param rateTypeId RateType ID
      * @return RateType instance
@@ -72,7 +72,7 @@ public interface RateService {
     RateType getRateType(Long rateTypeId);
 
     /**
-     * Retrieves the RateType instance from the persistence store by code.
+     * Retrieves the RateType instance from the persistent store by code.
      *
      * @param rateTypeCode RateType code
      * @return RateType instance
@@ -147,14 +147,14 @@ public interface RateService {
     Long persistRateCatalog(RateCatalog rateCatalog);
 
     /**
-     * Removes RateCatalog from the persistence store.
+     * Removes RateCatalog from the persistent store.
      *
      * @param rateCatalogId RateCatalog ID
      */
     void deleteRateCatalog(Long rateCatalogId);
 
     /**
-     * Retrieves the RateCatalog instance specified by ID from the persistence store.
+     * Retrieves the RateCatalog instance specified by ID from the persistent store.
      *
      * @param rateCatalogId RateCatalog ID
      * @return RateCatalog instance
@@ -162,7 +162,7 @@ public interface RateService {
     RateCatalog getRateCatalog(Long rateCatalogId);
 
     /**
-     * Retrieves the RateCatalog instance specified by Rate ID from the persistence store.
+     * Retrieves the RateCatalog instance specified by Rate ID from the persistent store.
      *
      * @param rateId Rate ID
      * @return RateCatalog instance
@@ -170,7 +170,7 @@ public interface RateService {
     RateCatalog getRateCatalogByRateId(Long rateId);
 
     /**
-     * Retrieves the RateCatalog instance specified by code and ATP ID from the persistence store.
+     * Retrieves the RateCatalog instance specified by code and ATP ID from the persistent store.
      *
      * @param rateCatalogCode RateCatalog code
      * @param atpId           ATP ID
@@ -252,7 +252,7 @@ public interface RateService {
     Long persistRate(Rate rate);
 
     /**
-     * Removes Rate specified by ID from the persistence store
+     * Removes Rate specified by ID from the persistent store
      *
      * @param rateId Rate ID
      */
@@ -483,7 +483,7 @@ public interface RateService {
 
 
     /**
-     * Removes the rate amount from the persistence store by ID.
+     * Removes the rate amount from the persistent store by ID.
      *
      * @param rateAmountId RateAmount ID
      */

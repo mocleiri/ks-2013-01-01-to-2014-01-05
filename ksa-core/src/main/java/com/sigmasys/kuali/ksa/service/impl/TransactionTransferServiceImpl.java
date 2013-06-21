@@ -1,12 +1,18 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.exception.InvalidGeneralLedgerTypeException;
 import com.sigmasys.kuali.ksa.exception.InvalidTransactionTypeException;
 import com.sigmasys.kuali.ksa.exception.TransactionNotAllowedException;
 import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.service.AccountService;
+import com.sigmasys.kuali.ksa.model.security.Permission;
+import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
+import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebService;
+import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -37,12 +44,121 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
     private TransactionService transactionService;
 
     @Autowired
-    private AccountService accountService;
+    private GeneralLedgerService generalLedgerService;
+
+    @Autowired
+    private AuditableEntityService auditableEntityService;
 
 
-    public TransferType getTransferType() {
-        // TODO
-        return null;
+    /**
+     * Retrieves TransferType instance from the persistent store by ID.
+     *
+     * @param transferTypeId TransferType ID
+     * @return TransferType instance
+     */
+    @Override
+    public TransferType getTransferType(Long transferTypeId) {
+
+        PermissionUtils.checkPermission(Permission.READ_TRANSFER_TYPE);
+
+        Query query = em.createQuery("select t from TransferType t " +
+                " left outer join fetch t.generalLedgerType " +
+                " where t.id = :id");
+
+        query.setParameter("id", transferTypeId);
+
+        List<TransferType> transferTypes = query.getResultList();
+        return CollectionUtils.isNotEmpty(transferTypes) ? transferTypes.get(0) : null;
+    }
+
+
+    /**
+     * Creates a new instance of TransferType and persists it in the persistent store.
+     *
+     * @param glTypeId    General Ledger Type ID
+     * @param code        TransferType code
+     * @param name        TransferType name
+     * @param description TransferType description
+     * @return TransferType instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public TransferType createTransferType(Long glTypeId, String code, String name, String description) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_TRANSFER_TYPE);
+
+        if (StringUtils.isBlank(code)) {
+            String errMsg = "TransferType code is required";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        GeneralLedgerType glType = generalLedgerService.getGeneralLedgerType(glTypeId);
+        if (glType == null) {
+            String errMsg = "General Ledger Type with ID = " + glTypeId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidGeneralLedgerTypeException(errMsg);
+        }
+
+        // Cresting a new instance of TransferType
+        TransferType transferType = new TransferType();
+
+        transferType.setGeneralLedgerType(glType);
+        transferType.setCode(code);
+        transferType.setName(name);
+        transferType.setDescription(description);
+
+        // Persisting the new instance of TransferType
+        auditableEntityService.persistAuditableEntity(transferType);
+
+        return transferType;
+    }
+
+    /**
+     * Persists TransferType instance in the persistent store.
+     *
+     * @param transferType TransferType instance
+     * @return TransferType ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Long persistTransferType(TransferType transferType) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_TRANSFER_TYPE);
+
+        return auditableEntityService.persistAuditableEntity(transferType);
+    }
+
+    /**
+     * Removes TransferType instance from the persistent store by ID.
+     *
+     * @param transferTypeId TransferType ID
+     * @return true, if the transfer type has successfully been deleted, false - otherwise
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public boolean deleteTransferType(Long transferTypeId) {
+
+        PermissionUtils.checkPermission(Permission.DELETE_TRANSFER_TYPE);
+
+        return auditableEntityService.deleteAuditableEntity(transferTypeId, TransferType.class);
+    }
+
+    /**
+     * Returns all transfer types existing in the persistent store.
+     *
+     * @return list of TransferType instances
+     */
+    @Override
+    public List<TransferType> getTransferTypes() {
+
+        PermissionUtils.checkPermission(Permission.READ_TRANSFER_TYPE);
+
+        Query query = em.createQuery("select t from TransferType t " +
+                " left outer join fetch t.generalLedgerType " +
+                " order by t.id desc");
+
+        return query.getResultList();
     }
 
 
@@ -80,6 +196,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
                                                    String statementPrefix,
                                                    String transactionTypeMask) {
 
+        PermissionUtils.checkPermission(Permission.CREATE_TRANSACTION_TRANSFER);
+
         Transaction transaction = transactionService.getTransaction(transactionId);
         if (transaction == null) {
             String errMsg = "Transaction with ID = " + transactionId + " does not exist";
@@ -105,6 +223,13 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
             recognitionDate = transaction.getRecognitionDate();
         }
 
+        TransferType transferType = getTransferType(transferTypeId);
+        if (transferType == null) {
+            String errMsg = "Transfer type with ID = " + transactionTypeId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
         TransactionType transactionType;
         if (transactionTypeId != null) {
             transactionType = transactionService.getTransactionType(transactionTypeId, recognitionDate);
@@ -121,7 +246,7 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
         // Clearing all non-locked allocations
         transactionService.removeAllocations(transaction.getId());
 
-        // Updating transaction from the persistence store
+        // Updating transaction from the persistent store
         transaction = transactionService.getTransaction(transactionId);
 
         // Checking if the amount is less or equal to the transaction unallocated amount
@@ -130,8 +255,6 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
-
-        // TODO: Ask Paul to figure out the correct check on the transaction, its type and amount ??
 
         // Checking if the new transaction is allowed
         if (!transactionService.isTransactionAllowed(accountId, transactionType.getId().getId(), effectiveDate)) {
@@ -151,20 +274,70 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
         }
 
         // Creating a transaction reversal with TRANSFERRING status
-        transactionService.reverseTransaction(transactionId, transactionType.getId().getId(),
-                memoText, amount, statementPrefix, TransactionStatus.TRANSFERRING);
+        Transaction reverseTransaction = transactionService.reverseTransaction(transactionId,
+                transactionType.getId().getId(), memoText, amount, statementPrefix, TransactionStatus.TRANSFERRING);
 
         // Creating a new transaction
         Transaction newTransaction = transactionService.createTransaction(transactionTypeId, accountId, effectiveDate,
                 recognitionDate, amount);
 
-        newTransaction.setGeneralLedgerType(getTransferType().getGeneralLedgerType());
+        newTransaction.setGeneralLedgerType(transferType.getGeneralLedgerType());
         newTransaction.setOriginationDate(transaction.getOriginationDate());
         newTransaction.setDocument(transaction.getDocument());
+        newTransaction.setRollup(transaction.getRollup());
 
-        // TODO
+        List<Tag> transactionTags = transaction.getTags();
 
-        return null;
+        if (CollectionUtils.isNotEmpty(transactionTags)) {
+            newTransaction.setTags(new ArrayList<Tag>(transactionTags));
+        }
+
+        if (StringUtils.isNotBlank(statementPrefix) && StringUtils.isNotBlank(transaction.getStatementText())) {
+            newTransaction.setStatementText(statementPrefix + " " + transaction.getStatementText());
+        }
+
+        // If both transactions are payments -> copy some additional properties from one to another
+        if (newTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT &&
+                transaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
+
+            Payment newPayment = (Payment) newTransaction;
+            Payment payment = (Payment) transaction;
+
+            newPayment.setRefundable(payment.isRefundable());
+            newPayment.setRefundRule(payment.getRefundRule());
+            newPayment.setClearDate(payment.getClearDate());
+        }
+
+        // Creating a new TransactionTransfer object and persisting it
+        TransactionTransfer transactionTransfer = new TransactionTransfer();
+        transactionTransfer.setCreationDate(new Date());
+        transactionTransfer.setTransferType(transferType);
+        transactionTransfer.setTransferAmount(amount);
+        transactionTransfer.setTransactionTypeMask(transactionTypeMask);
+        transactionTransfer.setSourceTransaction(transaction);
+        transactionTransfer.setOffsetTransaction(reverseTransaction);
+        transactionTransfer.setDestTransaction(newTransaction);
+        transactionTransfer.setTransactionTypeMask(transactionTypeMask);
+        transactionTransfer.setReversalStatus(ReversalStatus.NOT_REVERSED);
+
+        persistEntity(transactionTransfer);
+
+        return transactionTransfer;
+    }
+
+    /**
+     * Persists TransactionTransfer in the persistent store
+     *
+     * @param transactionTransfer TransactionTransfer instance
+     * @return TransactionTransfer ID
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Long persistTransactionTransfer(TransactionTransfer transactionTransfer) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_TRANSACTION_TRANSFER);
+
+        return persistEntity(transactionTransfer);
     }
 
 

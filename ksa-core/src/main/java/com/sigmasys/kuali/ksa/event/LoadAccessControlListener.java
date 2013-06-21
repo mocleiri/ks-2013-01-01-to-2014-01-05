@@ -4,7 +4,7 @@ package com.sigmasys.kuali.ksa.event;
 
 /**
  * LoadAccessControlListener can be used by KSA services to handle LoadAccessControlEvent
- * right after the access control attributes have been loaded from the persistence store and initialized.
+ * right after the access control attributes have been loaded from the persistent store and initialized.
  *
  * @author Michael Ivanov
  */

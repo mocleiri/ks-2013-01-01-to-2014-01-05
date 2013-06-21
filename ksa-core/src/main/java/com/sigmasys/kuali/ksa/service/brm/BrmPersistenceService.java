@@ -30,7 +30,7 @@ public interface BrmPersistenceService {
     Long persistRule(Rule rule);
 
     /**
-     * Retrieves a rule set (knowledge base) from the persistence store by ID
+     * Retrieves a rule set (knowledge base) from the persistent store by ID
      *
      * @param id RuleSet ID
      * @return RuleSet instance
@@ -38,7 +38,7 @@ public interface BrmPersistenceService {
     RuleSet getRuleSet(Long id);
 
     /**
-     * Retrieves a rule set (knowledge base) from the persistence store by name
+     * Retrieves a rule set (knowledge base) from the persistent store by name
      *
      * @param name RuleSet name
      * @return RuleSet instance
@@ -46,14 +46,14 @@ public interface BrmPersistenceService {
     RuleSet getRuleSet(String name);
 
     /**
-     * Retrieves all existing rule sets (knowledge bases) from the persistence store.
+     * Retrieves all existing rule sets (knowledge bases) from the persistent store.
      *
      * @return RuleSet instance
      */
     List<RuleSet> getRuleSets();
 
     /**
-     * Retrieves a rule from the persistence store by ID
+     * Retrieves a rule from the persistent store by ID
      *
      * @param id Rule identifier
      * @return Rule instance
@@ -61,7 +61,7 @@ public interface BrmPersistenceService {
     Rule getRule(Long id);
 
     /**
-     * Retrieves a rule from the persistence store by name
+     * Retrieves a rule from the persistent store by name
      *
      * @param name Rule name
      * @return Rule instance
@@ -124,7 +124,7 @@ public interface BrmPersistenceService {
     List<RuleType> getRuleTypes();
 
     /**
-     * Retrieves a rule type from the persistence store by name
+     * Retrieves a rule type from the persistent store by name
      *
      * @return a RuleType instance
      */

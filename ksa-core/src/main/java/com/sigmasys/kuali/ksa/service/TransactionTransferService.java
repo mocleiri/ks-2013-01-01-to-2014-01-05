@@ -3,10 +3,12 @@ package com.sigmasys.kuali.ksa.service;
 import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.TransactionTransfer;
+import com.sigmasys.kuali.ksa.model.TransferType;
 
 import javax.jws.WebService;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * The transfer transaction service is a set of methods that take care of transferring transactions
@@ -24,6 +26,49 @@ public interface TransactionTransferService {
     String SERVICE_URL = "transactionTransfer.webservice";
     String SERVICE_NAME = "TransactionTransferService";
     String PORT_NAME = SERVICE_NAME + "Port";
+
+    /**
+     * Retrieves TransferType instance from the persistent store by ID.
+     *
+     * @param transferTypeId TransferType ID
+     * @return TransferType instance
+     */
+    TransferType getTransferType(Long transferTypeId);
+
+    /**
+     * Creates a new instance of TransferType and persists it in the persistent store.
+     *
+     * @param glTypeId    General Ledger Type ID
+     * @param code        TransferType code
+     * @param name        TransferType name
+     * @param description TransferType description
+     * @return TransferType instance
+     */
+    TransferType createTransferType(Long glTypeId, String code, String name, String description);
+
+    /**
+     * Persists TransferType instance in the persistent store.
+     *
+     * @param transferType TransferType instance
+     * @return TransferType ID
+     */
+    Long persistTransferType(TransferType transferType);
+
+    /**
+     * Removes TransferType instance from the persistent store by ID.
+     *
+     * @param transferTypeId TransferType ID
+     * @return true, if the transfer type has successfully been deleted, false - otherwise
+     */
+    boolean deleteTransferType(Long transferTypeId);
+
+    /**
+     * Returns all transfer types existing in the persistent store.
+     *
+     * @return list of TransferType instances
+     */
+    List<TransferType> getTransferTypes();
+
 
     /**
      * This method transfers responsibility for a transaction from one account to another and
@@ -56,5 +101,13 @@ public interface TransactionTransferService {
                                             String memoText,
                                             String statementPrefix,
                                             String transactionTypeMask);
+
+    /**
+     * Persists TransactionTransfer in the persistent store
+     *
+     * @param transactionTransfer TransactionTransfer instance
+     * @return TransactionTransfer ID
+     */
+    Long persistTransactionTransfer(TransactionTransfer transactionTransfer);
 
 }

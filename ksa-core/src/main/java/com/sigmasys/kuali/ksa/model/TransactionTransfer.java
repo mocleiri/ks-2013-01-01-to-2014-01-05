@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Transaction Transfer model.
@@ -19,6 +20,11 @@ public class TransactionTransfer implements Identifiable {
      * Transaction Transfer ID
      */
     private Long id;
+
+    /**
+     * Creation timestamp
+     */
+    private Date creationDate;
 
     /**
      * Source transaction
@@ -73,7 +79,7 @@ public class TransactionTransfer implements Identifiable {
     /**
      * If this transfer is based on a transaction type mask matching, then the mask is stored here.
      */
-    private String transactionMaskType;
+    private String transactionTypeMask;
 
     /**
      * Reversal status
@@ -107,6 +113,15 @@ public class TransactionTransfer implements Identifiable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Column(name = "CREATION_DATE")
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -197,12 +212,12 @@ public class TransactionTransfer implements Identifiable {
     }
 
     @Column(name = "TRANSACTION_TYPE_MASK", length = 100)
-    public String getTransactionMaskType() {
-        return transactionMaskType;
+    public String getTransactionTypeMask() {
+        return transactionTypeMask;
     }
 
-    public void setTransactionMaskType(String transactionMaskType) {
-        this.transactionMaskType = transactionMaskType;
+    public void setTransactionTypeMask(String transactionTypeMask) {
+        this.transactionTypeMask = transactionTypeMask;
     }
 
     @Column(name = "REVERSAL_STATUS", length = 1, nullable = false)

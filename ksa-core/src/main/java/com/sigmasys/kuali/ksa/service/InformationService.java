@@ -226,7 +226,7 @@ public interface InformationService {
     FlagType createFlagType(String code, String name, String description, String accessLevelCode);
 
     /**
-     * Persists FlagType instance in the persistence store.
+     * Persists FlagType instance in the persistent store.
      *
      * @param flagType FlagType instance to persist
      * @return FlagType ID
@@ -234,7 +234,7 @@ public interface InformationService {
     Long persistFlagType(FlagType flagType);
 
     /**
-     * Removes FlagType entity from the persistence store.
+     * Removes FlagType entity from the persistent store.
      *
      * @param flagTypeId FlagType ID
      * @return true if FlagType entity has been deleted
@@ -242,7 +242,7 @@ public interface InformationService {
     boolean deleteFlagType(Long flagTypeId);
 
     /**
-     * Retrieves FlagType entity from the persistence store by ID.
+     * Retrieves FlagType entity from the persistent store by ID.
      *
      * @param flagTypeId FlagType ID
      * @return FlagType instance
@@ -250,7 +250,7 @@ public interface InformationService {
     FlagType getFlagType(Long flagTypeId);
 
     /**
-     * Returns all existing flag types from the persistence store.
+     * Returns all existing flag types from the persistent store.
      *
      * @return list of FlagType instances
      */
@@ -298,7 +298,7 @@ public interface InformationService {
     InformationAccessLevel getInformationAccessLevel(Long id);
 
     /**
-     * Persists InformationAccessLevel instance in the persistence store.
+     * Persists InformationAccessLevel instance in the persistent store.
      *
      * @param accessLevel InformationAccessLevel instance to persist
      * @return InformationAccessLevel ID
@@ -358,7 +358,7 @@ public interface InformationService {
     InformationAccessLevel createFlagAccessLevel(String code, String name, String description);
 
     /**
-     * Removes InformationAccessLevel entity from the persistence store by ID.
+     * Removes InformationAccessLevel entity from the persistent store by ID.
      *
      * @param id InformationAccessLevel ID
      * @return true if InformationAccessLevel entity has been deleted

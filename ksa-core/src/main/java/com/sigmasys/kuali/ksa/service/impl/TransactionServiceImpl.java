@@ -3459,7 +3459,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         List<Tag> newTags = new ArrayList<Tag>(tagsToAdd);
 
-        // Persisting new or merging existing tags in the persistence store
+        // Persisting new or merging existing tags in the persistent store
         Set<Long> tagIds = new HashSet<Long>();
         for (Tag tag : newTags) {
             if (tag.getId() != null) {

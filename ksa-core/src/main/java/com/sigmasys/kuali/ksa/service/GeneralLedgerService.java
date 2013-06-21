@@ -39,7 +39,7 @@ public interface GeneralLedgerService {
                                               GlOperationType glOperationOnCharge);
 
     /**
-     * Persists GeneralLedgerType instance in the persistence store.
+     * Persists GeneralLedgerType instance in the persistent store.
      *
      * @param glType GL type
      * @return GL type ID
