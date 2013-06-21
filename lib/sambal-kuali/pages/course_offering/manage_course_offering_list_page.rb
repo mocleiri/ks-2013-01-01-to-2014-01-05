@@ -5,8 +5,9 @@ class ManageCourseOfferingList < BasePage
 
   expected_element :subject_code
 
-  element(:co_results_div) { |b| b.frm.div(id: "manageCourseOfferingsPage") }
-  element(:subject_code) { |b| b.frm.co_results_div.h2.span() }
+  element(:subject_code) { |b| b.frm.div(class: "uif-viewHeader-contentWrapper uif-sticky").h1.span(index: 1) }
+
+  element(:co_results_div) { |b| b.frm.div(id: "Uif-ViewContentWrapper") }
 
   element(:approve_subject_code_for_scheduling_link) { |b| b.frm.co_results_div.link(id: "KS-CourseOfferingManagement-ApproveSubj") }
 
