@@ -194,9 +194,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *                          based on the effective date
      * @param date              Transaction effective or recognition Date
      * @return TransactionType instance
+     * @throws InvalidTransactionTypeException
+     *
      */
     @Override
-    public TransactionType getTransactionType(String transactionTypeId, Date date) {
+    public TransactionType getTransactionType(String transactionTypeId, Date date) throws InvalidTransactionTypeException {
 
         PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
 
@@ -224,19 +226,25 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *
      * @param transactionTypeId TransactionTypeId instance
      * @return TransactionType instance
+     * @throws InvalidTransactionTypeException
+     *
      */
     @Override
     @WebMethod(exclude = true)
-    public TransactionType getTransactionType(TransactionTypeId transactionTypeId) {
+    public TransactionType getTransactionType(TransactionTypeId transactionTypeId) throws InvalidTransactionTypeException {
 
         PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
 
         Query query = em.createQuery("select t from TransactionType t where t.id = :transactionTypeId");
+
         query.setParameter("transactionTypeId", transactionTypeId);
+
         List<TransactionType> transactionTypes = query.getResultList();
+
         if (CollectionUtils.isNotEmpty(transactionTypes)) {
             return transactionTypes.get(0);
         }
+
         String errMsg = "Cannot find TransactionType with ID = " + transactionTypeId;
         logger.error(errMsg);
         throw new InvalidTransactionTypeException(errMsg);
@@ -503,7 +511,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 throw new TransactionTypeNotAllowedException(errMsg);
             }
         } else if (!isTransactionAllowed(creatorId, id.getId(), effectiveDate)) {
-            String errMsg = "Transaction is not allowed for the given account = " + creatorId;
+            String errMsg = "Transaction is not allowed for the given account = " + creatorId +
+                    " and effective date = " + effectiveDate;
             logger.error(errMsg);
             throw new TransactionNotAllowedException(errMsg);
         }
@@ -2442,9 +2451,19 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public boolean isTransactionAllowed(String accountId, String transactionTypeId, Date effectiveDate) {
-        return accountService.accountExists(accountId) &&
-                getTransactionType(transactionTypeId, effectiveDate) != null &&
-                getAccessControlService().isTransactionTypeAllowed(accountId, transactionTypeId);
+
+        boolean transactionTypeExists = false;
+
+        try {
+            transactionTypeExists = (getTransactionType(transactionTypeId, effectiveDate) != null);
+        } catch (InvalidTransactionTypeException e) {
+            logger.warn(e.getMessage(), e);
+        }
+
+        String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+
+        return accountService.accountExists(accountId) && transactionTypeExists &&
+                getAccessControlService().isTransactionTypeAllowed(userId, transactionTypeId);
 
     }
 

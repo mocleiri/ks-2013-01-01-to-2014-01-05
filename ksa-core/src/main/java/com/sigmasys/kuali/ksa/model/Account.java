@@ -34,7 +34,7 @@ import com.sigmasys.kuali.ksa.util.BeanUtils;
 @Table(name = "KSSA_ACNT")
 @DiscriminatorColumn(name = "TYPE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class Account implements Identifiable {
+public abstract class Account implements Identifiable {
 
     /**
      * Account ID (User ID)
@@ -115,10 +115,6 @@ public class Account implements Identifiable {
      * Account Status Type
      */
     protected AccountStatusType statusType;
-
-
-    protected Account() {
-    }
 
 
     @Id

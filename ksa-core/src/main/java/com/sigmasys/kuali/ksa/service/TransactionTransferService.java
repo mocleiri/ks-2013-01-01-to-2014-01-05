@@ -3,7 +3,6 @@ package com.sigmasys.kuali.ksa.service;
 import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.TransactionTransfer;
-import com.sigmasys.kuali.ksa.model.TransferType;
 
 import javax.jws.WebService;
 import java.math.BigDecimal;
@@ -34,23 +33,28 @@ public interface TransactionTransferService {
      * For example, a sponsor may agree to pay 80% of a student’s tuition charges,
      * therefore only 80% of the tuition charge would be transferred.
      * <p/>
-     * TODO -> specify the correct parameters and provide their descriptions
      *
-     * @param transactionId
-     * @param transactionTypeId
-     * @param accountId
-     * @param transferType
-     * @param amount
-     * @param effectiveDate
-     * @param recognitionDate
-     * @param memoText
-     * @param statementPrefix
-     * @param transactionTypeMask
+     * @param transactionId       Transaction ID
+     * @param transactionTypeId   TransactionType ID
+     * @param transferTypeId      TransferType ID
+     * @param accountId           Account ID
+     * @param amount              Transaction amount being transferred
+     * @param effectiveDate       Effective Date
+     * @param recognitionDate     Recognition Date
+     * @param memoText            Memo text
+     * @param statementPrefix     Statement prefix
+     * @param transactionTypeMask Transaction type mask
      * @return TransactionTransfer instance
      */
-    TransactionTransfer transferTransaction(Long transactionId, String transactionTypeId, String accountId,
-                                            TransferType transferType, BigDecimal amount, Date effectiveDate,
-                                            Date recognitionDate, String memoText, String statementPrefix,
+    TransactionTransfer transferTransaction(Long transactionId,
+                                            String transactionTypeId,
+                                            Long transferTypeId,
+                                            String accountId,
+                                            BigDecimal amount,
+                                            Date effectiveDate,
+                                            Date recognitionDate,
+                                            String memoText,
+                                            String statementPrefix,
                                             String transactionTypeMask);
 
 }

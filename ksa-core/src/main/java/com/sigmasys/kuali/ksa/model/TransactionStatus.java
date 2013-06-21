@@ -17,6 +17,7 @@ public enum TransactionStatus implements Identifiable {
     WRITING_OFF,
     REVERSING,
     DISCOUNTING,
+    TRANSFERRING,
     RECIPROCAL_OFFSET;
 
 
@@ -46,6 +47,8 @@ public enum TransactionStatus implements Identifiable {
                 return "Reversing";
             case DISCOUNTING:
                 return "Discounting";
+            case TRANSFERRING:
+                return "Transferring";
             case RECIPROCAL_OFFSET:
                 return "Reciprocal Offset";
         }
