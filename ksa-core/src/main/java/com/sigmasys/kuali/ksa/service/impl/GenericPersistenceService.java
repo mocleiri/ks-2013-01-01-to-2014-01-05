@@ -202,11 +202,4 @@ public class GenericPersistenceService implements PersistenceService {
         return (T) entity.getId();
     }
 
-    protected <T extends AuditableEntity> T getAuditableEntityByCode(String code, Class<T> entityType) {
-        Query query = em.createQuery("select e from " + entityType.getSimpleName() + " e where e.code = :code");
-        query.setParameter("code", code);
-        List<T> entities = query.getResultList();
-        return (entities != null && !entities.isEmpty()) ? entities.get(0) : null;
-    }
-
 }

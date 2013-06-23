@@ -2631,7 +2631,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         PermissionUtils.checkPermission(Permission.READ_ROLLUP);
 
-        return getAuditableEntityByCode(code, Rollup.class);
+        return auditableEntityService.getAuditableEntity(code, Rollup.class);
     }
 
 

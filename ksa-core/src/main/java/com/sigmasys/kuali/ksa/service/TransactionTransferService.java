@@ -110,4 +110,28 @@ public interface TransactionTransferService {
      */
     Long persistTransactionTransfer(TransactionTransfer transactionTransfer);
 
+    /**
+     * Returns all transaction transfer objects for the given group ID.
+     *
+     * @param transferGroupId Transfer Group ID
+     * @return list of TransactionTransfer instances
+     */
+    List<TransactionTransfer> getTransactionTransfersByGroupId(String transferGroupId);
+
+    /**
+     * Sets the transfer group ID for each transaction transfer specified by the list of IDs.
+     *
+     * @param transferGroupId        Transfer group ID
+     * @param transactionTransferIds list of transaction transfer IDs
+     */
+    void setTransferGroup(String transferGroupId, List<Long> transactionTransferIds);
+
+    /**
+     * Sets the rollup specified by ID for the destination transaction of all transaction transfers from the specified group.
+     *
+     * @param transferGroupId Transfer Group ID
+     * @param rollupId        Rollup ID
+     */
+    void setRollupForTransferGroup(String transferGroupId, Long rollupId);
+
 }

@@ -71,6 +71,9 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Autowired
     private ActivityService activityService;
 
+    @Autowired
+    private AuditableEntityService auditableEntityService;
+
 
     protected Refund checkForRefund(Payment payment, Date refundRequestDate, Account refundRequestedBy, BigDecimal refundAmount) {
 
@@ -920,7 +923,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
             // Get the new Rollup:
             String achRollupCode = configService.getParameter(Constants.REFUND_ACH_GROUP_ROLLUP);
-            Rollup achRollup = getAuditableEntityByCode(achRollupCode, Rollup.class);
+            Rollup achRollup = auditableEntityService.getAuditableEntity(achRollupCode, Rollup.class);
 
             // Sum all due Refunds into one Ach transmission and perform refund:
             for (Refund dueRefund : allDueRefunds) {
@@ -1008,7 +1011,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
                 throw new ConfigurationException(errMsg);
             }
 
-            Rollup checkRollup = getAuditableEntityByCode(checkRollupCode, Rollup.class);
+            Rollup checkRollup = auditableEntityService.getAuditableEntity(checkRollupCode, Rollup.class);
 
             // Sum all due Refunds into one check and perform refund:
             for (Refund dueRefund : allDueRefunds) {

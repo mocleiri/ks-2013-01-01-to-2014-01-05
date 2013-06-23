@@ -184,7 +184,7 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      * @return TransactionTransfer instance
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public TransactionTransfer transferTransaction(Long transactionId,
                                                    String transactionTypeId,
                                                    Long transferTypeId,
@@ -332,12 +332,101 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      * @return TransactionTransfer ID
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public Long persistTransactionTransfer(TransactionTransfer transactionTransfer) {
 
         PermissionUtils.checkPermission(Permission.UPDATE_TRANSACTION_TRANSFER);
 
         return persistEntity(transactionTransfer);
+    }
+
+    /**
+     * Returns all transaction transfer objects for the given group ID.
+     *
+     * @param transferGroupId Transfer Group ID
+     * @return list of TransactionTransfer instances
+     */
+    @Override
+    public List<TransactionTransfer> getTransactionTransfersByGroupId(String transferGroupId) {
+
+        PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TRANSFER);
+
+        if (StringUtils.isBlank(transferGroupId)) {
+            String errMsg = "Transfer group ID must not be blank";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Query query = em.createQuery("select t from TransactionTransfer t " +
+                " left outer join fetch t.sourceTransaction " +
+                " left outer join fetch t.destTransaction " +
+                " left outer join fetch t.offsetTransaction " +
+                " left outer join fetch t.sourceReciprocalTransaction " +
+                " left outer join fetch t.destReciprocalTransaction " +
+                " left outer join fetch t.transferType " +
+                " where t.groupId = :groupId");
+
+        query.setParameter("groupId", transferGroupId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Sets the transfer group ID for each transaction transfer specified by the list of IDs.
+     *
+     * @param transferGroupId        Transfer group ID
+     * @param transactionTransferIds list of transaction transfer IDs
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public void setTransferGroup(String transferGroupId, List<Long> transactionTransferIds) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_TRANSACTION_TRANSFER);
+
+        if (CollectionUtils.isEmpty(transactionTransferIds)) {
+            String errMsg = "List of transaction transfer IDs must not be empty";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Query query = em.createQuery("update TransactionTransfer set groupId = :groupId where id in (:ids)");
+
+        query.setParameter("groupId", transferGroupId);
+        query.setParameter("ids", transactionTransferIds);
+
+        query.executeUpdate();
+    }
+
+    /**
+     * Sets the rollup specified by ID for the destination transaction of all transaction transfers from the specified group.
+     *
+     * @param transferGroupId Transfer Group ID
+     * @param rollupId        Rollup ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public void setRollupForTransferGroup(String transferGroupId, Long rollupId) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_TRANSACTION_TRANSFER);
+
+        Rollup rollup = auditableEntityService.getAuditableEntity(rollupId, Rollup.class);
+        if (rollup == null) {
+            String errMsg = "Rollup with ID = " + rollupId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        List<TransactionTransfer> transactionTransfers = getTransactionTransfersByGroupId(transferGroupId);
+
+        if (CollectionUtils.isNotEmpty(transactionTransfers)) {
+            for (TransactionTransfer transactionTransfer : transactionTransfers) {
+                Transaction destTransaction = transactionTransfer.getDestTransaction();
+                if (destTransaction != null) {
+                    destTransaction.setRollup(rollup);
+                }
+            }
+        }
+
     }
 
 
