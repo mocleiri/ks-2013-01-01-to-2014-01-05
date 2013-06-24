@@ -2,7 +2,7 @@ Feature: KRMS ELIG9.6 AND, OR and Move
 
   Background:
     Given I am logged in as admin
-    Given I have setup the data for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI103"
+    Given I have setup the data for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI103M"
 
   #ELIG9.6.EB1 (KSENROLL-6491)
   @pending

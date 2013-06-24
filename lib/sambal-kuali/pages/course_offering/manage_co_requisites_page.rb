@@ -46,6 +46,8 @@ class ManageCORequisites < BasePage
   element(:duration_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.duration/)}
   element(:duration_dropdown) { |b| b.frm.select(:name => /.*editTree.*proposition\.durationType/)}
   element(:program_dropdown) { |b| b.frm.select(:name => /.*editTree.*proposition\.programType/)}
+  element(:term_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.termCode/)}
+  element(:term_two_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.termCode2/)}
 
   element(:grade_fieldset) { |b| b.edit_tree_section.fieldset(:id => /KRMS-GradeScale-Field_node_\d+_parent_root_fieldset/)}
 
@@ -55,6 +57,7 @@ class ManageCORequisites < BasePage
   element(:lookup_course_code) { |b| b.frm_popup.text_field(name: "lookupCriteria[code]")}
   element(:lookup_description) { |b| b.frm_popup.text_field(name: "lookupCriteria[description]")}
   element(:lookup_set_name) { |b| b.frm_popup.text_field(name: "lookupCriteria[name]")}
+  element(:lookup_class_standing) { |b| b.frm_popup.text_field(name: "lookupCriteria[keyword]")}
   action(:lookup_search_button) { |b| b.frm_popup.button(id: "button_search").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
 
   element(:info_message) { |b| b.rule_maintenance_section.li(class: "uif-infoMessageItem")}

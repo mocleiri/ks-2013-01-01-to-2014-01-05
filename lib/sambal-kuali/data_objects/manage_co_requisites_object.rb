@@ -51,10 +51,11 @@ class ManageCORequisitesData
 
   def advanced_search(field, code)
     fields = {"course code"=>:lookup_course_code, "course title"=>:lookup_course_title, "course set"=>:lookup_set_name,
-              "course range"=>"????", }  ##############################################
+              "course range"=>"????", "program code"=>:lookup_course_code}  ##############################################
     on ManageCORequisites do |page|
       page.edit_loading.wait_while_present
       page.search_link
+      page.loading.wait_while_present
       page.send(fields[field]).when_present.set code
       page.lookup_search_button
       page.loading.wait_while_present
@@ -243,12 +244,60 @@ class ManageCORequisitesData
     add_new_node( group, node)
     on ManageCORequisites do |page|
       if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
-        page.rule_dropdown.when_present.select /Must have been admitted to the <Program> Program/
+        page.rule_dropdown.when_present.select /Must have been admitted to the <program> program/
       elsif( sect == "Antirequisite")
-        page.rule_dropdown.when_present.select /Must not have been admitted to the <Program> Program/
+        page.rule_dropdown.when_present.select /Must not have been admitted to the <program> program/
       end
-      page.program_dropdown.when_present.select /Approved Programs/
       add_program( program)
+      page.preview_btn
+    end
+  end
+
+  def create_any_program_rule( group, node)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must be admitted to any program offered at the course campus location/
+      page.edit_loading.wait_while_present
+      page.preview_btn
+    end
+  end
+
+  def create_permission_instructor_rule( group, node)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Permission of instructor required/
+      page.edit_loading.wait_while_present
+      page.preview_btn
+    end
+  end
+
+  def create_course_term_rule( group, node, course, term, prior_or_as = "as to")
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have successfully completed <course> #{Regexp.escape(prior_or_as)} <term>/
+      advanced_search("course code", course)
+      page.term_field.set term
+      page.preview_btn
+    end
+  end
+
+  def create_course_between_terms_rule( group, node, course, term1, term2)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have successfully completed <course> between <term1> and <term2>/
+      advanced_search("course code", course)
+      page.term_field.set term1
+      page.term_two_field.set term2
+      page.preview_btn
+    end
+  end
+
+  def create_program_class_standing_rule( group, node, program, stand)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must not have been admitted to the <program> program with a class standing of <class standing>/
+      add_program( program)
+      add_class_standing( stand)
       page.preview_btn
     end
   end
@@ -300,11 +349,18 @@ class ManageCORequisitesData
       if programs != "" && programs != nil
         page.program_dropdown.when_present.select /Approved Programs/
         programs.each do |elem|
-          advanced_search("course code", elem)
+          advanced_search("program code", elem)
           page.add_line_btn
           page.adding.wait_while_present
         end
       end
+    end
+  end
+
+  def add_class_standing( standing)
+    on ManageCORequisites do |page|
+      advanced_search("class standing", standing)
+      page.edit_loading.wait_while_present
     end
   end
 
@@ -339,22 +395,6 @@ class ManageCORequisitesData
     end
   end
 
-  #def add_new_gradetype_node(sect, field, node, course, set, range, type, grade)
-  #  on ManageCORequisites do |page|
-  #    if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
-  #      page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
-  #    end
-  #    page.add_btn
-  #    courses = create_array(course)
-  #    sets = create_array(set)
-  #    if field == "courses"
-  #      create_grade_courses_rule( courses, sets, range, type, grade, sect)
-  #    elsif field == "number of courses"
-  #      create_grade_number_courses_rule( courses, sets, range, type, grade, sect)
-  #    end
-  #  end
-  #end
-
   def create_array( string)
     if string != "" && string != nil
       strings = string.split(/,/)
@@ -363,27 +403,6 @@ class ManageCORequisitesData
     end
     return strings
   end
-
-  #def create_new_group(sect, field, node, course, set, range)
-  #  on ManageCORequisites do |page|
-  #    page.loading.wait_while_present
-  #    if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
-  #      page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
-  #      page.group_btn
-  #      if field == "course"
-  #        create_course_rule( course, sect)
-  #      elsif field == "courses"
-  #        courses = course.split(/,/)
-  #        create_all_courses_rule( courses, set, range, sect)
-  #      elsif field == "text"
-  #        create_text_rule( course)
-  #      elsif field == "number of courses"
-  #        courses = course.split(/,/)
-  #        create_number_courses_rule( courses, set, range, sect)
-  #      end
-  #    end
-  #  end
-  #end
 
   def switch_tabs
     on ManageCORequisites do |page|

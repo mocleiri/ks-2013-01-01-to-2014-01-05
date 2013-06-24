@@ -188,6 +188,30 @@ When /^I add a new program statement with program code "(.*?)"$/ do |program|
   @manageCOR.create_program_rule( "add", "", program, @courseOR.section)
 end
 
+When /^I add a new any program statement$/ do
+  @manageCOR.create_any_program_rule( "add", "")
+end
+
+When /^I add a new permission of instructor required statement$/ do
+  @manageCOR.create_permission_instructor_rule( "add", "")
+end
+
+When /^I add a new course and as of term statement with course "(.*?)" and term "(.*?)"$/ do |course, term|
+  @manageCOR.create_course_term_rule( "add", "", course, term)
+end
+
+When /^I add a new course and prior to term statement with course "(.*?)" and term "(.*?)"$/ do |course, term|
+  @manageCOR.create_course_term_rule( "add", "", course, term, "prior to")
+end
+
+When /^I add a new course and two terms statement with course "(.*?)" between terms one "(.*?)" and two "(.*?)"$/ do |course, term1, term2|
+  @manageCOR.create_course_between_terms_rule( "add", "", course, term1, term2)
+end
+
+When /^I add a new program and class standing statement with program code "(.*?)" and class standing "(.*?)"$/ do |program, stand|
+  @manageCOR.create_program_class_standing_rule( "add", "", program, stand)
+end
+
 When /^I group course statement with node "(.)" with course "([^\"]+)"$/ do |node, course|
   @manageCOR.create_course_rule( "group", node, course, @courseOR.section)
 end

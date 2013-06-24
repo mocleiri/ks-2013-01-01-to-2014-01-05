@@ -95,14 +95,14 @@ Feature: KRMS ELIG9.2 Natural Language
   @pending
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule two
     When I navigate to the agenda page for "Corequisite" for term "201301" and course "HIST110"
-    And I want to edit the selected agenda section
-    And I add a number of courses statement after node "A" with number "1" and courses "HIST250,HIST210" and course sets "General Education: Fundamental Studies-Professional Writing"
-    Then the "edit" tab should have the text "Must be concurrently enrolled in a minimum of 1 course from (HIST210, HIST250, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
-    When I switch to the other tab on the page
-    Then the "logic" tab should have the text "Must be concurrently enrolled in a minimum of 1 course from,HIST210,HIST250,General Education: Fundamental Studies-Professional Writing"
-    When I update the manage course offering agendas page
-    Then the "agenda" page should have the text "Must be concurrently enrolled in a minimum of 1 course from,HIST210,HIST250,General Education: Fundamental Studies-Professional Writing"
-    When I commit and return to see the changes made to the proposition
+#    And I want to edit the selected agenda section
+#    And I add a number of courses statement after node "A" with number "1" and courses "HIST250,HIST210" and course sets "General Education: Fundamental Studies-Professional Writing"
+#    Then the "edit" tab should have the text "Must be concurrently enrolled in a minimum of 1 course from (HIST210, HIST250, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+#    When I switch to the other tab on the page
+#    Then the "logic" tab should have the text "Must be concurrently enrolled in a minimum of 1 course from,HIST210,HIST250,General Education: Fundamental Studies-Professional Writing"
+#    When I update the manage course offering agendas page
+#    Then the "agenda" page should have the text "Must be concurrently enrolled in a minimum of 1 course from,HIST210,HIST250,General Education: Fundamental Studies-Professional Writing"
+#    When I commit and return to see the changes made to the proposition
     Then the "agenda" page should have the text "Must be concurrently enrolled in a minimum of 1 course from,HIST210,HIST250,General Education: Fundamental Studies-Professional Writing"
     When I want to edit the selected agenda section
     Then the "edit" tab should have the text "Must be concurrently enrolled in a minimum of 1 course from (ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394, HIST210, HIST250)"
