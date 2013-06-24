@@ -88,21 +88,6 @@ class CORequisitesData
     end
   end
 
-  def assert_agenda_tree_contents
-    section_regex = {"Antirequisite"=>"Corequisite", "Corequisite"=>"Recommended Preparation",
-                     "Recommended Preparation"=>"Student Eligibility & Prerequisite",
-                     "Student Eligibility & Prerequisite"=>"Credit Constraints",
-                     "Repeatable for Credit"=>"Course that Restricts Credits", "Course that Restricts Credits"=>""}
-    on CourseOfferingRequisites do |page|
-      page.loading.wait_while_present
-      open_agenda_section
-      regex = /.*#{@section}.*Rule.*\.\n#{section_regex[section]}.*/m
-      if page.agenda_management_section.text !~ regex
-        raise "\nError: Text did not match\n" + regex.to_s
-      end
-    end
-  end
-
   def open_agenda_section
     sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq_section,
                 "Antirequisite"=>:antirequisite_section, "Corequisite"=>:corequisite_section,

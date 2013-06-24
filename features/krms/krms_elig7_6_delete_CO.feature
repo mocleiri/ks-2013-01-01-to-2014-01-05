@@ -8,8 +8,8 @@ Feature: KRMS ELIG7.2 Delete statement or compound statement of CO copied from C
   Scenario: Test whether statement deleted in compound is removed from the tree
     When I edit the data for "Student Eligibility & Prerequisite" for term "201208" and course "PHYS275"
     And I want to edit the selected agenda section
-    And I delete node "J" in the tree
-    Then there should be no node "J" on both tabs
+    And I delete node "G" in the tree
+    Then there should be no node "G" on both tabs
     When I commit and return to see the changes made to the proposition
     Then the "agenda" page should not have the text "Must have successfully completed a minimum of 1 course from,HIST210,HIST395"
 

@@ -102,8 +102,8 @@ class ManageCORequisitesData
       create_text_rule( "add", "", "free form text input value")
       create_all_courses_rule( "group", "A", "ENGL478,HIST416", "", "", sect)
       create_text_rule( "add", "", "Text")
-      create_text_rule( "group", "F", "Text to copy")
-      create_number_courses_rule( "add", "D", "1", "HIST395,HIST210", "", "", sect)
+      create_text_rule( "group", "D", "Text to copy")
+      create_number_courses_rule( "add", "C", "1", "HIST395,HIST210", "", "", sect)
       page.loading.wait_while_present
       page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
@@ -114,13 +114,13 @@ class ManageCORequisitesData
 
   def edit_data_advanced_search( sect)
     on ManageCORequisites do |page|
-      create_course_rule( "add", "C", "ENGL101", sect)
-      create_text_rule( "group", "B", "free form text input value")
+      create_course_rule( "add", "B", "ENGL101", sect)
+      create_text_rule( "group", "A", "free form text input value")
       create_all_courses_rule( "add", "", "ENGL478,HIST416", "", "", sect)
-      create_text_rule( "group", "F", "Text")
-      create_number_courses_rule( "add", "D", "1", "HIST395,HIST210", "", "", sect)
+      create_text_rule( "group", "D", "Text")
+      create_number_courses_rule( "add", "C", "1", "HIST395,HIST210", "", "", sect)
       page.loading.wait_while_present
-      page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "AND"
+      page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
       page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present

@@ -49,6 +49,13 @@ When /^I want to add a new statement to the selected agenda section$/ do
   end
 end
 
+When /^I delete the tree$/ do
+  on ManageCORequisites do |page|
+    page.edit_tree_section.span(:id => /u\d+_node_0_parent_root_span/).when_present.click
+    page.del_btn
+  end
+end
+
 When /^I delete node "(.)" in the tree$/ do |node|
   on ManageCORequisites do |page|
     page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
@@ -56,8 +63,16 @@ When /^I delete node "(.)" in the tree$/ do |node|
   end
 end
 
-When /^I edit node "(.*?)" in the tree by changing the "(.*?)" to "(.*?)"$/ do |node, field, change|
-  @manageCOR.edit_existing_node(node, field, change)
+When /^I edit node "(.*?)" by changing course to "(.*?)"$/ do |node, change|
+  @manageCOR.edit_existing_node(node, "course", change)
+end
+
+When /^I edit node "(.*?)" by adding course "(.*?)"$/ do |node, change|
+  @manageCOR.edit_existing_node(node, "courses", change)
+end
+
+When /^I edit node "(.*?)" by changing text to "(.*?)"$/ do |node, change|
+  @manageCOR.edit_existing_node(node, "text", change)
 end
 
 When /^I add a course statement after node "(.)" with course "([^\"]+)"$/ do |node, course|
@@ -273,7 +288,15 @@ When /^I commit changes made to the proposition$/ do
 end
 
 Then /^the tree in the selected agenda section should be empty$/ do
-  @courseOR.assert_agenda_tree_contents
+  section_regex = {"Antirequisite"=>"Corequisite", "Corequisite"=>"Recommended Preparation",
+                   "Recommended Preparation"=>"Student Eligibility & Prerequisite",
+                   "Student Eligibility & Prerequisite"=>"Credit Constraints",
+                   "Repeatable for Credit"=>"Course that Restricts Credits", "Course that Restricts Credits"=>""}
+  on CourseOfferingRequisites do |page|
+    page.loading.wait_while_present
+    open_agenda_section
+    page.agenda_management_section.text.should =~ /.*#{@courseOR.section}.*Rule.*\.\n#{section_regex[@courseOR.section]}.*/m
+  end
 end
 
 Then /^there should be no node "(.*?)" on both tabs$/ do |node|

@@ -11,4 +11,4 @@ Feature: KRMS ELIG9.1 Data Setup
     When I want to edit the selected agenda section
     Then the "edit" tab should have the text "Must have successfully completed a minimum of 1 course from (HIST210, HIST395)"
     When I switch to the other tab on the page
-    Then the text "A(B(C AND D(E OR F) AND G) OR H OR I OR J)" should be present in the text area
+    Then the text "(A AND (B OR C) AND D) OR E OR F OR G" should be present in the text area
