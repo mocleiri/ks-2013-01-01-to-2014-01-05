@@ -13,6 +13,21 @@ When /^I search for the calendar$/ do
   @calendar.search
 end
 
+When /^I search for academic calendars$/ do
+  @calendar = make AcademicCalendar, :name => "Academic Calendar"
+  @calendar.search
+end
+
+When /^I search for holiday calendars$/ do
+  @calendar = make HolidayCalendar, :name => "Holiday Calendar"
+  @calendar.search
+end
+
+When /^I search for academic terms$/ do
+  @term = make AcademicTerm, :term_name => "Term"
+  @term.search
+end
+
 When /^I search for the Academic Calendar using (.*)$/ do |arg|
   search_terms = { :wildcards=>"*", :"partial name"=>@calendar.name[0..2] }
   visit Enrollment do |page|
@@ -177,6 +192,45 @@ And /^the term should not appear in search results$/ do
       page.results_list.should_not include @calendar.name
     rescue Watir::Exception::UnknownObjectException
       # Implication here is that there were no search results at all.
+    end
+  end
+end
+
+Then /^I should not be able to edit a calendar$/ do
+  on CalendarSearch do |page|
+    begin
+      page.results_table.rows.each do |row|
+        row.link(text: "Edit").present?.should be_false
+      end
+    rescue Watir::Exception::UnknownObjectException
+      # Means no search results on the page.
+      raise "Page has no results to check"
+    end
+  end
+end
+
+And /^I should not be able to copy a calendar$/ do
+  on CalendarSearch do |page|
+    begin
+      page.results_table.rows.each do |row|
+        row.link(text: "Copy").present?.should be_false
+      end
+    rescue Watir::Exception::UnknownObjectException
+      # Means no search results on the page.
+      raise "Page has no results to check"
+    end
+  end
+end
+
+Then /^I should not be able to edit a term$/ do
+  on CalendarSearch do |page|
+    begin
+      page.results_table.rows.each do |row|
+        row.link(text: "Edit").present?.should be_false
+      end
+    rescue Watir::Exception::UnknownObjectException
+      # Means no search results on the page.
+      raise "Page has no results to check"
     end
   end
 end

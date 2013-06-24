@@ -116,32 +116,32 @@ class HolidayCalendar
       on EditAcademicCalendar do |page|
         page.save
       end
-
-      def search
-        go_to_calendar_search
-        on CalendarSearch do |page|
-          page.search_for "Holiday Calendar", @name
-        end
-      end
-
-      def right_source?(name)
-        on CreateAcadCalendar do |page|
-          if page.source_name == name
-            return true
-          else
-            return false
-          end
-        end
-      end
-
-      def make_official
-        on EditAcademicCalendar do |page|
-          page.make_official
-        end
-      end
-
     end
   end
+
+  def search
+    go_to_calendar_search
+    on CalendarSearch do |page|
+      page.search_for "Holiday Calendar", @name
+    end
+  end
+
+  def right_source?(name)
+    on CreateAcadCalendar do |page|
+      if page.source_name == name
+        return true
+      else
+        return false
+      end
+    end
+  end
+
+  def make_official
+    on EditAcademicCalendar do |page|
+      page.make_official
+    end
+  end
+
 
   def search_and_edit_holiday_calendar
     go_to_calendar_search
