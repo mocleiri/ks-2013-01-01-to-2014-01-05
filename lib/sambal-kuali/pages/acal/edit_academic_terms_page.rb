@@ -1,14 +1,15 @@
-class AcademicTermPage < BasePage
+class EditAcademicTerms < BasePage
 
 
   wrapper_elements
   frame_element
 
-  element(:go_to_term_tab) { |b| b.frm.a(href: "#KS-AcademicTerm-EditSection_tab").click; b.loading.wait_while_present}
-  element(:go_to_cal_tab) { |b| b.frm.a(href: "#acal-info_tab").click; b.loading.wait_while_present}
+  action(:go_to_term_tab) { |b| b.frm.a(href: "#KS-AcademicTerm-EditSection_tab").click; b.loading.wait_while_present}
+  action(:go_to_cal_tab) { |b| b.frm.a(href: "#acal-info_tab").click; b.loading.wait_while_present}
   element(:term_type_add)  { |b| b.frm.select(id: "term_type_add_add_control") }
   element(:term_start_date_add)  { |b| b.frm.text_field(id: "term_start_date_add_add_control") }
   element(:term_end_date_add)  { |b| b.frm.text_field(id: "term_end_date_add_add_control") }
+  element(:parent_term_select)  { |b| b.frm.select(id: "parent_term_type_add") }
 
   action(:acal_term_add) { |b| b.frm.button(id: "acal-term_add").click; b.loading.wait_while_present }
 

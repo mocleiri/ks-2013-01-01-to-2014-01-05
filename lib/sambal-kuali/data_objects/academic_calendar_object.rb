@@ -36,7 +36,8 @@ class AcademicCalendar
         :name=>random_alphanums.strip,
         :start_date=>"09/01/#{next_year[:year]}",
         :end_date=>"06/25/#{next_year[:year] + 1}",
-        :organization=>"Registrar's Office"
+        :organization=>"Registrar's Office" ,
+        :terms => []
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -119,6 +120,19 @@ class AcademicCalendar
     end
   end
 
+  def edit (opts)
+    search
+    on(CalendarSearch).edit @name
+
+    add_term(opts[:terms]) unless opts[:terms].nil?
+
+  end
+
+  def add_term(term_object)
+    term_object.create
+    @terms << term_object
+  end
+
 end
 
 
@@ -134,12 +148,13 @@ class AcademicTerm
 
   def initialize(browser,opts = {})
     @browser = browser
+    calendar_year = get_random_calendar_year
 
     defaults = {
-        :start_date=>"09/02/#{next_year[:year]}",
-        :end_date=>"06/24/#{next_year[:year] + 1}",
-        :term_type=>"Spring Term",
-        :term_name=>"Spring Term" + " #{next_year[:year]}"
+        :start_date=>"09/02/#{calendar_year}",
+        :end_date=>"06/24/#{calendar_year}",
+        :term_type=>"Fall Term",
+        :term_name=>"Fall Term #{calendar_year}"
     }
 
     options = defaults.merge(opts)
@@ -147,32 +162,25 @@ class AcademicTerm
 
   end
 
-  def create(term_type)
+  def create()
 
-    if (term_type != nil)
-      @term_type="#{term_type}".capitalize + " Term"
-      @term_name=@term_type + " #{next_year[:year]}"
-    end
-
-    on AcademicTermPage do |page|
+    on EditAcademicTerms do |page|
+      page.go_to_term_tab
       page.term_type_add.select @term_type
+      page.adding.wait_while_present
       page.term_start_date_add.set @start_date
       page.term_end_date_add.set @end_date
-
+      #TODO - parent term
       page.acal_term_add
-      sleep 5
-      if (@term_type == "Spring Term")
-         page.term_type_add.select "Winter Term"
-      else
-         page.term_type_add.select "Spring Term"
-      end
+      page.adding.wait_while_present
+
       @keyDateGroup = Array.new(1){make KeyDateGroup}
       @keyDateGroup[0].create
     end
   end
 
   def verify()
-    on AcademicTermPage do |page|
+    on EditAcademicTerms do |page|
       page.get_term_type(0).should == @term_name
       page.get_term_start_date(0).should == @start_date
       page.get_term_end_date(0).should == @end_date
@@ -185,6 +193,13 @@ class AcademicTerm
     on CalendarSearch do |page|
       page.search_for "Academic Term", @term_name
     end
+  end
+
+  #there are existing calendars up to 2023, so most of the term codes are used
+  BASE_UNUSED_CALENDAR_YEAR = 2024
+  MAX_UNUSED_CALENDAR_YEAR = 2199
+  def get_random_calendar_year(base_year =BASE_UNUSED_CALENDAR_YEAR, max_year = MAX_UNUSED_CALENDAR_YEAR)
+    rand( (base_year).to_i..(max_year).to_i)
   end
 
 end
@@ -214,7 +229,7 @@ class KeyDateGroup
 
   def create(opts = {})
 
-    on AcademicTermPage do |page|
+    on EditAcademicTerms do |page|
       sleep 3
       page.key_date_group_dropdown(@term_index).select @key_date_group_type
 
@@ -267,8 +282,7 @@ class KeyDate
   end
 
   def create(opts = {})
-    sleep 3;
-    on AcademicTermPage do |page|
+    on EditAcademicTerms do |page|
       page.key_date_dropdown_addline(@term_index,0).select @key_date_type
       page.key_date_start_date_addline(@term_index,0).set @start_date
       page.key_date_allday_addline(@term_index,0).set @all_day
@@ -295,62 +309,62 @@ class KeyDate
     end
 
     if options[:start_date] != nil
-      on AcademicTermPage  do |page|
+      on EditAcademicTerms  do |page|
         page.key_date_start_date_edit(@term_index,@key_date_group,0).set options[:start_date]
         @start_date =  options[:start_date]
       end
     end
 
     if options[:all_day] != nil
-      on AcademicTermPage  do |page|
+      on EditAcademicTerms  do |page|
         page.key_date_allday_edit(@term_index,@key_date_group,0).set options[:all_day]
         @all_day = options[:all_day]
       end
     end
 
     if options[:date_range] != nil
-      on AcademicTermPage  do |page|
+      on EditAcademicTerms  do |page|
         page.key_date_daterange_edit(@term_index,@key_date_group,0).set options[:date_range]
         @date_range = options[:date_range]
       end
     end
 
     if options[:end_date] != nil
-      on AcademicTermPage  do |page|
+      on EditAcademicTerms  do |page|
         page.key_date_end_date_edit(@term_index,@key_date_group,0).set options[:end_date] if @date_range
         @end_date = options[:end_date]
       end
     end
 
     if options[:start_time] != nil
-      on AcademicTermPage  do |page|
+      on EditAcademicTerms  do |page|
         page.key_start_time_edit(@term_index,@key_date_group,0).set options[:start_time]
         @start_time = options[:start_time]
       end
     end
 
     if options[:end_time] != nil
-      on AcademicTermPage  do |page|
+      on EditAcademicTerms  do |page|
         page.key_end_time_edit(@term_index,@key_date_group,0).set options[:end_time]
         @end_time = options[:end_time]
       end
     end
 
     if options[:start_time_ampm] != nil
-      on AcademicTermPage  do |page|
+      on EditAcademicTerms  do |page|
         page.key_start_time_ampm_edit(@term_index,@key_date_group,0).set options[:start_time_ampm]
         @start_time_ampm = options[:start_time_ampm]
       end
     end
 
     if options[:end_time_ampm] != nil
-      on AcademicTermPage  do |page|
+      on EditAcademicTerms  do |page|
         page.key_end_time_ampm_edit(@term_index,@key_date_group,0).set options[:end_time_ampm]
         @end_time_ampm = options[:end_time_ampm]
       end
     end
 
-    on AcademicTermPage  do |page|
+    on EditAcademicTerms  do |page|
       page.save
       #page.make_term_official(@term_index)
     end
@@ -358,7 +372,7 @@ class KeyDate
     end
 
   def verify()
-    on AcademicTermPage do |page|
+    on EditAcademicTerms do |page|
       page.key_date_type(0,0,0).should == @key_date_type
       page.key_date_start_date(0,0,0).should == @start_date
       page.key_date_end_date(0,0,0).should == @end_date

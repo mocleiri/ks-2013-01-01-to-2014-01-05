@@ -116,7 +116,7 @@ Then /^the calendar should reflect the updates$/ do
 end
 
 When /^I add a (.*) term and save$/ do |term_type|
-  on AcademicTermPage do |page|
+  on EditAcademicTerms do |page|
      page.go_to_term_tab
      @term = make AcademicTerm
      @term.create term_type
@@ -136,21 +136,21 @@ Then /^I verify that the term added to the calendar$/ do
   on CalendarSearch do |page|
     page.edit @calendar.name
   end
-  on AcademicTermPage do |page|
+  on EditAcademicTerms do |page|
     page.go_to_term_tab
     @term.verify
   end
 end
 
 And /^Make Official button for the term is enabled$/ do
-  on AcademicTermPage do |page|
+  on EditAcademicTerms do |page|
     page.term_make_official_enabled(0).should == true
     page.term_make_official_button(0).should == 'Make Official'
   end
 end
 
 And /^I make the term official$/ do
-  on AcademicTermPage do |page|
+  on EditAcademicTerms do |page|
     page.go_to_term_tab
     page.make_term_official(0)
   end
@@ -161,7 +161,7 @@ Then /^the term should be set to Official on edit$/ do
   on CalendarSearch do |page|
     page.edit @term.term_name
   end
-  on AcademicTermPage do |page|
+  on EditAcademicTerms do |page|
     page.term_make_official_button(0).should == 'Update Official'
   end
 end
@@ -171,7 +171,7 @@ When /^I delete the Academic Term draft$/ do
   on CalendarSearch do |page|
     page.edit @term.term_name
   end
-  on AcademicTermPage do |page|
+  on EditAcademicTerms do |page|
     page.go_to_term_tab
     page.delete_term(0)
     page.go_to_cal_tab
@@ -232,5 +232,22 @@ Then /^I should not be able to edit a term$/ do
       # Means no search results on the page.
       raise "Page has no results to check"
     end
+  end
+end
+
+When /^I add a new term to the Academic Calendar$/ do
+  @term = make AcademicTerm
+  @calendar.edit :terms => @term
+end
+
+Then /^the term is listed when I view the Academic Calendar$/ do
+  @calendar.search
+
+  on CalendarSearch do |page|
+    page.edit @calendar.name
+  end
+
+  on ViewAcademicTerms do |page|
+    puts page.target_term_div(@term.name)
   end
 end

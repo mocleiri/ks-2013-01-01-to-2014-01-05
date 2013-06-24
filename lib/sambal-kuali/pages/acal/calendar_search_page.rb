@@ -37,31 +37,31 @@ class CalendarSearch < BasePage
   end
 
   def view calendar
-    results_table.row(text: /#{calendar}/).link(text: "View").click
+    results_table.row(text: /\b#{calendar}\b/).link(text: "View").click
     loading.wait_while_present
   end
 
   def edit calendar
-    results_table.row(text: /#{calendar}/).link(text: "Edit").click
+    results_table.row(text: /\b#{calendar}\b/).link(text: "Edit").click
     loading.wait_while_present
   end
 
   def copy calendar
-    results_table.row(text: /#{calendar}/).link(text: "Copy").click
+    results_table.row(text: /\b#{calendar}\b/).link(text: "Copy").click
     loading.wait_while_present
   end
 
   def delete calendar
-    results_table.row(text: /#{calendar}/).link(text: "Delete").click
+    results_table.row(text: /\b#{calendar}\b/).link(text: "Delete").click
     loading.wait_while_present
   end
 
   def calendar_status calendar
-    results_table.row(text: /#{calendar}/)[CALENDAR_STATUS].text
+    results_table.row(text: /\b#{calendar}\b/)[CALENDAR_STATUS].text
   end
 
   def calendar_action_text calendar
-    results_table.row(text: /#{calendar}/)[CALENDAR_ACTION].text
+    results_table.row(text: /\b#{calendar}\b/)[CALENDAR_ACTION].text
   end
 
   def results_list

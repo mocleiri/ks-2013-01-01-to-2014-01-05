@@ -62,7 +62,9 @@ Feature: EC.Academic Calendar Terms
 
   Scenario: Verify instructional days calculation for an academic term
     Given I create an Academic Calendar with an academic term
-    Then the instructional days calculation is
+    Then the instructional days calculation is correct
+    When I add holidays within the term
+    Then the instructional days calculation is correct
 
 #  @draft
 #  Scenario: Add a term to the academic calendar (acad calender must be official before can make term official)
