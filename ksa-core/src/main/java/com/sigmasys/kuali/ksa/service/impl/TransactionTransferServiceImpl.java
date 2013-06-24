@@ -40,6 +40,14 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
 
     private static final Log logger = LogFactory.getLog(TransactionTransferServiceImpl.class);
 
+    private static final String TRANSACTION_TRANSFER_SELECT = " select t from TransactionTransfer t " +
+            " left outer join fetch t.sourceTransaction " +
+            " left outer join fetch t.destTransaction " +
+            " left outer join fetch t.offsetTransaction " +
+            " left outer join fetch t.sourceReciprocalTransaction " +
+            " left outer join fetch t.destReciprocalTransaction " +
+            " left outer join fetch t.transferType ";
+
     @Autowired
     private TransactionService transactionService;
 
@@ -357,18 +365,31 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
             throw new IllegalArgumentException(errMsg);
         }
 
-        Query query = em.createQuery("select t from TransactionTransfer t " +
-                " left outer join fetch t.sourceTransaction " +
-                " left outer join fetch t.destTransaction " +
-                " left outer join fetch t.offsetTransaction " +
-                " left outer join fetch t.sourceReciprocalTransaction " +
-                " left outer join fetch t.destReciprocalTransaction " +
-                " left outer join fetch t.transferType " +
-                " where t.groupId = :groupId");
+        Query query = em.createQuery(TRANSACTION_TRANSFER_SELECT + " where t.groupId = :groupId order by t.id desc");
 
         query.setParameter("groupId", transferGroupId);
 
         return query.getResultList();
+    }
+
+    /**
+     * Retrieves TransactionTransfer instance by ID from the persistent store.
+     *
+     * @param transactionTransferId Transaction Transfer ID
+     * @return TransactionTransfer instance
+     */
+    @Override
+    public TransactionTransfer getTransactionTransfer(Long transactionTransferId) {
+
+        PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TRANSFER);
+
+        Query query = em.createQuery(TRANSACTION_TRANSFER_SELECT + " where t.id = :id");
+
+        query.setParameter("id", transactionTransferId);
+
+        List<TransactionTransfer> transfers = query.getResultList();
+
+        return CollectionUtils.isNotEmpty(transfers) ? transfers.get(0) : null;
     }
 
     /**
@@ -429,5 +450,176 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
 
     }
 
+    protected TransactionTransfer reverseTransactionTransfer(TransactionTransfer transactionTransfer, String memoText,
+                                                             BigDecimal reversalAmount) {
+
+        PermissionUtils.checkPermission(Permission.REVERSE_TRANSACTION_TRANSFER);
+
+        if (reversalAmount == null || BigDecimal.ZERO.compareTo(reversalAmount) == 0) {
+            String errMsg = "Reversal amount cannot be null or 0";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (transactionTransfer.getReversalStatus() != ReversalStatus.NOT_REVERSED) {
+            String errMsg = "TransactionTransfer (ID=" + transactionTransfer.getId() + ") has already been reversed";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        Transaction offsetTransaction = transactionTransfer.getOffsetTransaction();
+        if (offsetTransaction == null) {
+            String errMsg = "TransactionTransfer (ID=" + transactionTransfer.getId() + ") requires Offset Transaction";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        Transaction destTransaction = transactionTransfer.getDestTransaction();
+
+        if (reversalAmount.compareTo(transactionService.getUnallocatedAmount(destTransaction)) > 0) {
+
+            // Removing all regular allocations which the transaction is involved in
+            transactionService.removeAllAllocations(destTransaction.getId());
+
+            // Updating the transaction instance
+            destTransaction = transactionService.getTransaction(destTransaction.getId());
+
+            // Checking the unallocated amount again
+            if (reversalAmount.compareTo(transactionService.getUnallocatedAmount(destTransaction)) > 0) {
+                String errMsg = "Reversal amount cannot be greater than transaction unallocated amount";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+
+            transactionTransfer.setDestTransaction(destTransaction);
+        }
+
+
+        // Creating a new reversal for the destination transaction
+        Transaction sourceReciprocalTransaction =
+                transactionService.reverseTransaction(destTransaction.getId(), memoText, reversalAmount, null);
+
+        // Creating a new reversal for the offset transaction
+        Transaction destReciprocalTransaction =
+                transactionService.reverseTransaction(destTransaction.getId(), memoText, reversalAmount, null);
+
+        transactionTransfer.setSourceReciprocalTransaction(sourceReciprocalTransaction);
+        transactionTransfer.setDestReciprocalTransaction(destReciprocalTransaction);
+        transactionTransfer.setReversalAmount(reversalAmount);
+
+        boolean isPartialAmount = (reversalAmount.compareTo(transactionTransfer.getTransferAmount()) < 0);
+
+        // Setting the reversal status
+        transactionTransfer.setReversalStatus(isPartialAmount ? ReversalStatus.PARTIALLY_REVERSED : ReversalStatus.REVERSED);
+
+        return transactionTransfer;
+    }
+
+    /**
+     * This method is used to reverse a previously made transaction transfer. This allows the system to dynamically
+     * restore the charges and credits to an originating account without the user having to look up those values.
+     *
+     * @param transactionTransferId TransactionTransfer ID
+     * @param memoText              Memo text
+     * @param reversalAmount        Reversal amount
+     * @return TransactionTransfer instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public TransactionTransfer reverseTransactionTransfer(Long transactionTransferId, String memoText, BigDecimal reversalAmount) {
+
+        TransactionTransfer transactionTransfer = getTransactionTransfer(transactionTransferId);
+        if (transactionTransfer == null) {
+            String errMsg = "TransactionTransfer does not exist with ID = " + transactionTransferId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        return reverseTransactionTransfer(transactionTransfer, memoText, reversalAmount);
+    }
+
+
+    /**
+     * This method is used to reverse a previously made transaction transfer in the original transfer amount.
+     * This allows the system to dynamically  restore the charges and credits to an originating account without
+     * the user having to look up those values.
+     *
+     * @param transactionTransferId TransactionTransfer ID
+     * @param memoText              Memo text
+     * @return TransactionTransfer instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public TransactionTransfer reverseTransactionTransfer(Long transactionTransferId, String memoText) {
+
+        TransactionTransfer transactionTransfer = getTransactionTransfer(transactionTransferId);
+        if (transactionTransfer == null) {
+            String errMsg = "TransactionTransfer does not exist with ID = " + transactionTransferId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        return reverseTransactionTransfer(transactionTransfer, memoText, transactionTransfer.getTransferAmount());
+    }
+
+    /**
+     * Reverses transaction transfers for the entire group of transfers specified by ID.
+     *
+     * @param transferGroupId        Transfer Group ID
+     * @param memoText               Memo text
+     * @param allowLockedAllocations Indicates whether the locked allocations are allowed,
+     *                               if there any locked allocations and false throws an unchecked exception
+     * @return list of the transaction transfers from the group
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public List<TransactionTransfer> reverseTransferGroup(String transferGroupId, String memoText, boolean allowLockedAllocations) {
+
+        List<TransactionTransfer> transactionTransfers = getTransactionTransfersByGroupId(transferGroupId);
+
+        if (CollectionUtils.isEmpty(transactionTransfers)) {
+            String errMsg = "No transaction transfers exist for the transfer group ID = " + transferGroupId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        // Creating a new unique group ID
+        String reversalGroupId = UUID.randomUUID().toString();
+
+        for (TransactionTransfer transactionTransfer : transactionTransfers) {
+
+            Transaction destTransaction = transactionTransfer.getDestTransaction();
+
+            if (!allowLockedAllocations) {
+                if (CollectionUtils.isNotEmpty(transactionService.getAllocations(destTransaction.getId()))) {
+                    String errMsg = "Cannot reverse transaction group if one or more destination transactions " +
+                            " are locked-allocated, destination transaction ID = " + destTransaction.getId();
+                    logger.error(errMsg);
+                    throw new IllegalStateException(errMsg);
+                }
+            }
+
+            BigDecimal amount = destTransaction.getAmount();
+            if (amount == null) {
+                amount = BigDecimal.ZERO;
+            }
+
+            BigDecimal lockedAllocatedAmount = destTransaction.getLockedAllocatedAmount();
+            if (lockedAllocatedAmount == null) {
+                lockedAllocatedAmount = BigDecimal.ZERO;
+            }
+
+            BigDecimal reversalAmount = amount.subtract(lockedAllocatedAmount);
+
+            // Creating a transaction transfer reversal
+            reverseTransactionTransfer(transactionTransfer, memoText, reversalAmount);
+
+            // Setting the previously generated group ID
+            transactionTransfer.setGroupId(transferGroupId);
+
+        }
+
+        return transactionTransfers;
+    }
 
 }

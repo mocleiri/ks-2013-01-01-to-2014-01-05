@@ -125,7 +125,7 @@ public class TransactionTransfer implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SOURCE_TRN_ID_FK")
+    @JoinColumn(name = "SOURCE_TRN_ID_FK", nullable = false)
     public Transaction getSourceTransaction() {
         return sourceTransaction;
     }
@@ -135,7 +135,7 @@ public class TransactionTransfer implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DEST_TRN_ID_FK")
+    @JoinColumn(name = "DEST_TRN_ID_FK", nullable = false)
     public Transaction getDestTransaction() {
         return destTransaction;
     }
@@ -184,7 +184,7 @@ public class TransactionTransfer implements Identifiable {
         this.transferType = transferType;
     }
 
-    @Column(name = "TRANSFER_AMOUNT")
+    @Column(name = "TRANSFER_AMOUNT", nullable = false)
     public BigDecimal getTransferAmount() {
         return transferAmount;
     }

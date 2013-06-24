@@ -119,6 +119,14 @@ public interface TransactionTransferService {
     List<TransactionTransfer> getTransactionTransfersByGroupId(String transferGroupId);
 
     /**
+     * Retrieves TransactionTransfer instance by ID from the persistent store.
+     *
+     * @param transactionTransferId Transaction Transfer ID
+     * @return TransactionTransfer instance
+     */
+    TransactionTransfer getTransactionTransfer(Long transactionTransferId);
+
+    /**
      * Sets the transfer group ID for each transaction transfer specified by the list of IDs.
      *
      * @param transferGroupId        Transfer group ID
@@ -133,5 +141,38 @@ public interface TransactionTransferService {
      * @param rollupId        Rollup ID
      */
     void setRollupForTransferGroup(String transferGroupId, Long rollupId);
+
+    /**
+     * This method is used to reverse a previously made transaction transfer. This allows the system to dynamically
+     * restore the charges and credits to an originating account without the user having to look up those values.
+     *
+     * @param transactionTransferId TransactionTransfer ID
+     * @param memoText              Memo text
+     * @param reversalAmount        Reversal amount
+     * @return TransactionTransfer instance
+     */
+    TransactionTransfer reverseTransactionTransfer(Long transactionTransferId, String memoText, BigDecimal reversalAmount);
+
+    /**
+     * This method is used to reverse a previously made transaction transfer in the original transfer amount.
+     * This allows the system to dynamically  restore the charges and credits to an originating account without
+     * the user having to look up those values.
+     *
+     * @param transactionTransferId TransactionTransfer ID
+     * @param memoText              Memo text
+     * @return TransactionTransfer instance
+     */
+    TransactionTransfer reverseTransactionTransfer(Long transactionTransferId, String memoText);
+
+    /**
+     * Reverses transaction transfers for the entire group of transfers specified by ID.
+     *
+     * @param transferGroupId        Transfer Group ID
+     * @param memoText               Memo text
+     * @param allowLockedAllocations Indicates whether the locked allocations are allowed,
+     *                               if there any locked allocations and false throws an unchecked exception
+     * @return list of the transaction transfers from the group
+     */
+    List<TransactionTransfer> reverseTransferGroup(String transferGroupId, String memoText, boolean allowLockedAllocations);
 
 }

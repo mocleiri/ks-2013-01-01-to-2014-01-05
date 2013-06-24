@@ -2013,7 +2013,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             // Checking the unallocated amount again
             if (reversalAmount.compareTo(getUnallocatedAmount(transaction)) > 0) {
-                String errMsg = "Reversal amount cannot be than transaction unallocated amount";
+                String errMsg = "Reversal amount cannot be greater than transaction unallocated amount";
                 logger.error(errMsg);
                 throw new IllegalStateException(errMsg);
             }
