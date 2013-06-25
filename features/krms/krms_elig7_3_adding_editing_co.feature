@@ -7,7 +7,7 @@ Feature: KRMS ELIG7.3 Adding CO to empty CLU
   @pending
   Scenario: Test whether CO data persists if CLU was empty
     When I setup the data for "Student Eligibility & Prerequisite" for term "201301" and course "HIST307"
-    Then the "agenda" page should have the text "Must have successfully completed all courses from,ENGL478,HIST416"
+    Then the agenda page should have the text "Must have successfully completed all courses from,ENGL478,HIST416"
     When I want to edit the selected agenda section
     Then the "edit" tab should have the text "Must have successfully completed a minimum of 1 course from (HIST210, HIST395)"
     When I switch to the other tab on the page
@@ -17,7 +17,7 @@ Feature: KRMS ELIG7.3 Adding CO to empty CLU
   @pending
   Scenario: Test whether CO data persists if CLU already had data
     When I edit the data for "Student Eligibility & Prerequisite" for term "201208" and course "ENGL478M"
-    Then the "agenda" page should have the text "Must have successfully completed all courses from,ENGL478,HIST416"
+    Then the agenda page should have the text "Must have successfully completed all courses from,ENGL478,HIST416"
     When I want to edit the selected agenda section
     Then the "edit" tab should have the text "Must have successfully completed a minimum of 1 course from (HIST210, HIST395)"
     When I switch to the other tab on the page
