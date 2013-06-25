@@ -9,13 +9,13 @@ package com.sigmasys.kuali.ksa.model;
 public enum AccountTypeValue implements Identifiable {
 
     DIRECT_CHARGE(AccountTypeValue.DIRECT_CHARGE_CODE),
-    THIRD_PARTY_BILLING(AccountTypeValue.THIRD_PARTY_BILLING_CODE),
+    THIRD_PARTY(AccountTypeValue.THIRD_PARTY_CODE),
     DELEGATE(AccountTypeValue.DELEGATE_CODE),
     COLLECTION_AGENCY(AccountTypeValue.COLLECTION_AGENCY_CODE);
 
 
     public static final String DIRECT_CHARGE_CODE = "ACD";
-    public static final String THIRD_PARTY_BILLING_CODE = "ACT";
+    public static final String THIRD_PARTY_CODE = "ACT";
     public static final String DELEGATE_CODE = "AND";
     public static final String COLLECTION_AGENCY_CODE = "ANC";
 
@@ -35,8 +35,8 @@ public enum AccountTypeValue implements Identifiable {
         switch (this) {
             case DIRECT_CHARGE:
                 return "Direct Charge";
-            case THIRD_PARTY_BILLING:
-                return "Third Party Billing";
+            case THIRD_PARTY:
+                return "Third Party";
             case DELEGATE:
                 return "Delegate";
             case COLLECTION_AGENCY:

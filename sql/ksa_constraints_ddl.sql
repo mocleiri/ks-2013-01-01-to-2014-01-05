@@ -91,6 +91,13 @@ alter table KSSA_RULE add constraint FKB8FF8FE593E85A22 foreign key (RULE_TYPE_I
 alter table KSSA_RULE_SET add constraint FKD6784E893E85A22 foreign key (RULE_TYPE_ID_FK) references KSSA_RULE_TYPE;
 alter table KSSA_RULE_SET_RULE add constraint FKBF093F391A9A467 foreign key (RULE_ID_FK) references KSSA_RULE;
 alter table KSSA_RULE_SET_RULE add constraint FKBF093F37FE8AA6A foreign key (RULE_SET_ID_FK) references KSSA_RULE_SET;
+alter table KSSA_TP_ALLOWABLE_CHARGE add constraint FK9E01ADCA5AFB9A03 foreign key (TP_PLAN_ID_FK) references KSSA_TP_PLAN;
+alter table KSSA_TP_PLAN add constraint FKD66049838D8E753 foreign key (ACNT_ID_FK) references KSSA_ACNT;
+alter table KSSA_TP_PLAN add constraint FKD6604983402524CA foreign key (TRANSFER_TYPE_ID_FK) references KSSA_TRANSFER_TYPE;
+alter table KSSA_TP_PLAN_MEMBER add constraint FKC46B08D65AFB9A03 foreign key (TP_PLAN_ID_FK) references KSSA_TP_PLAN;
+alter table KSSA_TP_PLAN_MEMBER add constraint FKC46B08D63AB9A295 foreign key (ACNT_ID_FK) references KSSA_ACNT;
+alter table KSSA_TP_TRANSFER_DETAIL add constraint FK208A508B5AFB9A03 foreign key (TP_PLAN_ID_FK) references KSSA_TP_PLAN;
+alter table KSSA_TP_TRANSFER_DETAIL add constraint FK208A508B3AB9A295 foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_TRANSACTION add constraint FKDCED3DB598518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_TRANSACTION add constraint FKDCED3DB5FB9EC59 foreign key (CURRENCY_ID_FK) references KSSA_CURRENCY;
 alter table KSSA_TRANSACTION add constraint FKDCED3DB590ED3EED foreign key (DOCUMENT_ID_FK) references KSSA_DOCUMENT;
