@@ -1,8 +1,10 @@
 When /^I create a Course Offering with selected lecture Formats$/ do
   @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "ENGL222", :grade_format => "Quiz", :delivery_format => "Lecture/Quiz"
+  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "ENGL222", :grade_format => "Quiz", :delivery_format => "Lecture/Quiz"
 end
 
 And /^I create a Course Offering with selected Delivery Formats$/ do
+  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "CHEM132", :grade_format => "Lab", :delivery_format => "Lab"
   @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "CHEM132", :grade_format => "Lab", :delivery_format => "Lab"
 end
 
