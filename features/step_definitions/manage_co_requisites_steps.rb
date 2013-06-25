@@ -21,14 +21,6 @@ Then /^the "(.*?)" link should exist on the Course Offering Requisites page$/ do
   end
 end
 
-Then /^the CO and CLU should both have text "(.*?)"/ do |text|
-  @manageCOR.test_text("compare", text, true)
-end
-
-Then /^the CO and CLU should differ with text "(.*?)"/ do |text|
-  @manageCOR.test_text("compare", text, false)
-end
-
 Then /^the info message "(.*?)" should be present$/ do |mess|
   on ManageCORequisites do |page|
     page.info_message.text.should match /#{Regexp.escape(mess)}/
@@ -316,18 +308,44 @@ When /^I delete the tree in the selected agenda section$/ do
   end
 end
 
-Then /^the "(.*?)" (?:|page|tab) should have the text "(.*)"$/ do |page,text|
-  if page == "agenda"
-    @courseOR.open_agenda_section
+Then /^the agenda page should have the text "(.*)"$/ do |text|
+  @courseOR.open_agenda_section
+  on CourseOfferingRequisites do |page|
+    page.agenda_management_section.text.should match @manageCOR.test_text("agenda", text)
   end
-  @manageCOR.test_text(page, text, true)
 end
 
-Then /^the "(.*?)" (?:|page|tab) should not have the text "(.*)"$/ do |page,text|
-  if page == "agenda"
-    @courseOR.open_agenda_section
+Then /^the agenda page should not have the text "(.*)"$/ do |text|
+  @courseOR.open_agenda_section
+  on CourseOfferingRequisites do |page|
+    page.agenda_management_section.text.should_not match @manageCOR.test_text("agenda", text)
   end
-  @manageCOR.test_text(page, text, false)
+end
+
+Then /^the "(.*?)" tab should have the text "(.*)"$/ do |section,text|
+  sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
+  on ManageCORequisites do |page|
+    page.send(sect[section]).text.should match @manageCOR.test_text(section, text)
+  end
+end
+
+Then /^the "(.*?)" tab should not have the text "(.*)"$/ do |section,text|
+  sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
+  on ManageCORequisites do |page|
+    page.send(sect[section]).text.should_not match @manageCOR.test_text(section, text)
+  end
+end
+
+Then /^the CO and CLU should both have text "(.*?)"/ do |text|
+  on CourseOfferingRequisites do |page|
+    page.compare_tree.text.should match @manageCOR.test_text("compare", text)
+  end
+end
+
+Then /^the CO and CLU should differ with text "(.*?)"/ do |text|
+  on CourseOfferingRequisites do |page|
+    page.compare_tree.text.should_not match @manageCOR.test_text("compare", text)
+  end
 end
 
 When /^I switch to the other tab on the page$/ do
@@ -348,8 +366,52 @@ When /^I want to compare the CO to the CLU for the selected agenda section$/ do
   end
 end
 
-Then /^the text "(.*?)" should show correctly on all pages$/ do |text|
-  @manageCOR.check_text_correct( text, true, @courseOR.section)
+Then /^both tabs should have the text "(.*?)"$/ do |text|
+  on ManageCORequisites do |page|
+    page.edit_tree_section.text.should match @manageCOR.test_text("edit", text)
+    page.logic_tab.click
+    page.edit_loading.wait_while_present
+    page.preview_tree_section.text.should match @manageCOR.test_text("logic", @manageCOR.convert_text( text, "logic"))
+  end
+end
+
+Then /^the agenda page should before and after the submit have the text "(.*?)"$/ do |text|
+  on CourseOfferingRequisites do |page|
+    page.loading.wait_while_present
+    page.agenda_management_section.text.should match @manageCOR.test_text("agenda", @manageCOR.convert_text( text, "agenda"))
+  end
+  @courseOR.commit_changes( true)
+  on CourseOfferingRequisites do |page|
+    page.loading.wait_while_present
+    page.agenda_management_section.text.should match @manageCOR.test_text("agenda", @manageCOR.convert_text( text, "agenda"))
+  end
+end
+
+Then /^all pages should have the text "(.*?)"$/ do |text|
+  on ManageCORequisites do |page|
+    page.edit_tree_section.text.should match @manageCOR.test_text("edit", text)
+    page.logic_tab.click
+    page.edit_loading.wait_while_present
+    page.preview_tree_section.text.should match @manageCOR.test_text("logic", @manageCOR.convert_text( text, "logic"))
+    page.update_rule_btn
+  end
+  on CourseOfferingRequisites do |page|
+    page.loading.wait_while_present
+    page.agenda_management_section.text.should match @manageCOR.test_text("agenda", @manageCOR.convert_text( text, "agenda"))
+  end
+  @courseOR.commit_changes( true)
+  on CourseOfferingRequisites do |page|
+    page.loading.wait_while_present
+    page.agenda_management_section.text.should match @manageCOR.test_text("agenda", @manageCOR.convert_text( text, "agenda"))
+    page.rule_edit
+  end
+  on ManageCORequisites do |page|
+    page.loading.wait_while_present
+    page.edit_tree_section.text.should match @manageCOR.test_text("edit", text)
+    page.logic_tab.click
+    page.edit_loading.wait_while_present
+    page.preview_tree_section.text.should match @manageCOR.test_text("logic", @manageCOR.convert_text( text, "logic"))
+  end
 end
 
 When /^I update the manage course offering agendas page$/ do
@@ -417,4 +479,20 @@ end
 
 When /^I cut node "(.)" and paste it after node "(.)"$/ do |node, node_after|
   @manageCOR.copy_cut_paste( node, node_after, "cut")
+end
+
+Then /^the Move In button should be disabled$/ do
+  on ManageCORequisites do |page|
+    if page.right_btn_element.attribute_value('disabled')
+      puts page.right_btn_element.attribute_value('disabled') #.should == "disabled"
+    end
+  end
+end
+
+When /^I copy a "(.*?)" group and paste it after node "(.)"$/ do |level, node|
+  @manageCOR.copy_cut_paste_group( level, node, "copy")
+end
+
+When /^I cut a "(.*?)" group and paste it after node "(.)"$/ do |level, node|
+  @manageCOR.copy_cut_paste_group( level, node, "cut")
 end

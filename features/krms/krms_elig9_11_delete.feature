@@ -15,13 +15,11 @@ Feature: KRMS ELIG9.11 Delete
   @pending
   Scenario: Confirm that the Submit button persists the data after Delete
     When I want to edit the selected agenda section
-    And I delete node "J" in the tree
+    And I delete node "G" in the tree
     And I commit and return to see the changes made to the proposition
-    Then the "agenda" page should not have the text "Must have successfully completed a minimum of 1 course from,HIST210,HIST395"
+    Then the agenda page should not have the text "Must have successfully completed a minimum of 1 course from,HIST210,HIST395"
     When I want to edit the selected agenda section
-    Then the "edit" tab should not have the text "Must have successfully completed a minimum of 1 course from (HIST210, HIST395)"
-    When I switch to the other tab on the page
-    Then the "logic" tab should not have the text "Must have successfully completed a minimum of 1 course from,HIST210,HIST395"
+    Then there should be no node "G" on both tabs
 
   #ELIG9.11.EB3 (KSENROLL-7089)
   @pending

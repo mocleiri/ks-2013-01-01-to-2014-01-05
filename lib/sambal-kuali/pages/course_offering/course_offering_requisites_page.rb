@@ -24,7 +24,7 @@ class CourseOfferingRequisites < BasePage
   element(:rule_compare_link) { |b| b.frm.a(:text => /Compare to Canonical/)}
   action(:rule_compare) { |b| b.rule_compare_link.click; b.loading.wait_while_present }
   element(:rule_edit_links) { |b| b.frm.a(:text => /Edit Rule/)}
-  action(:rule_edit) { |b| b.rule_edit_links.click; b.loading.wait_while_present }
+  action(:rule_edit) { |b| b.rule_edit_links.click; b.loading.wait_while_present(60) }
   element(:rule_delete_link) { |b| b.frm.a(:text => /Delete Rule/)}
   action(:rule_delete) { |b| b.rule_delete_link.click; b.loading.wait_while_present }
   element(:rule_add_link) { |b| b.frm.a(:text => /Add Rule/)}

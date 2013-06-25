@@ -28,7 +28,7 @@ class ManageCourseOfferings < BasePage
   element(:delete_course_offering_link) { |b| b.manage_offering_links_div.link(id: "ActivityOfferingResultSection-deleteOneCoWithLink") }
   action(:delete_course_offering) { |b| b.delete_course_offering_link.click; b.loading.wait_while_present }
   element(:manage_course_offering_requisites_link) { |b| b.manage_offering_links_div.link(:text => /Manage Course Offering Requisites/) }
-  action(:manage_course_offering_requisites) { |b| b.manage_course_offering_requisites_link.click; b.loading.wait_while_present }
+  action(:manage_course_offering_requisites) { |b| b.manage_course_offering_requisites_link.click; b.loading.wait_while_present(60) }
   element(:view_all_reg_groups_link) { |b| b.manage_offering_links_div.link(text: /View All Registration Groups/) }
   action(:view_all_reg_groups) { |b| b.view_all_reg_groups_link.click; b.loading.wait_while_present }
 

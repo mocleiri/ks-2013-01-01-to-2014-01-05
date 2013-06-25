@@ -55,15 +55,18 @@ class CORequisitesData
       if( check == 0)
         page.rule_add
         @manageCORdata.create_data_advanced_search( sect)
+        commit_changes( true)
       else
         page.rule_edit
         check_new = @manageCORdata.check_new_data_existence
         if( check_new == 0)
-          @manageCORdata.edit_data_advanced_search( sect)
+          page.loading.wait_while_present
+          page.rule_edit
+          @manageCORdata.create_less_data_advanced_search( sect)
+          commit_changes( true)
         end
       end
     end
-    commit_changes( true)
   end
 
   def commit_changes( return_to_edit_page = false )

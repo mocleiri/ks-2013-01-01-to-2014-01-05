@@ -18,21 +18,23 @@ class ManageCORequisites < BasePage
   element(:object_tab) { |b| b.tab_section.a(:text => /Edit Rule/)}
   element(:logic_text) { |b| b.tab_section.text_field(id: "LogicArea_InputField_control")}
 
-  action(:add_btn) { |b| b.frm.button(:text => /Add Statement/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:edit_btn) { |b| b.frm.button(:text => /Edit/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:group_btn) { |b| b.frm.button(:text => /Create Group/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:update_rule_btn) { |b| b.frm.button(:text => /Update Rule/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:down_btn) { |b| b.frm.button(:text => /Move Down/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:up_btn) { |b| b.frm.button(:text => /Move Up/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:left_btn) { |b| b.frm.button(:text => /Move Out/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:right_btn) { |b| b.frm.button(:text => /Move In/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:preview_btn) { |b| b.frm.button(:text => /Preview Change/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:copy_btn) { |b| b.frm.button(:text => /Copy/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:cut_btn) { |b| b.frm.button(:text => /Cut/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:paste_btn) { |b| b.frm.button(:text => /Paste/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:del_btn) { |b| b.frm.button(:text => /Delete/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:add_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-AddButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:edit_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-EditButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:group_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-GroupButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:update_rule_btn) { |b| b.frm.button(id: "update-button").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:down_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-DownButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:up_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-UpButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:left_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-LeftButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:right_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-RightButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:preview_btn) { |b| b.frm.button(:text => /Preview Change/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present(60)}
+  action(:copy_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-CopyButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:cut_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-CutButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:paste_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-PasteButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:del_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-DeleteButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:add_line_btn) { |b| b.frm.button(:text => /add/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:delete_line_btn) { |b| b.frm.button(:text => /delete/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+
+  element(:right_btn_element) { |b| b.frm.button(id: "KRMS-RuleEditorView-RightButton") }
 
   action(:search_link) { |b| b.edit_tree_section.a(:text => /Advanced Search/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
 
