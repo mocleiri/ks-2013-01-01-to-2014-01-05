@@ -15,6 +15,7 @@ class ManageCourseOfferings < BasePage
   element(:term) { |b| b.frm.text_field(name: "termCode") }
   element(:input_code) { |b| b.frm.text_field(name: "inputCode") }
   action(:show) { |b| b.frm.button(text: "Show").click; sleep 2; b.loading.wait_while_present(600) }
+  action(:perf_show) { |b| b.frm.button(text: "Show").click; b.loading.wait_while_present(600) }
 
   value(:course_title) { |b| b.ao_results_div.h3.text }
 

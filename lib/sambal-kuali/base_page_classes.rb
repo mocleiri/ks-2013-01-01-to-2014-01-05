@@ -127,8 +127,6 @@ module PopulationsSearch
     names[1+rand(names.length-1)]
   end
 
-  private
-
   def target_row(name)
     results_table.wait_until_present
     results_table.rows.each do |r|
@@ -196,8 +194,10 @@ class HolidayBase < BasePage
   element(:add_button) { |b| b.frm.button(id: "KS-HolidayCalendar-HolidaySection_add") }
 
   element(:make_official_button) { |b| b.frm.button(text: "Make Official") }
+  element(:update_official_button) { |b| b.frm.button(text: "Update Official") }
 
   action(:make_official) { |b| b.make_official_button.click; b.loading.wait_while_present }
+  action(:update_official) { |b| b.update_official_button.click; b.loading.wait_while_present }
   action(:save) { |b| b.frm.button(text: "Save").click; b.loading.wait_while_present }
 
 end

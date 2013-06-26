@@ -93,7 +93,7 @@ class RegistrationWindowsCreate < RegistrationWindowsBase
   action(:assign_students) { |b| b.frm.button(text: "Assign Students").click; b.loading.wait_while_present }
   action(:break_appointments) { |b| b.frm.button(text: "Break Appointments").click; b.loading.wait_while_present }
   action(:appointment_detail) { |b| b.frm.a(id: "u206_line0").click; b.loading.wait_while_present }
-  action(:save) { |b| b.from.button(text: "Save").click; b.loading.wait_while_present }
+  action(:save) { |b| b.frm.button(text: "Save").click; b.loading.wait_while_present }
 
 
   element(:yes_label) { |b| b.frm.span(text: "Yes") }
