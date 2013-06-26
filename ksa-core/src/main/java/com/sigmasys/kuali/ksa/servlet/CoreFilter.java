@@ -205,7 +205,7 @@ public class CoreFilter implements Filter {
                                 final PersonService personService = KimApiServiceLocator.getPersonService();
                                 Field field = UserSession.class.getDeclaredField("person");
                                 field.setAccessible(true);
-                                field.set(this, personService.getPerson(userId));
+                                field.set(this, personService.getPersonByPrincipalName(userId));
                             } catch (Exception e) {
                                 logger.error(e.getMessage(), e);
                                 throw new IllegalStateException(e.getMessage(), e);

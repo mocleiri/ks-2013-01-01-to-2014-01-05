@@ -106,7 +106,8 @@
     ********************************************************************************************************************
     -->
 
-    <bean id="accountOverviewGroup" parent="Uif-VerticalBoxGroup">
+    <bean id="accountOverviewGroup" parent="Uif-VerticalBoxGroup" >
+        <property name="componentSecurity.viewAuthz" value="true"/>
         <property name="cssClasses">
             <list merge="true">
                 <value>ksa-group-border</value>
