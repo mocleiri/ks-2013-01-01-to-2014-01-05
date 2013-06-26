@@ -7,7 +7,7 @@ import com.sigmasys.kuali.ksa.model.Identifiable;
 import javax.persistence.*;
 
 /**
- * Third party plan membership model.
+ * Third Party plan membership model.
  * <p/>
  *
  * @author Michael Ivanov
