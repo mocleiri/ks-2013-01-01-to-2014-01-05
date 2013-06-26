@@ -13,7 +13,7 @@ class EditAcademicCalendar < BasePage
   action(:terms_tab) { |b| b.frm.link(text: "Terms").click }
   
   element(:academic_calendar_name) { |b| b.frm.text_field(name: "academicCalendarInfo.name") }
-  element(:organization) { |b| b.frm.select(name: "academicCalendarInfo.adminOrgId") }
+  #element(:organization) { |b| b.frm.select(name: "academicCalendarInfo.adminOrgId") }
   element(:calendar_start_date) { |b| b.frm.text_field(name: "academicCalendarInfo.startDate") }
   element(:calendar_end_date) { |b| b.frm.text_field(name: "academicCalendarInfo.endDate") }
 

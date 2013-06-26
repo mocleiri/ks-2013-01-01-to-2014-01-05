@@ -3,10 +3,10 @@
 # class attributes are initialized with default data unless values are explicitly provided
 #
 # Typical usage: (with optional setting of explicit data value in [] )
-#  @calendar = make HolidayCalendar, [:name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013", :organization=>"Example_Org"]
+#  @calendar = make HolidayCalendar, [:name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013"]
 #  @calendar.create
 # OR alternatively 2 steps together as
-#  @calendar = create HolidayCalendar, :name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013", :organization=>"Example_Org"
+#  @calendar = create HolidayCalendar, :name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013"
 # Note the use of the ruby options hash pattern re: setting attribute values
 class HolidayCalendar
 
@@ -17,14 +17,14 @@ class HolidayCalendar
   include Workflows
 
   #generally set using options hash
-  attr_accessor :name, :start_date, :end_date, :organization, :holiday_types
+  attr_accessor :name, :start_date, :end_date, :holiday_types
 
   # provides default data:
   #defaults = {
      # :name=>random_alphanums.strip,
      # :start_date=>"09/01/#{next_year[:year]}",
      # :end_date=>"06/25/#{next_year[:year] + 1}",
-     # :organization=>"Registrar's Office",
+     # :organization=>"Registrar's Office",  GONE per KSENROLL-5641
      # :holiday_types=>[
      # {:type=>"random", :start_date=>"02/01/#{next_year[:year] + 1}", :all_day=>true, :date_range=>false, :instructional=>false},
      # {:type=>"random", :start_date=>"03/02/#{next_year[:year] + 1}", :end_date=>"03/04/#{next_year[:year] + 1}", :all_day=>true, :date_range=>true, :instructional=>false},
@@ -40,7 +40,6 @@ class HolidayCalendar
         :name=>random_alphanums.strip,
         :start_date=>"09/01/#{next_year[:year]}",
         :end_date=>"06/25/#{next_year[:year] + 1}",
-        :organization=>"Registrar's Office",
         :holiday_types=>[
             {:type=>"random", :start_date=>"02/01/#{next_year[:year] + 1}", :all_day=>true, :date_range=>false, :instructional=>false},
             {:type=>"random", :start_date=>"03/02/#{next_year[:year] + 1}", :end_date=>"03/04/#{next_year[:year] + 1}", :all_day=>true, :date_range=>true, :instructional=>false}
@@ -109,7 +108,6 @@ class HolidayCalendar
       end
       on EditAcademicCalendar do |page|
         page.academic_calendar_name.set @name
-        page.organization.select @organization
         page.calendar_start_date.set @start_date
         page.calendar_end_date.set @end_date
       end

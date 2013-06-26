@@ -8,7 +8,7 @@ class ViewAcademicTerms < BasePage
 
   element(:acal_overview_div) { |b| b.frm.div(id: "KS-AcademicCalendar-Overview-WithoutTerms") }
   value(:acal_name) { |b| b.acal_overview_div.div(data_label: "Academic Calendar Name").span(index: 1).text }
-  value(:acal_organization) { |b| b.acal_overview_div.div(data_label: "Organization").span(index: 1).text }
+  #value(:acal_organization) { |b| b.acal_overview_div.div(data_label: "Organization").span(index: 1).text }
   value(:acal_start_date) { |b| b.acal_overview_div.div(data_label: "Start Date").span(index: 1).text }
   value(:acal_end_date) { |b| b.acal_overview_div.div(data_label: "End Date").span(index: 1).text }
 

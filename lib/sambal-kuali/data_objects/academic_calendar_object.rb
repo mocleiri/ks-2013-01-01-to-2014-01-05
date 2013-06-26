@@ -3,10 +3,10 @@
 # class attributes are initialized with default data unless values are explicitly provided
 #
 # Typical usage: (with optional setting of explicit data value in [] )
-#  @calendar = make AcademicCalendar, [:name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013", :organization=>"Example_Org"]
+#  @calendar = make AcademicCalendar, [:name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013"]
 #  @calendar.create
 # OR alternatively 2 steps together as
-#  @calendar = create AcademicCalendar, :name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013", :organization=>"Example_Org"
+#  @calendar = create AcademicCalendar, :name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013"
 # Note the use of the ruby options hash pattern re: setting attribute values
 class AcademicCalendar
 
@@ -17,7 +17,7 @@ class AcademicCalendar
   include Workflows
 
   #generally set using options hash
-  attr_accessor :name, :start_date, :end_date, :organization
+  attr_accessor :name, :start_date, :end_date
   #not implemented
   attr_accessor :events, :holidays, :terms
 
@@ -26,7 +26,7 @@ class AcademicCalendar
   #      :name=>random_alphanums.strip,
   #      :start_date=>"09/01/#{next_year[:year]}",
   #      :end_date=>"06/25/#{next_year[:year] + 1}",
-  #      :organization=>"Registrar's Office"
+  #      :organization=>"Registrar's Office"  GONE: per KSENROLL-7685
   #  }
   # initialize is generally called using TestFactory Foundry .make or .create methods
   def initialize(browser, opts={})
@@ -36,7 +36,6 @@ class AcademicCalendar
         :name=>random_alphanums.strip,
         :start_date=>"09/01/#{next_year[:year]}",
         :end_date=>"06/25/#{next_year[:year] + 1}",
-        :organization=>"Registrar's Office" ,
         :terms => []
     }
     options = defaults.merge(opts)
@@ -51,7 +50,6 @@ class AcademicCalendar
     end
     on EditAcademicCalendar do |page|
       page.academic_calendar_name.set @name
-      page.organization.select @organization
       page.calendar_start_date.set @start_date
       page.calendar_end_date.set @end_date
       page.save
@@ -79,7 +77,6 @@ class AcademicCalendar
       end
       on EditAcademicCalendar do |page|
         page.academic_calendar_name.set @name
-        page.organization.select @organization
         page.calendar_start_date.set @start_date
         page.calendar_end_date.set @end_date
       end
