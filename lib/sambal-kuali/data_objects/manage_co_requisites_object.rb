@@ -50,22 +50,45 @@ class ManageCORequisitesData
   end
 
   def advanced_search(field, code)
-    fields = {"course code"=>:lookup_course_code, "course title"=>:lookup_course_title, "course set"=>:lookup_set_name,
-              "course range"=>"????", "program code"=>:lookup_course_code}  ##############################################
     on ManageCORequisites do |page|
       page.edit_loading.wait_while_present
-      page.search_link
-      page.loading.wait_while_present
-      page.send(fields[field]).when_present.set code
+      if field == "course code"
+        click_search_link( Regexp.new(".*editTree.+proposition\.courseInfo\.code"))
+        page.lookup_course_code.when_present.set code
+      elsif field == "courses code"
+        click_search_link( Regexp.new(".*editTree.+proposition\.cluSet\.clus"))
+        page.lookup_course_code.when_present.set code
+      elsif field == "course title"
+        click_search_link( Regexp.new(".*editTree.+proposition\.cluSet\.clus"))
+        page.lookup_course_title.when_present.set code
+      elsif field == "course set"
+        click_search_link( Regexp.new(".*editTree.+proposition\.cluSet\.cluSets"))
+        page.lookup_set_name.when_present.set code
+      elsif field == "program code"
+        click_search_link( Regexp.new(".*editTree.+proposition\.progCluSet\.clus"))
+        page.lookup_course_code.when_present.set code
+      elsif field == "class standing"
+        click_search_link( Regexp.new(".*editTree.+proposition\.classStanding"))
+        page.lookup_class_standing.when_present.set code
+      elsif field == "org"
+        click_search_link( Regexp.new(".*editTree.+proposition\.orgInfo\.id"))
+        page.lookup_abrev_org.when_present.set code
+      end
       page.lookup_search_button
       page.loading.wait_while_present
-      if field == "course code" || field == "course set"#####################################
-        page.lookup_results.a(:title => /.*#{Regexp.escape(code)}.*/).click
-      else
-        #TODO - find a way to return course code randomly when searching for title or description
+      page.lookup_results.a(:title => /.*#{Regexp.escape(code)}.*/i).click
+    end
+  end
+
+  def click_search_link( regex)
+    on ManageCORequisites do |page|
+      elements = page.edit_tree_section.elements( :tag_name, 'a')
+      elements.each do |elem|
+        if page.edit_tree_section.a( id: elem.id).attribute_value('data-submit_data') =~ regex
+          page.edit_tree_section.a(id: elem.id).click
+        end
       end
     end
-    #sleep 3 #adding sleep, moving through the tree too fast causes test to crash
   end
 
   def check_data_existence
@@ -172,6 +195,21 @@ class ManageCORequisitesData
     on ManageCORequisites do |page|
       if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
         page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> courses from <courses>/
+        page.integer_field.when_present.set number
+      elsif( sect == "Corequisite")
+        page.rule_dropdown.when_present.select /Must be concurrently enrolled in a minimum of <n> courses from <courses>/
+        page.integer_field.when_present.set number
+      end
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_less_number_courses_rule( group, node, number, course, set, range, sect)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
+        page.rule_dropdown.when_present.select /Must have successfully completed no more than <n> courses from <courses>/
         page.integer_field.when_present.set number
       elsif( sect == "Corequisite")
         page.rule_dropdown.when_present.select /Must be concurrently enrolled in a minimum of <n> courses from <courses>/
@@ -301,6 +339,15 @@ class ManageCORequisitesData
     end
   end
 
+  def create_program_org_rule( group, node, org)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have been admitted to a program offered by <org>/
+      add_org(org)
+      page.preview_btn
+    end
+  end
+
   def add_courses( course, set, range)
     on ManageCORequisites do |page|
       courses = create_array( course)
@@ -359,6 +406,13 @@ class ManageCORequisitesData
   def add_class_standing( standing)
     on ManageCORequisites do |page|
       advanced_search("class standing", standing)
+      page.edit_loading.wait_while_present
+    end
+  end
+
+  def add_org( org)
+    on ManageCORequisites do |page|
+      advanced_search("org", org)
       page.edit_loading.wait_while_present
     end
   end

@@ -159,6 +159,14 @@ When /^I add a new number of courses statement with number "(\d+)" and course se
   @manageCOR.create_number_courses_rule( "add", "", number, "", set, "", @courseOR.section)
 end
 
+When /^I add a new no more than number of courses statement with number "(\d+)" and courses "([^\"]+)"$/ do |number, course|
+  @manageCOR.create_less_number_courses_rule( "add", "", number, course, "", "", @courseOR.section)
+end
+
+When /^I add a new no more than number of courses statement with number "(\d+)" and course sets "([^\"]+)"$/ do |number, set|
+  @manageCOR.create_less_number_courses_rule( "add", "", number, "", set, "", @courseOR.section)
+end
+
 When /^I add a new repeated for credits statement with "(\d+)" credits$/ do |number|
   @manageCOR.create_repeated_credit_rule( "add", "", number)
 end
@@ -217,6 +225,10 @@ end
 
 When /^I add a new program and class standing statement with program code "(.*?)" and class standing "(.*?)"$/ do |program, stand|
   @manageCOR.create_program_class_standing_rule( "add", "", program, stand)
+end
+
+When /^I add a new program offered by org statement with "(.*?)"$/ do |org|
+  @manageCOR.create_program_org_rule( "add", "", org)
 end
 
 When /^I group course statement with node "(.)" with course "([^\"]+)"$/ do |node, course|
@@ -325,6 +337,7 @@ end
 Then /^the "(.*?)" tab should have the text "(.*)"$/ do |section,text|
   sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
   on ManageCORequisites do |page|
+    page.edit_loading.wait_while_present
     page.send(sect[section]).text.should match @manageCOR.test_text(section, text)
   end
 end
@@ -332,6 +345,7 @@ end
 Then /^the "(.*?)" tab should not have the text "(.*)"$/ do |section,text|
   sect = {"edit"=>:edit_tree_section, "logic"=>:preview_tree_section}
   on ManageCORequisites do |page|
+    page.edit_loading.wait_while_present
     page.send(sect[section]).text.should_not match @manageCOR.test_text(section, text)
   end
 end

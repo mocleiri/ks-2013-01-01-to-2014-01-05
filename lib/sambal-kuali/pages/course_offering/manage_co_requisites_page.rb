@@ -9,7 +9,7 @@ class ManageCORequisites < BasePage
   element(:tab_section) { |b| b.frm.div(id: "KSCO-RuleEdit-TabSection_tabs")}
   element(:edit_tree_section) { |b| b.frm.div(id: "KRMS-RuleEditor-TreeGroup")}
   element(:logic_tab_section) { |b| b.frm.div(id: "KSCO-EditWithLogic-EditGroup")}
-  element(:preview_tree_section) { |b| b.frm.div(id: "KSCO-LogicPreview-Tree")}
+  element(:preview_tree_section) { |b| b.logic_tab_section.div(id: "KSCO-LogicPreview-Tree")}
   element(:compare_rule_section) { |b| b.frm.div(id: "compareRuleLightBox")}
   element(:preview_rule_section) { |b| b.frm.div(id: "KSCO-RulePreview-ActionLinks")}
 
@@ -61,6 +61,7 @@ class ManageCORequisites < BasePage
   element(:lookup_description) { |b| b.frm_popup.text_field(name: "lookupCriteria[description]")}
   element(:lookup_set_name) { |b| b.frm_popup.text_field(name: "lookupCriteria[name]")}
   element(:lookup_class_standing) { |b| b.frm_popup.text_field(name: "lookupCriteria[keyword]")}
+  element(:lookup_abrev_org) { |b| b.frm_popup.text_field(name: "lookupCriteria[shortName]")}
   action(:lookup_search_button) { |b| b.frm_popup.button(id: "button_search").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
 
   element(:info_message) { |b| b.rule_maintenance_section.li(class: "uif-infoMessageItem")}
