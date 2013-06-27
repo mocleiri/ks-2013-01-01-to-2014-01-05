@@ -23,7 +23,7 @@ Feature: KRMS ELIG9.10 Copy and Paste
   Scenario: Confirm the copy and paste of compound (group) rule statement is working as expected
     When I want to edit the selected agenda section
     And I copy a "secondary" group and paste it after node "G"
-    Then the "edit" tab should have the text "Must meet 1 of the following,Must have successfully completed all courses from (HIST416, ENGL478),Text to copy"
+    Then the "edit" tab should have the text "Must meet 1 of the following,I. Must have successfully completed all courses from (HIST416, ENGL478),J. Text to copy"
     And there should be a dropdown with value "OR" before node "I."
     When I switch to the other tab on the page
     Then the text "(A AND (B OR C) AND D) OR E OR F OR G OR (I OR J) OR H" should be present in the text area

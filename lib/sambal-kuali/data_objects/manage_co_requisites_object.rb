@@ -365,8 +365,11 @@ class ManageCORequisitesData
 
   def edit_existing_node(node, field, code)
     on ManageCORequisites do |page|
+      puts "going to click"
       page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+      puts "clicked... going to edit"
       page.edit_btn
+      puts "edited... going on"
       if field == "course"
         advanced_search("course code", code)
       elsif field == "courses"
@@ -434,20 +437,28 @@ class ManageCORequisitesData
 
   def test_text( section, text)
     string = ".*"
-    if (section == "edit" && text =~ /^.+\s\(.+\)$/) || text !~ /,/
+    if (section == "edit" && text =~ /^.+\(.+\)$/) || text !~ /,/
       string += Regexp.escape(text) + ".*"
-      return Regexp.new(string, Regexp::MULTILINE)
+    elsif text =~ /^.+\(.+\).+$/
+      array = text.split(/,/)
+      array.each do |elem|
+        if elem =~ /\(/
+          string += Regexp.escape(elem) + ","
+        else
+          string += Regexp.escape(elem) + ".*"
+        end
+      end
     else
       array = text.split(/,/)
       array.each do |elem|
         if section == "compare"
-          string += elem + "\n" + elem + ".*"
+          string += Regexp.escape(elem) + "\n" + Regexp.escape(elem) + ".*"
         else
-          string += elem + ".*"
+          string += Regexp.escape(elem) + ".*"
         end
       end
-      return Regexp.new(string, Regexp::MULTILINE)
     end
+    return Regexp.new(string, Regexp::MULTILINE)
   end
 
   def change_operator(level, operator)
@@ -538,7 +549,14 @@ class ManageCORequisitesData
       if level == "primary"
         page.edit_tree_section.span(:id => /u\d+_node_\d+_parent_node_0_parent_root_span/).click
       elsif level == "secondary"
-        page.edit_tree_section.span(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_span/).click
+        elements = page.edit_tree_section.elements(:class => /.*compoundNode.*/)
+        elements.each do |elem|
+          if elem.id =~ /u\d+_(node_\d+_parent_node_\d+_parent_node_0_parent_root)/
+            id = $1
+            page.edit_tree_section.span(:id => /u\d+_#{id}_span/).click
+            break
+          end
+        end
       elsif level == "tertiary"
         page.edit_tree_section.span(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_\d+_parent_node_0_parent_root_span/).click
       end

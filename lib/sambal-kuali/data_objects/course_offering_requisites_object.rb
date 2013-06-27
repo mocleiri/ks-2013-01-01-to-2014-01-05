@@ -98,7 +98,7 @@ class CORequisitesData
                 "Repeatable for Credit"=>:repeatable_credit_section,
                 "Course that Restricts Credits"=>:resctricted_credit_section}
     on CourseOfferingRequisites do |page|
-      page.loading.wait_while_present
+      page.loading.wait_while_present(60)
       if( page.send(sections[@section]).element(:tag_name, 'img').attribute_value('alt') != "expand")
         page.send(sections[@section]).when_present.click
       end

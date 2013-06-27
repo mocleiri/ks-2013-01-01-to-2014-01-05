@@ -286,7 +286,7 @@ Then /^the tree in the selected agenda section should be empty$/ do
                    "Repeatable for Credit"=>"Course that Restricts Credits", "Course that Restricts Credits"=>""}
   on CourseOfferingRequisites do |page|
     page.loading.wait_while_present
-    open_agenda_section
+    @courseOR.open_agenda_section
     page.agenda_management_section.text.should =~ /.*#{@courseOR.section}.*Rule.*\.\n#{section_regex[@courseOR.section]}.*/m
   end
 end

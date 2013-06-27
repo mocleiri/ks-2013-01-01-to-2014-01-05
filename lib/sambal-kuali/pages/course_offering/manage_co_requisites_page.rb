@@ -1,27 +1,26 @@
 class ManageCORequisites < BasePage
 
-  expected_element :object_tab
+  expected_element :cancel_update_link
 
   wrapper_elements
   krms_frame_elements
 
-  element(:rule_maintenance_section) { |b| b.frm.div(id: "KRMS-RuleMaintenance-Page")}
-  element(:tab_section) { |b| b.frm.div(id: "KRMS-RuleEdit-TabSection_tabs")}
-  element(:edit_tree_section) { |b| b.frm.div(id: "RuleStudentEditorView-TreeGroup")}
-  element(:logic_tab_section) { |b| b.frm.div(id: "KRMS-EditWithLogic-EditGroup")}
-  element(:preview_tree_section) { |b| b.frm.div(id: "LogicPreview-Tree")}
+  element(:rule_maintenance_section) { |b| b.frm.div(id: "KSCO-RuleMaintenance-Page")}
+  element(:tab_section) { |b| b.frm.div(id: "KSCO-RuleEdit-TabSection_tabs")}
+  element(:edit_tree_section) { |b| b.frm.div(id: "KRMS-RuleEditor-TreeGroup")}
+  element(:logic_tab_section) { |b| b.frm.div(id: "KSCO-EditWithLogic-EditGroup")}
+  element(:preview_tree_section) { |b| b.frm.div(id: "KSCO-LogicPreview-Tree")}
   element(:compare_rule_section) { |b| b.frm.div(id: "compareRuleLightBox")}
-  element(:preview_rule_section) { |b| b.frm.div(id: "KRMS-RulePreview-Links")}
+  element(:preview_rule_section) { |b| b.frm.div(id: "KSCO-RulePreview-ActionLinks")}
 
   element(:background_div) { |b| b.frm.li(:id => /^u\d+_node_0_parent_root$/)}
   element(:logic_tab) { |b| b.tab_section.a(:text => /Edit Rule Logic/)}
   element(:object_tab) { |b| b.tab_section.a(:text => /Edit Rule/)}
-  element(:logic_text) { |b| b.tab_section.text_field(id: "LogicArea_InputField_control")}
+  element(:logic_text) { |b| b.tab_section.text_field(id: "KRMS-LogicArea-InputField_control")}
 
   action(:add_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-AddButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:edit_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-EditButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:group_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-GroupButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:update_rule_btn) { |b| b.frm.button(id: "update-button").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:down_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-DownButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:up_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-UpButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:left_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-LeftButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
@@ -33,8 +32,10 @@ class ManageCORequisites < BasePage
   action(:del_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-DeleteButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:add_line_btn) { |b| b.frm.button(:text => /add/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:delete_line_btn) { |b| b.frm.button(:text => /delete/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:update_rule_btn) { |b| b.frm.button(id: "update-button").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
 
   element(:right_btn_element) { |b| b.frm.button(id: "KRMS-RuleEditorView-RightButton") }
+  element(:cancel_update_link) { |b| b.frm.a(id: "cancel-button")}
 
   action(:search_link) { |b| b.edit_tree_section.a(:text => /Advanced Search/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
 
