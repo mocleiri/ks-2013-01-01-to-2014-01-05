@@ -43,19 +43,19 @@ public class ThirdPartyTransferDetail implements Identifiable {
     private BigDecimal transferAmount;
 
     /**
-     * ThirdPartyPlan status
+     * Third-party charge status
      */
-    protected ThirdPartyPlanStatus planStatus;
+    protected ThirdPartyChargeStatus chargeStatus;
 
     /**
-     * ThirdPartyPlan status code
+     * Third-party charge status code
      */
-    protected String planStatusCode;
+    protected String chargeStatusCode;
 
 
     @PostLoad
     protected void populateTransientFields() {
-        planStatus = (planStatusCode != null) ? EnumUtils.findById(ThirdPartyPlanStatus.class, planStatusCode) : null;
+        chargeStatus = (chargeStatusCode != null) ? EnumUtils.findById(ThirdPartyChargeStatus.class, chargeStatusCode) : null;
     }
 
 
@@ -115,23 +115,23 @@ public class ThirdPartyTransferDetail implements Identifiable {
     }
 
     @Column(name = "STATUS", length = 1)
-    protected String getPlanStatusCode() {
-        return planStatusCode;
+    protected String getChargeStatusCode() {
+        return chargeStatusCode;
     }
 
-    protected void setPlanStatusCode(String planStatusCode) {
-        this.planStatusCode = planStatusCode;
-        planStatus = EnumUtils.findById(ThirdPartyPlanStatus.class, planStatusCode);
+    protected void setChargeStatusCode(String chargeStatusCode) {
+        this.chargeStatusCode = chargeStatusCode;
+        chargeStatus = EnumUtils.findById(ThirdPartyChargeStatus.class, chargeStatusCode);
     }
 
     @Transient
-    public ThirdPartyPlanStatus getPlanStatus() {
-        return planStatus;
+    public ThirdPartyChargeStatus getChargeStatus() {
+        return chargeStatus;
     }
 
-    public void setPlanStatus(ThirdPartyPlanStatus planStatus) {
-        this.planStatus = planStatus;
-        planStatusCode = planStatus.getId();
+    public void setChargeStatus(ThirdPartyChargeStatus chargeStatus) {
+        this.chargeStatus = chargeStatus;
+        chargeStatusCode = chargeStatus.getId();
     }
 
 }

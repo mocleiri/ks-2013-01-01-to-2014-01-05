@@ -59,6 +59,17 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
 
 
     /**
+     * Generates Transfer Group ID
+     *
+     * @return UUID String value
+     */
+    @Override
+    public String generateTransferGroupId() {
+        return UUID.randomUUID().toString();
+    }
+
+
+    /**
      * Retrieves TransferType instance from the persistent store by ID.
      *
      * @param transferTypeId TransferType ID
@@ -583,8 +594,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
             throw new IllegalArgumentException(errMsg);
         }
 
-        // Creating a new unique group ID
-        String reversalGroupId = UUID.randomUUID().toString();
+        // Generating a new transfer group ID
+        String reversalGroupId = generateTransferGroupId();
 
         for (TransactionTransfer transactionTransfer : transactionTransfers) {
 
@@ -614,9 +625,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
             // Creating a transaction transfer reversal
             reverseTransactionTransfer(transactionTransfer, memoText, reversalAmount);
 
-            // Setting the previously generated group ID
-            transactionTransfer.setGroupId(transferGroupId);
-
+            // Setting the new reversal group ID
+            transactionTransfer.setGroupId(reversalGroupId);
         }
 
         return transactionTransfers;

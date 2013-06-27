@@ -27,6 +27,14 @@ public interface TransactionTransferService {
     String SERVICE_NAME = "TransactionTransferService";
     String PORT_NAME = SERVICE_NAME + "Port";
 
+
+    /**
+     * Generates Transfer Group ID
+     *
+     * @return UUID String value
+     */
+    String generateTransferGroupId();
+
     /**
      * Retrieves TransferType instance from the persistent store by ID.
      *

@@ -131,6 +131,7 @@ public class AccessControlServiceImpl extends GenericPersistenceService implemen
     private List<Permission> getKimPermissions(String userId) {
         List<Permission> permissions = userPermissions.get(userId);
         if (permissions == null) {
+            Principal principal = getIdentityService().getPrincipalByPrincipalName(userId);
             permissions = new LinkedList<Permission>();
             QueryByCriteria criteria = QueryByCriteria.Builder.create().build();
             PermissionService permissionService = getPermissionService();
@@ -140,7 +141,7 @@ public class AccessControlServiceImpl extends GenericPersistenceService implemen
                 for (Permission permission : allPermissions) {
                     String name = permission.getName();
                     String namespaceCode = permission.getNamespaceCode();
-                    if (permissionService.hasPermission(userId, namespaceCode, name)) {
+                    if (permissionService.hasPermission(principal.getPrincipalId(), namespaceCode, name)) {
                         permissions.add(permission);
                     }
                 }

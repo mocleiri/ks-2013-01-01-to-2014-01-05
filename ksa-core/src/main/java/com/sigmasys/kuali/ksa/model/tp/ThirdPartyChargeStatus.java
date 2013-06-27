@@ -7,17 +7,17 @@ import com.sigmasys.kuali.ksa.model.Identifiable;
  *
  * @author Michael Ivanov
  */
-public enum ThirdPartyPlanStatus implements Identifiable {
+public enum ThirdPartyChargeStatus implements Identifiable {
 
-    CHARGED(ThirdPartyPlanStatus.CHARGED_CODE),
-    REVERSED(ThirdPartyPlanStatus.REVERSED_CODE);
+    ACTIVE(ThirdPartyChargeStatus.ACTIVE_CODE),
+    REVERSED(ThirdPartyChargeStatus.REVERSED_CODE);
 
-    public static final String CHARGED_CODE = "C";
+    public static final String ACTIVE_CODE = "A";
     public static final String REVERSED_CODE = "R";
 
     private String id;
 
-    private ThirdPartyPlanStatus(String id) {
+    private ThirdPartyChargeStatus(String id) {
         this.id = id;
     }
 
@@ -29,7 +29,7 @@ public enum ThirdPartyPlanStatus implements Identifiable {
     @Override
     public String toString() {
         switch (this) {
-            case CHARGED:
+            case ACTIVE:
                 return "Charged";
             case REVERSED:
                 return "Reversed";

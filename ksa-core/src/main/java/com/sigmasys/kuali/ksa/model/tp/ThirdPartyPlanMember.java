@@ -1,6 +1,5 @@
 package com.sigmasys.kuali.ksa.model.tp;
 
-import com.sigmasys.kuali.ksa.model.ChargeableAccount;
 import com.sigmasys.kuali.ksa.model.DirectChargeAccount;
 import com.sigmasys.kuali.ksa.model.Identifiable;
 
@@ -13,7 +12,7 @@ import javax.persistence.*;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_TP_PLAN_MEMBER")
+@Table(name = "KSSA_TP_PLAN_MEMBER", uniqueConstraints = {@UniqueConstraint(columnNames = {"ACNT_ID_FK", "TP_PLAN_ID_FK"})})
 public class ThirdPartyPlanMember implements Identifiable {
 
     /**
@@ -81,7 +80,7 @@ public class ThirdPartyPlanMember implements Identifiable {
 
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_EXECUTED")
-    public Boolean getExecuted() {
+    public Boolean isExecuted() {
         return isExecuted != null ? isExecuted : false;
     }
 
