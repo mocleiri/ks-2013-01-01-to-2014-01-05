@@ -13,7 +13,7 @@ Feature: KRMS ELIG7.4 Compare to Canonical
   @pending
   Scenario: Confirm that the selected course's natural language displays correctly
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201208" and course "BSCI202"
-    Then the "agenda" page should have the text "Must have successfully completed BSCI201"
+    Then the agenda page should have the text "Must have successfully completed BSCI201"
     When I want to edit the selected agenda section
     Then the "edit" tab should have the text "Permission of CMNS-Biology required"
 

@@ -11,7 +11,7 @@ Feature: KRMS ELIG7.2 Delete statement or compound statement of CO copied from C
     And I delete node "G" in the tree
     Then there should be no node "G" on both tabs
     When I commit and return to see the changes made to the proposition
-    Then the "agenda" page should not have the text "Must have successfully completed a minimum of 1 course from,HIST210,HIST395"
+    Then the agenda page should not have the text "Must have successfully completed a minimum of 1 course from,HIST210,HIST395"
 
   #ELIG7.6.EB2 (KSENROLL-7243)
   @pending
@@ -21,7 +21,7 @@ Feature: KRMS ELIG7.2 Delete statement or compound statement of CO copied from C
     And I delete node "G" in the tree
     Then there should be no node "G" on both tabs
     When I commit and return to see the changes made to the proposition
-    Then the "agenda" page should not have the text "Must meet all of the following,Must have successfully completed ENGL101,free form text input value"
+    Then the agenda page should not have the text "Must meet all of the following,Must have successfully completed ENGL101,free form text input value"
 
   #ELIG7.6.EB3 (KSENROLL-7244)
   @pending
