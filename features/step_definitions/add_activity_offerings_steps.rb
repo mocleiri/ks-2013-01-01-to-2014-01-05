@@ -28,22 +28,13 @@ When /^I copy an AO with Requested Delivery Logistics$/ do
   course_offering = make CourseOffering, :course => "CHEM276"
   course_offering.manage_and_init
 
-  # get AOs that match the desired DL-type
-  all_aos = course_offering.get_ao_list
-  #course_offering.activity_offering_cluster_list[0].ao_list
-  target_status = ActivityOffering::DRAFT_STATUS
-
-  target_aos = course_offering.get_aos_by_status :aos => all_aos, :ao_status => target_status
-  target_aos.empty?.should_not be true
-
-  # copy the first AO that matches the desired DL-type
-  @ao_source = target_aos[0]
+  # use the AO we copied in the previous step as the source for a new copy
+  # this AO should have RDLs but no ADLs
+  @ao_source = @ao_copy
   @ao_copy = create ActivityOffering, :create_by_copy => true,
                     :code => @ao_source.code,
                     :parent_course_offering => course_offering
 end
-
-
 
 Then /^the "(ADL|RDL)s" are successfully copied as RDLs in the new AO$/ do |source_delivery_logistics_type|
 
