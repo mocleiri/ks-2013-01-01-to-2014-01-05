@@ -191,7 +191,7 @@ class HolidayBase < BasePage
   element(:all_day) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].allDay") }
   element(:date_range) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].dateRange") }
   element(:instructional) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].instructional") }
-  element(:add_button) { |b| b.frm.button(id: "KS-HolidayCalendar-HolidaySection_add") }
+  element(:add_link) { |b| b.frm.link(id: "KS-HolidayCalendar-HolidaySection_add") }
 
   element(:make_official_button) { |b| b.frm.button(text: "Make Official") }
   element(:update_official_button) { |b| b.frm.button(text: "Update Official") }
@@ -212,7 +212,7 @@ module Holidays
     date_range.clear if date_range.set?
     loading.wait_while_present
     instruct(inst)
-    add_button.click
+    add_link.click
     loading.wait_while_present
   end
 
@@ -230,7 +230,7 @@ module Holidays
     end
     holiday_end_date.set end_date
     instruct(inst)
-    add_button.click
+    add_link.click
     loading.wait_while_present
   end
 
@@ -251,7 +251,7 @@ module Holidays
     holiday_end_time.set end_time
     holiday_end_meridian.select end_meridian
     instruct(inst)
-    add_button.click
+    add_link.click
     loading.wait_while_present
   end
 
@@ -273,7 +273,7 @@ module Holidays
     holiday_end_time.set end_time
     holiday_end_meridian.select end_meridian
     instruct(inst)
-    add_button.click
+    add_link.click
     loading.wait_while_present
   end
 

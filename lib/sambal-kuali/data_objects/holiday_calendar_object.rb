@@ -80,7 +80,7 @@ class HolidayCalendar
         else
           page.start_time
         end
-        page.add_button.click
+        page.add_link.click
         page.loading.wait_while_present
       end
       page.save
