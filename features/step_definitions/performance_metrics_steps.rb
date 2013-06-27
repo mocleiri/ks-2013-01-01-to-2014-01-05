@@ -265,3 +265,111 @@ When /^I delete the course offering$/ do
     @performance_test.end
   end
 end
+
+
+When /^I copy a course offering$/ do
+  on CopyCourseOffering do |page|
+    @performance_test.start
+    page.create_copy
+    @performance_test.end
+  end
+end
+
+When /^I click copy for a course offering$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set "201301"
+    page.input_code.set "ENGL101"
+    page.perf_show
+  end
+  on ManageCourseOfferingList do |page|
+    @performance_test.start
+    page.copy "ENGL101"
+    @performance_test.end
+  end
+end
+
+
+When /^I create a basic course offering$/ do
+  @performance_test = make PerformanceTest
+  go_to_create_course_offerings
+  on CreateCourseOffering do  |page|
+    page.target_term.set "201301"
+    page.catalogue_course_code.set "ENGL316"
+    page.show
+    page.suffix.set random_alphanums.strip
+    page.add_random_delivery_format
+    @performance_test.start
+    page.create_offering
+    @performance_test.end
+  end
+end
+
+
+When /^I create a jointly defined course offering$/ do
+  @performance_test = make PerformanceTest
+  go_to_create_course_offerings
+  on CreateCourseOffering do  |page|
+    page.target_term.set "201301"
+    page.catalogue_course_code.set "ENGL316"
+    page.show
+    page.suffix.set random_alphanums.strip
+    page.create_new_joint_defined_course_row_1
+    page.add_random_delivery_format
+    @performance_test.start
+    page.create_offering
+    @performance_test.end
+  end
+end
+
+When /^I edit an Activity Offering for performance$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set "201301"
+    page.input_code.set "ENGL250"
+    page.perf_show
+    @performance_test.start
+    page.edit "A"
+    @performance_test.end
+  end
+end
+
+When /^I copy an Activity Offering for performance$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set "201301"
+    page.input_code.set "ENGL250"
+    page.perf_show
+    @performance_test.start
+    page.copy "A"
+    @performance_test.end
+  end
+end
+
+When /^I add Delivery Logistics and save$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set "201301"
+    page.input_code.set "ENGL250"
+    page.perf_show
+    page.edit "A"
+  end
+
+  on ActivityOfferingMaintenance do |page|
+    page.add_days.set "MWF"
+    page.add_start_time.set "10:00"
+    page.add_start_time_ampm.select "am"
+    page.add_end_time.set "11:00"
+    page.add_end_time_ampm.select "am"
+    page.add_facility.set "IPT"
+    page.add_room.set "1116"
+    page.add_new_delivery_logistics
+    @performance_test.start
+    page.submit
+    @performance_test.end
+  end
+end
