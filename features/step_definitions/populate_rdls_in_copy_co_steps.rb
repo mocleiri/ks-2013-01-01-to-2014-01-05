@@ -1,5 +1,5 @@
 When /^I copy an CO with AOs that have ADLs to a new CO in the different term with RDLs in its AOs$/ do
-  @source_course_offering = make CourseOffering, :term=> Rollover::SOC_STATES_SOURCE_TERM, :course => "ENGL222"
+  @source_course_offering = make CourseOffering, :term=> Rollover::SOC_STATES_SOURCE_TERM, :course => "ENGL462"
   @course_offering = create CourseOffering, :term=> Rollover::PUBLISHED_SOC_TERM , :create_from_existing => @source_course_offering
 end
 
@@ -23,6 +23,7 @@ And /^The ADLs are Successfully copied to RDLs in the new AOs of the newly creat
     page.actual_logistics_div.exists?.should == false  #should not be any ADLs
     page.requested_logistics_table.rows.size.should be > 2 #should be more than header/footer rows
     page.requested_logistics_table.rows[1..-2].each do |row|
+      page.view_requested_delivery_logistics
       days = page.get_requested_logistics_days(row).delete(' ')
       start_time = page.get_requested_logistics_start_time(row).delete(' ')
       dl_key = "#{days}#{start_time}"
