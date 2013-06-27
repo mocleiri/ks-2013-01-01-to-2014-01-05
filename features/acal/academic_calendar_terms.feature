@@ -5,22 +5,22 @@ Feature: EC.Academic Calendar Terms
   Background:
     Given I am logged in as a Schedule Coordinator
 
-  Scenario: Create a new term for a new academic calendar
+  Scenario: Successfully create a new term for a new academic calendar
     Given I create an Academic Calendar
     When I add a new term to the Academic Calendar
     Then the term is listed when I view the Academic Calendar
 
-  Scenario: Create a new term for an academic calendar copy
+  Scenario: Successfully create a new term for an academic calendar copy
     Given I copy an existing Academic Calendar
     When I add a new term to the Academic Calendar
     Then the term is listed when I view the Academic Calendar
 
-  Scenario: Edit term information for an academic calendar
+  Scenario: Successfully edit term information for an academic calendar
     Given I copy an existing Academic Calendar
     When I edit the information for a term
     Then the updated term information is listed when I view the Academic Calendar
 
-  Scenario: Delete a term from a new academic calendar
+  Scenario: Successfully delete a term from a new academic calendar
     Given I create an Academic Calendar
     And I have added a new term to the Academic Calendar
     When I delete the term
@@ -66,6 +66,12 @@ Feature: EC.Academic Calendar Terms
     When I add holidays within the term
     Then the instructional days calculation is correct
 
+  @draft
+  Scenario: debug terms page/data objects
+    Given I debug the 2012-2013 Academic Calendar
+    When I debug the Winter Term
+    And I debug the key date groups
+    And I debug the key dates
 #  @draft
 #  Scenario: Add a term to the academic calendar (acad calender must be official before can make term official)
 #    When I add a spring term and save

@@ -3,7 +3,7 @@
 # class attributes are initialized with default data unless values are explicitly provided
 #
 # Typical usage: (with optional setting of explicit data value in [] )
-#  @calendar = make AcademicCalendar, [:name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013"]
+#  @calendar = make AcademicCalendar, [:name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013"
 #  @calendar.create
 # OR alternatively 2 steps together as
 #  @calendar = create AcademicCalendar, :name=>"acal_name1", :start_date=>"12/12/2012", :end_date=>"12/12/2013"
@@ -17,16 +17,17 @@ class AcademicCalendar
   include Workflows
 
   #generally set using options hash
-  attr_accessor :name, :start_date, :end_date
+  attr_accessor :name, :start_date, :end_date, :terms
   #not implemented
-  attr_accessor :events, :holidays, :terms
+  attr_accessor :events, :holidays
+
 
   # provides default data:
   #  defaults = {
   #      :name=>random_alphanums.strip,
   #      :start_date=>"09/01/#{next_year[:year]}",
   #      :end_date=>"06/25/#{next_year[:year] + 1}",
-  #      :organization=>"Registrar's Office"  GONE: per KSENROLL-7685
+  #      :organization=>"Registrar's Office"   GONE: per KSENROLL-7685
   #  }
   # initialize is generally called using TestFactory Foundry .make or .create methods
   def initialize(browser, opts={})
@@ -117,11 +118,15 @@ class AcademicCalendar
     end
   end
 
-  def edit (opts)
+  def edit (opts = {})
     search
     on(CalendarSearch).edit @name
 
-    add_term(opts[:terms]) unless opts[:terms].nil?
+    if !opts[:terms].nil? then
+      opts[:terms].each do |term_object|
+        add_term(term_object)
+      end
+    end
 
   end
 
@@ -141,7 +146,10 @@ class AcademicTerm
   include StringFactory
   include Workflows
 
-  attr_accessor :term_type, :term_name, :start_date, :end_date, :instructional_days, :key_date_groups
+  attr_accessor :term_type, :term_name, :start_date, :end_date, :instructional_days, :key_date_groups, :parent_calendar
+
+  WINTER_TERM_TYPE = "Winter Term"
+  FALL_TERM_TYPE = "Fall Term"
 
   def initialize(browser,opts = {})
     @browser = browser
@@ -151,7 +159,9 @@ class AcademicTerm
         :start_date=>"09/02/#{calendar_year}",
         :end_date=>"06/24/#{calendar_year}",
         :term_type=>"Fall Term",
-        :term_name=>"Fall Term #{calendar_year}"
+        :term_name=>"Fall Term #{calendar_year}",
+        :key_date_group_list=> Array.new(1){make KeyDateGroup}
+
     }
 
     options = defaults.merge(opts)
@@ -171,11 +181,29 @@ class AcademicTerm
       page.acal_term_add
       page.adding.wait_while_present
 
-      @keyDateGroup = Array.new(1){make KeyDateGroup}
-      @keyDateGroup[0].create
+      page.open_term_section(@term_type)
+
+      key_date_group_list.each do |date_group|
+        date_group.create
+      end
     end
   end
 
+  #checks to see if group already exists
+  def add_key_date_group(key_date_group_object)
+    key_date_group_object.create
+    @key_date_group_list <<  key_date_group_object
+  end
+
+  ##
+  def edit(opts = {})
+    search
+    on(CalendarSearch).edit @term_name
+    on(EditAcademicTerms).open_term_section(@term_type)
+  end
+
+
+  #TODO - move should statements to step definitions
   def verify()
     on EditAcademicTerms do |page|
       page.get_term_type(0).should == @term_name
@@ -209,14 +237,17 @@ class KeyDateGroup
   include StringFactory
   include Workflows
 
-  attr_accessor :key_date_group_type, :key_dates, :term_index
+  attr_accessor :key_date_group_type, :key_dates, :term_index, :term_type
+
+  INSTRUCTIONAL_DATE_GROUP = "Instructional"
+  REGISTRATION_DATE_GROUP = "Registration"
 
   def initialize(browser,opts = {})
     @browser = browser
 
     defaults = {
-        :key_date_group_type=>"Instructional",
-        :key_dates=>{},
+        :key_date_group_type=> INSTRUCTIONAL_DATE_GROUP,
+        :key_dates=>[],
         :term_index=>0
     }
 
@@ -228,18 +259,36 @@ class KeyDateGroup
 
     on EditAcademicTerms do |page|
       sleep 3
-      page.key_date_group_dropdown(@term_index).select @key_date_group_type
+      #page.open_keydates_section(@parent_term.term_type)
 
-      page.key_date_group_add @term_index
+      #only create if not already there
+      if page.key_date_group_div(@term_type, @key_date_group_type).nil? then
+        @term_index = page.term_index_by_term_type(@term_type)
+        page.key_date_group_dropdown(@term_index).select @key_date_group_type
+        page.loading.wait_while_present
 
-      if @key_dates == {}
-        @key_dates = Array.new(1){make KeyDate}
-        else
-        @key_dates[0].create
+        page.key_date_group_add @term_index
+        page.adding.wait_while_present
       end
+
+      @key_dates.each do |key_date|
+        add_key_date(key_date)
+      end
+
+      page.save
     end
 
   end
+
+  def add_key_date(key_date_object)
+    key_date_object.create
+  end
+  private :add_key_date
+
+  #def edit(opts = {})
+  #
+  #end
+
 
   def verify
     @key_dates[0].verify
@@ -255,7 +304,7 @@ class KeyDate
   include Workflows
 
   attr_accessor :key_date_type, :start_date, :end_date, :start_time, :end_time, :start_time_ampm, :end_time_ampm,
-                :all_day, :date_range, :term_index
+                :all_day, :date_range, :term_index, :parent_key_date_group
 
   def initialize(browser,opts = {})
     @browser = browser
@@ -263,32 +312,44 @@ class KeyDate
     defaults = {
         key_date_type: "Grading Period",
         start_date: "09/02/#{next_year[:year]}",
-        end_date: "06/24/#{next_year[:year] + 1}",
-        start_time: "10:00",
-        end_time: "05:00",
-        start_time_ampm: "am",
-        end_time_ampm: "pm",
+        end_date: nil,
+        start_time: nil,
+        end_time: nil,
+        start_time_ampm: nil,
+        end_time_ampm: nil,
         all_day: true,
         date_range: false,
-        term_index: 0,
-        key_date_group: 0
+        term_index: 0
     }
 
     options = defaults.merge(opts)
     set_options(options)
   end
 
-  def create(opts = {})
+  def create()
+    #only create if doesn't already exist, other wise edit the existing one
     on EditAcademicTerms do |page|
-      page.key_date_dropdown_addline(@term_index,0).select @key_date_type
-      page.key_date_start_date_addline(@term_index,0).set @start_date
-      page.key_date_allday_addline(@term_index,0).set @all_day
-      page.key_date_daterange_addline(@term_index,0).set @date_range
-      page.loading.wait_while_present
+      if ! page.key_date_exists?(@parent_key_date_group.term_type, @parent_key_date_group.key_date_group_type, @key_date_type) then
+        @term_index = page.term_index_by_term_type(@parent_key_date_group.term_type)
 
-      page.key_date_end_date_addline(@term_index,0).set @end_date if @date_range
+        page.key_date_dropdown_addline(@term_index,0).select @key_date_type
+        page.loading.wait_while_present
+        page.key_date_start_date_addline(@term_index,0).set @start_date
+        page.loading.wait_while_present
 
-      page.key_date_add(@term_index,0)
+
+        page.key_date_allday_addline(@term_index,0).set @all_day
+        page.loading.wait_while_present
+        page.key_date_daterange_addline(@term_index,0).set @date_range
+        page.loading.wait_while_present
+
+        page.key_date_end_date_addline(@term_index,0).set @end_date if @date_range
+
+        page.key_date_add(@term_index,0)
+      else
+        #TODO - need the opposite of set_options here
+        edit :key_date_type => @key_date_type, :start_date => @start_date, :end_date  => @end_date, :start_time  => @start_time, :end_time  => @end_time, :start_time_ampm  => @start_time_ampm,  :end_time_ampm => @end_time_ampm, :all_day => @all_day, :date_range  => @date_range
+      end
       page.save
 
     end
@@ -297,77 +358,70 @@ class KeyDate
 
   def edit options={}
 
-    if options[:term_index] != nil
-       @term_index = options[:term_index]
-    end
-
-    if options[:key_date_group] !=nil
-      @key_date_group = options[:key_date_group]
-    end
+    edit_row = on(EditAcademicTerms).key_date_target_row(@parent_key_date_group.term_type, @parent_key_date_group.key_date_group_type, @key_date_type)
 
     if options[:start_date] != nil
       on EditAcademicTerms  do |page|
-        page.key_date_start_date_edit(@term_index,@key_date_group,0).set options[:start_date]
-        @start_date =  options[:start_date]
+        page.edit_key_date_start_date(edit_row,options[:start_date])
       end
     end
 
     if options[:all_day] != nil
       on EditAcademicTerms  do |page|
-        page.key_date_allday_edit(@term_index,@key_date_group,0).set options[:all_day]
-        @all_day = options[:all_day]
+        if options[:all_day] then
+          page.set_key_date_is_all_day(edit_row)
+        else
+          page.clear_key_date_is_all_day(edit_row)
+        end
       end
     end
 
     if options[:date_range] != nil
       on EditAcademicTerms  do |page|
-        page.key_date_daterange_edit(@term_index,@key_date_group,0).set options[:date_range]
-        @date_range = options[:date_range]
+        if options[:date_range] then
+          page.set_key_date_is_range(edit_row)
+        else
+          page.clear_key_date_is_range(edit_row)
+        end
       end
     end
 
     if options[:end_date] != nil
       on EditAcademicTerms  do |page|
-        page.key_date_end_date_edit(@term_index,@key_date_group,0).set options[:end_date] if @date_range
-        @end_date = options[:end_date]
+        page.edit_key_date_end_date(edit_row,options[:end_date]) if @date_range
       end
     end
 
     if options[:start_time] != nil
       on EditAcademicTerms  do |page|
-        page.key_start_time_edit(@term_index,@key_date_group,0).set options[:start_time]
-        @start_time = options[:start_time]
+        page.edit_key_date_start_time(edit_row,options[:start_time])
       end
     end
 
     if options[:end_time] != nil
       on EditAcademicTerms  do |page|
-        page.key_end_time_edit(@term_index,@key_date_group,0).set options[:end_time]
-        @end_time = options[:end_time]
+        page.edit_key_date_end_time(edit_row,options[:end_time])
       end
     end
 
     if options[:start_time_ampm] != nil
       on EditAcademicTerms  do |page|
-        page.key_start_time_ampm_edit(@term_index,@key_date_group,0).set options[:start_time_ampm]
-        @start_time_ampm = options[:start_time_ampm]
+        page.edit_key_date_start_ampm(edit_row,options[:start_time_ampm])
       end
     end
 
     if options[:end_time_ampm] != nil
       on EditAcademicTerms  do |page|
-        page.key_end_time_ampm_edit(@term_index,@key_date_group,0).set options[:end_time_ampm]
-        @end_time_ampm = options[:end_time_ampm]
+        page.edit_key_date_end_ampm(edit_row,options[:end_time_ampm])
       end
     end
 
-    on EditAcademicTerms  do |page|
-      page.save
-      #page.make_term_official(@term_index)
+    on(EditAcademicTerms).save
+
+    set_options(options)
     end
 
-    end
-
+#TODO - move to step definitions
   def verify()
     on EditAcademicTerms do |page|
       page.key_date_type(0,0,0).should == @key_date_type

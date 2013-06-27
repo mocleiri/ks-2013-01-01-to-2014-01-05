@@ -251,3 +251,32 @@ Then /^the term is listed when I view the Academic Calendar$/ do
     puts page.target_term_div(@term.name)
   end
 end
+Given /^I debug the 2012-2013 Academic Calendar$/ do
+  @calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar"
+  @calendar.search
+  @calendar.edit
+
+end
+When /^I debug the Winter Term$/ do
+  @term = make AcademicTerm, :term_type=>AcademicTerm::WINTER_TERM_TYPE
+
+  on EditAcademicTerms do |page|
+    page.go_to_term_tab
+    page.open_term_section(@term.term_type)
+  end
+  #@term.edit :key_date_group_list =>  Array.new(1){make KeyDateGroup}
+end
+
+When /^I debug the key date groups$/ do
+  @key_date_group = create KeyDateGroup, :key_date_group_type=> KeyDateGroup::INSTRUCTIONAL_DATE_GROUP, :term_type =>@term.term_type
+  #on EditAcademicTerms do |page|
+  #  puts "exists #{page.key_date_group_exists?(@term.term_type, "Instructional Key Dates")}"
+  #end
+end
+
+When /^I debug the key dates$/ do
+  @key_date = create KeyDate, :key_date_type => "First Day of Classes", :start_date => (Date.today + 2).strftime("%m/%d/%Y"),:parent_key_date_group => @key_date_group
+  #on EditAcademicTerms do |page|
+  #  puts "exists #{page.key_date_exists?(@term.term_type, "Instructional", "Last Day of Classes")}"
+  #end
+end
