@@ -70,7 +70,7 @@ class HolidayCalendar
         page.holiday_start_date.set holiday[:start_date]
         if holiday[:date_range]
           page.date_range.set
-            sleep 2
+            sleep 4
           page.holiday_end_date.set holiday[:end_date]
         else
           page.date_range.clear if page.date_range.set?
