@@ -419,3 +419,14 @@ Feature: Temporary feature file to test every rule statement with every associat
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have earned a minimum GPA of 4.0 in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
 
+  #KSENROLL-7527
+  @pending
+  Scenario: Single course rule - Student Eligibility & Prerequisite
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new course statement with course "BSCI103"
+    Then the "edit" tab should have the text "Must have successfully completed BSCI103"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have successfully completed BSCI103"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have successfully completed BSCI103"
