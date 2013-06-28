@@ -84,6 +84,8 @@ class ManageCORequisitesData
     on ManageCORequisites do |page|
       elements = page.edit_tree_section.elements( :tag_name, 'a')
       elements.each do |elem|
+        puts elem.id
+        puts elem.text
         if page.edit_tree_section.a( id: elem.id).attribute_value('data-submit_data') =~ regex
           page.edit_tree_section.a(id: elem.id).click
         end
@@ -220,6 +222,25 @@ class ManageCORequisitesData
     end
   end
 
+  def create_less_credits_rule( group, node, number, course, set, range)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must successfully complete no more than <n> credits from <courses>/
+      page.integer_field.when_present.set number
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_any_credits_rule( group, node, course, set, range)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must not have successfully completed any credits from <courses>/
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
   def create_repeated_credit_rule( group, node, number)
     add_new_node( group, node)
     on ManageCORequisites do |page|
@@ -269,7 +290,7 @@ class ManageCORequisitesData
   def create_gpa_duration_rule( group, node, gpa, type, duration)
     add_new_node( group, node)
     on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must have earned a minimum Cumulative GPA of <GPA> in <duration><durationType>/
+      page.rule_dropdown.when_present.select /Must have earned a minimum cumulative GPA of <GPA> in <duration><durationType>/
       page.integer_field.when_present.set gpa
       page.duration_field.when_present.set duration
       page.duration_dropdown.when_present.select type
@@ -348,6 +369,44 @@ class ManageCORequisitesData
     end
   end
 
+  def create_class_standing_rule( group, node, stand, equals, sect)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      if equals == "="
+        if( sect == "Student Eligibility & Prerequisite" || sect == "Recommended Preparation")
+          page.rule_dropdown.when_present.select /Student must be in a class standing of <class standing>/
+        elsif( sect == "Antirequisite")
+          page.rule_dropdown.when_present.select /Must not be in a class standing of <class standing>/
+        end
+      elsif equals == ">"
+        page.rule_dropdown.when_present.select /Student must be in a class standing of <class standing> or greater/
+      elsif equals == "<"
+        page.rule_dropdown.when_present.select /Student must be in a class standing of <class standing> or less/
+      end
+      add_class_standing( stand)
+      page.preview_btn
+    end
+  end
+
+  def create_admin_org_rule( group, node, org)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Permission of <administering org> required/
+      add_org(org)
+      page.preview_btn
+    end
+  end
+
+  def create_min_credits_org_rule( group, node, org, credit)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> credits from courses in the <org>/
+      page.integer_field.when_present.set credit
+      add_org(org)
+      page.preview_btn
+    end
+  end
+
   def add_courses( course, set, range)
     on ManageCORequisites do |page|
       courses = create_array( course)
@@ -355,12 +414,12 @@ class ManageCORequisitesData
         page.multi_course_dropdown.when_present.select /Approved Courses/
         if courses.length > 1
           courses.each do |elem|
-            advanced_search("course code", elem)
+            advanced_search("courses code", elem)
             page.add_line_btn
             page.adding.wait_while_present
           end
         else
-          advanced_search("course code", course)
+          advanced_search("courses code", course)
           page.add_line_btn
           page.adding.wait_while_present
         end
@@ -428,7 +487,7 @@ class ManageCORequisitesData
         advanced_search("course code", code)
       elsif field == "courses"
         page.multi_course_dropdown.when_present.select /Approved Courses/
-        advanced_search("course code", code)
+        advanced_search("courses code", code)
         page.add_line_btn
         page.adding.wait_while_present
       elsif field == "text"

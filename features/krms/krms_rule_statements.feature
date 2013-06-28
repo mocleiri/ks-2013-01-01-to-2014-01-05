@@ -74,17 +74,6 @@ Feature: Temporary feature file to test every rule statement with every associat
   #Add a scenario for number of courses rule with course ranges
 
   @pending
-  Scenario: Repeated for credits rule
-    When I navigate to the agenda page for "Repeatable for Credit" for term "201301" and course "BSCI361"
-    And I want to add a new statement to the selected agenda section
-    And I add a new repeated for credits statement with "4" credits
-    Then the "edit" tab should have the text "May be repeated for a maximum of 4 credits"
-    When I switch to the other tab on the page
-    Then the "logic" tab should have the text "May be repeated for a maximum of 4 credits"
-    When I update the manage course offering agendas page
-    Then the agenda page should have the text "May be repeated for a maximum of 4 credits"
-
-  @pending
   Scenario: Grade and courses rule with approved courses
     When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
     And I want to add a new statement to the selected agenda section
@@ -127,39 +116,6 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must successfully complete a minimum of 2 courses with a minimum grade of A from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must successfully complete a minimum of 2 courses with a minimum grade of A from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
-
-  @pending
-  Scenario: Gpa and courses rule with approved courses
-    When I navigate to the agenda page for "Recommended Preparation" for term "201301" and course "BSCI361"
-    And I want to add a new statement to the selected agenda section
-    And I add a new gpa and courses statement with courses "BSCI103,BSCI202" and GPA of "3.3"
-    Then the "edit" tab should have the text "Must have earned a minimum GPA of 3.3 in (BSCI103, BSCI202)"
-    When I switch to the other tab on the page
-    Then the "logic" tab should have the text "Must have earned a minimum GPA of 3.3 in,BSCI103,BSCI202"
-    When I update the manage course offering agendas page
-    Then the agenda page should have the text "Must have earned a minimum GPA of 3.3 in,BSCI103,BSCI202"
-
-  @pending
-  Scenario: Gpa and courses rule with course sets
-    When I navigate to the agenda page for "Recommended Preparation" for term "201301" and course "BSCI361"
-    And I want to add a new statement to the selected agenda section
-    And I add a new gpa and courses statement with course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing" and GPA of "4.0"
-    Then the "edit" tab should have the text "Must have earned a minimum GPA of 4.0 in (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
-    When I switch to the other tab on the page
-    Then the "logic" tab should have the text "Must have earned a minimum GPA of 4.0 in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
-    When I update the manage course offering agendas page
-    Then the agenda page should have the text "Must have earned a minimum GPA of 4.0 in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
-
-  @pending
-  Scenario: Gpa and duration rule
-    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
-    And I want to add a new statement to the selected agenda section
-    And I add a new gpa and duration statement with GPA of "2.8" and duration type "Week" with duration "10"
-    Then the "edit" tab should have the text "Must have earned a minimum Cumulative GPA of 2.8 in 10 weeks"
-    When I switch to the other tab on the page
-    Then the "logic" tab should have the text "Must have earned a minimum Cumulative GPA of 2.8 in 10 weeks"
-    When I update the manage course offering agendas page
-    Then the agenda page should have the text "Must have earned a minimum Cumulative GPA of 2.8 in 10 weeks"
 
   #KSENROLL-7606
   @pending
@@ -282,15 +238,184 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the agenda page should have the text "Must have successfully completed no more than 2 courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
 
   #Add a scenario for number of courses rule with course ranges
-
+  ##############################################
   #KSENROLL-7614
   @pending
   Scenario: Program offered by org rule
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
     And I want to add a new statement to the selected agenda section
-    And I add a new program offered by org statement with "Summer Term"
+    And I add a new program offered by org statement with "Summer Term-PUAF"
     Then the "edit" tab should have the text "Must have been admitted to a Program offered by EXST-Summer Term"
     When I switch to the other tab on the page
     Then the "logic" tab should have the text "Must have been admitted to a Program offered by EXST-Summer Term"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have been admitted to a Program offered by EXST-Summer Term"
+
+  #KSENROLL-7615
+  @pending
+  Scenario: Class standing rule - Student Eligibility & Prerequisite
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new class standing statement with class standing "CORE"
+    Then the "edit" tab should have the text "Student must be in a class standing of Core"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Student must be in a class standing of Core"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Student must be in a class standing of Core"
+
+  #KSENROLL-7616
+  @pending
+  Scenario: Class standing or greater rule
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new class standing or greater statement with class standing "CORE"
+    Then the "edit" tab should have the text "Student must be in a class standing of Core or greater"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Student must be in a class standing of Core or greater"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Student must be in a class standing of Core or greater"
+
+  #KSENROLL-7617
+  @pending
+  Scenario: Class standing or less rule
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new class standing or less statement with class standing "CORE"
+    Then the "edit" tab should have the text "Student must be in a class standing of Core or less"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Student must be in a class standing of Core or less"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Student must be in a class standing of Core or less"
+
+  #KSENROLL-7618
+  @pending
+  Scenario: Class standing rule - Antirequisite
+    When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new class standing statement with class standing "CORE"
+    Then the "edit" tab should have the text "Must not be in a class standing of Core"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must not be in a class standing of Core"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must not be in a class standing of Core"
+
+  #KSENROLL-7619
+  @pending
+  Scenario: Permission of administering org rule
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new permission of administering org statement with org "Beyond the Classroom"
+    Then the "edit" tab should have the text "Permission of UGST-Dean-Beyond the Classroom required"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Permission of UGST-Dean-Beyond the Classroom required"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Permission of UGST-Dean-Beyond the Classroom required"
+
+  #KSENROLL-7588 EB1
+  @pending
+  Scenario: No more number of credits rule with approved courses
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new no more than credits statement with number "4" and courses "BSCI103,BSCI202"
+    Then the "edit" tab should have the text "Must successfully complete no more than 4 credits from (BSCI103, BSCI202)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must successfully complete no more than 4 credits from,BSCI103,BSCI202"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must successfully complete no more than 4 credits from,BSCI103,BSCI202"
+
+  #KSENROLL-7588 EB2
+  @pending
+  Scenario: No more number of credits rule with course sets
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new no more than credits statement with number "16" and course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing"
+    Then the "edit" tab should have the text "Must successfully complete no more than 16 credits from (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must successfully complete no more than 16 credits from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must successfully complete no more than 16 credits from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+
+  #KSENROLL-7590 EB1
+  @pending
+  Scenario: Any credits rule with approved courses
+    When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new any credits statement with courses "BSCI103,BSCI202"
+    Then the "edit" tab should have the text "Must not have successfully completed any credits from (BSCI103, BSCI202)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must not have successfully completed any credits from,BSCI103,BSCI202"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must not have successfully completed any credits from,BSCI103,BSCI202"
+
+  #KSENROLL-7590 EB2
+  @pending
+  Scenario: Any credits rule with course sets
+    When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new any credits statement with course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing"
+    Then the "edit" tab should have the text "Must not have successfully completed any credits from (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must not have successfully completed any credits from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must not have successfully completed any credits from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+
+  #KSENROLL-7602
+  @pending
+  Scenario: Repeated for credits rule
+    When I navigate to the agenda page for "Repeatable for Credit" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new repeated for credits statement with "4" credits
+    Then the "edit" tab should have the text "May be repeated for a maximum of 4 credits"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "May be repeated for a maximum of 4 credits"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "May be repeated for a maximum of 4 credits"
+
+  #KSENROLL-7604
+  @pending
+  Scenario: Minimum credits and org rule
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a minimum number of credits and org rule with "4" credits and org "Beyond the Classroom"
+    Then the "edit" tab should have the text "Must have successfully completed a minimum of 4 credits from courses in the UGST-Dean-Beyond the Classroom"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have successfully completed a minimum of 4 credits from courses in the UGST-Dean-Beyond the Classroom"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have successfully completed a minimum of 4 credits from courses in the UGST-Dean-Beyond the Classroom"
+
+  #KSENROLL-7597
+  @pending
+  Scenario: Gpa and duration rule
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new gpa and duration statement with GPA of "2.8" and duration type "Week" with duration "10"
+    Then the "edit" tab should have the text "Must have earned a minimum Cumulative GPA of 2.8 in 10 weeks"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have earned a minimum Cumulative GPA of 2.8 in 10 weeks"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have earned a minimum Cumulative GPA of 2.8 in 10 weeks"
+
+  #KSENROLL-7595 EB1
+  @pending
+  Scenario: Gpa and courses rule with approved courses
+    When I navigate to the agenda page for "Recommended Preparation" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new gpa and courses statement with courses "BSCI103,BSCI202" and GPA of "3.3"
+    Then the "edit" tab should have the text "Must have earned a minimum GPA of 3.3 in (BSCI103, BSCI202)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have earned a minimum GPA of 3.3 in,BSCI103,BSCI202"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have earned a minimum GPA of 3.3 in,BSCI103,BSCI202"
+
+  #KSENROLL-7595 EB2
+  @pending
+  Scenario: Gpa and courses rule with course sets
+    When I navigate to the agenda page for "Recommended Preparation" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new gpa and courses statement with course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing" and GPA of "4.0"
+    Then the "edit" tab should have the text "Must have earned a minimum GPA of 4.0 in (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have earned a minimum GPA of 4.0 in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have earned a minimum GPA of 4.0 in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+

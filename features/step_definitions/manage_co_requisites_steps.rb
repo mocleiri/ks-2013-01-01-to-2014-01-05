@@ -167,6 +167,22 @@ When /^I add a new no more than number of courses statement with number "(\d+)" 
   @manageCOR.create_less_number_courses_rule( "add", "", number, "", set, "", @courseOR.section)
 end
 
+When /^I add a new no more than credits statement with number "(\d+)" and courses "([^\"]+)"$/ do |number, course|
+  @manageCOR.create_less_credits_rule( "add", "", number, course, "", "")
+end
+
+When /^I add a new no more than credits statement with number "(\d+)" and course sets "([^\"]+)"$/ do |number, set|
+  @manageCOR.create_less_credits_rule( "add", "", number, "", set, "")
+end
+
+When /^I add a new any credits statement with courses "([^\"]+)"$/ do |course|
+  @manageCOR.create_any_credits_rule( "add", "", course, "", "")
+end
+
+When /^I add a new any credits statement with course sets "([^\"]+)"$/ do |set|
+  @manageCOR.create_any_credits_rule( "add", "", "", set, "")
+end
+
 When /^I add a new repeated for credits statement with "(\d+)" credits$/ do |number|
   @manageCOR.create_repeated_credit_rule( "add", "", number)
 end
@@ -231,7 +247,27 @@ When /^I add a new program offered by org statement with "(.*?)"$/ do |org|
   @manageCOR.create_program_org_rule( "add", "", org)
 end
 
-When /^I group course statement with node "(.)" with course "([^\"]+)"$/ do |node, course|
+When /^I add a new class standing or greater statement with class standing "(.*?)"$/ do |standing|
+  @manageCOR.create_class_standing_rule( "add", "", standing, ">", @courseOR.section)
+end
+
+When /^I add a new class standing or less statement with class standing "(.*?)"$/ do |standing|
+  @manageCOR.create_class_standing_rule( "add", "", standing, "<", @courseOR.section)
+end
+
+When /^I add a new class standing statement with class standing "(.*?)"$/ do |standing|
+  @manageCOR.create_class_standing_rule( "add", "", standing, "=", @courseOR.section)
+end
+
+When /^I add a new permission of administering org statement with org "(.*?)"$/ do |org|
+  @manageCOR.create_admin_org_rule( "add", "", org)
+end
+
+When /^I add a minimum number of credits and org rule with "([\d\.]+)" credits and org "(.*?)"$/ do |credit, org|
+  @manageCOR.create_min_credits_org_rule( "add", "", org, credit)
+end
+
+When /^I group course statement with node "(.)" with course "([^\"]+)"$/s do |node, course|
   @manageCOR.create_course_rule( "group", node, course, @courseOR.section)
 end
 
