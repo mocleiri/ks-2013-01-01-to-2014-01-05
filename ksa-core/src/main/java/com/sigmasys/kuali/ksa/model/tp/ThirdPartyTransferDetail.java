@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Third party plan detail.
@@ -31,6 +32,11 @@ public class ThirdPartyTransferDetail implements Identifiable {
      * The plan under which the transfer was made.
      */
     private ThirdPartyPlan plan;
+
+    /**
+     * Initiation date
+     */
+    private Date initiationDate;
 
     /**
      * Transfer Group ID
@@ -103,6 +109,15 @@ public class ThirdPartyTransferDetail implements Identifiable {
 
     public void setPlan(ThirdPartyPlan plan) {
         this.plan = plan;
+    }
+
+    @Column(name = "INIT_DATE")
+    public Date getInitiationDate() {
+        return initiationDate;
+    }
+
+    public void setInitiationDate(Date initiationDate) {
+        this.initiationDate = initiationDate;
     }
 
     @Column(name = "TRANSFER_AMOUNT")

@@ -3,7 +3,6 @@ package com.sigmasys.kuali.ksa.krad.controller;
 import com.sigmasys.kuali.ksa.krad.form.AccountRefundForm;
 import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
-import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AccountService;
@@ -29,8 +28,8 @@ import java.util.List;
 
 /**
  * The Controller for the Account Refund page.
- *
- *
+ * <p/>
+ * <p/>
  * User: Sergey
  * Date: 5/18/13
  * Time: 8:18 PM
@@ -56,8 +55,8 @@ public class AccountRefundController extends DownloadController {
     /**
      * Generates an initial form object for the Account Refund page.
      *
-     * @param request   Request object.
-     * @return          The initial form.
+     * @param request Request object.
+     * @return The initial form.
      */
     @Override
     protected UifFormBase createInitialForm(HttpServletRequest request) {
@@ -92,9 +91,9 @@ public class AccountRefundController extends DownloadController {
     /**
      * Called when the form is initially opened.
      *
-     * @param form          The form object associated with the Account Refund page.
-     * @return              ModelAndView for the page.
-     * @throws Exception    If any errors occur.
+     * @param form The form object associated with the Account Refund page.
+     * @return ModelAndView for the page.
+     * @throws Exception If any errors occur.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=displayInitialPage")
     public ModelAndView displayInitialPage(@ModelAttribute("KualiForm") AccountRefundForm form,
@@ -109,9 +108,9 @@ public class AccountRefundController extends DownloadController {
      * Invoked when the "Search" button is pressed. Performs Refund search and populates
      * the form object to be displayed on the screen.
      *
-     * @param form          The form object associated with the Account Refund page.
-     * @return              ModelAndView for the page.
-     * @throws Exception    If there are any errors search for Refunds.
+     * @param form The form object associated with the Account Refund page.
+     * @return ModelAndView for the page.
+     * @throws Exception If there are any errors search for Refunds.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=searchForRefunds")
     public ModelAndView searchForRefunds(@ModelAttribute("KualiForm") AccountRefundForm form,
@@ -125,9 +124,9 @@ public class AccountRefundController extends DownloadController {
     /**
      * Invoked when the "Verify Selected Refunds" button is pressed.
      *
-     * @param form          The form object.
-     * @return              The ModelAndView for the page.
-     * @throws Exception    If there are any errors.
+     * @param form The form object.
+     * @return The ModelAndView for the page.
+     * @throws Exception If there are any errors.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=verifySelectedRefunds")
     public ModelAndView verifySelectedRefunds(@ModelAttribute("KualiForm") AccountRefundForm form) throws Exception {
@@ -139,9 +138,9 @@ public class AccountRefundController extends DownloadController {
     /**
      * Invoked when the "Cancel Selected Refunds" button is pressed.
      *
-     * @param form          The form object.
-     * @return              The ModelAndView for the page.
-     * @throws Exception    If there are any errors.
+     * @param form The form object.
+     * @return The ModelAndView for the page.
+     * @throws Exception If there are any errors.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=cancelSelectedRefunds")
     public ModelAndView cancelSelectedRefunds(@ModelAttribute("KualiForm") AccountRefundForm form) throws Exception {
@@ -172,7 +171,7 @@ public class AccountRefundController extends DownloadController {
      * Searches for all Refunds and compiles a list of PotentialRefundModel and Refund objects.
      * Sets the lists of Potential and all Refunds on the given form object.
      *
-     * @param form  The form object.
+     * @param form The form object.
      */
     private void findAllRefunds(AccountRefundForm form, String userId) {
         // Calculate the filtering date range:
@@ -189,7 +188,7 @@ public class AccountRefundController extends DownloadController {
         }
 
         // Create model objects to display in the tables:
-        List<RefundModel> refundModels =  createRefundModelList(userId, filterDateFrom, filterDateTo);
+        List<RefundModel> refundModels = createRefundModelList(userId, filterDateFrom, filterDateTo);
         List<PotentialRefundModel> potentialRefundModels = createPotentialRefundList(userId, filterDateFrom, filterDateTo);
 
         form.setAllRefunds(refundModels);
@@ -199,9 +198,9 @@ public class AccountRefundController extends DownloadController {
     /**
      * Creates a list of RefundModel objects to be displayed in the "Refund Status" table.
      *
-     * @param userId    The current account Id.
-     * @param dateFrom  Filtering date from.
-     * @param dateTo    Filtering date to.
+     * @param userId   The current account Id.
+     * @param dateFrom Filtering date from.
+     * @param dateTo   Filtering date to.
      * @return
      */
     private List<RefundModel> createRefundModelList(String userId, Date dateFrom, Date dateTo) {
@@ -228,19 +227,18 @@ public class AccountRefundController extends DownloadController {
     /**
      * Creates a list of PotentialRefundModel objects to be displayed in the "Refund Status" table.
      *
-     * @param userId    The current account Id.
-     * @param dateFrom  Filtering date from.
-     * @param dateTo    Filtering date to.
+     * @param userId   The current account Id.
+     * @param dateFrom Filtering date from.
+     * @param dateTo   Filtering date to.
      * @return
      */
     private List<PotentialRefundModel> createPotentialRefundList(String userId, Date dateFrom, Date dateTo) {
+
         // Get Transactions for the current account within the specified date range.
         List<PotentialRefundModel> potentialRefundModels = new ArrayList<PotentialRefundModel>();
         List<Transaction> transactions = transactionService.getTransactions(userId, dateFrom, dateTo);
 
-        for(Transaction t: transactions){
-            // Prefetch Transaction's associations:
-            TransactionUtils.safePrefetchKsaTransactionAssociations(t);
+        for (Transaction t : transactions) {
 
             // Add new PotentialRefundModel object:
             PotentialRefundModel potentialRefundModel = new PotentialRefundModel(t);

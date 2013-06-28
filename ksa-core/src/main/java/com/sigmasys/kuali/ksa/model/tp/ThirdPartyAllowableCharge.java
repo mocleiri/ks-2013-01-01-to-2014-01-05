@@ -94,7 +94,7 @@ public class ThirdPartyAllowableCharge implements Identifiable {
         this.plan = plan;
     }
 
-    @Column(name = "TRANSACTION_TYPE_MASK", length = 100)
+    @Column(name = "TRANSACTION_TYPE_MASK", length = 100, nullable = false)
     public String getTransactionTypeMask() {
         return transactionTypeMask;
     }
@@ -103,7 +103,7 @@ public class ThirdPartyAllowableCharge implements Identifiable {
         this.transactionTypeMask = transactionTypeMask;
     }
 
-    @Column(name = "MAX_PERCENTAGE")
+    @Column(name = "MAX_PERCENTAGE", nullable = false)
     public BigDecimal getMaxPercentage() {
         return maxPercentage;
     }

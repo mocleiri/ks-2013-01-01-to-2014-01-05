@@ -463,22 +463,22 @@ public class TransactionUtils {
         return new LinkedList<GlTransaction>();
     }
 
-    // ------------- Private classes for internal usage -------------------------------------
-    private static class EffectiveDateComparator implements Comparator<Transaction> {
+    // ------------- Various Transaction comparators -------------------------------------
+    public static class EffectiveDateComparator implements Comparator<Transaction> {
         @Override
         public int compare(Transaction t1, Transaction t2) {
             return t1.getEffectiveDate().compareTo(t2.getEffectiveDate());
         }
     }
 
-    private static class AmountComparator implements Comparator<Transaction> {
+    public static class AmountComparator implements Comparator<Transaction> {
         @Override
         public int compare(Transaction t1, Transaction t2) {
             return t1.getAmount().compareTo(t2.getAmount());
         }
     }
 
-    private static class PriorityComparator implements Comparator<Transaction> {
+    public static class PriorityComparator implements Comparator<Transaction> {
         @Override
         public int compare(Transaction t1, Transaction t2) {
             TransactionType transactionType1 = t1.getTransactionType();
@@ -494,14 +494,14 @@ public class TransactionUtils {
         }
     }
 
-    private static class UnallocatedAmountComparator implements Comparator<Transaction> {
+    public static class UnallocatedAmountComparator implements Comparator<Transaction> {
         @Override
         public int compare(Transaction t1, Transaction t2) {
             return getUnallocatedAmount(t1).compareTo(getUnallocatedAmount(t2));
         }
     }
 
-    private static class MatrixScoreComparator implements Comparator<Transaction> {
+    public static class MatrixScoreComparator implements Comparator<Transaction> {
         @Override
         public int compare(Transaction t1, Transaction t2) {
             Integer matrixScore1 = (t1.getMatrixScore() != null) ? t1.getMatrixScore() : 0;
@@ -509,38 +509,6 @@ public class TransactionUtils {
             return matrixScore1.compareTo(matrixScore2);
         }
     }
-
-    /**
-     * Safely prefetches KSA Transaction associations. If any of the associations
-     * or their attributes is null, this method ignores them.
-     *
-     * @param ksaTransaction A KSA Transaction.
-     */
-    public static void safePrefetchKsaTransactionAssociations(Transaction ksaTransaction) {
-        if (ksaTransaction != null) {
-            // Prefetch associations of Transaction:
-            Currency currency = ksaTransaction.getCurrency();
-            TransactionType transactionType = ksaTransaction.getTransactionType();
-            Rollup rollup = ksaTransaction.getRollup();
-            GeneralLedgerType generalLedgerType = ksaTransaction.getGeneralLedgerType();
-
-            // Prefetch attributes of associations:
-            if (currency != null) {
-                currency.getCode();
-            }
-            if (transactionType != null) {
-                transactionType.getDescription();
-                ksaTransaction.getTransactionType().getId().getId();
-            }
-            if (rollup != null) {
-                rollup.getDescription();
-            }
-            if (generalLedgerType != null) {
-                generalLedgerType.getDescription();
-            }
-        }
-    }
-
 
 }
 

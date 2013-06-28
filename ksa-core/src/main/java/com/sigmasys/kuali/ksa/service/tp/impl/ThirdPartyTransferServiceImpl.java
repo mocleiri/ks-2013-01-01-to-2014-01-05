@@ -8,6 +8,7 @@ import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
+import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,8 +20,10 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 /**
@@ -188,7 +191,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
         ThirdPartyTransferDetail transferDetail;
 
-        BigDecimal remainingFund = BigDecimal.ZERO;
+        BigDecimal remainingFund;
 
         BigDecimal maxAmount = (thirdPartyPlan.getMaxAmount() != null) ? thirdPartyPlan.getMaxAmount() : BigDecimal.ZERO;
 
@@ -212,12 +215,184 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
             transferDetail.setDirectChargeAccount((DirectChargeAccount) account);
             transferDetail.setPlan(thirdPartyPlan);
             transferDetail.setChargeStatus(ThirdPartyChargeStatus.ACTIVE);
+            transferDetail.setInitiationDate(initiationDate);
 
             remainingFund = maxAmount;
         }
 
+        // Initializing the transaction effective date comparator
+        TransactionUtils.EffectiveDateComparator dateComparator = new TransactionUtils.EffectiveDateComparator();
+
         // Getting allowable charges for the plan sorted by priority
         List<ThirdPartyAllowableCharge> allowableCharges = getThirdPartyAllowableCharges(thirdPartyPlanId);
+
+        for (ThirdPartyAllowableCharge allowableCharge : allowableCharges) {
+
+            BigDecimal chargeRemainingFund = allowableCharge.getMaxAmount();
+
+            if (chargeRemainingFund != null && planMember.isExecuted()) {
+
+                // Getting transfer details with the same transaction type mask and Transfer Group ID
+                query = em.createQuery("select sum(t.transferAmount - t.reversalAmount) from TransactionTransfer t " +
+                        " where t.transferAmount <> null and t.reversalAmount <> null and " +
+                        " t.groupId = :groupId and t.transactionTypeMask = :typeMask");
+
+                query.setParameter("groupId", transferDetail.getTransferGroupId());
+                query.setParameter("typeMask", allowableCharge.getTransactionTypeMask());
+
+                List<Object> results = query.getResultList();
+
+                if (CollectionUtils.isNotEmpty(results)) {
+                    chargeRemainingFund = chargeRemainingFund.subtract(new BigDecimal(results.get(0).toString()));
+                }
+            }
+
+            // Retrieving the list of transactions for the given user ID and date range
+            List<Transaction> transactions = transactionService.getTransactions(accountId,
+                    thirdPartyPlan.getChargePeriodStartDate(), thirdPartyPlan.getChargePeriodEndDate());
+
+            // Sorting transactions by effective date
+            Collections.sort(transactions, dateComparator);
+
+            Pattern typeMaskPattern = Pattern.compile(allowableCharge.getTransactionTypeMask());
+
+            BigDecimal totalUnallocatedAmount = BigDecimal.ZERO;
+
+            for (Transaction transaction : transactions) {
+
+                String transactionTypeId = transaction.getTransactionType().getId().getId();
+
+                if (typeMaskPattern.matcher(transactionTypeId).matches()) {
+
+                    BigDecimal unallocatedAmount = transactionService.getUnallocatedAmount(transaction);
+                    if (unallocatedAmount.compareTo(BigDecimal.ZERO) > 0) {
+                        totalUnallocatedAmount = totalUnallocatedAmount.add(unallocatedAmount);
+                    }
+
+                }
+            }
+
+            final BigDecimal hundredPercent = new BigDecimal(100);
+
+            BigDecimal maxPercentage = allowableCharge.getMaxPercentage();
+            if (maxPercentage == null || maxPercentage.compareTo(hundredPercent) > 0) {
+                maxPercentage = hundredPercent;
+            }
+
+            BigDecimal financeChargeAmount = totalUnallocatedAmount.multiply(maxPercentage);
+
+            if ((chargeRemainingFund == null || financeChargeAmount.compareTo(chargeRemainingFund) < 0) &&
+                    (remainingFund == null || financeChargeAmount.compareTo(remainingFund) < 0)) {
+
+                // Doing non-divided funding
+
+                for (Transaction transaction : transactions) {
+
+                    if (remainingFund.compareTo(BigDecimal.ZERO) <= 0) {
+                        break;
+                    }
+
+                    Date effectiveDate = thirdPartyPlan.getEffectiveDate();
+                    if (effectiveDate == null) {
+                        effectiveDate = transaction.getEffectiveDate();
+                    }
+
+                    Date recognitionDate = thirdPartyPlan.getRecognitionDate();
+                    if (recognitionDate == null) {
+                        recognitionDate = transaction.getRecognitionDate();
+                    }
+
+                    // Creating a new transaction transfer
+                    TransactionTransfer transactionTransfer =
+                            transactionTransferService.transferTransaction(
+                                    transaction.getId(),
+                                    transaction.getTransactionType().getId().getId(),
+                                    thirdPartyPlan.getTransferType().getId(),
+                                    // TODO: or thirdPartyPlan.getThirdPartyAccount().getId() ???
+                                    accountId,
+                                    transaction.getAmount().multiply(maxPercentage),
+                                    effectiveDate,
+                                    recognitionDate,
+                                    // TODO: set memo text and statement prefix,
+                                    null,
+                                    null,
+                                    allowableCharge.getTransactionTypeMask());
+
+                    // Setting Transfer Group ID
+                    transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
+
+                    // Subtracting the transfer amount from the remaining fund
+                    remainingFund = remainingFund.subtract(transactionTransfer.getTransferAmount());
+                }
+
+            } else {
+
+                // Doing divided funding
+
+                // Taking the smallest funding amount from remainingFund and chargeRemainingFund
+                BigDecimal maxDividedFund = remainingFund;
+                if (maxDividedFund.compareTo(chargeRemainingFund) > 0) {
+                    maxDividedFund = chargeRemainingFund;
+                }
+
+                if (allowableCharge.getDistributionPlan() == ChargeDistributionPlan.FULL) {
+
+                    for (Transaction transaction : transactions) {
+
+                        if (maxDividedFund.compareTo(BigDecimal.ZERO) <= 0 ||
+                                remainingFund.compareTo(BigDecimal.ZERO) <= 0) {
+                            break;
+                        }
+
+                        BigDecimal transferAmount = transaction.getAmount().multiply(maxPercentage);
+
+                        if (transferAmount.compareTo(maxDividedFund) > 0) {
+                            transferAmount = maxDividedFund;
+                        }
+
+                        Date effectiveDate = thirdPartyPlan.getEffectiveDate();
+                        if (effectiveDate == null) {
+                            effectiveDate = transaction.getEffectiveDate();
+                        }
+
+                        Date recognitionDate = thirdPartyPlan.getRecognitionDate();
+                        if (recognitionDate == null) {
+                            recognitionDate = transaction.getRecognitionDate();
+                        }
+
+                        // Creating a new transaction transfer
+                        TransactionTransfer transactionTransfer =
+                                transactionTransferService.transferTransaction(
+                                        transaction.getId(),
+                                        transaction.getTransactionType().getId().getId(),
+                                        thirdPartyPlan.getTransferType().getId(),
+                                        // TODO: or thirdPartyPlan.getThirdPartyAccount().getId() ???
+                                        accountId,
+                                        transferAmount,
+                                        effectiveDate,
+                                        recognitionDate,
+                                        // TODO: set memo text and statement prefix,
+                                        null,
+                                        null,
+                                        allowableCharge.getTransactionTypeMask());
+
+                        // Setting Transfer Group ID
+                        transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
+
+                        // Subtracting the transfer amount from the maxDividedFund fund
+                        maxDividedFund = maxDividedFund.subtract(transactionTransfer.getTransferAmount());
+
+                        // Subtracting the transfer amount from the remaining fund
+                        remainingFund = remainingFund.subtract(transactionTransfer.getTransferAmount());
+                    }
+
+                }
+
+
+            }
+
+        }
+
 
         // TODO
 

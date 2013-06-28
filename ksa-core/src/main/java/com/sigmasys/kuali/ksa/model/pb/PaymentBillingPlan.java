@@ -14,8 +14,8 @@ import java.util.Date;
  *
  * @author Michael Ivanov
  */
-@Entity
-@Table(name = "KSSA_PB_PLAN")
+//@Entity
+//@Table(name = "KSSA_PB_PLAN")
 @AttributeOverride(name = "code", column = @Column(name = "CODE", length = 20, nullable = false, unique = true))
 public class PaymentBillingPlan extends AuditableEntity<Long> {
 
