@@ -196,7 +196,22 @@ And /^the term should not appear in search results$/ do
   end
 end
 
-Then /^I should not be able to edit a calendar$/ do
+Then /^I should be able to view the calendars$/ do
+  on CalendarSearch do |page|
+    begin
+      # only check the visible rows of the table, and skip the header
+      last_row = page.showing_up_to.to_i - 1
+      page.results_table.rows[1..last_row].each do |row|
+        row.link(text: "View").present?.should be_true
+      end
+    rescue Watir::Exception::UnknownObjectException
+      # Means no search results on the page.
+      raise "Page has no results to check"
+    end
+  end
+end
+
+And /^I should not be able to edit a calendar$/ do
   on CalendarSearch do |page|
     begin
       page.results_table.rows.each do |row|
@@ -222,7 +237,22 @@ And /^I should not be able to copy a calendar$/ do
   end
 end
 
-Then /^I should not be able to edit a term$/ do
+Then /^I should be able to view the terms$/ do
+  on CalendarSearch do |page|
+    begin
+      # only check the visible rows of the table, and skip the header
+      last_row = page.showing_up_to.to_i - 1
+      page.results_table.rows[1..last_row].each do |row|
+        row.link(text: "View").present?.should be_true
+      end
+    rescue Watir::Exception::UnknownObjectException
+      # Means no search results on the page.
+      raise "Page has no results to check"
+    end
+  end
+end
+
+And /^I should not be able to edit a term$/ do
   on CalendarSearch do |page|
     begin
       page.results_table.rows.each do |row|
@@ -279,4 +309,25 @@ When /^I debug the key dates$/ do
   #on EditAcademicTerms do |page|
   #  puts "exists #{page.key_date_exists?(@term.term_type, "Instructional", "Last Day of Classes")}"
   #end
+end
+
+When /^I add events to the Academic Calendar$/ do
+  @calendar.search
+  on CalendarSearch do |page|
+    page.edit @calendar.name
+  end
+  on EditAcademicCalendar do |page|
+    page.event_toggle
+    wait_until { page.event_type.enabled? }
+    page.event_type.select "Commencement - Seattle Campus"
+    page.event_start_date.set "04/15/#{next_year[:year]}"
+    page.event_end_date.set "05/15/#{next_year[:year] + 1}"
+    page.event_start_time.set "07:30"
+    page.event_end_time.set "09:00"
+    page.event_start_ampm.select "pm"
+    page.event_end_ampm.select "pm"
+    page.all_day.clear
+    page.date_range.set
+    page.add_event.click
+  end
 end
