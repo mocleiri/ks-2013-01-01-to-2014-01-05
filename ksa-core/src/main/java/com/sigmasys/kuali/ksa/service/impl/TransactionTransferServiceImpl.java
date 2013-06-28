@@ -601,10 +601,15 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
 
             Transaction destTransaction = transactionTransfer.getDestTransaction();
 
+            BigDecimal lockedAllocatedAmount = destTransaction.getLockedAllocatedAmount();
+            if (lockedAllocatedAmount == null) {
+                lockedAllocatedAmount = BigDecimal.ZERO;
+            }
+
             if (!allowLockedAllocations) {
-                if (CollectionUtils.isNotEmpty(transactionService.getAllocations(destTransaction.getId()))) {
+                if (lockedAllocatedAmount.compareTo(BigDecimal.ZERO) != 0) {
                     String errMsg = "Cannot reverse transaction group if one or more destination transactions " +
-                            " are locked-allocated, destination transaction ID = " + destTransaction.getId();
+                            " have any allocated amount, destination transaction ID = " + destTransaction.getId();
                     logger.error(errMsg);
                     throw new IllegalStateException(errMsg);
                 }
@@ -613,11 +618,6 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
             BigDecimal amount = destTransaction.getAmount();
             if (amount == null) {
                 amount = BigDecimal.ZERO;
-            }
-
-            BigDecimal lockedAllocatedAmount = destTransaction.getLockedAllocatedAmount();
-            if (lockedAllocatedAmount == null) {
-                lockedAllocatedAmount = BigDecimal.ZERO;
             }
 
             BigDecimal reversalAmount = amount.subtract(lockedAllocatedAmount);

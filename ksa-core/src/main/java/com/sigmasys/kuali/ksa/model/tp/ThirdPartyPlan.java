@@ -51,7 +51,7 @@ public class ThirdPartyPlan extends AuditableEntity<Long> {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACNT_ID_FK")
+    @JoinColumn(name = "ACNT_ID_FK", nullable = false)
     public ThirdPartyAccount getThirdPartyAccount() {
         return thirdPartyAccount;
     }

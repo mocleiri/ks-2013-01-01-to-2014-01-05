@@ -76,4 +76,14 @@ public interface ThirdPartyTransferService {
     ThirdPartyTransferDetail generateThirdPartyTransfer(Long thirdPartyPlanId, String accountId, Date initiationDate);
 
 
+    /**
+     * Reverses the third-party transaction transfer specified by ThirdPartyTransferDetail ID.
+     *
+     * @param transferDetailId ThirdPartyTransferDetail ID
+     * @param memoText         Memo text
+     * @return ThirdPartyTransferDetail instance
+     */
+    ThirdPartyTransferDetail reverseThirdPartyTransfer(Long transferDetailId, String memoText);
+
+
 }

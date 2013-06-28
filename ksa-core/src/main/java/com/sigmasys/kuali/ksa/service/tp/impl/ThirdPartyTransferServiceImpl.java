@@ -2,11 +2,13 @@ package com.sigmasys.kuali.ksa.service.tp.impl;
 
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.model.tp.*;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
+import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -67,6 +69,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     @Override
     public ThirdPartyPlan getThirdPartyPlan(Long thirdPartyPlanId) {
 
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
+
         Query query = em.createQuery("select p from ThirdPartyPlan p " +
                 " left outer join fetch p.thirdPartyAccount a " +
                 " left outer join fetch p.transferType t " +
@@ -90,6 +94,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     @Override
     public ThirdPartyTransferDetail getThirdPartyTransferDetail(Long thirdPartyTransferDetailId) {
 
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
+
         Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where d.id = :id and d.chargeStatusCode = :statusCode");
 
         query.setParameter("id", thirdPartyTransferDetailId);
@@ -110,6 +116,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     @Override
     @WebMethod(exclude = true)
     public ThirdPartyTransferDetail getThirdPartyTransferDetail(Long thirdPartyPlanId, String accountId) {
+
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
 
         Query query = em.createQuery(TRANSFER_DETAIL_SELECT +
                 " where p.id = :planId and dca.id = :accountId and d.chargeStatusCode = :statusCode");
@@ -132,6 +140,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     public List<ThirdPartyAllowableCharge> getThirdPartyAllowableCharges(Long thirdPartyPlanId) {
+
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_ALLOWABLE_CHARGE);
 
         Query query = em.createQuery("select c from ThirdPartyAllowableCharge c " +
                 " inner join fetch c.plan p " +
@@ -156,6 +166,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     @Override
     @Transactional(readOnly = false)
     public ThirdPartyTransferDetail generateThirdPartyTransfer(Long thirdPartyPlanId, String accountId, Date initiationDate) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_THIRD_PARTY_TRANSFER);
 
         ThirdPartyPlan thirdPartyPlan = getThirdPartyPlan(thirdPartyPlanId);
         if (thirdPartyPlan == null) {
@@ -216,6 +228,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
             transferDetail.setPlan(thirdPartyPlan);
             transferDetail.setChargeStatus(ThirdPartyChargeStatus.ACTIVE);
             transferDetail.setInitiationDate(initiationDate);
+            transferDetail.setTransferAmount(BigDecimal.ZERO);
 
             remainingFund = maxAmount;
         }
@@ -225,6 +238,9 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
         // Getting allowable charges for the plan sorted by priority
         List<ThirdPartyAllowableCharge> allowableCharges = getThirdPartyAllowableCharges(thirdPartyPlanId);
+
+        // Setting the total transfer amount variable to the existing transfer amount
+        BigDecimal totalTransferAmount = transferDetail.getTransferAmount();
 
         for (ThirdPartyAllowableCharge allowableCharge : allowableCharges) {
 
@@ -281,15 +297,93 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
             BigDecimal financeChargeAmount = totalUnallocatedAmount.multiply(maxPercentage);
 
-            if ((chargeRemainingFund == null || financeChargeAmount.compareTo(chargeRemainingFund) < 0) &&
-                    (remainingFund == null || financeChargeAmount.compareTo(remainingFund) < 0)) {
+            if ((chargeRemainingFund == null || financeChargeAmount.compareTo(chargeRemainingFund) <= 0) &&
+                    (remainingFund == null || financeChargeAmount.compareTo(remainingFund) <= 0)) {
 
                 // Doing non-divided funding
 
                 for (Transaction transaction : transactions) {
 
-                    if (remainingFund.compareTo(BigDecimal.ZERO) <= 0) {
+                    Date effectiveDate = thirdPartyPlan.getEffectiveDate();
+                    if (effectiveDate == null) {
+                        effectiveDate = transaction.getEffectiveDate();
+                    }
+
+                    Date recognitionDate = thirdPartyPlan.getRecognitionDate();
+                    if (recognitionDate == null) {
+                        recognitionDate = transaction.getRecognitionDate();
+                    }
+
+                    // Calculating the transfer amount as unallocated amount multiplied by maxPercentage
+                    BigDecimal transferAmount = transactionService.getUnallocatedAmount(transaction).multiply(maxPercentage);
+
+                    // Creating a new transaction transfer
+                    TransactionTransfer transactionTransfer =
+                            transactionTransferService.transferTransaction(
+                                    transaction.getId(),
+                                    transaction.getTransactionType().getId().getId(),
+                                    thirdPartyPlan.getTransferType().getId(),
+                                    thirdPartyPlan.getThirdPartyAccount().getId(),
+                                    transferAmount,
+                                    effectiveDate,
+                                    recognitionDate,
+                                    // TODO: set memo text and statement prefix,
+                                    null,
+                                    null,
+                                    allowableCharge.getTransactionTypeMask());
+
+                    // Setting Transfer Group ID
+                    transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
+
+                    // Subtracting the transfer amount from the remaining fund
+                    remainingFund = remainingFund.subtract(transferAmount);
+
+                    totalTransferAmount = totalTransferAmount.add(transferAmount);
+                }
+
+            } else {
+
+                // Doing divided funding
+
+                // Taking the smallest funding amount from remainingFund and chargeRemainingFund
+                BigDecimal maxDividedFund = remainingFund;
+                if (maxDividedFund.compareTo(chargeRemainingFund) > 0) {
+                    maxDividedFund = chargeRemainingFund;
+                }
+
+                BigDecimal divideCoefficient;
+
+                // Calculating the transfer amount percentage based on the distribution plan
+                switch (allowableCharge.getDistributionPlan()) {
+                    case FULL:
+                        divideCoefficient = maxPercentage;
                         break;
+                    case DIVIDED:
+                        divideCoefficient = maxDividedFund.divide(financeChargeAmount);
+                        break;
+                    default:
+                        String errMsg = "Unsupported distribution plan '" + allowableCharge.getDistributionPlan() + "'";
+                        logger.error(errMsg);
+                        throw new IllegalStateException(errMsg);
+                }
+
+                for (Transaction transaction : transactions) {
+
+                    if (maxDividedFund.compareTo(BigDecimal.ZERO) <= 0 ||
+                            remainingFund.compareTo(BigDecimal.ZERO) <= 0) {
+                        break;
+                    }
+
+                    // Calculating the transfer amount as unallocated amount multiplied by maxPercentage
+                    BigDecimal transferAmount = transactionService.getUnallocatedAmount(transaction).multiply(divideCoefficient);
+
+                    // Getting the smallest value out of unallocated amount, maxDividedFund and remainingFund
+                    if (transferAmount.compareTo(maxDividedFund) > 0) {
+                        transferAmount = maxDividedFund;
+                    }
+
+                    if (transferAmount.compareTo(remainingFund) > 0) {
+                        transferAmount = remainingFund;
                     }
 
                     Date effectiveDate = thirdPartyPlan.getEffectiveDate();
@@ -308,9 +402,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                                     transaction.getId(),
                                     transaction.getTransactionType().getId().getId(),
                                     thirdPartyPlan.getTransferType().getId(),
-                                    // TODO: or thirdPartyPlan.getThirdPartyAccount().getId() ???
-                                    accountId,
-                                    transaction.getAmount().multiply(maxPercentage),
+                                    thirdPartyPlan.getThirdPartyAccount().getId(),
+                                    transferAmount,
                                     effectiveDate,
                                     recognitionDate,
                                     // TODO: set memo text and statement prefix,
@@ -321,71 +414,13 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                     // Setting Transfer Group ID
                     transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
 
+                    // Subtracting the transfer amount from the maxDividedFund fund
+                    maxDividedFund = maxDividedFund.subtract(transferAmount);
+
                     // Subtracting the transfer amount from the remaining fund
-                    remainingFund = remainingFund.subtract(transactionTransfer.getTransferAmount());
-                }
+                    remainingFund = remainingFund.subtract(transferAmount);
 
-            } else {
-
-                // Doing divided funding
-
-                // Taking the smallest funding amount from remainingFund and chargeRemainingFund
-                BigDecimal maxDividedFund = remainingFund;
-                if (maxDividedFund.compareTo(chargeRemainingFund) > 0) {
-                    maxDividedFund = chargeRemainingFund;
-                }
-
-                if (allowableCharge.getDistributionPlan() == ChargeDistributionPlan.FULL) {
-
-                    for (Transaction transaction : transactions) {
-
-                        if (maxDividedFund.compareTo(BigDecimal.ZERO) <= 0 ||
-                                remainingFund.compareTo(BigDecimal.ZERO) <= 0) {
-                            break;
-                        }
-
-                        BigDecimal transferAmount = transaction.getAmount().multiply(maxPercentage);
-
-                        if (transferAmount.compareTo(maxDividedFund) > 0) {
-                            transferAmount = maxDividedFund;
-                        }
-
-                        Date effectiveDate = thirdPartyPlan.getEffectiveDate();
-                        if (effectiveDate == null) {
-                            effectiveDate = transaction.getEffectiveDate();
-                        }
-
-                        Date recognitionDate = thirdPartyPlan.getRecognitionDate();
-                        if (recognitionDate == null) {
-                            recognitionDate = transaction.getRecognitionDate();
-                        }
-
-                        // Creating a new transaction transfer
-                        TransactionTransfer transactionTransfer =
-                                transactionTransferService.transferTransaction(
-                                        transaction.getId(),
-                                        transaction.getTransactionType().getId().getId(),
-                                        thirdPartyPlan.getTransferType().getId(),
-                                        // TODO: or thirdPartyPlan.getThirdPartyAccount().getId() ???
-                                        accountId,
-                                        transferAmount,
-                                        effectiveDate,
-                                        recognitionDate,
-                                        // TODO: set memo text and statement prefix,
-                                        null,
-                                        null,
-                                        allowableCharge.getTransactionTypeMask());
-
-                        // Setting Transfer Group ID
-                        transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
-
-                        // Subtracting the transfer amount from the maxDividedFund fund
-                        maxDividedFund = maxDividedFund.subtract(transactionTransfer.getTransferAmount());
-
-                        // Subtracting the transfer amount from the remaining fund
-                        remainingFund = remainingFund.subtract(transactionTransfer.getTransferAmount());
-                    }
-
+                    totalTransferAmount = totalTransferAmount.add(transferAmount);
                 }
 
 
@@ -393,11 +428,49 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
         }
 
+        // Summing up transfers
+        transferDetail.setTransferAmount(totalTransferAmount);
+        planMember.setExecuted(true);
 
-        // TODO
+        // Persisting the transfer detail
+        persistEntity(transferDetail);
+
+        return transferDetail;
+    }
 
 
-        return null;
+    /**
+     * Reverses the third-party transaction transfer specified by ThirdPartyTransferDetail ID.
+     *
+     * @param transferDetailId ThirdPartyTransferDetail ID
+     * @param memoText         Memo text
+     * @return ThirdPartyTransferDetail instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public ThirdPartyTransferDetail reverseThirdPartyTransfer(Long transferDetailId, String memoText) {
+
+        PermissionUtils.checkPermission(Permission.REVERSE_THIRD_PARTY_TRANSFER);
+
+        ThirdPartyTransferDetail transferDetail = getThirdPartyTransferDetail(transferDetailId);
+        if (transferDetail == null) {
+            String errMsg = "ThirdPartyTransferDetail does not exist with ID = " + transferDetailId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (transferDetail.getChargeStatus() != ThirdPartyChargeStatus.ACTIVE) {
+            String errMsg = "ThirdPartyTransferDetail must be active";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        // Reversing the entire transaction transfer group allowing locked allocations
+        transactionTransferService.reverseTransferGroup(transferDetail.getTransferGroupId(), memoText, true);
+
+        transferDetail.setChargeStatus(ThirdPartyChargeStatus.REVERSED);
+
+        return transferDetail;
     }
 
 
