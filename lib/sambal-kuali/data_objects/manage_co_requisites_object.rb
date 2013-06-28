@@ -84,10 +84,9 @@ class ManageCORequisitesData
     on ManageCORequisites do |page|
       elements = page.edit_tree_section.elements( :tag_name, 'a')
       elements.each do |elem|
-        puts elem.id
-        puts elem.text
-        if page.edit_tree_section.a( id: elem.id).attribute_value('data-submit_data') =~ regex
+        if elem.text == "Advanced Search" && page.edit_tree_section.a( id: elem.id).attribute_value('data-submit_data') =~ regex
           page.edit_tree_section.a(id: elem.id).click
+          break
         end
       end
     end
@@ -478,11 +477,8 @@ class ManageCORequisitesData
 
   def edit_existing_node(node, field, code)
     on ManageCORequisites do |page|
-      puts "going to click"
       page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
-      puts "clicked... going to edit"
       page.edit_btn
-      puts "edited... going on"
       if field == "course"
         advanced_search("course code", code)
       elsif field == "courses"
