@@ -106,7 +106,7 @@ public class AdminUiLookupViewBeanWriter {
         out.indentPrintln ("<value>classpath:" + fullDirectoryPath + "/" + fileName + "</value>");
         out.indentPrintln("********************************************** -->");
         out.indentPrintln("<!-- LookupView -->");
-        out.indentPrintln("<bean id=\"KS-" + infoClass + "-AdminLookupView\" parent=\"KSLookupView\"");
+        out.indentPrintln("<bean id=\"KS-" + infoClass + "-AdminLookupView\" parent=\"KS-Uif-LookupView\"");
         out.incrementIndent();
         out.indentPrintln("p:title=\"" + xmlType.getName() + " Lookup\"");
         out.indentPrintln("p:header.headerText=\"" + xmlType.getName() + " Lookup\"");
@@ -123,7 +123,7 @@ public class AdminUiLookupViewBeanWriter {
         this.writeFieldsToSearchOn (xmlType, new Stack<XmlType>(), "");
         out.indentPrintln("<bean parent=\"Uif-LookupCriteriaInputField\" p:propertyName=\"maxResultsToReturn\"");
         out.indentPrintln("      p:label=\"Max. Results\"");
-        out.indentPrintln("      p:defaultValue=\"30\"");
+        out.indentPrintln("      p:defaultValue=\"50\"");
         out.indentPrintln("      p:helpSummary=\"The maximum number of results to return from the query, leave null to not limit the results\" />");
         out.decrementIndent();
         out.indentPrintln("</list>");

@@ -93,7 +93,7 @@ public class AdminUiInquiryViewBeanWriter {
         out.indentPrintln ("<value>classpath:" + fullDirectoryPath + "/" + fileName + "</value>");
         out.indentPrintln("********************************************** -->");
         out.indentPrintln("<!-- InquiryView -->");
-        out.indentPrintln("<bean id=\"KS-" + infoClass + "-AdminInquiryView\" parent=\"KSInquiryView\"");
+        out.indentPrintln("<bean id=\"KS-" + infoClass + "-AdminInquiryView\" parent=\"KS-Uif-InquiryView\"");
         out.incrementIndent();
         out.indentPrintln("p:title=\"" + xmlType.getName() + " Inquiry\"");
         out.indentPrintln("p:dataObjectClassName=\"" + xmlType.getJavaPackage() + "." + infoClass + "\"");
