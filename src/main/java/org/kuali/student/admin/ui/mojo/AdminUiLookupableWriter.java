@@ -160,7 +160,7 @@ public class AdminUiLookupableWriter extends JavaClassWriter {
         importsAdd(GlobalResourceLoader.class.getName());
         XmlType contextInfo = finder.findXmlType("contextInfo");
         importsAdd(contextInfo.getJavaPackage() + "." + contextInfo.getName());
-        importsAdd("org.kuali.student.enrollment.common.util.ContextBuilder");
+        importsAdd("org.kuali.student.common.util.ContextBuilder");
         importsAdd(PredicateFactory.class.getName());
         importsAdd(ArrayList.class.getName());
         importsAdd(QName.class.getName());

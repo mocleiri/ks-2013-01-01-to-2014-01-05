@@ -60,11 +60,11 @@ public class RemoteImplWriter {
     public void write() {
         this.validate();
 
-        for (Service service : filterServices()) {
-            new RemoteImplWriterForOneService(model, directory, rootPackage, service.getKey()).write();
-        }
-        
-//        new RemoteImplServiceSpringBeanWriter (model, directory, rootPackage).write();
+//        for (Service service : filterServices()) {
+//            new RemoteImplWriterForOneService(model, directory, rootPackage, service.getKey()).write();
+//        }
+//        
+        new RemoteImplServiceSpringBeanWriter (model, directory, rootPackage).write();
 
 //        // the Info interfaces's
 //        System.out.println("Generating common Info interfaces");

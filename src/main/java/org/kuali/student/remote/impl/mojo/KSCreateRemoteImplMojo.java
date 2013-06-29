@@ -57,12 +57,51 @@ public class KSCreateRemoteImplMojo extends AbstractKSMojo {
             String targetDir = "target/generated-sources/remote-impl";
         }
         List<String> servKeys = new ArrayList<String>();
-        servKeys.add("Atp");
-        servKeys.add("Type");
-        servKeys.add("State");
-        servKeys.add("LRC");
-        servKeys.add("RICE.Permission");
-        servKeys.add("RICE.Role");
+        servKeys.add("AcademicCalendar");
+//        servKeys.add("AcademicRecord");
+        servKeys.add("Appointment");
+//        servKeys.add("Atp");
+//        servKeys.add("BatchJobResult");
+        servKeys.add("Clu");
+        servKeys.add("Comment");
+        servKeys.add("CourseOffering");
+        servKeys.add("CourseOfferingSet");
+//        servKeys.add("CourseRegistration");
+        servKeys.add("Course");
+//        servKeys.add("CourseWaitlist");
+//        servKeys.add("DataDictionary");
+        servKeys.add("Document");
+        servKeys.add("EnumerationManagement");
+        servKeys.add("Exemption");
+//        servKeys.add("Fee");
+//        servKeys.add("Grading");
+        servKeys.add("Hold");
+//        servKeys.add("LRC");
+        servKeys.add("LearningObjective");
+//        servKeys.add("LearningResultRecord");
+//        servKeys.add("LprRoster");
+        servKeys.add("Lpr");
+        servKeys.add("Lui");
+        servKeys.add("Message");
+        servKeys.add("Organization");
+        servKeys.add("Population");
+        servKeys.add("Process");
+        servKeys.add("Program");
+        servKeys.add("Proposal");
+        servKeys.add("Room");
+        servKeys.add("Scheduling");
+//        servKeys.add("Search");
+//        servKeys.add("State");
+//        servKeys.add("Statement");
+//        servKeys.add("Type");
+//        servKeys.add("VersionManagement");
+
+//        servKeys.add("Atp");
+//        servKeys.add("Type");
+//        servKeys.add("State");
+//        servKeys.add("LRC");
+//        servKeys.add("RICE.Permission");
+//        servKeys.add("RICE.Role");
         ServicesFilterByKeys filter = new ServicesFilterByKeys(servKeys);
         RemoteImplWriter instance =
                 new RemoteImplWriter(model,

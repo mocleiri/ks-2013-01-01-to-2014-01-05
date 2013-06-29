@@ -140,7 +140,7 @@ public class AdminUiLookupViewBeanWriter {
                 out.indentPrintln("                <bean parent=\"Uif-Inquiry\" p:dataObjectClassName=\"" + xmlType.getJavaPackage() + "." + xmlType.getName() + "\" p:inquiryParameters=\"" + ms.getShortName() + "\" />");
                 out.indentPrintln("            </property>");
                 out.indentPrintln("        </bean>");
-            } else if (AdminUiInquiryViewBeanWriter.doLookup (ms.getLookup())) {
+            } else if (AdminUiInquiryViewBeanWriter.shouldDoLookup (ms.getLookup())) {
                 
                 out.println(">");
                 Lookup lookup = ms.getLookup();
@@ -220,13 +220,18 @@ public class AdminUiLookupViewBeanWriter {
             }
 
             out.indentPrint("<bean parent=\"Uif-LookupCriteriaInputField\" p:propertyName=\"" + fieldName + "\"");
-            if (!AdminUiInquiryViewBeanWriter.doLookup (ms.getLookup())) {
+            if (!AdminUiInquiryViewBeanWriter.shouldDoLookup (ms.getLookup())) {
                 out.println(" />");
                 continue;
             }
             out.println("");
             out.incrementIndent();
             XmlType msType = finder.findXmlType(ms.getLookup().getXmlTypeName());
+            if (msType == null) {
+                throw new NullPointerException ("Processing lookup for: " + type.getName () 
+                        + ms.getName() 
+                        + " lookup=" + ms.getLookup().getXmlTypeName());
+            }
             out.indentPrintln("p:quickfinder.dataObjectClassName=\"" + msType.getJavaPackage() + "." + msType.getName() + "\"");
             MessageStructure pk = this.getPrimaryKey(ms.getLookup().getXmlTypeName());
             if (pk == null) {

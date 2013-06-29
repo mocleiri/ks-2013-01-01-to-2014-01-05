@@ -91,7 +91,7 @@ public class KSCreateAdminUiMojo extends AbstractKSMojo {
         srcDirs.add(CORE_DIRECTORY);
         srcDirs.add(LUM_DIRECTORY);
         srcDirs.add(ENROLL_DIRECTORY);
-        srcDirs.add(RICE_KIM_API_DIRECTORY);
+//        srcDirs.add(RICE_KIM_API_DIRECTORY);
 //        srcDirs.add(RICE_CORE_API_DIRECTORY);
         KSCreateAdminUiMojo instance = new KSCreateAdminUiMojo();
         Map pluginContext = new HashMap();

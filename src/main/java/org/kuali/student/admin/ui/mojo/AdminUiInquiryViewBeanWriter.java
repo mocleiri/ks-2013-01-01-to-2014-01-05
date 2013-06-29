@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
 import org.kuali.student.contract.model.Lookup;
@@ -147,7 +146,7 @@ public class AdminUiInquiryViewBeanWriter {
                 continue;
             }
             out.indentPrint("                    <bean parent=\"Uif-DataField\" p:propertyName=\"" + fieldName + "\"");
-            if (!doLookup (ms.getLookup())) {
+            if (!shouldDoLookup (ms.getLookup())) {
                 out.println(" />");
                 continue;
             }
@@ -167,7 +166,7 @@ public class AdminUiInquiryViewBeanWriter {
     }
 
         
-    public static boolean doLookup (Lookup lookup) {
+    public static boolean shouldDoLookup (Lookup lookup) {
         if (lookup == null) {
             return false;
         }
@@ -177,6 +176,9 @@ public class AdminUiInquiryViewBeanWriter {
             return false;
         }
         if (lookup.getXmlTypeName().equals("Principal")) {
+            return false;
+        }
+        if (lookup.getXmlTypeName().equals("Agenda")) {
             return false;
         }
         return true;
