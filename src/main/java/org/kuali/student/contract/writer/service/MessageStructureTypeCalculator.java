@@ -103,6 +103,10 @@ public class MessageStructureTypeCalculator {
             return msType;
         }
 
+        if (type.equals("org.kuali.rice.krms.api.repository.typerelation.RelationshipType")) {
+            return "String";
+        }
+                
         throw new DictionaryValidationException("Unknown/unhandled xmlType.primtive value, "
                 + xmlType.getPrimitive()
                 + ", for type " + type);

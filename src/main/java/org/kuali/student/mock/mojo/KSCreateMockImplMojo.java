@@ -76,14 +76,19 @@ public class KSCreateMockImplMojo extends AbstractKSMojo {
     private static final String COMMON_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-common-api/src/main/java";
     private static final String ENROLL_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-enroll-api/src/main/java";
     private static final String LUM_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-lum-api/src/main/java";
-    private static final String RICE_CORE_API_DIRECTORY = "D:/svn/rice/rice-2.2.0-M3/core/api/src/main/java";
-    private static final String RICE_KIM_API_DIRECTORY = "D:/svn/rice/rice-2.2.0-M3/kim/kim-api/src/main/java";
+    private static final String RICE_CORE_API_DIRECTORY = "D:/svn/rice/rice-2.2.0/core/api/src/main/java";
+    private static final String RICE_KIM_API_DIRECTORY = "D:/svn/rice/rice-2.2.0/kim/kim-api/src/main/java";
+    private static final String RICE_KRMS_API_DIRECTORY = "D:/svn/rice/rice-2.2.0/krms/api/src/main/java";
     private static final String TEST_SOURCE_DIRECTORY =
             "src/test/java/org/kuali/student/contract/model/test/source";
     private static final String TARGET_GENERATED_SOURCES = "target/generated-sources";
     private static final String STANDALONE_MAIN_DIRECTORY = "D:/svn/ks/ks-standalone-admin-app/src/main";
     private static final String SERVICES_ENROLL_IMPL = "D:/svn/ks/services/ks-enroll/ks-enroll-impl/src/main/java";
     private static final String CM_CORE_API = "D:/svn/ks/CM-2.0/ks-api/ks-core-api/src/main/java";
+    private static final String TRUNK_CORE_IMPL = "D:/svn/ks/trunk/ks-core/ks-core-impl/src/main/java";
+    private static final String TRUNK_ENROLL_IMPL = "D:/svn/ks/trunk/ks-enroll/ks-enroll-impl/src/main/java";
+    private static final String TRUNK_ENROLL_IMPL_KRMS_API = "D:/svn/ks/trunk/ks-enroll/ks-enroll-impl/src/main/java/org/kuali/rice/krms/api";
+                                                   
 
     public static void main(String[] args) {
         System.out.println("execute");
@@ -94,6 +99,8 @@ public class KSCreateMockImplMojo extends AbstractKSMojo {
         srcDirs.add(ENROLL_DIRECTORY);
 //        srcDirs.add(RICE_KIM_API_DIRECTORY);
 //        srcDirs.add(RICE_CORE_API_DIRECTORY);
+//        srcDirs.add(RICE_KRMS_API_DIRECTORY);
+//        srcDirs.add(TRUNK_ENROLL_IMPL_KRMS_API);
         KSCreateMockImplMojo instance = new KSCreateMockImplMojo();
         Map pluginContext = new HashMap();
         MavenProject project = new MavenProject();
@@ -101,7 +108,8 @@ public class KSCreateMockImplMojo extends AbstractKSMojo {
         instance.setPluginContext(pluginContext);
         instance.setSourceDirs(srcDirs);
 //        instance.setTargetDir(SERVICES_ENROLL_IMPL);
-        instance.setTargetDir(CM_CORE_API);
+//        instance.setTargetDir(CM_CORE_API);
+        instance.setTargetDir(TRUNK_ENROLL_IMPL);
         try {
             instance.execute();
             //        assertTrue(new File(instance.getOutputDirectory() + "/" + "ks-LprInfo-dictionary.xml").exists());  

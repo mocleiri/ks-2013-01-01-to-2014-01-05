@@ -4,15 +4,20 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.joda.time.DateTime;
+import org.kuali.student.admin.ui.mojo.KSCreateAdminUiMojo;
 import org.kuali.student.common.mojo.AbstractKSMojo;
 import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.impl.ServiceContractModelCache;
@@ -43,7 +48,7 @@ public class KSContractDocMojo extends AbstractKSMojo {
     }
 
     @Override
-    public void execute() throws MojoExecutionException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
     	
     	MavenProject project = (MavenProject) getPluginContext().get("project");
     	
@@ -60,4 +65,55 @@ public class KSContractDocMojo extends AbstractKSMojo {
 
 
     }
+    
+    
+    private static final String CORE_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-core-api/src/main";
+    // "C:/svn/maven-dictionary-generator/trunk/src/main/java/org/kuali/student/core";
+    private static final String COMMON_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-common-api/src/main/java";
+    private static final String ENROLL_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-enroll-api/src/main/java";
+    private static final String LUM_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-lum-api/src/main/java";
+    private static final String KSA_DIRECTORY = "D:/svn/ks/ksa/ksa-core/src/main/java";
+    private static final String TEST_SOURCE_DIRECTORY =
+            "src/test/java/org/kuali/student/contract/model/test/source";
+    private static final String TARGET_GENERATED_SOURCES = "target/generated-sources";
+    private static final String STANDALONE_MAIN_DIRECTORY = "D:/svn/ks/ks-standalone-admin-app/src/main";
+
+    private static final String RICE_CORE_API_DIRECTORY = "D:/svn/rice/rice-2.2.0/core/api/src/main/java";
+    private static final String RICE_KIM_API_DIRECTORY = "D:/svn/rice/rice-2.2.0/kim/kim-api/src/main/java";
+    private static final String RICE_KRMS_API_DIRECTORY = "D:/svn/rice/rice-2.2.0/krms/api/src/main/java";
+    
+    
+    private static final String TRUNK_CORE_IMPL = "D:/svn/ks/trunk/ks-core/ks-core-impl/src/main/java";
+    private static final String TRUNK_ENROLL_IMPL = "D:/svn/ks/trunk/ks-core/ks-core-impl/src/main/java";
+    private static final String TRUNK_ENROLL_IMPL_KRMS_API = "D:/svn/ks/trunk/ks-enroll/ks-enroll-impl/src/main/java/org/kuali/rice/krms/api";
+                                                   
+    
+    public static void main(String[] args) {
+        System.out.println("execute");
+        List<String> srcDirs = new ArrayList<String>();
+//        srcDirs.add(COMMON_DIRECTORY);
+//        srcDirs.add(CORE_DIRECTORY);
+//        srcDirs.add(LUM_DIRECTORY);
+//        srcDirs.add(ENROLL_DIRECTORY);        
+//        srcDirs.add(RICE_KIM_API_DIRECTORY);     
+        srcDirs.add(KSA_DIRECTORY);
+//        srcDirs.add(RICE_CORE_API_DIRECTORY);
+//        srcDirs.add(RICE_KRMS_API_DIRECTORY);
+//        srcDirs.add(TRUNK_ENROLL_IMPL_KRMS_API);
+        KSContractDocMojo instance = new KSContractDocMojo();
+        Map pluginContext = new HashMap();
+        MavenProject project = new MavenProject();
+        pluginContext.put("project", project);
+        instance.setPluginContext(pluginContext);
+        instance.setSourceDirs(srcDirs);
+        instance.setHtmlDirectory(new File (TARGET_GENERATED_SOURCES));
+        try {
+            instance.execute();
+        } catch (MojoExecutionException ex) {
+            throw new RuntimeException(ex);
+        } catch (MojoFailureException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
 }
