@@ -17,6 +17,7 @@ Feature: EC.Academic Calendar Terms
 
   Scenario: Successfully edit term information for an academic calendar
     Given I copy an existing Academic Calendar
+    And I add a new term to the Academic Calendar
     When I edit the information for a term
     Then the updated term information is listed when I view the Academic Calendar
 

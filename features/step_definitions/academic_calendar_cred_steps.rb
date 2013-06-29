@@ -266,21 +266,57 @@ And /^I should not be able to edit a term$/ do
 end
 
 When /^I add a new term to the Academic Calendar$/ do
-  @term = make AcademicTerm
-  @calendar.edit :terms => @term
+  @term = make AcademicTerm, :term_year => @calendar.year
+  @calendar.edit :terms => [ @term ]
 end
 
 Then /^the term is listed when I view the Academic Calendar$/ do
   @calendar.search
 
   on CalendarSearch do |page|
-    page.edit @calendar.name
+    page.view @calendar.name
   end
 
   on ViewAcademicTerms do |page|
-    puts page.target_term_div(@term.name)
+    page.go_to_terms_tab
+    page.open_term_section(@term.term_type)
+    page.term_name(@term.term_type).should == @term.term_name
+    #page.term_code(@term.term_type)
+    page.term_start_date(@term.term_type).should == @term.start_date
+    page.term_end_date(@term.term_type).should == @term.end_date
+    page.term_status(@term.term_type).should == "DRAFT"
+    #puts page.term_instructional_days(@term.term_type)
+    #puts page.term_status(@term.term_type)
+    #puts page.key_date_start(@term.term_type,"instructional","Grades Due")
+    #puts page.key_date_start(@term.term_type,"registration","Last Day to Add Classes")
+
   end
 end
+
+Then /^the updated term information is listed when I view the Academic Calendar$/ do
+  @calendar.search
+
+  on CalendarSearch do |page|
+    page.view @calendar.name
+  end
+
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section(@term.term_type)
+    page.term_name(@term.term_type).should == @term.term_name
+    #page.term_code(@term.term_type)
+    page.term_start_date(@term.term_type).should == @term.start_date
+    page.term_end_date(@term.term_type).should == @term.end_date
+    page.term_status(@term.term_type).should == "DRAFT"
+    #puts page.term_instructional_days(@term.term_type)
+    #puts page.term_status(@term.term_type)
+    #puts page.key_date_start(@term.term_type,"instructional","Grades Due")
+    #puts page.key_date_start(@term.term_type,"registration","Last Day to Add Classes")
+
+  end
+end
+
+
 Given /^I debug the 2012-2013 Academic Calendar$/ do
   @calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar"
   @calendar.search
@@ -310,6 +346,21 @@ When /^I debug the key dates$/ do
   #  puts "exists #{page.key_date_exists?(@term.term_type, "Instructional", "Last Day of Classes")}"
   #end
 end
+
+Given /^I copy an existing Academic Calendar$/ do
+  @source_calendar = make AcademicCalendar, :name => "2012-2013 Continuing Education Calendar"
+  @calendar = make AcademicCalendar
+  @calendar.copy_from @source_calendar.name
+end
+
+When /^I edit the information for a term$/ do
+  puts @calendar.name
+#  @calendar.edit
+  @term.edit :term_name => "CE Term1",
+             :start_date => (Date.strptime( @term.start_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"), #add 2 days
+             :end_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")     #add 2 days
+end
+
 
 When /^I add events to the Academic Calendar$/ do
   @calendar.search

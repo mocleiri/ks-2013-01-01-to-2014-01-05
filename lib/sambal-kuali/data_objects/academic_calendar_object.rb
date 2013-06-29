@@ -17,7 +17,7 @@ class AcademicCalendar
   include Workflows
 
   #generally set using options hash
-  attr_accessor :name, :start_date, :end_date, :terms
+  attr_accessor :name, :start_date, :end_date, :terms, :year
   #not implemented
   attr_accessor :events, :holidays
 
@@ -33,10 +33,13 @@ class AcademicCalendar
   def initialize(browser, opts={})
     @browser = browser
 
+    random_year = AcademicCalendar.get_random_calendar_year
+
     defaults = {
         :name=>random_alphanums.strip,
-        :start_date=>"09/01/#{next_year[:year]}",
-        :end_date=>"06/25/#{next_year[:year] + 1}",
+        :year=>  random_year,
+        :start_date=>"09/01/#{random_year}",
+        :end_date=>"06/25/#{random_year + 1}",
         :terms => []
     }
     options = defaults.merge(opts)
@@ -135,6 +138,13 @@ class AcademicCalendar
     @terms << term_object
   end
 
+  #there are existing calendars up to 2023, so most of the term codes are used
+  BASE_UNUSED_CALENDAR_YEAR = 2024
+  MAX_UNUSED_CALENDAR_YEAR = 2199
+  def self.get_random_calendar_year(base_year =BASE_UNUSED_CALENDAR_YEAR, max_year = MAX_UNUSED_CALENDAR_YEAR)
+    base_year + rand( max_year - base_year )
+  end
+
 end
 
 
@@ -146,18 +156,24 @@ class AcademicTerm
   include StringFactory
   include Workflows
 
-  attr_accessor :term_type, :term_name, :start_date, :end_date, :instructional_days, :key_date_groups, :parent_calendar
+  attr_accessor :term_type, :term_name, :term_year, :start_date, :end_date, :instructional_days, :key_date_groups, :parent_calendar
 
   WINTER_TERM_TYPE = "Winter Term"
   FALL_TERM_TYPE = "Fall Term"
 
   def initialize(browser,opts = {})
     @browser = browser
-    calendar_year = get_random_calendar_year
+
+    #establish the year in order to make default start/end dates
+    if opts[:term_year].nil? then
+      calendar_year = AcademicCalendar.get_random_calendar_year
+    else
+      calendar_year = opts[:term_year]
+    end
 
     defaults = {
         :start_date=>"09/02/#{calendar_year}",
-        :end_date=>"06/24/#{calendar_year}",
+        :end_date=>"12/24/#{calendar_year}",
         :term_type=>"Fall Term",
         :term_name=>"Fall Term #{calendar_year}",
         :key_date_group_list=> Array.new(1){make KeyDateGroup}
@@ -183,7 +199,8 @@ class AcademicTerm
 
       page.open_term_section(@term_type)
 
-      key_date_group_list.each do |date_group|
+      @key_date_group_list.each do |date_group|
+        date_group.term_type = @term_type
         date_group.create
       end
     end
@@ -191,6 +208,7 @@ class AcademicTerm
 
   #checks to see if group already exists
   def add_key_date_group(key_date_group_object)
+    key_date_group_object.term_type = @term_type
     key_date_group_object.create
     @key_date_group_list <<  key_date_group_object
   end
@@ -200,6 +218,16 @@ class AcademicTerm
     search
     on(CalendarSearch).edit @term_name
     on(EditAcademicTerms).open_term_section(@term_type)
+
+    if options[:start_date] != nil
+      on EditAcademicTerms  do |page|
+        page.edit_key_date_start_date(edit_row,options[:start_date])
+      end
+    end
+
+    on(EditAcademicTerms).save
+
+    set_options(options)
   end
 
 
@@ -219,14 +247,6 @@ class AcademicTerm
       page.search_for "Academic Term", @term_name
     end
   end
-
-  #there are existing calendars up to 2023, so most of the term codes are used
-  BASE_UNUSED_CALENDAR_YEAR = 2024
-  MAX_UNUSED_CALENDAR_YEAR = 2199
-  def get_random_calendar_year(base_year =BASE_UNUSED_CALENDAR_YEAR, max_year = MAX_UNUSED_CALENDAR_YEAR)
-    rand( (base_year).to_i..(max_year).to_i)
-  end
-
 end
 
 class KeyDateGroup
