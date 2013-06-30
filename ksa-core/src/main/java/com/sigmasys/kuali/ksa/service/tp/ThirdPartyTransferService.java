@@ -69,12 +69,32 @@ public interface ThirdPartyTransferService {
      * The return value is a ThirdPartyTransferDetail object that explains what occurred during the plan execution.
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID
-     * @param accountId        Account ID
+     * @param accountId        DirectChargeAccount ID
      * @param initiationDate   Initiation date
      * @return ThirdPartyTransferDetail instance
      */
     ThirdPartyTransferDetail generateThirdPartyTransfer(Long thirdPartyPlanId, String accountId, Date initiationDate);
 
+
+    /**
+     * Generates the third-party transfers for the given account ID and open period date.
+     *
+     * @param accountId      DirectChargeAccount ID
+     * @param openPeriodDate Date between the open period start and end dates.
+     * @param ignoreExecuted if "true" the method ignores "isExecuted" value
+     * @return list of ThirdPartyTransferDetail instances
+     */
+    List<ThirdPartyTransferDetail> generateThirdPartyTransfers(String accountId, Date openPeriodDate, boolean ignoreExecuted);
+
+    /**
+     * Generates the third-party transfers for each eligible account with the given plan ID
+     *
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @param ignoreExecuted   if "true" the method ignores "isExecuted" value
+     * @return list of ThirdPartyTransferDetail instances
+     */
+    @WebMethod(exclude = true)
+    List<ThirdPartyTransferDetail> generateThirdPartyTransfers(Long thirdPartyPlanId, boolean ignoreExecuted);
 
     /**
      * Reverses the third-party transaction transfer specified by ThirdPartyTransferDetail ID.

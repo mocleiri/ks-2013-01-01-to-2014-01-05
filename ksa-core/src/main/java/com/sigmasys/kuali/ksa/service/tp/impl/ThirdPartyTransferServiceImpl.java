@@ -10,6 +10,7 @@ import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
+import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -21,10 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 
@@ -159,7 +159,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * The return value is a ThirdPartyTransferDetail object that explains what occurred during the plan execution.
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID
-     * @param accountId        Account ID
+     * @param accountId        DirectChargeAccount ID
      * @param initiationDate   Initiation date
      * @return ThirdPartyTransferDetail instance
      */
@@ -438,6 +438,122 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         return transferDetail;
     }
 
+
+    /**
+     * Generates the third-party transfers for the given account ID and open period date.
+     *
+     * @param accountId      DirectChargeAccount ID
+     * @param openPeriodDate Date between the open period start and end dates.
+     * @param ignoreExecuted if "true" the method ignores "isExecuted" value
+     * @return list of ThirdPartyTransferDetail instances
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public List<ThirdPartyTransferDetail> generateThirdPartyTransfers(String accountId, Date openPeriodDate, boolean ignoreExecuted) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_THIRD_PARTY_TRANSFER);
+
+        if (openPeriodDate == null) {
+            String errMsg = "Open Period Date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null || !(account instanceof DirectChargeAccount)) {
+            String errMsg = "DirectChargeAccount with ID = " + accountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        // Retrieving the third-party plan IDs for the given Account ID and open period date
+        StringBuilder queryBuilder = new StringBuilder("select p.id from ThirdPartyPlan p, ThirdPartyPlanMember m " +
+                " where p.id = m.plan.id and " +
+                " m.directChargeAccount.id = :accountId and " +
+                " :date >= to_date(p.openPeriodStartDate) and :date >= to_date(p.openPeriodEndDate)");
+
+        if (!ignoreExecuted) {
+            queryBuilder.append(" and m.executed = false ");
+        }
+
+        queryBuilder.append(" order by m.priority desc");
+
+        Query query = em.createQuery(queryBuilder.toString());
+
+        query.setParameter("accountId", accountId);
+        query.setParameter("date", CalendarUtils.removeTime(openPeriodDate), TemporalType.DATE);
+
+        List<Long> planIds = query.getResultList();
+
+        if (CollectionUtils.isNotEmpty(planIds)) {
+
+            List<ThirdPartyTransferDetail> transferDetails = new ArrayList<ThirdPartyTransferDetail>(planIds.size());
+
+            // Generating transfers for Plan ID, Account ID and Open Period Date
+            for (Long planId : planIds) {
+                transferDetails.add(generateThirdPartyTransfer(planId, accountId, openPeriodDate));
+            }
+
+            return transferDetails;
+        }
+
+        return Collections.emptyList();
+    }
+
+    /**
+     * Generates the third-party transfers for each eligible account with the given plan ID
+     *
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @param ignoreExecuted   if "true" the method ignores "isExecuted" value
+     * @return list of ThirdPartyTransferDetail instances
+     */
+    @Override
+    @WebMethod(exclude = true)
+    @Transactional(readOnly = false)
+    public List<ThirdPartyTransferDetail> generateThirdPartyTransfers(Long thirdPartyPlanId, boolean ignoreExecuted) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_THIRD_PARTY_TRANSFER);
+
+        ThirdPartyPlan thirdPartyPlan = getThirdPartyPlan(thirdPartyPlanId);
+        if (thirdPartyPlan == null) {
+            String errMsg = "ThirdPartyPlan does not exist with ID = " + thirdPartyPlanId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        // Retrieving the third-party plan IDs for the given Account ID and open period date
+        StringBuilder queryBuilder = new StringBuilder("select m.directChargeAccount.id " +
+                " from ThirdPartyPlan p, ThirdPartyPlanMember m " +
+                " where p.id = m.plan.id and p.id = :planId");
+
+        if (!ignoreExecuted) {
+            queryBuilder.append(" and m.executed = false ");
+        }
+
+        Query query = em.createQuery(queryBuilder.toString());
+
+        query.setParameter("planId", thirdPartyPlanId);
+
+        List<String> ids = query.getResultList();
+
+        if (CollectionUtils.isNotEmpty(ids)) {
+
+            Set<String> accountIds = new HashSet<String>(ids);
+
+            List<ThirdPartyTransferDetail> transferDetails = new ArrayList<ThirdPartyTransferDetail>(ids.size());
+
+            Date currentDate = new Date();
+
+            // Generating transfers for Plan ID, Account ID and current date
+            for (String accountId : accountIds) {
+                transferDetails.add(generateThirdPartyTransfer(thirdPartyPlanId, accountId, currentDate));
+            }
+
+            return transferDetails;
+        }
+
+        return Collections.emptyList();
+    }
 
     /**
      * Reverses the third-party transaction transfer specified by ThirdPartyTransferDetail ID.
