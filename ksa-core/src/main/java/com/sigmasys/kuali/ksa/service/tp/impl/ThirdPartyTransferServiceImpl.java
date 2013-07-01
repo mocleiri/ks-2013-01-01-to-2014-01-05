@@ -14,6 +14,7 @@ import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,9 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     /**
      * Creates and persists a new third-party billing plan based on the given parameters.
      *
+     * @param code                  ThirdPartyPlan code
+     * @param name                  ThirdPartyPlan name
+     * @param description           ThirdPartyPlan description
      * @param transferTypeId        TransferType ID
      * @param thirdPartyAccountId   ThirdPartyAccount ID
      * @param maxAmount             Maximum transfer amount
@@ -80,7 +84,10 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     @Transactional(readOnly = false)
-    public ThirdPartyPlan createThirdPartyPlan(Long transferTypeId,
+    public ThirdPartyPlan createThirdPartyPlan(String code,
+                                               String name,
+                                               String description,
+                                               Long transferTypeId,
                                                String thirdPartyAccountId,
                                                BigDecimal maxAmount,
                                                Date effectiveDate,
@@ -91,6 +98,12 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                                                Date chargePeriodEndDate) {
 
         PermissionUtils.checkPermission(Permission.CREATE_THIRD_PARTY_PLAN);
+
+        if (StringUtils.isBlank(code)) {
+            String errMsg = "ThirdPartyPlan code is required";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
 
         TransferType transferType = transactionTransferService.getTransferType(transferTypeId);
         if (transferType == null) {
@@ -119,6 +132,10 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         }
 
         ThirdPartyPlan plan = new ThirdPartyPlan();
+
+        plan.setCode(code);
+        plan.setName(name);
+        plan.setDescription(description);
         plan.setTransferType(transferType);
         plan.setThirdPartyAccount((ThirdPartyAccount) account);
         plan.setEffectiveDate(effectiveDate);

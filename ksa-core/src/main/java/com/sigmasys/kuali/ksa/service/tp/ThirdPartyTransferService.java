@@ -33,6 +33,9 @@ public interface ThirdPartyTransferService {
     /**
      * Creates and persists a new third-party billing plan based on the given parameters.
      *
+     * @param code                  ThirdPartyPlan code
+     * @param name                  ThirdPartyPlan name
+     * @param description           ThirdPartyPlan description
      * @param transferTypeId        TransferType ID
      * @param thirdPartyAccountId   ThirdPartyAccount ID
      * @param maxAmount             Maximum transfer amount
@@ -44,7 +47,10 @@ public interface ThirdPartyTransferService {
      * @param chargePeriodEndDate   Charge Period End Date
      * @return ThirdPartyPlan instance
      */
-    ThirdPartyPlan createThirdPartyPlan(Long transferTypeId,
+    ThirdPartyPlan createThirdPartyPlan(String code,
+                                        String name,
+                                        String description,
+                                        Long transferTypeId,
                                         String thirdPartyAccountId,
                                         BigDecimal maxAmount,
                                         Date effectiveDate,
