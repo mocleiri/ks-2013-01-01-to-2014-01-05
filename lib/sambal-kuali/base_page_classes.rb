@@ -193,10 +193,10 @@ class HolidayBase < BasePage
   element(:instructional) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].instructional") }
   element(:add_link) { |b| b.frm.link(id: "KS-HolidayCalendar-HolidaySection_add") }
 
-  element(:make_official_button) { |b| b.frm.button(text: "Make Official") }
+  element(:make_official_link) { |b| b.frm.link(text: "Make Official") }
   element(:update_official_button) { |b| b.frm.button(text: "Update Official") }
 
-  action(:make_official) { |b| b.make_official_button.click; b.loading.wait_while_present }
+  action(:make_official) { |b| b.make_official_link.click; b.loading.wait_while_present }
   action(:update_official) { |b| b.update_official_button.click; b.loading.wait_while_present }
   action(:save) { |b| b.frm.button(text: "Save").click; b.loading.wait_while_present }
 

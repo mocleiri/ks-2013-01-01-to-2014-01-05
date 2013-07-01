@@ -5,7 +5,7 @@ end
 Then /^The Make Official button of this Holiday Calendar should become active$/ do
   @calendar.search_and_edit_holiday_calendar
   on EditHolidayCalendar do |page|
-    page.make_official_button.enabled?.should == true
+    page.make_official_link.present?.should be_true
   end
 end
 
