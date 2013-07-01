@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.model.tp.*;
 import com.sigmasys.kuali.ksa.service.AccountService;
+import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
@@ -58,6 +59,80 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private AuditableEntityService auditableEntityService;
+
+
+    /**
+     * Creates and persists a new third-party billing plan based on the given parameters.
+     *
+     * @param transferTypeId        TransferType ID
+     * @param thirdPartyAccountId   ThirdPartyAccount ID
+     * @param maxAmount             Maximum transfer amount
+     * @param effectiveDate         Effective Date
+     * @param recognitionDate       Recognition Date
+     * @param openPeriodStartDate   Open Period Start Date
+     * @param openPeriodEndDate     Open Period End Date
+     * @param chargePeriodStartDate Charge Period Start Date
+     * @param chargePeriodEndDate   Charge Period End Date
+     * @return ThirdPartyPlan instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public ThirdPartyPlan createThirdPartyPlan(Long transferTypeId,
+                                               String thirdPartyAccountId,
+                                               BigDecimal maxAmount,
+                                               Date effectiveDate,
+                                               Date recognitionDate,
+                                               Date openPeriodStartDate,
+                                               Date openPeriodEndDate,
+                                               Date chargePeriodStartDate,
+                                               Date chargePeriodEndDate) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_THIRD_PARTY_PLAN);
+
+        TransferType transferType = transactionTransferService.getTransferType(transferTypeId);
+        if (transferType == null) {
+            String errMsg = "TransferType does not exist with ID = " + transferTypeId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Account account = accountService.getFullAccount(thirdPartyAccountId);
+        if (account == null || !(account instanceof ThirdPartyAccount)) {
+            String errMsg = "ThirdPartyAccount with ID = " + thirdPartyAccountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        if (openPeriodStartDate.after(openPeriodEndDate)) {
+            String errMsg = "Open Period Start Date cannot be before End Date";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (chargePeriodStartDate.after(chargePeriodEndDate)) {
+            String errMsg = "Charge Period Start Date cannot be before End Date";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        ThirdPartyPlan plan = new ThirdPartyPlan();
+        plan.setTransferType(transferType);
+        plan.setThirdPartyAccount((ThirdPartyAccount) account);
+        plan.setEffectiveDate(effectiveDate);
+        plan.setRecognitionDate(recognitionDate);
+        plan.setOpenPeriodStartDate(openPeriodStartDate);
+        plan.setOpenPeriodEndDate(openPeriodEndDate);
+        plan.setChargePeriodStartDate(chargePeriodStartDate);
+        plan.setChargePeriodEndDate(chargePeriodEndDate);
+
+        // Persisting a new created plan
+        auditableEntityService.persistAuditableEntity(plan);
+
+        return plan;
+    }
 
 
     /**
@@ -436,6 +511,20 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         persistEntity(transferDetail);
 
         return transferDetail;
+    }
+
+    /**
+     * Generates the third-party transfers for the given account ID and current date as an open period date
+     * ignoring already executed transfers
+     *
+     * @param accountId DirectChargeAccount ID
+     * @return list of ThirdPartyTransferDetail instances
+     */
+    @Override
+    @WebMethod(exclude = true)
+    @Transactional(readOnly = false)
+    public List<ThirdPartyTransferDetail> generateThirdPartyTransfers(String accountId) {
+        return generateThirdPartyTransfers(accountId, new Date(), true);
     }
 
 

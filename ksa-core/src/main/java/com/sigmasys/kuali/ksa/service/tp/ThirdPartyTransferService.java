@@ -8,6 +8,7 @@ import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +30,29 @@ public interface ThirdPartyTransferService {
     String SERVICE_NAME = "ThirdPartyTransferService";
     String PORT_NAME = SERVICE_NAME + "Port";
 
+    /**
+     * Creates and persists a new third-party billing plan based on the given parameters.
+     *
+     * @param transferTypeId        TransferType ID
+     * @param thirdPartyAccountId   ThirdPartyAccount ID
+     * @param maxAmount             Maximum transfer amount
+     * @param effectiveDate         Effective Date
+     * @param recognitionDate       Recognition Date
+     * @param openPeriodStartDate   Open Period Start Date
+     * @param openPeriodEndDate     Open Period End Date
+     * @param chargePeriodStartDate Charge Period Start Date
+     * @param chargePeriodEndDate   Charge Period End Date
+     * @return ThirdPartyPlan instance
+     */
+    ThirdPartyPlan createThirdPartyPlan(Long transferTypeId,
+                                        String thirdPartyAccountId,
+                                        BigDecimal maxAmount,
+                                        Date effectiveDate,
+                                        Date recognitionDate,
+                                        Date openPeriodStartDate,
+                                        Date openPeriodEndDate,
+                                        Date chargePeriodStartDate,
+                                        Date chargePeriodEndDate);
 
     /**
      * Retrieves ThirdPartyPlan instance by ID from the persistent store.
@@ -75,6 +99,15 @@ public interface ThirdPartyTransferService {
      */
     ThirdPartyTransferDetail generateThirdPartyTransfer(Long thirdPartyPlanId, String accountId, Date initiationDate);
 
+    /**
+     * Generates the third-party transfers for the given account ID and current date as an open period date
+     * ignoring already executed transfers
+     *
+     * @param accountId DirectChargeAccount ID
+     * @return list of ThirdPartyTransferDetail instances
+     */
+    @WebMethod(exclude = true)
+    List<ThirdPartyTransferDetail> generateThirdPartyTransfers(String accountId);
 
     /**
      * Generates the third-party transfers for the given account ID and open period date.
