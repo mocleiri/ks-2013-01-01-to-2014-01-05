@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.TransactionTransfer;
 import com.sigmasys.kuali.ksa.model.TransferType;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -170,6 +171,7 @@ public interface TransactionTransferService {
      * @param memoText              Memo text
      * @return TransactionTransfer instance
      */
+    @WebMethod(exclude = true)
     TransactionTransfer reverseTransactionTransfer(Long transactionTransferId, String memoText);
 
     /**

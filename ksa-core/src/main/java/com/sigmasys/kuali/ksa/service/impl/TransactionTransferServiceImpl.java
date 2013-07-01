@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 import java.math.BigDecimal;
@@ -560,6 +561,7 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      * @return TransactionTransfer instance
      */
     @Override
+    @WebMethod(exclude = true)
     @Transactional(readOnly = false)
     public TransactionTransfer reverseTransactionTransfer(Long transactionTransferId, String memoText) {
 
