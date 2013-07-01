@@ -52,7 +52,6 @@ end
 When /^I create a new Academic Calendar$/ do
   on EditAcademicCalendar do |page|
     page.academic_calendar_name.set random_alphanums.strip
-    page.organization.select "Registrar's Office"
     page.calendar_start_date.set "09/01/#{next_year[:year]}"
     page.calendar_end_date.set "06/25/#{next_year[:year] + 1}"
     @performance_test.start
@@ -374,3 +373,15 @@ When /^I add Delivery Logistics and save$/ do
     @performance_test.end
   end
 end
+
+When /^I search for a SOC$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_soc
+  on ManageSocPage do |page|
+    page.term_code.set "201301"
+    @performance_test.start
+    page.go_action
+    @performance_test.end
+  end
+end
+

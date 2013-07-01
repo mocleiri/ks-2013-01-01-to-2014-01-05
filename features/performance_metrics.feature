@@ -101,6 +101,10 @@ Feature: Performance.Metrics
     When I add Delivery Logistics and save
     Then the transaction takes less than "3" seconds
 
+  Scenario: Manage SOC
+    When I search for a SOC
+    Then the transaction takes less than "3" seconds
+
   @wip
   Scenario: Create a Cross-listed Course Offering
     When I create a cross-listed Course Offering
