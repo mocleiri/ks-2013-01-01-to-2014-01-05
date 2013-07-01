@@ -26,30 +26,6 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the agenda page should have the text "free input value"
 
   @pending
-  Scenario: All courses rule with approved courses
-    When I navigate to the agenda page for "Recommended Preparation" for term "201301" and course "BSCI361"
-    And I want to add a new statement to the selected agenda section
-    And I add a new courses statement with courses "BSCI103,BSCI202"
-    Then the "edit" tab should have the text "Must have successfully completed all courses from (BSCI103, BSCI202)"
-    When I switch to the other tab on the page
-    Then the "logic" tab should have the text "Must have successfully completed all courses from,BSCI103,BSCI202"
-    When I update the manage course offering agendas page
-    Then the agenda page should have the text "Must have successfully completed all courses from,BSCI103,BSCI202"
-
-  @pending
-  Scenario: All courses rule with course sets
-    When I navigate to the agenda page for "Recommended Preparation" for term "201301" and course "BSCI361"
-    And I want to add a new statement to the selected agenda section
-    And I add a new courses statement with course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing"
-    Then the "edit" tab should have the text "Must have successfully completed all courses from (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
-    When I switch to the other tab on the page
-    Then the "logic" tab should have the text "Must have successfully completed all courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
-    When I update the manage course offering agendas page
-    Then the agenda page should have the text "Must have successfully completed all courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
-
-  #Add a scenario for courses rule with course ranges
-
-  @pending
   Scenario: Number of courses rule with approved courses
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
     And I want to add a new statement to the selected agenda section
@@ -237,7 +213,19 @@ Feature: Temporary feature file to test every rule statement with every associat
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have successfully completed no more than 2 courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
 
-  #Add a scenario for number of courses rule with course ranges
+  #KSENROLL-7583 EB3
+  @bug @KSENROLL-7811
+  Scenario: No more number of courses rule with approved courses - non-UMD
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201208" and course "ENGL201"
+    And I want to add a new statement to the selected agenda section
+    And I add a new no more than number of courses statement with number "2" and courses "ENGL205,ENGL206,ENGL305"
+    Then the "edit" tab should have the text "Must have successfully completed no more than 1 course from (ENGL205, ENGL305, ENGL206)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have successfully completed no more than 1 course from,ENGL205,ENGL305,ENGL206"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have successfully completed no more than 1 course from,ENGL205,ENGL305,ENGL206"
+
+#Add a scenario for number of courses rule with course ranges
   ##############################################
   #KSENROLL-7614
   @pending
@@ -335,6 +323,18 @@ Feature: Temporary feature file to test every rule statement with every associat
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must successfully complete no more than 16 credits from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
 
+  #KSENROLL-7588 EB3
+  @pending
+  Scenario: No more number of credits rule with approved courses - non-UMD
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201208" and course "PHYS174"
+    And I want to add a new statement to the selected agenda section
+    And I add a new no more than credits statement with number "2" and courses "PHYS112,PHYS141,PHYS171"
+    Then the "edit" tab should have the text "Must successfully complete no more than 4 credits from (PHYS171, PHYS141, PHYS112)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must successfully complete no more than 4 credits from,PHYS171,PHYS141,PHYS112"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must successfully complete no more than 4 credits from,PHYS171,PHYS141,PHYS112"
+
   #KSENROLL-7590 EB1
   @pending
   Scenario: Any credits rule with approved courses
@@ -430,3 +430,29 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must have successfully completed BSCI103"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have successfully completed BSCI103"
+
+  #KSENROLL-7582 EB1
+  @pending
+  Scenario: All courses rule with approved courses - Recommended Preparation
+    When I navigate to the agenda page for "Recommended Preparation" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new courses statement with courses "BSCI103,BSCI202"
+    Then the "edit" tab should have the text "Must have successfully completed all courses from (BSCI103, BSCI202)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have successfully completed all courses from,BSCI103,BSCI202"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have successfully completed all courses from,BSCI103,BSCI202"
+
+  #KSENROLL-7582 EB2
+  @pending
+  Scenario: All courses rule with course sets - Recommended Preparation
+    When I navigate to the agenda page for "Recommended Preparation" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new courses statement with course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing"
+    Then the "edit" tab should have the text "Must have successfully completed all courses from (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have successfully completed all courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have successfully completed all courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+
+
