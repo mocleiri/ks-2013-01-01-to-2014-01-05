@@ -406,6 +406,15 @@ class ManageCORequisitesData
     end
   end
 
+  def create_min_total_credits_rule( group, node, credit)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have earned a minimum of <n> total credits/
+      page.integer_field.when_present.set credit
+      page.preview_btn
+    end
+  end
+
   def add_courses( course, set, range)
     on ManageCORequisites do |page|
       courses = create_array( course)

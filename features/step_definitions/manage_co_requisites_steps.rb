@@ -267,6 +267,10 @@ When /^I add a minimum number of credits and org rule with "([\d\.]+)" credits a
   @manageCOR.create_min_credits_org_rule( "add", "", org, credit)
 end
 
+When /^I add a new minimum total credits statement with "([\d]+)" credits$/ do |credits|
+  @manageCOR.create_min_total_credits_rule( "add", "", credits)
+end
+
 When /^I group course statement with node "(.)" with course "([^\"]+)"$/s do |node, course|
   @manageCOR.create_course_rule( "group", node, course, @courseOR.section)
 end

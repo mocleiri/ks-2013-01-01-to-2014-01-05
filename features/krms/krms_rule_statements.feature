@@ -455,3 +455,14 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "free input value"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "free input value"
+
+  #KSENROLL-7601
+  Scenario: Minimum total credits rule
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new minimum total credits statement with "8" credits
+    Then the "edit" tab should have the text "Must have earned a minimum of 8 total credits"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have earned a minimum of 8 total credits"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have earned a minimum of 8 total credits"
