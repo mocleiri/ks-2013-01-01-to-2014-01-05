@@ -127,6 +127,22 @@ When /^I add a gpa and courses statement after node "(.)" with course sets "([^\
   @manageCOR.create_gpa_courses_rule( "add", node, "", set, "", gpa)
 end
 
+When /^I add a gpa and duration statement after node "(.)" with GPA of "([\d\.]+)" and duration type "([^\"]+)" with duration "(\d+)"$/ do |node, gpa, type, duration|
+  @manageCOR.create_gpa_duration_rule( "add", node, gpa, type, duration)
+end
+
+When /^I add a minimum number of credits and org rule after node "(.)" with "([\d\.]+)" credits and org "(.*?)"$/ do |node, credit, org|
+  @manageCOR.create_min_credits_org_rule( "add", node, org, credit)
+end
+
+When /^I add a course and as of term statement after node "(.)" with course "(.*?)" and term "(.*?)"$/ do |node, course, term|
+  @manageCOR.create_course_term_rule( "add", node, course, term)
+end
+
+When /^I add a course and prior to term statement after node "(.)" with course "(.*?)" and term "(.*?)"$/ do |node, course, term|
+  @manageCOR.create_course_term_rule( "add", node, course, term, "prior to")
+end
+
 When /^I add a new course statement with course "([^\"]+)"$/ do |course|
   @manageCOR.create_course_rule( "add", "", course, @courseOR.section)
 end
@@ -263,7 +279,7 @@ When /^I add a new permission of administering org statement with org "(.*?)"$/ 
   @manageCOR.create_admin_org_rule( "add", "", org)
 end
 
-When /^I add a minimum number of credits and org rule with "([\d\.]+)" credits and org "(.*?)"$/ do |credit, org|
+When /^I add a new minimum number of credits and org rule with "([\d\.]+)" credits and org "(.*?)"$/ do |credit, org|
   @manageCOR.create_min_credits_org_rule( "add", "", org, credit)
 end
 

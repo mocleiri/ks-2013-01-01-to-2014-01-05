@@ -269,9 +269,8 @@ class ManageCORequisitesData
     on ManageCORequisites do |page|
       page.rule_dropdown.when_present.select /Must successfully complete a minimum of <n> courses from <courses> with a minimum grade of <gradeType> <grade>/
       page.integer_field.when_present.set number
-      page.grade_fieldset.label(:text => /#{Regexp.escape(type)}/).when_present.click
-      page.grade_dropdown.when_present.select grade
       add_courses( course, set, range)
+      choose_grade_type_grade( grade, type)
       page.preview_btn
     end
   end
@@ -328,7 +327,7 @@ class ManageCORequisitesData
     end
   end
 
-  def create_course_term_rule( group, node, course, term, prior_or_as = "as to")
+  def create_course_term_rule( group, node, course, term, prior_or_as = "as of")
     add_new_node( group, node)
     on ManageCORequisites do |page|
       page.rule_dropdown.when_present.select /Must have successfully completed <course> #{Regexp.escape(prior_or_as)} <term>/
@@ -481,6 +480,15 @@ class ManageCORequisitesData
     on ManageCORequisites do |page|
       advanced_search("org", org)
       page.edit_loading.wait_while_present
+    end
+  end
+
+  def choose_grade_type_grade( grade, type)
+    types = { "Completed Notation"=>:completed, "Letter"=>:letter, "A-F with Plus/Minus"=>:letter_plus_minus,
+              "Percentage"=>:percentage, "Pass/Fail"=>:pass_fail, "Pass/No Pass"=>:pass_nopass}
+    on ManageCORequisites do |page|
+      page.send(types[type])
+      page.grade_dropdown.when_present.select grade
     end
   end
 
