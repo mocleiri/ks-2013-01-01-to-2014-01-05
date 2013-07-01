@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
 
 import javax.jws.WebMethod;
@@ -59,6 +60,17 @@ public interface ThirdPartyTransferService {
                                         Date openPeriodEndDate,
                                         Date chargePeriodStartDate,
                                         Date chargePeriodEndDate);
+
+
+    /**
+     * Creates and persists a new third-party plan member for the given account and plan IDs
+     *
+     * @param accountId        Account ID
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @param priority         Priority
+     * @return ThirdPartyPlanMember instance
+     */
+    ThirdPartyPlanMember createThirdPartyPlanMember(String accountId, Long thirdPartyPlanId, int priority);
 
     /**
      * Retrieves ThirdPartyPlan instance by ID from the persistent store.

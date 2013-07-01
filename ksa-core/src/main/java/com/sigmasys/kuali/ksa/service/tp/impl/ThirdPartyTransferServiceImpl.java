@@ -151,6 +151,46 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         return plan;
     }
 
+    /**
+     * Creates and persists a new third-party plan member for the given account and plan IDs
+     *
+     * @param accountId        Account ID
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @param priority         Priority
+     * @return ThirdPartyPlanMember instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public ThirdPartyPlanMember createThirdPartyPlanMember(String accountId, Long thirdPartyPlanId, int priority) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_THIRD_PARTY_PLAN_MEMBER);
+
+        ThirdPartyPlan thirdPartyPlan = getThirdPartyPlan(thirdPartyPlanId);
+        if (thirdPartyPlan == null) {
+            String errMsg = "ThirdPartyPlan does not exist with ID = " + thirdPartyPlanId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null || !(account instanceof DirectChargeAccount)) {
+            String errMsg = "DirectChargeAccount with ID = " + accountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        ThirdPartyPlanMember planMember = new ThirdPartyPlanMember();
+
+        planMember.setDirectChargeAccount((DirectChargeAccount) account);
+        planMember.setPlan(thirdPartyPlan);
+        planMember.setPriority(priority);
+        planMember.setExecuted(false);
+
+        persistEntity(planMember);
+
+        return planMember;
+    }
+
 
     /**
      * Retrieves ThirdPartyPlan instance by ID from the persistence store.
@@ -277,7 +317,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
         Query query = em.createQuery("select m from ThirdPartyPlanMember m " +
                 " inner join fetch m.directChargeAccount a " +
-                " inner join m.thirdPartyPlan p " +
+                " inner join m.plan p " +
                 " where p.id = :planId and a.id = :accountId");
 
         query.setParameter("planId", thirdPartyPlanId);

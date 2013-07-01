@@ -3,6 +3,8 @@ package com.sigmasys.kuali.ksa.service;
 
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,7 +81,7 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
         return account;
     }
 
-    protected GeneralLedgerType createGeneralLedgerType() throws Exception {
+    protected GeneralLedgerType createGeneralLedgerType() {
 
         String GL_ACCOUNT_ID = "01-0-131120 1326";
 
@@ -102,8 +104,7 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     }
 
 
-    @Test
-    public void createThirdPartyPlan() throws Exception {
+    protected ThirdPartyPlan _createThirdPartyPlan() {
 
         GeneralLedgerType glType = createGeneralLedgerType();
 
@@ -117,6 +118,8 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
         Assert.notNull(account);
         Assert.notNull(account.getId());
 
+        Long currentTime = System.currentTimeMillis();
+
         ThirdPartyPlan plan = thirdPartyTransferService.createThirdPartyPlan(
                 "TPP code1",
                 "TPP name 1",
@@ -126,10 +129,10 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
                 new BigDecimal(10e4),
                 new Date(),
                 null,
-                new Date(),
-                new Date(System.currentTimeMillis() + (long) 10e6),
-                new Date(System.currentTimeMillis() + (long) 10e3),
-                new Date(System.currentTimeMillis() + (long) 10e8));
+                new Date(currentTime - (long) 10e4),
+                new Date(currentTime + (long) 10e6),
+                new Date(currentTime - (long) 10e3),
+                new Date(currentTime + (long) 10e8));
 
         Assert.notNull(plan);
         Assert.notNull(plan.getId());
@@ -137,6 +140,32 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
         Assert.notNull(plan.getTransferType());
 
         Assert.isTrue(plan.getThirdPartyAccount().getId().equals(THIRD_PARTY_ACCOUNT_ID));
+
+        ThirdPartyPlanMember planMember =
+                thirdPartyTransferService.createThirdPartyPlanMember(TEST_USER_ID, plan.getId(), 99);
+
+        Assert.notNull(planMember);
+        Assert.notNull(planMember.getId());
+
+        return plan;
+    }
+
+    @Test
+    public void createThirdPartyPlan() throws Exception {
+        _createThirdPartyPlan();
+    }
+
+
+    @Test
+    public void generateThirdPartyTransfer() {
+
+        ThirdPartyPlan plan = _createThirdPartyPlan();
+
+        ThirdPartyTransferDetail transfer =
+                thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), TEST_USER_ID, new Date());
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
 
     }
 
