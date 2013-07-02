@@ -139,10 +139,10 @@ class CourseOffering
         if @joint_co_to_create != nil
           create_joint_co()
         end
+        page.cross_listed_co_check_box.set unless !@cross_listed
         delivery_obj = make DeliveryFormat
         delivery_obj.select_random_delivery_formats
         @delivery_format_list << delivery_obj
-        page.cross_listed_co_check_box.set unless !@cross_listed
         page.create_offering
       end
     end
