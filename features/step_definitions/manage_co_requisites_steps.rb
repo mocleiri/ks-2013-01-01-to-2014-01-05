@@ -231,6 +231,10 @@ When /^I add a new gpa and duration statement with GPA of "([\d\.]+)" and durati
   @manageCOR.create_gpa_duration_rule( "add", "", gpa, type, duration)
 end
 
+When /^I add a new gpa statement with GPA of "([\d\.]+)"$/ do |gpa|
+  @manageCOR.create_gpa_rule( "add", "", gpa)
+end
+
 When /^I add a new program statement with program code "(.*?)"$/ do |program|
   @manageCOR.create_program_rule( "add", "", program, @courseOR.section)
 end

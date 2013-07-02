@@ -295,6 +295,15 @@ class ManageCORequisitesData
     end
   end
 
+  def create_gpa_rule( group, node, gpa)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have earned a minimum cumulative GPA of <GPA>/
+      page.integer_field.when_present.set gpa
+      page.preview_btn
+    end
+  end
+
   def create_program_rule( group, node, program, sect)
     add_new_node( group, node)
     on ManageCORequisites do |page|
