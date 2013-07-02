@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.service;
 
 
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyChargeStatus;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * ThirdPartyTransferService tests.
@@ -155,7 +157,6 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
         _createThirdPartyPlan();
     }
 
-
     @Test
     public void generateThirdPartyTransfer() {
 
@@ -166,6 +167,85 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
         Assert.notNull(transfer);
         Assert.notNull(transfer.getId());
+
+    }
+
+    @Test
+    public void generateThirdPartyTransfers1() {
+
+        _createThirdPartyPlan();
+
+        List<ThirdPartyTransferDetail> transfers =
+                thirdPartyTransferService.generateThirdPartyTransfers(TEST_USER_ID, new Date(), true);
+
+        Assert.notNull(transfers);
+        Assert.notEmpty(transfers);
+
+    }
+
+    @Test
+    public void generateThirdPartyTransfers2() {
+
+        ThirdPartyPlan plan = _createThirdPartyPlan();
+
+        List<ThirdPartyTransferDetail> transfers =
+                thirdPartyTransferService.generateThirdPartyTransfers(plan.getId(), true);
+
+        Assert.notNull(transfers);
+        Assert.notEmpty(transfers);
+
+    }
+
+    @Test
+    public void generateThirdPartyTransfers3() {
+
+        ThirdPartyPlan plan = _createThirdPartyPlan();
+
+        List<ThirdPartyTransferDetail> transfers =
+                thirdPartyTransferService.generateThirdPartyTransfers(plan.getId(), false);
+
+        Assert.notNull(transfers);
+        Assert.notEmpty(transfers);
+
+        transfers =
+                thirdPartyTransferService.generateThirdPartyTransfers(plan.getId(), true);
+
+        Assert.notNull(transfers);
+        Assert.notEmpty(transfers);
+
+    }
+
+    @Test
+    public void generateThirdPartyTransfers4() {
+
+        _createThirdPartyPlan();
+
+        List<ThirdPartyTransferDetail> transfers =
+                thirdPartyTransferService.generateThirdPartyTransfers(TEST_USER_ID);
+
+        Assert.notNull(transfers);
+        Assert.notEmpty(transfers);
+
+    }
+
+    @Test
+    public void reverseThirdPartyTransfers() {
+
+        ThirdPartyPlan plan = _createThirdPartyPlan();
+
+        ThirdPartyTransferDetail transfer =
+                thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), TEST_USER_ID, new Date());
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+
+        transfer = thirdPartyTransferService.reverseThirdPartyTransfer(transfer.getId(), "Reversed Memo");
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+        Assert.notNull(transfer.getChargeStatus());
+
+        Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.REVERSED);
 
     }
 

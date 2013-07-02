@@ -590,48 +590,47 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
 
         List<TransactionTransfer> transactionTransfers = getTransactionTransfersByGroupId(transferGroupId);
 
-        if (CollectionUtils.isEmpty(transactionTransfers)) {
-            String errMsg = "No transaction transfers exist for the transfer group ID = " + transferGroupId;
-            logger.error(errMsg);
-            throw new IllegalArgumentException(errMsg);
-        }
+        if (CollectionUtils.isNotEmpty(transactionTransfers)) {
 
-        // Generating a new transfer group ID
-        String reversalGroupId = generateTransferGroupId();
+            // Generating a new transfer group ID
+            String reversalGroupId = generateTransferGroupId();
 
-        for (TransactionTransfer transactionTransfer : transactionTransfers) {
+            for (TransactionTransfer transactionTransfer : transactionTransfers) {
 
-            Transaction destTransaction = transactionTransfer.getDestTransaction();
+                Transaction destTransaction = transactionTransfer.getDestTransaction();
 
-            BigDecimal lockedAllocatedAmount = destTransaction.getLockedAllocatedAmount();
-            if (lockedAllocatedAmount == null) {
-                lockedAllocatedAmount = BigDecimal.ZERO;
-            }
-
-            if (!allowLockedAllocations) {
-                if (lockedAllocatedAmount.compareTo(BigDecimal.ZERO) != 0) {
-                    String errMsg = "Cannot reverse transaction group if one or more destination transactions " +
-                            " have any allocated amount, destination transaction ID = " + destTransaction.getId();
-                    logger.error(errMsg);
-                    throw new IllegalStateException(errMsg);
+                BigDecimal lockedAllocatedAmount = destTransaction.getLockedAllocatedAmount();
+                if (lockedAllocatedAmount == null) {
+                    lockedAllocatedAmount = BigDecimal.ZERO;
                 }
+
+                if (!allowLockedAllocations) {
+                    if (lockedAllocatedAmount.compareTo(BigDecimal.ZERO) != 0) {
+                        String errMsg = "Cannot reverse transaction group if one or more destination transactions " +
+                                " have any allocated amount, destination transaction ID = " + destTransaction.getId();
+                        logger.error(errMsg);
+                        throw new IllegalStateException(errMsg);
+                    }
+                }
+
+                BigDecimal amount = destTransaction.getAmount();
+                if (amount == null) {
+                    amount = BigDecimal.ZERO;
+                }
+
+                BigDecimal reversalAmount = amount.subtract(lockedAllocatedAmount);
+
+                // Creating a transaction transfer reversal
+                reverseTransactionTransfer(transactionTransfer, memoText, reversalAmount);
+
+                // Setting the new reversal group ID
+                transactionTransfer.setGroupId(reversalGroupId);
             }
 
-            BigDecimal amount = destTransaction.getAmount();
-            if (amount == null) {
-                amount = BigDecimal.ZERO;
-            }
-
-            BigDecimal reversalAmount = amount.subtract(lockedAllocatedAmount);
-
-            // Creating a transaction transfer reversal
-            reverseTransactionTransfer(transactionTransfer, memoText, reversalAmount);
-
-            // Setting the new reversal group ID
-            transactionTransfer.setGroupId(reversalGroupId);
+            return transactionTransfers;
         }
 
-        return transactionTransfers;
+        return Collections.emptyList();
     }
 
 }
