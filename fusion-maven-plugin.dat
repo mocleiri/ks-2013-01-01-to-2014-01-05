@@ -7,4 +7,4 @@ ks-lum::enrollment_ks-lum_trunk::1a642591f6601c3a81f55a0281de7cd5e1f8564d
 # module = ks-enroll branch Path = enrollment/ks-enroll/trunk revision = 41764
 ks-enroll::enrollment_ks-enroll_trunk::9c7b188e3db8dd82c5ad9adc7700b0218f2decf5
 # module = ks-deployments branch Path = enrollment/ks-deployments/trunk revision = 41764
-ks-deployments::enrollment_ks-deployments_trunk::6075eb54959cd529303a4c855d1a4db0b0e71f3a
+ks-deployments::enrollment_ks-deployments_trunk::95d5ec1c4d8ec89b8ed8cb33d61c0cdb034af7f9
