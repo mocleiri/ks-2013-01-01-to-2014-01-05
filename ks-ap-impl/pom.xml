@@ -21,6 +21,7 @@
 -->
 
     <dependencies>
+        <!--
         <dependency>
             <groupId>org.kuali.student.api</groupId>
             <artifactId>ks-core-api</artifactId>
@@ -46,6 +47,7 @@
             <artifactId>ks-ap-api</artifactId>
             <version>${ks.ap.version}</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.kuali.student.core</groupId>
             <artifactId>ks-common-impl</artifactId>

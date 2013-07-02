@@ -357,7 +357,14 @@ public abstract class AbstractKsapModuleConfigurer extends
 					"the module name for this module has not been set");
 		}
 
-		if (CollectionUtils.isEmpty(this.validRunModes)) {
+        /*
+            TODO: Compile time error for CollectionUtils library
+            cannot find symbol
+            symbol  : method isEmpty(java.util.List<org.kuali.rice.core.api.config.module.RunMode>)
+            location: class org.apache.commons.collections.CollectionUtils
+         */
+		//if (CollectionUtils.isEmpty(this.validRunModes)) {
+        if(this.validRunModes == null || this.validRunModes.size() == 0) {
 			throw new IllegalStateException(
 					"the valid run modes for this module has not been set");
 		}

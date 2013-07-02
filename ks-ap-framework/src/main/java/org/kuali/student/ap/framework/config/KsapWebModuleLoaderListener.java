@@ -26,7 +26,16 @@ public class KsapWebModuleLoaderListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent event) {
         List<String> springFileLocations = getSpringFileLocations();
-        if (CollectionUtils.isNotEmpty(springFileLocations)) {
+
+        /*
+            TODO: Compile error for CollectionUtils
+            cannot find symbol
+            symbol  : method isNotEmpty(java.util.List<java.lang.String>)
+            location: class org.apache.commons.collections.CollectionUtils
+         */
+
+        //if (CollectionUtils.isNotEmpty(springFileLocations)) {
+        if(springFileLocations != null && springFileLocations.size() > 0) {
             LOG.info("Initializing " + getClass().getSimpleName() + " with spring files: " + springFileLocations);
             org.kuali.rice.core.framework.resourceloader.SpringResourceLoader resourceLoader = new org.kuali.rice.core.framework.resourceloader.SpringResourceLoader(RESOURCE_LOADER_NAME, springFileLocations, event.getServletContext());
             try {
@@ -59,7 +68,15 @@ public class KsapWebModuleLoaderListener implements ServletContextListener {
                         throw new ConfigurationException("Attempting to load WebModuleConfiguration for module '" + module.getModuleName() + "' but no configuration was provided!");
                     }
                     List<String> webModuleSpringFiles = webModuleConfiguration.getWebSpringFiles();
-                    if (CollectionUtils.isNotEmpty(webModuleSpringFiles)) {
+
+                    /*
+                        TODO: Compile error for CollectionUtils
+                        cannot find symbol
+                        symbol  : method isNotEmpty(java.util.List<java.lang.String>)
+                        location: class org.apache.commons.collections.CollectionUtils
+                    */
+                    // if (CollectionUtils.isNotEmpty(webModuleSpringFiles)) {
+                    if(webModuleSpringFiles != null && webModuleSpringFiles.size() > 0) {
                         springFileLocations.addAll(webModuleSpringFiles);
                     }
                 }
@@ -71,7 +88,15 @@ public class KsapWebModuleLoaderListener implements ServletContextListener {
                         throw new ConfigurationException("Attempting to load WebModuleConfiguration for module '" + module.getModuleName() + "' but no configuration was provided!");
                     }
                     List<String> webModuleSpringFiles = webModuleConfiguration.getWebSpringFiles();
-                    if (CollectionUtils.isNotEmpty(webModuleSpringFiles)) {
+
+                    /*
+                        TODO: Compile error for CollectionUtils
+                        cannot find symbol
+                        symbol  : method isNotEmpty(java.util.List<java.lang.String>)
+                        location: class org.apache.commons.collections.CollectionUtils
+                     */
+                    //if (CollectionUtils.isNotEmpty(webModuleSpringFiles)) {
+                    if(webModuleSpringFiles != null && webModuleSpringFiles.size() > 0) {
                         springFileLocations.addAll(webModuleSpringFiles);
                     }
                 }
