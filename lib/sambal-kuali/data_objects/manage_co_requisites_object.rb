@@ -257,8 +257,7 @@ class ManageCORequisitesData
       elsif( sect == "Antirequisite")
         page.rule_dropdown.when_present.select /Must not have earned a grade of <gradeType> <grade> or higher in <courses>/
       end
-      page.grade_fieldset.label(:text => /#{Regexp.escape(type)}/).when_present.click
-      page.grade_dropdown.when_present.select grade
+      choose_grade_type_grade( grade, type)
       add_courses( course, set, range)
       page.preview_btn
     end
@@ -488,6 +487,7 @@ class ManageCORequisitesData
               "Percentage"=>:percentage, "Pass/Fail"=>:pass_fail, "Pass/No Pass"=>:pass_nopass}
     on ManageCORequisites do |page|
       page.send(types[type])
+      page.edit_loading.wait_while_present
       page.grade_dropdown.when_present.select grade
     end
   end

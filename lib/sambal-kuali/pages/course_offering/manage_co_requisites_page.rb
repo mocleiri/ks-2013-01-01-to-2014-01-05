@@ -12,6 +12,7 @@ class ManageCORequisites < BasePage
   element(:preview_tree_section) { |b| b.logic_tab_section.div(id: "KSCO-LogicPreview-Tree")}
   element(:compare_rule_section) { |b| b.frm.div(id: "compareRuleLightBox")}
   element(:preview_rule_section) { |b| b.frm.div(id: "KSCO-RulePreview-ActionLinks")}
+  element(:grade_section) { |b| b.edit_tree_section.div(:id => /KRMS-GradeScale-Field/)}
 
   element(:background_div) { |b| b.frm.li(:id => /^u\d+_node_0_parent_root$/)}
   element(:logic_tab) { |b| b.tab_section.a(:text => /Edit Rule Logic/)}
@@ -52,13 +53,12 @@ class ManageCORequisites < BasePage
   element(:term_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.termCode/)}
   element(:term_two_field) { |b| b.frm.text_field(:name => /.*editTree.*proposition\.termCode2/)}
 
-  element(:grade_fieldset) { |b| b.edit_tree_section.div(id: "KRMS-GradeScale-Field")}
-  action(:completed) { |b| b.grade_fieldset.radio(value: "kuali.result.scale.grade.completed").when_present.click}
-  action(:letter) { |b| b.grade_fieldset.radio(value: "kuali.result.scale.grade.letter").when_present.click}
-  action(:letter_plus_minus) { |b| b.grade_fieldset.radio(value: "kuali.result.scale.grade.letter.plus.minus").when_present.click}
-  action(:percentage) { |b| b.grade_fieldset.radio(value: "kuali.result.scale.grade.percentage").when_present.click}
-  action(:pass_fail) { |b| b.grade_fieldset.radio(value: "kuali.result.scale.grade.pf").when_present.click}
-  action(:pass_nopass) { |b| b.grade_fieldset.radio(value: "kuali.result.scale.grade.pnp").when_present.click}
+  action(:completed) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_0/).when_present.click}
+  action(:letter) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_1/).when_present.click}
+  action(:letter_plus_minus) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.+_control_2/).when_present.click}
+  action(:percentage) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_3/).when_present.click}
+  action(:pass_fail) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_4/).when_present.click}
+  action(:pass_nopass) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_5/).when_present.click}
 
   element(:lookup_section) { |b| b.frm_popup.div(id: "CourseLookupView")}
   element(:lookup_results) { |b| b.frm_popup.div(id: "uLookupResults")}

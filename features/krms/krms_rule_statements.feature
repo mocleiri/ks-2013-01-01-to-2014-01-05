@@ -38,28 +38,6 @@ Feature: Temporary feature file to test every rule statement with every associat
 
   #Add a scenario for number of courses rule with course ranges
 
-  @pending
-  Scenario: Grade and courses rule with approved courses
-    When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
-    And I want to add a new statement to the selected agenda section
-    And I add a new grade and courses statement with courses "BSCI103,BSCI202" and grade type "Completed Notation" with grade "Completed"
-    Then the "edit" tab should have the text "Must not have earned a maximum grade of Completed or higher in (BSCI103, BSCI202)"
-    When I switch to the other tab on the page
-    Then the "logic" tab should have the text "Must not have earned a maximum grade of Completed or higher in,BSCI103,BSCI202"
-    When I update the manage course offering agendas page
-    Then the agenda page should have the text "Must not have earned a maximum grade of Completed or higher in,BSCI103,BSCI202"
-
-  @pending
-  Scenario: Grade and courses rule with course sets
-    When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
-    And I want to add a new statement to the selected agenda section
-    And I add a new grade and courses statement with course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing" and grade type "Letter" with grade "A"
-    Then the "edit" tab should have the text "Must not have earned a maximum grade of A or higher in (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
-    When I switch to the other tab on the page
-    Then the "logic" tab should have the text "Must not have earned a maximum grade of A or higher in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
-    When I update the manage course offering agendas page
-    Then the agenda page should have the text "Must not have earned a maximum grade of A or higher in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
-
   #KSENROLL-7606 EB1
   @pending
   Scenario: Any program rule
@@ -589,6 +567,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have earned a minimum of 8 total credits"
 
+  #KSENROLL-7600 EB1
   @pending
   Scenario: Grade and number of courses rule with approved courses
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
@@ -600,6 +579,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must successfully complete a minimum of 1 course with a minimum grade of 0-59% from,BSCI103,BSCI202"
 
+  #KSENROLL-7600 EB2
   @pending
   Scenario: Grade and number of courses rule with course sets
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
@@ -610,3 +590,51 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must successfully complete a minimum of 2 courses with a minimum grade of A from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must successfully complete a minimum of 2 courses with a minimum grade of A from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+
+  #KSENROLL-7599 EB1
+  @pending
+  Scenario: Grade and courses rule with approved courses
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new grade and courses statement with courses "BSCI103,BSCI202" and grade type "Completed Notation" with grade "Completed"
+    Then the "edit" tab should have the text "Must have earned a minimum grade of Completed in (BSCI103, BSCI202)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have earned a minimum grade of Completed in,BSCI103,BSCI202"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have earned a minimum grade of Completed in,BSCI103,BSCI202"
+
+  #KSENROLL-7599 EB2
+  @pending
+  Scenario: Grade and courses rule with course sets
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new grade and courses statement with course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing" and grade type "Letter" with grade "A"
+    Then the "edit" tab should have the text "Must have earned a minimum grade of A in (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have earned a minimum grade of A in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have earned a minimum grade of A in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+
+  #KSENROLL-7598 EB1
+  @pending
+  Scenario: Grade and courses rule with approved courses - Antirequisite
+    When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new grade and courses statement with courses "BSCI103,BSCI202" and grade type "Percentage" with grade "0-59%"
+    Then the "edit" tab should have the text "Must not have earned a maximum grade of 0-59% or higher in (BSCI103, BSCI202)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must not have earned a maximum grade of 0-59% or higher in,BSCI103,BSCI202"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must not have earned a maximum grade of 0-59% or higher in,BSCI103,BSCI202"
+
+  #KSENROLL-7598 EB2
+  @pending
+  Scenario: Grade and courses rule with course sets - Antirequisite
+    When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new grade and courses statement with course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing" and grade type "Letter" with grade "A"
+    Then the "edit" tab should have the text "Must not have earned a maximum grade of A or higher in (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must not have earned a maximum grade of A or higher in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must not have earned a maximum grade of A or higher in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
