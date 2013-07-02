@@ -97,7 +97,7 @@ When /^I update a field and save the Holiday Calendar$/ do
   on EditHolidayCalendar do |page|
     page.end_date.set "08/20/2016"
     @performance_test.start
-    page.update_official
+    page.save
     @performance_test.end
   end
 end
