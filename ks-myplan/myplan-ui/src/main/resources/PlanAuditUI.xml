@@ -65,7 +65,7 @@
             <bean parent="KSAP-HorizontalBoxGroup">
                 <property name="items">
                     <list>
-                        <ref bean="recent_reviews_help_icon"/>
+                        <ref bean="recent_audits_help_icon"/>
                     </list>
                 </property>
             </bean>
@@ -94,11 +94,11 @@
             <bean parent="Uif-StackedCollectionLayout-WithBoxItems">
                 <property name="lineGroupPrototype">
                     <bean parent="Uif-CollectionVerticalBoxItem">
-                        <property name="id" value="link_@{#line.report.auditId}"/>
+                        <property name="id" value="@{#line.report.auditId}"/>
                         <property name="title" value="@{#line.programTitle}"/>
                         <property name="hidden" value="@{#index gt 1}"/>
                         <property name="onClickScript" value="
-                            openDocument('audit?methodToCall=audit&amp;viewId=DegreeAudit-FormView&amp;planAudit.auditId=@{#line.report.auditId}#plan_audit_block_tab');
+                            window.location.href = 'audit?methodToCall=audit&amp;viewId=DegreeAudit-FormView&amp;planAudit.auditId=@{#line.report.auditId}#plan_audit_block_tab';
                         "/>
                         <property name="cssClasses">
                             <list merge="true">
