@@ -368,12 +368,16 @@ public class TransactionForm extends AbstractViewModel {
         return html;
     }
 
-    public void setAlerts(List<Alert> alerts) {
+    public void setAlertObjects(List<Alert> alerts) {
         List<InformationModel> models = new ArrayList<InformationModel>(alerts.size());
         for(Alert alert : alerts){
             models.add(new InformationModel(alert));
         }
-        this.alerts = models;
+        setAlerts(models);
+    }
+
+    public void setAlerts(List<InformationModel> alerts) {
+        this.alerts = alerts;
     }
 
     public List<InformationModel> getFlags() {
@@ -411,12 +415,16 @@ public class TransactionForm extends AbstractViewModel {
         return html;
     }
 
-    public void setFlags(List<Flag> flags) {
+    public void setFlagObjects(List<Flag> flags) {
         List<InformationModel> models = new ArrayList<InformationModel>(flags.size());
         for(Flag flag : flags){
             models.add(new InformationModel(flag));
         }
-        this.flags = models;
+        setFlags(models);
+    }
+
+    public void setFlags(List<InformationModel> flags) {
+        this.flags = flags;
     }
 
     public List<TransactionModel> getRollupTransactions() {

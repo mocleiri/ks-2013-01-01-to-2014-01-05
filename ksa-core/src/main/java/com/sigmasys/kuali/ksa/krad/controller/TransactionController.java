@@ -91,9 +91,9 @@ public class TransactionController extends GenericSearchController {
 
 
         } else if ("ViewAlerts".equals(pageId)) {
-            form.setAlerts(informationService.getAlerts(userId));
+            form.setAlertObjects(informationService.getAlerts(userId));
         } else if ("ViewFlags".equals(pageId)) {
-            form.setFlags(informationService.getFlags(userId));
+            form.setFlagObjects(informationService.getFlags(userId));
         } else if ("ViewMemos".equals(pageId)) {
             form.setMemos(informationService.getMemos(userId));
         }
@@ -221,8 +221,8 @@ public class TransactionController extends GenericSearchController {
             return;
         }
 
-        form.setAlerts(informationService.getAlerts(userId));
-        form.setFlags(informationService.getFlags(userId));
+        form.setAlertObjects(informationService.getAlerts(userId));
+        form.setFlagObjects(informationService.getFlags(userId));
 
         Date startDate = form.getStartingDate();
         Date endDate = form.getEndingDate();
