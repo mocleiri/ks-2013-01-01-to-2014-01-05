@@ -9,7 +9,6 @@ import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.RefundService;
-import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -82,8 +82,8 @@ public class AccountRefundController extends DownloadController {
         form.setAllRefunds(new ArrayList<RefundModel>());
 
         // Set statistics:
-        form.setFlags(informationService.getFlags(userId));
-        form.setAlerts(informationService.getAlerts(userId));
+        form.setFlagObjects(informationService.getFlags(userId));
+        form.setAlertObjects(informationService.getAlerts(userId));
 
         return form;
     }
@@ -117,6 +117,32 @@ public class AccountRefundController extends DownloadController {
                                          @RequestParam("userId") String userId) throws Exception {
         // Refresh the view with the updated filtering criteria:
         findAllRefunds(form, userId);
+
+        return getUIFModelAndView(form);
+    }
+
+    /**
+     * TEST METHOD: Creates a bunch of test refunds. This method will be deleted when demo data includes
+     * test refunds.
+     *
+     * @param form      The form object.
+     * @param userId    ID of the user.
+     * @return          ModelAndView.
+     * @throws Exception
+     */
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=createTestRefunds")
+    public ModelAndView createTestRefunds(@ModelAttribute("KualiForm") AccountRefundForm form,
+                                          @RequestParam("userId") String userId) throws Exception {
+
+        // Creates test refunds in the database:
+        Transaction transaction = transactionService.createTransaction("cash", userId, new Date(), new BigDecimal(10e5));
+        Payment payment = (Payment) transaction;
+
+        payment.setRefundable(true);
+        payment.setRefundRule(String.format("A(9)(%s)", userId));
+
+        Refund refund = refundService.checkForRefund(payment.getId());
+
 
         return getUIFModelAndView(form);
     }

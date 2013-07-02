@@ -211,6 +211,12 @@
 	<bean id="accountRefundStatusSection" parent="Uif-VerticalBoxSection" p:headerText="Refund Status">
 		<property name="items">
 			<list>
+				<!-- TEST - REMOVE WHEN DEMO DATA ADDED -->
+				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Create Test Refunds" p:ajaxSubmit="true" 
+						p:methodToCall="createTestRefunds" p:onClickScript="writeHiddenToForm('userId', '@{account.id}');"
+						p:successCallback="alert('Test refunds were created successfully.');"
+						p:errorCallback="alert('There were errors creating test refunds. See log for details.');"/>
+			
 				<!-- No Refunds message -->
 				<bean parent="Uif-MessageField" p:messageText="No Refunds found with supplied filter criteria" p:render="@{allRefunds.size() == 0}"/>
 				
