@@ -4,17 +4,6 @@ Feature: Temporary feature file to test every rule statement with every associat
     Given I am logged in as admin
 
   @pending
-  Scenario: Single course rule
-    When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
-    And I want to add a new statement to the selected agenda section
-    And I add a new course statement with course "BSCI103"
-    Then the "edit" tab should have the text "Must not have successfully completed BSCI103"
-    When I switch to the other tab on the page
-    Then the "logic" tab should have the text "Must not have successfully completed BSCI103"
-    When I update the manage course offering agendas page
-    Then the agenda page should have the text "Must not have successfully completed BSCI103"
-
-  @pending
   Scenario: Number of courses rule with approved courses
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
     And I want to add a new statement to the selected agenda section
@@ -640,6 +629,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the agenda page should have the text "Must not have earned a maximum grade of A or higher in,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
 
   #KSENROLL-7596
+  @pending
   Scenario: Cumulative gpa rule
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
     And I want to add a new statement to the selected agenda section
@@ -649,3 +639,14 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must have earned a minimum cumulative GPA of 2.8"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have earned a minimum cumulative GPA of 2.8"
+
+  @pending
+  Scenario: Concurrently enrolled course rule
+    When I navigate to the agenda page for "Corequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new course statement with course "BSCI103"
+    Then the "edit" tab should have the text "Must be concurrently enrolled in BSCI103"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must be concurrently enrolled in BSCI103"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must be concurrently enrolled in BSCI103"
