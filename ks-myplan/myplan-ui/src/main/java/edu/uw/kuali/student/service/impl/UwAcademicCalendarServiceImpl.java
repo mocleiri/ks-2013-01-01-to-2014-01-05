@@ -17,8 +17,9 @@ import org.kuali.student.r2.common.dto.*;
 import org.kuali.student.r2.common.exceptions.*;
 
 import org.apache.log4j.Logger;
-import org.kuali.student.r2.core.state.dto.StateInfo;
-import org.kuali.student.r2.core.type.dto.TypeInfo;
+import org.kuali.student.r2.core.class1.state.dto.StateInfo;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
+
 
 import javax.jws.WebParam;
 import java.io.StringReader;

@@ -9,6 +9,7 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.dom4j.tree.DefaultText;
 import org.dom4j.xpath.DefaultXPath;
+import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.student.core.organization.dto.OrgInfo;
@@ -39,7 +40,6 @@ import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
-import org.restlet.Client;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Method;
@@ -78,6 +78,8 @@ import static org.kuali.student.myplan.audit.service.DegreeAuditConstants.*;
 public class DegreeAuditServiceImpl implements DegreeAuditService {
 
     private int TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+    private String postAuditRequestURL = ConfigContext.getCurrentContextConfig().getProperty(DEGREE_AUDIT_SERVICE_URL);
 
 
 //    public static void main(String[] args)
@@ -207,24 +209,30 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
         }
     }
 
-    static public class DegreeAuditCourseRequest {
+    static public class DegreeAuditCourseRequest implements Cloneable {
         String curric;
         String credit;
         String campus;
         String number;
         String quarter;
         String year;
+        String activity;
 
         public String toString() {
             return
                     "<Course>\n" +
                             "<CurriculumAbbreviation>" + curric.replace("&", "&amp;") + "</CurriculumAbbreviation>\n" +
-                            "<MinimumTermCredit>" + credit.replace("&", "&amp;") + "</MinimumTermCredit>\n" +
+                            "<MinimumTermCredit>" + credit + "</MinimumTermCredit>\n" +
                             "<CourseCampus>" + campus.replace("&", "&amp;") + "</CourseCampus>\n" +
                             "<CourseNumber>" + number.replace("&", "&amp;") + "</CourseNumber>\n" +
                             "<Quarter>" + quarter.replace("&", "&amp;") + "</Quarter>\n" +
+                            "<SectionID>" + activity + "</SectionID>\n" +
                             "<Year>" + year.replace("&", "&amp;") + "</Year>\n" +
                             "</Course>\n";
+        }
+
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone();
         }
     }
 
@@ -282,6 +290,7 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
                     String bucketType = BUCKET_IGNORE;
                     String credit = "0";
                     String section = null;
+                    String secondaryActivity = null;
                     for (AttributeInfo attrib : planItem.getAttributes()) {
                         String key = attrib.getKey();
                         String value = attrib.getValue();
@@ -291,6 +300,8 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
                             credit = value;
                         } else if (SECTION.equals(key)) {
                             section = value;
+                        } else if (SECONDARY_ACTIVITY.equals(key)) {
+                            secondaryActivity = value;
                         }
                     }
 
@@ -305,6 +316,7 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
                         course.curric = courseInfo.getSubjectArea().trim();
                         course.number = courseInfo.getCourseNumberSuffix().trim();
                         course.credit = credit;
+                        course.activity = section;
                         {
                             course.campus = "Seattle";
                             List<OrgInfo> campusList = OrgHelper.getOrgInfo(CourseSearchConstants.CAMPUS_LOCATION_ORG_TYPE, CourseSearchConstants.ORG_QUERY_SEARCH_BY_TYPE_REQUEST, CourseSearchConstants.ORG_TYPE_PARAM);
@@ -326,6 +338,16 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
                         course.quarter = yt.getTermAsID();
                         course.year = yt.getYearAsString();
                         req.courses.add(course);
+
+                        //Adding new course request if a secondary activity exists
+                        //NOTE: secondary activity courses should no pass credit
+                        if (secondaryActivity != null) {
+                            DegreeAuditCourseRequest secondaryActivityCourse = (DegreeAuditCourseRequest) course.clone();
+                            secondaryActivityCourse.credit = "0";
+                            secondaryActivityCourse.activity = secondaryActivity;
+                            req.courses.add(secondaryActivityCourse);
+                        }
+
                         totalCredits = totalCredits + Integer.parseInt(course.credit);
                     } catch (Exception e) {
                         logger.warn("whatever", e);
@@ -374,8 +396,6 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
         try {
 
             String payload = req.toString();
-
-            String postAuditRequestURL = getStudentServiceClient().getBaseUrl() + "/v5/degreeaudit.xml";
             logger.debug("REST HTTP POST");
             logger.debug(postAuditRequestURL);
             logger.debug(payload);
@@ -816,10 +836,10 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
         DprogHibernateDao dao = (DprogHibernateDao) getDprogDao();
         List<AuditProgramInfo> auditProgramInfoList = new ArrayList<AuditProgramInfo>();
         String hql = "SELECT DISTINCT dp.comp_id.dprog, dp.webtitle from Dprog dp WHERE (dp.comp_id.dprog LIKE '0%' or dp.comp_id.dprog LIKE '1%' or dp.comp_id.dprog LIKE '2%') AND dp.lyt>=? AND dp.webtitle IS NOT NULL AND dp.webtitle<>'' AND dp.dpstatus='W'";
-        String[] currentTermAndYear = this.getCurrentYearAndTerm();
-        int year = Integer.parseInt(currentTermAndYear[1]) - 10;
+        YearTerm currentTermAndYear = AtpHelper.getCurrentYearTerm();
+        int year = currentTermAndYear.getYear() - 10;
         StringBuffer termYear = new StringBuffer();
-        termYear = termYear.append(year).append(currentTermAndYear[0]);
+        termYear = termYear.append(year).append(currentTermAndYear.getTerm());
 //        YearTerm yt = AtpHelper.getCurrentYearTerm();
 //        yt = new AtpHelper.YearTerm( yt.getYear() - 10, yt.getTerm() );
 //        String whoof = yt.toUAchieveValue();
@@ -866,13 +886,6 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
             // Ignores audit status "X"
         }
         return auditStatus;
-    }
-
-    /*Implemented to get the current year and the term value from the academic calender service.*/
-    private String[] getCurrentYearAndTerm() {
-        String currentAtp = AtpHelper.getCurrentAtpId();
-        String[] termYear = AtpHelper.atpIdToTermAndYear(currentAtp);
-        return new String[]{termYear[0].trim(), termYear[1].trim()};
     }
 
     public StudentServiceClient getStudentServiceClient() {

@@ -387,6 +387,10 @@ ${headerLine?xml}
         <#assign sectionHeadingOpen = true>
 
     <#else> <#-- REQUIREMENT -->
+        <#if inSection>
+        </div> <#-- close section -->
+            <#assign inSection = false>
+        </#if>
 
         <#if sectionHeadingOpen = true>
         </div>
@@ -559,7 +563,16 @@ ${headerLine?xml}
             <#assign showHeader = showSubreqStatusX || subreq.required || subreq.showSubreqNumber || subreq.showTitle || showExcLines >
             <#assign showTotals = subreq.showGotSummary || subreq.showInProgressHours || subreq.showPlannedHours || subreq.showNeedsSummary >
 
-            <#if showHeader || showTotals || subreq.showSelectNotFrom >
+            <!--
+
+             showTakenCourses: ${subreq.showTakenCourses?string?xml}
+             showTotals: ${showTotals?string?xml}
+             showHeader: ${showHeader?string?xml}
+             showSelectNotFrom: ${subreq.showSelectNotFrom?string?xml}
+
+            -->
+
+            <#if showHeader || showTotals || subreq.showSelectNotFrom || subreq.showTakenCourses >
             <div class="subrequirement ${justTitle}">
                 <div class="header">
                     <#if showSubreqStatus >
