@@ -221,10 +221,14 @@ class ManageCORequisitesData
     end
   end
 
-  def create_less_credits_rule( group, node, number, course, set, range)
+  def create_less_credits_rule( group, node, number, course, set, range, equal)
     add_new_node( group, node)
     on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must successfully complete no more than <n> credits from <courses>/
+      if equal == ">"
+        page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> credits from <courses>/
+      elsif equal == "<"
+        page.rule_dropdown.when_present.select /Must successfully complete no more than <n> credits from <courses>/
+      end
       page.integer_field.when_present.set number
       add_courses( course, set, range)
       page.preview_btn

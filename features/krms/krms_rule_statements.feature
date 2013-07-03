@@ -690,4 +690,26 @@ Feature: Temporary feature file to test every rule statement with every associat
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must be concurrently enrolled in all courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
 
+  #KSENROLL-7589 EB1
+  @pending
+  Scenario: Minimum number of credits rule with approved courses
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new minimum credits statement with number "4" and courses "BSCI103,BSCI202"
+    Then the "edit" tab should have the text "Must have successfully completed a minimum of 4 credits from (BSCI103, BSCI202)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have successfully completed a minimum of 4 credits from,BSCI103,BSCI202"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have successfully completed a minimum of 4 credits from,BSCI103,BSCI202"
 
+#KSENROLL-7588 EB2
+  @pending
+  Scenario: Minimum number of credits rule with course sets
+    When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new minimum credits statement with number "16" and course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing"
+    Then the "edit" tab should have the text "Must have successfully completed a minimum of 16 credits from (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must have successfully completed a minimum of 16 credits from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must have successfully completed a minimum of 16 credits from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"

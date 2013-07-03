@@ -188,11 +188,19 @@ When /^I add a new no more than number of courses statement with number "(\d+)" 
 end
 
 When /^I add a new no more than credits statement with number "(\d+)" and courses "([^\"]+)"$/ do |number, course|
-  @manageCOR.create_less_credits_rule( "add", "", number, course, "", "")
+  @manageCOR.create_less_credits_rule( "add", "", number, course, "", "", "<")
 end
 
 When /^I add a new no more than credits statement with number "(\d+)" and course sets "([^\"]+)"$/ do |number, set|
-  @manageCOR.create_less_credits_rule( "add", "", number, "", set, "")
+  @manageCOR.create_less_credits_rule( "add", "", number, "", set, "", "<")
+end
+
+When /^I add a new minimum credits statement with number "(\d+)" and courses "([^\"]+)"$/ do |number, course|
+  @manageCOR.create_less_credits_rule( "add", "", number, course, "", "", ">")
+end
+
+When /^I add a new minimum credits statement with number "(\d+)" and course sets "([^\"]+)"$/ do |number, set|
+  @manageCOR.create_less_credits_rule( "add", "", number, "", set, "", ">")
 end
 
 When /^I add a new any credits statement with courses "([^\"]+)"$/ do |course|
