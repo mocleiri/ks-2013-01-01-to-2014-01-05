@@ -346,7 +346,7 @@ class ManageCourseOfferings < BasePage
 
   def get_cluster_error_msgs(private_name = :default_cluster)
     msg_list = []
-    target_cluster(private_name).ul(class: "uif-validationMessagesList").lis(class:  "uif-errorMessageItem").each do |li|
+    frm.ul(class: "uif-validationMessagesList").lis(class:  "uif-errorMessageItem").each do |li|
       msg_list <<  li.text()
     end
     msg_list.to_s
