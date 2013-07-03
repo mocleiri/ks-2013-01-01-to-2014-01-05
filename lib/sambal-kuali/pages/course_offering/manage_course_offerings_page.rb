@@ -195,6 +195,7 @@ class ManageCourseOfferings < BasePage
     for code in code_list
         target_row(code, cluster_private_name).checkbox.clear
     end
+    sleep 2 #avoid modal dialog for dirty form
   end
 
   def select_ao(code, cluster_private_name = :default_cluster)
