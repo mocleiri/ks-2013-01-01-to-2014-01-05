@@ -5,7 +5,7 @@ class CreateHolidayCalendar < HolidayBase
   wrapper_elements
   frame_element
 
-  #expected_element :calendar_name
+  expected_element :start_date
 
   element(:calendar_name) { |b| b.frm.div(data_label: "Holiday Calendar Name").text_field }
   element(:start_date) { |b| b.frm.div(data_label: "Start Date").text_field }
