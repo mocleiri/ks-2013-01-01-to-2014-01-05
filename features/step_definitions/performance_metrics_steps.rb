@@ -227,7 +227,7 @@ When /^I search for a course by course code$/ do
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set "201301"
-    page.input_code.set "ENGL313"
+    page.input_code.set "ENGL101A"
     @performance_test.start
     page.perf_show
     @performance_test.end
