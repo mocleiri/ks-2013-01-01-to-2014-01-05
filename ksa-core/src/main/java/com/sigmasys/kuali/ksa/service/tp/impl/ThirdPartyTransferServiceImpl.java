@@ -616,7 +616,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         StringBuilder queryBuilder = new StringBuilder("select p.id from ThirdPartyPlan p, ThirdPartyPlanMember m " +
                 " where p.id = m.plan.id and " +
                 " m.directChargeAccount.id = :accountId and " +
-                " :date >= to_date(p.openPeriodStartDate) and :date >= to_date(p.openPeriodEndDate)");
+                " :date >= to_date(p.openPeriodStartDate) and :date <= to_date(p.openPeriodEndDate)");
 
         if (!ignoreExecuted) {
             queryBuilder.append(" and m.executed = false ");
