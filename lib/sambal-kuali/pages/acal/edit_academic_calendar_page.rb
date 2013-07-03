@@ -28,7 +28,10 @@ class EditAcademicCalendar < BasePage
   element(:event_end_ampm) { |b| b.frm.select(name: "newCollectionLines['events'].endTimeAmPm") }
   element(:all_day) { |b| b.frm.checkbox(name: "newCollectionLines['events'].allDay") }
   element(:date_range) { |b| b.frm.checkbox(name: "newCollectionLines['events'].dateRange") }
-  element(:add_event) { |b| b.frm.button(id: "u177_add") } # Persistent ID needed! Note that there can be multiple Adds on the page. Element identifiers for all need to be helpful
+  element(:add_event) { |b| b.frm.button(id: "acal-info-event_add") }
+  element(:delete_event_0) { |b| b.frm.button(id: "acal-info-event_del_line0") } # Note that there can be multiple Deletes on the page (= to however many events have already been added)
+  element(:delete_event_1) { |b| b.frm.button(id: "acal-info-event_del_line1") }
+  element(:delete_event_2) { |b| b.frm.button(id: "acal-info-event_del_line2") }
 
   element(:make_official_link) { |b| b.frm.link(id: "acal_Official") }
   action(:make_official) { |b| b.make_official_link.click; b.loading.wait_while_present }
@@ -37,7 +40,7 @@ class EditAcademicCalendar < BasePage
   element(:sticky_footer_div) { |b| b.frm.div(class: "uif-footer uif-stickyFooter uif-stickyButtonFooter") } # Persistent ID needed!
 
   action(:save) { |b| b.sticky_footer_div.button(text: "Save").click; b.loading.wait_while_present } # Persistent ID needed!
-  action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete Draft").click; b.loading.wait_while_present } # Persistent ID needed!
+  action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete Calendar Draft").click; b.loading.wait_while_present } # Persistent ID needed!
   action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click }
 
   ###### confirm make official dialog
