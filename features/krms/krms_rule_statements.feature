@@ -726,3 +726,27 @@ Feature: Temporary feature file to test every rule statement with every associat
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must not have successfully completed BSCI103"
 
+  #KSENROLL-7585 EB1
+  @pending
+  Scenario: Any courses rule with approved courses
+    When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new courses statement with courses "BSCI103,BSCI202"
+    Then the "edit" tab should have the text "Must not have successfully completed any courses from (BSCI103, BSCI202)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must not have successfully completed any courses from,BSCI103,BSCI202"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must not have successfully completed any courses from,BSCI103,BSCI202"
+
+  #KSENROLL-7585 EB2
+  @pending
+  Scenario: Any courses rule with course sets
+    When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new courses statement with course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing"
+    Then the "edit" tab should have the text "Must not have successfully completed any courses from (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must not have successfully completed any courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must not have successfully completed any courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+
