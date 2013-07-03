@@ -219,7 +219,7 @@ class AcademicTerm
     on(CalendarSearch).edit @term_name
     on(EditAcademicTerms).open_term_section(@term_type)
 
-    if options[:start_date] != nil
+    if opts[:start_date] != nil
       on EditAcademicTerms  do |page|
         page.edit_key_date_start_date(edit_row,options[:start_date])
       end
@@ -227,7 +227,7 @@ class AcademicTerm
 
     on(EditAcademicTerms).save
 
-    set_options(options)
+    set_options(opts)
   end
 
 
