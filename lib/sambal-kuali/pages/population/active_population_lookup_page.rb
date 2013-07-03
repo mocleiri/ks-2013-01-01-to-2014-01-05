@@ -17,6 +17,11 @@ class ActivePopulationLookup < PopulationsBase
 
   def change_results_page(page_number)
     results_table.wait_until_present
-   paginate_links_span.link(text: "#{page_number}").click
+    #paginate_links_span.link(text: "#{page_number}").click -- links to individual pages are gone
+    i = 0
+    while i > page_number.to_i do
+      paginate_links_span.link(text: "Next").click
+      i += 1
+    end
   end
 end
