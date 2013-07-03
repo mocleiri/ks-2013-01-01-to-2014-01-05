@@ -26,6 +26,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must be admitted to any program offered at the course campus location"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must be admitted to any program offered at the course campus location"
+    When I commit changes made to the proposition
 
   #KSENROLL-7607
   @pending
@@ -86,6 +87,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must have successfully completed ENGL101 as of Fall 2011"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have successfully completed ENGL101 as of Fall 2011"
+    When I commit changes made to the proposition
 
   #KSENROLL-7611 EB1
   @pending
@@ -110,6 +112,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must have successfully completed ENGL244 prior to Fall 2011"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have successfully completed ENGL244 prior to Fall 2011"
+    When I commit changes made to the proposition
 
   #KSENROLL-7612 EB1
   @pending
@@ -134,6 +137,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must have successfully completed ENGL101 between Summer I 2011 and Spring 2012"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have successfully completed ENGL101 between Summer I 2011 and Spring 2012"
+    When I commit changes made to the proposition
 
   #KSENROLL-7613 EB1
   @pending
@@ -158,6 +162,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must not have been admitted to the Women's Studies Program with a class standing of Freshman"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must not have been admitted to the Women's Studies Program with a class standing of Freshman"
+    When I commit changes made to the proposition
 
   #KSENROLL-7583 EB1
   @bug @KSENROLL-7811
@@ -187,13 +192,14 @@ Feature: Temporary feature file to test every rule statement with every associat
   @bug @KSENROLL-7811
   Scenario: No more number of courses rule with approved courses - non-UMD
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201208" and course "ENGL201"
-    And I want to add a new statement to the selected agenda section
-    And I add a new no more than number of courses statement with number "2" and courses "ENGL205,ENGL206,ENGL305"
+    And I want to edit the selected agenda section
+    And I add a no more than number of courses statement after node "A" with number "2" and courses "ENGL205,ENGL206,ENGL305"
     Then the "edit" tab should have the text "Must have successfully completed no more than 2 courses from (ENGL205, ENGL305, ENGL206)"
     When I switch to the other tab on the page
     Then the "logic" tab should have the text "Must have successfully completed no more than 2 courses from,ENGL205,ENGL305,ENGL206"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have successfully completed no more than 2 courses from,ENGL205,ENGL305,ENGL206"
+    When I commit changes made to the proposition
 
 #Add a scenario for number of courses rule with course ranges
   ##############################################
@@ -232,8 +238,9 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Student must be in a class standing of Senior"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Student must be in a class standing of Senior"
+    When I commit changes made to the proposition
 
-  #KSENROLL-7615 EB3
+#KSENROLL-7615 EB3
   @pending
   Scenario: Class standing rule - Antirequisite - non-UMD
     When I navigate to the agenda page for "Antirequisite" for term "201208" and course "ENGL409L"
@@ -244,6 +251,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must not be in a class standing of Freshman"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must not be in a class standing of Freshman"
+    When I commit changes made to the proposition
 
 #KSENROLL-7616
   @pending
@@ -280,6 +288,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Student must be in a class standing of Junior or less"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Student must be in a class standing of Junior or less"
+    When I commit changes made to the proposition
 
 #KSENROLL-7618
   @pending
@@ -340,8 +349,9 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must successfully complete no more than 2 credits from,PHYS112,PHYS141,PHYS171"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must successfully complete no more than 2 credits from,PHYS112,PHYS141,PHYS171"
+    When I commit changes made to the proposition
 
-  #KSENROLL-7590 EB1
+#KSENROLL-7590 EB1
   @pending
   Scenario: Any credits rule with approved courses
     When I navigate to the agenda page for "Antirequisite" for term "201301" and course "BSCI361"
@@ -376,8 +386,9 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must not have successfully completed any credits from,ENGL313,ENGL373,ENGL440,ENGL611"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must not have successfully completed any credits from,ENGL313,ENGL373,ENGL440,ENGL611"
+    When I commit changes made to the proposition
 
-  #KSENROLL-7602
+#KSENROLL-7602
   @pending
   Scenario: Repeated for credits rule
     When I navigate to the agenda page for "Repeatable for Credit" for term "201301" and course "BSCI361"
@@ -402,7 +413,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the agenda page should have the text "Must have successfully completed a minimum of 4 credits from courses in the UGST-Dean-Beyond the Classroom"
 
   #KSENROLL-7604 EB2
-  @pending
+  @bug @KSENROLL-7881
   Scenario: Minimum credits and org rule - non-UMD
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201208" and course "PHYS604"
     And I want to edit the selected agenda section
@@ -412,6 +423,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must have successfully completed a minimum of 5 credits from courses in the CMNS-Applied Mathematics"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have successfully completed a minimum of 5 credits from courses in the CMNS-Applied Mathematics"
+    When I commit changes made to the proposition
 
   #KSENROLL-7597 EB1
   @pending
@@ -436,6 +448,7 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must have earned a minimum Cumulative GPA of 3.0 in 2 terms"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have earned a minimum Cumulative GPA of 3.0 in 2 terms"
+    When I commit changes made to the proposition
 
   #KSENROLL-7595 EB1
   @pending
@@ -472,8 +485,9 @@ Feature: Temporary feature file to test every rule statement with every associat
     Then the "logic" tab should have the text "Must have earned a minimum GPA of 2.5 in,WMST300,WMST336"
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must have earned a minimum GPA of 2.5 in,WMST300,WMST336"
+    When I commit changes made to the proposition
 
-  #KSENROLL-7527
+#KSENROLL-7527
   @pending
   Scenario: Single course rule - Student Eligibility & Prerequisite
     When I navigate to the agenda page for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI361"
@@ -652,5 +666,28 @@ Feature: Temporary feature file to test every rule statement with every associat
     When I update the manage course offering agendas page
     Then the agenda page should have the text "Must be concurrently enrolled in a minimum of 2 courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
 
-#Add a scenario for number of courses rule with course ranges
+  #KSENROLL-7591 EB1
+  @pending
+  Scenario: Concurrently enrolled all courses rule with approved courses
+    When I navigate to the agenda page for "Corequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new courses statement with courses "BSCI103,BSCI202"
+    Then the "edit" tab should have the text "Must be concurrently enrolled in all courses from (BSCI103, BSCI202)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must be concurrently enrolled in all courses from,BSCI103,BSCI202"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must be concurrently enrolled in all courses from,BSCI103,BSCI202"
+
+  #KSENROLL-7591 EB2
+  @pending
+  Scenario: Concurrently enrolled all courses rule with course sets
+    When I navigate to the agenda page for "Corequisite" for term "201301" and course "BSCI361"
+    And I want to add a new statement to the selected agenda section
+    And I add a new courses statement with course sets "CORE: Life Science Lab-Linked Courses (LL),General Education: Fundamental Studies-Professional Writing"
+    Then the "edit" tab should have the text "Must be concurrently enrolled in all courses from (BSCI124, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    When I switch to the other tab on the page
+    Then the "logic" tab should have the text "Must be concurrently enrolled in all courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+    When I update the manage course offering agendas page
+    Then the agenda page should have the text "Must be concurrently enrolled in all courses from,BSCI124,ENGL381,ENGL390,ENGL391,ENGL392,ENGL393,ENGL394,ENGL395"
+
 

@@ -76,7 +76,7 @@ class ManageCORequisitesData
       end
       page.lookup_search_button
       page.loading.wait_while_present
-      page.lookup_results.a(:title => /.*#{Regexp.escape(code)}.*/i).click
+      page.lookup_results.a(:title => /.*#{Regexp.escape(code)}.*/i).when_present.click
     end
   end
 

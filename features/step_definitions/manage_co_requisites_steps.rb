@@ -143,6 +143,10 @@ When /^I add a course and prior to term statement after node "(.)" with course "
   @manageCOR.create_course_term_rule( "add", node, course, term, "prior to")
 end
 
+When /^I add a no more than number of courses statement after node "(.)" with number "(\d+)" and courses "([^\"]+)"$/ do |node, number, course|
+  @manageCOR.create_less_number_courses_rule( "add", node, number, course, "", "", @courseOR.section)
+end
+
 When /^I add a new course statement with course "([^\"]+)"$/ do |course|
   @manageCOR.create_course_rule( "add", "", course, @courseOR.section)
 end
