@@ -1,6 +1,6 @@
 class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
-  expected_title /Kuali :: Edit Activity Offering/
+  #expected_title /Kuali :: Edit Activity Offering/
 
   expected_element :mainpage_section
 
