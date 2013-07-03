@@ -2,10 +2,7 @@ package com.sigmasys.kuali.ksa.service;
 
 
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyChargeStatus;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
+import com.sigmasys.kuali.ksa.model.tp.*;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import org.junit.Before;
 import org.junit.Test;
@@ -289,6 +286,34 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
         Assert.notNull(transfer.getChargeStatus());
 
         Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.REVERSED);
+
+    }
+
+
+    @Test
+    public void createThirdPartyAllowableCharge() throws Exception {
+
+        ThirdPartyPlan plan = _createThirdPartyPlan();
+
+        ThirdPartyAllowableCharge allowableCharge =
+                thirdPartyTransferService.createThirdPartyAllowableCharge(
+                        plan.getId(),
+                        ".*",
+                        new BigDecimal(390.01),
+                        new BigDecimal(55.5),
+                        11,
+                        ChargeDistributionPlan.DIVIDED);
+
+
+        Assert.notNull(allowableCharge);
+        Assert.notNull(allowableCharge.getId());
+        Assert.notNull(allowableCharge.getDistributionPlan());
+
+        Assert.isTrue(allowableCharge.getDistributionPlan() == ChargeDistributionPlan.DIVIDED);
+        Assert.isTrue(".*".equals(allowableCharge.getTransactionTypeMask()));
+        Assert.isTrue(allowableCharge.getPriority() == 11);
+        Assert.isTrue(new BigDecimal(390.01).compareTo(allowableCharge.getMaxAmount()) == 0);
+        Assert.isTrue(new BigDecimal(55.5).compareTo(allowableCharge.getMaxPercentage()) == 0);
 
     }
 

@@ -193,6 +193,68 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
 
     /**
+     * Creates and persists a new ThirdPartyAllowableCharge instance for the given parameters.
+     *
+     * @param thirdPartyPlanId    ThirdPartyPlan ID
+     * @param transactionTypeMask Transaction Type Mask
+     * @param maxAmount           Maximum amount
+     * @param maxPercentage       Maximum percentage
+     * @param priority            Priority
+     * @param distributionPlan    Charge Distribution Plan
+     * @return ThirdPartyAllowableCharge instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public ThirdPartyAllowableCharge createThirdPartyAllowableCharge(Long thirdPartyPlanId,
+                                                                     String transactionTypeMask,
+                                                                     BigDecimal maxAmount,
+                                                                     BigDecimal maxPercentage,
+                                                                     int priority,
+                                                                     ChargeDistributionPlan distributionPlan) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_THIRD_PARTY_ALLOWABLE_CHARGE);
+
+        ThirdPartyPlan thirdPartyPlan = getThirdPartyPlan(thirdPartyPlanId);
+        if (thirdPartyPlan == null) {
+            String errMsg = "ThirdPartyPlan does not exist with ID = " + thirdPartyPlanId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (StringUtils.isBlank(transactionTypeMask)) {
+            String errMsg = "Transaction type mask cannot be empty";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (maxPercentage == null) {
+            String errMsg = "Maximum percentage cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (distributionPlan == null) {
+            String errMsg = "Charge distribution plan is required";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        ThirdPartyAllowableCharge allowableCharge = new ThirdPartyAllowableCharge();
+
+        allowableCharge.setPlan(thirdPartyPlan);
+        allowableCharge.setTransactionTypeMask(transactionTypeMask);
+        allowableCharge.setMaxAmount(maxAmount);
+        allowableCharge.setMaxPercentage(maxPercentage);
+        allowableCharge.setPriority(priority);
+        allowableCharge.setDistributionPlan(distributionPlan);
+
+        persistEntity(allowableCharge);
+
+        return allowableCharge;
+    }
+
+
+    /**
      * Retrieves ThirdPartyPlan instance by ID from the persistence store.
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID

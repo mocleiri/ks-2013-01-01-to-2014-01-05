@@ -2,10 +2,7 @@ package com.sigmasys.kuali.ksa.service.tp;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
+import com.sigmasys.kuali.ksa.model.tp.*;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -71,6 +68,25 @@ public interface ThirdPartyTransferService {
      * @return ThirdPartyPlanMember instance
      */
     ThirdPartyPlanMember createThirdPartyPlanMember(String accountId, Long thirdPartyPlanId, int priority);
+
+
+    /**
+     * Creates and persists a new ThirdPartyAllowableCharge instance for the given parameters.
+     *
+     * @param thirdPartyPlanId    ThirdPartyPlan ID
+     * @param transactionTypeMask Transaction Type Mask
+     * @param maxAmount           Maximum amount
+     * @param maxPercentage       Maximum percentage
+     * @param priority            Priority
+     * @param distributionPlan    Charge Distribution Plan
+     * @return ThirdPartyAllowableCharge instance
+     */
+    ThirdPartyAllowableCharge createThirdPartyAllowableCharge(Long thirdPartyPlanId,
+                                                              String transactionTypeMask,
+                                                              BigDecimal maxAmount,
+                                                              BigDecimal maxPercentage,
+                                                              int priority,
+                                                              ChargeDistributionPlan distributionPlan);
 
     /**
      * Retrieves ThirdPartyPlan instance by ID from the persistent store.
