@@ -33,6 +33,7 @@ Feature: EC.Authorize Milestones Feature
     And I do not have access to copy the listed course offering
     And I do not have access to edit the listed course offering
     Given It is "Before" the first day of classes and "Before" the first day to add classes
+    And I am logged in as a Department Schedule Coordinator
     Then I manage course offerings for a subject code in my admin org
     And I have access to manage course offerings
     And I do not have access to copy the listed course offering
@@ -44,6 +45,7 @@ Feature: EC.Authorize Milestones Feature
     Then I attempt to create a course offering for a subject in my admin org
     And I do not have access to create the course offering
     Given It is "Before" the first day of classes and "Before" the first day to add classes
+    And I am logged in as a Department Schedule Coordinator
     Then I attempt to create a course offering for a subject in my admin org
     And I do not have access to create the course offering
 
@@ -55,6 +57,7 @@ Feature: EC.Authorize Milestones Feature
     And I do not have access to copy an activity offering
     And I have access to edit an activity offering
     Given It is "Before" the first day of classes and "Before" the first day to add classes
+    And I am logged in as a Department Schedule Coordinator
     Then I manage a course offering in my admin org
     And I have access to view the activity offering details
     And I do not have access to copy an activity offering
@@ -66,9 +69,11 @@ Feature: EC.Authorize Milestones Feature
     Then I attempt to perform a rollover
     Then I do not have access to the page
     Given It is "Before" the first day of classes and "Before" the first day to add classes
+    And I am logged in as a Department Schedule Coordinator
     Then I attempt to perform a rollover
     Then I do not have access to the page
     Given It is "Before" the first day of classes and "After" the first day to add classes
+    And I am logged in as a Department Schedule Coordinator
     Then I attempt to perform a rollover
     Then I do not have access to the page
 
