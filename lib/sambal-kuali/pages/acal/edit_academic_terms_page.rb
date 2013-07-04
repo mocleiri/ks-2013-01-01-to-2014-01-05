@@ -28,15 +28,24 @@ class EditAcademicTerms < BasePage
     end
   end
 
-  #def open_keydates_section(term_type)
-  #  open_term_section(term_type)
-  #  term_index = term_index_by_term_type(term_type)
-  #  puts "term_index #{term_index}"
-  #  link = acal_term_list_div.link(id: "acal-term-keydatesgroup_line#{term_index}_toggle")
-  #  if link.image.attribute_value("alt") == "collapse" then #/expand
-  #    link.click
-  #  end
-  #end
+  def delete_term(term_type)
+    term_index = term_index_by_term_type(term_type)
+    acal_term_list_div.div(id: "u1017_line#{term_index}").link(text: /Delete Term/).click
+    loading.wait_while_present
+  end
+
+  def make_term_official(term_type)
+    term_index = term_index_by_term_type(term_type)
+    acal_term_list_div.link(id: "term_official_line#{term_index}").click
+    loading.wait_while_present
+    make_offical_confirm
+  end
+
+  ###### confirm make official dialog
+  element(:make_official_dialog_div) { |b| b.frm.div(id: "KS-AcademicCalendar-ConfirmTermOfficial-Dialog") }
+  action(:make_offical_confirm) { |b| b.make_official_dialog_div.radio(index: 0).click; b.loading.wait_while_present }
+  action(:make_offical_cancel) { |b| b.make_official_dialog_div.radio(index: 1).click ; b.loading.wait_while_present}
+  ########
 
   def key_date_group_list_parent(term_type)
     term_index = term_index_by_term_type(term_type)
@@ -169,13 +178,11 @@ class EditAcademicTerms < BasePage
   action(:get_term_start_date) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].startDate").value }
   action(:get_term_end_date) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].endDate").value }
 
-  action(:term_make_official_button) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").text}
-  action(:term_make_official_enabled) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").enabled?}
-  action(:make_term_official) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").click; b.loading.wait_while_present(300)}
+  #action(:term_make_official_button) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").text}
+  #action(:term_make_official_enabled) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").enabled?}
+  #action(:make_term_official) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").click; b.loading.wait_while_present(300)}
 
   action(:key_date_exist) { |term_index, key_date_group_index, key_date_index, b| b.frm.div(id: "key_date_type_line#{term_index}_line#{key_date_group_index}_line#{key_date_index}").span(index: 0).exists?}
-
-  action(:delete_term) { |term_index,b| b.frm.a(id: "term_delete_button_line#{term_index}").click; b.loading.wait_while_present}
 
   action(:get_key_date_group_index) { |group_name, b| b.frm.div(text:"#{group_name}").span(index:0).id}
 

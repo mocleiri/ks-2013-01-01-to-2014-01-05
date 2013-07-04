@@ -3,6 +3,12 @@ When /^I create an Academic Calendar$/ do
   @calendar.create
 end
 
+When /^I create an Academic Calendar in Official status$/ do
+  @calendar = make AcademicCalendar
+  @calendar.create
+  @calendar.make_official
+end
+
 Then /^the Make Official button should become active$/ do
   on EditAcademicCalendar do |page|
     page.make_official_link.present?.should == true # TODO: Figure out why ".should_be enabled" does not work.
@@ -150,10 +156,7 @@ And /^Make Official button for the term is enabled$/ do
 end
 
 And /^I make the term official$/ do
-  on EditAcademicTerms do |page|
-    page.go_to_term_tab
-    page.make_term_official(0)
-  end
+  @term.make_official
 end
 
 Then /^the term should be set to Official on edit$/ do
@@ -354,7 +357,6 @@ Given /^I copy an existing Academic Calendar$/ do
 end
 
 When /^I edit the information for a term$/ do
-  puts @calendar.name
 #  @calendar.edit
   @term.edit :term_name => "CE Term1",
              :start_date => (Date.strptime( @term.start_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"), #add 2 days
@@ -382,3 +384,23 @@ When /^I add events to the Academic Calendar$/ do
     page.add_event.click
   end
 end
+
+When /^I delete the term$/ do
+  @calendar.delete_term(@term)
+end
+
+When /^the term is not listed when I view the Academic Calendar$/ do
+  @calendar.view
+  on ViewAcademicTerms do |page|
+    page.term_index_by_term_type(@term.term_type).should == -1 #means not present
+  end
+end
+
+Then /^the term is listed in official status when I view the Academic Calendar$/ do
+  @calendar.view
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.term_status(@term.term_type).should == "OFFICIAL"
+  end
+end
+

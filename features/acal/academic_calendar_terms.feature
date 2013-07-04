@@ -23,13 +23,13 @@ Feature: EC.Academic Calendar Terms
 
   Scenario: Successfully delete a term from a new academic calendar
     Given I create an Academic Calendar
-    And I have added a new term to the Academic Calendar
+    And I add a new term to the Academic Calendar
     When I delete the term
     Then the term is not listed when I view the Academic Calendar
 
   Scenario: Make an academic term official
     Given I create an Academic Calendar in Official status
-    And I have added a new term to the Academic Calendar
+    And I add a new term to the Academic Calendar
     When I make the term official
     Then the term is listed in official status when I view the Academic Calendar
 

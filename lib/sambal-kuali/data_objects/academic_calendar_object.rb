@@ -133,9 +133,25 @@ class AcademicCalendar
 
   end
 
+  def view
+    search
+    on(CalendarSearch).view @name
+  end
+
   def add_term(term_object)
     term_object.create
     @terms << term_object
+  end
+
+  def delete_term(term_object)
+    edit
+    on EditAcademicTerms do |page|
+      page.go_to_term_tab
+      page.delete_term(term_object.term_type)
+    end
+    puts @terms.length
+    @terms.delete(term_object)
+    puts @terms.length
   end
 
   #there are existing calendars up to 2023, so most of the term codes are used
@@ -247,6 +263,18 @@ class AcademicTerm
       page.search_for "Academic Term", @term_name
     end
   end
+
+  def make_official
+    on EditAcademicTerms do |page|
+      page.go_to_term_tab
+      page.make_term_official(@term_type)
+    end
+  end
+
+  #def delete
+  #  search
+  #
+  #end
 end
 
 class KeyDateGroup

@@ -8,6 +8,7 @@ class BasePage < PageFactory
       action(:logout) { |b| b.logout_el.click }
       element(:administration_el) { |b| b.link(title: "Administration") }
 
+      action(:enrollment_via_breadcrumb) { |b| b.link(id: "KS-HomewardPathBreadcrumbs-Enrollment").click }
       action(:home) { |b| b.link(text: "Home").click }
       action(:main_menu) { |p| p.main_menu_el.click }
       action(:provide_feedback) { |b| b.link(title: "Provide Feedback").click }

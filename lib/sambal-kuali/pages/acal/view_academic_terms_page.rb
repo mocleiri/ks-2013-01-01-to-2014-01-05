@@ -20,7 +20,12 @@ class ViewAcademicTerms < BasePage
   private :terms_div_list
 
   def term_index_by_term_type(term_type)
-    acal_term_list_div.link(text: /^#{term_type}$/).id[/\d+(?=_toggle)/]
+    begin
+      acal_term_list_div.link(text: /^#{term_type}$/).id[/\d+(?=_toggle)/]
+    rescue
+      #if the term_type is not found
+      return -1
+    end
   end
 
   def open_term_section(term_type)
