@@ -159,7 +159,6 @@ class ManageCourseOfferingList < BasePage
     code_list.each do |code|
       target_row(code).checkbox.clear
     end
-    sleep 2 #avoid modal dialog for dirty form
   end
 
   def select_co(code)
