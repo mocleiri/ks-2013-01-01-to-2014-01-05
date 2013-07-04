@@ -53,12 +53,12 @@ Then /^the activity offering delivery logistics are copied to the rollover term 
   @course_offering_copy = make CourseOffering, :course=>@course_offering.course, :term=>Rollover::ROLLOVER_TEST_TERM_TARGET
 
   @course_offering.manage_and_init
-  source_activity_offering = @course_offering.get_ao_obj_by_code("G")
+  source_activity_offering = @course_offering.find_ao_obj_by_code("G")
   source_activity_offering.requested_delivery_logistics_list.size.should_not == 0
 
   #now navigate to course offering copy and validate RDLs
   @course_offering_copy.manage
-  @course_offering_copy.edit_ao :ao_code => "G"
+  @course_offering_copy.edit_ao :ao_code => source_activity_offering.code, :cluster_private_name => source_activity_offering.aoc_private_name
 
   on ActivityOfferingMaintenance do |page|
     page.actual_logistics_div.exists?.should == false  #should not be any ADLs

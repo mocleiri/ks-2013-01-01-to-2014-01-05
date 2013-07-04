@@ -866,6 +866,16 @@ class CourseOffering
    get_cluster_obj_by_private_name(cluster_private_name).ao_list.select{|ao| ao.code == ao_code}[0]
   end
 
+  # searches all clusters
+  def find_ao_obj_by_code(ao_code)
+    activity_offering_cluster_list.each do |cluster_obj|
+      cluster_obj.ao_list.each do |ao|
+        return ao unless ao.code != ao_code
+      end
+    end
+    return nil
+  end
+
   def create_from_existing_course(course, term)
     pre_copy_co_list = []
     post_copy_co_list = []

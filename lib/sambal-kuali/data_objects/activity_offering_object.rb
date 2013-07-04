@@ -212,7 +212,7 @@ class ActivityOffering
     edit(init)
   end
 
-  def init_existing(ao_table_row, parent_co)
+  def init_existing(ao_table_row, parent_co, cluster_name)
     @code =  ao_table_row.cells[ManageCourseOfferings::AO_CODE].text
     @status = ao_table_row.cells[ManageCourseOfferings::AO_STATUS].text
     @activity_type = ao_table_row.cells[ManageCourseOfferings::AO_TYPE].text
@@ -228,6 +228,7 @@ class ActivityOffering
         @actual_delivery_logistics_list[dl_object.dl_key] = dl_object
       end
     end
+    @aoc_private_name = cluster_name
     @parent_course_offering = parent_co
   end
 

@@ -81,7 +81,7 @@ class ActivityOfferingCluster
 
       ao_rows.each do |ao_row|
         ao_obj_temp = make ActivityOffering
-        ao_obj_temp.init_existing(ao_row, @parent_course_offering)
+        ao_obj_temp.init_existing(ao_row, @parent_course_offering, @private_name)
         @ao_list.push(ao_obj_temp)
       end
     end
