@@ -471,16 +471,9 @@ class CourseOffering
           page.select_co(co.course.upcase)
         end
         page.approve_course_offering
-        #page.approve_yes
-        page.approve_yes_element.click #TODO - needs to be reverted once KSENROLL-6884 is fixed
-        while page.alert.exists?  #TODO - needs to be reverted once KSENROLL-6884 is fixed
-          page.alert.ok            #TODO - needs to be reverted once KSENROLL-6884 is fixed
-        end                      #TODO - needs to be reverted once KSENROLL-6884 is fixed
-        #loading.wait_while_present(300)   #TODO - needs to be reverted once KSENROLL-6884 is fixed
-        sleep 60 #TODO - needs to be reverted once KSENROLL-6884 is fixed
 
       rescue Timeout::Error => e
-        puts "rescued target_row edit"
+        puts "rescued approve course offering"
       end
     end
   end
@@ -498,12 +491,6 @@ class CourseOffering
       sleep 1
       page.select_all_cos
       page.approve_course_offering
-      page.approve_yes_element.click #TODO - needs to be reverted once KSENROLL-6884 is fixed
-      while page.alert.exists?  #TODO - needs to be reverted once KSENROLL-6884 is fixed
-        page.alert.ok            #TODO - needs to be reverted once KSENROLL-6884 is fixed
-      end                      #TODO - needs to be reverted once KSENROLL-6884 is fixed
-                                     #loading.wait_while_present(300)   #TODO - needs to be reverted once KSENROLL-6884 is fixed
-      sleep 60 #TODO - needs to be reverted once KSENROLL-6884 is fixed
     end
     approved = false
     on ManageCourseOfferingList do |page|
@@ -517,7 +504,6 @@ class CourseOffering
         sleep 1
         page.select_all_cos
         page.approve_course_offering
-        page.approve_yes
       end
     end
   end

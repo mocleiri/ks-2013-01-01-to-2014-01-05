@@ -12,7 +12,7 @@ class ManageCourseOfferingList < BasePage
   element(:approve_subject_code_for_scheduling_link) { |b| b.frm.co_results_div.link(id: "KS-CourseOfferingManagement-ApproveSubj") }
 
   element(:approve_course_offering_button) { |b| b.frm.co_results_div.button(id: "KS-CourseOfferingManagement-ToolBar-Approve-CO") }
-  action(:approve_course_offering) { |b| b.approve_course_offering_button.click; b.loading.wait_while_present }
+  action(:approve_course_offering) { |b| b.approve_course_offering_button.click; b.loading.wait_while_present(120) }
 
   element(:create_course_offering_button) { |b| b.frm.co_results_div.button(id: "KS-CourseOfferingManagement-ToolBar-Add-CO") }
   action(:create_course_offering) { |b| b.create_course_offering_element.click; b.loading.wait_while_present }
@@ -20,12 +20,12 @@ class ManageCourseOfferingList < BasePage
   element(:delete_cos_button) { |b|b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-CO")}
   action(:delete_cos) { |b|b.delete_cos_button.click; b.loading.wait_while_present(300) }
 
-  element(:approve_dialog){|b| b.frm.div(id:"approveCODialog")}
-  element(:approve_yes_element) { |b| b.approve_dialog.radio(index:0)}
-  action(:approve_yes) { |b| b.approve_yes_element.click;b.loading.wait_while_present(300)}
-
-  element(:no_button_element) { |b| b.approve_dialog.radio(index:1)}
-  action(:no) { |b| b.no_button_element.click;b.loading.wait_while_present(300)}
+  #element(:approve_dialog){|b| b.frm.div(id:"approveCODialog")}
+  #element(:approve_yes_element) { |b| b.approve_dialog.radio(index:0)}
+  #action(:approve_yes) { |b| b.approve_yes_element.click;b.loading.wait_while_present(300)}
+  #
+  #element(:no_button_element) { |b| b.approve_dialog.radio(index:1)}
+  #action(:no) { |b| b.no_button_element.click;b.loading.wait_while_present(300)}
 
   SELECT_COLUMN = 0
   CO_CODE_COLUMN = 1
