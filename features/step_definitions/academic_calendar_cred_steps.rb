@@ -365,6 +365,8 @@ end
 
 
 When /^I add events to the Academic Calendar$/ do
+  #@event = make CalendarEvent, :event_year => @calendar.year
+  #@calendar.edit :@events => [ @event ]
   @calendar.search
   on CalendarSearch do |page|
     page.edit @calendar.name
@@ -382,7 +384,35 @@ When /^I add events to the Academic Calendar$/ do
     page.all_day.clear
     page.date_range.set
     page.add_event.click
+    page.save
   end
+end
+
+Then /^the events are listed when I view the Academic Calendar$/ do
+  @calendar.search
+
+  on CalendarSearch do |page|
+    page.view @calendar.name
+  end
+
+  on ViewAcademicCalendar do |page|
+    page.go_to_calendar_tab
+    page.open_event_section
+    if event_row = target_event_row("Commencement - Seattle Campus")
+      return check_start_end_date(event_row, "04/15/#{next_year[:year]}", "05/15/#{next_year[:year] + 1}")
+    else
+      raise 'Created event not found in event table'
+    end
+  #  page.term_name(@term.term_type).should == @term.term_name
+  #on EditAcademicCalendar do |page|
+  #  page.academic_calendar_name.value.should == @calendar.name
+  #  page.calendar_start_date.value.should == @calendar.start_date
+  #  page.calendar_end_date.value.should == @calendar.end_date
+  #end
+  end
+end
+
+
 end
 
 When /^I delete the term$/ do

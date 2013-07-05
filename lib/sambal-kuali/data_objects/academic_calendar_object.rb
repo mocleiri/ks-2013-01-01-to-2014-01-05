@@ -482,3 +482,116 @@ class KeyDate
 
 end
 
+class CalendarEvent
+
+  include Foundry
+  include DataFactory
+  include DateFactory
+  include StringFactory
+  include Workflows
+
+  attr_accessor :term_type, :term_name, :term_year, :start_date, :end_date, :instructional_days, :key_date_groups, :parent_calendar
+
+  WINTER_TERM_TYPE = "Winter Term"
+  FALL_TERM_TYPE = "Fall Term"
+
+  def initialize(browser,opts = {})
+    @browser = browser
+
+    #establish the year in order to make default start/end dates
+    if opts[:term_year].nil? then
+      calendar_year = AcademicCalendar.get_random_calendar_year
+    else
+      calendar_year = opts[:term_year]
+    end
+
+    defaults = {
+        :start_date=>"09/02/#{calendar_year}",
+        :end_date=>"12/24/#{calendar_year}",
+        :term_type=>"Fall Term",
+        :term_name=>"Fall Term #{calendar_year}",
+        :key_date_group_list=> Array.new(1){make KeyDateGroup}
+
+    }
+
+    options = defaults.merge(opts)
+    set_options(options)
+
+  end
+
+  def create()
+
+    on EditAcademicTerms do |page|
+      page.go_to_term_tab
+      page.term_type_add.select @term_type
+      page.adding.wait_while_present
+      page.term_start_date_add.set @start_date
+      page.term_end_date_add.set @end_date
+      #TODO - parent term
+      page.acal_term_add
+      page.adding.wait_while_present
+
+      page.open_term_section(@term_type)
+
+      @key_date_group_list.each do |date_group|
+        date_group.term_type = @term_type
+        date_group.create
+      end
+    end
+  end
+
+  #checks to see if group already exists
+  def add_key_date_group(key_date_group_object)
+    key_date_group_object.term_type = @term_type
+    key_date_group_object.create
+    @key_date_group_list <<  key_date_group_object
+  end
+
+  ##
+  def edit(opts = {})
+    search
+    on(CalendarSearch).edit @term_name
+    on(EditAcademicTerms).open_term_section(@term_type)
+
+    if opts[:start_date] != nil
+      on EditAcademicTerms  do |page|
+        page.edit_key_date_start_date(edit_row,options[:start_date])
+      end
+    end
+
+    on(EditAcademicTerms).save
+
+    set_options(opts)
+  end
+
+
+  #TODO - move should statements to step definitions
+  def verify()
+    on EditAcademicTerms do |page|
+      page.get_term_type(0).should == @term_name
+      page.get_term_start_date(0).should == @start_date
+      page.get_term_end_date(0).should == @end_date
+    end
+    @keyDateGroup[0].verify
+  end
+
+  def search
+    go_to_calendar_search
+    on CalendarSearch do |page|
+      page.search_for "Academic Term", @term_name
+    end
+  end
+
+  def make_official
+    on EditAcademicTerms do |page|
+      page.go_to_term_tab
+      page.make_term_official(@term_type)
+    end
+  end
+
+  #def delete
+  #  search
+  #
+  #end
+end
+
