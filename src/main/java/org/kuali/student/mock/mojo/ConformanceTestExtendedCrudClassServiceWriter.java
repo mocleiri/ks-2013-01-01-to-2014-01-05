@@ -147,11 +147,14 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         for (MessageStructure ms: messageStructures) {
             if (ms.getShortName().equals("id")) continue;
             if (ms.getShortName().equals("meta")) continue;
-            // if (ms.getShortName().equals("descr")) continue;
             if (ms.getShortName().equals("attributes")) continue;
             if (ms.getType().equals("String")) {
                 indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\");");
-            } else {
+            }
+            else if (ms.getShortName().equals("descr")) {
+                indentPrintln("expected.setDescr(RichTextHelper.buildRichTextInfo(\"descr01\", \"descr01\"));");
+            }
+            else {
                 indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "01\");");
             }
         }
@@ -176,11 +179,14 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         for (MessageStructure ms: messageStructures) {
             if (ms.getShortName().equals("id")) continue;
             if (ms.getShortName().equals("meta")) continue;
-            //if (ms.getShortName().equals("descr")) continue;
             if (ms.getShortName().equals("attributes")) continue;
             if (ms.getType().equals("String")) {
                 indentPrintln("assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
-            } else {
+            }
+            else if (ms.getShortName().equals("descr")) {
+                indentPrintln("new RichTextTester().check(expected.getDescr(), actual.getDescr());");
+            }
+            else {
                 indentPrintln("//TODO *TYPE = " + ms.getType() + "* assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
             }
         }
@@ -203,11 +209,14 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         for (MessageStructure ms: messageStructures) {
             if (ms.getShortName().equals("id")) continue;
             if (ms.getShortName().equals("meta")) continue;
-            // if (ms.getShortName().equals("descr")) continue;
             if (ms.getShortName().equals("attributes")) continue;
             if (ms.getType().equals("String")) {
                 indentPrintln("expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\");");
-            } else {
+            }
+            else if (ms.getShortName().equals("descr")) {
+                indentPrintln("expected.setDescr(RichTextHelper.buildRichTextInfo(\"descr_Updated\", \"descr_Updated\"));");
+            }
+            else {
                 indentPrintln("//TODO *TYPE = " + ms.getType() + "* expected." + new GetterSetterNameCalculator (ms, this, model).calcSetter() + "(\"" + ms.getShortName()+ "_Updated\");");
             }
         }
@@ -229,11 +238,14 @@ public class ConformanceTestExtendedCrudClassServiceWriter extends ConformanceTe
         openBrace();
         for (MessageStructure ms: messageStructures) {
             if (ms.getShortName().equals("meta")) continue;
-            // if (ms.getShortName().equals("descr")) continue;
             if (ms.getShortName().equals("attributes")) continue;
             if (ms.getType().equals("String")) {
                 indentPrintln("assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
-            } else {
+            }
+            else if (ms.getShortName().equals("descr")) {
+                indentPrintln("new RichTextTester().check(expected.getDescr(), actual.getDescr());");
+            }
+            else {
                 indentPrintln("//TODO *TYPE = " + ms.getType() + "* assertEquals (expected." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "(), actual." + new GetterSetterNameCalculator (ms, this, model).calcGetter() + "());");
             }
         }
