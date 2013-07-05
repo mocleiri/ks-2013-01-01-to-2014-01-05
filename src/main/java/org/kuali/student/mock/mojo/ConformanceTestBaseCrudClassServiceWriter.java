@@ -491,7 +491,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
         indentPrintDecoratedComment("test get by type");
 
         indentPrintln("// code to get by specific type \"typeKey01\" ");
-        indentPrintln(initLower(dtoObjectName) + "Ids = testService.get" + dtoObjectName + "IdsByType (\"typeKey01\", contextInfo);");
+        indentPrintln(initLower(dtoObjectName) + "Ids = testService.get" + dtoObjectName + "IdsByType (\"typeKey_Updated\", contextInfo);");
         // indentPrintln(initLower(dtoObjectName) + "Ids = " + getMethodCallAsString ("get" + dtoObjectName + "IdsByType", "// INSERT CODE TO GET BY SPECIFIC TYPE \"typeKey01\" HERE", MethodType.GET_IDS_BY_TYPE));
         indentPrintln("");
 
