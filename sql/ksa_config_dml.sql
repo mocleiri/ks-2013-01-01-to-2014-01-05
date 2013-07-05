@@ -95,7 +95,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.port', '587');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.protocol', 'smtp');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.auth', 'true');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.user', 'ksa.sigmasys');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.password', 'sigmasys2013');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.password', 'sigmasys2013_');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.tls.enabled', 'true');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.mail.address.from', 'ksa.sigmasys@gmail.com');
 
