@@ -1,8 +1,8 @@
 package com.sigmasys.kuali.ksa.model.pb;
 
 import com.sigmasys.kuali.ksa.model.AuditableEntity;
-import com.sigmasys.kuali.ksa.model.DebitType;
 import com.sigmasys.kuali.ksa.model.TransferType;
+import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -22,6 +22,10 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
 
     private TransferType transferType;
 
+    private String flatFeeDebitTypeId;
+
+    private String variableFeeDebitTypeId;
+
     private Date openPeriodStartDate;
 
     private Date openPeriodEndDate;
@@ -34,15 +38,11 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
 
     private BigDecimal flatFeeAmount;
 
-    private BigDecimal feeAmountPercentage;
+    private BigDecimal variableFeeAmount;
 
     private BigDecimal minFeeAmount;
 
     private BigDecimal maxFeeAmount;
-
-    private DebitType flatFeeDebitType;
-
-    private DebitType nonFlatFeeDebitType;
 
     private Integer roundingFactor;
 
@@ -50,7 +50,20 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
 
     private String statementPrefix;
 
-    // TODO
+    private PaymentRoundingType paymentRoundingType;
+
+    private LateStartType lateStartType;
+
+    private String paymentRoundingTypeCode;
+
+    private String lateStartTypeCode;
+
+
+    @PostLoad
+    protected void populateTransientFields() {
+        paymentRoundingType = (paymentRoundingTypeCode != null) ? EnumUtils.findById(PaymentRoundingType.class, paymentRoundingTypeCode) : null;
+        lateStartType = (lateStartTypeCode != null) ? EnumUtils.findById(LateStartType.class, lateStartTypeCode) : null;
+    }
 
 
     @Id
@@ -64,6 +77,34 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
     @Override
     public Long getId() {
         return id;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRANSFER_TYPE_ID_FK")
+    public TransferType getTransferType() {
+        return transferType;
+    }
+
+    public void setTransferType(TransferType transferType) {
+        this.transferType = transferType;
+    }
+
+    @Column(name = "FLAT_FEE_DEBIT_TYPE_ID", length = 20)
+    public String getFlatFeeDebitTypeId() {
+        return flatFeeDebitTypeId;
+    }
+
+    public void setFlatFeeDebitTypeId(String flatFeeDebitTypeId) {
+        this.flatFeeDebitTypeId = flatFeeDebitTypeId;
+    }
+
+    @Column(name = "VAR_FEE_DEBIT_TYPE_ID", length = 20)
+    public String getVariableFeeDebitTypeId() {
+        return variableFeeDebitTypeId;
+    }
+
+    public void setVariableFeeDebitTypeId(String variableFeeDebitTypeId) {
+        this.variableFeeDebitTypeId = variableFeeDebitTypeId;
     }
 
     @Temporal(TemporalType.DATE)
@@ -106,5 +147,116 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
         this.chargePeriodEndDate = chargePeriodEndDate;
     }
 
+    @Column(name = "MAX_AMOUNT")
+    public BigDecimal getMaxAmount() {
+        return maxAmount;
+    }
 
+    public void setMaxAmount(BigDecimal maxAmount) {
+        this.maxAmount = maxAmount;
+    }
+
+    @Column(name = "FLAT_FEE_AMOUNT")
+    public BigDecimal getFlatFeeAmount() {
+        return flatFeeAmount;
+    }
+
+    public void setFlatFeeAmount(BigDecimal flatFeeAmount) {
+        this.flatFeeAmount = flatFeeAmount;
+    }
+
+    @Column(name = "VAR_FEE_AMOUNT")
+    public BigDecimal getVariableFeeAmount() {
+        return variableFeeAmount;
+    }
+
+    public void setVariableFeeAmount(BigDecimal variableFeeAmount) {
+        this.variableFeeAmount = variableFeeAmount;
+    }
+
+    @Column(name = "MIN_FEE_AMOUNT")
+    public BigDecimal getMinFeeAmount() {
+        return minFeeAmount;
+    }
+
+    public void setMinFeeAmount(BigDecimal minFeeAmount) {
+        this.minFeeAmount = minFeeAmount;
+    }
+
+    @Column(name = "MAX_FEE_AMOUNT")
+    public BigDecimal getMaxFeeAmount() {
+        return maxFeeAmount;
+    }
+
+    public void setMaxFeeAmount(BigDecimal maxFeeAmount) {
+        this.maxFeeAmount = maxFeeAmount;
+    }
+
+    @Column(name = "ROUND_FACTOR")
+    public Integer getRoundingFactor() {
+        return roundingFactor;
+    }
+
+    public void setRoundingFactor(Integer roundingFactor) {
+        this.roundingFactor = roundingFactor;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_GL_IMMEDIATE")
+    public Boolean getGlCreationImmediate() {
+        return isGlCreationImmediate != null ? isGlCreationImmediate : false;
+    }
+
+    public void setGlCreationImmediate(Boolean glCreationImmediate) {
+        isGlCreationImmediate = glCreationImmediate;
+    }
+
+    @Column(name = "STMT_PREFIX", length = 100)
+    public String getStatementPrefix() {
+        return statementPrefix;
+    }
+
+    public void setStatementPrefix(String statementPrefix) {
+        this.statementPrefix = statementPrefix;
+    }
+
+    @Column(name = "PAYMENT_ROUND_TYPE", length = 1)
+    protected String getPaymentRoundingTypeCode() {
+        return paymentRoundingTypeCode;
+    }
+
+    protected void setPaymentRoundingTypeCode(String paymentRoundingTypeCode) {
+        this.paymentRoundingTypeCode = paymentRoundingTypeCode;
+        paymentRoundingType = EnumUtils.findById(PaymentRoundingType.class, paymentRoundingTypeCode);
+    }
+
+    @Column(name = "LATE_START", length = 1)
+    protected String getLateStartTypeCode() {
+        return lateStartTypeCode;
+    }
+
+    protected void setLateStartTypeCode(String lateStartTypeCode) {
+        this.lateStartTypeCode = lateStartTypeCode;
+        lateStartType = EnumUtils.findById(LateStartType.class, lateStartTypeCode);
+    }
+
+    @Transient
+    public PaymentRoundingType getPaymentRoundingType() {
+        return paymentRoundingType;
+    }
+
+    public void setPaymentRoundingType(PaymentRoundingType paymentRoundingType) {
+        this.paymentRoundingType = paymentRoundingType;
+        paymentRoundingTypeCode = paymentRoundingType.getId();
+    }
+
+    @Transient
+    public LateStartType getLateStartType() {
+        return lateStartType;
+    }
+
+    public void setLateStartType(LateStartType lateStartType) {
+        this.lateStartType = lateStartType;
+        lateStartTypeCode = lateStartType.getId();
+    }
 }
