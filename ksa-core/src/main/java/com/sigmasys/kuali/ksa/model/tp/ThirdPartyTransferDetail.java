@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * Third party plan detail.
+ * Third-party plan detail.
  * Stores the information relating to a TP plan that has been executed against a student account
  * <p/>
  *

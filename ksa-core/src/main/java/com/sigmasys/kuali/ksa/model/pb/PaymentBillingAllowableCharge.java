@@ -1,7 +1,6 @@
-package com.sigmasys.kuali.ksa.model.tp;
+package com.sigmasys.kuali.ksa.model.pb;
 
 import com.sigmasys.kuali.ksa.model.Identifiable;
-import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -13,8 +12,8 @@ import java.math.BigDecimal;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_TP_ALLOWABLE_CHARGE")
-public class ThirdPartyAllowableCharge implements Identifiable {
+@Table(name = "KSSA_PB_ALLOWABLE_CHARGE")
+public class PaymentBillingAllowableCharge implements Identifiable {
 
     /**
      * Identifier
@@ -24,7 +23,7 @@ public class ThirdPartyAllowableCharge implements Identifiable {
     /**
      * The plan assigned to an eligible account
      */
-    private ThirdPartyPlan plan;
+    private PaymentBillingPlan plan;
 
     /**
      * Transaction Type mask.
@@ -49,32 +48,15 @@ public class ThirdPartyAllowableCharge implements Identifiable {
      */
     private Integer priority;
 
-    /**
-     * ChargeDistributionPlan
-     */
-    private ChargeDistributionPlan distributionPlan;
-
-
-    /**
-     * ChargeDistributionPlan code
-     */
-    private String distributionPlanCode;
-
-
-    @PostLoad
-    protected void populateTransientFields() {
-        distributionPlan = (distributionPlanCode != null) ? EnumUtils.findById(ChargeDistributionPlan.class, distributionPlanCode) : null;
-    }
-
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_TP_ALLOWABLE_CHARGE",
+    @TableGenerator(name = "TABLE_GEN_PB_ALLOWABLE_CHARGE",
             table = "KSSA_SEQUENCE_TABLE",
             pkColumnName = "SEQ_NAME",
             valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "TP_ALLOWABLE_CHARGE_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_TP_ALLOWABLE_CHARGE")
+            pkColumnValue = "PB_ALLOWABLE_CHARGE_SEQ")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_PB_ALLOWABLE_CHARGE")
     @Override
     public Long getId() {
         return id;
@@ -85,12 +67,12 @@ public class ThirdPartyAllowableCharge implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TP_PLAN_ID_FK")
-    public ThirdPartyPlan getPlan() {
+    @JoinColumn(name = "PB_PLAN_ID_FK")
+    public PaymentBillingPlan getPlan() {
         return plan;
     }
 
-    public void setPlan(ThirdPartyPlan plan) {
+    public void setPlan(PaymentBillingPlan plan) {
         this.plan = plan;
     }
 
@@ -129,26 +111,5 @@ public class ThirdPartyAllowableCharge implements Identifiable {
     public void setPriority(Integer priority) {
         this.priority = priority;
     }
-
-    @Column(name = "DIST_PLAN", length = 1)
-    protected String getDistributionPlanCode() {
-        return distributionPlanCode;
-    }
-
-    protected void setDistributionPlanCode(String distributionPlanCode) {
-        this.distributionPlanCode = distributionPlanCode;
-        distributionPlan = EnumUtils.findById(ChargeDistributionPlan.class, distributionPlanCode);
-    }
-
-    @Transient
-    public ChargeDistributionPlan getDistributionPlan() {
-        return distributionPlan;
-    }
-
-    public void setDistributionPlan(ChargeDistributionPlan distributionPlan) {
-        this.distributionPlan = distributionPlan;
-        distributionPlanCode = distributionPlan.getId();
-    }
-
 
 }

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * Third Party Plan model.
+ * Third-party Plan model.
  * <p/>
  *
  * @author Michael Ivanov

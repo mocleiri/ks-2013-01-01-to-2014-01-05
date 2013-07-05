@@ -3,7 +3,7 @@ package com.sigmasys.kuali.ksa.model.tp;
 import com.sigmasys.kuali.ksa.model.Identifiable;
 
 /**
- * TP ChargeDistributionPlan values.
+ * Third-party ChargeDistributionPlan values.
  *
  * @author Michael Ivanov
  */

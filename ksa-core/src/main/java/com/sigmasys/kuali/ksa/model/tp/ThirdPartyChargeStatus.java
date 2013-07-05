@@ -3,7 +3,7 @@ package com.sigmasys.kuali.ksa.model.tp;
 import com.sigmasys.kuali.ksa.model.Identifiable;
 
 /**
- * ThirdPartyPlan status constants.
+ * Third-party charge status constants.
  *
  * @author Michael Ivanov
  */
@@ -30,7 +30,7 @@ public enum ThirdPartyChargeStatus implements Identifiable {
     public String toString() {
         switch (this) {
             case ACTIVE:
-                return "Charged";
+                return "Active";
             case REVERSED:
                 return "Reversed";
         }
