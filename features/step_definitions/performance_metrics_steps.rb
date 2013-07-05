@@ -244,10 +244,10 @@ end
 
 When /^I save the course change$/ do
   on CourseOfferingEdit do |page|
-    if page.pass_fail_checkbox.set?
-      page.pass_fail_checkbox.clear
+    if page.waitlist_checkbox.set?
+      page.waitlist_checkbox.clear
     else
-      page.pass_fail_checkbox.set
+      page.waitlist_checkbox.set
     end
     @performance_test.start
     page.submit
