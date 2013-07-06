@@ -98,7 +98,12 @@ class ViewAcademicTerms < BasePage
   end
 
   def target_key_date_row(term_type, date_group_type, key_date_type)
-    row = key_date_group_info_table(term_type, date_group_type).row(text: /^\b#{key_date_type}\b$/)
+    begin
+      row = key_date_group_info_table(term_type, date_group_type).row(text: /^\b#{key_date_type}\b$/)
+    rescue
+      return nil
+    end
+    return row
   end
 
   def key_date_start(term_type, date_group_type, key_date_type)

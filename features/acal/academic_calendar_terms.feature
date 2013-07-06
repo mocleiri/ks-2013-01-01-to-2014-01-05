@@ -34,38 +34,37 @@ Feature: EC.Academic Calendar Terms
     Then the term is listed in official status when I view the Academic Calendar
 
   Scenario: Add a Key Date to an academic term
-    Given I copy an existing Academic Calendar
-    And I have added a new term to the Academic Calendar
+    Given I create an Academic Calendar
+    And I add a new term to the Academic Calendar
     When I add an instructional Key Date
     Then the Key Date is listed with the academic term information
 
   Scenario: Modify a Key Date for an academic term
-    Given I copy an existing Academic Calendar
-    And I have added a new academic term with an instructional key date
-    When I edit the instructional Key Date
+    Given I create an Academic Calendar
+    And I add a new term to the Academic Calendar with an instructional key date
+    When I edit an instructional Key Date
     Then the updated Key Date is listed with the academic term information
 
   Scenario: Delete a Key Date for an academic term
     Given I copy an existing Academic Calendar
-    And I have added a new academic term with an instructional key date
     When I delete an instructional Key Date
     Then the Key Date is not listed with the academic term information
 
   Scenario: Delete a Key Date Group for an academic term
     Given I copy an existing Academic Calendar
-    And I have added a new academic term with an instructional key date group
     When I delete an instructional Key Date Group
     Then the Key Date Group is not listed with the academic term information
 
   Scenario: Copy a Key Dates for an academic term
-    Given I copy an existing Academic Calendar that has instructional key dates
+    Given I copy an existing Academic Calendar
     Then the Key Dates are copied without date values
 
   Scenario: Verify instructional days calculation for an academic term
-    Given I create an Academic Calendar with an academic term
+    Given I create an Academic Calendar
+    And I add a new term to the Academic Calendar with a defined instructional period
     Then the instructional days calculation is correct
-    When I add holidays within the term
-    Then the instructional days calculation is correct
+    #When I add holidays within the term
+    #Then the instructional days calculation is correct
 
   @draft
   Scenario: debug terms page/data objects

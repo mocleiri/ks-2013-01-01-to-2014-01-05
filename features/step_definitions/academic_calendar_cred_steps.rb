@@ -123,7 +123,7 @@ end
 
 When /^I add a (.*) term and save$/ do |term_type|
   on EditAcademicTerms do |page|
-     page.go_to_term_tab
+     page.go_to_terms_tab
      @term = make AcademicTerm
      @term.create term_type
      page.go_to_cal_tab
@@ -143,7 +143,7 @@ Then /^I verify that the term added to the calendar$/ do
     page.edit @calendar.name
   end
   on EditAcademicTerms do |page|
-    page.go_to_term_tab
+    page.go_to_terms_tab
     @term.verify
   end
 end
@@ -175,7 +175,7 @@ When /^I delete the Academic Term draft$/ do
     page.edit @term.term_name
   end
   on EditAcademicTerms do |page|
-    page.go_to_term_tab
+    page.go_to_terms_tab
     page.delete_term(0)
     page.go_to_cal_tab
   end
@@ -273,6 +273,19 @@ When /^I add a new term to the Academic Calendar$/ do
   @calendar.edit :terms => [ @term ]
 end
 
+When /^I add a new term to the Academic Calendar with a defined instructional period$/ do
+  @term = make AcademicTerm, :term_year => @calendar.year
+  @calendar.edit :terms => [ @term ]
+  @term.expected_instructional_days = @term.weekdays_in_term
+
+  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = create KeyDate, :parent_key_date_group => @keydategroup,
+                    :key_date_type => "Instructional Period",
+                    :start_date => @term.start_date,
+                    :end_date => @term.end_date,
+                    :date_range => true
+end
+
 Then /^the term is listed when I view the Academic Calendar$/ do
   @calendar.search
 
@@ -330,7 +343,7 @@ When /^I debug the Winter Term$/ do
   @term = make AcademicTerm, :term_type=>AcademicTerm::WINTER_TERM_TYPE
 
   on EditAcademicTerms do |page|
-    page.go_to_term_tab
+    page.go_to_terms_tab
     page.open_term_section(@term.term_type)
   end
   #@term.edit :key_date_group_list =>  Array.new(1){make KeyDateGroup}
@@ -362,7 +375,6 @@ When /^I edit the information for a term$/ do
              :start_date => (Date.strptime( @term.start_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"), #add 2 days
              :end_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")     #add 2 days
 end
-
 
 When /^I add events to the Academic Calendar$/ do
   #@event = make CalendarEvent, :event_year => @calendar.year
@@ -403,16 +415,13 @@ Then /^the events are listed when I view the Academic Calendar$/ do
     else
       raise 'Created event not found in event table'
     end
-  #  page.term_name(@term.term_type).should == @term.term_name
-  #on EditAcademicCalendar do |page|
-  #  page.academic_calendar_name.value.should == @calendar.name
-  #  page.calendar_start_date.value.should == @calendar.start_date
-  #  page.calendar_end_date.value.should == @calendar.end_date
-  #end
+    #  page.term_name(@term.term_type).should == @term.term_name
+    #on EditAcademicCalendar do |page|
+    #  page.academic_calendar_name.value.should == @calendar.name
+    #  page.calendar_start_date.value.should == @calendar.start_date
+    #  page.calendar_end_date.value.should == @calendar.end_date
+    #end
   end
-end
-
-
 end
 
 When /^I delete the term$/ do
@@ -434,3 +443,121 @@ Then /^the term is listed in official status when I view the Academic Calendar$/
   end
 end
 
+Then /^I add a new term to the Academic Calendar with an instructional key date$/ do
+  step "I add a new term to the Academic Calendar"
+  step "I add an instructional Key Date"
+end
+
+Then /^I add an instructional Key Date$/ do
+  @term.edit
+
+  @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :all_day => true
+
+end
+
+Then /^I edit an instructional Key Date$/ do
+  @term.edit
+
+  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes"
+  @keydate.edit :start_date => "09/14/#{@term.term_year}"
+end
+
+Then /^I delete an instructional Key Date Group$/ do
+  @term = make AcademicTerm, :term_year => @calendar.year, :term_name => "Continuing Education Term 1", :term_type => "Continuing Education Term 1"
+  @term.edit
+
+  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydategroup.delete
+end
+
+
+Then /^I delete an instructional Key Date$/ do
+  @term = make AcademicTerm, :term_year => @calendar.year, :term_name => "Continuing Education Term 1", :term_type => "Continuing Education Term 1"
+  @term.edit
+
+  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes"
+  @keydate.delete
+end
+
+Then /^the Key Date is listed with the academic term information$/ do
+  @calendar.view
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section(@term.term_type)
+    page.key_date_start(@term.term_type, "Instructional", @keydate.key_date_type ).should == @keydate.start_date
+  end
+end
+
+Then /^the updated Key Date is listed with the academic term information$/ do
+  @calendar.view
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section(@term.term_type)
+    page.key_date_start(@term.term_type, "Instructional", @keydate.key_date_type ).should == @keydate.start_date
+  end
+end
+
+Then /^the Key Date is not listed with the academic term information$/ do
+  @calendar.view
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section(@term.term_type)
+    page.key_date_target_row(@term.term_type, "Instructional", @keydate.key_date_type).nil?.should == true
+  end
+end
+
+Then /^the Key Date Group is not listed with the academic term information$/ do
+  @calendar.view
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section(@term.term_type)
+    page.key_date_group_div(@term.term_type, "Instructional").nil?.should == true
+  end
+end
+
+Then /^the Key Dates are copied without date values$/ do
+  @term = make AcademicTerm, :term_year => @calendar.year, :term_name => "Continuing Education Term 1", :term_type => "Continuing Education Term 1"
+  @term.edit
+
+  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes"
+
+  @keydategroup2 = make KeyDateGroup, :key_date_group_type=> "Registration", :term_type=> @term.term_type
+  @keydate2 = make KeyDate, :parent_key_date_group => @keydategroup2, :key_date_type => "Drop Date"
+
+  on EditAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.key_date_exists?(@term.term_type, "Instructional", "First Day of Classes").should == true
+
+    row = page.key_date_target_row(@term.term_type, "Instructional", "First Day of Classes")
+    page.key_date_start_date(row).should == ""
+    page.key_date_start_time(row).should == ""
+    page.key_date_end_date(row).should == ""
+    page.key_date_end_time(row).should == ""
+    #page.key_date_is_all_day(row).should == false
+    #page.key_date_is_range(row).should == false
+
+    page.key_date_exists?(@term.term_type, "Registration", "Drop Date").should == true
+
+    row = page.key_date_target_row(@term.term_type, "Registration", "Drop Date")
+    page.key_date_start_date(row).should == ""
+    page.key_date_start_time(row).should == ""
+    page.key_date_end_date(row).should == ""
+    page.key_date_end_time(row).should == ""
+    #page.key_date_is_all_day(row).should == false
+    #page.key_date_is_range(row).should == false
+
+  end
+end
+
+Then /^the instructional days calculation is correct$/ do
+  @calendar.view
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section(@term.term_type)
+    page.term_instructional_days(@term.term_type).to_i.should == @term.expected_instructional_days.to_i
+  end
+end

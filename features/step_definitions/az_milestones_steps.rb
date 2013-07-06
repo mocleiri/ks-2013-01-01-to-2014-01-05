@@ -3,7 +3,7 @@ Given /^It is "After" the first day of classes$/ do
   @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE
   @term.edit
 
-  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_index=> @tindex, :term_type=> @term.term_type
+  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
   @keydate = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => (Date.today - 1).strftime("%m/%d/%Y"), :end_date=>(Date.today - 1).strftime("%m/%d/%Y"), :term_index=> @tindex
   @keydategroup.key_dates = Array.new(1){@keydate}
   @keydategroup.create
@@ -15,13 +15,13 @@ Given /^It is "Before" the first day of classes and "Before" the first day to ad
   @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE
   @term.edit
 
-  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_index=> @tindex, :term_type=> @term.term_type
-  @keydate = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => (Date.today + 5).strftime("%m/%d/%Y"), :end_date=>(Date.today + 5).strftime("%m/%d/%Y"), :term_index=> @tindex
+  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => (Date.today + 5).strftime("%m/%d/%Y"), :end_date=>(Date.today + 5).strftime("%m/%d/%Y")
   @keydategroup.key_dates = Array.new(1){@keydate}
   @keydategroup.create
 
-  @keydategroup = make KeyDateGroup,:key_date_group_type=> "Registration", :term_index=> @tindex, :term_type=> @term.term_type
-  @keydate2 = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "Registration Period 1", :start_date => (Date.today + 1).strftime("%m/%d/%Y"), :end_date=>(Date.today + 4).strftime("%m/%d/%Y"), :term_index=> @tindex, :date_range => true
+  @keydategroup = make KeyDateGroup,:key_date_group_type=> "Registration", :term_type=> @term.term_type
+  @keydate2 = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "Registration Period 1", :start_date => (Date.today + 1).strftime("%m/%d/%Y"), :end_date=>(Date.today + 4).strftime("%m/%d/%Y"), :date_range => true
   @keydategroup.key_dates = Array.new(1){@keydate2}
   @keydategroup.create
   #step "I am logged in as a Department Schedule Coordinator"
@@ -32,13 +32,13 @@ Given /^It is "Before" the first day of classes and "After" the first day to add
   @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE
   @term.edit
 
-  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_index=> @tindex, :term_type=> @term.term_type
-  @keydate = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => (Date.today + 5).strftime("%m/%d/%Y"), :end_date=>(Date.today + 5).strftime("%m/%d/%Y"), :term_index=> @tindex
+  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => (Date.today + 5).strftime("%m/%d/%Y"), :end_date=>(Date.today + 5).strftime("%m/%d/%Y")
   @keydategroup.key_dates = Array.new(1){@keydate}
   @keydategroup.create
 
-  @keydategroup = make KeyDateGroup,:key_date_group_type=> "Registration", :term_index=> @tindex, :term_type=> @term.term_type
-  @keydate2 = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "Registration Period 1", :start_date => (Date.today - 4).strftime("%m/%d/%Y"), :end_date=>(Date.today +1).strftime("%m/%d/%Y"), :term_index=> @tindex
+  @keydategroup = make KeyDateGroup,:key_date_group_type=> "Registration", :term_type=> @term.term_type
+  @keydate2 = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "Registration Period 1", :start_date => (Date.today - 4).strftime("%m/%d/%Y"), :end_date=>(Date.today +1).strftime("%m/%d/%Y")
   @keydategroup.key_dates = Array.new(1){@keydate2}
   @keydategroup.create
 end
@@ -60,8 +60,8 @@ Given /^It is "After" the first day to add classes$/ do
   @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE
   @term.edit
 
-  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_index=> @tindex, :term_type=> @term.term_type
-  @keydate = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => (Date.today - 1).strftime("%m/%d/%Y"), :end_date=>(Date.today - 1).strftime("%m/%d/%Y"), :term_index=> @tindex
+  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = make KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => (Date.today - 1).strftime("%m/%d/%Y"), :end_date=>(Date.today - 1).strftime("%m/%d/%Y")
   @keydategroup.key_dates = Array.new(1){@keydate}
   @keydategroup.create
 

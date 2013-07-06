@@ -4,7 +4,7 @@ class EditAcademicTerms < BasePage
   wrapper_elements
   frame_element
 
-  action(:go_to_term_tab) { |b| b.frm.a(href: "#KS-AcademicTerm-EditSection_tab").click; b.loading.wait_while_present}
+  action(:go_to_terms_tab) { |b| b.frm.a(href: "#KS-AcademicTerm-EditSection_tab").click; b.loading.wait_while_present}
   action(:go_to_cal_tab) { |b| b.frm.a(href: "#acal-info_tab").click; b.loading.wait_while_present}
   element(:term_type_add)  { |b| b.frm.select(id: "term_type_add_add_control") }
   element(:term_start_date_add)  { |b| b.frm.text_field(id: "term_start_date_add_add_control") }
@@ -21,8 +21,19 @@ class EditAcademicTerms < BasePage
     acal_term_list_div.link(text: /^#{term_type}$/).id[/\d+(?=_toggle)/]
   end
 
+  def term_section_div_list
+    acal_term_list_div.divs(id: /^u1011_line\d+$/)
+  end
+
   def open_term_section(term_type)
     link =  acal_term_list_div.link(text: "#{term_type}")
+    if link.image.attribute_value("alt") == "collapse" then # expand means is already expanded
+      link.click
+    end
+  end
+
+  def open_term_section_by_index(term_index)
+    link =  div.link(id: "u1011_line#{term_index}_toggle")
     if link.image.attribute_value("alt") == "collapse" then # expand means is already expanded
       link.click
     end
@@ -65,6 +76,10 @@ class EditAcademicTerms < BasePage
     return nil
   end
 
+  def delete_key_date_group(term_type, key_date_group_type)
+    key_date_group_div(term_type, key_date_group_type).button(id: /key_date_group_delete_button/).click
+    loading.wait_while_present
+  end
   #def key_date_group_exists?(term_type, key_date_group_type)
   #  key_date_group_div_list(term_type).each do | div |
   #    if div.span(text: /#{key_date_group_type.upcase} key dates/ ).exists?
@@ -106,6 +121,7 @@ class EditAcademicTerms < BasePage
   end
 
 
+
 #  def add_key_date_add_row(term_index,key_date_group);  ;end
 
   #KeyDates
@@ -142,7 +158,7 @@ class EditAcademicTerms < BasePage
   def set_key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.set; end
   def clear_key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.clear; end
   def set_key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.set; end
-  def delete_key_date(row); row.cells[ACTION_COL].link(text: "delete").click; end
+  def delete_key_date(row); row.cells[ACTION_COL].link(text: "Delete").click; end
 
   def key_date_start_date(row); row.cells[START_DATE_COL].text_field.value; end
   def key_date_start_time(row); row.cells[START_TIME_COL].text_field.value; end
@@ -177,6 +193,9 @@ class EditAcademicTerms < BasePage
   action(:get_term_type) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].name").value }
   action(:get_term_start_date) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].startDate").value }
   action(:get_term_end_date) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].endDate").value }
+
+  action(:term_start_date) { |term_index,b| b.frm.text_field(id: "term_start_date_line#{term_index}_control") }
+  action(:term_end_date) { |term_index,b| b.frm.text_field(id: "term_end_date_line#{term_index}_control") }
 
   #action(:term_make_official_button) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").text}
   #action(:term_make_official_enabled) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").enabled?}

@@ -85,9 +85,35 @@ class AcademicCalendar
         page.calendar_end_date.set @end_date
       end
     end
-    on EditAcademicCalendar do |page|
+    #add logic to update the term dates
+    on EditAcademicTerms do |page|
+      page.go_to_terms_tab
+      term_section_div_list = page.term_section_div_list
+      if term_section_div_list.length > 0 then
+        page.open_term_section_by_index(0)
+        old_base_year = page.term_start_date(0).value[/\d{4}$/].to_i
+      end
+      index = 0
+      term_section_div_list.each do |div|
+        page.open_term_section_by_index(index)
+        start_date = page.term_start_date(index).value
+        page.term_start_date(index).set convert_date_to_updated_year(start_date, old_base_year)
+        end_date = page.term_end_date(index).value
+        page.term_end_date(index).set convert_date_to_updated_year(end_date, old_base_year)
+
+        index += 1
+      end
+
       page.save
     end
+  end
+
+  #when updating the term dates, make sure get the calendar yr correct ie 2012 vs 2013 dates
+  def convert_date_to_updated_year(date, base_year)
+    date_year = date[/\d{4}$/].to_i
+    date_month_day = date[/\d{2}\/\d{2}\//]
+    new_date_year = @year.to_i + (date_year - base_year)
+    "#{date_month_day}#{new_date_year}"
   end
 
   #search for academic calendar matching the :name attribute
@@ -146,12 +172,15 @@ class AcademicCalendar
   def delete_term(term_object)
     edit
     on EditAcademicTerms do |page|
-      page.go_to_term_tab
+      page.go_to_terms_tab
       page.delete_term(term_object.term_type)
     end
-    puts @terms.length
     @terms.delete(term_object)
-    puts @terms.length
+  end
+
+  def edit_keydate(key_date_obj, opts)
+    edit
+
   end
 
   #there are existing calendars up to 2023, so most of the term codes are used
@@ -172,7 +201,7 @@ class AcademicTerm
   include StringFactory
   include Workflows
 
-  attr_accessor :term_type, :term_name, :term_year, :start_date, :end_date, :instructional_days, :key_date_groups, :parent_calendar
+  attr_accessor :term_type, :term_name, :term_year, :start_date, :end_date, :expected_instructional_days, :key_date_groups, :parent_calendar
 
   WINTER_TERM_TYPE = "Winter Term"
   FALL_TERM_TYPE = "Fall Term"
@@ -192,7 +221,8 @@ class AcademicTerm
         :end_date=>"12/24/#{calendar_year}",
         :term_type=>"Fall Term",
         :term_name=>"Fall Term #{calendar_year}",
-        :key_date_group_list=> Array.new(1){make KeyDateGroup}
+        :key_date_group_list=> Array.new(1){make KeyDateGroup},
+        :term_year=> calendar_year
 
     }
 
@@ -204,7 +234,7 @@ class AcademicTerm
   def create()
 
     on EditAcademicTerms do |page|
-      page.go_to_term_tab
+      page.go_to_terms_tab
       page.term_type_add.select @term_type
       page.adding.wait_while_present
       page.term_start_date_add.set @start_date
@@ -237,11 +267,11 @@ class AcademicTerm
 
     if opts[:start_date] != nil
       on EditAcademicTerms  do |page|
-        page.edit_key_date_start_date(edit_row,options[:start_date])
+        page.term_start_date(edit_row,options[:start_date])
       end
     end
 
-    on(EditAcademicTerms).save
+    on(EditAcademicTerms).save unless opts.length == 0
 
     set_options(opts)
   end
@@ -260,13 +290,13 @@ class AcademicTerm
   def search
     go_to_calendar_search
     on CalendarSearch do |page|
-      page.search_for "Academic Term", @term_name
+      page.search_for "Academic Term", @term_name, @term_year
     end
   end
 
   def make_official
     on EditAcademicTerms do |page|
-      page.go_to_term_tab
+      page.go_to_terms_tab
       page.make_term_official(@term_type)
     end
   end
@@ -275,6 +305,21 @@ class AcademicTerm
   #  search
   #
   #end
+
+  def weekdays_in_term
+    date1 = Date.strptime( @start_date , '%m/%d/%Y')
+    date2 = Date.strptime( @end_date , '%m/%d/%Y')
+    puts "calculating from #{@start_date} to #{@end_date}"
+    weekdays = 0
+    date = date2
+    while date > date1
+      weekdays = weekdays + 1 unless date.saturday? or date.sunday?
+      date = date - 1
+    end
+    puts weekdays
+    weekdays
+  end
+
 end
 
 class KeyDateGroup
@@ -296,7 +341,7 @@ class KeyDateGroup
     defaults = {
         :key_date_group_type=> INSTRUCTIONAL_DATE_GROUP,
         :key_dates=>[],
-        :term_index=>0
+        :term_type => "Fall Term"
     }
 
     options = defaults.merge(opts)
@@ -336,7 +381,12 @@ class KeyDateGroup
   #def edit(opts = {})
   #
   #end
-
+  def delete
+    on EditAcademicTerms  do |page|
+      page.delete_key_date_group(@term_type, @key_date_group_type)
+      page.save
+    end
+  end
 
   def verify
     @key_dates[0].verify
@@ -366,8 +416,7 @@ class KeyDate
         start_time_ampm: nil,
         end_time_ampm: nil,
         all_day: true,
-        date_range: false,
-        term_index: 0
+        date_range: false
     }
 
     options = defaults.merge(opts)
@@ -377,6 +426,7 @@ class KeyDate
   def create()
     #only create if doesn't already exist, other wise edit the existing one
     on EditAcademicTerms do |page|
+      page.go_to_terms_tab
       if ! page.key_date_exists?(@parent_key_date_group.term_type, @parent_key_date_group.key_date_group_type, @key_date_type) then
         @term_index = page.term_index_by_term_type(@parent_key_date_group.term_type)
 
@@ -467,7 +517,16 @@ class KeyDate
     on(EditAcademicTerms).save
 
     set_options(options)
+  end
+
+  def delete
+    delete_row = on(EditAcademicTerms).key_date_target_row(@parent_key_date_group.term_type, @parent_key_date_group.key_date_group_type, @key_date_type)
+    on EditAcademicTerms  do |page|
+      page.delete_key_date(delete_row)
+      page.loading.wait_while_present
     end
+  end
+
 
 #TODO - move to step definitions
   def verify()
