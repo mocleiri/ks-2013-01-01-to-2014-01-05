@@ -270,7 +270,7 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
         transaction = transactionService.getTransaction(transactionId);
 
         // Checking if the amount is less or equal to the transaction unallocated amount
-        if (amount.compareTo(transactionService.getUnallocatedAmount(transaction)) > 0) {
+        if (amount.compareTo(transaction.getUnallocatedAmount()) > 0) {
             String errMsg = "Transferred amount should be less or equal to transaction unallocated amount";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
@@ -488,7 +488,7 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
 
         Transaction destTransaction = transactionTransfer.getDestTransaction();
 
-        if (reversalAmount.compareTo(transactionService.getUnallocatedAmount(destTransaction)) > 0) {
+        if (reversalAmount.compareTo(destTransaction.getUnallocatedAmount()) > 0) {
 
             // Removing all regular allocations which the transaction is involved in
             transactionService.removeAllAllocations(destTransaction.getId());
@@ -497,7 +497,7 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
             destTransaction = transactionService.getTransaction(destTransaction.getId());
 
             // Checking the unallocated amount again
-            if (reversalAmount.compareTo(transactionService.getUnallocatedAmount(destTransaction)) > 0) {
+            if (reversalAmount.compareTo(destTransaction.getUnallocatedAmount()) > 0) {
                 String errMsg = "Reversal amount cannot be greater than transaction unallocated amount";
                 logger.error(errMsg);
                 throw new IllegalStateException(errMsg);

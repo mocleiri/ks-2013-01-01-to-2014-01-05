@@ -99,6 +99,7 @@ public interface TransactionService {
      * @param effectiveDate     Transaction Effective Date
      * @return TransactionType instance
      * @throws InvalidTransactionTypeException
+     *
      */
     TransactionType getTransactionType(String transactionTypeId, Date effectiveDate) throws InvalidTransactionTypeException;
 
@@ -108,6 +109,7 @@ public interface TransactionService {
      * @param transactionTypeId TransactionTypeId instance
      * @return TransactionType instance
      * @throws InvalidTransactionTypeException
+     *
      */
     @WebMethod(exclude = true)
     TransactionType getTransactionType(TransactionTypeId transactionTypeId) throws InvalidTransactionTypeException;
@@ -828,14 +830,6 @@ public interface TransactionService {
      */
     List<CreditPermission> getCreditPermissions(TransactionTypeId transactionTypeId,
                                                 Integer priorityFrom, Integer priorityTo);
-
-    /**
-     * Returns the total unallocated amount for the given transaction
-     *
-     * @param transaction Transaction instance
-     * @return the total unallocated amount
-     */
-    BigDecimal getUnallocatedAmount(Transaction transaction);
 
     /**
      * Returns the unallocated amount of all transactions in the list for the given transaction type and

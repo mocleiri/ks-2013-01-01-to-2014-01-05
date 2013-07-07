@@ -1034,8 +1034,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             deleteEntity(allocation.getId(), Allocation.class);
         }
 
-        BigDecimal unallocatedAmount1 = getUnallocatedAmount(transaction1);
-        BigDecimal unallocatedAmount2 = getUnallocatedAmount(transaction2);
+        BigDecimal unallocatedAmount1 = transaction1.getUnallocatedAmount();
+        BigDecimal unallocatedAmount2 = transaction2.getUnallocatedAmount();
 
         if (unallocatedAmount1.abs().compareTo(newAmount) < 0 || unallocatedAmount2.abs().compareTo(newAmount) < 0) {
             String errMsg = "Not enough balance to cover the allocation amount " + newAmount;
@@ -1173,17 +1173,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         return pair;
-    }
-
-    /**
-     * Returns the total unallocated amount for the given transaction
-     *
-     * @param transaction Transaction instance
-     * @return the total unallocated amount
-     */
-    @Override
-    public BigDecimal getUnallocatedAmount(Transaction transaction) {
-        return TransactionUtils.getUnallocatedAmount(transaction);
     }
 
     /**
@@ -2003,7 +1992,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             }
         }
 
-        if (reversalAmount.compareTo(getUnallocatedAmount(transaction)) > 0) {
+        if (reversalAmount.compareTo(transaction.getUnallocatedAmount()) > 0) {
 
             // Removing all regular allocations which the transaction is involved in
             removeAllAllocations(transaction.getId());
@@ -2012,7 +2001,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             transaction = getTransaction(transaction.getId());
 
             // Checking the unallocated amount again
-            if (reversalAmount.compareTo(getUnallocatedAmount(transaction)) > 0) {
+            if (reversalAmount.compareTo(transaction.getUnallocatedAmount()) > 0) {
                 String errMsg = "Reversal amount cannot be greater than transaction unallocated amount";
                 logger.error(errMsg);
                 throw new IllegalStateException(errMsg);
@@ -2555,7 +2544,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             }
         }
 
-        BigDecimal writeOffAmount = getUnallocatedAmount(transaction);
+        BigDecimal writeOffAmount = transaction.getUnallocatedAmount();
 
         // Reverse the transaction
         Transaction writeOffTransaction = reverseTransaction(transaction, transactionType.getId().getId(), memoText,
@@ -2784,7 +2773,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                         }
                     }
                     if ((allPermissions && !restricted) || (!allPermissions && restricted)) {
-                        unallocatedAmount = unallocatedAmount.add(getUnallocatedAmount(transaction));
+                        unallocatedAmount = unallocatedAmount.add(transaction.getUnallocatedAmount());
                     }
                 }
             }
@@ -3169,7 +3158,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         if (cancellationAmount.compareTo(BigDecimal.ZERO) != 0) {
 
-            BigDecimal unallocatedAmount = getUnallocatedAmount(charge);
+            BigDecimal unallocatedAmount = charge.getUnallocatedAmount();
 
             if (unallocatedAmount.compareTo(cancellationAmount) < 0) {
                 String errMsg = "Unallocated amount cannot be less than cancellation amount";

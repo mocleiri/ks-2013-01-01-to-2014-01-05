@@ -474,7 +474,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
                 if (typeMaskPattern.matcher(transactionTypeId).matches()) {
 
-                    BigDecimal unallocatedAmount = transactionService.getUnallocatedAmount(transaction);
+                    BigDecimal unallocatedAmount = transaction.getUnallocatedAmount();
                     if (unallocatedAmount.compareTo(BigDecimal.ZERO) > 0) {
                         totalUnallocatedAmount = totalUnallocatedAmount.add(unallocatedAmount);
                     }
@@ -509,7 +509,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                     }
 
                     // Calculating the transfer amount as unallocated amount multiplied by maxPercentage
-                    BigDecimal transferAmount = transactionService.getUnallocatedAmount(transaction).multiply(maxPercentage);
+                    BigDecimal transferAmount = transaction.getUnallocatedAmount().multiply(maxPercentage);
 
                     // Creating a new transaction transfer
                     TransactionTransfer transactionTransfer =
@@ -569,7 +569,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                     }
 
                     // Calculating the transfer amount as unallocated amount multiplied by maxPercentage
-                    BigDecimal transferAmount = transactionService.getUnallocatedAmount(transaction).multiply(divideCoefficient);
+                    BigDecimal transferAmount = transaction.getUnallocatedAmount().multiply(divideCoefficient);
 
                     // Getting the smallest value out of unallocated amount, maxDividedFund and remainingFund
                     if (transferAmount.compareTo(maxDividedFund) > 0) {

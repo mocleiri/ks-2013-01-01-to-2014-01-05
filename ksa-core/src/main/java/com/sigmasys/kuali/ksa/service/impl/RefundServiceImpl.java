@@ -161,7 +161,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         // Iterate through the Payments:
         for (Payment payment : payments) {
-            BigDecimal refundAmount = TransactionUtils.getUnallocatedAmount(payment);
+            BigDecimal refundAmount = payment.getUnallocatedAmount();
             allRefunds.add(checkForRefund(payment, refundRequestDate, refundRequestedBy, refundAmount));
         }
 
@@ -185,7 +185,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             throw new TransactionNotFoundException(errMsg);
         }
 
-        return checkForRefund(payment, TransactionUtils.getUnallocatedAmount(payment));
+        return checkForRefund(payment, payment.getUnallocatedAmount());
     }
 
     /**
@@ -229,7 +229,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             throw new IllegalStateException(errMsg);
         }
 
-        if (refundAmount.compareTo(TransactionUtils.getUnallocatedAmount(payment)) > 0) {
+        if (refundAmount.compareTo(payment.getUnallocatedAmount()) > 0) {
             String errMsg = "Refund amount cannot be greater than unallocated payment amount";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);

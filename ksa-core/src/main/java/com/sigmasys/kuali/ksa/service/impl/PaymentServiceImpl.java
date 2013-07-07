@@ -165,10 +165,10 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
 
                         if (canPay) {
 
-                            BigDecimal amount = transactionService.getUnallocatedAmount(transaction);
+                            BigDecimal amount = transaction.getUnallocatedAmount();
                             logger.info("First transaction ID = " + transactionId + ", unallocated amount = "
                                     + amount.toPlainString());
-                            BigDecimal amount1 = transactionService.getUnallocatedAmount(transaction1);
+                            BigDecimal amount1 = transaction1.getUnallocatedAmount();
                             logger.info("Second transaction ID = " + transactionId1 + ", unallocated amount = " +
                                     amount1.toPlainString());
 
