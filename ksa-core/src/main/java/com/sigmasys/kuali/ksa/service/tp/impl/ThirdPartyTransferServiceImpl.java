@@ -327,7 +327,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
 
     /**
-     * Returns the list of third-party allowable charges by ThirdPartyPlan ID sorted by priority in the descending order.
+     * Returns a list of third-party allowable charges by ThirdPartyPlan ID sorted by priority in the descending order.
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID
      * @return list of ThirdPartyAllowableCharge instances
@@ -633,7 +633,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
-     * Generates the third-party transfers for the given account ID and current date as an open period date
+     * Generates third-party transfers for the given account ID and current date as an open period date
      * ignoring already executed transfers
      *
      * @param accountId DirectChargeAccount ID
@@ -648,7 +648,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
 
     /**
-     * Generates the third-party transfers for the given account ID and open period date.
+     * Generates third-party transfers for the given account ID and open period date.
      *
      * @param accountId      DirectChargeAccount ID
      * @param openPeriodDate Date between the open period start and end dates.
@@ -709,7 +709,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
-     * Generates the third-party transfers for each eligible account with the given plan ID
+     * Generates third-party transfers for each eligible account with the given plan ID
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID
      * @param ignoreExecuted   if "true" the method ignores "isExecuted" value
@@ -764,7 +764,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
-     * Reverses the third-party transaction transfer specified by ThirdPartyTransferDetail ID.
+     * Reverses a third-party transaction transfer specified by ThirdPartyTransferDetail ID.
      *
      * @param transferDetailId ThirdPartyTransferDetail ID
      * @param memoText         Memo text

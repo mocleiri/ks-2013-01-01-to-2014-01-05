@@ -52,9 +52,9 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
 
     private PaymentRoundingType paymentRoundingType;
 
-    private LateStartType lateStartType;
-
     private String paymentRoundingTypeCode;
+
+    private LateStartType lateStartType;
 
     private String lateStartTypeCode;
 

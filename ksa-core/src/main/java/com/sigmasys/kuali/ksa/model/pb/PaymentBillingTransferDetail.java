@@ -35,6 +35,16 @@ public class PaymentBillingTransferDetail implements Identifiable {
     private PaymentBillingPlan plan;
 
     /**
+     * Flat-fee transaction
+     */
+    private Charge flatFeeCharge;
+
+    /**
+     * Variable-fee transaction
+     */
+    private Charge variableFeeCharge;
+
+    /**
      * Initiation date
      */
     private Date initiationDate;
@@ -53,16 +63,6 @@ public class PaymentBillingTransferDetail implements Identifiable {
      * Total amount that was financed by this plan. Equal to or less than "maxAmount".
      */
     private BigDecimal planAmount;
-
-    /**
-     * Flat-fee transaction
-     */
-    private Charge flatFeeCharge;
-
-    /**
-     * Variable-fee transaction
-     */
-    private Charge variableFeeCharge;
 
     /**
      * Payment billing charge status
@@ -127,6 +127,26 @@ public class PaymentBillingTransferDetail implements Identifiable {
         this.plan = plan;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FLAT_FEE_CHARGE_ID_FK")
+    public Charge getFlatFeeCharge() {
+        return flatFeeCharge;
+    }
+
+    public void setFlatFeeCharge(Charge flatFeeCharge) {
+        this.flatFeeCharge = flatFeeCharge;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "VAR_FEE_CHARGE_ID_FK")
+    public Charge getVariableFeeCharge() {
+        return variableFeeCharge;
+    }
+
+    public void setVariableFeeCharge(Charge variableFeeCharge) {
+        this.variableFeeCharge = variableFeeCharge;
+    }
+
     @Column(name = "INIT_DATE")
     public Date getInitiationDate() {
         return initiationDate;
@@ -152,26 +172,6 @@ public class PaymentBillingTransferDetail implements Identifiable {
 
     public void setPlanAmount(BigDecimal planAmount) {
         this.planAmount = planAmount;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FLAT_FEE_CHARGE_ID_FK")
-    public Charge getFlatFeeCharge() {
-        return flatFeeCharge;
-    }
-
-    public void setFlatFeeCharge(Charge flatFeeCharge) {
-        this.flatFeeCharge = flatFeeCharge;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "VAR_FEE_CHARGE_ID_FK")
-    public Charge getVariableFeeCharge() {
-        return variableFeeCharge;
-    }
-
-    public void setVariableFeeCharge(Charge variableFeeCharge) {
-        this.variableFeeCharge = variableFeeCharge;
     }
 
     @Column(name = "STATUS", length = 1)

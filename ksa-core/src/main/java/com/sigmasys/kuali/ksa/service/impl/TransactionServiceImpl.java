@@ -2102,6 +2102,28 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * be reversed when a payment bounces, or for some other reason is entered
      * on to the account and is not payable.
      *
+     * @param transactionId  Transaction ID
+     * @param memoText       Text of the memo to be created
+     * @param reversalAmount Reversal amount
+     * @return a created reversal transaction
+     */
+    @Override
+    @WebMethod(exclude = true)
+    @Transactional(readOnly = false)
+    public Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount) {
+        return reverseTransaction(transactionId, memoText, reversalAmount, null);
+    }
+
+    /**
+     * If the reverse method is called, the system will generate a negative
+     * transaction for the type of the original transaction. A memo transaction
+     * will be generated, and the transactions will be locked together. Subject
+     * to user customization, the transactions may be marked as hidden. (likely
+     * that credits will not be hidden, debits will.) A charge to an account may
+     * be reversed when a mistake is made, or a refund is issued. A payment may
+     * be reversed when a payment bounces, or for some other reason is entered
+     * on to the account and is not payable.
+     *
      * @param transactionId   Transaction ID
      * @param memoText        Text of the memo to be created
      * @param reversalAmount  Reversal amount
@@ -2113,7 +2135,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Transactional(readOnly = false)
     public Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount,
                                           String statementPrefix) {
-
         return reverseTransaction(transactionId, memoText, reversalAmount, statementPrefix, null);
     }
 
