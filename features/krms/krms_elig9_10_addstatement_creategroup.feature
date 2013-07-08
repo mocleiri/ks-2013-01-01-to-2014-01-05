@@ -1,8 +1,8 @@
-Feature: KRMS ELIG9.10 Add Statement and Create Group
+Feature: KRMS.ELIG9-10 Add Statement and Create Group
 
   Background:
     Given I am logged in as admin
-    And I have navigated to the agenda page for "Corequisite" for term "201301" and course "HIST210"
+    And I have navigated to the Corequisite section for course "HIST210" in the future term
 
   #ELIG9.10.EB1 (KSENROLL-7049)
   @pending
@@ -13,7 +13,7 @@ Feature: KRMS ELIG9.10 Add Statement and Create Group
     And I add a free form text statement after node "B" with text "Free Text 3"
     And I commit and return to see the changes made to the proposition
     And I want to edit the selected agenda section
-    Then the "edit" tab should have the text "Must meet all of the following,Free Text 1,Free Text 2,Free Text 3"
+    Then the edit tab's text should match "Free Text 1,Free Text 2,Free Text 3"
 
   #ELIG9.10.EB2 (KSENROLL-7049)
   @pending
@@ -24,4 +24,4 @@ Feature: KRMS ELIG9.10 Add Statement and Create Group
     And I group free form text statement with node "D" with text "Free Text 2c"
     And I commit and return to see the changes made to the proposition
     And I want to edit the selected agenda section
-    Then the "edit" tab should have the text "Free Text 1b,Free Text 2c,Free Text 2b"
+    Then the edit tab's text should match "Free Text 1b,Free Text 2c,Free Text 2b"
