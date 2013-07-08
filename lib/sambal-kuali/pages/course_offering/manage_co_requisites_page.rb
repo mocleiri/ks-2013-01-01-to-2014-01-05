@@ -26,7 +26,7 @@ class ManageCORequisites < BasePage
   action(:up_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-UpButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:left_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-LeftButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:right_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-RightButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:preview_btn) { |b| b.frm.button(:text => /Preview Change/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present(60)}
+  action(:preview_btn) { |b| b.frm.button(:id => /update-button/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present(60)}
   action(:copy_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-CopyButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:cut_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-CutButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:paste_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-PasteButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
@@ -69,6 +69,7 @@ class ManageCORequisites < BasePage
   element(:lookup_class_standing) { |b| b.frm_popup.text_field(name: "lookupCriteria[keyword]")}
   element(:lookup_abrev_org) { |b| b.frm_popup.text_field(name: "lookupCriteria[shortName]")}
   action(:lookup_search_button) { |b| b.frm_popup.button(id: "button_search").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  element(:lookup_results_table) { |b| b.frm_popup.div(id: "uLookupResults").table() }
 
   element(:info_message) { |b| b.rule_maintenance_section.li(class: "uif-infoMessageItem")}
   element(:edit_loading) { |b| b.rule_maintenance_section.image(alt: "Loading...") }

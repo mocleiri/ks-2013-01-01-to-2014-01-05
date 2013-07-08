@@ -28,7 +28,9 @@ class CORequisitesData
     @browser = browser
 
     defaults = {
-        :section => "Student Eligibility & Prerequisite"
+      :section => "Student Eligibility & Prerequisite",
+      :term => "201208",
+      :course => "ENGL101"
     }
 
     options = defaults.merge(opts)
@@ -36,35 +38,30 @@ class CORequisitesData
     set_options(options)
   end
 
-  def navigate(term, course)
+  def navigate_to_mco_requisites
     @manageCORdata = make ManageCORequisitesData
-    @course_offering = make CourseOffering, {:course => course, :term => term}
+    @course_offering = make CourseOffering, {:course => @course, :term => @term}
     @course_offering.manage
     on ManageCourseOfferings do |page|
-      page.loading.wait_while_present
+      page.loading.wait_while_present(200)
       page.manage_course_offering_requisites
     end
   end
 
-  def data_setup(sect, term, course)
-    navigate(term, course)
+  def data_setup
+    navigate_to_mco_requisites
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
       open_agenda_section
-      check = @manageCORdata.check_data_existence
-      if( check == 0)
-        page.rule_add
-        @manageCORdata.create_data_advanced_search( sect)
+      if page.rule_edit_links.exists?
+        page.rule_edit
+        page.loading.wait_while_present
+        @manageCORdata.create_less_data_advanced_search( @section)
         commit_changes( true)
       else
-        page.rule_edit
-        check_new = @manageCORdata.check_new_data_existence
-        if( check_new == 0)
-          page.loading.wait_while_present
-          page.rule_edit
-          @manageCORdata.create_less_data_advanced_search( sect)
-          commit_changes( true)
-        end
+        page.rule_add
+        @manageCORdata.create_data_advanced_search( @section)
+        commit_changes( true)
       end
     end
   end
@@ -81,10 +78,10 @@ class CORequisitesData
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
       page.submit
+      page.loading.wait_while_present(200)
     end
     if return_to_edit_page == true
       on ManageCourseOfferings do |page|
-        page.loading.wait_while_present
         page.manage_course_offering_requisites
       end
       open_agenda_section

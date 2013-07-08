@@ -1,13 +1,145 @@
-When /^I (?:|setup|edit|have setup) the data for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |section, term, course|
+When /^I (?:|setup|edit|have setup) the Antirequisite section for course "(.*?)" in the historic term$/ do |course|
   @manageCOR = make ManageCORequisitesData
-  @courseOR = make CORequisitesData, :section => section
-  @courseOR.data_setup(section, term, course)
+  @courseOR = make CORequisitesData, :section => "Antirequisite", :course => course
+  @courseOR.data_setup
 end
 
-When /^I (?:|navigate|have navigated) to the agenda page for "(.*?)" for term "(.*?)" and course "(.*?)"$/ do |section, term, course|
+When /^I (?:|setup|edit|have setup) the Antirequisite section for course "(.*?)" in the future term$/ do |course|
   @manageCOR = make ManageCORequisitesData
-  @courseOR = make CORequisitesData, :section => section
-  @courseOR.navigate(term, course)
+  @courseOR = make CORequisitesData, :section => "Antirequisite", :term => "201301", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|navigate|have navigated) to the Antirequisite section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Antirequisite", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|navigate|have navigated) to the Antirequisite section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Antirequisite", :term => "201301", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|setup|edit|have setup) the Corequisite section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Corequisite", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|setup|edit|have setup) the Corequisite section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Corequisite", :term => "201301", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|navigate|have navigated) to the Corequisite section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Corequisite", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|navigate|have navigated) to the Corequisite section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Corequisite", :term => "201301", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|setup|edit|have setup) the Recommended Preparation section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Recommended Preparation", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|setup|edit|have setup) the Recommended Preparation section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Recommended Preparation", :term => "201301", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|navigate|have navigated) to the Recommended Preparation section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Recommended Preparation", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|navigate|have navigated) to the Recommended Preparation section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Recommended Preparation", :term => "201301", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|setup|edit|have setup) the Student Eligibility & Prerequisite section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Student Eligibility & Prerequisite", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|setup|edit|have setup) the Student Eligibility & Prerequisite section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Student Eligibility & Prerequisite", :term => "201301", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|navigate|have navigated) to the Student Eligibility & Prerequisite section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Student Eligibility & Prerequisite", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|navigate|have navigated) to the Student Eligibility & Prerequisite section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Student Eligibility & Prerequisite", :term => "201301", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|setup|edit|have setup) the Repeatable for Credit section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Repeatable for Credit", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|setup|edit|have setup) the Repeatable for Credit section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Repeatable for Credit", :term => "201301", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|navigate|have navigated) to the Repeatable for Credit section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Repeatable for Credit", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|navigate|have navigated) to the Repeatable for Credit section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Repeatable for Credit", :term => "201301", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|setup|edit|have setup) the Course that Restricts Credits section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Course that Restricts Credits", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|setup|edit|have setup) the Course that Restricts Credits section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Course that Restricts Credits", :term => "201301", :course => course
+  @courseOR.data_setup
+end
+
+When /^I (?:|navigate|have navigated) to the Course that Restricts Credits section for course "(.*?)" in the historic term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Course that Restricts Credits", :course => course
+  @courseOR.navigate_to_mco_requisites
+end
+
+When /^I (?:|navigate|have navigated) to the Course that Restricts Credits section for course "(.*?)" in the future term$/ do |course|
+  @manageCOR = make ManageCORequisitesData
+  @courseOR = make CORequisitesData, :section => "Course that Restricts Credits", :term => "201301", :course => course
+  @courseOR.navigate_to_mco_requisites
 end
 
 Then /^the "(.*?)" link should exist on the Course Offering Requisites page$/ do |link|
@@ -378,10 +510,10 @@ end
 Then /^there should be no node "(.*?)" on both tabs$/ do |node|
   on ManageCORequisites do |page|
     page.loading.wait_while_present
-    page.edit_tree_section.text.should_not =~ /.*#{Regexp.escape(node)}\..*/
+    page.edit_tree_section.text.should_not match /.*#{Regexp.escape(node)}\..*/
     page.logic_tab
     page.edit_loading.wait_while_present
-    page.logic_text.text.should_not =~ /.*#{Regexp.escape(node)}.*/
+    page.logic_text.text.should_not match /.*#{Regexp.escape(node)}.*/
   end
 end
 
@@ -581,4 +713,8 @@ end
 
 When /^I cut a "(.*?)" group and paste it after node "(.)"$/ do |level, node|
   @manageCOR.copy_cut_paste_group( level, node, "cut")
+end
+
+When /^I delete the group containing node "(.)"$/ do |node|
+  @manageCOR.delete_group( node)
 end

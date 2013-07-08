@@ -1,9 +1,9 @@
 @nightly
-Feature: KRMS ELIG7.1 Modify CO copied from CLU
+Feature: KRMS.ELIG7-1 Modify CO copied from CLU
 
   Background:
     Given I am logged in as admin
-    And I have navigated to the agenda page for "Student Eligibility & Prerequisite" for term "201208" and course "BSCI361"
+    And I have navigated to the Student Eligibility & Prerequisite section for course "BSCI361" in the historic term
 
   #ELIG7.1.EB1 (KSENROLL-7245)
   Scenario: Test whether editing existing statements persists to the database

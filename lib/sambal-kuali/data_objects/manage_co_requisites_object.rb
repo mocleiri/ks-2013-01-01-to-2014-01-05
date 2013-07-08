@@ -77,6 +77,14 @@ class ManageCORequisitesData
       page.lookup_search_button
       page.loading.wait_while_present
       page.lookup_results.a(:title => /.*#{Regexp.escape(code)}.*/i).when_present.click
+
+      ##############################################################
+      ### TODO adding if statement due to tabs switching when AFT runs, will have to investigate if this is a bug
+      if page.object_tab.parent.attribute_value('class') !~ /ui-tabs-active/
+        page.object_tab.when_present.click
+        page.edit_loading.wait_while_present
+      end
+      ##############################################################
     end
   end
 
@@ -92,29 +100,30 @@ class ManageCORequisitesData
     end
   end
 
-  def check_data_existence
-    on CourseOfferingRequisites do |page|
-      page.loading.wait_while_present
-      if page.rule_edit_links.exists?
-        return 1
-      else
-        return 0
+  def check_number_groups
+    on ManageCORequisites do |page|
+      groups = -1
+      page.edit_tree_section.lis.each do |list|
+        if list.text =~ /^[\s\t]*Must meet 1 of the following/ || list.text =~ /^[\s\t]*Must meet all of the following/
+          groups += 1
+        end
       end
+      if groups == -1
+        groups = 0
+      end
+      return groups
     end
   end
 
-  def check_new_data_existence
+  def check_number_statements
     on ManageCORequisites do |page|
-      page.logic_tab.click
-      page.edit_loading.wait_while_present
-      text = page.logic_text.text
-      array = text.split('(')
-      page.update_rule_btn
-      if array.length >= 3
-        return 1
-      else
-        return 0
+      statements = 0
+      page.edit_tree_section.lis.each do |list|
+        if list.text =~ /^[\s\t]*[A-Z]\./ && list.attribute_value('class') =~ /^ruleTreeNode simple/
+          statements += 1
+        end
       end
+      return statements
     end
   end
 
@@ -136,12 +145,31 @@ class ManageCORequisitesData
   end
 
   def create_less_data_advanced_search( sect)
+    groups = check_number_groups
+    statements = check_number_statements
     on ManageCORequisites do |page|
-      create_course_rule( "add", "B", "ENGL101", sect)
-      create_text_rule( "group", "A", "free form text input value")
-      create_all_courses_rule( "add", "", "ENGL478,HIST416", "", "", sect)
-      create_text_rule( "group", "D", "Text")
-      create_number_courses_rule( "add", "C", "1", "HIST395,HIST210", "", "", sect)
+      if statements == 1
+        create_course_rule( "add", "A", "HIST639", sect)
+        statements+=1
+      end
+      if statements == 2
+        create_course_rule( "add", "B", "ENGL101", sect)
+        statements+=1
+      end
+      if groups == 0
+        create_text_rule( "group", "A", "free form text input value")
+        groups+=1
+        if statements <= 3
+          create_all_courses_rule( "add", "", "ENGL478,HIST416", "", "", sect)
+          statements+=1
+        end
+      end
+      if groups == 1
+        create_text_rule( "group", "D", "Text")
+        if statements <= 4
+          create_number_courses_rule( "add", "C", "1", "HIST395,HIST210", "", "", sect)
+        end
+      end
       page.loading.wait_while_present
       page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
       page.edit_loading.wait_while_present
@@ -708,6 +736,19 @@ class ManageCORequisitesData
         page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
       end
       page.paste_btn
+    end
+  end
+
+  def delete_group( node)
+    on ManageCORequisites do |page|
+      page.edit_tree_section.lis.each do |list|
+        if list.text =~ /^[\s\t]*#{node}\./ && list.attribute_value('class') =~ /^ruleTreeNode simple/
+          list.parent.parent.a(:class => /ruleTreeNode compoundNode/).click
+          page.del_btn
+          break
+        end
+      end
+      page.edit_loading.wait_while_present
     end
   end
 end

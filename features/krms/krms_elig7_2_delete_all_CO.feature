@@ -1,9 +1,9 @@
 @nightly
-Feature: KRMS ELIG7.2 Delete all statements of CO copied from CLU
+Feature: KRMS.ELIG7-2 Delete all statements of CO copied from CLU
 
   Background:
     Given I am logged in as admin
-    And I have navigated to the agenda page for "Student Eligibility & Prerequisite" for term "201208" and course "ENGL313"
+    And I have navigated to the Student Eligibility & Prerequisite section for course "ENGL313" in the historic term
 
   #ELIG7.2.EB1 (KSENROLL-7247)
   Scenario: Test whether tree deleted is removed from all tabs on the page
