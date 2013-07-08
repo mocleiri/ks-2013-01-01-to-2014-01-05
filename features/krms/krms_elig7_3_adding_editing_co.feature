@@ -1,24 +1,24 @@
-Feature: KRMS ELIG7.3 Adding CO to empty CLU
+@nightly
+Feature: KRMS.ELIG7-3 Adding CO to empty CLU
 
   Background:
     Given I am logged in as admin
 
   #ELIG7.3.EB1 (KSENROLL-7177)
-  @pending
   Scenario: Test whether CO data persists if CLU was empty
-    When I setup the data for "Student Eligibility & Prerequisite" for term "201301" and course "HIST307"
-    Then the agenda page should have the text "Must have successfully completed all courses from,ENGL478,HIST416"
+    When I setup the Student Eligibility & Prerequisite section for course "HIST307" in the future term
+    Then the agenda page's text should match "all courses from,ENGL478,HIST416"
     When I want to edit the selected agenda section
-    Then the "edit" tab should have the text "Must have successfully completed a minimum of 1 course from (HIST210, HIST395)"
+    Then the edit tab's text should match "1 course from (HIST210, HIST395)"
     When I switch to the other tab on the page
-    Then the text "(A AND (B OR C) AND D) OR E OR F OR G" should be present in the text area
+    Then the text area should contain "(A AND (B OR C) AND D) OR E OR F OR G"
 
   #ELIG7.3.EB2 (KSENROLL-7239)
-  @pending
   Scenario: Test whether CO data persists if CLU already had data
-    When I edit the data for "Student Eligibility & Prerequisite" for term "201208" and course "ENGL478M"
-    Then the agenda page should have the text "Must have successfully completed all courses from,ENGL478,HIST416"
-    When I want to edit the selected agenda section
-    Then the "edit" tab should have the text "Must have successfully completed a minimum of 1 course from (HIST210, HIST395)"
+    When I edit the Student Eligibility & Prerequisite section for course "ENGL478M" in the historic term
+    And I want to edit the selected agenda section
+    Then the edit tab's text should match "1 course from (HIST210, HIST395)"
     When I switch to the other tab on the page
-    Then the text "(A OR (B AND C) OR D) OR E OR F OR G" should be present in the text area
+    Then the text area should contain "(A OR (B AND C) OR D) OR E OR F OR G"
+    When I update the manage course offering agendas page
+    Then the agenda page's text should match "all courses from,ENGL478,HIST416"

@@ -11,7 +11,7 @@ Feature: KRMS.ELIG7-6 Delete statement or compound statement of CO copied from C
     And I delete node "D" in the tree
     Then there should be no node "D" on both tabs
     When I commit and return to see the changes made to the proposition
-    Then the agenda page should not have the text "HIST416,ENGL478"
+    Then the agenda page's text should not match "HIST416,ENGL478"
 
   #ELIG7.6.EB2 (KSENROLL-7243)
   Scenario: Test whether compound deleted is removed from the tree
@@ -20,7 +20,7 @@ Feature: KRMS.ELIG7-6 Delete statement or compound statement of CO copied from C
     And I delete the group containing node "C"
     Then there should be no node "C" on both tabs
     When I commit and return to see the changes made to the proposition
-    Then the agenda page should not have the text "free form text input value,Text"
+    Then the agenda page's text should not match "free form text input value,Text"
 
   #ELIG7.6.EB3 (KSENROLL-7244)
   Scenario: Test whether clicking delete rule deletes the whole tree
