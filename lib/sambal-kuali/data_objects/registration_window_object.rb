@@ -51,7 +51,7 @@ class RegistrationWindow
         :term_type => 'Spring Term',
         :year => '2013',
         :period_id => 'All Registration Periods for this Term',
-        :period_key => 'Advanced Registration Period',
+        :period_key => 'Junior Registration',
         :appointment_window_info_name => random_string,
         :assigned_population_name => 'ENGL',
         :start_date => RegistrationWindowsConstants::DATE_WITHIN,
