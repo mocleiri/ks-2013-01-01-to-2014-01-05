@@ -14,8 +14,8 @@ When /^I log in as a Schedule Coordinator$/ do
 end
 
 Then /^the transaction takes less than "([^"]*)" seconds$/ do |time_requirement|
-  #@performance_test.test_time.should <= time_requirement.to_f
   puts @performance_test.test_time.to_s
+  @performance_test.test_time.should <= time_requirement.to_f
 end
 
 When /^I search for an Academic Calendar$/ do
@@ -45,6 +45,9 @@ When /^I update a field and save the Academic Calendar$/ do
     page.calendar_end_date.set "08/23/2015"
     @performance_test.start
     page.save
+   # while page.alert.exists?
+   #   page.alert.cancel
+   # end
     @performance_test.end
   end
 end
