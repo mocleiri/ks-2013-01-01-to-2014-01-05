@@ -30,7 +30,7 @@ When /^I search for holiday calendars$/ do
 end
 
 When /^I search for academic terms$/ do
-  @term = make AcademicTerm, :term_name => "Term"
+  @term = make AcademicTerm, :term_name => "Term", :term_year => ""
   @term.search
 end
 
