@@ -657,7 +657,7 @@ class CORequisitesData
 
   def switch_tabs
     on ManageCORequisites do |page|
-      page.edit_loading.wait_while_present
+      page.edit_loading.wait_while_present(60)
       tab = page.tab_section.li(:class => /ui-state-active/).text
       if tab == "Edit Rule"
         page.logic_tab.when_present.click
@@ -710,15 +710,16 @@ class CORequisitesData
     return Regexp.new(string, Regexp::MULTILINE)
   end
 
-  def change_operator(level, operator)
+  def change_operator(node, operator)
     on ManageCORequisites do |page|
-      page.loading.wait_while_present
-      if level == "primary"
-        page.edit_tree_section.select(:id => /u\d+_node_\d_parent_node_0_parent_root_control/).when_present.select operator
-      elsif level == "secondary"
-        page.edit_tree_section.select(:id => /u\d+_node_\d_parent_node_\d_parent_node_0_parent_root_control/).when_present.select operator
-      elsif level == "tertiary"
-        page.edit_tree_section.select(:id => /u\d+_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_control/).when_present.select operator
+      i = 0
+      lists = page.edit_tree_section.lis
+      lists.each do |list|
+        i += 1
+        if( list.text =~ /^[\s\t]*AND\nOR$/ and lists[i].text =~ /^[\s\t]*#{node}\..*$/)
+          list.select(:class=>/uif-dropdownControl/).select operator
+          break
+        end
       end
     end
   end
@@ -801,21 +802,6 @@ class CORequisitesData
           break
         end
       end
-
-      #if level == "primary"
-      #  page.edit_tree_section.span(:id => /u\d+_node_\d+_parent_node_0_parent_root_span/).click
-      #elsif level == "secondary"
-      #  elements = page.edit_tree_section.elements(:class => /.*compoundNode.*/)
-      #  elements.each do |elem|
-      #    if elem.id =~ /u\d+_(node_\d+_parent_node_\d+_parent_node_0_parent_root)/
-      #      id = $1
-      #      page.edit_tree_section.span(:id => /u\d+_#{id}_span/).click
-      #      break
-      #    end
-      #  end
-      #elsif level == "tertiary"
-      #  page.edit_tree_section.span(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_\d+_parent_node_0_parent_root_span/).click
-      #end
       if action == "copy"
         page.copy_btn
       elsif action == "cut"

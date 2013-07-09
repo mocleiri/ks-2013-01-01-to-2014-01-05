@@ -665,14 +665,14 @@ Then /^node "(.*)" should be after node "(.*)"$/ do |second,first|
   end
 end
 
-When /^I change a "(.*?)" logical operator to "(.*?)"$/ do |level, operator|
-  @courseOR.change_operator(level, operator)
+When /^I change the operator before node "(.*?)" to "(.*?)"$/ do |node, operator|
+  @courseOR.change_operator(node, operator)
 end
 
 Then /^the first node should match "(.*)"$/ do |text|
   on ManageCORequisites do |page|
     page.loading.wait_while_present
-    page.edit_tree_section.text.should match /.*#{Regexp.escape(text)}.*/
+    page.edit_tree_section.text.should match /^Click on rule statement to edit\n[\s\t]*#{Regexp.escape(text)}.*/
   end
 end
 
