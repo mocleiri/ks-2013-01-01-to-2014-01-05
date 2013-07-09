@@ -19,7 +19,7 @@ class AcademicCalendar
   #generally set using options hash
   attr_accessor :name, :start_date, :end_date, :terms, :year
   #not implemented
-  attr_accessor :events, :holidays
+  attr_accessor :events, :holiday_calendar_list
 
 
   # provides default data:
@@ -40,7 +40,8 @@ class AcademicCalendar
         :year=>  random_year,
         :start_date=>"09/01/#{random_year}",
         :end_date=>"06/25/#{random_year + 1}",
-        :terms => []
+        :terms => [],
+        :holiday_calendar_list => []
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -183,6 +184,17 @@ class AcademicCalendar
 
   end
 
+  #holiday_calendar is created separately
+  def add_holiday_calendar(hcal_object)
+    edit
+    on EditAcademicCalendar do |page|
+      page.add_holiday_calendar_select.select hcal_object.name
+      page.add_holiday_calendar
+      page.save
+    end
+    holiday_calendar_list << hcal_object
+  end
+
   #there are existing calendars up to 2023, so most of the term codes are used
   BASE_UNUSED_CALENDAR_YEAR = 2024
   MAX_UNUSED_CALENDAR_YEAR = 2199
@@ -241,7 +253,15 @@ class AcademicTerm
       page.term_end_date_add.set @end_date
       #TODO - parent term
       page.acal_term_add
-      page.adding.wait_while_present
+
+      begin
+        page.adding.wait_while_present
+      rescue
+        page.alert.ok
+        sleep 60
+      end
+
+
 
       page.open_term_section(@term_type)
 
@@ -263,11 +283,28 @@ class AcademicTerm
   def edit(opts = {})
     search
     on(CalendarSearch).edit @term_name
-    on(EditAcademicTerms).open_term_section(@term_type)
+
+    term_index = 0
+    on EditAcademicTerms do |page|
+      page.open_term_section(@term_type)
+      term_index = page.term_index_by_term_type(@term_type)
+    end
+
+    if opts[:term_name] != nil
+      on EditAcademicTerms  do |page|
+        page.term_name_edit(term_index).set opts[:term_name]
+      end
+    end
 
     if opts[:start_date] != nil
       on EditAcademicTerms  do |page|
-        page.term_start_date(edit_row,options[:start_date])
+        page.term_start_date(term_index).set opts[:start_date]
+      end
+    end
+
+    if opts[:end_date] != nil
+      on EditAcademicTerms  do |page|
+        page.term_end_date(term_index).set opts[:end_date]
       end
     end
 
@@ -312,7 +349,7 @@ class AcademicTerm
     puts "calculating from #{@start_date} to #{@end_date}"
     weekdays = 0
     date = date2
-    while date > date1
+    while date >= date1
       weekdays = weekdays + 1 unless date.saturday? or date.sunday?
       date = date - 1
     end
@@ -524,6 +561,7 @@ class KeyDate
     on EditAcademicTerms  do |page|
       page.delete_key_date(delete_row)
       page.loading.wait_while_present
+      page.save
     end
   end
 

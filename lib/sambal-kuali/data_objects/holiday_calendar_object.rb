@@ -21,17 +21,17 @@ class HolidayCalendar
 
   # provides default data:
   #defaults = {
-     # :name=>random_alphanums.strip,
-     # :start_date=>"09/01/#{next_year[:year]}",
-     # :end_date=>"06/25/#{next_year[:year] + 1}",
-     # :organization=>"Registrar's Office",  GONE per KSENROLL-5641
-     # :holiday_types=>[
-     # {:type=>"random", :start_date=>"02/01/#{next_year[:year] + 1}", :all_day=>true, :date_range=>false, :instructional=>false},
-     # {:type=>"random", :start_date=>"03/02/#{next_year[:year] + 1}", :end_date=>"03/04/#{next_year[:year] + 1}", :all_day=>true, :date_range=>true, :instructional=>false},
-     # {:type=>"random", :start_date=>"04/05/#{next_year[:year] + 1}", :start_time=>"03:00", :start_meridian=>"pm", :end_time=>"07:44", :end_meridian=>"pm", :all_day=>false, :date_range=>false, :instructional=>false},
-     # {:type=>"random", :start_date=>"05/11/#{next_year[:year] + 1}", :start_time=>"02:22", :start_meridian=>"am", :end_date=>"05/22/#{next_year[:year] + 1}", :end_time=>"07:44", :end_meridian=>"pm", :all_day=>false, :date_range=>true, :instructional=>false}
-     # ]
-     #}
+  # :name=>random_alphanums.strip,
+  # :start_date=>"09/01/#{next_year[:year]}",
+  # :end_date=>"06/25/#{next_year[:year] + 1}",
+  # :organization=>"Registrar's Office",  GONE per KSENROLL-5641
+  # :holiday_types=>[
+  # {:type=>"random", :start_date=>"02/01/#{next_year[:year] + 1}", :all_day=>true, :date_range=>false, :instructional=>false},
+  # {:type=>"random", :start_date=>"03/02/#{next_year[:year] + 1}", :end_date=>"03/04/#{next_year[:year] + 1}", :all_day=>true, :date_range=>true, :instructional=>false},
+  # {:type=>"random", :start_date=>"04/05/#{next_year[:year] + 1}", :start_time=>"03:00", :start_meridian=>"pm", :end_time=>"07:44", :end_meridian=>"pm", :all_day=>false, :date_range=>false, :instructional=>false},
+  # {:type=>"random", :start_date=>"05/11/#{next_year[:year] + 1}", :start_time=>"02:22", :start_meridian=>"am", :end_date=>"05/22/#{next_year[:year] + 1}", :end_time=>"07:44", :end_meridian=>"pm", :all_day=>false, :date_range=>true, :instructional=>false}
+  # ]
+  #}
   # initialize is generally called using TestFactory Foundry .make or .create methods
   def initialize(browser, opts={})
     @browser = browser
@@ -41,8 +41,8 @@ class HolidayCalendar
         :start_date=>"09/01/#{next_year[:year]}",
         :end_date=>"06/25/#{next_year[:year] + 1}",
         :holiday_types=>[
-            {:type=>"random", :start_date=>"02/01/#{next_year[:year] + 1}", :all_day=>true, :date_range=>false, :instructional=>false},
-            {:type=>"random", :start_date=>"03/02/#{next_year[:year] + 1}", :end_date=>"03/04/#{next_year[:year] + 1}", :all_day=>true, :date_range=>true, :instructional=>false}
+            (make Holiday, :type=>"random", :start_date=>"02/01/#{next_year[:year] + 1}", :all_day=>true, :date_range=>false, :instructional=>false) ,
+            (make Holiday, :type=>"random", :start_date=>"03/02/#{next_year[:year] + 1}", :end_date=>"03/04/#{next_year[:year] + 1}", :all_day=>true, :date_range=>true, :instructional=>false )
         ]
     }
     options = defaults.merge(opts)
@@ -61,27 +61,7 @@ class HolidayCalendar
       page.end_date.set @end_date
       #page.organization.select @organization
       @holiday_types.each do |holiday|
-        if holiday[:type] == "random"
-          page.holiday_type.select page.select_random_holiday
-          holiday[:type]=page.holiday_type.value
-        else
-          page.holiday_type.select holiday[:type]
-        end
-        page.holiday_start_date.set holiday[:start_date]
-        if holiday[:date_range]
-          page.date_range.set
-            sleep 4
-          page.holiday_end_date.set holiday[:end_date]
-        else
-          page.date_range.clear if page.date_range.set?
-        end
-        if holiday[:all_day]
-          page.all_day.set unless page.all_day.set?
-        else
-          page.start_time
-        end
-        page.add_link.click
-        page.loading.wait_while_present
+        holiday.create
       end
       page.save
     end
@@ -135,7 +115,7 @@ class HolidayCalendar
   end
 
   def make_official
-    on EditAcademicCalendar do |page|
+    on CreateHolidayCalendar do |page|
       page.make_official
     end
   end
@@ -155,5 +135,82 @@ class HolidayCalendar
       page.search_for "Holiday Calendar", @name
     end
   end
+
+  def instructional_days_off
+    return 1
+  end
 end
 
+class Holiday
+
+  include Foundry
+  include DataFactory
+  include DateFactory
+  include StringFactory
+  include Workflows
+
+  attr_accessor :type, :start_date, :end_date, :all_day, :date_range, :instructional
+
+  def initialize(browser,opts = {})
+    @browser = browser
+
+    defaults = {
+        :type=> "random",
+        :start_date => "12/12/2012",
+        :all_day => true,
+        :date_range => false,
+        :instructional => true
+    }
+
+    options = defaults.merge(opts)
+    set_options(options)
+  end
+
+  def create(opts = {})
+
+    on CreateHolidayCalendar do |page|
+      if @type == "random"
+        page.holiday_type.select page.select_random_holiday
+        @type=page.holiday_type.value
+      else
+        page.holiday_type.select @type
+      end
+      page.holiday_start_date.set @start_date
+      if @date_range
+        page.date_range.set
+        sleep 4
+        page.holiday_end_date.set @end_date
+      else
+        page.date_range.clear if page.date_range.set?
+      end
+      if @all_day
+        page.all_day.set unless page.all_day.set?
+      else
+        page.start_time
+      end
+      if !@instructional then
+        page.instructional.clear
+        #make sure date is not on a weekend
+        st_date = Date.strptime( @start_date , '%m/%d/%Y')
+        e_date = Date.strptime( @end_date , '%m/%d/%Y') unless @end_date.nil? or @end_date == ""
+        while st_date.saturday? or st_date.sunday? do
+          st_date = st_date + 1
+          e_date = e_date + 1 unless e_date.nil?
+        end
+        @start_date = st_date.strftime("%m/%d/%Y")
+        page.holiday_start_date.set @start_date
+        if !e_date.nil? then
+          @end_date = e_date.strftime("%m/%d/%Y")
+          page.holiday_end_date.set @end_date
+        end
+      else
+        page.instructional.set
+      end
+      page.add_link.click
+      page.loading.wait_while_present
+    end
+
+  end
+
+
+end

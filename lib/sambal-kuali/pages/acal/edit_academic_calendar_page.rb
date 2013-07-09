@@ -78,4 +78,9 @@ class EditAcademicCalendar < BasePage
   action(:key_date_add) { |b| b.frm.button(id: "u1326_line0_line0_add").click } # Persistent ID needed!
   action(:delete_keydate_group) { |b| b.frm.button(text: "delete keydate group").click } # Persistent ID needed!
 
+  element(:add_holiday_calendar_div) { |b| b.frm.div(id: "acal-holidays_disclosureContent") }
+  element(:add_holiday_calendar_select) { |b| b.add_holiday_calendar_div.select }
+  element(:add_holiday_calendar_button) { |b| b.add_holiday_calendar_div.button(id: "acal-holidays_add") }
+  action(:add_holiday_calendar)  { |b| b.add_holiday_calendar_button.click; b.loading.wait_while_present }
+
 end

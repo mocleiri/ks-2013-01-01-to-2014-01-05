@@ -1,6 +1,6 @@
-@wip
+@nightly
 Feature: EC.Academic Calendar Terms
-  CO 2.14
+  CO 2.17
 
   Background:
     Given I am logged in as a Schedule Coordinator
@@ -63,29 +63,5 @@ Feature: EC.Academic Calendar Terms
     Given I create an Academic Calendar
     And I add a new term to the Academic Calendar with a defined instructional period
     Then the instructional days calculation is correct
-    #When I add holidays within the term
-    #Then the instructional days calculation is correct
-
-  @draft
-  Scenario: debug terms page/data objects
-    Given I debug the 2012-2013 Academic Calendar
-    When I debug the Winter Term
-    And I debug the key date groups
-    And I debug the key dates
-#  @draft
-#  Scenario: Add a term to the academic calendar (acad calender must be official before can make term official)
-#    When I add a spring term and save
-#    Then I verify that the term added to the calendar
-#    And Make Official button for the term is enabled
-#
-#  @draft
-#  Scenario: Make Academic Term Official
-#    When I add a winter term and save
-#    And I make the term official
-#    Then the term should be set to Official on edit
-#
-#  @draft
-#  Scenario: Delete Draft Academic Term
-#    When I add a summer term and save
-#    And I delete the Academic Term draft
-#    Then the term should not appear in search results
+    When I add a Holiday Calendar with holidays in the term
+    Then the instructional days calculation is correct

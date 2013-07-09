@@ -332,37 +332,6 @@ Then /^the updated term information is listed when I view the Academic Calendar$
   end
 end
 
-
-Given /^I debug the 2012-2013 Academic Calendar$/ do
-  @calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar"
-  @calendar.search
-  @calendar.edit
-
-end
-When /^I debug the Winter Term$/ do
-  @term = make AcademicTerm, :term_type=>AcademicTerm::WINTER_TERM_TYPE
-
-  on EditAcademicTerms do |page|
-    page.go_to_terms_tab
-    page.open_term_section(@term.term_type)
-  end
-  #@term.edit :key_date_group_list =>  Array.new(1){make KeyDateGroup}
-end
-
-When /^I debug the key date groups$/ do
-  @key_date_group = create KeyDateGroup, :key_date_group_type=> KeyDateGroup::INSTRUCTIONAL_DATE_GROUP, :term_type =>@term.term_type
-  #on EditAcademicTerms do |page|
-  #  puts "exists #{page.key_date_group_exists?(@term.term_type, "Instructional Key Dates")}"
-  #end
-end
-
-When /^I debug the key dates$/ do
-  @key_date = create KeyDate, :key_date_type => "First Day of Classes", :start_date => (Date.today + 2).strftime("%m/%d/%Y"),:parent_key_date_group => @key_date_group
-  #on EditAcademicTerms do |page|
-  #  puts "exists #{page.key_date_exists?(@term.term_type, "Instructional", "Last Day of Classes")}"
-  #end
-end
-
 Given /^I copy an existing Academic Calendar$/ do
   @source_calendar = make AcademicCalendar, :name => "2012-2013 Continuing Education Calendar"
   @calendar = make AcademicCalendar
@@ -505,7 +474,7 @@ Then /^the Key Date is not listed with the academic term information$/ do
   on ViewAcademicTerms do |page|
     page.go_to_terms_tab
     page.open_term_section(@term.term_type)
-    page.key_date_target_row(@term.term_type, "Instructional", @keydate.key_date_type).nil?.should == true
+    page.target_key_date_row(@term.term_type, "Instructional", @keydate.key_date_type).exists?.should == false
   end
 end
 
@@ -560,4 +529,20 @@ Then /^the instructional days calculation is correct$/ do
     page.open_term_section(@term.term_type)
     page.term_instructional_days(@term.term_type).to_i.should == @term.expected_instructional_days.to_i
   end
+end
+
+When /^I add a Holiday Calendar with holidays in the term$/ do
+  holiday_list =  Array.new(1){make Holiday, :type=>"Columbus Day", :start_date=>"09/05/#{@term.term_year}", :all_day=>true, :date_range=>false, :instructional=>false}
+  @holiday_calendar = create HolidayCalendar, :start_date => @calendar.start_date,
+                             :end_date => @calendar.end_date,
+                             :holiday_types => holiday_list
+  @holiday_calendar.make_official
+
+  @calendar.add_holiday_calendar(@holiday_calendar)
+  @term.expected_instructional_days -= 1 # 1 holiday added
+
+end
+
+When /^I add a Holiday Calendar to the Academic Calendar$/ do
+  pending
 end

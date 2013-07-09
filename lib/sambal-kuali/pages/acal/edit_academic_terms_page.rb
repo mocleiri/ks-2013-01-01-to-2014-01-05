@@ -22,7 +22,7 @@ class EditAcademicTerms < BasePage
   end
 
   def term_section_div_list
-    acal_term_list_div.divs(id: /^u1011_line\d+$/)
+    acal_term_list_div.divs(id: /^term_section_line\d+$/)
   end
 
   def open_term_section(term_type)
@@ -33,7 +33,7 @@ class EditAcademicTerms < BasePage
   end
 
   def open_term_section_by_index(term_index)
-    link =  div.link(id: "u1011_line#{term_index}_toggle")
+    link =  div.link(id: "term_section_line#{term_index}_toggle")
     if link.image.attribute_value("alt") == "collapse" then # expand means is already expanded
       link.click
     end
@@ -41,7 +41,7 @@ class EditAcademicTerms < BasePage
 
   def delete_term(term_type)
     term_index = term_index_by_term_type(term_type)
-    acal_term_list_div.div(id: "u1017_line#{term_index}").link(text: /Delete Term/).click
+    acal_term_list_div.div(id: "term_section_line#{term_index}").link(text: /Delete Term/).click
     loading.wait_while_present
   end
 
@@ -194,6 +194,7 @@ class EditAcademicTerms < BasePage
   action(:get_term_start_date) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].startDate").value }
   action(:get_term_end_date) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].endDate").value }
 
+  action(:term_name_edit) { |term_index,b| b.frm.text_field(id: "term_name_line#{term_index}_control") }
   action(:term_start_date) { |term_index,b| b.frm.text_field(id: "term_start_date_line#{term_index}_control") }
   action(:term_end_date) { |term_index,b| b.frm.text_field(id: "term_end_date_line#{term_index}_control") }
 
