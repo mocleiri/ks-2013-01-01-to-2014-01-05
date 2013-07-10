@@ -1,6 +1,6 @@
 Given /^It is "After" the first day of classes$/ do
   step "I am logged in as a Schedule Coordinator"
-  @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE, :term_year => Rollover::PUBLISHED_MILESTDONES_SOC_TERM_YEAR
+  @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE, :term_year => Rollover::PUBLISHED_MILESTONES_SOC_TERM_YEAR
   @term.edit
 
   @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
@@ -12,7 +12,7 @@ end
 
 Given /^It is "Before" the first day of classes and "Before" the first day to add classes/ do
   step "I am logged in as a Schedule Coordinator"
-  @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE, :term_year => Rollover::PUBLISHED_MILESTDONES_SOC_TERM_YEAR
+  @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE, :term_year => Rollover::PUBLISHED_MILESTONES_SOC_TERM_YEAR
   @term.edit
 
   @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
@@ -29,7 +29,7 @@ end
 
 Given /^It is "Before" the first day of classes and "After" the first day to add classes/ do
   step "I am logged in as a Schedule Coordinator"
-  @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE, :term_year => Rollover::PUBLISHED_MILESTDONES_SOC_TERM_YEAR
+  @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE, :term_year => Rollover::PUBLISHED_MILESTONES_SOC_TERM_YEAR
   @term.edit
 
   @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
@@ -57,7 +57,7 @@ end
 
 Given /^It is "After" the first day to add classes$/ do
   step "I am logged in as a Schedule Coordinator"
-  @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE, :term_year => Rollover::PUBLISHED_MILESTDONES_SOC_TERM_YEAR
+  @term = make AcademicTerm, :term_name=> Rollover::PUBLISHED_MILESTONES_SOC_TERM_NAME, :term_type=>AcademicTerm::WINTER_TERM_TYPE, :term_year => Rollover::PUBLISHED_MILESTONES_SOC_TERM_YEAR
   @term.edit
 
   @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
