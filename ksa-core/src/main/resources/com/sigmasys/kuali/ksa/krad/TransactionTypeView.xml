@@ -403,7 +403,7 @@
                                 -->
                             </bean>
 
-                            <bean parent="Uif-InputField" p:propertyName="operation" p:labelPlacement="TOP" p:label="Operation" p:readOnly="true">
+                            <bean parent="Uif-InputField" p:propertyName="operation" p:labelPlacement="TOP" p:label="Operation" p:readOnly="false">
                                 <property name="control">
                                   <bean parent="Uif-DropdownControl" p:width="100%"/>
                                 </property>
@@ -415,7 +415,7 @@
                                   p:labelPlacement="TOP"
                                   p:fieldLabel.renderColon="true"
                                   p:align="right">
-                                <property name="readOnly" value="true"/>
+                                <property name="readOnly" value="false"/>
                                 <property name="control">
                                     <bean parent="Uif-CurrencyTextControl" p:size="22"/>
                                 </property>
