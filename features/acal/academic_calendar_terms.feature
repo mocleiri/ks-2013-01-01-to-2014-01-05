@@ -65,6 +65,7 @@ Feature: EC.Academic Calendar Terms
     Given I copy an existing Academic Calendar
     Then the Key Dates are copied without date values
 
+  @bug @KSENROLL-8022
   Scenario: Verify instructional days calculation for an academic term
     Given I create an Academic Calendar
     And I add a new term to the Academic Calendar with a defined instructional period

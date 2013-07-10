@@ -166,6 +166,7 @@ class AcademicCalendar
   end
 
   def add_term(term_object)
+    term_object.term_year = @year
     term_object.create
     @terms << term_object
   end
@@ -222,7 +223,7 @@ class AcademicTerm
     @browser = browser
 
     #establish the year in order to make default start/end dates
-    if opts[:term_year].nil? then
+    if opts[:term_year] == "random" then
       calendar_year = AcademicCalendar.get_random_calendar_year
     else
       calendar_year = opts[:term_year]
@@ -230,7 +231,7 @@ class AcademicTerm
 
     defaults = {
         :start_date=>"09/02/#{calendar_year}",
-        :end_date=>"12/24/#{calendar_year}",
+        :end_date=>"09/24/#{calendar_year}",
         :term_type=>"Fall Term",
         :term_name=>"Fall Term #{calendar_year}",
         :key_date_group_list=> Array.new(1){make KeyDateGroup},
