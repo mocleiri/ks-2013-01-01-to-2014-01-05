@@ -5,6 +5,7 @@ Feature: EC.Academic Calendar CRED
     Given I am logged in as a Schedule Coordinator
     And I create an Academic Calendar
 
+  @bug @KSENROLL-8017
   Scenario: Create and save academic calendar from blank
     Then the Make Official button should become active
 
@@ -12,11 +13,13 @@ Feature: EC.Academic Calendar CRED
     And I search for the calendar
     Then the calendar should appear in search results
 
+  @bug @KSENROLL-8017
   Scenario: Make Academic Calendar Official
     When I make the calendar official
     And I search for the calendar
     Then the calendar should be set to Official
 
+  @bug @KSENROLL-8017
   Scenario: Copy an Academic Calendar
     And I copy the Academic Calendar
     Then the Make Official button should become active

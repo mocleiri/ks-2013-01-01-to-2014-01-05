@@ -104,6 +104,7 @@ When /^I update the Academic Calendar$/ do
 end
 
 When /^I delete the Academic Calendar draft$/ do
+  @calendar.edit
   on EditAcademicCalendar do |page|
     page.delete_draft
     page.confirm_delete
@@ -121,21 +122,22 @@ Then /^the calendar should reflect the updates$/ do
   end
 end
 
-When /^I add a (.*) term and save$/ do |term_type|
-  on EditAcademicTerms do |page|
-     page.go_to_terms_tab
-     @term = make AcademicTerm
-     @term.create term_type
-     page.go_to_cal_tab
-  end
-  on EditAcademicCalendar do |page|
-    page.save
-    raise "Page has errors" unless page.page_info_message
-    if(page.page_info_message)
-        (page.page_info_message_text =~ /has been saved successfully./).should_not == nil
-    end
-  end
-end
+#TODO - cleanup?
+#When /^I add a (.*) term and save$/ do |term_type|
+#  on EditAcademicTerms do |page|
+#     page.go_to_terms_tab
+#     @term = make AcademicTerm
+#     @term.create term_type
+#     page.go_to_cal_tab
+#  end
+#  on EditAcademicCalendar do |page|
+#    page.save
+#    raise "Page has errors" unless page.page_info_message
+#    if(page.page_info_message)
+#        (page.page_info_message_text =~ /has been saved successfully./).should_not == nil
+#    end
+#  end
+#end
 
 Then /^I verify that the term added to the calendar$/ do
   @calendar.search
