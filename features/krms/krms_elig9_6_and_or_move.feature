@@ -1,8 +1,8 @@
-Feature: KRMS ELIG9.6 AND, OR and Move
+Feature: KRMS.ELIG9-6 AND, OR and Move
 
   Background:
     Given I am logged in as admin
-    Given I have setup the data for "Student Eligibility & Prerequisite" for term "201301" and course "BSCI103M"
+    Given I have setup the Student Eligibility & Prerequisite section for course "BSCI103M" in the future term
 
   #ELIG9.6.EB1 (KSENROLL-6491)
   @pending
@@ -15,7 +15,7 @@ Feature: KRMS ELIG9.6 AND, OR and Move
   @pending
   Scenario: The group should change depending on the AND/OR operator
     When I want to edit the selected agenda section
-    And I change a "primary" logical operator to "AND"
+    And I change the operator before node "G" to "AND"
     Then the first node should match "Must meet all of the following"
 
   #ELIG9.6.EB3 (KSENROLL-6308)
@@ -24,9 +24,9 @@ Feature: KRMS ELIG9.6 AND, OR and Move
     When I want to edit the selected agenda section
     And I move node "B" down
     And I move node "E" up
-    And I change a "primary" logical operator to "AND"
+    And I change the operator before node "G" to "AND"
     And I switch to the other tab on the page
-    Then the text "E AND (A AND (C OR B) AND D) AND F AND G" should be present in the text area
+    Then the text area should contain "E AND (A OR (C OR B) OR D) AND F AND G"
 
   #ELIG9.6.EB4 (KSENROLL-6310)
   @pending
@@ -62,13 +62,13 @@ Feature: KRMS ELIG9.6 AND, OR and Move
   @pending
   Scenario: The droplist value should be able to be changed
     When I want to edit the selected agenda section
-    And I change a "primary" logical operator to "AND"
+    And I change the operator before node "G" to "AND"
     Then there should be a dropdown with value "AND" before node "G"
 
   #ELIG9.6.EB9 (KSENROLL-5777)
   @pending
   Scenario: The changes should be applied to the rule view on the Edit with Logic tab
     When I want to edit the selected agenda section
-    And I change a "primary" logical operator to "AND"
+    And I change the operator before node "G" to "AND"
     And I switch to the other tab on the page
-    Then the text "(A AND (B OR C) AND D) AND E AND F AND G" should be present in the text area
+    Then the text area should contain "(A OR (B OR C) OR D) AND E AND F AND G"
