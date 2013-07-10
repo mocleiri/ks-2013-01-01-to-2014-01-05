@@ -98,17 +98,17 @@ class CORequisitesData
     rescue Watir::Wait::TimeoutError
       #means Update Rule button already clicked
     end
-    on CourseOfferingRequisites do |page|
-      page.loading.wait_while_present
-      page.submit
-      page.loading.wait_while_present(200)
-    end
-    if return_to_edit_page == true
-      on ManageCourseOfferings do |page|
-        page.manage_course_offering_requisites
-      end
-      open_agenda_section
-    end
+    #on CourseOfferingRequisites do |page|
+    #  page.loading.wait_while_present
+    #  page.submit
+    #  page.loading.wait_while_present(200)
+    #end
+    #if return_to_edit_page == true
+    #  on ManageCourseOfferings do |page|
+    #    page.manage_course_offering_requisites
+    #  end
+    #  open_agenda_section
+    #end
   end
 
   def open_agenda_section
@@ -724,27 +724,16 @@ class CORequisitesData
     end
   end
 
-  def test_node_level( level, node)
+  def test_node_level( level)
     on ManageCORequisites do |page|
-      page.loading.wait_while_present
-      id = page.edit_tree_section.span(:text => /.*#{node}\..*/).id
       if level == "primary"
-        test_primary = /u\d+_node_\d_parent_node_0_parent_root_span/
-        if id !~ test_primary
-          raise "\nError: ID did not match primary level\n" + test_primary.to_s
-        end
+        test = /u\d+_node_\d_parent_node_0_parent_root_span/
       elsif level == "secondary"
-        test_secondary = /u\d+_node_\d_parent_node_\d_parent_node_0_parent_root_span/
-        if id !~ test_secondary
-          raise "\nError: ID did not match secondary level\n" + test_secondary.to_s
-        end
+        test = /u\d+_node_\d_parent_node_\d_parent_node_0_parent_root_span/
       elsif level == "tertiary"
-        test_tertiary = /u\d+_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_span/
-        if id !~ test_tertiary
-          raise "\nError: ID did not match tertiary level\n" + test_tertiary.to_s
-        end
+        test = /u\d+_node_\d_parent_node_\d_parent_node_\d_parent_node_0_parent_root_span/
       end
-
+      return Regexp.new(test)
     end
   end
 

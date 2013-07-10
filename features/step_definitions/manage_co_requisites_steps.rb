@@ -677,7 +677,10 @@ Then /^the first node should match "(.*)"$/ do |text|
 end
 
 Then /^node "(.*)" should be a "(.*)" node in the tree$/ do |node, level|
-  @courseOR.test_node_level(level, node)
+  on ManageCORequisites do |page|
+    page.loading.wait_while_present
+    page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should match @courseOR.test_node_level(level)
+  end
 end
 
 Then /^there should be a dropdown with value "(.*)" before node "(.*)"$/ do |drop, node|
@@ -698,7 +701,7 @@ end
 Then /^the Move In button should be disabled$/ do
   on ManageCORequisites do |page|
     if page.right_btn_element.attribute_value('disabled')
-      puts page.right_btn_element.attribute_value('disabled') #.should == "disabled"
+      page.right_btn_element.attribute_value('disabled').should == "true"
     end
   end
 end
