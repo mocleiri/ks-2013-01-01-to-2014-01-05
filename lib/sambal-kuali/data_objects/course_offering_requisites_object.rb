@@ -98,17 +98,17 @@ class CORequisitesData
     rescue Watir::Wait::TimeoutError
       #means Update Rule button already clicked
     end
-    #on CourseOfferingRequisites do |page|
-    #  page.loading.wait_while_present
-    #  page.submit
-    #  page.loading.wait_while_present(200)
-    #end
-    #if return_to_edit_page == true
-    #  on ManageCourseOfferings do |page|
-    #    page.manage_course_offering_requisites
-    #  end
-    #  open_agenda_section
-    #end
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      page.submit
+      page.loading.wait_while_present(200)
+    end
+    if return_to_edit_page == true
+      on ManageCourseOfferings do |page|
+        page.manage_course_offering_requisites
+      end
+      open_agenda_section
+    end
   end
 
   def open_agenda_section
