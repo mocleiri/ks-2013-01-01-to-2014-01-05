@@ -48,28 +48,28 @@
 
     <param name="jpa.vendor">hibernate</param>
 
-	<param name="ks.myplan.datasource.driver.name.oracle">oracle.jdbc.OracleDriver</param>
-	<param name="ks.myplan.datasource.driver.name.derby">org.apache.derby.jdbc.ClientDriver</param>
-	<param name="ks.myplan.datasource.driver.name.mysql">com.mysql.jdbc.Driver</param>
-	<param name="ks.myplan.datasource.driver.name">${ks.myplan.datasource.driver.name.${db.vendor}}</param>
+    <param name="ks.myplan.datasource.driver.name.oracle">oracle.jdbc.OracleDriver</param>
+    <param name="ks.myplan.datasource.driver.name.derby">org.apache.derby.jdbc.ClientDriver</param>
+    <param name="ks.myplan.datasource.driver.name.mysql">com.mysql.jdbc.Driver</param>
+    <param name="ks.myplan.datasource.driver.name">${ks.myplan.datasource.driver.name.${db.vendor}}</param>
 
-	<param name="ks.myplan.datasource.url.oracle">jdbc:oracle:thin:@localhost:1521:XE</param>
-	<param name="ks.myplan.datasource.url.derby">jdbc:derby://localhost:1527/derby/enroll;create=true</param>
-	<param name="ks.myplan.datasource.url.mysql">jdbc:mysql://localhost/KSEMBEDDED</param>
+    <param name="ks.myplan.datasource.url.oracle">jdbc:oracle:thin:@localhost:1521:XE</param>
+    <param name="ks.myplan.datasource.url.derby">jdbc:derby://localhost:1527/derby/enroll;create=true</param>
+    <param name="ks.myplan.datasource.url.mysql">jdbc:mysql://localhost/KSEMBEDDED</param>
     <param name="ks.myplan.datasource.url">${ks.myplan.datasource.url.${db.vendor}}</param>
 
-	<param name="ks.myplan.jpa.DatabasePlatform.oracle">org.hibernate.dialect.Oracle10gDialect</param>
-	<param name="ks.myplan.jpa.DatabasePlatform.derby">org.hibernate.dialect.DerbyDialect</param>
-	<param name="ks.myplan.jpa.DatabasePlatform.mysql">org.hibernate.dialect.MySQLDialect</param>
-	<param name="ks.myplan.jpa.DatabasePlatform">${ks.myplan.jpa.DatabasePlatform.${db.vendor}}</param>
+    <param name="ks.myplan.jpa.DatabasePlatform.oracle">org.hibernate.dialect.Oracle10gDialect</param>
+    <param name="ks.myplan.jpa.DatabasePlatform.derby">org.hibernate.dialect.DerbyDialect</param>
+    <param name="ks.myplan.jpa.DatabasePlatform.mysql">org.hibernate.dialect.MySQLDialect</param>
+    <param name="ks.myplan.jpa.DatabasePlatform">${ks.myplan.jpa.DatabasePlatform.${db.vendor}}</param>
 
-	<param name="ks.myplan.datasource.validationQuery.oracle">select 1 from dual</param>
-	<param name="ks.myplan.datasource.validationQuery.derby">values(1)</param>
-	<param name="ks.myplan.datasource.validationQuery.mysql">select 1</param>
-	<param name="ks.myplan.datasource.validationQuery">${ks.myplan.datasource.validationQuery.${db.vendor}}</param>
+    <param name="ks.myplan.datasource.validationQuery.oracle">select 1 from dual</param>
+    <param name="ks.myplan.datasource.validationQuery.derby">values(1)</param>
+    <param name="ks.myplan.datasource.validationQuery.mysql">select 1</param>
+    <param name="ks.myplan.datasource.validationQuery">${ks.myplan.datasource.validationQuery.${db.vendor}}</param>
 
-	<param name="ks.myplan.datasource.username">ksmyplan</param>
-	<param name="ks.myplan.datasource.password">ksmyplan</param>
+    <param name="ks.myplan.datasource.username">ksmyplan</param>
+    <param name="ks.myplan.datasource.password">ksmyplan</param>
 
     <param name="ks.myplan.datasource.maxSize" override="false">10</param>
     <param name="ks.myplan.datasource.minSize" override="false">2</param>
@@ -77,7 +77,9 @@
 
     <param name="ks.myplan.jpa.showSql">false</param>
     <param name="ks.myplan.jpa.generateDdl">false</param>
-    <param name="ks.myplan.jpa.JpaProperties.hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JOTMTransactionManagerLookup</param>
+    <param name="ks.myplan.jpa.JpaProperties.hibernate.transaction.manager_lookup_class">
+        org.hibernate.transaction.JOTMTransactionManagerLookup
+    </param>
     <param name="ks.myplan.jpa.JpaProperties.hibernate.hbm2ddl.auto">validate</param>
     <param name="ks.myplan.jpa.JpaProperties.hibernate.connection.release_mode">after_statement</param>
     <param name="ks.myplan.jpa.JpaProperties.hibernate.connection.autocommit">false</param>
@@ -89,9 +91,13 @@
     <param name="ks.myplan.externalizable.images.url">/${app.code}/ks-myplan/images/</param>
 
     <!-- MyPlan properties file containing Error Messages -->
-    <param name="rice.struts.message.resources" override="true">${rice.struts.message.resources},org.kuali.student.myplan.KSMyPlan-ApplicationResources</param>
+    <param name="rice.struts.message.resources" override="true">
+        ${rice.struts.message.resources},org.kuali.student.myplan.KSMyPlan-ApplicationResources
+    </param>
 
-    <param name="resourceBundleNames" override="true">org.kuali.rice.krad.KRADApplicationResources,org.kuali.rice.krad.ApplicationResources,org.kuali.student.myplan.KSMyPlan-ApplicationResources</param>
+    <param name="resourceBundleNames" override="true">
+        org.kuali.rice.krad.KRADApplicationResources,org.kuali.rice.krad.ApplicationResources,org.kuali.student.myplan.KSMyPlan-ApplicationResources
+    </param>
 
     <!-- used to show KS links in Rice Portal -->
     <param name="portal.show.sample.app">true</param>
@@ -218,13 +224,22 @@
     <param name="ks.academicCalendar.enable.caching">true</param>
     <param name="myplan.cache.config.file">classpath:myplan-ehcache.xml</param>
     <param name="myplan.courseSearch.enable.caching">true</param>
-<!--     <param name="ks.courseOffering.enable.caching">true</param> -->
+    <!--     <param name="ks.courseOffering.enable.caching">true</param> -->
     <param name="ks.courseOffering.enable.caching">false</param>
     <param name="ks.academicRecord.enable.caching">true</param>
 
     <!-- Dictionary Context Overrides -->
-    <param name="uw.ks.core.dictionary.serviceContextLocations">classpath:ks-proposalInfo-dictionary-context.xml, classpath:ks-workflow-dictionary-context.xml, classpath:ks-document-dictionary-context.xml, classpath:ks-comment-dictionary-context.xml, classpath:ks-atp-dictionary-context.xml, classpath:ks-lrc-dictionary-context.xml, classpath:uw-base-dictionary-override.xml, classpath:uw-comment-dictionary-override.xml</param>
-    <param name="uw.ks.lum.dictionary.serviceContextLocations">classpath:ks-courseInfo-dictionary-context.xml, classpath:ks-programInfo-dictionary-context.xml, classpath:ks-statement-dictionary-context.xml, classpath:ks-lrc-dictionary-context.xml,  classpath:uw-base-dictionary-override.xml, classpath:uw-courseInfo-dictionary-override.xml</param>
+    <param name="uw.ks.core.dictionary.serviceContextLocations">classpath:ks-proposalInfo-dictionary-context.xml,
+        classpath:ks-workflow-dictionary-context.xml, classpath:ks-document-dictionary-context.xml,
+        classpath:ks-comment-dictionary-context.xml, classpath:ks-atp-dictionary-context.xml,
+        classpath:ks-lrc-dictionary-context.xml, classpath:uw-base-dictionary-override.xml,
+        classpath:uw-comment-dictionary-override.xml
+    </param>
+    <param name="uw.ks.lum.dictionary.serviceContextLocations">classpath:ks-courseInfo-dictionary-context.xml,
+        classpath:ks-programInfo-dictionary-context.xml, classpath:ks-statement-dictionary-context.xml,
+        classpath:ks-lrc-dictionary-context.xml, classpath:uw-base-dictionary-override.xml,
+        classpath:uw-courseInfo-dictionary-override.xml
+    </param>
     <!--<param name="css.files" override="true">ks-myplan/css/myplan.css,${css.files}</param>-->
 
     <!-- UW SWS Service Impl -->
@@ -273,6 +288,7 @@
     <param name="myplan.adviser.message.env.link">${application.url}/myplan/advise/</param>
 
     <param name="myplan.version">${project.version}</param>
+    <param name="myplan.buildNumber">${buildNumber}</param>
 
     <param name="myplan.getting.started.page">https://depts.washington.edu/myplan/welcome-to-myplan/</param>
 
