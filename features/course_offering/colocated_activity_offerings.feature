@@ -19,25 +19,8 @@ Background:
     And I break colocation on the first colocated AO
     Then the first colocated AO is not colocated with any remaining AOs
 
+  # KSENROLL-8034
   Scenario: Delete a fully colocated AO
     When I designate a valid term and Course Offering Code with a fully colocated AO
     And I delete the fully colocated AO
     Then The AO is successfully deleted
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
