@@ -115,6 +115,7 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Open
     When I attempt to create a joint offered course offering for a subject in my admin org
     Then I do not have access to create a new joint offered course offering
 
+  @bug @KSENROLL-8065
   Scenario: CCO AZ - Department Schedule Coordinator does not have access to co-located DL's
     Given there is a course with a co-located DL in my admin org
     Then I do not have access to edit the co-located Activity Offering
