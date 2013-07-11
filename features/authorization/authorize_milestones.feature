@@ -5,6 +5,7 @@ Feature: EC.Authorize Milestones Feature
     Given I am logged in as a Schedule Coordinator
     And I am working on a term in "Published" SOC state for milestones testing
 
+  @bug @KSENROLL-8063
   Scenario: Department Schedule Coordinator Carol has access to delete AO's Before the first day of class
     Given It is "Before" the first day of classes and "Before" the first day to add classes
     And there is a "Draft" course offering in my admin org
@@ -15,6 +16,7 @@ Feature: EC.Authorize Milestones Feature
     And I do not have access to select the "Offered" course offering for approve, delete
     And I do not have access to delete an activity offering in a "Offered" state
 
+  @bug @KSENROLL-8063
   Scenario:Department Schedule Coordinator Carol does not have access to delete AO's After the first day of class
     Given It is "After" the first day of classes
     And there is a "Draft" course offering in my admin org
