@@ -38,7 +38,7 @@ As an Administrator, I want to create registration groups for a Course Offering
     Given I manage registration groups for a new course offering with multiple AO types and only one lecture activity
     When I create an activity offering cluster
     And I move a lecture activity offering to the new cluster
-    Then a cluster warning message appears stating "You must add Lecture to form reg groups"
+    Then for the original cluster a warning message appears stating "You must add Lecture to form reg groups"
 
   Scenario: ARG 6.5 When deleting an AOC delete all associated AOs as well
     Given I manage registration groups for a new course offering

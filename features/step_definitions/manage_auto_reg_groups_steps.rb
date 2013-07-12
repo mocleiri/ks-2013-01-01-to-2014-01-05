@@ -7,10 +7,6 @@ When /^I move an activity offering to the cluster$/ do
   @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("A",@course_offering.activity_offering_cluster_list[1])
 end
 
-When /^I move a lab activity offering from the first activity offering cluster to the second activity offering cluster$/ do
-  @ao_cluster2.move_ao_to_another_cluster("D",@ao_cluster)
-end
-
 Then /^the activity offering is shown as part of the cluster$/ do
   #validate all ao_clusters
   @course_offering.activity_offering_cluster_list.each do |cluster|
@@ -27,8 +23,6 @@ Given /^I have created an additional activity offering cluster for a catalog cou
   ao_cluster = make ActivityOfferingCluster
   @course_offering.add_ao_cluster(ao_cluster)
 end
-
-
 
 When /^I create a(?:n| new) activity offering cluster$/ do
   @ao_cluster = make ActivityOfferingCluster
@@ -97,6 +91,13 @@ Then /^a cluster warning message appears stating "(.*?)"$/ do |errMsg|
   end
 end
 
+Then /^for the original cluster a warning message appears stating "(.*?)"$/ do |errMsg|
+  cluster_private_name = @course_offering.activity_offering_cluster_list[0].private_name
+  on ManageCourseOfferings do |page|
+    page.get_cluster_warning_msgs(cluster_private_name).should include errMsg
+  end
+end
+
 Then /^I try to rename the second activity offering cluster to the same private name as the first$/ do
     @ao_cluster2.rename :private_name=> @ao_cluster.private_name
 end
@@ -160,11 +161,6 @@ end
 When /^Move one lab and one lecture activity offering to the second cluster$/ do
     @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("A", @course_offering.activity_offering_cluster_list[1])
     @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("J", @course_offering.activity_offering_cluster_list[1])
-end
-
-Then /^I copy the newly created course offering$/ do
-  @course_offering_copy = create CourseOffering, :term=> "201301", :create_by_copy=>@course_offering
-  @course_offering_copy.manage_and_init
 end
 
 Then /^the new course offering is formatted the same as the original$/ do
