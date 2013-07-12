@@ -1,4 +1,10 @@
 REF_OBJ_KRMS_OBJ_ID,COLLECTION_NM,KRMS_OBJ_ID,KRMS_DSCR_TYP,REF_OBJ_ID,REF_DSCR_TYP,NMSPC_CD,ACTV,VER_NBR
+"10143","${mpx.null}","10143","Agenda","c76c4e23-9d41-4c0e-b8bd-d51b58e01d99","kuali.lui.type.course.offering","KS-SYS","N","1"
+"10144","${mpx.null}","10144","Agenda","d3d3a31f-b1d4-4c60-a9c9-945c49d42e28","kuali.lui.type.course.offering","KS-SYS","N","1"
+"10145","${mpx.null}","10145","Agenda","d4c2352c-00b7-4bc3-9fa4-ae0dd99e3206","kuali.lui.type.course.offering","KS-SYS","N","1"
+"10146","${mpx.null}","10146","Agenda","c1020295-e80b-47eb-87c5-70c8f20ad153","kuali.lui.type.course.offering","KS-SYS","N","1"
+"10147","${mpx.null}","10147","Agenda","2b7a849d-f5af-45e1-933a-fb5ae4815771","kuali.lui.type.course.offering","KS-SYS","N","1"
+"10148","${mpx.null}","10148","Agenda","694c192c-298c-461d-ba71-8fdab674409f","kuali.lui.type.course.offering","KS-SYS","N","1"
 "11304","Course","11313","Agenda","CLUID-CHEM132-200508000000","kuali.lu.type.CreditCourse","KS-SYS","Y","1"
 "11305","Course","11314","Agenda","CLUID-CHEM147-200508000000","kuali.lu.type.CreditCourse","KS-SYS","Y","1"
 "11306","Course","11315","Agenda","2c16e552-67b9-4fea-837a-5fcda06bae5c","kuali.lu.type.CreditCourse","KS-SYS","Y","1"
