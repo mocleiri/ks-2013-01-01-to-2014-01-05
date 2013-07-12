@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
+import com.sigmasys.kuali.ksa.service.PaymentService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
@@ -43,6 +44,9 @@ public class PaymentController extends GenericSearchController {
 
     @Autowired
     private AuditableEntityService auditableEntityService;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @Autowired
     private InformationService informationService;
@@ -194,15 +198,7 @@ public class PaymentController extends GenericSearchController {
         // determine next screen and set up data
         if(form.isAllocatePayment()){
             form.setPageId(ALLOCATE_PAYMENT_PAGE);
-            List<Transaction> transactions = transactionService.getTransactions(userId);
-
-            List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
-            for (Transaction t : transactions) {
-                if(transactionService.canPay(payment, t)){
-                    TransactionModel m = new TransactionModel(t);
-                    models.add(m);
-                }
-            }
+            List<TransactionModel> models = this.getTransactionModels(userId, payment);
             form.setAllocations(models);
 
         } else if(form.isAddAdditionalPayment()){
@@ -269,6 +265,14 @@ public class PaymentController extends GenericSearchController {
                 }
             }
 
+            String userId = form.getAccount().getId();
+            paymentService.paymentApplication(userId);
+            List<TransactionModel> models = this.getTransactionModels(userId, payment);
+            form.setAllocations(models);
+
+            Payment pmt = transactionService.getPayment(payment.getId());
+            form.setPayment(new TransactionModel(pmt));
+
             String statusMsg = "Payment successfully allocated";
             GlobalVariables.getMessageMap().putInfo(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
 
@@ -289,6 +293,21 @@ public class PaymentController extends GenericSearchController {
     public KeyValuesFinder getRollupOptionsFinder() {
         // Don't cache the values finder or else new entries will not show when added
         return new AuditableEntityKeyValuesFinder<Rollup>(Rollup.class);
+    }
+
+    private List<TransactionModel> getTransactionModels(String userId, Payment payment){
+
+        List<Transaction> transactions = transactionService.getTransactions(userId);
+
+        List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
+        for (Transaction t : transactions) {
+            if(transactionService.canPay(payment, t)){
+                TransactionModel m = new TransactionModel(t);
+                models.add(m);
+            }
+        }
+
+        return models;
     }
 
     private boolean savePayment(PaymentForm form) {
