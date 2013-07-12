@@ -238,7 +238,8 @@ public class OrgOrgRelationAssembler implements Assembler<Data, OrgorgRelationHe
             QueryPath metaPath = QueryPath.concat(null, ORGORG_PATH);
             Metadata orgOrgMeta =orgProposalModel.getMetadata(metaPath);
             if(!orgOrgMeta.isCanEdit()){
-               orgOrgRelation.setOrgOrgRelationTypeKey(orgService.getOrgOrgRelationTypeForOrgType(relation.getTypeKey(), context).getName());
+               //This call no longer makes any sense
+               //orgOrgRelation.setOrgOrgRelationTypeKey(orgService.getOrgOrgRelationTypeForOrgType(relation.getTypeKey(), context).getName());
             }
             else{
                 orgOrgRelation.setOrgOrgRelationTypeKey(relation.getTypeKey());
@@ -263,7 +264,8 @@ public class OrgOrgRelationAssembler implements Assembler<Data, OrgorgRelationHe
             QueryPath metaPath = QueryPath.concat(null, ORGORG_PATH);
             Metadata orgOrgMeta =orgProposalModel.getMetadata(metaPath);
             if(!orgOrgMeta.isCanEdit()){
-                    orgOrgRelation.setOrgOrgRelationTypeKey(orgService.getOrgOrgRelationTypeForOrgType(relation.getTypeKey(), context).getName());
+                //This call no longer makes any sense
+                //orgOrgRelation.setOrgOrgRelationTypeKey(orgService.getOrgOrgRelationTypeForOrgType(relation.getTypeKey(), context).getName());
             }
             else{
                 orgOrgRelation.setOrgOrgRelationTypeKey("REV_" +relation.getTypeKey());

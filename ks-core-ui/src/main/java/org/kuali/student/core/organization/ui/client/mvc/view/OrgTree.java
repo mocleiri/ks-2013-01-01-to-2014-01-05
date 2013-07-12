@@ -23,7 +23,6 @@ import org.kuali.student.common.ui.client.event.ModifyActionEvent;
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.r2.core.organization.dto.OrgHierarchyInfo;
-import org.kuali.student.r2.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.core.organization.ui.client.service.OrgRpcService;
 import org.kuali.student.core.organization.ui.client.service.OrgRpcServiceAsync;
 import org.kuali.student.core.organization.ui.client.theme.OrgTreeImages;
@@ -93,7 +92,8 @@ public class OrgTree  extends Composite{
             public void onSuccess(List<OrgHierarchyInfo> result) {
                 if(result != null){
                     for(final OrgHierarchyInfo orgHInfo:result){
-
+                        /*
+                        ////Removed because this section no longer makes sense after the org service refactor
                         // setting maxLevel to -1 to obtain only the root Node
                         orgRpcServiceAsync.getOrgDisplayTree(orgHInfo.getRootOrgId(), orgHInfo.getId(), -1, new KSAsyncCallback<List<OrgTreeInfo> >(){
 
@@ -106,7 +106,7 @@ public class OrgTree  extends Composite{
                             }
                             
                         });
-                        
+                          */
                     }                
                 }
             }
@@ -117,6 +117,8 @@ public class OrgTree  extends Composite{
     
     protected void getOrgTree(final String orgId, final String hierarchyId, final TreeItem node){
         //Setting Max level to 1 to obtain relations at the first level.
+        /*
+        //Removed because this section no longer makes sense after the org service refactor
         orgRpcServiceAsync.getOrgDisplayTree(orgId, hierarchyId, 1, new KSAsyncCallback<List<OrgTreeInfo> >(){
 
             @Override
@@ -135,6 +137,7 @@ public class OrgTree  extends Composite{
             }
             
         });
+        */
     }
     private class RootNode  extends Composite implements Node{
         VerticalPanel w = new VerticalPanel();
