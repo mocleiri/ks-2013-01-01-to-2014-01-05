@@ -291,80 +291,118 @@
         </property>
     </bean>
 
-    <bean id="editTransactionTypeSection" parent="Uif-VerticalBoxSection">
+    <bean id="editTransactionTypeSection" parent="Uif-HorizontalBoxSection">
         <property name="title" value="Transaction Type Details View"/>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="type" p:labelPlacement="TOP" p:label="Transaction Type">
-                    <property name="control">
-                        <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeList"/>
+                <bean parent="Uif-VerticalBoxSection">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:propertyName="type" p:labelPlacement="TOP" p:label="Transaction Type">
+                                <property name="control">
+                                    <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeList"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="code" p:label="Transaction Code" p:labelPlacement="TOP" p:required="true">
+                                <property name="control">
+                                    <bean parent="Uif-TextControl" p:size="20" p:maxLength="100"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="subCode">
+                                <property name="control">
+                                    <bean parent="Uif-HiddenControl"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="startDate"
+                                  p:label="Start Date"
+                                  p:instructionalText="Start date of the Transaction Type"
+                                  p:fieldLabel.renderColon="true"
+                                  p:labelPlacement="TOP"
+                                  p:maxLength="10"
+                                  p:required="true">
+                                <property name="bindingInfo.bindToForm" value="true"/>
+                                <property name="control">
+                                    <bean parent="Uif-DateControl" p:size="11"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-CheckboxInputField">
+                                <property name="propertyName" value="showEndDate"/>
+                                <property name="label" value="Specify an End Date"/>
+                                <property name="defaultValue" value="false"/>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="endDate"
+                                  p:label="End Date"
+                                  p:instructionalText="Must be a date in the future"
+                                  p:fieldLabel.renderColon="true"
+                                  p:labelPlacement="TOP"
+                                  p:maxLength="10"
+                                  p:required="true"
+                                  p:progressiveRender="@{showEndDate}">
+                                <property name="bindingInfo.bindToForm" value="true"/>
+                                <property name="control">
+                                    <bean parent="Uif-DateControl" p:size="11"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:label="Default Statement Text"
+                                  p:propertyName="description" p:labelPlacement="TOP">
+                                <property name="control">
+                                    <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="rollupId" p:labelPlacement="TOP" p:label="Roll-Up"
+                                  p:fieldLabel.renderColon="false">
+                                <property name="control">
+                                    <bean parent="Uif-DropdownControl" p:width="100%"/>
+                                </property>
+                                <property name="optionsFinder" value="@{getRollupOptionsFinder()}"/>
+                            </bean>
+
+                        </list>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="code" p:label="Transaction Code" p:labelPlacement="TOP" p:required="true">
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="20" p:maxLength="100"/>
+                <bean parent="Uif-VerticalBoxSection">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:propertyName="cancellationRule" p:label="Cancellation Rule" p:progressiveRender="@{#dp.type eq 'D'}">
+                                <property name="control">
+                                    <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="clearPeriod" p:label="Default Clearing Period" p:progressiveRender="@{#dp.type eq 'C'}">
+                                <property name="control">
+                                    <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="refundable" p:progressiveRender="@{#dp.type eq 'C'}">
+                                <property name="control">
+                                    <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Is Refundable"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="refundRule" p:label="Refund Rule" p:progressiveRender="@{#dp.type eq 'C'}">
+                                <property name="control">
+                                    <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="authorizationText" p:label="Authorization Text/Label" p:progressiveRender="@{#dp.type eq 'C'}">
+                                <property name="control">
+                                    <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:label="Unallocated GL Operation" p:propertyName="unallocatedGLOperation" p:progressiveRender="@{#dp.type eq 'C'}">
+                                <property name="control">
+                                    <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeList"/>
+                                </property>
+
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="unallocatedGLAccount" p:label="Unallocated GL Account" p:progressiveRender="@{#dp.type eq 'C'}">
+                                <property name="control">
+                                    <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
+                                </property>
+                            </bean>
+                        </list>
                     </property>
-                </bean>
-                <bean parent="Uif-InputField" p:propertyName="subCode">
-                    <property name="control">
-                        <bean parent="Uif-HiddenControl"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-InputField" p:propertyName="startDate"
-                      p:label="Start Date"
-                      p:instructionalText="Start date of the Transaction Type"
-                      p:fieldLabel.renderColon="true"
-                      p:labelPlacement="TOP"
-                      p:maxLength="10"
-                      p:required="true">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-DateControl" p:size="11"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-CheckboxInputField">
-                    <property name="propertyName" value="showEndDate"/>
-                    <property name="label" value="Specify an End Date"/>
-                    <property name="defaultValue" value="false"/>
-                </bean>
-                <bean parent="Uif-InputField" p:propertyName="endDate"
-                      p:label="End Date"
-                      p:instructionalText="Must be a date in the future"
-                      p:fieldLabel.renderColon="true"
-                      p:labelPlacement="TOP"
-                      p:maxLength="10"
-                      p:required="true"
-                      p:progressiveRender="@{showEndDate}">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-DateControl" p:size="11"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-InputField" p:label="Default Statement Text"
-                      p:propertyName="description" p:labelPlacement="TOP">
-                    <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-InputField" p:propertyName="rollupId" p:labelPlacement="TOP" p:label="Roll-Up"
-                      p:fieldLabel.renderColon="false">
-                    <property name="control">
-                        <bean parent="Uif-DropdownControl" p:width="100%"/>
-                    </property>
-                    <property name="optionsFinder" value="@{getRollupOptionsFinder()}"/>
                 </bean>
 
-                <bean parent="Uif-InputField" p:label="Unallocated GL Operation" p:propertyName="unallocatedGLOperation" p:progressiveRender="@{#dp.type eq 'C'}">
-                    <property name="control">
-                        <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeList"/>
-                    </property>
-
-                </bean>
-                <bean parent="Uif-InputField" p:propertyName="unallocatedGLAccount" p:label="Unallocated GL Account" p:progressiveRender="@{#dp.type eq 'C'}">
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
-                    </property>
-                </bean>
             </list>
         </property>
     </bean>

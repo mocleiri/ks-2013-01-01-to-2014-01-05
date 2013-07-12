@@ -234,6 +234,9 @@ public class TransactionTypeController extends GenericSearchController {
 
         TransactionTypeId ttId = transactionService.persistTransactionType(tt);
         if (tt instanceof DebitType) {
+            ((DebitType)tt).setCancellationRule(form.getCancellationRule());
+            transactionService.persistTransactionType(tt);
+
             for (GlBreakdown breakdown : breakdowns) {
                 breakdown.setDebitType((DebitType) tt);
             }
@@ -245,10 +248,16 @@ public class TransactionTypeController extends GenericSearchController {
             ((CreditType) tt).setUnallocatedGlOperation(unallocatedGlOperationType);
             String unallocatedGLAccount = form.getUnallocatedGLAccount();
             ((CreditType) tt).setUnallocatedGlAccount(unallocatedGLAccount);
+            ((CreditType) tt).setClearPeriod(form.getClearPeriod());
+            ((CreditType) tt).setRefundable(form.getRefundable());
+            ((CreditType) tt).setRefundRule(form.getRefundRule());
+            ((CreditType) tt).setAuthorizationText(form.getAuthorizationText());
+
+
             transactionService.persistTransactionType(tt);
         }
 
-        GlobalVariables.getMessageMap().putInfo("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, "Transaction Type added");
+        GlobalVariables.getMessageMap().putInfo("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, "Transaction Type saved");
 
         return getUIFModelAndView(form);
     }
@@ -363,6 +372,8 @@ public class TransactionTypeController extends GenericSearchController {
 
         if (ttSource instanceof DebitType) {
 
+            form.setCancellationRule(((DebitType)ttSource).getCancellationRule());
+
             List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns(ttSource.getId());
 
             List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>(sourceBreakdowns.size());
@@ -377,8 +388,20 @@ public class TransactionTypeController extends GenericSearchController {
 
             form.setGlBreakdowns(breakdowns);
 
-        } else {
+        } else if(ttSource instanceof CreditType){
+            CreditType creditType = (CreditType)ttSource;
+
             form.setGlBreakdowns(Collections.<GlBreakdownModel>emptyList());
+
+            form.setClearPeriod(creditType.getClearPeriod());
+            form.setRefundable(creditType.isRefundable());
+            form.setRefundRule(creditType.getRefundRule());
+            form.setAuthorizationText(creditType.getAuthorizationText());
+            form.setUnallocatedGLAccount(creditType.getUnallocatedGlAccount());
+            GlOperationType operation = creditType.getUnallocatedGlOperation();
+            if(operation != null){
+                form.setUnallocatedGLOperation(operation.getId());
+            }
         }
     }
 

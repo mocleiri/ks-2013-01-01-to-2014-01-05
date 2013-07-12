@@ -38,6 +38,8 @@ public class TransactionTypeForm extends AbstractViewModel {
 
     // Credit types only
     private Integer clearPeriod;
+    private Boolean refundable;
+    private String refundRule;
     private String authorizationText;
     private String unallocatedGLAccount;
     private String unallocatedGLOperation;
@@ -45,7 +47,7 @@ public class TransactionTypeForm extends AbstractViewModel {
     private List<Tag> tags;
 
     // Debit types only
-
+    private String cancellationRule;
 
     // Display only fields
     private boolean showEndDate;
@@ -265,5 +267,29 @@ public class TransactionTypeForm extends AbstractViewModel {
 
     public void setSubCode(Integer subCode) {
         this.subCode = subCode;
+    }
+
+    public Boolean getRefundable() {
+        return refundable;
+    }
+
+    public void setRefundable(Boolean refundable) {
+        this.refundable = refundable;
+    }
+
+    public String getRefundRule() {
+        return refundRule;
+    }
+
+    public void setRefundRule(String refundRule) {
+        this.refundRule = refundRule;
+    }
+
+    public String getCancellationRule() {
+        return cancellationRule;
+    }
+
+    public void setCancellationRule(String cancellationRule) {
+        this.cancellationRule = cancellationRule;
     }
 }
