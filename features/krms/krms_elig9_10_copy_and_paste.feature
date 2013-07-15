@@ -2,7 +2,7 @@ Feature: KRMS.ELIG9-10 Copy and Paste
 
   Background:
     Given I am logged in as admin
-    Given I have setup the Student Eligibility & Prerequisite section for course "HIST111" in the future term
+    And I have setup the Student Eligibility & Prerequisite section for course "HIST111" in the future term
 
   #ELIG9.10.EB1 (KSENROLL-7051)
   @pending
@@ -23,7 +23,7 @@ Feature: KRMS.ELIG9-10 Copy and Paste
   Scenario: Confirm the copy and paste of compound (group) rule statement is working as expected
     When I want to edit the selected agenda section
     And I copy the group containing node "C" and paste it after node "G"
-    Then the edit tab's text should match "Must meet 1 of the following,I. Must have successfully completed all courses from (HIST416, ENGL478),J. Text to copy"
+    Then the edit tab's text should match "I. Must have successfully completed all courses from (HIST416, ENGL478),J. Text to copy"
     And there should be a dropdown with value "OR" before node "I."
     When I switch to the other tab on the page
     Then the text area should contain "(A OR (B OR C) OR D) OR E OR F OR G OR (I OR J) OR H"

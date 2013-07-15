@@ -650,9 +650,11 @@ class CORequisitesData
 
   def add_new_node( group, node)
     on ManageCORequisites do |page|
+      page.loading.wait_while_present
       if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
         page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
       end
+      sleep 2
       if group == "group"
         page.group_btn
       else
