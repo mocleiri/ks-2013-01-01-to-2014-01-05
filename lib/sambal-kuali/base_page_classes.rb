@@ -52,11 +52,11 @@ module PopulationsSearch
   # Clicks the 'return value' link for the named row
   def return_value(name)
     target_row(name).wait_until_present
-    target_row(name).link(text: "return value").wait_until_present
+    target_row(name).link(text: "Select").wait_until_present
     begin
-      target_row(name).link(text: "return value").click
+      target_row(name).link(text: "Select").click
     rescue Timeout::Error => e
-      puts "rescued target_row(name).link(text: return value).click"
+      puts "rescued target_row(name).link(text: Select).click"
     end
     loading.wait_while_present
   end
