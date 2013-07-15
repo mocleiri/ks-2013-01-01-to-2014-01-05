@@ -27,11 +27,11 @@ class OrgLookupPopUp < OrganizationBase
 
   def return_value(short_name)
     target_org_row(short_name).wait_until_present
-    target_org_row(short_name).link(text: "return value").wait_until_present
+    target_org_row(short_name).link(text: "Select").wait_until_present
     begin
-      target_org_row(short_name).link(text: "return value").click
+      target_org_row(short_name).link(text: "Select").click
       rescue Timeout::Error => e
-      puts "rescued return value timeout"
+      puts "rescued Select timeout"
     end
     loading.wait_while_present
   end

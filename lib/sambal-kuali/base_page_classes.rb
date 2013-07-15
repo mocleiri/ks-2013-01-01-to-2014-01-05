@@ -49,7 +49,7 @@ module PopulationsSearch
   POPULATION_TYPE = 3
   POPULATION_STATE = 4
 
-  # Clicks the 'return value' link for the named row
+  # Clicks the 'Select' link for the named row
   def return_value(name)
     target_row(name).wait_until_present
     target_row(name).link(text: "Select").wait_until_present

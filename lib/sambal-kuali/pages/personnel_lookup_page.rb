@@ -15,12 +15,12 @@ class PersonnelLookup < BasePage
 
   element(:paginate_links_span) { |b| b.frm.div(class: "dataTables_paginate paging_full_numbers").span() }
 
-  # Clicks the 'return value' link for the named row
+  # Clicks the 'Select' link for the named row
   def return_value(principal_name)
     target_row(principal_name).wait_until_present
-    target_row(principal_name).link(text: "return value").wait_until_present
+    target_row(principal_name).link(text: "Select").wait_until_present
     begin
-      target_row(principal_name).link(text: "return value").click
+      target_row(principal_name).link(text: "Select").click
     rescue Timeout::Error => e
       puts "rescued target_row personnel lookup"
     end
