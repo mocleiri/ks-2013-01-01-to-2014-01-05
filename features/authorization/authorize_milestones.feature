@@ -14,7 +14,8 @@ Feature: EC.Authorize Milestones Feature
     And I have access to delete a course offering in a "Draft" state
     And there is a "Offered" course offering in my admin org
     And I do not have access to select the "Offered" course offering for approve, delete
-    And I do not have access to delete an activity offering in a "Offered" state
+    Then I do not have access to select an activity offering in a "Offered" state
+    #And I do not have access to delete an activity offering in a "Offered" state
 
   @bug @KSENROLL-8063
   Scenario:Department Schedule Coordinator Carol does not have access to delete AO's After the first day of class
@@ -22,10 +23,12 @@ Feature: EC.Authorize Milestones Feature
     And there is a "Draft" course offering in my admin org
     Given I am logged in as a Department Schedule Coordinator
     And I do not have access to select course offerings for approve, delete
-    Then I do not have access to delete an activity offering in a "Draft" state
+    Then I do not have access to select an activity offering in a "Draft" state
+    #Then I do not have access to delete an activity offering in a "Draft" state
     And there is a "Offered" course offering in my admin org
     And I do not have access to select course offerings for approve, delete
-    And I do not have access to delete an activity offering in a "Offered" state
+    Then I do not have access to select an activity offering in a "Offered" state
+    #And I do not have access to delete an activity offering in a "Offered" state
 
   Scenario: Department Schedule Coordinator Carol Access Verification for Manage course offering List
     Given It is "After" the first day of classes

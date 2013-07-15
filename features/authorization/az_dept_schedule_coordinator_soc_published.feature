@@ -103,8 +103,8 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Published
     Then I have access to delete an activity offering in "Draft" status for the course offering
 #TODO - tests for  suspended, cancelled
 
-  @bug @KSENROLL-8063
   Scenario: AZ 5.1A/Full_published.7B Department Schedule Coordinator Carol has limited access to delete AOs
     Given there is a "Offered" course offering in my admin org
-    Then I do not have access to delete an activity offering in a "Offered" state
+    Then I do not have access to select an activity offering in a "Offered" state
+    #Then I do not have access to delete an activity offering in a "Offered" state
 

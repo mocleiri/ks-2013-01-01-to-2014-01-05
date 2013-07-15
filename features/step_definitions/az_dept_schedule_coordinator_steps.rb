@@ -673,6 +673,17 @@ Then /^I do not have access to select course offerings for approve, delete$/ do
   end
 end
 
+Then /^I do not have access to select activity offerings for delete, approve$/ do
+  on ManageCourseOfferings do |page|
+    cluster_div = page.target_cluster(:default_cluster)
+    page.get_cluster_div_ao_rows(cluster_div).each do |ao_row|
+      ao_row.cells[0].checkbox.present?.should be_false
+    end
+  end
+end
+
+
+
 Then /^I do not have access to select course offerings for approve$/ do
   @course_offering.search_by_subjectcode
   on ManageCourseOfferingList do |page|

@@ -629,7 +629,6 @@ class CourseOffering
     end
   end
 
-
   # checks to see if COs of a specific status can be deleted (for Authorization testing)
   # @example
   #  @course_offering.attempt_co_delete_by_status(CourseOffering::OFFERED_STATUS)
@@ -649,6 +648,20 @@ class CourseOffering
       on DeleteCourseOffering do |page|
         return page.confirm_delete_button.present?
       end
+    end
+  end
+
+  # checks to see if AOs of a specific status can be selected (for Authorization testing)
+  # @example
+  #  @course_offering.attempt_ao_select_by_status(ActivityOffering::OFFERED_STATUS)
+  #    :cluster_private_name default value is first cluster
+  #
+  # @param opts [Hash] :co_obj_list => [co_obj1, co_obj2, ...]
+  # @returns boolean - checkbox to select AO was available
+  def ao_has_checkbox_by_status(ao_status, cluster_private_name = :default_cluster)
+    on ManageCourseOfferings do |page|
+      row = page.row_by_status(ao_status, cluster_private_name)
+      return row.cells[0].checkbox.exists?
     end
   end
 

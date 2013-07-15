@@ -78,6 +78,11 @@ Then /^I do not have access to delete an activity offering in a "([^"]*)" state$
   @course_offering.attempt_ao_delete_by_status(aostate).should == false
 end
 
+Then /^I do not have access to select an activity offering in a "([^"]*)" state$/ do |aostate|
+  @course_offering.manage
+  @course_offering.ao_has_checkbox_by_status(aostate).should == false
+end
+
 Then /^I do not have access to delete a course offering in a "([^"]*)" state$/ do |costate|
   @course_offering.search_by_subjectcode
   @course_offering.attempt_co_delete_by_status(costate).should be_false

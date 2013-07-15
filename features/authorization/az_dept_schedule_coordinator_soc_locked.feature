@@ -5,7 +5,6 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Locked
     Given I am logged in as a Department Schedule Coordinator
     And I am working on a term in "Locked" SOC state
 
-  @bug @KSENROLL-8063
   Scenario: AZ 4.1A/Full_locked.1 Validate Department Schedule Coordinator access to a course offering in their admin org (single CO view)
     When I manage a course offering in my admin org
     Then I have access to view the course offering details
@@ -17,9 +16,10 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Locked
     And I do not have access to delete the course offering
     And I do not have access to edit activity offerings
     And I do not have access to copy activity offerings
-    And I do not have access to delete an activity offering
-    And I do not have access to approve an activity offering
     And I do not have access to add a new activity offering
+    And I do not have access to select activity offerings for delete, approve
+#    And I do not have access to delete an activity offering
+#    And I do not have access to approve an activity offering
 
   Scenario: AZ 4.1A/Full_locked.1A Validate Department Schedule Coordinator access to a course offering not in their admin org (single CO view)
     When I manage a course offering for a subject code not in my admin org
@@ -79,7 +79,8 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Locked
   @bug @KSENROLL-8063
   Scenario: AZ 5.1A/Full_locked.7 Department Schedule Coordinator Carol has limited access to delete AOs
     Given there is a "Draft" course offering in my admin org
-    Then I do not have access to delete an activity offering in a "Draft" state
+    Then I do not have access to select an activity offering in a "Draft" state
+    #Then I do not have access to delete an activity offering in a "Draft" state
     #And I do not have access to delete an activity offering in a "Approved" state
 #TODO - tests for offered, suspended, cancelled
 

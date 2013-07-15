@@ -81,7 +81,6 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Final Edits
     When I manage the course offering
     Then I do not have access to delete the course offering
 
-  @bug @KSENROLL-8063
   Scenario: AZ 3.1/AZ 4.1B/Full_final_edits.5 - Verify Department Schedule Coordinator edit activity offering access (within admin org)
     When I attempt to edit an activity offering for a course offering in my admin org
     Then I have access to edit the activity code
