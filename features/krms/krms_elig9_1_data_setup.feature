@@ -1,10 +1,10 @@
+@nightly
 Feature: KRMS.ELIG9-1 Data Setup
 
   Background:
     Given I am logged in as admin
 
   #ELIG9.1.EB1 (KSENROLL-6953)
-  @pending
   Scenario: Test whether data is created and persisted to the DB
     When I setup the Student Eligibility & Prerequisite section for course "HIST110" in the future term
     Then the agenda page's text should match "all courses from,ENGL478,HIST416"

@@ -1,3 +1,4 @@
+@nightly
 Feature: KRMS.ELIG9-4 Free Text
 
   Background:
@@ -5,7 +6,6 @@ Feature: KRMS.ELIG9-4 Free Text
     And I have navigated to the Corequisite section for course "ENGL201" in the future term
 
   #ELIG9.4.EB1 (KSENROLL-7049)
-  @pending
   Scenario: Setup one level of data using Add Rule Statement button
     When I want to add a new statement to the selected agenda section
     And I add a new free form text statement with text "Free Text 1"
@@ -15,8 +15,7 @@ Feature: KRMS.ELIG9-4 Free Text
     And I want to edit the selected agenda section
     Then the edit tab's text should match "Free Text 1,Free Text 2,Free Text 3"
 
-#ELIG9.4.EB2 (KSENROLL-7049)
-  @pending
+  #ELIG9.4.EB2 (KSENROLL-7049)
   Scenario: Setup second level of data (Groups) using Create Group button
     When I want to edit the selected agenda section
     And I group free form text statement with node "B" with text "Free Text 1b"

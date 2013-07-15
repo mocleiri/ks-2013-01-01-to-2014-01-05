@@ -136,25 +136,11 @@ Then /^the info message "(.*?)" should be present$/ do |mess|
 end
 
 When /^I want to edit the selected agenda section$/ do
-  begin
-    @courseOR.open_agenda_section
-    on CourseOfferingRequisites do |page|
-      page.rule_edit
-    end
-  rescue Watir::Wait::TimeoutError
-    #means Data setup was not needed
-  end
+  @courseOR.edit_add_statement( "edit")
 end
 
 When /^I want to add a new statement to the selected agenda section$/ do
-  begin
-    @courseOR.open_agenda_section
-    on CourseOfferingRequisites do |page|
-      page.rule_add
-    end
-  rescue Watir::Wait::TimeoutError
-    #means Data setup was not needed
-  end
+  @courseOR.edit_add_statement( "add")
 end
 
 When /^I delete the tree$/ do

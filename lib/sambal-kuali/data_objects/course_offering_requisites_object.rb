@@ -61,6 +61,21 @@ class CORequisitesData
     set_options(options)
   end
 
+  def edit_add_statement( edit_or_add)
+    begin
+      open_agenda_section
+      on CourseOfferingRequisites do |page|
+        if edit_or_add == "add"
+          page.rule_add
+        else
+          page.rule_edit
+        end
+      end
+    rescue Watir::Wait::TimeoutError
+      #means Data setup was not needed
+    end
+  end
+
   def navigate_to_mco_requisites
     @course_offering = make CourseOffering, {:course => @course, :term => @term}
     @course_offering.manage
