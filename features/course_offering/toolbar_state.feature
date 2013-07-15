@@ -26,7 +26,6 @@ Feature: EC.Toolbar state
     When I select a course offering in "Draft" status
     Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
 
-  @bug @KSENROLL-7309
   Scenario: TB_Locked.1 Validate CO toolbar button state for locked SOC
     Given I am working on a term in "Locked" SOC state
     And there is an "Planned" course offering present
@@ -34,14 +33,13 @@ Feature: EC.Toolbar state
     When I manage course offerings for the specified subject code
     Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
     When I select a course offering in "Planned" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
     When I select a course offering in "Draft" status
     Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
     When I select a course offering in "Draft" status
     And I select a course offering in "Planned" status
     Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
 
-  @bug @KSENROLL-7309
   Scenario: TB_Open.1 Validate initial CO toolbar button state for open SOC
     Given I am working on a term in "Open" SOC state
     And there is an "Planned" course offering present
@@ -49,14 +47,13 @@ Feature: EC.Toolbar state
     When I manage course offerings for the specified subject code
     Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
     When I select a course offering in "Planned" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
     When I select a course offering in "Draft" status
     Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
     When I select a course offering in "Draft" status
     And I select a course offering in "Planned" status
     Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
 
-  @bug @KSENROLL-7309
   Scenario: TB_Draft.1 Validate initial CO toolbar button state for draft SOC
     Given I am working on a term in "Draft" SOC state
     And there is an "Planned" course offering present
@@ -64,7 +61,7 @@ Feature: EC.Toolbar state
     When I manage course offerings for the specified subject code
     Then the expected initial state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "disabled"
     When I select a course offering in "Planned" status
-    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "disabled"; Delete: "enabled"
+    Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
     When I select a course offering in "Draft" status
     Then the expected state of the CO toolbar is: Create: "enabled"; Approve: "enabled"; Delete: "enabled"
     When I select a course offering in "Draft" status
