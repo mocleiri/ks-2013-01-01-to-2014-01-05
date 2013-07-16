@@ -59,7 +59,11 @@ Feature: Performance.Metrics
     Then the transaction takes less than "3" seconds
 
   Scenario: Search Course Offering by Subject
-    When I search for a course by subject code
+    When I search for a course by the "ENGL" subject code
+    Then the transaction takes less than "3" seconds
+
+  Scenario: Search Course Offering by Subject
+    When I search for a course by the "CHEM" subject code
     Then the transaction takes less than "3" seconds
 
   Scenario: Search Course Offering by Course and edit
@@ -104,11 +108,6 @@ Feature: Performance.Metrics
   Scenario: Manage SOC
     When I search for a SOC
     Then the transaction takes less than "3" seconds
-
-  @wip
-  Scenario: Create a Cross-listed Course Offering
-    When I create a cross-listed Course Offering
-    #Then the transaction takes less than "3" seconds
 
 
 
