@@ -5,7 +5,6 @@ Feature: EC.Academic Calendar CRED
     Given I am logged in as a Schedule Coordinator
     And I create an Academic Calendar
 
-  @bug @KSENROLL-8017
   Scenario: Create and save academic calendar from blank
     Then the Make Official button should become active
 

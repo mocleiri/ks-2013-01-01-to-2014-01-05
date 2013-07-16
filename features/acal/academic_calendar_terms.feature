@@ -27,7 +27,6 @@ Feature: EC.Academic Calendar Terms
     When I delete the term
     Then the term is not listed when I view the Academic Calendar
 
-  @bug @KSENROLL-8017
   Scenario: Make an academic term official
     Given I create an Academic Calendar in Official status
     And I add a new term to the Academic Calendar
