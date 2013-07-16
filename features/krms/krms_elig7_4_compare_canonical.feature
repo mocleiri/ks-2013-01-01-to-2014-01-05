@@ -20,14 +20,14 @@ Feature: KRMS.ELIG7-4 Compare to Canonical
   Scenario: Confirm that the selected course's CO and CLU have the same text
     When I navigate to the Student Eligibility & Prerequisite section for course "BSCI202" in the historic term
     And I want to compare the CO to the CLU for the selected agenda section
-    Then the CO and CLU should both have text "Must meet 1 of the following:,Must have successfully completed BSCI201,Permission of CMNS-Biology required"
+    Then the CO and CLU should both have text "Must have successfully completed BSCI201,Permission of CMNS-Biology required"
 
   #ELIG7.4.EB4 (KSENROLL-7174)
   Scenario: Confirm that there is a warning message after editing CO
     When I navigate to the Student Eligibility & Prerequisite section for course "BSCI202" in the historic term
     And I want to edit the selected agenda section
     And I add a course statement after node "B" with course "HIST210"
-    Then the info message "Course Offering Rule now differs from Canonical Rule" should be present
+    Then the info message "Rule now differs from parent Rule" should be present
     When I commit changes made to the proposition
 
   #ELIG7.4.EB5 (KSENROLL-7174)

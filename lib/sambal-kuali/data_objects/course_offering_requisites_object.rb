@@ -265,12 +265,12 @@ class CORequisitesData
           create_number_courses_rule( "add", "C", "1", "HIST395,HIST210", "", "")
         end
         data_setup_needed = true
+        page.loading.wait_while_present
+        page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
+        page.edit_loading.wait_while_present
+        page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
+        page.edit_loading.wait_while_present
       end
-      page.loading.wait_while_present
-      page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
-      page.edit_loading.wait_while_present
-      page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
-      page.edit_loading.wait_while_present
       return data_setup_needed
     end
   end
@@ -717,12 +717,18 @@ class CORequisitesData
     else
       array = text.split(/,/)
       array.each do |elem|
-        if section == "compare"
-          string += Regexp.escape(elem) + "\n" + Regexp.escape(elem) + ".*"
-        else
-          string += Regexp.escape(elem) + ".*"
-        end
+        string += Regexp.escape(elem) + ".*"
       end
+    end
+    return Regexp.new(string, Regexp::MULTILINE)
+  end
+
+  def test_compare_text( diff = true, text)
+    string = ".*"
+    array = text.split(/,/)
+    i = 0
+    array.each do |elem|
+      string += Regexp.escape(elem) + "\n" + Regexp.escape(elem) + "\n[ANDOR]+\n[ANDOR]+\n"
     end
     return Regexp.new(string, Regexp::MULTILINE)
   end

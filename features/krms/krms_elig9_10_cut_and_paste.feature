@@ -11,7 +11,7 @@ Feature: KRMS.ELIG9-10 Cut and Paste
     And I cut node "D" and paste it after node "G"
     Then there should be a dropdown with value "OR" before node "D."
     When I switch to the other tab on the page
-    Then the text area should contain "(A OR (B OR C)) OR E OR F OR G OR D"
+    Then the text area should contain "(A AND (B OR C)) OR E OR F OR G OR D"
     When I switch to the other tab on the page
     When I edit node "D" by changing text to "edit cut prop type"
     Then the edit tab's text should match "edit cut prop type"

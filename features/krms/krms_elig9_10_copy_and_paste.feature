@@ -12,7 +12,7 @@ Feature: KRMS.ELIG9-10 Copy and Paste
     Then the edit tab's text should match "H. Text"
     And there should be a dropdown with value "OR" before node "H."
     When I switch to the other tab on the page
-    Then the text area should contain "(A OR (B OR C) OR D) OR E OR F OR G OR H"
+    Then the text area should contain "(A AND (B OR C) AND D) OR E OR F OR G OR H"
     When I switch to the other tab on the page
     And I edit node "H" by changing text to "edit copied prop type 1"
     Then the edit tab's text should match "edit copied prop type 1"
@@ -26,7 +26,7 @@ Feature: KRMS.ELIG9-10 Copy and Paste
     Then the edit tab's text should match "I. Must have successfully completed all courses from (HIST416, ENGL478),J. Text to copy"
     And there should be a dropdown with value "OR" before node "I."
     When I switch to the other tab on the page
-    Then the text area should contain "(A OR (B OR C) OR D) OR E OR F OR G OR (I OR J) OR H"
+    Then the text area should contain "(A AND (B OR C) AND D) OR E OR F OR G OR (I OR J) OR H"
     When I commit and return to see the changes made to the proposition
     And I want to edit the selected agenda section
     And I switch to the other tab on the page
