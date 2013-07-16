@@ -7,7 +7,7 @@
   Background:
     Given I am logged in as a Schedule Coordinator
 
-  @bug @KSENROLL-7091
+  @bug @KSENROLL-8135
   Scenario: Copy ADLs from source AOs to RDLs of new AOs of different term when copying a Course Offering from a previous term
     When I copy an CO with AOs that have ADLs to a new CO in the different term with RDLs in its AOs
     Then The new CO and AOs are Successfully created
