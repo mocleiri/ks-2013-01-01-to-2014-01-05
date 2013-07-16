@@ -46,6 +46,7 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Published
     And I do not have access to copy the listed course offering
     And I do not have access to select course offerings for approve, delete
 
+  @bug @KSENROLL-8138
   Scenario: AZ 4.1C/Full_published.3 Department Schedule Coordinator Carol has access to create CO's in her admin org
     When I attempt to create a course offering for a subject in my admin org
     Then I do not have access to create the course offering
@@ -94,9 +95,9 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Published
     Then I have access to view the activity offering details
     And the next, previous and list all course offering links are enabled
     And I have access to edit an activity offering
-    And I do not have access to approve an activity offering
     But I do not have access to add a new activity offering
     And I do not have access to copy an activity offering
+    And I do not have access to select activity offerings for add, approve, delete
 
   Scenario: AZ 5.1A/Full_published.7 Department Schedule Coordinator Carol has limited access to delete AOs
     Given there is a "Draft" course offering in my admin org

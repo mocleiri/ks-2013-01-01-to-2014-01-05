@@ -138,7 +138,8 @@ Feature: EC.Schedule Coordinator Authorization
     And I have access to copy an activity offering
     #And I have access to manage registration groups TODO: validate access to various reg groups links on page
 
-  Scenario: CCO AZ - Schedule Coordinator has access to create jointly defined courses
+  @bug @KSENROLL-8138
+  Scenario: AZ CCO.1 - Schedule Coordinator has access to create jointly defined courses
     Given I am working on a term in "Open" SOC state
     When I attempt to create a joint offered course offering for a subject in my admin org
     Then I have access to create a new joint offered course offering
