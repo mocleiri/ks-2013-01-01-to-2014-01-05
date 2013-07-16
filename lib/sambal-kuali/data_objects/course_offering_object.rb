@@ -391,7 +391,7 @@ class CourseOffering
     on CreateCourseOffering do  |page|
       page.target_term.set @term
       page.catalogue_course_code.set @course
-      page.show
+      page.continue
     end
   end
 

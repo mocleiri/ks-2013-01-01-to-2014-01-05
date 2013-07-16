@@ -11,7 +11,9 @@ class CreateCourseOffering < BasePage
   element(:target_term) { |b| b.frm.div(data_label: "Target Term").text_field() }
   element(:catalogue_course_code) { |b| b.frm.div(data_label: "Catalog Course Code").text_field() }
 
-  action(:show) { |b| b.frm.button(text: "Show").click; b.loading.wait_while_present(120) } # Persistent ID needed!
+  action(:continue) { |b| b.frm.button(id: "ks-uif-primaryActionButton").click; b.loading.wait_while_present(120) }
+
+  #action(:show) { |b| b.frm.button(text: "Show").click; b.loading.wait_while_present(120) } # Persistent ID needed!
   action(:create_offering) { |b| b.frm.button(id: "createOfferingButton").click; b.loading.wait_while_present }
   action(:cancel) { |b| b.frm.link(text: "cancel").click; b.loading.wait_while_present }
   action(:search) { |b| b.frm.link(text: "Search").click; b.loading.wait_while_present } # Persistent ID needed!
