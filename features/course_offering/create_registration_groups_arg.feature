@@ -9,7 +9,7 @@ As an Administrator, I want to create registration groups for a Course Offering
   #ARG 6.1 - see Simple Rollover feature
   #ARG 6.2 When creating a CO by copy AOC and AOs should also be copied and RGs are generated - see copy_activity_offering_clusters.feature
 
-  @bug @KSENROLL-8065
+  @bug @KSENROLL-8141
   Scenario: ARG 6.3 Registration groups are automatically generated when adding or copying an AO
     Given I manage registration groups for a new course offering
     When I copy an Activity Offering
@@ -17,7 +17,6 @@ As an Administrator, I want to create registration groups for a Course Offering
     And I add an Activity Offering
     Then the corresponding number of registration groups for each cluster is correct
 
-  @bug @KSENROLL-8065
   Scenario: ARG 6.4A when an AO is updated and creates a time conflict or a total seats issue the reg group state and the messaging should reflect this
     Given I manage registration groups for a new course offering
     When I update an Activity Offering to have less seats
@@ -64,7 +63,6 @@ As an Administrator, I want to create registration groups for a Course Offering
     And I remove the newly created cluster
     Then the cluster and pertaining AO's are deleted
 
-  @bug @KSENROLL-8065
   Scenario: ARG 6.10-1 Access Edit AO directly from within the clusters on the new Mge AO page and return with cancel
     Given I manage registration groups for a new course offering
     When I edit the Activity Offering
@@ -72,7 +70,6 @@ As an Administrator, I want to create registration groups for a Course Offering
     And I return from the edit Activity Offering page
     Then the Manage Course Offerings page is displayed
 
-  @bug @KSENROLL-8065
   Scenario: ARG 6.10-2 Access Edit AO directly from within the clusters on the new Mge AO page can submit ao changes
     Given I manage registration groups for a new course offering
     When I edit the Activity Offering
