@@ -442,6 +442,12 @@ class ActivityOffering
     end
   end
 
+  def save_and_remain_on_page()
+    on ActivityOfferingMaintenance do |page|
+      page.save
+    end
+  end
+
   #calculates the expected number of seats remaining
   #
   #@return [int] expected number of seats remaining

@@ -4,8 +4,28 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   expected_element :mainpage_section
 
-  element(:submit_button) { |b| b.frm.button(text: "Update") }
+  element(:ao_text) { |b| b.frm.div(class: "uif-viewHeader-contentWrapper uif-sticky").h1.span.text }
+
+  element(:save_continue_alert_div) { |b| b.frm.div(id: "ActivityOfferingEdit-NavigationConfirmation") }
+  element(:cancel_save_link) { |b| b.save_continue_alert_div.link(text: "Cancel") }
+  action(:prev_ao) { |b| b.frm.link(id: "edit_ao_prev").click; b.loading.wait_while_present }
+  element(:prev_ao_text) { |b| b.frm.link(id: "edit_ao_prev").text }
+  element(:select_ao_menu) { |b| b.frm.select(id: "edit_ao_select_control") }
+  action(:next_ao) { |b| b.frm.link(id: "edit_ao_next").click; b.loading.wait_while_present }
+  element(:next_ao_text) { |b| b.frm.link(id: "edit_ao_next").text }
+  action(:cancel_save) { |b| b.cancel_save_link.click }
+
+  element(:save_cancel_div) { |b| b.frm.div(id: "ActivityOfferingEdit_SubmitCancel") }
+  element(:save_button) { |b| b.save_cancel_div.button(text: "Save Progress") }
+  action(:save) { |b| sleep 2; b.loading.wait_while_present; sleep 2; b.save_button.click; b.loading.wait_while_present(120) }
+
+  element(:submit_button) { |b| b.save_cancel_div.button(text: "Update") }
   action(:submit) { |b| sleep 2; b.loading.wait_while_present; sleep 2; b.submit_button.click; b.loading.wait_while_present(120) }
+
+  element(:save_and_continue_button) { |b| b.frm.button(id: "edit_ao_save_and_continue") }
+  action(:save_and_continue) { |b| b.save_and_continue_button.click; b.loading.wait_while_present }
+  element(:continue_without_saving_button) { |b| b.frm.button(id: "edit_ao_cancel") }
+  action(:continue_without_saving) { |b| b.continue_without_saving_button.click; b.loading.wait_while_present }
 
   element(:activity_code) { |b| b.frm.text_field(name: "document.newMaintainableObject.dataObject.aoInfo.activityCode") }
 
@@ -73,6 +93,10 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   ROOM = 5
   FEATURES = 6
   ACTIONS = 7
+
+  def jump_to_ao(ao_name)
+    select_ao_menu.select(ao_name)
+  end
 
   def edit_rdl_row(row)
     row.cells[ACTIONS].link(text: "Edit").click

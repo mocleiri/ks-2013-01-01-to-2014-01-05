@@ -15,16 +15,105 @@ Then /^I am able to submit the changes$/ do
   end
 end
 
+Then /^I am able to save the changes and remain on the Edit AO page$/ do
+  @activity_offering.save_and_remain_on_page
+end
 
-And /^verify that the changes of Information attributes have persisted$/ do
-  @course_offering.manage
-  @activity_offering.edit
+And /^verify that the changes have persisted$/ do
   on ActivityOfferingMaintenance do |page|
     page.total_maximum_enrollment.value.should == @activity_offering.max_enrollment.to_s
     page.course_url.value.should == @activity_offering.course_url
   end
 end
 
+And /^verify that the changes of Information attributes (have|have not) persisted$/ do |have_have_not|
+  @course_offering.manage
+  @activity_offering.edit
+  on ActivityOfferingMaintenance do |page|
+    if have_have_not == "have"
+      page.total_maximum_enrollment.value.should == @activity_offering.max_enrollment.to_s
+      page.course_url.value.should == @activity_offering.course_url
+    elsif have_have_not == "have not"
+      page.total_maximum_enrollment.value.should_not == @activity_offering.max_enrollment.to_s
+      page.course_url.value.should_not == @activity_offering.course_url
+    end
+  end
+end
+
+Then /^I am able to save the changes and jump to the (next|previous) AO$/  do |direction|
+  on ActivityOfferingMaintenance do |page|
+    if direction == "next"
+      page.next_ao
+      @expected_title = "#{@course_offering.course} - #{page.next_ao_text}"
+    else
+      page.prev_ao
+      @expected_title = "#{@course_offering.course} - #{page.prev_ao_text}"
+    end
+    page.save_and_continue
+  end
+  puts "#{direction} = #{@expected_title}"
+  on ActivityOfferingMaintenance do |page|
+    puts "Expected: #{@expected_title}, Found: #{page.ao_text}"
+    page.ao_text.should == @expected_title
+  end
+end
+
+Then /^I am able to jump to the (next|previous) AO without saving the changes$/ do |direction|
+  on ActivityOfferingMaintenance do |page|
+    if direction == "next"
+      page.next_ao
+      @expected_title = page.next_ao_text
+    else
+      page.prev_ao
+      @expected_title = page.prev_ao_text
+    end
+    page.continue_without_saving
+  end
+  puts "#{direction} = #{@expected_title}"
+  on ActivityOfferingMaintenance do |page|
+    puts "new next = #{page.next_ao_text}"
+  end
+end
+
+Then /^I am able to jump to an arbitrary AO without saving the changes$/ do
+  on ActivityOfferingMaintenance do |page|
+    @target = "Discussion E"
+    page.jump_to_ao(@target)
+    page.continue_without_saving
+  end
+  @expected_title = "#{@course_offering.course} - #{@target}"
+  on ActivityOfferingMaintenance do |page|
+    puts "Expected: #{@expected_title}, Found: #{page.ao_text}"
+    page.ao_text.should == @expected_title
+  end
+end
+
+Then /^I am able to save the changes and jump to an arbitrary AO$/ do
+  on ActivityOfferingMaintenance do |page|
+    @target = "Discussion E"
+    page.jump_to_ao(@target)
+    page.save_and_continue
+  end
+  @expected_title = "#{@course_offering.course} - #{@target}"
+  on ActivityOfferingMaintenance do |page|
+    puts "Expected: #{@expected_title}, Found: #{page.ao_text}"
+    page.ao_text.should == @expected_title
+  end
+end
+
+Then /^I am able to jump to an arbitrary AO but cancel the change$/ do
+  on ActivityOfferingMaintenance do |page|
+    @target = "Discussion E"
+    page.jump_to_ao(@target)
+    page.cancel_save
+  end
+  @expected_title = "#{@course_offering.course} - #{@activity_offering.activity_type} #{@activity_offering.code}"
+  on ActivityOfferingMaintenance do |page|
+    puts "Expected: #{@expected_title}, Found: #{page.ao_text}"
+    page.ao_text.should == @expected_title
+  end
+
+end
 When /^I change Personnel attributes$/ do
   person = make Personnel, :id => "admin", :affiliation => "Instructor", :inst_effort => 30
   @activity_offering.edit :personnel_list => [person]
@@ -61,7 +150,7 @@ end
 
 # Get activity offering A and force flags to false, so we can be sure that setting them to true later is a valid test
 Given /^I edit an Activity Offering$/ do
-  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+  @activity_offering = @course_offering.get_ao_obj_by_code("B")
   @prev_req_ev = @activity_offering.requires_evaluation
   @prev_hon_flg = @activity_offering.honors_course
 end
