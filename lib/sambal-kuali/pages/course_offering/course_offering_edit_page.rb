@@ -93,13 +93,14 @@ class CourseOfferingEdit < BasePage
   AFFILIATION_COLUMN = 2
   #ACTIONS_COLUMN -- defined above
 
-  element(:personnel_table) { |b| b.frm.div(id: "KS-CourseOfferingEdit-PersonnelTableSection").table() }
+  element(:personnel_div) { |b| b.frm.div(id: "KS-CourseOfferingEdit-PersonnelTableSection") }
+  element(:personnel_table) { |b| b.personnel_div.table() }
 
   element(:add_person_id) { |b| b.personnel_table.rows[1].cells[ID_COLUMN].text_field() }
   #action(:lookup_person) { |b| b.personnel_table.rows[1].cells[ID_COLUMN].image().click; b.loading.wait_while_present } # Need persistent ID!
   action(:lookup_person) { |b| b.personnel_table.rows[1].cells[ID_COLUMN].input(title: "Search Field").click; b.loading.wait_while_present }
   element(:add_affiliation) { |b| b.personnel_table.rows[1].cells[AFFILIATION_COLUMN].select() }
-  element(:add_personnel_button_element) { |b| b.personnel_table.rows[1].button(text: "add") }
+  element(:add_personnel_button_element) { |b| b.personnel_div.button(text: "Add Personnel") }
   action(:add_personnel) { |b| b.add_personnel_button_element.click; b.adding.wait_while_present } # Needs persistent ID value
 
   def update_affiliation(id, affiliation)

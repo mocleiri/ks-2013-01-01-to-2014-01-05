@@ -8,7 +8,7 @@ class PersonnelLookup < BasePage
     self.frame(class: "fancybox-iframe")
   end
 
-  element(:principal_name) { |b| b.frm.div(data_label: "Principal Name").text_field }
+  element(:principal_name) { |b| b.frm.div(data_label: "Name").text_field }
   element(:id_field) { |b| b.frm.div(data_label: "ID").text_field }
   element(:last_name) { |b| b.frm.div(data_label: "Last Name").text_field }
   element(:results_table) { |b| b.frm.div(id: "uLookupResults").table(index: 0) }
