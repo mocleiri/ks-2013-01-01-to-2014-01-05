@@ -59,7 +59,6 @@
                 <value>classpath:PlanAuditUI.xml</value>
                 <value>classpath:FullPlanCoursesUI.xml</value>
                 <value>classpath:PlanItemsUI.xml</value>
-                <value>classpath:QuickAddUI.xml</value>
                 <value>classpath:SavedCoursesUI.xml</value>
                 <value>classpath:SingleQuarterUI.xml</value>
                 <!--
