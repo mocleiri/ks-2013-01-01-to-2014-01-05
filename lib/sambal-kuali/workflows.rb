@@ -104,6 +104,12 @@ module Workflows
     end
   end
 
+  def go_to_manual_soc_state_change
+    visit PortalMenu do |page|
+      page.test_manual_soc_state_change
+    end
+  end
+
   def log_in(user, pwd)
     current_user = ""
     if !$distributed_env then

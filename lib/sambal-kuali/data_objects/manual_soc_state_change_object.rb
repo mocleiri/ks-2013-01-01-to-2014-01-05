@@ -36,8 +36,9 @@ class ManualSocStateChange
       @term = opts[:term]
     end
 
-    go_to_state_propagation
-    on StatePropagationTest do |page|
+    go_to_manual_soc_state_change
+    on ManualSocStateChangePage do |page|
+      sleep 2
       page.change_soc_state_termCode.value = @term
       page.change_soc_state_newSocState.value = @soc_state
       page.change_soc_state
