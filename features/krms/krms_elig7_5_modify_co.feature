@@ -1,10 +1,10 @@
+@nightly
 Feature: KRMS.ELIG7-5 Adding CO to empty CLU
 
   Background:
     Given I am logged in as admin
 
   #ELIG7.5.EB1 (KSENROLL-7177)
-  @pending
   Scenario: Test whether CO data persists if CLU was empty
     When I setup the Student Eligibility & Prerequisite section for course "BSCI202" in the future term
     Then the agenda page's text should match "all courses from,ENGL478,HIST416"
@@ -14,7 +14,6 @@ Feature: KRMS.ELIG7-5 Adding CO to empty CLU
     Then the text area should contain "(A AND (B OR C) AND D) OR E OR F OR G"
 
   #ELIG7.5.EB2 (KSENROLL-7239)
-  @pending
   Scenario: Test whether CO data persists if CLU already had data
     When I edit the Student Eligibility & Prerequisite section for course "ENGL402" in the historic term
     Then the agenda page's text should match "all courses from,ENGL478,HIST416"

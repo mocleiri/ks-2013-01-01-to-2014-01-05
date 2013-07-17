@@ -1,3 +1,4 @@
+@nightly
 Feature: KRMS.ELIG9-10 Cut and Paste
 
   Background:
@@ -5,7 +6,6 @@ Feature: KRMS.ELIG9-10 Cut and Paste
     And I have setup the Corequisite section for course "ENGL101X" in the future term
 
   #ELIG9.10.EB1 (KSENROLL-7052)
-  @pending
   Scenario: Confirm the cut and paste of a rule statement is working as expected
     When I want to edit the selected agenda section
     And I cut node "D" and paste it after node "G"
@@ -18,7 +18,6 @@ Feature: KRMS.ELIG9-10 Cut and Paste
     When I commit changes made to the proposition
 
   #ELIG9.10.EB2 (KSENROLL-7052)
-  @pending
   Scenario: Confirm the cut and paste of compound (group) rule statement is working as expected
     When I want to edit the selected agenda section
     And I cut the group containing node "B" and paste it after node "F"

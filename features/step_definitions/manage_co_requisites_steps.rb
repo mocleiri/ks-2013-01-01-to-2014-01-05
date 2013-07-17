@@ -511,28 +511,28 @@ end
 Then /^the edit tab's text should match "(.*)"$/ do |text|
   on ManageCORequisites do |page|
     page.edit_loading.wait_while_present
-    page.edit_tree_section.text.should match @courseOR.test_text(@courseOR.section, text)
+    page.edit_tree_section.text.should match @courseOR.test_text("edit", text)
   end
 end
 
 Then /^the edit tab's text should not match "(.*)"$/ do |text|
   on ManageCORequisites do |page|
     page.edit_loading.wait_while_present
-    page.edit_tree_section.text.should_not match @courseOR.test_text(@courseOR.section, text)
+    page.edit_tree_section.text.should_not match @courseOR.test_text("edit", text)
   end
 end
 
 Then /^the logic tab's text should match "(.*)"$/ do |text|
   on ManageCORequisites do |page|
     page.edit_loading.wait_while_present
-    page.preview_tree_section.text.should match @courseOR.test_text(@courseOR.section, text)
+    page.preview_tree_section.text.should match @courseOR.test_text("logic", text)
   end
 end
 
 Then /^the logic tab's text should not match "(.*)"$/ do |text|
   on ManageCORequisites do |page|
     page.edit_loading.wait_while_present
-    page.preview_tree_section.text.should_not match @courseOR.test_text(@courseOR.section, text)
+    page.preview_tree_section.text.should_not match @courseOR.test_text("logic", text)
   end
 end
 
@@ -571,46 +571,19 @@ Then /^both tabs' text should match "(.*?)"$/ do |text|
     page.edit_tree_section.text.should match @courseOR.test_text("edit", text)
     page.logic_tab.click
     page.edit_loading.wait_while_present
-    page.preview_tree_section.text.should match @courseOR.test_text("logic", @courseOR.convert_text( text, "logic"))
+    page.preview_tree_section.text.should match @courseOR.test_text("logic", text)
   end
 end
 
-Then /^the agenda page should before and after the submit have the text "(.*?)"$/ do |text|
+Then /^the agenda page's text should before and after the submit match "(.*?)"$/ do |text|
   on CourseOfferingRequisites do |page|
     page.loading.wait_while_present
-    page.agenda_management_section.text.should match @courseOR.test_text("agenda", @courseOR.convert_text( text, "agenda"))
+    page.agenda_management_section.text.should match @courseOR.test_text("agenda", text)
   end
   @courseOR.commit_changes( true)
   on CourseOfferingRequisites do |page|
     page.loading.wait_while_present
-    page.agenda_management_section.text.should match @courseOR.test_text("agenda", @courseOR.convert_text( text, "agenda"))
-  end
-end
-
-Then /^all pages' text should match "(.*?)"$/ do |text|
-  on ManageCORequisites do |page|
-    page.edit_tree_section.text.should match @courseOR.test_text("edit", text)
-    page.logic_tab.click
-    page.edit_loading.wait_while_present
-    page.preview_tree_section.text.should match @courseOR.test_text("logic", @courseOR.convert_text( text, "logic"))
-    page.update_rule_btn
-  end
-  on CourseOfferingRequisites do |page|
-    page.loading.wait_while_present
-    page.agenda_management_section.text.should match @courseOR.test_text("agenda", @courseOR.convert_text( text, "agenda"))
-  end
-  @courseOR.commit_changes( true)
-  on CourseOfferingRequisites do |page|
-    page.loading.wait_while_present
-    page.agenda_management_section.text.should match @courseOR.test_text("agenda", @courseOR.convert_text( text, "agenda"))
-    page.rule_edit
-  end
-  on ManageCORequisites do |page|
-    page.loading.wait_while_present
-    page.edit_tree_section.text.should match @courseOR.test_text("edit", text)
-    page.logic_tab.click
-    page.edit_loading.wait_while_present
-    page.preview_tree_section.text.should match @courseOR.test_text("logic", @courseOR.convert_text( text, "logic"))
+    page.agenda_management_section.text.should match @courseOR.test_text("agenda", text)
   end
 end
 

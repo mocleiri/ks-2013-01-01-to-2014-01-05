@@ -271,6 +271,7 @@ class CORequisitesData
         page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_loading.wait_while_present
       end
+      page.update_rule_btn
       return data_setup_needed
     end
   end
@@ -703,10 +704,11 @@ class CORequisitesData
 
   def test_text( section, text)
     string = ".*"
-    if (section == "edit" && text =~ /^.+\(.+\)$/) || text !~ /,/
-      string += Regexp.escape(text) + ".*"
-    elsif text =~ /^.+\(.+\).+$/
-      array = text.split(/,/)
+    new_text = convert_text( text, section)
+    if (section == "edit" && new_text =~ /^.+\(.+\)$/) || new_text !~ /,/
+      string += Regexp.escape(new_text) + ".*"
+    elsif new_text =~ /^.+\(.+\).+$/
+      array = new_text.split(/,/)
       array.each do |elem|
         if elem =~ /\(/
           string += Regexp.escape(elem) + ","
@@ -715,11 +717,12 @@ class CORequisitesData
         end
       end
     else
-      array = text.split(/,/)
+      array = new_text.split(/,/)
       array.each do |elem|
         string += Regexp.escape(elem) + ".*"
       end
     end
+    puts string
     return Regexp.new(string, Regexp::MULTILINE)
   end
 

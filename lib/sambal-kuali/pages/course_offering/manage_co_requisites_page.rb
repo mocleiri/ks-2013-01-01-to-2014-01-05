@@ -47,7 +47,8 @@ class ManageCORequisites < BasePage
   action(:delete_line_btn) { |b| b.frm.button(:text => /delete/).when_present.click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:update_rule_btn) { |b| b.frm.button(id: "update-button").when_present.click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
 
-  element(:right_btn_element) { |b| b.frm.button(id: "KRMS-RuleEditorView-RightButton") }
+  #element(:right_btn_element) { |b| b.frm.button(id: "KRMS-RuleEditorView-RightButton") }
+  element(:right_btn_element) { |b| b.frm.button(:text => /Move In/) }
   element(:cancel_update_link) { |b| b.frm.a(id: "cancel-button")}
 
   action(:search_link) { |b| b.edit_tree_section.a(:text => /Advanced Search/).click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
