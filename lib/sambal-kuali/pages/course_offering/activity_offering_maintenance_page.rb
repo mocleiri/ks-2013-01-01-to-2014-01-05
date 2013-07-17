@@ -4,7 +4,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   expected_element :mainpage_section
 
-  element(:ao_text) { |b| b.frm.div(class: "uif-viewHeader-contentWrapper uif-sticky").h1.span.text }
+  element(:ao_header_text) { |b| b.frm.div(class: "uif-viewHeader-contentWrapper uif-sticky").h1.span.text }
 
   element(:save_continue_alert_div) { |b| b.frm.div(id: "ActivityOfferingEdit-NavigationConfirmation") }
   element(:cancel_save_link) { |b| b.save_continue_alert_div.link(text: "Cancel") }
@@ -112,8 +112,8 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   end
 
   def get_affiliation(id)
-    #target_person_row(id).cells[AFFILIATION_COLUMN].select.selected_options[0].text
-    target_person_row(id).cells[AFFILIATION_COLUMN].text
+    target_person_row(id).cells[AFFILIATION_COLUMN].select.selected_options[0].text
+    #target_person_row(id).cells[AFFILIATION_COLUMN].text
   end
 
   def update_affiliation(id, affiliation)

@@ -1,11 +1,11 @@
 #Scenario: Edit Activity Offering Information attributes
-When /^I change Activity Offering Information attributes$/ do
+Given /^I am editing the information attributes for an activity offering$/ do
   # Activity Code can not be saved. This is a bug
   # Modify Total Maximum Enrollment to 50
   @activity_offering.edit :course_url => "www.kuali.org", :max_enrollment => 50
 end
 
-Then /^I am able to submit the changes$/ do
+And /^I submit the Activity Offering changes$/ do
   @activity_offering.save
 
   #validate the success-growl is being shown
@@ -15,32 +15,34 @@ Then /^I am able to submit the changes$/ do
   end
 end
 
-Then /^I am able to save the changes and remain on the Edit AO page$/ do
+When /^I save the changes and remain on the Edit AO page$/ do
   @activity_offering.save_and_remain_on_page
 end
 
-And /^verify that the changes have persisted$/ do
+Then /^the changes of Activity Offering attributes are persisted$/ do
+  @course_offering.manage
+  @activity_offering.edit
   on ActivityOfferingMaintenance do |page|
     page.total_maximum_enrollment.value.should == @activity_offering.max_enrollment.to_s
     page.course_url.value.should == @activity_offering.course_url
   end
 end
 
-And /^verify that the changes of Information attributes (have|have not) persisted$/ do |have_have_not|
+Then /^the changes of information attributes (are|are not) persisted$/ do |are_are_not|
   @course_offering.manage
   @activity_offering.edit
   on ActivityOfferingMaintenance do |page|
-    if have_have_not == "have"
+    if are_are_not == "are"
       page.total_maximum_enrollment.value.should == @activity_offering.max_enrollment.to_s
       page.course_url.value.should == @activity_offering.course_url
-    elsif have_have_not == "have not"
+    elsif are_are_not == "are not"
       page.total_maximum_enrollment.value.should_not == @activity_offering.max_enrollment.to_s
       page.course_url.value.should_not == @activity_offering.course_url
     end
   end
 end
 
-Then /^I am able to save the changes and jump to the (next|previous) AO$/  do |direction|
+When /^I save the changes and jump to the (next|previous) AO$/  do |direction|
   on ActivityOfferingMaintenance do |page|
     if direction == "next"
       page.next_ao
@@ -53,12 +55,12 @@ Then /^I am able to save the changes and jump to the (next|previous) AO$/  do |d
   end
   puts "#{direction} = #{@expected_title}"
   on ActivityOfferingMaintenance do |page|
-    puts "Expected: #{@expected_title}, Found: #{page.ao_text}"
-    page.ao_text.should == @expected_title
+    puts "Expected: #{@expected_title}, Found: #{page.ao_header_text}"
+    page.ao_header_text.should == @expected_title
   end
 end
 
-Then /^I am able to jump to the (next|previous) AO without saving the changes$/ do |direction|
+When /^I jump to the (next|previous) AO without saving the changes$/ do |direction|
   on ActivityOfferingMaintenance do |page|
     if direction == "next"
       page.next_ao
@@ -75,7 +77,7 @@ Then /^I am able to jump to the (next|previous) AO without saving the changes$/ 
   end
 end
 
-Then /^I am able to jump to an arbitrary AO without saving the changes$/ do
+When /^I jump to an arbitrary AO without saving the changes$/ do
   on ActivityOfferingMaintenance do |page|
     @target = "Discussion E"
     page.jump_to_ao(@target)
@@ -83,12 +85,12 @@ Then /^I am able to jump to an arbitrary AO without saving the changes$/ do
   end
   @expected_title = "#{@course_offering.course} - #{@target}"
   on ActivityOfferingMaintenance do |page|
-    puts "Expected: #{@expected_title}, Found: #{page.ao_text}"
-    page.ao_text.should == @expected_title
+    puts "Expected: #{@expected_title}, Found: #{page.ao_header_text}"
+    page.ao_header_text.should == @expected_title
   end
 end
 
-Then /^I am able to save the changes and jump to an arbitrary AO$/ do
+When /^I save the changes and jump to an arbitrary AO$/ do
   on ActivityOfferingMaintenance do |page|
     @target = "Discussion E"
     page.jump_to_ao(@target)
@@ -96,12 +98,12 @@ Then /^I am able to save the changes and jump to an arbitrary AO$/ do
   end
   @expected_title = "#{@course_offering.course} - #{@target}"
   on ActivityOfferingMaintenance do |page|
-    puts "Expected: #{@expected_title}, Found: #{page.ao_text}"
-    page.ao_text.should == @expected_title
+    puts "Expected: #{@expected_title}, Found: #{page.ao_header_text}"
+    page.ao_header_text.should == @expected_title
   end
 end
 
-Then /^I am able to jump to an arbitrary AO but cancel the change$/ do
+When /^I jump to an arbitrary AO but cancel the change$/ do
   on ActivityOfferingMaintenance do |page|
     @target = "Discussion E"
     page.jump_to_ao(@target)
@@ -109,8 +111,8 @@ Then /^I am able to jump to an arbitrary AO but cancel the change$/ do
   end
   @expected_title = "#{@course_offering.course} - #{@activity_offering.activity_type} #{@activity_offering.code}"
   on ActivityOfferingMaintenance do |page|
-    puts "Expected: #{@expected_title}, Found: #{page.ao_text}"
-    page.ao_text.should == @expected_title
+    puts "Expected: #{@expected_title}, Found: #{page.ao_header_text}"
+    page.ao_header_text.should == @expected_title
   end
 
 end
@@ -119,7 +121,7 @@ When /^I change Personnel attributes$/ do
   @activity_offering.edit :personnel_list => [person]
 end
 
-And /^verify that the changes of the Personnel attributes have persisted$/ do
+Then /^the changes of the Personnel attributes are persisted$/ do
   @course_offering.manage
   @activity_offering.edit
   on ActivityOfferingMaintenance do |page|
@@ -134,7 +136,7 @@ When /^I change Miscellaneous Activity Offering attributes$/ do
 end
 
 
-And /^verify that the changes of Miscellaneous have persisted$/ do
+Then /^the miscellaneous changes are persisted$/ do
   @course_offering.manage
   @activity_offering.edit
   on ActivityOfferingMaintenance do |page|
