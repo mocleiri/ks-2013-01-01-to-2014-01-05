@@ -7,6 +7,10 @@ class StatePropagationTest < BasePage
 
   element(:frame_only) { |b| b.frm}
   element(:header) { |b| b.frm.text_field(name: "Propagation") }
+  element(:change_soc_state_termCode) { |b| b.frm.text_field(name: "termCodeForSocStateChange") }
+  element(:change_soc_state_newSocState) { |b| b.frm.text_field(name: "newSocStateForSocStateChange") }
+  element(:change_soc_state_button) { |b| b.frm.button(text: "Change SOC State") }
+  action(:change_soc_state) { |b| b.change_soc_state_button.click; b.loading.wait_while_present(60) }
   element(:perform_test_button) { |b| b.frm.button(text: "Test State Propagation") }
   action(:perform_test) { |b| b.perform_test_button.click; b.loading.wait_while_present(900)}
 
