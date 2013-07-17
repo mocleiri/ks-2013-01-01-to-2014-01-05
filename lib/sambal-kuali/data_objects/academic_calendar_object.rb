@@ -214,7 +214,7 @@ class AcademicTerm
   include StringFactory
   include Workflows
 
-  attr_accessor :term_type, :term_name, :term_year, :start_date, :end_date, :expected_instructional_days, :key_date_groups, :parent_calendar
+  attr_accessor :term_type, :term_name, :term_year, :start_date, :end_date, :expected_instructional_days, :key_date_groups, :parent_calendar, :parent_term, :subterm
 
   WINTER_TERM_TYPE = "Winter Term"
   FALL_TERM_TYPE = "Fall Term"
@@ -233,15 +233,164 @@ class AcademicTerm
         :start_date=>"09/02/#{calendar_year}",
         :end_date=>"09/24/#{calendar_year}",
         :term_type=>"Fall Term",
-        :term_name=>"Fall Term #{calendar_year}",
         :key_date_group_list=> Array.new(1){make KeyDateGroup},
-        :term_year=> calendar_year
+        :term_year=> calendar_year,
+        :parent_term=> nil,
+        :subterm=> false
 
     }
 
     options = defaults.merge(opts)
     set_options(options)
+    @term_name = "#{@term_type} #{calendar_year}"
 
+    if @subterm then
+      @term_type = "Subterm: #{@term_type}"
+    end
+  end
+
+  def create()
+
+    on EditAcademicTerms do |page|
+      page.go_to_terms_tab
+      if @subterm then
+        term_type =  @term_type[/(?<=Subterm: ).*/] #remove the 'Subterm: ' prefix
+      else
+        term_type = @term_type
+      end
+      page.term_type_add.select term_type
+      page.adding.wait_while_present
+      page.term_start_date_add.set @start_date
+      page.term_end_date_add.set @end_date
+      #if @subterm then
+      #  page.parent_term_select.select @parent_term
+      #end
+      page.acal_term_add
+
+      begin
+        page.adding.wait_while_present
+      rescue
+        page.alert.ok
+        sleep 60
+      end
+
+      page.open_term_section(@term_type)
+
+      @key_date_group_list.each do |date_group|
+        date_group.term_type = @term_type
+        date_group.create
+      end
+    end
+  end
+
+  #checks to see if group already exists
+  def add_key_date_group(key_date_group_object)
+    key_date_group_object.term_type = @term_type
+    key_date_group_object.create
+    @key_date_group_list <<  key_date_group_object
+  end
+
+  ##
+  def edit(opts = {})
+    search
+    on(CalendarSearch).edit @term_name
+
+    term_index = 0
+    on EditAcademicTerms do |page|
+      page.open_term_section(@term_type)
+      term_index = page.term_index_by_term_type(@term_type)
+    end
+
+    if opts[:term_name] != nil
+      on EditAcademicTerms  do |page|
+        page.term_name_edit(term_index).set opts[:term_name]
+      end
+    end
+
+    if opts[:start_date] != nil
+      on EditAcademicTerms  do |page|
+        page.term_start_date(term_index).set opts[:start_date]
+      end
+    end
+
+    if opts[:end_date] != nil
+      on EditAcademicTerms  do |page|
+        page.term_end_date(term_index).set opts[:end_date]
+      end
+    end
+
+    on(EditAcademicTerms).save unless opts.length == 0
+
+    set_options(opts)
+  end
+
+
+  #TODO - move should statements to step definitions
+  def verify()
+    on EditAcademicTerms do |page|
+      page.get_term_type(0).should == @term_name
+      page.get_term_start_date(0).should == @start_date
+      page.get_term_end_date(0).should == @end_date
+    end
+    @keyDateGroup[0].verify
+  end
+
+  def search
+    go_to_calendar_search
+    on CalendarSearch do |page|
+      page.search_for "Academic Term", @term_name, @term_year
+    end
+  end
+
+  def make_official
+    on EditAcademicTerms do |page|
+      page.go_to_terms_tab
+      page.make_term_official(@term_type)
+    end
+  end
+
+  #def delete
+  #  search
+  #
+  #end
+
+  def weekdays_in_term
+    date1 = Date.strptime( @start_date , '%m/%d/%Y')
+    date2 = Date.strptime( @end_date , '%m/%d/%Y')
+    puts "calculating from #{@start_date} to #{@end_date}"
+    weekdays = 0
+    date = date2
+    while date >= date1
+      weekdays = weekdays + 1 unless date.saturday? or date.sunday?
+      date = date - 1
+    end
+    puts weekdays
+    weekdays
+  end
+
+end
+
+class AcademicSubTerm < AcademicTerm
+
+  attr_accessor :parent_term
+
+
+  def initialize(browser,opts = {})
+    super
+
+    defaults = {
+        :start_date=>"09/02/#{calendar_year}",
+        :end_date=>"09/12/#{calendar_year}",
+        :term_type=>"Half Fall 1",
+        :term_name=>"Half Fall 1 #{calendar_year}",
+        :key_date_group_list=> Array.new(1){make KeyDateGroup},
+        :term_year=> calendar_year,
+        :parent_term=> "Fall Term"
+    }
+
+    options = defaults.merge(opts)
+    set_options(options)
+    puts "done"
   end
 
   def create()
@@ -359,6 +508,7 @@ class AcademicTerm
   end
 
 end
+
 
 class KeyDateGroup
 

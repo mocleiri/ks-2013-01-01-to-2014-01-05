@@ -340,6 +340,11 @@ Given /^I copy an existing Academic Calendar$/ do
   @calendar.copy_from @source_calendar.name
 end
 
+Given /^I create an Academic Calendar that supports subterms$/ do
+  @calendar = create AcademicCalendar
+  @calendar.add_term(make AcademicTerm, :term_year => @calendar.year)
+end
+
 When /^I edit the information for a term$/ do
 #  @calendar.edit
   @term.edit :term_name => "CE Term1",
@@ -548,3 +553,32 @@ end
 When /^I add a Holiday Calendar to the Academic Calendar$/ do
   pending
 end
+
+Given /^I add a subterm$/ do
+  @subterm = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  @calendar.add_term(@subterm)
+end
+
+Then /^the subterm is listed when I view the Academic Calendar$/ do
+  @calendar.search
+
+  on CalendarSearch do |page|
+    page.view @calendar.name
+  end
+
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section(@subterm.term_type)
+    page.term_name(@subterm.term_type).should == @subterm.term_name
+    #page.term_code(@term.term_type)
+    page.term_start_date(@subterm.term_type).should == @subterm.start_date
+    page.term_end_date(@subterm.term_type).should == @subterm.end_date
+    page.term_status(@subterm.term_type).should == "DRAFT"
+    #puts page.term_instructional_days(@term.term_type)
+    #puts page.term_status(@term.term_type)
+    #puts page.key_date_start(@term.term_type,"instructional","Grades Due")
+    #puts page.key_date_start(@term.term_type,"registration","Last Day to Add Classes")
+
+  end
+end
+
