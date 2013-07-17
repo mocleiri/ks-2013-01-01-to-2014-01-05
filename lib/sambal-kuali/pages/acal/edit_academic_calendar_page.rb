@@ -1,15 +1,17 @@
 class EditAcademicCalendar < BasePage
 
-  expected_element :academic_calendar_name
+  expected_element :header_calendar_name
 
   wrapper_elements
   frame_element
+
+  element(:header_calendar_name) { |b| b.frm.div(class: "ks-unified-header ks-unified-header").h1.span}
 
   element(:page_validation_list_exists) { |b| b.frm.ul(id: "pageValidationList").exists?}
   element(:page_error_message_exists) { |b| b.frm.ul(id: "pageValidationList").li(class: "uif-errorMessageItem").exists?}
   element(:page_info_message) { |b| b.frm.ul(id: "pageValidationList").exists? and b.frm.ul(id: "pageValidationList").li(class: "uif-infoMessageItem").exists?}
   value(:page_info_message_text) { |b| b.frm.ul(id: "pageValidationList").li(class: "uif-infoMessageItem").text}
-  action(:information_tab) { |b| b.frm.link(text: "Information").click }
+  action(:calendar_tab) { |b| b.frm.link(text: "Calendar").click }
   action(:terms_tab) { |b| b.frm.link(text: "Terms").click }
   
   element(:academic_calendar_name) { |b| b.frm.text_field(name: "academicCalendarInfo.name") }
