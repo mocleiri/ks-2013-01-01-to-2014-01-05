@@ -45,9 +45,6 @@ When /^I update a field and save the Academic Calendar$/ do
     page.calendar_end_date.set "08/23/2012"
     @performance_test.start
     page.save
-   # while page.alert.exists?
-   #   page.alert.cancel
-   # end
     @performance_test.end
   end
 end
@@ -288,7 +285,10 @@ When /^I create a basic course offering$/ do
   on CreateCourseOffering do  |page|
     page.target_term.set "201301"
     page.catalogue_course_code.set "ENGL316"
-    page.show
+    page.continue
+    while page.alert.exists?
+      page.alert.cancel
+    end
     page.suffix.set random_alphanums.strip
     page.add_random_delivery_format
     @performance_test.start
@@ -304,7 +304,7 @@ When /^I create a jointly defined course offering$/ do
   on CreateCourseOffering do  |page|
     page.target_term.set "201301"
     page.catalogue_course_code.set "ENGL316"
-    page.show
+    page.continue
     page.suffix.set random_alphanums.strip
     page.create_new_joint_defined_course_row_1
     page.add_random_delivery_format
@@ -332,7 +332,7 @@ When /^I copy an Activity Offering for performance$/ do
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set "201301"
-    page.input_code.set "ENGL101"
+    page.input_code.set "ENGL101A"
     page.perf_show
     @performance_test.start
     page.copy "A"
@@ -345,7 +345,7 @@ When /^I add Delivery Logistics and save$/ do
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set "201301"
-    page.input_code.set "ENGL101"
+    page.input_code.set "ENGL101A"
     page.perf_show
     page.edit "A"
   end
