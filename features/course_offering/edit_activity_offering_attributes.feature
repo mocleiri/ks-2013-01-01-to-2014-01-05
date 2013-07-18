@@ -11,6 +11,7 @@ Feature: WC.Edit Activity Offering Attributes
     And I submit the AO changes
     Then the changes of information attributes are persisted
 
+  #KSENROLL-8131
   Scenario: Edit Activity Offering Personnel attributes
     When I change Personnel attributes
     And I submit the AO changes
@@ -21,49 +22,41 @@ Feature: WC.Edit Activity Offering Attributes
     And I submit the AO changes
     Then the miscellaneous changes are persisted
 
-  @pending
   Scenario: Change Activity Offering Information attributes without submitting
     Given I am editing the information attributes for an activity offering
     When I save the changes and remain on the Edit AO page
     Then the changes of Activity Offering attributes are persisted
 
-  @pending
   Scenario: Change Activity Offering Information attributes, save and jump to previous AO
     Given I am editing the information attributes for an activity offering
     When I save the changes and jump to the previous AO
     Then the changes of information attributes are persisted
 
-  @pending
   Scenario: Change Activity Offering Information attributes, save and jump to previous AO
     Given I am editing the information attributes for an activity offering
     When I save the changes and jump to the next AO
     Then the changes of information attributes are persisted
 
-  @pending
   Scenario: Change Activity Offering Information attributes and jump to previous AO without saving
     Given I am editing the information attributes for an activity offering
     When I jump to the previous AO without saving the changes
     Then the changes of information attributes are not persisted
 
-  @pending
   Scenario: Change Activity Offering Information attributes and jump to next AO without saving
     Given I am editing the information attributes for an activity offering
     When I jump to the next AO without saving the changes
     Then the changes of information attributes are not persisted
 
-  @pending
   Scenario: Change Activity Offering Information attributes and jump to an arbitrary AO without saving
     Given I am editing the information attributes for an activity offering
     When I jump to an arbitrary AO without saving the changes
     Then the changes of information attributes are not persisted
 
-  @pending
   Scenario: Change Activity Offering Information attributes and jump to an arbitrary AO
     Given I am editing the information attributes for an activity offering
     When I save the changes and jump to an arbitrary AO
     Then the changes of information attributes are persisted
 
-  @pending
   Scenario: Change Activity Offering Information attributes and cancel
     Given I am editing the information attributes for an activity offering
     When I jump to an arbitrary AO but cancel the change
