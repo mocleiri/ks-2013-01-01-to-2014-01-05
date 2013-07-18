@@ -26,6 +26,11 @@ class ViewAcademicCalendar < BasePage
   element(:acal_event_list_div) { |b| b.frm.div(id: "acal-info-event") }
   element(:acal_event_list_link) { |b| b.acal_event_list_div.link(text: "Events") }
   element(:calendar_events_table) { |b| b.acal_event_list_div.table }
+  element(:acal_holiday_div) { |b| b.frm.div(id: "acal-holidays") }
+  element(:hcal_name_div) { |b| b.acal_holiday_div.div(data_label: "Holiday Calendar Name") }
+  value(:hcal_name_text) { |b| b.hcal_name_div.span(index: 1).text }
+  value(:hcal_start_date) { |b| b.acal_holiday_div.div(data_label: "Start Date").span(index: 1).text }
+  value(:hcal_end_date) { |b| b.acal_holiday_div.div(data_label: "End Date").span(index: 1).text }
 
   def terms_div_list
     term_info_div.div(class: "uif-stackedCollectionLayout").divs(class: "uif-group uif-boxGroup uif-verticalBoxGroup uif-collectionItem uif-boxCollectionItem")
@@ -71,22 +76,24 @@ class ViewAcademicCalendar < BasePage
 
 
   #identify the row containing this event
-  def target_event_row(event_name)
-    calendar_events_table.rows.each do |row|
-      if row.cells[EVENT_COL].text == event_name then
-        return row
+  def target_event_row_in_view(event_name)
+    if calendar_events_table.exists?
+      calendar_events_table.rows.each do |row|
+        if row.cells[VIEW_EVENT_COL].text == event_name then
+          return row
+        end
       end
     end
     return nil
   end
 
-  EVENT_COL = 0
-  START_DATE_COL = 1
-  END_DATE_COL = 2
+  VIEW_EVENT_COL = 0
+  VIEW_START_DATE_COL = 1
+  VIEW_END_DATE_COL = 2
 
-  def check_start_end_date(row, start_date, end_date)
-    calendar_events_table.row.cells[START_DATE_COL].text == start_date &&
-        calendar_events_table.row.cells[END_DATE_COL].text == end_date
+  def check_start_end_date(event_row, start_date, end_date)
+    event_row.cells[VIEW_START_DATE_COL].text.should == start_date
+    event_row.cells[VIEW_END_DATE_COL].text.should == end_date
   end
 
 end

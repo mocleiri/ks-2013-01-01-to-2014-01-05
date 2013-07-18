@@ -15,7 +15,6 @@ class EditAcademicCalendar < BasePage
   action(:terms_tab) { |b| b.frm.link(text: "Terms").click }
   
   element(:academic_calendar_name) { |b| b.frm.text_field(name: "academicCalendarInfo.name") }
-  #element(:organization) { |b| b.frm.select(name: "academicCalendarInfo.adminOrgId") }
   element(:calendar_start_date) { |b| b.frm.text_field(name: "academicCalendarInfo.startDate") }
   element(:calendar_end_date) { |b| b.frm.text_field(name: "academicCalendarInfo.endDate") }
 
@@ -31,9 +30,12 @@ class EditAcademicCalendar < BasePage
   element(:all_day) { |b| b.frm.checkbox(name: "newCollectionLines['events'].allDay") }
   element(:date_range) { |b| b.frm.checkbox(name: "newCollectionLines['events'].dateRange") }
   element(:add_event) { |b| b.frm.button(id: "acal-info-event_add") }
-  element(:delete_event_0) { |b| b.frm.button(id: "acal-info-event_del_line0") } # Note that there can be multiple Deletes on the page (= to however many events have already been added)
-  element(:delete_event_1) { |b| b.frm.button(id: "acal-info-event_del_line1") }
-  element(:delete_event_2) { |b| b.frm.button(id: "acal-info-event_del_line2") }
+  #element(:delete_event_0) { |b| b.frm.button(id: "acal-info-event_del_line0") } # Note that there can be multiple Deletes on the page (= to however many events have already been added)
+  #element(:delete_event_1) { |b| b.frm.button(id: "acal-info-event_del_line1") }
+  #element(:delete_event_2) { |b| b.frm.button(id: "acal-info-event_del_line2") }
+  element(:acal_event_list_div) { |b| b.frm.div(id: "acal-info-event") }
+  element(:acal_event_list_link) { |b| b.acal_event_list_div.link(text: "Events") }
+  element(:calendar_events_table) { |b| b.acal_event_list_div.table }
 
   element(:make_official_link) { |b| b.frm.link(id: "acal_Official") }
   action(:make_official) { |b| b.make_official_link.click; b.loading.wait_while_present }
@@ -57,32 +59,53 @@ class EditAcademicCalendar < BasePage
   action(:cancel_delete) { |b| b.delete_dialog_div.radio(index: 1).click ; b.loading.wait_while_present}
   ########
 
-  element(:term_type) { |b| b.frm.select(name: "newCollectionLines['termWrapperList'].termType") }
-  element(:term_start_date) { |b| b.frm.text_field(name: "newCollectionLines['termWrapperList'].startDate") }
-  element(:term_end_date) { |b| b.frm.text_field(name: "newCollectionLines['termWrapperList'].endDate") }
-  
-  action(:add_term) { |b| b.frm.button(id: "u666_add").click; loading.wait_while_present } # Persistent ID needed!
-
-  element(:term_info_name) { |b| b.frm.text_field(name: "termWrapperList[0].name") }
-  element(:term_info_start_date) { |b| b.frm.text_field(name: "termWrapperList[0].startDate") }
-  element(:term_info_end_date) { |b| b.frm.text_field(name: "termWrapperList[0].instructionalDays") }
-  
-  element(:key_date_type) { |b| b.frm.select(name: "newCollectionLines['termWrapperList_0_.keyDatesGroupWrappers_0_.keydates'].keyDateType") }
-  element(:key_date_start_date) { |b| b.frm.text_field(name: "newCollectionLines['termWrapperList_0_.keyDatesGroupWrappers_0_.keydates'].startDate") }
-  element(:key_date_start_time) { |b| b.frm.text_field(name: "newCollectionLines['termWrapperList_0_.keyDatesGroupWrappers_0_.keydates'].startTime") }
-  element(:key_date_start_ampm) { |b| b.frm.select(name: "newCollectionLines['termWrapperList_0_.keyDatesGroupWrappers_0_.keydates'].startTimeAmPm") }
-  element(:key_date_end_date) { |b| b.frm.text_field(name: "newCollectionLines['termWrapperList_0_.keyDatesGroupWrappers_0_.keydates'].endDate") }
-  element(:key_date_end_time) { |b| b.frm.text_field(name: "newCollectionLines['termWrapperList_0_.keyDatesGroupWrappers_0_.keydates'].endTime") }
-  element(:key_date_end_ampm) { |b| b.frm.select(name: "newCollectionLines['termWrapperList_0_.keyDatesGroupWrappers_0_.keydates'].endTimeAmPm") }
-  element(:key_date_all_day) { |b| b.frm.checkbox(name: "newCollectionLines['termWrapperList_0_.keyDatesGroupWrappers_0_.keydates'].allDay") }
-  element(:key_date_date_range) { |b| b.frm.checkbox(name: "newCollectionLines['termWrapperList_0_.keyDatesGroupWrappers_0_.keydates'].dateRange") }
-
-  action(:key_date_add) { |b| b.frm.button(id: "u1326_line0_line0_add").click } # Persistent ID needed!
-  action(:delete_keydate_group) { |b| b.frm.button(text: "delete keydate group").click } # Persistent ID needed!
-
   element(:add_holiday_calendar_div) { |b| b.frm.div(id: "acal-holidays_disclosureContent") }
   element(:add_holiday_calendar_select) { |b| b.add_holiday_calendar_div.select }
   element(:add_holiday_calendar_button) { |b| b.add_holiday_calendar_div.button(id: "acal-holidays_add") }
   action(:add_holiday_calendar)  { |b| b.add_holiday_calendar_button.click; b.loading.wait_while_present }
+
+  def edit_start_date(row, value); row.cells[EDIT_START_DATE_COL].text_field.set(value); end
+  def edit_start_time(row, value); row.cells[EDIT_START_TIME_COL].text_field.set(value); end
+  def edit_start_ampm(row, value); row.cells[EDIT_START_TIME_AMPM_COL].select.select(value.downcase); end
+  def edit_end_date(row, value); row.cells[EDIT_END_DATE_COL].text_field.set(value); end
+  def edit_end_time(row, value); row.cells[EDIT_END_TIME_COL].text_field.set(value); end
+  def edit_end_ampm(row, value); row.cells[EDIT_END_TIME_AMPM_COL].select.select(value.downcase); end
+  def clear_is_all_day(row); row.cells[EDIT_ALL_DAY_COL].checkbox.clear; end
+  def set_is_all_day(row); row.cells[EDIT_ALL_DAY_COL].checkbox.set; end
+  def clear_is_range(row); row.cells[EDIT_DATE_RANGE_COL].checkbox.clear; end
+  def set_is_range(row); row.cells[EDIT_DATE_RANGE_COL].checkbox.set; end
+  def delete(row); row.cells[EDIT_ACTION_COL].button(id: /acal-info-event_del_line*/).click; end
+
+  #identify the row containing this event
+  def target_event_row_in_edit(event_name)
+    calendar_events_table.rows.each do |row|
+      if row.cells[EDIT_EVENT_COL].text == event_name then
+        return row
+      end
+    end
+    return nil
+  end
+
+  EDIT_EVENT_COL = 0
+  EDIT_START_DATE_COL = 1
+  EDIT_START_TIME_COL = 2
+  EDIT_START_TIME_AMPM_COL = 3
+  EDIT_END_DATE_COL = 4
+  EDIT_END_TIME_COL = 5
+  EDIT_END_TIME_AMPM_COL = 6
+  EDIT_ALL_DAY_COL = 7
+  EDIT_DATE_RANGE_COL = 8
+  EDIT_ACTION_COL = 9
+
+  def holiday_cal_index_by_name(cal_name)
+    add_holiday_calendar_div.link(text: /^#{cal_name}$/).id[/\d+(?=_toggle)/]
+  end
+
+  def delete_holiday_cal(cal_name)
+    hcal_index = holiday_cal_index_by_name(cal_name)
+    #            need persistent id:
+    add_holiday_calendar_div.div(id: "u644_line#{hcal_index}").link(text: /Delete/).click
+    loading.wait_while_present
+  end
 
 end

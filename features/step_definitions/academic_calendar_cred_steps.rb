@@ -353,30 +353,52 @@ When /^I edit the information for a term$/ do
 end
 
 When /^I add events to the Academic Calendar$/ do
-  #@event = make CalendarEvent, :event_year => @calendar.year
-  #@calendar.edit :@events => [ @event ]
+  @calendar.search
+  on CalendarSearch do |page|
+    page.edit @calendar.name
+    @event = create CalendarEvent
+  end
+end
+
+When /^I update the event dates$/ do
+  @calendar.search
+  on CalendarSearch do |page|
+    page.edit @calendar.name
+    @event.edit :start_date => "04/06/#{next_year[:year]}", :end_date=>"05/29/#{next_year[:year] + 1}",
+                :start_time=>"11:11", :end_time=>"09:45"
+  end
+end
+
+When /^I remove the events from the Academic Calendar$/ do
+  @calendar.search
+  on CalendarSearch do |page|
+    page.edit @calendar.name
+    @event.delete
+  end
+end
+
+When /^I add a Holiday Calendar to the Academic Calendar$/ do
+  hol_cal_start_date = Date.strptime(@calendar.start_date, '%m/%d/%Y')
+  hol_cal_start_date += 1
+  hol_cal_end_date = Date.strptime(@calendar.end_date, '%m/%d/%Y')
+  hol_cal_end_date -= 1
+  @holCalendar = create HolidayCalendar, :start_date => hol_cal_start_date.strftime(format='%m/%d/%Y'),
+                                         :end_date => hol_cal_end_date.strftime(format='%m/%d/%Y')
+                                         #:holiday_types=>[:start_date => hol_cal_start_date.strftime(format='%m/%d/%Y'),
+  @holCalendar.make_official
   @calendar.search
   on CalendarSearch do |page|
     page.edit @calendar.name
   end
   on EditAcademicCalendar do |page|
-    page.event_toggle
-    wait_until { page.event_type.enabled? }
-    page.event_type.select "Commencement - Seattle Campus"
-    page.event_start_date.set "04/15/#{next_year[:year]}"
-    page.event_end_date.set "05/15/#{next_year[:year] + 1}"
-    page.event_start_time.set "07:30"
-    page.event_end_time.set "09:00"
-    page.event_start_ampm.select "pm"
-    page.event_end_ampm.select "pm"
-    page.all_day.clear
-    page.date_range.set
-    page.add_event.click
+    #toggle Holiday?
+    page.add_holiday_calendar_select.select @holCalendar.name
+    page.add_holiday_calendar_button.click
     page.save
   end
 end
 
-Then /^the events are listed when I view the Academic Calendar$/ do
+Then /^the .*event.*s are listed when I view the Academic Calendar$/ do
   @calendar.search
 
   on CalendarSearch do |page|
@@ -386,17 +408,31 @@ Then /^the events are listed when I view the Academic Calendar$/ do
   on ViewAcademicCalendar do |page|
     page.go_to_calendar_tab
     page.open_event_section
-    if event_row = target_event_row("Commencement - Seattle Campus")
-      return check_start_end_date(event_row, "04/15/#{next_year[:year]}", "05/15/#{next_year[:year] + 1}")
-    else
+    event_row = page.target_event_row_in_view(@event.event_type)
+    if event_row == nil
       raise 'Created event not found in event table'
+    else
+      start_date_time = @event.start_date + " " + @event.start_time + " " + @event.start_time_ampm.upcase
+      end_date_time = @event.end_date + " " + @event.end_time + " " + @event.end_time_ampm.upcase
+      page.check_start_end_date(event_row, start_date_time, end_date_time)
     end
-    #  page.term_name(@term.term_type).should == @term.term_name
-    #on EditAcademicCalendar do |page|
-    #  page.academic_calendar_name.value.should == @calendar.name
-    #  page.calendar_start_date.value.should == @calendar.start_date
-    #  page.calendar_end_date.value.should == @calendar.end_date
-    #end
+  end
+end
+
+Then /^the event list is updated when I view the Academic Calendar$/ do
+  #search for the event, and it should not be there
+  @calendar.search
+
+  on CalendarSearch do |page|
+    page.view @calendar.name
+  end
+
+  on ViewAcademicCalendar do |page|
+    page.go_to_calendar_tab
+    page.open_event_section
+    event_row = nil
+    event_row = page.target_event_row_in_view(@event.event_type)
+    event_row.should == nil
   end
 end
 
@@ -550,10 +586,6 @@ When /^I add a Holiday Calendar with holidays in the term$/ do
 
 end
 
-When /^I add a Holiday Calendar to the Academic Calendar$/ do
-  pending
-end
-
 Given /^I add a subterm$/ do
   @subterm = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
   @calendar.add_term(@subterm)
@@ -579,6 +611,43 @@ Then /^the subterm is listed when I view the Academic Calendar$/ do
     #puts page.key_date_start(@term.term_type,"instructional","Grades Due")
     #puts page.key_date_start(@term.term_type,"registration","Last Day to Add Classes")
 
+  end
+end
+
+Then /^the Holiday Calendar (.*) when I view the Academic Calendar$/ do |arg|
+  @calendar.search
+
+  on CalendarSearch do |page|
+    page.view @calendar.name
+  end
+  on ViewAcademicCalendar do |page|
+    page.go_to_calendar_tab
+    if arg == "is listed"
+      # what if multiple hcals
+      page.hcal_name_text.should == @holCalendar.name
+      page.hcal_start_date.should == @holCalendar.start_date
+      page.hcal_end_date.should == @holCalendar.end_date
+    else
+      if page.hcal_name_div.exists?
+        page.hcal_name_text.should_not == @holCalendar.name
+      else
+        #return true
+      end
+    end
+  end
+end
+
+Then /^I remove the Holiday Calendar$/ do
+  @calendar.search
+
+  on CalendarSearch do |page|
+    page.edit @calendar.name
+  end
+
+  on EditAcademicCalendar do |page|
+    #page.go_to_calendar_tab
+    page.delete_holiday_cal(@holCalendar.name)
+    page.save
   end
 end
 

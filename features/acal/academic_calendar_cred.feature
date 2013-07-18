@@ -31,29 +31,24 @@ Feature: EC.Academic Calendar CRED
     And I search for the calendar
     Then the calendar should not appear in search results
 
-  @wip
   Scenario: Add events on an Academic Calendar
     When I add events to the Academic Calendar
     Then the events are listed when I view the Academic Calendar
 
-  @wip
   Scenario: Update events on an Academic Calendar
     Given I add events to the Academic Calendar
     When I update the event dates
     Then the updated event dates are listed when I view the Academic Calendar
 
-  @wip
   Scenario: Delete events on an Academic Calendar
     Given I add events to the Academic Calendar
     When I remove the events from the Academic Calendar
     Then the event list is updated when I view the Academic Calendar
 
-  @wip
   Scenario: Add a Holiday Calendar to an Academic Calendar
     When I add a Holiday Calendar to the Academic Calendar
     Then the Holiday Calendar is listed when I view the Academic Calendar
 
-  @wip
   Scenario: Remove a Holiday Calendar from an Academic Calendar
     Given I add a Holiday Calendar to the Academic Calendar
     When I remove the Holiday Calendar

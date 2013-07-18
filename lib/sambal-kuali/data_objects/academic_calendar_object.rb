@@ -738,27 +738,21 @@ class CalendarEvent
   include StringFactory
   include Workflows
 
-  attr_accessor :term_type, :term_name, :term_year, :start_date, :end_date, :instructional_days, :key_date_groups, :parent_calendar
-
-  WINTER_TERM_TYPE = "Winter Term"
-  FALL_TERM_TYPE = "Fall Term"
+  attr_accessor :event_type, :start_date, :end_date, :start_time, :end_time, :start_time_ampm, :end_time_ampm, :all_day, :date_range
 
   def initialize(browser,opts = {})
     @browser = browser
 
-    #establish the year in order to make default start/end dates
-    if opts[:term_year].nil? then
-      calendar_year = AcademicCalendar.get_random_calendar_year
-    else
-      calendar_year = opts[:term_year]
-    end
-
     defaults = {
-        :start_date=>"09/02/#{calendar_year}",
-        :end_date=>"12/24/#{calendar_year}",
-        :term_type=>"Fall Term",
-        :term_name=>"Fall Term #{calendar_year}",
-        :key_date_group_list=> Array.new(1){make KeyDateGroup}
+        :event_type=>"Commencement - Seattle Campus",
+        :start_date=>"04/15/#{next_year[:year]}",
+        :end_date=>"05/15/#{next_year[:year] + 1}",
+        :start_time=>"07:30",
+        :end_time=>"09:00",
+        :start_time_ampm=>"pm",
+        :end_time_ampm=>"pm",
+        :all_day=>false,
+        :date_range=>true
 
     }
 
@@ -769,77 +763,98 @@ class CalendarEvent
 
   def create()
 
-    on EditAcademicTerms do |page|
-      page.go_to_term_tab
-      page.term_type_add.select @term_type
-      page.adding.wait_while_present
-      page.term_start_date_add.set @start_date
-      page.term_end_date_add.set @end_date
-      #TODO - parent term
-      page.acal_term_add
-      page.adding.wait_while_present
+    on EditAcademicCalendar do |page|
+      page.event_toggle
+      wait_until { page.event_type.enabled? }
+      page.event_type.select @event_type
+      page.event_start_date.set @start_date
+      page.event_end_date.set @end_date
+      page.event_start_time.set @start_time
+      page.event_end_time.set @end_time
+      page.event_start_ampm.select @start_time_ampm
+      page.event_end_ampm.select @end_time_ampm
+      page.all_day.set @all_day
+      page.date_range.set @date_range
+      page.add_event.click
+      page.save
 
-      page.open_term_section(@term_type)
-
-      @key_date_group_list.each do |date_group|
-        date_group.term_type = @term_type
-        date_group.create
-      end
     end
   end
 
-  #checks to see if group already exists
-  def add_key_date_group(key_date_group_object)
-    key_date_group_object.term_type = @term_type
-    key_date_group_object.create
-    @key_date_group_list <<  key_date_group_object
-  end
+  def edit options={}
 
-  ##
-  def edit(opts = {})
-    search
-    on(CalendarSearch).edit @term_name
-    on(EditAcademicTerms).open_term_section(@term_type)
+    edit_row = on(EditAcademicCalendar).target_event_row_in_edit(@event_type)
 
-    if opts[:start_date] != nil
-      on EditAcademicTerms  do |page|
-        page.edit_key_date_start_date(edit_row,options[:start_date])
+    if options[:start_date] != nil
+      on EditAcademicCalendar  do |page|
+        page.edit_start_date(edit_row,options[:start_date])
       end
     end
 
-    on(EditAcademicTerms).save
-
-    set_options(opts)
-  end
-
-
-  #TODO - move should statements to step definitions
-  def verify()
-    on EditAcademicTerms do |page|
-      page.get_term_type(0).should == @term_name
-      page.get_term_start_date(0).should == @start_date
-      page.get_term_end_date(0).should == @end_date
+    if options[:end_date] != nil
+      on EditAcademicCalendar  do |page|
+        page.edit_end_date(edit_row,options[:end_date]) if @date_range
+      end
     end
-    @keyDateGroup[0].verify
+
+    if options[:start_time] != nil
+      on EditAcademicCalendar  do |page|
+        page.edit_start_time(edit_row,options[:start_time])
+      end
+    end
+
+    if options[:end_time] != nil
+      on EditAcademicCalendar  do |page|
+        page.edit_end_time(edit_row,options[:end_time])
+      end
+    end
+
+    if options[:start_time_ampm] != nil
+      on EditAcademicCalendar  do |page|
+        page.edit_start_ampm(edit_row,options[:start_time_ampm])
+      end
+    end
+
+    if options[:end_time_ampm] != nil
+      on EditAcademicCalendar  do |page|
+        page.edit_end_ampm(edit_row,options[:end_time_ampm])
+      end
+    end
+
+    if options[:all_day] != nil
+      on EditAcademicCalendar  do |page|
+        if options[:all_day] then
+          page.set_is_all_day(edit_row)
+        else
+          page.clear_is_all_day(edit_row)
+        end
+      end
+    end
+
+    if options[:date_range] != nil
+      on EditAcademicCalendar  do |page|
+        if options[:date_range] then
+          page.set_is_range(edit_row)
+        else
+          page.clear_is_range(edit_row)
+        end
+      end
+    end
+
+    on(EditAcademicCalendar).save
+
+    set_options(options)
   end
 
-  def search
-    go_to_calendar_search
-    on CalendarSearch do |page|
-      page.search_for "Academic Term", @term_name
+  def delete
+    delete_row = on(EditAcademicCalendar).target_event_row_in_edit(@event_type)
+    on EditAcademicCalendar  do |page|
+      page.delete(delete_row)
+      page.loading.wait_while_present
+      page.save
     end
   end
 
-  def make_official
-    on EditAcademicTerms do |page|
-      page.go_to_term_tab
-      page.make_term_official(@term_type)
-    end
-  end
 
-  #def delete
-  #  search
-  #
-  #end
 end
 
