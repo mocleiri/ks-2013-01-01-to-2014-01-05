@@ -5,7 +5,7 @@ Given /^I am editing the information attributes for an activity offering$/ do
   @activity_offering.edit :course_url => "www.kuali.org", :max_enrollment => 50
 end
 
-And /^I submit the Activity Offering changes$/ do
+And /^I submit the AO changes$/ do
   @activity_offering.save
 
   #validate the success-growl is being shown
@@ -117,7 +117,7 @@ When /^I jump to an arbitrary AO but cancel the change$/ do
 
 end
 When /^I change Personnel attributes$/ do
-  person = make Personnel, :id => "admin", :affiliation => "Instructor", :inst_effort => 30
+  person = make Personnel, :id => "N.ALEXANDRAS", :name => "NELSON, ALEXANDRA", :affiliation => "Instructor", :inst_effort => 30
   @activity_offering.edit :personnel_list => [person]
 end
 

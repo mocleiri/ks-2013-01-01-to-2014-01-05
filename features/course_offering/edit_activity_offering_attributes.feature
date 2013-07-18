@@ -8,17 +8,17 @@ Feature: WC.Edit Activity Offering Attributes
 
   Scenario: Edit Activity Offering Information attributes
     When I am editing the information attributes for an activity offering
-    And I submit the Activity Offering changes
+    And I submit the AO changes
     Then the changes of information attributes are persisted
 
   Scenario: Edit Activity Offering Personnel attributes
     When I change Personnel attributes
-    And I submit the Activity Offering changes
+    And I submit the AO changes
     Then the changes of the Personnel attributes are persisted
 
   Scenario: Edit Miscellaneous Activity Offering attributes
     When I change Miscellaneous Activity Offering attributes
-    And I submit the Activity Offering changes
+    And I submit the AO changes
     Then the miscellaneous changes are persisted
 
   @pending
