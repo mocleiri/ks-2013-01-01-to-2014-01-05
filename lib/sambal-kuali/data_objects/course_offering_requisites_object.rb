@@ -722,7 +722,6 @@ class CORequisitesData
         string += Regexp.escape(elem) + ".*"
       end
     end
-    puts string
     return Regexp.new(string, Regexp::MULTILINE)
   end
 
