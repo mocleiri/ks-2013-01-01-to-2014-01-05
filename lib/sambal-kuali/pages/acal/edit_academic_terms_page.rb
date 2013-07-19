@@ -207,8 +207,15 @@ class EditAcademicTerms < BasePage
   action(:get_key_date_group_index) { |group_name, b| b.frm.div(text:"#{group_name}").span(index:0).id}
 
   element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") } # Persistent ID needed!
-  action(:save) { |b| b.sticky_footer_div.button(text: "Save").click; b.loading.wait_while_present } # Persistent ID needed!
   action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click }
+
+  def save
+    sticky_footer_div.button(text: "Save").click
+    loading.wait_while_present
+    growl_div.wait_until_present
+    raise "save was not successful" unless growl_text.match /saved successfully/
+    growl_div.div(class: "jGrowl-close").click
+  end
 
 end
 

@@ -86,7 +86,7 @@ class AcademicCalendar
         page.calendar_end_date.set @end_date
       end
     end
-    #add logic to update the term dates
+    #add logic to update the term dates and make term names consistent by adding year
     on EditAcademicTerms do |page|
       page.go_to_terms_tab
       term_section_div_list = page.term_section_div_list
@@ -97,6 +97,8 @@ class AcademicCalendar
       index = 0
       term_section_div_list.each do |div|
         page.open_term_section_by_index(index)
+        updated_term_name = "#{page.term_name_edit(index).value} #{@year}"
+        page.term_name_edit(index).set updated_term_name
         start_date = page.term_start_date(index).value
         page.term_start_date(index).set convert_date_to_updated_year(start_date, old_base_year)
         end_date = page.term_end_date(index).value

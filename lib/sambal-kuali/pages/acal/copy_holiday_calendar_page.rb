@@ -5,9 +5,9 @@ class CopyHolidayCalendar < BasePage
   wrapper_elements
   frame_element
 
-  value(:source_name) { |b| b.frm.div(id: "u38").text } # Persistent ID needed!
-  value(:source_start_date) { |b| b.frm.span(id: "u47").text } # Persistent ID needed!
-  value(:source_end_date) { |b| b.frm.span(id: "u56").text } # Persistent ID needed!
+  #value(:source_name) { |b| b.frm.div(id: "u38").text } # Persistent ID needed!
+  #value(:source_start_date) { |b| b.frm.span(id: "u47").text } # Persistent ID needed!
+  #value(:source_end_date) { |b| b.frm.span(id: "u56").text } # Persistent ID needed!
 
   element(:start_blank_calendar) { |b| b.frm.link(text: "Create Blank Holiday Calendar").click }
   element(:choose_different_calendar) { |b| b.frm.link(text: "Choose a Different Calendar") }

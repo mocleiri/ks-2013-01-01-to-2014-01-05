@@ -40,10 +40,16 @@ class EditAcademicCalendar < BasePage
   element(:make_official_link) { |b| b.frm.link(id: "acal_Official") }
   action(:make_official) { |b| b.make_official_link.click; b.loading.wait_while_present }
 
+  def save
+    sticky_footer_div.button(text: "Save").click
+    loading.wait_while_present
+    growl_div.wait_until_present
+    raise "save was not successful" unless growl_text.match /saved successfully/
+    growl_div.div(class: "jGrowl-close").click
+  end
 
   element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") } # Persistent ID needed!
 
-  action(:save) { |b| b.sticky_footer_div.button(text: "Save").click; b.loading.wait_while_present } # Persistent ID needed!
   action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete Calendar Draft").click; b.loading.wait_while_present } # Persistent ID needed!
   action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click }
 

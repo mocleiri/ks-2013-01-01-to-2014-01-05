@@ -24,6 +24,8 @@ class BasePage < PageFactory
 
       element(:loading) { |b| b.image(alt: "Loading...") }
       element(:adding) { |b| b.frm.image(alt: "Adding Line...") }
+      element(:growl_div) { |b| b.frm.div(id: "jGrowl") }
+      value(:growl_text) { |b| b.growl_div.text }
     end
 
     def frame_element

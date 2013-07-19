@@ -272,7 +272,7 @@ end
 
 When /^I add a new term to the Academic Calendar$/ do
   @term = make AcademicTerm, :term_year => @calendar.year
-  @calendar.edit :terms => [ @term ]
+  @calendar.add_term(@term)
 end
 
 When /^I add a new term to the Academic Calendar with a defined instructional period$/ do
