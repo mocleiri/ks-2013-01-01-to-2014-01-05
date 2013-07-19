@@ -773,6 +773,7 @@ class CalendarEvent
       page.event_end_date.set @end_date
       page.event_start_time.set @start_time
       page.event_end_time.set @end_time
+      page.loading.wait_while_present
       page.event_start_ampm.select @start_time_ampm
       page.event_end_ampm.select @end_time_ampm
       page.all_day.set @all_day
