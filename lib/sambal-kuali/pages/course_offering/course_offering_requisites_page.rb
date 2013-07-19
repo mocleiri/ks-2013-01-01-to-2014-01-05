@@ -38,6 +38,6 @@ class CourseOfferingRequisites < BasePage
 
   element(:submit_btn) { |b| b.frm.button(:text => /Submit/)}
   action(:submit) { |b| b.submit_btn.click; b.loading.wait_while_present }
-  element(:cancel_btn) { |b| b.frm.a(:text => /cancel/)}
+  element(:cancel_btn) { |b| b.frm.a(:text => /Cancel/)}
   action(:cancel) { |b| b.cancel_btn.click; b.loading.wait_while_present }
 end
