@@ -117,7 +117,7 @@ When /^I jump to an arbitrary AO but cancel the change$/ do
 
 end
 When /^I change Personnel attributes$/ do
-  person = make Personnel, :id => "N.ALEXANDRAS", :name => "NELSON, ALEXANDRA", :affiliation => "Instructor", :inst_effort => 30
+  person = make Personnel, :id => "admin", :name => "admin, admin", :affiliation => "Instructor", :inst_effort => 30
   @activity_offering.edit :personnel_list => [person]
 end
 

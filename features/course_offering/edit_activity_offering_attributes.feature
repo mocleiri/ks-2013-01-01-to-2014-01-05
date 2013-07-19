@@ -11,7 +11,7 @@ Feature: WC.Edit Activity Offering Attributes
     And I submit the AO changes
     Then the changes of information attributes are persisted
 
-  #KSENROLL-5290
+  #KSENROLL-8232
   Scenario: Edit Activity Offering Personnel attributes
     When I change Personnel attributes
     And I submit the AO changes
