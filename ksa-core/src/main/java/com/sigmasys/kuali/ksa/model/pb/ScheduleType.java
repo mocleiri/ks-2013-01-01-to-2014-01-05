@@ -3,16 +3,16 @@ package com.sigmasys.kuali.ksa.model.pb;
 import com.sigmasys.kuali.ksa.model.Identifiable;
 
 /**
- * LateStartType values.
+ * ScheduleType values.
  *
  * @author Michael Ivanov
  */
-public enum LateStartType implements Identifiable {
+public enum ScheduleType implements Identifiable {
 
-    NOT_ALLOWED(LateStartType.NOT_ALLOWED_CODE),
-    BACK_BILLED(LateStartType.BACK_BILLED_CODE),
-    SKIP_EARLIER(LateStartType.SKIP_EARLIER_CODE),
-    DUE_TODAY(LateStartType.DUE_TODAY_CODE);
+    NOT_ALLOWED(ScheduleType.NOT_ALLOWED_CODE),
+    BACK_BILLED(ScheduleType.BACK_BILLED_CODE),
+    SKIP_EARLIER(ScheduleType.SKIP_EARLIER_CODE),
+    DUE_TODAY(ScheduleType.DUE_TODAY_CODE);
 
 
     public static final String NOT_ALLOWED_CODE = "N";
@@ -23,7 +23,7 @@ public enum LateStartType implements Identifiable {
 
     private String id;
 
-    private LateStartType(String id) {
+    private ScheduleType(String id) {
         this.id = id;
     }
 

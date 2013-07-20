@@ -1,9 +1,8 @@
 package com.sigmasys.kuali.ksa.service.pb.impl;
 
+import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.pb.PaymentBillingChargeStatus;
-import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
-import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail;
+import com.sigmasys.kuali.ksa.model.pb.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
@@ -22,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.jws.WebService;
 import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -68,7 +68,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @param paymentBillingPlanId PaymentBillingPlan ID
      * @param accountId            DirectChargeAccount ID
      * @param maxAmount            Maximum amount to finance
-     * @param effectiveDate        Effective Date
+     * @param initiationDate       Initiation Date
      * @return PaymentBillingTransferDetail instance
      */
     @Override
@@ -76,10 +76,75 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
     public PaymentBillingTransferDetail generatePaymentBillingTransfer(Long paymentBillingPlanId,
                                                                        String accountId,
                                                                        BigDecimal maxAmount,
-                                                                       Date effectiveDate) {
-        // TODO
+                                                                       Date initiationDate) {
 
-        return null;
+        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_TRANSFER);
+
+        PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
+        if (billingPlan == null) {
+            String errMsg = "PaymentBillingPlan does not exist with ID = " + paymentBillingPlanId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null || !(account instanceof DirectChargeAccount)) {
+            String errMsg = "DirectChargeAccount with ID = " + accountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        if (maxAmount == null) {
+            String errMsg = "Maximum amount to finance cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (initiationDate == null) {
+            String errMsg = "Initiation date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (initiationDate.after(billingPlan.getOpenPeriodEndDate()) ||
+                initiationDate.before(billingPlan.getOpenPeriodStartDate())) {
+            String errMsg = "Initiation date must be between Open Period Start and End dates";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        Query query = em.createQuery("select 1 from PaymentBillingTransferDetail t " +
+                " inner join t.directChargeAccount a " +
+                " inner join t.plan p " +
+                " where p.id = :planId and a.id = :accountId and t.chargeStatusCode <> :statusCode");
+
+        query.setParameter("planId", paymentBillingPlanId);
+        query.setParameter("accountId", accountId);
+        query.setParameter("statusCode", PaymentBillingChargeStatus.REVERSED_CODE);
+        query.setMaxResults(1);
+
+        if (CollectionUtils.isNotEmpty(query.getResultList())) {
+            String errMsg = "Account '" + accountId + "' is not eligible for this plan (PaymentBillingPlan ID = " +
+                    paymentBillingPlanId + ")";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        if (maxAmount.compareTo(billingPlan.getMaxAmount()) > 0) {
+            maxAmount = billingPlan.getMaxAmount();
+        }
+
+        PaymentBillingTransferDetail transferDetail = new PaymentBillingTransferDetail();
+
+        transferDetail.setInitiationDate(initiationDate);
+        transferDetail.setMaxAmount(maxAmount);
+        transferDetail.setDirectChargeAccount((DirectChargeAccount) account);
+        transferDetail.setPlan(billingPlan);
+        transferDetail.setChargeStatus(PaymentBillingChargeStatus.INITIALIZED);
+
+        persistPaymentBillingTransferDetail(transferDetail);
+
+        return transferDetail;
     }
 
     /**
@@ -172,6 +237,145 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         transferDetail.setChargeStatus(PaymentBillingChargeStatus.REVERSED);
 
         return transferDetail;
+    }
+
+
+    /**
+     * Persists PaymentBillingTransferDetail instance in the persistent store.
+     *
+     * @param transferDetail PaymentBillingTransferDetail instance
+     * @return PaymentBillingTransferDetail ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Long persistPaymentBillingTransferDetail(PaymentBillingTransferDetail transferDetail) {
+        return persistEntity(transferDetail);
+    }
+
+    /**
+     * Returns a list of payment billing transactions for the plan specified by ID.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @return list of PaymentBillingTransaction instances
+     */
+    @Override
+    public List<PaymentBillingTransaction> getPaymentBillingTransactions(Long paymentBillingPlanId) {
+
+        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_TRANSACTION);
+
+        Query query = em.createQuery("select pbt from PaymentBillingTransaction pbt " +
+                " left outer join fetch pbt.transaction t " +
+                " left outer join fetch pbt.transferDetail td " +
+                " left outer join fetch td.directChargeAccount a " +
+                " left outer join fetch td.plan p " +
+                " where p.id = :planId " +
+                " order by pbt.id desc");
+
+        query.setParameter("planId", paymentBillingPlanId);
+
+        return query.getResultList();
+    }
+
+
+    /**
+     * Generates a list of PaymentBillingSchedule objects for the given PaymentBillingPlan ID
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @return list of PaymentBillingSchedule instances
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public List<PaymentBillingSchedule> generatePaymentBillingSchedules(Long paymentBillingPlanId) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_SCHEDULE);
+
+        PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
+        if (billingPlan == null) {
+            String errMsg = "PaymentBillingPlan does not exist with ID = " + paymentBillingPlanId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        ScheduleType scheduleType = billingPlan.getScheduleType();
+
+        if (scheduleType == null || scheduleType == ScheduleType.NOT_ALLOWED) {
+            String errMsg = "Payment Billing Schedule is not allowed for this plan (PaymentBillingPlan ID = " +
+                    paymentBillingPlanId + ")";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        // TODO: Ask Paul how to implement the next steps
+
+
+        return null;
+    }
+
+
+    /**
+     * This method is used internally to produce a monthly payment amount, based on the original amount,
+     * the percentage and the rounding factor.
+     *
+     * @param totalAmount    Total amount
+     * @param percentage     Percentage
+     * @param roundingFactor Rounding factor
+     * @return Payment amount
+     */
+    protected BigDecimal calculatePaymentAmount(BigDecimal totalAmount, BigDecimal percentage, int roundingFactor) {
+
+        if (roundingFactor != 0 && roundingFactor != 1 && roundingFactor % 10 != 0) {
+            String errMsg = "Rounding factor must be 0, 1 or a power of 10 (0,1,10,100,1000,...)";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        BigDecimal paymentAmount = totalAmount.multiply(percentage).divide(new BigDecimal(100));
+
+        if (roundingFactor == 0) {
+            paymentAmount = paymentAmount.setScale(2, RoundingMode.CEILING);
+        }
+
+        // TODO: ask Paul about rounding of BigDecimal values
+
+        return null;
+    }
+
+
+    /**
+     * This method creates the transactions that make up the payment billing charges and
+     * nets off the transactions that are financed.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @return PaymentBillingTransferDetail instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public PaymentBillingTransferDetail generatePaymentBillingTransactions(Long paymentBillingPlanId) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_TRANSFER);
+
+        List<PaymentBillingTransaction> billingTransactions = getPaymentBillingTransactions(paymentBillingPlanId);
+
+        if (CollectionUtils.isNotEmpty(billingTransactions)) {
+
+            BigDecimal totalFinancedAmount = BigDecimal.ZERO;
+
+            for (PaymentBillingTransaction billingTransaction : billingTransactions) {
+
+                BigDecimal financedAmount = billingTransaction.getFinancedAmount();
+                if (financedAmount == null) {
+                    financedAmount = BigDecimal.ZERO;
+                }
+
+                totalFinancedAmount = totalFinancedAmount.add(financedAmount);
+            }
+
+            // TODO "Create a UUID and set paymentBillingDetail.transferGroup to this UUID"
+            // TODO ask Paul how to get PaymentBillingDetail here
+
+        }
+
+        return null;
     }
 
 

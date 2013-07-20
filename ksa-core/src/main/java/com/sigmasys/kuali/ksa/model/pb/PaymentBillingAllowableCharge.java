@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
- * Third-party allowable charge model.
+ * Payment billing allowable charge model.
  * <p/>
  *
  * @author Michael Ivanov

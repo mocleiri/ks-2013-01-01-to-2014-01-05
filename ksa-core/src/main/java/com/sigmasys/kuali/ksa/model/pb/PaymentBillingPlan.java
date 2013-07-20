@@ -54,15 +54,15 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
 
     private String paymentRoundingTypeCode;
 
-    private LateStartType lateStartType;
+    private ScheduleType scheduleType;
 
-    private String lateStartTypeCode;
+    private String scheduleTypeCode;
 
 
     @PostLoad
     protected void populateTransientFields() {
         paymentRoundingType = (paymentRoundingTypeCode != null) ? EnumUtils.findById(PaymentRoundingType.class, paymentRoundingTypeCode) : null;
-        lateStartType = (lateStartTypeCode != null) ? EnumUtils.findById(LateStartType.class, lateStartTypeCode) : null;
+        scheduleType = (scheduleTypeCode != null) ? EnumUtils.findById(ScheduleType.class, scheduleTypeCode) : null;
     }
 
 
@@ -231,13 +231,13 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
     }
 
     @Column(name = "LATE_START", length = 1)
-    protected String getLateStartTypeCode() {
-        return lateStartTypeCode;
+    protected String getScheduleTypeCode() {
+        return scheduleTypeCode;
     }
 
-    protected void setLateStartTypeCode(String lateStartTypeCode) {
-        this.lateStartTypeCode = lateStartTypeCode;
-        lateStartType = EnumUtils.findById(LateStartType.class, lateStartTypeCode);
+    protected void setScheduleTypeCode(String scheduleTypeCode) {
+        this.scheduleTypeCode = scheduleTypeCode;
+        scheduleType = EnumUtils.findById(ScheduleType.class, scheduleTypeCode);
     }
 
     @Transient
@@ -251,12 +251,12 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
     }
 
     @Transient
-    public LateStartType getLateStartType() {
-        return lateStartType;
+    public ScheduleType getScheduleType() {
+        return scheduleType;
     }
 
-    public void setLateStartType(LateStartType lateStartType) {
-        this.lateStartType = lateStartType;
-        lateStartTypeCode = lateStartType.getId();
+    public void setScheduleType(ScheduleType scheduleType) {
+        this.scheduleType = scheduleType;
+        scheduleTypeCode = scheduleType.getId();
     }
 }
