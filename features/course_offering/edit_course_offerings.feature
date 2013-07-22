@@ -42,6 +42,8 @@ Feature: WC.Edit Course Offerings
     And I add an administering organization and activate the honors flag
     Then I can submit and the course offering is updated
 
+# KSENROLL-2860/3022
+  @pending
   Scenario Outline: Test that user is unable to manage course offerings when SOC is in certain states
     When I manually change a given soc-state to "<BlockingSocState>"
     Then I verify that I cannot manage course offerings
