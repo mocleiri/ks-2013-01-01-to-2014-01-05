@@ -125,10 +125,10 @@ Then /^the changes of the Personnel attributes are persisted$/ do
   @course_offering.manage
   @activity_offering.edit
   on ActivityOfferingMaintenance do |page|
-    pers_id = @activity_offering.personnel_list[0].id
-    page.get_inst_effort(pers_id).should == @activity_offering.personnel_list[0].inst_effort.to_s
-    page.get_affiliation(pers_id).should == @activity_offering.personnel_list[0].affiliation
-    end
+    page.personnel_id.value.should == @activity_offering.personnel_list[0].id
+    page.personnel_effort.value.should == @activity_offering.personnel_list[0].inst_effort.to_s
+    page.personnel_name.value.should == @activity_offering.personnel_list[0].name
+  end
 end
 
 When /^I change Miscellaneous Activity Offering attributes$/ do

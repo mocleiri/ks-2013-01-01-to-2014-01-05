@@ -687,6 +687,7 @@ class Personnel
 
   #generally set using options hash
   attr_accessor :id,
+                :name,
                 :affiliation,
                 :inst_effort
 
@@ -702,6 +703,7 @@ class Personnel
 
     defaults = {
         :id => "admin",
+        :name => "admin,admin",
         :affiliation => "Instructor",
         :inst_effort => 50
     }
@@ -714,10 +716,11 @@ class Personnel
   # generally called from ActivityOffering class
   def create
     on ActivityOfferingMaintenance do |page|
-      page.add_person_id.set @id
-      page.add_affiliation.select @affiliation
-      page.add_inst_effort.set @inst_effort
-      page.add_personnel
+      page.personnel_table.rows[1].cells[0].text_field.set @id
+      page.personnel_table.rows[1].cells[1].text_field.set @name
+      page.personnel_table.rows[1].cells[2].select().select(@affiliation)
+      page.personnel_table.rows[1].cells[3].text_field.set @inst_effort
+      #page.add_personnel
     end
   end
 
@@ -726,9 +729,10 @@ class Personnel
   #  @param opts [Hash] key => value for attribute to be updated
   def edit opts={}
     on ActivityOfferingMaintenance do |page|
-      page.add_person_id.fit opts[:id]
-      page.add_affiliation.fit opts[:affiliation]
-      page.add_inst_effort.fit opts[:inst_effort]
+      page.personnel_table.rows[1].cells[0].text_field.set opts[:id]
+      page.personnel_table.rows[1].cells[1].text_field.set opts[:name]
+      page.personnel_table.rows[1].cells[2].select().select(opts[:affiliation])
+      page.personnel_table.rows[1].cells[3].text_field.set opts[:inst_effort]
     end
 #        update_options(opts)
   end

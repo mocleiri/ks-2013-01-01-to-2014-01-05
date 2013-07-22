@@ -73,15 +73,19 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   element(:delete_requested_delivery_logistics_button) { |b| b.requested_logistics_table.button(text: "delete") } #TODO: identify button by row (days + start_time)
 
-  PERS_ACTION_COLUMN = 4
+  PERS_ACTION_DELETE_COLUMN = 4
+
+  element(:personnel_id) { |b| b.personnel_div.text_field(name: "document.newMaintainableObject.dataObject.instructors[0].offeringInstructorInfo.personId") }
+  element(:personnel_name) { |b| b.personnel_div.text_field(name: "document.newMaintainableObject.dataObject.instructors[0].offeringInstructorInfo.personName") }
+  element(:personnel_effort) { |b| b.personnel_div.text_field(name: "document.newMaintainableObject.dataObject.instructors[0].sEffort") }
 
   element(:add_person_id) { |b| b.personnel_table.rows[1].cells[ID_COLUMN].text_field() }
 
   action(:lookup_person) { |b| b.personnel_table.rows[1].cells[ID_COLUMN].button().click; b.loading.wait_while_present }
   element(:add_affiliation) { |b| b.personnel_table.rows[1].cells[AFFILIATION_COLUMN].select() }
   element(:add_inst_effort) { |b| b.personnel_table.rows[1].cells[INST_EFFORT_COLUMN].text_field() }
-  action(:add_personnel_element) { |b| b.personnel_table.rows[1].cells[PERS_ACTION_COLUMN].button() }
-  action(:add_personnel) { |b| b.add_personnel_element.click; b.adding.wait_while_present }
+  action(:delete_personnel_element) { |b| b.personnel_table.rows[1].cells[PERS_ACTION_DELETE_COLUMN].button() }
+  action(:delete_personnel) { |b| b.delete_personnel_element.click; b.loading.wait_while_present }
   element(:jgrowl){|b|b.frm.div(id:"jGrowl")}
   value(:growltext){|b| b.jgrowl.div(class:"jGrowl-message").text}
 

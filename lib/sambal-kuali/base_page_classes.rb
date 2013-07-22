@@ -398,7 +398,8 @@ class ActivityOfferingMaintenanceBase < BasePage
   rdl_table_accessor_maker :get_requested_logistics_room, ROOM_COLUMN
   rdl_table_accessor_maker :get_requested_logistics_features, FEATURES_COLUMN
 
-  element(:personnel_table) { |b| b.frm.div(id: "ao-personnelgroup").table() }
+  element(:personnel_div) { |b| b.frm.div(id: "ao-personnelgroup") }
+  element(:personnel_table) { |b| b.frm.table(id: "ao-personnelgroup-table") }
   ID_COLUMN = 0
   PERS_NAME_COLUMN = 1
   AFFILIATION_COLUMN = 2
