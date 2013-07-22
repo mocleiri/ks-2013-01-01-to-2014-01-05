@@ -29,6 +29,9 @@ public class TransactionForm extends AbstractViewModel {
     private List<TransactionModel> rollupTransactions;
     private List<TransactionModel> allTransactions;
 
+    private TransactionModel currentTransaction;
+    private List<TransactionModel> currrentTransactionAllocations = new ArrayList<TransactionModel>();
+
     private List<TransactionModel> deferments;
 
     private Date       startingDate;
@@ -659,5 +662,21 @@ public class TransactionForm extends AbstractViewModel {
 
     public void setFilterTags(List<Tag> filterTags) {
         this.filterTags = filterTags;
+    }
+
+    public TransactionModel getCurrentTransaction() {
+        return currentTransaction;
+    }
+
+    public void setCurrentTransaction(TransactionModel currentTransaction) {
+        this.currentTransaction = currentTransaction;
+    }
+
+    public List<TransactionModel> getCurrrentTransactionAllocations() {
+        return currrentTransactionAllocations;
+    }
+
+    public void setCurrrentTransactionAllocations(List<TransactionModel> currrentTransactionAllocations) {
+        this.currrentTransactionAllocations = currrentTransactionAllocations;
     }
 }

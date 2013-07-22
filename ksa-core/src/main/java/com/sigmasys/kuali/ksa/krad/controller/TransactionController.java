@@ -27,6 +27,10 @@ import java.util.*;
 @RequestMapping(value = "/transactionView")
 public class TransactionController extends GenericSearchController {
 
+    private static final String TRANSACTION_VIEW = "TransactionView";
+    private static final String ALLOCATE_TRANSACTION_PAGE = "AllocateTransactionPage";
+
+
     @Autowired
     private AuditableEntityService auditableEntityService;
 
@@ -463,6 +467,111 @@ public class TransactionController extends GenericSearchController {
         return performRedirect(form, refreshLocation, props);
     }
 
+    /**
+     * Load the information needed for the allocation form
+     *
+     * @param form Kuali form instance
+     * @return ModelAndView
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=allocate")
+    public ModelAndView allocate(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+        String transactionIdString = request.getParameter("actionParameters[transactionId]");
+        Long transactionId = Long.parseLong(transactionIdString);
+
+        String userid = form.getAccount().getId();
+
+        Transaction t = transactionService.getTransaction(transactionId);
+
+        if(! t.getAccount().getId().equals(form.getAccount().getId())){
+            // This should never happen unless someone is messing with the URL and trying to see things
+            throw new IllegalStateException("Transaction ID and Userid do not match: " + t.getAccount().getId() + " " + userid);
+        }
+
+        if(t != null){
+            TransactionModel tm = new TransactionModel(t);
+            form.setCurrentTransaction(tm);
+
+            List<TransactionModel> allocations = this.getPossibleAllocations(userid, t);
+            logger.info("Potential allocations size: " + allocations.size());
+            form.setCurrrentTransactionAllocations(allocations);
+
+        }
+
+
+        form.setPageId(ALLOCATE_TRANSACTION_PAGE);
+
+
+        return getUIFModelAndView(form);
+    }
+
+    /**
+     * Save the information from the allocation form
+     *
+     * @param form Kuali form instance
+     * @return ModelAndView
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=allocateTransaction")
+    public ModelAndView allocateTransaction(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+
+        TransactionModel currentTransaction = form.getCurrentTransaction();
+        Transaction parent = (Transaction)currentTransaction.getParentTransaction();
+
+        if(parent == null){
+            String statusMsg = "Unknown transaction.  Unable to process allocations.";
+            GlobalVariables.getMessageMap().putError("", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            logger.error(statusMsg);
+
+            return getUIFModelAndView(form);
+        }
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        List<TransactionModel> allocations = form.getCurrrentTransactionAllocations();
+        for(TransactionModel model : allocations){
+            BigDecimal amount = model.getNewAllocation();
+
+            if(amount != null){
+                if(amount.compareTo(model.getUnallocatedAmount()) > 0){
+                    String statusMsg = "Allocation amount of " + amount + " cannot be greater than the unallocated amount of " + model.getUnallocatedAmount() + " for " + model.getParentTransaction().getTransactionType().getDescription();
+                    GlobalVariables.getMessageMap().putError(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+                }
+                total = total.add(amount);
+            }
+        }
+
+        // Total of allocations can't be greater than the payment amount
+        if(total.compareTo(parent.getAmount()) > 0) {
+            String statusMsg = "Allocations cannot add up to more than the payment amount";
+            GlobalVariables.getMessageMap().putError(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            logger.error(statusMsg);
+
+            return getUIFModelAndView(form);
+        }
+
+        if(!GlobalVariables.getMessageMap().hasErrors()) {
+            for(TransactionModel model : allocations) {
+                BigDecimal amount = model.getNewAllocation();
+                if(amount != null && (amount.compareTo(BigDecimal.ZERO) > 0)) {
+                    transactionService.createAllocation(parent.getId(), model.getParentTransaction().getId(), amount);
+                }
+            }
+
+            String userId = form.getAccount().getId();
+//            paymentService.paymentApplication(userId);
+            List<TransactionModel> models = this.getPossibleAllocations(userId, parent);
+            form.setCurrrentTransactionAllocations(models);
+
+            Transaction t = transactionService.getTransaction(parent.getId());
+            form.setCurrentTransaction(new TransactionModel(t));
+
+            String statusMsg = "Transaction successfully allocated";
+            GlobalVariables.getMessageMap().putInfo(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+
+        }
+
+        return getUIFModelAndView(form);
+    }
+
     private boolean saveAllocationMemos(TransactionForm form, Long transactionId, Long allocationId) {
         List<TransactionModel> allTransactions = form.getAllTransactions();
 
@@ -587,4 +696,21 @@ public class TransactionController extends GenericSearchController {
             }
         }
     }
+
+    private List<TransactionModel> getPossibleAllocations(String userId, Transaction transaction){
+
+        List<Transaction> transactions = transactionService.getTransactions(userId);
+
+        List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
+        for (Transaction t : transactions) {
+            if(transactionService.canPay(transaction, t) && (t.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0)){
+                TransactionModel m = new TransactionModel(t);
+                models.add(m);
+            }
+        }
+
+        return models;
+    }
+
+
 }

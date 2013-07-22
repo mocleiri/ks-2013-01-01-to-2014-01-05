@@ -88,6 +88,14 @@
                         </list>
                     </property>
                 </bean>
+                <bean parent="Uif-Page" p:id="AllocateTransactionPage" p:title="Allocate Transaction">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HeaderTwo" p:headerText="Allocate Transaction"/>
+                            <ref bean="AllocateTransactionSection"/>
+                        </list>
+                    </property>
+                </bean>
                 <bean parent="Uif-Page" p:id="ViewAlerts" p:title="View Alerts">
                     <property name="items">
                         <list>
@@ -598,7 +606,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective" p:style="width: 10%;"/>
-                <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="white-space: nowrap;">
                     <property name="items">
                     <list>
                         <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.transactionType.description}" />
@@ -656,6 +664,13 @@
                                     <ref bean="transactionTags"/>
 
                                 </list>
+                            </property>
+                        </bean>
+                        <bean parent="Uif-ActionLink" p:methodToCall="allocate" p:style="float: right; white-space: normal;"
+                              p:onClickScript="writeHiddenToForm(&quot;actionParameters[transactionId]&quot;, &quot;@{#line.id}&quot;);"
+                                p:render="@{#line.unallocatedAmount > 0}">
+                            <property name="actionImage">
+                                <bean parent="Uif-Image" p:source="../images/allocation.png" p:style="float: right"/>
                             </property>
                         </bean>
 
@@ -869,5 +884,118 @@
     </list>
     </property>
     </bean>
+
+
+    <bean id="AllocateTransactionSection" parent="Uif-VerticalBoxSection"
+          p:title="@{account.id}"
+          p:instructionalText="The following form will allow a payment to be allocated">
+        <property name="items">
+            <list>
+                <bean parent="Uif-HorizontalFieldGroup">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:propertyName="currentTransaction.effectiveDate" p:label="Selected Transaction" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="currentTransaction.transactionType.description" p:readOnly="true"/>
+                            <!--
+                            <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('paymentDetailLightbox');writeHiddenToForm('actionParameters[currentParent]', '@{payment.id}');" p:linkText="@{payment.transactionType.description}" />
+                            <bean id="paymentDetailLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                <property name="hidden" value="true"/>
+                                <property name="items">
+                                    <list>
+                                        <ref bean="paymentDetail"/>
+                                    </list>
+                                </property>
+                            </bean>
+                            -->
+                            <bean parent="Uif-InputField" p:propertyName="currentTransaction.amount" p:label="Amount" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="currentTransaction.unallocatedAmount" p:label="Unallocated" p:readOnly="true"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-Disclosure-VerticalBoxSection" >
+                    <property name="headerText" value="Potential Allocations (@{currrentTransactionAllocations.size()})"/>
+                    <property name="readOnly" value="false"/>
+
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="7">
+                                <property name="readOnly" value="false"/>
+                                <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionModel"/>
+                                <property name="propertyName" value="currrentTransactionAllocations"/>
+                                <property name="layoutManager.sequencePropertyName" value="id"/>
+                                <property name="layoutManager.richTable.render" value="true"/>
+                                <property name="layoutManager.renderSequenceField" value="false"/>
+                                <property name="renderAddBlankLineButton" value="false" />
+                                <property name="renderAddLine" value="false" />
+                                <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                                <property name="layoutManager.richTable.disableTableSort" value="false"/>
+                                <property name="layoutManager.richTable.templateOptions">
+                                    <map merge="true">
+                                        <entry key="bPaginate" value="false"/>
+                                        <entry key="bInfo" value="false"/>
+                                        <entry key="bFilter" value="false"/>
+                                        <entry key="bSort" value="false" />
+                                    </map>
+                                </property>
+                                <property name="renderLineActions" value="false"/>
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective" p:readOnly="true"/>
+                                        <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:readOnly="true" >
+                                            <property name="items">
+                                                <list>
+                                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:linkText="@{#line.transactionType.description}" />
+                                                    <!--
+                                                    p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotalDeferment@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');"
+                                                    <bean id="allocationDetailLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                                        <property name="hidden" value="true"/>
+                                                        <property name="items">
+                                                            <list>
+                                                                <ref bean="transactionDetail"/>
+                                                            </list>
+                                                        </property>
+                                                    </bean>
+                                                    -->
+                                                    <bean parent="Uif-ImageField" p:source="../images/memo.png" p:style="cursor:pointer; float: right;" p:altText="" p:title="" p:readOnly="true"
+                                                          p:onClickScript="showLightboxComponent('memoLightboxRunningTotalDeferment@{#lineSuffix}');" p:render="@{#line.memos.size() > 0}">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Memo: (@{#line.memos.size()}) Click icon to view"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean parent="Uif-ImageField" p:source="../images/document.png" p:style="cursor:pointer; float: right;" p:altText="" p:title="" p:readOnly="true"
+                                                          p:onClickScript="showLightboxComponent('documentLightboxRunningTotalDeferment@{#lineSuffix}');">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Document: Click icon to view"/>
+                                                        </property>
+                                                    </bean>
+                                                    <bean parent="Uif-ImageField" p:source="../images/tag.png" p:style="cursor:pointer; float: right;" p:altText="" p:title="" p:readOnly="true"
+                                                          p:onClickScript="showLightboxComponent('tagLightboxRunningTotalDeferment@{#lineSuffix}');writeHiddenToForm('actionParameters[currentTagParent]', '@{#line.id}');" p:render="@{#line.tags.size() > 0}">
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Tags: @{#line.tagList}"/>
+                                                        </property>
+                                                    </bean>
+                                                </list>
+                                            </property>
+                                        </bean>
+                                        <bean parent="Uif-InputField" p:propertyName="parentTransaction.amount" p:label="Amount" p:style="text-align: right;" p:readOnly="true" />
+                                        <bean parent="Uif-InputField" p:propertyName="allocatedAmount" p:label="Allocated" p:style="text-align: right;" p:readOnly="true" />
+                                        <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unllocated" p:style="text-align: right;" p:readOnly="true" />
+
+                                        <bean parent="Uif-InputField" p:propertyName="newAllocation" p:label="Amount to Allocate" p:readOnly="false" p:style="text-align: right;"/>
+                                    </list>
+                                </property>
+
+                            </bean>
+
+                        </list>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="allocateTransaction" p:actionLabel="Allocate"/>
+
+            </list>
+        </property>
+    </bean>
+
 
 </beans>
