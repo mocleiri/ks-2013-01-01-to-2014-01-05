@@ -44,7 +44,7 @@ class EditAcademicCalendar < BasePage
     sticky_footer_div.button(text: "Save").click
     loading.wait_while_present
     growl_div.wait_until_present
-    raise "save was not successful" unless growl_text.match /saved successfully/
+    raise "save was not successful - growl text #{growl_text}" unless growl_text.match /saved successfully/
     growl_div.div(class: "jGrowl-close").click
   end
 

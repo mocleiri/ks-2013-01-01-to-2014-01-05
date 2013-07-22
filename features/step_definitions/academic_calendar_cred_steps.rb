@@ -651,3 +651,115 @@ Then /^I remove the Holiday Calendar$/ do
   end
 end
 
+Given /^I debug Academic Calendar with subterms$/ do
+  @calendar = make AcademicCalendar, :name => "kneAKutywR" , :year => "2160"
+
+  #@calendar.add_term(make AcademicTerm, :term_year => @calendar.year)
+
+  @subterm_list = Array.new(2)
+  @subterm_list[0] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true, :term_name => "4rDpwRZu1r"
+  #@calendar.add_term(@subterm_list[0])
+
+  @subterm_list[1] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
+  #@calendar.add_term(@subterm_list[1])
+end
+
+
+
+Given /^I create Academic Calendar with subterms$/ do
+  @calendar = create AcademicCalendar
+  @calendar.add_term(make AcademicTerm, :term_year => @calendar.year)
+
+  @subterm_list = Array.new(2)
+  @subterm_list[0] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  @calendar.add_term(@subterm_list[0])
+
+  @subterm_list[1] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
+  @calendar.add_term(@subterm_list[1])
+end
+
+Then /^the subterms are successfully copied$/ do
+  @calendar.search
+
+  on CalendarSearch do |page|
+    page.view @calendar.name
+  end
+
+  @subterm_list.each do |subterm|
+    on ViewAcademicTerms do |page|
+      page.go_to_terms_tab
+      page.open_term_section(subterm.term_type)
+      page.term_name(subterm.term_type).should == subterm.term_name
+      #page.term_code(@term.term_type)
+      page.term_start_date(subterm.term_type).should == subterm.start_date
+      page.term_end_date(subterm.term_type).should == subterm.end_date
+      page.term_status(subterm.term_type).should == "DRAFT"
+
+    end
+  end
+end
+
+Then /^I can search and view the subterm in read only mode$/ do
+   @subterm_list[0].search
+
+   on CalendarSearch do |page|
+     page.view @subterm_list[0].term_name
+   end
+
+
+
+   on ViewAcademicTerms do |page|
+     page.go_to_terms_tab
+     page.open_term_section(@subterm_list[0].term_type)
+     page.term_name(@subterm_list[0].term_type).should == @subterm_list[0].term_name
+     #page.term_code(@term.term_type)
+     page.term_start_date(@subterm_list[0].term_type).should == @subterm_list[0].start_date
+     page.term_end_date(@subterm_list[0].term_type).should == @subterm_list[0].end_date
+     page.term_status(@subterm_list[0].term_type).should == "DRAFT"
+
+   end
+end
+
+When /^I edit the subterm information$/ do
+  @subterm_list[0].edit :term_name => random_alphanums ,
+                        :start_date => (Date.strptime( @subterm_list[0].start_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"), #add 2 days
+                        :end_date => (Date.strptime( @subterm_list[0].end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")  #add 2 days
+end
+
+When /^I delete a subterm$/ do
+  @subterm_list[0].delete
+end
+
+Then /^the subterm in updated successfully$/ do
+  @subterm_list[0].search
+
+  on CalendarSearch do |page|
+    page.view @subterm_list[0].term_name
+  end
+
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section(@subterm_list[0].term_type)
+    page.term_name(@subterm_list[0].term_type).should == @subterm_list[0].term_name
+    #page.term_code(@term.term_type)
+    page.term_start_date(@subterm_list[0].term_type).should == @subterm_list[0].start_date
+    page.term_end_date(@subterm_list[0].term_type).should == @subterm_list[0].end_date
+    page.term_status(@subterm_list[0].term_type).should == "DRAFT"
+  end
+
+end
+
+Then /^the subterm is no longer listed on the calendar$/ do
+  @calendar.search
+
+  on CalendarSearch do |page|
+    page.view @calendar.name
+  end
+
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.term_index_by_term_type(@subterm_list[0].term_type).should == -1 #ie not found
+  end
+
+end
+

@@ -9,7 +9,7 @@ class EditAcademicTerms < BasePage
   element(:term_type_add)  { |b| b.frm.select(id: "term_type_add_add_control") }
   element(:term_start_date_add)  { |b| b.frm.text_field(id: "term_start_date_add_add_control") }
   element(:term_end_date_add)  { |b| b.frm.text_field(id: "term_end_date_add_add_control") }
-  element(:parent_term_select)  { |b| b.frm.select(id: "parent_term_type_add") }
+  element(:parent_term_select)  { |b| b.frm.select(id: "parent_term_type_add_control") }
 
   action(:acal_term_add) { |b| b.frm.link(id: "acal-term_add").click; b.loading.wait_while_present }
 
@@ -41,9 +41,17 @@ class EditAcademicTerms < BasePage
 
   def delete_term(term_type)
     term_index = term_index_by_term_type(term_type)
-    acal_term_list_div.div(id: "term_section_line#{term_index}").link(text: /Delete Term/).click
+    puts "term_index: #{term_index}"
+    acal_term_list_div.div(id: "term_section_line#{term_index}").link(text: /Delete.*Draft/).click
     loading.wait_while_present
+    delete_confirm
   end
+
+  ###### confirm delete dialog
+  element(:delete_dialog_div) { |b| b.frm.div(id: "KS-AcademicTerm-ConfirmDelete-Dialog") }
+  action(:delete_confirm) { |b| b.delete_dialog_div.radio(index: 0).click; b.loading.wait_while_present }
+  action(:delete_cancel) { |b| b.delete_dialog_div.radio(index: 1).click ; b.loading.wait_while_present}
+  ########
 
   def make_term_official(term_type)
     term_index = term_index_by_term_type(term_type)
@@ -213,7 +221,7 @@ class EditAcademicTerms < BasePage
     sticky_footer_div.button(text: "Save").click
     loading.wait_while_present
     growl_div.wait_until_present
-    raise "save was not successful" unless growl_text.match /saved successfully/
+    raise "save was not successful - growl text: #{growl_text}" unless growl_text.match /saved successfully/
     growl_div.div(class: "jGrowl-close").click
   end
 
