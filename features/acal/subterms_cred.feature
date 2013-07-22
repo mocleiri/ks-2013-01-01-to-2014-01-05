@@ -29,3 +29,11 @@ Feature: EC.Subterms CRED
     Given I create Academic Calendar with subterms
     When I delete a subterm
     Then the subterm is no longer listed on the calendar
+
+   @draft
+  Scenario: CAL 4.7 Successfully verify the instruction dates calculation for a subterm
+    Given I create an Academic Calendar
+    And I add a new subterm to the Academic Calendar with a defined instructional period
+    Then the instructional days calculation is correct
+    When I add a Holiday Calendar with holidays in the term
+    Then the instructional days calculation is correct

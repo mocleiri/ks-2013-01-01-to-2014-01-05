@@ -411,7 +411,7 @@ class KeyDateGroup
 
     on EditAcademicTerms do |page|
       sleep 3
-      #page.open_keydates_section(@parent_term.term_type)
+      page.open_term_section(@term_type)
 
       #only create if not already there
       if page.key_date_group_div(@term_type, @key_date_group_type).nil? then
@@ -486,6 +486,7 @@ class KeyDate
     #only create if doesn't already exist, other wise edit the existing one
     on EditAcademicTerms do |page|
       page.go_to_terms_tab
+      page.open_term_section(@parent_key_date_group.term_type)
       if ! page.key_date_exists?(@parent_key_date_group.term_type, @parent_key_date_group.key_date_group_type, @key_date_type) then
         @term_index = page.term_index_by_term_type(@parent_key_date_group.term_type)
 

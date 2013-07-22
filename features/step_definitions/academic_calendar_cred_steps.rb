@@ -288,6 +288,23 @@ When /^I add a new term to the Academic Calendar with a defined instructional pe
                     :date_range => true
 end
 
+When /^I add a new subterm to the Academic Calendar with a defined instructional period$/ do
+  @calendar = create AcademicCalendar
+  @calendar.add_term(make AcademicTerm, :term_year => @calendar.year)
+
+  @term = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  @calendar.add_term(@term)
+
+  @term.expected_instructional_days = @term.weekdays_in_term
+
+  @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = create KeyDate, :parent_key_date_group => @keydategroup,
+                    :key_date_type => "Instructional Period",
+                    :start_date => @term.start_date,
+                    :end_date => @term.end_date,
+                    :date_range => true
+end
+
 Then /^the term is listed when I view the Academic Calendar$/ do
   @calendar.search
 
