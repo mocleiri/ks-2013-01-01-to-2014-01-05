@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.model.pb;
 
+import com.sigmasys.kuali.ksa.model.Charge;
 import com.sigmasys.kuali.ksa.model.Identifiable;
 import com.sigmasys.kuali.ksa.model.Transaction;
 
@@ -19,7 +20,7 @@ public class PaymentBillingTransaction implements Identifiable {
 
     private Long id;
 
-    private Transaction transaction;
+    private Charge charge;
 
     private PaymentBillingTransferDetail transferDetail;
 
@@ -54,13 +55,13 @@ public class PaymentBillingTransaction implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PB_TRANSACTION_ID_FK")
-    public Transaction getTransaction() {
-        return transaction;
+    @JoinColumn(name = "CHARGE_ID_FK")
+    public Charge getCharge() {
+        return charge;
     }
 
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
+    public void setCharge(Charge charge) {
+        this.charge = charge;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

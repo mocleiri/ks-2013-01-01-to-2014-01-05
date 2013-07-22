@@ -138,7 +138,7 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
     }
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "END_OPEN_PERIOD")
+    @Column(name = "END_CHARGE_PERIOD")
     public Date getChargePeriodEndDate() {
         return chargePeriodEndDate;
     }
@@ -230,7 +230,7 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
         paymentRoundingType = EnumUtils.findById(PaymentRoundingType.class, paymentRoundingTypeCode);
     }
 
-    @Column(name = "LATE_START", length = 1)
+    @Column(name = "SCHEDULE_TYPE", length = 1)
     protected String getScheduleTypeCode() {
         return scheduleTypeCode;
     }

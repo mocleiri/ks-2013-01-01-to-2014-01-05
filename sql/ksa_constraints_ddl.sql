@@ -73,7 +73,7 @@ alter table KSSA_PB_ALLOWABLE_CHARGE add constraint FKA75DC914CAFA67ED foreign k
 alter table KSSA_PB_DATE add constraint FKEADDE852CAFA67ED foreign key (PB_PLAN_ID_FK) references KSSA_PB_PLAN;
 alter table KSSA_PB_PLAN add constraint FKEAE383CD402524CA foreign key (TRANSFER_TYPE_ID_FK) references KSSA_TRANSFER_TYPE;
 alter table KSSA_PB_SCHEDULE add constraint FK69D1913BDC6A8FE2 foreign key (PB_TRANSFER_DETAIL_ID_FK) references KSSA_PB_TRANSFER_DETAIL;
-alter table KSSA_PB_TRANSACTION add constraint FKAFB7259ADA451CEC foreign key (PB_TRANSACTION_ID_FK) references KSSA_TRANSACTION;
+alter table KSSA_PB_TRANSACTION add constraint FKAFB7259A5E6B0A9F foreign key (CHARGE_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_PB_TRANSACTION add constraint FKAFB7259ADC6A8FE2 foreign key (PB_TRANSFER_DETAIL_ID_FK) references KSSA_PB_TRANSFER_DETAIL;
 alter table KSSA_PB_TRANSFER_DETAIL add constraint FKA4F8A401CAFA67ED foreign key (PB_PLAN_ID_FK) references KSSA_PB_PLAN;
 alter table KSSA_PB_TRANSFER_DETAIL add constraint FKA4F8A4013AB9A295 foreign key (ACNT_ID_FK) references KSSA_ACNT;
