@@ -714,12 +714,18 @@ class Personnel
   # creates personnel based on class attributes
   #
   # generally called from ActivityOffering class
+  PERSONNEL_ID_COLUMN = 0
+  PERSONNEL_NAME_COLUMN = 1
+  PERSONNEL_AFFILIATION_COLUMN = 2
+  PERSONNEL_INST_EFFORT_COLUMN = 3
+  PERSONNEL_DELETE_COLUMN      = 4
+
   def create
     on ActivityOfferingMaintenance do |page|
-      page.personnel_table.rows[1].cells[0].text_field.set @id
-      page.personnel_table.rows[1].cells[1].text_field.set @name
-      page.personnel_table.rows[1].cells[2].select().select(@affiliation)
-      page.personnel_table.rows[1].cells[3].text_field.set @inst_effort
+      page.personnel_table.rows[1].cells[PERSONNEL_ID_COLUMN].text_field.set @id
+      page.personnel_table.rows[1].cells[PERSONNEL_NAME_COLUMN].text_field.set @name
+      page.personnel_table.rows[1].cells[PERSONNEL_AFFILIATION_COLUMN].select().select(@affiliation)
+      page.personnel_table.rows[1].cells[PERSONNEL_INST_EFFORT_COLUMN].text_field.set @inst_effort
       #page.add_personnel
     end
   end
@@ -729,10 +735,10 @@ class Personnel
   #  @param opts [Hash] key => value for attribute to be updated
   def edit opts={}
     on ActivityOfferingMaintenance do |page|
-      page.personnel_table.rows[1].cells[0].text_field.set opts[:id]
-      page.personnel_table.rows[1].cells[1].text_field.set opts[:name]
-      page.personnel_table.rows[1].cells[2].select().select(opts[:affiliation])
-      page.personnel_table.rows[1].cells[3].text_field.set opts[:inst_effort]
+      page.personnel_table.rows[1].cells[PERSONNEL_ID_COLUMN].text_field.set opts[:id]
+      page.personnel_table.rows[1].cells[PERSONNEL_NAME_COLUMN].text_field.set opts[:name]
+      page.personnel_table.rows[1].cells[PERSONNEL_AFFILIATION_COLUMN].select().select(opts[:affiliation])
+      page.personnel_table.rows[1].cells[PERSONNEL_INST_EFFORT_COLUMN].text_field.set opts[:inst_effort]
     end
 #        update_options(opts)
   end
