@@ -29,7 +29,7 @@ class EditAcademicCalendar < BasePage
   element(:event_end_ampm) { |b| b.frm.select(name: "newCollectionLines['events'].endTimeAmPm") }
   element(:all_day) { |b| b.frm.checkbox(name: "newCollectionLines['events'].allDay") }
   element(:date_range) { |b| b.frm.checkbox(name: "newCollectionLines['events'].dateRange") }
-  element(:add_event) { |b| b.frm.button(id: "acal-info-event_add") }
+  element(:add_event) { |b| b.frm.link(id: "acal-info-event_add") }
   #element(:delete_event_0) { |b| b.frm.button(id: "acal-info-event_del_line0") } # Note that there can be multiple Deletes on the page (= to however many events have already been added)
   #element(:delete_event_1) { |b| b.frm.button(id: "acal-info-event_del_line1") }
   #element(:delete_event_2) { |b| b.frm.button(id: "acal-info-event_del_line2") }
