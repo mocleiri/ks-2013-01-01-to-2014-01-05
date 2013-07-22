@@ -169,6 +169,7 @@
     <bean id="orgSearchServiceImpl"
           class="org.kuali.student.r2.core.class1.search.OrganizationSearchServiceImpl">
         <property name="searchManager" ref="orgSearchManager" />
+        <property name="typeService" ref="typeServiceImpl" />
         <property name="searchOperations">
             <map>
                 <entry key="org.search.orgQuickViewByRelationTypeOrgTypeRelatedOrgIds" value-ref="organizationHierarchySearch"/>
