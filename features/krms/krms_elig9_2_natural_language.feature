@@ -56,7 +56,7 @@ Feature: KRMS.ELIG9-2 Natural Language
     When I update the manage course offering agendas page
     Then the agenda page's text should before and after the submit match "Must have successfully completed a minimum of 1 course from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I want to edit the selected agenda section
-    Then the edit tab's text should match "Must have successfully completed a minimum of 1 course from (HIST798, HIST250, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+    Then the edit tab's text should match "Must have successfully completed a minimum of 1 course from (HIST798, HIST250, ENGL395, ENGL381, ENGL394, ENGL390, ENGL393, ENGL392, ENGL391)"
     When I switch to the other tab on the page
     Then the logic tab's text should match "Must have successfully completed a minimum of 1 course from (HIST250, HIST798, ENGL381, ENGL390, ENGL391, ENGL392, ENGL393, ENGL394, ENGL395)"
 
@@ -82,7 +82,7 @@ Feature: KRMS.ELIG9-2 Natural Language
     When I update the manage course offering agendas page
     Then the agenda page's text should before and after the submit match "Must be concurrently enrolled in all courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I want to edit the selected agenda section
-    Then the edit tab's text should match "Must be concurrently enrolled in all courses from (HIST798, HIST250, ENGL395, ENGL394, ENGL390, ENGL381, ENGL393, ENGL392, ENGL391)"
+    Then the edit tab's text should match "Must be concurrently enrolled in all courses from (HIST798, HIST250, ENGL395, ENGL381, ENGL394, ENGL390, ENGL393, ENGL392, ENGL391)"
     When I switch to the other tab on the page
     Then the logic tab's text should match "Must be concurrently enrolled in all courses from (HIST250, HIST798, ENGL381, ENGL390, ENGL391, ENGL392, ENGL393, ENGL394, ENGL395)"
 
@@ -97,7 +97,7 @@ Feature: KRMS.ELIG9-2 Natural Language
     When I update the manage course offering agendas page
     Then the agenda page's text should before and after the submit match "Must be concurrently enrolled in a minimum of 1 course from,HIST210,HIST250,General Education: Fundamental Studies-Professional Writing"
     When I want to edit the selected agenda section
-    Then the edit tab's text should match "Must be concurrently enrolled in a minimum of 1 course from (HIST210, HIST250, ENGL395, ENGL394, ENGL390, ENGL381, ENGL393, ENGL392, ENGL391)"
+    Then the edit tab's text should match "Must be concurrently enrolled in a minimum of 1 course from (HIST210, HIST250, ENGL395, ENGL381, ENGL394, ENGL390, ENGL393, ENGL392, ENGL391)"
     When I switch to the other tab on the page
     Then the logic tab's text should match "Must be concurrently enrolled in a minimum of 1 course from (HIST210, HIST250, ENGL381, ENGL390, ENGL391, ENGL392, ENGL393, ENGL394, ENGL395)"
 
