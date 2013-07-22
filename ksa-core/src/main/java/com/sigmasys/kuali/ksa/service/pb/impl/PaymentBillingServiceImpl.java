@@ -49,6 +49,13 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             " left outer join fetch p.transferType t " +
             " left outer join fetch t.generalLedgerType g ";
 
+    private static final String TRANSACTION_SELECT = "select pbt from PaymentBillingTransaction pbt " +
+            " left outer join fetch pbt.transaction t " +
+            " left outer join fetch pbt.transferDetail td " +
+            " left outer join fetch td.directChargeAccount a " +
+            " left outer join fetch td.plan p ";
+
+
     @Autowired
     private TransactionService transactionService;
 
@@ -195,13 +202,13 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * Reverses a payment billing transfer specified by PaymentBillingTransferDetail ID.
      *
      * @param transferDetailId PaymentBillingTransferDetail ID
-     * @param removeFees       if true, then the fee charges will also be reversed
      * @param memoText         Memo text
+     * @param removeFees       if true, then the fee charges will also be reversed
      * @return PaymentBillingTransferDetail instance
      */
     @Override
     @Transactional(readOnly = false)
-    public PaymentBillingTransferDetail reversePaymentBillingTransfer(Long transferDetailId, boolean removeFees, String memoText) {
+    public PaymentBillingTransferDetail reversePaymentBillingTransfer(Long transferDetailId, String memoText, boolean removeFees) {
 
         PermissionUtils.checkPermission(Permission.REVERSE_PAYMENT_BILLING_TRANSFER);
 
@@ -259,19 +266,32 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingTransaction instances
      */
     @Override
-    public List<PaymentBillingTransaction> getPaymentBillingTransactions(Long paymentBillingPlanId) {
+    public List<PaymentBillingTransaction> getPaymentBillingTransactionsByPlanId(Long paymentBillingPlanId) {
 
         PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_TRANSACTION);
 
-        Query query = em.createQuery("select pbt from PaymentBillingTransaction pbt " +
-                " left outer join fetch pbt.transaction t " +
-                " left outer join fetch pbt.transferDetail td " +
-                " left outer join fetch td.directChargeAccount a " +
-                " left outer join fetch td.plan p " +
-                " where p.id = :planId " +
-                " order by pbt.id desc");
+        Query query = em.createQuery(TRANSACTION_SELECT + " where p.id = :planId order by pbt.id desc");
 
         query.setParameter("planId", paymentBillingPlanId);
+
+        return query.getResultList();
+    }
+
+
+    /**
+     * Returns a list of payment billing transactions for the transfer detail specified by ID.
+     *
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingTransaction instances
+     */
+    @Override
+    public List<PaymentBillingTransaction> getPaymentBillingTransactionsByTransferDetailId(Long transferDetailId) {
+
+        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_TRANSACTION);
+
+        Query query = em.createQuery(TRANSACTION_SELECT + " where td.id = :transferDetailId order by pbt.id desc");
+
+        query.setParameter("transferDetailId", transferDetailId);
 
         return query.getResultList();
     }
@@ -354,7 +374,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_TRANSFER);
 
-        List<PaymentBillingTransaction> billingTransactions = getPaymentBillingTransactions(paymentBillingPlanId);
+        List<PaymentBillingTransaction> billingTransactions = getPaymentBillingTransactionsByPlanId(paymentBillingPlanId);
 
         if (CollectionUtils.isNotEmpty(billingTransactions)) {
 

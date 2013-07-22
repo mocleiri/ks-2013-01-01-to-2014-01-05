@@ -62,11 +62,11 @@ public interface PaymentBillingService {
      * Reverses a payment billing transfer specified by PaymentBillingTransferDetail ID.
      *
      * @param transferDetailId PaymentBillingTransferDetail ID
-     * @param removeFees       if true, then the fee charges will also be reversed
      * @param memoText         Memo text
+     * @param removeFees       if true, then the fee charges will also be reversed
      * @return PaymentBillingTransferDetail instance
      */
-    PaymentBillingTransferDetail reversePaymentBillingTransfer(Long transferDetailId, boolean removeFees, String memoText);
+    PaymentBillingTransferDetail reversePaymentBillingTransfer(Long transferDetailId, String memoText, boolean removeFees);
 
 
     /**
@@ -83,7 +83,15 @@ public interface PaymentBillingService {
      * @param paymentBillingPlanId PaymentBillingPlan ID
      * @return list of PaymentBillingTransaction instances
      */
-    List<PaymentBillingTransaction> getPaymentBillingTransactions(Long paymentBillingPlanId);
+    List<PaymentBillingTransaction> getPaymentBillingTransactionsByPlanId(Long paymentBillingPlanId);
+
+    /**
+     * Returns a list of payment billing transactions for the transfer detail specified by ID.
+     *
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingTransaction instances
+     */
+    List<PaymentBillingTransaction> getPaymentBillingTransactionsByTransferDetailId(Long transferDetailId);
 
     /**
      * Generates a list of PaymentBillingSchedule objects for the given PaymentBillingPlan ID
