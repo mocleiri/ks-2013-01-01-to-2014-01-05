@@ -66,3 +66,5 @@ TYP_ID,NM,NMSPC_CD,SRVC_NM,ACTV,VER_NBR
 "10072","kuali.krms.proposition.type.no.repeat.course.nof","KS-SYS","simplePropositionTypeService","Y","0"
 "10076","kuali.krms.proposition.type.compound.and","KS-SYS","compoundPropositionTypeService","Y","0"
 "10077","kuali.krms.proposition.type.compound.or","KS-SYS","compoundPropositionTypeService","Y","0"
+"10078","kuali.krms.proposition.type.max.limit.courses.at.org.for.program","KS-SYS","simplePropositionTypeService","Y","0"
+"10079","kuali.krms.proposition.type.max.limit.courses.at.org.duration.for.program","KS-SYS","simplePropositionTypeService","Y","0"
