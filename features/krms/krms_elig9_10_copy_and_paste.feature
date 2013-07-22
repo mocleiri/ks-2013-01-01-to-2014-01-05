@@ -19,7 +19,7 @@ Feature: KRMS.ELIG9-10 Copy and Paste
     When I commit changes made to the proposition
 
   #ELIG9.10.EB2 (KSENROLL-7051)
-  @bug @KSENROLL-7110
+  @pending
   Scenario: Confirm the copy and paste of compound (group) rule statement is working as expected
     When I want to edit the selected agenda section
     And I copy the group containing node "C" and paste it after node "G"
@@ -30,4 +30,4 @@ Feature: KRMS.ELIG9-10 Copy and Paste
     When I commit and return to see the changes made to the proposition
     And I want to edit the selected agenda section
     And I switch to the other tab on the page
-    Then the text area should contain "(A OR (B OR C) OR D) OR E OR F OR G OR (H OR I) OR J"
+    Then the text area should contain "(A AND (B OR C) AND D) OR E OR F OR G OR (H OR I) OR J"
