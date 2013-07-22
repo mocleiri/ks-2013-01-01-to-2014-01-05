@@ -65,3 +65,35 @@ Feature: EC.Academic Calendar Terms
     Then the instructional days calculation is correct
     When I add a Holiday Calendar with holidays in the term
     Then the instructional days calculation is correct
+
+  @wip
+  Scenario: Verify an error message is displayed when a term is added with dates do not fall within (parent) Academic Calendar dates
+    Given I create an Academic Calendar
+    And I add a new term with start date earlier than the Academic Calendar start date
+    Then an ACAL warning message is displayed stating "blah"
+
+  @wip
+  Scenario: Verify an error message is displayed when a term is edited with dates do not fall within (parent) Academic Calendar dates
+    Given I create an Academic Calendar with a term
+    When I edit the term so that the start date is earlier than the Academic Calendar start date
+    Then an ACAL warning message is displayed stating "blah"
+
+  @wip
+  Scenario: Verify an error message is displayed when a key date is added with dates that do not fall within (parent) term dates
+    Given I create an Academic Calendar with a term
+    And I add a new key date with a date later than the Academic Term end date
+    Then an ACAL warning message is displayed stating "blah"
+
+  @wip
+  Scenario: Verify an error message is displayed when a key date is edited with dates that do not fall within (parent) term dates
+    Given I create an Academic Calendar with a term
+    And I add an instructional Key Date
+    When I edit the key date so that the start date is later than the Academic Term end date
+    Then an ACAL warning message is displayed stating "blah"
+
+  @wip @done
+  Scenario: Verify an error message is displayed when a key date is made blank
+    Given I create an Academic Calendar with a term
+    And I add an instructional Key Date
+    When I make the key date blank
+    Then an Key Dates warning message is displayed stating "Start date should not be empty"

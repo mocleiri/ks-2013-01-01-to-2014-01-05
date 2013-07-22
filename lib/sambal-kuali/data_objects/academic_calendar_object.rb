@@ -514,7 +514,12 @@ class KeyDate
 
   end
 
-  def edit options={}
+  def edit opts={}
+
+    defaults = {
+        :exp_success => true
+    }
+    options = defaults.merge(opts)
 
     edit_row = on(EditAcademicTerms).key_date_target_row(@parent_key_date_group.term_type, @parent_key_date_group.key_date_group_type, @key_date_type)
 
@@ -574,7 +579,7 @@ class KeyDate
       end
     end
 
-    on(EditAcademicTerms).save
+    on(EditAcademicTerms).save :exp_success => options[:exp_success]
 
     set_options(options)
   end

@@ -71,6 +71,11 @@ class EditAcademicTerms < BasePage
     acal_term_list_div.div(id: "acal-term-keydatesgroup_line#{term_index}").div(class: "uif-stackedCollectionLayout")
   end
 
+  def key_date_validation_messages(term_type)
+    term_index = term_index_by_term_type(term_type)
+    acal_term_list_div.div(id: "acal-term-keydatesgroup_line#{term_index}").ul(class: "uif-validationMessagesList").lis
+  end
+
   def key_date_group_div_list(term_type)
     key_date_group_list_parent(term_type).divs(class: "uif-group uif-boxGroup uif-horizontalBoxGroup uif-collectionItem uif-boxCollectionItem")
   end
@@ -217,11 +222,20 @@ class EditAcademicTerms < BasePage
   element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") } # Persistent ID needed!
   action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click }
 
-  def save
+
+  def save(opts = {})
+
+    defaults = {
+        :exp_success => true
+    }
+    options = defaults.merge(opts)
+
     sticky_footer_div.button(text: "Save").click
     loading.wait_while_present
     growl_div.wait_until_present
-    raise "save was not successful - growl text: #{growl_text}" unless growl_text.match /saved successfully/
+    if options[:exp_success] then
+      raise "save was not successful - growl text: #{growl_text}" unless growl_text.match /saved successfully/
+    end
     growl_div.div(class: "jGrowl-close").click
   end
 
