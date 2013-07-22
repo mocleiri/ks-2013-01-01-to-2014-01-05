@@ -6,7 +6,7 @@ class CourseOfferingEdit < BasePage
 
   expected_element :term_label_div
 
-  action(:submit) { |b| b.frm.button(text: "submit").click; b.loading.wait_while_present }
+  action(:submit) { |b| b.frm.button(text: "Save").click; b.loading.wait_while_present }
   action(:cancel) { |b| b.frm.link(text: "cancel").click; b.loading.wait_while_present }
   element(:term_label_div) { |b| b.frm.div(data_label: "Term") }
 
