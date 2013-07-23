@@ -133,13 +133,17 @@ class CourseOffering
     else #create from catalog
       start_create_by_search
       on CreateCourseOffering do  |page|
+        page.continue
+      end
+
+      on CreateCOFromCatalog do |page|
         @suffix = random_alphanums(5) unless @suffix != ""
         page.suffix.set @suffix
         @course = "#{@course}#{@suffix}"
         if @joint_co_to_create != nil
           create_joint_co()
         end
-        page.cross_listed_co_check_box.set unless !@cross_listed
+        page.cross_listed_co_check_box.set if @cross_listed
         delivery_obj = make DeliveryFormat
         delivery_obj.select_random_delivery_formats
         @delivery_format_list << delivery_obj
@@ -153,7 +157,7 @@ class CourseOffering
     # TODO: this is hardcoded to create joint-co from row-1;
     # needs to be parameterized using the @joint_co_to_create
     # variable
-    on CreateCourseOffering do |page|
+    on CreateCOFromCatalog do |page|
       page.create_new_joint_defined_course_row_1
       page.create_new_joint_defined_course_row_2
     end
@@ -391,7 +395,6 @@ class CourseOffering
     on CreateCourseOffering do  |page|
       page.target_term.set @term
       page.catalogue_course_code.set @course
-      page.continue
     end
   end
 
@@ -891,9 +894,13 @@ class CourseOffering
 
     start_create_by_search
     on CreateCourseOffering do |page|
-      page.create_from_existing_offering_tab
+      page.choose_from_existing
+      page.continue
+    end
+
+    on CreateCOFromExisting do |page|
       page.select_copy_for_existing_course(term, course)
-      page.configure_course_offering_copy_toggle
+      page.create
       #TODO add parms for selecting what to exclude from copy
     end
 
@@ -1081,7 +1088,7 @@ class DeliveryFormat
   end
 
   def select_random_delivery_formats
-    on CreateCourseOffering do  |page|
+    on CreateCOFromCatalog do  |page|
       selected_options = page.add_random_delivery_format
       if selected_options[:del_format] == "Lab"
         @format = "Lab Only"

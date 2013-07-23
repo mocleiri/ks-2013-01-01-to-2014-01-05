@@ -16,7 +16,9 @@ Then /^the new Course Offering should contain only the selected delivery formats
       page.get_delivery_format(del_option.format).should == del_option.format
       page.get_grade_roster_level(del_option.format).should == del_option.grade_format
     end
+    page.close
   end
+
 end
 
 And /^I copy a course offering from an existing offering$/ do
