@@ -239,41 +239,55 @@ class CORequisitesData
     groups = check_number_groups
     statements = check_number_statements
     data_setup_needed = false
-    on ManageCORequisites do |page|
-      if statements == 1
-        create_course_rule( "add", "A", "HIST639")
-        statements+=1
-        data_setup_needed = true
-      end
-      if statements == 2
-        create_course_rule( "add", "B", "ENGL101")
-        statements+=1
-        data_setup_needed = true
-      end
+    if statements == 1
+      create_course_rule( "add", "A", "HIST639")
+      statements+=1
+      data_setup_needed = true
+    end
+    if statements == 2
+      create_course_rule( "add", "B", "ENGL101")
+      statements+=1
+      data_setup_needed = true
+    end
+    if groups == 0 && statements == 3
+      create_text_rule( "group", "A", "free form text input value")
+      groups+=1
+      create_all_courses_rule( "add", "", "ENGL478,HIST416", "", "")
+      statements+=1
+      data_setup_needed = true
+    else
       if groups == 0
         create_text_rule( "group", "A", "free form text input value")
         groups+=1
-        if statements <= 3
-          create_all_courses_rule( "add", "", "ENGL478,HIST416", "", "")
-          statements+=1
-        end
         data_setup_needed = true
       end
-      if groups == 1
-        create_text_rule( "group", "D", "Text")
-        if statements <= 4
-          create_number_courses_rule( "add", "C", "1", "HIST395,HIST210", "", "")
-        end
+      if statements == 3
+        create_all_courses_rule( "add", "B", "ENGL478,HIST416", "", "")
+        statements+=1
         data_setup_needed = true
+      end
+    end
+    if groups == 1
+      create_text_rule( "group", "D", "Text")
+      groups += 1
+      data_setup_needed = true
+    end
+    if statements == 4
+      create_number_courses_rule( "add", "C", "1", "HIST395,HIST210", "", "")
+      statements += 1
+      data_setup_needed = true
+    end
+    if groups > 1
+      on ManageCORequisites do |page|
         page.loading.wait_while_present
         page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_loading.wait_while_present
         page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_loading.wait_while_present
+        page.update_rule_btn
       end
-      page.update_rule_btn
-      return data_setup_needed
     end
+    return data_setup_needed
   end
 
   def create_course_rule( group, node, course)
@@ -652,8 +666,11 @@ class CORequisitesData
   def add_new_node( group, node)
     on ManageCORequisites do |page|
       page.loading.wait_while_present
-      if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
-        page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+      node_to_edit = page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/)
+      if node != "" && node != nil && node_to_edit.exists?
+        if node_to_edit.parent.parent.attribute_value('class') !~ /ruleBlockSelected/
+          page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+        end
       end
       sleep 2
       if group == "group"
@@ -725,12 +742,25 @@ class CORequisitesData
     return Regexp.new(string, Regexp::MULTILINE)
   end
 
-  def test_compare_text( diff = true, text)
+  def test_compare_text( text)
     string = ".*"
-    array = text.split(/,/)
+    if text =~ /^(.+)\((.+)\)$/
+      first_match = $1
+      second_match = $2
+      array = first_match.split(/,/)
+      size = array.length - 1
+      last_elem = "#{array[size]}(#{second_match})"
+      array[size] = last_elem
+    else
+      array = text.split(/,/)
+    end
     i = 0
     array.each do |elem|
-      string += Regexp.escape(elem) + "\n" + Regexp.escape(elem) + "\n[ANDOR]+\n[ANDOR]+\n"
+      string += Regexp.escape(elem) + "\n" + Regexp.escape(elem)
+      i += 1
+      if i < array.size
+        string += "\n[ANDOR]+\n[ANDOR]+\n"
+      end
     end
     return Regexp.new(string, Regexp::MULTILINE)
   end
