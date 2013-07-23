@@ -30,7 +30,6 @@ Feature: EC.Subterms CRED
     When I delete a subterm
     Then the subterm is no longer listed on the calendar
 
-   @done
   Scenario: CAL 4.7 Successfully verify the instruction dates calculation for a subterm
     Given I create an Academic Calendar that supports subterms
     And I add a new subterm to the Academic Calendar with a defined instructional period
@@ -38,13 +37,11 @@ Feature: EC.Subterms CRED
     When I add a Holiday Calendar with holidays in the term
     Then the instructional days calculation is correct
 
-  @done
   Scenario: CAL 4.2C Verify an error message is displayed when a subterm is added with dates do not fall within (parent) Academic Calendar dates
     Given I create an Academic Calendar that supports subterms
     And I add a new subterm with start date earlier than the Academic Calendar start date
     Then a term warning message is displayed stating "doesn't fall within Acal dates"
 
-  @done
   Scenario: CAL 4.2D Verify an error message is displayed when a subterm is edited with dates do not fall within (parent) Academic Calendar dates
     Given I create an Academic Calendar with subterms
     When I edit the subterm so that the start date is earlier than the Academic Calendar start date
@@ -53,16 +50,16 @@ Feature: EC.Subterms CRED
   Scenario: CAL 4.2E Verify an error message is displayed when a key date is added with dates that do not fall within (parent) subterm dates
     Given I create an Academic Calendar with subterms
     And I add a new key date with a date later than the Academic Subterm end date
-    Then a Key Dates warning message is displayed stating "doesn't fall within.*dates"
+    Then a subterm Key Dates warning message is displayed stating "doesn't fall within.*dates"
 
   Scenario: CAL 4.2F Verify an error message is displayed when a key date is edited with dates that do not fall within (parent) subterm dates
     Given I create an Academic Calendar with subterms
     And I add an instructional Key Date to a subterm
     When I edit the key date so that the start date is later than the Academic Subterm end date
-    Then a Key Dates warning message is displayed stating "doesn't fall within.*dates"
+    Then a subterm Key Dates warning message is displayed stating "doesn't fall within.*dates"
 
   Scenario: CAL 4.2G Verify an error message is displayed when a key date is made blank
     Given I create an Academic Calendar with subterms
-    And I add an instructional Key Date
-    When I make the key date blank to a subterm
-    Then a Key Dates warning message is displayed stating "Start date should not be empty"
+    And I add an instructional Key Date to a subterm
+    When I make the subterm key date blank
+    Then a subterm Key Dates warning message is displayed stating "Start date should not be empty"

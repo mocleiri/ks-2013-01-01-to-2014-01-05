@@ -480,15 +480,13 @@ Then /^I add an instructional Key Date$/ do
 
   @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
   @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :all_day => true
-
 end
 
 Then /^I add an instructional Key Date to a subterm$/ do
-  @term.edit
+  @subterm_list[0].edit
 
-  @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @subterm_list[0].term_type
   @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :all_day => true
-
 end
 
 
@@ -825,9 +823,9 @@ When /^I add a new key date with a date later than the Academic Term end date$/ 
 end
 
 When /^I add a new key date with a date later than the Academic Subterm end date$/ do
-  @term.edit
+  @subterm_list[0].edit
 
-  @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @subterm_list[0].term_type
   @keydate = create KeyDate, :parent_key_date_group => @keydategroup,
                     :key_date_type => "First Day of Classes",
                     :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"),
@@ -842,7 +840,7 @@ When /^I edit the key date so that the start date is later than the Academic Ter
 end
 
 When /^I edit the key date so that the start date is later than the Academic Subterm end date$/ do
-  @term.edit
+  @subterm_list[0].edit
   @keydate.edit :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")
 end
 
@@ -851,8 +849,19 @@ When /^I make the key date blank$/ do
   @keydate.edit :start_date => "", :exp_success => false
 end
 
-Then /^an Key Dates warning message is displayed stating "([^"]*)"$/ do |exp_msg|
+When /^I make the subterm key date blank$/ do
+  @subterm_list[0].edit
+  @keydate.edit :start_date => "", :exp_success => false
+end
+
+Then /^a Key Dates warning message is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.key_date_validation_messages(@term.term_type)[0].text.should match /#{exp_msg}/
+  end
+end
+
+Then /^a subterm Key Dates warning message is displayed stating "([^"]*)"$/ do |exp_msg|
+  on EditAcademicTerms do |page|
+    page.key_date_validation_messages(@subterm_list[0].term_type)[0].text.should match /#{exp_msg}/
   end
 end
