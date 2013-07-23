@@ -2,10 +2,7 @@ package com.sigmasys.kuali.ksa.service.pb;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
-import com.sigmasys.kuali.ksa.model.pb.PaymentBillingSchedule;
-import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransaction;
-import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail;
+import com.sigmasys.kuali.ksa.model.pb.*;
 
 import javax.jws.WebService;
 import java.math.BigDecimal;
@@ -94,6 +91,14 @@ public interface PaymentBillingService {
     List<PaymentBillingTransaction> getPaymentBillingTransactionsByTransferDetailId(Long transferDetailId);
 
     /**
+     * Returns a list of payment billing schedules for the transfer detail specified by ID.
+     *
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingSchedule instances
+     */
+    List<PaymentBillingSchedule> getPaymentBillingSchedulesByTransferDetailId(Long transferDetailId);
+
+    /**
      * Generates a list of PaymentBillingSchedule objects for the given PaymentBillingPlan ID
      *
      * @param paymentBillingPlanId PaymentBillingPlan ID
@@ -102,16 +107,35 @@ public interface PaymentBillingService {
     List<PaymentBillingSchedule> generatePaymentBillingSchedules(Long paymentBillingPlanId);
 
     /**
-     * This method creates the transactions that make up the payment billing charges and
-     * nets off the transactions that are financed.
+     * This method creates the list of type PaymentBillingTransaction, detailing which transactions can be financed,
+     * and how much of each of them can be financed. The parameters for this calculation derive from PaymentBillingPlan.
+     * Note that the maxAmount in PaymentBillingTransferDetail allows the system to decrease the amount to finance,
+     * allowing a student to finance less than the maximum amount specified in the plan.
+     *
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingTransaction instances
+     */
+    List<PaymentBillingTransaction> generatePaymentBillingTransactions(Long transferDetailId);
+
+    /**
+     * This method creates the transactions that make up the payment billing charges and nets off the transactions
+     * that are financed for the given PaymentBillingTransferDetail specified by ID.
+     *
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingTransaction instances
+     */
+    List<PaymentBillingTransaction> createPaymentBillingTransactions(Long transferDetailId);
+
+    /**
+     * Returns payment billing allowable charges for the given plan specified by ID from the persistent store
+     * sorted by priorities in the descending order.
      *
      * @param paymentBillingPlanId PaymentBillingPlan ID
-     * @return PaymentBillingTransferDetail instance
+     * @return list of PaymentBillingAllowableCharge instances
      */
-    PaymentBillingTransferDetail generatePaymentBillingTransactions(Long paymentBillingPlanId);
+    List<PaymentBillingAllowableCharge> getPaymentBillingAllowableCharges(Long paymentBillingPlanId);
 
 
     // TODO
-
 
 }

@@ -244,6 +244,36 @@ public interface TransactionService {
     List<Transaction> getTransactions(String userId, Date fromDate, Date toDate);
 
     /**
+     * Returns all charges by account ID and date range
+     *
+     * @param userId   Account ID
+     * @param fromDate Start date
+     * @param toDate   End date
+     * @return List of charges
+     */
+    List<Charge> getCharges(String userId, Date fromDate, Date toDate);
+
+    /**
+     * Returns all payments by account ID and date range
+     *
+     * @param userId   Account ID
+     * @param fromDate Start date
+     * @param toDate   End date
+     * @return List of payments
+     */
+    List<Payment> getPayments(String userId, Date fromDate, Date toDate);
+
+    /**
+     * Returns all deferments by account ID and date range
+     *
+     * @param userId   Account ID
+     * @param fromDate Start date
+     * @param toDate   End date
+     * @return List of deferments
+     */
+    List<Deferment> getDeferments(String userId, Date fromDate, Date toDate);
+
+    /**
      * Returns all transactions by account ID, date range and statuses
      *
      * @param userId   Account ID
@@ -261,6 +291,7 @@ public interface TransactionService {
      * @param userId Account ID
      * @return List of all charges by account ID
      */
+    @WebMethod(exclude = true)
     List<Charge> getCharges(String userId);
 
     /**
@@ -285,6 +316,7 @@ public interface TransactionService {
      * @param userId Account ID
      * @return List of all payments by account ID
      */
+    @WebMethod(exclude = true)
     List<Payment> getPayments(String userId);
 
     /**
@@ -301,6 +333,7 @@ public interface TransactionService {
      * @param userId Account ID
      * @return List of all deferments by account ID
      */
+    @WebMethod(exclude = true)
     List<Deferment> getDeferments(String userId);
 
     /**

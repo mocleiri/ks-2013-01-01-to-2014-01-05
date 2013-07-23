@@ -681,6 +681,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return List of all charges by account ID
      */
     @Override
+    @WebMethod(exclude = true)
     public List<Charge> getCharges(String userId) {
         return getTransactions(Charge.class, null, null, userId);
     }
@@ -703,6 +704,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return List of all payments by account ID
      */
     @Override
+    @WebMethod(exclude = true)
     public List<Payment> getPayments(String userId) {
         return getTransactions(Payment.class, null, null, userId);
     }
@@ -726,6 +728,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return List of all deferments by account ID
      */
     @Override
+    @WebMethod(exclude = true)
     public List<Deferment> getDeferments(String userId) {
         return getTransactions(Deferment.class, null, null, userId);
     }
@@ -753,6 +756,45 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     public List<Transaction> getTransactions(String userId, Date fromDate, Date toDate) {
         return getTransactions(Transaction.class, fromDate, toDate, userId);
+    }
+
+    /**
+     * Returns all charges by account ID and date range
+     *
+     * @param userId   Account ID
+     * @param fromDate Start date
+     * @param toDate   End date
+     * @return List of charges
+     */
+    @Override
+    public List<Charge> getCharges(String userId, Date fromDate, Date toDate) {
+        return getTransactions(Charge.class, fromDate, toDate, userId);
+    }
+
+    /**
+     * Returns all payments by account ID and date range
+     *
+     * @param userId   Account ID
+     * @param fromDate Start date
+     * @param toDate   End date
+     * @return List of payments
+     */
+    @Override
+    public List<Payment> getPayments(String userId, Date fromDate, Date toDate) {
+        return getTransactions(Payment.class, fromDate, toDate, userId);
+    }
+
+    /**
+     * Returns all deferments by account ID and date range
+     *
+     * @param userId   Account ID
+     * @param fromDate Start date
+     * @param toDate   End date
+     * @return List of deferments
+     */
+    @Override
+    public List<Deferment> getDeferments(String userId, Date fromDate, Date toDate) {
+        return getTransactions(Deferment.class, fromDate, toDate, userId);
     }
 
 

@@ -5,13 +5,13 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.pb.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AccountService;
-import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.jws.WebService;
 import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 
 /**
@@ -64,9 +65,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
     @Autowired
     private AccountService accountService;
-
-    @Autowired
-    private AuditableEntityService auditableEntityService;
 
 
     /**
@@ -220,7 +218,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         }
 
         if (transferDetail.getChargeStatus() != PaymentBillingChargeStatus.ACTIVE) {
-            String errMsg = "PaymentBillingTransferDetail must be active";
+            String errMsg = "PaymentBillingTransferDetail must be " + PaymentBillingChargeStatus.ACTIVE.toString();
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
@@ -277,7 +275,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         return query.getResultList();
     }
 
-
     /**
      * Returns a list of payment billing transactions for the transfer detail specified by ID.
      *
@@ -290,6 +287,30 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_TRANSACTION);
 
         Query query = em.createQuery(TRANSACTION_SELECT + " where td.id = :transferDetailId order by pbt.id desc");
+
+        query.setParameter("transferDetailId", transferDetailId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Returns a list of payment billing schedules for the transfer detail specified by ID.
+     *
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingSchedule instances
+     */
+    @Override
+    public List<PaymentBillingSchedule> getPaymentBillingSchedulesByTransferDetailId(Long transferDetailId) {
+
+        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_SCHEDULE);
+
+        Query query = em.createQuery("select s from PaymentBillingSchedule s " +
+                " inner join fetch s.transferDetail d " +
+                " left outer join fetch d.directChargeAccount " +
+                " left outer join fetch d.plan " +
+                " left outer join fetch d.flatFeeCharge " +
+                " left outer join fetch d.variableFeeCharge " +
+                " where d.id = :transferDetailId order by s.id desc");
 
         query.setParameter("transferDetailId", transferDetailId);
 
@@ -343,8 +364,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     protected BigDecimal calculatePaymentAmount(BigDecimal totalAmount, BigDecimal percentage, int roundingFactor) {
 
-        if (roundingFactor != 0 && roundingFactor != 1 && roundingFactor % 10 != 0) {
-            String errMsg = "Rounding factor must be 0, 1 or a power of 10 (0,1,10,100,1000,...)";
+        if (roundingFactor < 0) {
+            String errMsg = "Rounding factor cannot be a negative number";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
@@ -352,50 +373,267 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         BigDecimal paymentAmount = totalAmount.multiply(percentage).divide(new BigDecimal(100));
 
         if (roundingFactor == 0) {
-            paymentAmount = paymentAmount.setScale(2, RoundingMode.CEILING);
+            return paymentAmount.setScale(2, RoundingMode.CEILING);
         }
 
-        // TODO: ask Paul about rounding of BigDecimal values
+        BigInteger roundedAmount = paymentAmount.divide(new BigDecimal(roundingFactor)).toBigInteger();
 
-        return null;
+        return new BigDecimal(roundedAmount.add(BigInteger.ONE)).multiply(new BigDecimal(roundingFactor));
     }
 
 
     /**
-     * This method creates the transactions that make up the payment billing charges and
-     * nets off the transactions that are financed.
+     * This method creates the list of type PaymentBillingTransaction, detailing which transactions can be financed,
+     * and how much of each of them can be financed. The parameters for this calculation derive from PaymentBillingPlan.
+     * Note that the maxAmount in PaymentBillingTransferDetail allows the system to decrease the amount to finance,
+     * allowing a student to finance less than the maximum amount specified in the plan.
      *
-     * @param paymentBillingPlanId PaymentBillingPlan ID
-     * @return PaymentBillingTransferDetail instance
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingTransaction instances
      */
     @Override
     @Transactional(readOnly = false)
-    public PaymentBillingTransferDetail generatePaymentBillingTransactions(Long paymentBillingPlanId) {
+    public List<PaymentBillingTransaction> generatePaymentBillingTransactions(Long transferDetailId) {
 
-        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_TRANSFER);
+        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_TRANSACTIONS);
 
-        List<PaymentBillingTransaction> billingTransactions = getPaymentBillingTransactionsByPlanId(paymentBillingPlanId);
+        PaymentBillingTransferDetail transferDetail = getPaymentBillingTransferDetail(transferDetailId);
+        if (transferDetail == null) {
+            String errMsg = "PaymentBillingTransferDetail does not exist with ID = " + transferDetailId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
 
-        if (CollectionUtils.isNotEmpty(billingTransactions)) {
+        if (transferDetail.getChargeStatus() != PaymentBillingChargeStatus.INITIALIZED) {
+            String errMsg = "PaymentBillingTransferDetail must be " + PaymentBillingChargeStatus.INITIALIZED.toString();
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
 
-            BigDecimal totalFinancedAmount = BigDecimal.ZERO;
+        PaymentBillingPlan billingPlan = transferDetail.getPlan();
+        if (billingPlan == null) {
+            String errMsg = "PaymentBillingPlan does not exist for PaymentBillingTransferDetail with ID = " + transferDetailId;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        List<Charge> charges = transactionService.getCharges(transferDetail.getDirectChargeAccount().getId(),
+                billingPlan.getChargePeriodStartDate(),
+                billingPlan.getChargePeriodEndDate());
+
+        List<PaymentBillingAllowableCharge> allowableCharges = getPaymentBillingAllowableCharges(billingPlan.getId());
+
+        List<PaymentBillingTransaction> billingTransactions = new LinkedList<PaymentBillingTransaction>();
+
+        for (Charge charge : charges) {
+
+            if (isChargeAllowed(charge, allowableCharges)) {
+
+                PaymentBillingTransaction billingTransaction = new PaymentBillingTransaction();
+
+                billingTransaction.setCharge(charge);
+                billingTransaction.setTransferDetail(transferDetail);
+
+                BigDecimal unallocatedAmount = charge.getUnallocatedAmount();
+
+                billingTransaction.setOriginalAmount(charge.getAmount());
+                billingTransaction.setOriginalUnallocatedAmount(unallocatedAmount);
+                billingTransaction.setRemainingAmount(unallocatedAmount);
+                billingTransaction.setFinancedAmount(BigDecimal.ZERO);
+
+                billingTransactions.add(billingTransaction);
+            }
+        }
+
+        List<PaymentBillingTransaction> resultTransactions = new LinkedList<PaymentBillingTransaction>();
+
+        for (PaymentBillingAllowableCharge allowableCharge : allowableCharges) {
 
             for (PaymentBillingTransaction billingTransaction : billingTransactions) {
 
-                BigDecimal financedAmount = billingTransaction.getFinancedAmount();
-                if (financedAmount == null) {
-                    financedAmount = BigDecimal.ZERO;
+                if (transferDetail.getPlanAmount().compareTo(transferDetail.getMaxAmount()) >= 0) {
+                    break;
                 }
 
-                totalFinancedAmount = totalFinancedAmount.add(financedAmount);
+                if (billingTransaction.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0) {
+
+                    if (isChargeAllowed(billingTransaction.getCharge(), Arrays.asList(allowableCharge))) {
+
+                        final BigDecimal hundredPercent = new BigDecimal(100);
+
+                        BigDecimal maxPercentage = allowableCharge.getMaxPercentage();
+                        if (maxPercentage == null) {
+                            maxPercentage = hundredPercent;
+                        }
+
+                        BigDecimal amountToFinance =
+                                billingTransaction.getOriginalAmount().multiply(maxPercentage).divide(hundredPercent);
+
+                        if (amountToFinance.compareTo(billingTransaction.getRemainingAmount()) > 0) {
+                            amountToFinance = billingTransaction.getRemainingAmount();
+                        }
+
+                        if (billingTransaction.getFinancedAmount().add(amountToFinance).compareTo(allowableCharge.getMaxAmount()) > 0) {
+                            amountToFinance = allowableCharge.getMaxAmount().subtract(billingTransaction.getFinancedAmount());
+                        }
+
+                        if (transferDetail.getPlanAmount().add(amountToFinance).compareTo(transferDetail.getMaxAmount()) > 0) {
+                            amountToFinance = transferDetail.getMaxAmount().subtract(transferDetail.getPlanAmount());
+                        }
+
+                        billingTransaction.setRemainingAmount(billingTransaction.getRemainingAmount().subtract(amountToFinance));
+                        billingTransaction.setFinancedAmount(billingTransaction.getFinancedAmount().add(amountToFinance));
+                        transferDetail.setPlanAmount(transferDetail.getPlanAmount().add(amountToFinance));
+
+                    }
+
+                }
+
+            }
+        }
+
+        for (PaymentBillingTransaction billingTransaction : billingTransactions) {
+            if (billingTransaction.getFinancedAmount().compareTo(BigDecimal.ZERO) > 0) {
+                persistEntity(billingTransaction);
+                resultTransactions.add(billingTransaction);
+            }
+        }
+
+        transferDetail.setChargeStatus(PaymentBillingChargeStatus.ACTIVE);
+
+        return resultTransactions;
+    }
+
+    private boolean isChargeAllowed(Charge charge, List<PaymentBillingAllowableCharge> allowableCharges) {
+        for (PaymentBillingAllowableCharge allowableCharge : allowableCharges) {
+            String transactionTypeMask = allowableCharge.getTransactionTypeMask();
+            if (StringUtils.isNotBlank(transactionTypeMask)) {
+                if (Pattern.matches(transactionTypeMask, charge.getTransactionType().getId().getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * This method creates the transactions that make up the payment billing charges and nets off the transactions
+     * that are financed for the given PaymentBillingTransferDetail specified by ID.
+     *
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingTransaction instances
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public List<PaymentBillingTransaction> createPaymentBillingTransactions(Long transferDetailId) {
+
+        PaymentBillingTransferDetail transferDetail = getPaymentBillingTransferDetail(transferDetailId);
+        if (transferDetail == null) {
+            String errMsg = "PaymentBillingTransferDetail does not exist with ID = " + transferDetailId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        final PaymentBillingPlan billingPlan = transferDetail.getPlan();
+        if (billingPlan == null) {
+            String errMsg = "PaymentBillingPlan does not exist for PaymentBillingTransferDetail with ID = " + transferDetailId;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        transferDetail.setTransferGroupId(transactionTransferService.generateTransferGroupId());
+
+        List<PaymentBillingTransaction> billingTransactions = getPaymentBillingTransactionsByTransferDetailId(transferDetailId);
+
+        if (CollectionUtils.isNotEmpty(billingTransactions)) {
+
+            // Sorting PB transactions depending on the payment rounding type
+            Collections.sort(billingTransactions, new Comparator<PaymentBillingTransaction>() {
+                @Override
+                public int compare(PaymentBillingTransaction t1, PaymentBillingTransaction t2) {
+                    switch (billingPlan.getPaymentRoundingType()) {
+                        case ALL_BUT_LAST:
+                            return t1.getCharge().getEffectiveDate().compareTo(t2.getCharge().getEffectiveDate());
+                        case ALL_BUT_FIRST:
+                            return t2.getCharge().getEffectiveDate().compareTo(t1.getCharge().getEffectiveDate());
+                    }
+                    return t1.getFinancedAmount().compareTo(t2.getFinancedAmount());
+                }
+            });
+
+            BigDecimal totalFinancedAmount = getTotalFinancedAmount(billingTransactions);
+
+            // Calculating the finance ratio and setting it for each PB transaction
+            for (PaymentBillingTransaction billingTransaction : billingTransactions) {
+                billingTransaction.setRatio(billingTransaction.getFinancedAmount().divide(totalFinancedAmount));
             }
 
-            // TODO "Create a UUID and set paymentBillingDetail.transferGroup to this UUID"
-            // TODO ask Paul how to get PaymentBillingDetail here
+            // Getting PB schedules for the transfer detail
+            List<PaymentBillingSchedule> billingSchedules = getPaymentBillingSchedulesByTransferDetailId(transferDetailId);
+
+            for (PaymentBillingSchedule billingSchedule : billingSchedules) {
+
+                BigDecimal totalTempAmount = BigDecimal.ZERO;
+
+                // Iterating through all, but last PB transactions and calculate temporary amounts
+                for (int i = 0; i < billingTransactions.size() - 1; i++) {
+
+                    PaymentBillingTransaction billingTransaction = billingTransactions.get(i);
+
+                    BigDecimal tempAmount = billingSchedule.getAmount().multiply(billingTransaction.getRatio());
+                    if (tempAmount.compareTo(billingTransaction.getRemainingAmount()) > 0) {
+                        tempAmount = billingTransaction.getRemainingAmount();
+                    }
+
+                    billingTransaction.setTemporaryAmount(tempAmount);
+
+                    totalTempAmount = totalTempAmount.add(tempAmount);
+                }
+
+                // TODO:
+                // Take the last (largest) paymentBillingTransaction, and
+                // set temporaryAmount to paymentBillingSchedule.amount – sum from the previous step.
+                // (Round the last transaction to make the total equal the amount for the period)
+
+            }
 
         }
 
+        // TODO
         return null;
+    }
+
+    private BigDecimal getTotalFinancedAmount(List<PaymentBillingTransaction> billingTransactions) {
+        BigDecimal totalFinancedAmount = BigDecimal.ZERO;
+        for (PaymentBillingTransaction billingTransaction : billingTransactions) {
+            BigDecimal financedAmount = billingTransaction.getFinancedAmount();
+            if (financedAmount == null) {
+                financedAmount = BigDecimal.ZERO;
+            }
+            totalFinancedAmount = totalFinancedAmount.add(financedAmount);
+        }
+        return totalFinancedAmount;
+    }
+
+
+    /**
+     * Returns payment billing allowable charges for the given plan specified by ID from the persistent store
+     * sorted by priorities in the descending order.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @return list of PaymentBillingAllowableCharge instances
+     */
+    public List<PaymentBillingAllowableCharge> getPaymentBillingAllowableCharges(Long paymentBillingPlanId) {
+
+        Query query = em.createQuery("select c from PaymentBillingAllowableCharge c " +
+                " inner join fetch c.plan p " +
+                " where p.id = :planId " +
+                " order by c.priority desc");
+
+        query.setParameter("planId", paymentBillingPlanId);
+
+        return query.getResultList();
     }
 
 

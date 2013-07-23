@@ -156,7 +156,7 @@ public class PaymentBillingTransferDetail implements Identifiable {
         this.initiationDate = initiationDate;
     }
 
-    @Column(name = "MAX_AMOUNT")
+    @Column(name = "MAX_AMOUNT", nullable = false)
     public BigDecimal getMaxAmount() {
         return maxAmount;
     }
@@ -165,7 +165,7 @@ public class PaymentBillingTransferDetail implements Identifiable {
         this.maxAmount = maxAmount;
     }
 
-    @Column(name = "PLAN_AMOUNT")
+    @Column(name = "PLAN_AMOUNT", nullable = false)
     public BigDecimal getPlanAmount() {
         return planAmount;
     }
