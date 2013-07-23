@@ -17,6 +17,7 @@
 package org.kuali.student.r2.core.acal.service.facade;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
@@ -37,8 +38,10 @@ import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultCellInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultRowInfo;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,15 +78,18 @@ public class AcademicCalendarServiceFacadeImpl implements AcademicCalendarServic
     }
 
     @Override
-    public void makeTermOfficialCascaded(String termId, ContextInfo contextInfo)
+    public StatusInfo makeTermOfficialCascaded(String termId, ContextInfo contextInfo)
             throws PermissionDeniedException, MissingParameterException, InvalidParameterException,
                    OperationFailedException, DoesNotExistException {
+        StatusInfo statusInfo = new StatusInfo();
+
         // KSENROLL-7251 Implement a new servies process ot change the state of the Academic Calendar
         // from draft to official
         TermInfo termInfo = acalService.getTerm(termId, contextInfo);
         if (AtpServiceConstants.ATP_OFFICIAL_STATE_KEY.equals(termInfo.getStateKey())) {
             // If official, then should have already cascaded.
-            return;
+            statusInfo.setSuccess(Boolean.TRUE);
+            return statusInfo;
         }
         // Assumes state propagation not wired in yet.
         Map<String, TermInfo> termIdToTermInfoProcessed = new HashMap<String, TermInfo>();
@@ -132,121 +138,70 @@ public class AcademicCalendarServiceFacadeImpl implements AcademicCalendarServic
                 acalService.changeAcademicCalendarState(id, AtpServiceConstants.ATP_OFFICIAL_STATE_KEY, contextInfo);
             }
         }
-    }
-
-
-    @Override
-    public StatusInfo deleteTermCascaded(String termId, ContextInfo context)
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException,
-                   OperationFailedException, PermissionDeniedException {
-        Set<String> toDeleteTermIds = new HashSet<String>();
-        StatusInfo statusInfo = new StatusInfo();
-
-        //build the list of term/sub term ids to be deleted
-        //If there is any term/sub term with offcial state, return status false and won't delete anything
-        if (buildToDeleteTermIdList(termId, toDeleteTermIds, context)) {
-            //delete terms and sub terms
-            for (String toDeleteTermId : toDeleteTermIds) {
-                //delete associated key dates
-                List<KeyDateInfo> keyDateInfos = acalService.getKeyDatesForTerm(toDeleteTermId, context);
-                if (keyDateInfos!=null && !keyDateInfos.isEmpty()) {
-                    for (KeyDateInfo keyDateInfo : keyDateInfos) {
-                        acalService.deleteKeyDate(keyDateInfo.getId(), context);
-                    }
-                }
-                //delete term/sub term
-                acalService.deleteTerm(toDeleteTermId, context);
-            }
-            statusInfo.setSuccess(Boolean.TRUE);
-            return statusInfo;
-        } else {
-            throw new OperationFailedException("Term can't be deleted in official state or having sub terms in official state - Term id:" + termId);
-        }
-
+        statusInfo.setSuccess(Boolean.TRUE);
+        return statusInfo;
     }
 
     @Override
+    @Transactional(rollbackFor = {Throwable.class})
     public StatusInfo deleteCalendarCascaded(String academicCalendarId, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         AcademicCalendarInfo acalInfo = acalService.getAcademicCalendar(academicCalendarId, context);
-        Set<String> toDeleteTermIds = new HashSet<String>(); //term ids of the terms to be deleted
         StatusInfo statusInfo = new StatusInfo();
 
         //if the calendar in official state, not to delete anything
         if (StringUtils.equals(acalInfo.getStateKey(), AtpServiceConstants.ATP_OFFICIAL_STATE_KEY)) {
-            throw new OperationFailedException("Calendar can't be deleted in official state - Calendar id:" + academicCalendarId);
-        } else {
-            List<TermInfo> termInfos = acalService.getTermsForAcademicCalendar(acalInfo.getId(), context);
-
-            //iterate terms/sub terms of the given calendar to build the list of term ids to be deleted
-            //If there is any term/sub term with offcial state, throw exception
-            for (TermInfo termInfo : termInfos) {
-                Set<String> toDeleteTermIdsPerTerm = new HashSet<String>();
-                if (buildToDeleteTermIdList(termInfo.getId(), toDeleteTermIdsPerTerm, context)) {
-                    toDeleteTermIds.addAll(toDeleteTermIdsPerTerm);
-                } else {
-                    throw new OperationFailedException("Calendar can't be deleted with term(s) in official state - Calendar id:" + academicCalendarId);
-                }
-            }
-
-            //delete terms and sub terms
-            for (String toDeleteTermId : toDeleteTermIds) {
-                //delete associated key dates
-                List<KeyDateInfo> keyDateInfos = acalService.getKeyDatesForTerm(toDeleteTermId, context);
-                if (keyDateInfos!=null && !keyDateInfos.isEmpty()) {
-                    for (KeyDateInfo keyDateInfo : keyDateInfos) {
-                        acalService.deleteKeyDate(keyDateInfo.getId(), context);
-                    }
-                }
-                //delete term
-                acalService.deleteTerm(toDeleteTermId, context);
-            }
-
-            //delete calendar
-            acalService.deleteAcademicCalendar(academicCalendarId, context);
-            statusInfo.setSuccess(Boolean.TRUE);
-            return statusInfo;
+            throw new OperationFailedException("Calendar of the state official can't be deleted - Calendar id:" + academicCalendarId);
         }
+        List<String> termIds = getTermIdsForAcademicCalendar(academicCalendarId, context);
+        if (termIds!=null && !termIds.isEmpty()) {
+            for (String termId : termIds) {
+                deleteTermCascaded(termId, context);
+            }
+        }
+
+        //delete calendar
+        acalService.deleteAcademicCalendar(academicCalendarId, context);
+        statusInfo.setSuccess(Boolean.TRUE);
+        return statusInfo;
+
     }
 
 
-    /**
-     * build the list of term and sub term ids for the given term recursively. The state of the term and all the sub terms
-     * will be checked. If any term/sub term id(s) have the state official, no term or sub term can't be deleted
-     * @param termId: id of term on the top level of the hierarchy
-     * @param toDeleteTermIds: Set of all the term and sub term ids to be deleted
-     * @param context call context
-     * @return true: none of the term/sub term has the official state (they can be deleted)
-     *
-     */
-    private boolean buildToDeleteTermIdList (String termId, Set<String> toDeleteTermIds, ContextInfo context) {
-        try {
-            TermInfo termInfo = acalService.getTerm(termId, context);
+    @Override
+    @Transactional(rollbackFor = {Throwable.class})
+    public StatusInfo deleteTermCascaded(String termId, ContextInfo context)
+            throws DoesNotExistException, InvalidParameterException, MissingParameterException,
+            OperationFailedException, PermissionDeniedException {
+        StatusInfo statusInfo = new StatusInfo();
 
-            //if the current term with the state offcial, return false otherwise add it to the to be deleted set
-            if (StringUtils.equals(termInfo.getStateKey(), AtpServiceConstants.ATP_OFFICIAL_STATE_KEY)) {
-                return false;
-            } else {
-                toDeleteTermIds.add(termInfo.getId());
+        List<String> subTermIds = getIncludedTermidsInTerm(termId, context);
+        if (subTermIds!=null && !subTermIds.isEmpty()) {
+            for (String subTermId : subTermIds) {
+                deleteTermCascaded(subTermId, context);
             }
+        }
 
-            //retrieve the sub terms of the current term.
-            //if there is no sub terms, it means we've already reached the bottom, return true.
-            // otherwise, call the method recursively for the sub term(s)
-            List<TermInfo> subTermInfos = acalService.getIncludedTermsInTerm(termId, context);
-            if (subTermInfos == null || subTermInfos.isEmpty()) {
-                return true;
-            } else {
-                for (TermInfo subTermInfo : subTermInfos) {
-                    if (!buildToDeleteTermIdList(subTermInfo.getId(), toDeleteTermIds, context)) {
-                        return false;
-                    }
+        //delete the associated keydates
+        deleteKeyDatesbyTermId(termId, context);
+        //delete term/subterm
+        acalService.deleteTerm(termId, context);
+
+        statusInfo.setSuccess(Boolean.TRUE);
+        return statusInfo;
+    }
+
+    private void deleteKeyDatesbyTermId (String termId, ContextInfo context) {
+        try {
+            List<String> keyDateIds = acalService.getKeyDateIdsForTerm(termId, context);
+            if (keyDateIds!=null && !keyDateIds.isEmpty()) {
+                for (String keyDateId : keyDateIds) {
+                    acalService.deleteKeyDate(keyDateId, context);
                 }
             }
-
-            return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
     }
 
     @Override

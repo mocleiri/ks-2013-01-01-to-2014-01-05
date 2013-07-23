@@ -45,12 +45,7 @@
         </property>
     </bean>
 
-    <bean id="KS-Uif-Page" parent="Uif-Page" class="org.kuali.student.common.uif.container.KSUifPage">
-        <property name="footer">
-            <bean parent="KS-Uif-EmptyFooter"/>
-        </property>
-        <property name="stickyFooter" value="true"/>
-    </bean>
+    <bean id="KS-Uif-Page" parent="Uif-Page" class="org.kuali.student.common.uif.container.KSUifPage" />
 
     <bean id="KS-Uif-EmptyFooter" parent="Uif-FooterBase">
         <property name="items">
@@ -179,6 +174,11 @@
             <!-- In KS, expandall/collapseall not needed-->
             <list/>
         </property>
+        <property name="footer">
+            <bean parent="KS-Uif-EmptyFooter"/>
+        </property>
+        <property name="stickyFooter" value="true"/>
+
 
         <!-- Need Krad Fix to work see KULRICE-9578, work around inplace-->
         <!--<property name="page.breadcrumbOptions.renderHomewardPathBreadcrumbs" value="@{!#form.renderedInLightBox}"/>-->
@@ -186,22 +186,14 @@
     </bean>
 
 
-    <bean id="KS-Uif-FooterBase" parent="Uif-FooterBase">
-        <property name="cssClasses" value="ks-uif-footer" />
-    </bean>
+    <bean id="KS-Uif-FooterBase" parent="Uif-FooterBase" />
 
-    <!--
-    <bean id="KS-Uif-DocumentPageFooter" parent="Uif-DocumentPageFooter" abstract="true">
-        <property name="cssClasses">
-            <list merge="true">
-                <value>ac_sticky</value>
-            </list>
-        </property>
-    </bean>
-       -->
+
+    <bean id="KS-Uif-DocumentPageFooter" parent="Uif-DocumentPageFooter" abstract="true" />
+
     <!--This footer can be used for maintenance views: create a new or edit when we only want to see submit and cancel buttons -->
     <bean id="KS-Uif-DocumentPageFooter-SubmitCancel"  parent="KS-Uif-DocumentPageFooter-SubmitCancel-parent"/>
-    <bean id="KS-Uif-DocumentPageFooter-SubmitCancel-parent" parent="Uif-DocumentPageFooter" abstract="true">
+    <bean id="KS-Uif-DocumentPageFooter-SubmitCancel-parent" parent="KS-Uif-DocumentPageFooter" abstract="true">
         <property name="items">
             <list>
                 <bean parent="Uif-PrimaryActionButton" p:ajaxSubmit="false" p:methodToCall="route" p:actionLabel="submit" p:performClientSideValidation="true"
@@ -615,5 +607,49 @@
                 <bean parent="Uif-Message" p:messageText="[!--PageSourceFile: @{(#view.currentPage.pageSourceFile eq null) ? 'Not Defined' : #view.currentPage.pageSourceFile}--]" />
             </list>
         </property>
+    </bean>
+
+    <bean id="KS-TableCollectionSubSection-BottomAddLine" parent="KS-TableCollectionSubSection-BottomAddLine-parent"/>
+
+    <bean id="KS-TableCollectionSubSection-BottomAddLine-parent" parent="Uif-TableCollectionSection" abstract="true" scope="prototype">
+        <property name="collectionLookup">
+            <null/>
+        </property>
+        <property name="headerText" value="" />
+        <property name="layoutManager.renderSequenceField" value="false" />
+        <property name="layoutManager.separateAddLine" value="false" />
+        <property name="layoutManager.applyDefaultCellWidths" value="false" />
+        <property name="layoutManager.applyAlternatingRowStyles" value="false" />
+        <property name="renderAddBlankLineButton" value="true" />
+        <property name="addLinePlacement" value="BOTTOM" />
+        <property name="layoutManager.style" value="width: 100%; display:block;"/>
+        <!--<property name="addLineActions">
+            <list>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="addLine" p:actionLabel="add"
+                      p:actionEvent="addLine"/>
+            </list>
+        </property>-->
+        <property name="addBlankLineAction">
+            <ref bean="KS-BottomAddLine"/>
+        </property>
+        <property name="lineActions">
+            <list>
+                <bean parent="Uif-DeleteLineAction"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="KS-BottomAddLine" parent="KS-BottomAddLine-parent"/>
+
+    <bean id="KS-BottomAddLine-parent" parent="Uif-SecondaryActionButton-Small" abstract="true" scope="prototype">
+        <property name="hidden" value="@{#parent.readOnly}"/>
+        <property name="actionLabel" value="Add"/>
+        <property name="actionImagePlacement" value="LEFT"/>
+        <property name="methodToCall" value="addBlankLine"/>
+        <property name="actionEvent" value="addBlankLine"/>
+        <property name="actionImage">
+            <bean parent="Uif-Image" p:source="@{#ConfigProperties['ks.common.externalizable.images.url']}/plus_15px.png"/>
+        </property>
+        <property name="style" value="margin-top:30px; margin-left:-150px; margin-bottom:15px"/>
     </bean>
 </beans>
