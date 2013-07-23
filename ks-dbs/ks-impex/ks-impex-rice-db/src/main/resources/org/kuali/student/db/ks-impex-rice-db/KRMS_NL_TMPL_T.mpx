@@ -316,3 +316,5 @@ NL_TMPL_ID,LANG_CD,NL_USAGE_ID,TYP_ID,TMPL,VER_NBR
 "KS-KRMS-NL-TMPL-1563","en","KS-KRMS-NL-USAGE-1005","10010","Student Eligibility & Prerequisite:","0"
 "KS-KRMS-NL-TMPL-1564","en","KS-KRMS-NL-USAGE-1005","10011","Repeatable for Credit:","0"
 "KS-KRMS-NL-TMPL-1565","en","KS-KRMS-NL-USAGE-1005","10012","Course that Restricts Credits:","0"
+"KS-KRMS-NL-TMPL-1566","en","KS-KRMS-NL-USAGE-1005","10079","Students not admitted to $NLHelper.getCluOrCluSetAsLongNames($programClu,$programCluSet) may take no more than $intValue $NLHelper.getProperGrammar($intValue, ${mpx.quote}course${mpx.quote}) in the $org.getLongName() in $duration $NLHelper.getProperGrammar($duration, $durationType.getName()).toLowerCase()","0"
+"KS-KRMS-NL-TMPL-1567","en","KS-KRMS-NL-USAGE-1005","10078","Students admitted to $NLHelper.getCluOrCluSetAsLongNames($programClu,$programCluSet) may take no more than $intValue $NLHelper.getProperGrammar($intValue, ${mpx.quote}course${mpx.quote})in the $org.getLongName() in  $duration $NLHelper.getProperGrammar($duration, $durationType.getName()).toLowerCase()","0"
