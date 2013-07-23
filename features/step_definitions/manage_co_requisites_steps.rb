@@ -610,11 +610,10 @@ When /^I move node "(.)" into the group$/ do |node|
 end
 
 When /^I move node "(.)" out of and into the group$/ do |node|
-  @courseOR.move_around(node, "out up in")
-end
-
-When /^I move node "(.)" out and in$/ do |node|
-  @courseOR.move_around(node, "out in")
+  #@courseOR.move_around(node, "out up in")
+  @courseOR.move_around(node, "out")
+  @courseOR.move_around(node, "up")
+  @courseOR.move_around(node, "in")
 end
 
 Then /^node "(.*)" should be after node "(.*)"$/ do |second,first|

@@ -24,7 +24,7 @@ Feature: KRMS.ELIG9-6 AND, OR and Move
     And I move node "E" up
     And I change the operator before node "G" to "AND"
     And I switch to the other tab on the page
-    Then the text area should contain "E AND (A AND (C OR B) AND D) AND F AND G"
+    Then the text area should contain "E AND (A OR (C OR B) OR D) AND F AND G"
 
   #ELIG9.6.EB4 (KSENROLL-6310)
   Scenario: Move a node in a group left and confirm that it leaves the group
@@ -63,4 +63,4 @@ Feature: KRMS.ELIG9-6 AND, OR and Move
     When I want to edit the selected agenda section
     And I change the operator before node "G" to "AND"
     And I switch to the other tab on the page
-    Then the text area should contain "(A AND (B OR C) AND D) AND E AND F AND G"
+    Then the text area should contain "(A OR (B OR C) OR D) AND E AND F AND G"
