@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.model.Refund;
 import com.sigmasys.kuali.ksa.model.Tag;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class BatchRefundForm extends AbstractViewModel {
     private String newTag;
 
     private List<Refund> refunds;
-    private List<PotentialRefundModel> potentialRefundModels;
+    private List<PotentialRefundModel> potentialRefundModels = new ArrayList<PotentialRefundModel>();
 
     public String getNewAccount() {
         return newAccount;

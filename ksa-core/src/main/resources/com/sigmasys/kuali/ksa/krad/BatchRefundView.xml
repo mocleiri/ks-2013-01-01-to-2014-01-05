@@ -195,11 +195,11 @@
     <bean id="potentialRefundList" parent="Uif-Disclosure-VerticalBoxSection">
         <property name="items">
             <list>
-                <bean parent="Uif-MessageField" p:messageText="No Potential Refunds found with supplied filter criteria" p:render="@{potentialRefunds.size() == 0}"/>
+                <bean parent="Uif-MessageField" p:messageText="No Potential Refunds found with supplied filter criteria" p:render="@{potentialRefundModels.size() == 0}"/>
                 <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="8">
                     <property name="title" value="Potential Refunds"/>
                     <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel"/>
-                    <property name="propertyName" value="potentialRefunds"/>
+                    <property name="propertyName" value="potentialRefundModels"/>
                     <property name="layoutManager.sequencePropertyName" value="transaction.id"/>
                     <property name="layoutManager.richTable.render" value="true"/>
                     <property name="layoutManager.renderSequenceField" value="false"/>
@@ -226,13 +226,13 @@
                     -->
                     <property name="items">
                         <list>
-                            <bean parent="Uif-InputField" p:label="Account ID" p:propertyName="transaction.account.id" p:readOnly="true"/>
-                            <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="transaction.effectiveDate" p:readOnly="true"/>
-                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="transaction.statementText" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:label="Account ID" p:propertyName="parentTransaction.account.id" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="parentTransaction.effectiveDate" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="parentTransaction.statementText" p:readOnly="true"/>
                             <bean parent="Uif-InputField" p:label="Override Description" p:propertyName="overrideDescription" p:readOnly="false"/>
-                            <bean parent="Uif-InputField" p:propertyName="transaction.paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
-                            <bean parent="Uif-InputField" p:propertyName="transaction.allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
-                            <bean parent="Uif-InputField" p:propertyName="transaction.unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="parentTransaction.paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="parentTransaction.allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="parentTransaction.unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
                             <bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Amount to Refund" p:style="text-align: right; width: 10%;" p:readOnly="false"/>
                         </list>
                     </property>

@@ -3,10 +3,7 @@ package com.sigmasys.kuali.ksa.krad.controller;
 import com.sigmasys.kuali.ksa.krad.form.BatchRefundForm;
 import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
-import com.sigmasys.kuali.ksa.model.Account;
-import com.sigmasys.kuali.ksa.model.Refund;
-import com.sigmasys.kuali.ksa.model.Tag;
-import com.sigmasys.kuali.ksa.model.Transaction;
+import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.RefundService;
 import org.apache.commons.logging.Log;
@@ -161,7 +158,9 @@ public class BatchRefundController extends GenericSearchController {
             logger.info("Count: " + transactions.size());
 
             for(Transaction t: transactions){
-                potentialRefundModels.add(new PotentialRefundModel(new TransactionModel(t)));
+                if(t instanceof Credit){
+                    potentialRefundModels.add(new PotentialRefundModel(new TransactionModel(t)));
+                }
             }
         }
 
