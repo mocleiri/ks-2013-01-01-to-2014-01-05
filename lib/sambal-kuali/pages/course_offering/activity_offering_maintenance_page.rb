@@ -148,7 +148,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   action(:lookup_population_name) { |index, b| b.seat_pools_table.rows[index].button(title: "Search Field").click; b.loading.wait_while_present }
   
   element(:add_pool_expiration_milestone) { |b| b.seat_pools_table.rows[1].cells[EXP_MILESTONE_COLUMN].select() }
-  element(:add_pool_element) { |b| b.frm.button(text: "Add Another Seat Pool")}
+  element(:add_pool_element) { |b| b.frm.button(id: "ao-seatpoolgroupZ_add")}
   action(:add_seat_pool) { |b| b.add_pool_element.click; b.loading.wait_while_present }
 
   element(:seat_pools_div) { |b| b.frm.div(id: "ao-seatpoolgroup") }
