@@ -107,7 +107,7 @@
     -->
 
     <bean id="accountOverviewGroup" parent="Uif-VerticalBoxGroup" >
-        <property name="componentSecurity.viewAuthz" value="true"/>
+        <!--<property name="componentSecurity.viewAuthz" value="true"/>-->
         <property name="cssClasses">
             <list merge="true">
                 <value>ksa-group-border</value>
@@ -458,14 +458,14 @@
                                 <bean parent="Uif-InputField" p:propertyName="aged90" p:label="@{daysLate3}" p:fieldLabel.renderColon="false"/>
                                 <bean parent="Uif-InputField" p:propertyName="agedTotal" p:label="Total" p:fieldLabel.renderColon="false"/>
                             </list></property></bean>
-                            <bean parent="Uif-SecondaryActionButton-Small"
+                            <bean parent="Uif-ActionLink"
                                   p:methodToCall="ageDebt"
-                                  p:actionLabel="Age Transactions" p:style="float: right;"
+                                  p:actionLabel="Age Transactions"
                                   p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
                             </bean>
-                            <bean parent="Uif-SecondaryActionButton-Small"
+                            <bean parent="Uif-ActionLink"
                                   p:methodToCall="assessFees"
-                                  p:actionLabel="Assess Fees" p:style="float: right;"
+                                  p:actionLabel="Assess Fees"
                                   p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
                             </bean>
                         </list>
@@ -549,6 +549,12 @@
             <list>
                 <!-- @TODO - Once we move to Rice 2.2.1 this nasty mess of html should be rewritten to use messageComponentStructure -->
                 <bean parent="Uif-MessageField">
+                    <!--<property name="cssClasses">
+                        <list merge="true">
+                            <value>ksa-ellipsis</value>
+                        </list>
+                    </property>
+                    -->
                     <property name="messageText" value="&lt;img src='../images/@{getInfoType(#line)}.png'/&gt; &lt;b&gt;@{getFormattedDate(#line.effectiveDate)}&lt;/b&gt; - @{#line.text}"/>
                 </bean>
             </list>
