@@ -35,7 +35,7 @@ class CourseOfferingEdit < BasePage
   action(:cross_listed_co_set) {|b| b.cross_listed_co_check_box.set; b.loading.wait_while_present   }
   action(:cross_listed_co_clear) {|b| b.cross_listed_co_check_box.clear; b.loading.wait_while_present   }
 
-  element(:delivery_formats_table) { |b| b.frm.div(id: "KS-CourseOfferingEdit-FormatOfferingSubSection").table }
+  element(:delivery_formats_table) { |b| b.frm.div(id: "KS-CourseOfferingEdit-DeliveryFormats").table }
   FORMAT_COLUMN = 0
   GRADE_ROSTER_LEVEL_COLUMN = 1
   FINAL_EXAM_COLUMN = 2
