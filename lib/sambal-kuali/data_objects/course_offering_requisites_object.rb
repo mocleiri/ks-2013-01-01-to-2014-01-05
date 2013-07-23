@@ -284,7 +284,7 @@ class CORequisitesData
         page.edit_loading.wait_while_present
         page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_loading.wait_while_present
-        page.update_rule_btn
+        #page.update_rule_btn
       end
     end
     return data_setup_needed
