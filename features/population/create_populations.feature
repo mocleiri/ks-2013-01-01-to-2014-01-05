@@ -35,7 +35,7 @@ I want to create populations by using rules, and based on other populations
 
   Scenario: Attempt to create exclusion based population with no reference population
     When I try to create a population that is exclusion-based with no reference population
-    Then an error message appears stating "Reference Population: Required"
+    Then the reference population field is highlighted as required
 
   Scenario: Successfully create exclusion based population with 2 child populations
     When I create an exclusion-based population with 2 child populations
