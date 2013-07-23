@@ -289,9 +289,6 @@ When /^I add a new term to the Academic Calendar with a defined instructional pe
 end
 
 When /^I add a new subterm to the Academic Calendar with a defined instructional period$/ do
-  @calendar = create AcademicCalendar
-  @calendar.add_term(make AcademicTerm, :term_year => @calendar.year)
-
   @term = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
   @calendar.add_term(@term)
 
@@ -359,7 +356,8 @@ end
 
 Given /^I create an Academic Calendar that supports subterms$/ do
   @calendar = create AcademicCalendar
-  @calendar.add_term(make AcademicTerm, :term_year => @calendar.year)
+  @term = make AcademicTerm, :term_year => @calendar.year
+  @calendar.add_term(@term)
 end
 
 When /^I edit the information for a term$/ do
@@ -484,6 +482,15 @@ Then /^I add an instructional Key Date$/ do
   @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :all_day => true
 
 end
+
+Then /^I add an instructional Key Date to a subterm$/ do
+  @term.edit
+
+  @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :all_day => true
+
+end
+
 
 Then /^I edit an instructional Key Date$/ do
   @term.edit
@@ -668,24 +675,10 @@ Then /^I remove the Holiday Calendar$/ do
   end
 end
 
-Given /^I debug Academic Calendar with subterms$/ do
-  @calendar = make AcademicCalendar, :name => "kneAKutywR" , :year => "2160"
-
-  #@calendar.add_term(make AcademicTerm, :term_year => @calendar.year)
-
-  @subterm_list = Array.new(2)
-  @subterm_list[0] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true, :term_name => "4rDpwRZu1r"
-  #@calendar.add_term(@subterm_list[0])
-
-  @subterm_list[1] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
-  #@calendar.add_term(@subterm_list[1])
-end
-
-
-
-Given /^I create Academic Calendar with subterms$/ do
+Given /^I create an Academic Calendar with subterms$/ do
   @calendar = create AcademicCalendar
-  @calendar.add_term(make AcademicTerm, :term_year => @calendar.year)
+  @term = make AcademicTerm, :term_year => @calendar.year
+  @calendar.add_term(@term)
 
   @subterm_list = Array.new(2)
   @subterm_list[0] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
@@ -785,9 +778,24 @@ When /^I add a new term with start date earlier than the Academic Calendar start
   @calendar.add_term(@term)
 end
 
+When /^I add a new subterm with start date earlier than the Academic Calendar start date$/ do
+  @subterm = make AcademicTerm, :term_year => @calendar.year,
+               :start_date => (Date.strptime( @calendar.start_date , '%m/%d/%Y') - 2).strftime("%m/%d/%Y"), #minus 2 days
+               :subterm => true,
+               :term_type=> "Half Fall 1",
+               :parent_term=> "Fall Term"
+  @calendar.add_term(@subterm)
+end
+
 Then /^a term warning message is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.term_validation_messages(@term.term_type)[0].text.should match /#{exp_msg}/
+  end
+end
+
+Then /^a subterm warning message is displayed stating "([^"]*)"$/ do |exp_msg|
+  on EditAcademicTerms do |page|
+    page.term_validation_messages(@subterm_list[0].term_type)[0].text.should match /#{exp_msg}/
   end
 end
 
@@ -801,6 +809,10 @@ When /^I edit the term so that the start date is earlier than the Academic Calen
   @term.edit :start_date => (Date.strptime( @calendar.start_date , '%m/%d/%Y') - 2).strftime("%m/%d/%Y") #minus 2 days
 end
 
+When /^I edit the subterm so that the start date is earlier than the Academic Calendar start date$/ do
+  @subterm_list[0].edit :start_date => (Date.strptime( @calendar.start_date , '%m/%d/%Y') - 2).strftime("%m/%d/%Y") #minus 2 days
+end
+
 When /^I add a new key date with a date later than the Academic Term end date$/ do
   @term.edit
 
@@ -812,7 +824,24 @@ When /^I add a new key date with a date later than the Academic Term end date$/ 
 
 end
 
+When /^I add a new key date with a date later than the Academic Subterm end date$/ do
+  @term.edit
+
+  @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = create KeyDate, :parent_key_date_group => @keydategroup,
+                    :key_date_type => "First Day of Classes",
+                    :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"),
+                    :all_day => true
+
+end
+
+
 When /^I edit the key date so that the start date is later than the Academic Term end date$/ do
+  @term.edit
+  @keydate.edit :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")
+end
+
+When /^I edit the key date so that the start date is later than the Academic Subterm end date$/ do
   @term.edit
   @keydate.edit :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")
 end
