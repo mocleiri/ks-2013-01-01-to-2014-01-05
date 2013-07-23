@@ -86,7 +86,22 @@
                             <ref bean="editTransactionTypeSection"/>
                             <ref bean="tagGroup"/>
                             <ref bean="glBreakdownList"/>
-                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insert" p:actionLabel="Submit"/>
+                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insert" p:actionLabel="Submit" p:render="@{transactionsAffectedCount == 0}"/>
+                            <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Submit"  p:render="@{transactionsAffectedCount > 0}"
+                                    p:preSubmitCall="return showLightboxComponent('affectedCountLightbox');"/>
+                            <bean id="affectedCountLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                <property name="hidden" value="true"/>
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-HeaderTwo" p:headerText="Transaction Type Update"/>
+                                        <bean parent="Uif-Message" p:style="color: red;" p:messageText="The requested action will affect @{transactionsAffectedCount} transactions.  The data in these records will be inconsistent with the new Transaction Type Settings and may cause future instability.  Additionally, processing this action may take a long time."/>
+                                        <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
+                                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insert" p:onClickScript="jQuery.fancybox.close();" p:actionLabel="Submit"/>
+                                            <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Cancel"  p:onClickScript="jQuery.fancybox.close();"/>
+                                        </list></property></bean>
+                                    </list>
+                                </property>
+                            </bean>
 
                         </list>
                     </property>
@@ -131,7 +146,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-InputField" p:label="ID" p:propertyName="currentTransactionType.id.id" p:width="10%"/>
-                <bean parent="Uif-HorizontalFieldGroup" p:label="Statement Text" p:style="width: 55%;">
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Statement Text">
                     <property name="items">
                         <list>
                             <bean parent="Uif-MessageField" p:messageText="@{#line.currentTransactionType.description} (@{#line.transactionTypes.size()})"/>
@@ -177,7 +192,7 @@
                         </list>
                     </property>
                 </bean>
-                <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 35%;">
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Description">
                     <property name="items">
                     <list>
                         <bean parent="Uif-LinkField" p:linkText="@{#line.transactionType.description}"
@@ -319,12 +334,37 @@
                                   p:fieldLabel.renderColon="true"
                                   p:labelPlacement="TOP"
                                   p:maxLength="10"
-                                  p:required="true">
+                                  p:required="true" p:onChangeScript="showLightboxComponent('startDateAuditLightbox');">
                                 <property name="bindingInfo.bindToForm" value="true"/>
                                 <property name="control">
                                     <bean parent="Uif-DateControl" p:size="11"/>
                                 </property>
                             </bean>
+                            <bean id="startDateAuditLightbox" parent="Uif-VerticalBoxSection">
+                                <property name="hidden" value="true"/>
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-HeaderTwo" p:headerText="Transaction Type Update"/>
+                                        <bean parent="Uif-Message" p:style="color: red;" p:messageText="Changes to the Start Date CANNOT make a transaction type overlap, this will not be allowed."/>
+                                        <bean parent="Uif-Message" p:style="color: red;" p:messageText="However, a start date can be changed to an earliert date if"/>
+                                        <bean parent="Uif-Message" p:style="color: red;" p:messageText="(a) a prior period does not exist or"/>
+                                        <bean parent="Uif-Message" p:style="color: red;" p:messageText="(b) any conflicting period has been moved to allow this change."/>
+                                        <bean parent="Uif-Message" p:style="color: red;" p:messageText="Any transactions that have already occurred will be rejected."/>
+
+                                        <bean parent="Uif-InputField" p:label="Audit Log Entry" p:instructionalText="Please describe why the Start Date was modified"
+                                              p:propertyName="startDateAuditReason" p:labelPlacement="TOP">
+                                            <property name="control">
+                                                <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
+                                            </property>
+                                        </bean>
+
+
+                                        <!--<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Close"  p:onClickScript="jQuery.fancybox.close();"/>-->
+                                    </list>
+                                </property>
+                            </bean>
+
+
                             <bean parent="Uif-CheckboxInputField">
                                 <property name="propertyName" value="showEndDate"/>
                                 <property name="label" value="Specify an End Date"/>

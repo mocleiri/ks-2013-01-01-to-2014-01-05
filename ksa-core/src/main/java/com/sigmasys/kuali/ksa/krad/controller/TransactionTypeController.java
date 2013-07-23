@@ -7,6 +7,7 @@ import com.sigmasys.kuali.ksa.krad.model.TransactionTypeModel;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.krad.util.CreditDebitKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.service.ActivityService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
@@ -46,6 +47,9 @@ public class TransactionTypeController extends GenericSearchController {
 
     @Autowired
     private GeneralLedgerService glService;
+
+    @Autowired
+    private ActivityService activityService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -207,6 +211,20 @@ public class TransactionTypeController extends GenericSearchController {
             TransactionTypeId ttId = new TransactionTypeId(code, subCode);
             tt = transactionService.getTransactionType(ttId);
 
+            // If start date changed, make sure there's an audit message
+            if(!form.getStartDate().equals(tt.getStartDate())){
+                String reason = form.getStartDateAuditReason();
+                if(reason == null || "".equals(reason)){
+                    String errMsg = "When changing the start date of an existing transaction type, a reason must be provided";
+                    logger.error(errMsg);
+                    GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, errMsg);
+                    return getUIFModelAndView(form);
+                }
+
+                this.persistAudit(form, tt);
+            }
+
+
             tt.setStartDate(startDate);
             tt.setPriority(priority);
             tt.setDescription(description);
@@ -285,6 +303,9 @@ public class TransactionTypeController extends GenericSearchController {
                 form.setSubCode(ttSource.getId().getSubCode());
                 this.loadFormFromTransactionType(form, ttSource);
             }
+
+            long number = transactionService.getNumberOfTransactions(ttId);
+            form.setTransactionsAffectedCount(number);
         }
 
 
@@ -478,5 +499,20 @@ public class TransactionTypeController extends GenericSearchController {
         }
 
         return errors;
+    }
+
+    private void persistAudit(TransactionTypeForm form, TransactionType transactionType){
+        ActivityType activityType = activityService.getActivityType("LOGMEMO");
+
+        Activity activity = new Activity();
+        activity.setTypeId(activityType.getId());
+        activity.setLogDetail(form.getStartDateAuditReason());
+        activity.setEntityType("TransactionType");
+        activity.setEntityId(transactionType.getId().toString());
+
+
+
+        activityService.persistActivity(activity);
+
     }
 }

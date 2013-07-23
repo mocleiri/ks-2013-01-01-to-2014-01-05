@@ -17,6 +17,8 @@ public class TransactionTypeForm extends AbstractViewModel {
 
     private TransactionTypeModel transactionType;
 
+    private long transactionsAffectedCount = 0L;
+
     private Map<String, TransactionTypeGroupModel> transactionTypeGroups = new HashMap<String, TransactionTypeGroupModel>();
 
 
@@ -32,6 +34,9 @@ public class TransactionTypeForm extends AbstractViewModel {
     private String description;
     private String defaultStatement;
     private Date startDate;
+
+    private String startDateAuditReason;
+
     private Date endDate;
     private Integer priority;
     private String rollupId;
@@ -291,5 +296,21 @@ public class TransactionTypeForm extends AbstractViewModel {
 
     public void setCancellationRule(String cancellationRule) {
         this.cancellationRule = cancellationRule;
+    }
+
+    public long getTransactionsAffectedCount() {
+        return transactionsAffectedCount;
+    }
+
+    public void setTransactionsAffectedCount(long transactionsAffectedCount) {
+        this.transactionsAffectedCount = transactionsAffectedCount;
+    }
+
+    public String getStartDateAuditReason() {
+        return startDateAuditReason;
+    }
+
+    public void setStartDateAuditReason(String startDateAuditReason) {
+        this.startDateAuditReason = startDateAuditReason;
     }
 }
