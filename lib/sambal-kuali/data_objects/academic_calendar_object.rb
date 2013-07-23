@@ -297,6 +297,12 @@ class AcademicTerm
 
   ##
   def edit(opts = {})
+    defaults = {
+        :exp_success=> true
+    }
+    options = defaults.merge(opts)
+
+
     search
     on(CalendarSearch).edit @term_name
 
@@ -306,27 +312,27 @@ class AcademicTerm
       term_index = page.term_index_by_term_type(@term_type)
     end
 
-    if opts[:term_name] != nil
+    if options[:term_name] != nil
       on EditAcademicTerms  do |page|
-        page.term_name_edit(term_index).set opts[:term_name]
+        page.term_name_edit(term_index).set options[:term_name]
       end
     end
 
-    if opts[:start_date] != nil
+    if options[:start_date] != nil
       on EditAcademicTerms  do |page|
-        page.term_start_date(term_index).set opts[:start_date]
+        page.term_start_date(term_index).set options[:start_date]
       end
     end
 
-    if opts[:end_date] != nil
+    if options[:end_date] != nil
       on EditAcademicTerms  do |page|
-        page.term_end_date(term_index).set opts[:end_date]
+        page.term_end_date(term_index).set options[:end_date]
       end
     end
 
-    on(EditAcademicTerms).save unless opts.length == 0
+    on(EditAcademicTerms).save :exp_success => options[:exp_success] unless options.length <= 1 #don't save if only :exp_success element
 
-    set_options(opts)
+    set_options(options)
   end
 
 

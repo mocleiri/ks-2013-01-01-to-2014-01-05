@@ -781,11 +781,14 @@ Then /^the subterm is no longer listed on the calendar$/ do
 end
 
 When /^I add a new term with start date earlier than the Academic Calendar start date$/ do
-  pending
+  @term = make AcademicTerm, :term_year => @calendar.year, :start_date => (Date.strptime( @calendar.start_date , '%m/%d/%Y') - 2).strftime("%m/%d/%Y") #minus 2 days
+  @calendar.add_term(@term)
 end
 
-Then /^an ACAL warning message is displayed stating "([^"]*)"$/ do |arg|
-  pending
+Then /^a term warning message is displayed stating "([^"]*)"$/ do |exp_msg|
+  on EditAcademicTerms do |page|
+    page.term_validation_messages(@term.term_type)[0].text.should match /#{exp_msg}/
+  end
 end
 
 Given /^I create an Academic Calendar with a term$/ do
@@ -795,15 +798,23 @@ Given /^I create an Academic Calendar with a term$/ do
 end
 
 When /^I edit the term so that the start date is earlier than the Academic Calendar start date$/ do
-  pending
+  @term.edit :start_date => (Date.strptime( @calendar.start_date , '%m/%d/%Y') - 2).strftime("%m/%d/%Y") #minus 2 days
 end
 
 When /^I add a new key date with a date later than the Academic Term end date$/ do
-  pending
+  @term.edit
+
+  @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
+  @keydate = create KeyDate, :parent_key_date_group => @keydategroup,
+                    :key_date_type => "First Day of Classes",
+                    :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"),
+                    :all_day => true
+
 end
 
 When /^I edit the key date so that the start date is later than the Academic Term end date$/ do
-  pending
+  @term.edit
+  @keydate.edit :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")
 end
 
 When /^I make the key date blank$/ do
