@@ -604,7 +604,7 @@ When /^I add a Holiday Calendar with holidays in the term$/ do
   holiday_list =  Array.new(1){make Holiday, :type=>"Columbus Day", :start_date=>"09/05/#{@term.term_year}", :all_day=>true, :date_range=>false, :instructional=>false}
   @holiday_calendar = create HolidayCalendar, :start_date => @calendar.start_date,
                              :end_date => @calendar.end_date,
-                             :holiday_types => holiday_list
+                             :holiday_list => holiday_list
   @holiday_calendar.make_official
 
   @calendar.add_holiday_calendar(@holiday_calendar)

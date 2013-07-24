@@ -11,11 +11,17 @@ Feature: EC.Holiday Calendar CRED
   Scenario: Search for newly created Holiday Calendar
     Given I create a Holiday Calendar
     When I search for the Holiday Calendar
-    Then the calendar should appear in search results
+    And the holiday calendar should appear in search results
 
   Scenario: Make Holiday Calendar Official
     Given I create a Holiday Calendar
     When I make the Holiday Calendar official
     And I search for the Holiday Calendar
-    Then the calendar should be set to Official
+    And the holiday calendar should appear in search results
 
+  @draft
+  Scenario: Copy a Holiday Calendar from search
+    Given I create a Holiday Calendar
+    When I create a holiday calendar by copying an existing calendar form search
+    Then I search for the copied Holiday Calendar
+    And all holidays were copied successfully

@@ -17,7 +17,7 @@ class HolidayCalendar
   include Workflows
 
   #generally set using options hash
-  attr_accessor :name, :start_date, :end_date, :holiday_types
+  attr_accessor :name, :start_date, :end_date, :holiday_list
 
   # provides default data:
   #defaults = {
@@ -25,7 +25,7 @@ class HolidayCalendar
   # :start_date=>"09/01/#{next_year[:year]}",
   # :end_date=>"06/25/#{next_year[:year] + 1}",
   # :organization=>"Registrar's Office",  GONE per KSENROLL-5641
-  # :holiday_types=>[
+  # :holiday_list=>[
   # {:type=>"random", :start_date=>"02/01/#{next_year[:year] + 1}", :all_day=>true, :date_range=>false, :instructional=>false},
   # {:type=>"random", :start_date=>"03/02/#{next_year[:year] + 1}", :end_date=>"03/04/#{next_year[:year] + 1}", :all_day=>true, :date_range=>true, :instructional=>false},
   # {:type=>"random", :start_date=>"04/05/#{next_year[:year] + 1}", :start_time=>"03:00", :start_meridian=>"pm", :end_time=>"07:44", :end_meridian=>"pm", :all_day=>false, :date_range=>false, :instructional=>false},
@@ -40,7 +40,8 @@ class HolidayCalendar
         :name=>random_alphanums.strip,
         :start_date=>"09/01/#{next_year[:year]}",
         :end_date=>"06/25/#{next_year[:year] + 1}",
-        :holiday_types=>[
+        :create_by_copy_search => nil,
+        :holiday_list=>[
             (make Holiday, :type=>"random", :start_date=>"02/01/#{next_year[:year] + 1}", :all_day=>true, :date_range=>false, :instructional=>false) ,
             (make Holiday, :type=>"random", :start_date=>"03/02/#{next_year[:year] + 1}", :end_date=>"03/04/#{next_year[:year] + 1}", :all_day=>true, :date_range=>true, :instructional=>false )
         ]
@@ -51,19 +52,37 @@ class HolidayCalendar
 
   #navigates to Create Calendar page and creates academic calendar from blank
   def create
-    go_to_holiday_calendar
-    on CopyHolidayCalendar do |page|
-      page.start_blank_calendar
-    end
-    on CreateHolidayCalendar do |page|
-      page.calendar_name.set @name
-      page.start_date.set @start_date
-      page.end_date.set @end_date
-      #page.organization.select @organization
-      @holiday_types.each do |holiday|
-        holiday.create
+    if @create_by_copy_search
+      go_to_calendar_search
+      on CalendarSearch do |page|
+        page.search_for "Holiday Calendar", @create_by_copy_search.name
+        page.copy @create_by_copy_search.name
       end
-      page.save
+      on EditHolidayCalendar do |page|
+        @name = random_alphanums.strip
+        page.calendar_name.set @name
+        init_calendar
+        page.start_date.set @holiday_list.first.start_date
+        page.end_date.set @holiday_list.last.start_date
+        @start_date = page.start_date.text
+        @end_date = page.end_date.text
+        page.save
+      end
+    else
+      go_to_holiday_calendar
+      on CopyHolidayCalendar do |page|
+        page.start_blank_calendar
+      end
+      on CreateHolidayCalendar do |page|
+         page.calendar_name.set @name
+         page.start_date.set @start_date
+         page.end_date.set @end_date
+         @holiday_list.each do |holiday|
+           holiday.create
+         end
+         init_calendar
+       page.save
+      end
     end
   end
 
@@ -86,16 +105,45 @@ class HolidayCalendar
         page.search_for "Holiday Calendar", name
         page.copy name
       end
-      on EditAcademicCalendar do |page|
+      on EditHolidayCalendar do |page|
         page.academic_calendar_name.set @name
         page.calendar_start_date.set @start_date
         page.calendar_end_date.set @end_date
       end
-      on EditAcademicCalendar do |page|
+      on EditHolidayCalendar do |page|
         page.save
       end
     end
   end
+
+  def copy(name)
+    on CalendarSearch do |page|
+      page.search_for "Holiday Calendar", name
+      page.copy name
+    end
+    on EditHolidayCalendar do |page|
+      @name = random_alphanums.strip
+      page.calendar_name.set @name
+      init_calendar
+      page.start_date.set @holiday_list.first.start_date
+      page.end_date.set @holiday_list.last.start_date
+      @start_date = page.start_date.text
+      @end_date = page.end_date.text
+      page.save
+    end
+  end
+
+  def init_calendar
+    @holiday_list.clear
+    on EditHolidayCalendar do |page|
+      page.holiday_table.rows[2..page.holiday_table.rows.count].each do |holiday_row|
+        temp_holiday = make Holiday
+        temp_holiday.init_holiday(holiday_row) unless holiday_row.cells[EditHolidayCalendar::HOLIDAY_TYPE].text == ""
+        @holiday_list.push(temp_holiday) unless temp_holiday.type == "random"
+      end
+    end
+  end
+
 
   def search
     go_to_calendar_search
@@ -149,7 +197,7 @@ class Holiday
   include StringFactory
   include Workflows
 
-  attr_accessor :type, :start_date, :end_date, :all_day, :date_range, :instructional
+  attr_accessor :type, :start_date, :start_time, :start_ampm, :end_date, :end_time, :end_ampm, :all_day, :date_range, :instructional
 
   def initialize(browser,opts = {})
     @browser = browser
@@ -157,9 +205,15 @@ class Holiday
     defaults = {
         :type=> "random",
         :start_date => "12/12/2012",
+        :start_time => "",
+        :start_ampm => "",
+        :end_date => "",
+        :end_time => "",
+        :end_ampm => "",
         :all_day => true,
         :date_range => false,
-        :instructional => true
+        :instructional => true,
+
     }
 
     options = defaults.merge(opts)
@@ -212,5 +266,16 @@ class Holiday
 
   end
 
-
+  def init_holiday(holiday_row)
+      @type = holiday_row.cells[EditHolidayCalendar::HOLIDAY_TYPE].text
+      @start_date = holiday_row.cells[EditHolidayCalendar::START_DATE].text_field.value
+      @start_time = holiday_row.cells[EditHolidayCalendar::START_TIME].text_field.value
+      @start_ampm = holiday_row.cells[EditHolidayCalendar::START_AMPM].select_list.selected_options[0].value
+      @end_date = holiday_row.cells[EditHolidayCalendar::END_DATE].text_field.value
+      @end_time = holiday_row.cells[EditHolidayCalendar::END_TIME].text_field.value
+      @end_ampm = holiday_row.cells[EditHolidayCalendar::END_AMPM].select_list.selected_options[0].value
+      @all_day = holiday_row.cells[EditHolidayCalendar::ALL_DAY].checkbox.set?
+      @date_range = holiday_row.cells[EditHolidayCalendar::DATE_RANGE].checkbox.set?
+      @instructional = holiday_row.cells[EditHolidayCalendar::INSTRUCTIONAL].checkbox.set?
+  end
 end
