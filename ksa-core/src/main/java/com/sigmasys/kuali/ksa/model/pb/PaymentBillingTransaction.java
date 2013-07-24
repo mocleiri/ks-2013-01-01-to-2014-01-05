@@ -2,11 +2,9 @@ package com.sigmasys.kuali.ksa.model.pb;
 
 import com.sigmasys.kuali.ksa.model.Charge;
 import com.sigmasys.kuali.ksa.model.Identifiable;
-import com.sigmasys.kuali.ksa.model.Transaction;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * Payment Billing Transaction model.
@@ -110,15 +108,6 @@ public class PaymentBillingTransaction implements Identifiable {
         this.remainingAmount = remainingAmount;
     }
 
-    @Column(name = "TEMP_AMOUNT")
-    public BigDecimal getTemporaryAmount() {
-        return temporaryAmount;
-    }
-
-    public void setTemporaryAmount(BigDecimal temporaryAmount) {
-        this.temporaryAmount = temporaryAmount;
-    }
-
     @Column(name = "RATIO")
     public BigDecimal getRatio() {
         return ratio;
@@ -126,5 +115,14 @@ public class PaymentBillingTransaction implements Identifiable {
 
     public void setRatio(BigDecimal ratio) {
         this.ratio = ratio;
+    }
+
+    @Transient
+    public BigDecimal getTemporaryAmount() {
+        return temporaryAmount;
+    }
+
+    public void setTemporaryAmount(BigDecimal temporaryAmount) {
+        this.temporaryAmount = temporaryAmount;
     }
 }

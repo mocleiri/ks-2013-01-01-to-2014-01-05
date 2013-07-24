@@ -118,13 +118,13 @@ public interface PaymentBillingService {
     List<PaymentBillingTransaction> generatePaymentBillingTransactions(Long transferDetailId);
 
     /**
-     * This method creates the transactions that make up the payment billing charges and nets off the transactions
+     * This method transfers the transactions that make up the payment billing charges and nets off the transactions
      * that are financed for the given PaymentBillingTransferDetail specified by ID.
      *
      * @param transferDetailId PaymentBillingTransferDetail ID
-     * @return list of PaymentBillingTransaction instances
+     * @return PaymentBillingTransferDetail instance
      */
-    List<PaymentBillingTransaction> createPaymentBillingTransactions(Long transferDetailId);
+    PaymentBillingTransferDetail transferPaymentBillingTransactions(Long transferDetailId);
 
     /**
      * Returns payment billing allowable charges for the given plan specified by ID from the persistent store
@@ -134,6 +134,14 @@ public interface PaymentBillingService {
      * @return list of PaymentBillingAllowableCharge instances
      */
     List<PaymentBillingAllowableCharge> getPaymentBillingAllowableCharges(Long paymentBillingPlanId);
+
+    /**
+     * Returns payment billing dates for the given plan specified by ID from the persistent store
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @return list of PaymentBillingDate instances
+     */
+    List<PaymentBillingDate> getPaymentBillingDates(Long paymentBillingPlanId);
 
 
     // TODO

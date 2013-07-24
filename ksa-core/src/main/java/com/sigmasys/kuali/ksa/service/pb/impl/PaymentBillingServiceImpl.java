@@ -10,6 +10,7 @@ import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
+import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -23,6 +24,7 @@ import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -518,15 +520,15 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
 
     /**
-     * This method creates the transactions that make up the payment billing charges and nets off the transactions
+     * This method transfers the transactions that make up the payment billing charges and nets off the transactions
      * that are financed for the given PaymentBillingTransferDetail specified by ID.
      *
      * @param transferDetailId PaymentBillingTransferDetail ID
-     * @return list of PaymentBillingTransaction instances
+     * @return PaymentBillingTransferDetail instances
      */
     @Override
     @Transactional(readOnly = false)
-    public List<PaymentBillingTransaction> createPaymentBillingTransactions(Long transferDetailId) {
+    public PaymentBillingTransferDetail transferPaymentBillingTransactions(Long transferDetailId) {
 
         PaymentBillingTransferDetail transferDetail = getPaymentBillingTransferDetail(transferDetailId);
         if (transferDetail == null) {
@@ -548,17 +550,26 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         if (CollectionUtils.isNotEmpty(billingTransactions)) {
 
-            // Sorting PB transactions depending on the payment rounding type
+            // Sorting PB transactions by financed amounts
             Collections.sort(billingTransactions, new Comparator<PaymentBillingTransaction>() {
                 @Override
                 public int compare(PaymentBillingTransaction t1, PaymentBillingTransaction t2) {
-                    switch (billingPlan.getPaymentRoundingType()) {
-                        case ALL_BUT_LAST:
-                            return t1.getCharge().getEffectiveDate().compareTo(t2.getCharge().getEffectiveDate());
-                        case ALL_BUT_FIRST:
-                            return t2.getCharge().getEffectiveDate().compareTo(t1.getCharge().getEffectiveDate());
-                    }
                     return t1.getFinancedAmount().compareTo(t2.getFinancedAmount());
+                }
+            });
+
+            // Getting PB schedules for the transfer detail and sorting them according to he payment rounding type
+            List<PaymentBillingSchedule> billingSchedules = getPaymentBillingSchedulesByTransferDetailId(transferDetailId);
+
+            Collections.sort(billingSchedules, new Comparator<PaymentBillingSchedule>() {
+                @Override
+                public int compare(PaymentBillingSchedule s1, PaymentBillingSchedule s2) {
+                    switch (billingPlan.getPaymentRoundingType()) {
+                        case ALL_BUT_FIRST:
+                            return s2.getEffectiveDate().compareTo(s1.getEffectiveDate());
+                        default:
+                            return s1.getEffectiveDate().compareTo(s2.getEffectiveDate());
+                    }
                 }
             });
 
@@ -569,10 +580,11 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                 billingTransaction.setRatio(billingTransaction.getFinancedAmount().divide(totalFinancedAmount));
             }
 
-            // Getting PB schedules for the transfer detail
-            List<PaymentBillingSchedule> billingSchedules = getPaymentBillingSchedulesByTransferDetailId(transferDetailId);
 
             for (PaymentBillingSchedule billingSchedule : billingSchedules) {
+
+                // Getting the rollup by Plan ID and PaymentBillingSchedule's effective date
+                Rollup rollup = getRollup(billingPlan.getId(), billingSchedule.getEffectiveDate());
 
                 BigDecimal totalTempAmount = BigDecimal.ZERO;
 
@@ -581,27 +593,135 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
                     PaymentBillingTransaction billingTransaction = billingTransactions.get(i);
 
-                    BigDecimal tempAmount = billingSchedule.getAmount().multiply(billingTransaction.getRatio());
-                    if (tempAmount.compareTo(billingTransaction.getRemainingAmount()) > 0) {
-                        tempAmount = billingTransaction.getRemainingAmount();
+                    if (billingTransaction.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0) {
+
+                        BigDecimal tempAmount = billingSchedule.getAmount().multiply(billingTransaction.getRatio());
+                        if (tempAmount.compareTo(billingTransaction.getRemainingAmount()) > 0) {
+                            tempAmount = billingTransaction.getRemainingAmount();
+                        }
+
+                        billingTransaction.setTemporaryAmount(tempAmount);
+
+                        totalTempAmount = totalTempAmount.add(tempAmount);
+
+                        // Creating a new transaction transfer
+                        transferTransaction(billingTransaction, billingSchedule.getEffectiveDate(), rollup);
                     }
-
-                    billingTransaction.setTemporaryAmount(tempAmount);
-
-                    totalTempAmount = totalTempAmount.add(tempAmount);
                 }
 
-                // TODO:
-                // Take the last (largest) paymentBillingTransaction, and
-                // set temporaryAmount to paymentBillingSchedule.amount – sum from the previous step.
-                // (Round the last transaction to make the total equal the amount for the period)
+                // Taking the last transaction and setting its temporary amount to
+                // PaymentBillingSchedule's amount minus totalTempAmount
+                PaymentBillingTransaction lastTransaction = billingTransactions.get(billingTransactions.size() - 1);
 
+                if (billingSchedule.getAmount().compareTo(totalTempAmount) > 0 &&
+                        lastTransaction.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0) {
+
+                    lastTransaction.setTemporaryAmount(billingSchedule.getAmount().subtract(totalTempAmount));
+
+                    // Creating a new transaction transfer for the last transaction
+                    transferTransaction(lastTransaction, billingSchedule.getEffectiveDate(), rollup);
+                }
             }
-
         }
 
-        // TODO
+        if (billingPlan.getFlatFeeAmount() != null && billingPlan.getFlatFeeAmount().compareTo(BigDecimal.ZERO) > 0) {
+
+            Charge flatFeeCharge = (Charge) transactionService.createTransaction(
+                    billingPlan.getFlatFeeDebitTypeId(),
+                    transferDetail.getDirectChargeAccount().getId(),
+                    new Date(),
+                    billingPlan.getFlatFeeAmount());
+
+            transferDetail.setFlatFeeCharge(flatFeeCharge);
+        }
+
+        if (billingPlan.getVariableFeeAmount() != null && billingPlan.getVariableFeeAmount().compareTo(BigDecimal.ZERO) > 0) {
+
+            BigDecimal amountToCharge = billingPlan.getVariableFeeAmount().multiply(transferDetail.getPlanAmount());
+
+            if (billingPlan.getMaxFeeAmount().compareTo(amountToCharge) < 0) {
+                amountToCharge = billingPlan.getMaxFeeAmount();
+            }
+
+            if (billingPlan.getMinFeeAmount().compareTo(amountToCharge) > 0) {
+                amountToCharge = billingPlan.getMinFeeAmount();
+            }
+
+            Charge varFeeCharge = (Charge) transactionService.createTransaction(
+                    billingPlan.getVariableFeeDebitTypeId(),
+                    transferDetail.getDirectChargeAccount().getId(),
+                    new Date(),
+                    amountToCharge);
+
+            transferDetail.setVariableFeeCharge(varFeeCharge);
+        }
+
+        transferDetail.setChargeStatus(PaymentBillingChargeStatus.ACTIVE);
+
+        return transferDetail;
+    }
+
+    private Rollup getRollup(Long paymentBillingPlanId, Date effectiveDate) {
+        effectiveDate = CalendarUtils.removeTime(effectiveDate);
+        List<PaymentBillingDate> billingDates = getPaymentBillingDates(paymentBillingPlanId);
+        for (PaymentBillingDate billingDate : billingDates) {
+            if (effectiveDate.equals(CalendarUtils.removeTime(billingDate.getEffectiveDate()))) {
+                return billingDate.getRollup();
+            }
+        }
         return null;
+    }
+
+    private TransactionTransfer transferTransaction(PaymentBillingTransaction billingTransaction, Date effectiveDate, Rollup rollup) {
+
+        Charge charge = billingTransaction.getCharge();
+        if (charge == null) {
+            String errMsg = "PaymentBillingTransaction does not have a reference to Charge, ID = " + billingTransaction.getId();
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        PaymentBillingTransferDetail transferDetail = billingTransaction.getTransferDetail();
+        if (transferDetail == null) {
+            String errMsg = "PaymentBillingTransaction does not have a reference to PaymentBillingTransferDetail, ID = " + billingTransaction.getId();
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        PaymentBillingPlan plan = transferDetail.getPlan();
+        if (plan == null) {
+            String errMsg = "PaymentBillingTransferDetail does not have a reference to PaymentBillingPlan, ID = " + transferDetail.getId();
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        TransactionTransfer transactionTransfer = transactionTransferService.transferTransaction(charge.getId(),
+                charge.getTransactionType().getId().getId(),
+                plan.getTransferType().getId(),
+                transferDetail.getDirectChargeAccount().getId(),
+                billingTransaction.getTemporaryAmount(),
+                effectiveDate,
+                null,
+                "PB transferred " + charge.getId() + " in amount of " + billingTransaction.getTemporaryAmount() +
+                        ", scheduled for " + DateFormat.getDateInstance().format(effectiveDate),
+                plan.getStatementPrefix(),
+                null
+        );
+
+        transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
+        transactionTransfer.getDestTransaction().setRollup(rollup);
+
+        if (plan.isGlCreationImmediate()) {
+            transactionService.makeEffective(transactionTransfer.getDestTransaction().getId(), true);
+        }
+
+        BigDecimal remainingAmount = billingTransaction.getRemainingAmount();
+        BigDecimal tempAmount = billingTransaction.getTemporaryAmount();
+
+        billingTransaction.setRemainingAmount(remainingAmount.subtract(tempAmount));
+        billingTransaction.setTemporaryAmount(BigDecimal.ZERO);
+
+        return transactionTransfer;
     }
 
     private BigDecimal getTotalFinancedAmount(List<PaymentBillingTransaction> billingTransactions) {
@@ -624,12 +744,33 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @param paymentBillingPlanId PaymentBillingPlan ID
      * @return list of PaymentBillingAllowableCharge instances
      */
+    @Override
     public List<PaymentBillingAllowableCharge> getPaymentBillingAllowableCharges(Long paymentBillingPlanId) {
 
         Query query = em.createQuery("select c from PaymentBillingAllowableCharge c " +
                 " inner join fetch c.plan p " +
                 " where p.id = :planId " +
                 " order by c.priority desc");
+
+        query.setParameter("planId", paymentBillingPlanId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Returns payment billing dates for the given plan specified by ID from the persistent store
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @return list of PaymentBillingDate instances
+     */
+    @Override
+    public List<PaymentBillingDate> getPaymentBillingDates(Long paymentBillingPlanId) {
+
+        Query query = em.createQuery("select d from PaymentBillingDate d " +
+                " inner join fetch d.plan p " +
+                " left outer join fetch d.rollup r " +
+                " where p.id = :planId " +
+                " order by d.id desc");
 
         query.setParameter("planId", paymentBillingPlanId);
 

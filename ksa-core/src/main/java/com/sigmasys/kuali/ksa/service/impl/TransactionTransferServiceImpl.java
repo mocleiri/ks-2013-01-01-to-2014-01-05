@@ -337,7 +337,6 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
         transactionTransfer.setSourceTransaction(transaction);
         transactionTransfer.setOffsetTransaction(reverseTransaction);
         transactionTransfer.setDestTransaction(newTransaction);
-        transactionTransfer.setTransactionTypeMask(transactionTypeMask);
         transactionTransfer.setReversalStatus(ReversalStatus.NOT_REVERSED);
 
         persistEntity(transactionTransfer);

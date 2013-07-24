@@ -89,7 +89,7 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
         this.transferType = transferType;
     }
 
-    @Column(name = "FLAT_FEE_DEBIT_TYPE_ID", length = 20)
+    @Column(name = "FLAT_FEE_DEBIT_TYPE_ID", length = 20, nullable = false)
     public String getFlatFeeDebitTypeId() {
         return flatFeeDebitTypeId;
     }
@@ -98,7 +98,7 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
         this.flatFeeDebitTypeId = flatFeeDebitTypeId;
     }
 
-    @Column(name = "VAR_FEE_DEBIT_TYPE_ID", length = 20)
+    @Column(name = "VAR_FEE_DEBIT_TYPE_ID", length = 20, nullable = false)
     public String getVariableFeeDebitTypeId() {
         return variableFeeDebitTypeId;
     }
@@ -108,7 +108,7 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
     }
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "START_OPEN_PERIOD")
+    @Column(name = "START_OPEN_PERIOD", nullable = false)
     public Date getOpenPeriodStartDate() {
         return openPeriodStartDate;
     }
@@ -117,18 +117,18 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
         this.openPeriodStartDate = openPeriodStartDate;
     }
 
+    @Temporal(TemporalType.DATE)
+    @Column(name = "END_OPEN_PERIOD", nullable = false)
     public Date getOpenPeriodEndDate() {
         return openPeriodEndDate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "END_OPEN_PERIOD")
     public void setOpenPeriodEndDate(Date openPeriodEndDate) {
         this.openPeriodEndDate = openPeriodEndDate;
     }
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "START_CHARGE_PERIOD")
+    @Column(name = "START_CHARGE_PERIOD", nullable = false)
     public Date getChargePeriodStartDate() {
         return chargePeriodStartDate;
     }
@@ -138,7 +138,7 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
     }
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "END_CHARGE_PERIOD")
+    @Column(name = "END_CHARGE_PERIOD", nullable = false)
     public Date getChargePeriodEndDate() {
         return chargePeriodEndDate;
     }
@@ -147,7 +147,7 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
         this.chargePeriodEndDate = chargePeriodEndDate;
     }
 
-    @Column(name = "MAX_AMOUNT")
+    @Column(name = "MAX_AMOUNT", nullable = false)
     public BigDecimal getMaxAmount() {
         return maxAmount;
     }
@@ -203,7 +203,7 @@ public class PaymentBillingPlan extends AuditableEntity<Long> {
 
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_GL_IMMEDIATE")
-    public Boolean getGlCreationImmediate() {
+    public Boolean isGlCreationImmediate() {
         return isGlCreationImmediate != null ? isGlCreationImmediate : false;
     }
 

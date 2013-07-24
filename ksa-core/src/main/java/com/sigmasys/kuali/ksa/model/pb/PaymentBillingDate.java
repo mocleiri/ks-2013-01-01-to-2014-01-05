@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.model.pb;
 
 import com.sigmasys.kuali.ksa.model.Identifiable;
+import com.sigmasys.kuali.ksa.model.Rollup;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -24,7 +25,7 @@ public class PaymentBillingDate implements Identifiable {
 
     private BigDecimal percentage;
 
-    private Long rollupId;
+    private Rollup rollup;
 
 
     @Id
@@ -73,12 +74,13 @@ public class PaymentBillingDate implements Identifiable {
         this.percentage = percentage;
     }
 
-    @Column(name = "ROLLUP_ID")
-    public Long getRollupId() {
-        return rollupId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ROLLUP_ID_FK")
+    public Rollup getRollup() {
+        return rollup;
     }
 
-    public void setRollupId(Long rollupId) {
-        this.rollupId = rollupId;
+    public void setRollup(Rollup rollup) {
+        this.rollup = rollup;
     }
 }
