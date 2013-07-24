@@ -63,3 +63,13 @@ Feature: EC.Subterms CRED
     And I add an instructional Key Date to a subterm
     When I make the subterm key date blank
     Then a subterm Key Dates warning message is displayed stating "Start date should not be empty"
+
+   Scenario: CAL 4.10A Delete draft academic calendar and ensure draft subterm is also deleted.
+     Given I create an Academic Calendar with subterms
+     When I delete the Academic Calendar draft
+     Then the subterm is also deleted
+
+    Scenario: CAL 4.10B Delete draft parent term and ensure that draft subterm is also deleted
+      Given I create an Academic Calendar with subterms
+      When I delete the parent term of a subterm
+      Then the subterm is also deleted

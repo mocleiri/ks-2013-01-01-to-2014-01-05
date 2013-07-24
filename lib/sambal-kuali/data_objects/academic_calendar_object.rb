@@ -178,6 +178,7 @@ class AcademicCalendar
     on EditAcademicTerms do |page|
       page.go_to_terms_tab
       page.delete_term(term_object.term_type)
+      page.save
     end
     @terms.delete(term_object)
   end
@@ -348,9 +349,8 @@ class AcademicTerm
 
   def search
     go_to_calendar_search
-    go_to_calendar_search
     term_criteria = "Academic Term"
-    term_criteria = "Sub Term" unless !@subterm
+    term_criteria = "Sub Term" if @subterm
     on CalendarSearch do |page|
       page.search_for term_criteria, @term_name, @term_year
     end

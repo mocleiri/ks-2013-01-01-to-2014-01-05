@@ -111,6 +111,10 @@ When /^I delete the Academic Calendar draft$/ do
   end
 end
 
+When /^I delete the parent term of a subterm$/ do
+  @calendar.delete_term(@term)
+end
+
 Then /^the calendar should reflect the updates$/ do
   on CalendarSearch do |page|
     page.edit @calendar.name
@@ -863,5 +867,17 @@ end
 Then /^a subterm Key Dates warning message is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.key_date_validation_messages(@subterm_list[0].term_type)[0].text.should match /#{exp_msg}/
+  end
+end
+
+Then /^the subterm is also deleted$/ do
+  @subterm_list[0].search
+
+  on CalendarSearch do |page|
+    begin
+      page.results_list.should_not include @subterm_list[0].term_name
+    rescue Watir::Exception::UnknownObjectException
+      # Implication here is that there were no search results at all.
+    end
   end
 end
