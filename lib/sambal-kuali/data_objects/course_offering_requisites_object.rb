@@ -73,6 +73,9 @@ class CORequisitesData
       end
     rescue Watir::Wait::TimeoutError
       #means Data setup was not needed
+      on CourseOfferingRequisites do |page|
+        page.alert.ok
+      end
     end
   end
 
@@ -81,7 +84,12 @@ class CORequisitesData
     @course_offering.manage
     on ManageCourseOfferings do |page|
       page.loading.wait_while_present(200)
-      page.manage_course_offering_requisites
+      begin
+        page.manage_course_offering_requisites
+      rescue Watir::Wait::TimeoutError
+        page.alert.ok
+      end
+
     end
   end
 
@@ -113,10 +121,16 @@ class CORequisitesData
     rescue Watir::Wait::TimeoutError
       #means Update Rule button already clicked
     end
-    on CourseOfferingRequisites do |page|
-      page.loading.wait_while_present
-      page.submit
-      page.loading.wait_while_present(200)
+    begin
+      on CourseOfferingRequisites do |page|
+        page.loading.wait_while_present
+        page.submit
+        page.loading.wait_while_present(200)
+      end
+    rescue Watir::Wait::TimeoutError
+      on ManageCourseOfferings do |page|
+        page.alert.ok
+      end
     end
     if return_to_edit_page == true
       on ManageCourseOfferings do |page|
@@ -132,10 +146,17 @@ class CORequisitesData
                 "Recommended Preparation"=>:recommended_prep_section,
                 "Repeatable for Credit"=>:repeatable_credit_section,
                 "Course that Restricts Credits"=>:resctricted_credit_section}
-    on CourseOfferingRequisites do |page|
-      page.loading.wait_while_present(60)
-      if( page.send(sections[@section]).element(:tag_name, 'img').attribute_value('alt') != "expand")
-        page.send(sections[@section]).when_present.click
+    begin
+      on CourseOfferingRequisites do |page|
+        page.loading.wait_while_present(60)
+        if( page.send(sections[@section]).element(:tag_name, 'img').attribute_value('alt') != "expand")
+          page.send(sections[@section]).when_present.click
+        end
+      end
+    rescue Watir::Wait::TimeoutError
+      #Means agenda section is already open
+      on CourseOfferingRequisites do |page|
+        page.alert.ok
       end
     end
   end
@@ -277,14 +298,14 @@ class CORequisitesData
       statements += 1
       data_setup_needed = true
     end
-    if groups > 1
+    if groups >= 2
       on ManageCORequisites do |page|
         page.loading.wait_while_present
         page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_loading.wait_while_present
         page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_loading.wait_while_present
-        #page.update_rule_btn
+        page.update_rule_btn
       end
     end
     return data_setup_needed
