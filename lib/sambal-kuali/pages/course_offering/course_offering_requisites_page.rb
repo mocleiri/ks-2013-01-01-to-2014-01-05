@@ -22,7 +22,7 @@ class CourseOfferingRequisites < BasePage
   action(:resctricted_credit) { |b| b.resctricted_credit_section.click; b.loading.wait_while_present }
   #############################################
   ###  TODO: Will have to find a way to use IDs instead of text
-  element(:rule_compare_link) { |b| b.frm.a(:text => /Compare to Canonical/)}
+  element(:rule_compare_link) { |b| b.frm.a(:text => /Compare to Catalog/)}
   action(:rule_compare) { |b| b.rule_compare_link.click; b.loading.wait_while_present(60) }
   element(:rule_edit_links) { |b| b.frm.a(:text => /Edit Rule/)}
   action(:rule_edit) { |b| b.rule_edit_links.click; b.loading.wait_while_present(60) }

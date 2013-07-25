@@ -7,7 +7,7 @@ Feature: KRMS.ELIG7-4 Compare to Canonical
   #ELIG7.4.EB1 (KSENROLL-7174)
   Scenario: Confirm that the selected course has data linked to it
     When I navigate to the Student Eligibility & Prerequisite section for course "BSCI202" in the historic term
-    Then the "Compare to Canonical" link should exist on the Course Offering Requisites page
+    Then the "Compare to Catalog" link should exist on the Course Offering Requisites page
 
   #ELIG7.4.EB2 (KSENROLL-7174)
   Scenario: Confirm that the selected course's natural language displays correctly
