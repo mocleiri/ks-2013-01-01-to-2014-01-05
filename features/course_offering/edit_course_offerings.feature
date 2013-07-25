@@ -24,6 +24,29 @@ Feature: WC.Edit Course Offerings
     And I change the delivery format options
     Then I can submit and the course offering is updated
 
+#KSENROLL-8076
+  @pending
+  Scenario: Edit an existing course offering and add a delivery format line
+    Given I edit a course offering with multiple delivery format types
+    And I add a delivery format option
+    Then I can submit and the delivery formats are updated
+
+#KSENROLL-8076
+  @pending
+  Scenario: Edit an existing course offering and modify a delivery format line
+    Given I edit a course offering with multiple delivery format types
+    And I modify a delivery format option
+    Then I can submit and the modified delivery formats are updated
+
+#KSENROLL-8076
+  @pending
+  Scenario: Edit an existing course offering and delete a delivery format line
+    Given I edit a course offering with multiple delivery format types
+    And I add a delivery format option
+    Then I can submit and the delivery formats are updated
+    When I delete the added delivery format option
+    Then I can submit and the added delivery format is not present
+
   #KSENROLL-1504
   Scenario: Edit an existing course offering's wait list options
     When I edit a course offering

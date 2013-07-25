@@ -30,6 +30,14 @@ When /^I edit a course offering with multiple format types$/ do
   end
 end
 
+When /^I edit a course offering with multiple delivery format types$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL222")
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+end
+
 When /^I select a final exam type of "([^"]*)"$/ do |final_option|
      @course_offering.edit_offering :final_exam_type => final_option
 end
@@ -40,6 +48,36 @@ When /^I change the delivery format options$/ do
   @course_offering.edit_offering :delivery_format_list => delivery_format_list
 end
 
+And /^I add a delivery format option$/ do
+  on CourseOfferingEdit do |page|
+    page.delivery_format_add
+    delivery_format = make DeliveryFormat,
+                           :format => "Lecture",
+                           :grade_format => "Lecture",
+                           :final_exam_driver => "Lecture"
+    page.select_delivery_format(2,delivery_format)
+  end
+end
+
+And /^I modify a delivery format option$/ do
+  delivery_format = make DeliveryFormat,
+                         :format => "Lecture",
+                         :grade_format => "Lecture",
+                         :final_exam_driver => "Lecture"
+  on CourseOfferingEdit do |page|
+    page.select_delivery_format(1, delivery_format, false)
+  end
+end
+
+Then /^I delete the added delivery format option$/ do
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.delivery_format_delete_1
+  end
+end
 Then /^I can submit and the course offering is updated$/ do
   on CourseOfferingEdit do |page|
     page.submit
@@ -61,7 +99,46 @@ Then /^I can submit and the course offering is updated$/ do
   end
 end
 
+Then /^I can submit and the delivery formats are updated$/ do
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
 
+  @course_offering.search_by_subjectcode
+       @course_offering.view_course_details
+       on ManageCourseDetails do  |page|
+         page.get_delivery_format("Lecture").should == "Lecture Only"
+         page.get_grade_roster_level("Lecture").should == "Lecture"
+         page.get_final_exam_driver("Lecture").should == "Lecture"
+  end
+end
+
+Then /^I can submit and the modified delivery formats are updated$/ do
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+
+  @course_offering.search_by_subjectcode
+       @course_offering.view_course_details
+       on ManageCourseDetails do  |page|
+         page.get_delivery_format("Lecture/Discussion").should == "Lecture/Discussion"
+         page.get_grade_roster_level("Lecture").should == "Lecture"
+         page.get_final_exam_driver("Lecture").should == "Lecture"
+  end
+end
+
+Then /^I can submit and the added delivery format is not present$/ do
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+
+  @course_offering.search_by_subjectcode
+  @course_offering.view_course_details
+  on ManageCourseDetails do  |page|
+    page.delivery_format_row("Lecture").should_not be_present
+  end
+
+end
 When /^a final exam driver of "([^"]*)"$/ do |final_driver|
     @course_offering.edit_offering :final_exam_driver => final_driver
 end

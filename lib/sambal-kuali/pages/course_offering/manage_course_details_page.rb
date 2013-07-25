@@ -39,7 +39,7 @@ class ManageCourseDetails < BasePage
   end
 
   def delivery_format_row(format)
-    delivery_formats_table.row(text: /#{Regexp.escape(format)}/)
+    delivery_formats_table.row(text: /^#{Regexp.escape(format)}$/)
   end
 
 end
