@@ -630,7 +630,7 @@ end
 Then /^the first node should match "(.*)"$/ do |text|
   on ManageCORequisites do |page|
     page.loading.wait_while_present
-    page.edit_tree_section.text.should match /^Click on rule statement to edit\n[\s\t]*#{Regexp.escape(text)}.*/
+    page.edit_tree_section.text.should match /^Click on rule statement to move or modify\n[\s\t]*#{Regexp.escape(text)}.*/
   end
 end
 

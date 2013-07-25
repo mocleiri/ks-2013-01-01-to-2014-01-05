@@ -132,6 +132,8 @@ class CORequisitesData
         page.alert.ok
       end
     end
+    # TODO: Adding a sleep as a temporary workaround, see KSENROLL-8312
+    sleep 15
     if return_to_edit_page == true
       on ManageCourseOfferings do |page|
         page.manage_course_offering_requisites
