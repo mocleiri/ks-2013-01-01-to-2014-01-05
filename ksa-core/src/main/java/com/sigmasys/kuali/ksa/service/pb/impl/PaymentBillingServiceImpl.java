@@ -319,37 +319,85 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         return query.getResultList();
     }
 
-
     /**
-     * Generates a list of PaymentBillingSchedule objects for the given PaymentBillingPlan ID
+     * Generates a list of PaymentBillingSchedule objects for the given PaymentBillingTransferDetail ID
      *
-     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param transferDetailId PaymentBillingTransferDetail ID
      * @return list of PaymentBillingSchedule instances
      */
     @Override
     @Transactional(readOnly = false)
-    public List<PaymentBillingSchedule> generatePaymentBillingSchedules(Long paymentBillingPlanId) {
+    public List<PaymentBillingSchedule> generatePaymentBillingSchedules(Long transferDetailId) {
 
         PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_SCHEDULE);
 
-        PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
-        if (billingPlan == null) {
-            String errMsg = "PaymentBillingPlan does not exist with ID = " + paymentBillingPlanId;
+        PaymentBillingTransferDetail transferDetail = getPaymentBillingTransferDetail(transferDetailId);
+        if (transferDetail == null) {
+            String errMsg = "PaymentBillingTransferDetail does not exist with ID = " + transferDetailId;
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
+        }
+
+        PaymentBillingPlan billingPlan = transferDetail.getPlan();
+        if (billingPlan == null) {
+            String errMsg = "PaymentBillingPlan does not exist for PaymentBillingTransferDetail with ID = " + transferDetailId;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
         }
 
         ScheduleType scheduleType = billingPlan.getScheduleType();
 
         if (scheduleType == null || scheduleType == ScheduleType.NOT_ALLOWED) {
-            String errMsg = "Payment Billing Schedule is not allowed for this plan (PaymentBillingPlan ID = " +
-                    paymentBillingPlanId + ")";
+            String errMsg = "Payment Billing Schedule is not allowed for this plan (PaymentBillingPlan ID = " + billingPlan.getId() + ")";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
 
-        // TODO: Ask Paul how to implement the next steps
+        List<PaymentBillingDate> billingDates = getPaymentBillingDates(billingPlan.getId());
 
+        boolean isEffectiveDateAfter = true;
+
+        for (PaymentBillingDate billingDate : billingDates) {
+            if (transferDetail.getInitiationDate().before(billingDate.getEffectiveDate())) {
+                isEffectiveDateAfter = false;
+            }
+        }
+
+        List<PaymentBillingSchedule> billingSchedules = new LinkedList<PaymentBillingSchedule>();
+
+        Date currentDate = new Date();
+
+        BigDecimal currentPercentage = BigDecimal.ZERO;
+
+        for (PaymentBillingDate billingDate : billingDates) {
+
+            if (scheduleType == ScheduleType.SKIP_EARLIER) {
+                if (billingDate.getEffectiveDate().before(currentDate)) {
+                    currentPercentage = currentPercentage.add(billingDate.getPercentage());
+                    continue;
+                }
+            }
+
+            PaymentBillingSchedule billingSchedule = new PaymentBillingSchedule();
+
+            billingSchedule.setEffectiveDate(billingDate.getEffectiveDate());
+            billingSchedule.setPercentage(billingDate.getPercentage());
+            billingSchedule.setTransferDetail(transferDetail);
+
+            billingSchedules.add(billingSchedule);
+        }
+
+        if (scheduleType == ScheduleType.SKIP_EARLIER) {
+
+            BigDecimal hundredPercent = new BigDecimal(100);
+
+            for (PaymentBillingSchedule billingSchedule : billingSchedules) {
+                // TODO ???
+                billingSchedule.setPercentage(billingSchedule.getPercentage().multiply(currentPercentage).divide(hundredPercent));
+            }
+        }
+
+        // TODO: Ask Paul how to implement the next steps
 
         return null;
     }
@@ -770,7 +818,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                 " inner join fetch d.plan p " +
                 " left outer join fetch d.rollup r " +
                 " where p.id = :planId " +
-                " order by d.id desc");
+                " order by d.effectiveDate asc");
 
         query.setParameter("planId", paymentBillingPlanId);
 

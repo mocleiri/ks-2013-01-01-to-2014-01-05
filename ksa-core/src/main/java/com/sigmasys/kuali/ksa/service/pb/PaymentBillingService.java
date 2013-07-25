@@ -99,12 +99,12 @@ public interface PaymentBillingService {
     List<PaymentBillingSchedule> getPaymentBillingSchedulesByTransferDetailId(Long transferDetailId);
 
     /**
-     * Generates a list of PaymentBillingSchedule objects for the given PaymentBillingPlan ID
+     * Generates a list of PaymentBillingSchedule objects for the given PaymentBillingTransferDetail ID
      *
-     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param transferDetailId PaymentBillingTransferDetail ID
      * @return list of PaymentBillingSchedule instances
      */
-    List<PaymentBillingSchedule> generatePaymentBillingSchedules(Long paymentBillingPlanId);
+    List<PaymentBillingSchedule> generatePaymentBillingSchedules(Long transferDetailId);
 
     /**
      * This method creates the list of type PaymentBillingTransaction, detailing which transactions can be financed,
