@@ -503,8 +503,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                 persistEntity(billingSchedule);
             }
 
-
-
             return finalSchedules;
         }
 
