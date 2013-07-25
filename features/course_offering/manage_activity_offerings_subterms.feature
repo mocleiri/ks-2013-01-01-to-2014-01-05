@@ -21,3 +21,8 @@ Feature: EC.Manage Activity Offerings - subterms
     When I copy the activity offering
     Then the AO subterm indicator is successfully copied
 
+  Scenario: CO 26.8B Successfully copy a CO with an AO attached to a subterm
+    Given I edit an Activity Offering that has available subterms
+    And I set a subterm for the activity offering
+    When I copy the parent course offering
+    Then the AO subterm indicator is successfully copied with the parent CO

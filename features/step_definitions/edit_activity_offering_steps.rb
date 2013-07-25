@@ -230,6 +230,10 @@ Then /^I copy the activity offering$/ do
                                                 :parent_course_offering => @activity_offering.parent_course_offering
 end
 
+Then /^I copy the parent course offering$/ do
+  @course_offering_copy = create CourseOffering, :create_by_copy => @course_offering
+end
+
 Then /^the AO subterm indicator is successfully copied$/ do
   @course_offering.manage
   on ManageCourseOfferings do |page|
@@ -243,6 +247,25 @@ Then /^the AO subterm indicator is successfully copied$/ do
   end
 
   @activity_offering_copy.edit
+  on ActivityOfferingMaintenance do |page|
+    page.subterm.should == @activity_offering.subterm
+    page.cancel
+  end
+end
+
+Then /^the AO subterm indicator is successfully copied with the parent CO$/ do
+  @course_offering_copy.manage
+  on ManageCourseOfferings do |page|
+    page.has_subterm_icon(@activity_offering.code).should == true
+    page.view_activity_offering(@activity_offering.code)
+  end
+
+  on ActivityOfferingInquiry do |page|
+    page.subterm.should == @activity_offering.subterm
+    page.close
+  end
+
+  @activity_offering.edit
   on ActivityOfferingMaintenance do |page|
     page.subterm.should == @activity_offering.subterm
     page.cancel

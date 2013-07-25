@@ -924,7 +924,7 @@ class CourseOffering
     go_to_manage_course_offerings
     on ManageCourseOfferings do |page|
       page.term.set term
-      page.input_code.set source_course_code[0,4] #subject code
+      page.input_code.set source_course_code[0,5] #subject code + course level (assumes always more than one CO returned)
       page.show
     end
     on ManageCourseOfferingList do |page|
