@@ -17,9 +17,6 @@ class CreateCOFromExisting < BasePage
   element(:exclude_instructor_checkbox) { |b| b.frm.label(text: /Exclude instructor information/) }
   action(:select_exclude_instructor_checkbox) { |b| b.exclude_instructor_checkbox.wait_until_present; b.exclude_instructor_checkbox.click }
 
-
-  element(:growl_message) { |b| b.div(text: /Course offering .* has been successfully created/) }
-
   element(:course_offering_existing_table) { |b| b.frm.div(id: "KS-ExistingOffering-ListCOs").table() }
 
   #TODO just selects the first row - needs to be deprecated

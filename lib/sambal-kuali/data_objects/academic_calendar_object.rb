@@ -217,7 +217,7 @@ class AcademicTerm
   include StringFactory
   include Workflows
 
-  attr_accessor :term_type, :term_name, :term_year, :start_date, :end_date, :expected_instructional_days, :key_date_groups, :parent_calendar, :parent_term, :subterm
+  attr_accessor :term_type, :term_name, :term_year, :start_date, :end_date, :expected_instructional_days, :key_date_groups, :parent_calendar, :parent_term, :subterm, :subterm_type
 
   WINTER_TERM_TYPE = "Winter Term"
   FALL_TERM_TYPE = "Fall Term"
@@ -248,6 +248,7 @@ class AcademicTerm
     @term_name = "#{@term_type} #{calendar_year}"
 
     if @subterm then
+      @subterm_type = @term_type
       @term_type = "Subterm: #{@term_type}"
     end
   end
@@ -257,7 +258,7 @@ class AcademicTerm
     on EditAcademicTerms do |page|
       page.go_to_terms_tab
       if @subterm then
-        term_type =  @term_type[/(?<=Subterm: ).*/] #remove the 'Subterm: ' prefix
+        term_type = @subterm_type
       else
         term_type = @term_type
       end

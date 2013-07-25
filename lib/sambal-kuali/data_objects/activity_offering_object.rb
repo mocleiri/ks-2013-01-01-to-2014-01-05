@@ -28,7 +28,8 @@ class ActivityOffering
                 :max_enrollment,
                 :seat_remaining_percent,
                 :course_url,
-                :aoc_private_name
+                :aoc_private_name,
+                :subterm
   #type: hash - generally set using options hash
   attr_accessor :actual_delivery_logistics_list,
                 :requested_delivery_logistics_list,
@@ -68,7 +69,8 @@ class ActivityOffering
   #    :evaluation => true,
   #    :honors_course => true,
   #    :colocate_ao_list => [],
-  #    :colocate_shared_enrollment => false
+  #    :colocate_shared_enrollment => false,
+  #    :subterm => "None"
   #  }
   # some basic e.g. list/hash values:
   # :seat_pool_list =>  {"random"=> (make SeatPool)}
@@ -100,7 +102,8 @@ class ActivityOffering
         :aoc_private_name => :default_cluster,
         :create_by_copy => nil, #if true create copy using :ao_code
         :colocate_ao_list => [],
-        :colocate_shared_enrollment => false
+        :colocate_shared_enrollment => false,
+        :subterm => "None"
     }
 
     options = defaults.merge(opts)
@@ -244,6 +247,7 @@ class ActivityOffering
 
     on(ManageCourseOfferings).edit @code unless opts[:edit_already_started]
 
+    edit_subterm opts
     edit_colocation opts
     edit_max_enrollment_no_colocation opts
     edit_requested_delivery_logistics opts
@@ -256,6 +260,15 @@ class ActivityOffering
   end #END: edit
 
   # PRIVATE helper methods for edit()
+
+  def edit_subterm opts
+    if opts[:subterm] != nil
+      on ActivityOfferingMaintenance do |page|
+        page.change_subterm opts[:subterm]
+        @subterm = opts[:subterm]
+      end
+    end
+  end
 
   def edit_colocation opts={}
 

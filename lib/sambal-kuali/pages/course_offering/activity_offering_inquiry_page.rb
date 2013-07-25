@@ -1,11 +1,16 @@
 class ActivityOfferingInquiry < BasePage
 
+  wrapper_elements
+
   def frm
     self.frame(class: "fancybox-iframe")
   end
 
   action(:close) { |b| b.frm.button(text: "Close").click; b.loading.wait_while_present }
-  
+
+  value(:subterm) { |b| b.frm.span(id: "subterm_name_control").text }
+  value(:subterm_start_date) { |b| b.frm.span(id: "start_end_date_control").text[/.*(?=-)/].strip }
+  value(:subterm_end_date) { |b| b.frm.span(id: "start_end_date_control").text[/(?<=-).*/].strip }
   value(:course_offering_code) { |b| b.frm.span(id: "u14").text } # Persistent ID needed!
   value(:activity_code) { |b| b.frm.span(id: "u23").text } # Persistent ID needed!
   value(:course_offering_title) { |b| b.frm.span(id: "u32").text } # Persistent ID needed!

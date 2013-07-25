@@ -11,7 +11,7 @@ And /^I submit the AO changes$/ do
   #validate the success-growl is being shown
   on ManageCourseOfferings do |page|
     sleep 2 #TODO: required by headless
-    page.growltext.should == "Activity Offering modified."
+    page.growl_text.should == "Activity Offering modified."
   end
 end
 
@@ -155,4 +155,96 @@ Given /^I edit an Activity Offering$/ do
   @activity_offering = @course_offering.get_ao_obj_by_code("B")
   @prev_req_ev = @activity_offering.requires_evaluation
   @prev_hon_flg = @activity_offering.honors_course
+end
+
+Given /^I edit an Activity Offering that has available subterms$/ do
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :course=>"ENGL222", :term=>"201208")
+  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @course_offering.manage
+  @course_offering.edit_ao :ao_code=> @activity_offering.code
+
+  @subterm_list = Array.new(2)
+  @subterm_list[0] = make AcademicTerm, :term_year => "2012", :start_date => "08/29/2012", :end_date => "10/21/2012",
+                          :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  @subterm_list[1] = make AcademicTerm, :term_year => "2012", :start_date => "10/22/2012", :end_date => "12/11/2012",
+                          :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
+
+end
+
+Then /^I set a subterm for the activity offering$/ do
+  @activity_offering.edit :edit_already_started => true, :subterm => @subterm_list[0].subterm_type
+  @activity_offering.save
+end
+
+Then /^I update the subterm for the activity offering$/ do
+  @activity_offering.edit :subterm => @subterm_list[1].subterm_type
+  @activity_offering.save
+end
+
+Then /^I remove the subterm for the activity offering$/ do
+  @activity_offering.edit :subterm => "None"
+  @activity_offering.save
+end
+
+Then /^the AO subterm change is successful$/ do
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.has_subterm_icon("A").should == true
+    page.view_activity_offering("A")
+  end
+
+  on ActivityOfferingInquiry do |page|
+    page.subterm.should == @activity_offering.subterm
+    page.close
+  end
+
+  @activity_offering.edit
+  on ActivityOfferingMaintenance do |page|
+      page.subterm.should == @activity_offering.subterm
+      page.cancel
+  end
+end
+
+Then /^the AO subterm is successfully removed$/ do
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.has_subterm_icon("A").should == false
+    page.view_activity_offering("A")
+  end
+
+  on ActivityOfferingInquiry do |page|
+    page.subterm.should == "None"
+    page.close
+  end
+
+  @activity_offering.edit
+  on ActivityOfferingMaintenance do |page|
+    page.subterm.should == "None"
+    page.cancel
+  end
+end
+
+Then /^I copy the activity offering$/ do
+  @activity_offering_copy = create ActivityOffering, :create_by_copy => true,
+                                                :code => @activity_offering.code,
+                                                :parent_course_offering => @activity_offering.parent_course_offering
+end
+
+Then /^the AO subterm indicator is successfully copied$/ do
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.has_subterm_icon(@activity_offering_copy.code).should == true
+    page.view_activity_offering(@activity_offering_copy.code)
+  end
+
+  on ActivityOfferingInquiry do |page|
+    page.subterm.should == @activity_offering.subterm
+    page.close
+  end
+
+  @activity_offering_copy.edit
+  on ActivityOfferingMaintenance do |page|
+    page.subterm.should == @activity_offering.subterm
+    page.cancel
+  end
 end

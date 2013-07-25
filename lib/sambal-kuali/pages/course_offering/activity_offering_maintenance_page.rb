@@ -6,14 +6,11 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   element(:ao_header_text) { |b| b.frm.div(class: "uif-viewHeader-contentWrapper uif-sticky").h1.span.text }
 
-  element(:save_continue_alert_div) { |b| b.frm.div(id: "ActivityOfferingEdit-NavigationConfirmation") }
-  element(:cancel_save_link) { |b| b.save_continue_alert_div.link(text: "Cancel") }
   action(:prev_ao) { |b| b.frm.link(id: "edit_ao_prev").click; b.loading.wait_while_present }
   element(:prev_ao_text) { |b| b.frm.link(id: "edit_ao_prev").text }
   element(:select_ao_menu) { |b| b.frm.select(id: "edit_ao_select_control") }
   action(:next_ao) { |b| b.frm.link(id: "edit_ao_next").click; b.loading.wait_while_present }
   element(:next_ao_text) { |b| b.frm.link(id: "edit_ao_next").text }
-  action(:cancel_save) { |b| b.cancel_save_link.click }
 
   element(:save_cancel_div) { |b| b.frm.div(id: "ActivityOfferingEdit_SubmitCancel") }
   element(:save_button) { |b| b.save_cancel_div.button(text: "Save Progress") }
@@ -21,13 +18,28 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   element(:submit_button) { |b| b.save_cancel_div.button(text: "Update") }
   action(:submit) { |b| sleep 2; b.loading.wait_while_present; sleep 2; b.submit_button.click; b.loading.wait_while_present(120) }
+  action(:cancel) { |b| b.save_cancel_div.link(text: "Cancel").click; b.loading.wait_while_present }
 
+  #unsaved changes dialog - appears when navigating between AOs
+  element(:save_continue_alert_div) { |b| b.frm.div(id: "ActivityOfferingEdit-NavigationConfirmation") }
+  element(:cancel_save_link) { |b| b.save_continue_alert_div.link(text: "Cancel") }
+  action(:cancel_save) { |b| b.cancel_save_link.click }
   element(:save_and_continue_button) { |b| b.frm.button(id: "edit_ao_save_and_continue") }
   action(:save_and_continue) { |b| b.save_and_continue_button.click; b.loading.wait_while_present }
   element(:continue_without_saving_button) { |b| b.frm.button(id: "edit_ao_cancel") }
   action(:continue_without_saving) { |b| b.continue_without_saving_button.click; b.loading.wait_while_present }
+  #end of dialog elements
 
   element(:activity_code) { |b| b.frm.text_field(name: "document.newMaintainableObject.dataObject.aoInfo.activityCode") }
+
+  value(:subterm) { |b| b.frm.div(id: "subterm_name").span.text }
+  element(:change_subterm_element) { |b| b.frm.link(id: "change_link") }
+  element(:change_subterm_popup) { |b| b.frm.div(id: "KS-ActivityOfferingEdit-SubtermsPopupForm") }
+
+  def change_subterm(subterm_type)
+    change_subterm_element.click
+    change_subterm_popup.select.select subterm_type
+  end
 
   # Co-located
   element(:colocated_checkbox) { |b| b.frm.checkbox(id: "is_co_located_control") }
@@ -63,8 +75,6 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   action(:facility_features) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-New-Features-Section_toggle").click; b.loading.wait_while_present }
   element(:feature_list){ |b|b.frm.select(id: "featuresList_control")}
 
-  action(:cancel) { |b| b.frm.link(text: "Cancel").click; b.loading.wait_while_present }
-
   element(:add_new_delivery_logistics_button) { |b| b.add_logistics_div.button(id: "add_rdl_button") }
   action(:add_new_delivery_logistics) { |b| b.add_new_delivery_logistics_button.click; b.adding.wait_while_present }
 
@@ -73,7 +83,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   element(:delete_requested_delivery_logistics_button) { |b| b.requested_logistics_table.button(text: "delete") } #TODO: identify button by row (days + start_time)
 
-  PERS_ACTION_DELETE_COLUMN = 4
+  PERS_ACTION_COLUMN = 4
 
   element(:personnel_id) { |b| b.personnel_div.text_field(name: "document.newMaintainableObject.dataObject.instructors[0].offeringInstructorInfo.personId") }
   element(:personnel_name) { |b| b.personnel_div.text_field(name: "document.newMaintainableObject.dataObject.instructors[0].offeringInstructorInfo.personName") }
@@ -84,10 +94,11 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   action(:lookup_person) { |b| b.personnel_table.rows[1].cells[ID_COLUMN].button().click; b.loading.wait_while_present }
   element(:add_affiliation) { |b| b.personnel_table.rows[1].cells[AFFILIATION_COLUMN].select() }
   element(:add_inst_effort) { |b| b.personnel_table.rows[1].cells[INST_EFFORT_COLUMN].text_field() }
-  action(:delete_personnel_element) { |b| b.personnel_table.rows[1].cells[PERS_ACTION_DELETE_COLUMN].button() }
+  action(:delete_personnel_element) { |b| b.personnel_table.rows[1].cells[PERS_ACTION_COLUMN].button() }
   action(:delete_personnel) { |b| b.delete_personnel_element.click; b.loading.wait_while_present }
-  element(:jgrowl){|b|b.frm.div(id:"jGrowl")}
-  value(:growltext){|b| b.jgrowl.div(class:"jGrowl-message").text}
+
+  element(:add_personnel_element) { |b| b.frm.button(id: "ao-personnelgroup-addline") }
+  element(:add_personnel) { |b| b.add_personnel_element.click; b.loading.wait_while_present }
 
   TBA = 0
   DAYS = 1

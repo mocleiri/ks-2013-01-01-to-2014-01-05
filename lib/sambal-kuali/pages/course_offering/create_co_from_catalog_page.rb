@@ -28,8 +28,6 @@ class CreateCOFromCatalog < BasePage
   #element(:cross_listed_co_check_boxes) { |b| b.frm.dvi(id:"KS-CoListed-Checkbox-Group")}
   element(:cross_listed_co_check_box) { |b| b.checkbox(id: "KS-COEditListed-Checkbox-Group_control_0") }
 
- element(:growl_message) { |b| b.div(text: /Course offering .* has been successfully created/) }
-
   element(:joint_defined_courses_table) { |b| b.div(id: "KS-Catalog-JointCourse-Section").table() }
   element(:create_new_joint_defined_course_first_row) { |b| b.joint_defined_courses_table.rows[1].cells[3].link}
   action(:create_new_joint_defined_course_row_1) { |b| b.joint_defined_courses_table.rows[1].cells[3].link.click }
