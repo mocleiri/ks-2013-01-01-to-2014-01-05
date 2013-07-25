@@ -730,35 +730,51 @@ function updateContextBar(srcId, contextBarId){
 
     var contextBar = jQuery("#" + contextBarId);    // grab the placeholder
     if( contextBar ) {
-        contextBar.show();
+        if (contextBar.css('display') == "none") {
+            contextBar.show();
+        }
         var src = jQuery("#" + srcId);                  // grab the new context bar
         jQuery(contextBar).append(jQuery(src));         // add it to the context bar placeholder
         jQuery(src).show();
     }
 }
 
+/*
+ This method is for removing the empty context bar from a page.
+ The position of the page header is repositioned accordingly
+ */
 function removeEmptyContextBar(){
     var contextBar = jQuery("#KS-CourseOffering-View-ContextBar-PlaceHolder");
 
-    if (contextBar) {
+    if (contextBar && contextBar.css('display') != "none") {
+        //hide the empty context bar
         contextBar.hide();
-        var headerDiv = jQuery(".uif-viewHeader-contentWrapper");
 
+        //re-position header. value 41 is the height of the context bar
+        var headerDiv = jQuery(".uif-viewHeader-contentWrapper");
         if (headerDiv) {
             var headerOffsetTop = headerDiv.offset().top - 41;
-            headerDiv.attr("style", "position:fixed; left: 0; top: " + headerOffsetTop + "px;");
-            stickyContent = null;
+            headerDiv.offset({top:headerOffsetTop});
+            headerDiv.data("offset", headerDiv.offset());
         }
     }
 }
 
+/*
+ This method is for putting the page header back to the original position
+ */
 function resetHeaderPosition(){
-    var headerDiv = jQuery(".uif-viewHeader-contentWrapper");
+    var contextBar = jQuery("#KS-CourseOffering-View-ContextBar-PlaceHolder");
+    if (contextBar && contextBar.css('display') != "none") {
 
-    if (headerDiv) {
-        var headerOffsetTop = headerDiv.offset().top + 41;
-        headerDiv.attr("style", "position:fixed; left: 0; top: " + headerOffsetTop + "px;");
-        stickyContent = headerDiv;
+        var headerDiv = jQuery(".uif-viewHeader-contentWrapper");
+        if (headerDiv) {
+            var headerOffsetTop = headerDiv.offset().top + 41;
+
+            //adjust header back to the original position
+            headerDiv.offset({top:headerOffsetTop});
+            headerDiv.data("offset", headerDiv.offset());
+        }
     }
 }
 
@@ -1079,6 +1095,7 @@ function resetDialogResponses(returnFieldId){
 function resetDirtyFields(returnFieldId){
     var dirtyFields = jQuery('#'+returnFieldId+'_control');
     if(dirtyFields.length==0) return;
+    if(typeof dirtyFields[0].value === 'undefined') return;
     var fields = dirtyFields[0].value.split(',');
     for(i =0; i<fields.length;i++){
         var field = fields[i];

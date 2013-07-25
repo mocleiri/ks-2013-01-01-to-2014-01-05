@@ -66,7 +66,7 @@
         <property name="page.header.lowerGroup.render" value="false"/>
         <property name="header.cssClasses">
             <list >
-                <value>ks-borderBottom4</value>
+                <value>ks-unified-header</value>
             </list>
         </property>
         <property name="additionalCssFiles">
@@ -443,7 +443,6 @@
         <property name="addBlankLineAction.render" value="@{#dp.renderHelper.showFormatAddButton}"/>
         <property name="collectionObjectClass" value="org.kuali.student.enrollment.class2.courseoffering.dto.FormatOfferingWrapper" />
         <property name="propertyName" value="formatOfferingList" />
-        <property name="layoutManager.richTable.render" value="false"/>
         <property name="lineActions">
             <list>
                 <bean parent="Uif-DeleteLineAction">
@@ -451,7 +450,6 @@
                 </bean>
             </list>
         </property>
-        <property name="addBlankLineAction.style" value="margin-top:30px;"/>
         <property name="items">
             <list>
                 <bean parent="Uif-InputField" p:propertyName="formatOfferingInfo.formatId"  p:readOnly="@{!#lp.renderHelper.newRow}"
@@ -481,8 +479,8 @@
                         <bean class="org.kuali.student.enrollment.class2.courseoffering.keyvalue.DummyKeyValue"/>
                     </property>
                 </bean>
-                <bean parent="Uif-MessageField" p:label="FINAL EXAM DRIVER ACTIVITY" p:labelPlacement="TOP" p:fieldLabel.renderColon="false" p:messageText="Alternate exam for this offering" />
-                <bean parent="Uif-MessageField" p:label="FINAL EXAM DRIVER ACTIVITY" p:labelPlacement="TOP" p:fieldLabel.renderColon="false" p:messageText="No final exam for this offering"  />
+                <bean parent="Uif-MessageField" p:label="FINAL EXAM DRIVER ACTIVITY" p:labelPlacement="TOP" p:fieldLabel.renderColon="false" p:messageText="Alternate exam for this offering" p:render="@{#dp.courseOfferingInfo.finalExamType eq 'ALTERNATE'}" />
+                <bean parent="Uif-MessageField" p:label="FINAL EXAM DRIVER ACTIVITY" p:labelPlacement="TOP" p:fieldLabel.renderColon="false" p:messageText="No final exam for this offering" p:render="@{#dp.courseOfferingInfo.finalExamType eq 'NONE'}" />
             </list>
         </property>
     </bean>
@@ -589,6 +587,7 @@
 
 
     <bean id="KS-CourseOfferingEdit-MiscSection" parent="Uif-VerticalBoxSection" p:style="margin-top: 2em;" p:headerText="Miscellaneous">
+        <property name="validationMessages.displayMessages" value="false"/>
         <property name="items">
             <list>
                 <bean parent="Uif-Message" p:messageText="&lt;hr&gt;"/>
@@ -614,8 +613,7 @@
 
         <property name="items">
             <list>
-                <bean parent="Uif-InputField"  p:label="Organization ID"  p:propertyName="id" p:required="true"
-                      p:style="font-weight:bold;white-space:nowrap;">
+                <bean parent="Uif-InputField"  p:label="Organization ID"  p:propertyName="id" p:style="font-weight:bold;white-space:nowrap;">
                     <property name="control">
                         <bean parent="Uif-TextControl" p:size="16" p:ReadOnly="true" />
                     </property>

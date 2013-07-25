@@ -155,6 +155,9 @@ public class ARGCourseOfferingManagementController extends UifControllerBase {
 
         ARGUtil.getViewHelperService(form).loadCourseOfferingsByTermAndCourseCode(form.getTermInfo().getId(), form.getInputCode(), form);
 
+        //turn on authz
+        form.setEditAuthz(ARGUtil.checkEditViewAuthz(form));
+
         if (!form.getCourseOfferingResultList().isEmpty()) {
             if (form.getCourseOfferingResultList().size() > 1) {
                 form.setSubjectCode(form.getCourseOfferingResultList().get(0).getSubjectArea());
@@ -168,9 +171,6 @@ public class ARGCourseOfferingManagementController extends UifControllerBase {
                 return getUIFModelAndView(form, CourseOfferingConstants.MANAGE_THE_CO_PAGE);
             }
         }
-
-        //turn on authz
-        form.setEditAuthz(ARGUtil.checkEditViewAuthz(form));
 
         if (GlobalVariables.getMessageMap().getErrorMessages().isEmpty()) {
             return getUIFModelAndView(form, CourseOfferingConstants.MANAGE_ARG_CO_PAGE);
@@ -317,6 +317,15 @@ public class ARGCourseOfferingManagementController extends UifControllerBase {
      */
     @RequestMapping(params = "methodToCall=cancelDeleteAOs")
     public ModelAndView cancelDeleteAOs(@ModelAttribute("KualiForm") ARGCourseOfferingManagementForm theForm) throws Exception {
+        ARGUtil.reloadTheCourseOfferingWithAOs_RGs_Clusters(theForm);
+        return getUIFModelAndView(theForm, CourseOfferingConstants.MANAGE_THE_CO_PAGE);
+    }
+
+    /*
+     * Method used to delete a list of selected Draft activity Offerings
+     */
+    @RequestMapping(params = "methodToCall=reloadManageCO")
+    public ModelAndView reloadManageCO(@ModelAttribute("KualiForm") ARGCourseOfferingManagementForm theForm) throws Exception {
         ARGUtil.reloadTheCourseOfferingWithAOs_RGs_Clusters(theForm);
         return getUIFModelAndView(theForm, CourseOfferingConstants.MANAGE_THE_CO_PAGE);
     }

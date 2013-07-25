@@ -92,7 +92,7 @@
 
         <property name="header.cssClasses">
           <list >
-            <value>ks-borderBottom4</value>
+            <value>ks-unified-header</value>
           </list>
         </property>
         <property name="additionalCssFiles">
@@ -387,7 +387,7 @@
 
     <!-- Create Course Offering Start -->
 
-    <bean id="KS-CourseOffering-CreatePage" parent="KS-Uif-Page" p:disclosure.render="false" p:readOnly="@{#view.readOnly}" >
+    <bean id="KS-CourseOffering-CreatePage" parent="KS-Uif-Page" p:disclosure.render="false" p:readOnly="@{#view.readOnly}" p:style="overflow:hidden;">
         <property name="id" value="courseOfferingCreatePage"/>
         <property name="headerText" value=""/>
         <property name="pageSourceFile" value="CourseOfferingCreateMaintenanceView.xml" />
@@ -421,7 +421,7 @@
                                 <list>
                                     <bean parent="KS-Uif-PrimaryActionButton" p:methodToCall="continueFromCreate" p:actionLabel="Continue" p:render="@{!#view.readOnly}"
                                           p:onClickScript="jQuery('#validateDirty')[0].value=false;"/>
-                                    <bean parent="KS-Uif-ActionLink" p:methodToCall="cancel" p:actionLabel="cancel"/>
+                                    <bean parent="KS-Uif-ActionLink" p:methodToCall="cancel" p:actionLabel="Cancel"/>
                                 </list>
                             </property>
                         </bean>
@@ -434,10 +434,23 @@
     <bean id="KS-CourseOffering-CodeTargetSection" parent="Uif-VerticalBoxSection">
         <property name="items">
             <list>
+                <bean parent="Uif-InputField" p:propertyName="targetTermCode" p:required="true"
+                      p:label="Target Term" p:labelPlacement="TOP" p:fieldLabel.renderColon="false">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="10" p:watermarkText="201301"/>
+                    </property>
+                    <property name="help">
+                        <bean parent="Uif-Help" p:tooltipHelpContent="Term is required to retrieve the correct version of the Catalog Course"/>
+                    </property>
+                </bean>
                 <bean parent="Uif-InputField" p:propertyName="catalogCourseCode"
                       p:label="Catalog Course Code" p:labelPlacement="TOP" p:required="true" p:fieldLabel.renderColon="false">
+                    <property name="refreshWhenChangedPropertyNames" value="targetTermCode"/>
                     <property name="control">
-                        <bean parent="Uif-TextControl" p:size="10" />
+                        <bean parent="Uif-TextControl" p:size="10" p:watermarkText="ENGL237">
+                            <property name="disabled" value="@{#dp.targetTermCode eq null}"/>
+                            <property name="evaluateDisabledOnKeyUp" value="true"/>
+                        </bean>
                     </property>
                     <property name="quickfinder.dataObjectClassName" value="org.kuali.student.r2.lum.course.dto.CourseInfo"/>
                     <property name="quickfinder.fieldConversions">
@@ -446,7 +459,8 @@
                         </map>
                     </property>
                     <property name="quickfinder.quickfinderAction">
-                        <bean parent="Uif-ActionLink" p:actionLabel="Find a Course" p:style="display:block" p:methodToCall="performLookup"/>
+                        <bean parent="Uif-ActionLink" p:actionLabel="Find a Course" p:style="display:block" p:methodToCall="performLookup" p:disabled="@{#dp.targetTermCode eq null}"
+                              p:evaluateDisabledOnKeyUp="true" />
                     </property>
                     <property name="quickfinder.lightBoxLookup">
                         <bean parent="Uif-LightBoxPost" p:lookupReturnByScript="false"/>
@@ -464,13 +478,6 @@
                                 </map>
                             </property>
                         </bean>
-                    </property>
-                </bean>
-
-                <bean parent="Uif-InputField" p:propertyName="targetTermCode" p:required="true"
-                      p:label="Target Term" p:labelPlacement="TOP" p:fieldLabel.renderColon="false">
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="10" />
                     </property>
                 </bean>
             </list>
@@ -554,7 +561,7 @@
                                 <list>
                                     <bean parent="KS-Uif-PrimaryActionButton" p:methodToCall="createFromCopy" p:actionLabel="Create" p:render="@{!#view.readOnly}"
                                             p:onClickScript="jQuery('#validateDirty')[0].value=false;"/>
-                                    <bean parent="Uif-ActionLink" p:methodToCall="cancel" p:actionLabel="cancel"
+                                    <bean parent="Uif-ActionLink" p:methodToCall="cancel" p:actionLabel="Cancel"
                                           p:render="@{#actionFlags[#Constants.KUALI_ACTION_CAN_CANCEL]}"/>
                                 </list>
                             </property>
@@ -616,14 +623,28 @@
                 <value>co_copy_tables</value>
             </list>
 		</property>
-        <property name="headerText" value="Course Offerings Available for Copying" />
+        <property name="headerText" value="@{document.newMaintainableObject.dataObject.existingTermOfferings.size()>1 ? 'Course Offerings Available for Copying' : 'Course Offering Available for Copying' }" />
 		<property name="collectionObjectClass" value="org.kuali.student.enrollment.class2.courseoffering.dto.ExistingCourseOffering" />
 		<property name="propertyName" value="existingTermOfferings" />
 		<property name="layoutManager.renderSequenceField" value="false" />
         <property name="layoutManager.applyAlternatingRowStyles" value="false" />
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="sDom" value="rtip"/>
+                <entry key="bPaginate" value="@{document.newMaintainableObject.dataObject.existingTermOfferings.size()>1}"/>
+                <entry key="aoColumns" value="[{'bSortable':false},
+                                               {'bSortable':true},
+                                               {'bSortable':true},
+                                               {'bSortable':true},
+                                               {'bSortable':true},
+                                               {'bSortable':true}
+                                                ]"/>
+            </map>
+        </property>
 		<property name="items">
            <list>
-               <bean parent="Uif-InputField" p:propertyName="selected" p:label="" p:onDocumentReadyScript="replaceCheckBoxWithRadio('KS-ExistingOffering-ListCOs');">
+               <bean parent="Uif-InputField" p:propertyName="selected" p:label="" p:onDocumentReadyScript="replaceCheckBoxWithRadio('KS-ExistingOffering-ListCOs');"
+                       p:render="@{document.newMaintainableObject.dataObject.existingTermOfferings.size()>1}">
                    <property name="control">
                        <bean parent="Uif-CheckboxControl"/>
                    </property>
