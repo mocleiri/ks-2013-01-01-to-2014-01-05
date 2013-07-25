@@ -485,6 +485,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                     PaymentBillingSchedule billingSchedule = new PaymentBillingSchedule();
                     billingSchedule.setEffectiveDate(transferDetail.getInitiationDate());
                     billingSchedule.setAmount(tempAmount);
+                    billingSchedule.setTransferDetail(transferDetail);
 
                     finalSchedules.add(billingSchedule);
                 }
