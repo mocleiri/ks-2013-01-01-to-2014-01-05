@@ -402,7 +402,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
             billingSchedule.setEffectiveDate(billingDate.getEffectiveDate());
             billingSchedule.setPercentage(billingDate.getPercentage());
-            billingSchedule.setTransferDetail(transferDetail);
 
             billingSchedules.add(billingSchedule);
 
@@ -485,7 +484,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                     PaymentBillingSchedule billingSchedule = new PaymentBillingSchedule();
                     billingSchedule.setEffectiveDate(transferDetail.getInitiationDate());
                     billingSchedule.setAmount(tempAmount);
-                    billingSchedule.setTransferDetail(transferDetail);
 
                     finalSchedules.add(billingSchedule);
                 }
@@ -494,14 +492,18 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                 finalSchedules.addAll(billingSchedules);
             }
 
-            // Persisting all PB schedules
+            transferDetail.setChargeStatus(PaymentBillingChargeStatus.SCHEDULED);
+
+            // Persisting the updated PB transfer detail entity
+            persistEntity(transferDetail);
+
+            // Persisting all PB schedules with the persistent transfer detail
             for (PaymentBillingSchedule billingSchedule : finalSchedules) {
+                billingSchedule.setTransferDetail(transferDetail);
                 persistEntity(billingSchedule);
             }
 
-            transferDetail.setChargeStatus(PaymentBillingChargeStatus.SCHEDULED);
 
-            persistEntity(transferDetail);
 
             return finalSchedules;
         }
