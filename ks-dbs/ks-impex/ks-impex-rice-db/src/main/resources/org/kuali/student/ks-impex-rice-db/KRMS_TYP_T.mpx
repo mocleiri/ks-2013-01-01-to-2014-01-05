@@ -68,3 +68,4 @@ TYP_ID,NM,NMSPC_CD,SRVC_NM,ACTV,VER_NBR
 "10077","kuali.krms.proposition.type.compound.or","KS-SYS","compoundPropositionTypeService","Y","0"
 "10078","kuali.krms.proposition.type.max.limit.courses.at.org.for.program","KS-SYS","simplePropositionTypeService","Y","0"
 "10079","kuali.krms.proposition.type.max.limit.courses.at.org.duration.for.program","KS-SYS","simplePropositionTypeService","Y","0"
+"10080","kuali.krms.proposition.type.memberof.population","KS-SYS","simplePropositionTypeService","Y","0"
