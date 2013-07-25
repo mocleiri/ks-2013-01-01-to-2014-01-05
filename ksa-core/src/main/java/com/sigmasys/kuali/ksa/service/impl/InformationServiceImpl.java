@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -325,6 +324,54 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
         return memo;
 
+    }
+
+    /**
+     * Creates a memo with the default access level code.
+     *
+     * @param transactionId  Transaction ID
+     * @param memoText       Memo text
+     * @param effectiveDate  Effective date
+     * @param expirationDate Expiration date
+     * @param prevMemoId     Previous Memo ID
+     * @return new Memo instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Memo createMemo(Long transactionId, String memoText, Date effectiveDate, Date expirationDate, Long prevMemoId) {
+
+        String accessLevelCode = getDefaultMemoAccessLevelCode();
+        if (StringUtils.isBlank(accessLevelCode)) {
+            String errMsg = "Memo's default access level code is not set";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+
+        return createMemo(transactionId, memoText, accessLevelCode, effectiveDate, expirationDate, prevMemoId);
+    }
+
+    /**
+     * Creates a memo with the default access level code for the given account.
+     *
+     * @param accountId      Account ID
+     * @param memoText       Memo text
+     * @param effectiveDate  Effective date
+     * @param expirationDate Expiration date
+     * @param prevMemoId     Previous Memo ID
+     * @return new Memo instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Memo createMemo(String accountId, String memoText, Date effectiveDate, Date expirationDate, Long prevMemoId) {
+
+        String accessLevelCode = getDefaultMemoAccessLevelCode();
+        if (StringUtils.isBlank(accessLevelCode)) {
+            String errMsg = "Memo's default access level code is not set";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+
+        return createMemo(accountId, memoText, accessLevelCode, effectiveDate, expirationDate, prevMemoId);
     }
 
     /**
@@ -909,6 +956,16 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     public boolean deleteInformationAccessLevel(Long id) {
         PermissionUtils.checkPermission(Permission.DELETE_ACCESS_LEVEL);
         return deleteEntity(id, InformationAccessLevel.class);
+    }
+
+    /**
+     * Returns the default Memo Access Level code defined in the KSA configuration.
+     *
+     * @return Memo Access Level code
+     */
+    @Override
+    public String getDefaultMemoAccessLevelCode() {
+        return configService.getParameter(Constants.MEMO_DEFAULT_ACCESS_LEVEL);
     }
 
     protected void checkInformationPermission(InformationAccessLevel accessLevel, InformationPermission permission) {

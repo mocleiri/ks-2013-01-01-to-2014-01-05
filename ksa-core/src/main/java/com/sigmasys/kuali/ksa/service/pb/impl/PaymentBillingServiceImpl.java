@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.pb.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AccountService;
+import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
@@ -67,6 +68,9 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private InformationService informationService;
 
 
     /**
@@ -329,8 +333,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
     @Transactional(readOnly = false)
     public List<PaymentBillingSchedule> generatePaymentBillingSchedules(Long transferDetailId) {
 
-        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_SCHEDULE);
-
         PaymentBillingTransferDetail transferDetail = getPaymentBillingTransferDetail(transferDetailId);
         if (transferDetail == null) {
             String errMsg = "PaymentBillingTransferDetail does not exist with ID = " + transferDetailId;
@@ -345,35 +347,53 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             throw new IllegalStateException(errMsg);
         }
 
+        return generatePaymentBillingSchedules(transferDetail, billingPlan.getRoundingFactor());
+    }
+
+    protected List<PaymentBillingSchedule> generatePaymentBillingSchedules(PaymentBillingTransferDetail transferDetail,
+                                                                           int roundingFactor) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_SCHEDULE);
+
+        PaymentBillingPlan billingPlan = transferDetail.getPlan();
+        if (billingPlan == null) {
+            String errMsg = "PaymentBillingPlan does not exist for PaymentBillingTransferDetail with ID = " +
+                    transferDetail.getId();
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
         ScheduleType scheduleType = billingPlan.getScheduleType();
 
         if (scheduleType == null || scheduleType == ScheduleType.NOT_ALLOWED) {
-            String errMsg = "Payment Billing Schedule is not allowed for this plan (PaymentBillingPlan ID = " + billingPlan.getId() + ")";
+            String errMsg = "Payment Billing Schedule is not allowed for this plan (PaymentBillingPlan ID = " +
+                    billingPlan.getId() + ")";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
 
         List<PaymentBillingDate> billingDates = getPaymentBillingDates(billingPlan.getId());
 
-        boolean isEffectiveDateAfter = true;
+        boolean isInitiationDateBefore = true;
 
         for (PaymentBillingDate billingDate : billingDates) {
-            if (transferDetail.getInitiationDate().before(billingDate.getEffectiveDate())) {
-                isEffectiveDateAfter = false;
+            if (transferDetail.getInitiationDate().after(billingDate.getEffectiveDate())) {
+                isInitiationDateBefore = false;
+                break;
             }
         }
 
         List<PaymentBillingSchedule> billingSchedules = new LinkedList<PaymentBillingSchedule>();
 
-        Date currentDate = new Date();
+        BigDecimal totalPercentage = BigDecimal.ZERO;
 
-        BigDecimal currentPercentage = BigDecimal.ZERO;
+        boolean skipEarlier = !isInitiationDateBefore && scheduleType == ScheduleType.SKIP_EARLIER;
 
         for (PaymentBillingDate billingDate : billingDates) {
 
-            if (scheduleType == ScheduleType.SKIP_EARLIER) {
-                if (billingDate.getEffectiveDate().before(currentDate)) {
-                    currentPercentage = currentPercentage.add(billingDate.getPercentage());
+            if (skipEarlier) {
+                // Skipping the earlier PB dates and continuing
+                if (transferDetail.getInitiationDate().after(billingDate.getEffectiveDate())) {
                     continue;
                 }
             }
@@ -385,21 +405,107 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             billingSchedule.setTransferDetail(transferDetail);
 
             billingSchedules.add(billingSchedule);
+
+            totalPercentage = totalPercentage.add(billingDate.getPercentage());
         }
 
-        if (scheduleType == ScheduleType.SKIP_EARLIER) {
+        if (!billingSchedules.isEmpty()) {
 
-            BigDecimal hundredPercent = new BigDecimal(100);
+            final BigDecimal percentageCoeff = new BigDecimal(100).divide(totalPercentage);
+
+            boolean offsetPercentage = (skipEarlier && totalPercentage.compareTo(BigDecimal.ZERO) > 0);
 
             for (PaymentBillingSchedule billingSchedule : billingSchedules) {
-                // TODO ???
-                billingSchedule.setPercentage(billingSchedule.getPercentage().multiply(currentPercentage).divide(hundredPercent));
+
+                if (offsetPercentage) {
+                    billingSchedule.setPercentage(billingSchedule.getPercentage().multiply(percentageCoeff));
+                }
+
+                BigDecimal paymentAmount = calculatePaymentAmount(transferDetail.getPlanAmount(),
+                        billingSchedule.getPercentage(),
+                        billingPlan.getRoundingFactor());
+
+                billingSchedule.setAmount(paymentAmount);
             }
+
+            PaymentBillingSchedule firstLastSchedule =
+                    (billingPlan.getPaymentRoundingType() == PaymentRoundingType.FIRST) ?
+                            billingSchedules.get(0) : billingSchedules.get(billingSchedules.size() - 1);
+
+            BigDecimal tempAmount = BigDecimal.ZERO;
+
+            for (PaymentBillingSchedule billingSchedule : billingSchedules) {
+                if (!billingSchedule.equals(firstLastSchedule)) {
+                    tempAmount = tempAmount.add(billingSchedule.getAmount());
+                }
+            }
+
+            BigDecimal nonRoundedAmount = transferDetail.getPlanAmount().subtract(tempAmount);
+
+            firstLastSchedule.setAmount(nonRoundedAmount);
+
+            if (nonRoundedAmount.compareTo(BigDecimal.ZERO) <= 0) {
+
+                if (roundingFactor <= 0) {
+                    String errMsg = "Payment billing rounding problem occurred, PaymentBillingTransferDetail ID = " +
+                            transferDetail.getId() + ", non-rounded amount = " + nonRoundedAmount.toString();
+                    logger.error(errMsg);
+                    throw new IllegalStateException(errMsg);
+                } else {
+
+                    String memoText = configService.getParameter(Constants.PAYMENT_BILLING_ROUNDING_PROBLEM_MEMO);
+
+                    String accountId = transferDetail.getDirectChargeAccount().getId();
+
+                    informationService.createMemo(accountId, memoText, new Date(), null, null);
+
+                    // Trying to generate PB schedules again with roundingFactor = 0
+                    return generatePaymentBillingSchedules(transferDetail, 0);
+                }
+            }
+
+            List<PaymentBillingSchedule> finalSchedules = new LinkedList<PaymentBillingSchedule>();
+
+            if (!isInitiationDateBefore && scheduleType == ScheduleType.BALANCE_TODAY) {
+
+                tempAmount = BigDecimal.ZERO;
+
+                for (PaymentBillingSchedule billingSchedule : billingSchedules) {
+
+                    if (billingSchedule.getEffectiveDate().before(transferDetail.getInitiationDate())) {
+                        tempAmount = tempAmount.add(billingSchedule.getAmount());
+                    } else {
+                        finalSchedules.add(billingSchedule);
+                    }
+
+                }
+
+                if (tempAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+                    PaymentBillingSchedule billingSchedule = new PaymentBillingSchedule();
+                    billingSchedule.setEffectiveDate(transferDetail.getInitiationDate());
+                    billingSchedule.setAmount(tempAmount);
+
+                    finalSchedules.add(billingSchedule);
+                }
+
+            } else {
+                finalSchedules.addAll(billingSchedules);
+            }
+
+            // Persisting all PB schedules
+            for (PaymentBillingSchedule billingSchedule : finalSchedules) {
+                persistEntity(billingSchedule);
+            }
+
+            transferDetail.setChargeStatus(PaymentBillingChargeStatus.SCHEDULED);
+
+            persistEntity(transferDetail);
+
+            return finalSchedules;
         }
 
-        // TODO: Ask Paul how to implement the next steps
-
-        return null;
+        return Collections.emptyList();
     }
 
 
@@ -613,7 +719,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                 @Override
                 public int compare(PaymentBillingSchedule s1, PaymentBillingSchedule s2) {
                     switch (billingPlan.getPaymentRoundingType()) {
-                        case ALL_BUT_FIRST:
+                        case FIRST:
                             return s2.getEffectiveDate().compareTo(s1.getEffectiveDate());
                         default:
                             return s1.getEffectiveDate().compareTo(s2.getEffectiveDate());

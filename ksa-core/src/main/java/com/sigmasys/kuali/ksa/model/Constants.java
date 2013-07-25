@@ -86,6 +86,12 @@ public interface Constants {
     String REFUND_METHOD_OVERRIDE = "ksa.refund.override.method";
     String REFUND_SOURCE_TYPE = "ksa.refund.source.type";
 
+    // Payment Billing constants
+    String PAYMENT_BILLING_ROUNDING_PROBLEM_MEMO = "ksa.payment.billing.rounding.problem.memo";
+
+    // Memo constants
+    String MEMO_DEFAULT_ACCESS_LEVEL = "ksa.memo.level";
+
     // Account service constants
     String AGE_DEBT_METHOD = "ksa.account.age.debt.method";
 

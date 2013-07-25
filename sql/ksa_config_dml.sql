@@ -85,9 +85,13 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.payment.contest.type.id', 'ca
 
 -- General Ledger settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.general.ledger.type', 'SAR');
+
 -- The GL mode can be Individual, Batch, BatchRollup
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.general.ledger.mode', 'Batch');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.general.ledger.payment.application.statement', 'PA Transaction');
+
+-- Payment Billing parameters
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.payment.billing.rounding.problem.memo', 'PB rounding problem occurred');
 
 
 -- Combined Cash Limit Tracking Settings

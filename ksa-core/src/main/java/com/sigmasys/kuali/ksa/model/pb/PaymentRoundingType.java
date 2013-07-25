@@ -9,11 +9,11 @@ import com.sigmasys.kuali.ksa.model.Identifiable;
  */
 public enum PaymentRoundingType implements Identifiable {
 
-    ALL_BUT_FIRST(PaymentRoundingType.ALL_BUT_FIRST_CODE),
-    ALL_BUT_LAST(PaymentRoundingType.ALL_BUT_LAST_CODE);
+    FIRST(PaymentRoundingType.FIRST_CODE),
+    LAST(PaymentRoundingType.LAST_CODE);
 
-    public static final String ALL_BUT_FIRST_CODE = "F";
-    public static final String ALL_BUT_LAST_CODE = "L";
+    public static final String FIRST_CODE = "F";
+    public static final String LAST_CODE = "L";
 
 
     private String id;
@@ -30,9 +30,9 @@ public enum PaymentRoundingType implements Identifiable {
     @Override
     public String toString() {
         switch (this) {
-            case ALL_BUT_FIRST:
+            case FIRST:
                 return "Non-rounded First";
-            case ALL_BUT_LAST:
+            case LAST:
                 return "Non-rounded Last";
         }
         throw new IllegalStateException("No payment rounding type found for " + name() + " value");

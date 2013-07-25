@@ -106,7 +106,6 @@ public class TransactionController extends GenericSearchController {
     }
 
     /**
-     *
      * @param form
      * @return
      */
@@ -115,11 +114,11 @@ public class TransactionController extends GenericSearchController {
         String newTag = form.getNewTag();
         Tag tag = auditableEntityService.getAuditableEntity(newTag, Tag.class);
         List<Tag> tags = form.getFilterTags();
-        if(tags == null){
+        if (tags == null) {
             tags = new ArrayList<Tag>();
             form.setFilterTags(tags);
         }
-        if(tag != null){
+        if (tag != null) {
             tags.add(tag);
         }
 
@@ -129,7 +128,6 @@ public class TransactionController extends GenericSearchController {
     }
 
     /**
-     *
      * @param form
      * @return
      */
@@ -142,11 +140,11 @@ public class TransactionController extends GenericSearchController {
             Tag tag = auditableEntityService.getAuditableEntity(tagId, Tag.class);
 
             List<Tag> tags = form.getFilterTags();
-            if(tags == null){
+            if (tags == null) {
                 tags = new ArrayList<Tag>();
                 form.setFilterTags(tags);
             }
-            if(tag != null){
+            if (tag != null) {
 
                 this.removeTag(tags, tag);
                 form.setFilterTags(tags);
@@ -159,7 +157,6 @@ public class TransactionController extends GenericSearchController {
     }
 
     /**
-     *
      * @param form
      * @return
      */
@@ -180,7 +177,6 @@ public class TransactionController extends GenericSearchController {
     }
 
     /**
-     *
      * @param form
      * @return
      */
@@ -189,21 +185,21 @@ public class TransactionController extends GenericSearchController {
         String transactionIdString = request.getParameter("actionParameters[currentParent]");
 
         Long transactionId;
-        try{
+        try {
             transactionId = Long.parseLong(transactionIdString);
-        } catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             logger.error("Invalid transaction id passed to addTransactionTag: '" + transactionIdString + "'");
             return getUIFModelAndView(form);
         }
 
         // Need to loop through the form's 'allTransactions' to figure out which one we're talking about.
-        for(TransactionModel tm : form.getAllTransactions()){
-            if(tm.getId().equals(transactionId)){
+        for (TransactionModel tm : form.getAllTransactions()) {
+            if (tm.getId().equals(transactionId)) {
                 String tagString = tm.getNewTag();
 
                 Tag tag = auditableEntityService.getAuditableEntity(tagString, Tag.class);
                 List<Tag> tags = new ArrayList<Tag>();
-                if(tag != null){
+                if (tag != null) {
                     tags.add(tag);
                     transactionService.addTagsToTransaction(transactionId, tags);
                 }
@@ -218,7 +214,7 @@ public class TransactionController extends GenericSearchController {
     private void populateForm(TransactionForm form) {
         Account act = form.getAccount();
         String userId = "";
-        if(act != null){
+        if (act != null) {
             userId = act.getId();
         } else {
             form.setStatusMessage("No account in form");
@@ -247,7 +243,7 @@ public class TransactionController extends GenericSearchController {
 
         List<Tag> tags = form.getFilterTags();
 
-        if(tags != null && tags.size() > 0){
+        if (tags != null && tags.size() > 0) {
             transactions = TransactionUtils.filterByTags(transactions, tags);
         }
 
@@ -274,7 +270,7 @@ public class TransactionController extends GenericSearchController {
 
             // Add appropriate Alerts
             for (InformationModel im : form.getAlerts()) {
-                Alert a = (Alert)im.getParentEntity();
+                Alert a = (Alert) im.getParentEntity();
                 Transaction alertTransaction = a.getTransaction();
                 if (alertTransaction != null && alertTransaction.getId().equals(t.getId())) {
                     m.addAlert(a);
@@ -283,7 +279,7 @@ public class TransactionController extends GenericSearchController {
 
             // Add appropriate flags
             for (InformationModel im : form.getFlags()) {
-                Flag f = (Flag)im.getParentEntity();
+                Flag f = (Flag) im.getParentEntity();
                 Transaction flagTransaction = f.getTransaction();
                 if (flagTransaction != null && flagTransaction.getId().equals(t.getId())) {
                     m.addFlag(f);
@@ -427,24 +423,24 @@ public class TransactionController extends GenericSearchController {
         String errorMessage = "";
         Long transactionId;
         Long allocationId;
-        try{
+        try {
             transactionId = Long.parseLong(transactionIdString);
             allocationId = Long.parseLong(allocationIdString);
-        } catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             errorMessage = "Invalid ID passed to removeAllocation";
             GlobalVariables.getMessageMap().putError("transactionView", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
         }
 
-        if(locked) {
+        if (locked) {
             // Save the memo attached to this.
-            if(this.saveAllocationMemos(form, transactionId, allocationId)){
+            if (this.saveAllocationMemos(form, transactionId, allocationId)) {
                 transactionService.removeLockedAllocation(transactionId, allocationId);
             } else {
                 errorMessage = "Memo is required for locked allocations";
                 GlobalVariables.getMessageMap().putError("TransactionView", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             }
-        }  else {
+        } else {
             transactionService.removeAllocation(transactionId, allocationId);
         }
 
@@ -475,31 +471,27 @@ public class TransactionController extends GenericSearchController {
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=allocate")
     public ModelAndView allocate(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+
         String transactionIdString = request.getParameter("actionParameters[transactionId]");
         Long transactionId = Long.parseLong(transactionIdString);
 
-        String userid = form.getAccount().getId();
+        String userId = form.getAccount().getId();
 
         Transaction t = transactionService.getTransaction(transactionId);
 
-        if(! t.getAccount().getId().equals(form.getAccount().getId())){
+        if (!t.getAccount().getId().equals(form.getAccount().getId())) {
             // This should never happen unless someone is messing with the URL and trying to see things
-            throw new IllegalStateException("Transaction ID and Userid do not match: " + t.getAccount().getId() + " " + userid);
+            throw new IllegalStateException("Transaction ID and User ID do not match: " + t.getAccount().getId() + " " + userId);
         }
 
-        if(t != null){
-            TransactionModel tm = new TransactionModel(t);
-            form.setCurrentTransaction(tm);
+        TransactionModel tm = new TransactionModel(t);
+        form.setCurrentTransaction(tm);
 
-            List<TransactionModel> allocations = this.getPossibleAllocations(userid, t);
-            logger.info("Potential allocations size: " + allocations.size());
-            form.setCurrrentTransactionAllocations(allocations);
-
-        }
-
+        List<TransactionModel> allocations = this.getPossibleAllocations(userId, t);
+        logger.info("Potential allocations size: " + allocations.size());
+        form.setCurrrentTransactionAllocations(allocations);
 
         form.setPageId(ALLOCATE_TRANSACTION_PAGE);
-
 
         return getUIFModelAndView(form);
     }
@@ -514,9 +506,9 @@ public class TransactionController extends GenericSearchController {
     public ModelAndView allocateTransaction(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
         TransactionModel currentTransaction = form.getCurrentTransaction();
-        Transaction parent = (Transaction)currentTransaction.getParentTransaction();
+        Transaction parent = currentTransaction.getParentTransaction();
 
-        if(parent == null){
+        if (parent == null) {
             String statusMsg = "Unknown transaction.  Unable to process allocations.";
             GlobalVariables.getMessageMap().putError("", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
@@ -527,11 +519,11 @@ public class TransactionController extends GenericSearchController {
         BigDecimal total = BigDecimal.ZERO;
 
         List<TransactionModel> allocations = form.getCurrrentTransactionAllocations();
-        for(TransactionModel model : allocations){
+        for (TransactionModel model : allocations) {
             BigDecimal amount = model.getNewAllocation();
 
-            if(amount != null){
-                if(amount.compareTo(model.getUnallocatedAmount()) > 0){
+            if (amount != null) {
+                if (amount.compareTo(model.getUnallocatedAmount()) > 0) {
                     String statusMsg = "Allocation amount of " + amount + " cannot be greater than the unallocated amount of " + model.getUnallocatedAmount() + " for " + model.getParentTransaction().getTransactionType().getDescription();
                     GlobalVariables.getMessageMap().putError(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
                 }
@@ -540,7 +532,7 @@ public class TransactionController extends GenericSearchController {
         }
 
         // Total of allocations can't be greater than the payment amount
-        if(total.compareTo(parent.getAmount()) > 0) {
+        if (total.compareTo(parent.getAmount()) > 0) {
             String statusMsg = "Allocations cannot add up to more than the payment amount";
             GlobalVariables.getMessageMap().putError(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
@@ -548,10 +540,10 @@ public class TransactionController extends GenericSearchController {
             return getUIFModelAndView(form);
         }
 
-        if(!GlobalVariables.getMessageMap().hasErrors()) {
-            for(TransactionModel model : allocations) {
+        if (!GlobalVariables.getMessageMap().hasErrors()) {
+            for (TransactionModel model : allocations) {
                 BigDecimal amount = model.getNewAllocation();
-                if(amount != null && (amount.compareTo(BigDecimal.ZERO) > 0)) {
+                if (amount != null && (amount.compareTo(BigDecimal.ZERO) > 0)) {
                     transactionService.createAllocation(parent.getId(), model.getParentTransaction().getId(), amount);
                 }
             }
@@ -573,16 +565,16 @@ public class TransactionController extends GenericSearchController {
     }
 
     private boolean saveAllocationMemos(TransactionForm form, Long transactionId, Long allocationId) {
+
         List<TransactionModel> allTransactions = form.getAllTransactions();
 
-        for(TransactionModel model : allTransactions){
-            if(transactionId.equals(model.getId()) || allocationId.equals(model.getId())){
+        for (TransactionModel model : allTransactions) {
+            if (transactionId.equals(model.getId()) || allocationId.equals(model.getId())) {
                 List<AllocationModel> allocations = model.getAllocations();
-                for(AllocationModel allocation : allocations){
+                for (AllocationModel allocation : allocations) {
                     Memo memo = allocation.getMemoModel();
-                    if(memo != null && memo.getText() != null){
-                        memo = informationService.createMemo(transactionId, memo.getText(), "DEF_MEMO_LEVEL_CD", memo.getEffectiveDate(), memo.getExpirationDate(), null);
-                        return true;
+                    if (memo != null && memo.getText() != null) {
+                        return informationService.createMemo(transactionId, memo.getText(), memo.getEffectiveDate(), memo.getExpirationDate(), null) != null;
                     }
                 }
 
@@ -593,6 +585,7 @@ public class TransactionController extends GenericSearchController {
     }
 
     private void populateRollups(TransactionForm form, List<TransactionModel> transactions) {
+
         List<TransactionModel> rollUpTransactionModelList = new ArrayList<TransactionModel>();
         List<TransactionModel> unGroupedTransactionModelList = new ArrayList<TransactionModel>();
         List<TransactionModel> defermentModelList = new ArrayList<TransactionModel>();
@@ -689,21 +682,21 @@ public class TransactionController extends GenericSearchController {
     }
 
     private void removeTag(List<Tag> tags, Tag tagToRemove) {
-        for ( Tag tag : new HashSet<Tag>(tags) ) {
-            if ( tag.getCode().equals(tagToRemove.getCode())) {
+        for (Tag tag : new HashSet<Tag>(tags)) {
+            if (tag.getCode().equals(tagToRemove.getCode())) {
                 tags.remove(tag);
                 break;
             }
         }
     }
 
-    private List<TransactionModel> getPossibleAllocations(String userId, Transaction transaction){
+    private List<TransactionModel> getPossibleAllocations(String userId, Transaction transaction) {
 
         List<Transaction> transactions = transactionService.getTransactions(userId);
 
         List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
         for (Transaction t : transactions) {
-            if(transactionService.canPay(transaction, t) && (t.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0)){
+            if (transactionService.canPay(transaction, t) && (t.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0)) {
                 TransactionModel m = new TransactionModel(t);
                 models.add(m);
             }

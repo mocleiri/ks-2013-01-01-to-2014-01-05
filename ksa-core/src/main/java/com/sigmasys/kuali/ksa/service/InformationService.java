@@ -142,6 +142,19 @@ public interface InformationService {
     Memo createMemo(Long transactionId, String memoText, String accessLevelCode,
                     Date effectiveDate, Date expirationDate, Long prevMemoId);
 
+
+    /**
+     * Creates a memo with the default access level code for the given transaction.
+     *
+     * @param transactionId  Transaction ID
+     * @param memoText       Memo text
+     * @param effectiveDate  Effective date
+     * @param expirationDate Expiration date
+     * @param prevMemoId     Previous Memo ID
+     * @return new Memo instance
+     */
+    Memo createMemo(Long transactionId, String memoText, Date effectiveDate, Date expirationDate, Long prevMemoId);
+
     /**
      * Memos can be generated in a number of ways. If a memo is generated
      * against a transaction, it is placed in the main memo account, and also
@@ -160,6 +173,18 @@ public interface InformationService {
      */
     Memo createMemo(String accountId, String memoText, String accessLevelCode,
                     Date effectiveDate, Date expirationDate, Long prevMemoId);
+
+    /**
+     * Creates a memo with the default access level code for the given account.
+     *
+     * @param accountId      Account ID
+     * @param memoText       Memo text
+     * @param effectiveDate  Effective date
+     * @param expirationDate Expiration date
+     * @param prevMemoId     Previous Memo ID
+     * @return new Memo instance
+     */
+    Memo createMemo(String accountId, String memoText, Date effectiveDate, Date expirationDate, Long prevMemoId);
 
 
     /**
@@ -364,5 +389,12 @@ public interface InformationService {
      * @return true if InformationAccessLevel entity has been deleted
      */
     boolean deleteInformationAccessLevel(Long id);
+
+    /**
+     * Returns the default Memo Access Level code defined in the KSA configuration.
+     *
+     * @return Memo Access Level code
+     */
+    String getDefaultMemoAccessLevelCode();
 
 }

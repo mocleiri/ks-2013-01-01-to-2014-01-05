@@ -12,13 +12,13 @@ public enum ScheduleType implements Identifiable {
     NOT_ALLOWED(ScheduleType.NOT_ALLOWED_CODE),
     BACK_BILLED(ScheduleType.BACK_BILLED_CODE),
     SKIP_EARLIER(ScheduleType.SKIP_EARLIER_CODE),
-    DUE_TODAY(ScheduleType.DUE_TODAY_CODE);
+    BALANCE_TODAY(ScheduleType.BALANCE_TODAY_CODE);
 
 
     public static final String NOT_ALLOWED_CODE = "N";
     public static final String BACK_BILLED_CODE = "B";
     public static final String SKIP_EARLIER_CODE = "S";
-    public static final String DUE_TODAY_CODE = "D";
+    public static final String BALANCE_TODAY_CODE = "D";
 
 
     private String id;
@@ -41,7 +41,7 @@ public enum ScheduleType implements Identifiable {
                 return "Back-billed";
             case SKIP_EARLIER:
                 return "Skip Earlier";
-            case DUE_TODAY:
+            case BALANCE_TODAY:
                 return "Due Today";
         }
         throw new IllegalStateException("No late start type found for " + name() + " value");
