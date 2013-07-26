@@ -7,6 +7,11 @@ When /^I search for course offerings by course by entering a subject code$/ do
   @schedule_of_classes.display
 end
 
+When /^I search for course offerings by course by entering a course number/ do
+  @schedule_of_classes = make ScheduleOfClasses, :term => "Fall 2012", :course_search_parm => "CHEM105", :exp_course_list => ["CHEM105"]
+  @schedule_of_classes.display
+end
+
 When /^I search for course offerings by course by entering a subject code: (.*)$/ do |subject_code|
   @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => subject_code
   @schedule_of_classes.display
@@ -20,6 +25,10 @@ end
 
 Then /^the course offering details for a particular offering can be shown$/ do
   @schedule_of_classes.expand_course_details
+end
+
+And /^the subterm icon appears with the subterm information$/ do
+  @schedule_of_classes.check_activities_table
 end
 
 Then /^the course offering details for all offerings can be shown$/ do

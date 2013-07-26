@@ -32,10 +32,17 @@ class DisplayScheduleOfClasses < BasePage
 
   element(:results_table) { |b| b.frm.div(id: "KS-ScheduleOfClasses-CourseOfferingListSection").table() }
 
+  element(:results_activities_table) { |b| b.frm.div(id: /findThisId_.*/).table() }
+
+  # Course table
   EXPAND_ACTION_COLUMN = 0
   COURSE_CODE_COLUMN = 1
   TITLE_COLUMN = 2
   CREDITS_COLUMN = 3
+
+  # Activities table
+  CODE_COL = 0
+  ICON_COL = 9
 
   def target_course_row(course_code)
     results_table.wait_until_present
