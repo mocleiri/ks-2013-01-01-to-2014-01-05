@@ -16,9 +16,9 @@ import java.util.Set;
 public class RateCatalog extends AbstractRateEntity {
 
 
-    private BigDecimal lowerBoundAmount;
+    private BigDecimal minAmount;
 
-    private BigDecimal upperBoundAmount;
+    private BigDecimal maxAmount;
 
     private Boolean isKeyPairFinal;
 
@@ -40,22 +40,22 @@ public class RateCatalog extends AbstractRateEntity {
         return id;
     }
 
-    @Column(name = "LOWER_BOUND_AMOUNT")
-    public BigDecimal getLowerBoundAmount() {
-        return lowerBoundAmount;
+    @Column(name = "MIN_AMOUNT")
+    public BigDecimal getMinAmount() {
+        return minAmount;
     }
 
-    public void setLowerBoundAmount(BigDecimal lowerBoundAmount) {
-        this.lowerBoundAmount = lowerBoundAmount;
+    public void setMinAmount(BigDecimal minAmount) {
+        this.minAmount = minAmount;
     }
 
-    @Column(name = "UPPER_BOUND_AMOUNT")
-    public BigDecimal getUpperBoundAmount() {
-        return upperBoundAmount;
+    @Column(name = "MAX_AMOUNT")
+    public BigDecimal getMaxAmount() {
+        return maxAmount;
     }
 
-    public void setUpperBoundAmount(BigDecimal upperBoundAmount) {
-        this.upperBoundAmount = upperBoundAmount;
+    public void setMaxAmount(BigDecimal maxAmount) {
+        this.maxAmount = maxAmount;
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")

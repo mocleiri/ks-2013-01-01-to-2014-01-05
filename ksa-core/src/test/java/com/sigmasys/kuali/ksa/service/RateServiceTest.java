@@ -61,21 +61,26 @@ public class RateServiceTest extends AbstractServiceTest {
         String rateTypeCode = "RT_2013";
         String transactionTypeId = "cash";
         TransactionDateType dateType = TransactionDateType.ALWAYS;
-        BigDecimal lowerBound = new BigDecimal(10.99);
-        BigDecimal upperBound = new BigDecimal(300000.67);
-        BigDecimal cappedAmount = new BigDecimal(200.88);
+
+        BigDecimal minAmount = new BigDecimal(10.99);
+        BigDecimal maxAmount = new BigDecimal(300000.67);
+        BigDecimal limitAmount = new BigDecimal(200.88);
+
+        int minLimitUnits = 0;
+        int maxLimitUnits = 10;
+
         List<KeyPair> keyPairs = Arrays.asList(new KeyPair("key1", "value1"));
 
         RateCatalog rateCatalog = rateService.createRateCatalog(rateCatalogCode, rateTypeCode, transactionTypeId,
-                dateType, lowerBound, upperBound, cappedAmount, Arrays.asList(atpIds), keyPairs,
-                false, false, false, false, false);
+                dateType, minAmount, maxAmount, limitAmount, minLimitUnits, maxLimitUnits, Arrays.asList(atpIds),
+                keyPairs, false, false, false, false, false);
 
         Assert.notNull(rateCatalog);
         Assert.notNull(rateCatalog.getId());
         Assert.notNull(rateCatalog.getCode());
         Assert.isTrue(rateCatalog.getCode().equals(rateCatalogCode));
-        Assert.notNull(rateCatalog.getLowerBoundAmount());
-        Assert.notNull(rateCatalog.getUpperBoundAmount());
+        Assert.notNull(rateCatalog.getMinAmount());
+        Assert.notNull(rateCatalog.getMaxAmount());
         Assert.notNull(rateCatalog.getKeyPairs());
         Assert.notEmpty(rateCatalog.getKeyPairs());
         Assert.notNull(rateCatalog.getTransactionDateType());
@@ -926,15 +931,13 @@ public class RateServiceTest extends AbstractServiceTest {
 
         RateAmount amount1 = new RateAmount();
         amount1.setAmount(new BigDecimal(200.00));
-        amount1.setUnit(3);
-        amount1.setUnitFraction(6);
+        amount1.setUnit(125);
         amount1.setTransactionTypeId(rate.getTransactionTypeId());
         amounts.add(amount1);
 
         RateAmount amount2 = new RateAmount();
         amount2.setAmount(new BigDecimal(100.00));
-        amount2.setUnit(1);
-        amount2.setUnitFraction(5);
+        amount2.setUnit(275);
         amount2.setTransactionTypeId(rate.getTransactionTypeId());
         amounts.add(amount2);
 
@@ -994,15 +997,13 @@ public class RateServiceTest extends AbstractServiceTest {
 
         RateAmount amount1 = new RateAmount();
         amount1.setAmount(new BigDecimal(200.00));
-        amount1.setUnit(3);
-        amount1.setUnitFraction(6);
+        amount1.setUnit(350);
         amount1.setTransactionTypeId(rate.getTransactionTypeId());
         amounts.add(amount1);
 
         RateAmount amount2 = new RateAmount();
         amount2.setAmount(new BigDecimal(100.00));
-        amount2.setUnit(1);
-        amount2.setUnitFraction(5);
+        amount2.setUnit(125);
         amount2.setTransactionTypeId(rate.getTransactionTypeId());
         amounts.add(amount2);
 
@@ -1021,7 +1022,7 @@ public class RateServiceTest extends AbstractServiceTest {
             Assert.notNull(rateAmount.getRate());
             Assert.isTrue(rateAmount.getRate().getId().equals(rate.getId()));
 
-            if (rateAmount.getUnit() == 1) {
+            if (rateAmount.getUnit() == 125) {
                 rateService.deleteRateAmount(rateAmount.getId());
             }
 

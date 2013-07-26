@@ -28,7 +28,11 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> {
 
     protected Set<KeyPair> keyPairs;
 
-    protected BigDecimal cappedAmount;
+    protected BigDecimal limitAmount;
+
+    protected Integer minLimitUnits;
+
+      protected Integer maxLimitUnits;
 
     protected TransactionDateType transactionDateType;
 
@@ -83,13 +87,31 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> {
         this.rateType = rateType;
     }
 
-    @Column(name = "CAPPED_AMOUNT")
-    public BigDecimal getCappedAmount() {
-        return cappedAmount;
+    @Column(name = "LIMIT_AMOUNT")
+    public BigDecimal getLimitAmount() {
+        return limitAmount;
     }
 
-    public void setCappedAmount(BigDecimal cappedAmount) {
-        this.cappedAmount = cappedAmount;
+    public void setLimitAmount(BigDecimal limitAmount) {
+        this.limitAmount = limitAmount;
+    }
+
+    @Column(name = "MIN_LIMIT_UNITS")
+    public Integer getMinLimitUnits() {
+        return minLimitUnits;
+    }
+
+    public void setMinLimitUnits(Integer minLimitUnits) {
+        this.minLimitUnits = minLimitUnits;
+    }
+
+    @Column(name = "MAX_LIMIT_UNITS")
+    public Integer getMaxLimitUnits() {
+        return maxLimitUnits;
+    }
+
+    public void setMaxLimitUnits(Integer maxLimitUnits) {
+        this.maxLimitUnits = maxLimitUnits;
     }
 
     @Column(name = "TRANS_DATE_TYPE", length = 10)
@@ -110,11 +132,6 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> {
     public void setTransactionDateType(TransactionDateType transactionDateType) {
         this.transactionDateType = transactionDateType;
         transactionDateTypeCode = transactionDateType.getId();
-    }
-
-    @Transient
-    public Boolean isAmountCapped() {
-        return cappedAmount != null;
     }
 
 }

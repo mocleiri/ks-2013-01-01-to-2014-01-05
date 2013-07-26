@@ -111,9 +111,11 @@ public interface RateService {
      * @param rateTypeCode               RateType code
      * @param transactionTypeId          TransactionType ID
      * @param transactionDateType        TransactionDateType enum value
-     * @param lowerBoundAmount           Minimum transaction amount
-     * @param upperBoundAmount           Maximum transaction amount
-     * @param cappedAmount               Capped amount
+     * @param minAmount                  Minimum transaction amount
+     * @param maxAmount                  Maximum transaction amount
+     * @param limitAmount                Limit amount
+     * @param minLimitUnits              Minimum number of Limit Units
+     * @param maxLimitUnits              Maximum number of Limit Units
      * @param atpIds                     list of ATP IDs
      * @param keyPairs                   list of KeyPair instances
      * @param isTransactionTypeFinal     Indicates whether the transaction type is final
@@ -127,9 +129,11 @@ public interface RateService {
                                   String rateTypeCode,
                                   String transactionTypeId,
                                   TransactionDateType transactionDateType,
-                                  BigDecimal lowerBoundAmount,
-                                  BigDecimal upperBoundAmount,
-                                  BigDecimal cappedAmount,
+                                  BigDecimal minAmount,
+                                  BigDecimal maxAmount,
+                                  BigDecimal limitAmount,
+                                  int minLimitUnits,
+                                  int maxLimitUnits,
                                   List<String> atpIds,
                                   List<KeyPair> keyPairs,
                                   boolean isTransactionTypeFinal,

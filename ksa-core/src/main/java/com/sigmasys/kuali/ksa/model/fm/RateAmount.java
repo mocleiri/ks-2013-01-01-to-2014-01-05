@@ -12,14 +12,12 @@ import java.math.BigDecimal;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_RATE_AMOUNT",  uniqueConstraints = {@UniqueConstraint(columnNames = {"RATE_ID_FK", "UNIT", "UNIT_FRACTION"})})
+@Table(name = "KSSA_RATE_AMOUNT",  uniqueConstraints = {@UniqueConstraint(columnNames = {"RATE_ID_FK", "UNIT"})})
 public class RateAmount implements Identifiable {
 
     private Long id;
 
     private Integer unit;
-
-    private Integer unitFraction;
 
     private BigDecimal amount;
 
@@ -51,15 +49,6 @@ public class RateAmount implements Identifiable {
 
     public void setUnit(Integer unit) {
         this.unit = unit;
-    }
-
-    @Column(name = "UNIT_FRACTION")
-    public Integer getUnitFraction() {
-        return unitFraction;
-    }
-
-    public void setUnitFraction(Integer unitFraction) {
-        this.unitFraction = unitFraction;
     }
 
     @Column(name = "AMOUNT")
