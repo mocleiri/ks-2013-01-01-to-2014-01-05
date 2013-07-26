@@ -66,11 +66,10 @@ Feature: WC.Edit Course Offerings
     Then I can submit and the course offering is updated
 
 # KSENROLL-2860/3022
-  @pending
-  Scenario Outline: Test that user is unable to manage course offerings when SOC is in certain states
-    When I manually change a given soc-state to "<BlockingSocState>"
-    Then I verify that I cannot manage course offerings
-  Examples:
-    | BlockingSocState |
-    | Publishing       |
-    | In Progress      |
+  Scenario: Test that user is unable to manage course offerings when SOC is in certain states
+    When I manually change a given soc-state to "Publishing"
+    Then I verify that I "cannot" manage course offerings
+    And I manually change a given soc-state to "In Progress"
+    Then I verify that I "cannot" manage course offerings
+    And I manually change a given soc-state to "Open"
+    Then I verify that I "can" manage course offerings

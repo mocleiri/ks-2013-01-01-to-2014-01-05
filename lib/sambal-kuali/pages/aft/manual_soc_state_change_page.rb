@@ -1,5 +1,8 @@
 class ManualSocStateChangePage < BasePage
 
+  # we navigate directly to this page because it does not have a direct-link in the portal or in ENR-home
+  page_url "#{$test_site}/kr-krad/testStatePropagation?viewId=testStatePropagationView&pageId=aft-changeSocStatePage&methodToCall=start"
+
   wrapper_elements
   frame_element
 

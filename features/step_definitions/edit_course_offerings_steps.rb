@@ -170,15 +170,21 @@ When /^I add an administering organization and activate the honors flag$/ do
 
 end
 
-When /^I manually change a given soc-state to "(Publishing|In Progress)"$/ do |newSocState|
+When /^I manually change a given soc-state to "(Open|Publishing|In Progress)"$/ do |newSocState|
   @manualSocStateChanger = make ManualSocStateChange
   @manualSocStateChanger.perform_manual_soc_state_change :new_soc_state=>newSocState
 end
 
-Then /^I verify that I cannot manage course offerings$/ do
+Then /^I verify that I "(can|cannot)" manage course offerings$/ do |can_manage|
   course_offering = make CourseOffering, :term => @manualSocStateChanger.term
   course_offering.search_by_subjectcode
-  expected_errMsg = "Access to course offerings is not permitted while this term's Set of Courses (SOC) is"
-  on(ManageCourseOfferings).first_msg.should match /.*#{Regexp.escape(expected_errMsg)}.*/
+
+  case can_manage
+    when "cannot"
+      expected_errMsg = "Access to course offerings is not permitted while this term's Set of Courses (SOC) is"
+      on(ManageCourseOfferings).first_msg.should match /.*#{Regexp.escape(expected_errMsg)}.*/
+    else  # "can"
+      on(ManageCourseOfferings).info_list.should_not be_present   # an error-message should not be displayed
+  end
 end
 

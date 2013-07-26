@@ -69,7 +69,6 @@ class PortalMenu < BasePage
   action(:manage_population) { |b| b.link(title: "Manage Population (Lookup)").click }
   action(:population_maintenance_edoc) { |b| b.link(title: "Population Maintenance eDoc (New)").click }
   action(:test_state_propagation) { |b| b.link(text: "Test State Propagation").click }
-  action(:test_manual_soc_state_change) { |b| b.link(text: "Test SOC State Change").click }
   action(:schedule_of_classes) { |b| b.link(title: "Schedule of Classes").click }
 
   #KRMS Links

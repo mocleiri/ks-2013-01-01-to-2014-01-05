@@ -10,6 +10,7 @@ class ManualSocStateChange
   attr_accessor :term,
                 :soc_state
 
+  OPEN_STATE_KEY = "kuali.soc.state.open"
   PUBLISHING_STATE_KEY = "kuali.soc.state.publishing"
   IN_PROGRESS_STATE_KEY = "kuali.soc.scheduling.state.inprogress"
 
@@ -25,20 +26,23 @@ class ManualSocStateChange
   end
 
   # initiates a manual SOC state-change
+  #
+  # @example
+  #   @manual_soc_state_change.perform_manual_soc_state_change :new_soc_state => "Publishing"
+  #
+  # @param opts [Hash] {:new_soc_state => "Publishing" (default is "Open")}
   def perform_manual_soc_state_change(opts={})
     case opts[:new_soc_state]
       when "Publishing"
         @soc_state = ManualSocStateChange::PUBLISHING_STATE_KEY
       when "In Progress"
         @soc_state = ManualSocStateChange::IN_PROGRESS_STATE_KEY
-    end
-    if opts[:term] != nil
-      @term = opts[:term]
+      else
+        @soc_state = ManualSocStateChange::OPEN_STATE_KEY
     end
 
-    go_to_manual_soc_state_change
+    visit ManualSocStateChangePage
     on ManualSocStateChangePage do |page|
-      sleep 2
       page.change_soc_state_termCode.value = @term
       page.change_soc_state_newSocState.value = @soc_state
       page.change_soc_state
