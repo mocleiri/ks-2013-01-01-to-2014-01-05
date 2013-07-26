@@ -25,14 +25,17 @@ class EditAcademicCalendar < BasePage
   element(:event_end_date) { |b| b.frm.text_field(name: "newCollectionLines['events'].endDate") }
   element(:event_start_time) { |b| b.frm.text_field(name: "newCollectionLines['events'].startTime") }
   element(:event_end_time) { |b| b.frm.text_field(name: "newCollectionLines['events'].endTime") }
-  element(:event_start_ampm) { |b| b.frm.select(name: "newCollectionLines['events'].startTimeAmPm") }
-  element(:event_end_ampm) { |b| b.frm.select(name: "newCollectionLines['events'].endTimeAmPm") }
+  element(:event_start_am) { |b| b.frm.radio(name: "newCollectionLines['events'].startTimeAmPm", value: "AM") }
+  element(:event_start_pm) { |b| b.frm.radio(name: "newCollectionLines['events'].startTimeAmPm", value: "PM") }
+  element(:event_end_am) { |b| b.frm.radio(name: "newCollectionLines['events'].endTimeAmPm", value: "AM") }
+  element(:event_end_pm) { |b| b.frm.radio(name: "newCollectionLines['events'].endTimeAmPm", value: "PM") }
+  action(:event_start_am_set) { |b| b.event_start_am.set; b.loading.wait_while_present}
+  action(:event_start_pm_set) { |b| b.event_start_pm.set; b.loading.wait_while_present}
+  action(:event_end_am_set) { |b| b.event_end_am.set; b.loading.wait_while_present}
+  action(:event_end_pm_set) { |b| b.event_end_pm.set; b.loading.wait_while_present}
   element(:all_day) { |b| b.frm.checkbox(name: "newCollectionLines['events'].allDay") }
   element(:date_range) { |b| b.frm.checkbox(name: "newCollectionLines['events'].dateRange") }
   element(:add_event) { |b| b.frm.link(id: "acal-info-event_add") }
-  #element(:delete_event_0) { |b| b.frm.button(id: "acal-info-event_del_line0") } # Note that there can be multiple Deletes on the page (= to however many events have already been added)
-  #element(:delete_event_1) { |b| b.frm.button(id: "acal-info-event_del_line1") }
-  #element(:delete_event_2) { |b| b.frm.button(id: "acal-info-event_del_line2") }
   element(:acal_event_list_div) { |b| b.frm.div(id: "acal-info-event") }
   element(:acal_event_list_link) { |b| b.acal_event_list_div.link(text: "Events") }
   element(:calendar_events_table) { |b| b.acal_event_list_div.table }
@@ -72,10 +75,10 @@ class EditAcademicCalendar < BasePage
 
   def edit_start_date(row, value); row.cells[EDIT_START_DATE_COL].text_field.set(value); end
   def edit_start_time(row, value); row.cells[EDIT_START_TIME_COL].text_field.set(value); end
-  def edit_start_ampm(row, value); row.cells[EDIT_START_TIME_AMPM_COL].select.select(value.downcase); end
+  def edit_start_ampm(row, value); row.cells[EDIT_START_TIME_AMPM_COL].radio.select(value.downcase); end
   def edit_end_date(row, value); row.cells[EDIT_END_DATE_COL].text_field.set(value); end
   def edit_end_time(row, value); row.cells[EDIT_END_TIME_COL].text_field.set(value); end
-  def edit_end_ampm(row, value); row.cells[EDIT_END_TIME_AMPM_COL].select.select(value.downcase); end
+  def edit_end_ampm(row, value); row.cells[EDIT_END_TIME_AMPM_COL].radio.select(value.downcase); end
   def clear_is_all_day(row); row.cells[EDIT_ALL_DAY_COL].checkbox.clear; end
   def set_is_all_day(row); row.cells[EDIT_ALL_DAY_COL].checkbox.set; end
   def clear_is_range(row); row.cells[EDIT_DATE_RANGE_COL].checkbox.clear; end
@@ -110,7 +113,7 @@ class EditAcademicCalendar < BasePage
   def delete_holiday_cal(cal_name)
     hcal_index = holiday_cal_index_by_name(cal_name)
     #            need persistent id:
-    add_holiday_calendar_div.div(id: "u644_line#{hcal_index}").link(text: /Delete/).click
+    add_holiday_calendar_div.div(id: /u.*_line#{hcal_index}.*/).link(text: /Delete/).click
     loading.wait_while_present
   end
 

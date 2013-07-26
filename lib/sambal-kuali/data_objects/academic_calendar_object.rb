@@ -656,8 +656,16 @@ class CalendarEvent
       page.event_start_time.set @start_time
       page.event_end_time.set @end_time
       page.loading.wait_while_present
-      page.event_start_ampm.select @start_time_ampm
-      page.event_end_ampm.select @end_time_ampm
+      if @start_time_ampm == "am"
+        page.event_start_am_set
+      else
+        page.event_start_pm_set
+      end
+      if @end_time_ampm == "am"
+        page.event_end_am_set
+      else
+        page.event_end_pm_set
+      end
       page.all_day.set @all_day
       page.date_range.set @date_range
       page.add_event.click
