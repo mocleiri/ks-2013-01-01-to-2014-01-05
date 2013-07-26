@@ -75,13 +75,14 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   action(:facility_features) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-New-Features-Section_toggle").click; b.loading.wait_while_present }
   element(:feature_list){ |b|b.frm.select(id: "featuresList_control")}
 
-  element(:add_new_delivery_logistics_button) { |b| b.add_logistics_div.button(id: "add_rdl_button") }
+  element(:add_new_delivery_logistics_button) { |b| b.button(id: "add_rdl_button") }
   action(:add_new_delivery_logistics) { |b| b.add_new_delivery_logistics_button.click; b.adding.wait_while_present }
 
   element(:view_requested_delivery_logistics_link) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-Requested_toggle") }
   action(:view_requested_delivery_logistics) { |b| b.view_requested_delivery_logistics_link.click; b.loading.wait_while_present }
 
   element(:delete_requested_delivery_logistics_button) { |b| b.requested_logistics_table.button(text: "delete") } #TODO: identify button by row (days + start_time)
+  action(:delete_requested_delivery_logistics) { |b| b.delete_requested_delivery_logistics_button.click; b.loading.wait_while_present }
 
   PERS_ACTION_COLUMN = 4
 

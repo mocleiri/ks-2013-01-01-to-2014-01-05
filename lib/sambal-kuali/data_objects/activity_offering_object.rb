@@ -1005,21 +1005,65 @@ class DeliveryLogistics
         end
 
         if opts[:start_time] != nil then
-          page.add_days.set opts[:start_time]
+          page.add_start_time.set opts[:start_time]
           page.add_start_time_ampm.select opts[:start_time_ampm] unless opts[:start_time_ampm] == ""
         end
 
         if opts[:end_time] != nil then
-          page.add_days.set opts[:end_time]
-          page.add_start_time_ampm.select opts[:end_time_ampm] unless opts[:end_time_ampm] == ""
+          page.add_end_time.set opts[:end_time]
+          page.add_end_time_ampm.select opts[:end_time_ampm] unless opts[:end_time_ampm] == ""
         end
 
         if opts[:facility] != nil then
-          page.add_days.set opts[:facility]
+          page.add_facility.set opts[:facility]
         end
 
         if opts[:room] != nil then
-          page.add_days.set opts[:room]
+          page.add_room.set opts[:room]
+        end
+
+        #opts["features_list"] TODO if implemented
+        page.add_new_delivery_logistics
+      end
+      set_options(opts)
+    else
+      raise "error: cannot edit Actual Delivery Logistics"
+    end
+  end
+
+  def add(opts)
+    if isRDL then
+      on ActivityOfferingMaintenance do |page|
+        #target_row = target_row_by_dl_key
+        #page.edit_rdl_row(target_row)
+        sleep 2
+
+        if opts[:tba]
+          page.add_tba.set
+        else
+          page.add_tba.clear
+        end
+
+        if opts[:days] != nil then
+          page.add_days.set opts[:days]
+        end
+
+        if opts[:start_time] != nil then
+          page.add_start_time.set opts[:start_time]
+          page.add_start_time_ampm.select opts[:start_time_ampm] unless opts[:start_time_ampm] == ""
+        end
+
+        if opts[:end_time] != nil then
+          page.add_end_time.set opts[:end_time]
+          page.add_end_time_ampm.select opts[:end_time_ampm] unless opts[:end_time_ampm] == ""
+        end
+
+        if opts[:facility] != nil then
+          page.add_facility.set opts[:facility]
+        end
+
+        if opts[:room] != nil then
+          page.add_room.set opts[:room]
         end
 
         #opts["features_list"] TODO if implemented

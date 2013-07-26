@@ -6,7 +6,27 @@ Feature: WC.Edit AO delivery logistics
 
   Background:
     Given I am logged in as a Schedule Coordinator
+    And I am editing an AO with RDLs
 
   Scenario: Revise an AO's requested delivery logistics
     When I revise an AO's requested delivery logistics
-    Then the AO's delivery logistics shows the new schedule
+    Then the AO's delivery logistics shows the new schedule in row 1
+
+#KSENROLL-8080
+  @pending
+  Scenario: Add RDLs for an AO
+    When I add RDLs for an AO
+    Then the AO's delivery logistics shows the new schedule in row 2
+
+#KSENROLL-8080
+  @pending
+  Scenario: Add TBA RDLs for an AO
+    When I add RDLs for an AO checking the TBA flag
+    Then the AO's delivery logistics shows the new schedule as TBA in row 2
+
+#KSENROLL-8080
+  @pending
+  Scenario: Delete RDLs for an AO
+    When I add RDLs for an AO
+    And I delete the original RDLs
+    Then the AO's delivery logistics shows the new schedule in row 1
