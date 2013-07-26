@@ -79,6 +79,10 @@ When /^I try to create a second activity offering cluster with the same private 
   @ao_cluster2 = create ActivityOfferingCluster, :private_name=>@ao_cluster.private_name
 end
 
+When /^I try to create a second activity offering cluster with a different private name$/ do
+  @ao_cluster2 = create ActivityOfferingCluster
+end
+
 Then /^a cluster error message appears stating "(.*?)"$/ do |errMsg|
   on ManageCourseOfferings do |page|
     page.get_cluster_error_msgs.should include errMsg
