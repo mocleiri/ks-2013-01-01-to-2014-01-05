@@ -12,6 +12,7 @@ import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
+import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -58,6 +59,11 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             " left outer join fetch pbt.transferDetail td " +
             " left outer join fetch td.directChargeAccount a " +
             " left outer join fetch td.plan p ";
+
+    private static final String QUEUE_SELECT = "select q from PaymentBillingQueue q " +
+            " left outer join fetch q.directChargeAccount a " +
+            " left outer join fetch q.plan p " +
+            " left outer join fetch q.transferDetail d ";
 
 
     @Autowired
@@ -184,17 +190,17 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
     /**
      * Retrieves PaymentBillingTransferDetail with ACTIVE status by ID from the persistent store.
      *
-     * @param paymentBillingTransferDetailId PaymentBillingTransferDetail ID
+     * @param transferDetailId PaymentBillingTransferDetail ID
      * @return PaymentBillingTransferDetail instance
      */
     @Override
-    public PaymentBillingTransferDetail getPaymentBillingTransferDetail(Long paymentBillingTransferDetailId) {
+    public PaymentBillingTransferDetail getPaymentBillingTransferDetail(Long transferDetailId) {
 
         PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
 
         Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where d.id = :id and d.chargeStatusCode = :statusCode");
 
-        query.setParameter("id", paymentBillingTransferDetailId);
+        query.setParameter("id", transferDetailId);
         query.setParameter("statusCode", PaymentBillingChargeStatus.ACTIVE_CODE);
 
         List<PaymentBillingTransferDetail> details = query.getResultList();
@@ -495,7 +501,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             transferDetail.setChargeStatus(PaymentBillingChargeStatus.SCHEDULED);
 
             // Persisting the updated PB transfer detail entity
-            persistEntity(transferDetail);
+            persistPaymentBillingTransferDetail(transferDetail);
 
             // Persisting all PB schedules with the persistent transfer detail
             for (PaymentBillingSchedule billingSchedule : finalSchedules) {
@@ -921,6 +927,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
     @Override
     public List<PaymentBillingDate> getPaymentBillingDates(Long paymentBillingPlanId) {
 
+        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_DATE);
+
         Query query = em.createQuery("select d from PaymentBillingDate d " +
                 " inner join fetch d.plan p " +
                 " left outer join fetch d.rollup r " +
@@ -930,6 +938,225 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         query.setParameter("planId", paymentBillingPlanId);
 
         return query.getResultList();
+    }
+
+    /**
+     * Returns a list of PaymentBillingQueue objects by Account and PaymentBillingTransferDetail IDs
+     *
+     * @param accountId        Account Id
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingQueue instances
+     */
+    @Override
+    public List<PaymentBillingQueue> getPaymentBillingQueues(String accountId, Long transferDetailId) {
+
+        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_QUEUE);
+
+        Query query = em.createQuery(QUEUE_SELECT +
+                " where a.id = :accountId and " +
+                (transferDetailId != null ? " d.id = :transferDetailId " : " d is null") +
+                " order by q.creationDate desc");
+
+        query.setParameter("accountId", accountId);
+        query.setParameter("transferDetailId", transferDetailId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Returns a list of PaymentBillingQueue objects by Creator and PaymentBillingTransferDetail IDs
+     *
+     * @param creatorId        Creator Id
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingQueue instances
+     */
+    @Override
+    public List<PaymentBillingQueue> getPaymentBillingQueuesByCreatorId(String creatorId, Long transferDetailId) {
+
+        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_QUEUE);
+
+        Query query = em.createQuery(QUEUE_SELECT +
+                " where q.creatorId = :creatorId and " +
+                (transferDetailId != null ? " d.id = :transferDetailId " : " d is null") +
+                " order by q.creationDate desc");
+
+        query.setParameter("creatorId", creatorId);
+        query.setParameter("transferDetailId", transferDetailId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Executes a payment billing plan for the specified user account with the given maximum payment amount.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param accountId            Account Id
+     * @param maxAmount            Maximum payment amount
+     * @param initiationDate       Initiation date
+     * @return PaymentBillingTransferDetail instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public PaymentBillingTransferDetail executePaymentBilling(Long paymentBillingPlanId,
+                                                              String accountId,
+                                                              BigDecimal maxAmount,
+                                                              Date initiationDate) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_TRANSFER);
+
+        PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
+        if (billingPlan == null) {
+            String errMsg = "PaymentBillingPlan does not exist with ID = " + paymentBillingPlanId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null || !(account instanceof DirectChargeAccount)) {
+            String errMsg = "DirectChargeAccount with ID = " + accountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        if (maxAmount == null) {
+            String errMsg = "Maximum amount to finance cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        PaymentBillingTransferDetail transferDetail =
+                generatePaymentBillingTransfer(paymentBillingPlanId, accountId, maxAmount, initiationDate);
+
+        List<PaymentBillingTransaction> billingTransactions = generatePaymentBillingTransactions(transferDetail.getId());
+
+        generatePaymentBillingSchedules(transferDetail, billingPlan.getRoundingFactor());
+
+        if (CollectionUtils.isNotEmpty(billingTransactions)) {
+            transferPaymentBillingTransactions(transferDetail.getId());
+        }
+
+        return getPaymentBillingTransferDetail(transferDetail.getId());
+    }
+
+
+    /**
+     * Processes PaymentBillingQueue objects for the given Account ID.
+     *
+     * @param accountId Account ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public void processPaymentBillingQueues(String accountId) {
+
+        PermissionUtils.checkPermission(Permission.PROCESS_PAYMENT_BILLING_QUEUE);
+
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null || !(account instanceof DirectChargeAccount)) {
+            String errMsg = "DirectChargeAccount with ID = " + accountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        // Getting the list of PaymentBillingQueue objects with no PaymentBillingTransferDetail
+        List<PaymentBillingQueue> billingQueues = getPaymentBillingQueues(accountId, null);
+
+        if (CollectionUtils.isNotEmpty(billingQueues)) {
+
+            Query query = em.createQuery("select d from PaymentBillingTransferDetail d " +
+                    " inner join d.directChargeAccount a " +
+                    " inner join d.plan p " +
+                    " where p.id = :planId and a.id = :accountId and d.chargeStatusCode <> :statusCode");
+
+            query.setParameter("accountId", accountId);
+            query.setParameter("statusCode", PaymentBillingChargeStatus.REVERSED_CODE);
+            query.setMaxResults(1);
+
+            for (PaymentBillingQueue billingQueue : billingQueues) {
+
+                PaymentBillingPlan billingPlan = billingQueue.getPlan();
+                if (billingPlan == null) {
+                    String errMsg = "PaymentBillingPlan does not exist for PaymentBillingQueue with ID = " + billingQueue.getId();
+                    logger.error(errMsg);
+                    throw new IllegalStateException(errMsg);
+                }
+
+                query.setParameter("planId", billingPlan.getId());
+
+                List<PaymentBillingTransferDetail> transferDetails = query.getResultList();
+
+                if (CollectionUtils.isNotEmpty(transferDetails)) {
+
+                    PaymentBillingTransferDetail transferDetail = transferDetails.get(0);
+
+                    if (billingQueue.isForceReversal()) {
+                        reversePaymentBillingTransfer(transferDetail.getId(), "PB Queue processing", true);
+                    }
+
+                    // TODO: Confirm if the amount being passed is the plan maximum amount ??
+                    PaymentBillingTransferDetail newTransferDetail =
+                            executePaymentBilling(billingPlan.getId(),
+                                    accountId,
+                                    billingPlan.getMaxAmount(),
+                                    billingQueue.getInitiationDate());
+
+                    billingQueue.setTransferDetail(newTransferDetail);
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates and persists a new PaymentBillingQueue object.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param accountId            Account ID
+     * @param maxAmount            Maximum payment amount
+     * @param initiationDate       Initiation date
+     * @param forceReversal        Indicates whether to force reversal of previously created PB transfers
+     * @return PaymentBillingQueue instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public PaymentBillingQueue createPaymentBillingQueue(Long paymentBillingPlanId,
+                                                         String accountId,
+                                                         BigDecimal maxAmount,
+                                                         Date initiationDate,
+                                                         boolean forceReversal) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_PAYMENT_BILLING_QUEUE);
+
+        PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
+        if (billingPlan == null) {
+            String errMsg = "PaymentBillingPlan does not exist with ID = " + paymentBillingPlanId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null || !(account instanceof DirectChargeAccount)) {
+            String errMsg = "DirectChargeAccount with ID = " + accountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        if (maxAmount == null) {
+            String errMsg = "Maximum amount to finance cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        PaymentBillingQueue billingQueue = new PaymentBillingQueue();
+
+        billingQueue.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+        billingQueue.setCreationDate(new Date());
+        billingQueue.setPlan(billingPlan);
+        billingQueue.setDirectChargeAccount((DirectChargeAccount) account);
+        billingQueue.setInitiationDate(initiationDate);
+        billingQueue.setForceReversal(forceReversal);
+
+        persistEntity(billingQueue);
+
+        return billingQueue;
     }
 
 

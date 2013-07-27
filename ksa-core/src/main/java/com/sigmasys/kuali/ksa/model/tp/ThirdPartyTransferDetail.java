@@ -111,6 +111,7 @@ public class ThirdPartyTransferDetail implements Identifiable {
         this.plan = plan;
     }
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "INIT_DATE")
     public Date getInitiationDate() {
         return initiationDate;

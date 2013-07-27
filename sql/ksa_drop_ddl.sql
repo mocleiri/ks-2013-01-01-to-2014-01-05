@@ -61,6 +61,7 @@ drop table KSSA_NAME cascade constraints;
 drop table KSSA_PB_ALLOWABLE_CHARGE cascade constraints;
 drop table KSSA_PB_DATE cascade constraints;
 drop table KSSA_PB_PLAN cascade constraints;
+drop table KSSA_PB_QUEUE cascade constraints;
 drop table KSSA_PB_SCHEDULE cascade constraints;
 drop table KSSA_PB_TRANSACTION cascade constraints;
 drop table KSSA_PB_TRANSFER_DETAIL cascade constraints;

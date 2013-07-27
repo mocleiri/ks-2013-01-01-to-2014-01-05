@@ -147,6 +147,7 @@ public class PaymentBillingTransferDetail implements Identifiable {
         this.variableFeeCharge = variableFeeCharge;
     }
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "INIT_DATE")
     public Date getInitiationDate() {
         return initiationDate;

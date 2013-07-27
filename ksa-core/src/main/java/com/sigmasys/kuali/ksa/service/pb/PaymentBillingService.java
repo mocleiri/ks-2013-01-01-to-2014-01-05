@@ -143,7 +143,60 @@ public interface PaymentBillingService {
      */
     List<PaymentBillingDate> getPaymentBillingDates(Long paymentBillingPlanId);
 
+    /**
+     * Returns a list of PaymentBillingQueue objects by Account and PaymentBillingTransferDetail IDs
+     *
+     * @param accountId        Account Id
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingQueue instances
+     */
+    List<PaymentBillingQueue> getPaymentBillingQueues(String accountId, Long transferDetailId);
 
-    // TODO
+    /**
+     * Returns a list of PaymentBillingQueue objects by Creator and PaymentBillingTransferDetail IDs
+     *
+     * @param creatorId        Creator Id
+     * @param transferDetailId PaymentBillingTransferDetail ID
+     * @return list of PaymentBillingQueue instances
+     */
+    List<PaymentBillingQueue> getPaymentBillingQueuesByCreatorId(String creatorId, Long transferDetailId);
+
+    /**
+     * Executes a payment billing plan for the specified user account with the given maximum payment amount.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param accountId            Account Id
+     * @param maxAmount            Maximum payment amount
+     * @param initiationDate       Initiation date
+     * @return PaymentBillingTransferDetail instance
+     */
+    PaymentBillingTransferDetail executePaymentBilling(Long paymentBillingPlanId,
+                                                       String accountId,
+                                                       BigDecimal maxAmount,
+                                                       Date initiationDate);
+
+    /**
+     * Processes PaymentBillingQueue objects for the given Account ID.
+     *
+     * @param accountId Account ID
+     */
+    void processPaymentBillingQueues(String accountId);
+
+    /**
+     * Creates and persists a new PaymentBillingQueue object.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param accountId            Account ID
+     * @param maxAmount            Maximum payment amount
+     * @param initiationDate       Initiation date
+     * @param forceReversal        Indicates whether to force reversal of previously created PB transfers
+     * @return PaymentBillingQueue instance
+     */
+    PaymentBillingQueue createPaymentBillingQueue(Long paymentBillingPlanId,
+                                                  String accountId,
+                                                  BigDecimal maxAmount,
+                                                  Date initiationDate,
+                                                  boolean forceReversal);
+
 
 }
