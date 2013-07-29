@@ -39,6 +39,53 @@ public interface PaymentBillingService {
                                                                 Date initiationDate);
 
     /**
+     * Creates and persists a new PaymentBillingPlan instance in the persistent store
+     *
+     * @param code                   PaymentBillingPlan code
+     * @param name                   PaymentBillingPlan name
+     * @param description            PaymentBillingPlan description
+     * @param transferTypeId         TransferType ID
+     * @param flatFeeDebitTypeId     Flat fee DebitType ID
+     * @param variableFeeDebitTypeId Variable fee DebitType ID
+     * @param openPeriodStartDate    Open period start date
+     * @param openPeriodEndDate      Open period end date
+     * @param chargePeriodStartDate  Charge period start date
+     * @param chargePeriodEndDate    Charge period end date
+     * @param maxAmount              Maximum amount
+     * @param flatFeeAmount          Flat fee amount
+     * @param variableFeeAmount      Variable fee amount
+     * @param minFeeAmount           Minimum fee amount
+     * @param maxFeeAmount           Maximum fee amount
+     * @param roundingFactor         Rounding factor
+     * @param isGlCreationImmediate  Indicates whether GL transaction creation is immediate
+     * @param statementPrefix        Transaction statement prefix
+     * @param paymentRoundingType    Payment rounding type
+     * @param scheduleType           Schedule type
+     * @return PaymentBillingPlan instance
+     */
+    PaymentBillingPlan createPaymentBillingPlan(
+            String code,
+            String name,
+            String description,
+            Long transferTypeId,
+            String flatFeeDebitTypeId,
+            String variableFeeDebitTypeId,
+            Date openPeriodStartDate,
+            Date openPeriodEndDate,
+            Date chargePeriodStartDate,
+            Date chargePeriodEndDate,
+            BigDecimal maxAmount,
+            BigDecimal flatFeeAmount,
+            BigDecimal variableFeeAmount,
+            BigDecimal minFeeAmount,
+            BigDecimal maxFeeAmount,
+            int roundingFactor,
+            boolean isGlCreationImmediate,
+            String statementPrefix,
+            PaymentRoundingType paymentRoundingType,
+            ScheduleType scheduleType);
+
+    /**
      * Retrieves PaymentBillingPlan instance by ID from the persistent store.
      *
      * @param paymentBillingPlanId PaymentBillingPlan ID
@@ -181,6 +228,13 @@ public interface PaymentBillingService {
      * @param accountId Account ID
      */
     void processPaymentBillingQueues(String accountId);
+
+    /**
+     * Processes PaymentBillingQueue objects for the given Creator ID.
+     *
+     * @param creatorId Creator's account ID
+     */
+    void processPaymentBillingQueuesByCreator(String creatorId);
 
     /**
      * Creates and persists a new PaymentBillingQueue object.

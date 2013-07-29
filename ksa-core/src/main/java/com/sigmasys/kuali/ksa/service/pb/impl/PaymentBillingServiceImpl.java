@@ -164,6 +164,113 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         return transferDetail;
     }
 
+
+    /**
+     * Creates and persists a new PaymentBillingPlan instance in the persistent store
+     *
+     * @param code                   PaymentBillingPlan code
+     * @param name                   PaymentBillingPlan name
+     * @param description            PaymentBillingPlan description
+     * @param transferTypeId         TransferType ID
+     * @param flatFeeDebitTypeId     Flat fee DebitType ID
+     * @param variableFeeDebitTypeId Variable fee DebitType ID
+     * @param openPeriodStartDate    Open period start date
+     * @param openPeriodEndDate      Open period end date
+     * @param chargePeriodStartDate  Charge period start date
+     * @param chargePeriodEndDate    Charge period end date
+     * @param maxAmount              Maximum amount
+     * @param flatFeeAmount          Flat fee amount
+     * @param variableFeeAmount      Variable fee amount
+     * @param minFeeAmount           Minimum fee amount
+     * @param maxFeeAmount           Maximum fee amount
+     * @param roundingFactor         Rounding factor
+     * @param isGlCreationImmediate  Indicates whether GL transaction creation is immediate
+     * @param statementPrefix        Transaction statement prefix
+     * @param paymentRoundingType    Payment rounding type
+     * @param scheduleType           Schedule type
+     * @return PaymentBillingPlan instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public PaymentBillingPlan createPaymentBillingPlan(
+            String code,
+            String name,
+            String description,
+            Long transferTypeId,
+            String flatFeeDebitTypeId,
+            String variableFeeDebitTypeId,
+            Date openPeriodStartDate,
+            Date openPeriodEndDate,
+            Date chargePeriodStartDate,
+            Date chargePeriodEndDate,
+            BigDecimal maxAmount,
+            BigDecimal flatFeeAmount,
+            BigDecimal variableFeeAmount,
+            BigDecimal minFeeAmount,
+            BigDecimal maxFeeAmount,
+            int roundingFactor,
+            boolean isGlCreationImmediate,
+            String statementPrefix,
+            PaymentRoundingType paymentRoundingType,
+            ScheduleType scheduleType) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_PAYMENT_BILLING_PLAN);
+
+        if (StringUtils.isBlank(code)) {
+            String errMsg = "PaymentBillingPlan code is required";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (flatFeeDebitTypeId == null) {
+            String errMsg = "Flat fee debit type ID cannot be null";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        if (variableFeeDebitTypeId == null) {
+            String errMsg = "Variable fee debit type ID cannot be null";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        TransferType transferType = transactionTransferService.getTransferType(transferTypeId);
+        if (transferType == null) {
+            String errMsg = "TransferType does not exist with ID = " + transferTypeId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (openPeriodStartDate.after(openPeriodEndDate)) {
+            String errMsg = "Open Period Start Date cannot be before End Date";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (chargePeriodStartDate.after(chargePeriodEndDate)) {
+            String errMsg = "Charge Period Start Date cannot be before End Date";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (minFeeAmount.compareTo(maxFeeAmount) > 0) {
+            String errMsg = "Minimum amount must be less or equal to maximum amount";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (roundingFactor < 0) {
+            String errMsg = "Rounding factor cannot be a negative number";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+
+        // TODO
+
+        return null;
+    }
+
     /**
      * Retrieves PaymentBillingPlan instance by ID from the persistent store.
      *
@@ -1038,27 +1145,13 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         return getPaymentBillingTransferDetail(transferDetail.getId());
     }
 
-
-    /**
-     * Processes PaymentBillingQueue objects for the given Account ID.
-     *
-     * @param accountId Account ID
-     */
-    @Override
-    @Transactional(readOnly = false)
-    public void processPaymentBillingQueues(String accountId) {
+    protected void processPaymentBillingQueues(String userId, boolean isCreatorId) {
 
         PermissionUtils.checkPermission(Permission.PROCESS_PAYMENT_BILLING_QUEUE);
 
-        Account account = accountService.getFullAccount(accountId);
-        if (account == null || !(account instanceof DirectChargeAccount)) {
-            String errMsg = "DirectChargeAccount with ID = " + accountId + " does not exist";
-            logger.error(errMsg);
-            throw new UserNotFoundException(errMsg);
-        }
-
         // Getting the list of PaymentBillingQueue objects with no PaymentBillingTransferDetail
-        List<PaymentBillingQueue> billingQueues = getPaymentBillingQueues(accountId, null);
+        List<PaymentBillingQueue> billingQueues = isCreatorId ? getPaymentBillingQueuesByCreatorId(userId, null) :
+                getPaymentBillingQueues(userId, null);
 
         if (CollectionUtils.isNotEmpty(billingQueues)) {
 
@@ -1067,7 +1160,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                     " inner join d.plan p " +
                     " where p.id = :planId and a.id = :accountId and d.chargeStatusCode <> :statusCode");
 
-            query.setParameter("accountId", accountId);
             query.setParameter("statusCode", PaymentBillingChargeStatus.REVERSED_CODE);
             query.setMaxResults(1);
 
@@ -1080,7 +1172,10 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                     throw new IllegalStateException(errMsg);
                 }
 
+                String accountId = billingQueue.getDirectChargeAccount().getId();
+
                 query.setParameter("planId", billingPlan.getId());
+                query.setParameter("accountId", accountId);
 
                 List<PaymentBillingTransferDetail> transferDetails = query.getResultList();
 
@@ -1092,7 +1187,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                         reversePaymentBillingTransfer(transferDetail.getId(), "PB Queue processing", true);
                     }
 
-                    // TODO: Confirm if the amount being passed is the plan maximum amount ??
+                    // TODO: Confirm with Paul if the amount being passed is the plan maximum amount ??
                     PaymentBillingTransferDetail newTransferDetail =
                             executePaymentBilling(billingPlan.getId(),
                                     accountId,
@@ -1103,6 +1198,30 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                 }
             }
         }
+    }
+
+
+    /**
+     * Processes PaymentBillingQueue objects for the given Account ID.
+     *
+     * @param accountId Account ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public void processPaymentBillingQueues(String accountId) {
+        processPaymentBillingQueues(accountId, false);
+    }
+
+
+    /**
+     * Processes PaymentBillingQueue objects for the given Creator ID.
+     *
+     * @param creatorId Creator's account ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public void processPaymentBillingQueuesByCreator(String creatorId) {
+        processPaymentBillingQueues(creatorId, true);
     }
 
     /**
