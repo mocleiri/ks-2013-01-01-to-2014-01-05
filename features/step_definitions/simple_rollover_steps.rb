@@ -8,6 +8,11 @@ When /^I initiate a rollover to create a term in open state$/ do
   @rollover.perform_rollover
 end
 
+When /^I initiate a rollover to create a term in open state$/ do
+  @rollover = make Rollover, :source_term => Rollover::MAIN_TEST_TERM_SOURCE, :target_term => Rollover::MAIN_TEST_TERM_TARGET
+  @rollover.perform_rollover
+end
+
 When /^I initiate a rollover to create a term in default state EC/ do
   @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::DRAFT_SOC_TERM
   @rollover.perform_rollover
@@ -130,4 +135,68 @@ end
 
 When /^I am working on a term in "Closed" SOC state$/ do
   @term_for_test = Rollover::CLOSED_SOC_TERM
+end
+
+And /^I rollover the subterms' parent term to a target term with those subterms setup$/ do
+  @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1 #, :name => "TWj64w1q3e"
+  @term_target = make AcademicTerm, :term_year => @calendar_target.year
+  @calendar_target.add_term(@term_target)
+
+  @subterm_list_target = Array.new(2)
+  @subterm_list_target[0] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  @calendar_target.add_term(@subterm_list_target[0])
+
+  @subterm_list_target[1] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
+  @calendar_target.add_term(@subterm_list_target[1])
+
+  @subterm_list_target.each do |subterm|
+    subterm.make_official
+  end
+
+  @term_target.set_up_soc
+
+  @rollover = make Rollover, :target_term => @term_target.term_code , :source_term => @term.term_code
+  @rollover.perform_rollover
+  @rollover.wait_for_rollover_to_complete
+
+end
+
+Then /^the Activity Offerings are assigned to the target subterms$/ do
+  @course_offering_target = make CourseOffering, :course => @course_offering.course, :term => @term_target.term_code
+  @course_offering_target.manage
+
+  @activity_offering_target = make ActivityOffering, :code => @activity_offering.code, :parent_course_offering => @course_offering_target
+  on ManageCourseOfferings do |page|
+    page.has_subterm_icon(@activity_offering_target.code).should == true
+    page.view_activity_offering(@activity_offering_target.code)
+  end
+
+  on ActivityOfferingInquiry do |page|
+    page.subterm.should == @activity_offering.subterm
+    page.close
+  end
+
+  @activity_offering_target.edit
+  on ActivityOfferingMaintenance do |page|
+    page.subterm.should == @activity_offering.subterm
+    page.cancel
+  end
+
+  @activity_offering_target2 = make ActivityOffering, :code => @activity_offering2.code, :parent_course_offering => @course_offering_target
+  on ManageCourseOfferings do |page|
+    page.has_subterm_icon(@activity_offering_target2.code).should == true
+    page.view_activity_offering(@activity_offering_target2.code)
+  end
+
+  on ActivityOfferingInquiry do |page|
+    page.subterm.should == @activity_offering2.subterm
+    page.close
+  end
+
+  @activity_offering_target2.edit
+  on ActivityOfferingMaintenance do |page|
+    page.subterm.should == @activity_offering2.subterm
+    page.cancel
+  end
+
 end

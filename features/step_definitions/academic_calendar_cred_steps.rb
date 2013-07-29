@@ -678,7 +678,7 @@ Then /^I remove the Holiday Calendar$/ do
 end
 
 Given /^I create an Academic Calendar with subterms$/ do
-  @calendar = create AcademicCalendar
+  @calendar = create AcademicCalendar #, :year => "2235", :name => "fSZtG62zfU"
   @term = make AcademicTerm, :term_year => @calendar.year
   @calendar.add_term(@term)
 
@@ -688,9 +688,12 @@ Given /^I create an Academic Calendar with subterms$/ do
 
   @subterm_list[1] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
   @calendar.add_term(@subterm_list[1])
+
+  @term.set_up_soc
 end
 
 Given /^I make the subterms official$/ do
+  @calendar.edit
   @subterm_list.each do |subterm|
     subterm.make_official
   end
@@ -888,10 +891,3 @@ Then /^the subterm is also deleted$/ do
   end
 end
 
-Then /^I setup the SOC for for the parent term$/ do
-  go_to_create_soc
-  on CreateSocForTerm do |page|
-    page.term_code.set @term.term_code
-    page.submit
-  end
-end

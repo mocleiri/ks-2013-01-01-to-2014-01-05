@@ -30,10 +30,15 @@ Then /^the new Course Offering should be displayed in the list of available offe
   @course_offering.view_course_details
 end
 
-And /^I create a Course Offering with an Activity Offering in a subterm$/ do
+And /^I create a Course Offering with an Activity Offerings assigned to subterms$/ do
   @course_offering = create CourseOffering, :term=>@term.term_code, :course => "CHEM132", :grade_format => "Lab", :delivery_format => "Lab"
+  #@course_offering = make CourseOffering, :term=>@term.term_code, :course => "CHEM132"
   @activity_offering = create ActivityOffering, :subterm => @subterm_list[0].subterm_type, :parent_course_offering => @course_offering,
                               :format => "Lab Only", :activity_type => "Lab"
-  #@activity_offering.save
+  @activity_offering.save
+  @activity_offering2 = create ActivityOffering, :subterm => @subterm_list[1].subterm_type, :parent_course_offering => @course_offering,
+                              :format => "Lab Only", :activity_type => "Lab"
+  @activity_offering.save
+
 end
 
