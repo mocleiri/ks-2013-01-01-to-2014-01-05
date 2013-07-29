@@ -56,7 +56,7 @@ Feature: KRMS.ELIG9-2 Natural Language
     When I update the manage course offering agendas page
     Then the agenda page's text should before and after the submit match "Must have successfully completed a minimum of 1 course from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I want to edit the selected agenda section
-    Then the edit tab's text should match "Must have successfully completed a minimum of 1 course from (HIST798, HIST250, ENGL395, ENGL381, ENGL394, ENGL390, ENGL393, ENGL392, ENGL391)"
+    Then the edit tab's text should match "Must have successfully completed a minimum of 1 course from (HIST798, HIST250, ENGL395, ENGL394, ENGL390, ENGL381, ENGL393, ENGL392, ENGL391)"
     When I switch to the other tab on the page
     Then the logic tab's text should match "Must have successfully completed a minimum of 1 course from (HIST250, HIST798, ENGL381, ENGL390, ENGL391, ENGL392, ENGL393, ENGL394, ENGL395)"
 
@@ -74,15 +74,16 @@ Feature: KRMS.ELIG9-2 Natural Language
   #ELIG9.2.EB3.1 (KSENROLL-6954)
   Scenario: Confirm that the natural language displays all rules correctly for Corequisite - rule one
     When I navigate to the Corequisite section for course "HIST110" in the future term
-    And I want to add a new statement to the selected agenda section
-    And I add a new courses statement with courses "HIST250,HIST798" and course sets "General Education: Fundamental Studies-Professional Writing"
-    Then the edit tab's text should match "Must be concurrently enrolled in all courses from (HIST798, HIST250, ENGL381, ENGL390, ENGL392, ENGL395, ENGL391, ENGL393, ENGL394)"
+#    And I want to add a new statement to the selected agenda section
+#    And I add a new courses statement with courses "HIST250,HIST798" and course sets "General Education: Fundamental Studies-Professional Writing"
+    And I want to edit the selected agenda section
+    Then the edit tab's text should match "Must be concurrently enrolled in all courses from (HIST798, HIST250, ENGL395, ENGL394, ENGL390, ENGL381, ENGL393, ENGL392, ENGL391)"
     When I switch to the other tab on the page
     Then the logic tab's text should match "Must be concurrently enrolled in all courses from (HIST250, HIST798, ENGL381, ENGL390, ENGL391, ENGL392, ENGL393, ENGL394, ENGL395)"
     When I update the manage course offering agendas page
     Then the agenda page's text should before and after the submit match "Must be concurrently enrolled in all courses from,HIST250,HIST798,General Education: Fundamental Studies-Professional Writing"
     When I want to edit the selected agenda section
-    Then the edit tab's text should match "Must be concurrently enrolled in all courses from (HIST798, HIST250, ENGL395, ENGL381, ENGL394, ENGL390, ENGL393, ENGL392, ENGL391)"
+    Then the edit tab's text should match "Must be concurrently enrolled in all courses from (HIST798, HIST250, ENGL395, ENGL394, ENGL390, ENGL381, ENGL393, ENGL392, ENGL391)"
     When I switch to the other tab on the page
     Then the logic tab's text should match "Must be concurrently enrolled in all courses from (HIST250, HIST798, ENGL381, ENGL390, ENGL391, ENGL392, ENGL393, ENGL394, ENGL395)"
 
@@ -97,7 +98,7 @@ Feature: KRMS.ELIG9-2 Natural Language
     When I update the manage course offering agendas page
     Then the agenda page's text should before and after the submit match "Must be concurrently enrolled in a minimum of 1 course from,HIST210,HIST250,General Education: Fundamental Studies-Professional Writing"
     When I want to edit the selected agenda section
-    Then the edit tab's text should match "Must be concurrently enrolled in a minimum of 1 course from (HIST210, HIST250, ENGL395, ENGL381, ENGL394, ENGL390, ENGL393, ENGL392, ENGL391)"
+    Then the edit tab's text should match "Must be concurrently enrolled in a minimum of 1 course from (HIST210, HIST250, ENGL395, ENGL394, ENGL390, ENGL381, ENGL393, ENGL392, ENGL391)"
     When I switch to the other tab on the page
     Then the logic tab's text should match "Must be concurrently enrolled in a minimum of 1 course from (HIST210, HIST250, ENGL381, ENGL390, ENGL391, ENGL392, ENGL393, ENGL394, ENGL395)"
 
