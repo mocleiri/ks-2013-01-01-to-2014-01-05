@@ -103,6 +103,12 @@ When /^I save the changes and jump to an arbitrary AO$/ do
   end
 end
 
+When /^I cancel the AO changes$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.cancel
+  end
+end
+
 When /^I jump to an arbitrary AO but cancel the change$/ do
   on ActivityOfferingMaintenance do |page|
     @target = "Discussion E"

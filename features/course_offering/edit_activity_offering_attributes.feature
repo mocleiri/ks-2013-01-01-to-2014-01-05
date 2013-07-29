@@ -11,6 +11,11 @@ Feature: WC.Edit Activity Offering Attributes
     And I submit the AO changes
     Then the changes of information attributes are persisted
 
+  Scenario: Edit Activity Offering Information attributes and cancel changes
+    When I am editing the information attributes for an activity offering
+    And I cancel the AO changes
+    Then the changes of information attributes are not persisted
+
   #KSENROLL-8232
   Scenario: Edit Activity Offering Personnel attributes
     When I change Personnel attributes
