@@ -42,8 +42,8 @@ Feature: EC.Manage Activity Offerings - subterms
     Then the Activity Offerings are assigned to the target subterms
 
   Scenario: CO 26.4B Confirm error message is displayed for a rollover where the source term has AOs/subterms and the target term does not
-#    Given I create an Academic Calendar with subterms
-#    And I make the subterms official
-#    And I create a Course Offering with an Activity Offerings assigned to subterms
-#    When I rollover the subterms' parent term to a target term with those subterms are NOT setup
+    Given I create an Academic Calendar with subterms
+    And I make the subterms official
+    And I create a Course Offering with an Activity Offerings assigned to subterms
+    When I rollover the subterms' parent term to a target term with those subterms are NOT setup
     Then there is a target term error message on the rollover page stating: Target term and/or subterms are not official
