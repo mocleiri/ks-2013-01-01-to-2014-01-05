@@ -23,6 +23,7 @@ class RolloverDetails < BasePage
 
   #release to dept dialog
   element(:release_to_depts_dialog_div)  { |b| b.frm.div(class: "fancybox-wrap fancybox-desktop fancybox-type-html fancybox-opened") }
+  # previous line, must use class to id - This is the parent in KRAD > parent="Uif-VerticalBoxGroup" - cant ID it
   element(:release_to_depts_dialog_confirm_button) { |b| b.release_to_depts_dialog_div.button }
   element(:release_to_depts_dialog_confirm) { |b| b.release_to_depts_dialog_confirm_button.click; b.loading.wait_while_present }
   element(:release_to_depts_dialog_cancel_link) { |b| b.release_to_depts_dialog_div.link }

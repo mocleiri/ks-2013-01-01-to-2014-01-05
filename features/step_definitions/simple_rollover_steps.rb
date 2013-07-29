@@ -161,6 +161,25 @@ And /^I rollover the subterms' parent term to a target term with those subterms 
 
 end
 
+And /^I rollover the subterms' parent term to a target term with those subterms are NOT setup$/ do
+  @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1 #, :name => "TWj64w1q3e"
+  @term_target = make AcademicTerm, :term_year => @calendar_target.year
+  @calendar_target.add_term(@term_target)
+  @calendar_target.make_official
+  @term_target.set_up_soc
+
+  @rollover = make Rollover, :target_term => @term_target.term_code ,
+                   :source_term => @term.term_code,
+                   :exp_success => false
+  @rollover.perform_rollover
+end
+
+Then /^there is a target term error message on the rollover page stating: (.*)$/ do |expected_msg|
+  on PerformRollover do |page|
+    page.target_term_first_validation_msg.should match /.*#{Regexp.escape(expected_msg)}.*/
+  end
+end
+
 Then /^the Activity Offerings are assigned to the target subterms$/ do
   @course_offering_target = make CourseOffering, :course => @course_offering.course, :term => @term_target.term_code
   @course_offering_target.manage

@@ -19,7 +19,8 @@ class Rollover
 
   #generally set using options hash
   attr_accessor :source_term,
-                :target_term
+                :target_term,
+                :exp_success
 
   SOC_STATES_SOURCE_TERM = "201200"
 
@@ -49,7 +50,8 @@ class Rollover
 
     defaults = {
         :source_term=>"201212",
-        :target_term=>"202112"
+        :target_term=>"202112",
+        :exp_success=>true
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -70,8 +72,10 @@ class Rollover
       page.rollover_course_offerings
     end
 
-    on RolloverDetails do |page|
-      raise "rollover issue" unless page.status.upcase == "IN PROGRESS"
+    if @exp_success then
+      on RolloverDetails do |page|
+        raise "rollover issue" unless page.status.upcase == "IN PROGRESS"
+      end
     end
 
   end

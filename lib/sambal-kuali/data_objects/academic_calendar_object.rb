@@ -33,13 +33,17 @@ class AcademicCalendar
   def initialize(browser, opts={})
     @browser = browser
 
-    random_year = AcademicCalendar.get_random_calendar_year
+    if opts[:year].nil? then
+      calendar_year = AcademicCalendar.get_random_calendar_year
+    else
+      calendar_year = opts[:year].to_i
+    end
 
     defaults = {
         :name=>random_alphanums.strip,
-        :year=>  random_year,
-        :start_date=>"09/01/#{random_year}",
-        :end_date=>"06/25/#{random_year + 1}",
+        :year=>  calendar_year,
+        :start_date=>"09/01/#{calendar_year}",
+        :end_date=>"06/25/#{calendar_year + 1}",
         :terms => [],
         :holiday_calendar_list => []
     }
@@ -200,8 +204,8 @@ class AcademicCalendar
   end
 
   #there are existing calendars up to 2023, so most of the term codes are used
-  BASE_UNUSED_CALENDAR_YEAR = 2024
-  MAX_UNUSED_CALENDAR_YEAR = 2199
+  BASE_UNUSED_CALENDAR_YEAR = 2200
+  MAX_UNUSED_CALENDAR_YEAR = 2399
   def self.get_random_calendar_year(base_year =BASE_UNUSED_CALENDAR_YEAR, max_year = MAX_UNUSED_CALENDAR_YEAR)
     base_year + rand( max_year - base_year )
   end
@@ -391,6 +395,16 @@ class AcademicTerm
     end
     puts weekdays
     weekdays
+  end
+
+ #can't do this for a subterm
+  def set_up_soc
+    raise "can't make subterm official" if @subterm
+    go_to_create_soc
+    on CreateSocForTerm do |page|
+      page.term_code.set @term_code
+      page.submit
+    end
   end
 
 end
