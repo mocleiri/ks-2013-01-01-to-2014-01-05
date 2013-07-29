@@ -690,6 +690,12 @@ Given /^I create an Academic Calendar with subterms$/ do
   @calendar.add_term(@subterm_list[1])
 end
 
+Given /^I make the subterms official$/ do
+  @subterm_list.each do |subterm|
+    subterm.make_official
+  end
+end
+
 Then /^the subterms are successfully copied$/ do
   @calendar.search
 
@@ -879,5 +885,13 @@ Then /^the subterm is also deleted$/ do
     rescue Watir::Exception::UnknownObjectException
       # Implication here is that there were no search results at all.
     end
+  end
+end
+
+Then /^I setup the SOC for for the parent term$/ do
+  go_to_create_soc
+  on CreateSocForTerm do |page|
+    page.term_code.set @term.term_code
+    page.submit
   end
 end

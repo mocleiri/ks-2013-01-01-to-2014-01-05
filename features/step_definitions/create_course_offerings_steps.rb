@@ -29,3 +29,11 @@ Then /^the new Course Offering should be displayed in the list of available offe
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
 end
+
+And /^I create a Course Offering with an Activity Offering in a subterm$/ do
+  @course_offering = create CourseOffering, :term=>@term.term_code, :course => "CHEM132", :grade_format => "Lab", :delivery_format => "Lab"
+  @activity_offering = create ActivityOffering, :subterm => @subterm_list[0].subterm_type, :parent_course_offering => @course_offering,
+                              :format => "Lab Only", :activity_type => "Lab"
+  #@activity_offering.save
+end
+

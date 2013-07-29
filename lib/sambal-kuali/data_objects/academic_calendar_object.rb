@@ -217,7 +217,13 @@ class AcademicTerm
   include StringFactory
   include Workflows
 
-  attr_accessor :term_type, :term_name, :term_year, :start_date, :end_date, :expected_instructional_days, :key_date_groups, :parent_calendar, :parent_term, :subterm, :subterm_type
+  attr_accessor :term_type, :term_name,
+                :term_year, :start_date, :end_date,
+                :expected_instructional_days,
+                :key_date_groups,
+                :parent_calendar,
+                :parent_term, :subterm, :subterm_type,
+                :term_code
 
   WINTER_TERM_TYPE = "Winter Term"
   FALL_TERM_TYPE = "Fall Term"
@@ -236,6 +242,7 @@ class AcademicTerm
         :start_date=>"09/02/#{calendar_year}",
         :end_date=>"09/24/#{calendar_year}",
         :term_type=>"Fall Term",
+        :term_code => "#{calendar_year}08" ,
         :key_date_group_list=> Array.new(1){make KeyDateGroup},
         :term_year=> calendar_year,
         :parent_term=> nil,
@@ -245,7 +252,7 @@ class AcademicTerm
 
     options = defaults.merge(opts)
     set_options(options)
-    @term_name = "#{@term_type} #{calendar_year}"
+    @term_name = "#{@term_type} #{calendar_year}" if @term_name.nil?
 
     if @subterm then
       @subterm_type = @term_type

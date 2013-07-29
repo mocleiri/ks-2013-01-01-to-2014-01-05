@@ -394,6 +394,8 @@ class CourseOffering
     go_to_create_course_offerings
     on CreateCourseOffering do  |page|
       page.target_term.set @term
+      #page.target_term.fire_event "onchange"
+      page.catalogue_course_code.click
       page.catalogue_course_code.set @course
     end
   end

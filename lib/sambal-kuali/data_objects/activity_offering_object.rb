@@ -200,6 +200,7 @@ class ActivityOffering
     end
 
     init = {
+        :parent_course_offering=> @parent_course_offering,
         :max_enrollment => @max_enrollment,
         :actual_delivery_logistics_list => @actual_delivery_logistics_list,
         :requested_delivery_logistics_list => @requested_delivery_logistics_list,
@@ -209,7 +210,8 @@ class ActivityOffering
         :requires_evaluation => @requires_evaluation,
         :honors_course => @honors_course,
         :colocate_ao_list => @colocate_ao_list,
-        :colocate_shared_enrollment => @colocate_shared_enrollment
+        :colocate_shared_enrollment => @colocate_shared_enrollment,
+        :subterm => @subterm
     }
 
     edit(init)

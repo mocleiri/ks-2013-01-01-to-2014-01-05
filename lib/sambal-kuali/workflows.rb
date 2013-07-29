@@ -3,6 +3,12 @@
 module Workflows
 
   # Site Navigation helpers...
+  def go_to_create_soc
+    visit PortalMenu do |page|
+      page.create_soc_for_term
+    end
+  end
+
   def go_to_rollover_details
     visit Enrollment do |page|
       page.view_rollover_details

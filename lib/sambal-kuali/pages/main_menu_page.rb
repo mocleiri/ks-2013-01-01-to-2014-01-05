@@ -17,6 +17,8 @@ class PortalMenu < BasePage
   action(:manage_course_offerings) { |b| b.link(text: "Manage Course Offerings").click }
   action(:delete_target_term) { |b| b.link(text: "Delete Target Term").click }
   action(:release_to_departments) { |b| b.link(text: "Release to Departments").click }
+  action(:create_soc_for_term) { |b| b.link(text: "Create Soc for Term").click }
+
   action(:activity_offering_lookup) { |b| b.link(text: "Activity Offering Lookup").click }
   action(:activity_offering_lookup2) { |b| b.link(text: "Activity Offering Lookup 2").click }
   action(:course_offering_info_lookup) { |b| b.link(title: "CourseOfferingInfo Lookup").click }

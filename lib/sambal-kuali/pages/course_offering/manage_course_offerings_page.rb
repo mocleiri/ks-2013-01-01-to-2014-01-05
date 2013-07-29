@@ -221,9 +221,14 @@ class ManageCourseOfferings < BasePage
 
   def codes_list(cluster_private_name = :default_cluster)
     codes = []
-    activity_offering_results_table(cluster_private_name).rows.each { |row| codes << row[AO_CODE].text }
-    codes.delete_if { |code| code == "CODE" }
-    codes.delete_if { |code| code.strip == "" }
+    begin
+      activity_offering_results_table(cluster_private_name).rows.each { |row| codes << row[AO_CODE].text }
+      codes.delete_if { |code| code == "CODE" }
+      codes.delete_if { |code| code.strip == "" }
+    rescue
+      #no AOs found
+      codes = []
+    end
     codes
   end
 
