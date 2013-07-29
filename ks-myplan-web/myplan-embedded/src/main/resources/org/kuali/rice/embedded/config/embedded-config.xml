@@ -225,6 +225,7 @@
     <!-- Dictionary Context Overrides -->
     <param name="uw.ks.core.dictionary.serviceContextLocations">classpath:ks-proposalInfo-dictionary-context.xml, classpath:ks-workflow-dictionary-context.xml, classpath:ks-document-dictionary-context.xml, classpath:ks-comment-dictionary-context.xml, classpath:ks-atp-dictionary-context.xml, classpath:ks-lrc-dictionary-context.xml, classpath:uw-base-dictionary-override.xml, classpath:uw-comment-dictionary-override.xml</param>
     <param name="uw.ks.lum.dictionary.serviceContextLocations">classpath:ks-courseInfo-dictionary-context.xml, classpath:ks-programInfo-dictionary-context.xml, classpath:ks-statement-dictionary-context.xml, classpath:ks-lrc-dictionary-context.xml,  classpath:uw-base-dictionary-override.xml, classpath:uw-courseInfo-dictionary-override.xml</param>
+    <param name="uw.academic.plan.serviceContextLocations">classpath:uw-planItem-dictionary-override.xml</param>
     <!--<param name="css.files" override="true">ks-myplan/css/myplan.css,${css.files}</param>-->
 
     <!-- UW SWS Service Impl -->
