@@ -35,6 +35,7 @@ import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.exceptions.ReadOnlyException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
+import org.kuali.student.r2.core.organization.constants.OrganizationServiceConstants;
 import org.kuali.student.r2.core.organization.dto.OrgCodeInfo;
 import org.kuali.student.r2.core.organization.dto.OrgHierarchyInfo;
 import org.kuali.student.r2.core.organization.dto.OrgInfo;
@@ -44,6 +45,7 @@ import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.r2.core.organization.infc.OrgPositionRestriction;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
 import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
+import org.kuali.student.r2.core.search.dto.SearchResultCellInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultRowInfo;
 import org.springframework.test.context.ContextConfiguration;
@@ -85,41 +87,76 @@ public class TestOrganizationServiceImpl {
 
     @Test
     public void testOrgTypeSearch() throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
-        SearchRequestInfo searchRequest = new SearchRequestInfo("org.search.orgTypes");
+        SearchRequestInfo searchRequest = new SearchRequestInfo(OrganizationServiceConstants.ORGANIZATION_SEARCH_ORG_TYPE_SEARCH_KEY);
 
         SearchResultInfo searchResult = orgService.search(searchRequest, callContext);
+        List<SearchResultRowInfo> rows = searchResult.getRows();
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.CorporateEntity");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Board");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Division");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.School");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Program");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Center");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.College");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Department");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Office");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Association");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.AdvisoryGroup");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.WorkGroup");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Section");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Senate");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Committee");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.AdhocCommittee");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.COC");
 
-        assertEquals(17, searchResult.getRows().size());
-        for (SearchResultRowInfo row : searchResult.getRows()) {
-            assertEquals(2, row.getCells().size());
-        }
-
-        searchRequest.addParam("org.queryParam.orgOptionalId", "kuali.org.CorporateEntity");
+        searchRequest.addParam(OrganizationServiceConstants.OrganizationSearchParameters.ORG_OPTIONAL_ID, "kuali.org.CorporateEntity");
 
         searchResult = orgService.search(searchRequest, callContext);
 
-        assertEquals(1, searchResult.getRows().size());
+        rows = searchResult.getRows();
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.CorporateEntity");
     }
+
 
     @Test
     public void testOrgPersonRelationTypeSearch() throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
         SearchRequestInfo searchRequest = new SearchRequestInfo("org.search.orgPersonRelationTypes");
 
         SearchResultInfo searchResult = orgService.search(searchRequest, callContext);
-
-        assertEquals(26, searchResult.getRows().size());
-        for (SearchResultRowInfo row : searchResult.getRows()) {
-            assertEquals(2, row.getCells().size());
-        }
+        List<SearchResultRowInfo> rows = searchResult.getRows();
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.President");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.EVPP");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.ViceChancellor");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.VicePresident");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.AssocDean");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.AssocProvost");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.Chancellor");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.Dean");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.ExecutiveOfficer");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.AdministrativeOfficer");
 
         searchRequest.addParam("org.queryParam.orgOptionalId", "kuali.org.PersonRelation.Head");
-
         searchResult = orgService.search(searchRequest, callContext);
 
-        assertEquals(1, searchResult.getRows().size());
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.Head");
+    }
+
+    private void validateContainsRow(List<SearchResultRowInfo> rows, String key, String typeKey) {
+        for (SearchResultRowInfo row : rows) {
+            List<SearchResultCellInfo> cells = row.getCells();
+            for(SearchResultCellInfo cell : cells) {
+                if(key.equals(cell.getKey()) && cell.getValue().equals(typeKey)) {
+                    return;
+                }
+            }
+        }
+        fail();
     }
 
 
+
+
+    @Test
     public void testSearchForOrgs() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         QueryByCriteria.Builder qbcBuilder = QueryByCriteria.Builder.create();
         qbcBuilder.setPredicates(PredicateFactory.equal("id", "1"));
