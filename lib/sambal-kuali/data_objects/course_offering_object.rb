@@ -137,7 +137,7 @@ class CourseOffering
       end
 
       on CreateCOFromCatalog do |page|
-        @suffix = random_alphanums(5) unless @suffix != ""
+        @suffix = random_alphanums(5) if @suffix == ""
         page.suffix.set @suffix
         @course = "#{@course}#{@suffix}"
         if @joint_co_to_create != nil
@@ -935,6 +935,12 @@ class CourseOffering
     end
     on CopyCourseOffering do |page|
       page.create_copy
+    end
+    go_to_manage_course_offerings
+    on ManageCourseOfferings do |page|
+      page.term.set term
+      page.input_code.set source_course_code[0,5] #subject code + course level (assumes always more than one CO returned)
+      page.show
     end
     on ManageCourseOfferingList do |page|
       post_copy_co_list = page.co_list
