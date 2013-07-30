@@ -2,8 +2,8 @@ package com.sigmasys.kuali.ksa.service;
 
 
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.tp.*;
-import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
+import com.sigmasys.kuali.ksa.model.pb.*;
+import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,25 +17,21 @@ import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
- * ThirdPartyTransferService tests.
+ * PaymentBillingService tests.
  *
  * @author Michael Ivanov
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
-public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
-
-    protected static final String THIRD_PARTY_ACCOUNT_ID = "third_party_account";
-
+public class PaymentBillingServiceTest extends AbstractServiceTest {
 
     @PersistenceContext(unitName = Constants.KSA_PERSISTENCE_UNIT)
     protected EntityManager em;
 
     @Autowired
-    private ThirdPartyTransferService thirdPartyTransferService;
+    private PaymentBillingService billingService;
 
     @Autowired
     private TransactionTransferService transferService;
@@ -54,31 +50,6 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
         // set up test data within the transaction
         String userId = "admin";
         adminAccount = accountService.getOrCreateAccount(userId);
-    }
-
-    protected ThirdPartyAccount createThirdPartyAccount() {
-
-        // TODO: replace it with a call to createThirdPartyAccount() method of AccountService when it is ready
-
-        OrgName orgName = new OrgName();
-        orgName.setName("Org 1");
-        orgName.setCreatorId("admin");
-        orgName.setLastUpdate(new Date());
-        orgName.setContact(adminAccount.getDefaultPersonName());
-
-        em.persist(orgName);
-
-        ThirdPartyAccount account = new ThirdPartyAccount();
-        account.setId(THIRD_PARTY_ACCOUNT_ID);
-        account.setAbleToAuthenticate(true);
-        account.setCreationDate(new Date());
-        account.setCreatorId("admin");
-        account.setOrgName(orgName);
-        account.setCreditLimit(new BigDecimal(10e6));
-
-        em.persist(account);
-
-        return account;
     }
 
     protected GeneralLedgerType createGeneralLedgerType() {
@@ -104,7 +75,7 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     }
 
 
-    protected ThirdPartyPlan _createThirdPartyPlan() throws Exception {
+    protected PaymentBillingPlan _createPaymentBillingPlan() throws Exception {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
 
@@ -122,67 +93,89 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
         Assert.notNull(transferType);
         Assert.notNull(transferType.getId());
 
-        ThirdPartyAccount account = createThirdPartyAccount();
+        /*
+         Long transferTypeId,
+            String flatFeeDebitTypeId,
+            String variableFeeDebitTypeId,
+            Date openPeriodStartDate,
+            Date openPeriodEndDate,
+            Date chargePeriodStartDate,
+            Date chargePeriodEndDate,
+            BigDecimal maxAmount,
+            BigDecimal flatFeeAmount,
+            BigDecimal variableFeeAmount,
+            BigDecimal minFeeAmount,
+            BigDecimal maxFeeAmount,
+            int roundingFactor,
+            boolean isGlCreationImmediate,
+            String statementPrefix,
+            PaymentRoundingType paymentRoundingType,
+            ScheduleType scheduleType
+         */
 
-        Assert.notNull(account);
-        Assert.notNull(account.getId());
-
-        ThirdPartyPlan plan = thirdPartyTransferService.createThirdPartyPlan(
-                "TPP code1",
-                "TPP name 1",
-                "TPP description 1",
+        PaymentBillingPlan plan = billingService.createPaymentBillingPlan(
+                "PB code1",
+                "PB name 1",
+                "PB description 1",
                 transferType.getId(),
-                account.getId(),
-                new BigDecimal(10e4),
-                new Date(),
-                null,
+                "1001",
+                "1020",
                 openPeriodStartDate,
                 openPeriodEndDate,
                 chargePeriodStartDate,
-                chargePeriodEndDate);
+                chargePeriodEndDate,
+                new BigDecimal(10e7),
+                new BigDecimal(3570.99),
+                new BigDecimal(400.00),
+                new BigDecimal(1),
+                new BigDecimal(3700.99),
+                1,
+                true,
+                "PB plan prefix",
+                PaymentRoundingType.FIRST,
+                ScheduleType.SKIP_EARLIER);
 
         Assert.notNull(plan);
         Assert.notNull(plan.getId());
-        Assert.notNull(plan.getThirdPartyAccount());
         Assert.notNull(plan.getTransferType());
 
-        Assert.isTrue(plan.getThirdPartyAccount().getId().equals(THIRD_PARTY_ACCOUNT_ID));
-
-        ThirdPartyPlanMember planMember =
-                thirdPartyTransferService.createThirdPartyPlanMember(TEST_USER_ID, plan.getId(), 99);
-
-        Assert.notNull(planMember);
-        Assert.notNull(planMember.getId());
+        Assert.isTrue(PaymentRoundingType.FIRST == plan.getPaymentRoundingType());
+        Assert.isTrue(ScheduleType.SKIP_EARLIER == plan.getScheduleType());
+        Assert.isTrue("1001".equals(plan.getFlatFeeDebitTypeId()));
+        Assert.isTrue("1020".equals(plan.getVariableFeeDebitTypeId()));
 
         return plan;
     }
 
     @Test
-    public void createThirdPartyPlan() throws Exception {
-        _createThirdPartyPlan();
+    public void createPaymentBillingPlan() throws Exception {
+        _createPaymentBillingPlan();
     }
 
     @Test
-    public void generateThirdPartyTransfer() throws Exception {
+    public void generatePaymentBillingTransfer() throws Exception {
 
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+        PaymentBillingPlan plan = _createPaymentBillingPlan();
 
-        ThirdPartyTransferDetail transfer =
-                thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), TEST_USER_ID, new Date());
+        PaymentBillingTransferDetail transfer =
+                billingService.generatePaymentBillingTransfer(plan.getId(), TEST_USER_ID, new BigDecimal(2300), new Date());
 
         Assert.notNull(transfer);
         Assert.notNull(transfer.getId());
 
-        Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.ACTIVE);
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.INITIALIZED);
     }
 
+    // TODO -> implement more JUnit tests
+
+    /*
     @Test
     public void generateThirdPartyTransfers1() throws Exception {
 
-        _createThirdPartyPlan();
+        _createPaymentBillingPlan();
 
         List<ThirdPartyTransferDetail> transfers =
-                thirdPartyTransferService.generateThirdPartyTransfers(TEST_USER_ID, new Date(), true);
+                billingService.generateThirdPartyTransfers(TEST_USER_ID, new Date(), true);
 
         Assert.notNull(transfers);
         Assert.notEmpty(transfers);
@@ -200,10 +193,10 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     @Test
     public void generateThirdPartyTransfers2() throws Exception {
 
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+        ThirdPartyPlan plan = _createPaymentBillingPlan();
 
         List<ThirdPartyTransferDetail> transfers =
-                thirdPartyTransferService.generateThirdPartyTransfers(plan.getId(), true);
+                billingService.generateThirdPartyTransfers(plan.getId(), true);
 
         Assert.notNull(transfers);
         Assert.notEmpty(transfers);
@@ -221,16 +214,16 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     @Test
     public void generateThirdPartyTransfers3() throws Exception {
 
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+        ThirdPartyPlan plan = _createPaymentBillingPlan();
 
         List<ThirdPartyTransferDetail> transfers =
-                thirdPartyTransferService.generateThirdPartyTransfers(plan.getId(), false);
+                billingService.generateThirdPartyTransfers(plan.getId(), false);
 
         Assert.notNull(transfers);
         Assert.notEmpty(transfers);
 
         transfers =
-                thirdPartyTransferService.generateThirdPartyTransfers(plan.getId(), true);
+                billingService.generateThirdPartyTransfers(plan.getId(), true);
 
         Assert.notNull(transfers);
         Assert.notEmpty(transfers);
@@ -248,10 +241,10 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     @Test
     public void generateThirdPartyTransfers4() throws Exception {
 
-        _createThirdPartyPlan();
+        _createPaymentBillingPlan();
 
         List<ThirdPartyTransferDetail> transfers =
-                thirdPartyTransferService.generateThirdPartyTransfers(TEST_USER_ID);
+                billingService.generateThirdPartyTransfers(TEST_USER_ID);
 
         Assert.notNull(transfers);
         Assert.notEmpty(transfers);
@@ -269,15 +262,15 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     @Test
     public void reverseThirdPartyTransfers() throws Exception {
 
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+        ThirdPartyPlan plan = _createPaymentBillingPlan();
 
         ThirdPartyTransferDetail transfer =
-                thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), TEST_USER_ID, new Date());
+                billingService.generateThirdPartyTransfer(plan.getId(), TEST_USER_ID, new Date());
 
         Assert.notNull(transfer);
         Assert.notNull(transfer.getId());
 
-        transfer = thirdPartyTransferService.reverseThirdPartyTransfer(transfer.getId(), "Reversed Memo");
+        transfer = billingService.reverseThirdPartyTransfer(transfer.getId(), "Reversed Memo");
 
         Assert.notNull(transfer);
         Assert.notNull(transfer.getId());
@@ -291,10 +284,10 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     @Test
     public void createThirdPartyAllowableCharge() throws Exception {
 
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+        ThirdPartyPlan plan = _createPaymentBillingPlan();
 
         ThirdPartyAllowableCharge allowableCharge =
-                thirdPartyTransferService.createThirdPartyAllowableCharge(
+                billingService.createThirdPartyAllowableCharge(
                         plan.getId(),
                         ".*",
                         new BigDecimal(390.01),
@@ -314,6 +307,6 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
         Assert.isTrue(new BigDecimal(55.5).compareTo(allowableCharge.getMaxPercentage()) == 0);
 
     }
-
+    */
 
 }

@@ -155,6 +155,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         transferDetail.setInitiationDate(initiationDate);
         transferDetail.setMaxAmount(maxAmount);
+        // TODO: check with Paul if the following assignment is correct
+        transferDetail.setPlanAmount(maxAmount);
         transferDetail.setDirectChargeAccount((DirectChargeAccount) account);
         transferDetail.setPlan(billingPlan);
         transferDetail.setChargeStatus(PaymentBillingChargeStatus.INITIALIZED);
