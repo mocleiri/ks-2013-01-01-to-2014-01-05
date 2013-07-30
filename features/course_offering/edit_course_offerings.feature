@@ -10,6 +10,20 @@ Feature: WC.Edit Course Offerings
     And I can edit the course offering
     And I can return to search using the cancel button
 
+  #KSENROLL-8075
+  @pending
+  Scenario: Edit an existing course offering changing the student registration options
+    When I edit a course offering with multiple registration options
+    And I clear the registration options checkboxes
+    Then I can submit and the registration options are changed
+
+  #KSENROLL-8075
+  @pending
+  Scenario: Edit an existing course offering changing credit type and credits
+    When I edit a course offering with multiple registration options
+    And I change the credit type from multiple to fixed
+    Then I can submit and the credit options are changed
+
   #KSENROLL-1503.1
   Scenario: Edit an existing course offering deactivating final examinations and update the grade roster level
     When I edit a course offering with multiple format types
@@ -24,22 +38,16 @@ Feature: WC.Edit Course Offerings
     And I change the delivery format options
     Then I can submit and the course offering is updated
 
-#KSENROLL-8076
-  @pending
   Scenario: Edit an existing course offering and add a delivery format line
     Given I edit a course offering with multiple delivery format types
     And I add a delivery format option
     Then I can submit and the delivery formats are updated
 
-#KSENROLL-8076
-  @pending
   Scenario: Edit an existing course offering and modify a delivery format line
     Given I edit a course offering with multiple delivery format types
     And I modify a delivery format option
     Then I can submit and the modified delivery formats are updated
 
-#KSENROLL-8076
-  @pending
   Scenario: Edit an existing course offering and delete a delivery format line
     Given I edit a course offering with multiple delivery format types
     And I add a delivery format option
