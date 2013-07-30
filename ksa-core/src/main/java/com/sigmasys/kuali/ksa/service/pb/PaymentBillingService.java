@@ -94,6 +94,14 @@ public interface PaymentBillingService {
     PaymentBillingPlan getPaymentBillingPlan(Long paymentBillingPlanId);
 
     /**
+     * Persists PaymentBillingPlan instance in the persistent store
+     *
+     * @param billingPlan PaymentBillingPlan instance
+     * @return PaymentBillingPlan ID
+     */
+    Long persistPaymentBillingPlan(PaymentBillingPlan billingPlan);
+
+    /**
      * Retrieves PaymentBillingTransferDetail with ACTIVE status by ID from the persistent store.
      *
      * @param transferDetailId PaymentBillingTransferDetail ID

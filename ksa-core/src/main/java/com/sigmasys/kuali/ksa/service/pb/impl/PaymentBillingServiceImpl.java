@@ -318,6 +318,21 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
     }
 
     /**
+     * Persists PaymentBillingPlan instance in the persistent store
+     *
+     * @param billingPlan PaymentBillingPlan instance
+     * @return PaymentBillingPlan ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Long persistPaymentBillingPlan(PaymentBillingPlan billingPlan) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_PAYMENT_BILLING_PLAN);
+
+        return persistEntity(billingPlan);
+    }
+
+    /**
      * Retrieves PaymentBillingTransferDetail with ACTIVE status by ID from the persistent store.
      *
      * @param transferDetailId PaymentBillingTransferDetail ID
