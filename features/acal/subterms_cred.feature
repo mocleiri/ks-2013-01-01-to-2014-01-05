@@ -73,3 +73,17 @@ Feature: EC.Subterms CRED
       Given I create an Academic Calendar with subterms
       When I delete the parent term of a subterm
       Then the subterm is also deleted
+
+  Scenario: CAL 4.8 Make subterm official when parent is official
+    Given I create an Academic Calendar with subterms
+    When I make the subterms official
+    Then the subterm is listed in official status when I view the Academic Calendar
+
+  Scenario: CAL 4.8 Make subterm official when parent is draft
+    Given I create an Academic Calendar with subterms
+    When I make the subterms official
+    Then the subterm is listed in official status when I view the Academic Calendar
+    And the term is listed in official status when I view the Academic Calendar
+    When I search for the calendar
+    Then the calendar should be set to Official
+

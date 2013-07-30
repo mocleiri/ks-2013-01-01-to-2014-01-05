@@ -165,6 +165,10 @@ And /^I make the term official$/ do
   @term.make_official
 end
 
+And /^I make the subterm official$/ do
+  @subterm_list[0].make_official
+end
+
 Then /^the term should be set to Official on edit$/ do
   @term.search
   on CalendarSearch do |page|
@@ -471,6 +475,14 @@ Then /^the term is listed in official status when I view the Academic Calendar$/
   on ViewAcademicTerms do |page|
     page.go_to_terms_tab
     page.term_status(@term.term_type).should == "OFFICIAL"
+  end
+end
+
+Then /^the subterm is listed in official status when I view the Academic Calendar$/ do
+  @calendar.view
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.term_status(@subterm_list[0].term_type).should == "OFFICIAL"
   end
 end
 
