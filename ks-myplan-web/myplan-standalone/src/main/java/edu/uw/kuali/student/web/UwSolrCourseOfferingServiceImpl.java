@@ -609,7 +609,9 @@ public class UwSolrCourseOfferingServiceImpl extends CourseOfferingServiceDecora
                     Document sectionDoc;
                     sectionDoc = offeringServiceUtils.newDocument(sectionData);
                     CourseOfferingInfo info = offeringServiceUtils.buildCourseOfferingInfo(sectionDoc, courseInfo);
-                    list.add(info);
+                    if (info != null) {
+                        list.add(info);
+                    }
                 }
             } else {
                 failOver = true;
