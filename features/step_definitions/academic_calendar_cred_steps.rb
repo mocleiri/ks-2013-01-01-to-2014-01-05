@@ -103,6 +103,18 @@ When /^I update the Academic Calendar$/ do
   end
 end
 
+When /^I edit the term and make it official$/ do
+  @calendar.search
+  on CalendarSearch do |page|
+    page.edit @calendar.name
+  end
+  on EditAcademicTerms do |page|
+    page.go_to_terms_tab
+    @term.make_official
+    page.save
+  end
+end
+
 When /^I delete the Academic Calendar draft$/ do
   @calendar.edit
   on EditAcademicCalendar do |page|
