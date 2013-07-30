@@ -1,3 +1,4 @@
+@nightly
 Feature: KRMS.ELIG9-10 Copy and Paste
 
   Background:
@@ -5,7 +6,6 @@ Feature: KRMS.ELIG9-10 Copy and Paste
     And I have setup the Student Eligibility & Prerequisite section for course "HIST111" in the future term
 
   #ELIG9.10.EB1 (KSENROLL-7051)
-  @pending
   Scenario: Confirm the copy and paste of rule statement is working as expected
     When I want to edit the selected agenda section
     And I copy node "D" and paste it after node "G"
@@ -19,7 +19,6 @@ Feature: KRMS.ELIG9-10 Copy and Paste
     When I commit changes made to the proposition
 
   #ELIG9.10.EB2 (KSENROLL-7051)
-  @pending
   Scenario: Confirm the copy and paste of compound (group) rule statement is working as expected
     When I want to edit the selected agenda section
     And I copy the group containing node "C" and paste it after node "G"
