@@ -266,9 +266,32 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         }
 
 
-        // TODO
+        PaymentBillingPlan plan = new PaymentBillingPlan();
 
-        return null;
+        plan.setCode(code);
+        plan.setName(name);
+        plan.setDescription(description);
+        plan.setTransferType(transferType);
+        plan.setFlatFeeDebitTypeId(flatFeeDebitTypeId);
+        plan.setVariableFeeDebitTypeId(variableFeeDebitTypeId);
+        plan.setOpenPeriodStartDate(openPeriodStartDate);
+        plan.setOpenPeriodEndDate(openPeriodEndDate);
+        plan.setChargePeriodStartDate(chargePeriodStartDate);
+        plan.setChargePeriodEndDate(chargePeriodEndDate);
+        plan.setMaxAmount(maxAmount);
+        plan.setFlatFeeAmount(flatFeeAmount);
+        plan.setVariableFeeAmount(variableFeeAmount);
+        plan.setMinFeeAmount(minFeeAmount);
+        plan.setMaxFeeAmount(maxFeeAmount);
+        plan.setRoundingFactor(roundingFactor);
+        plan.setGlCreationImmediate(isGlCreationImmediate);
+        plan.setStatementPrefix(statementPrefix);
+        plan.setPaymentRoundingType(paymentRoundingType);
+        plan.setScheduleType(scheduleType);
+
+        persistEntity(plan);
+
+        return plan;
     }
 
     /**
