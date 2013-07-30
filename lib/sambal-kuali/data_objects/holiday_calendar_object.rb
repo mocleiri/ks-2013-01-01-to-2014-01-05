@@ -270,10 +270,10 @@ class Holiday
       @type = holiday_row.cells[EditHolidayCalendar::HOLIDAY_TYPE].text
       @start_date = holiday_row.cells[EditHolidayCalendar::START_DATE].text_field.value
       @start_time = holiday_row.cells[EditHolidayCalendar::START_TIME].text_field.value
-      @start_ampm = holiday_row.cells[EditHolidayCalendar::START_AMPM].select_list.selected_options[0].value
+      @start_am = holiday_row.cells[EditHolidayCalendar::START_AMPM].radio.set? if holiday_row.cells[EditHolidayCalendar::START_AMPM].radio.enabled?
       @end_date = holiday_row.cells[EditHolidayCalendar::END_DATE].text_field.value
       @end_time = holiday_row.cells[EditHolidayCalendar::END_TIME].text_field.value
-      @end_ampm = holiday_row.cells[EditHolidayCalendar::END_AMPM].select_list.selected_options[0].value
+      @end_am = holiday_row.cells[EditHolidayCalendar::END_AMPM].radio.set? if holiday_row.cells[EditHolidayCalendar::END_AMPM].radio.enabled?
       @all_day = holiday_row.cells[EditHolidayCalendar::ALL_DAY].checkbox.set?
       @date_range = holiday_row.cells[EditHolidayCalendar::DATE_RANGE].checkbox.set?
       @instructional = holiday_row.cells[EditHolidayCalendar::INSTRUCTIONAL].checkbox.set?
