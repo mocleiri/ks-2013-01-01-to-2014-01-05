@@ -176,6 +176,10 @@ class CourseOffering
       #TODO:Add Suffix to edit method Course Offerings
     end
 
+    if options[:affiliated_person_list] != nil
+      @affiliated_person_list = options[:affiliated_person_list]
+    end
+
     if options[:wait_list] != nil
       on CourseOfferingEdit do |page|
         if options[:wait_list] == "NO"

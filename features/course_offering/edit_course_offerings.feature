@@ -66,6 +66,7 @@ Feature: WC.Edit Course Offerings
     When I edit a course offering
     And I add an affiliated person
     Then I can submit and the course offering is updated
+    And the changes of the affiliated person are persisted
 
   #KSENROLL- 1506
   Scenario: Edit an existing course offering's administering organizations and honors flag

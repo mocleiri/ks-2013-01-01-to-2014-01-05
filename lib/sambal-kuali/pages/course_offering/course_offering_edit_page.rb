@@ -6,7 +6,7 @@ class CourseOfferingEdit < BasePage
 
   expected_element :term_label_div
 
-  action(:submit) { |b| b.frm.button(text: "Save").click; b.loading.wait_while_present }
+  action(:submit) { |b| b.frm.button(text: "Update").click; b.loading.wait_while_present }
   action(:cancel) { |b| b.frm.link(text: "cancel").click; b.loading.wait_while_present }
   element(:term_label_div) { |b| b.frm.div(data_label: "Term") }
 
@@ -108,6 +108,9 @@ class CourseOfferingEdit < BasePage
   element(:personnel_table) { |b| b.personnel_div.table() }
 
   element(:add_person_id) { |b| b.personnel_table.rows[1].cells[ID_COLUMN].text_field() }
+  element(:personnel_id) { |b| b.personnel_div.text_field(name: "document.newMaintainableObject.dataObject.instructors[0].offeringInstructorInfo.personId") }
+  element(:personnel_name) { |b| b.personnel_div.text_field(name: "document.newMaintainableObject.dataObject.instructors[0].offeringInstructorInfo.personName") }
+  element(:personnel_affiliation) { |b| b.personnel_table.rows[1].cells[AFFILIATION_COLUMN].select() }
   #action(:lookup_person) { |b| b.personnel_table.rows[1].cells[ID_COLUMN].image().click; b.loading.wait_while_present } # Need persistent ID!
   action(:lookup_person) { |b| b.personnel_table.rows[1].cells[ID_COLUMN].input(title: "Search Field").click; b.loading.wait_while_present }
   element(:add_affiliation) { |b| b.personnel_table.rows[1].cells[AFFILIATION_COLUMN].select() }

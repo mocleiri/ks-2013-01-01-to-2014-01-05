@@ -158,6 +158,19 @@ When /^I add an affiliated person$/ do
   @course_offering.edit_offering :affiliated_person_list => personnel_list
 end
 
+Then /^the changes of the affiliated person are persisted$/ do
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+
+  on CourseOfferingEdit do |page|
+    page.personnel_id.value.should == "admin"
+    page.personnel_name.value.should == "admin, admin"
+    page.personnel_affiliation.value.should == "kuali.lpr.type.instructor.main"
+  end
+end
+
 When /^I activate a wait list with a level of "([^"]*)" and type of "([^"]*)"$/ do |list_level, list_type|
     @course_offering.edit_offering :wait_list => "YES", :wait_list_level=> list_level, :wait_list_type => list_type
 end
