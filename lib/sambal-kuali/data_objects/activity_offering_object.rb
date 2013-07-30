@@ -103,7 +103,7 @@ class ActivityOffering
         :create_by_copy => nil, #if true create copy using :ao_code
         :colocate_ao_list => [],
         :colocate_shared_enrollment => false,
-        :subterm => "None"
+        :subterm => nil
     }
 
     options = defaults.merge(opts)
