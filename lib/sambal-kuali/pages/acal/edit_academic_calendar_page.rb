@@ -53,7 +53,7 @@ class EditAcademicCalendar < BasePage
 
   element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") } # Persistent ID needed!
 
-  action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete Calendar Draft").click; b.loading.wait_while_present } # Persistent ID needed!
+  action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete").click; b.loading.wait_while_present } # Persistent ID needed!
   action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click }
 
   ###### confirm make official dialog
