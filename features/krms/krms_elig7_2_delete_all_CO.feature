@@ -7,7 +7,7 @@ Feature: KRMS.ELIG7-2 Delete all statements of CO copied from CLU
 
   #ELIG7.2.EB1 (KSENROLL-7247)
   Scenario: Test whether tree deleted is removed from all tabs on the page
-    When I want to edit the selected agenda section
+    When I want to edit the Student Eligibility & Prerequisite section
     And I delete the tree
     And I commit and return to see the changes made to the proposition
-    Then the tree in the selected agenda section should be empty
+    Then the tree in the Student Eligibility & Prerequisite section should be empty

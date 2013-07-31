@@ -51,32 +51,11 @@ class CORequisitesData
     @browser = browser
 
     defaults = {
-      :section => "Student Eligibility & Prerequisite",
-      :term => "201208",
-      :course => "ENGL101"
     }
 
     options = defaults.merge(opts)
 
     set_options(options)
-  end
-
-  def edit_add_statement( edit_or_add)
-    begin
-      open_agenda_section
-      on CourseOfferingRequisites do |page|
-        if edit_or_add == "add"
-          page.rule_add
-        else
-          page.rule_edit
-        end
-      end
-    rescue Watir::Wait::TimeoutError
-      #means Data setup was not needed
-      on CourseOfferingRequisites do |page|
-        page.alert.ok
-      end
-    end
   end
 
   def navigate_to_mco_requisites
@@ -89,26 +68,10 @@ class CORequisitesData
       rescue Watir::Wait::TimeoutError
         page.alert.ok
       end
-
     end
-  end
-
-  def data_setup
-    navigate_to_mco_requisites
     on CourseOfferingRequisites do |page|
       page.loading.wait_while_present
       open_agenda_section
-      if page.rule_edit_links.exists?
-        page.rule_edit
-        page.loading.wait_while_present
-        if create_less_data_advanced_search == true
-          commit_changes( true)
-        end
-      else
-        page.rule_add
-        create_data_advanced_search
-        commit_changes( true)
-      end
     end
   end
 
@@ -133,12 +96,11 @@ class CORequisitesData
       end
     end
     # TODO: Adding a sleep as a temporary workaround, see KSENROLL-8312
-    sleep 15
+    #sleep 15
     if return_to_edit_page == true
       on ManageCourseOfferings do |page|
         page.manage_course_offering_requisites
       end
-      open_agenda_section
     end
   end
 
@@ -147,7 +109,7 @@ class CORequisitesData
                 "Antirequisite"=>:antirequisite_section, "Corequisite"=>:corequisite_section,
                 "Recommended Preparation"=>:recommended_prep_section,
                 "Repeatable for Credit"=>:repeatable_credit_section,
-                "Course that Restricts Credits"=>:resctricted_credit_section}
+                "Course that Restricts Credits"=>:restricted_credit_section}
     begin
       on CourseOfferingRequisites do |page|
         page.loading.wait_while_present(60)
@@ -187,6 +149,9 @@ class CORequisitesData
       elsif field == "org"
         click_search_link( Regexp.new(".*editTree.+proposition\.orgInfo\.id"))
         page.lookup_abrev_org.when_present.set code
+      elsif field == "population"
+        click_search_link( Regexp.new(".*editTree.+proposition\.orgInfo\.population\.id"))
+        page.lookup_population.when_present.set code
       end
       page.lookup_search_button
       page.loading.wait_while_present
@@ -241,7 +206,7 @@ class CORequisitesData
     end
   end
 
-  def create_data_advanced_search
+  def create_rule_tree
     on ManageCORequisites do |page|
       create_course_rule( "add", "", "ENGL101")
       create_course_rule( "add", "", "HIST639")
@@ -258,7 +223,7 @@ class CORequisitesData
     end
   end
 
-  def create_less_data_advanced_search
+  def create_smaller_rule_tree
     groups = check_number_groups
     statements = check_number_statements
     data_setup_needed = false
@@ -311,282 +276,6 @@ class CORequisitesData
       end
     end
     return data_setup_needed
-  end
-
-  def create_course_rule( group, node, course)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      if( @section == "Student Eligibility & Prerequisite" || @section == "Recommended Preparation")
-        page.rule_dropdown.when_present.select /Must have successfully completed <course>/
-      elsif( @section == "Antirequisite" || @section == "Course that Restricts Credits")
-        page.rule_dropdown.when_present.select /Must not have successfully completed <course>/
-      elsif( @section == "Corequisite")
-        page.rule_dropdown.when_present.select /Must be concurrently enrolled in <course>/
-      elsif( @section == "Repeatable for Credit")
-        page.rule_dropdown.when_present.select /May not repeat <course>/
-      end
-      advanced_search("course code", course)
-      page.preview_btn
-    end
-  end
-
-  def create_text_rule( group, node, text)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Free Form Text/
-      page.free_text_field.when_present.set text
-      page.preview_btn
-    end
-  end
-
-  def create_all_courses_rule( group, node, course, set, range)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      if( @section == "Student Eligibility & Prerequisite" || @section == "Recommended Preparation")
-        page.rule_dropdown.when_present.select /Must have successfully completed all courses from <courses>/
-      elsif( @section == "Antirequisite" || @section == "Course that Restricts Credits")
-        page.rule_dropdown.when_present.select /Must not have successfully completed any courses from <courses>/
-      elsif( @section == "Corequisite")
-        page.rule_dropdown.when_present.select /Must be concurrently enrolled in all courses from <courses>/
-      end
-      add_courses( course, set, range)
-      page.preview_btn
-    end
-  end
-
-  def create_number_courses_rule( group, node, number, course, set, range)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      if( @section == "Student Eligibility & Prerequisite" || @section == "Recommended Preparation")
-        page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> courses from <courses>/
-        page.integer_field.when_present.set number
-      elsif( @section == "Corequisite")
-        page.rule_dropdown.when_present.select /Must be concurrently enrolled in a minimum of <n> courses from <courses>/
-        page.integer_field.when_present.set number
-      end
-      add_courses( course, set, range)
-      page.preview_btn
-    end
-  end
-
-  def create_less_number_courses_rule( group, node, number, course, set, range)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      if( @section == "Student Eligibility & Prerequisite" || @section == "Recommended Preparation")
-        page.rule_dropdown.when_present.select /Must have successfully completed no more than <n> courses from <courses>/
-        page.integer_field.when_present.set number
-      elsif( @section == "Corequisite")
-        page.rule_dropdown.when_present.select /Must be concurrently enrolled in a minimum of <n> courses from <courses>/
-        page.integer_field.when_present.set number
-      end
-      add_courses( course, set, range)
-      page.preview_btn
-    end
-  end
-
-  def create_less_credits_rule( group, node, number, course, set, range, equal)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      if equal == ">"
-        page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> credits from <courses>/
-      elsif equal == "<"
-        page.rule_dropdown.when_present.select /Must successfully complete no more than <n> credits from <courses>/
-      end
-      page.integer_field.when_present.set number
-      add_courses( course, set, range)
-      page.preview_btn
-    end
-  end
-
-  def create_any_credits_rule( group, node, course, set, range)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must not have successfully completed any credits from <courses>/
-      add_courses( course, set, range)
-      page.preview_btn
-    end
-  end
-
-  def create_repeated_credit_rule( group, node, number)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /May be repeated for a maximum of <n> credits/
-      page.integer_field.when_present.set number
-      page.preview_btn
-    end
-  end
-
-  def create_grade_courses_rule( group, node, course, set, range, type, grade)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      if( @section == "Student Eligibility & Prerequisite" || @section == "Recommended Preparation")
-        page.rule_dropdown.when_present.select /Must have earned a minimum grade of <gradeType> <grade> in <courses>/
-      elsif( @section == "Antirequisite")
-        page.rule_dropdown.when_present.select /Must not have earned a grade of <gradeType> <grade> or higher in <courses>/
-      end
-      choose_grade_type_grade( grade, type)
-      add_courses( course, set, range)
-      page.preview_btn
-    end
-  end
-
-  def create_grade_number_courses_rule( group, node, course, set, range, type, grade, number)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must successfully complete a minimum of <n> courses from <courses> with a minimum grade of <gradeType> <grade>/
-      page.integer_field.when_present.set number
-      add_courses( course, set, range)
-      choose_grade_type_grade( grade, type)
-      page.preview_btn
-    end
-  end
-
-  def create_gpa_courses_rule( group, node, course, set, range, gpa)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must have earned a minimum GPA of <GPA> in <courses>/
-      page.integer_field.when_present.set gpa
-      add_courses( course, set, range)
-      page.preview_btn
-    end
-  end
-
-  def create_gpa_duration_rule( group, node, gpa, type, duration)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must have earned a minimum cumulative GPA of <GPA> in <duration><durationType>/
-      page.integer_field.when_present.set gpa
-      page.duration_field.when_present.set duration
-      page.duration_dropdown.when_present.select type
-      page.preview_btn
-    end
-  end
-
-  def create_gpa_rule( group, node, gpa)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must have earned a minimum cumulative GPA of <GPA>/
-      page.integer_field.when_present.set gpa
-      page.preview_btn
-    end
-  end
-
-  def create_program_rule( group, node, program)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      if( @section == "Student Eligibility & Prerequisite" || @section == "Recommended Preparation")
-        page.rule_dropdown.when_present.select /Must have been admitted to the <program> program/
-      elsif( @section == "Antirequisite")
-        page.rule_dropdown.when_present.select /Must not have been admitted to the <program> program/
-      end
-      add_program( program)
-      page.preview_btn
-    end
-  end
-
-  def create_any_program_rule( group, node)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must be admitted to any program offered at the course campus location/
-      page.edit_loading.wait_while_present
-      page.preview_btn
-    end
-  end
-
-  def create_permission_instructor_rule( group, node)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Permission of instructor required/
-      page.edit_loading.wait_while_present
-      page.preview_btn
-    end
-  end
-
-  def create_course_term_rule( group, node, course, term, prior_or_as = "as of")
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must have successfully completed <course> #{Regexp.escape(prior_or_as)} <term>/
-      advanced_search("course code", course)
-      page.term_field.set term
-      page.preview_btn
-    end
-  end
-
-  def create_course_between_terms_rule( group, node, course, term1, term2)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must have successfully completed <course> between <term1> and <term2>/
-      advanced_search("course code", course)
-      page.term_field.set term1
-      page.term_two_field.set term2
-      page.preview_btn
-    end
-  end
-
-  def create_program_class_standing_rule( group, node, program, stand)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must not have been admitted to the <program> program with a class standing of <class standing>/
-      add_program( program)
-      add_class_standing( stand)
-      page.preview_btn
-    end
-  end
-
-  def create_program_org_rule( group, node, org)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must have been admitted to a program offered by <org>/
-      add_org(org)
-      page.preview_btn
-    end
-  end
-
-  def create_class_standing_rule( group, node, stand, equals)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      if equals == "="
-        if( @section == "Student Eligibility & Prerequisite" || @section == "Recommended Preparation")
-          page.rule_dropdown.when_present.select /Student must be in a class standing of <class standing>/
-        elsif( @section == "Antirequisite")
-          page.rule_dropdown.when_present.select /Must not be in a class standing of <class standing>/
-        end
-      elsif equals == ">"
-        page.rule_dropdown.when_present.select /Student must be in a class standing of <class standing> or greater/
-      elsif equals == "<"
-        page.rule_dropdown.when_present.select /Student must be in a class standing of <class standing> or less/
-      end
-      add_class_standing( stand)
-      page.preview_btn
-    end
-  end
-
-  def create_admin_org_rule( group, node, org)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Permission of <administering org> required/
-      add_org(org)
-      page.preview_btn
-    end
-  end
-
-  def create_min_credits_org_rule( group, node, org, credit)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> credits from courses in the <org>/
-      page.integer_field.when_present.set credit
-      add_org(org)
-      page.preview_btn
-    end
-  end
-
-  def create_min_total_credits_rule( group, node, credit)
-    add_new_node( group, node)
-    on ManageCORequisites do |page|
-      page.rule_dropdown.when_present.select /Must have earned a minimum of <n> total credits/
-      page.integer_field.when_present.set credit
-      page.preview_btn
-    end
   end
 
   def add_courses( course, set, range)
@@ -891,6 +580,711 @@ class CORequisitesData
         end
       end
       page.edit_loading.wait_while_present
+    end
+  end
+end
+
+class AntirequisiteRule < CORequisitesData
+  include Foundry
+  include DataFactory
+
+  attr_accessor :submit_btn,
+                :section
+
+  def initialize(browser, opts={})
+    @browser = browser
+
+    defaults = {
+        :section => "Antirequisite",
+        :term => "201208",
+        :course => "ENGL101"
+    }
+
+    options = defaults.merge(opts)
+
+    set_options(options)
+  end
+
+  def edit_add_antirequisite( edit_or_add)
+    begin
+      open_agenda_section
+      on CourseOfferingRequisites do |page|
+        if edit_or_add == "add"
+          page.antireq_add
+        else
+          page.antireq_edit
+        end
+      end
+    rescue Watir::Wait::TimeoutError
+      #means Data setup was not needed
+      on CourseOfferingRequisites do |page|
+        page.alert.ok
+      end
+    end
+  end
+
+  def data_setup
+    navigate_to_mco_requisites
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      if page.antireq_edit_link.exists?
+        page.antireq_edit
+        page.loading.wait_while_present
+        if create_smaller_rule_tree == true
+          commit_changes( true)
+        end
+      else
+        page.antireq_add
+        create_rule_tree
+        commit_changes( true)
+      end
+    end
+  end
+
+  def create_course_rule( group, node, course)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must not have successfully completed <course>/
+      advanced_search("course code", course)
+      page.preview_btn
+    end
+  end
+
+  def create_text_rule( group, node, text)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Free Form Text/
+      page.free_text_field.when_present.set text
+      page.preview_btn
+    end
+  end
+
+  def create_all_courses_rule( group, node, course, set, range)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must not have successfully completed any courses from <courses>/
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_any_credits_rule( group, node, course, set, range)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must not have successfully completed any credits from <courses>/
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_grade_courses_rule( group, node, course, set, range, type, grade)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must not have earned a grade of <gradeType> <grade> or higher in <courses>/
+      choose_grade_type_grade( grade, type)
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+end
+
+class CorequisiteRule < CORequisitesData
+  include Foundry
+  include DataFactory
+
+  attr_accessor :submit_btn,
+                :section
+
+  def initialize(browser, opts={})
+    @browser = browser
+
+    defaults = {
+        :section => "Corequisite",
+        :term => "201208",
+        :course => "ENGL101"
+    }
+
+    options = defaults.merge(opts)
+
+    set_options(options)
+  end
+
+  def edit_add_corequisite( edit_or_add)
+    begin
+      open_agenda_section
+      on CourseOfferingRequisites do |page|
+        if edit_or_add == "add"
+          page.coreq_add
+        else
+          page.coreq_edit
+        end
+      end
+    rescue Watir::Wait::TimeoutError
+      #means Data setup was not needed
+      on CourseOfferingRequisites do |page|
+        page.alert.ok
+      end
+    end
+  end
+
+  def data_setup
+    navigate_to_mco_requisites
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      if page.coreq_edit_link.exists?
+        page.coreq_edit
+        page.loading.wait_while_present
+        if create_smaller_rule_tree == true
+          commit_changes( true)
+        end
+      else
+        page.coreq_add
+        create_rule_tree
+        commit_changes( true)
+      end
+    end
+  end
+
+  def create_course_rule( group, node, course)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must be concurrently enrolled in <course>/
+      advanced_search("course code", course)
+      page.preview_btn
+    end
+  end
+
+  def create_text_rule( group, node, text)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Free Form Text/
+      page.free_text_field.when_present.set text
+      page.preview_btn
+    end
+  end
+
+  def create_all_courses_rule( group, node, course, set, range)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must be concurrently enrolled in all courses from <courses>/
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_number_courses_rule( group, node, number, course, set, range)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must be concurrently enrolled in a minimum of <n> courses from <courses>/
+      page.integer_field.when_present.set number
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+end
+
+class PreparationPrerequisiteRule < CORequisitesData
+  include Foundry
+  include DataFactory
+
+  attr_accessor :submit_btn,
+                :section
+
+  def initialize(browser, opts={})
+    @browser = browser
+
+    defaults = {
+        :section => "Student Eligibility & Prerequisite",
+        :term => "201208",
+        :course => "ENGL101"
+    }
+
+    options = defaults.merge(opts)
+
+    set_options(options)
+  end
+
+  def edit_add_prerequisite( edit_or_add)
+    begin
+      open_agenda_section
+      on CourseOfferingRequisites do |page|
+        if edit_or_add == "add"
+          page.prereq_add
+        else
+          page.prereq_edit
+        end
+      end
+    rescue Watir::Wait::TimeoutError
+      #means Data setup was not needed
+      on CourseOfferingRequisites do |page|
+        page.alert.ok
+      end
+    end
+  end
+
+  def edit_add_preparation( edit_or_add)
+    begin
+      open_agenda_section
+      on CourseOfferingRequisites do |page|
+        if edit_or_add == "add"
+          page.prep_add
+        else
+          page.prep_edit
+        end
+      end
+    rescue Watir::Wait::TimeoutError
+      #means Data setup was not needed
+      on CourseOfferingRequisites do |page|
+        page.alert.ok
+      end
+    end
+  end
+
+  def data_setup_prerequisite
+    navigate_to_mco_requisites
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      if page.prereq_edit_link.exist?
+        page.prereq_edit
+        page.loading.wait_while_present
+        if create_smaller_rule_tree == true
+          commit_changes( true)
+        end
+      else
+        page.prereq_add
+        create_rule_tree
+        commit_changes( true)
+      end
+    end
+  end
+
+  def data_setup_preparation
+    navigate_to_mco_requisites
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      if page.prep_edit_link.exists
+        page.prep_edit
+        page.loading.wait_while_present
+        if create_smaller_rule_tree == true
+          commit_changes( true)
+        end
+      else
+        page.prep_add
+        create_rule_tree
+        commit_changes( true)
+      end
+    end
+  end
+
+  def create_course_rule( group, node, course)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have successfully completed <course>/
+      advanced_search("course code", course)
+      page.preview_btn
+    end
+  end
+
+  def create_text_rule( group, node, text)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Free Form Text/
+      page.free_text_field.when_present.set text
+      page.preview_btn
+    end
+  end
+
+  def create_all_courses_rule( group, node, course, set, range)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have successfully completed all courses from <courses>/
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_number_courses_rule( group, node, number, course, set, range)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> courses from <courses>/
+      page.integer_field.when_present.set number
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_less_number_courses_rule( group, node, number, course, set, range)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have successfully completed no more than <n> courses from <courses>/
+      page.integer_field.when_present.set number
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_less_credits_rule( group, node, number, course, set, range, equal)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      if equal == ">"
+        page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> credits from <courses>/
+      elsif equal == "<"
+        page.rule_dropdown.when_present.select /Must successfully complete no more than <n> credits from <courses>/
+      end
+      page.integer_field.when_present.set number
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_grade_courses_rule( group, node, course, set, range, type, grade)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have earned a minimum grade of <gradeType> <grade> in <courses>/
+      choose_grade_type_grade( grade, type)
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_higher_grade_courses_rule( group, node, course, set, range, type, grade)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must not have earned a grade of <gradeType> <grade> or higher in <courses>/
+      choose_grade_type_grade( grade, type)
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_grade_number_courses_rule( group, node, course, set, range, type, grade, number)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must successfully complete a minimum of <n> courses from <courses> with a minimum grade of <gradeType> <grade>/
+      page.integer_field.when_present.set number
+      add_courses( course, set, range)
+      choose_grade_type_grade( grade, type)
+      page.preview_btn
+    end
+  end
+
+  def prereq_gpa_courses_rule( group, node, course, set, range, gpa)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have earned a minimum GPA of <GPA> in <courses>/
+      page.integer_field.when_present.set gpa
+      add_courses( course, set, range)
+      page.preview_btn
+    end
+  end
+
+  def create_gpa_duration_rule( group, node, gpa, type, duration)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have earned a minimum cumulative GPA of <GPA> in <duration><durationType>/
+      page.integer_field.when_present.set gpa
+      page.duration_field.when_present.set duration
+      page.duration_dropdown.when_present.select type
+      page.preview_btn
+    end
+  end
+
+  def create_gpa_rule( group, node, gpa)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have earned a minimum cumulative GPA of <GPA>/
+      page.integer_field.when_present.set gpa
+      page.preview_btn
+    end
+  end
+
+  def create_program_rule( group, node, program)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have been admitted to the <program> program/
+      add_program( program)
+      page.preview_btn
+    end
+  end
+
+  def create_not_program_rule( group, node, program)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must not have been admitted to the <program> program/
+      add_program( program)
+      page.preview_btn
+    end
+  end
+
+  def create_any_program_rule( group, node)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must be admitted to any program offered at the course campus location/
+      page.edit_loading.wait_while_present
+      page.preview_btn
+    end
+  end
+
+  def create_permission_instructor_rule( group, node)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Permission of instructor required/
+      page.edit_loading.wait_while_present
+      page.preview_btn
+    end
+  end
+
+  def create_course_term_rule( group, node, course, term, prior_or_as = "as of")
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have successfully completed <course> #{Regexp.escape(prior_or_as)} <term>/
+      advanced_search("course code", course)
+      page.term_field.set term
+      page.preview_btn
+    end
+  end
+
+  def create_course_between_terms_rule( group, node, course, term1, term2)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have successfully completed <course> between <term1> and <term2>/
+      advanced_search("course code", course)
+      page.term_field.set term1
+      page.term_two_field.set term2
+      page.preview_btn
+    end
+  end
+
+  def create_program_org_rule( group, node, org)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have been admitted to a program offered by <org>/
+      add_org(org)
+      page.preview_btn
+    end
+  end
+
+  def create_admin_org_rule( group, node, org)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Permission of <administering org> required/
+      add_org(org)
+      page.preview_btn
+    end
+  end
+
+  def create_min_credits_org_rule( group, node, org, credit)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have successfully completed a minimum of <n> credits from courses in the <org>/
+      page.integer_field.when_present.set credit
+      add_org(org)
+      page.preview_btn
+    end
+  end
+
+  def create_min_total_credits_rule( group, node, credit)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must have earned a minimum of <n> total credits/
+      page.integer_field.when_present.set credit
+      page.preview_btn
+    end
+  end
+
+  def create_population_rule( group, node, pop)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Student must be a member of <population>/
+      advanced_search("population", pop)
+      page.preview_btn
+    end
+  end
+
+  def create_program_org_duration_rule( group, node, program, integer, org, duration, type)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Students admitted to <program> may take no more than <n> courses in the <org> in <duration><durationType>/
+      add_program( program)
+      page.integer_field.when_present.set integer
+      add_org(org)
+      page.duration_field.when_present.set duration
+      page.duration_dropdown.when_present.select type
+      page.preview_btn
+    end
+  end
+
+  def create_not_program_org_duration_rule( group, node, program, integer, org, duration, type)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Students not admitted to <program> may take no more than <n> courses in the <org> in <duration><durationType>/
+      add_program( program)
+      page.integer_field.when_present.set integer
+      add_org(org)
+      page.duration_field.when_present.set duration
+      page.duration_dropdown.when_present.select type
+      page.preview_btn
+    end
+  end
+end
+
+class RepeatCreditRule < CORequisitesData
+  include Foundry
+  include DataFactory
+
+  attr_accessor :submit_btn,
+                :section
+
+  def initialize(browser, opts={})
+    @browser = browser
+
+    defaults = {
+        :section => "Repeatable for Credit",
+        :term => "201208",
+        :course => "ENGL101"
+    }
+
+    options = defaults.merge(opts)
+
+    set_options(options)
+  end
+
+  def edit_add_repeat( edit_or_add)
+    begin
+      open_agenda_section
+      on CourseOfferingRequisites do |page|
+        if edit_or_add == "add"
+          page.repeat_add
+        else
+          page.repeat_edit
+        end
+      end
+    rescue Watir::Wait::TimeoutError
+      #means Data setup was not needed
+      on CourseOfferingRequisites do |page|
+        page.alert.ok
+      end
+    end
+  end
+
+  def data_setup
+    navigate_to_mco_requisites
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      if page.repeat_edit_link.exists?
+        page.repeat_edit
+        page.loading.wait_while_present
+        if create_smaller_rule_tree == true
+          commit_changes( true)
+        end
+      else
+        page.repeat_add
+        create_rule_tree
+        commit_changes( true)
+      end
+    end
+  end
+
+  def create_text_rule( group, node, text)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Free Form Text/
+      page.free_text_field.when_present.set text
+      page.preview_btn
+    end
+  end
+
+  def create_repeated_credit_rule( group, node, number)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /May be repeated for a maximum of <n> credits/
+      page.integer_field.when_present.set number
+      page.preview_btn
+    end
+  end
+end
+
+class RestrictCreditRule < CORequisitesData
+  include Foundry
+  include DataFactory
+
+  attr_accessor :submit_btn,
+                :section
+
+  def initialize(browser, opts={})
+    @browser = browser
+
+    defaults = {
+        :section => "Course that Restricts Credits",
+        :term => "201208",
+        :course => "ENGL101"
+    }
+
+    options = defaults.merge(opts)
+
+    set_options(options)
+  end
+
+  def edit_add_restrict( edit_or_add)
+    begin
+      open_agenda_section
+      on CourseOfferingRequisites do |page|
+        if edit_or_add == "add"
+          page.restrict_add
+        else
+          page.restrict_edit
+        end
+      end
+    rescue Watir::Wait::TimeoutError
+      #means Data setup was not needed
+      on CourseOfferingRequisites do |page|
+        page.alert.ok
+      end
+    end
+  end
+
+  def data_setup
+    navigate_to_mco_requisites
+    on CourseOfferingRequisites do |page|
+      page.loading.wait_while_present
+      if page.restrict_edit_link.exists?
+        page.restrict_edit
+        page.loading.wait_while_present
+        if create_smaller_rule_tree == true
+          commit_changes( true)
+        end
+      else
+        page.restrict_add
+        create_rule_tree
+        commit_changes( true)
+      end
+    end
+  end
+
+  def create_course_rule( group, node, course)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must not have successfully completed <course>/
+      advanced_search("course code", course)
+      page.preview_btn
+    end
+  end
+
+  def create_text_rule( group, node, text)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Free Form Text/
+      page.free_text_field.when_present.set text
+      page.preview_btn
+    end
+  end
+
+  def create_all_courses_rule( group, node, course, set, range)
+    add_new_node( group, node)
+    on ManageCORequisites do |page|
+      page.rule_dropdown.when_present.select /Must not have successfully completed any courses from <courses>/
+      add_courses( course, set, range)
+      page.preview_btn
     end
   end
 end

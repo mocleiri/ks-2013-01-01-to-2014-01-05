@@ -7,7 +7,7 @@ Feature: KRMS.ELIG9-10 Copy and Paste
 
   #ELIG9.10.EB1 (KSENROLL-7051)
   Scenario: Confirm the copy and paste of rule statement is working as expected
-    When I want to edit the selected agenda section
+    When I want to edit the Student Eligibility & Prerequisite section
     And I copy node "D" and paste it after node "G"
     Then the edit tab's text should match "H. Text"
     And there should be a dropdown with value "OR" before node "H."
@@ -20,13 +20,13 @@ Feature: KRMS.ELIG9-10 Copy and Paste
 
   #ELIG9.10.EB2 (KSENROLL-7051)
   Scenario: Confirm the copy and paste of compound (group) rule statement is working as expected
-    When I want to edit the selected agenda section
+    When I want to edit the Student Eligibility & Prerequisite section
     And I copy the group containing node "C" and paste it after node "G"
     Then the edit tab's text should match "I. Must have successfully completed all courses from (HIST416, ENGL478),J. Text to copy"
     And there should be a dropdown with value "OR" before node "I."
     When I switch to the other tab on the page
     Then the text area should contain "(A AND (B OR C) AND D) OR E OR F OR G OR (I OR J) OR H"
     When I commit and return to see the changes made to the proposition
-    And I want to edit the selected agenda section
+    And I want to edit the Student Eligibility & Prerequisite section
     And I switch to the other tab on the page
     Then the text area should contain "(A AND (B OR C) AND D) OR E OR F OR G OR (H OR I) OR J"

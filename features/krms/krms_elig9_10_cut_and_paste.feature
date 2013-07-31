@@ -7,7 +7,7 @@ Feature: KRMS.ELIG9-10 Cut and Paste
 
   #ELIG9.10.EB1 (KSENROLL-7052)
   Scenario: Confirm the cut and paste of a rule statement is working as expected
-    When I want to edit the selected agenda section
+    When I want to edit the Corequisite section
     And I cut node "D" and paste it after node "G"
     Then there should be a dropdown with value "OR" before node "D."
     When I switch to the other tab on the page
@@ -19,12 +19,12 @@ Feature: KRMS.ELIG9-10 Cut and Paste
 
   #ELIG9.10.EB2 (KSENROLL-7052)
   Scenario: Confirm the cut and paste of compound (group) rule statement is working as expected
-    When I want to edit the selected agenda section
+    When I want to edit the Corequisite section
     And I cut the group containing node "B" and paste it after node "F"
     Then there should be a dropdown with value "OR" before node "B."
     When I switch to the other tab on the page
     Then the text area should contain "A OR D OR E OR F OR (B OR C) OR G"
     When I commit and return to see the changes made to the proposition
-    And I want to edit the selected agenda section
+    And I want to edit the Corequisite section
     And I switch to the other tab on the page
     Then the text area should contain "A OR B OR C OR D OR (E OR F) OR G"
