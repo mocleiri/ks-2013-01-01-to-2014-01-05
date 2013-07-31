@@ -6,6 +6,14 @@ Feature: WC.Edit Activity Offering Attributes
     And I manage a given Course Offering
     And I edit an Activity Offering
 
+  Scenario: Edit Activity Offering code
+    When I edit an activity offering code
+    And I submit the AO changes
+    Then the activity offering code change is persisted
+    When I revert the change to the activity code
+    And I submit the AO changes
+    Then the activity offering code change is persisted
+
   Scenario: Edit Activity Offering Information attributes
     When I am editing the information attributes for an activity offering
     And I submit the AO changes

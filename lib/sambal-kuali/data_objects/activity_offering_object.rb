@@ -119,8 +119,6 @@ class ActivityOffering
     @code <=> other.code
   end
 
-
-
   #create one or many simple aos without details
   #
   #   @example
@@ -249,6 +247,7 @@ class ActivityOffering
 
     on(ManageCourseOfferings).edit @code unless opts[:edit_already_started]
 
+    edit_code opts
     edit_subterm opts
     edit_colocation opts
     edit_max_enrollment_no_colocation opts
@@ -262,6 +261,14 @@ class ActivityOffering
   end #END: edit
 
   # PRIVATE helper methods for edit()
+
+  def edit_code opts
+    if opts[:code].nil?
+      return nil
+    end
+    on(ActivityOfferingMaintenance).activity_code.set opts[:code]
+    @code = opts[:code]
+  end #END: edit_code
 
   def edit_subterm opts
     if opts[:subterm] != nil

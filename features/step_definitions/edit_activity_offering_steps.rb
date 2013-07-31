@@ -1,8 +1,23 @@
 #Scenario: Edit Activity Offering Information attributes
 Given /^I am editing the information attributes for an activity offering$/ do
-  # Activity Code can not be saved. This is a bug
   # Modify Total Maximum Enrollment to 50
-  @activity_offering.edit :course_url => "www.kuali.org", :max_enrollment => 50
+  @activity_offering.edit :max_enrollment => 50
+end
+
+When /^I edit an activity offering code/ do
+  @activity_offering.edit :code => @prev_code + @prev_code
+end
+
+When /^I revert the change to the activity code/ do
+  @activity_offering.edit :code => @prev_code, :edit_already_started => true
+end
+
+Then /^the activity offering code change is persisted/ do
+  @course_offering.manage
+  @activity_offering.edit
+  on ActivityOfferingMaintenance do |page|
+    page.activity_code.value.should ==  @activity_offering.code.to_s
+  end
 end
 
 And /^I submit the AO changes$/ do
@@ -24,7 +39,6 @@ Then /^the changes of Activity Offering attributes are persisted$/ do
   @activity_offering.edit
   on ActivityOfferingMaintenance do |page|
     page.total_maximum_enrollment.value.should == @activity_offering.max_enrollment.to_s
-    page.course_url.value.should == @activity_offering.course_url
   end
 end
 
@@ -34,10 +48,8 @@ Then /^the changes of information attributes (are|are not) persisted$/ do |are_a
   on ActivityOfferingMaintenance do |page|
     if are_are_not == "are"
       page.total_maximum_enrollment.value.should == @activity_offering.max_enrollment.to_s
-      page.course_url.value.should == @activity_offering.course_url
     elsif are_are_not == "are not"
       page.total_maximum_enrollment.value.should_not == @activity_offering.max_enrollment.to_s
-      page.course_url.value.should_not == @activity_offering.course_url
     end
   end
 end
@@ -138,9 +150,8 @@ Then /^the changes of the Personnel attributes are persisted$/ do
 end
 
 When /^I change Miscellaneous Activity Offering attributes$/ do
-  @activity_offering.edit :requires_evaluation => !(@prev_req_ev), :honors_course => !(@prev_hon_flg)
+  @activity_offering.edit :requires_evaluation => !(@prev_req_ev), :honors_course => !(@prev_hon_flg), :course_url => "www.kuali.org"
 end
-
 
 Then /^the miscellaneous changes are persisted$/ do
   @course_offering.manage
@@ -148,6 +159,7 @@ Then /^the miscellaneous changes are persisted$/ do
   on ActivityOfferingMaintenance do |page|
     page.requires_evaluation.set?.should_not == @prev_req_ev
     page.honors_flag.set?.should_not == @prev_hon_flg
+    page.course_url == @prev_course_url
   end
 end
 
@@ -161,6 +173,8 @@ Given /^I edit an Activity Offering$/ do
   @activity_offering = @course_offering.get_ao_obj_by_code("B")
   @prev_req_ev = @activity_offering.requires_evaluation
   @prev_hon_flg = @activity_offering.honors_course
+  @prev_code = @activity_offering.code
+  @prev_course_url = @activity_offering.course_url
 end
 
 Given /^I edit an Activity Offering that has available subterms$/ do
