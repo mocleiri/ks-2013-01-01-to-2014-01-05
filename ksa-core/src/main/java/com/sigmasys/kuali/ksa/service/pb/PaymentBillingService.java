@@ -182,6 +182,22 @@ public interface PaymentBillingService {
     PaymentBillingTransferDetail transferPaymentBillingTransactions(Long transferDetailId);
 
     /**
+     * Creates and persists a new PaymentBillingAllowableCharge instance in the persistent store.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param transactionTypeMask  Transaction Type mask
+     * @param maxAmount            Maximum allowed amount
+     * @param maxPercentage        Maximum allowed percentage
+     * @param priority             priority
+     * @return PaymentBillingAllowableCharge instance
+     */
+    PaymentBillingAllowableCharge createPaymentBillingAllowableCharge(Long paymentBillingPlanId,
+                                                                      String transactionTypeMask,
+                                                                      BigDecimal maxAmount,
+                                                                      BigDecimal maxPercentage,
+                                                                      int priority);
+
+    /**
      * Returns payment billing allowable charges for the given plan specified by ID from the persistent store
      * sorted by priorities in the descending order.
      *

@@ -17,6 +17,7 @@ import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * PaymentBillingService tests.
@@ -42,14 +43,34 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private TransactionService transactionService;
 
-    private Account adminAccount;
 
     @Before
     public void setUpWithinTransaction() {
         // set up test data within the transaction
-        String userId = "admin";
-        adminAccount = accountService.getOrCreateAccount(userId);
+        accountService.getOrCreateAccount(TEST_USER_ID);
+    }
+
+    private void createCharge(String chargeTypeId) throws Exception {
+
+        Transaction transaction = transactionService.createTransaction(chargeTypeId, TEST_USER_ID, new Date(),
+                new BigDecimal(300));
+
+        Assert.notNull(transaction);
+        Assert.isTrue(transaction instanceof Charge);
+        Assert.notNull(transaction.getId());
+        Assert.notNull(transaction.getTransactionType());
+        Assert.notNull(transaction.getAccount());
+        Assert.notNull(transaction.getAccountId());
+        Assert.notNull(transaction.getCurrency());
+
+        Assert.isTrue("USD".equals(transaction.getCurrency().getCode()));
+        Assert.isTrue(TEST_USER_ID.equals(transaction.getAccount().getId()));
+        Assert.isTrue(new Date().compareTo(transaction.getEffectiveDate()) >= 0);
+        Assert.isTrue(new BigDecimal(300).equals(transaction.getNativeAmount()));
+
     }
 
     protected GeneralLedgerType createGeneralLedgerType() {
@@ -93,26 +114,6 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         Assert.notNull(transferType);
         Assert.notNull(transferType.getId());
 
-        /*
-         Long transferTypeId,
-            String flatFeeDebitTypeId,
-            String variableFeeDebitTypeId,
-            Date openPeriodStartDate,
-            Date openPeriodEndDate,
-            Date chargePeriodStartDate,
-            Date chargePeriodEndDate,
-            BigDecimal maxAmount,
-            BigDecimal flatFeeAmount,
-            BigDecimal variableFeeAmount,
-            BigDecimal minFeeAmount,
-            BigDecimal maxFeeAmount,
-            int roundingFactor,
-            boolean isGlCreationImmediate,
-            String statementPrefix,
-            PaymentRoundingType paymentRoundingType,
-            ScheduleType scheduleType
-         */
-
         PaymentBillingPlan plan = billingService.createPaymentBillingPlan(
                 "PB code1",
                 "PB name 1",
@@ -138,11 +139,32 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         Assert.notNull(plan);
         Assert.notNull(plan.getId());
         Assert.notNull(plan.getTransferType());
+        Assert.notNull(plan.getFlatFeeAmount());
+        Assert.notNull(plan.getVariableFeeAmount());
 
+        Assert.isTrue(plan.getFlatFeeAmount().compareTo(BigDecimal.ZERO) > 0);
+        Assert.isTrue(plan.getVariableFeeAmount().compareTo(BigDecimal.ZERO) > 0);
         Assert.isTrue(PaymentRoundingType.FIRST == plan.getPaymentRoundingType());
         Assert.isTrue(ScheduleType.SKIP_EARLIER == plan.getScheduleType());
         Assert.isTrue("1001".equals(plan.getFlatFeeDebitTypeId()));
         Assert.isTrue("1020".equals(plan.getVariableFeeDebitTypeId()));
+
+
+        PaymentBillingAllowableCharge allowableCharge = billingService.createPaymentBillingAllowableCharge(
+                plan.getId(),
+                ".*",
+                new BigDecimal(1450),
+                new BigDecimal(100),
+                1);
+
+        Assert.notNull(allowableCharge);
+        Assert.notNull(allowableCharge.getId());
+        Assert.notNull(allowableCharge.getPlan());
+
+        Assert.isTrue(".*".equals(allowableCharge.getTransactionTypeMask()));
+        Assert.isTrue(new BigDecimal(1450).compareTo(allowableCharge.getMaxAmount()) == 0);
+        Assert.isTrue(new BigDecimal(100).compareTo(allowableCharge.getMaxPercentage()) == 0);
+        Assert.isTrue(1 == allowableCharge.getPriority());
 
         return plan;
     }
@@ -166,100 +188,42 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.INITIALIZED);
     }
 
-    // TODO -> implement more JUnit tests
-
-    /*
     @Test
-    public void generateThirdPartyTransfers1() throws Exception {
+    public void executePaymentBilling() throws Exception {
 
-        _createPaymentBillingPlan();
+        createCharge("1020");
+        createCharge("1001");
 
-        List<ThirdPartyTransferDetail> transfers =
-                billingService.generateThirdPartyTransfers(TEST_USER_ID, new Date(), true);
+        PaymentBillingPlan plan = _createPaymentBillingPlan();
 
-        Assert.notNull(transfers);
-        Assert.notEmpty(transfers);
+        PaymentBillingTransferDetail transferDetail =
+                billingService.executePaymentBilling(plan.getId(), TEST_USER_ID, new BigDecimal(10e3), new Date());
 
-        for (ThirdPartyTransferDetail transfer : transfers) {
+        Assert.notNull(transferDetail);
+        Assert.notNull(transferDetail.getId());
+        Assert.notNull(transferDetail.getDirectChargeAccount());
+        Assert.notNull(transferDetail.getPlan());
 
-            Assert.notNull(transfer);
-            Assert.notNull(transfer.getId());
+        Assert.notNull(transferDetail.getFlatFeeCharge());
+        Assert.notNull(transferDetail.getVariableFeeCharge());
 
-            Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.ACTIVE);
+        List<PaymentBillingTransaction> billingTransactions =
+                billingService.getPaymentBillingTransactionsByTransferDetailId(transferDetail.getId());
+
+        Assert.notNull(billingTransactions);
+        Assert.notEmpty(billingTransactions);
+
+        for (PaymentBillingTransaction billingTransaction : billingTransactions) {
+
+            Assert.notNull(billingTransaction);
+            Assert.notNull(billingTransaction.getId());
+            Assert.notNull(billingTransaction.getTransferDetail());
+            Assert.notNull(billingTransaction.getCharge());
         }
 
     }
 
-    @Test
-    public void generateThirdPartyTransfers2() throws Exception {
-
-        ThirdPartyPlan plan = _createPaymentBillingPlan();
-
-        List<ThirdPartyTransferDetail> transfers =
-                billingService.generateThirdPartyTransfers(plan.getId(), true);
-
-        Assert.notNull(transfers);
-        Assert.notEmpty(transfers);
-
-        for (ThirdPartyTransferDetail transfer : transfers) {
-
-            Assert.notNull(transfer);
-            Assert.notNull(transfer.getId());
-
-            Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.ACTIVE);
-        }
-
-    }
-
-    @Test
-    public void generateThirdPartyTransfers3() throws Exception {
-
-        ThirdPartyPlan plan = _createPaymentBillingPlan();
-
-        List<ThirdPartyTransferDetail> transfers =
-                billingService.generateThirdPartyTransfers(plan.getId(), false);
-
-        Assert.notNull(transfers);
-        Assert.notEmpty(transfers);
-
-        transfers =
-                billingService.generateThirdPartyTransfers(plan.getId(), true);
-
-        Assert.notNull(transfers);
-        Assert.notEmpty(transfers);
-
-        for (ThirdPartyTransferDetail transfer : transfers) {
-
-            Assert.notNull(transfer);
-            Assert.notNull(transfer.getId());
-
-            Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.ACTIVE);
-        }
-
-    }
-
-    @Test
-    public void generateThirdPartyTransfers4() throws Exception {
-
-        _createPaymentBillingPlan();
-
-        List<ThirdPartyTransferDetail> transfers =
-                billingService.generateThirdPartyTransfers(TEST_USER_ID);
-
-        Assert.notNull(transfers);
-        Assert.notEmpty(transfers);
-
-        for (ThirdPartyTransferDetail transfer : transfers) {
-
-            Assert.notNull(transfer);
-            Assert.notNull(transfer.getId());
-
-            Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.ACTIVE);
-        }
-
-    }
-
-    @Test
+    /*@Test
     public void reverseThirdPartyTransfers() throws Exception {
 
         ThirdPartyPlan plan = _createPaymentBillingPlan();
@@ -279,6 +243,7 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.REVERSED);
 
     }
+
 
 
     @Test

@@ -17,6 +17,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ojb.broker.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +56,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             " left outer join fetch t.generalLedgerType g ";
 
     private static final String TRANSACTION_SELECT = "select pbt from PaymentBillingTransaction pbt " +
-            " left outer join fetch pbt.transaction t " +
+            " left outer join fetch pbt.charge t " +
             " left outer join fetch pbt.transferDetail td " +
             " left outer join fetch td.directChargeAccount a " +
             " left outer join fetch td.plan p ";
@@ -156,12 +157,12 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         transferDetail.setInitiationDate(initiationDate);
         transferDetail.setMaxAmount(maxAmount);
         // TODO: check with Paul if the following assignment is correct
-        transferDetail.setPlanAmount(maxAmount);
+        transferDetail.setPlanAmount(BigDecimal.ZERO);
         transferDetail.setDirectChargeAccount((DirectChargeAccount) account);
         transferDetail.setPlan(billingPlan);
         transferDetail.setChargeStatus(PaymentBillingChargeStatus.INITIALIZED);
 
-        persistPaymentBillingTransferDetail(transferDetail);
+        persistEntity(transferDetail);
 
         return transferDetail;
     }
@@ -335,7 +336,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
     }
 
     /**
-     * Retrieves PaymentBillingTransferDetail with ACTIVE status by ID from the persistent store.
+     * Retrieves PaymentBillingTransferDetail by ID from the persistent store.
      *
      * @param transferDetailId PaymentBillingTransferDetail ID
      * @return PaymentBillingTransferDetail instance
@@ -345,10 +346,9 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
 
-        Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where d.id = :id and d.chargeStatusCode = :statusCode");
+        Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where d.id = :id");
 
         query.setParameter("id", transferDetailId);
-        query.setParameter("statusCode", PaymentBillingChargeStatus.ACTIVE_CODE);
 
         List<PaymentBillingTransferDetail> details = query.getResultList();
 
@@ -737,7 +737,11 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         for (Charge charge : charges) {
 
+            logger.info("KUKU 1");
+
             if (isChargeAllowed(charge, allowableCharges)) {
+
+                logger.info("KUKU 2");
 
                 PaymentBillingTransaction billingTransaction = new PaymentBillingTransaction();
 
@@ -760,10 +764,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         for (PaymentBillingAllowableCharge allowableCharge : allowableCharges) {
 
             for (PaymentBillingTransaction billingTransaction : billingTransactions) {
-
-                if (transferDetail.getPlanAmount().compareTo(transferDetail.getMaxAmount()) >= 0) {
-                    break;
-                }
 
                 if (billingTransaction.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0) {
 
@@ -793,8 +793,10 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
                         billingTransaction.setRemainingAmount(billingTransaction.getRemainingAmount().subtract(amountToFinance));
                         billingTransaction.setFinancedAmount(billingTransaction.getFinancedAmount().add(amountToFinance));
+
                         transferDetail.setPlanAmount(transferDetail.getPlanAmount().add(amountToFinance));
 
+                        logger.info("Financed amount = " + billingTransaction.getFinancedAmount());
                     }
 
                 }
@@ -1044,6 +1046,75 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         return totalFinancedAmount;
     }
 
+    /**
+     * Creates and persists a new PaymentBillingAllowableCharge instance in the persistent store.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param transactionTypeMask  Transaction Type mask
+     * @param maxAmount            Maximum allowed amount
+     * @param maxPercentage        Maximum allowed percentage
+     * @param priority             priority
+     * @return PaymentBillingAllowableCharge instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public PaymentBillingAllowableCharge createPaymentBillingAllowableCharge(Long paymentBillingPlanId,
+                                                                             String transactionTypeMask,
+                                                                             BigDecimal maxAmount,
+                                                                             BigDecimal maxPercentage,
+                                                                             int priority) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_PAYMENT_BILLING_ALLOWABLE_CHARGE);
+
+        PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
+        if (billingPlan == null) {
+            String errMsg = "PaymentBillingPlan does not exist with ID = " + paymentBillingPlanId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (StringUtils.isBlank(transactionTypeMask)) {
+            String errMsg = "Transaction Type mask is required";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (maxAmount == null) {
+            String errMsg = "Maximum amount cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (maxPercentage == null) {
+            String errMsg = "Maximum percentage cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (maxPercentage.compareTo(BigDecimal.ZERO) < 0 || maxPercentage.compareTo(new BigDecimal(100)) > 0) {
+            String errMsg = "Maximum percentage should be in the range [0, 100]";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (priority < 0) {
+            String errMsg = "Priority cannot be a negative number";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        PaymentBillingAllowableCharge allowableCharge = new PaymentBillingAllowableCharge();
+
+        allowableCharge.setPlan(billingPlan);
+        allowableCharge.setTransactionTypeMask(transactionTypeMask);
+        allowableCharge.setMaxAmount(maxAmount);
+        allowableCharge.setMaxPercentage(maxPercentage);
+        allowableCharge.setPriority(priority);
+
+        persistEntity(allowableCharge);
+
+        return allowableCharge;
+    }
 
     /**
      * Returns payment billing allowable charges for the given plan specified by ID from the persistent store
@@ -1174,13 +1245,11 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         PaymentBillingTransferDetail transferDetail =
                 generatePaymentBillingTransfer(paymentBillingPlanId, accountId, maxAmount, initiationDate);
 
-        List<PaymentBillingTransaction> billingTransactions = generatePaymentBillingTransactions(transferDetail.getId());
+        generatePaymentBillingTransactions(transferDetail.getId());
 
         generatePaymentBillingSchedules(transferDetail, billingPlan.getRoundingFactor());
 
-        if (CollectionUtils.isNotEmpty(billingTransactions)) {
-            transferPaymentBillingTransactions(transferDetail.getId());
-        }
+        transferPaymentBillingTransactions(transferDetail.getId());
 
         return getPaymentBillingTransferDetail(transferDetail.getId());
     }
