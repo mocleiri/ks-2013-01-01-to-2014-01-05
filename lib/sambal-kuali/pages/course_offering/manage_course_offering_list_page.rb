@@ -85,6 +85,11 @@ class ManageCourseOfferingList < BasePage
     target_row.cells[CO_STATUS_COLUMN].text
   end
 
+  def co_status(co_code)
+    target_row = target_row(co_code)
+    co_row_status(target_row)
+  end
+
   def crosslist_tooltip_text(co_code)
     retVal = ""
 

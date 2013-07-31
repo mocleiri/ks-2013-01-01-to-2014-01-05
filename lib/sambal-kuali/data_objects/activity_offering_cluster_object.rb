@@ -172,7 +172,7 @@ class ActivityOfferingCluster
 
      on ManageCourseOfferings do |page|
        page.rename_cluster(@private_name)
-       set_options(options) unless !options[:expect_success]
+       set_options(options) if options[:expect_success]
        page.rename_private_name.set @private_name
        page.rename_published_name.set @published_name
        page.rename_aoc_button

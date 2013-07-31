@@ -204,8 +204,8 @@ class AcademicCalendar
   end
 
   #there are existing calendars up to 2023, so most of the term codes are used
-  BASE_UNUSED_CALENDAR_YEAR = 2200
-  MAX_UNUSED_CALENDAR_YEAR = 2399
+  BASE_UNUSED_CALENDAR_YEAR = 2030
+  MAX_UNUSED_CALENDAR_YEAR = 2199
   def self.get_random_calendar_year(base_year =BASE_UNUSED_CALENDAR_YEAR, max_year = MAX_UNUSED_CALENDAR_YEAR)
     base_year + rand( max_year - base_year )
   end

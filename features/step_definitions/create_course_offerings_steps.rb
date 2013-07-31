@@ -30,15 +30,40 @@ Then /^the new Course Offering should be displayed in the list of available offe
   @course_offering.view_course_details
 end
 
-And /^I create a Course Offering with an Activity Offerings assigned to subterms$/ do
-  @course_offering = create CourseOffering, :term=>@term.term_code, :course => "CHEM132", :grade_format => "Lab", :delivery_format => "Lab"
+And /^I create a Course Offering from catalog with Activity Offerings assigned to subterms$/ do
+  @course_offering = create CourseOffering, :term=>@term.term_code,
+                            :course => "CHEM132",
+                            :grade_format => "Lab",
+                            :delivery_format => "Lab" ,
+                            :suffix => ""
   #@course_offering = make CourseOffering, :term=>@term.term_code, :course => "CHEM132"
-  @activity_offering = create ActivityOffering, :subterm => @subterm_list[0].subterm_type, :parent_course_offering => @course_offering,
+  @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering, # :subterm => @subterm_list[0].subterm_type,
                               :format => "Lab Only", :activity_type => "Lab"
   @activity_offering.save
-  @activity_offering2 = create ActivityOffering, :subterm => @subterm_list[1].subterm_type, :parent_course_offering => @course_offering,
+  @activity_offering2 = create ActivityOffering,  :parent_course_offering => @course_offering, #:subterm => @subterm_list[1].subterm_type,
                               :format => "Lab Only", :activity_type => "Lab"
   @activity_offering.save
 
 end
 
+And /^I create a Course Offering from catalog with Activity Offerings$/ do
+  @course_offering = create CourseOffering, :term=> @term.term_code,
+                            :course => "CHEM132",
+                            :grade_format => "Lab",
+                            :delivery_format => "Lab" ,
+                            :suffix => ""
+  #@course_offering = make CourseOffering, :term=>@term.term_code, :course => "CHEM132"
+
+  @rdl_list = {}
+  @rdl_list["MT"] = make DeliveryLogistics, :days => "MT", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+
+  @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering, # :subterm => @subterm_list[0].subterm_type,
+                              :format => "Lab Only", :activity_type => "Lab" , :requested_delivery_logistics_list => @rdl_list
+  @activity_offering.save
+
+  @rdl_list2 = {}
+  @rdl_list2["WF"] = make DeliveryLogistics, :days => "WF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  @activity_offering2 = create ActivityOffering,  :parent_course_offering => @course_offering, #:subterm => @subterm_list[1].subterm_type,
+                               :format => "Lab Only", :activity_type => "Lab" , :requested_delivery_logistics_list => @rdl_list2
+  @activity_offering.save
+end

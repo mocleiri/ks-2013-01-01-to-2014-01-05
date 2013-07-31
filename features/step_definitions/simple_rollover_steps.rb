@@ -137,8 +137,46 @@ When /^I am working on a term in "Closed" SOC state$/ do
   @term_for_test = Rollover::CLOSED_SOC_TERM
 end
 
-And /^I rollover the subterms' parent term to a target term with those subterms setup$/ do
+And /^I setup a target term with those subterms setup$/ do
   @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1 #, :name => "TWj64w1q3e"
+  @term_target = make AcademicTerm, :term_year => @calendar_target.year
+  @calendar_target.add_term(@term_target)
+
+  @subterm_list_target = Array.new(2)
+  @subterm_list_target[0] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  @calendar_target.add_term(@subterm_list_target[0])
+
+  @subterm_list_target[1] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
+  @calendar_target.add_term(@subterm_list_target[1])
+
+  @subterm_list_target.each do |subterm|
+    subterm.make_official
+  end
+
+  @term_target.set_up_soc
+end
+
+And /^I create the target Academic Term with subterms$/ do
+  @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1 #, :name => "TWj64w1q3e"
+  @term_target = make AcademicTerm, :term_year => @calendar_target.year
+  @calendar_target.add_term(@term_target)
+
+  #@subterm_list_target = Array.new(2)
+  #@subterm_list_target[0] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  #@calendar_target.add_term(@subterm_list_target[0])
+  #
+  #@subterm_list_target[1] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
+  #@calendar_target.add_term(@subterm_list_target[1])
+  #
+  #@subterm_list_target.each do |subterm|
+  #  subterm.make_official
+  #end
+
+  @term_target.set_up_soc
+end
+
+And /^I rollover the subterms' parent term to a target term with those subterms setup$/ do
+  @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1 #,:name => "6aXt9C4nbM"
   @term_target = make AcademicTerm, :term_year => @calendar_target.year
   @calendar_target.add_term(@term_target)
 
@@ -158,8 +196,9 @@ And /^I rollover the subterms' parent term to a target term with those subterms 
   @rollover = make Rollover, :target_term => @term_target.term_code , :source_term => @term.term_code
   @rollover.perform_rollover
   @rollover.wait_for_rollover_to_complete
-
+  @rollover.release_to_depts
 end
+
 
 And /^I rollover the subterms' parent term to a target term with those subterms are NOT setup$/ do
   @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1 #, :name => "TWj64w1q3e"
@@ -178,6 +217,49 @@ Then /^there is a target term error message on the rollover page stating: (.*)$/
   on PerformRollover do |page|
     page.target_term_first_validation_msg.should match /.*#{Regexp.escape(expected_msg)}.*/
   end
+end
+
+
+Then /^I approve the Course Offering for scheduling in the target term$/ do
+  @course_offering_target = make CourseOffering, :term=> @term_target.term_code,
+                                 :course => @course_offering.course
+  @course_offering_target.search_by_subjectcode
+  #on ManageCourseOfferings do |page|
+  #    #if page.list_all_course_link.exists? then
+  #      page.list_all_course_link.click
+  #      page.loading.wait_until_present
+  #    #end
+  #end
+  @course_offering_target.approve_co
+end
+
+Then /^I advance the SOC state from open to published state$/ do
+  @manageSoc = make ManageSoc, :term_code =>@rollover.target_term, :co_code=> @course_offering_target.course
+  @manageSoc.search
+  @manageSoc.change_action "Lock"
+  @manageSoc.check_state_change_button_exists "Schedule"
+  @manageSoc.change_action "Schedule"
+  @manageSoc.check_state_change_button_exists "FinalEdit"
+  @manageSoc.change_action "FinalEdit"
+  @manageSoc.check_state_change_button_exists "Publish"
+  @manageSoc.change_action "Publish"
+  @manageSoc.check_state_change_button_exists "Close"
+  #@manageSoc.verify_publish_state_changes
+end
+
+Then /^the Course Offering is in offered state$/ do
+  #@course_offering_target = make CourseOffering, :course => "CHEM132TUSNA", :term => "213108"
+  @course_offering_target.manage
+
+  on ManageCourseOfferings do |page|
+    page.list_all_course_link.click
+    page.loading.wait_while_present
+  end
+
+  on ManageCourseOfferingList do |page|
+    page.co_status(@course_offering_target.course).should == "Offered"
+  end
+
 end
 
 Then /^the Activity Offerings are assigned to the target subterms$/ do

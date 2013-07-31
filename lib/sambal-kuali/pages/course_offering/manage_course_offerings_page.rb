@@ -8,9 +8,9 @@ class ManageCourseOfferings < BasePage
 
   expected_element :term
 
-  element(:previous_course_link){ |b| b.frm.link(id: "LoadPrev") } # Persistent ID needed!
-  element(:list_all_course_link){ |b| b.frm.link(id: "ListAll") } # Persistent ID needed!
-  element(:next_course_link){ |b| b.frm.link(id: "LoadNext") }     # Persistent ID needed!
+  element(:previous_course_link){ |b| b.frm.link(id: "LoadPrev") }
+  element(:list_all_course_link){ |b| b.frm.link(id: "ListAll") }
+  element(:next_course_link){ |b| b.frm.link(id: "LoadNext") }
 
   element(:term) { |b| b.frm.text_field(name: "termCode") }
   element(:input_code) { |b| b.frm.text_field(name: "inputCode") }

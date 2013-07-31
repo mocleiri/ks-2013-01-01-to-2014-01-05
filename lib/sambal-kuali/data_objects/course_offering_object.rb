@@ -137,7 +137,7 @@ class CourseOffering
       end
 
       on CreateCOFromCatalog do |page|
-        @suffix = random_alphanums(5) if @suffix == ""
+        @suffix = random_alphanums(5).upcase if @suffix == ""
         page.suffix.set @suffix
         @course = "#{@course}#{@suffix}"
         if @joint_co_to_create != nil
@@ -381,6 +381,11 @@ class CourseOffering
       st_time = Time.new
       page.show
       end_time = Time.new
+      #TODO: add code in case there is only 1 course
+      if page.list_all_course_link.exists? then
+        page.list_all_course_link.click
+        page.loading.wait_until_present
+      end
       puts "#{@course[0,4]} subj code search time: #{end_time-st_time}"
     end
   end
@@ -885,19 +890,6 @@ class CourseOffering
   end
 
   def create_from_existing_course(course, term)
-    pre_copy_co_list = []
-    post_copy_co_list = []
-
-    go_to_manage_course_offerings
-    on ManageCourseOfferings do |page|
-      page.term.set @term
-      page.input_code.set course[0,4] #subject code
-      page.show
-    end
-    on ManageCourseOfferingList do |page|
-      pre_copy_co_list = page.co_list
-    end
-
     start_create_by_search
     on CreateCourseOffering do |page|
       page.choose_from_existing
@@ -909,48 +901,33 @@ class CourseOffering
       page.create
       #TODO add parms for selecting what to exclude from copy
     end
-
-    go_to_manage_course_offerings
+    co_code = ""
     on ManageCourseOfferings do |page|
-      page.term.set @term
-      page.input_code.set course[0,4] #subject code
-      page.show
+      co_code = page.input_code.value
     end
-    on ManageCourseOfferingList do |page|
-      post_copy_co_list = page.co_list
-    end
-    (post_copy_co_list - pre_copy_co_list).first
+    co_code
   end
   private :create_from_existing_course
 
   def create_co_copy(source_course_code, term)
-    pre_copy_co_list = []
-    post_copy_co_list = []
-
     go_to_manage_course_offerings
     on ManageCourseOfferings do |page|
       page.term.set term
       page.input_code.set source_course_code[0,5] #subject code + course level (assumes always more than one CO returned)
       page.show
     end
+
     on ManageCourseOfferingList do |page|
-      pre_copy_co_list = page.co_list
       page.copy source_course_code
     end
     on CopyCourseOffering do |page|
       page.create_copy
     end
-    go_to_manage_course_offerings
-    on ManageCourseOfferings do |page|
-      page.term.set term
-      page.input_code.set source_course_code[0,5] #subject code + course level (assumes always more than one CO returned)
-      page.show
-    end
-    on ManageCourseOfferingList do |page|
-      post_copy_co_list = page.co_list
-    end
 
-    @course = (post_copy_co_list - pre_copy_co_list).first
+    on ManageCourseOfferings do |page|
+      @course = page.input_code.value # source_course_code[0,5] #subject code + course level (assumes always more than one CO returned)
+    end
+    return @course
   end
   private :create_co_copy
 
