@@ -19,10 +19,18 @@ Feature: WC.Edit Course Offerings
 
   #KSENROLL-8075
   @pending
-  Scenario: Edit an existing course offering changing credit type and credits
-    When I edit a course offering with multiple registration options
+  Scenario: Edit an existing course offering changing credit type and credit count
+    When I edit a course offering with multiple credit options
     And I change the credit type from multiple to fixed
+    And I select 2.5 credits
     Then I can submit and the credit options are changed
+
+  #KSENROLL-8075
+  @pending
+  Scenario: Edit an existing course offering changing credit count values
+    When I edit a course offering with multiple credit options
+    And I change the multiple credit values
+    Then I can submit and the credit values are changed
 
   #KSENROLL-1503.1
   Scenario: Edit an existing course offering deactivating final examinations and update the grade roster level

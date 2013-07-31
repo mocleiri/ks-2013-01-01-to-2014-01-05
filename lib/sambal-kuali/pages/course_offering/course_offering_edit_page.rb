@@ -19,10 +19,19 @@ class CourseOfferingEdit < BasePage
 
   element(:registration_opts_div) { |b| b.frm.div(data_label: "Student Registration Options").parent }
   element(:pass_fail_checkbox) { |b| b.registration_opts_div.checkbox(name: "document.newMaintainableObject.dataObject.passFailStudentRegOpts") }
-  element(:audit_checkbox) { |b| b.registration_opts_div.checkbox(name: "document.newMaintainableObject.dataObject.passFailStudentRegOpts") }
+  element(:audit_checkbox) { |b| b.registration_opts_div.checkbox(name: "document.newMaintainableObject.dataObject.auditStudentRegOpts") }
 
-  element(:credit_type_option_fixed) { |b| b.frm.radio(value: "kuali.result.values.group.type.fixed") }
+  element(:credit_type_option_fixed) { |b| b.frm.radio(id: "KS-CourseOfferingEdit-CreditType_OptionTypeSelector_control_0") }
+  element(:credit_type_option_multiple) { |b| b.frm.radio(id: "KS-CourseOfferingEdit-CreditType_OptionTypeSelector_control_1") }
+  element(:multiple_credit_checkbox_1_0) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"1.0") }
+  element(:multiple_credit_checkbox_1_5) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"1.5") }
+  element(:multiple_credit_checkbox_2_0) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"2.0") }
+  element(:multiple_credit_checkbox_2_5) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"2.5") }
+  element(:multiple_credit_checkbox_3_0) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"3.0") }
   element(:credits) { |b| b.frm.div(data_label: "Credits").text_field() }
+  element(:fixed_credit_select_menu) { |b| b.frm.select(id: "KS-CourseOfferingEdit-CreditType_OptionTypeFixed_control") }
+  action(:select_fixed_credit_option) { |b| b.credit_type_option_fixed.set() }
+  action(:select_multiple_credit_option) { |b| b.credit_type_option_multiple.set() }
 
   element(:final_exam_option_div) { |b| b.frm.div(id: "finalExamType") }
   action(:final_exam_option_standard) { |b| b.frm.radio(value: "STANDARD").set; b.loading.wait_while_present}
@@ -90,6 +99,30 @@ class CourseOfferingEdit < BasePage
     delivery_format_row(format).cells[FINAL_EXAM_COLUMN].select().select(format)
   end
 
+  def select_fixed_credits(credits)
+    fixed_credit_select_menu.select(credits)
+  end
+
+  def set_multiple_credit_count(credits)
+    case credits
+      when "1.0" then multiple_credit_checkbox_1_0.set
+      when "1.5" then multiple_credit_checkbox_1_5.set
+      when "2.0" then multiple_credit_checkbox_2_0.set
+      when "2.5" then multiple_credit_checkbox_2_5.set
+      when "3.0" then multiple_credit_checkbox_3_0.set
+    end
+  end
+
+  def clear_multiple_credit_count(credits)
+    case credits
+      when "1.0" then multiple_credit_checkbox_1_0.clear
+      when "1.5" then multiple_credit_checkbox_1_5.clear
+      when "2.0" then multiple_credit_checkbox_2_0.clear
+      when "2.5" then multiple_credit_checkbox_2_5.clear
+      when "3.0" then multiple_credit_checkbox_3_0.clear
+    end
+  end
+  
   element(:waitlist_div)  { |b| b.frm.div(id: "KS-CourseOfferingEdit-Waitlist") }
   element(:waitlist_checkbox) { |b| b.waitlist_div.checkbox() }
   value(:has_waitlist?) { |b| b.waitlist_checkbox.value }

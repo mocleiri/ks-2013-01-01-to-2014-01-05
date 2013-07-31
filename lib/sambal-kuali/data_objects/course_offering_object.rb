@@ -43,6 +43,11 @@ class CourseOffering
                 :honors_flag,
                 :grade_options,
                 :reg_options,
+                :pass_fail_flag,
+                :audit_flag,
+                :credit_type,
+                :fixed_credit_count,
+                :multiple_credit_list,
                 :search_by_subj,
                 :joint_co_to_create,
                 :cross_listed_codes
@@ -76,7 +81,12 @@ class CourseOffering
   #    :affiliated_org_list => {},
   #    :grade_options => "Letter",
   #    :reg_options => "None available",
+  #    :pass_fail_flag => true,
+  #    :audit_flag => false,
   #    :search_by_subj => false,
+  #    :credit_type => "",
+  #    :fixed_credit_count => "",
+  #    :multiple_credit_list => {},
   #    :create_by_copy => nil,
   #    :cross_listed => false,  (applies only to create from catalog)
   #    :joint_co_to_create
@@ -102,6 +112,11 @@ class CourseOffering
         :affiliated_org_list => {},
         :grade_options => "Letter",
         :reg_options => "Pass/Fail Grading",
+        :pass_fail_flag => true,
+        :audit_flag => false,
+        :credit_type => "",
+        :fixed_credit_count => "",
+        :multiple_credit_list => {},
         :search_by_subj => false,
         :create_by_copy => nil,
         :create_from_existing => nil,
@@ -249,6 +264,61 @@ class CourseOffering
       @grade_format = options[:grade_format]
     end
 
+    if options[:pass_fail_flag] != nil
+      on CourseOfferingEdit do |page|
+        if options[:pass_fail_flag]
+          page.pass_fail_checkbox.set
+        else
+          page.pass_fail_checkbox.clear
+        end
+        @pass_fail_flag = options[:pass_fail_flag]
+        @reg_options = set_reg_options(options)
+      end
+    end
+
+    if options[:audit_flag] != nil
+      on CourseOfferingEdit do |page|
+        if options[:audit_flag]
+          page.audit_checkbox.set
+        else
+          page.audit_checkbox.clear
+        end
+        @audit_flag = options[:audit_flag]
+        @reg_options = set_reg_options(options)
+      end
+    end
+
+    if options[:credit_type] != nil
+      @credit_type = options[:credit_type]
+      on CourseOfferingEdit do |page|
+        if options[:credit_type] == "fixed"
+          page.select_fixed_credit_option
+        elsif options[:credit_type] == "multiple"
+          page.select_fixed_multiple_option
+        end
+      end
+    end
+
+    if options[:fixed_credit_count] != nil
+      @fixed_credit_count = options[:fixed_credit_count]
+      on CourseOfferingEdit do |page|
+        page.select_fixed_credits(@fixed_credit_count)
+      end
+    end
+
+    if options[:multiple_credit_list] != nil
+      @multiple_credit_list = options[:multiple_credit_list]
+      on CourseOfferingEdit do |page|
+        @multiple_credit_list.each do |credits, checked|
+          if checked
+            page.set_multiple_credit_count(credits)
+          else
+            page.clear_multiple_credit_count(credits)
+          end
+        end
+      end
+    end
+
     if options[:final_exam_driver] != nil
       on CourseOfferingEdit do |page|
         page.select_final_exam_driver(options[:final_exam_driver])
@@ -299,6 +369,18 @@ class CourseOffering
         options[:cross_listed] ? page.cross_listed_co_set : page.cross_listed_co_clear
         page.submit
       end
+    end
+  end
+
+  def set_reg_options (options)
+    if options[:pass_fail_flag] and options[:audit_flag]
+      @reg_options = "Allow students to audit; Pass/Fail Grading"
+    elsif options[:pass_fail_flag]
+      @reg_options = "Pass/Fail Grading"
+    elsif options[:audit_flag]
+      @reg_options = "Allow students to audit"
+    else
+      @reg_options = "None available"
     end
   end
 

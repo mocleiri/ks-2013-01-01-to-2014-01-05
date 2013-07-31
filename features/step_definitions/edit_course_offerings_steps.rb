@@ -30,6 +30,14 @@ When /^I edit a course offering with multiple format types$/ do
   end
 end
 
+When /^I edit a course offering with multiple (\w+) options$/ do |opt|
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple")
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+end
+
 When /^I edit a course offering with multiple delivery format types$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL222")
   @course_offering.manage
@@ -40,6 +48,64 @@ end
 
 When /^I select a final exam type of "([^"]*)"$/ do |final_option|
      @course_offering.edit_offering :final_exam_type => final_option
+end
+
+And /^I clear the registration options checkboxes$/ do
+  @course_offering.edit_offering :pass_fail_flag => false, :audit_flag => false
+end
+
+When /^I change the credit type from multiple to fixed$/ do
+  @course_offering.edit_offering :credit_type => "fixed"
+end
+
+And /^I select (\d\.\d) credits$/ do |credits|
+  @course_offering.edit_offering :fixed_credit_count => credits
+end
+
+And /^I change the multiple credit values$/ do
+  credit_selections = {"1.0" => true, "1.5" => false, "2.0" => true, "2.5" => false, "3.0" => true}
+  @course_offering.edit_offering :multiple_credit_list => credit_selections
+end
+
+Then /^I can submit and the credit options are changed$/ do
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+
+  @course_offering.search_by_subjectcode
+  @course_offering.view_course_details
+  on ManageCourseDetails do  |page|
+    page.course_credit_count.should == @course_offering.fixed_credit_count
+  end
+end
+
+Then /^I can submit and the credit values are changed$/ do
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+
+  @course_offering.search_by_subjectcode
+  @course_offering.view_course_details
+
+  # Concatenate credits that are set
+  expected_value = ""
+  @course_offering.multiple_credit_list.each do |credits, set|
+    if set
+      expected_value << credits + ", "
+    end
+  end
+  # If there is a string, remove all occurrences of ".0" so that, for example, "3.0" becomes simply "3"
+  if expected_value.length > 0
+    while expected_value[".0"]
+      expected_value[".0"] = ""
+    end
+    # Remove final ", "
+    expected_value[-2..-1] = ""
+  end
+
+  on ManageCourseDetails do  |page|
+    page.course_credit_count.should == expected_value
+  end
 end
 
 When /^I change the delivery format options$/ do
@@ -96,6 +162,17 @@ Then /^I can submit and the course offering is updated$/ do
          page.final_exam_type.should == @course_offering.final_exam_type
          page.waited_list.should == @course_offering.wait_list
          page.honors_flag.should == @course_offering.honors_flag
+  end
+end
+
+Then /^I can submit and the registration options are changed$/ do
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+  @course_offering.search_by_subjectcode
+  @course_offering.view_course_details
+  on ManageCourseDetails do  |page|
+    page.registration_options.should == @course_offering.reg_options
   end
 end
 
