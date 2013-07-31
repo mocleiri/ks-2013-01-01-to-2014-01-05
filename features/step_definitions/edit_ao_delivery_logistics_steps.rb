@@ -14,26 +14,36 @@ When /^I revise an AO's requested delivery logistics$/ do
 end
 
 
-Then /^the AO's delivery logistics shows the new schedule in row (\d+)$/ do |row|
+Then /^the AO's delivery logistics shows the new schedule$/ do
   @activity_offering.parent_course_offering.manage
   @activity_offering.edit
-  on ActivityOfferingMaintenance do |page|
-    page.view_requested_delivery_logistics
-    page.requested_logistics_table[row.to_i][1].text.gsub(/\s+/, "").should == @new_rdls.days
-    page.requested_logistics_table[row.to_i][2].text.should == "#{@new_rdls.start_time} #{@new_rdls.start_time_ampm.upcase}"
-    page.requested_logistics_table[row.to_i][3].text.should == "#{@new_rdls.end_time} #{@new_rdls.end_time_ampm.upcase}"
-    page.requested_logistics_table[row.to_i][4].text.should == @new_rdls.facility
-    page.requested_logistics_table[row.to_i][5].text.should == @new_rdls.room
+
+  rdl_list = @activity_offering.requested_delivery_logistics_list.values
+  rdl_list.each do |row|
+    row.target_row_by_dl_key
+    row.days.should == @new_rdls.days
+    row.start_time.should == @new_rdls.start_time
+    row.start_time_ampm.should == @new_rdls.start_time_ampm
+    row.end_time.should == @new_rdls.end_time
+    row.end_time_ampm.should == @new_rdls.end_time_ampm
+    row.facility.should == @new_rdls.facility
+    row.room.should == @new_rdls.room
   end
 end
 
-Then /^the AO's delivery logistics shows the new schedule as TBA in row (\d+)$/ do |row|
+Then /^the AO's delivery logistics shows the new schedule as TBA$/ do
   @activity_offering.parent_course_offering.manage
   @activity_offering.edit
-  on ActivityOfferingMaintenance do |page|
-    page.view_requested_delivery_logistics
-    page.requested_logistics_table[row.to_i][0].text.should == "TBA"
+
+  rdl_list = @activity_offering.requested_delivery_logistics_list.values
+  rdl_list.each do |row|
+    row.target_row_by_dl_key
+    row.tba?.should == true
   end
+  #on ActivityOfferingMaintenance do |page|
+  #  page.view_requested_delivery_logistics
+  #  page.requested_logistics_table[row.to_i][0].text.should == "TBA"
+  #end
 end
 
 When /^I add RDLs for an AO$/ do
