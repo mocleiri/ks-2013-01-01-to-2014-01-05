@@ -134,7 +134,7 @@ When /^I jump to an arbitrary AO but cancel the change$/ do
   end
 
 end
-When /^I change Personnel attributes$/ do
+When /^I add Personnel attributes$/ do
   person = make Personnel, :id => "admin", :name => "admin, admin", :affiliation => "Instructor", :inst_effort => 30
   @activity_offering.edit :personnel_list => [person]
 end
@@ -147,6 +147,11 @@ Then /^the changes of the Personnel attributes are persisted$/ do
     page.personnel_effort.value.should == @activity_offering.personnel_list[0].inst_effort.to_s
     page.personnel_name.value.should == @activity_offering.personnel_list[0].name
   end
+end
+
+When /^I change Personnel attributes$/ do
+  person = make Personnel, :id => "S.DAVIDB", :name => "SMITH, DAVID", :affiliation => "Instructor", :inst_effort => 30
+  @activity_offering.edit :edit_already_started => true, :personnel_list => [person]
 end
 
 When /^I change Miscellaneous Activity Offering attributes$/ do

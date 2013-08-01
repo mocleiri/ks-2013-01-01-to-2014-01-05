@@ -26,6 +26,9 @@ Feature: WC.Edit Activity Offering Attributes
 
   #KSENROLL-8232
   Scenario: Edit Activity Offering Personnel attributes
+    When I add Personnel attributes
+    And I submit the AO changes
+    Then the changes of the Personnel attributes are persisted
     When I change Personnel attributes
     And I submit the AO changes
     Then the changes of the Personnel attributes are persisted
