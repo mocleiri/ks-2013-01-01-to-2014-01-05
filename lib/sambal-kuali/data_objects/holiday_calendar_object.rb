@@ -230,18 +230,18 @@ class Holiday
         page.holiday_type.select @type
       end
       page.holiday_start_date.set @start_date
-      if @date_range
-        page.date_range.set
-        sleep 4
-        page.holiday_end_date.set @end_date
-      else
-        page.date_range.clear if page.date_range.set?
-      end
-      if @all_day
-        page.all_day.set unless page.all_day.set?
-      else
-        page.start_time
-      end
+      #if @date_range
+      #  page.date_range.set
+      #  sleep 4
+      #  page.holiday_end_date.set @end_date
+      #else
+      #  page.date_range.clear if page.date_range.set?
+      #end
+      #if @all_day
+      #  page.all_day.set unless page.all_day.set?
+      #else
+      #  page.start_time
+      #end
       if !@instructional then
         page.instructional.clear
         #make sure date is not on a weekend
@@ -274,8 +274,8 @@ class Holiday
       @end_date = holiday_row.cells[EditHolidayCalendar::END_DATE].text_field.value
       @end_time = holiday_row.cells[EditHolidayCalendar::END_TIME].text_field.value
       @end_am = holiday_row.cells[EditHolidayCalendar::END_AMPM].radio.set? if holiday_row.cells[EditHolidayCalendar::END_AMPM].radio.enabled?
-      @all_day = holiday_row.cells[EditHolidayCalendar::ALL_DAY].checkbox.set?
-      @date_range = holiday_row.cells[EditHolidayCalendar::DATE_RANGE].checkbox.set?
+      #@all_day = holiday_row.cells[EditHolidayCalendar::ALL_DAY].checkbox.set?
+      #@date_range = holiday_row.cells[EditHolidayCalendar::DATE_RANGE].checkbox.set?
       @instructional = holiday_row.cells[EditHolidayCalendar::INSTRUCTIONAL].checkbox.set?
   end
 end

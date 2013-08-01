@@ -19,9 +19,7 @@ class EditHolidayCalendar < HolidayBase
   END_DATE = 4
   END_TIME = 5
   END_AMPM = 6
-  ALL_DAY = 7
-  DATE_RANGE = 8
-  INSTRUCTIONAL = 9
-  ACTIONS = 10
+  INSTRUCTIONAL = 7
+  ACTIONS = 8
 
 end

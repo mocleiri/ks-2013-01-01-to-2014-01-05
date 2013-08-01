@@ -55,7 +55,7 @@ Feature: EC.Academic Calendar Terms
     When I delete an instructional Key Date Group
     Then the Key Date Group is not listed with the academic term information
 
-  Scenario: Copy a Key Dates for an academic term
+  Scenario: Copy Key Dates for an academic term
     Given I copy an existing Academic Calendar
     Then the Key Dates are copied without date values
 

@@ -511,7 +511,7 @@ class KeyDate
   end
 
   def create()
-    #only create if doesn't already exist, other wise edit the existing one
+    #only create if doesn't already exist, otherwise edit the existing one
     on EditAcademicTerms do |page|
       page.go_to_terms_tab
       page.open_term_section(@parent_key_date_group.term_type)
@@ -524,12 +524,12 @@ class KeyDate
         page.loading.wait_while_present
 
 
-        page.key_date_allday_addline(@term_index,0).set @all_day
-        page.loading.wait_while_present
-        page.key_date_daterange_addline(@term_index,0).set @date_range
-        page.loading.wait_while_present
+        #page.key_date_allday_addline(@term_index,0).set @all_day
+        #page.loading.wait_while_present
+        #page.key_date_daterange_addline(@term_index,0).set @date_range
+        #page.loading.wait_while_present
 
-        page.key_date_end_date_addline(@term_index,0).set @end_date if @date_range
+        page.key_date_end_date_addline(@term_index,0).set @end_date #if @date_range
 
         page.key_date_add(@term_index,0)
       else
