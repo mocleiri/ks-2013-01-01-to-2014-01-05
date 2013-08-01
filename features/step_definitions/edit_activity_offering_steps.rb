@@ -150,6 +150,10 @@ Then /^the changes of the Personnel attributes are persisted$/ do
 end
 
 When /^I change Personnel attributes$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.delete_personnel
+    page.add_personnel
+  end
   person = make Personnel, :id => "S.DAVIDB", :name => "SMITH, DAVID", :affiliation => "Instructor", :inst_effort => 30
   @activity_offering.edit :edit_already_started => true, :personnel_list => [person]
 end
