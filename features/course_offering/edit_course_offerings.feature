@@ -10,23 +10,17 @@ Feature: WC.Edit Course Offerings
     And I can edit the course offering
     And I can return to search using the cancel button
 
-  #KSENROLL-8075
-  @pending
   Scenario: Edit an existing course offering changing the student registration options
     When I edit a course offering with multiple registration options
     And I clear the registration options checkboxes
     Then I can submit and the registration options are changed
 
-  #KSENROLL-8075
-  @pending
   Scenario: Edit an existing course offering changing credit type and credit count
     When I edit a course offering with multiple credit options
     And I change the credit type from multiple to fixed
     And I change the number of credits
     Then I can submit and the credit options are changed
 
-  #KSENROLL-8075
-  @pending
   Scenario: Edit an existing course offering changing credit count values
     When I edit a course offering with multiple credit options
     And I change the multiple credit values
