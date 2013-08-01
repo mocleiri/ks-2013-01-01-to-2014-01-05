@@ -56,7 +56,6 @@ class CourseOffering
   #boolean - - generally set using options hash true/false
   attr_accessor :cross_listed
 
-
   DRAFT_STATUS = "Draft"
   PLANNED_STATUS = "Planned"
   OFFERED_STATUS = "Offered"
@@ -1075,6 +1074,19 @@ class CourseOffering
         page.cancel_delete
       end
     end
+  end
+
+  def formatted_multiple_credits_list
+    formatted_credits_list = ""
+    @multiple_credit_list.each do |credits, set|
+      if set
+        formatted_credits_list << credits.to_i.to_s + ", "
+      end
+    end
+
+    # If there is a string, remove final ", "
+    formatted_credits_list[-2..-1] = "" if formatted_credits_list.length > 0
+    formatted_credits_list
   end
 
 

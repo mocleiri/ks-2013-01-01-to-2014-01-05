@@ -22,7 +22,7 @@ Feature: WC.Edit Course Offerings
   Scenario: Edit an existing course offering changing credit type and credit count
     When I edit a course offering with multiple credit options
     And I change the credit type from multiple to fixed
-    And I select 2.5 credits
+    And I change the number of credits
     Then I can submit and the credit options are changed
 
   #KSENROLL-8075

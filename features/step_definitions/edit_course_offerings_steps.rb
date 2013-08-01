@@ -31,7 +31,8 @@ When /^I edit a course offering with multiple format types$/ do
 end
 
 When /^I edit a course offering with multiple (\w+) options$/ do |opt|
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple")
+  #@course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple")
+  @course_offering = make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple"
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering
@@ -58,8 +59,8 @@ When /^I change the credit type from multiple to fixed$/ do
   @course_offering.edit_offering :credit_type => "fixed"
 end
 
-And /^I select (\d\.\d) credits$/ do |credits|
-  @course_offering.edit_offering :fixed_credit_count => credits
+And /^I change the number of credits$/ do
+  @course_offering.edit_offering :fixed_credit_count => "2.5"
 end
 
 And /^I change the multiple credit values$/ do
@@ -87,24 +88,8 @@ Then /^I can submit and the credit values are changed$/ do
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
 
-  # Concatenate credits that are set
-  expected_value = ""
-  @course_offering.multiple_credit_list.each do |credits, set|
-    if set
-      expected_value << credits + ", "
-    end
-  end
-  # If there is a string, remove all occurrences of ".0" so that, for example, "3.0" becomes simply "3"
-  if expected_value.length > 0
-    while expected_value[".0"]
-      expected_value[".0"] = ""
-    end
-    # Remove final ", "
-    expected_value[-2..-1] = ""
-  end
-
   on ManageCourseDetails do  |page|
-    page.course_credit_count.should == expected_value
+    page.course_credit_count.should == @course_offering.formatted_multiple_credits_list
   end
 end
 
@@ -157,6 +142,7 @@ Then /^I can submit and the course offering is updated$/ do
 
   @course_offering.search_by_subjectcode
        @course_offering.view_course_details
+  puts "CO.wait_list = #{@course_offering.wait_list}"
        on ManageCourseDetails do  |page|
          page.registration_options.should == @course_offering.reg_options
          page.final_exam_type.should == @course_offering.final_exam_type
