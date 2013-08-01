@@ -212,3 +212,12 @@ When /^I deselect the second activity offering$/ do
     page.deselect_ao("B")
   end
 end
+
+Then /^I edit the activity offering I do not have access to change the subterm$/ do
+  @activity_offering.edit
+  on ActivityOfferingMaintenance do |page|
+    page.change_subterm_element.present?.should == false
+    page.cancel
+  end
+
+end

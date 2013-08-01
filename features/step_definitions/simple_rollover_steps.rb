@@ -224,17 +224,24 @@ Then /^I approve the Course Offering for scheduling in the target term$/ do
   @course_offering_target = make CourseOffering, :term=> @term_target.term_code,
                                  :course => @course_offering.course
   @course_offering_target.search_by_subjectcode
-  #on ManageCourseOfferings do |page|
-  #    #if page.list_all_course_link.exists? then
-  #      page.list_all_course_link.click
-  #      page.loading.wait_until_present
-  #    #end
-  #end
   @course_offering_target.approve_co
 end
 
+Then /^I manage the Course Offering in the target term$/ do
+  #NB - redefining course/activity_offering here for subsequent steps
+  @course_offering = make CourseOffering, :term=> @term_target.term_code,
+                                 :course => @course_offering.course
+  #@course_offering = make CourseOffering, :term=> "234008",
+  #                               :course =>"ENGL211CDRQV"
+
+  @course_offering.manage
+  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+end
+
+
+
 Then /^I advance the SOC state from open to published state$/ do
-  @manageSoc = make ManageSoc, :term_code =>@rollover.target_term, :co_code=> @course_offering_target.course
+  @manageSoc = make ManageSoc, :term_code =>@rollover.target_term
   @manageSoc.search
   @manageSoc.change_action "Lock"
   @manageSoc.check_state_change_button_exists "Schedule"
@@ -246,6 +253,19 @@ Then /^I advance the SOC state from open to published state$/ do
   @manageSoc.check_state_change_button_exists "Close"
   #@manageSoc.verify_publish_state_changes
 end
+
+Then /^I advance the SOC state from open to final edits state$/ do
+  @manageSoc = make ManageSoc, :term_code =>@rollover.target_term
+  @manageSoc.search
+  @manageSoc.change_action "Lock"
+  @manageSoc.check_state_change_button_exists "Schedule"
+  @manageSoc.change_action "Schedule"
+  @manageSoc.check_state_change_button_exists "FinalEdit"
+  @manageSoc.change_action "FinalEdit"
+  @manageSoc.check_state_change_button_exists "Publish"
+end
+
+
 
 Then /^the Course Offering is in offered state$/ do
   #@course_offering_target = make CourseOffering, :course => "CHEM132TUSNA", :term => "213108"

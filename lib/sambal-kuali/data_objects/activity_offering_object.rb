@@ -271,7 +271,9 @@ class ActivityOffering
   end #END: edit_code
 
   def edit_subterm opts
+
     if opts[:subterm] != nil
+      sleep 1
       on ActivityOfferingMaintenance do |page|
         page.change_subterm opts[:subterm]
         @subterm = opts[:subterm]

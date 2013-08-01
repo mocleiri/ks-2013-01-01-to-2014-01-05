@@ -52,6 +52,28 @@ And /^I create a Course Offering from catalog with Activity Offerings assigned t
   @activity_offering2.save
 end
 
+And /^I create a Course Offering from catalog with Activity Offerings assigned to subterms in my admin org$/ do
+  @course_offering = create CourseOffering, :term=> @term.term_code,
+                            :course => "ENGL211",
+                            :grade_format => "Lecture",
+                            :delivery_format => "Lecture" ,
+                            :suffix => ""
+  #@course_offering = make CourseOffering, :course => "ENGL211MECJ6", :term => "208508"
+  @rdl_list = {}
+  @rdl_list["MT"] = make DeliveryLogistics, :days => "MT", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+
+  @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering,  :subterm => @subterm_list[0].subterm_type,
+                              :format => "Lecture Only", :activity_type => "Lecture" , :requested_delivery_logistics_list => @rdl_list
+  @activity_offering.save
+
+  @rdl_list2 = {}
+  @rdl_list2["WF"] = make DeliveryLogistics, :days => "WF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  @activity_offering2 = create ActivityOffering,  :parent_course_offering => @course_offering, :subterm => @subterm_list[1].subterm_type,
+                               :format => "Lecture Only", :activity_type => "Lecture" , :requested_delivery_logistics_list => @rdl_list2
+
+  @activity_offering2.save
+end
+
 And /^I create a Course Offering from catalog with Activity Offerings$/ do
   @course_offering = create CourseOffering, :term=> @term.term_code,
                             :course => "CHEM132",
