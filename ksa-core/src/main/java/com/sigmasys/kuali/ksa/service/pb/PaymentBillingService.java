@@ -207,6 +207,20 @@ public interface PaymentBillingService {
     List<PaymentBillingAllowableCharge> getPaymentBillingAllowableCharges(Long paymentBillingPlanId);
 
     /**
+     * Creates and persists a new PaymentBillingDate instance in the persistent store.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param rollupId             Rollup ID
+     * @param percentage           Percentage
+     * @param effectiveDate        Effective date
+     * @return PaymentBillingDate instance
+     */
+    PaymentBillingDate createPaymentBillingDate(Long paymentBillingPlanId,
+                                                Long rollupId,
+                                                BigDecimal percentage,
+                                                Date effectiveDate);
+
+    /**
      * Returns payment billing dates for the given plan specified by ID from the persistent store
      *
      * @param paymentBillingPlanId PaymentBillingPlan ID

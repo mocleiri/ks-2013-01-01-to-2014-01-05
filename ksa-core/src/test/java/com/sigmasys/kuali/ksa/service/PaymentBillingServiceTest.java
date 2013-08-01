@@ -53,7 +53,7 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         accountService.getOrCreateAccount(TEST_USER_ID);
     }
 
-    private void createCharge(String chargeTypeId) throws Exception {
+    private void _createCharge(String chargeTypeId) throws Exception {
 
         Transaction transaction = transactionService.createTransaction(chargeTypeId, TEST_USER_ID, new Date(),
                 new BigDecimal(300));
@@ -73,7 +73,7 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
 
     }
 
-    protected GeneralLedgerType createGeneralLedgerType() {
+    protected GeneralLedgerType _createGeneralLedgerType() {
 
         String GL_ACCOUNT_ID = "01-0-131120 1326";
 
@@ -98,6 +98,9 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
 
     protected PaymentBillingPlan _createPaymentBillingPlan() throws Exception {
 
+        _createCharge("1020");
+        _createCharge("1001");
+
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
 
         Date openPeriodStartDate = dateFormat.parse("01/01/2011");
@@ -106,8 +109,7 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         Date chargePeriodStartDate = dateFormat.parse("01/01/2011");
         Date chargePeriodEndDate = dateFormat.parse("01/01/2020");
 
-
-        GeneralLedgerType glType = createGeneralLedgerType();
+        GeneralLedgerType glType = _createGeneralLedgerType();
 
         TransferType transferType = transferService.createTransferType(glType.getId(), "_TT_1", "TT 1", "Transfer Type 1");
 
@@ -149,9 +151,16 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         Assert.isTrue("1001".equals(plan.getFlatFeeDebitTypeId()));
         Assert.isTrue("1020".equals(plan.getVariableFeeDebitTypeId()));
 
+        _createPaymentBillingAllowableCharge(plan.getId());
+
+        return plan;
+    }
+
+
+    private PaymentBillingAllowableCharge _createPaymentBillingAllowableCharge(Long paymentBillingPlanId) {
 
         PaymentBillingAllowableCharge allowableCharge = billingService.createPaymentBillingAllowableCharge(
-                plan.getId(),
+                paymentBillingPlanId,
                 ".*",
                 new BigDecimal(1450),
                 new BigDecimal(100),
@@ -166,7 +175,7 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         Assert.isTrue(new BigDecimal(100).compareTo(allowableCharge.getMaxPercentage()) == 0);
         Assert.isTrue(1 == allowableCharge.getPriority());
 
-        return plan;
+        return allowableCharge;
     }
 
     @Test
@@ -190,9 +199,6 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
 
     @Test
     public void executePaymentBilling() throws Exception {
-
-        createCharge("1020");
-        createCharge("1001");
 
         PaymentBillingPlan plan = _createPaymentBillingPlan();
 
@@ -223,55 +229,74 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
 
     }
 
-    /*@Test
-    public void reverseThirdPartyTransfers() throws Exception {
+    @Test
+    public void reversePaymentBillingTransfer() throws Exception {
 
-        ThirdPartyPlan plan = _createPaymentBillingPlan();
+        PaymentBillingPlan plan = _createPaymentBillingPlan();
 
-        ThirdPartyTransferDetail transfer =
-                billingService.generateThirdPartyTransfer(plan.getId(), TEST_USER_ID, new Date());
+        PaymentBillingTransferDetail transfer =
+                billingService.generatePaymentBillingTransfer(plan.getId(), TEST_USER_ID, new BigDecimal(1300), new Date());
 
         Assert.notNull(transfer);
         Assert.notNull(transfer.getId());
 
-        transfer = billingService.reverseThirdPartyTransfer(transfer.getId(), "Reversed Memo");
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.INITIALIZED);
+
+        transfer = billingService.transferPaymentBillingTransactions(transfer.getId());
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.ACTIVE);
+
+        transfer = billingService.reversePaymentBillingTransfer(transfer.getId(), "Reversed Memo", true);
 
         Assert.notNull(transfer);
         Assert.notNull(transfer.getId());
         Assert.notNull(transfer.getChargeStatus());
 
-        Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.REVERSED);
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.REVERSED);
 
     }
-
-
 
     @Test
-    public void createThirdPartyAllowableCharge() throws Exception {
+    public void generatePaymentBillingSchedules() throws Exception {
 
-        ThirdPartyPlan plan = _createPaymentBillingPlan();
+        PaymentBillingPlan plan = _createPaymentBillingPlan();
 
-        ThirdPartyAllowableCharge allowableCharge =
-                billingService.createThirdPartyAllowableCharge(
-                        plan.getId(),
-                        ".*",
-                        new BigDecimal(390.01),
-                        new BigDecimal(55.5),
-                        11,
-                        ChargeDistributionPlan.DIVIDED);
+        PaymentBillingTransferDetail transfer =
+                billingService.generatePaymentBillingTransfer(plan.getId(), TEST_USER_ID, new BigDecimal(2300), new Date());
 
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
 
-        Assert.notNull(allowableCharge);
-        Assert.notNull(allowableCharge.getId());
-        Assert.notNull(allowableCharge.getDistributionPlan());
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.INITIALIZED);
 
-        Assert.isTrue(allowableCharge.getDistributionPlan() == ChargeDistributionPlan.DIVIDED);
-        Assert.isTrue(".*".equals(allowableCharge.getTransactionTypeMask()));
-        Assert.isTrue(allowableCharge.getPriority() == 11);
-        Assert.isTrue(new BigDecimal(390.01).compareTo(allowableCharge.getMaxAmount()) == 0);
-        Assert.isTrue(new BigDecimal(55.5).compareTo(allowableCharge.getMaxPercentage()) == 0);
+        Rollup rollup = new Rollup();
+        rollup.setCode("Rollup 1 code");
+        rollup.setName("Rollup 1 name");
+        rollup.setDescription("Rollup 1 description");
+
+        em.persist(rollup);
+
+        billingService.createPaymentBillingDate(plan.getId(), rollup.getId(), new BigDecimal(30),
+                new Date(System.currentTimeMillis() + System.currentTimeMillis()));
+
+        List<PaymentBillingSchedule> billingSchedules = billingService.generatePaymentBillingSchedules(transfer.getId());
+
+        Assert.notNull(billingSchedules);
+        Assert.notEmpty(billingSchedules);
+
+        for (PaymentBillingSchedule schedule : billingSchedules) {
+
+            Assert.notNull(schedule);
+            Assert.notNull(schedule.getId());
+            Assert.notNull(schedule.getAmount());
+            Assert.notNull(schedule.getTransferDetail());
+            Assert.notNull(schedule.getPercentage());
+            Assert.notNull(schedule.getEffectiveDate());
+        }
 
     }
-    */
 
 }

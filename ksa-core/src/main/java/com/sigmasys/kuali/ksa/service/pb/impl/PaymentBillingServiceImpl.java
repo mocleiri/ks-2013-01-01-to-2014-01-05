@@ -4,10 +4,7 @@ import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.pb.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
-import com.sigmasys.kuali.ksa.service.AccountService;
-import com.sigmasys.kuali.ksa.service.InformationService;
-import com.sigmasys.kuali.ksa.service.TransactionService;
-import com.sigmasys.kuali.ksa.service.TransactionTransferService;
+import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
@@ -78,6 +75,9 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
     @Autowired
     private InformationService informationService;
+
+    @Autowired
+    private AuditableEntityService entityService;
 
 
     /**
@@ -563,7 +563,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         if (!billingSchedules.isEmpty()) {
 
-            final BigDecimal percentageCoeff = new BigDecimal(100).divide(totalPercentage);
+            BigDecimal percentageCoeff = (totalPercentage.compareTo(BigDecimal.ZERO) > 0) ?
+                    new BigDecimal(100).divide(totalPercentage, RoundingMode.HALF_UP) : BigDecimal.ZERO;
 
             boolean offsetPercentage = (skipEarlier && totalPercentage.compareTo(BigDecimal.ZERO) > 0);
 
@@ -592,6 +593,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                 }
             }
 
+            // TODO: Plan amount is never set, it is always 0 -> see generatePaymentBillingTransfer()
             BigDecimal nonRoundedAmount = transferDetail.getPlanAmount().subtract(tempAmount);
 
             firstLastSchedule.setAmount(nonRoundedAmount);
@@ -599,10 +601,12 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             if (nonRoundedAmount.compareTo(BigDecimal.ZERO) <= 0) {
 
                 if (roundingFactor <= 0) {
+
                     String errMsg = "Payment billing rounding problem occurred, PaymentBillingTransferDetail ID = " +
                             transferDetail.getId() + ", non-rounded amount = " + nonRoundedAmount.toString();
                     logger.error(errMsg);
                     throw new IllegalStateException(errMsg);
+
                 } else {
 
                     String memoText = configService.getParameter(Constants.PAYMENT_BILLING_ROUNDING_PROBLEM_MEMO);
@@ -737,11 +741,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         for (Charge charge : charges) {
 
-            logger.info("KUKU 1");
-
             if (isChargeAllowed(charge, allowableCharges)) {
-
-                logger.info("KUKU 2");
 
                 PaymentBillingTransaction billingTransaction = new PaymentBillingTransaction();
 
@@ -811,7 +811,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             }
         }
 
-        transferDetail.setChargeStatus(PaymentBillingChargeStatus.ACTIVE);
+        transferDetail.setChargeStatus(PaymentBillingChargeStatus.ALLOWABLE);
 
         return resultTransactions;
     }
@@ -1134,6 +1134,68 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         query.setParameter("planId", paymentBillingPlanId);
 
         return query.getResultList();
+    }
+
+    /**
+     * Creates and persists a new PaymentBillingDate instance in the persistent store.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param rollupId             Rollup ID
+     * @param percentage           Percentage
+     * @param effectiveDate        Effective date
+     * @return PaymentBillingDate instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public PaymentBillingDate createPaymentBillingDate(Long paymentBillingPlanId,
+                                                       Long rollupId,
+                                                       BigDecimal percentage,
+                                                       Date effectiveDate) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_PAYMENT_BILLING_DATE);
+
+        PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
+        if (billingPlan == null) {
+            String errMsg = "PaymentBillingPlan does not exist with ID = " + paymentBillingPlanId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Rollup rollup = entityService.getAuditableEntity(rollupId, Rollup.class);
+        if (rollup == null) {
+            String errMsg = "Rollup does not exist with ID = " + rollupId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (percentage == null) {
+            String errMsg = "Percentage cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(new BigDecimal(100)) > 0) {
+            String errMsg = "Percentage should be in the range [0, 100]";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (effectiveDate == null) {
+            String errMsg = "Effective date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        PaymentBillingDate billingDate = new PaymentBillingDate();
+
+        billingDate.setPlan(billingPlan);
+        billingDate.setRollup(rollup);
+        billingDate.setPercentage(percentage);
+        billingDate.setEffectiveDate(effectiveDate);
+
+        persistEntity(billingDate);
+
+        return billingDate;
     }
 
     /**
