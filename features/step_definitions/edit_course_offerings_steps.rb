@@ -31,8 +31,7 @@ When /^I edit a course offering with multiple format types$/ do
 end
 
 When /^I edit a course offering with multiple (\w+) options$/ do |opt|
-  #@course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple")
-  @course_offering = make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple"
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple")
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering
