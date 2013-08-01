@@ -37,6 +37,9 @@ public class TransactionTypeController extends GenericSearchController {
 
     private static final Log logger = LogFactory.getLog(TransactionTypeController.class);
 
+    private static final Integer MIN_PRIORITY = new Integer(1);
+    private static final Integer MAX_PRIORITY = new Integer(1000);
+
     private KeyValuesFinder creditDebitTypeOptionsFinder;
 
     @Autowired
@@ -344,6 +347,64 @@ public class TransactionTypeController extends GenericSearchController {
         }
 
         return getUIFModelAndView(form);
+    }
+
+    /**
+     * @param form
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=priority")
+    public ModelAndView priority(@ModelAttribute("KualiForm") TransactionTypeForm form, HttpServletRequest request) {
+        String modelToCopy = request.getParameter("actionParameters[model]");
+        //Integer subCode = new Integer(request.getParameter("actionParameters[subCode]"));
+
+        String priorityChange = request.getParameter("actionParameters[priority]");
+
+        TransactionType tt = transactionService.getTransactionType(modelToCopy, new Date());
+
+        boolean error = false;
+
+        if("min".equalsIgnoreCase(priorityChange)) {
+            tt.setPriority(MIN_PRIORITY);
+        } else if("max".equalsIgnoreCase(priorityChange)) {
+            tt.setPriority(MAX_PRIORITY);
+        } else if("plus1".equalsIgnoreCase(priorityChange)) {
+            if(tt.getPriority().equals(MAX_PRIORITY)) {
+                String message = "Transaction type '" + tt.getId().getId() + "' - " + tt.getDescription() + " is already at the highest priority";
+                GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, message);
+                error = true;
+            } else {
+                tt.setPriority(tt.getPriority() + 1);
+            }
+        } else if("minus1".equalsIgnoreCase(priorityChange)) {
+            if(tt.getPriority().equals(MIN_PRIORITY)) {
+                String message = "Transaction type '" + tt.getId().getId() + "' - " + tt.getDescription() + " is already at the lowest priority";
+                GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, message);
+                error = true;
+            } else {
+                tt.setPriority(tt.getPriority() - 1);
+            }
+        } else {
+            // Try to parse the priorityChange and use that value
+            try{
+                Integer value = Integer.parseInt(priorityChange);
+                tt.setPriority(value);
+            } catch(NumberFormatException e){
+                String message = "Invalid priority value";
+                GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, message);
+                error = true;
+            }
+        }
+
+        if(! error) {
+            transactionService.persistTransactionType(tt);
+            Map<String, TransactionTypeGroupModel> groups = form.getTransactionTypeGroups();
+            TransactionTypeGroupModel model = groups.get(modelToCopy);
+            model.setCurrentTransactionType(new TransactionTypeModel(tt));
+        }
+
+        return getUIFModelAndView(form);
+
     }
 
     public synchronized KeyValuesFinder getCreditDebitTypeOptionsFinder() {

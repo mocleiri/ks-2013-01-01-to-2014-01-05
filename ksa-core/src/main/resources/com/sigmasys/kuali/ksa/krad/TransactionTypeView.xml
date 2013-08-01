@@ -44,10 +44,8 @@
                         <list>
                             <bean parent="Uif-HeaderFour" p:headerText="View Transaction Types"/>
                             <bean parent="Uif-Message" p:style="width: 80%" p:messageText="The transaction type is a very important type in the KSA system.  Transactions contain the fundamental information that is used to support a number of complex operations.  Once a transaction is saved to the KSA ledger, few parts of it can be altered."/>
-                            <bean parent="Uif-Link" p:linkText="Create New Transaction Type" p:target="_self"
-                                  p:href="transactionTypeView?methodToCall=create&amp;viewId=TransactionTypeView&amp;pageId=TransactionTypeCreatePage"/>
                             <!--<ref bean="addSection"/>-->
-                            <ref bean="tableTransactionTypeSection"/>
+                            <ref bean="transactionTypeTabs"/>
                         </list>
                     </property>
                 </bean>
@@ -118,6 +116,30 @@
         <property name="viewHelperService" ref="transactionTypeHelper"/>
         <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.SettingsForm"/>
     </bean>
+
+
+    <bean id="transactionTypeTabs" parent="Uif-TabGroup"><property name="items"><list>
+        <bean parent="Uif-VerticalBoxSection" p:headerText="Roll-up">
+            <property name="items">
+                <list>
+                    <bean parent="Uif-Link" p:linkText="Create New Transaction Type" p:target="_self"
+                          p:href="transactionTypeView?methodToCall=create&amp;viewId=TransactionTypeView&amp;pageId=TransactionTypeCreatePage"/>
+                    <ref bean="tableTransactionTypeSection"/>
+
+                </list>
+            </property>
+        </bean>
+        <bean parent="Uif-VerticalBoxSection" p:headerText="Processing Priority">
+            <property name="items">
+                <list>
+                    <bean parent="Uif-Message" p:style="width: 80%" p:messageText="Transaction types will be processed during payment application in the following priority order."/>
+                    <ref bean="transactionTypeProcessingPriority"/>
+
+                </list>
+            </property>
+        </bean>
+    </list></property></bean>
+
 
     <!--
     ********************************************************************************************************************
@@ -236,6 +258,64 @@
         </property>
     </bean>
 
+
+    <!--
+    ********************************************************************************************************************
+                     transactionType Priority List section
+    A table containing a list of transactionType used in the system
+    ********************************************************************************************************************
+    -->
+    <bean id="transactionTypeProcessingPriority" parent="Uif-Disclosure-TableCollectionSection">
+        <!--<property name="title" value="View Transaction Types"/>-->
+        <property name="readOnly" value="true"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.TransactionTypeGroupModel"/>
+        <property name="propertyName" value="transactionTypes"/>
+        <property name="layoutManager.sequencePropertyName" value="currentTransactionType.id.id"/>
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <!--<property name="layoutManager.applyDefaultCellWidths" value="false"/> -->
+        <!--<property name="layoutManager.richTable.disableTableSort" value="false"/>-->
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="true"/>
+                <entry key="iDisplayLength" value="20"/>
+                <entry key="bSort" value="true" />
+                <!--<entry key="aoColumns"
+                       value="[
+                          {'sTitle':'ID', 'bSortable':false, 'bSearchable':true},
+                          {'sTitle':'Transaction Type Description', 'bSortable':false, 'bSearchable':true},
+                          {'sTitle':'Quick Move', 'bSortable':false, 'bSearchable':false},
+                          {'sTitle':'Priority', 'bSortable':true, 'bSearchable':false}
+                            ]"/>-->
+            </map>
+        </property>
+        <property name="layoutManager.groupingPropertyNames"> <list> <value>currentTransactionType.priority</value> </list> </property>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="ID" p:propertyName="currentTransactionType.id.id" p:readOnly="true" p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="Transaction Type Description" p:propertyName="currentTransactionType.description"  p:readOnly="true" p:width="50%"/>
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Quick Move" p:width="20%;">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionLabel="Max"
+                                  p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:max"/>
+                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionLabel="Plus 1"
+                                  p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:plus1"/>
+                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionLabel="Minus 1"
+                                  p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:minus1"/>
+                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionLabel="Min"
+                                  p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:min"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Priority" p:propertyName="currentTransactionType.priority" p:readOnly="false" p:width="10%"/>
+                <!--
+                <bean parent="Uif-LinkField"  p:linkText="Add new from model"  p:readOnly="true"
+                      p:href="transactionTypeView?methodToCall=create&amp;viewId=TransactionTypeView&amp;pageId=TransactionTypeCreatePage"/>
+                -->
+            </list>
+        </property>
+    </bean>
 
     <bean id="detailTransactionTypeSection" parent="Uif-VerticalBoxSection">
         <property name="title" value="Transaction Type Details View"/>

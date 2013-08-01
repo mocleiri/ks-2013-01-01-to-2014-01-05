@@ -175,7 +175,12 @@ public class TransactionTypeModel implements Serializable {
 
     //@Override
     public TransactionTypeId getId() {
-        return parentEntity.getId();
+        try{
+            return parentEntity.getId();
+        } catch(NullPointerException npe){
+            npe.printStackTrace();
+            return null;
+        }
     }
 
     public String getType() {
@@ -186,6 +191,14 @@ public class TransactionTypeModel implements Serializable {
         } else {
             return "Unknown";
         }
+    }
+
+    public Integer getPriority(){
+        return parentEntity.getPriority();
+    }
+
+    public void setPriority(Integer priority) {
+        parentEntity.setPriority(priority);
     }
 
     public String getRollupText() {

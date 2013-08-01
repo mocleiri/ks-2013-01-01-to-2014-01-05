@@ -20,7 +20,7 @@ public class TransactionTypeForm extends AbstractViewModel {
     private long transactionsAffectedCount = 0L;
 
     private Map<String, TransactionTypeGroupModel> transactionTypeGroups = new HashMap<String, TransactionTypeGroupModel>();
-
+    private int counter = 0;
 
     private String statusMessage;
 
@@ -71,7 +71,10 @@ public class TransactionTypeForm extends AbstractViewModel {
     }
 
     public List<TransactionTypeGroupModel> getTransactionTypes() {
-        return new ArrayList<TransactionTypeGroupModel>(transactionTypeGroups.values());
+        Collection<TransactionTypeGroupModel> models = transactionTypeGroups.values();
+        counter++;
+
+        return new ArrayList<TransactionTypeGroupModel>(models);
     }
 
     public TransactionTypeModel getTransactionType() {
