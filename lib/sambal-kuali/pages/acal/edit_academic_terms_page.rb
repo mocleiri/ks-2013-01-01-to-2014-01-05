@@ -181,10 +181,24 @@ class EditAcademicTerms < BasePage
 
   def key_date_start_date(row); row.cells[START_DATE_COL].text_field.value; end
   def key_date_start_time(row); row.cells[START_TIME_COL].text_field.value; end
-  def key_date_start_ampm(row); row.cells[START_AMPM_COL].select.selected_options[0]; end
+  def key_date_start_ampm(row)
+    return "" unless row.cells[START_AMPM_COL].radio.present?
+    if row.cells[START_AMPM_COL].radio.set? then
+      return "am"
+    else
+      return "pm"
+    end
+  end
   def key_date_end_date(row); row.cells[END_DATE_COL].text_field.value; end
   def key_date_end_time(row); row.cells[END_TIME_COL].text_field.value; end
-  def key_date_end_ampm(row); row.cells[END_AMPM_COL].select.selected_options[0]; end
+  def key_date_end_ampm(row)
+    return "" unless row.cells[START_AMPM_COL].radio.present?
+    if row.cells[START_AMPM_COL].radio.set? then
+      return "am"
+    else
+      return "pm"
+    end
+  end
   def key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.checked?; end
   def key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.checked?; end
 

@@ -557,25 +557,25 @@ class KeyDate
       end
     end
 
-    if options[:all_day] != nil
-      on EditAcademicTerms  do |page|
-        if options[:all_day] then
-          page.set_key_date_is_all_day(edit_row)
-        else
-          page.clear_key_date_is_all_day(edit_row)
-        end
-      end
-    end
+    #if options[:all_day] != nil
+    #  on EditAcademicTerms  do |page|
+    #    if options[:all_day] then
+    #      page.set_key_date_is_all_day(edit_row)
+    #    else
+    #      page.clear_key_date_is_all_day(edit_row)
+    #    end
+    #  end
+    #end
 
-    if options[:date_range] != nil
-      on EditAcademicTerms  do |page|
-        if options[:date_range] then
-          page.set_key_date_is_range(edit_row)
-        else
-          page.clear_key_date_is_range(edit_row)
-        end
-      end
-    end
+    #if options[:date_range] != nil
+    #  on EditAcademicTerms  do |page|
+    #    if options[:date_range] then
+    #      page.set_key_date_is_range(edit_row)
+    #    else
+    #      page.clear_key_date_is_range(edit_row)
+    #    end
+    #  end
+    #end
 
     if options[:end_date] != nil
       on EditAcademicTerms  do |page|
