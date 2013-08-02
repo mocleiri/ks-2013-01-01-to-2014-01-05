@@ -224,6 +224,7 @@ public class TransactionController extends GenericSearchController {
         form.setAlertObjects(informationService.getAlerts(userId));
         form.setFlagObjects(informationService.getFlags(userId));
 
+        Boolean showInternal = form.getShowInternal();
         Date startDate = form.getStartingDate();
         Date endDate = form.getEndingDate();
 
@@ -251,6 +252,10 @@ public class TransactionController extends GenericSearchController {
 
         List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
         for (Transaction t : transactions) {
+            if(!showInternal && t.isInternal()){
+                continue;
+            }
+
             Date effectiveDate = t.getEffectiveDate();
             if (actualStartDate == null || (effectiveDate.before(actualStartDate))) {
                 actualStartDate = effectiveDate;

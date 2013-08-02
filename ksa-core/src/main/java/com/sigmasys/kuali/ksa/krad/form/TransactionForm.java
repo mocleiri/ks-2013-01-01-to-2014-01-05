@@ -34,6 +34,7 @@ public class TransactionForm extends AbstractViewModel {
 
     private List<TransactionModel> deferments;
 
+    private Boolean    showInternal = Boolean.FALSE;
     private Date       startingDate;
     private BigDecimal startingBalance = BigDecimal.ZERO;
     private Date       endingDate;
@@ -678,5 +679,13 @@ public class TransactionForm extends AbstractViewModel {
 
     public void setCurrrentTransactionAllocations(List<TransactionModel> currrentTransactionAllocations) {
         this.currrentTransactionAllocations = currrentTransactionAllocations;
+    }
+
+    public Boolean getShowInternal() {
+        return showInternal;
+    }
+
+    public void setShowInternal(Boolean showInternal) {
+        this.showInternal = showInternal;
     }
 }
