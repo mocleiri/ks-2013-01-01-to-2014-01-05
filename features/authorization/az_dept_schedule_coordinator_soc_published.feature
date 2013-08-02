@@ -46,6 +46,7 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Published
     And I do not have access to copy the listed course offering
     And I do not have access to select course offerings for approve, delete
 
+  @bug @KSENROLL-8460
   Scenario: AZ 4.1C/Full_published.3 Department Schedule Coordinator Carol has access to create CO's in her admin org
     When I attempt to create a course offering for a subject in my admin org
     Then I do not have access to create the course offering
