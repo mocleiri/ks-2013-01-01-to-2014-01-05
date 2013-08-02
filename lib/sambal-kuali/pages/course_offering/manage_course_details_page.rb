@@ -39,7 +39,11 @@ class ManageCourseDetails < BasePage
   end
 
   def delivery_format_row(format)
-    delivery_formats_table.row(text: /^#{Regexp.escape(format)}$/)
+    delivery_formats_table.rows.each do |df_row|
+      format_text = df_row.cells[FORMAT_COLUMN].text
+      return df_row if format_text[/^#{Regexp.escape(format)}$/]
+    end
+    return nil
   end
 
 end

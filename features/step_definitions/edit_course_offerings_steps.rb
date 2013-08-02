@@ -169,9 +169,9 @@ Then /^I can submit and the delivery formats are updated$/ do
   @course_offering.search_by_subjectcode
        @course_offering.view_course_details
        on ManageCourseDetails do  |page|
-         page.get_delivery_format("Lecture").should == "Lecture Only"
-         page.get_grade_roster_level("Lecture").should == "Lecture"
-         page.get_final_exam_driver("Lecture").should == "Lecture"
+         page.get_delivery_format("Lecture Only").should == "Lecture Only"
+         page.get_grade_roster_level("Lecture Only").should == "Lecture"
+         page.get_final_exam_driver("Lecture Only").should == "Lecture"
   end
 end
 
@@ -184,8 +184,8 @@ Then /^I can submit and the modified delivery formats are updated$/ do
        @course_offering.view_course_details
        on ManageCourseDetails do  |page|
          page.get_delivery_format("Lecture/Discussion").should == "Lecture/Discussion"
-         page.get_grade_roster_level("Lecture").should == "Lecture"
-         page.get_final_exam_driver("Lecture").should == "Lecture"
+         page.get_grade_roster_level("Lecture/Discussion").should == "Lecture"
+         page.get_final_exam_driver("Lecture/Discussion").should == "Lecture"
   end
 end
 
@@ -197,7 +197,7 @@ Then /^I can submit and the added delivery format is not present$/ do
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
   on ManageCourseDetails do  |page|
-    page.delivery_format_row("Lecture").should_not be_present
+    page.delivery_format_row("Lecture Only").should == nil
   end
 
 end
