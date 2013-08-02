@@ -1,4 +1,4 @@
-@nightly
+@draft @deprecated @KSENROLL-8286
 Feature: EC.Jointly-defined Course Offering
 
   Background:
