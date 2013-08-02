@@ -60,7 +60,7 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Final Edits
   Scenario: AZ 4.1C/Full_final_edits.3 Department Schedule Coordinator Carol has access to create CO's in her admin org
     When I attempt to create a course offering for a subject in my admin org
     Then I have access to create the course offering from catalog
-    And I have access to create the course from an existing offering
+    Then I have access to create the course from an existing offering
 
   Scenario: Full_final_edits.3A Department Schedule Coordinator Carol does not have access to create CO's not in her admin org
     When I attempt to create a course offering for a subject not in my admin org

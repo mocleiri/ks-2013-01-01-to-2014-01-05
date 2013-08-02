@@ -50,6 +50,7 @@ class CourseOfferingEdit < BasePage
   FINAL_EXAM_COLUMN = 2
   ACTIONS_COLUMN = 3
 
+  element(:select_format_type_div) {|b| b.frm.div(id: "KS-CourseOffering-FormatOfferingSubSection") }
   element(:select_format_type_add) {|b| b.select_format_type_div.select(index: 0) }
   element(:select_grade_roster_level_add) {|b| b.select_format_type_div.select(index: 1) }
   element(:select_final_exam_driver_add) {|b| b.select_format_type_div.select(index: 2) }

@@ -7,6 +7,9 @@ class CreateCOFromExisting < BasePage
   expected_element :exclude_instructor_checkbox
 
   action(:create) { |b| b.frm.button(id: "ks-uif-primaryActionButton").click; b.loading.wait_while_present(120) }
+  element(:sticky_footer_div) { |b| b.frm.div(id: "u8") } #static id required
+  #element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") }
+  action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click; b.loading.wait_while_present }
 
   element(:exclude_cancelled_aos_checkbox) { |b| b.frm.label(text: /Exclude cancelled Activity Offerings/) }
   action(:select_exclude_cancelled_aos_checkbox) { |b| b.exclude_instructor_checkbox.wait_until_present; b.exclude_instructor_checkbox.click }

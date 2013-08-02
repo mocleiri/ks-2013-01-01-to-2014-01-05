@@ -82,6 +82,17 @@ Then /^an authorization error is displayed when I attempt to edit the course off
   end
 end
 
+Then /^an authorization error is displayed when I attempt to create the course offering$/ do
+  on CreateCourseOffering do |page|
+    page.choose_from_catalog
+    page.continue
+  end
+
+  on ErrorPage do |page|
+    page.error_401.should == true
+  end
+end
+
 When /^I manage course offerings for a subject in my admin org$/ do
   @course_offering = make CourseOffering, :course=>"ENGL346", :term=>Rollover::FINAL_EDITS_SOC_TERM
   @course_offering.search_by_coursecode
@@ -344,6 +355,11 @@ end
 
 Then /^I do not have access to create the course offering$/ do
   on CreateCourseOffering do |page|
+    page.choose_from_existing
+    page.continue
+  end
+
+  on CreateCourseOffering do |page|
     page.auth_error.present?.should == true
   end
 end
@@ -360,14 +376,23 @@ end
 
 Then /^I have access to create the course offering from catalog$/ do
   on CreateCourseOffering do |page|
+    page.choose_from_catalog
+    page.continue
+  end
+  on CreateCOFromCatalog do |page|
     page.suffix.present?.should == true
+    page.cancel
   end
 end
 
 When /^I have access to create the course from an existing offering$/ do
   on CreateCourseOffering do |page|
-    page.create_from_existing_offering_tab
-    page.configure_course_offering_copy_element.present?.should == true
+    page.choose_from_existing
+    page.continue
+  end
+  on CreateCOFromExisting do |page|
+    page.exclude_instructor_checkbox.present?.should == true
+    page.cancel
   end
 end
 

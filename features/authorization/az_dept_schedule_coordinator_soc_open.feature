@@ -57,7 +57,6 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Open
     And I do not have access to copy the listed course offering
     And I do not have access to select course offerings for approve, delete
 
-  @bug @KSENROLL-8138
   Scenario: AZ 4.1C/Full_open.3 Department Schedule Coordinator Carol has access to create CO's in her admin org
     When I attempt to create a course offering for a subject in my admin org
     Then I have access to create the course offering from catalog
@@ -112,7 +111,6 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Open
     And I have access to delete an activity offering in "Approved" status for the course offering
     #TODO - tests for offered, suspended, cancelled
 
-  @bug @KSENROLL-8138
   Scenario: AZ CCO_open.1- Department schedule Coordinator does not have access to create joint defined courses in their admin org
     When I attempt to create a joint offered course offering for a subject in my admin org
     Then I do not have access to create a new joint offered course offering
