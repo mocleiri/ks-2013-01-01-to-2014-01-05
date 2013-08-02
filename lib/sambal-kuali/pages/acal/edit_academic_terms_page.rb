@@ -163,9 +163,7 @@ class EditAcademicTerms < BasePage
   END_DATE_COL = 4
   END_TIME_COL = 5
   END_AMPM_COL = 6
-  IS_ALL_DAY_COL = 7
-  IS_DATE_RANGE_COL = 8
-  ACTION_COL = 9
+  ACTION_COL = 7
 
   def edit_key_date_start_date(row, value); row.cells[START_DATE_COL].text_field.set(value); end
   def edit_key_date_start_time(row, value); row.cells[START_TIME_COL].text_field.set(value); end
@@ -173,10 +171,10 @@ class EditAcademicTerms < BasePage
   def edit_key_date_end_date(row, value); row.cells[END_DATE_COL].text_field.set(value); end
   def edit_key_date_end_time(row, value); row.cells[END_TIME_COL].text_field.set(value); end
   def edit_key_date_end_ampm(row, value); row.cells[END_AMPM_COL].select.select(value.downcase); end
-  def clear_key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.clear; end
-  def set_key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.set; end
-  def clear_key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.clear; end
-  def set_key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.set; end
+  #def clear_key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.clear; end
+  #def set_key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.set; end
+  #def clear_key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.clear; end
+  #def set_key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.set; end
   def delete_key_date(row); row.cells[ACTION_COL].link(text: "Delete").click; end
 
   def key_date_start_date(row); row.cells[START_DATE_COL].text_field.value; end
@@ -199,29 +197,8 @@ class EditAcademicTerms < BasePage
       return "pm"
     end
   end
-  def key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.checked?; end
-  def key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.checked?; end
-
-
-
-  #action(:key_date_type) { |term_index, key_date_group_index, key_date_index, b| b.frm.div(id: "key_date_type_line#{term_index}_line#{key_date_group_index}_line#{key_date_index}").span(index: 0).text}
-  #action(:key_date_start_date) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].startDate").value}
-  #action(:key_date_end_date) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].endDate").value}
-  #action(:key_date_starttime) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].startTime").value}
-  #action(:key_date_endtime) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].endTime").value}
-  #action(:key_date_starttimeampm) { |term_index, key_date_group_index, key_date_index, b| b.frm.select(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].startTimeAmPm").value}
-  #action(:key_date_endtimeampm) { |term_index, key_date_group_index, key_date_index, b| b.frm.select(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].endTimeAmPm").value}
-  #action(:key_date_allday) { |term_index, key_date_group_index, key_date_index, b| b.frm.checkbox(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].allDay").checked?}
-  #action(:key_date_daterange) { |term_index, key_date_group_index, key_date_index, b| b.frm.checkbox(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].dateRange").checked?}
-
-  #action(:key_date_start_date_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].startDate")}
-  #action(:key_date_end_date_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].endDate")}
-  #action(:key_date_starttime_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].startTime")}
-  #action(:key_date_endtime_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.text_field(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].endTime")}
-  #action(:key_date_starttimeampm_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.select(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].startTimeAmPm")}
-  #action(:key_date_endtimeampm_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.select(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].endTimeAmPm")}
-  #action(:key_date_allday_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.checkbox(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].allDay")}
-  #action(:key_date_daterange_edit) { |term_index, key_date_group_index, key_date_index, b| b.frm.checkbox(name: "termWrapperList[#{term_index}].keyDatesGroupWrappers[#{key_date_group_index}].keydates[#{key_date_index}].dateRange")}
+  #def key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.checked?; end
+  #def key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.checked?; end
 
   action(:get_term_type) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].name").value }
   action(:get_term_start_date) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].startDate").value }
@@ -230,10 +207,6 @@ class EditAcademicTerms < BasePage
   action(:term_name_edit) { |term_index,b| b.frm.text_field(id: "term_name_line#{term_index}_control") }
   action(:term_start_date) { |term_index,b| b.frm.text_field(id: "term_start_date_line#{term_index}_control") }
   action(:term_end_date) { |term_index,b| b.frm.text_field(id: "term_end_date_line#{term_index}_control") }
-
-  #action(:term_make_official_button) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").text}
-  #action(:term_make_official_enabled) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").enabled?}
-  #action(:make_term_official) { |term_index,b| b.frm.button(id: "term_official_button_line#{term_index}").click; b.loading.wait_while_present(300)}
 
   action(:key_date_exist) { |term_index, key_date_group_index, key_date_index, b| b.frm.div(id: "key_date_type_line#{term_index}_line#{key_date_group_index}_line#{key_date_index}").span(index: 0).exists?}
 
