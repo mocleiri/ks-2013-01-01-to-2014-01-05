@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
+import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.krad.form.TransactionForm;
 import com.sigmasys.kuali.ksa.krad.model.AllocationModel;
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -43,13 +45,29 @@ public class TransactionController extends GenericSearchController {
     @Autowired
     private RefundService refundService;
 
+    @Autowired
+    private ConfigService configService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
      */
     @Override
     protected TransactionForm createInitialForm(HttpServletRequest request) {
-        return new TransactionForm();
+        TransactionForm form = new TransactionForm();
+
+        String start = configService.getParameter(Constants.KSA_TRANSACTION_DEFAULT_START_DATE);
+        String end = configService.getParameter(Constants.KSA_TRANSACTION_DEFAULT_END_DATE);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try{
+            form.setStartingDate(sdf.parse(start));
+            form.setEndingDate(sdf.parse(end));
+        } catch(Exception e){
+            //log it but no big deal, the code will still work
+            logger.error("Error parsing configuration parameters for transaction start and end dates.", e);
+        }
+
+        return form;
     }
 
 
