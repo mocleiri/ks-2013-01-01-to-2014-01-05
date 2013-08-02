@@ -35,8 +35,6 @@ When /^all holidays were copied successfully$/ do
       holiday.end_date = page.holiday_table.rows[i].cells[EditHolidayCalendar::END_DATE].text_field.value
       holiday.end_time = page.holiday_table.rows[i].cells[EditHolidayCalendar::END_TIME].text_field.value
       holiday.end_ampm = page.holiday_table.rows[i].cells[EditHolidayCalendar::END_AMPM].select_list.selected_options[0].value
-      holiday.all_day = page.holiday_table.rows[i].cells[EditHolidayCalendar::ALL_DAY].checkbox.set?
-      holiday.date_range = page.holiday_table.rows[i].cells[EditHolidayCalendar::DATE_RANGE].checkbox.set?
       holiday.instructional = page.holiday_table.rows[i].cells[EditHolidayCalendar::INSTRUCTIONAL].checkbox.set?
       i+=1
     end

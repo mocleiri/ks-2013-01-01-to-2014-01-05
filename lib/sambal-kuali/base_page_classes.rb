@@ -188,8 +188,6 @@ class HolidayBase < BasePage
   element(:holiday_end_date) { |b| b.frm.text_field(name: "newCollectionLines['holidays'].endDate") }
   element(:holiday_end_time) { |b| b.frm.text_field(name: "newCollectionLines['holidays'].endTime") }
   element(:holiday_end_meridian) { |b| b.frm.select(name: "newCollectionLines['holidays'].endTimeAmPm") }
-  element(:all_day) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].allDay") }
-  element(:date_range) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].dateRange") }
   element(:instructional) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].instructional") }
   element(:add_link) { |b| b.frm.link(id: "KS-HolidayCalendar-HolidaySection_add") }
 
@@ -208,8 +206,6 @@ module Holidays
     wait_until { holiday_type.enabled? }
     holiday_type.select type
     holiday_start_date.set date
-    all_day.set unless all_day.set?
-    date_range.clear if date_range.set?
     loading.wait_while_present
     instruct(inst)
     add_link.click
@@ -220,8 +216,6 @@ module Holidays
     wait_until { holiday_type.enabled? }
     holiday_type.select type
     holiday_start_date.set start_date
-    all_day.set unless all_day.set?
-    date_range.set unless date_range.set?
     loading.wait_while_present
     begin
       wait_until { holiday_end_date.enabled? }
@@ -238,8 +232,6 @@ module Holidays
     wait_until { holiday_type.enabled? }
     holiday_type.select type
     holiday_start_date.set start_date
-    all_day.clear if all_day.set?
-    date_range.clear if date_range.set?
     loading.wait_while_present
     begin
       wait_until { holiday_end_time.enabled? }
@@ -259,8 +251,6 @@ module Holidays
     wait_until { holiday_type.enabled? }
     holiday_type.select type
     holiday_start_date.set start_date
-    all_day.clear if all_day.set?
-    date_range.set unless date_range.set?
     loading.wait_while_present
     begin
       wait_until { holiday_end_date.enabled? }

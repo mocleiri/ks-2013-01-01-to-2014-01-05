@@ -489,7 +489,7 @@ class KeyDate
   include Workflows
 
   attr_accessor :key_date_type, :start_date, :end_date, :start_time, :end_time, :start_time_ampm, :end_time_ampm,
-                :all_day, :date_range, :term_index, :parent_key_date_group
+                :term_index, :parent_key_date_group
 
   def initialize(browser,opts = {})
     @browser = browser
@@ -501,9 +501,7 @@ class KeyDate
         start_time: nil,
         end_time: nil,
         start_time_ampm: nil,
-        end_time_ampm: nil,
-        all_day: true,
-        date_range: false
+        end_time_ampm: nil
     }
 
     options = defaults.merge(opts)
@@ -534,7 +532,7 @@ class KeyDate
         page.key_date_add(@term_index,0)
       else
         #TODO - need the opposite of set_options here
-        edit :key_date_type => @key_date_type, :start_date => @start_date, :end_date  => @end_date, :start_time  => @start_time, :end_time  => @end_time, :start_time_ampm  => @start_time_ampm,  :end_time_ampm => @end_time_ampm, :all_day => @all_day, :date_range  => @date_range
+        edit :key_date_type => @key_date_type, :start_date => @start_date, :end_date  => @end_date, :start_time  => @start_time, :end_time  => @end_time, :start_time_ampm  => @start_time_ampm,  :end_time_ampm => @end_time_ampm
       end
       page.save
 
@@ -556,26 +554,6 @@ class KeyDate
         page.edit_key_date_start_date(edit_row,options[:start_date])
       end
     end
-
-    #if options[:all_day] != nil
-    #  on EditAcademicTerms  do |page|
-    #    if options[:all_day] then
-    #      page.set_key_date_is_all_day(edit_row)
-    #    else
-    #      page.clear_key_date_is_all_day(edit_row)
-    #    end
-    #  end
-    #end
-
-    #if options[:date_range] != nil
-    #  on EditAcademicTerms  do |page|
-    #    if options[:date_range] then
-    #      page.set_key_date_is_range(edit_row)
-    #    else
-    #      page.clear_key_date_is_range(edit_row)
-    #    end
-    #  end
-    #end
 
     if options[:end_date] != nil
       on EditAcademicTerms  do |page|
@@ -628,8 +606,6 @@ class KeyDate
       page.key_date_type(0,0,0).should == @key_date_type
       page.key_date_start_date(0,0,0).should == @start_date
       page.key_date_end_date(0,0,0).should == @end_date
-      page.key_date_allday(0,0,0).should == @all_day
-      page.key_date_daterange(0,0,0).should == @date_range
     end
   end
 
@@ -643,8 +619,7 @@ class CalendarEvent
   include StringFactory
   include Workflows
 
-  attr_accessor :event_type, :start_date, :end_date, :start_time, :end_time,
-                :start_time_ampm, :end_time_ampm, :all_day, :date_range, :acal_year
+  attr_accessor :event_type, :start_date, :end_date, :start_time, :end_time, :start_time_ampm, :end_time_ampm, :acal_year
 
   def initialize(browser,opts = {})
     @browser = browser
@@ -656,9 +631,7 @@ class CalendarEvent
         :start_time=>"07:30",
         :end_time=>"09:00",
         :start_time_ampm=>"pm",
-        :end_time_ampm=>"pm",
-        :all_day=>false,
-        :date_range=>true
+        :end_time_ampm=>"pm"
 
     }
 
@@ -688,8 +661,6 @@ class CalendarEvent
       else
         page.event_end_pm_set
       end
-      #page.all_day.set @all_day
-      #page.date_range.set @date_range
       page.add_event.click
       page.save
 
@@ -708,7 +679,7 @@ class CalendarEvent
 
     if options[:end_date] != nil
       on EditAcademicCalendar  do |page|
-        page.edit_end_date(edit_row,options[:end_date]) if @date_range
+        page.edit_end_date(edit_row,options[:end_date])
       end
     end
 
@@ -733,26 +704,6 @@ class CalendarEvent
     if options[:end_time_ampm] != nil
       on EditAcademicCalendar  do |page|
         page.edit_end_ampm(edit_row,options[:end_time_ampm])
-      end
-    end
-
-    if options[:all_day] != nil
-      on EditAcademicCalendar  do |page|
-        if options[:all_day] then
-          page.set_is_all_day(edit_row)
-        else
-          page.clear_is_all_day(edit_row)
-        end
-      end
-    end
-
-    if options[:date_range] != nil
-      on EditAcademicCalendar  do |page|
-        if options[:date_range] then
-          page.set_is_range(edit_row)
-        else
-          page.clear_is_range(edit_row)
-        end
       end
     end
 

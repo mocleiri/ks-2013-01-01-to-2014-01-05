@@ -33,8 +33,6 @@ class EditAcademicCalendar < BasePage
   action(:event_start_pm_set) { |b| b.event_start_pm.set; b.loading.wait_while_present}
   action(:event_end_am_set) { |b| b.event_end_am.set; b.loading.wait_while_present}
   action(:event_end_pm_set) { |b| b.event_end_pm.set; b.loading.wait_while_present}
-  element(:all_day) { |b| b.frm.checkbox(name: "newCollectionLines['events'].allDay") }
-  element(:date_range) { |b| b.frm.checkbox(name: "newCollectionLines['events'].dateRange") }
   element(:add_event) { |b| b.frm.link(id: "acal-info-event_add") }
   element(:acal_event_list_div) { |b| b.frm.div(id: "acal-info-event") }
   element(:acal_event_list_link) { |b| b.acal_event_list_div.link(text: "Events") }
@@ -79,10 +77,6 @@ class EditAcademicCalendar < BasePage
   def edit_end_date(row, value); row.cells[EDIT_END_DATE_COL].text_field.set(value); end
   def edit_end_time(row, value); row.cells[EDIT_END_TIME_COL].text_field.set(value); end
   def edit_end_ampm(row, value); row.cells[EDIT_END_TIME_AMPM_COL].radio.select(value.downcase); end
-  def clear_is_all_day(row); row.cells[EDIT_ALL_DAY_COL].checkbox.clear; end
-  def set_is_all_day(row); row.cells[EDIT_ALL_DAY_COL].checkbox.set; end
-  def clear_is_range(row); row.cells[EDIT_DATE_RANGE_COL].checkbox.clear; end
-  def set_is_range(row); row.cells[EDIT_DATE_RANGE_COL].checkbox.set; end
   def delete(row); row.cells[EDIT_ACTION_COL].button(id: /acal-info-event_del_line*/).click; end
 
   #identify the row containing this event

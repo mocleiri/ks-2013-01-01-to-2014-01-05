@@ -1,6 +1,7 @@
 @nightly
 Feature: EC.Search for a registration window
 
+  @bug @KSENROLL-8425
   Background:
     Given I am logged in as a Schedule Coordinator
 

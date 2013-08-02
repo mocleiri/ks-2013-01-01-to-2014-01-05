@@ -304,8 +304,7 @@ When /^I add a new term to the Academic Calendar with a defined instructional pe
   @keydate = create KeyDate, :parent_key_date_group => @keydategroup,
                     :key_date_type => "Instructional Period",
                     :start_date => @term.start_date,
-                    :end_date => @term.end_date,
-                    :date_range => true
+                    :end_date => @term.end_date
 end
 
 When /^I add a new subterm to the Academic Calendar with a defined instructional period$/ do
@@ -318,8 +317,7 @@ When /^I add a new subterm to the Academic Calendar with a defined instructional
   @keydate = create KeyDate, :parent_key_date_group => @keydategroup,
                     :key_date_type => "Instructional Period",
                     :start_date => @term.start_date,
-                    :end_date => @term.end_date,
-                    :date_range => true
+                    :end_date => @term.end_date
 end
 
 Then /^the term is listed when I view the Academic Calendar$/ do
@@ -507,14 +505,14 @@ Then /^I add an instructional Key Date$/ do
   @term.edit
 
   @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
-  @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :all_day => true
+  @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :end_date => "09/12/#{@term.term_year}"
 end
 
 Then /^I add an instructional Key Date to a subterm$/ do
   @subterm_list[0].edit
 
   @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @subterm_list[0].term_type
-  @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :all_day => true
+  @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :end_date => "09/12/#{@term.term_year}"
 end
 
 
@@ -599,8 +597,6 @@ Then /^the Key Dates are copied without date values$/ do
     page.key_date_start_time(row).should == ""
     page.key_date_end_date(row).should == ""
     page.key_date_end_time(row).should == ""
-    #page.key_date_is_all_day(row).should == false
-    #page.key_date_is_range(row).should == false
 
     page.key_date_exists?(@term.term_type, "Registration", "Drop Date").should == true
 
@@ -609,8 +605,6 @@ Then /^the Key Dates are copied without date values$/ do
     page.key_date_start_time(row).should == ""
     page.key_date_end_date(row).should == ""
     page.key_date_end_time(row).should == ""
-    #page.key_date_is_all_day(row).should == false
-    #page.key_date_is_range(row).should == false
 
   end
 end
@@ -625,7 +619,7 @@ Then /^the instructional days calculation is correct$/ do
 end
 
 When /^I add a Holiday Calendar with holidays in the term$/ do
-  holiday_list =  Array.new(1){make Holiday, :type=>"Columbus Day", :start_date=>"09/05/#{@term.term_year}", :all_day=>true, :date_range=>false, :instructional=>false}
+  holiday_list =  Array.new(1){make Holiday, :type=>"Columbus Day", :start_date=>"09/05/#{@term.term_year}", :instructional=>false}
   @holiday_calendar = create HolidayCalendar, :start_date => @calendar.start_date,
                              :end_date => @calendar.end_date,
                              :holiday_list => holiday_list
@@ -855,7 +849,7 @@ When /^I add a new key date with a date later than the Academic Term end date$/ 
   @keydate = create KeyDate, :parent_key_date_group => @keydategroup,
                     :key_date_type => "First Day of Classes",
                     :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"),
-                    :all_day => true
+                    :end_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")
 
 end
 
@@ -866,7 +860,7 @@ When /^I add a new key date with a date later than the Academic Subterm end date
   @keydate = create KeyDate, :parent_key_date_group => @keydategroup,
                     :key_date_type => "First Day of Classes",
                     :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"),
-                    :all_day => true
+                    :end_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")
 
 end
 

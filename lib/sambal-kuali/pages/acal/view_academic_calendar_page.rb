@@ -20,8 +20,6 @@ class ViewAcademicCalendar < BasePage
   element(:event_end_time) { |b| b.frm.text_field(name: "newCollectionLines['events'].endTime") }
   element(:event_start_ampm) { |b| b.frm.select(name: "newCollectionLines['events'].startTimeAmPm") }
   element(:event_end_ampm) { |b| b.frm.select(name: "newCollectionLines['events'].endTimeAmPm") }
-  element(:all_day) { |b| b.frm.checkbox(name: "newCollectionLines['events'].allDay") }
-  element(:date_range) { |b| b.frm.checkbox(name: "newCollectionLines['events'].dateRange") }
   element(:acal_term_list_div) { |b| b.frm.div(id: "acal-term") }
   element(:acal_event_list_div) { |b| b.frm.div(id: "acal-info-event") }
   element(:acal_event_list_link) { |b| b.acal_event_list_div.link(text: "Events") }
