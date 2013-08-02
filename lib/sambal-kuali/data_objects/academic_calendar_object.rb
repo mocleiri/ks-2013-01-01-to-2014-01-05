@@ -579,7 +579,7 @@ class KeyDate
 
     if options[:end_date] != nil
       on EditAcademicTerms  do |page|
-        page.edit_key_date_end_date(edit_row,options[:end_date]) if @date_range
+        page.edit_key_date_end_date(edit_row,options[:end_date])
       end
     end
 
