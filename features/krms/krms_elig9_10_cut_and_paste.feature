@@ -11,7 +11,7 @@ Feature: KRMS.ELIG9-10 Cut and Paste
     And I cut node "D" and paste it after node "G"
     Then there should be a dropdown with value "OR" before node "D."
     When I switch to the other tab on the page
-    Then the text area should contain "(A AND (B OR C)) OR E OR F OR G OR D"
+    Then the text area should contain "(A OR (B AND C)) OR E OR F OR G OR D"
     When I switch to the other tab on the page
     When I edit node "D" by changing text to "edit cut prop type"
     Then the edit tab's text should match "edit cut prop type"
@@ -23,8 +23,8 @@ Feature: KRMS.ELIG9-10 Cut and Paste
     And I cut the group containing node "B" and paste it after node "F"
     Then there should be a dropdown with value "OR" before node "B."
     When I switch to the other tab on the page
-    Then the text area should contain "A OR D OR E OR F OR (B OR C) OR G"
+    Then the text area should contain "A OR D OR E OR F OR (B AND C) OR G"
     When I commit and return to see the changes made to the proposition
     And I want to edit the Corequisite section
     And I switch to the other tab on the page
-    Then the text area should contain "A OR B OR C OR D OR (E OR F) OR G"
+    Then the text area should contain "A OR B OR C OR D OR (E AND F) OR G"

@@ -11,7 +11,7 @@ Feature: KRMS.ELIG7-3 Adding CO to empty CLU
     When I want to edit the Student Eligibility & Prerequisite section
     Then the edit tab's text should match "1 course from (HIST210, HIST395)"
     When I switch to the other tab on the page
-    Then the text area should contain "(A AND (B OR C) AND D) OR E OR F OR G"
+    Then the text area should contain "(A OR (B AND C) OR D) OR E OR F OR G"
 
   #ELIG7.3.EB2 (KSENROLL-7239)
   Scenario: Test whether CO data persists if CLU already had data

@@ -24,7 +24,7 @@ Feature: KRMS.ELIG7-6 Delete statement or compound statement of CO copied from C
 
   #ELIG7.6.EB3 (KSENROLL-7244)
   Scenario: Test whether clicking delete rule deletes the whole tree
-    When I navigate to the Student Eligibility & Prerequisite section for course "PHYS275" in the historic term
+    When I navigate to the Student Eligibility & Prerequisite section for course "PHYS375" in the historic term
     And I delete the tree in the Student Eligibility & Prerequisite section
     And I commit and return to see the changes made to the proposition
     Then the tree in the Student Eligibility & Prerequisite section should be empty

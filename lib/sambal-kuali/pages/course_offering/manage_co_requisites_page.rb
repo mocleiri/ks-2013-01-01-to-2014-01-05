@@ -69,10 +69,9 @@ class ManageCORequisites < BasePage
 
   action(:completed) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_0/).when_present.click}
   action(:letter) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_1/).when_present.click}
-  action(:letter_plus_minus) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.+_control_2/).when_present.click}
+  action(:pass_fail) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_2/).when_present.click}
   action(:percentage) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_3/).when_present.click}
-  action(:pass_fail) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_4/).when_present.click}
-  action(:pass_nopass) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_5/).when_present.click}
+  action(:grade) { |b| b.grade_section.radio(:id => /KRMS-GradeScale-Field.*_control_4/).when_present.click}
 
   element(:lookup_section) { |b| b.frm_popup.div(id: "CourseLookupView")}
   element(:lookup_results) { |b| b.frm_popup.div(id: "uLookupResults")}

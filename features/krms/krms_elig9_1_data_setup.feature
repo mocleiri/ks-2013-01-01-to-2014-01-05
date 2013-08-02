@@ -11,4 +11,4 @@ Feature: KRMS.ELIG9-1 Data Setup
     When I want to edit the Student Eligibility & Prerequisite section
     Then the edit tab's text should match "minimum of 1 course from (HIST210, HIST395)"
     When I switch to the other tab on the page
-    Then the text area should contain "(A AND (B OR C) AND D) OR E OR F OR G"
+    Then the text area should contain "(A OR (B AND C) OR D) OR E OR F OR G"
