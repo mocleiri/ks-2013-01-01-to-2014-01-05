@@ -103,12 +103,12 @@ public class Rate extends AbstractRateEntity {
     }
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "KSSA_RATE_KYPR",
+    @JoinTable(name = "KSSA_RATE_KEY_PAIR",
             joinColumns = {
                     @JoinColumn(name = "RATE_ID_FK")
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = "RATE_KYPR_ID_FK")
+                    @JoinColumn(name = "RATE_KEY_PAIR_ID_FK")
             }
     )
     public Set<KeyPair> getKeyPairs() {

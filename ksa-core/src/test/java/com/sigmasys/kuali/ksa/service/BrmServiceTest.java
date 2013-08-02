@@ -7,7 +7,6 @@ import com.sigmasys.kuali.ksa.model.rule.RuleType;
 import com.sigmasys.kuali.ksa.model.rule.RuleTypeEnum;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmPersistenceService;
-import com.sigmasys.kuali.ksa.service.brm.BrmService;
 import com.sigmasys.kuali.ksa.util.CommonUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,9 +27,6 @@ import java.util.*;
 public class BrmServiceTest extends AbstractServiceTest {
 
     @Autowired
-    private BrmService brmService;
-
-    @Autowired
     private AccountImportService accountImportService;
 
     @Autowired
@@ -38,9 +34,6 @@ public class BrmServiceTest extends AbstractServiceTest {
 
     @Autowired
     private AccountService accountService;
-
-    @Autowired
-    private FeeManagementService feeManagementService;
 
 
     @Before
@@ -50,31 +43,9 @@ public class BrmServiceTest extends AbstractServiceTest {
         accountService.getOrCreateAccount(userId);
     }
 
-    //@Test
-    public void fireFeeAssessmentRules1() throws Exception {
-
-        // Importing accounts for Fee Management which is rule-based
-        String content = CommonUtils.getResourceAsString("xmlImport/fee-management/student-profile-admin1.xml");
-        accountImportService.importStudentProfile(content);
-
-        BrmContext brmContext = new BrmContext();
-        brmContext.setAccount(accountService.getFullAccount("admin"));
-
-        Map<String, Object> globalParams = new HashMap<String, Object>();
-        globalParams.put("feeBase", feeManagementService.getFeeBase("admin"));
-
-        brmContext.setGlobalVariables(globalParams);
-
-        brmContext = brmService.fireRules(1L, brmContext);
-
-        Assert.notNull(brmContext);
-        Assert.notNull(brmContext.getAccount());
-        Assert.isTrue("admin".equals(brmContext.getAccount().getId()));
-
-    }
 
     //@Test
-    public void fireFeeAssessmentRules2() throws Exception {
+    public void fireFeeAssessmentRules() throws Exception {
 
         // Importing accounts for Fee Management which is rule-based
         String content = CommonUtils.getResourceAsString("xmlImport/fee-management/student-profile-user1.xml");
@@ -83,16 +54,7 @@ public class BrmServiceTest extends AbstractServiceTest {
         BrmContext brmContext = new BrmContext();
         brmContext.setAccount(accountService.getFullAccount("user1"));
 
-        Map<String, Object> globalParams = new HashMap<String, Object>();
-        globalParams.put("feeBase", feeManagementService.getFeeBase("user1"));
-
-        brmContext.setGlobalVariables(globalParams);
-
-        brmContext = brmService.fireRules("Fee Management", brmContext);
-
-        Assert.notNull(brmContext);
-        Assert.notNull(brmContext.getAccount());
-        Assert.isTrue("user1".equals(brmContext.getAccount().getId()));
+        // TODO: implement assertions for the new FM
 
     }
 
@@ -228,24 +190,24 @@ public class BrmServiceTest extends AbstractServiceTest {
     @Test
     public void getRuleNamesByRuleSetName() throws Exception {
 
-            String ruleSetName = "Payment Application";
+        String ruleSetName = "Payment Application";
 
-            List<String> ruleNames = brmPersistenceService.getRuleNames(ruleSetName);
+        List<String> ruleNames = brmPersistenceService.getRuleNames(ruleSetName);
 
-            Assert.notNull(ruleNames);
-            Assert.notEmpty(ruleNames);
+        Assert.notNull(ruleNames);
+        Assert.notEmpty(ruleNames);
 
-            boolean hasPaymentApplicationRule = false;
-            for (String ruleName : ruleNames) {
-                logger.debug("Rule name = " + ruleName);
-                Assert.notNull(ruleName);
-                Assert.isTrue(ruleName.trim().length() > 0);
-                if ("Payment Application Rule".equals(ruleName)) {
-                    hasPaymentApplicationRule = true;
-                }
+        boolean hasPaymentApplicationRule = false;
+        for (String ruleName : ruleNames) {
+            logger.debug("Rule name = " + ruleName);
+            Assert.notNull(ruleName);
+            Assert.isTrue(ruleName.trim().length() > 0);
+            if ("Payment Application Rule".equals(ruleName)) {
+                hasPaymentApplicationRule = true;
             }
+        }
 
-            Assert.isTrue(hasPaymentApplicationRule);
+        Assert.isTrue(hasPaymentApplicationRule);
     }
 
 }

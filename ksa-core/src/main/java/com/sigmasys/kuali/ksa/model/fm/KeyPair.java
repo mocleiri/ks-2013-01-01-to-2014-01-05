@@ -10,7 +10,7 @@ import javax.persistence.*;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_KYPR")
+@Table(name = "KSSA_KEY_PAIR")
 public class KeyPair implements Identifiable {
 
 
@@ -41,12 +41,12 @@ public class KeyPair implements Identifiable {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_KYPR",
+    @TableGenerator(name = "TABLE_GEN_KEY_PAIR",
             table = "KSSA_SEQUENCE_TABLE",
             pkColumnName = "SEQ_NAME",
             valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "KYPR_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_KYPR")
+            pkColumnValue = "KEY_PAIR_SEQ")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_KEY_PAIR")
     @Override
     public Long getId() {
         return id;

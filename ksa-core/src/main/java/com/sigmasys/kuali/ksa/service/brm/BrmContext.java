@@ -68,8 +68,4 @@ public class BrmContext implements Serializable {
         return ContextUtils.getBean(BrmPaymentService.class);
     }
 
-    public FeeManagementService getFeeManagementService() {
-        return ContextUtils.getBean(FeeManagementService.class);
-    }
-
 }

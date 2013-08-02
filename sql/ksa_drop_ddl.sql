@@ -2,8 +2,6 @@
 -- This Oracle script drops database objects in KSA schema.
 -- It needs to be run by the schema owner
 
-drop table KSSA_ACNT_KYPR cascade constraints;
-
 drop table KSSA_CONFIG cascade constraints;
 
 -- KSA tables dropping
@@ -31,14 +29,9 @@ drop table KSSA_CASH_LIMIT_PARAMETER cascade constraints;
 drop table KSSA_COLLECTION_ACNT cascade constraints;
 drop table KSSA_CREDIT_PERMISSION cascade constraints;
 drop table KSSA_CURRENCY cascade constraints;
-drop table KSSA_DEPRECATED_KYPR cascade constraints;
 drop table KSSA_DOCUMENT cascade constraints;
 drop table KSSA_ELECTRONIC_CONTACT cascade constraints;
 drop table KSSA_EXTERNAL_STATEMENT cascade constraints;
-drop table KSSA_FD_KYPR cascade constraints;
-drop table KSSA_FEE_DETAIL cascade constraints;
-drop table KSSA_FEE_DETAIL_AMOUNT cascade constraints;
-drop table KSSA_FEE_TYPE cascade constraints;
 drop table KSSA_FLAG_TYPE cascade constraints;
 drop table KSSA_GL_BATCH_BASELINE cascade constraints;
 drop table KSSA_GL_BREAKDOWN cascade constraints;
@@ -51,12 +44,9 @@ drop table KSSA_GL_TYPE cascade constraints;
 drop table KSSA_ID_TYPE cascade constraints;
 drop table KSSA_INFORMATION cascade constraints;
 drop table KSSA_IRS_1098T cascade constraints;
-drop table KSSA_KYPR cascade constraints;
+drop table KSSA_KEY_PAIR cascade constraints;
 drop table KSSA_LANGUAGE cascade constraints;
 drop table KSSA_LATE_PERIOD cascade constraints;
-drop table KSSA_LEARNING_PERIOD cascade constraints;
-drop table KSSA_LU cascade constraints;
-drop table KSSA_LU_KYPR cascade constraints;
 drop table KSSA_NAME cascade constraints;
 drop table KSSA_PB_ALLOWABLE_CHARGE cascade constraints;
 drop table KSSA_PB_DATE cascade constraints;
@@ -70,8 +60,8 @@ drop table KSSA_RATE cascade constraints;
 drop table KSSA_RATE_AMOUNT cascade constraints;
 drop table KSSA_RATE_CATALOG cascade constraints;
 drop table KSSA_RATE_CATALOG_ATP cascade constraints;
-drop table KSSA_RATE_CATALOG_KYPR cascade constraints;
-drop table KSSA_RATE_KYPR cascade constraints;
+drop table KSSA_RATE_CATALOG_KEY_PAIR cascade constraints;
+drop table KSSA_RATE_KEY_PAIR cascade constraints;
 drop table KSSA_RATE_TYPE cascade constraints;
 drop table KSSA_REFUND cascade constraints;
 drop table KSSA_REFUND_MANIFEST cascade constraints;

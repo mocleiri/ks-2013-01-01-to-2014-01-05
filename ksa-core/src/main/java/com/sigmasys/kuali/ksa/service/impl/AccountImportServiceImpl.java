@@ -1,14 +1,11 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
-import java.math.BigDecimal;
-import java.util.Date;
 
 import javax.annotation.PostConstruct;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,16 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.FeeBase;
-import com.sigmasys.kuali.ksa.model.LearningPeriod;
-import com.sigmasys.kuali.ksa.model.LearningUnit;
-import com.sigmasys.kuali.ksa.model.PeriodKeyPair;
 import com.sigmasys.kuali.ksa.service.AccountImportService;
 import com.sigmasys.kuali.ksa.service.AccountService;
-import com.sigmasys.kuali.ksa.service.FeeManagementService;
-import com.sigmasys.kuali.ksa.jaxb.KeyPair;
 import com.sigmasys.kuali.ksa.jaxb.StudentProfile;
 import com.sigmasys.kuali.ksa.util.XmlSchemaValidator;
+
+
+// TODO -> Make it work with the new FM functionality
 
 @Service("accountImportService")
 @Transactional(readOnly = false)
@@ -58,9 +52,6 @@ public class AccountImportServiceImpl implements AccountImportService {
 
     @Autowired
     private AccountService accountService;
-
-    @Autowired
-    private FeeManagementService feeManagementService;
 
 
     @PostConstruct
@@ -121,6 +112,7 @@ public class AccountImportServiceImpl implements AccountImportService {
     @Override
     @WebMethod(exclude = true)
     public void importStudentProfile(StudentProfile studentProfile) {
+
         // Step 1: Validating the XML schema is done prior to invoking this method by the JAX-WS framework
         // Validate the argument object instead:
         if (studentProfile == null) {
@@ -135,8 +127,10 @@ public class AccountImportServiceImpl implements AccountImportService {
             throw new UserNotFoundException("Account does not exist, ID = " + accountId);
         }
 
+        // TODO
+
         // Retrieve a new FeeBase for the now validated Account with ID "accountId":
-        FeeBase feeBase = feeManagementService.getFeeBase(accountId);
+        /*FeeBase feeBase = feeManagementService.getFeeBase(accountId);
 
         // Step 3a: Import StudentProfile.StudentInformation
         StudentProfile.StudentInformation studentInfo = studentProfile.getStudentInformation();
@@ -179,132 +173,7 @@ public class AccountImportServiceImpl implements AccountImportService {
             for (com.sigmasys.kuali.ksa.jaxb.LearningUnit lu : study.getLearningUnit()) {
                 importLearningUnit(feeBase, lu, period);
             }
-        }
+        }*/
     }
 
-    /**
-     * Imports a {@link LearningUnit} from a {@link com.sigmasys.kuali.ksa.jaxb.LearningUnit} into a
-     * <code>FeeBase</code> using the specified <code>LearningPeriod</code>.
-     *
-     * @param feeBase   A <code>FeeBase</code> object.
-     * @param luFromXml A {@link com.sigmasys.kuali.ksa.jaxb.LearningUnit} from the student's profile object.
-     * @param period    A <code>LearningPeriod</code>.
-     */
-    private void importLearningUnit(FeeBase feeBase, com.sigmasys.kuali.ksa.jaxb.LearningUnit luFromXml, LearningPeriod period) {
-        // Try to find an existing LearningUnit:
-        LearningUnit luFromFeeBase = findMatchingLearningUnit(feeBase, luFromXml);
-        Date effectiveDate = (luFromXml.getEffectiveDate() != null) ? luFromXml.getEffectiveDate().toGregorianCalendar().getTime() : new Date();
-        String command = luFromXml.getCommand();
-
-        // If not found, create a new LearningUnit in the FeeBase:
-        if (luFromFeeBase == null) {
-            // Create a new LearningUnit:
-            luFromFeeBase = new LearningUnit();
-            luFromFeeBase.setAccount(feeBase.getAccount());
-            luFromFeeBase.setAccountId(feeBase.getAccount().getId());
-            luFromFeeBase.setCampus(ObjectUtils.toString(luFromXml.getCampus()));
-            luFromFeeBase.setCredit(new BigDecimal(luFromXml.getUnitCredit()));
-            luFromFeeBase.setLearningPeriod(period);
-            luFromFeeBase.setLevel(luFromXml.getLevel());
-            luFromFeeBase.setUnitCode(luFromXml.getUnitCode());
-            luFromFeeBase.setUnitSection(luFromXml.getUnitSection());
-            feeBase.getLearningUnits().add(luFromFeeBase);
-
-            // If the command is "drop", set the "dropDate". Otherwise, set the "addDate":
-            if (StringUtils.equalsIgnoreCase("drop", command)) {
-                luFromFeeBase.setDropDate(effectiveDate);
-            } else {
-                luFromFeeBase.setAddDate(effectiveDate);
-            }
-
-            // Persist the LearningUnit from FeeBase:
-            feeManagementService.persistLearningUnit(luFromFeeBase);
-
-            // Create KeyPairs:
-            for (KeyPair keyPair : luFromXml.getKeyPair()) {
-                createKeyPair(luFromFeeBase, keyPair.getKeyName(), keyPair.getValue());
-            }
-        } else if (StringUtils.equalsIgnoreCase("drop", command)) {
-            luFromFeeBase.setDropDate(effectiveDate);
-            feeManagementService.persistLearningUnit(luFromFeeBase);
-        }
-    }
-
-    /**
-     * Attempts to find a matching <code>LearningUnit</code> within the specified <code>FeeBase</code>
-     * that matches the argument.
-     *
-     * @param feeBase   A <code>FeeBase</code> object.
-     * @param luToMatch A <code>com.sigmasys.kuali.ksa.jaxb.LearningUnit</code> to find a match for.
-     * @return A matching <code>LearningUnit</code> or <code>null</code> if no match is found.
-     */
-    private LearningUnit findMatchingLearningUnit(FeeBase feeBase, com.sigmasys.kuali.ksa.jaxb.LearningUnit luToMatch) {
-        LearningUnit existingLu = null;
-
-        for (LearningUnit lu : feeBase.getLearningUnits()) {
-            if (StringUtils.equalsIgnoreCase(lu.getUnitCode(), luToMatch.getUnitCode())
-                    && StringUtils.equalsIgnoreCase(lu.getUnitSection(), luToMatch.getUnitSection())) {
-                existingLu = lu;
-
-                break;
-            }
-        }
-
-        return existingLu;
-    }
-
-    /**
-     * Creates a new {@link com.sigmasys.kuali.ksa.model.DeprecatedKeyPair} only if the <code>value</code> is not empty
-     * as checked by {@link StringUtils#isNotBlank(String)}
-     *
-     * @param feeBase A <code>FeeBase</code> object.
-     * @param name    Name of the new <code>KeyPair</code>.
-     * @param value   Value of the new <code>KeyPair</code>
-     */
-    private void createKeyPair(FeeBase feeBase, String name, String value) {
-        if (StringUtils.isNotBlank(value)) {
-            if (feeManagementService.containsKeyPair(feeBase, name)) {
-                feeManagementService.updateKeyPair(feeBase, name, value);
-            } else {
-                feeManagementService.createKeyPair(feeBase, name, value);
-            }
-        }
-    }
-
-    /**
-     * Creates a new {@link PeriodKeyPair} only if the <code>value</code> is not empty
-     * as checked by {@link StringUtils#isNotBlank(String)} and the <code>period</code> is not <code>null</code>.
-     *
-     * @param feeBase A <code>FeeBase</code> object.
-     * @param name    Name of the new <code>PeriodKeyPair</code>.
-     * @param value   Value of the new <code>PeriodKeyPair</code>.
-     * @param period  Period of the new <code>PeriodKeyPair</code>.
-     */
-    private void createPeriodKeyPair(FeeBase feeBase, String name, String value, LearningPeriod period) {
-        if (StringUtils.isNotBlank(value)) {
-            if (feeManagementService.containsKeyPair(feeBase, name)) {
-                feeManagementService.updateKeyPair(feeBase, name, value, period);
-            } else {
-                feeManagementService.createKeyPair(feeBase, name, value, period);
-            }
-        }
-    }
-
-    /**
-     * Creates a new {@link com.sigmasys.kuali.ksa.model.DeprecatedKeyPair} only if the <code>value</code> is not empty
-     * as checked by {@link StringUtils#isNotBlank(String)}
-     *
-     * @param learningUnit A <code>LearningUnit</code> object.
-     * @param name         Name of the new <code>KeyPair</code>.
-     * @param value        Value of the new <code>KeyPair</code>
-     */
-    private void createKeyPair(LearningUnit learningUnit, String name, String value) {
-        if (StringUtils.isNotBlank(value)) {
-            if (feeManagementService.containsKeyPair(learningUnit, name)) {
-                feeManagementService.updateKeyPair(learningUnit, name, value);
-            } else {
-                feeManagementService.setKeyPair(learningUnit, name, value);
-            }
-        }
-    }
 }

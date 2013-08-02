@@ -4,7 +4,6 @@ import com.sigmasys.kuali.ksa.krad.form.QuickViewForm;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
-import com.sigmasys.kuali.ksa.service.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.util.InformationUtils;
 import org.apache.commons.logging.Log;
@@ -37,8 +36,6 @@ public class QuickViewController extends GenericSearchController {
     @Autowired
     private InformationService informationService;
 
-    @Autowired
-    private FeeManagementService feeManagementService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -169,7 +166,7 @@ public class QuickViewController extends GenericSearchController {
      * Fee assessment.
      *
      * @param form Kuali form instance
-     * @return ModelandView
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=assessFees")
     public ModelAndView assessFees(@ModelAttribute("KualiForm") QuickViewForm form) {
@@ -178,7 +175,8 @@ public class QuickViewController extends GenericSearchController {
 
         if (accountId != null && !accountId.trim().isEmpty()) {
             // age the indexed Account Transactions
-            feeManagementService.assessFees(accountId);
+            // TODO
+            // feeManagementService.assessFees(accountId);
             // populate the form using the id
             populateForm(accountId, form);
         }
@@ -351,7 +349,6 @@ public class QuickViewController extends GenericSearchController {
                 iterator.remove();
             }
         }
-
 
         form.setMemoModels(memos);
     }
