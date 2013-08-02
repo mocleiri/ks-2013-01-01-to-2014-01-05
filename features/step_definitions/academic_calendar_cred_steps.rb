@@ -391,7 +391,7 @@ When /^I add events to the Academic Calendar$/ do
   @calendar.search
   on CalendarSearch do |page|
     page.edit @calendar.name
-    @event = create CalendarEvent
+    @event = create CalendarEvent, :acal_year =>  @calendar.year
   end
 end
 
@@ -399,7 +399,7 @@ When /^I update the event dates$/ do
   @calendar.search
   on CalendarSearch do |page|
     page.edit @calendar.name
-    @event.edit :start_date => "04/06/#{next_year[:year]}", :end_date=>"05/29/#{next_year[:year] + 1}",
+    @event.edit :start_date => "04/06/#{@event.acal_year.to_i + 1}", :end_date=>"05/29/#{@event.acal_year.to_i + 1}",
                 :start_time=>"11:11", :end_time=>"09:45"
   end
 end

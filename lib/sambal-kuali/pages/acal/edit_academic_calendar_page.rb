@@ -51,9 +51,9 @@ class EditAcademicCalendar < BasePage
     growl_div.div(class: "jGrowl-close").click
   end
 
-  element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") } # Persistent ID needed!
+  element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") }
 
-  action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete").click; b.loading.wait_while_present } # Persistent ID needed!
+  action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete").click; b.loading.wait_while_present }
   action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click }
 
   ###### confirm make official dialog
@@ -102,9 +102,7 @@ class EditAcademicCalendar < BasePage
   EDIT_END_DATE_COL = 4
   EDIT_END_TIME_COL = 5
   EDIT_END_TIME_AMPM_COL = 6
-  EDIT_ALL_DAY_COL = 7
-  EDIT_DATE_RANGE_COL = 8
-  EDIT_ACTION_COL = 9
+  EDIT_ACTION_COL = 7
 
   def holiday_cal_index_by_name(cal_name)
     add_holiday_calendar_div.link(text: /^#{cal_name}$/).id[/\d+(?=_toggle)/]

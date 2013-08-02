@@ -643,15 +643,16 @@ class CalendarEvent
   include StringFactory
   include Workflows
 
-  attr_accessor :event_type, :start_date, :end_date, :start_time, :end_time, :start_time_ampm, :end_time_ampm, :all_day, :date_range
+  attr_accessor :event_type, :start_date, :end_date, :start_time, :end_time,
+                :start_time_ampm, :end_time_ampm, :all_day, :date_range, :acal_year
 
   def initialize(browser,opts = {})
     @browser = browser
 
     defaults = {
         :event_type=>"Commencement - Seattle Campus",
-        :start_date=>"04/15/#{next_year[:year]}",
-        :end_date=>"05/15/#{next_year[:year] + 1}",
+        :start_date=>"04/15/#{opts[:acal_year].to_i + 1}",
+        :end_date=>"05/15/#{opts[:acal_year].to_i + 1}",
         :start_time=>"07:30",
         :end_time=>"09:00",
         :start_time_ampm=>"pm",
@@ -687,8 +688,8 @@ class CalendarEvent
       else
         page.event_end_pm_set
       end
-      page.all_day.set @all_day
-      page.date_range.set @date_range
+      #page.all_day.set @all_day
+      #page.date_range.set @date_range
       page.add_event.click
       page.save
 

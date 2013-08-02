@@ -135,6 +135,7 @@ class HolidayCalendar
 
   def init_calendar
     @holiday_list.clear
+    sleep 2
     on EditHolidayCalendar do |page|
       page.holiday_table.rows[2..page.holiday_table.rows.count].each do |holiday_row|
         temp_holiday = make Holiday
