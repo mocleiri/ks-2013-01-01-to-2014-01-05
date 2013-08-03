@@ -10,7 +10,6 @@ Feature: EC.AZ Manage Course Offerings with subterms
     And I create a Course Offering from catalog with Activity Offerings assigned to subterms in my admin org
     And I rollover the subterms' parent term to a target term with those subterms setup
 
-  @bug @KSENROLL-8433
   Scenario: CO 26.6A Carol has access to add/remove/update the subterm for an AO (in admin org) when SOC=OPEN
     Given I am logged in as a Department Schedule Coordinator
     And I manage the Course Offering in the target term
@@ -21,7 +20,6 @@ Feature: EC.AZ Manage Course Offerings with subterms
     When I update the subterm for the activity offering
     Then the AO subterm change is successful
 
-  @bug @KSENROLL-8433
   Scenario: CO 26.6B Carol has access to add/remove/update the subterm for an AO (in admin org) when SOC=FINAL EDITS
     Given I advance the SOC state from open to final edits state
     And I am logged in as a Department Schedule Coordinator

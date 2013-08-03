@@ -204,8 +204,8 @@ class AcademicCalendar
   end
 
   #there are existing calendars up to 2023, so most of the term codes are used
-  BASE_UNUSED_CALENDAR_YEAR = 2030
-  MAX_UNUSED_CALENDAR_YEAR = 2199
+  BASE_UNUSED_CALENDAR_YEAR = 2230
+  MAX_UNUSED_CALENDAR_YEAR = 2699
   def self.get_random_calendar_year(base_year =BASE_UNUSED_CALENDAR_YEAR, max_year = MAX_UNUSED_CALENDAR_YEAR)
     base_year + rand( max_year - base_year )
   end
@@ -343,7 +343,7 @@ class AcademicTerm
       end
     end
 
-    on(EditAcademicTerms).save :exp_success => options[:exp_success] unless options.length <= 1 #don't save if only :exp_success element
+    on(EditAcademicTerms).save :exp_success => options[:exp_success] #unless options.length >= 1 #don't save if only :exp_success element
 
     set_options(options)
   end
@@ -386,14 +386,12 @@ class AcademicTerm
   def weekdays_in_term
     date1 = Date.strptime( @start_date , '%m/%d/%Y')
     date2 = Date.strptime( @end_date , '%m/%d/%Y')
-    puts "calculating from #{@start_date} to #{@end_date}"
     weekdays = 0
     date = date2
     while date >= date1
       weekdays = weekdays + 1 unless date.saturday? or date.sunday?
       date = date - 1
     end
-    puts weekdays
     weekdays
   end
 

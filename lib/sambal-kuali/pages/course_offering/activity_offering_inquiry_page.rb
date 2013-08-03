@@ -1,6 +1,7 @@
 class ActivityOfferingInquiry < BasePage
 
   wrapper_elements
+  expected_element :term_element
 
   def frm
     self.frame(class: "fancybox-iframe")
@@ -12,10 +13,11 @@ class ActivityOfferingInquiry < BasePage
   value(:subterm_start_date) { |b| b.frm.span(id: "start_end_date_control").text[/.*(?=-)/].strip }
   value(:subterm_end_date) { |b| b.frm.span(id: "start_end_date_control").text[/(?<=-).*/].strip }
   value(:course_offering_code) { |b| b.frm.span(id: "u14").text } # Persistent ID needed!
-  value(:activity_code) { |b| b.frm.span(id: "u23").text } # Persistent ID needed!
+  value(:activity_code) { |b| b.frm.span(id: "activityCode_control").text }
   value(:course_offering_title) { |b| b.frm.span(id: "u32").text } # Persistent ID needed!
-  value(:term) { |b| b.frm.span(id: "u41").text } # Persistent ID needed!
-  value(:type) { |b| b.frm.span(id: "u50").text } # Persistent ID needed!
+  element(:term_element) { |b| b.frm.span(id: "term_control") }
+  value(:term) { |b| b.frm.span(id: "term_control").text }
+  value(:type) { |b| b.frm.span(id: "type_name_control").text }
   value(:format_offering) { |b| b.frm.span(id: "u59").text } # Persistent ID needed!
   value(:total_maximum_enrollment) { |b| b.frm.span(id: "u68").text } # Persistent ID needed!
   value(:state) { |b| b.frm.span(id: "u77").text } # Persistent ID needed!

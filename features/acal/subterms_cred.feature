@@ -16,6 +16,7 @@ Feature: EC.Subterms CRED
     When I copy the Academic Calendar
     Then the subterms are successfully copied
 
+  @wip @aft_bug
   Scenario: CAL 4.2B Successfully search for and view and subterm
     Given I create an Academic Calendar with subterms
     Then I can search and view the subterm in read only mode
@@ -27,7 +28,8 @@ Feature: EC.Subterms CRED
 
   Scenario: CAL 4.10 Successfully delete a subterm
     Given I create an Academic Calendar with subterms
-    When I delete a subterm
+    When I edit the calendar
+    And I delete a subterm
     Then the subterm is no longer listed on the calendar
 
   Scenario: CAL 4.7 Successfully verify the instruction dates calculation for a subterm
@@ -40,7 +42,7 @@ Feature: EC.Subterms CRED
   Scenario: CAL 4.2C Verify an error message is displayed when a subterm is added with dates do not fall within (parent) Academic Calendar dates
     Given I create an Academic Calendar that supports subterms
     And I add a new subterm with start date earlier than the Academic Calendar start date
-    Then a term warning message is displayed stating "doesn't fall within Acal dates"
+    Then a subterm warning message is displayed stating "doesn't fall within Acal dates"
 
   Scenario: CAL 4.2D Verify an error message is displayed when a subterm is edited with dates do not fall within (parent) Academic Calendar dates
     Given I create an Academic Calendar with subterms

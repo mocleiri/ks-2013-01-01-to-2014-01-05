@@ -226,11 +226,12 @@ class EditAcademicTerms < BasePage
     sticky_footer_div.button(text: "Save").click
     loading.wait_while_present
     sleep 1
-    growl_div.wait_until_present
     if options[:exp_success] then
+      growl_div.wait_until_present
       raise "save was not successful - growl text: #{growl_text}" unless growl_text.match /saved successfully/
+      growl_div.div(class: "jGrowl-close").click
     end
-    growl_div.div(class: "jGrowl-close").click
+
   end
 
 end

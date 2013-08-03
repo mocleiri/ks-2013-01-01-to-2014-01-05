@@ -505,14 +505,14 @@ Then /^I add an instructional Key Date$/ do
   @term.edit
 
   @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
-  @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :end_date => "09/12/#{@term.term_year}"
+  @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :end_date => ""
 end
 
 Then /^I add an instructional Key Date to a subterm$/ do
   @subterm_list[0].edit
 
   @keydategroup = create KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @subterm_list[0].term_type
-  @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :end_date => "09/12/#{@term.term_year}"
+  @keydate = create KeyDate, :parent_key_date_group => @keydategroup, :key_date_type => "First Day of Classes", :start_date => "09/12/#{@term.term_year}", :end_date => ""
 end
 
 
@@ -745,8 +745,6 @@ Then /^I can search and view the subterm in read only mode$/ do
      page.view @subterm_list[0].term_name
    end
 
-
-
    on ViewAcademicTerms do |page|
      page.go_to_terms_tab
      page.open_term_section(@subterm_list[0].term_type)
@@ -762,7 +760,11 @@ end
 When /^I edit the subterm information$/ do
   @subterm_list[0].edit :term_name => random_alphanums ,
                         :start_date => (Date.strptime( @subterm_list[0].start_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"), #add 2 days
-                        :end_date => (Date.strptime( @subterm_list[0].end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")  #add 2 days
+                        :end_date => (Date.strptime( @subterm_list[0].end_date , '%m/%d/%Y') - 2).strftime("%m/%d/%Y")  #less 2 days
+end
+
+When /^I edit the calendar$/ do
+  @calendar.edit
 end
 
 When /^I delete a subterm$/ do
@@ -818,13 +820,15 @@ end
 
 Then /^a term warning message is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
+    page.open_term_section(@term.term_type)
     page.term_validation_messages(@term.term_type)[0].text.should match /#{exp_msg}/
   end
 end
 
 Then /^a subterm warning message is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
-    page.term_validation_messages(@subterm_list[0].term_type)[0].text.should match /#{exp_msg}/
+    page.open_term_section(@subterm.term_type)
+    page.term_validation_messages(@subterm.term_type)[0].text.should match /#{exp_msg}/
   end
 end
 
@@ -872,7 +876,8 @@ end
 
 When /^I edit the key date so that the start date is later than the Academic Subterm end date$/ do
   @subterm_list[0].edit
-  @keydate.edit :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")
+  @keydate.edit :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"),
+                :exp_success => false
 end
 
 When /^I make the key date blank$/ do

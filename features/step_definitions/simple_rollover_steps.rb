@@ -161,18 +161,37 @@ And /^I create the target Academic Term with subterms$/ do
   @term_target = make AcademicTerm, :term_year => @calendar_target.year
   @calendar_target.add_term(@term_target)
 
-  #@subterm_list_target = Array.new(2)
-  #@subterm_list_target[0] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
-  #@calendar_target.add_term(@subterm_list_target[0])
-  #
-  #@subterm_list_target[1] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
-  #@calendar_target.add_term(@subterm_list_target[1])
-  #
-  #@subterm_list_target.each do |subterm|
-  #  subterm.make_official
-  #end
+  @subterm_list_target = Array.new(2)
+  @subterm_list_target[0] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  @calendar_target.add_term(@subterm_list_target[0])
+
+  @subterm_list_target[1] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
+  @calendar_target.add_term(@subterm_list_target[1])
+
+  @subterm_list_target.each do |subterm|
+    subterm.make_official
+  end
 
   @term_target.set_up_soc
+end
+
+And /^I setup a second target term with those subterms setup$/ do
+  @calendar_target2 = create AcademicCalendar, :year => @calendar.year.to_i + 2 #, :name => "TWj64w1q3e"
+  @term_target2 = make AcademicTerm, :term_year => @calendar_target2.year
+  @calendar_target2.add_term(@term_target2)
+
+  @subterm_list_target2 = Array.new(2)
+  @subterm_list_target2[0] = make AcademicTerm, :term_year => @calendar_target2.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  @calendar_target2.add_term(@subterm_list_target2[0])
+
+  @subterm_list_target2[1] = make AcademicTerm, :term_year => @calendar_target2.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
+  @calendar_target2.add_term(@subterm_list_target2[1])
+
+  @subterm_list_target2.each do |subterm|
+    subterm.make_official
+  end
+
+  @term_target2.set_up_soc
 end
 
 And /^I rollover the subterms' parent term to a target term with those subterms setup$/ do
@@ -317,6 +336,49 @@ Then /^the Activity Offerings are assigned to the target subterms$/ do
   @activity_offering_target2.edit
   on ActivityOfferingMaintenance do |page|
     page.subterm.should == @activity_offering2.subterm
+    page.cancel
+  end
+
+end
+
+Then /^I can create a Course Offering in the second term from the existing CO in the first term$/ do
+  @course_offering_copy = create CourseOffering, :term=>  @term_target.term_code, :create_from_existing=>@course_offering_target
+end
+
+Then /^the Activity Offerings for the copied CO are assigned to the target subterms$/ do
+  @course_offering_copy.manage
+
+  @activity_offering_copy = make ActivityOffering, :code =>"A", :parent_course_offering => @course_offering_copy
+  on ManageCourseOfferings do |page|
+    page.has_subterm_icon(@activity_offering_copy.code).should == true
+    page.view_activity_offering(@activity_offering_copy.code)
+  end
+
+  on ActivityOfferingInquiry do |page|
+    page.subterm.should == @subterm_list_target2[0].subterm_type
+    page.close
+  end
+
+  @activity_offering_target.edit
+  on ActivityOfferingMaintenance do |page|
+    page.subterm.should == @subterm_list_target2[0].subterm_type
+    page.cancel
+  end
+
+  @activity_offering_target2 = make ActivityOffering, :code => "B", :parent_course_offering => @course_offering_target
+  on ManageCourseOfferings do |page|
+    page.has_subterm_icon(@activity_offering_target2.code).should == true
+    page.view_activity_offering(@activity_offering_target2.code)
+  end
+
+  on ActivityOfferingInquiry do |page|
+    page.subterm.should  @subterm_list_target2[1].subterm_type
+    page.close
+  end
+
+  @activity_offering_target2.edit
+  on ActivityOfferingMaintenance do |page|
+    page.subterm.should == @subterm_list_target2[1].subterm_type
     page.cancel
   end
 
