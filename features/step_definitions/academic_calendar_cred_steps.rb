@@ -631,8 +631,9 @@ When /^I add a Holiday Calendar with holidays in the term$/ do
 end
 
 Given /^I add a subterm$/ do
-  @subterm = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
-  @calendar.add_term(@subterm)
+  @subterm_list = Array.new(2)
+  @subterm_list[0] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  @calendar.add_term(@subterm_list[0])
 end
 
 Then /^the subterm is listed when I view the Academic Calendar$/ do
@@ -644,12 +645,12 @@ Then /^the subterm is listed when I view the Academic Calendar$/ do
 
   on ViewAcademicTerms do |page|
     page.go_to_terms_tab
-    page.open_term_section(@subterm.term_type)
-    page.term_name(@subterm.term_type).should == @subterm.term_name
+    page.open_term_section(@subterm_list[0].term_type)
+    page.term_name(@subterm_list[0].term_type).should == @subterm_list[0].term_name
     #page.term_code(@term.term_type)
-    page.term_start_date(@subterm.term_type).should == @subterm.start_date
-    page.term_end_date(@subterm.term_type).should == @subterm.end_date
-    page.term_status(@subterm.term_type).should == "DRAFT"
+    page.term_start_date(@subterm_list[0].term_type).should == @subterm_list[0].start_date
+    page.term_end_date(@subterm_list[0].term_type).should == @subterm_list[0].end_date
+    page.term_status(@subterm_list[0].term_type).should == "DRAFT"
     #puts page.term_instructional_days(@term.term_type)
     #puts page.term_status(@term.term_type)
     #puts page.key_date_start(@term.term_type,"instructional","Grades Due")
@@ -810,12 +811,13 @@ When /^I add a new term with start date earlier than the Academic Calendar start
 end
 
 When /^I add a new subterm with start date earlier than the Academic Calendar start date$/ do
-  @subterm = make AcademicTerm, :term_year => @calendar.year,
+  @subterm_list = Array.new(2)
+  @subterm_list[0] = make AcademicTerm, :term_year => @calendar.year,
                :start_date => (Date.strptime( @calendar.start_date , '%m/%d/%Y') - 2).strftime("%m/%d/%Y"), #minus 2 days
                :subterm => true,
                :term_type=> "Half Fall 1",
                :parent_term=> "Fall Term"
-  @calendar.add_term(@subterm)
+  @calendar.add_term(@subterm_list[0])
 end
 
 Then /^a term warning message is displayed stating "([^"]*)"$/ do |exp_msg|
@@ -827,8 +829,8 @@ end
 
 Then /^a subterm warning message is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
-    page.open_term_section(@subterm.term_type)
-    page.term_validation_messages(@subterm.term_type)[0].text.should match /#{exp_msg}/
+    page.open_term_section(@subterm_list[0].term_type)
+    page.term_validation_messages(@subterm_list[0].term_type)[0].text.should match /#{exp_msg}/
   end
 end
 
@@ -864,7 +866,7 @@ When /^I add a new key date with a date later than the Academic Subterm end date
   @keydate = create KeyDate, :parent_key_date_group => @keydategroup,
                     :key_date_type => "First Day of Classes",
                     :start_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y"),
-                    :end_date => (Date.strptime( @term.end_date , '%m/%d/%Y') + 2).strftime("%m/%d/%Y")
+                    :end_date => ""
 
 end
 

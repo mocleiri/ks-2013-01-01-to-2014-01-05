@@ -16,11 +16,11 @@ Feature: EC.Subterms CRED
     When I copy the Academic Calendar
     Then the subterms are successfully copied
 
-  @wip @aft_bug
   Scenario: CAL 4.2B Successfully search for and view and subterm
     Given I create an Academic Calendar with subterms
     Then I can search and view the subterm in read only mode
 
+  @wip @aft_bug
   Scenario: CAL 4.3 Successfully edit a subterm
     Given I create an Academic Calendar with subterms
     When I edit the subterm information

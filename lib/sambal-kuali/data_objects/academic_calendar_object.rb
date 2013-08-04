@@ -34,7 +34,7 @@ class AcademicCalendar
     @browser = browser
 
     if opts[:year].nil? then
-      calendar_year = AcademicCalendar.get_random_calendar_year
+      calendar_year = get_random_calendar_year
     else
       calendar_year = opts[:year].to_i
     end
@@ -206,8 +206,25 @@ class AcademicCalendar
   #there are existing calendars up to 2023, so most of the term codes are used
   BASE_UNUSED_CALENDAR_YEAR = 2230
   MAX_UNUSED_CALENDAR_YEAR = 2699
-  def self.get_random_calendar_year(base_year =BASE_UNUSED_CALENDAR_YEAR, max_year = MAX_UNUSED_CALENDAR_YEAR)
-    base_year + rand( max_year - base_year )
+  def get_random_calendar_year(base_year =BASE_UNUSED_CALENDAR_YEAR, max_year = MAX_UNUSED_CALENDAR_YEAR)
+    random_year = base_year + rand( max_year - base_year )
+    #make sure that year and next are not already used
+    year_used = true
+    go_to_calendar_search
+    while year_used
+      on CalendarSearch do |page|
+        page.search_for "Academic Calendar", "", random_year + 1
+      end
+      on CalendarSearch do |page|
+        if page.results_table.exists? then
+          year_used = true
+          random_year =  random_year + 1
+        else
+          year_used = false
+        end
+      end
+    end
+    random_year
   end
 
 end
@@ -236,11 +253,11 @@ class AcademicTerm
     @browser = browser
 
     #establish the year in order to make default start/end dates
-    if opts[:term_year] == "random" then
-      calendar_year = AcademicCalendar.get_random_calendar_year
-    else
-      calendar_year = opts[:term_year]
-    end
+    #if opts[:term_year] == "random" then
+    #  calendar_year = AcademicCalendar.get_random_calendar_year
+    #else
+    calendar_year = opts[:term_year]
+    #end
 
     defaults = {
         :start_date=>"09/02/#{calendar_year}",
@@ -251,7 +268,6 @@ class AcademicTerm
         :term_year=> calendar_year,
         :parent_term=> nil,
         :subterm=> false
-
     }
 
     options = defaults.merge(opts)
@@ -533,9 +549,7 @@ class KeyDate
         edit :key_date_type => @key_date_type, :start_date => @start_date, :end_date  => @end_date, :start_time  => @start_time, :end_time  => @end_time, :start_time_ampm  => @start_time_ampm,  :end_time_ampm => @end_time_ampm
       end
       page.save
-
     end
-
   end
 
   def edit opts={}
