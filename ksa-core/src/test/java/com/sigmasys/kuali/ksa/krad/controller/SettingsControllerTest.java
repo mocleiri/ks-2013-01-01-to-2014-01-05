@@ -8,6 +8,8 @@ import com.sigmasys.kuali.ksa.service.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
@@ -109,8 +111,9 @@ public class SettingsControllerTest extends AbstractServiceTest {
 
         Assert.notNull(modelAndView);
         Assert.notNull(form);
-        Assert.notNull(form.getStatusMessage());
-        Assert.isTrue(form.getStatusMessage().startsWith("Success:"));
+
+
+        Assert.isTrue(GlobalVariables.getMessageMap().getErrorCount() == 0);
 
     }
 
@@ -168,8 +171,7 @@ public class SettingsControllerTest extends AbstractServiceTest {
 
         Assert.notNull(modelAndView);
         Assert.notNull(form);
-        Assert.notNull(form.getStatusMessage());
-        Assert.isTrue(form.getStatusMessage().startsWith("Success:"));
+        Assert.isTrue(GlobalVariables.getMessageMap().getErrorCount() == 0);
     }
 
 }

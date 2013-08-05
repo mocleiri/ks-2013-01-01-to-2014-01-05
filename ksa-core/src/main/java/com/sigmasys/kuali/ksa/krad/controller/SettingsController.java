@@ -50,7 +50,6 @@ public class SettingsController extends GenericSearchController {
     @Override
     protected SettingsForm createInitialForm(HttpServletRequest request) {
         SettingsForm form = new SettingsForm();
-        form.setStatusMessage("");
         return form;
     }
 
@@ -191,7 +190,13 @@ public class SettingsController extends GenericSearchController {
                 String name = parentEntity.getName();
                 String description = parentEntity.getDescription();
 
-                auditableEntityService.createAuditableEntity(code, name, description, parentEntity.getClass());
+                AuditableEntity value = auditableEntityService.createAuditableEntity(code, name, description, parentEntity.getClass());
+                if(value instanceof Tag){
+                    ((Tag)value).setAdministrative(entity.getAdministrative());
+                    auditableEntityService.persistAuditableEntity(value);
+                }
+
+
 
                 form.setAuditableEntities(auditableEntityService.getAuditableEntities(parentEntity.getClass()));
 
@@ -199,12 +204,12 @@ public class SettingsController extends GenericSearchController {
 
                 // success in creating the currency.
                 String statusMsg = "Success: " + parentEntity.getClass().getName() + " saved, ID = " + parentEntity.getId();
-                form.setStatusMessage(statusMsg);
+                GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
                 logger.info(statusMsg);
 
             } catch (Exception e) {
                 String statusMsg = e.getMessage();
-                form.setStatusMessage(statusMsg);
+                GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
                 logger.error(statusMsg, e);
             }
         }
@@ -239,13 +244,13 @@ public class SettingsController extends GenericSearchController {
 
                 // success in creating the currency.
                 String statusMsg = "Success: " + parentEntity.getClass().getName() + " saved, ID = " + parentEntity.getId();
-                form.setStatusMessage(statusMsg);
+                GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
                 logger.info(statusMsg);
 
             } catch (Exception e) {
                 // failed to create the currency. Leave the currency information in the view
                 String statusMsg = e.getMessage();
-                form.setStatusMessage(statusMsg);
+                GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
                 logger.error(statusMsg, e);
             }
 
@@ -267,11 +272,11 @@ public class SettingsController extends GenericSearchController {
             auditableEntityService.persistAuditableEntity(entity);
             // success in updating the currency.
             String statusMsg = "Success: " + entity.getClass() + " entity updated. Entity ID =  " + entity.getId();
-            form.setStatusMessage(statusMsg);
+            GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.info(statusMsg);
         } catch (Exception e) {
             String statusMsg = "Failure: " + entity.getClass() + " entity did not update, Entity ID =  " + entity.getId() + ". " + e.getMessage();
-            form.setStatusMessage(statusMsg);
+            GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg);
         }
 

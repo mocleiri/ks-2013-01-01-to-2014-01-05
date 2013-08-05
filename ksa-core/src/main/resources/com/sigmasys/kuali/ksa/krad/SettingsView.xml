@@ -125,8 +125,8 @@
                         <list>
                             <bean parent="Uif-HorizontalBoxSection">
                             </bean>
-                            <ref bean="addSection"/>
-                            <ref bean="tableSection"/>
+                            <ref bean="addSectionTag"/>
+                            <ref bean="tableSectionTag"/>
                         </list>
                     </property>
                 </bean>
@@ -143,7 +143,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <ref bean="detailSection"/>
+                            <ref bean="detailSectionTag"/>
                         </list>
                     </property>
                 </bean>
@@ -515,8 +515,6 @@
                 </bean>
                 <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insertAuditableEntity"
                       p:actionLabel="Add"/>
-                <!--  Status message -->
-                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
 
             </list>
         </property>
@@ -568,8 +566,48 @@
                     </property>
                 </bean>
                 <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insertLatePeriod" p:actionLabel="Add"/>
-                <!--  Status message -->
-                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="addSectionTag" parent="Uif-HorizontalBoxSection">
+        <property name="title" value="Add @{humanType}"/>
+        <property name="instructionalText" value="Input fields to add a @{humanType} * denotes a required field"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="Symbol"
+                      p:propertyName="auditableEntity.code"
+                      p:labelPlacement="TOP"
+                      p:required="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="11" p:maxLength="10"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Name"
+                      p:propertyName="auditableEntity.name"
+                      p:labelPlacement="TOP"
+                      p:required="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="20" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Description"
+                      p:propertyName="auditableEntity.description"
+                      p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"
+                              p:watermarkText="Paste or key in the description here..."/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Administrative Tag" p:propertyName="auditableEntity.administrative"
+                      p:labelPlacement="RIGHT">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insertAuditableEntity"
+                      p:actionLabel="Add"/>
 
             </list>
         </property>
@@ -662,6 +700,64 @@
         </property>
     </bean>
 
+    <bean id="tableSectionTag" parent="Uif-Disclosure-TableCollectionSection"
+          p:layoutManager.numberOfColumns="4"
+          p:width="85%">
+        <property name="title" value="View @{humanType}"/>
+        <property name="readOnly" value="true"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.AuditableEntityModel"/>
+        <property name="propertyName" value="auditableEntities"/>
+        <property name="layoutManager.sequencePropertyName" value="id"/>
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+        <property name="layoutManager.richTable.disableTableSort" value="false"/>
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="true"/>
+                <entry key="iDisplayLength" value="20"/>
+            </map>
+        </property>
+
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="Symbol"
+                      p:propertyName="code"
+                      p:width="10%">
+                    <property name="control">
+                        <bean parent="Uif-TextControl"
+                              p:size="11" p:maxLength="10"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Name"
+                      p:propertyName="name"
+                      p:width="15%">
+                    <property name="control">
+                        <bean parent="Uif-TextControl"
+                              p:size="20" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Description"
+                      p:propertyName="description"
+                      p:width="55%">
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl"
+                              p:rows="5" p:cols="80"
+                              p:watermarkText="Statement description..."/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Administrative Tag" p:propertyName="administrative"
+                      p:labelPlacement="RIGHT" p:readOnly="false">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-LinkField" p:label="Edit" p:linkText="Edit" p:target="_self" p:width="10%"
+                      p:href="settingsView?viewId=SettingsView&amp;pageId=@{simpleType}DetailsPage&amp;methodToCall=get&amp;entityId=@{#line.id}"/>
+            </list>
+        </property>
+    </bean>
+
     <!--
     ********************************************************************************************************************
                                         Edit a auditableEntity
@@ -710,8 +806,6 @@
                               p:source="@{#ConfigProperties['krad.externalizable.images.url']}ks/icon_btn_add.png"/>
                     </property>-->
                 </bean>
-                <!--  Status message -->
-                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
             </list>
         </property>
     </bean>
@@ -768,10 +862,80 @@
                               p:source="@{#ConfigProperties['krad.externalizable.images.url']}ks/icon_btn_add.png"/>
                     </property>-->
                 </bean>
-                <!--  Status message -->
-                <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
             </list>
         </property>
     </bean>
+
+    <bean id="detailSectionTag" parent="Uif-VerticalBoxSection">
+        <property name="title" value="@{humanType} Details View"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField"
+                      p:propertyName="auditableEntity.code"
+                      p:labelPlacement="TOP"
+                      p:label="Symbol">
+                    <property name="readOnly" value="true"/>
+                    <property name="control">
+                        <bean parent="Uif-TextControl"
+                              p:size="11" p:maxLength="10"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField"
+                      p:propertyName="auditableEntity.name"
+                      p:label="Name"
+                      p:labelPlacement="TOP"
+                      p:required="true">
+                    <property name="control">
+                        <bean parent="Uif-TextControl"
+                              p:size="20" p:maxLength="100"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField"
+                      p:label="Description"
+                      p:propertyName="auditableEntity.description"
+                      p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl"
+                              p:rows="5" p:cols="80"
+                              p:watermarkText="Key in the statement description here..."/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Administrative Tag" p:propertyName="auditableEntity.administrative"
+                      p:onChangeScript="showLightboxComponent('administrativeTagLightbox');" p:labelPlacement="RIGHT">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"/>
+                    </property>
+                </bean>
+                <bean id="administrativeTagLightbox" parent="Uif-VerticalBoxSection">
+                    <property name="hidden" value="true"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HeaderTwo" p:headerText="Administrative Tag"/>
+                            <bean parent="Uif-Message" p:messageText="Warning: Changes to tag types will be applied to all"/>
+                            <bean parent="Uif-Message" p:messageText="existing tags.  Unchecking the 'Adminitrative' tag checkbox"/>
+                            <bean parent="Uif-Message" p:messageText="will cause all previous tags with this symbol to"/>
+                            <bean parent="Uif-Message" p:messageText="be visible and available to everyone.  Checking a previously"/>
+                            <bean parent="Uif-Message" p:messageText="unchecked 'Administrative' checkbox makes tags with this"/>
+                            <bean parent="Uif-Message" p:messageText="symbol only visible and available to users with the"/>
+                            <bean parent="Uif-Message" p:messageText="appropriate permissions."/>
+
+                            <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="OK"  p:onClickScript="jQuery.fancybox.close();"/>
+                        </list>
+                    </property>
+                </bean>
+
+
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="updateAuditableEntity"
+                      p:actionLabel="Submit"
+                      p:onClickScript="writeHiddenToForm(&quot;actionParameters[entityId]&quot;, &quot;@{auditableEntity.id}&quot;);">
+                    <!--<property name="actionImage">
+                        <bean parent="Uif-ImageField"
+                              p:source="@{#ConfigProperties['krad.externalizable.images.url']}ks/icon_btn_add.png"/>
+                    </property>-->
+                </bean>
+            </list>
+        </property>
+    </bean>
+
 
 </beans>

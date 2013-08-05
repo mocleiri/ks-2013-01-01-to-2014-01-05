@@ -135,4 +135,18 @@ public class AuditableEntityModel extends AuditableEntity<Long> {
     public String toString() {
         return "Auditable Entity Model parent: " + parentEntity;
     }
+
+    public Boolean getAdministrative(){
+        if(parentEntity instanceof Tag){
+            return ((Tag)parentEntity).isAdministrative();
+        }
+        return false;
+    }
+
+    public void setAdministrative(Boolean administrative){
+        if(parentEntity instanceof Tag){
+            ((Tag)parentEntity).setAdministrative(administrative);
+        }
+    }
+
 }

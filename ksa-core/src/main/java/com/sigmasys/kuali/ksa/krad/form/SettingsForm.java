@@ -16,8 +16,7 @@ public class SettingsForm extends AbstractViewModel {
 
    private AuditableEntityModel auditableEntity;
 
-   private String statusMessage;
-    private List<ConfigParameter> configParameters;
+   private List<ConfigParameter> configParameters;
 
     /*
       Get/Set methods
@@ -96,14 +95,6 @@ public class SettingsForm extends AbstractViewModel {
 
         return this.getSimpleType();
     }
-
-    public String getStatusMessage() {
-      return statusMessage;
-   }
-
-   public void setStatusMessage(String statusMessage) {
-      this.statusMessage = statusMessage;
-   }
 
     public List<ConfigParameter> getConfigParameters(){
         return this.configParameters;
