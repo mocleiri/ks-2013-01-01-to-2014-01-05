@@ -369,6 +369,7 @@ class CourseOffering
         page.submit
       end
     end
+
   end
 
   def set_reg_options (options)
@@ -491,6 +492,7 @@ class CourseOffering
   end
 
   def view_course_details
+    search_by_subjectcode
     on ManageCourseOfferingList do |page|
       page.view_course_offering @course.upcase
     end

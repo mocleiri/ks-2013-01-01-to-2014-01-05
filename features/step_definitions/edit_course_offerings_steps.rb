@@ -7,7 +7,7 @@ Then /^I view the course offering details$/ do
   @course_offering.view_course_details
   on ManageCourseDetails do |page|
     page.close
-    end
+  end
 end
 
 When /^I can edit the course offering$/ do
