@@ -272,7 +272,7 @@ public class TestOrganizationServiceImpl {
         orgInfo.setLongName("TestOrgLongName");
         orgInfo.setShortName("TestOrgShortName");
         orgInfo.setStateKey("Active");
-        orgInfo.setTypeKey("");//set as a param
+        orgInfo.setTypeKey("kuali.org.Program");
         orgInfo.setEffectiveDate(df.parse("20090101"));
         orgInfo.setExpirationDate(df.parse("21001231"));
         AttributeInfo attribute = new AttributeInfo();
@@ -400,9 +400,9 @@ public class TestOrganizationServiceImpl {
         orgPersonRelationInfo.setStateKey("Active");
         orgPersonRelationInfo.setEffectiveDate(df.parse("20090101"));
         orgPersonRelationInfo.setExpirationDate(df.parse("21001231"));
-        orgPersonRelationInfo.setOrgId("");
-        orgPersonRelationInfo.setPersonId("");
-        orgPersonRelationInfo.setTypeKey("");
+        orgPersonRelationInfo.setOrgId("28");
+        orgPersonRelationInfo.setPersonId("KIM-12345");
+        orgPersonRelationInfo.setTypeKey("kuali.org.PersonRelation.Dean");
 
         OrgPersonRelationInfo createdOPRInfo = orgService.createOrgPersonRelation("28", "KIM-12345", "kuali.org.PersonRelation.Dean", orgPersonRelationInfo, callContext);
 
@@ -440,9 +440,9 @@ public class TestOrganizationServiceImpl {
         orgOrgRelationInfo.setStateKey("Active");
         orgOrgRelationInfo.setEffectiveDate(df.parse("20090101"));
         orgOrgRelationInfo.setExpirationDate(df.parse("21001231"));
-        orgOrgRelationInfo.setOrgId("");
-        orgOrgRelationInfo.setRelatedOrgId("");
-        orgOrgRelationInfo.setTypeKey("");
+        orgOrgRelationInfo.setOrgId("16");
+        orgOrgRelationInfo.setRelatedOrgId("17");
+        orgOrgRelationInfo.setTypeKey("kuali.org.Part");
 
         OrgOrgRelationInfo createdOORInfo = orgService.createOrgOrgRelation("16", "17", "kuali.org.Part", orgOrgRelationInfo, callContext);
 
@@ -489,8 +489,8 @@ public class TestOrganizationServiceImpl {
         orgPositionRestrictionInfo.setMinNumRelations(2);
         orgPositionRestrictionInfo.setStdDuration(stdDuration);
         orgPositionRestrictionInfo.setTitle("Title for PositionRestriction");
-        orgPositionRestrictionInfo.setOrgId("");
-        orgPositionRestrictionInfo.setOrgPersonRelationTypeKey("");
+        orgPositionRestrictionInfo.setOrgId("1");
+        orgPositionRestrictionInfo.setOrgPersonRelationTypeKey("kuali.org.PersonRelation.Treasurer");
 
         OrgPositionRestrictionInfo created = orgService.createOrgPositionRestriction("1", "kuali.org.PersonRelation.Treasurer", orgPositionRestrictionInfo, callContext);
 

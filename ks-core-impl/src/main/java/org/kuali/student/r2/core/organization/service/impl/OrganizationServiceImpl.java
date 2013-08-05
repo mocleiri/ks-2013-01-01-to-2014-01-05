@@ -249,6 +249,10 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgHierarchyInfo createOrgHierarchy(String orgHierarchyTypeKey, OrgHierarchyInfo orgHierarchyInfo, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
+        if(!orgHierarchyTypeKey.equals(orgHierarchyInfo.getTypeKey())) {
+            throw new InvalidParameterException(orgHierarchyTypeKey + " does not match the corresponding value in the object " + orgHierarchyInfo.getTypeKey());
+        }
+
         //make sure that the root org exists if it is defined
         if(orgHierarchyInfo.getRootOrgId() != null) {
             getOrg(orgHierarchyInfo.getRootOrgId(), contextInfo);
@@ -372,6 +376,10 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgInfo createOrg(String orgTypeKey, OrgInfo orgInfo, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
+        if(!orgTypeKey.equals(orgInfo.getTypeKey())) {
+            throw new InvalidParameterException(orgTypeKey + " does not match the corresponding value in the object " + orgInfo.getTypeKey());
+        }
+
         OrgEntity entity = new OrgEntity(orgInfo);
         entity.setOrgType(orgTypeKey);
         entity.setEntityCreated(contextInfo);
@@ -584,6 +592,16 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgOrgRelationInfo createOrgOrgRelation(String orgId, String orgPeerId, String orgOrgRelationTypeKey, OrgOrgRelationInfo orgOrgRelationInfo, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
+        if(!orgId.equals(orgOrgRelationInfo.getOrgId())) {
+            throw new InvalidParameterException(orgId + " does not match the corresponding value in the object " + orgOrgRelationInfo.getOrgId());
+        }
+        if(!orgPeerId.equals(orgOrgRelationInfo.getRelatedOrgId())) {
+            throw new InvalidParameterException(orgPeerId + " does not match the corresponding value in the object " + orgOrgRelationInfo.getRelatedOrgId());
+        }
+        if(!orgOrgRelationTypeKey.equals(orgOrgRelationInfo.getTypeKey())) {
+            throw new InvalidParameterException(orgOrgRelationTypeKey + " does not match the corresponding value in the object " + orgOrgRelationInfo.getTypeKey());
+        }
+
         //Make sure that the orgs  actually exist
         List<String> ids = new ArrayList<String>();
         ids.add(orgId);
@@ -806,6 +824,16 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgPersonRelationInfo createOrgPersonRelation(String orgId, String personId, String orgPersonRelationTypeKey, OrgPersonRelationInfo orgPersonRelationInfo, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
+        if(!orgId.equals(orgPersonRelationInfo.getOrgId())) {
+            throw new InvalidParameterException(orgId + " does not match the corresponding value in the object " + orgPersonRelationInfo.getOrgId());
+        }
+        if(!personId.equals(orgPersonRelationInfo.getPersonId())) {
+            throw new InvalidParameterException(personId + " does not match the corresponding value in the object " + orgPersonRelationInfo.getPersonId());
+        }
+        if(!orgPersonRelationTypeKey.equals(orgPersonRelationInfo.getTypeKey())) {
+            throw new InvalidParameterException(orgPersonRelationTypeKey + " does not match the corresponding value in the object " + orgPersonRelationInfo.getTypeKey());
+        }
+
         getOrg(orgId, contextInfo);
 
         OrgPersonRelationEntity entity = new OrgPersonRelationEntity(orgPersonRelationInfo);
@@ -920,6 +948,13 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public OrgPositionRestrictionInfo createOrgPositionRestriction(String orgId, String orgPersonRelationTypeKey, OrgPositionRestrictionInfo orgPositionRestrictionInfo, ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
+        if(!orgId.equals(orgPositionRestrictionInfo.getOrgId())) {
+            throw new InvalidParameterException(orgId + " does not match the corresponding value in the object " + orgPositionRestrictionInfo.getOrgId());
+        }
+        if(!orgPersonRelationTypeKey.equals(orgPositionRestrictionInfo.getOrgPersonRelationTypeKey())) {
+            throw new InvalidParameterException(orgPersonRelationTypeKey + " does not match the corresponding value in the object " + orgPositionRestrictionInfo.getOrgPersonRelationTypeKey());
+        }
+
         getOrg(orgId, contextInfo);
 
         OrgPositionRestrictionEntity entity = new OrgPositionRestrictionEntity(orgPositionRestrictionInfo);

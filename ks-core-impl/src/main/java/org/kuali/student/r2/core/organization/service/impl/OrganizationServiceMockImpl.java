@@ -201,6 +201,10 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,PermissionDeniedException
             ,ReadOnlyException
     {
+        if(!orgHierarchyTypeKey.equals(orgHierarchyInfo.getTypeKey())) {
+            throw new InvalidParameterException(orgHierarchyTypeKey + " does not match the corresponding value in the object " + orgHierarchyInfo.getTypeKey());
+        }
+
         //make sure that the root org exists if it is defined
         if(orgHierarchyInfo.getRootOrgId() != null) {
             getOrg(orgHierarchyInfo.getRootOrgId(), contextInfo);
@@ -370,6 +374,9 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,PermissionDeniedException
             ,ReadOnlyException
     {
+        if(!orgTypeKey.equals(orgInfo.getTypeKey())) {
+            throw new InvalidParameterException(orgTypeKey + " does not match the corresponding value in the object " + orgInfo.getTypeKey());
+        }
 
         OrgInfo copy = new OrgInfo(orgInfo);
         if (copy.getId() == null) {
@@ -639,6 +646,16 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
             ,ReadOnlyException {
+        if(!orgId.equals(orgOrgRelationInfo.getOrgId())) {
+            throw new InvalidParameterException(orgId + " does not match the corresponding value in the object " + orgOrgRelationInfo.getOrgId());
+        }
+        if(!orgPeerId.equals(orgOrgRelationInfo.getRelatedOrgId())) {
+            throw new InvalidParameterException(orgPeerId + " does not match the corresponding value in the object " + orgOrgRelationInfo.getRelatedOrgId());
+        }
+        if(!orgOrgRelationTypeKey.equals(orgOrgRelationInfo.getTypeKey())) {
+            throw new InvalidParameterException(orgOrgRelationTypeKey + " does not match the corresponding value in the object " + orgOrgRelationInfo.getTypeKey());
+        }
+
         //Make sure that the orgs  actually exist
         List<String> ids = new ArrayList<String>();
         ids.add(orgId);
@@ -946,6 +963,16 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,PermissionDeniedException
             ,ReadOnlyException
     {
+        if(!orgId.equals(orgPersonRelationInfo.getOrgId())) {
+            throw new InvalidParameterException(orgId + " does not match the corresponding value in the object " + orgPersonRelationInfo.getOrgId());
+        }
+        if(!personId.equals(orgPersonRelationInfo.getPersonId())) {
+            throw new InvalidParameterException(personId + " does not match the corresponding value in the object " + orgPersonRelationInfo.getPersonId());
+        }
+        if(!orgPersonRelationTypeKey.equals(orgPersonRelationInfo.getTypeKey())) {
+            throw new InvalidParameterException(orgPersonRelationTypeKey + " does not match the corresponding value in the object " + orgPersonRelationInfo.getTypeKey());
+        }
+
         getOrg(orgId, contextInfo);
 
         OrgPersonRelationInfo copy = new OrgPersonRelationInfo(orgPersonRelationInfo);
@@ -1130,6 +1157,13 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
             ,OperationFailedException
             ,PermissionDeniedException
             ,ReadOnlyException {
+        if(!orgId.equals(orgPositionRestrictionInfo.getOrgId())) {
+            throw new InvalidParameterException(orgId + " does not match the corresponding value in the object " + orgPositionRestrictionInfo.getOrgId());
+        }
+        if(!orgPersonRelationTypeKey.equals(orgPositionRestrictionInfo.getOrgPersonRelationTypeKey())) {
+            throw new InvalidParameterException(orgPersonRelationTypeKey + " does not match the corresponding value in the object " + orgPositionRestrictionInfo.getOrgPersonRelationTypeKey());
+        }
+
         OrgPositionRestrictionInfo copy = new OrgPositionRestrictionInfo(orgPositionRestrictionInfo);
         if (copy.getId() == null) {
             copy.setId(UUIDHelper.genStringUUID());

@@ -25,14 +25,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kuali.student.common.mock.MockService;
 import org.kuali.student.common.test.util.AttributeTester;
 import org.kuali.student.common.test.util.IdEntityTester;
 import org.kuali.student.common.test.util.MetaTester;
-import org.kuali.student.common.test.util.RichTextTester;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.common.dto.HasAttributesAndMetaInfo;
-import org.kuali.student.r2.common.dto.IdEntityInfo;
 import org.kuali.student.r2.common.dto.RelationshipInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.exceptions.AlreadyExistsException;
@@ -985,7 +981,7 @@ public abstract class TestOrganizationServiceImplConformanceBaseCrud {
 			// METHOD TO INSERT CODE TO SET MORE DTO FIELDS HERE
 			testCrudOrgPositionRestriction_setDTOFieldsForTestReadAfterUpdate (betaDTO);
 			
-			betaDTO = testService.createOrgPositionRestriction ( betaDTO.getId(), betaDTO.getOrgPersonRelationTypeKey(), betaDTO, contextInfo);
+			betaDTO = testService.createOrgPositionRestriction (betaDTO.getOrgId(), betaDTO.getOrgPersonRelationTypeKey(), betaDTO, contextInfo);
 			
 			// -------------------------------------
 			// test bulk get with no ids supplied
