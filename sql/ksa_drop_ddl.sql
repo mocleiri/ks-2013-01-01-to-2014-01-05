@@ -33,6 +33,8 @@ drop table KSSA_DOCUMENT cascade constraints;
 drop table KSSA_ELECTRONIC_CONTACT cascade constraints;
 drop table KSSA_EXTERNAL_STATEMENT cascade constraints;
 drop table KSSA_FLAG_TYPE cascade constraints;
+drop table KSSA_FM_SESSION cascade constraints;
+drop table KSSA_FM_SIGNUP cascade constraints;
 drop table KSSA_GL_BATCH_BASELINE cascade constraints;
 drop table KSSA_GL_BREAKDOWN cascade constraints;
 drop table KSSA_GL_BREAKDOWN_OVERRIDE cascade constraints;
