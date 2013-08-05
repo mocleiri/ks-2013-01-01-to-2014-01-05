@@ -179,7 +179,8 @@
                                     <property name="suggest">
                                         <bean parent="Uif-Suggest">
                                             <property name="valuePropertyName" value="code"/>
-                                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                                            <property name="labelPropertyName" value="description"/>
+                                            <property name="templateOptions" value="minLength:2,delay:0,html:true"/>
                                             <property name="suggestQuery">
                                                 <bean parent="Uif-AttributeQueryConfig">
                                                     <property name="queryMethodToCall" value="getTagsForSuggest"/>
@@ -200,6 +201,7 @@
                                                 <property name="items">
                                                     <list>
                                                         <bean parent="Uif-InputField" p:propertyName="code"/>
+                                                        <bean parent="Uif-MessageField"  p:messageText="(A)" p:render="@{#line.isAdministrative()}"/>
                                                         <bean parent="Uif-ActionLink" p:actionLabel="Remove" p:methodToCall="removeTag" p:actionParameters="tagId:@{#line.id}">
                                                             <property name="actionImage">
                                                                 <bean parent="Uif-Image"

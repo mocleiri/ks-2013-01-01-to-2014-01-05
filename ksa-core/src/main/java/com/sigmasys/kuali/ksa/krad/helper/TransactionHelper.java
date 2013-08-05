@@ -24,7 +24,16 @@ public class TransactionHelper extends ViewHelperServiceImpl {
     }
 
     public List<Tag> getTagsForSuggest(String suggest) {
-        return getAuditableEntityService().getAuditableEntitiesByNamePattern(suggest, Tag.class);
+        List<Tag> tags = getAuditableEntityService().getAuditableEntitiesByNamePattern(suggest, Tag.class);
+
+        for(Tag t : tags) {
+            if(t.isAdministrative()) {
+                t.setDescription("<b>" + t.getCode() + " (A)</b>");
+            } else {
+                t.setDescription(t.getCode());
+            }
+        }
+        return tags;
     }
 
 
