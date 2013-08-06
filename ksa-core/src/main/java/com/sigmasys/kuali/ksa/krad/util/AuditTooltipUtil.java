@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.util;
 
 import com.sigmasys.kuali.ksa.krad.model.TransactionTypeModel;
+import com.sigmasys.kuali.ksa.model.AuditableEntity;
 import com.sigmasys.kuali.ksa.model.Information;
 import com.sigmasys.kuali.ksa.model.InformationAccessLevel;
 import com.sigmasys.kuali.ksa.model.TransactionType;
@@ -30,6 +31,10 @@ public class AuditTooltipUtil {
         }
         return getAuditTooltip(information.getCreatorId(), information.getCreationDate(), information.getEditorId(), information.getLastUpdate(),
                 information.getEffectiveDate(), information.getExpirationDate(), accessCode);
+    }
+
+    public static <T extends AuditableEntity> String getAuditTooltip(AuditableEntity<T> entity) {
+        return getAuditTooltip(entity.getCreatorId(), entity.getCreationDate(), entity.getEditorId(), entity.getLastUpdate(), null, null, null);
     }
 
     private static String getAuditTooltip(String userId, Date createDate, String updateUserId, Date updateDate, Date effectiveDate, Date expirationDate, String viewLevel) {

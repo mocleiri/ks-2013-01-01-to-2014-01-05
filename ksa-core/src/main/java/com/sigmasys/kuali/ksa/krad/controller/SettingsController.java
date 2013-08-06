@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.krad.controller;
 import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.krad.form.SettingsForm;
 import com.sigmasys.kuali.ksa.krad.model.AuditableEntityModel;
+import com.sigmasys.kuali.ksa.krad.model.CashLimitParameterModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -162,6 +164,14 @@ public class SettingsController extends GenericSearchController {
                 }
             }
             form.setConfigParameters(modifiableParameters);
+        } else if("CashLimitParameterPage".equals(pageId)) {
+            form.setAuditableEntity(new CashLimitParameter());
+            List<CashLimitParameter> entities = auditableEntityService.getAuditableEntities(CashLimitParameter.class);
+            List<CashLimitParameterModel> models = new ArrayList<CashLimitParameterModel>(entities.size());
+            for(CashLimitParameter entity : entities){
+                models.add(new CashLimitParameterModel(entity));
+            }
+            form.setCashLimitParameters(models);
         }
 
         return getUIFModelAndView(form);
@@ -303,6 +313,33 @@ public class SettingsController extends GenericSearchController {
         }
 
         return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=saveCashLimitParameters")
+    public ModelAndView saveCashLimitParameters(@ModelAttribute("KualiForm") SettingsForm form) {
+        List<CashLimitParameterModel> parameters = form.getCashLimitParameters();
+
+        try{
+            for(CashLimitParameterModel p : parameters){
+                CashLimitParameter parent = (CashLimitParameter)p.getParentEntity();
+                if(parent.getTag() == null){
+                    Tag tag = auditableEntityService.getAuditableEntity(p.getTagString(), Tag.class);
+                    parent.setTag(tag);
+                }
+                auditableEntityService.persistAuditableEntity(parent);
+            }
+            String statusMsg = "Cash Limit Parameters saved";
+            GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            logger.info(statusMsg);
+        } catch(Throwable t){
+            String statusMsg = "System Parameters did not update: " + t.getLocalizedMessage();
+            GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            logger.error(statusMsg + " " + t.getMessage());
+
+        }
+
+        return getUIFModelAndView(form);
+
     }
 
 

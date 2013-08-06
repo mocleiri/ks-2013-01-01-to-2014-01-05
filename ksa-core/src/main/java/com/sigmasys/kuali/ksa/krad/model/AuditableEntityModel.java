@@ -11,7 +11,7 @@ import java.util.Date;
  */
 public class AuditableEntityModel extends AuditableEntity<Long> {
 
-    private AuditableEntity<Long> parentEntity;
+    protected AuditableEntity<Long> parentEntity;
 
     public AuditableEntityModel() {
     }

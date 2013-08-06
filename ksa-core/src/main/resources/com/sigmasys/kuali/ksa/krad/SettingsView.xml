@@ -23,11 +23,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <bean id="settingsHelper" class="com.sigmasys.kuali.ksa.krad.helper.SettingsHelper"/>
+
     <bean id="SettingsView" parent="Uif-KsaFormView" p:footer.render="false">
         <property name="title" value="Settings"/>
         <property name="headerText" value="Settings"/>
         <property name="entryPageId" value="CurrencyPage"/>
         <property name="navigation" ref="settingsNavigation"/>
+        <property name="viewHelperService" ref="settingsHelper"/>
         <property name="items">
             <list merge="true">
 
@@ -378,7 +381,23 @@
 
                 <!--End Activity Types Page-->
 
-                <!--Begin Activity Types Page-->
+                <!--Begin Cash Limit Parameters Page-->
+
+                <bean parent="Uif-Page" p:id="CashLimitParameterPage" p:title="Cash Limit Parameter Page">
+                    <property name="headerText" value="@{humanType}"/>
+                    <property name="items">
+                        <list>
+                            <ref bean="tableSectionCashLimit"/>
+                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="saveCashLimitParameters"
+                                  p:actionLabel="Save"/>
+
+                        </list>
+                    </property>
+                </bean>
+
+                <!--End Cash Limit Parameters Page-->
+
+                <!--Begin System Configuration Page-->
 
                 <bean parent="Uif-Page" p:id="SystemConfigurationPage" p:title="System Configuration">
                     <property name="headerText" value="System Configuration"/>
@@ -456,6 +475,8 @@
                       p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=FlagTypePage"/>
                 <bean parent="Uif-Link" p:linkText="Activity Types" p:target="_self"
                       p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=ActivityTypePage"/>
+                <bean parent="Uif-Link" p:linkText="Cash Limit Parameter" p:target="_self"
+                      p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CashLimitParameterPage"/>
                 <bean parent="Uif-Link" p:linkText="System Configuration" p:target="_self"
                       p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=SystemConfigurationPage"/>
             </list>
@@ -757,6 +778,69 @@
             </list>
         </property>
     </bean>
+
+    <bean id="tableSectionCashLimit" parent="Uif-Disclosure-TableCollectionSection"
+          p:layoutManager.numberOfColumns="4"
+          p:width="85%">
+        <property name="title" value="View @{humanType}"/>
+        <property name="readOnly" value="false"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.CashLimitParameterModel"/>
+        <property name="propertyName" value="cashLimitParameters"/>
+        <property name="layoutManager.sequencePropertyName" value="id"/>
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+        <property name="layoutManager.richTable.disableTableSort" value="false"/>
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="true"/>
+                <entry key="iDisplayLength" value="20"/>
+            </map>
+        </property>
+
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="Tag" p:propertyName="tagString" p:width="25%" p:readOnly="true" p:render="@{!#isAddLine}"/>
+                <bean parent="Uif-InputField" p:label="Tag" p:propertyName="tagString" p:width="25%" p:render="@{#isAddLine}">
+                    <property name="suggest">
+                        <bean parent="Uif-Suggest">
+                            <property name="labelPropertyName" value="description"/>
+                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                            <property name="suggestQuery">
+                                <bean parent="Uif-AttributeQueryConfig">
+                                    <property name="queryMethodToCall" value="getTagsForSuggest"/>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Lower Limit" p:propertyName="lowerLimit" p:width="5%">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="4"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Upper Limit" p:propertyName="upperLimit" p:width="5%">
+                    <property name="control">
+                        <bean parent="Uif-TextControl" p:size="4"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="active" p:label="Active" p:width="5%">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:label="Friendly Name" p:propertyName="name" p:width="15%"/>
+                <bean parent="Uif-InputField" p:label="Authority Name" p:propertyName="authorityName" p:width="15%"/>
+                <bean parent="Uif-InputField" p:label="XML Element" p:propertyName="xmlElement" p:width="15%"/>
+                <bean parent="Uif-ImageField" p:label="Audit" p:source="../images/audit_guy.png" p:altText="Audit Information" p:title="">
+                    <property name="toolTip">
+                        <bean parent="Uif-Tooltip" p:tooltipContent="@{getAuditTooltip(#line)}" p:width="30%"/>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
 
     <!--
     ********************************************************************************************************************

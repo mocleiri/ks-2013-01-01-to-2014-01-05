@@ -1,6 +1,8 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.krad.model.AuditableEntityModel;
+import com.sigmasys.kuali.ksa.krad.model.CashLimitParameterModel;
+import com.sigmasys.kuali.ksa.krad.util.AuditTooltipUtil;
 import com.sigmasys.kuali.ksa.model.*;
 
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ public class SettingsForm extends AbstractViewModel {
    private AuditableEntityModel auditableEntity;
 
    private List<ConfigParameter> configParameters;
+
+    private List<CashLimitParameterModel> cashLimitParameters;
 
     /*
       Get/Set methods
@@ -102,5 +106,20 @@ public class SettingsForm extends AbstractViewModel {
     
     public void setConfigParameters(List<ConfigParameter> parameters) {
         this.configParameters = parameters;
+    }
+
+    public List<CashLimitParameterModel> getCashLimitParameters() {
+        return cashLimitParameters;
+    }
+
+    public void setCashLimitParameters(List<CashLimitParameterModel> cashLimitParameters) {
+        this.cashLimitParameters = cashLimitParameters;
+    }
+
+    public <T extends AuditableEntity> String getAuditTooltip(AuditableEntityModel entity){
+        if(entity.getParentEntity() == null) {
+            return "";
+        }
+        return AuditTooltipUtil.getAuditTooltip(entity.getParentEntity());
     }
 }
