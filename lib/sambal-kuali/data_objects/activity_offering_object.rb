@@ -316,6 +316,7 @@ class ActivityOffering
         page.colocated_co_input_field.value = ao_to_colo.parent_course_offering.course
         page.colocated_ao_input_field.value = ao_to_colo.code
         page.add_colocated
+        page.add_colocate_ao_confirmation_add
       end
 
       if opts[:colocate_shared_enrollment]
