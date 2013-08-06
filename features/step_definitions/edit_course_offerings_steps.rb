@@ -263,3 +263,54 @@ Then /^I verify that I "(can|cannot)" manage course offerings$/ do |can_manage|
   end
 end
 
+When /^I "(set|unset)" the Honors Course selection$/ do |shouldSetHonorsCourse|
+  honors_flag = "NO"
+  if shouldSetHonorsCourse == "set"
+    honors_flag = "YES"
+  end
+  @course_offering.edit_offering :honors_flag => honors_flag
+end
+
+And /^I save the changes and remain on the Edit CO page$/ do
+  on CourseOfferingEdit do |page|
+    page.save_progress
+  end
+end
+
+And /^I jump to "(the previous|the next|an arbitrary)" CO while "(saving|not saving)" changes$/ do |coDirection, shouldSaveChanges|
+
+  on CourseOfferingEdit do |page|
+
+    # which CO to navigate to
+    case coDirection
+      when "the previous"
+        page.edit_previous_co
+      when "the next"
+        page.edit_next_co
+      else    # nav to an arbitrary CO via the drop-down selector
+        page.edit_relatedCos_dropdown_list.options[10].select
+    end
+
+    # whether changes should be saved
+    if shouldSaveChanges == "saving"
+      page.navigation_save_and_continue
+    else
+      page.navigation_cancel_and_continue
+    end
+  end
+
+end
+
+Then /^I can verify that the Honors Course setting is "(set|not set)"$/ do |shouldHonorsCourseBeSet|
+  honors_flag = "NO"
+  if shouldHonorsCourseBeSet == "set"
+    honors_flag = "YES"
+  end
+
+  @course_offering.view_course_details
+  on ManageCourseDetails do |page|
+    page.honors_flag.should == honors_flag
+  end
+end
+
+
