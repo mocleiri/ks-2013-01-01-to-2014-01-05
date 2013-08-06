@@ -44,13 +44,9 @@ import java.io.Serializable;
                 "weeklyInclassContactHours", "weeklyOutofclassContactHours", 
                 "weeklyTotalContactHours",  "isEvaluated",
                 "maximumEnrollment", "minimumEnrollment","isMaxEnrollmentEstimate",
-                "finalExamStartTime", "finalExamEndTime", 
-                "finalExamSpaceCode", "activityOfferingURL", 
+                "activityOfferingURL",
                 "courseOfferingId", "courseOfferingTitle", 
-                "courseOfferingCode", "hasWaitlist", "waitlistTypeKey",
-                "waitlistMaximum", "isWaitlistCheckinRequired", 
-                "waitlistCheckinFrequency",
-                "isColocated",
+                "courseOfferingCode", "isColocated",
                 "meta", "attributes", "_futureElements"})
 
 public class ActivityOfferingInfo
@@ -109,15 +105,6 @@ public class ActivityOfferingInfo
 
     @XmlElement
     private Integer minimumEnrollment;
-        
-    @XmlElement
-    private Date finalExamStartTime;
-    
-    @XmlElement
-    private Date finalExamEndTime;
-
-    @XmlElement
-    private String finalExamSpaceCode;
 
     @XmlElement
     private Boolean isEvaluated;
@@ -133,21 +120,6 @@ public class ActivityOfferingInfo
 
     @XmlElement
     private String courseOfferingCode;
-
-    @XmlElement
-    private Boolean hasWaitlist;
-
-    @XmlElement
-    private String waitlistTypeKey;
-
-    @XmlElement
-    private Integer waitlistMaximum;
-
-    @XmlElement
-    private Boolean isWaitlistCheckinRequired;
-
-    @XmlElement
-    private TimeAmountInfo waitlistCheckinFrequency;
 
     @XmlAnyElement
     private List<Element> _futureElements;
@@ -209,23 +181,8 @@ public class ActivityOfferingInfo
 
         this.isMaxEnrollmentEstimate = offering.getIsMaxEnrollmentEstimate();
 
-        if (offering.getFinalExamStartTime() != null) {
-            this.finalExamStartTime = new Date(offering.getFinalExamStartTime().getTime());
-        }
-
-        if (offering.getFinalExamEndTime() != null) {
-            this.finalExamEndTime = new Date(offering.getFinalExamEndTime().getTime());
-        }
-
-        this.finalExamSpaceCode = offering.getFinalExamSpaceCode();
         this.isEvaluated = offering.getIsEvaluated();
         this.activityOfferingURL = offering.getActivityOfferingURL();
-
-        this.hasWaitlist = offering.getHasWaitlist();
-        this.isWaitlistCheckinRequired = offering.getIsWaitlistCheckinRequired();
-        this.waitlistCheckinFrequency = new TimeAmountInfo(offering.getWaitlistCheckinFrequency());
-        this.waitlistMaximum = offering.getWaitlistMaximum();
-        this.waitlistTypeKey = offering.getWaitlistTypeKey();
     }
 
     @Override
@@ -380,33 +337,6 @@ public class ActivityOfferingInfo
         this.minimumEnrollment = minimumEnrollment;
     }
 
-    @Override
-    public Date getFinalExamStartTime() {
-        return finalExamStartTime;
-    }
-
-    public void setFinalExamStartTime(Date finalExamStartTime) {
-        this.finalExamStartTime = finalExamStartTime;
-    }
-
-    @Override
-    public Date getFinalExamEndTime() {
-        return finalExamEndTime;
-    }
-
-    public void setFinalExamEndTime(Date finalExamEndTime) {
-        this.finalExamEndTime = finalExamEndTime;
-    }
-
-    @Override
-    public String getFinalExamSpaceCode() {
-        return finalExamSpaceCode;
-    }
-
-    public void setFinalExamSpaceCode(String finalExamSpaceCode) {
-        this.finalExamSpaceCode = finalExamSpaceCode;
-    }
-
     public void setHonorsOffering(Boolean honorsOffering) {
         isHonorsOffering = honorsOffering;
     }
@@ -459,51 +389,6 @@ public class ActivityOfferingInfo
 
     public void setCourseOfferingTitle(String courseOfferingTitle) {
         this.courseOfferingTitle = courseOfferingTitle;
-    }
-
-    @Override
-    public Boolean getHasWaitlist() {
-        return hasWaitlist;
-    }
-
-    public void setHasWaitlist(Boolean hasWaitlist) {
-        this.hasWaitlist = hasWaitlist;
-    }
-
-    @Override
-    public String getWaitlistTypeKey() {
-        return waitlistTypeKey;
-    }
-
-    public void setWaitlistTypeKey(String waitlistTypeKey) {
-        this.waitlistTypeKey = waitlistTypeKey;
-    }
-
-    @Override
-    public Integer getWaitlistMaximum() {
-        return waitlistMaximum;
-    }
-
-    public void setWaitlistMaximum(Integer waitlistMaximum) {
-        this.waitlistMaximum = waitlistMaximum;
-    }
-
-    @Override
-    public Boolean getIsWaitlistCheckinRequired() {
-        return isWaitlistCheckinRequired;
-    }
-
-    public void setIsWaitlistCheckinRequired(Boolean isWaitlistCheckinRequired) {
-        this.isWaitlistCheckinRequired = isWaitlistCheckinRequired;
-    }
-
-    @Override
-    public TimeAmountInfo getWaitlistCheckinFrequency() {
-        return waitlistCheckinFrequency;
-    }
-
-    public void setWaitlistCheckinFrequency(TimeAmountInfo waitlistCheckinFrequency) {
-        this.waitlistCheckinFrequency = waitlistCheckinFrequency;
     }
 
     public void setSchedulingStateKey(String schedulingStateKey) {

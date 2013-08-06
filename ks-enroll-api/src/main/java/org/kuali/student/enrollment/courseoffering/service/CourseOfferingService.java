@@ -1979,6 +1979,25 @@ public interface CourseOfferingService
      */
     public ActivityOfferingClusterInfo getActivityOfferingCluster(@WebParam(name = "activityOfferingClusterId") String activityOfferingClusterId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
+
+    /**
+     * Retrieves a list of activity offering clusters using the given id list.
+     * The returned list may be in any order and if duplicate Ids are supplied, a unique set may or may not be returned.
+     *
+     * @param activityOfferingClusterIds List of unique Ids of ActivityOfferingClusters
+     * @param contextInfo            Context information containing the principalId
+     *                            and locale information about the caller of
+     *                            service operation
+     * @return Activity offering cluster list
+     * @throws DoesNotExistException     activityOfferingClusterId in the list not
+     *                                   found
+     * @throws InvalidParameterException invalid activityOfferingClusterIds
+     * @throws MissingParameterException missing activityOfferingClusterIds
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException authorization failure
+     */
+    public List<ActivityOfferingClusterInfo> getActivityOfferingClustersByIds(@WebParam(name = "activityOfferingClusterIds") List<String> activityOfferingClusterIds, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+
     /**
      * Retrieves a list of ActivityOfferingClusters associated with a
      * FormatOffering
