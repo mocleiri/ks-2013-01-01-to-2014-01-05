@@ -184,10 +184,12 @@ class HolidayBase < BasePage
   element(:holiday_type) { |b| b.frm.select(name: "newCollectionLines['holidays'].typeKey") }
   element(:holiday_start_date) { |b| b.frm.text_field(name: "newCollectionLines['holidays'].startDate") }
   element(:holiday_start_time) { |b| b.frm.text_field(name: "newCollectionLines['holidays'].startTime") }
-  element(:holiday_start_meridian) { |b| b.frm.select(name: "newCollectionLines['holidays'].startTimeAmPm") }
+  element(:holiday_start_meridian_am) { |b| b.frm.radio(name: "newCollectionLines['holidays'].startTimeAmPm", value: "AM") }
+  element(:holiday_start_meridian_pm) { |b| b.frm.radio(name: "newCollectionLines['holidays'].startTimeAmPm", value: "PM") }
   element(:holiday_end_date) { |b| b.frm.text_field(name: "newCollectionLines['holidays'].endDate") }
   element(:holiday_end_time) { |b| b.frm.text_field(name: "newCollectionLines['holidays'].endTime") }
-  element(:holiday_end_meridian) { |b| b.frm.select(name: "newCollectionLines['holidays'].endTimeAmPm") }
+  element(:holiday_end_meridian_am) { |b| b.frm.radio(name: "newCollectionLines['holidays'].endTimeAmPm", value: "AM") }
+  element(:holiday_end_meridian_pm) { |b| b.frm.radio(name: "newCollectionLines['holidays'].endTimeAmPm", value: "PM") }
   element(:instructional) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].instructional") }
   element(:add_link) { |b| b.frm.link(id: "KS-HolidayCalendar-HolidaySection_add") }
 
@@ -197,6 +199,10 @@ class HolidayBase < BasePage
   action(:make_official) { |b| b.make_official_link.click; b.loading.wait_while_present }
   action(:update_official) { |b| b.update_official_button.click; b.loading.wait_while_present }
   action(:save) { |b| b.frm.button(text: "Save").click; b.loading.wait_while_present }
+  action(:holiday_start_meridian_am_set) { |b| b.holiday_start_meridian_am.set; b.loading.wait_while_present}
+  action(:holiday_start_meridian_pm_set) { |b| b.holiday_start_meridian_pm.set; b.loading.wait_while_present}
+  action(:holiday_end_meridian_am_set) { |b| b.holiday_end_meridian_am.set; b.loading.wait_while_present}
+  action(:holiday_end_meridian_pm_set) { |b| b.holiday_end_meridian_pm.set; b.loading.wait_while_present}
 
 end
 
@@ -333,6 +339,22 @@ module Holidays
       instructional.set
     else
       instructional.clear
+    end
+  end
+
+  def start_meridian(merid)
+    if merid == "am"
+      holiday_start_meridian_am_set
+    else
+      holiday_start_meridian_pm_set
+    end
+  end
+
+  def end_meridian(merid)
+    if merid == "am"
+      holiday_end_meridian_am_set
+    else
+      holiday_end_meridian_pm_set
     end
   end
 
