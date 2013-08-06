@@ -59,7 +59,7 @@ limitations under the License.
     <bean id="KRMS-FreeForm-InputField" parent="KRMS-FreeForm-InputField-parent"/>
 
     <bean id="KRMS-OrgDepartment-Field-Parent" parent="Uif-InputField-LabelTop"
-          p:propertyName="proposition.termParameter" p:required="true">
+          p:propertyName="proposition.orgInfo.longName" p:required="true">
         <property name="style" value="width:450px;"/>
         <!--<property name="suggest">
             <bean parent="Uif-Suggest">
@@ -86,10 +86,10 @@ limitations under the License.
 
     <bean id="KRMS-Administering-Org-Field" parent="KRMS-OrgDepartment-Field-Parent" p:label="Organization"/>
 
-    <bean id="KRMS-ClassStanding-Group" parent="KRMS-CustomComponent-BoxGroup">
+    <bean id="KRMS-Population-Group" parent="KRMS-CustomComponent-BoxGroup">
         <property name="items">
             <list>
-                <ref bean="KRMS-ClassStanding-Field"/>
+                <ref bean="KRMS-Population-Field"/>
             </list>
         </property>
     </bean>
@@ -108,106 +108,33 @@ limitations under the License.
         <property name="viewName" value="krmsOrgDepartmentView"/>
         <property name="fieldConversions">
             <map>
-                <entry key="longName" value="proposition.termParameter"/>
+                <entry key="longName" value="proposition.orgInfo.longName"/>
                 <entry key="id" value="proposition.orgInfo.id"/>
             </map>
         </property>
     </bean>
 
-    <bean id="KRMS-ClassStanding-Field-Parent" parent="Uif-InputField-LabelTop"
-          p:propertyName="proposition.classStanding" p:required="true">
+    <bean id="KRMS-Population-Field-Parent" parent="Uif-InputField-LabelTop"
+          p:propertyName="proposition.population.name" p:required="true">
         <property name="style" value="width:450px;"/>
         <property name="control">
             <bean parent="Uif-TextControl" p:size="60" p:style="background-color: #DDDDDD;width:370px; margin-top:null 2px;"
                   p:readOnly="true"/>
         </property>
         <property name="quickfinder">
-            <bean parent="KRMS-ClassStanding-QuickFinder"/>
+            <bean parent="KRMS-Population-QuickFinder"/>
         </property>
     </bean>
-    <bean id="KRMS-ClassStanding-Field" parent="KRMS-ClassStanding-Field-Parent" p:label="Class Standing"/>
+    <bean id="KRMS-Population-Field" parent="KRMS-Population-Field-Parent" p:label="Population"/>
 
-    <bean id="KRMS-ClassStanding-QuickFinder" parent="KRMS-QuickFinder">
+    <bean id="KRMS-Population-QuickFinder" parent="KRMS-QuickFinder">
         <property name="dataObjectClassName" value="org.kuali.student.enrollment.class2.population.dto.PopulationWrapper"/>
-        <property name="viewName" value="krmsClassStandingView"/>
+        <property name="viewName" value="krmsPopulationView"/>
         <property name="fieldConversions">
             <map>
-                <entry key="populationInfo.name" value="proposition.classStanding"/>
-                <entry key="id" value="proposition.populationWrapper.id"/>
+                <entry key="populationInfo.name" value="proposition.population.name"/>
+                <entry key="id" value="proposition.population.id"/>
             </map>
-        </property>
-    </bean>
-
-    <bean id="PropositionBo-MaintenanceView-Custom-parentBean" abstract="true" parent="Uif-VerticalBoxSection">
-        <property name="items">
-            <list>
-
-                <ref bean="KRMS-PropositionEdit-DefineSection"/>
-                <ref bean="KRMS-PropositionEdit-DetailSection"/>
-
-            </list>
-        </property>
-        <property name="footer">
-            <!--Add button to update the preview-->
-            <bean id="PropEditButtonPanel" parent="Uif-HorizontalBoxGroup">
-                <property name="items">
-                    <list>
-                        <!--bean id="update-button" parent="Uif-SecondaryActionButton-Small" p:performClientSideValidation="true" p:disabled="@{!#dp.ruleEditor.permission.previewChangeRuleAction}"-->
-                        <bean id="KS-RulePreview-Button" parent="Uif-SecondaryActionButton-Small" p:performClientSideValidation="true">
-                            <property name="actionLabel" value="Preview Change"/>
-                            <property name="actionScript" value="updateProposition('updateProposition', 'KRMS-RuleEditor-TreeGroup');"/>
-                        </bean>
-                        <bean id="KS-CancelProp-Button" parent="KS-Uif-ActionLink"
-                              p:style="margin-left: 0.5em;margin-top: 0.3em;color: #3F7826;">
-                            <property name="actionLabel" value="Cancel"/>
-                            <property name="actionScript" value="updateProposition('cancelEditProposition', 'KRMS-RuleEditor-TreeGroup');"/>
-                        </bean>
-                    </list>
-                </property>
-            </bean>
-        </property>
-    </bean>
-
-    <bean id="KRMS-PropositionEdit-DefineSection-parentBean" abstract="true" parent="KRMS-VerticalBoxSubSection">
-        <property name="headerText" value="Define Rule Statement"/>
-        <property name="items">
-            <list>
-
-                <!-- Hidden ID field -->
-                <bean parent="KRMS-PropKey-HiddenField"/>
-
-                <!--Add the type droplist-->
-                <bean id="KRMS-PropositionType-Dropdown" parent="Uif-InputField-LabelTop" p:propertyName="proposition.typeId"
-                      p:showLabel="true" p:label="Rule Statement Option" p:maxLength="40" p:required="true">
-                    <property name="control">
-                        <bean parent="Uif-DropdownControl" p:cssClasses="categorySelect"
-                              p:onChangeScript="ajaxCallPropositionTree('updatePropositionType', 'KRMS-PropositionEdit-DetailSection');"/>
-                    </property>
-                    <property name="optionsFinder">
-                        <bean class="org.kuali.student.core.krms.keyvalues.KSPropositionTypeValuesFinder"/>
-                    </property>
-                </bean>
-
-            </list>
-        </property>
-    </bean>
-
-    <bean id="KRMS-RuleEditor-TreeExpandCollapse" parent="Uif-HorizontalFieldGroup" p:showLabel="false">
-        <property name="items">
-            <list>
-                <bean parent="KS-Uif-ActionLink" p:actionScript="jq('.jstree').jstree('open_all');"
-                      p:actionLabel="[+] expand all" p:style="margin-left: 2em;">
-                    <property name="actionImage">
-                        <null/>
-                    </property>
-                </bean>
-                <bean parent="KS-Uif-ActionLink" p:actionScript="jq('.jstree').jstree('close_all');"
-                      p:actionLabel="[-] collapse all" p:style="margin-right: 15pt;margin-left:1em">
-                    <property name="actionImage">
-                        <null/>
-                    </property>
-                </bean>
-            </list>
         </property>
     </bean>
 

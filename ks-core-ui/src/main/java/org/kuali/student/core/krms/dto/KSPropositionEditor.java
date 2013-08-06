@@ -18,6 +18,7 @@ package org.kuali.student.core.krms.dto;
 import org.kuali.rice.krms.api.repository.proposition.PropositionDefinitionContract;
 import org.kuali.rice.krms.dto.PropositionEditor;
 import org.kuali.student.r2.core.organization.dto.OrgInfo;
+import org.kuali.student.r2.core.population.dto.PopulationInfo;
 
 /**
  * @author Kuali Student Team
@@ -29,6 +30,7 @@ public class KSPropositionEditor extends PropositionEditor {
     private OrgInfo orgInfo;
     private Integer duration;
     private String durationType;
+    private PopulationInfo population;
 
     public KSPropositionEditor(){
         super();
@@ -69,4 +71,11 @@ public class KSPropositionEditor extends PropositionEditor {
         this.durationType = durationType;
     }
 
+    public PopulationInfo getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(PopulationInfo population) {
+        this.population = population;
+    }
 }

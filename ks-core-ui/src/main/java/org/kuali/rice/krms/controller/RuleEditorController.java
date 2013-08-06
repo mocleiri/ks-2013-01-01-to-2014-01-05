@@ -66,11 +66,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=goToRuleView")
     public ModelAndView goToRuleView(@ModelAttribute("KualiForm") UifFormBase form, @SuppressWarnings("unused") BindingResult result,
-                                     @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+                                     @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
 
         //Clear the client state on new edit rule.
         form.getClientStateForSyncing().clear();
@@ -92,11 +91,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=deleteRule")
     public ModelAndView deleteRule(@ModelAttribute("KualiForm") UifFormBase form, @SuppressWarnings("unused") BindingResult result,
-                                   @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+                                   @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
 
         MaintenanceDocumentForm document = (MaintenanceDocumentForm) form;
         RuleManagementWrapper ruleWrapper = AgendaUtilities.getRuleWrapper(document);
@@ -127,11 +125,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=addRule")
     public ModelAndView addRule(@ModelAttribute("KualiForm") UifFormBase form, @SuppressWarnings("unused") BindingResult result,
-                                @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+                                @SuppressWarnings("unused") HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
 
         //Clear the client state on new edit rule.
         form.getClientStateForSyncing().clear();
@@ -158,8 +155,7 @@ public class RuleEditorController extends MaintenanceDocumentController {
      */
     @RequestMapping(params = "methodToCall=ajaxRefresh")
     public ModelAndView ajaxRefresh(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                    HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                    HttpServletRequest request, HttpServletResponse response) {
         return getUIFModelAndView(form);
     }
 
@@ -213,11 +209,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=goToEditProposition")
     public ModelAndView goToEditProposition(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                            HttpServletRequest request, HttpServletResponse response) {
 
         RuleViewHelperService viewHelper = this.getViewHelper(form);
         RuleEditor ruleEditor = getRuleEditor(form);
@@ -255,11 +250,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=addProposition")
     public ModelAndView addProposition(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                       HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                       HttpServletRequest request, HttpServletResponse response) {
 
         RuleEditor ruleEditor = getRuleEditor(form);
         String selectedPropKey = ruleEditor.getSelectedKey();
@@ -332,7 +326,6 @@ public class RuleEditorController extends MaintenanceDocumentController {
             }
         } else {
             // special case, if root has no children, add a new simple proposition
-            // todo: how to add compound proposition. - just add another to the firs simple
             if (root.getChildren().isEmpty()) {
                 PropositionEditor blank = viewHelper.createSimplePropositionBoStub(null);
                 blank.setRuleId(ruleEditor.getId());
@@ -386,12 +379,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=movePropositionUp")
     public ModelAndView movePropositionUp(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                          HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                          HttpServletRequest request, HttpServletResponse response) {
         moveSelectedProposition(form, true);
 
         return getUIFModelAndView(form);
@@ -405,12 +396,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=movePropositionDown")
     public ModelAndView movePropositionDown(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                            HttpServletRequest request, HttpServletResponse response) {
         moveSelectedProposition(form, false);
 
         return getUIFModelAndView(form);
@@ -430,7 +419,7 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param up   whether the desired move is in an up direction
      * @throws Exception
      */
-    private void moveSelectedProposition(UifFormBase form, boolean up) throws Exception {
+    private void moveSelectedProposition(UifFormBase form, boolean up) {
 
         RuleEditor ruleEditor = getRuleEditor(form);
         String selectedPropKey = ruleEditor.getSelectedKey();
@@ -503,12 +492,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=movePropositionLeft")
     public ModelAndView movePropositionLeft(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                            HttpServletRequest request, HttpServletResponse response) {
 
         RuleEditor ruleEditor = getRuleEditor(form);
         String selectedpropKey = ruleEditor.getSelectedKey();
@@ -557,12 +544,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=movePropositionRight")
     public ModelAndView movePropositionRight(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                             HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                             HttpServletRequest request, HttpServletResponse response) {
 
         RuleEditor ruleEditor = getRuleEditor(form);
         String selectedpropKey = ruleEditor.getSelectedKey();
@@ -606,8 +591,7 @@ public class RuleEditorController extends MaintenanceDocumentController {
      */
     @RequestMapping(params = "methodToCall=togglePropositionSimpleCompound")
     public ModelAndView togglePropositionSimpleCompound(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                                        HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                                        HttpServletRequest request, HttpServletResponse response) {
 
         RuleEditor ruleEditor = getRuleEditor(form);
         String selectedPropKey = ruleEditor.getSelectedKey();
@@ -666,8 +650,7 @@ public class RuleEditorController extends MaintenanceDocumentController {
      */
     @RequestMapping(params = "methodToCall=pasteProposition")
     public ModelAndView pasteProposition(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                         HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                         HttpServletRequest request, HttpServletResponse response) {
 
         boolean cutAction = true;
         RuleEditor ruleEditor = getRuleEditor(form);
@@ -776,12 +759,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=deleteProposition")
     public ModelAndView deleteProposition(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                          HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                          HttpServletRequest request, HttpServletResponse response) {
         RuleEditor ruleEditor = getRuleEditor(form);
         String selectedpropKey = ruleEditor.getSelectedKey();
         Node<RuleEditorTreeNode, String> root = ruleEditor.getEditTree().getRootElement();
@@ -821,12 +802,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=updateCompoundOperator")
     public ModelAndView updateCompoundOperator(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                               HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                               HttpServletRequest request, HttpServletResponse response) {
 
         RuleEditor ruleEditor = getRuleEditor(form);
         String selectedpropKey = ruleEditor.getSelectedKey();
@@ -858,15 +837,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      */
     @RequestMapping(params = "methodToCall=updateProposition")
     public ModelAndView updateProposition(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                          HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        RuleEditor ruleEditor = getRuleEditor(form);
-        if (ruleEditor.getProposition() != null) {
-            PropositionTreeUtil.resetNewProp(ruleEditor.getPropositionEditor());
-        }
+                                          HttpServletRequest request, HttpServletResponse response) {
 
         //Reset the description on current selected proposition
+        RuleEditor ruleEditor = getRuleEditor(form);
         PropositionEditor proposition = PropositionTreeUtil.getProposition(ruleEditor);
         if (proposition != null) {
 
@@ -902,6 +876,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
                 this.setUpdatedProposition(ruleEditor.getPropositionEditor(), proposition);
             }
 
+        }
+
+        if (ruleEditor.getProposition() != null) {
+            PropositionTreeUtil.resetNewProp(ruleEditor.getPropositionEditor());
         }
 
         // clear dialog history so user can press the button again
@@ -941,7 +919,7 @@ public class RuleEditorController extends MaintenanceDocumentController {
         }
     }
 
-    protected void compareRulePropositions(MaintenanceDocumentForm form, RuleEditor ruleEditor) throws Exception {
+    protected void compareRulePropositions(MaintenanceDocumentForm form, RuleEditor ruleEditor) {
 
         RuleManagementWrapper ruleWrapper = (RuleManagementWrapper) form.getDocument().getNewMaintainableObject().getDataObject();
 
@@ -967,18 +945,21 @@ public class RuleEditorController extends MaintenanceDocumentController {
      */
     @RequestMapping(params = "methodToCall=updateRule")
     public ModelAndView updateRule(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                   HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                   HttpServletRequest request, HttpServletResponse response) {
 
         RuleEditor ruleEditor = getRuleEditor(form);
+
+        //Return with error message if user is currently editing a proposition.
+        PropositionEditor proposition = PropositionTreeUtil.getProposition(ruleEditor);
+        if ((proposition!=null) && (proposition.isEditMode())) {
+            GlobalVariables.getMessageMap().putErrorForSectionId(KRMSConstants.KRMS_PROPOSITION_DETAILSECTION_ID, KRMSConstants.KRMS_MSG_ERROR_RULE_PREVIEW);
+            return getUIFModelAndView(form);
+        }
+
         if (!(ruleEditor.getProposition() == null && ruleEditor.getPropId() == null)) {
+            PropositionTreeUtil.resetEditModeOnPropositionTree(ruleEditor.getPropositionEditor());
             ruleEditor.setDummy(false);
             PropositionTreeUtil.resetNewProp(ruleEditor.getPropositionEditor());
-
-            if (PropositionTreeUtil.resetEditModeOnPropositionTree(ruleEditor.getPropositionEditor())) {
-                GlobalVariables.getMessageMap().putErrorForSectionId(KRMSConstants.KRMS_PROPOSITION_DETAILSECTION_ID, KRMSConstants.KRMS_MSG_ERROR_RULE_PREVIEW);
-                return getUIFModelAndView(form);
-            }
         }
         this.getViewHelper(form).refreshViewTree(ruleEditor);
 
@@ -1006,8 +987,7 @@ public class RuleEditorController extends MaintenanceDocumentController {
      */
     @RequestMapping(params = "methodToCall=updatePreview")
     public ModelAndView updatePreview(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                      HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                      HttpServletRequest request, HttpServletResponse response) {
         RuleEditor ruleEditor = getRuleEditor(form);
         parseRuleExpression(ruleEditor, this.getViewHelper(form));
 
@@ -1033,11 +1013,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
     private void parseRuleExpression(RuleEditor ruleEditor, RuleViewHelperService viewHelper) {
         RuleLogicExpressionParser ruleLogicExpressionParser = new RuleLogicExpressionParser();
         ruleLogicExpressionParser.setExpression(ruleEditor.getLogicArea());
-        List<String> propsAlpha = this.getPropositionKeys(new ArrayList<String>(), ruleEditor.getPropositionEditor());
 
         //validate the expression
         List<String> errorMessages = new ArrayList<String>();
-        boolean validExpression = ruleLogicExpressionParser.validateExpression(errorMessages, propsAlpha);
+        boolean validExpression = ruleLogicExpressionParser.validateExpression(errorMessages);
 
         //show errors and don't change anything else
         if (!validExpression) {
@@ -1076,12 +1055,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=cancelEditProposition")
     public ModelAndView cancelEditProposition(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                              HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                              HttpServletRequest request, HttpServletResponse response) {
 
         RuleEditor ruleEditor = getRuleEditor(form);
         PropositionEditor root = ruleEditor.getPropositionEditor();
@@ -1123,12 +1100,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=cancelEditRule")
     public ModelAndView cancelEditRule(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                       HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                       HttpServletRequest request, HttpServletResponse response) {
 
         RuleEditor ruleEditor = getRuleEditor(form);
         PropositionEditor proposition = ruleEditor.getPropositionEditor();
@@ -1153,12 +1128,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=updatePropositionType")
     public ModelAndView updatePropositionType(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                              HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+                                              HttpServletRequest request, HttpServletResponse response) {
 
         PropositionEditor proposition = PropositionTreeUtil.getProposition(this.getRuleEditor(form));
         proposition.clear();
@@ -1175,11 +1148,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request  - http request
      * @param response - http response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=compareRules")
     public ModelAndView compareRules(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                     HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                     HttpServletRequest request, HttpServletResponse response) {
 
         doCompareRules(form);
 
@@ -1187,7 +1159,7 @@ public class RuleEditorController extends MaintenanceDocumentController {
         return showDialog(KRMSConstants.KSKRMS_DIALOG_COMPARE, form, request, response);
     }
 
-    protected void doCompareRules(UifFormBase form) throws Exception {
+    protected void doCompareRules(UifFormBase form) {
         MaintenanceDocumentForm document = (MaintenanceDocumentForm) form;
         Object dataObject = document.getDocument().getNewMaintainableObject().getDataObject();
         if (dataObject instanceof RuleManagementWrapper) {
@@ -1226,11 +1198,10 @@ public class RuleEditorController extends MaintenanceDocumentController {
      * @param request
      * @param response
      * @return
-     * @throws Exception
      */
     @RequestMapping(params = "methodToCall=getSelectedKey")
     public ModelAndView getSelectedKey(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
-                                       HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                       HttpServletRequest request, HttpServletResponse response) {
 
         //Clear the current states of the tabs to open the first tab again with the edit tree.
         Map<String, String> states = (Map<String, String>) form.getClientStateForSyncing().get(KRMSConstants.KRMS_RULE_TABS_ID);

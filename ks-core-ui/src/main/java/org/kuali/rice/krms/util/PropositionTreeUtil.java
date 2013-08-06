@@ -152,39 +152,6 @@ public class PropositionTreeUtil {
         return editMode;
     }
 
-    //public static boolean resetEditModeOnPropositionTree(Node<RuleEditorTreeNode, String> currentNode) {
-        //boolea//n editMode = false;
-        //if (currentNode.getData() != null) {
-        //    RuleEditorTreeNode dataNode = currentNode.getData();
-        //    editMode = dataNode.getProposition().isEditMode();
-        //    dataNode.getProposition().setEditMode(false);
-        //}
-        //List<Node<RuleEditorTreeNode, String>> children = currentNode.getChildren();
-        //for (Node<RuleEditorTreeNode, String> child : children) {
-        //    if (resetEditModeOnPropositionTree(child)) {
-        //        editMode = true;
-        //    }
-        //
-        //}
-        //return false;
-    //}
-
-    //public static Node<RuleEditorTreeNode, String> findPropositionTreeNode(Node<RuleEditorTreeNode, String> currentNode, String selectedPropId) {
-    //    Node<RuleEditorTreeNode, String> bingo = null;
-    //    if (currentNode.getData() != null) {
-    //        RuleEditorTreeNode dataNode = currentNode.getData();
-    //        if (selectedPropId.equalsIgnoreCase(dataNode.getProposition().getId())) {
-    //            return currentNode;
-    //        }
-    //    }
-
-    //    for (Node<RuleEditorTreeNode, String> child : currentNode.getChildren()) {
-    //        bingo = findPropositionTreeNode(child, selectedPropId);
-    //        if (bingo != null) break;
-    //    }
-    //    return bingo;
-    //}
-
     /**
      * Builds a logical string expression from the proposition tree.
      *
@@ -194,23 +161,23 @@ public class PropositionTreeUtil {
     public static String configureLogicExpression(PropositionEditor proposition) {
         // If the prop is a compound proposition, calls itself for each of the compoundComponents
         if (PropositionType.COMPOUND.getCode().equalsIgnoreCase(proposition.getPropositionTypeCode())) {
-            String logicExpression = "";
+            StringBuilder logicExpression = new StringBuilder();
             boolean first = true;
             for (PropositionEditor child : proposition.getCompoundEditors()) {
                 // add an opcode node in between each of the children.
                 if (!first) {
-                    logicExpression += " " + getLabelForOperator(proposition.getCompoundOpCode()) + " ";
+                    logicExpression.append(" " + getLabelForOperator(proposition.getCompoundOpCode()) + " ");
                 }
                 first = false;
                 // call to build the childs node
                 String compoundExpression = configureLogicExpression(child);
                 if (compoundExpression.length() > 1) {
-                    logicExpression += "(" + compoundExpression + ")";
+                    logicExpression.append("(" + compoundExpression + ")");
                 } else {
-                    logicExpression += compoundExpression;
+                    logicExpression.append(compoundExpression);
                 }
             }
-            return logicExpression;
+            return logicExpression.toString();
         } else {
             return proposition.getKey();
         }
