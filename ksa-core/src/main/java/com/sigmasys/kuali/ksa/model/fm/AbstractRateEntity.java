@@ -32,7 +32,7 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> {
 
     protected Integer minLimitUnits;
 
-      protected Integer maxLimitUnits;
+    protected Integer maxLimitUnits;
 
     protected TransactionDateType transactionDateType;
 
