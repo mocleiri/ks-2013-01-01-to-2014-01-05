@@ -13,6 +13,23 @@ When /^I revise an AO's requested delivery logistics$/ do
   @activity_offering.save
 end
 
+When /^I add RDLs for an AO specifying times and facility only$/ do
+  # capture the RDLs
+  @new_rdls = @activity_offering.requested_delivery_logistics_list.values[0]
+  # add new RDL row
+  @activity_offering.edit
+  @new_rdls.add :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => ""
+  @activity_offering.save
+end
+
+When /^I add RDLs for an AO specifying times and room only$/ do
+  # capture the RDLs
+  @new_rdls = @activity_offering.requested_delivery_logistics_list.values[0]
+  # add new RDL row
+  @activity_offering.edit
+  @new_rdls.add :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "", :room => "0152"
+  @activity_offering.save
+end
 
 Then /^the AO's delivery logistics shows the new schedule$/ do
   @activity_offering.parent_course_offering.manage
@@ -40,10 +57,14 @@ Then /^the AO's delivery logistics shows the new schedule as TBA$/ do
     row.target_row_by_dl_key
     row.tba?.should == true
   end
-  #on ActivityOfferingMaintenance do |page|
-  #  page.view_requested_delivery_logistics
-  #  page.requested_logistics_table[row.to_i][0].text.should == "TBA"
-  #end
+end
+
+Then /^an error message is displayed about the required RDL fields$/ do
+  on ActivityOfferingMaintenance do |page|
+    sleep 2 #TODO: required by headless
+    page.growl_text.should == "The form contains errors. Please correct these errors and try again."
+    page.cancel
+  end
 end
 
 When /^I add RDLs for an AO$/ do
@@ -81,5 +102,4 @@ end
 #  course_offering.manage_and_init
 #  @activity_offering = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
 #end
-
 
