@@ -25,6 +25,8 @@ public class FeeManagementManifest implements Identifiable {
 
     private FeeManagementManifest linkedManifest;
 
+    private Rate rate;
+
     private Rollup rollup;
 
     private String registrationId;
@@ -34,8 +36,6 @@ public class FeeManagementManifest implements Identifiable {
     private String internalChargeId;
 
     private String transactionTypeId;
-
-    private String rateCode;
 
     private Date effectiveDate;
 
@@ -100,6 +100,16 @@ public class FeeManagementManifest implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "RATE_ID_FK")
+    public Rate getRate() {
+        return rate;
+    }
+
+    public void setRate(Rate rate) {
+        this.rate = rate;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROLLUP_ID_FK")
     public Rollup getRollup() {
         return rollup;
@@ -143,15 +153,6 @@ public class FeeManagementManifest implements Identifiable {
 
     public void setTransactionTypeId(String transactionTypeId) {
         this.transactionTypeId = transactionTypeId;
-    }
-
-    @Column(name = "RATE_CODE", length = 45)
-    public String getRateCode() {
-        return rateCode;
-    }
-
-    public void setRateCode(String rateCode) {
-        this.rateCode = rateCode;
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")

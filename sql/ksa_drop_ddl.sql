@@ -38,6 +38,7 @@ drop table KSSA_FM_MANIFEST_KEY_PAIR cascade constraints;
 drop table KSSA_FM_MANIFEST_TAG cascade constraints;
 drop table KSSA_FM_SESSION cascade constraints;
 drop table KSSA_FM_SESSION_KEY_PAIR cascade constraints;
+drop table KSSA_FM_SESSION_LOG cascade constraints;
 drop table KSSA_FM_SIGNUP cascade constraints;
 drop table KSSA_FM_SIGNUP_KEY_PAIR cascade constraints;
 drop table KSSA_FM_SIGNUP_RATE cascade constraints;
