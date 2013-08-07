@@ -51,7 +51,7 @@ class CourseOfferingEdit < BasePage
   action(:final_exam_option_none) { |b| b.frm.radio(value: "NONE").set; b.loading.wait_while_present }
 
   element(:cross_listed_as_label) { |b| b.frm.span(text:/Crosslisted as:/)}
-  element(:cross_listed_co_check_boxes) { |b| b.frm.dvi(id:"KS-COEditListed-Checkbox-Group")}
+  element(:cross_listed_co_check_boxes) { |b| b.frm.div(id:"KS-COEditListed-Checkbox-Group")}
   element(:cross_listed_co_check_box) { |b| b.checkbox(id: "KS-COEditListed-Checkbox-Group_control_0") }
   action(:cross_listed_co_set) {|b| b.cross_listed_co_check_box.set; b.loading.wait_while_present   }
   action(:cross_listed_co_clear) {|b| b.cross_listed_co_check_box.clear; b.loading.wait_while_present   }
@@ -68,8 +68,8 @@ class CourseOfferingEdit < BasePage
   element(:select_final_exam_driver_add) {|b| b.select_format_type_div.select(index: 2) }
   element(:delivery_format_add_element) {|b| b.button(id: "KS-CourseOffering-FormatOfferingSubSection_add")  }
   action(:delivery_format_add) {|b| b.delivery_format_add_element.click; b.loading.wait_while_present   }
-  element(:delivery_format_delete_element_0)  { |b| b.button(id: "KS-CourseOffering-FormatOfferingSubSection_del_line0") }
-  element(:delivery_format_delete_element_1)  { |b| b.button(id: "KS-CourseOffering-FormatOfferingSubSection_del_line1") }
+  element(:delivery_format_delete_element_0)  { |b| b.link(id: "KS-CourseOffering-FormatOfferingSubSection_del_line0") }
+  element(:delivery_format_delete_element_1)  { |b| b.link(id: "KS-CourseOffering-FormatOfferingSubSection_del_line1") }
   action(:delivery_format_delete_0) {|b| b.delivery_format_delete_element_0.click; b.loading.wait_while_present   }
   action(:delivery_format_delete_1) {|b| b.delivery_format_delete_element_1.click; b.loading.wait_while_present   }
 
@@ -188,7 +188,7 @@ class CourseOfferingEdit < BasePage
 
   element(:add_org_id) { |b| b.admin_orgs_table.rows[1].cells[ORG_ID_COLUMN].text_field() }
   action(:lookup_org) { |b| b.admin_orgs_table.rows[1].cells[ORG_ID_COLUMN].button().click; b.loading.wait_while_present } # Need persistent ID!
-  action(:add_org_button) { |b| b.admin_orgs_table.rows[1].button(id: "KS-CourseOfferingEdit-OrganizationSection_add") }
+  action(:add_org_button) { |b| b.button(id: "KS-CourseOfferingEdit-OrganizationSection_add") }
   action(:add_org) { |b| b.add_org_button.click; b.adding.wait_while_present() }
 
   def get_org_name(id)
