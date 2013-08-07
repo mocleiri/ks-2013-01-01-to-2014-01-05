@@ -525,7 +525,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @param amountTransactionTypeId RateAmount TransactionType ID
      * @param transactionDateType     TransactionDateType enum value
      * @param defaultRateAmount       Default Rate amount
-     * @param cappedAmount            Capped amount
+     * @param limitAmount             Limit amount
      * @param transactionDate         Transaction date
      * @param recognitionDate         Recognition date
      * @param atpId                   ATP ID
@@ -542,7 +542,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                            String amountTransactionTypeId,
                            TransactionDateType transactionDateType,
                            BigDecimal defaultRateAmount,
-                           BigDecimal cappedAmount,
+                           BigDecimal limitAmount,
                            Date transactionDate,
                            Date recognitionDate,
                            String atpId,
@@ -593,7 +593,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         rate.setTransactionDate(transactionDate);
         rate.setTransactionDateType(transactionDateType);
         rate.setRecognitionDate(recognitionDate);
-        rate.setLimitAmount(cappedAmount);
+        rate.setLimitAmount(limitAmount);
 
         rate.setAmountFinal(isAmountFinal);
         rate.setTransactionTypeFinal(isTransactionTypeFinal);
@@ -1079,7 +1079,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         }
 
         if (rate.getLimitAmount() != null && rate.getLimitAmount().compareTo(defaultRateAmount.getAmount()) < 0) {
-            String errMsg = "Rate capped amount cannot be less than the default Rate amount";
+            String errMsg = "Rate limit amount cannot be less than the default Rate amount";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }

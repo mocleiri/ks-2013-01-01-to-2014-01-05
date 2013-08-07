@@ -225,7 +225,7 @@ public interface RateService {
      * @param amountTransactionTypeId RateAmount TransactionType ID
      * @param transactionDateType     TransactionDateType enum value
      * @param defaultRateAmount       Default Rate amount
-     * @param cappedAmount            Capped amount
+     * @param limitAmount             Limit amount
      * @param transactionDate         Transaction date
      * @param recognitionDate         Recognition date
      * @param atpId                   ATP ID
@@ -240,7 +240,7 @@ public interface RateService {
                     String amountTransactionTypeId,
                     TransactionDateType transactionDateType,
                     BigDecimal defaultRateAmount,
-                    BigDecimal cappedAmount,
+                    BigDecimal limitAmount,
                     Date transactionDate,
                     Date recognitionDate,
                     String atpId,

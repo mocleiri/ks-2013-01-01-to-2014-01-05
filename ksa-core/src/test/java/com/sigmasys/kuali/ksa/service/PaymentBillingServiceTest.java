@@ -282,6 +282,12 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         billingService.createPaymentBillingDate(plan.getId(), rollup.getId(), new BigDecimal(30),
                 new Date(System.currentTimeMillis() + System.currentTimeMillis()));
 
+        List<PaymentBillingTransaction> billingTransactions =
+                billingService.generatePaymentBillingTransactions(transfer.getId());
+
+        Assert.notNull(billingTransactions);
+        Assert.notEmpty(billingTransactions);
+
         List<PaymentBillingSchedule> billingSchedules = billingService.generatePaymentBillingSchedules(transfer.getId());
 
         Assert.notNull(billingSchedules);

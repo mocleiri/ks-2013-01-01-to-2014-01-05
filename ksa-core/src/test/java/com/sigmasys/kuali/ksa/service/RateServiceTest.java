@@ -109,11 +109,11 @@ public class RateServiceTest extends AbstractServiceTest {
         String transactionTypeId = "cash";
         String amountTransactionTypeId = "cash";
         TransactionDateType dateType = TransactionDateType.ALWAYS;
-        BigDecimal cappedAmount = new BigDecimal(7776000.1111);
+        BigDecimal limitAmount = new BigDecimal(7776000.1111);
         BigDecimal rateAmount = new BigDecimal(200.88);
 
         Rate rate = rateService.createRate(rateCode, rateName, rateCatalogCode, transactionTypeId,
-                amountTransactionTypeId, dateType, rateAmount, cappedAmount, transactionDate, recognitionDate, atpId,
+                amountTransactionTypeId, dateType, rateAmount, limitAmount, transactionDate, recognitionDate, atpId,
                 false, false);
 
         Assert.notNull(rate);

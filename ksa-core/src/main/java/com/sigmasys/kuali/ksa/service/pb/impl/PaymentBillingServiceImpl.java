@@ -508,6 +508,12 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_SCHEDULE);
 
+        if (transferDetail.getChargeStatus() != PaymentBillingChargeStatus.ALLOWABLE) {
+            String errMsg = "PaymentBillingTransferDetail must be " + PaymentBillingChargeStatus.ALLOWABLE.toString();
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
         PaymentBillingPlan billingPlan = transferDetail.getPlan();
         if (billingPlan == null) {
             String errMsg = "PaymentBillingPlan does not exist for PaymentBillingTransferDetail with ID = " +
