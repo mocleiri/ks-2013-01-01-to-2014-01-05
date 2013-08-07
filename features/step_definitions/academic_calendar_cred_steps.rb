@@ -447,7 +447,8 @@ Then /^the .*event.*s are listed when I view the Academic Calendar$/ do
     else
       start_date_time = @event.start_date + " " + @event.start_time + " " + @event.start_time_ampm.upcase
       end_date_time = @event.end_date + " " + @event.end_time + " " + @event.end_time_ampm.upcase
-      page.check_start_end_date(event_row, start_date_time, end_date_time)
+      event_row.cells[ViewAcademicCalendar::VIEW_START_DATE_COL].text.should == start_date_time
+      event_row.cells[ViewAcademicCalendar::VIEW_END_DATE_COL].text.should == end_date_time
     end
   end
 end

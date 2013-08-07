@@ -89,9 +89,4 @@ class ViewAcademicCalendar < BasePage
   VIEW_START_DATE_COL = 1
   VIEW_END_DATE_COL = 2
 
-  def check_start_end_date(event_row, start_date, end_date)
-    event_row.cells[VIEW_START_DATE_COL].text.should == start_date
-    event_row.cells[VIEW_END_DATE_COL].text.should == end_date
-  end
-
 end
