@@ -14,8 +14,7 @@ Feature: EC.Schedule of Classes
     And the course offering details for a particular offering can be shown
 
   Scenario: CO 26.9 Successfully display schedule of classes by subject code and display subterm information
-    When I search for course offerings by course by entering a course number
-    Then a list of course offerings with that subject code is displayed
+    When I search for a course offering that has activity offerings assigned to subterms by course code
     And the course offering details for a particular offering can be shown
     And the subterm icon appears with the subterm information
 

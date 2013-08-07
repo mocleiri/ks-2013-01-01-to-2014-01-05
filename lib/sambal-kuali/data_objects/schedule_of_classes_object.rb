@@ -121,27 +121,6 @@ class ScheduleOfClasses
     end
   end
 
-  # checks to make sure activities table is present before
-  #  verifying presence of icon with the proper text
-  # @raises exception if activities table is not found
-  def check_activities_table
-    icon_title_text = "This activity is in Half Fall 1 - 08/29/2012 - 10/21/2012"
-    #TODO: look up text above from CO & ACal pages (term name & dates)
-    on DisplayScheduleOfClasses do |page|
-      if !page.results_activities_table.exists?
-        raise "activities table not found"
-      else
-        page.results_activities_table.rows[1..-1].each do |row|
-          # check only rows with data in them
-          if row.cells[DisplayScheduleOfClasses::CODE_COL].text =~ /[A-B]/
-            row.cells[DisplayScheduleOfClasses::ICON_COL].image.attribute_value("src") =~ /subterm_icon\.png/
-            row.cells[DisplayScheduleOfClasses::ICON_COL].image.title.should == icon_title_text
-          end
-        end
-      end
-    end
-  end
-
   # expand course details for the courses in the :exp_course_list
   #
   #  @raises exception if course details are not displayed

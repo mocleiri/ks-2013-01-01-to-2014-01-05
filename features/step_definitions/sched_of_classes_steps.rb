@@ -7,7 +7,7 @@ When /^I search for course offerings by course by entering a subject code$/ do
   @schedule_of_classes.display
 end
 
-When /^I search for course offerings by course by entering a course number/ do
+When /^I search for a course offering that has activity offerings assigned to subterms by course code/ do
   @schedule_of_classes = make ScheduleOfClasses, :term => "Fall 2012", :course_search_parm => "CHEM105", :exp_course_list => ["CHEM105"]
   @schedule_of_classes.display
 end
@@ -28,7 +28,21 @@ Then /^the course offering details for a particular offering can be shown$/ do
 end
 
 And /^the subterm icon appears with the subterm information$/ do
-  @schedule_of_classes.check_activities_table
+  icon_title_text = "This activity is in Half Fall 1 - 08/29/2012 - 10/21/2012"
+  #TODO: look up text above (term name & dates) from CO & ACal pages
+  on DisplayScheduleOfClasses do |page|
+    if !page.results_activities_table.exists?
+      raise "activities table not found"
+    else
+      page.results_activities_table.rows[1..-1].each do |row|
+        # check only rows with data in them
+        if row.cells[DisplayScheduleOfClasses::CODE_COL].text =~ /[A-B]/
+          row.cells[DisplayScheduleOfClasses::ICON_COL].image.attribute_value("src").should match /subterm_icon\.png/
+          row.cells[DisplayScheduleOfClasses::ICON_COL].image.title.should == icon_title_text
+        end
+      end
+    end
+  end
 end
 
 Then /^the course offering details for all offerings can be shown$/ do
