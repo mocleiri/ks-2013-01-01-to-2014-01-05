@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Fee management signup model.
@@ -33,6 +34,8 @@ public class FeeManagementSignup implements Identifiable {
     private Date creationDate;
 
     private Date effectiveDate;
+
+    private Set<KeyPair> keyPairs;
 
     private FeeManagementSignupOperation operation;
 
@@ -135,6 +138,23 @@ public class FeeManagementSignup implements Identifiable {
 
     public void setEffectiveDate(Date effectiveDate) {
         this.effectiveDate = effectiveDate;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "KSSA_FM_SIGNUP_KEY_PAIR",
+            joinColumns = {
+                    @JoinColumn(name = "FM_SIGNUP_ID_FK")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "KEY_PAIR_ID_FK")
+            }
+    )
+    public Set<KeyPair> getKeyPairs() {
+        return keyPairs;
+    }
+
+    public void setKeyPairs(Set<KeyPair> keyPairs) {
+        this.keyPairs = keyPairs;
     }
 
     @Column(name = "OPERATION", length = 2)

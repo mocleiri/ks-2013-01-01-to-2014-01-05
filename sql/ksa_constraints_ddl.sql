@@ -39,11 +39,20 @@ alter table KSSA_FLAG_TYPE add constraint FKC2EF34E4DC4F9C14 foreign key (ACCESS
 alter table KSSA_FM_MANIFEST add constraint FK496D0D9E32EC13CF foreign key (FM_SESSION_ID_FK) references KSSA_FM_SESSION;
 alter table KSSA_FM_MANIFEST add constraint FK496D0D9E233F505D foreign key (LINKED_MANIFEST_ID_FK) references KSSA_FM_MANIFEST;
 alter table KSSA_FM_MANIFEST add constraint FK496D0D9EF7D721E7 foreign key (ROLLUP_ID_FK) references KSSA_ROLLUP;
+alter table KSSA_FM_MANIFEST_KEY_PAIR add constraint FKD4F0165BD4D06A63 foreign key (KEY_PAIR_ID_FK) references KSSA_KEY_PAIR;
+alter table KSSA_FM_MANIFEST_KEY_PAIR add constraint FKD4F0165B87F1F7EF foreign key (FM_MANIFEST_ID_FK) references KSSA_FM_MANIFEST;
+alter table KSSA_FM_MANIFEST_TAG add constraint FK8AFD815987F1F7EF foreign key (FM_MANIFEST_ID_FK) references KSSA_FM_MANIFEST;
+alter table KSSA_FM_MANIFEST_TAG add constraint FK8AFD815947AB5D71 foreign key (TAG_ID_FK) references KSSA_TAG;
 alter table KSSA_FM_SESSION add constraint FKA9FAF52798518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_FM_SESSION add constraint FKA9FAF5276588BC3B foreign key (PREV_SESSION_ID_FK) references KSSA_FM_SESSION;
 alter table KSSA_FM_SESSION add constraint FKA9FAF527CDE154FB foreign key (NEXT_SESSION_ID_FK) references KSSA_FM_SESSION;
+alter table KSSA_FM_SESSION_KEY_PAIR add constraint FKC36398F2D4D06A63 foreign key (KEY_PAIR_ID_FK) references KSSA_KEY_PAIR;
+alter table KSSA_FM_SESSION_KEY_PAIR add constraint FKC36398F232EC13CF foreign key (FM_SESSION_ID_FK) references KSSA_FM_SESSION;
 alter table KSSA_FM_SIGNUP add constraint FK7109644732EC13CF foreign key (FM_SESSION_ID_FK) references KSSA_FM_SESSION;
+alter table KSSA_FM_SIGNUP_KEY_PAIR add constraint FK6D502DD2FCF18C1 foreign key (FM_SIGNUP_ID_FK) references KSSA_FM_SIGNUP;
+alter table KSSA_FM_SIGNUP_KEY_PAIR add constraint FK6D502DD2D4D06A63 foreign key (KEY_PAIR_ID_FK) references KSSA_KEY_PAIR;
 alter table KSSA_FM_SIGNUP_RATE add constraint FKEFBE2DD8FCF18C1 foreign key (FM_SIGNUP_ID_FK) references KSSA_FM_SIGNUP;
+alter table KSSA_FM_SIGNUP_RATE_AMOUNT add constraint FKCE20509FB935A3A0 foreign key (FM_SIGNUP_RATE_ID_FK) references KSSA_FM_SIGNUP_RATE;
 alter table KSSA_GL_BATCH_BASELINE add constraint FK3C33E61BFA70171C foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
 alter table KSSA_GL_BREAKDOWN add constraint FKF48BE710AE27AC92 foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSSA_TRANSACTION_TYPE;
 alter table KSSA_GL_BREAKDOWN add constraint FKF48BE710FA70171C foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
@@ -124,3 +133,4 @@ alter table KSSA_TRANSACTION_TYPE add constraint FK81104B8496077E1 foreign key (
 alter table KSSA_TRANSACTION_TYPE_TAG add constraint FKA1635C3F47AB5D71 foreign key (TAG_ID_FK) references KSSA_TAG;
 alter table KSSA_TRANSACTION_TYPE_TAG add constraint FKA1635C3FCE008744 foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSSA_TRANSACTION_TYPE;
 alter table KSSA_TRANSFER_TYPE add constraint FKC595C845FA70171C foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
+

@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Fee management session model.
@@ -36,6 +37,8 @@ public class FeeManagementSession implements Identifiable {
     private Date creationDate;
 
     private Date reviewDate;
+
+    private Set<KeyPair> keyPairs;
 
     private FeeManagementSessionStatus status;
 
@@ -151,6 +154,23 @@ public class FeeManagementSession implements Identifiable {
 
     public void setReviewDate(Date reviewDate) {
         this.reviewDate = reviewDate;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "KSSA_FM_SESSION_KEY_PAIR",
+            joinColumns = {
+                    @JoinColumn(name = "FM_SESSION_ID_FK")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "KEY_PAIR_ID_FK")
+            }
+    )
+    public Set<KeyPair> getKeyPairs() {
+        return keyPairs;
+    }
+
+    public void setKeyPairs(Set<KeyPair> keyPairs) {
+        this.keyPairs = keyPairs;
     }
 
     @Column(name = "STATUS", length = 2)

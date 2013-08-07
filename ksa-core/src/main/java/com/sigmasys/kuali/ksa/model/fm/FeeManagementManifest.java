@@ -2,10 +2,12 @@ package com.sigmasys.kuali.ksa.model.fm;
 
 import com.sigmasys.kuali.ksa.model.Identifiable;
 import com.sigmasys.kuali.ksa.model.Rollup;
+import com.sigmasys.kuali.ksa.model.Tag;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Fee management manifest model.
@@ -40,6 +42,10 @@ public class FeeManagementManifest implements Identifiable {
     private Date recognitionDate;
 
     private Boolean isSessionCurrent;
+
+    private Set<KeyPair> keyPairs;
+
+    private Set<Tag> tags;
 
     private FeeManagementManifestStatus status;
 
@@ -176,6 +182,40 @@ public class FeeManagementManifest implements Identifiable {
 
     public void setRecognitionDate(Date recognitionDate) {
         this.recognitionDate = recognitionDate;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "KSSA_FM_MANIFEST_KEY_PAIR",
+            joinColumns = {
+                    @JoinColumn(name = "FM_MANIFEST_ID_FK")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "KEY_PAIR_ID_FK")
+            }
+    )
+    public Set<KeyPair> getKeyPairs() {
+        return keyPairs;
+    }
+
+    public void setKeyPairs(Set<KeyPair> keyPairs) {
+        this.keyPairs = keyPairs;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "KSSA_FM_MANIFEST_TAG",
+            joinColumns = {
+                    @JoinColumn(name = "FM_MANIFEST_ID_FK")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "TAG_ID_FK")
+            }
+    )
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 
     @Column(name = "STATUS", length = 1)
