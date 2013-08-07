@@ -291,14 +291,10 @@ class AcademicTerm
       end
       page.term_type_add.select term_type
       page.adding.wait_while_present
-      if @subterm then
-         wait_until { page.parent_term_select.selected_options[0].text == @parent_term }
-      end
+
       page.term_start_date_add.set @start_date
       page.term_end_date_add.set @end_date
-      #if @subterm then
-      #  page.parent_term_select.select @parent_term
-      #end
+
       page.acal_term_add
 
       begin

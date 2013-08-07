@@ -9,7 +9,6 @@ class EditAcademicTerms < BasePage
   element(:term_type_add)  { |b| b.frm.select(id: "term_type_add_add_control") }
   element(:term_start_date_add)  { |b| b.frm.text_field(id: "term_start_date_add_add_control") }
   element(:term_end_date_add)  { |b| b.frm.text_field(id: "term_end_date_add_add_control") }
-  element(:parent_term_select)  { |b| b.frm.select(id: "parent_term_type_add_control") }
 
   action(:acal_term_add) { |b| b.frm.link(id: "acal-term_add").click; b.loading.wait_while_present }
 
@@ -231,7 +230,6 @@ class EditAcademicTerms < BasePage
       raise "save was not successful - growl text: #{growl_text}" unless growl_text.match /saved successfully/
       growl_div.div(class: "jGrowl-close").click
     end
-
   end
 
 end
