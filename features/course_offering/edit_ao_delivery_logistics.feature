@@ -16,14 +16,10 @@ Feature: WC.Edit AO delivery logistics
     When I add RDLs for an AO
     Then the AO's delivery logistics shows the new schedule
 
-#KSENROLL-8445
-  @pending
   Scenario: Add an RDL using incomplete logistics - times and facility
     When I add RDLs for an AO specifying times and facility only
     Then the AO's delivery logistics shows the new schedule
 
-#KSENROLL-8445
-  @pending
   Scenario: Add an RDL using incomplete logistics - times and room
     When I add RDLs for an AO specifying times and room only
     Then an error message is displayed about the required RDL fields
