@@ -1,6 +1,5 @@
 package com.sigmasys.kuali.ksa.service.fm.impl;
 
-import com.sigmasys.kuali.ksa.exception.InvalidFeeManagementSessionStatusException;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.fm.FeeManagementSession;
@@ -18,10 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.jws.WebService;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sergey
- * Date: 8/7/13
- * Time: 11:25 PM
+ * FeeManagementService implementation.
+ * <p/>
  * <p/>
  * This class provides a concrete implementation of the <code>FeeManagementService</code> interface
  * according to the specification in the "Process Diagrams" document
@@ -52,11 +49,12 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * Session reconciliation takes former sessions and ensures that charges that need to be removed are
      * accurately recorded in the new session.
      *
-     * @param feeManagementSessionId ID of a FeeManagement Session.
+     * @param feeManagementSessionId FeeManagementSession ID
      */
     @Override
     @Transactional(readOnly = false)
     public void reconcileSession(Long feeManagementSessionId) {
+
         // Get a FeeManagement session with the given ID:
         FeeManagementSession fmSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
 
@@ -66,14 +64,12 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
 
         // Check the session passed is CURRENT or SIMULATED
-        FeeManagementSessionStatus fmStatus = fmSession.getStatus();
+        FeeManagementSessionStatus sessionStatus = fmSession.getStatus();
 
-        if ((fmStatus != FeeManagementSessionStatus.CURRENT) || (fmStatus != FeeManagementSessionStatus.SIMULATED)) {
-            String errorMsg = String.format("Invalid FeeManagement Session status [%s]. Session status must be CURRENT or SIMULATED.", fmStatus.toString());
-
+        if (sessionStatus == null || (sessionStatus != FeeManagementSessionStatus.CURRENT && sessionStatus != FeeManagementSessionStatus.SIMULATED)) {
+            String errorMsg = String.format("Invalid FeeManagement Session status [%s]. Session status must be CURRENT or SIMULATED.", sessionStatus);
             logger.error(errorMsg);
-            throw new InvalidFeeManagementSessionStatusException(errorMsg);
-
+            throw new IllegalStateException(errorMsg);
         }
 
         // Get the associated Account:
@@ -94,7 +90,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // Point the manifestId of these matching transactions together
 
         // Updated the status of the current FM Session to RECONCILED or SIMULATED_RECONCILED:
-        FeeManagementSessionStatus newFmStatus = (fmStatus == FeeManagementSessionStatus.CURRENT)
+        FeeManagementSessionStatus newFmStatus = (sessionStatus == FeeManagementSessionStatus.CURRENT)
                 ? FeeManagementSessionStatus.RECONCILED : FeeManagementSessionStatus.SIMULATED_RECONCILED;
 
         // Update the entity:
@@ -106,9 +102,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * Creates charges on the current Fee Management session.
      * Creates reversals and cancellations and also rate transactions.
      *
-     * @param feeManagementSessionId ID of a FeeManagement Sessin.
+     * @param feeManagementSessionId FeeManagementSession ID
      */
     @Override
+    @Transactional(readOnly = false)
     public void chargeSession(Long feeManagementSessionId) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -126,7 +123,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      *
      * @param fmSession A FeeManagement Session to find its last CHARGED prior FM Session.
      * @return The last prior CHARGED FM session or <code>null</code> if there is no last prior
-     * CHARGED FM Session.
+     *         CHARGED FM Session.
      */
     private FeeManagementSession getLastChargedSession(FeeManagementSession fmSession) {
         // Check if the current session is null or its status is CHARGED, end the recursion here:
