@@ -76,6 +76,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             "left outer join fetch a.electronicContacts ec " +
             "left outer join fetch a.statusType st " +
             "left outer join fetch a.latePeriod lp " +
+            "left outer join fetch a.keyPairs kp " +
             "where pn.default = true and " +
             "      pa.default = true and " +
             "      ec.default = true";
@@ -532,6 +533,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
                 "left outer join fetch a.electronicContacts ec " +
                 "left outer join fetch a.statusType st " +
                 "left outer join fetch a.latePeriod lp " +
+                "left outer join fetch a.keyPairs kp " +
                 "where a.id = :id");
         query.setParameter("id", userId);
         List<Account> accounts = query.getResultList();
@@ -1004,7 +1006,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         searchPatterns = removeEmptyStrings(searchPatterns);
 
         // A list of properties used to search Accounts:
-        List<String> searchAttributes = Arrays.asList(
+        String[] searchAttributes = {
                 "a.id",
                 "pn.firstName",
                 "pn.middleName",
@@ -1014,45 +1016,47 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
                 "pa.city",
                 "pa.state",
                 "pa.country"
-        );
+        };
 
         // Get the Account search query and build additional search conditions:
-        StringBuilder accountSearchQuery = new StringBuilder(GET_FULL_ACCOUNTS_QUERY);
+        StringBuilder searchQueryBuilder = new StringBuilder(GET_FULL_ACCOUNTS_QUERY);
 
         boolean searchPatternsExist = searchPatterns != null && searchPatterns.length > 0;
 
         if (searchPatternsExist) {
 
-            accountSearchQuery.append(" and (");
+            searchQueryBuilder.append(" and (");
 
             // Add conditions for each search attribute:
             int i = 0;
             while (i++ < searchPatterns.length) {
                 // Add conditions using bind variables:
                 for (String searchAttribute : searchAttributes) {
-                    accountSearchQuery.append("lower(").append(searchAttribute).append(") like ? or ");
+                    searchQueryBuilder.append("lower(").append(searchAttribute).append(") like ? or ");
                 }
             }
 
-            accountSearchQuery.setLength(accountSearchQuery.length() - 3);
-            accountSearchQuery.append(")");
+            searchQueryBuilder.setLength(searchQueryBuilder.length() - 3);
+            searchQueryBuilder.append(")");
         }
 
         // Add "order by":
-        accountSearchQuery.append(" order by a.id");
+        searchQueryBuilder.append(" order by a.id");
 
-        Query query = em.createQuery(accountSearchQuery.toString());
-        int searchAttributeCount = searchAttributes.size();
+        Query query = em.createQuery(searchQueryBuilder.toString());
 
         if (searchPatternsExist) {
+
             for (int i = 0; i < searchPatterns.length; i++) {
+
                 // Set parameter for each search attribute:
                 String pattern = "%" + StringUtils.lowerCase(searchPatterns[i]) + "%";
 
-                for (int j = 0; j < searchAttributeCount; j++) {
-                    query.setParameter(i * searchAttributeCount + j + 1, pattern);
+                for (int j = 0; j < searchAttributes.length; j++) {
+                    query.setParameter(i * searchAttributes.length + j + 1, pattern);
                 }
             }
+
         }
 
         return query.getResultList();

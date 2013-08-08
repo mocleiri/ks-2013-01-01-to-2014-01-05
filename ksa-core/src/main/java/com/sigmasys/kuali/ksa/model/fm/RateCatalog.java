@@ -1,6 +1,8 @@
 package com.sigmasys.kuali.ksa.model.fm;
 
 
+import com.sigmasys.kuali.ksa.model.KeyPair;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Set;

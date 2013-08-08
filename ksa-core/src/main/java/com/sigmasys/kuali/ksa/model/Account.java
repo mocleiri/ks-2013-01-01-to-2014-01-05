@@ -112,6 +112,11 @@ public abstract class Account implements Identifiable {
     protected Set<PostalAddress> postalAddresses;
 
     /**
+     * KeyPair values associated with the current account
+     */
+    protected Set<KeyPair> keyPairs;
+
+    /**
      * Account Status Type
      */
     protected AccountStatusType statusType;
@@ -290,6 +295,23 @@ public abstract class Account implements Identifiable {
 
     public void setPostalAddresses(Set<PostalAddress> postalAddresses) {
         this.postalAddresses = postalAddresses;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "KSSA_ACNT_KEY_PAIR",
+            joinColumns = {
+                    @JoinColumn(name = "ACNT_ID_FK")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "KEY_PAIR_ID_FK")
+            }
+    )
+    public Set<KeyPair> getKeyPairs() {
+        return keyPairs;
+    }
+
+    public void setKeyPairs(Set<KeyPair> keyPairs) {
+        this.keyPairs = keyPairs;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

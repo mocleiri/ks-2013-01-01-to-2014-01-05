@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.exception.InvalidRateException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateTypeException;
 import com.sigmasys.kuali.ksa.exception.InvalidTransactionTypeException;
 import com.sigmasys.kuali.ksa.model.Constants;
+import com.sigmasys.kuali.ksa.model.KeyPair;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;

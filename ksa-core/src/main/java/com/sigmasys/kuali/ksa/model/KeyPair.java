@@ -1,6 +1,4 @@
-package com.sigmasys.kuali.ksa.model.fm;
-
-import com.sigmasys.kuali.ksa.model.Identifiable;
+package com.sigmasys.kuali.ksa.model;
 
 import javax.persistence.*;
 

@@ -1,5 +1,7 @@
 package com.sigmasys.kuali.ksa.model.fm;
 
+import com.sigmasys.kuali.ksa.model.KeyPair;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;

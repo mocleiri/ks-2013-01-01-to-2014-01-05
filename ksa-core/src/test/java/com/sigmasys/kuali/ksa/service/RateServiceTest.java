@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.service;
 
 
 import com.sigmasys.kuali.ksa.model.Constants;
+import com.sigmasys.kuali.ksa.model.KeyPair;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import org.apache.commons.collections.CollectionUtils;

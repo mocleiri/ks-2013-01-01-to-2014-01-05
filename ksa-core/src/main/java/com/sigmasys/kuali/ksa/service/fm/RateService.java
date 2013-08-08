@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateTypeException;
 import com.sigmasys.kuali.ksa.model.Constants;
+import com.sigmasys.kuali.ksa.model.KeyPair;
 import com.sigmasys.kuali.ksa.model.fm.*;
 
 import javax.jws.WebService;
