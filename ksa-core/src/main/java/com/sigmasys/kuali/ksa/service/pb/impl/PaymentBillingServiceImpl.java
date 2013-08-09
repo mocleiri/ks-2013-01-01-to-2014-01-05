@@ -14,7 +14,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ojb.broker.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -156,7 +155,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         transferDetail.setInitiationDate(initiationDate);
         transferDetail.setMaxAmount(maxAmount);
-        // TODO: check with Paul if the following assignment is correct
         transferDetail.setPlanAmount(BigDecimal.ZERO);
         transferDetail.setDirectChargeAccount((DirectChargeAccount) account);
         transferDetail.setPlan(billingPlan);
@@ -599,7 +597,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                 }
             }
 
-            // TODO: Plan amount is never set, it is always 0 -> see generatePaymentBillingTransfer()
             BigDecimal nonRoundedAmount = transferDetail.getPlanAmount().subtract(tempAmount);
 
             firstLastSchedule.setAmount(nonRoundedAmount);
@@ -1364,7 +1361,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                         reversePaymentBillingTransfer(transferDetail.getId(), "PB Queue processing", true);
                     }
 
-                    // TODO: Confirm with Paul if the amount being passed is the plan maximum amount ??
                     PaymentBillingTransferDetail newTransferDetail =
                             executePaymentBilling(billingPlan.getId(),
                                     accountId,
