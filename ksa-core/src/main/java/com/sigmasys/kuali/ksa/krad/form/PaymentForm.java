@@ -161,6 +161,13 @@ public class PaymentForm extends AbstractViewModel {
         return "";
     }
 
+    public String getRefundable() {
+        if(this.transactionType != null){
+            return transactionType.isRefundable() ? "Yes" : "No";
+        }
+        return "";
+    }
+
     public String getDefaultClearingPeriod() {
         if(this.transactionType != null){
             return transactionType.getClearPeriod().toString() + " days";

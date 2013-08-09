@@ -178,6 +178,7 @@
                                                             <list>
                                                                 <bean parent="Uif-InputField" p:propertyName="paymentTransactionTypeId2" p:label="Payment Type" />
                                                                 <bean parent="Uif-InputField" p:propertyName="description" p:label="Description" />
+                                                                <bean parent="Uif-InputField" p:propertyName="refundable" p:label="Refundable" />
                                                                 <bean parent="Uif-InputField" p:propertyName="defaultClearingPeriod" p:label="Default Clearing Period" />
                                                             </list>
                                                         </property>
