@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.ChargeForm;
+import com.sigmasys.kuali.ksa.krad.form.PaymentForm;
 import com.sigmasys.kuali.ksa.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -114,6 +115,38 @@ public class ChargeController extends GenericSearchController {
 
         return getUIFModelAndView(form);
     }
+
+    /**
+     * Retrieves the transaction type.
+     *
+     * @param form PaymentForm
+     * @return ModelAndView
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=getTransactionType")
+    public ModelAndView getTransactionType(@ModelAttribute("KualiForm") ChargeForm form) {
+
+        String ttId = form.getChargeTransactionTypeId();
+
+        form.setTransactionType(null);
+        TransactionType type = null;
+
+        try {
+            form.setTransactionTypeMessage("");
+            type = transactionService.getTransactionType(ttId, new Date());
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
+            form.setTransactionTypeMessage("Invalid Transaction Type");
+        }
+
+        if (type != null && type instanceof DebitType) {
+
+            form.setTransactionType((DebitType) type);
+
+        }
+
+        return getUIFModelAndView(form);
+    }
+
 
     private boolean saveCharge(ChargeForm form) {
         boolean saveResult = false;

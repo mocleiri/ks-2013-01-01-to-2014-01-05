@@ -103,6 +103,21 @@
                         </bean>
                     </property>
                 </bean>
+                <bean parent="Uif-VerticalBoxSection" p:style="background-color: #CCC; border-radius: 15px;"
+                      p:methodToCallOnRefresh="getTransactionType" p:refreshWhenChangedPropertyNames="chargeTransactionTypeId">
+                    <property name="items"><list>
+                        <bean parent="Uif-Disclosure-GridSection" p:readOnly="true" >
+                            <property name="items">
+                                <list>
+                                    <bean parent="Uif-MessageField" p:messageText="@{transactionTypeMessage}"/>
+                                    <bean parent="Uif-InputField" p:propertyName="chargeTransactionTypeId2" p:label="Charge Type" />
+                                    <bean parent="Uif-InputField" p:propertyName="description" p:label="Description" />
+
+                                </list>
+                            </property>
+                        </bean>
+                    </list></property>
+                </bean>
                 <!-- Use the Charge instance to get/set the values -->
                 <bean parent="Uif-InputField" p:propertyName="charge.amount"
                       p:label="Amount"

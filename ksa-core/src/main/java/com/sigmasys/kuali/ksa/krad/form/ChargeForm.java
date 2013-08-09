@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Charge;
+import com.sigmasys.kuali.ksa.model.DebitType;
 
 import java.math.BigDecimal;
 
@@ -17,7 +18,11 @@ public class ChargeForm extends AbstractViewModel {
 
    private String chargeTransactionTypeId;
 
-   private BigDecimal estimatedCurrentBalance;
+   private DebitType transactionType;
+
+   private String transactionTypeMessage;
+
+    private BigDecimal estimatedCurrentBalance;
 
    private BigDecimal estimatedPendingBalance;
 
@@ -51,7 +56,22 @@ public class ChargeForm extends AbstractViewModel {
       this.chargeTransactionTypeId = chargeTransactionTypeId;
    }
 
-   public BigDecimal getEstimatedCurrentBalance() {
+    public String getChargeTransactionTypeId2() {
+        if(this.transactionType != null){
+            return this.transactionType.getId().getId();
+        }
+        return "";
+    }
+
+    public String getDescription() {
+        if(this.transactionType != null){
+            return transactionType.getDescription();
+        }
+        return "";
+    }
+
+
+    public BigDecimal getEstimatedCurrentBalance() {
       return estimatedCurrentBalance;
    }
 
@@ -74,4 +94,20 @@ public class ChargeForm extends AbstractViewModel {
    public void setStatusMessage(String statusMessage) {
       this.statusMessage = statusMessage;
    }
+
+    public DebitType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(DebitType transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public String getTransactionTypeMessage() {
+        return transactionTypeMessage;
+    }
+
+    public void setTransactionTypeMessage(String transactionTypeMessage) {
+        this.transactionTypeMessage = transactionTypeMessage;
+    }
 }
