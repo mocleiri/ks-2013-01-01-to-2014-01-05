@@ -1232,21 +1232,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     public List<PaymentBillingQueue> getPaymentBillingQueues(String accountId, Long transferDetailId) {
-
-        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_QUEUE);
-
-        Query query = em.createQuery(QUEUE_SELECT +
-                " where a.id = :accountId and " +
-                (transferDetailId != null ? " d.id = :transferDetailId " : " d is null") +
-                " order by q.creationDate desc");
-
-        query.setParameter("accountId", accountId);
-
-        if (transferDetailId != null) {
-            query.setParameter("transferDetailId", transferDetailId);
-        }
-
-        return query.getResultList();
+        return getPaymentBillingQueues(accountId, transferDetailId, false);
     }
 
     /**
@@ -1258,16 +1244,23 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     public List<PaymentBillingQueue> getPaymentBillingQueuesByCreatorId(String creatorId, Long transferDetailId) {
+        return getPaymentBillingQueues(creatorId, transferDetailId, true);
+    }
+
+    protected List<PaymentBillingQueue> getPaymentBillingQueues(String userId, Long transferDetailId, boolean isCreatorId) {
 
         PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_QUEUE);
 
         Query query = em.createQuery(QUEUE_SELECT +
-                " where q.creatorId = :creatorId and " +
+                " where " + (isCreatorId ? "q.creatorId" : "a.id") + " = :userId and " +
                 (transferDetailId != null ? " d.id = :transferDetailId " : " d is null") +
                 " order by q.creationDate desc");
 
-        query.setParameter("creatorId", creatorId);
-        query.setParameter("transferDetailId", transferDetailId);
+        query.setParameter("userId", userId);
+
+        if (transferDetailId != null) {
+            query.setParameter("transferDetailId", transferDetailId);
+        }
 
         return query.getResultList();
     }
@@ -1335,9 +1328,10 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             Query query = em.createQuery("select d from PaymentBillingTransferDetail d " +
                     " inner join d.directChargeAccount a " +
                     " inner join d.plan p " +
-                    " where p.id = :planId and a.id = :accountId and d.chargeStatusCode <> :statusCode");
+                    " where p.id = :planId and a.id = :accountId and d.chargeStatusCode in (:statusCodes)");
 
-            query.setParameter("statusCode", PaymentBillingChargeStatus.REVERSED_CODE);
+            query.setParameter("statusCodes",
+                    Arrays.asList(PaymentBillingChargeStatus.ACTIVE_CODE, PaymentBillingChargeStatus.REVERSED_CODE));
             query.setMaxResults(1);
 
             for (PaymentBillingQueue billingQueue : billingQueues) {
@@ -1360,8 +1354,15 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
                     PaymentBillingTransferDetail transferDetail = transferDetails.get(0);
 
-                    if (billingQueue.isForceReversal()) {
-                        reversePaymentBillingTransfer(transferDetail.getId(), "PB Queue processing", true);
+                    logger.debug("Existing PaymentBillingTransferDetail: " + transferDetail);
+
+                    if (transferDetail.getChargeStatus() == PaymentBillingChargeStatus.ACTIVE) {
+                        if (billingQueue.isForceReversal()) {
+                            reversePaymentBillingTransfer(transferDetail.getId(), "PB Queue processing", true);
+                        } else {
+                            billingQueue.setTransferDetail(transferDetail);
+                            continue;
+                        }
                     }
 
                     PaymentBillingTransferDetail newTransferDetail =
@@ -1371,6 +1372,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                                     billingQueue.getInitiationDate());
 
                     billingQueue.setTransferDetail(newTransferDetail);
+
+                    logger.debug("New PaymentBillingTransferDetail: " + transferDetail);
                 }
             }
         }
@@ -1439,6 +1442,21 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
+
+        Query query = em.createQuery("select 1 from PaymentBillingQueue " +
+                " where plan.id = :planId and directChargeAccount.id = :accountId");
+
+        query.setParameter("planId", paymentBillingPlanId);
+        query.setParameter("accountId", accountId);
+        query.setMaxResults(1);
+
+        if (CollectionUtils.isNotEmpty(query.getResultList())) {
+            String errMsg = "PaymentBillingQueue already exists for the given plan (ID=" + paymentBillingPlanId +
+                    ") and account (ID=" + accountId + ")";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
 
         PaymentBillingQueue billingQueue = new PaymentBillingQueue();
 

@@ -178,6 +178,25 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         return allowableCharge;
     }
 
+    private PaymentBillingQueue _createPaymentBillingQueue(Long paymentBillingPlanId) {
+
+        PaymentBillingQueue billingQueue = billingService.createPaymentBillingQueue(paymentBillingPlanId,
+                TEST_USER_ID,
+                new BigDecimal(240.09),
+                new Date(),
+                true);
+
+        Assert.notNull(billingQueue);
+        Assert.notNull(billingQueue.getId());
+        Assert.notNull(billingQueue.getDirectChargeAccount());
+        Assert.notNull(billingQueue.getCreatorId());
+        Assert.notNull(billingQueue.getCreationDate());
+        Assert.notNull(billingQueue.getInitiationDate());
+        Assert.notNull(billingQueue.getPlan());
+
+        return billingQueue;
+    }
+
     @Test
     public void createPaymentBillingPlan() throws Exception {
         _createPaymentBillingPlan();
@@ -302,6 +321,65 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
             Assert.notNull(schedule.getPercentage());
             Assert.notNull(schedule.getEffectiveDate());
         }
+
+    }
+
+    @Test
+    public void processPaymentBillingQueues() throws Exception {
+
+        PaymentBillingPlan plan = _createPaymentBillingPlan();
+
+        PaymentBillingTransferDetail transfer =
+                billingService.generatePaymentBillingTransfer(plan.getId(), TEST_USER_ID, new BigDecimal(100), new Date());
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.INITIALIZED);
+
+        transfer = billingService.transferPaymentBillingTransactions(transfer.getId());
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.ACTIVE);
+
+        transfer = billingService.reversePaymentBillingTransfer(transfer.getId(), "Reversed Transfer", true);
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.REVERSED);
+
+        _createPaymentBillingQueue(plan.getId());
+
+        billingService.processPaymentBillingQueues(TEST_USER_ID);
+
+    }
+
+    @Test
+    public void processPaymentBillingQueuesByCreator() throws Exception {
+
+        PaymentBillingPlan plan = _createPaymentBillingPlan();
+
+        PaymentBillingTransferDetail transfer =
+                billingService.generatePaymentBillingTransfer(plan.getId(), TEST_USER_ID, new BigDecimal(700.22), new Date());
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.INITIALIZED);
+
+        transfer = billingService.transferPaymentBillingTransactions(transfer.getId());
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.ACTIVE);
+
+        _createPaymentBillingQueue(plan.getId());
+
+        billingService.processPaymentBillingQueuesByCreator(TEST_USER_ID);
 
     }
 

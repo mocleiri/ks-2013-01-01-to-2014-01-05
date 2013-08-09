@@ -195,4 +195,20 @@ public class PaymentBillingTransferDetail implements Identifiable {
         chargeStatusCode = chargeStatus.getId();
     }
 
+    @Override
+    public String toString() {
+        return "PaymentBillingTransferDetail{" +
+                "id=" + id +
+                ", directChargeAccount=" + directChargeAccount +
+                ", plan=" + plan +
+                ", flatFeeCharge=" + flatFeeCharge +
+                ", variableFeeCharge=" + variableFeeCharge +
+                ", initiationDate=" + initiationDate +
+                ", transferGroupId='" + transferGroupId + '\'' +
+                ", maxAmount=" + maxAmount +
+                ", planAmount=" + planAmount +
+                ", chargeStatus=" + chargeStatus +
+                ", chargeStatusCode='" + chargeStatusCode + '\'' +
+                '}';
+    }
 }
