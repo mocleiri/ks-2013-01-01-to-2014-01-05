@@ -1,8 +1,8 @@
 class EditAcademicTerms < BasePage
 
-
   wrapper_elements
   frame_element
+  include CalendarStickyFooter
 
   action(:go_to_terms_tab) { |b| b.frm.a(href: "#KS-AcademicTerm-EditSection_tab").click; b.loading.wait_while_present}
   action(:go_to_cal_tab) { |b| b.frm.a(href: "#acal-info_tab").click; b.loading.wait_while_present}
@@ -210,27 +210,6 @@ class EditAcademicTerms < BasePage
   action(:key_date_exist) { |term_index, key_date_group_index, key_date_index, b| b.frm.div(id: "key_date_type_line#{term_index}_line#{key_date_group_index}_line#{key_date_index}").span(index: 0).exists?}
 
   action(:get_key_date_group_index) { |group_name, b| b.frm.div(text:"#{group_name}").span(index:0).id}
-
-  element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") } # Persistent ID needed!
-  action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click }
-
-
-  def save(opts = {})
-
-    defaults = {
-        :exp_success => true
-    }
-    options = defaults.merge(opts)
-
-    sticky_footer_div.button(text: "Save").click
-    loading.wait_while_present
-    sleep 1
-    if options[:exp_success] then
-      growl_div.wait_until_present
-      raise "save was not successful - growl text: #{growl_text}" unless growl_text.match /saved successfully/
-      growl_div.div(class: "jGrowl-close").click
-    end
-  end
 
 end
 

@@ -15,6 +15,7 @@ class AcademicCalendar
   include DateFactory
   include StringFactory
   include Workflows
+  include CalendarUtils
 
   #generally set using options hash
   attr_accessor :name, :start_date, :end_date, :terms, :year
@@ -155,14 +156,28 @@ class AcademicCalendar
   end
 
   def edit (opts = {})
+    defaults = {
+        :exp_success=> true
+    }
+    options = defaults.merge(opts)
+
     search
     on(CalendarSearch).edit @name
 
-    if !opts[:terms].nil? then
-      opts[:terms].each do |term_object|
-        add_term(term_object)
-      end
+    if !options[:name].nil? then
+      on(EditAcademicCalendar).academic_calendar_name.set options[:name]
     end
+
+    if !options[:start_date].nil? then
+      on(EditAcademicCalendar).calendar_start_date.set options[:start_date]
+    end
+
+    if !options[:end_date].nil? then
+      on(EditAcademicCalendar).calendar_end_date.set options[:end_date]
+    end
+
+    on(EditAcademicCalendar).save :exp_success => options[:exp_success]
+    set_options(options) if options[:exp_success]
 
   end
 
@@ -202,31 +217,6 @@ class AcademicCalendar
     end
     holiday_calendar_list << hcal_object
   end
-
-  #there are existing calendars up to 2023, so most of the term codes are used
-  BASE_UNUSED_CALENDAR_YEAR = 2230
-  MAX_UNUSED_CALENDAR_YEAR = 2699
-  def get_random_calendar_year(base_year =BASE_UNUSED_CALENDAR_YEAR, max_year = MAX_UNUSED_CALENDAR_YEAR)
-    random_year = base_year + rand( max_year - base_year )
-    #make sure that year and next are not already used
-    year_used = true
-    go_to_calendar_search
-    while year_used
-      on CalendarSearch do |page|
-        page.search_for "Academic Calendar", "", random_year + 1
-      end
-      on CalendarSearch do |page|
-        if page.results_table.exists? then
-          year_used = true
-          random_year =  random_year + 1
-        else
-          year_used = false
-        end
-      end
-    end
-    random_year
-  end
-
 end
 
 
@@ -327,7 +317,6 @@ class AcademicTerm
     }
     options = defaults.merge(opts)
 
-
     search
     on(CalendarSearch).edit @term_name
 
@@ -407,7 +396,7 @@ class AcademicTerm
     weekdays
   end
 
- #can't do this for a subterm
+  #can't do this for a subterm
   def set_up_soc
     raise "can't make subterm official" if @subterm
     go_to_create_soc
@@ -728,7 +717,6 @@ class CalendarEvent
       page.save
     end
   end
-
 
 end
 

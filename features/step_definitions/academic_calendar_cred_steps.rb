@@ -88,19 +88,9 @@ When /^I copy the Academic Calendar$/ do
 end
 
 When /^I update the Academic Calendar$/ do
-  @calendar.search
-  on CalendarSearch do |page|
-    page.edit @calendar.name
-  end
-  @calendar.name = random_alphanums.strip
-  @calendar.start_date = "02/15/#{next_year[:year]}"
-  @calendar.end_date = "07/06/#{next_year[:year] + 1}"
-  on EditAcademicCalendar do |page|
-    page.academic_calendar_name.set @calendar.name
-    page.calendar_start_date.set @calendar.start_date
-    page.calendar_end_date.set @calendar.end_date
-    page.save
-  end
+  @calendar.edit :name => random_alphanums.strip,
+                 :start_date => "02/15/#{@calendar.year.to_i + 1}",
+                 :end_date => "07/06/#{@calendar.year.to_i + 1}"
 end
 
 When /^I edit the term and make it official$/ do
@@ -127,33 +117,14 @@ When /^I delete the parent term of a subterm$/ do
   @calendar.delete_term(@term)
 end
 
-Then /^the calendar should reflect the updates$/ do
-  on CalendarSearch do |page|
-    page.edit @calendar.name
-  end
-  on EditAcademicCalendar do |page|
-    page.academic_calendar_name.value.should == @calendar.name
-    page.calendar_start_date.value.should == @calendar.start_date
-    page.calendar_end_date.value.should == @calendar.end_date
+Then /^the academic calendar should reflect the updates$/ do
+  @calendar.view
+  on ViewAcademicCalendar do |page|
+    page.acal_name.should == @calendar.name
+    page.acal_start_date.should == @calendar.start_date
+    page.acal_end_date.should == @calendar.end_date
   end
 end
-
-#TODO - cleanup?
-#When /^I add a (.*) term and save$/ do |term_type|
-#  on EditAcademicTerms do |page|
-#     page.go_to_terms_tab
-#     @term = make AcademicTerm
-#     @term.create term_type
-#     page.go_to_cal_tab
-#  end
-#  on EditAcademicCalendar do |page|
-#    page.save
-#    raise "Page has errors" unless page.page_info_message
-#    if(page.page_info_message)
-#        (page.page_info_message_text =~ /has been saved successfully./).should_not == nil
-#    end
-#  end
-#end
 
 Then /^I verify that the term added to the calendar$/ do
   @calendar.search
@@ -297,7 +268,7 @@ end
 
 When /^I add a new term to the Academic Calendar with a defined instructional period$/ do
   @term = make AcademicTerm, :term_year => @calendar.year
-  @calendar.edit :terms => [ @term ]
+  @calendar.add_term @term
   @term.expected_instructional_days = @term.weekdays_in_term
 
   @keydategroup = make KeyDateGroup, :key_date_group_type=> "Instructional", :term_type=> @term.term_type
@@ -415,17 +386,18 @@ When /^I add a Holiday Calendar to the Academic Calendar$/ do
   hol_cal_start_date += 1
   hol_cal_end_date = Date.strptime(@calendar.end_date, '%m/%d/%Y')
   hol_cal_end_date -= 1
-  @holCalendar = create HolidayCalendar, :start_date => hol_cal_start_date.strftime(format='%m/%d/%Y'),
-                                         :end_date => hol_cal_end_date.strftime(format='%m/%d/%Y')
-                                         #:holiday_types=>[:start_date => hol_cal_start_date.strftime(format='%m/%d/%Y'),
-  @holCalendar.make_official
+  @holiday_calendar = create HolidayCalendar, :year => @calendar.year,
+                             :start_date => hol_cal_start_date.strftime(format='%m/%d/%Y'),
+                             :end_date => hol_cal_end_date.strftime(format='%m/%d/%Y')
+                             #:holiday_types=>[:start_date => hol_cal_start_date.strftime(format='%m/%d/%Y'),
+  @holiday_calendar.make_official
   @calendar.search
   on CalendarSearch do |page|
     page.edit @calendar.name
   end
   on EditAcademicCalendar do |page|
     #toggle Holiday?
-    page.add_holiday_calendar_select.select @holCalendar.name
+    page.add_holiday_calendar_select.select @holiday_calendar.name
     page.add_holiday_calendar_button.click
     page.save
   end
@@ -621,7 +593,8 @@ end
 
 When /^I add a Holiday Calendar with holidays in the term$/ do
   holiday_list =  Array.new(1){make Holiday, :type=>"Columbus Day", :start_date=>"09/05/#{@term.term_year}", :instructional=>false}
-  @holiday_calendar = create HolidayCalendar, :start_date => @calendar.start_date,
+  @holiday_calendar = create HolidayCalendar, :year => @calendar.year,
+                             :start_date => @calendar.start_date,
                              :end_date => @calendar.end_date,
                              :holiday_list => holiday_list
   @holiday_calendar.make_official
@@ -670,12 +643,12 @@ Then /^the Holiday Calendar (.*) when I view the Academic Calendar$/ do |arg|
     page.go_to_calendar_tab
     if arg == "is listed"
       # what if multiple hcals
-      page.hcal_name_text.should == @holCalendar.name
-      page.hcal_start_date.should == @holCalendar.start_date
-      page.hcal_end_date.should == @holCalendar.end_date
+      page.hcal_name_text.should == @holiday_calendar.name
+      page.hcal_start_date.should == @holiday_calendar.start_date
+      page.hcal_end_date.should == @holiday_calendar.end_date
     else
       if page.hcal_name_div.exists?
-        page.hcal_name_text.should_not == @holCalendar.name
+        page.hcal_name_text.should_not == @holiday_calendar.name
       else
         #return true
       end
@@ -692,7 +665,7 @@ Then /^I remove the Holiday Calendar$/ do
 
   on EditAcademicCalendar do |page|
     #page.go_to_calendar_tab
-    page.delete_holiday_cal(@holCalendar.name)
+    page.delete_holiday_cal(@holiday_calendar.name)
     page.save
   end
 end

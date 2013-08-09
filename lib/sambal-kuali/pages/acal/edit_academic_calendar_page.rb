@@ -1,9 +1,10 @@
 class EditAcademicCalendar < BasePage
 
-  expected_element :header_calendar_name
-
   wrapper_elements
   frame_element
+  include CalendarStickyFooter
+
+  expected_element :header_calendar_name
 
   element(:header_calendar_name) { |b| b.frm.div(class: "ks-unified-header ks-unified-header").h1.span}
 
@@ -40,19 +41,6 @@ class EditAcademicCalendar < BasePage
 
   element(:make_official_link) { |b| b.frm.link(id: "acal_Official") }
   action(:make_official) { |b| b.make_official_link.click; b.loading.wait_while_present }
-
-  def save
-    sticky_footer_div.button(text: "Save").click
-    loading.wait_while_present
-    growl_div.wait_until_present
-    raise "save was not successful - growl text #{growl_text}" unless growl_text.match /saved successfully/
-    growl_div.div(class: "jGrowl-close").click
-  end
-
-  element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") }
-
-  action(:delete_draft) { |b| b.sticky_footer_div.link(text: "Delete").click; b.loading.wait_while_present }
-  action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click }
 
   ###### confirm make official dialog
   element(:make_official_dialog_div) { |b| b.frm.div(id: "KS-AcademicCalendar-ConfirmCalendarOfficial-Dialog") }

@@ -23,8 +23,7 @@ Feature: EC.Academic Calendar CRED
 
   Scenario: Update Academic Calendar
     When I update the Academic Calendar
-    And I search for the calendar
-    Then the calendar should reflect the updates
+    Then the academic calendar should reflect the updates
 
   Scenario: Delete Draft Academic Calendar
     When I delete the Academic Calendar draft
@@ -62,3 +61,13 @@ Feature: EC.Academic Calendar CRED
     When I search for the Academic Calendar using partial name
     Then the calendar should appear in search results
 
+#TODO: date validations
+#  Scenario: Verify warning message when adding an Event with date outside Academic Calendar date range
+#  Scenario: Verify warning message when editing an Event with date outside Academic Calendar date range
+#  Scenario: Verify warning message when adding an Event with start date after end date
+#  Scenario: Verify error message when adding an Event with blank start date
+#  Scenario: Verify error message when adding an Event with a start date which has an invalid format
+#  Scenario: Verify error message when adding a Academic Calendar with blank start date
+#  Scenario: Verify error message when adding a Academic Calendar with start date after end date
+#  Scenario: Verify error message when editing a Academic Calendar with start date after end date
+#  Scenario: Verify error message when editing a Academic Calendar with start date which has an invalid format

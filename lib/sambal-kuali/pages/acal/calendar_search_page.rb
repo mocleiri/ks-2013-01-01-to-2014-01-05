@@ -5,6 +5,12 @@ class CalendarSearch < BasePage
   wrapper_elements
   frame_element
 
+  ###### confirm delete dialog
+  element(:delete_dialog_div) { |b| b.frm.div(id: "KS-AcademicCalendar-ConfirmDelete-Dialog") }
+  action(:confirm_delete) { |b| b.delete_dialog_div.radio(index: 0).click; b.loading.wait_while_present }
+  action(:cancel_delete) { |b| b.delete_dialog_div.radio(index: 1).click ; b.loading.wait_while_present}
+  ########
+
   CALENDAR_NAME = 0
   CALENDAR_START_DATE = 1
   CALENDAR_END_DATE = 2
@@ -53,6 +59,7 @@ class CalendarSearch < BasePage
 
   def delete calendar
     results_table.row(text: /\b#{calendar}\b/).link(text: "Delete").click
+    confirm_delete
     loading.wait_while_present
   end
 

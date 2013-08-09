@@ -138,6 +138,64 @@ module PopulationsSearch
 
 end
 
+module CalendarUtils
+
+  #there are existing calendars up to 2023, so most of the term codes are used
+  BASE_UNUSED_CALENDAR_YEAR = 2230
+  MAX_UNUSED_CALENDAR_YEAR = 2699
+  def get_random_calendar_year(base_year =BASE_UNUSED_CALENDAR_YEAR, max_year = MAX_UNUSED_CALENDAR_YEAR)
+    random_year = base_year + rand( max_year - base_year )
+    #make sure that year and next are not already used
+    year_used = true
+    go_to_calendar_search
+    while year_used
+      on CalendarSearch do |page|
+        page.search_for "Academic Calendar", "", random_year + 1
+      end
+      on CalendarSearch do |page|
+        if page.results_table.exists? then
+          year_used = true
+          random_year =  random_year + 1
+        else
+          year_used = false
+        end
+      end
+    end
+    random_year
+  end
+
+end
+
+module CalendarStickyFooter
+
+  PageFactory.element(:acal_sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") } # persistent id not possible
+
+  def save(opts = {})
+    defaults = {
+        :exp_success => true
+    }
+    options = defaults.merge(opts)
+
+    acal_sticky_footer_div.button(text: "Save").click
+    loading.wait_while_present
+    sleep 1
+    if options[:exp_success] then
+      growl_div.wait_until_present
+      raise "save was not successful - growl text: #{growl_text}" unless growl_text.match /saved successfully/
+      growl_div.div(class: "jGrowl-close").click
+    end
+  end
+
+  def cancel
+    acal_sticky_footer_div.link(text: "Cancel").click
+  end
+
+  def delete_draft
+    acal_sticky_footer_div.link(text: "Delete").click
+    loading.wait_while_present
+  end
+end
+
 module PopulationEdit
 
   def child_populations
@@ -179,186 +237,6 @@ class OrganizationBase < BasePage
 
 end
 
-class HolidayBase < BasePage
-
-  element(:holiday_type) { |b| b.frm.select(name: "newCollectionLines['holidays'].typeKey") }
-  element(:holiday_start_date) { |b| b.frm.text_field(name: "newCollectionLines['holidays'].startDate") }
-  element(:holiday_start_time) { |b| b.frm.text_field(name: "newCollectionLines['holidays'].startTime") }
-  element(:holiday_start_meridian_am) { |b| b.frm.radio(name: "newCollectionLines['holidays'].startTimeAmPm", value: "AM") }
-  element(:holiday_start_meridian_pm) { |b| b.frm.radio(name: "newCollectionLines['holidays'].startTimeAmPm", value: "PM") }
-  element(:holiday_end_date) { |b| b.frm.text_field(name: "newCollectionLines['holidays'].endDate") }
-  element(:holiday_end_time) { |b| b.frm.text_field(name: "newCollectionLines['holidays'].endTime") }
-  element(:holiday_end_meridian_am) { |b| b.frm.radio(name: "newCollectionLines['holidays'].endTimeAmPm", value: "AM") }
-  element(:holiday_end_meridian_pm) { |b| b.frm.radio(name: "newCollectionLines['holidays'].endTimeAmPm", value: "PM") }
-  element(:instructional) { |b| b.frm.checkbox(name: "newCollectionLines['holidays'].instructional") }
-  element(:add_link) { |b| b.frm.link(id: "KS-HolidayCalendar-HolidaySection_add") }
-
-  element(:make_official_link) { |b| b.frm.link(text: "Make Official") }
-  element(:update_official_button) { |b| b.frm.button(text: "Update Official") }
-
-  action(:make_official) { |b| b.make_official_link.click; b.loading.wait_while_present }
-  action(:update_official) { |b| b.update_official_button.click; b.loading.wait_while_present }
-  action(:save) { |b| b.frm.button(text: "Save").click; b.loading.wait_while_present }
-  action(:holiday_start_meridian_am_set) { |b| b.holiday_start_meridian_am.set; b.loading.wait_while_present}
-  action(:holiday_start_meridian_pm_set) { |b| b.holiday_start_meridian_pm.set; b.loading.wait_while_present}
-  action(:holiday_end_meridian_am_set) { |b| b.holiday_end_meridian_am.set; b.loading.wait_while_present}
-  action(:holiday_end_meridian_pm_set) { |b| b.holiday_end_meridian_pm.set; b.loading.wait_while_present}
-
-end
-
-module Holidays
-
-  def add_all_day_holiday(type, date, inst=false)
-    wait_until { holiday_type.enabled? }
-    holiday_type.select type
-    holiday_start_date.set date
-    loading.wait_while_present
-    instruct(inst)
-    add_link.click
-    loading.wait_while_present
-  end
-
-  def add_date_range_holiday(type, start_date, end_date, inst=false)
-    wait_until { holiday_type.enabled? }
-    holiday_type.select type
-    holiday_start_date.set start_date
-    loading.wait_while_present
-    begin
-      wait_until { holiday_end_date.enabled? }
-    rescue Selenium::WebDriver::Error::StaleElementReferenceError
-      sleep 2
-    end
-    holiday_end_date.set end_date
-    instruct(inst)
-    add_link.click
-    loading.wait_while_present
-  end
-
-  def add_partial_day_holiday(type, start_date, start_time, start_meridian, end_time, end_meridian, inst=false)
-    wait_until { holiday_type.enabled? }
-    holiday_type.select type
-    holiday_start_date.set start_date
-    loading.wait_while_present
-    begin
-      wait_until { holiday_end_time.enabled? }
-    rescue Selenium::WebDriver::Error::StaleElementReferenceError
-      sleep 2
-    end
-    holiday_start_time.set start_time
-    holiday_start_meridian.select start_meridian
-    holiday_end_time.set end_time
-    holiday_end_meridian.select end_meridian
-    instruct(inst)
-    add_link.click
-    loading.wait_while_present
-  end
-
-  def add_partial_range_holiday(type, start_date, start_time, start_meridian, end_date, end_time, end_meridian, inst=false)
-    wait_until { holiday_type.enabled? }
-    holiday_type.select type
-    holiday_start_date.set start_date
-    loading.wait_while_present
-    begin
-      wait_until { holiday_end_date.enabled? }
-    rescue Selenium::WebDriver::Error::StaleElementReferenceError
-      sleep 2
-    end
-    holiday_start_time.set start_time
-    holiday_start_meridian.select start_meridian
-    holiday_end_date.set end_date
-    holiday_end_time.set end_time
-    holiday_end_meridian.select end_meridian
-    instruct(inst)
-    add_link.click
-    loading.wait_while_present
-  end
-
-  def delete_holiday(holiday_type)
-    target_row(holiday_type).button(text: "delete").click
-    loading.wait_while_present
-  end
-
-  def edit_start_date(holiday_type, date)
-    target_row(holiday_type).text_field(name: /startDate/).set date
-  end
-
-  def edit_start_time(holiday_type, time, meridian)
-    target_row(holiday_type).checkbox(name: /allDay/).clear if target_row(holiday_type).checkbox(name: /allDay/).set?
-    target_row(holiday_type).text_field(name: /startTime\d/).set time
-    target_row(holiday_type).text_field(name: /startTimeAmPm/).set meridian
-  end
-
-  def edit_end_time(holiday_type, time, meridian)
-    target_row(holiday_type).checkbox(name: /dateRange/).set unless target_row(holiday_type).checkbox(name: /dateRange/).set?
-    target_row(holiday_type).text_field(name: /endTime\d/).set time
-    target_row(holiday_type).text_field(name: /endTimeAmPm/).set meridian
-  end
-
-  def toggle_all_day(holiday_type)
-    if target_row(holiday_type).checkbox(name: /allDay/).set?
-      target_row(holiday_type).checkbox(name: /allDay/).clear
-    else
-      target_row(holiday_type).checkbox(name: /allDay/).set
-    end
-  end
-
-  def toggle_range(holiday_type)
-    if target_row(holiday_type).checkbox(name: /dateRange/).set?
-      target_row(holiday_type).checkbox(name: /dateRange/).clear
-    else
-      target_row(holiday_type).checkbox(name: /dateRange/).set
-    end
-  end
-
-  def toggle_instructional(holiday_type)
-    if target_row(holiday_type).checkbox(name: /instructional/).set?
-      target_row(holiday_type).checkbox(name: /instructional/).clear
-    else
-      target_row(holiday_type).checkbox(name: /instructional/).set
-    end
-  end
-
-  # Returns a random item from the list of holidays
-  def select_random_holiday
-    holidays = []
-    #wait_until { holiday_type.enabled? }
-    sleep 10
-    holiday_type.options.each { |opt| holidays << opt.text }
-    holidays.delete_if { |item| item == "Select holiday type" }
-    holidays[rand(holidays.length)]
-  end
-
-  private
-
-  def target_row(holiday_type)
-    holiday_table.row(text: /#{Regexp.escape(holiday_type)}/)
-  end
-
-  def instruct(instr)
-    if instr
-      instructional.set
-    else
-      instructional.clear
-    end
-  end
-
-  def start_meridian(merid)
-    if merid == "am"
-      holiday_start_meridian_am_set
-    else
-      holiday_start_meridian_pm_set
-    end
-  end
-
-  def end_meridian(merid)
-    if merid == "am"
-      holiday_end_meridian_am_set
-    else
-      holiday_end_meridian_pm_set
-    end
-  end
-
-end
 
 class ActivityOfferingMaintenanceBase < BasePage
 

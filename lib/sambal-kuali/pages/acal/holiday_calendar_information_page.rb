@@ -1,6 +1,4 @@
-class HolidayCalendarInfo < HolidayBase
-
-  include Holidays
+class HolidayCalendarInfo < BasePage
 
   expected_element :last_saved_element
 

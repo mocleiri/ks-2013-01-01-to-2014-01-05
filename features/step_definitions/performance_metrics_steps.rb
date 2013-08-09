@@ -94,7 +94,7 @@ When /^I edit the Holiday Calendar$/ do
 end
 
 When /^I update a field and save the Holiday Calendar$/ do
-  on EditHolidayCalendar do |page|
+  on CreateEditHolidayCalendar do |page|
     page.end_date.set "08/20/2016"
     @performance_test.start
     page.save
@@ -105,7 +105,7 @@ end
 When /^I start a blank Holiday Calendar$/ do
   @performance_test = make PerformanceTest
   go_to_holiday_calendar
-  on CreateHolidayCalendar do |page|
+  on CreateEditHolidayCalendar do |page|
     @performance_test.start
     page.start_blank_calendar
     @performance_test.end
@@ -113,7 +113,7 @@ When /^I start a blank Holiday Calendar$/ do
 end
 
 When /^I create a new Holiday Calendar$/ do
-  on EditHolidayCalendar do |page|
+  on CreateEditHolidayCalendar do |page|
     page.calendar_name.set random_alphanums.strip
     page.start_date.set "09/01/#{next_year[:year]}"
     page.end_date.set "06/25/#{next_year[:year] + 1}"
