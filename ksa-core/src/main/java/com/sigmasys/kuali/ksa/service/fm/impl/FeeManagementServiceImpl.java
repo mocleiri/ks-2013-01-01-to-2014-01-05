@@ -9,13 +9,13 @@ import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.fm.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 import java.util.Arrays;
@@ -139,9 +139,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Returns all FM Manifests associated with an FM Session with the given ID.
      *
-     * @param feeManagementSessionId    An FM Session ID.
-     * @return  All associated FM Manifests.
+     * @param feeManagementSessionId An FM Session ID.
+     * @return All associated FM Manifests.
      */
+    @Override
     public List<FeeManagementManifest> getManifests(Long feeManagementSessionId) {
         // Check permissions to perform this operation:
         PermissionUtils.checkPermission(Permission.READ_RATE);
@@ -155,18 +156,22 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
     /**
      * Returns all FM Manifests of given types associated with an FM Session with the given ID.
-     * @param feeManagementSessionId    An FM Session ID.
-     * @param manifestTypes             Types of FM Manifests to retrieve.
-     * @return  All associated FM Manifests of given types.
+     *
+     * @param feeManagementSessionId An FM Session ID.
+     * @param manifestTypes          Types of FM Manifests to retrieve.
+     * @return All associated FM Manifests of given types.
      */
-    public List<FeeManagementManifest> getManifests(Long feeManagementSessionId, List<FeeManagementManifestType> manifestTypes) {
+    @Override
+    @WebMethod(exclude = true)
+    public List<FeeManagementManifest> getManifests(Long feeManagementSessionId, FeeManagementManifestType... manifestTypes) {
+
         // Check permissions to perform this operation:
         PermissionUtils.checkPermission(Permission.READ_RATE);
 
         // Create a query to select all FM Manifests linked to the given FM Session:
         Query query = em.createQuery(GET_MANIFESTS_JOIN + " where m.session.id = :fmSessionId and m.type in (:manifestTypes) ");
         query.setParameter("fmSessionId", feeManagementSessionId);
-        query.setParameter("manifestTypes", manifestTypes);
+        query.setParameter("manifestTypes", Arrays.asList(manifestTypes));
 
         return query.getResultList();
     }
@@ -212,13 +217,13 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Performs adjustment of lines between the last charged FM Session and the current session.
      *
-     * @param currentFmSession      Current FM Session.
-     * @param lastChargedFmSession  Last FM Session in the CHARGED status. Guaranteed not to be null.
+     * @param currentFmSession     Current FM Session.
+     * @param lastChargedFmSession Last FM Session in the CHARGED status. Guaranteed not to be null.
      */
     private void processPriorSessionAdjustment(FeeManagementSession currentFmSession, FeeManagementSession lastChargedFmSession) {
         // Get the prior FM session's eligible lines:
         List<FeeManagementManifest> eligibleManifests = getManifests(lastChargedFmSession.getId(),
-                Arrays.asList(FeeManagementManifestType.CHARGE, FeeManagementManifestType.CANCELLATION, FeeManagementManifestType.DISCOUNT));
+                FeeManagementManifestType.CHARGE, FeeManagementManifestType.CANCELLATION, FeeManagementManifestType.DISCOUNT);
 
     }
 }

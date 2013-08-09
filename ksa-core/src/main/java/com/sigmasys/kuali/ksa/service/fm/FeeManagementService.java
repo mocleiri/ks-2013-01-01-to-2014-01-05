@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifest;
 import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifestType;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.util.List;
 
@@ -44,16 +45,18 @@ public interface FeeManagementService {
     /**
      * Returns all FM Manifests associated with an FM Session with the given ID.
      *
-     * @param feeManagementSessionId    An FM Session ID.
-     * @return  All associated FM Manifests.
+     * @param feeManagementSessionId An FM Session ID.
+     * @return All associated FM Manifests.
      */
     List<FeeManagementManifest> getManifests(Long feeManagementSessionId);
 
     /**
      * Returns all FM Manifests of given types associated with an FM Session with the given ID.
-     * @param feeManagementSessionId    An FM Session ID.
-     * @param manifestTypes             Types of FM Manifests to retrieve.
-     * @return  All associated FM Manifests of given types.
+     *
+     * @param feeManagementSessionId An FM Session ID.
+     * @param manifestTypes          Types of FM Manifests to retrieve.
+     * @return All associated FM Manifests of given types.
      */
-    List<FeeManagementManifest> getManifests(Long feeManagementSessionId, List<FeeManagementManifestType> manifestTypes);
+    @WebMethod(exclude = true)
+    List<FeeManagementManifest> getManifests(Long feeManagementSessionId, FeeManagementManifestType... manifestTypes);
 }
