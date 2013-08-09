@@ -2,12 +2,14 @@ package com.sigmasys.kuali.ksa.service.fm.impl;
 
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.fm.FeeManagementSession;
-import com.sigmasys.kuali.ksa.model.fm.FeeManagementSessionStatus;
+import com.sigmasys.kuali.ksa.model.fm.*;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.fm.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
+import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebService;
+import javax.persistence.Query;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * FeeManagementService implementation.
@@ -36,6 +41,14 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * This class's logger.
      */
     private static final Log logger = LogFactory.getLog(FeeManagementServiceImpl.class);
+
+    // A query to get Manifests without regard to statuses. Status filtering can be added later:
+    private static final String GET_MANIFESTS_JOIN = "select m from FeeManagementManifest m " +
+            " left outer join fetch m.keyPairs kp " +
+            " left outer join fetch m.tags t " +
+            " left outer join fetch m.rate r " +
+            " left outer join fetch m.rollup ru " +
+            " left outer join fetch m.linkedManifest lm ";
 
     @Autowired
     private TransactionService transactionService;
@@ -66,7 +79,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // Check the session passed is CURRENT or SIMULATED
         FeeManagementSessionStatus sessionStatus = fmSession.getStatus();
 
-        if (sessionStatus == null || (sessionStatus != FeeManagementSessionStatus.CURRENT && sessionStatus != FeeManagementSessionStatus.SIMULATED)) {
+        if (sessionStatus == null || ((sessionStatus != FeeManagementSessionStatus.CURRENT) && (sessionStatus != FeeManagementSessionStatus.SIMULATED))) {
             String errorMsg = String.format("Invalid FeeManagement Session status [%s]. Session status must be CURRENT or SIMULATED.", sessionStatus);
             logger.error(errorMsg);
             throw new IllegalStateException(errorMsg);
@@ -75,15 +88,28 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // Get the associated Account:
         Account account = fmSession.getAccount();
 
-        // TODO: Check Account blocked status. I don't know what it is, but it's in Paul's diagram.
-        // When I figure out what it means, I'll implement it.
+        if (account == null) {
+            String errorMsg = String.format("Fee Management Session with id [%s] does not have an associated Account.", feeManagementSessionId);
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        } else {
+            // Check if the Account associated with the FM Session is blocked:
+            boolean accountBlocked = isAccountBlocked(account);
+
+            if (accountBlocked) {
+                String errorMsg = String.format("The account %s associated with the FM session with id [%s] is blocked.", account.getId(), feeManagementSessionId);
+                logger.error(errorMsg);
+                throw new IllegalStateException(errorMsg);
+            }
+        }
 
         // Get the last CHARGED FM Session:
         FeeManagementSession lastChargedFmSession = getLastChargedSession(fmSession);
 
         // If there is a prior CHARGED FM Session, perform line adjustment:
         if (lastChargedFmSession != null) {
-            // TODO: Perform line status adjustment. I need to better understand what it's doing
+            // Perform line comparison and status adjustment.
+            processPriorSessionAdjustment(fmSession, lastChargedFmSession);
         }
 
         // TODO: Search the current manifests where offering + rate or internalId + rate match, and the types are one CHARGE and one CANCEL
@@ -110,6 +136,41 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Returns all FM Manifests associated with an FM Session with the given ID.
+     *
+     * @param feeManagementSessionId    An FM Session ID.
+     * @return  All associated FM Manifests.
+     */
+    public List<FeeManagementManifest> getManifests(Long feeManagementSessionId) {
+        // Check permissions to perform this operation:
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+
+        // Create a query to select all FM Manifests linked to the given FM Session:
+        Query query = em.createQuery(GET_MANIFESTS_JOIN + " where m.session.id = :fmSessionId ");
+        query.setParameter("fmSessionId", feeManagementSessionId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Returns all FM Manifests of given types associated with an FM Session with the given ID.
+     * @param feeManagementSessionId    An FM Session ID.
+     * @param manifestTypes             Types of FM Manifests to retrieve.
+     * @return  All associated FM Manifests of given types.
+     */
+    public List<FeeManagementManifest> getManifests(Long feeManagementSessionId, List<FeeManagementManifestType> manifestTypes) {
+        // Check permissions to perform this operation:
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+
+        // Create a query to select all FM Manifests linked to the given FM Session:
+        Query query = em.createQuery(GET_MANIFESTS_JOIN + " where m.session.id = :fmSessionId and m.type in (:manifestTypes) ");
+        query.setParameter("fmSessionId", feeManagementSessionId);
+        query.setParameter("manifestTypes", manifestTypes);
+
+        return query.getResultList();
+    }
+
 
     /***************************************************************************
      *
@@ -133,5 +194,31 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             // Get the prior session and continue the recursion:
             return getLastChargedSession(fmSession.getPrevSession());
         }
+    }
+
+    /**
+     * Checks if the Account associated with the given FM Session is blocked.
+     *
+     * @param account Account associated with a Fee Management Session.
+     * @return boolean Whether the Account associated with the FM Session is blocked.
+     */
+    private boolean isAccountBlocked(Account account) {
+        // TODO: Perform a check for a blocked account. This method will be defined and implemented later (per Paul):
+        boolean accountBlocked = false;
+
+        return accountBlocked;
+    }
+
+    /**
+     * Performs adjustment of lines between the last charged FM Session and the current session.
+     *
+     * @param currentFmSession      Current FM Session.
+     * @param lastChargedFmSession  Last FM Session in the CHARGED status. Guaranteed not to be null.
+     */
+    private void processPriorSessionAdjustment(FeeManagementSession currentFmSession, FeeManagementSession lastChargedFmSession) {
+        // Get the prior FM session's eligible lines:
+        List<FeeManagementManifest> eligibleManifests = getManifests(lastChargedFmSession.getId(),
+                Arrays.asList(FeeManagementManifestType.CHARGE, FeeManagementManifestType.CANCELLATION, FeeManagementManifestType.DISCOUNT));
+
     }
 }

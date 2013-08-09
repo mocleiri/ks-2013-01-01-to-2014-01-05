@@ -2,8 +2,11 @@ package com.sigmasys.kuali.ksa.service.fm;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.model.Constants;
+import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifest;
+import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifestType;
 
 import javax.jws.WebService;
+import java.util.List;
 
 /**
  * FeeManagementService.
@@ -37,4 +40,20 @@ public interface FeeManagementService {
      * @param feeManagementSessionId FeeManagementSession ID
      */
     void chargeSession(Long feeManagementSessionId);
+
+    /**
+     * Returns all FM Manifests associated with an FM Session with the given ID.
+     *
+     * @param feeManagementSessionId    An FM Session ID.
+     * @return  All associated FM Manifests.
+     */
+    List<FeeManagementManifest> getManifests(Long feeManagementSessionId);
+
+    /**
+     * Returns all FM Manifests of given types associated with an FM Session with the given ID.
+     * @param feeManagementSessionId    An FM Session ID.
+     * @param manifestTypes             Types of FM Manifests to retrieve.
+     * @return  All associated FM Manifests of given types.
+     */
+    List<FeeManagementManifest> getManifests(Long feeManagementSessionId, List<FeeManagementManifestType> manifestTypes);
 }
