@@ -1241,7 +1241,10 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                 " order by q.creationDate desc");
 
         query.setParameter("accountId", accountId);
-        query.setParameter("transferDetailId", transferDetailId);
+
+        if (transferDetailId != null) {
+            query.setParameter("transferDetailId", transferDetailId);
+        }
 
         return query.getResultList();
     }
