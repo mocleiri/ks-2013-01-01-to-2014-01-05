@@ -15,7 +15,7 @@
 # the external paths
 #
 
-ks-api https://svn.kuali.org/repos/student/contrib/CM/ks-api
-ks-core https://svn.kuali.org/repos/student/contrib/CM/ks-core
-ks-lum https://svn.kuali.org/repos/student/contrib/CM/ks-lum
-ks-deployments https://svn.kuali.org/repos/student/contrib/CM/ks-deployments
+ks-api https://svn.kuali.org/repos/student/contrib/CM/ks-api/trunk
+ks-core https://svn.kuali.org/repos/student/contrib/CM/ks-core/trunk
+ks-lum https://svn.kuali.org/repos/student/contrib/CM/ks-lum/trunk
+ks-deployments https://svn.kuali.org/repos/student/contrib/CM/ks-deployments/trunk
