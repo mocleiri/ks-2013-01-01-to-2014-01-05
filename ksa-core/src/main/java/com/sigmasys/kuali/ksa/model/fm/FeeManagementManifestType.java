@@ -9,9 +9,6 @@ import com.sigmasys.kuali.ksa.model.Identifiable;
  */
 public enum FeeManagementManifestType implements Identifiable {
 
-    /**
-     * CHARGE, CANCEL, DISCOUNT, CORRECTION.
-     */
 
     CHARGE(FeeManagementManifestType.CHARGE_CODE),
     CANCELLATION(FeeManagementManifestType.CANCELLATION_CODE),
