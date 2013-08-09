@@ -14,6 +14,7 @@
  */
 package org.kuali.student.myplan.plan.form;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +61,12 @@ public class PlanForm extends UifFormBase {
 
     private String courseId;
 
+    // Quick Add params
+    private String courseCd;
+    
+    private BigDecimal courseCredit;
+    
+    private String courseNote;
 
     /*properties used for section Planning*/
     private String sectionCode;
@@ -121,6 +128,7 @@ public class PlanForm extends UifFormBase {
 
     private StatusInfo statusInfo = new StatusInfo();
 
+
     public int getBookmarkedCount() {
         return bookmarkedCount;
     }
@@ -179,11 +187,40 @@ public class PlanForm extends UifFormBase {
         this.javascriptEvents = javascriptEvents;
     }
 
-    public String getAtpId() {
+    public String getCourseCd() {
+		return courseCd;
+	}
+
+	public void setCourseCd(String courseCd) {
+		this.courseCd = courseCd;
+	}
+
+	public BigDecimal getCourseCredit() {
+		return courseCredit;
+	}
+
+	public void setCourseCredit(BigDecimal courseCredit) {
+		this.courseCredit = courseCredit;
+	}
+
+	public String getCourseNote() {
+		return courseNote;
+	}
+
+	public void setCourseNote(String courseNote) {
+		this.courseNote = courseNote;
+	}
+
+	public String getAtpId() {
         return atpId;
     }
 
     public void setAtpId(String atpId) {
+        if(atpId!=null){
+            if(atpId.contains(",")){
+                atpId=atpId.substring(0,atpId.indexOf(","));
+            }
+        }
         this.atpId = atpId;
     }
 
@@ -228,6 +265,7 @@ public class PlanForm extends UifFormBase {
     }
 
     public CourseSummaryDetails getCourseSummaryDetails() {
+        if(courseSummaryDetails==null) courseSummaryDetails = new CourseSummaryDetails();
         return this.courseSummaryDetails;
     }
 
@@ -236,6 +274,7 @@ public class PlanForm extends UifFormBase {
     }
 
     public PlannedCourseSummary getPlannedCourseSummary() {
+        if(plannedCourseSummary==null) plannedCourseSummary = new PlannedCourseSummary();
         return plannedCourseSummary;
     }
 
@@ -370,6 +409,33 @@ public class PlanForm extends UifFormBase {
             shortTermName = KsapFrameworkServiceLocator.getTermHelper().getYearTerm(getAtpId()).getShortName();
         }
         return shortTermName;
+    }
+
+    /**
+     * Returns the list of events that should be
+     */
+    public String getPlannerJavascriptEventsAsJSON() {
+
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonOut = null;
+        try {
+            //  Turn the list of javascript events into a string of JSON.
+            jsonOut = mapper.writeValueAsString(javascriptEvents);
+            jsonOut = StringEscapeUtils.unescapeJava(jsonOut);
+            jsonOut = jsonOut.replaceAll("\"\\{", "{");
+            jsonOut = jsonOut.replaceAll("}\"", "}");
+            jsonOut = StringEscapeUtils.escapeHtml(jsonOut);
+        } catch (Exception e) {
+            logger.error("Could not convert javascript events to JSON.", e);
+            jsonOut = "";
+        }
+
+        //  TODO: Determine if there is a config that can be set to avoid having to do this.
+
+
+        return jsonOut;
     }
 
     /**
