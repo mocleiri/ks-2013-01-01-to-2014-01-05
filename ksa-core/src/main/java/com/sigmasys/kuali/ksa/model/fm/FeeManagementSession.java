@@ -2,7 +2,6 @@ package com.sigmasys.kuali.ksa.model.fm;
 
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Identifiable;
-import com.sigmasys.kuali.ksa.model.KeyPair;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
