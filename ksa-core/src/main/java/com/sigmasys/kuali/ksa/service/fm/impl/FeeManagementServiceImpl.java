@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -144,14 +144,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     public List<FeeManagementManifest> getManifests(Long feeManagementSessionId) {
-        // Check permissions to perform this operation:
-        PermissionUtils.checkPermission(Permission.READ_RATE);
-
-        // Create a query to select all FM Manifests linked to the given FM Session:
-        Query query = em.createQuery(GET_MANIFESTS_JOIN + " where m.session.id = :fmSessionId ");
-        query.setParameter("fmSessionId", feeManagementSessionId);
-
-        return query.getResultList();
+        return getManifests(feeManagementSessionId, (FeeManagementManifestType[]) null);
     }
 
     /**
@@ -168,10 +161,26 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // Check permissions to perform this operation:
         PermissionUtils.checkPermission(Permission.READ_RATE);
 
+        boolean typesExist = (manifestTypes != null && manifestTypes.length > 0);
+
+        List<String> typeCodes = null;
+
+        if (typesExist) {
+            typeCodes = new ArrayList<String>(manifestTypes.length);
+            for (FeeManagementManifestType manifestType : manifestTypes) {
+                typeCodes.add(manifestType.getId());
+            }
+        }
+
         // Create a query to select all FM Manifests linked to the given FM Session:
-        Query query = em.createQuery(GET_MANIFESTS_JOIN + " where m.session.id = :fmSessionId and m.type in (:manifestTypes) ");
+        Query query = em.createQuery(GET_MANIFESTS_JOIN + " where m.session.id = :fmSessionId" +
+                (typesExist ? " and m.typeCode in (:typeCodes)" : ""));
+
         query.setParameter("fmSessionId", feeManagementSessionId);
-        query.setParameter("manifestTypes", Arrays.asList(manifestTypes));
+
+        if (typesExist) {
+            query.setParameter("typeCodes", typeCodes);
+        }
 
         return query.getResultList();
     }
