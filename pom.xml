@@ -77,9 +77,9 @@
         </profile>
     </profiles>
     <scm>
-        <connection>scm:svn:https://svn.kuali.org/repos/student/contrib/CM/aggregate</connection>
-        <developerConnection>scm:svn:https://svn.kuali.org/repos/student/contrib/CM/aggregate</developerConnection>
-        <url>https://svn.kuali.org/repos/student/contrib/CM/aggregate</url>
+        <connection>scm:svn:https://svn.kuali.org/repos/student/contrib/CM/aggregate/trunk</connection>
+        <developerConnection>scm:svn:https://svn.kuali.org/repos/student/contrib/CM/aggregate/trunk</developerConnection>
+        <url>https://svn.kuali.org/repos/student/contrib/CM/aggregate/trunk</url>
     </scm>
     <properties>
         <ks.api.version>2.0.2-cm-contrib-SNAPSHOT</ks.api.version>
