@@ -187,6 +187,15 @@ class ManageCourseOfferings < BasePage
     loading.wait_while_present(120)
   end
 
+  def ao_requisites_link(code,cluster_private_name = :default_cluster)
+    target_row(code, cluster_private_name).link(text: /\b#{Regexp.escape("Activity Offering Requisites")}\b/)
+  end
+
+  def ao_requisites(code, cluster_private_name = :default_cluster)
+    ao_requisites_link(code, cluster_private_name).click
+    loading.wait_while_present(120)
+  end
+
   def select_aos(code_list, cluster_private_name = :default_cluster)
     for code in code_list
         target_row(code, cluster_private_name).checkbox.set
