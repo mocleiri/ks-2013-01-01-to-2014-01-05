@@ -459,6 +459,17 @@ class ActivityOffering
           :edit_personnel_list,
           :edit_seat_pool_list
 
+  def add_personnel person
+    person.add
+    @personnel_list << person
+  end
+
+  def delete_personnel
+    on ActivityOfferingMaintenance do |page|
+      page.delete_personnel
+    end
+  end
+
   #completes activity offering edit operation
   #this is a separate step from edit as it allows validation steps to occur during the edit process
   def save()
@@ -755,6 +766,16 @@ class Personnel
     end
   end
 
+  def add
+    on ActivityOfferingMaintenance do |page|
+      page.add_personnel
+      page.personnel_table.rows[-2].cells[PERSONNEL_ID_COLUMN].text_field.set @id
+      page.personnel_table.rows[-2].cells[PERSONNEL_NAME_COLUMN].text_field.set @name
+      page.personnel_table.rows[-2].cells[PERSONNEL_AFFILIATION_COLUMN].select().select(@affiliation)
+      page.personnel_table.rows[-2].cells[PERSONNEL_INST_EFFORT_COLUMN].text_field.set @inst_effort
+    end
+  end
+
   # edits personnel based on values in options hash
   #
   #  @param opts [Hash] key => value for attribute to be updated
@@ -767,6 +788,26 @@ class Personnel
     end
 #        update_options(opts)
   end
+
+  def target_row_by_personnel_id
+    on ActivityOfferingMaintenance do |page|
+      idx = -1
+      page.personnel_table.rows.each do |row|
+        idx += 1
+        if (idx < 1)
+          next
+        end
+        begin
+          row_key = row.cells[PERSONNEL_ID_COLUMN].text_field.value
+          return row unless row_key != @id
+        rescue Watir::Exception::UnknownObjectException
+          return nil
+        end
+      end
+    end
+    return nil
+  end
+
 
   # edits personnel based on values in options hash
   #

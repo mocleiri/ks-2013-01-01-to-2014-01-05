@@ -102,7 +102,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   action(:delete_personnel) { |b| b.delete_personnel_element.click; b.loading.wait_while_present }
 
   element(:add_personnel_element) { |b| b.frm.button(id: "ao-personnelgroup-addline") }
-  element(:add_personnel) { |b| b.add_personnel_element.click; b.loading.wait_while_present }
+  action(:add_personnel) { |b| b.add_personnel_element.click; b.loading.wait_while_present }
 
   TBA = 0
   DAYS = 1

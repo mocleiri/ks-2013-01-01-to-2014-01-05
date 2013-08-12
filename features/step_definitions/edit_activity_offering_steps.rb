@@ -134,7 +134,7 @@ When /^I jump to an arbitrary AO but cancel the change$/ do
   end
 
 end
-When /^I add Personnel attributes$/ do
+When /^I change Personnel attributes$/ do
   person = make Personnel, :id => "admin", :name => "admin, admin", :affiliation => "Instructor", :inst_effort => 30
   @activity_offering.edit :personnel_list => [person]
 end
@@ -142,20 +142,34 @@ end
 Then /^the changes of the Personnel attributes are persisted$/ do
   @course_offering.manage
   @activity_offering.edit
-  on ActivityOfferingMaintenance do |page|
-    page.personnel_id.value.should == @activity_offering.personnel_list[0].id
-    page.personnel_effort.value.should == @activity_offering.personnel_list[0].inst_effort.to_s
-    page.personnel_name.value.should == @activity_offering.personnel_list[0].name
-  end
+  personnel = @activity_offering.personnel_list[0]
+  personnel.should_not == nil
+  row = personnel.target_row_by_personnel_id
+  row.should_not == nil
+  row.cells[Personnel::PERSONNEL_NAME_COLUMN].text_field.value.should == personnel.name
+  row.cells[Personnel::PERSONNEL_AFFILIATION_COLUMN].select.selected_options[0].text.should == personnel.affiliation
+  row.cells[Personnel::PERSONNEL_INST_EFFORT_COLUMN].text_field.value.to_i.should == personnel.inst_effort
 end
 
-When /^I change Personnel attributes$/ do
-  on ActivityOfferingMaintenance do |page|
-    page.delete_personnel
-    page.add_personnel
-  end
+Then /^the deleted Personnel line should not be present$/ do
+  @course_offering.manage
+  @activity_offering.edit
+  personnel = @activity_offering.personnel_list[0]
+  personnel.should_not == nil
+  row = personnel.target_row_by_personnel_id
+  row.should == nil
+end
+
+When /^I add Personnel attributes$/ do
+  @activity_offering.edit
   person = make Personnel, :id => "S.DAVIDB", :name => "SMITH, DAVID", :affiliation => "Instructor", :inst_effort => 30
-  @activity_offering.edit :edit_already_started => true, :personnel_list => [person]
+  @activity_offering.add_personnel person
+end
+
+When(/^I delete Personnel attributes$/) do
+  person = make Personnel, :id => "B.MORAYMAR", :name => "BARR, MORAYMA", :affiliation => "Instructor", :inst_effort => 100
+  @activity_offering.edit :personnel_list => [person]
+  @activity_offering.delete_personnel
 end
 
 When /^I change Miscellaneous Activity Offering attributes$/ do
