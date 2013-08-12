@@ -96,7 +96,7 @@ Then /^the holiday calendar appears in the search results$/ do
   end
 end
 
-Then /^the holiday calendar does not appear in the search results$/ do |arg|
+Then /^the holiday calendar does not appear in the search results$/ do
   on CalendarSearch do |page|
       begin
       page.results_list.should_not include @holiday_calendar.name
@@ -173,6 +173,12 @@ end
 Then /^the holiday start date field is highlighted for the error$/ do
   on CreateEditHolidayCalendar do |page|
     page.holiday_start_date.attribute_value('class').should match /error/
+    #make sure don't get alert when leaving the page
+	page.holiday_type.select "Select holiday type"
+    page.holiday_end_date.set ""
+    page.holiday_start_date.set ""
+    page.instructional.clear
+    page.cancel
   end
 end
 

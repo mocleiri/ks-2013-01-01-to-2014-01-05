@@ -11,6 +11,12 @@ class CalendarSearch < BasePage
   action(:cancel_delete) { |b| b.delete_dialog_div.radio(index: 1).click ; b.loading.wait_while_present}
   ########
 
+  ###### confirm delete dialog
+  element(:hcal_delete_dialog_div) { |b| b.frm.div(id: "KS-CalendarSearch-ConfirmDelete-Dialog") }
+  action(:hcal_confirm_delete) { |b| b.hcal_delete_dialog_div.radio(index: 0).click; b.loading.wait_while_present }
+  action(:hcal_cancel_delete) { |b| b.hcal_delete_dialog_div.radio(index: 1).click ; b.loading.wait_while_present}
+  ########
+
   CALENDAR_NAME = 0
   CALENDAR_START_DATE = 1
   CALENDAR_END_DATE = 2
@@ -60,6 +66,12 @@ class CalendarSearch < BasePage
   def delete calendar
     results_table.row(text: /\b#{calendar}\b/).link(text: "Delete").click
     confirm_delete
+    loading.wait_while_present
+  end
+
+  def hcal_delete calendar
+    results_table.row(text: /\b#{calendar}\b/).link(text: "Delete").click
+    hcal_confirm_delete
     loading.wait_while_present
   end
 

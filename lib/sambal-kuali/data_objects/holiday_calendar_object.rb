@@ -178,7 +178,7 @@ class HolidayCalendar
     search
     on CalendarSearch do |page|
       page.search_for "Holiday Calendar", @name
-      page.delete name
+      page.hcal_delete name
     end
   end
 
