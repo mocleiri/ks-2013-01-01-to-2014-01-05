@@ -1,7 +1,20 @@
 package com.sigmasys.kuali.ksa.service.fm.impl;
 
-import com.sigmasys.kuali.ksa.model.Account;
-import com.sigmasys.kuali.ksa.model.Constants;
+import java.math.BigDecimal;
+import java.util.*;
+
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import javax.persistence.Query;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
@@ -9,17 +22,6 @@ import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.fm.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * FeeManagementService implementation.
@@ -112,8 +114,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             processPriorSessionAdjustment(fmSession, lastChargedFmSession);
         }
 
-        // TODO: Search the current manifests where offering + rate or internalId + rate match, and the types are one CHARGE and one CANCEL
-        // Point the manifestId of these matching transactions together
+        // Validate the full-reversal manifests of the current FM session:
+        validateFullReversals(fmSession);
 
         // Updated the status of the current FM Session to RECONCILED or SIMULATED_RECONCILED:
         FeeManagementSessionStatus newFmStatus = (sessionStatus == FeeManagementSessionStatus.CURRENT)
@@ -226,13 +228,242 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Performs adjustment of lines between the last charged FM Session and the current session.
      *
-     * @param currentFmSession     Current FM Session.
-     * @param lastChargedFmSession Last FM Session in the CHARGED status. Guaranteed not to be null.
+     * @param currentFmSession	Current FM Session.
+     * @param priorFmSession 	Last FM Session in the CHARGED status. Guaranteed not to be null.
      */
-    private void processPriorSessionAdjustment(FeeManagementSession currentFmSession, FeeManagementSession lastChargedFmSession) {
-        // Get the prior FM session's eligible lines:
-        List<FeeManagementManifest> eligibleManifests = getManifests(lastChargedFmSession.getId(),
+    private void processPriorSessionAdjustment(FeeManagementSession currentFmSession, FeeManagementSession priorFmSession) {
+        // Get the prior and current FM sessions' manifests:
+        List<FeeManagementManifest> priorManifests = getManifests(priorFmSession.getId(),
                 FeeManagementManifestType.CHARGE, FeeManagementManifestType.CANCELLATION, FeeManagementManifestType.DISCOUNT);
-
+        List<FeeManagementManifest> currentManifests = getManifests(currentFmSession.getId(),
+        		FeeManagementManifestType.CHARGE, FeeManagementManifestType.CANCELLATION, FeeManagementManifestType.DISCOUNT);
+     
+        // Get pairs of matching FM manifests in the prior and the current FM sessions:
+        List<FeeManagementManifest> unmatchedPriorManifests = new ArrayList<FeeManagementManifest>();
+        List<Pair<FeeManagementManifest, FeeManagementManifest>> matchingManifests = getMatchingManifests(priorManifests, currentManifests, unmatchedPriorManifests);
+        
+        // Process matching manifest pairs:
+        for (Pair<FeeManagementManifest, FeeManagementManifest> matchingPair : matchingManifests) {
+        	processMatchingManifests(matchingPair, currentFmSession);
+        }
+        
+        // Process unmatched prior manifests:
+        processUnmatchedPriorManifest(unmatchedPriorManifests, currentFmSession);
     }
+    
+    /**
+     * Returns a <code>List</code> of matching <code>FeeManagementManifest</code>s that match in both prior and current manifest lists.
+     * Matching manifests is done by either:
+     * 1. registrationId + offeringId + rate, or
+     * 2. internalChargeId + rate.
+     * 
+     * @param priorManifests			Prior FM session's manifests.
+     * @param currentManifests			Current FM session's manifests.
+     * @param unmatchedPriorManifests	A List to be populated with unmatched prior FM session's manifests. This is an IN parameter and must not be null.
+     * @return	A List of matching manifest pairs. The "a" property of the <code>Pair</code> is the prior manifest, and "b" is the current one.
+     */
+    private List<Pair<FeeManagementManifest, FeeManagementManifest>> getMatchingManifests (List<FeeManagementManifest> priorManifests, 
+    								List<FeeManagementManifest> currentManifests, List<FeeManagementManifest> unmatchedPriorManifests) {
+    	// Create the resulting list:
+    	List<Pair<FeeManagementManifest, FeeManagementManifest>> matchingManifests = new ArrayList<Pair<FeeManagementManifest,FeeManagementManifest>>();
+    	
+    	// Create a copy of the prior manifest List since we'll be removing matched prior manifests:
+    	List<FeeManagementManifest> priorManifestsCopy = new ArrayList<FeeManagementManifest>(priorManifests);
+    	
+    	// Iterate through the prior manifests trying find a match in the current manifest list:
+    	for (Iterator<FeeManagementManifest> itPrior = priorManifestsCopy.iterator(); itPrior.hasNext();) {
+    		FeeManagementManifest priorManifest = itPrior.next();
+    		
+    		// Iterate through the list of current manifests trying to find a match:
+    		for (FeeManagementManifest currentManifest : currentManifests) {
+    			if (manifestsMatch(priorManifest, currentManifest)) {
+    				// Add a new matching pair, remove the matching prior manifest from the underlying list and break out of the loop:
+    				matchingManifests.add(new Pair<FeeManagementManifest, FeeManagementManifest>(priorManifest, currentManifest));
+    				itPrior.remove();
+    				
+    				break;
+    			}
+    		}
+    	}
+    	
+    	// Add non-matching prior FM session's manifests to the list of unmatched manifests:
+    	unmatchedPriorManifests.addAll(priorManifestsCopy);
+    	
+    	return matchingManifests;
+    }
+    
+    /**
+     * Compares two FM manifests, prior and current, and check if they match by either:
+     * 1. registrationId + offeringId + rate, or
+     * 2. internalChargeId + rate.
+     * 
+     * @param prior		A prior FM session's manifest.
+     * @param current	A current FM session's manifest.
+     * @return	<code>true</code> if the manifests are a match, <code>false</code> otherwise.
+     */
+    private boolean manifestsMatch(FeeManagementManifest prior, FeeManagementManifest current) {
+    	if ((prior != null) && (current != null)) {
+    		boolean rateMatches = (prior.getRate() != null) && (current.getRate() != null) && prior.getRate().equals(current.getRate());
+    		
+    		return rateMatches
+    				&& ((StringUtils.equals(prior.getRegistrationId(), current.getRegistrationId()) && StringUtils.equals(prior.getOfferingId(), current.getOfferingId())) 
+    						|| StringUtils.equals(prior.getInternalChargeId(), current.getInternalChargeId()));
+    	}
+    	
+    	return false;
+    }
+    
+    /**
+     * Processes matching manifests from the prior and current FM sessions by doing one of the following:<br> 
+     * 1. Either copies the transactionId from the prior manifest to the current one if already charged, or<br>
+     * 2. Performs corrections.
+     * 
+     * @param manifests 		A <code>Pair</code> of matching manifests, the first one in the pair is the prior session's manifest.
+     * @param currentFmSession	The current FM session. Used for non-charged matching manifests adjustment.
+     */
+	private void processMatchingManifests(Pair<FeeManagementManifest, FeeManagementManifest> manifests, FeeManagementSession currentFmSession) {
+		// First, check if the payment information on the prior and current manifests match, i.e. current has already been charged:
+		FeeManagementManifest prior = manifests.getA();
+		FeeManagementManifest current = manifests.getB();
+    	boolean currentAlreadyCharged = manifestPaymentInformationMatch(prior, current);
+    	
+    	if (currentAlreadyCharged) {
+    		// Copy the transactionId from the prior to the current:
+    		// TODO: Figure out what "transactionId" in an FM manifest is
+    	} else {
+    		// Create a correction on the current session from the prior manifest:
+    		createPriorManifestCorrection(prior, currentFmSession);
+    	}
+    }
+	
+	/**
+	 * Checks if the prior and current FM manifests' payment information matches. That includes:<p>
+	 * 1. effectiveDate<br>
+	 * 2. recognitionDate<br>
+	 * 3. transactionTypeId<br>
+	 * 4. amount
+	 * 
+	 * @param prior		A prior FM session manifest.
+	 * @param current	A current FM session manifest.
+	 * @return <code>true</code> if the payment information on both manifests matches.
+	 */
+	private boolean manifestPaymentInformationMatch(FeeManagementManifest prior, FeeManagementManifest current) {
+		return (prior.getEffectiveDate() != null) && (current.getEffectiveDate() != null) && prior.getEffectiveDate().equals(current.getEffectiveDate())
+			&& (prior.getRecognitionDate() != null) && (current.getRecognitionDate() != null) && prior.getRecognitionDate().equals(current.getRecognitionDate())
+			&& StringUtils.equals(prior.getTransactionTypeId(), current.getTransactionTypeId())
+			&& getManifestAmount(prior).equals(getManifestAmount(current));
+	}
+	
+	/**
+	 * Calculates the total manifest amount. Guaranteed not to return null.
+	 * 
+	 * @param manifest An FM manifest to calculate its total amount.
+	 * @return	The total FM manifest amount.
+	 */
+	private final BigDecimal getManifestAmount(FeeManagementManifest manifest) {
+		// TODO: Figure out how to calculate an FM manifest's amount and move this method to RateService:
+		Rate rate = manifest.getRate();
+		BigDecimal manifestAmount = new BigDecimal(0);
+		
+		if (rate != null) {
+			// Get all RateAmounts:
+			Set<RateAmount> rateAmounts = rate.getRateAmounts();
+			
+			if (rateAmounts != null) {
+				for (RateAmount rateAmount : rateAmounts) {
+					// Add amount to the total amount:
+					if (rateAmount.getAmount() != null) {
+						manifestAmount = manifestAmount.add(rateAmount.getAmount());
+					}
+				}
+			}
+		}
+		
+		// If the total Manifest amount is still 0, then use the default amount if it exists:
+		if (manifestAmount.doubleValue() == 0d) {
+			RateAmount defaultAmount = rate.getDefaultRateAmount();
+			
+			if (defaultAmount.getAmount() != null) {
+				manifestAmount = defaultAmount.getAmount();
+			}
+		}
+		
+		return manifestAmount;
+	}
+	
+	/**
+	 * Processes all prior FM session's unmatched manifests (those that do not have matching manifests on the current FM session).
+	 * 
+	 * @param unmatchedPriorManifests	Unmatched prior FM manifests.	
+	 * @param currentFmSession			Current FM session.
+	 */
+	private void processUnmatchedPriorManifest(List<FeeManagementManifest> unmatchedPriorManifests, FeeManagementSession currentFmSession) {
+		// TODO: Remove all full-reversal manifest pairs:
+
+		// Iterate through the remaining non-full-reversal prior manifests and create a correction on the current FM session out of each one of them:
+		for (FeeManagementManifest priorManifest : unmatchedPriorManifests) {
+			// Create a correction on the current session from the prior manifest:
+			createPriorManifestCorrection(priorManifest, currentFmSession);
+		}
+	}
+	
+	/**
+	 * Checks if the two <code>FeeManagementManifest</code>s are a subject to full reversal, which means that:<p>
+	 * 
+	 * 1. The types of the two are CHARGE and CANCEL<br>
+	 * 2. Manifests match (see {@link #manifestsMatch(FeeManagementManifest, FeeManagementManifest)}<br>
+	 * 3. Same transactionTypeId and amount.<br>
+	 * 4. Their manifests point at each other.<br>
+	 * 
+	 * @param fmm1	The first FM manifest to check for full reversal.
+	 * @param fmm2	The second FM manifest to check for full reversal.
+	 * @return <code>true</code> if the two FM manifests are full reversal.
+	 */
+	private boolean isFullReversal(FeeManagementManifest fmm1, FeeManagementManifest fmm2) {
+		// First check if the FM manifests point at each other:
+		boolean pointAtEachOther = (fmm1.getLinkedManifest() != null) && (fmm2.getLinkedManifest() != null) 
+				&& fmm1.getLinkedManifest().getId().equals(fmm2.getId()) && fmm2.getLinkedManifest().getId().equals(fmm1.getId());
+		
+		// Check if the types are CHARGE and CANCEL
+		if (pointAtEachOther) {
+			boolean statusesForReversal = ((fmm1.getType() == FeeManagementManifestType.CHARGE) && (fmm2.getType() == FeeManagementManifestType.CANCELLATION))
+					|| ((fmm2.getType() == FeeManagementManifestType.CHARGE) && (fmm1.getType() == FeeManagementManifestType.CANCELLATION));
+			
+			// Now check if the manifests match and have the same transactionTypeId and amount:
+			if (statusesForReversal) {
+				return manifestsMatch(fmm1, fmm2) 
+						&& StringUtils.equals(fmm1.getTransactionTypeId(), fmm2.getTransactionTypeId())
+						&& getManifestAmount(fmm1).equals(getManifestAmount(fmm2));
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Creates a correction from a prior FM session's manifest into the current FM session. 
+	 *  
+	 * @param priorManifest		A prior FM manifest to create a correction out of.
+	 * @param currentFmSession	Current FM session.
+	 */
+	private void createPriorManifestCorrection(FeeManagementManifest priorManifest, FeeManagementSession currentFmSession) {
+		// Bring the prior manifest to the current session. Change its type to CORRECTED:
+		priorManifest.setSession(currentFmSession);
+		priorManifest.setType(FeeManagementManifestType.CORRECTION);
+		
+		// Duplicate the prior manifest and add to the current FM session:
+		// TODO: Figure out why there is no CORRECTED type and what to do with Manifest duplication:
+		
+		// Persist the prior and new manifests:
+		persistEntity(priorManifest);
+	}
+	
+	/**
+	 * Validates that full-reversal manifests point at each other. Repoints them at each other if necessary.
+	 * 
+	 * @param fmSession An FM Session to validate its full reversals.
+	 */
+	private void validateFullReversals(FeeManagementSession fmSession) {
+		// TODO: Either get Manifests for the FM session or use the already loaded ones:
+	}
 }
