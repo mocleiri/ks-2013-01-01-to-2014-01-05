@@ -1,12 +1,14 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.AdminForm;
+import com.sigmasys.kuali.ksa.model.Activity;
 import com.sigmasys.kuali.ksa.model.GlTransaction;
 import com.sigmasys.kuali.ksa.model.GlTransactionStatus;
 import com.sigmasys.kuali.ksa.service.ActivityService;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,8 +58,10 @@ public class AdminController extends GenericSearchController {
        String pageId = request.getParameter("pageId");
        logger.info("Admin Controller: Page '" + pageId + "'");
 
-       if ("ActivityPage".equals(pageId)) {
-         form.setActivities(activityService.getActivities());
+       if ("SystemActivity".equals(pageId)) {
+           List<Activity> activities = activityService.getActivities();
+           activities = this.filterActivities(form, activities);
+         form.setActivities(activities);
          return getUIFModelAndView(form);
       } else if("TransactionsExport".equals(pageId)){
            List<GlTransaction> transactions = glService.getGlTransactionsByStatus(GlTransactionStatus.QUEUED);
@@ -68,25 +74,45 @@ public class AdminController extends GenericSearchController {
 
    }
 
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filter")
+    public ModelAndView filter(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
 
-   /**
-    *
-    * @param form
-    * @param request
-    * @return
-    */
-   @RequestMapping(method= RequestMethod.POST, params="methodToCall=refresh")
-   public ModelAndView refresh(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
+        String pageId = request.getParameter("pageId");
+        logger.info("Admin Controller: Page '" + pageId + "'");
 
-      String pageId = request.getParameter("actionParameters[pageId]");
+        if ("SystemActivity".equals(pageId)) {
+            List<Activity> activities = activityService.getActivities();
+            activities = this.filterActivities(form, activities);
+            form.setActivities(activities);
+        }
 
-      if (pageId != null && "ActivityPage".equals(pageId)) {
-         form.setActivities(activityService.getActivities());
-         return getUIFModelAndView(form);
-      }
+        return getUIFModelAndView(form);
 
-      /*throw new IllegalArgumentException("'pageId' request parameter must be specified");*/
-       return getUIFModelAndView(form);
+    }
 
-   }
+        private List<Activity> filterActivities(AdminForm form, List<Activity> activities) {
+        List<Activity> good = new ArrayList<Activity>();
+
+        Date start = form.getStartingDate();
+        Date end = form.getEndingDate();
+
+        for(Activity a : activities){
+            Date timestamp = a.getTimestamp();
+            if(start != null && (DateTimeComparator.getDateOnlyInstance().compare(start, timestamp) > 0)) {
+                continue;
+            }
+
+            if(end != null && (DateTimeComparator.getDateOnlyInstance().compare(end, timestamp) < 0)) {
+                continue;
+            }
+
+
+
+            good.add(a);
+        }
+
+        return good;
+    }
+
+
 }

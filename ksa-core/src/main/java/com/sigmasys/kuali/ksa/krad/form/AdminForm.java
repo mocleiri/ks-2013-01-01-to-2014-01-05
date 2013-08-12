@@ -1,11 +1,14 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
-import java.util.List;
-
 import com.sigmasys.kuali.ksa.krad.model.AccountInformationHolder;
 import com.sigmasys.kuali.ksa.krad.model.AccountSearchInformationHolder;
 import com.sigmasys.kuali.ksa.krad.model.AccountSearchResultModel;
-import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.model.Activity;
+import com.sigmasys.kuali.ksa.model.GlTransaction;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by: dmulderink on 10/5/12 at 6:55 PM
@@ -44,6 +47,11 @@ public class AdminForm extends AbstractViewModel {
 
    // a list of activities
    private List<Activity> activities;
+
+
+    // Fields used to filter activities
+    private Date startingDate;
+    private Date endingDate;
 
    /*
      Get / Set methods
@@ -97,4 +105,20 @@ public class AdminForm extends AbstractViewModel {
 			List<AccountSearchResultModel> accountSearchResults) {
 		this.accountSearchResults = accountSearchResults;
 	}
+
+    public Date getStartingDate() {
+        return startingDate;
+    }
+
+    public void setStartingDate(Date startingDate) {
+        this.startingDate = startingDate;
+    }
+
+    public Date getEndingDate() {
+        return endingDate;
+    }
+
+    public void setEndingDate(Date endingDate) {
+        this.endingDate = endingDate;
+    }
 }
