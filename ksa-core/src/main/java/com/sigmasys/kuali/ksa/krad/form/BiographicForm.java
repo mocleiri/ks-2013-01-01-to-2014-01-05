@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.model.ElectronicContact;
 import com.sigmasys.kuali.ksa.model.PersonName;
 import com.sigmasys.kuali.ksa.model.PostalAddress;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -118,6 +119,9 @@ public class BiographicForm extends AbstractViewModel {
    }
 
    public List<PersonName> getPersonNameList() {
+       if(personNameList == null) {
+           personNameList = new ArrayList<PersonName>();
+       }
       return personNameList;
    }
 
@@ -126,6 +130,9 @@ public class BiographicForm extends AbstractViewModel {
    }
 
    public List<PostalAddress> getPostalAddressList() {
+       if(postalAddressList == null){
+           postalAddressList = new ArrayList<PostalAddress>();
+       }
       return postalAddressList;
    }
 
@@ -134,6 +141,9 @@ public class BiographicForm extends AbstractViewModel {
    }
 
    public List<ElectronicContact> getElectronicContactList() {
+       if(electronicContactList == null){
+           electronicContactList = new ArrayList<ElectronicContact>();
+       }
       return electronicContactList;
    }
 
