@@ -20,7 +20,7 @@ class ViewAcademicCalendar < BasePage
   element(:event_end_ampm) { |b| b.frm.select(name: "newCollectionLines['events'].endTimeAmPm") }
 
   element(:acal_event_list_div) { |b| b.frm.div(id: "acal-info-event") }
-  element(:acal_event_list_link) { |b| b.link(id: "acal-info-event") }
+  element(:acal_event_list_link) { |b| b.link(id: "acal-info-event_toggle") }
   element(:calendar_events_table) { |b| b.acal_event_list_div.table }
   element(:acal_holiday_div) { |b| b.frm.div(id: "acal-holidays") }
   element(:hcal_name_div) { |b| b.acal_holiday_div.div(data_label: "Holiday Calendar Name") }
