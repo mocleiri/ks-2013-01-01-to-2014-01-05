@@ -2,17 +2,22 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.jaxb.KsaBatchTransactionResponse;
 import com.sigmasys.kuali.ksa.krad.form.FileUploadForm;
+import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.BatchReceiptStatus;
 import com.sigmasys.kuali.ksa.model.Transaction;
+import com.sigmasys.kuali.ksa.service.ReportService;
 import com.sigmasys.kuali.ksa.service.TransactionImportService;
 import com.sigmasys.kuali.ksa.util.ErrorUtils;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +25,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +46,8 @@ public class BatchTransactionsController extends GenericSearchController {
     @Autowired
     private TransactionImportService transactionImportService;
 
+    @Autowired
+    private ReportService reportService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -165,4 +178,41 @@ public class BatchTransactionsController extends GenericSearchController {
 
         return getUIFModelAndView(form);
     }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=agedTransactions")
+    public ModelAndView agedTransactions(@ModelAttribute("KualiForm") FileUploadForm form, BindingResult result,
+                                         HttpServletRequest request,
+                                         HttpServletResponse response) throws IOException {
+
+        List<Account> accounts = accountService.getAccountsByNamePattern("");
+        List<String> userids = new ArrayList<String>();
+        for(Account account : accounts) {
+            userids.add(account.getId());
+        }
+        String report = reportService.generateAgedBalanceReport(userids, false, false);
+
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date today = Calendar.getInstance().getTime();
+
+        String reportDate = df.format(today);
+
+        String filename = reportDate + "_Aged_Balance_List.xml";
+        // Set the response headers
+        response.setContentType("application/xml");
+        response.setContentLength(report.length());
+        response.setHeader("Expires", "0");
+        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+        response.setHeader("Pragma", "public");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + filename + "\"");
+
+        // Copy the input stream to the response
+        FileCopyUtils.copy(IOUtils.toInputStream(report), response.getOutputStream());
+
+
+        return getUIFModelAndView(form);
+
+    }
+
 }

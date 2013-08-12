@@ -133,6 +133,8 @@
                       p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView"/>
                 <bean parent="Uif-Link" p:linkText="Refunds"
                       p:href="batchRefundView?methodToCall=get&amp;viewId=BatchRefundView"/>
+                <bean parent="Uif-Link" p:linkText="Generate Aged Balance List"
+                      p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView&amp;pageId=AgedBalanceView"/>
             </list>
         </property>
     </bean>

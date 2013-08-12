@@ -28,7 +28,7 @@
 
     <bean id="BatchTransactionsView" parent="Uif-KsaFormView" p:footer.render="false">
         <property name="title" value="Batch Transactions"/>
-        <property name="headerText" value="Batch Transaction Upload"/>
+        <property name="headerText" value="Batch Transactions"/>
         <property name="entryPageId" value="BatchTransactionsUploadFilePage"/>
         <property name="navigation" ref="KsaBatchNavigation"/>
         <property name="items">
@@ -49,9 +49,20 @@
                         </list>
                     </property>
                 </bean>
+                <bean parent="Uif-Page" p:id="AgedBalanceView" p:title="Generate Aged Balance List">
+                    <property name="headerText" value="File Upload"/>
+                    <property name="items">
+                        <list>
+                            <ref bean="agedTransactionDownloadFile"/>
+                        </list>
+                    </property>
+                </bean>
             </list>
         </property>
 <!--
+
+
+
         <property name="additionalCssFiles" ref=""/>
         <property name="additionalJsFiles" ref=""/>
         <property name="viewHelperServiceClassName" value=""/>
@@ -124,6 +135,20 @@
                             <bean parent="Uif-MessageField" p:messageText="@{message}"/>
                         </list>
                     </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+
+
+    <bean id="agedTransactionDownloadFile" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+        <!--p:title="Upload a file for processing">-->
+        <property name="headerText" value="Download Aged Transactions Report"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="agedTransactions"
+                      p:actionLabel="Generate Aged Balance List" p:ajaxSubmit="false" p:disableBlocking="true">
                 </bean>
             </list>
         </property>
