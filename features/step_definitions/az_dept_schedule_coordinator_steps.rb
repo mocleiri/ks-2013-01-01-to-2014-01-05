@@ -88,9 +88,16 @@ Then /^an authorization error is displayed when I attempt to create the course o
     page.continue
   end
 
-  on ErrorPage do |page|
-    page.error_401.should == true
+  on CreateCourseOffering do |page|
+    page.auth_error.present?.should == true
+    page.catalogue_course_code.set ""
+    page.target_term.set ""
+    page.cancel
   end
+
+  #on ErrorPage do |page|
+  #  page.error_401.should == true
+  #end
 end
 
 When /^I manage course offerings for a subject in my admin org$/ do
