@@ -241,50 +241,6 @@ class ManageCourseOfferings < BasePage
     codes
   end
 
-  ##TODO - this code is duplicate - see ActivityOffering data object
-  #def add_ao input_format, input_quantity
-  #  format.select(input_format)
-  #  loading.wait_while_present(120)
-  #  activity_type.select(activity_type.options[0].text)
-  #  loading.wait_while_present(120)
-  #  cluster.select(cluster.options[0].text)
-  #  loading.wait_while_present(120)
-  #  quantity.set(input_quantity)
-  #  complete_add_activity
-  #end
-
-  #def cross_listed_as(crossListedCoCode)
-  #
-  #  course_title
-  #end
-
-  #def check_all_ao_status(aoStatus, cluster_private_name = :default_cluster)
-  #  retVal = true
-  #  activity_offering_results_table(cluster_private_name).rows.each {|row|
-  #    if !(row[AO_STATUS].text.eql? aoStatus)
-  #      retVal = false
-  #      break
-  #    end
-  #  }
-  #  retVal
-  #end
-
-  #def check_aos_status(aoStatus, aos, cluster_private_name = :default_cluster)
-  #  retVal = true
-  #  aos.each { |code|
-  #    if(!ao_status(code, aoStatus, cluster_private_name))
-  #      retVal = false
-  #      break
-  #    end
-  #  }
-  #  retVal
-  #end
-
-  #def has_cross_listed_message(co_code)
-  #  #cross_listed_message_div.present?.should == true
-  #  cross_listed_message.include? co_code
-  #end
-
   ########################## cluster tab
 
   element(:cluster_list_div)  { |b| b.frm.div(id: "KS-CourseOfferingManagement-AOClustersCollection").div(class: "uif-stackedCollectionLayout") }

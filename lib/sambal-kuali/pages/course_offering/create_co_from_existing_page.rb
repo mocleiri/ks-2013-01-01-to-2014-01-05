@@ -35,7 +35,8 @@ class CreateCOFromExisting < BasePage
   end
 
   def select_copy_for_existing_course(term, course)
-    existing_co_target_row(term, course).cells[ACTIONS_COLUMN].radio.click
+    #if there is only one row, the radio button is not displayed
+    existing_co_target_row(term, course).cells[ACTIONS_COLUMN].radio.click if existing_co_target_row(term, course).cells[ACTIONS_COLUMN].radio.exists?
   end
 
 end

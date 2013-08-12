@@ -342,7 +342,7 @@ Then /^the Activity Offerings are assigned to the target subterms$/ do
 end
 
 Then /^I can create a Course Offering in the second term from the existing CO in the first term$/ do
-  @course_offering_copy = create CourseOffering, :term=>  @term_target.term_code, :create_from_existing=>@course_offering_target
+  @course_offering_copy = create CourseOffering, :term=>  @term_target2.term_code, :create_from_existing=>@course_offering_target
 end
 
 Then /^the Activity Offerings for the copied CO are assigned to the target subterms$/ do
@@ -359,7 +359,7 @@ Then /^the Activity Offerings for the copied CO are assigned to the target subte
     page.close
   end
 
-  @activity_offering_target.edit
+  @activity_offering_copy.edit
   on ActivityOfferingMaintenance do |page|
     page.subterm.should == @subterm_list_target2[0].subterm_type
     page.cancel
@@ -372,7 +372,7 @@ Then /^the Activity Offerings for the copied CO are assigned to the target subte
   end
 
   on ActivityOfferingInquiry do |page|
-    page.subterm.should  @subterm_list_target2[1].subterm_type
+    page.subterm.should == @subterm_list_target2[1].subterm_type
     page.close
   end
 

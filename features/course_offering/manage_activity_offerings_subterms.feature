@@ -27,7 +27,6 @@ Feature: EC.Manage Activity Offerings - subterms
     When I copy the parent course offering
     Then the AO subterm indicator is successfully copied with the parent CO
 
-  @draft
   Scenario: CO 26.8C1 Successfully copy an existing Course Offering from a prior term which has an AO attached to a subterm
     Given I create an Academic Calendar with subterms
     And I make the subterms official
@@ -41,7 +40,7 @@ Feature: EC.Manage Activity Offerings - subterms
     Then I can create a Course Offering in the second term from the existing CO in the first term
     Then the Activity Offerings for the copied CO are assigned to the target subterms
 
-  @draft
+  @draft @reference_only
   Scenario: CO 26.8C2A Successfully promote a Course Offering to offered with AOs NOT attached to a subterm
     Given I create an Academic Calendar with subterms
     And I make the subterms official
@@ -51,7 +50,7 @@ Feature: EC.Manage Activity Offerings - subterms
     When I advance the SOC state from open to published state
     Then the Course Offering is in offered state
 
-  @draft
+  @draft @reference_only
   Scenario: CO 26.8C2B Successfully promote a Course Offering to offered with AOs attached to a subterm
     Given I create an Academic Calendar with subterms
     And I make the subterms official
