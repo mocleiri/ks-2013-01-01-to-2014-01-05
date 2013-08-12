@@ -676,10 +676,20 @@ Given /^I create an Academic Calendar with subterms$/ do
   @calendar.add_term(@term)
 
   @subterm_list = Array.new(2)
-  @subterm_list[0] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
+  @subterm_list[0] = make AcademicTerm, :term_year => @calendar.year,
+                          :term_type=> "Half Fall 1",
+                          :parent_term=> "Fall Term",
+                          :subterm => true,
+                          :start_date => "09/02/#{@calendar.year}",
+                          :end_date => "09/11/#{@calendar.year}"
   @calendar.add_term(@subterm_list[0])
 
-  @subterm_list[1] = make AcademicTerm, :term_year => @calendar.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
+  @subterm_list[1] = make AcademicTerm, :term_year => @calendar.year,
+                          :term_type=> "Half Fall 2",
+                          :parent_term=> "Fall Term",
+                          :subterm => true,
+                          :start_date => "09/12/#{@calendar.year}",
+                          :end_date => "09/24/#{@calendar.year}"
   @calendar.add_term(@subterm_list[1])
 
   @term.set_up_soc
