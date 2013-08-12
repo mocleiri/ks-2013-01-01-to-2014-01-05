@@ -9,12 +9,13 @@ import com.sigmasys.kuali.ksa.model.Identifiable;
  */
 public enum FeeManagementManifestType implements Identifiable {
 
-
+    ORIGINAL(FeeManagementManifestType.ORIGINAL_CODE),
     CHARGE(FeeManagementManifestType.CHARGE_CODE),
     CANCELLATION(FeeManagementManifestType.CANCELLATION_CODE),
     DISCOUNT(FeeManagementManifestType.DISCOUNT_CODE),
     CORRECTION(FeeManagementManifestType.CORRECTION_CODE);
 
+    public static final String ORIGINAL_CODE = "OR";
     public static final String CHARGE_CODE = "CH";
     public static final String CANCELLATION_CODE = "CA";
     public static final String DISCOUNT_CODE = "DI";

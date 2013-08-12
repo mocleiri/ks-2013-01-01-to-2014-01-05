@@ -18,8 +18,8 @@ alter table KSSA_ACNT_PROTECTED_INFO add constraint FKEF75726D2C28B62A foreign k
 alter table KSSA_ACNT_PROTECTED_INFO add constraint FKEF75726D73E6C8ED foreign key (ID_TYPE_ID_FK) references KSSA_ID_TYPE;
 alter table KSSA_ACNT_PROTECTED_INFO add constraint FKEF75726DACFC7690 foreign key (TAX_TYPE_ID_FK) references KSSA_TAX_TYPE;
 alter table KSSA_ALLOCATION add constraint FKC2912B0998518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
-alter table KSSA_ALLOCATION add constraint FKC2912B09ED7E538 foreign key (TRN_ID_2_FK) references KSSA_TRANSACTION;
-alter table KSSA_ALLOCATION add constraint FKC2912B09ED770D9 foreign key (TRN_ID_1_FK) references KSSA_TRANSACTION;
+alter table KSSA_ALLOCATION add constraint FKC2912B09AF21E866 foreign key (TRANSACTION_ID_2_FK) references KSSA_TRANSACTION;
+alter table KSSA_ALLOCATION add constraint FKC2912B09AF217407 foreign key (TRANSACTION_ID_1_FK) references KSSA_TRANSACTION;
 alter table KSSA_BATCH_RECEIPT add constraint FK6961BF2A4861130D foreign key (INCOMING_XML_ID_FK) references KSSA_XML;
 alter table KSSA_BATCH_RECEIPT add constraint FK6961BF2A98518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_BATCH_RECEIPT add constraint FK6961BF2A8016ED3 foreign key (OUTGOING_XML_ID_FK) references KSSA_XML;
@@ -38,6 +38,7 @@ alter table KSSA_COLLECTION_ACNT add constraint FKF9BE25E0CAA80A89 foreign key (
 alter table KSSA_CREDIT_PERMISSION add constraint FK1F74048CBC57B259 foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSSA_TRANSACTION_TYPE;
 alter table KSSA_EXTERNAL_STATEMENT add constraint FK818A3B0498518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_FLAG_TYPE add constraint FKC2EF34E4DC4F9C14 foreign key (ACCESS_LEVEL_ID_FK) references KSSA_ACCESS_LEVEL;
+alter table KSSA_FM_MANIFEST add constraint FK496D0D9ED61AFDF9 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_FM_MANIFEST add constraint FK496D0D9E32EC13CF foreign key (FM_SESSION_ID_FK) references KSSA_FM_SESSION;
 alter table KSSA_FM_MANIFEST add constraint FK496D0D9E233F505D foreign key (LINKED_MANIFEST_ID_FK) references KSSA_FM_MANIFEST;
 alter table KSSA_FM_MANIFEST add constraint FK496D0D9EF7D721E7 foreign key (ROLLUP_ID_FK) references KSSA_ROLLUP;
@@ -56,6 +57,7 @@ alter table KSSA_FM_SIGNUP add constraint FK7109644732EC13CF foreign key (FM_SES
 alter table KSSA_FM_SIGNUP_KEY_PAIR add constraint FK6D502DD2FCF18C1 foreign key (FM_SIGNUP_ID_FK) references KSSA_FM_SIGNUP;
 alter table KSSA_FM_SIGNUP_KEY_PAIR add constraint FK6D502DD2C9ADF350 foreign key (KEY_PAIR_ID_FK) references KSSA_KEY_PAIR;
 alter table KSSA_FM_SIGNUP_RATE add constraint FKEFBE2DD8FCF18C1 foreign key (FM_SIGNUP_ID_FK) references KSSA_FM_SIGNUP;
+alter table KSSA_FM_SIGNUP_RATE add constraint FKEFBE2DD8B1D17704 foreign key (RATE_ID_FK) references KSSA_RATE;
 alter table KSSA_FM_SIGNUP_RATE_AMOUNT add constraint FKCE20509FB935A3A0 foreign key (FM_SIGNUP_RATE_ID_FK) references KSSA_FM_SIGNUP_RATE;
 alter table KSSA_GL_BATCH_BASELINE add constraint FK3C33E61BFA70171C foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
 alter table KSSA_GL_BREAKDOWN add constraint FKF48BE710AE27AC92 foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSSA_TRANSACTION_TYPE;
@@ -69,9 +71,9 @@ alter table KSSA_GL_TRANS_TRANSACTION add constraint FK1A29A596C852663A foreign 
 alter table KSSA_INFORMATION add constraint FKD2A2E003DBB2002A foreign key (FLAG_TYPE_ID_FK) references KSSA_FLAG_TYPE;
 alter table KSSA_INFORMATION add constraint FKD2A2E00316BC312E foreign key (NEXT_ID) references KSSA_INFORMATION;
 alter table KSSA_INFORMATION add constraint FKD2A2E00395ACD1EE foreign key (PREV_ID) references KSSA_INFORMATION;
+alter table KSSA_INFORMATION add constraint FKD2A2E003D61AFDF9 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_INFORMATION add constraint FKD2A2E00398518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_INFORMATION add constraint FKD2A2E003DC4F9C14 foreign key (ACCESS_LEVEL_ID_FK) references KSSA_ACCESS_LEVEL;
-alter table KSSA_INFORMATION add constraint FKD2A2E003FE6E074B foreign key (TRN_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_IRS_1098T add constraint FKCD8EF71887CB7AAA foreign key (STUDENT_POSTAL_ADDRESS_ID_FK) references KSSA_POSTAL_ADDRESS;
 alter table KSSA_IRS_1098T add constraint FKCD8EF71898518DD2 foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_IRS_1098T add constraint FKCD8EF718F13B97E6 foreign key (XML_ID_FK) references KSSA_XML;
@@ -127,12 +129,12 @@ alter table KSSA_TRANSACTION add constraint FKDCED3DB5F7D721E7 foreign key (ROLL
 alter table KSSA_TRANSACTION add constraint FKDCED3DB5FA70171C foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
 alter table KSSA_TRANSACTION_TAG add constraint FK429CDF0D61AFDF9 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_TRANSACTION_TAG add constraint FK429CDF047AB5D71 foreign key (TAG_ID_FK) references KSSA_TAG;
+alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F837351FE9745E foreign key (SRC_TRANSACTION_ID_FK) references KSSA_TRANSACTION;
+alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F8373572BA6D4D foreign key (OFFSET_TRANSACTION_ID_FK) references KSSA_TRANSACTION;
+alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F83735ADE326D4 foreign key (DEST_RECIP_TRANSACTION_ID_FK) references KSSA_TRANSACTION;
+alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F837358BBB419C foreign key (DEST_TRANSACTION_ID_FK) references KSSA_TRANSACTION;
+alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F83735F59CC016 foreign key (SRC_RECIP_TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F83735402524CA foreign key (TRANSFER_TYPE_ID_FK) references KSSA_TRANSFER_TYPE;
-alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F8373518FC4427 foreign key (SOURCE_TRN_ID_FK) references KSSA_TRANSACTION;
-alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F83735E54C0A9F foreign key (OFFSET_TRN_ID_FK) references KSSA_TRANSACTION;
-alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F83735E6719DEE foreign key (DEST_TRN_ID_FK) references KSSA_TRANSACTION;
-alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F83735A955E3E3 foreign key (DEST_RECIPROCAL_TRN_ID_FK) references KSSA_TRANSACTION;
-alter table KSSA_TRANSACTION_TRANSFER add constraint FK15F837354455500A foreign key (SOURCE_RECIPROCAL_TRN_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_TRANSACTION_TYPE add constraint FK81104B8496077E1 foreign key (DEF_ROLLUP_ID_FK) references KSSA_ROLLUP;
 alter table KSSA_TRANSACTION_TYPE_TAG add constraint FKA1635C3F47AB5D71 foreign key (TAG_ID_FK) references KSSA_TAG;
 alter table KSSA_TRANSACTION_TYPE_TAG add constraint FKA1635C3FCE008744 foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSSA_TRANSACTION_TYPE;

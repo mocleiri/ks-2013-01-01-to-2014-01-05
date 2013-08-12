@@ -171,7 +171,7 @@ public class Information extends AccountIdAware implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRN_ID_FK")
+    @JoinColumn(name = "TRANSACTION_ID_FK")
     public Transaction getTransaction() {
         return transaction;
     }

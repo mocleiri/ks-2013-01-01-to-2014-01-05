@@ -71,7 +71,7 @@ public class Allocation extends AccountIdAware implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRN_ID_1_FK")
+    @JoinColumn(name = "TRANSACTION_ID_1_FK")
     public Transaction getFirstTransaction() {
         return firstTransaction;
     }
@@ -81,7 +81,7 @@ public class Allocation extends AccountIdAware implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRN_ID_2_FK")
+    @JoinColumn(name = "TRANSACTION_ID_2_FK")
     public Transaction getSecondTransaction() {
         return secondTransaction;
     }

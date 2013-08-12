@@ -81,7 +81,7 @@ public abstract class TransactionType extends AuditableEntity<TransactionTypeId>
         this.priority = priority;
     }
 
-    @Column(name = "DEFAULT_TRN_TXT", length = 100)
+    @Column(name = "DEFAULT_STMT", length = 100)
     public String getDefaultStatement() {
         return defaultStatement;
     }

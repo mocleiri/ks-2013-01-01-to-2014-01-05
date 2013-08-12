@@ -176,6 +176,30 @@ public interface AccountService {
     ElectronicContact addElectronicContact(String userId, ElectronicContact electronicContact);
 
     /**
+     * Persists PersonName instance in the persistent store.
+     *
+     * @param personName PersonName instance
+     * @return PersonName ID
+     */
+    Long persistPersonName(PersonName personName);
+
+    /**
+     * Persists PostalAddress instance in the persistent store.
+     *
+     * @param postalAddress PostalAddress instance
+     * @return PostalAddress ID
+     */
+    Long persistPostalAddress(PostalAddress postalAddress);
+
+    /**
+     * Persists ElectronicContact instance in the persistent store.
+     *
+     * @param electronicContact ElectronicContact instance
+     * @return ElectronicContact ID
+     */
+    Long persistElectronicContact(ElectronicContact electronicContact);
+
+    /**
      * Get ACH looks into the AccountProtectedInformation class (which triggers a system event) to look for
      * the ACH information for the user
      *

@@ -867,6 +867,45 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
     /**
+     * Persists PersonName instance in the persistent store.
+     *
+     * @param personName PersonName instance
+     * @return PersonName ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Long persistPersonName(PersonName personName) {
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
+        return persistEntity(personName);
+    }
+
+    /**
+     * Persists PostalAddress instance in the persistent store.
+     *
+     * @param postalAddress PostalAddress instance
+     * @return PostalAddress ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Long persistPostalAddress(PostalAddress postalAddress) {
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
+        return persistEntity(postalAddress);
+    }
+
+    /**
+     * Persists ElectronicContact instance in the persistent store.
+     *
+     * @param electronicContact ElectronicContact instance
+     * @return ElectronicContact ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Long persistElectronicContact(ElectronicContact electronicContact) {
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
+        return persistEntity(electronicContact);
+    }
+
+    /**
      * Get ACH looks into the AccountProtectedInformation class (which triggers a system event) to look for
      * the ACH information for the user
      *

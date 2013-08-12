@@ -18,7 +18,7 @@ public class FeeManagementSignupRate implements Identifiable {
 
     private FeeManagementSignup signup;
 
-    private String rateCode;
+    private Rate rate;
 
 
     @Id
@@ -48,12 +48,13 @@ public class FeeManagementSignupRate implements Identifiable {
         this.signup = signup;
     }
 
-    @Column(name = "RATE_CODE", length = 45, nullable = false)
-    public String getRateCode() {
-        return rateCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "RATE_ID_FK")
+    public Rate getRate() {
+        return rate;
     }
 
-    public void setRateCode(String rateCode) {
-        this.rateCode = rateCode;
+    public void setRate(Rate rate) {
+        this.rate = rate;
     }
 }

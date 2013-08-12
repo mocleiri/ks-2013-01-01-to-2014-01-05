@@ -1,12 +1,10 @@
 package com.sigmasys.kuali.ksa.model.fm;
 
-import com.sigmasys.kuali.ksa.model.Identifiable;
-import com.sigmasys.kuali.ksa.model.KeyPair;
-import com.sigmasys.kuali.ksa.model.Rollup;
-import com.sigmasys.kuali.ksa.model.Tag;
+import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,9 +24,13 @@ public class FeeManagementManifest implements Identifiable {
 
     private FeeManagementManifest linkedManifest;
 
+    private Transaction transaction;
+
     private Rate rate;
 
     private Rollup rollup;
+
+    private BigDecimal amount;
 
     private String registrationId;
 
@@ -101,6 +103,16 @@ public class FeeManagementManifest implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRANSACTION_ID_FK")
+    public Transaction getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(Transaction transaction) {
+        this.transaction = transaction;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RATE_ID_FK")
     public Rate getRate() {
         return rate;
@@ -118,6 +130,15 @@ public class FeeManagementManifest implements Identifiable {
 
     public void setRollup(Rollup rollup) {
         this.rollup = rollup;
+    }
+
+    @Column(name = "AMOUNT")
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     @Column(name = "REG_ID", length = 45)

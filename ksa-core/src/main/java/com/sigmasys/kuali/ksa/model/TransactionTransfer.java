@@ -100,12 +100,12 @@ public class TransactionTransfer implements Identifiable {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_TRN_TRANSFER",
+    @TableGenerator(name = "TABLE_GEN_TRANSFER",
             table = "KSSA_SEQUENCE_TABLE",
             pkColumnName = "SEQ_NAME",
             valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "TRN_TRANSFER_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_TRN_TRANSFER")
+            pkColumnValue = "TRANSFER_SEQ")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_TRANSFER")
     @Override
     public Long getId() {
         return id;
@@ -125,7 +125,7 @@ public class TransactionTransfer implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SOURCE_TRN_ID_FK", nullable = false)
+    @JoinColumn(name = "SRC_TRANSACTION_ID_FK", nullable = false)
     public Transaction getSourceTransaction() {
         return sourceTransaction;
     }
@@ -135,7 +135,7 @@ public class TransactionTransfer implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DEST_TRN_ID_FK", nullable = false)
+    @JoinColumn(name = "DEST_TRANSACTION_ID_FK", nullable = false)
     public Transaction getDestTransaction() {
         return destTransaction;
     }
@@ -145,7 +145,7 @@ public class TransactionTransfer implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OFFSET_TRN_ID_FK")
+    @JoinColumn(name = "OFFSET_TRANSACTION_ID_FK")
     public Transaction getOffsetTransaction() {
         return offsetTransaction;
     }
@@ -155,7 +155,7 @@ public class TransactionTransfer implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SOURCE_RECIPROCAL_TRN_ID_FK")
+    @JoinColumn(name = "SRC_RECIP_TRANSACTION_ID_FK")
     public Transaction getSourceReciprocalTransaction() {
         return sourceReciprocalTransaction;
     }
@@ -165,7 +165,7 @@ public class TransactionTransfer implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DEST_RECIPROCAL_TRN_ID_FK")
+    @JoinColumn(name = "DEST_RECIP_TRANSACTION_ID_FK")
     public Transaction getDestReciprocalTransaction() {
         return destReciprocalTransaction;
     }
