@@ -143,4 +143,19 @@ public abstract class AuditableEntity<T extends Serializable> implements Identif
                 ", lastUpdate=" + lastUpdate +
                 '}';
     }
+    
+    /**
+     * Copies all properties from another <code>AuditableEntity</code> into this object, except "id".
+     * 
+     * @param another Another <code>AuditableEntity</code> to copy its properties into this one.
+     */
+    protected void copyFrom(AuditableEntity<T> another) {
+    	this.code = another.code;
+    	this.creationDate = (another.creationDate != null) ? new Date(another.creationDate.getTime()) : null;
+    	this.creatorId = another.creatorId;
+    	this.description = another.description;
+    	this.editorId = another.editorId;
+    	this.lastUpdate = (another.lastUpdate != null) ? new Date(another.lastUpdate.getTime()) : null;
+    	this.name = another.name;
+    }
 }
