@@ -105,7 +105,7 @@ end
 When /^I start a blank Holiday Calendar$/ do
   @performance_test = make PerformanceTest
   go_to_holiday_calendar
-  on CreateEditHolidayCalendar do |page|
+  on CopyHolidayCalendar do |page|
     @performance_test.start
     page.start_blank_calendar
     @performance_test.end
@@ -289,6 +289,8 @@ When /^I create a basic course offering$/ do
     while page.alert.exists?
       page.alert.cancel
     end
+  end
+  on CreateCOFromCatalog do |page|
     page.suffix.set random_alphanums.strip
     page.add_random_delivery_format
     @performance_test.start
@@ -305,6 +307,8 @@ When /^I create a jointly defined course offering$/ do
     page.target_term.set "201301"
     page.catalogue_course_code.set "ENGL316"
     page.continue
+  end
+  on CreateCOFromCatalog do |page|
     page.suffix.set random_alphanums.strip
     page.create_new_joint_defined_course_row_1
     page.add_random_delivery_format
