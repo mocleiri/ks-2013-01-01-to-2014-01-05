@@ -1,10 +1,13 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.config.ConfigService;
+import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.util.ContextUtils;
+import com.sigmasys.kuali.ksa.util.InformationUtils;
 
-import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -37,8 +40,10 @@ public class QuickViewForm extends AbstractViewModel {
 
     // Alert
 
-    private List<Information> alertsFlags;
-    // Aging
+    private List<InformationModel> alerts;
+    private List<InformationModel> flags;
+    private List<InformationModel> holds;
+
 
     // the last aging date
     private Date lastAgeDate;
@@ -134,12 +139,14 @@ public class QuickViewForm extends AbstractViewModel {
     }
 
 
-    public List<Information> getAlertsFlags() {
-        return alertsFlags;
-    }
+    public List<InformationModel> getAlertsFlags() {
+        List<InformationModel> list = new ArrayList<InformationModel>();
 
-    public void setAlertsFlags(List<Information> alertsFlags) {
-        this.alertsFlags = alertsFlags;
+        list.addAll(this.getAlerts());
+        list.addAll(this.getFlags());
+        list.addAll(this.getHolds());
+        return InformationUtils.orderModelsByEffectiveDate(list, false);
+
     }
 
     public Date getLastAgeDate() {
@@ -192,6 +199,9 @@ public class QuickViewForm extends AbstractViewModel {
     }
 
     public List<Memo> getMemoModels() {
+        if(memoModels == null){
+            memoModels = new ArrayList<Memo>();
+        }
         return memoModels;
     }
 
@@ -267,7 +277,110 @@ public class QuickViewForm extends AbstractViewModel {
         } else if(i instanceof Memo){
             return "memo";
         }
-        return "unknown";
+        return "";
 
     }
+
+    public String getInfoType(InformationModel i){
+        String type = getInfoType(i.getParentEntity());
+        if("".equals(type)) {
+            type = "hold";
+        }
+        return type;
+    }
+
+    public List<InformationModel> getAlerts() {
+        if (alerts == null) {
+            alerts = new ArrayList<InformationModel>();
+        }
+        return alerts;
+    }
+
+    public String getAlertTooltip() {
+        return this.getInformationTooltip("Alerts", alerts);
+    }
+
+    public void setAlertObjects(List<Alert> alerts) {
+        List<InformationModel> models = new ArrayList<InformationModel>(alerts.size());
+        for(Alert alert : alerts){
+            models.add(new InformationModel(alert));
+        }
+        setAlerts(models);
+    }
+
+    public void setAlerts(List<InformationModel> alerts) {
+        this.alerts = alerts;
+    }
+
+    public List<InformationModel> getFlags() {
+        if (flags == null) {
+            flags = new ArrayList<InformationModel>();
+        }
+        return flags;
+    }
+
+    public String getFlagTooltip() {
+        return this.getInformationTooltip("Flags", flags);
+    }
+
+    public void setFlagObjects(List<Flag> flags) {
+        List<InformationModel> models = new ArrayList<InformationModel>(flags.size());
+        for(Flag flag : flags){
+            models.add(new InformationModel(flag));
+        }
+        setFlags(models);
+    }
+
+    public void setFlags(List<InformationModel> flags) {
+        this.flags = flags;
+    }
+
+    public List<InformationModel> getHolds() {
+        if(holds == null) {
+            holds = new ArrayList<InformationModel>();
+        }
+        return holds;
+    }
+
+    public void setHolds(List<InformationModel> holds) {
+        this.holds = holds;
+    }
+
+    public String getHoldTooltip() {
+        return this.getInformationTooltip("Holds", holds);
+    }
+
+    private int getItemsPerPage() {
+        return Integer.valueOf(ContextUtils.getBean(ConfigService.class).getParameter(Constants.QUICKVIEW_INFORMATION_COUNT));
+    }
+
+
+    private String getInformationTooltip(String name, List<InformationModel> items) {
+
+        int itemsPerPage = getItemsPerPage();
+
+        String html = "<b>" + name + " (";
+
+        if (items == null || items.size() == 0) {
+            html += "0/0)</b><br/><p>No " + name + "</p>";
+            return html;
+        }
+
+        int size = items.size();
+
+        if (size > itemsPerPage) {
+            html += itemsPerPage + "/" + size + ")</b><br/>";
+        } else {
+            html += size + "/" + size + ")</b><br/>";
+        }
+
+        html += "<p>";
+        for (int i = 0; i < items.size() && i < itemsPerPage; i++) {
+            html += items.get(i).getDisplayValue() + "<br/>";
+        }
+        html += "</p>";
+
+        return html;
+    }
+
 }

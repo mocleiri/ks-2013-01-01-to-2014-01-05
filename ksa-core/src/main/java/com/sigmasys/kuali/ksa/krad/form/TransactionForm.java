@@ -10,7 +10,6 @@ import org.kuali.rice.core.api.util.tree.Tree;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +23,8 @@ public class TransactionForm extends AbstractViewModel {
 
     private List<InformationModel> alerts;
     private List<InformationModel> flags;
+    private List<InformationModel> holds;
+
     private List<Memo> memos;
     private Tree<Memo, String> memoTree = new Tree<Memo, String>();
 
@@ -346,31 +347,7 @@ public class TransactionForm extends AbstractViewModel {
     }
 
     public String getAlertTooltip() {
-
-        int itemsPerPage = getItemsPerPage();
-
-        String html = "<b>Alerts (";
-
-        if (alerts == null || alerts.size() == 0) {
-            html += "0/0)</b><br/><p>No alerts</p>";
-            return html;
-        }
-
-        int size = alerts.size();
-
-        if (size > itemsPerPage) {
-            html += itemsPerPage + "/" + size + ")</b><br/>";
-        } else {
-            html += size + "/" + size + ")</b><br/>";
-        }
-
-        html += "<p>";
-        for (int i = 0; i < alerts.size() && i < itemsPerPage; i++) {
-            html += alerts.get(i).getDisplayValue() + "<br/>";
-        }
-        html += "</p>";
-
-        return html;
+        return this.getInformationTooltip("Alerts", alerts);
     }
 
     public void setAlertObjects(List<Alert> alerts) {
@@ -393,31 +370,7 @@ public class TransactionForm extends AbstractViewModel {
     }
 
     public String getFlagTooltip() {
-
-        int itemsPerPage = getItemsPerPage();
-
-        String html = "<b>Flags (";
-
-        if (flags == null || flags.size() == 0) {
-            html += "0/0)</b><br/><p>No flags</p>";
-            return html;
-        }
-
-        int size = flags.size();
-
-        if (size > itemsPerPage) {
-            html += itemsPerPage + "/" + size + ")</b><br/>";
-        } else {
-            html += size + "/" + size + ")</b><br/>";
-        }
-
-        html += "<p>";
-        for (int i = 0; i < flags.size() && i < itemsPerPage; i++) {
-            html += flags.get(i).getDisplayValue() + "<br/>";
-        }
-        html += "</p>";
-
-        return html;
+        return this.getInformationTooltip("Flags", flags);
     }
 
     public void setFlagObjects(List<Flag> flags) {
@@ -453,31 +406,7 @@ public class TransactionForm extends AbstractViewModel {
     }
 
     public String getMemoTooltip() {
-
-        int itemsPerPage = getItemsPerPage();
-
-        String html = "<b>Memos (";
-
-        if (alerts == null || alerts.size() == 0) {
-            html += "0/0)</b><br/><p>No memos</p>";
-            return html;
-        }
-
-        int size = memos.size();
-
-        if (size > itemsPerPage) {
-            html += itemsPerPage + "/" + size + ")</b><br/>";
-        } else {
-            html += size + "/" + size + ")</b><br/>";
-        }
-
-        html += "<p>";
-        for (int i = 0; i < memos.size() && i < itemsPerPage; i++) {
-            html += memos.get(i).getDisplayValue() + "<br/>";
-        }
-        html += "</p>";
-
-        return html;
+        return this.getInformationTooltip("Memos", alerts);
     }
 
     public void setMemos(List<Memo> memos) {
@@ -689,4 +618,47 @@ public class TransactionForm extends AbstractViewModel {
     public void setShowInternal(Boolean showInternal) {
         this.showInternal = showInternal;
     }
+
+    public List<InformationModel> getHolds() {
+        return holds;
+    }
+
+    public void setHolds(List<InformationModel> holds) {
+        this.holds = holds;
+    }
+
+    public String getHoldTooltip() {
+        return this.getInformationTooltip("Holds", holds);
+    }
+
+
+    private String getInformationTooltip(String name, List<InformationModel> items) {
+
+        int itemsPerPage = getItemsPerPage();
+
+        String html = "<b>" + name + " (";
+
+        if (items == null || items.size() == 0) {
+            html += "0/0)</b><br/><p>No " + name + "</p>";
+            return html;
+        }
+
+        int size = items.size();
+
+        if (size > itemsPerPage) {
+            html += itemsPerPage + "/" + size + ")</b><br/>";
+        } else {
+            html += size + "/" + size + ")</b><br/>";
+        }
+
+        html += "<p>";
+        for (int i = 0; i < items.size() && i < itemsPerPage; i++) {
+            html += items.get(i).getDisplayValue() + "<br/>";
+        }
+        html += "</p>";
+
+        return html;
+    }
+
+
 }

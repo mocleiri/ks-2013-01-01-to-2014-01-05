@@ -37,6 +37,7 @@
                     <property name="headerText" value="@{account.compositeDefaultPersonName}"/>
                     <property name="items">
                         <list>
+                            <ref bean="viewTransactionAccountInfo"/>
                             <!--  Status message -->
                             <bean parent="Uif-MessageField" p:messageText="@{statusMessage}"/>
 
@@ -328,7 +329,7 @@
                     </property>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-MessageField" p:messageText="Alerts / Flags (@{alertsFlags.size()})"/>
+                            <bean parent="Uif-MessageField" p:messageText="Alerts (@{alerts.size()}) / Flags (@{flags.size()}) / Applied Holds (@{holds.size()})"/>
                         </list>
                     </property>
                 </bean>
@@ -357,6 +358,8 @@
                                               p:href="transactionView?methodToCall=get&amp;viewId=TransactionView&amp;pageId=ViewAlerts&amp;userId=@{account.id}"/>
                                                     <bean parent="Uif-Link" p:linkText="Flag Details"
                                                           p:href="transactionView?methodToCall=get&amp;viewId=TransactionView&amp;pageId=ViewFlags&amp;userId=@{account.id}"/>
+                                                    <bean parent="Uif-Link" p:linkText="Hold Details"
+                                                          p:href="transactionView?methodToCall=get&amp;viewId=TransactionView&amp;pageId=ViewHolds&amp;userId=@{account.id}"/>
                                                 </list>
                                             </property>
                                         </bean>

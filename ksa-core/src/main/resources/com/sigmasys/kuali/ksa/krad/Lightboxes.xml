@@ -171,18 +171,88 @@
         </property>
     </bean>
 
-<!--
-    <bean id="memoLightboxTable" parent="Uif-VerticalBoxGroup">
+
+    <bean id="Ksa-TransactionHolds" parent="Uif-HorizontalBoxGroup">
         <property name="items">
             <list>
-                <bean parent="Uif-TreeGroup" p:instructionalText="Data Tree">
-                    <property name="title" value="Basic String Data tree"/>
-                    <property name="propertyName" value="memoTree"/>
+                <bean parent="Uif-ImageField" p:source="../images/hold.png" p:style="margin-top: 10px; cursor:pointer;" p:altText="" p:title=""
+                      p:onClickScript="showLightboxComponent('holdLightbox');">
+                    <property name="toolTip">
+                        <bean parent="Uif-Tooltip" p:tooltipContent="@{holdTooltip}"/>
+                    </property>
+                </bean>
+                <bean id="holdLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                    <property name="hidden" value="true"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HeaderTwo" p:headerText="Account and Transaction Holds"/>
+                            <ref bean="holdLightboxTable"/>
+
+                        </list>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-Message"  p:style="margin-top: 10px;">
+                    <property name="messageText" value="(@{holds.size()})"/>
                 </bean>
             </list>
         </property>
     </bean>
--->
+
+    <bean id="holdLightboxTable" parent="Uif-Disclosure-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:width="85%">
+        <property name="readOnly" value="true"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.InformationModel"/>
+        <property name="propertyName" value="holds"/>
+        <property name="layoutManager.sequencePropertyName" value="id"/>
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+        <property name="layoutManager.richTable.disableTableSort" value="false"/>
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="false"/>
+                <entry key="bInfo" value="false"/>
+                <entry key="bFilter" value="false"/>
+            </map>
+        </property>
+
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="effectiveDate" p:width="10%"/>
+                <bean parent="Uif-InputField" p:label="Access Level" p:propertyName="accessLevel"/>
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Flag Text">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-ImageField" p:source="../images/hold.png" p:altText="Holds" p:title="" />
+                            <bean parent="Uif-InputField" p:propertyName="text"/>
+                            <bean parent="Uif-ImageField" p:source="../images/audit_guy.png" p:style="float: right;" p:altText="" p:title="">
+                                <property name="toolTip">
+                                    <bean parent="Uif-Tooltip" p:tooltipContent="@{#line.auditTooltip}"/>
+                                </property>
+                            </bean>
+
+                        </list>
+                    </property>
+                </bean>
+                <!--<bean parent="Uif-LinkField" p:label="Edit" p:linkText="Edit" p:target="_self" p:width="10%"
+                      p:href="settingsView?viewId=SettingsView&amp;pageId=@{simpleType}DetailsPage&amp;methodToCall=get&amp;entityId=@{#line.id}" />-->
+            </list>
+        </property>
+    </bean>
+
+
+    <!--
+        <bean id="memoLightboxTable" parent="Uif-VerticalBoxGroup">
+            <property name="items">
+                <list>
+                    <bean parent="Uif-TreeGroup" p:instructionalText="Data Tree">
+                        <property name="title" value="Basic String Data tree"/>
+                        <property name="propertyName" value="memoTree"/>
+                    </bean>
+                </list>
+            </property>
+        </bean>
+    -->
 
     <bean id="memoLightboxTable" parent="Uif-Disclosure-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:width="85%">
         <property name="readOnly" value="true"/>
