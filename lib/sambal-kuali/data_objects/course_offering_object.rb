@@ -158,9 +158,9 @@ class CourseOffering
           create_joint_co()
         end
         page.cross_listed_co_check_box.set if @cross_listed
-        delivery_obj = make DeliveryFormat
-        delivery_obj.select_random_delivery_formats
-        @delivery_format_list << delivery_obj
+        @delivery_format_list.each do |dfl|
+          dfl.create
+        end
         page.create_offering
       end
     end
@@ -1163,13 +1163,34 @@ class DeliveryFormat
   def initialize(browser, opts={})
     @browser = browser
 
-    defaults = {
-        :format => "Lecture/Quiz",
-        :grade_format => "Course",
-        :final_exam_driver => "Lecture"
-    }
-    options = defaults.merge(opts)
-    set_options(options)
+    set_options(opts)
+  end
+
+  def create
+    if @format == "random" then
+      select_random_delivery_formats
+    else
+      on CreateCOFromCatalog do |page|
+        if page.format_select.include? @format
+          page.format_select.select @format
+          if @format == "Lab"
+            @format = "Lab Only"
+          end
+        else
+          raise "Option #{@format} not in format select"
+        end
+        if page.grade_roster_level_select.include? @grade_format
+          page.grade_roster_level_select.select @grade_format
+        else
+          raise "Option #{@grade_format} not in grade roster select"
+        end
+        if page.final_exam_driver_select.include? @final_exam_driver
+          page.final_exam_driver_select.select @final_exam_driver
+        else
+          raise "Option #{@final_exam_driver} not in final exam select"
+        end
+      end
+    end
   end
 
   def select_random_delivery_formats
@@ -1179,8 +1200,6 @@ class DeliveryFormat
         @format = "Lab Only"
       elsif selected_options[:del_format] == "Lecture"
         @format = "Lecture Only"
-      elsif selected_options[:del_format] == "Discussion/Lecture"
-        @format = "Lecture/Discussion"
       else
         @format = selected_options[:del_format]
       end
