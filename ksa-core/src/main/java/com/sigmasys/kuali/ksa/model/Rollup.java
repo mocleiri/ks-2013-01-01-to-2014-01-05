@@ -9,7 +9,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "KSSA_ROLLUP")
-public class Rollup extends AuditableEntity<Long> {
+public class Rollup extends AuditableEntity<Long> implements Cloneable {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
@@ -24,4 +24,13 @@ public class Rollup extends AuditableEntity<Long> {
         return id;
     }
 
+    public Rollup clone() {
+    	// Create a clone of this object:
+    	Rollup clone = new Rollup();
+    	
+    	clone.copyFrom(this);
+    	
+    	return clone;
+    }
+    
 }

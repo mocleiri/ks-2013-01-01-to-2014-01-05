@@ -38,4 +38,17 @@ public class Tag extends AuditableEntity<Long> {
     public void setAdministrative(Boolean isAdministrative) {
         this.isAdministrative = isAdministrative;
     }
+    
+    /**
+     * Creates a clone of this object.
+     */
+    public Tag clone() {
+    	// Create a clone of this object:
+    	Tag clone = new Tag();
+    	
+    	clone.copyFrom(this);
+    	clone.isAdministrative = (this.isAdministrative != null) ? new Boolean(this.isAdministrative) : null;
+    	
+    	return clone;
+    }
 }
