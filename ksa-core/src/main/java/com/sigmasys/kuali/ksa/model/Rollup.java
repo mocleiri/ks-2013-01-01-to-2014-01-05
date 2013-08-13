@@ -24,13 +24,4 @@ public class Rollup extends AuditableEntity<Long> implements Cloneable {
         return id;
     }
 
-    public Rollup clone() {
-    	// Create a clone of this object:
-    	Rollup clone = new Rollup();
-    	
-    	clone.copyFrom(this);
-    	
-    	return clone;
-    }
-    
 }
