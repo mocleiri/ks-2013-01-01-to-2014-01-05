@@ -58,25 +58,7 @@ public class SearchControllerTest extends AbstractServiceTest {
 
     @Test
     public void getTransactionList() throws Exception {
-
-        // Passing request parameters needed to perform get() method
-        MockHttpServletRequest request = getRequest();
-
-        request.setParameter("userId", userId);
-        request.setParameter("pageId", "AccountOVTransactionsPage");
-
-        List<Transaction> transactions = transactionService.getTransactions(userId);
-
-        ModelAndView modelAndView = searchController.get(searchForm, request);
-
-        // Checking assertions
-        Assert.notNull(modelAndView);
-        Assert.notNull(searchForm.getRollUpTransactionModelList());
-        Assert.notNull(searchForm.getUnGroupedTransactionModelList());
-
-        Assert.isTrue(transactions.size() == searchForm.getUnGroupedTransactionModelList().size());
-
-        // TODO: add more assertions
+        // removed code.  Transactions are now in the TransactionController
 
     }
 
