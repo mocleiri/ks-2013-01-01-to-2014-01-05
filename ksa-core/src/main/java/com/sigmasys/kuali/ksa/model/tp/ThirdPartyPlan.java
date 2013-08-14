@@ -90,7 +90,7 @@ public class ThirdPartyPlan extends AuditableEntity<Long> {
     }
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "RECOG_DATE")
+    @Column(name = "RECOGNITION_DATE")
     public Date getRecognitionDate() {
         return recognitionDate;
     }

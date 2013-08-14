@@ -198,7 +198,7 @@ public class FeeManagementManifest implements Identifiable {
     }
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "RECOG_DATE")
+    @Column(name = "RECOGNITION_DATE")
     public Date getRecognitionDate() {
         return recognitionDate;
     }

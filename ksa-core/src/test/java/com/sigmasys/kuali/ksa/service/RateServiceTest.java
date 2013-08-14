@@ -99,7 +99,7 @@ public class RateServiceTest extends AbstractServiceTest {
         return _createRateCatalog(rateCatalogCode, "19871", "19872", "19873", "19874");
     }
 
-    private Rate _createRate(String rateCode, String rateCatalogCode, String atpId) throws Exception {
+    private Rate _createRate(String rateCode, String subCode, String rateCatalogCode, String atpId) throws Exception {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
 
@@ -113,7 +113,7 @@ public class RateServiceTest extends AbstractServiceTest {
         BigDecimal limitAmount = new BigDecimal(7776000.1111);
         BigDecimal rateAmount = new BigDecimal(200.88);
 
-        Rate rate = rateService.createRate(rateCode, rateName, rateCatalogCode, transactionTypeId,
+        Rate rate = rateService.createRate(rateCode, subCode, rateName, rateCatalogCode, transactionTypeId,
                 amountTransactionTypeId, dateType, rateAmount, limitAmount, transactionDate, recognitionDate, atpId,
                 false, false);
 
@@ -121,6 +121,7 @@ public class RateServiceTest extends AbstractServiceTest {
         Assert.notNull(rate.getId());
         Assert.notNull(rate.getAtpId());
         Assert.notNull(rate.getCode());
+        Assert.notNull(rate.getSubCode());
         Assert.notNull(rate.getRateCatalogAtp());
 
         RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
@@ -160,7 +161,7 @@ public class RateServiceTest extends AbstractServiceTest {
     }
 
     private Rate _createRate(String rateCode, String rateCatalogCode) throws Exception {
-        return _createRate(rateCode, rateCatalogCode, "19874");
+        return _createRate(rateCode, rateCode + "_subCode", rateCatalogCode, "19874");
     }
 
     @Test
@@ -534,7 +535,9 @@ public class RateServiceTest extends AbstractServiceTest {
 
         String rateCode = "R_2013_ATP";
 
-        Rate rate = _createRate(rateCode, rateCatalogCode, "19872");
+        String subCode = "ATP_1";
+
+        Rate rate = _createRate(rateCode, subCode, rateCatalogCode, "19872");
 
         Assert.notNull(rate);
 
@@ -542,7 +545,7 @@ public class RateServiceTest extends AbstractServiceTest {
 
         Assert.notNull(rateId);
 
-        rate = rateService.getRateByCodeAndAtpId(rateCode, "19872");
+        rate = rateService.getRate(rateCode, subCode, "19872");
 
         Assert.notNull(rate);
         Assert.notNull(rate.getId());
@@ -551,6 +554,7 @@ public class RateServiceTest extends AbstractServiceTest {
 
     }
 
+
     @Test
     public void getRatesByCode() throws Exception {
 
@@ -558,16 +562,18 @@ public class RateServiceTest extends AbstractServiceTest {
 
         String rateCode = "R_2013_CODE";
 
+        String subCode = "_1";
+
         _createRateCatalog(rateCatalogCode, "19871");
         _createRateCatalog(rateCatalogCode, "19872");
 
-        Rate rate1 = _createRate(rateCode, rateCatalogCode, "19871");
+        Rate rate1 = _createRate(rateCode, subCode, rateCatalogCode, "19871");
 
         Assert.notNull(rate1);
         Assert.notNull(rate1.getCode());
         Assert.notNull(rate1.getAtpId());
 
-        Rate rate2 = _createRate(rateCode, rateCatalogCode, "19872");
+        Rate rate2 = _createRate(rateCode, subCode, rateCatalogCode, "19872");
 
         Assert.notNull(rate2);
         Assert.notNull(rate2.getCode());
@@ -591,6 +597,69 @@ public class RateServiceTest extends AbstractServiceTest {
             Assert.isTrue(rate.getCode().equals(rateCode));
 
             logger.debug("Rate ATP ID = '" + rate.getAtpId() + "'");
+
+            if (rate.getId().equals(rate1.getId())) {
+
+                rate1Exists = true;
+
+                Assert.isTrue("19871".equals(rate.getAtpId()));
+
+            } else if (rate.getId().equals(rate2.getId())) {
+
+                rate2Exists = true;
+
+                Assert.isTrue("19872".equals(rate.getAtpId()));
+            }
+        }
+
+        Assert.isTrue(rate1Exists);
+        Assert.isTrue(rate2Exists);
+
+    }
+
+
+    @Test
+    public void getRatesByCodeAndSubCode() throws Exception {
+
+        String rateCatalogCode = "RC_2013_C1";
+
+        String rateCode = "R_2013_C1";
+
+        String subCode = "C1_S";
+
+        _createRateCatalog(rateCatalogCode, "19871");
+        _createRateCatalog(rateCatalogCode, "19872");
+
+        Rate rate1 = _createRate(rateCode, subCode, rateCatalogCode, "19871");
+
+        Assert.notNull(rate1);
+        Assert.notNull(rate1.getCode());
+        Assert.notNull(rate1.getAtpId());
+
+        Rate rate2 = _createRate(rateCode, subCode, rateCatalogCode, "19872");
+
+        Assert.notNull(rate2);
+        Assert.notNull(rate2.getCode());
+        Assert.notNull(rate2.getAtpId());
+
+        List<Rate> rates = rateService.getRatesByCodeAndSubCode(rateCode, subCode);
+
+        Assert.notNull(rates);
+        Assert.notEmpty(rates);
+
+        Assert.isTrue(rates.size() == 2);
+
+        boolean rate1Exists = false;
+        boolean rate2Exists = false;
+
+        for (Rate rate : rates) {
+
+            Assert.notNull(rate.getCode());
+            Assert.notNull(rate.getSubCode());
+            Assert.notNull(rate.getAtpId());
+
+            Assert.isTrue(rate.getCode().equals(rateCode));
+            Assert.isTrue(rate.getSubCode().equals(subCode));
 
             if (rate.getId().equals(rate1.getId())) {
 

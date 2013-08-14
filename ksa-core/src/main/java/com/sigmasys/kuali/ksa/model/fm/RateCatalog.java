@@ -71,7 +71,7 @@ public class RateCatalog extends AbstractRateEntity {
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_RECOG_DATE_DEFINABLE")
+    @Column(name = "IS_RECOGNITION_DATE_DEFINABLE")
     public Boolean isRecognitionDateDefinable() {
         return isRecognitionDateDefinable != null ? isRecognitionDateDefinable : false;
     }

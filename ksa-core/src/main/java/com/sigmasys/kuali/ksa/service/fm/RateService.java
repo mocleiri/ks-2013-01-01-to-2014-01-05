@@ -8,6 +8,7 @@ import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.KeyPair;
 import com.sigmasys.kuali.ksa.model.fm.*;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -220,6 +221,7 @@ public interface RateService {
      * Creates a new persistent Rate instance based on the given parameters.
      *
      * @param rateCode                Rate code
+     * @param subCode                 Rate sub-code
      * @param rateName                Rate name
      * @param rateCatalogCode         RateCatalog code
      * @param transactionTypeId       Rate TransactionType ID
@@ -235,6 +237,7 @@ public interface RateService {
      * @return a new Rate instance
      */
     Rate createRate(String rateCode,
+                    String subCode,
                     String rateName,
                     String rateCatalogCode,
                     String transactionTypeId,
@@ -275,10 +278,12 @@ public interface RateService {
      * Retrieves the Rate instance from the database by code and ATP ID.
      *
      * @param rateCode Rate code
+     * @param subCode  Rate sub-code
      * @param atpId    ATP ID
      * @return Rate instance
      */
-    Rate getRateByCodeAndAtpId(String rateCode, String atpId);
+    @WebMethod(exclude = true)
+    Rate getRate(String rateCode, String subCode, String atpId);
 
     /**
      * Returns the list of rates by code.
@@ -287,6 +292,15 @@ public interface RateService {
      * @return a list of Rate instances
      */
     List<Rate> getRatesByCode(String rateCode);
+
+    /**
+        * Returns the list of rates by code and sub-code.
+        *
+        * @param rateCode Rate code
+        * @param subCode  Rate sub-code
+        * @return a list of Rate instances
+        */
+    List<Rate> getRatesByCodeAndSubCode(String rateCode, String subCode);
 
     /**
      * Returns the list of rates by ATP ID.

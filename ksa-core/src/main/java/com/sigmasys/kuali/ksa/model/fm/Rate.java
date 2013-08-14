@@ -13,8 +13,10 @@ import java.util.Set;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_RATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE", "RATE_CATALOG_ATP_ID_FK"})})
+@Table(name = "KSSA_RATE", uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE", "SUB_CODE", "RATE_CATALOG_ATP_ID_FK"})})
 public class Rate extends AbstractRateEntity {
+
+    private String subCode;
 
     private String atpId;
 
@@ -40,6 +42,15 @@ public class Rate extends AbstractRateEntity {
     @Override
     public Long getId() {
         return id;
+    }
+
+    @Column(name = "SUB_CODE", nullable = false, length = 20)
+    public String getSubCode() {
+        return subCode;
+    }
+
+    public void setSubCode(String subCode) {
+        this.subCode = subCode;
     }
 
     @Column(name = "RATE_CATALOG_ATP_ID_FK", insertable = false, updatable = false, nullable = false, length = 45)

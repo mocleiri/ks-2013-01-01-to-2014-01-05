@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 import java.math.BigDecimal;
@@ -520,6 +521,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * Creates a new persistent Rate instance based on the given parameters.
      *
      * @param rateCode                Rate code
+     * @param subCode                 Rate sub-code
      * @param rateName                Rate name
      * @param rateCatalogCode         RateCatalog code
      * @param transactionTypeId       Rate TransactionType ID
@@ -537,6 +539,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     @Transactional(readOnly = false)
     public Rate createRate(String rateCode,
+                           String subCode,
                            String rateName,
                            String rateCatalogCode,
                            String transactionTypeId,
@@ -586,6 +589,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         // Creating a new Rate instance
         Rate rate = new Rate();
         rate.setCode(rateCode);
+        rate.setSubCode(subCode);
         rate.setName(rateName);
         rate.setRateType(rateCatalog.getRateType());
         rate.setTransactionTypeId(transactionTypeId);
@@ -711,11 +715,13 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * Retrieves the Rate instance from the database by code and ATP ID.
      *
      * @param rateCode Rate code
+     * @param subCode  Rate sub-code
      * @param atpId    ATP ID
      * @return Rate instance
      */
     @Override
-    public Rate getRateByCodeAndAtpId(String rateCode, String atpId) {
+    @WebMethod(exclude = true)
+    public Rate getRate(String rateCode, String subCode, String atpId) {
 
         PermissionUtils.checkPermission(Permission.READ_RATE);
 
@@ -725,8 +731,10 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new IllegalArgumentException(errMsg);
         }
 
-        Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :rateCode and rca.id.atpId = :atpId");
+        Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :rateCode and r.subCode = :subCode and rca.id.atpId = :atpId");
+
         query.setParameter("rateCode", rateCode);
+        query.setParameter("subCode", subCode);
         query.setParameter("atpId", atpId);
 
         List<Rate> rates = query.getResultList();
@@ -742,9 +750,33 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     public List<Rate> getRatesByCode(String rateCode) {
+
         PermissionUtils.checkPermission(Permission.READ_RATE);
-        Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :code");
+
+        Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :code order by r.id desc");
+
         query.setParameter("code", rateCode);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Returns the list of rates by code and sub-code.
+     *
+     * @param rateCode Rate code
+     * @param subCode  Rate sub-code
+     * @return a list of Rate instances
+     */
+    @Override
+    public List<Rate> getRatesByCodeAndSubCode(String rateCode, String subCode) {
+
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+
+        Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :code and r.subCode = :subCode order by r.id desc");
+
+        query.setParameter("code", rateCode);
+        query.setParameter("subCode", subCode);
+
         return query.getResultList();
     }
 
@@ -991,6 +1023,12 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new InvalidRateException(errMsg);
         }
 
+        if (StringUtils.isBlank(rate.getSubCode())) {
+            String errMsg = "Rate sub-code is required";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
         if (StringUtils.isBlank(rate.getName())) {
             String errMsg = "Rate name is required";
             logger.error(errMsg);
@@ -1013,6 +1051,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         }
 
         boolean defaultAmountIsPresent = false;
+
+        Set<Integer> uniqueUnits = new HashSet<Integer>();
 
         for (RateAmount rateAmount : rateAmounts) {
 
@@ -1048,11 +1088,13 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             }
 
             if (rate.getTransactionDate() != null) {
+
                 if (!isTransactionTypeValid(transactionTypeId, rate.getTransactionDate())) {
                     String errMsg = "RateAmount's transaction type is invalid";
                     logger.error(errMsg);
                     throw new InvalidRateException(errMsg);
                 }
+
             } else {
                 try {
                     Atp atp = atpService.getAtp(rate.getAtpId(), getAtpContextInfo());
@@ -1068,13 +1110,22 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                 }
             }
 
-            if (!defaultAmountIsPresent && rateAmount.getId().equals(defaultRateAmount.getId())) {
+            if (rateAmount.getId().equals(defaultRateAmount.getId())) {
                 defaultAmountIsPresent = true;
+            } else {
+                uniqueUnits.add(rateAmount.getUnit());
             }
         }
 
         if (!defaultAmountIsPresent) {
             String errMsg = "Default RateAmount must be one of existing Rate's amounts";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        // Checking that the unit numbers of the current rate are unique
+        if (uniqueUnits.size() != rateAmounts.size() - 1) {
+            String errMsg = "Rate must have unique RateAmount units";
             logger.error(errMsg);
             throw new InvalidRateException(errMsg);
         }
