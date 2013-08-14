@@ -266,10 +266,12 @@ public class AccountRefundController extends DownloadController {
 
         for (Transaction t : transactions) {
 
-            // Add new PotentialRefundModel object:
-            PotentialRefundModel potentialRefundModel = new PotentialRefundModel(t);
+            if(t instanceof Credit) {
+                // Add new PotentialRefundModel object:
+                PotentialRefundModel potentialRefundModel = new PotentialRefundModel(t);
 
-            potentialRefundModels.add(potentialRefundModel);
+                potentialRefundModels.add(potentialRefundModel);
+            }
         }
 
         return potentialRefundModels;
