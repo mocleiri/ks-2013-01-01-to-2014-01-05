@@ -6,7 +6,6 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 
-import com.sigmasys.kuali.ksa.util.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +21,7 @@ import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.fm.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
+import com.sigmasys.kuali.ksa.util.BeanUtils;
 
 /**
  * FeeManagementService implementation.
@@ -478,8 +478,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     private void createPriorManifestCorrection(FeeManagementManifest priorManifest, FeeManagementSession currentFmSession) {
 
         // Clone the prior manifest and add to the current session. Also, create a Correction Manifest:
-        FeeManagementManifest priorCopy = BeanUtils.getDeepCopy(priorManifest);
-        FeeManagementManifest correctionManifest = BeanUtils.getDeepCopy(priorManifest);
+        FeeManagementManifest priorCopy = copyManifest(priorManifest);
+        FeeManagementManifest correctionManifest = copyManifest(priorManifest);
 
         priorCopy.setSession(currentFmSession);
         priorCopy.setType(FeeManagementManifestType.ORIGINAL);
@@ -517,5 +517,64 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             persistEntity(pair.getA());
             persistEntity(pair.getB());
         }
+    }
+    
+    /**
+     * Create a shallow copy of a <code>FeeManagementManifest</code> with only Tags and KeyPairs deep-copied.
+     * The new <code>FeeManagementManifest</code> is not attached to any FM session and not linked to any FM Manifests.
+     * 
+     * @param origManifest 	An original FM manifest to copy.
+     * @return	A copy of the original FM manifest.
+     */
+    private FeeManagementManifest copyManifest(FeeManagementManifest origManifest) {
+    	
+    	// Create a new FM Manifest as a shallow copy of the original one:
+    	FeeManagementManifest copyManifest = BeanUtils.getShallowCopy(origManifest);
+    	
+    	// Create copies of KeyPairs:
+    	if (origManifest.getKeyPairs() != null) {
+    		// Create a new Set of KeyPairs if one is not set yet:
+    		if (copyManifest.getKeyPairs() == null) {
+    			copyManifest.setKeyPairs(new HashSet<KeyPair>()); 
+    		} else {
+    			// Clear the previous tags:
+    			copyManifest.getKeyPairs().clear();
+    		}
+    		
+			// Create and add a new KeyPair identical to the original:
+    		for (KeyPair keyPair : origManifest.getKeyPairs()) {
+    			copyManifest.getKeyPairs().add(new KeyPair(keyPair.getKey(), keyPair.getValue()));
+    		}
+    	}
+    	
+    	// Create copies of Tags:
+    	if (origManifest.getTags() != null) {
+    		// Create a new Set of Tags if one is not set yet:
+    		if (copyManifest.getTags() == null) {
+    			copyManifest.setTags(new HashSet<Tag>());
+    		} else {
+    			copyManifest.getTags().clear();
+    		}
+    		
+    		// Create a new Tag shallow copy:
+    		for (Tag tag : origManifest.getTags()) {
+    			Tag copyTag = BeanUtils.getShallowCopy(tag);
+    			
+    			copyTag.setId(null);
+    			copyManifest.getTags().add(copyTag);
+    		}
+    	}
+    	
+    	
+    	// Set non primitive non-java package types:
+    	copyManifest.setSession(null);
+    	copyManifest.setLinkedManifest(null);
+    	copyManifest.setTransaction(origManifest.getTransaction());
+    	copyManifest.setRate(origManifest.getRate());
+    	copyManifest.setRollup(origManifest.getRollup());
+    	copyManifest.setStatus(origManifest.getStatus());
+    	copyManifest.setId(null);
+    	
+    	return copyManifest;
     }
 }
