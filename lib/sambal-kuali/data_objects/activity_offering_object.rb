@@ -431,7 +431,6 @@ class ActivityOffering
     end
 
     @personnel_list = opts[:personnel_list]
-    puts "edit_personnel_list: @personnel_list = #{@personnel_list}"
 
   end #END: edit_personnel_list
 
@@ -790,18 +789,15 @@ class Personnel
   end
 
   def target_row_by_personnel_id
-    "@id = #{@id}"
     on ActivityOfferingMaintenance do |page|
       idx = -1
       page.personnel_table.rows.each do |row|
         idx += 1
-        puts "  idx = #{idx}"
         if (idx < 1)
           next
         end
         begin
           row_key = row.cells[PERSONNEL_ID_COLUMN].text_field.value
-          puts "    row key: #{row_key}"
           return row unless row_key != @id
         rescue Watir::Exception::UnknownObjectException
           return nil
