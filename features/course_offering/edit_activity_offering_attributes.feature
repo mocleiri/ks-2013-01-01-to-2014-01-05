@@ -25,21 +25,18 @@ Feature: WC.Edit Activity Offering Attributes
     Then the changes of information attributes are not persisted
 
 #KSENROLL-8082
-  @pending
   Scenario: Add Activity Offering Personnel attributes
     When I add Personnel attributes
     And I submit the AO changes
     Then the changes of the Personnel attributes are persisted
 
 #KSENROLL-8082
-  @pending
   Scenario: Delete Activity Offering Personnel attributes
     When I delete Personnel attributes
     And I submit the AO changes
     Then the deleted Personnel line should not be present
 
 #KSENROLL-8082
-  @pending
   Scenario: Edit Activity Offering Personnel attributes
     When I change Personnel attributes
     And I submit the AO changes
