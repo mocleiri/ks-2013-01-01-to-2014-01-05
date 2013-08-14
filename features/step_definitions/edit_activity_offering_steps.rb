@@ -154,9 +154,8 @@ end
 Then /^the deleted Personnel line should not be present$/ do
   @course_offering.manage
   @activity_offering.edit
-  personnel = @activity_offering.personnel_list[0]
-  personnel.should_not == nil
-  row = personnel.target_row_by_personnel_id
+  person = make Personnel, :id => "B.MORAYMAR", :name => "BARR, MORAYMA", :affiliation => "Instructor", :inst_effort => 100
+  row = person.target_row_by_personnel_id
   row.should == nil
 end
 
@@ -167,9 +166,11 @@ When /^I add Personnel attributes$/ do
 end
 
 When(/^I delete Personnel attributes$/) do
+  @activity_offering.edit
+  person = make Personnel, :id => "S.DAVIDB", :name => "SMITH, DAVID", :affiliation => "Instructor", :inst_effort => 30
+  @activity_offering.add_personnel person
   person = make Personnel, :id => "B.MORAYMAR", :name => "BARR, MORAYMA", :affiliation => "Instructor", :inst_effort => 100
-  @activity_offering.edit :personnel_list => [person]
-  @activity_offering.delete_personnel
+  @activity_offering.delete_personnel person
 end
 
 When /^I change Miscellaneous Activity Offering attributes$/ do
@@ -188,6 +189,7 @@ end
 
 Given /^I manage a given Course Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :course=>"ENGL222")
+  #@course_offering = make CourseOffering, :course=>"ENGL222F"
   @course_offering.manage_and_init
 end
 
