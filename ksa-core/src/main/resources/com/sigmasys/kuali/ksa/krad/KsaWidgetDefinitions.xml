@@ -8,7 +8,7 @@
 
 
     <!-- Breadcrumbs and History -->
-    <bean id="Uif-KsaBreadcrumbs" parent="Uif-Breadcrumbs-parentBean">
+    <bean id="Uif-KsaBreadcrumbs" parent="Uif-Breadcrumbs">
         <!--property name="homewardPathList">
             <list>
                 <bean parent="Uif-HistoryEntry" p:title="Home" p:url="../index.html"/>
@@ -212,6 +212,15 @@
         <property name="navigation">
             <bean parent="Uif-KsaPageNavigation"/>
         </property>
+        <property name="breadcrumbOptions.homewardPathBreadcrumbs">
+            <list>
+                <bean parent="Uif-BreadcrumbItem">
+                    <property name="label" value="Home"/>
+                    <property name="url.href" value="@{#ConfigProperties['application.url']}"/>
+                </bean>
+            </list>
+        </property>
+
         <property name="items">
             <list>
                 <ref bean="AccountSearchPage"/>

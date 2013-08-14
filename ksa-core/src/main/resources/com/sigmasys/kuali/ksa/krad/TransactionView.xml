@@ -1,27 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2005-2012 The Kuali Foundation
+
+    Licensed under the Educational Community License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.opensource.org/licenses/ecl2.php
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                           http://www.springframework.org/schema/util
-                           http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-
-    <bean id="transactionHelper" class="com.sigmasys.kuali.ksa.krad.helper.TransactionHelper"/>
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <bean id="TransactionView" parent="Uif-KsaFormView" p:footer.render="false">
-        <property name="title" value="Student Transaction Overview"/>
-        <property name="headerText" value="Transaction Overview"/>
-        <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.TransactionForm"/>
-        <property name="theme" ref="Uif-KsaTheme"/>
+        <property name="title" value="Transaction Overview"/>
+        <property name="headerText" value="Transactions"/>
         <property name="entryPageId" value="ViewTransactions"/>
         <property name="navigation" ref="KsaAccountNavigation"/>
-        <property name="viewHelperService" ref="transactionHelper"/>
         <property name="items">
             <list merge="true">
-                <bean parent="Uif-Page" p:id="ViewTransactions" p:title="View Transactions">
-                    <!--<property name="headerText" value="View Transactions"/>-->
+                <bean parent="Uif-Page" p:id="ViewTransactions">
+                    <property name="headerText" value="View Transactions"/>
                     <property name="items">
                         <list>
                             <bean id="viewTransactionAccountInfo" parent="Uif-HorizontalBoxSection">
@@ -44,7 +54,7 @@
                     </property>
                 </bean>
                 <bean parent="Uif-Page" p:id="RollUpTransactions" p:title="View Transactions">
-                    <!--<property name="headerText" value="View Transactions"/>-->
+                    <property name="headerText" value="Uoll-Up Transactions"/>
                     <property name="items">
                         <list>
                             <bean parent="Uif-HorizontalBoxSection">
@@ -67,7 +77,7 @@
                     </property>
                 </bean>
                 <bean parent="Uif-Page" p:id="RunningBalanceTransactions" p:title="View Transactions">
-                    <!--<property name="headerText" value="View Transactions"/>-->
+                    <property name="headerText" value="Running Balance"/>
                     <property name="items">
                         <list>
                             <bean parent="Uif-HorizontalBoxSection">
@@ -90,6 +100,8 @@
                     </property>
                 </bean>
                 <bean parent="Uif-Page" p:id="AllocateTransactionPage" p:title="Allocate Transaction">
+                    <property name="headerText" value="Allocate Transactions"/>
+
                     <property name="items">
                         <list>
                             <bean parent="Uif-HeaderTwo" p:headerText="Allocate Transaction"/>
@@ -98,6 +110,8 @@
                     </property>
                 </bean>
                 <bean parent="Uif-Page" p:id="ViewAlerts" p:title="View Alerts">
+                    <property name="headerText" value="View Alerts"/>
+
                     <property name="items">
                         <list>
                             <bean parent="Uif-HeaderTwo" p:headerText="Alerts"/>
@@ -106,6 +120,9 @@
                     </property>
                 </bean>
                 <bean parent="Uif-Page" p:id="ViewFlags" p:title="View Flags">
+
+                    <property name="headerText" value="View Flags"/>
+
                     <property name="items">
                         <list>
                             <bean parent="Uif-HeaderTwo" p:headerText="Flags"/>
@@ -114,6 +131,8 @@
                     </property>
                 </bean>
                 <bean parent="Uif-Page" p:id="ViewMemos" p:title="View Memos">
+                    <property name="headerText" value="View Memos"/>
+
                     <property name="items">
                         <list>
                             <bean parent="Uif-HeaderTwo" p:headerText="Memos"/>
@@ -125,6 +144,7 @@
                 </bean>
             </list>
         </property>
+        <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.TransactionForm"/>
     </bean>
 
     <bean name="transactionDisplay" parent="Uif-VerticalBoxSection">
@@ -1003,6 +1023,7 @@
 
             </list>
         </property>
+
     </bean>
 
 
