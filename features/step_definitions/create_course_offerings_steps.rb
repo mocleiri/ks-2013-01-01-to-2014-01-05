@@ -5,9 +5,8 @@ When /^I create a Course Offering with selected lecture Formats$/ do
   @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "CHEM132", :delivery_format_list => delivery_format_list
 end
 
-And /^I create a Course Offering with selected Delivery Formats$/ do
-  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "CHEM132", :grade_format => "Lab", :delivery_format => "Lab"
-  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "CHEM132", :grade_format => "Lab", :delivery_format => "Lab"
+And /^I create a Course Offering with random Delivery Formats$/ do
+  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM
 end
 
 Then /^the new Course Offering should contain only the selected delivery formats$/ do

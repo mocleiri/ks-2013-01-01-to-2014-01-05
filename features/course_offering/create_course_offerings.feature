@@ -3,8 +3,8 @@ Feature: EC.Create Course Offerings
 Background:
   Given I am logged in as a Schedule Coordinator
 
-  Scenario: Create Course Offerings with selected delivery formats
-    When I create a Course Offering with selected Delivery Formats
+  Scenario: Create Course Offerings with random delivery formats
+    When I create a Course Offering with random Delivery Formats
     Then the new Course Offering should contain only the selected delivery formats
 
   Scenario: Create Course Offerings with lecture delivery formats

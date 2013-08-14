@@ -104,7 +104,7 @@ class CourseOffering
         :wait_list_level => "Course Offering",
         :wait_list_type => "Automatic",
         :grade_format => "",
-        :delivery_format_list => [],
+        :delivery_format_list => [ (make DeliveryFormat ) ],
         :final_exam_driver => "",
         :honors_flag => "NO",
         :affiliated_person_list => {},
@@ -1163,7 +1163,13 @@ class DeliveryFormat
   def initialize(browser, opts={})
     @browser = browser
 
-    set_options(opts)
+    defaults = {
+        :format => "random",
+        :grade_format => "",
+        :final_exam_driver => ""
+    }
+    options = defaults.merge(opts)
+    set_options(options)
   end
 
   def create
@@ -1200,6 +1206,8 @@ class DeliveryFormat
         @format = "Lab Only"
       elsif selected_options[:del_format] == "Lecture"
         @format = "Lecture Only"
+      #elsif selected_options[:del_format] == "Discussion/Lecture"
+      #  @format = "Lecture/Discussion"
       else
         @format = selected_options[:del_format]
       end
