@@ -1724,6 +1724,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Transactional(readOnly = false)
     public void deleteRateAmount(Long rateAmountId) {
 
+        PermissionUtils.checkPermission(Permission.DELETE_RATE_AMOUNT);
+
         RateAmount rateAmount = getEntity(rateAmountId, RateAmount.class);
         if (rateAmount == null) {
             String errMsg = "RateAmount with ID = " + rateAmountId + " does not exist";
@@ -1756,6 +1758,32 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             deleteEntity(rateAmountId, RateAmount.class);
         }
 
+    }
+
+    /**
+     * Returns a list of Rate sub-codes by Rate code and ATP ID
+     *
+     * @param rateCode Rate code
+     * @param atpId    ATP ID
+     * @return list of Rate sub-codes
+     */
+    @Override
+    public List<String> getRateSubCodes(String rateCode, String atpId) {
+
+        PermissionUtils.checkPermission(Permission.READ_RATE);
+
+        Query query = em.createQuery("select subCode from Rate where code = :rateCode and atpId = :atpId");
+
+        query.setParameter("rateCode", rateCode);
+        query.setParameter("atpId", atpId);
+
+        List<String> subCodes = query.getResultList();
+
+        if (CollectionUtils.isNotEmpty(subCodes)) {
+            Collections.sort(subCodes);
+        }
+
+        return subCodes;
     }
 
 }

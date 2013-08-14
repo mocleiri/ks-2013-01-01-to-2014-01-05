@@ -294,12 +294,12 @@ public interface RateService {
     List<Rate> getRatesByCode(String rateCode);
 
     /**
-        * Returns the list of rates by code and sub-code.
-        *
-        * @param rateCode Rate code
-        * @param subCode  Rate sub-code
-        * @return a list of Rate instances
-        */
+     * Returns the list of rates by code and sub-code.
+     *
+     * @param rateCode Rate code
+     * @param subCode  Rate sub-code
+     * @return a list of Rate instances
+     */
     List<Rate> getRatesByCodeAndSubCode(String rateCode, String subCode);
 
     /**
@@ -508,5 +508,14 @@ public interface RateService {
      */
     void deleteRateAmount(Long rateAmountId);
 
+
+    /**
+     * Returns a list of Rate sub-codes by Rate code and ATP ID
+     *
+     * @param rateCode Rate code
+     * @param atpId    ATP ID
+     * @return list of Rate sub-codes
+     */
+    List<String> getRateSubCodes(String rateCode, String atpId);
 
 }

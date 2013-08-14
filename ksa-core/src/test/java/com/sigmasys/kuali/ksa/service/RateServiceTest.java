@@ -1124,5 +1124,45 @@ public class RateServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void getRateSubCodes() throws Exception {
+
+        String rateCatalogCode = "RC_2013_C1_S";
+
+        String rateCode = "R_2013_C1_S";
+
+        String atpId = "19871";
+
+        String subCode1 = "C2_S";
+        String subCode2 = "C1_S";
+
+        _createRateCatalog(rateCatalogCode, atpId);
+
+        Rate rate1 = _createRate(rateCode, subCode1, rateCatalogCode, atpId);
+
+        Assert.notNull(rate1);
+        Assert.notNull(rate1.getCode());
+        Assert.notNull(rate1.getSubCode());
+        Assert.notNull(rate1.getAtpId());
+
+        Rate rate2 = _createRate(rateCode, subCode2, rateCatalogCode, atpId);
+
+        Assert.notNull(rate2);
+        Assert.notNull(rate2.getCode());
+        Assert.notNull(rate2.getSubCode());
+        Assert.notNull(rate2.getAtpId());
+
+        List<String> subCodes = rateService.getRateSubCodes(rateCode, atpId);
+
+        Assert.notNull(subCodes);
+        Assert.notEmpty(subCodes);
+        Assert.isTrue(subCodes.size() == 2);
+        Assert.notNull(subCodes.get(0));
+        Assert.notNull(subCodes.get(1));
+        Assert.isTrue(subCodes.get(0).equals(subCode2));
+        Assert.isTrue(subCodes.get(1).equals(subCode1));
+
+    }
+
 
 }

@@ -44,7 +44,7 @@ public class Rate extends AbstractRateEntity {
         return id;
     }
 
-    @Column(name = "SUB_CODE", nullable = false, length = 20)
+    @Column(name = "SUB_CODE", nullable = false, length = 30)
     public String getSubCode() {
         return subCode;
     }

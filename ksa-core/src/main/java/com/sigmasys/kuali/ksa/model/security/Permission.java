@@ -244,6 +244,7 @@ public enum Permission {
     UPDATE_RATE_CATALOG,
     DELETE_RATE_CATALOG,
     READ_RATE_CATALOG,
+    DELETE_RATE_AMOUNT,
 
     // Fee Management permissions:
     READ_MANIFEST
