@@ -189,7 +189,6 @@ end
 
 Given /^I manage a given Course Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :course=>"ENGL222")
-  #@course_offering = make CourseOffering, :course=>"ENGL222F"
   @course_offering.manage_and_init
 end
 
