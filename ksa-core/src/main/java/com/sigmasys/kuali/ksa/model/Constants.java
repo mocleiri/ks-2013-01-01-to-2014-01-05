@@ -52,6 +52,9 @@ public interface Constants {
 
     // Rice constants
     String APPLICATION_HOST_PARAM_NAME = "application.host";
+    
+    // Fee management constants
+    String KSA_FM_PRECLEAR_MANIFEST = "ksa.fm.preclear.manifest";
 
     // ---------------------------------------------------------------
     // DATE FORMATS
