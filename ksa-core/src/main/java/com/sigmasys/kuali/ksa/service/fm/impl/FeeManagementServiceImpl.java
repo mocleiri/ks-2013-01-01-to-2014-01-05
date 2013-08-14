@@ -6,6 +6,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,15 +72,15 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     public void reconcileSession(Long feeManagementSessionId) {
 
         // Get a FeeManagement session with the given ID:
-        FeeManagementSession fmSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
+        FeeManagementSession currentSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
 
-        if (fmSession == null) {
+        if (currentSession == null) {
             logger.error("Cannot find an FM session with the ID " + feeManagementSessionId);
             throw new IllegalArgumentException("Cannot find an FM session with the ID " + feeManagementSessionId);
         }
 
         // Check the session passed is CURRENT or SIMULATED
-        FeeManagementSessionStatus sessionStatus = fmSession.getStatus();
+        FeeManagementSessionStatus sessionStatus = currentSession.getStatus();
 
         if (sessionStatus == null || ((sessionStatus != FeeManagementSessionStatus.CURRENT) && (sessionStatus != FeeManagementSessionStatus.SIMULATED))) {
             String errorMsg = String.format("Invalid FeeManagement Session status [%s]. Session status must be CURRENT or SIMULATED.", sessionStatus);
@@ -88,7 +89,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
 
         // Get the associated Account:
-        Account account = fmSession.getAccount();
+        Account account = currentSession.getAccount();
 
         if (account == null) {
             String errorMsg = String.format("Fee Management Session with id [%s] does not have an associated Account.", feeManagementSessionId);
@@ -106,24 +107,36 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
 
         // Get the last CHARGED FM Session:
-        FeeManagementSession lastChargedFmSession = getLastChargedSession(fmSession);
+        FeeManagementSession lastChargedFmSession = getLastChargedSession(currentSession);
+        
+        // Get current FM Session's manifests:
+        List<FeeManagementManifest> currentManifests = getManifests(currentSession.getId(),
+                FeeManagementManifestType.CHARGE, FeeManagementManifestType.CANCELLATION, FeeManagementManifestType.DISCOUNT);
 
         // If there is a prior CHARGED FM Session, perform line adjustment:
         if (lastChargedFmSession != null) {
             // Perform line comparison and status adjustment.
-            processPriorSessionAdjustment(fmSession, lastChargedFmSession);
+            processPriorSessionAdjustment(currentSession, lastChargedFmSession, currentManifests);
+        }
+        
+        // Optionally, remove inverse manifests from the list of current manifests:
+        boolean preclearCurrentManifests = BooleanUtils.toBoolean(configService.getParameter(Constants.KSA_FM_PRECLEAR_MANIFEST));
+        
+        if (preclearCurrentManifests) {
+        	// Remove inverse manifests:
+        	removeInverseManifests(currentManifests);
         }
 
         // Validate reversal manifests of the current FM session:
-        validateCurrentReversals(fmSession);
+        validateCurrentReversals(currentManifests);
 
         // Updated the status of the current FM Session to RECONCILED or SIMULATED_RECONCILED:
         FeeManagementSessionStatus newFmStatus = (sessionStatus == FeeManagementSessionStatus.CURRENT)
                 ? FeeManagementSessionStatus.RECONCILED : FeeManagementSessionStatus.SIMULATED_RECONCILED;
 
         // Update the entity:
-        fmSession.setChargeStatus(newFmStatus);
-        persistEntity(fmSession);
+        currentSession.setChargeStatus(newFmStatus);
+        persistEntity(currentSession);
     }
 
     /**
@@ -228,14 +241,13 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Performs adjustment of lines between the last charged FM Session and the current session.
      *
-     * @param currentFmSession Current FM Session.
-     * @param priorFmSession   Last FM Session in the CHARGED status. Guaranteed not to be null.
+     * @param currentFmSession 	Current FM Session.
+     * @param priorFmSession   	Last FM Session in the CHARGED status. Guaranteed not to be null.
+     * @param currentManifests	A list of current FM session's manifests.
      */
-    private void processPriorSessionAdjustment(FeeManagementSession currentFmSession, FeeManagementSession priorFmSession) {
+    private void processPriorSessionAdjustment(FeeManagementSession currentFmSession, FeeManagementSession priorFmSession, List<FeeManagementManifest> currentManifests) {
         // Get the prior and current FM sessions' manifests:
         List<FeeManagementManifest> priorManifests = getManifests(priorFmSession.getId(),
-                FeeManagementManifestType.CHARGE, FeeManagementManifestType.CANCELLATION, FeeManagementManifestType.DISCOUNT);
-        List<FeeManagementManifest> currentManifests = getManifests(currentFmSession.getId(),
                 FeeManagementManifestType.CHARGE, FeeManagementManifestType.CANCELLATION, FeeManagementManifestType.DISCOUNT);
 
         // Get pairs of matching FM manifests in the prior and the current FM sessions:
@@ -364,7 +376,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         return (prior.getEffectiveDate() != null) && (current.getEffectiveDate() != null) && prior.getEffectiveDate().equals(current.getEffectiveDate())
                 && (prior.getRecognitionDate() != null) && (current.getRecognitionDate() != null) && prior.getRecognitionDate().equals(current.getRecognitionDate())
                 && StringUtils.equals(prior.getTransactionTypeId(), current.getTransactionTypeId())
-                && (prior.getAmount() != null) && (current.getAmount() != null) && (prior.getAmount().compareTo(current.getAmount()) == 0);
+                && safeAmountsEqual(prior, current);
     }
 
     /**
@@ -398,6 +410,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return A List of full-reversal Manifest Pairs
      */
     private List<Pair<FeeManagementManifest, FeeManagementManifest>> findReversalManifests(List<FeeManagementManifest> manifests, boolean fullReversal) {
+    	
         List<Pair<FeeManagementManifest, FeeManagementManifest>> reversalManifests = new ArrayList<Pair<FeeManagementManifest, FeeManagementManifest>>();
 
         // Iterate through a copy of the list of manifests. Begin with the first manifest and try
@@ -459,10 +472,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                     || ((fmm2.getType() == FeeManagementManifestType.CHARGE) && (fmm1.getType() == FeeManagementManifestType.CANCELLATION));
 
             // Now check if the manifests match and have the same transactionTypeId and amount:
-            if (statusesForReversal) {
-                return manifestsMatch(fmm1, fmm2, fullReversal)
-                        && StringUtils.equals(fmm1.getTransactionTypeId(), fmm2.getTransactionTypeId())
-                        && (fmm1.getAmount() != null) && (fmm2.getAmount() != null) && (fmm1.getAmount().compareTo(fmm2.getAmount()) == 0);
+            if (statusesForReversal && manifestsMatch(fmm1, fmm2, fullReversal)) {
+                return fullReversal 
+                		? StringUtils.equals(fmm1.getTransactionTypeId(), fmm2.getTransactionTypeId()) && safeAmountsEqual(fmm1, fmm2) 
+                				: true;
             }
         }
 
@@ -493,17 +506,103 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         persistEntity(priorCopy);
         persistEntity(correctionManifest);
     }
+    
+    /**
+     * Removes inverse manifests from the list of manifests. 
+     * 
+     * @param manifests A list of manifests to remove inverse ones from.
+     */
+    private void removeInverseManifests(List<FeeManagementManifest> manifests) {
+    	
+        // Iterate through the list of manifests. Begin with the first manifest and try
+        // to find its full-reversal counterpart. If one is found, add a Pair, remove them both from
+        // the list and start from the same "startIndex":
+        int startIndex = 0;
 
+        while (startIndex < manifests.size() - 1) {
+            // Get the first Manifest to match against:
+            FeeManagementManifest firstManifest = manifests.get(startIndex);
+            boolean matchFound = false;
+
+            for (int i = startIndex + 1, sz = manifests.size(); (i < sz) && !matchFound; i++) {
+                // Check if the next manifest is an inverse one:
+            	FeeManagementManifest anotherManifest = manifests.get(i);
+            	
+                matchFound = manifestsInverse(firstManifest, anotherManifest);
+
+                if (matchFound) {
+                    // Delete both entities, remove both from the list, and start again from the same index:
+                    em.remove(firstManifest);
+                    em.remove(anotherManifest);
+                    manifests.remove(startIndex);
+                    manifests.remove(i);
+                }
+            }
+
+            // If a match not found, increment the start index and keep searching:
+            if (!matchFound) {
+                startIndex++;
+            }
+        }
+    }
+    
+    /**
+     * Checks if two FM manifests are inverse. According to the documentation, FM Manifests are inverse if:
+     * If TYPES are inverse {CHARGE vs. CANCEL} with amounts equal
+	 * OR
+	 * Same type {Both CHARGE or CANCEL} with inverse amounts && transactionTypeId is the same
+	 * 
+     * @param m1 An FM Manifest to compare.
+     * @param m2 Another FM Manifest to compare.
+     * @return true if the two manifests are inverse, false otherwise.
+     */
+    private boolean manifestsInverse(FeeManagementManifest m1, FeeManagementManifest m2) {
+    	if ((m1 != null) && (m2 != null)) {
+    		// Check for inverse statuses and equal amounts or same statuses and inverse amounts:
+    		if (((m1.getType() == FeeManagementManifestType.CHARGE) && (m2.getType() == FeeManagementManifestType.CANCELLATION))
+    				|| ((m1.getType() == FeeManagementManifestType.CANCELLATION) && (m2.getType() == FeeManagementManifestType.CHARGE))) {
+    			return safeAmountsEqual(m1, m2);
+    		} else  if (((m1.getType() == FeeManagementManifestType.CHARGE) && (m2.getType() == FeeManagementManifestType.CHARGE))
+    				|| ((m1.getType() == FeeManagementManifestType.CANCELLATION) && (m2.getType() == FeeManagementManifestType.CANCELLATION))) {
+    			return safeAmountsInverse(m1, m2) && StringUtils.equals(m1.getTransactionTypeId(), m2.getTransactionTypeId());
+    		}
+    	}
+    	
+    	return false;
+    }
+    
+    /**
+     * Safely compares "amount" properties of two <code>FeeManagementManifest</code>s.
+     * Calls the "compareTo" method of BigDecimal.
+     * Guaranteed not to cause a NullPointerException.
+     * 
+     * @param m1 A <code>FeeManagementManifest</code>.
+     * @param m2 A <code>FeeManagementManifest</code>.
+     * @return true if "amount" attributes are equal.
+     */
+    private boolean safeAmountsEqual(FeeManagementManifest m1, FeeManagementManifest m2) {
+    	return (m1.getAmount() != null) && (m2.getAmount() != null) && (m1.getAmount().compareTo(m2.getAmount()) == 0);
+    }
+    
+    /**
+     * Safely compares "amount" properties of two <code>FeeManagementManifest</code>s.
+     * Calls the "compareTo" method of BigDecimal.
+     * Guaranteed not to cause a NullPointerException.
+     * 
+     * @param m1 A <code>FeeManagementManifest</code>.
+     * @param m2 A <code>FeeManagementManifest</code>.
+     * @return true if "amount" attributes are inverse.
+     */
+    private boolean safeAmountsInverse(FeeManagementManifest m1, FeeManagementManifest m2) {
+    	return (m1.getAmount() != null) && (m2.getAmount() != null) && (m1.getAmount().compareTo(m2.getAmount().negate()) == 0);
+    }
+    
     /**
      * Validates that full-reversal manifests point at each other. Repoints them at each other if necessary.
      *
-     * @param currentFmSession The current FM Session to validate its reversals.
+     * @param currentManifests	The current FM Session's manifests to validate reversals.
      */
-    private void validateCurrentReversals(FeeManagementSession currentFmSession) {
-
-        // Get only CHARGE and CANCEL Manifests for the current session:
-        List<FeeManagementManifest> currentManifests = getManifests(currentFmSession.getId(),
-                FeeManagementManifestType.CHARGE, FeeManagementManifestType.CANCELLATION);
+    private void validateCurrentReversals(List<FeeManagementManifest> currentManifests) {
 
         // Get reversal Manifest pairs and point them to each other:
         List<Pair<FeeManagementManifest, FeeManagementManifest>> reversalManifests = findReversalManifests(currentManifests, false);
