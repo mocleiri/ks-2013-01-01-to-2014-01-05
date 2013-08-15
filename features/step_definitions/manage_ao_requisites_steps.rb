@@ -1,55 +1,55 @@
 #Student Eligibility & Prerequisite
 When /^I navigate to the agendas page and open the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.navigate_to_ao_requisites
 end
 
 When /^I copy and edit the Course Offering rule to the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_copy_edit_co_rule
 end
 
 When /^I copy the Course Offering rule to the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_copy_co_rule
 end
 
 When /^I revert the copied rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_revert_copy_co_rule
 end
 
 When /^I revert the copied and edited rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_revert_copy_edit_co_rule
 end
 
 When /^I revert the added rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_revert_add_ao_rule
 end
 
 When /^I revert the previously added rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_revert_add_ao_rule
 end
 
 When /^I revert the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_revert_replaced_co_rule
 end
 
 When /^I commit after reverting the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "BSCI361"
+  @prereq = make AOPreparationPrerequisiteRule, :activity => "B"
   @prereq.sepr_revert_replaced_co_rule
   @prereq.commit_changes
 end
@@ -62,13 +62,13 @@ end
 
 When /^I replace the CO rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_replace_co_rule
 end
 
 When /^I commit the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "BSCI361"
+  @prereq = make AOPreparationPrerequisiteRule, :activity => "C"
   @prereq.sepr_replace_co_rule
   @prereq.commit_changes
 end
@@ -81,31 +81,31 @@ end
 
 When /^I delete the copied rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_delete_copied_ao_rule
 end
 
 When /^I delete the copied and edited rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_delete_copied_edited_ao_rule
 end
 
 When /^I view the catalog and course offering rule for the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_view_catalog_co_rule
 end
 
 When /^I compare the rules in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_compare_catalog_co_ao_rule
 end
 
 When /^I compare the replaced rule with the CO and CLU rules in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
+  @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_compare_ao_to_clu_co_rule
 end
 

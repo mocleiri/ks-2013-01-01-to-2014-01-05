@@ -64,7 +64,7 @@ class AORequisitesData
     @course_offering.manage
     on ManageCourseOfferings do |page|
       page.loading.wait_while_present(200)
-      page.ao_requisites("B")
+      page.ao_requisites(@activity)
     end
     on ActivityOfferingRequisites do |page|
       page.loading.wait_while_present
@@ -854,7 +854,8 @@ class AOPreparationPrerequisiteRule < AORequisitesData
     defaults = {
         :section => "Student Eligibility & Prerequisite",
         :term => "201208",
-        :course => "ENGL101"
+        :course => "ENGL304",
+        :activity => "A"
     }
 
     options = defaults.merge(opts)
