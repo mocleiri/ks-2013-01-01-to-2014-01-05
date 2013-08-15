@@ -39,7 +39,7 @@ import org.kuali.student.r2.core.organization.model.OrgPersonRelationEntity;
 import org.kuali.student.r2.core.organization.model.OrgPositionRestrictionEntity;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.kuali.student.r2.core.class1.type.service.TypeService;
-import org.kuali.student.r2.core.organization.constants.OrganizationServiceConstants;
+import org.kuali.student.r2.core.constants.OrganizationServiceConstants;
 import org.kuali.student.r2.core.organization.dto.OrgHierarchyInfo;
 import org.kuali.student.r2.core.organization.dto.OrgInfo;
 import org.kuali.student.r2.core.organization.dto.OrgOrgRelationInfo;
