@@ -5,9 +5,11 @@ import com.sigmasys.kuali.ksa.krad.form.SettingsForm;
 import com.sigmasys.kuali.ksa.krad.model.AuditableEntityModel;
 import com.sigmasys.kuali.ksa.krad.model.CashLimitParameterModel;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.CashLimitService;
 import com.sigmasys.kuali.ksa.service.InformationService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
@@ -21,9 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -168,11 +168,11 @@ public class SettingsController extends GenericSearchController {
                 }
             }
             form.setConfigParameters(modifiableParameters);
-        } else if("CashLimitParameterPage".equals(pageId)) {
+        } else if ("CashLimitParameterPage".equals(pageId)) {
             form.setAuditableEntity(new CashLimitParameter());
             List<CashLimitParameter> entities = auditableEntityService.getAuditableEntities(CashLimitParameter.class);
             List<CashLimitParameterModel> models = new ArrayList<CashLimitParameterModel>(entities.size());
-            for(CashLimitParameter entity : entities){
+            for (CashLimitParameter entity : entities) {
                 models.add(new CashLimitParameterModel(entity));
             }
             form.setCashLimitParameters(models);
@@ -205,11 +205,10 @@ public class SettingsController extends GenericSearchController {
                 String description = parentEntity.getDescription();
 
                 AuditableEntity value = auditableEntityService.createAuditableEntity(code, name, description, parentEntity.getClass());
-                if(value instanceof Tag){
-                    ((Tag)value).setAdministrative(entity.getAdministrative());
+                if (value instanceof Tag) {
+                    ((Tag) value).setAdministrative(entity.getAdministrative());
                     auditableEntityService.persistAuditableEntity(value);
                 }
-
 
 
                 form.setAuditableEntities(auditableEntityService.getAuditableEntities(parentEntity.getClass()));
@@ -303,10 +302,34 @@ public class SettingsController extends GenericSearchController {
         List<ConfigParameter> parameters = form.getConfigParameters();
 
         try {
-            configService.updateParameters(parameters);
+
+            if (CollectionUtils.isNotEmpty(parameters)) {
+
+                List<ConfigParameter> readOnlyParameters = configService.getReadOnlyParameters();
+
+                if (CollectionUtils.isNotEmpty(readOnlyParameters)) {
+
+                    Set<String> readOnlyParamNames = new HashSet<String>(readOnlyParameters.size());
+
+                    for (ConfigParameter readOnlyParameter : readOnlyParameters) {
+                        readOnlyParamNames.add(readOnlyParameter.getName().toLowerCase());
+                    }
+
+                    for (ConfigParameter parameter : parameters) {
+                        if (readOnlyParamNames.contains(parameter.getName().toLowerCase())) {
+                            String msg = "Read-only System Parameter '" + parameter.getName() + "' cannot be overridden";
+                            GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, msg);
+                        }
+                    }
+                }
+
+                configService.updateParameters(parameters);
+            }
+
             String statusMsg = "System Parameters updated.";
             GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.info(statusMsg);
+
         } catch (Exception e) {
             String statusMsg = "System Parameters did not update. ";
             if (e instanceof DuplicateKeyException) {
@@ -323,10 +346,10 @@ public class SettingsController extends GenericSearchController {
     public ModelAndView saveCashLimitParameters(@ModelAttribute("KualiForm") SettingsForm form) {
         List<CashLimitParameterModel> parameters = form.getCashLimitParameters();
 
-        try{
-            for(CashLimitParameterModel p : parameters){
-                CashLimitParameter parent = (CashLimitParameter)p.getParentEntity();
-                if(parent.getTag() == null){
+        try {
+            for (CashLimitParameterModel p : parameters) {
+                CashLimitParameter parent = (CashLimitParameter) p.getParentEntity();
+                if (parent.getTag() == null) {
                     Tag tag = auditableEntityService.getAuditableEntity(p.getTagString(), Tag.class);
                     parent.setTag(tag);
                 }
@@ -335,7 +358,7 @@ public class SettingsController extends GenericSearchController {
             String statusMsg = "Cash Limit Parameters saved";
             GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.info(statusMsg);
-        } catch(Throwable t){
+        } catch (Throwable t) {
             String statusMsg = "System Parameters did not update: " + t.getLocalizedMessage();
             GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg + " " + t.getMessage());
