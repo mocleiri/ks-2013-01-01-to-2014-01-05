@@ -319,6 +319,7 @@ public class SettingsController extends GenericSearchController {
                         if (readOnlyParamNames.contains(parameter.getName().toLowerCase())) {
                             String msg = "Read-only System Parameter '" + parameter.getName() + "' cannot be overridden";
                             GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, msg);
+                            return getUIFModelAndView(form);
                         }
                     }
                 }
