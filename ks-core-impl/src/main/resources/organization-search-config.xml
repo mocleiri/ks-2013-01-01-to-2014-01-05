@@ -220,30 +220,6 @@
 		</search:searchCriteriaTypeInfo>
 	</search:searchType>
 	
-	<search:searchType id="org.search.orgTypes" parent="org.search.orgTypes-parent"/>
-	<search:searchType id="org.search.orgTypes-parent"  abstract="true">
-		<search:name>All org Types</search:name>
-		<search:desc>Returns all org types.</search:desc>
-		<search:searchResultTypeInfo>
-			<ref bean="org.result.orgType" />
-		</search:searchResultTypeInfo>
-		<search:searchCriteriaTypeInfo>
-			<ref bean="org.criteria.orgType" />
-		</search:searchCriteriaTypeInfo>
-	</search:searchType>
-	
-	<search:searchType id="org.search.orgPeronRelationTypes" parent="org.search.orgPeronRelationTypes-parent"/>
-	<search:searchType id="org.search.orgPeronRelationTypes-parent"  abstract="true">
-		<search:name>All org Types</search:name>
-		<search:desc>Returns all org types.</search:desc>
-		<search:searchResultTypeInfo>
-			<ref bean="org.result.orgPersonRelationType" />
-		</search:searchResultTypeInfo>
-		<search:searchCriteriaTypeInfo>
-			<ref bean="org.criteria.orgPersonRelationType" />
-		</search:searchCriteriaTypeInfo>
-	</search:searchType>
-	
 	<search:searchType id="org.search.findOrgPositionRestrictions" parent="org.search.findOrgPositionRestrictions-parent"/>
 	<search:searchType id="org.search.findOrgPositionRestrictions-parent"  abstract="true">
 		<search:name>All org Hierarchies</search:name>
@@ -409,26 +385,6 @@
 			<ref bean="org.resultColumn.orgHierarchyName" />
 		</search:resultColumns>
 	</search:searchResultTypeInfo>
-	
-	<search:searchResultTypeInfo id="org.result.orgType" parent="org.result.orgType-parent"/>
-	<search:searchResultTypeInfo id="org.result.orgType-parent"  abstract="true">
-		<search:name>Organization Type</search:name>
-		<search:desc>Organization Type</search:desc>
-		<search:resultColumns>
-			<ref bean="org.resultColumn.orgType" />
-			<ref bean="org.resultColumn.orgTypeName" />
-		</search:resultColumns>
-	</search:searchResultTypeInfo>
-	
-	<search:searchResultTypeInfo id="org.result.orgPersonRelationType" parent="org.result.orgPersonRelationType-parent"/>
-	<search:searchResultTypeInfo id="org.result.orgPersonRelationType-parent"  abstract="true">
-		<search:name>Organization Person RelationType</search:name>
-		<search:desc>Organization Person RelationType</search:desc>
-		<search:resultColumns>
-			<ref bean="org.resultColumn.orgPersonRelationType" />
-			<ref bean="org.resultColumn.orgPersonRelationTypeName" />
-		</search:resultColumns>
-	</search:searchResultTypeInfo>
 
 	<search:searchResultTypeInfo id="org.result.hierarchiesOrgIsIn" parent="org.result.hierarchiesOrgIsIn-parent"/>
 	<search:searchResultTypeInfo id="org.result.hierarchiesOrgIsIn-parent"  abstract="true">
@@ -547,7 +503,7 @@
 	
 	<search:resultColumn id="org.resultColumn.orgPersonRelationType" parent="org.resultColumn.orgType-parent"/>
 	<search:resultColumn id="org.resultColumn.orgPersonRelationTypeName" parent="org.resultColumn.orgTypeName-parent"/>
-	
+
 	<search:resultColumn id="org.resultColumn.orgPositionRestrictionType" parent="org.resultColumn.orgType-parent"/>
 	<search:resultColumn id="org.resultColumn.orgPositionRestrictionTypeName" parent="org.resultColumn.orgTypeName-parent"/>
 	
@@ -643,24 +599,6 @@
 	<search:searchCriteriaTypeInfo id="org.criteria.orgHierarchyIds-parent"  abstract="true">
 		<search:name>OrgHierarchyIdsCriteria</search:name>
 		<search:desc>OrgHierarchyIdsCriteria Description</search:desc>
-	</search:searchCriteriaTypeInfo>
-	
-	<search:searchCriteriaTypeInfo id="org.criteria.orgType" parent="org.criteria.orgType-parent"/>
-	<search:searchCriteriaTypeInfo id="org.criteria.orgType-parent"  abstract="true">
-		<search:name>OrgTypeCriteria</search:name>
-		<search:desc>OrgTypeCriteria Description</search:desc>
-		<search:queryParams>
-			<ref bean="org.queryParam.orgOptionalId" />
-		</search:queryParams>
-	</search:searchCriteriaTypeInfo>
-	
-	<search:searchCriteriaTypeInfo id="org.criteria.orgPersonRelationType" parent="org.criteria.orgPersonRelationType-parent"/>
-	<search:searchCriteriaTypeInfo id="org.criteria.orgPersonRelationType-parent"  abstract="true">
-		<search:name>OrgPersonRelationTypeCriteria</search:name>
-		<search:desc>OrgPersonRelationTypeCriteria Description</search:desc>
-		<search:queryParams>
-			<ref bean="org.queryParam.orgOptionalId" />
-		</search:queryParams>
 	</search:searchCriteriaTypeInfo>
 
 	<search:searchCriteriaTypeInfo id="org.criteria.hierarchiesOrgIsIn" parent="org.criteria.hierarchiesOrgIsIn-parent"/>
@@ -792,94 +730,143 @@
     <bean id="queryMap-parent" class="org.springframework.beans.factory.config.MapFactoryBean">
 		<property name="sourceMap">
 			<map>
-				<entry key="org.search.orgHierarchyIds">
-					<value>SELECT oh.id, oh.name FROM OrgHierarchy oh</value>
-				</entry>
-				<entry key="org.search.orgTypes">
-					<value>SELECT org.id, org.name FROM OrgType org</value>
-				</entry>
-				<entry key="org.search.orgPeronRelationTypes">
-					<value>SELECT org.id, org.name FROM OrgPersonRelationType org</value>
+                <entry key="org.search.orgHierarchyIds">
+					<value>SELECT oh.id, oh.name FROM OrgHierarchyEntity oh</value>
 				</entry>
 				<entry key="org.search.findOrgPositionRestrictions">
-					<value>SELECT opr.personRelationType.id , opr.title FROM OrgPositionRestriction opr WHERE opr.org.id = :org_queryParam_orgId</value>
+					<value>SELECT opr.orgPersonRelationType, opr.title FROM OrgPositionRestrictionEntity opr WHERE opr.orgId = :org_queryParam_orgId</value>
 				</entry>
 				<entry key="org.search.hierarchiesOrgIsIn">
-					<value>SELECT hierarchy.id FROM Org org, in(org.type.orgHierarchies) hierarchy WHERE org.id = :org_queryParam_orgId</value>
+					<value>
+                        SELECT DISTINCT hierarchy.id
+                        FROM OrgHierarchyEntity hierarchy, OrgOrgRelationEntity rel
+                        WHERE (rel.orgId = :org_queryParam_orgId OR rel.relatedOrgId = :org_queryParam_orgId) AND
+                        rel.orgOrgRelationType in elements(hierarchy.orgOrgRelationTypes)
+                    </value>
 				</entry>
 				<entry key="org.search.orgQuickViewByOrgType">
-					<value>SELECT org.id, org.shortName FROM Org org WHERE
-						org.type.id = :org_queryParam_orgType</value>
+					<value>SELECT org.id, org.shortName FROM OrgEntity org WHERE
+						org.orgType = :org_queryParam_orgType</value>
 				</entry>
 				<entry key="org.search.orgQuickViewByHierarchyShortName">
-					<value>SELECT org.id, org.shortName FROM Org org, in(org.type.orgHierarchies) hierarcy WHERE org.shortName like :org_queryParam_orgShortName and hierarcy.id = :org_queryParam_orgHierarchyId</value>
+					<value>
+                        SELECT DISTINCT org.id, org.shortName
+                        FROM OrgHierarchyEntity hierarchy, OrgOrgRelationEntity rel, OrgEntity org
+                        WHERE (rel.orgId = org.id OR rel.relatedOrgId = org.id) AND
+                        org.shortName like :org_queryParam_orgShortName AND hierarchy.id = :org_queryParam_orgHierarchyId AND
+                        rel.orgOrgRelationType in elements(hierarchy.orgOrgRelationTypes)
+                    </value>
 				</entry>
 				<entry key="org.search.orgQuickLongViewByFirstLetter">
-					<value>SELECT org.id, org.longName, org.type.id, hierarchy.name FROM Org org, in(org.type.orgHierarchies) hierarchy WHERE org.shortName like :org_queryParam_orgShortName or org.longName like :org_queryParam_orgShortName</value>
+					<value>
+                        SELECT DISTINCT org.id, org.shortName, org.orgType, hierarchy.name
+                        FROM OrgHierarchyEntity hierarchy, OrgOrgRelationEntity rel, OrgEntity org
+                        WHERE (rel.orgId = org.id OR rel.relatedOrgId = org.id) AND
+                        (org.shortName like :org_queryParam_orgShortName OR org.longName like :org_queryParam_orgShortName) AND
+                        rel.orgOrgRelationType in elements(hierarchy.orgOrgRelationTypes)
+                    </value>
 				</entry>
 				<entry key="org.search.orgByShortName">
-					<value>SELECT org.id, org.shortName FROM Org org WHERE org.shortName like :org_queryParam_orgShortName or org.id = :org_queryParam_orgId</value>
+					<value>SELECT org.id, org.shortName FROM OrgEntity org WHERE org.shortName like :org_queryParam_orgShortName or org.id = :org_queryParam_orgId</value>
 				</entry>
 				<entry key="org.search.orgByShortNameAndType">
-					<value>SELECT org.id, org.shortName FROM Org org WHERE org.type.id = :org_queryParam_orgType AND (org.shortName like :org_queryParam_orgShortName or org.id = :org_queryParam_orgId)</value>
+					<value>SELECT org.id, org.shortName FROM OrgEntity org WHERE org.orgType = :org_queryParam_orgType AND (org.shortName like :org_queryParam_orgShortName or org.id = :org_queryParam_orgId)</value>
 				</entry>
 				<entry key="org.search.orgFullViewById">
-					<value>SELECT org.id, org.shortName, org.longName, org.type.id, hierarchy.name FROM Org org, in(org.type.orgHierarchies) hierarchy WHERE org.id = :org_queryParam_orgId</value>
+					<value>
+                        SELECT DISTINCT org.id, org.shortName, org.longName, org.orgType, hierarchy.name
+                        FROM OrgHierarchyEntity hierarchy, OrgOrgRelationEntity rel, OrgEntity org
+                        WHERE (rel.orgId = org.id OR rel.relatedOrgId = org.id) AND
+                              org.id = :org_queryParam_orgId AND
+                              rel.orgOrgRelationType in elements(hierarchy.orgOrgRelationTypes)
+                    </value>
 				</entry>
 				<entry key="org.search.orgQuickViewByRelationTypeOrgTypeRelatedOrgType">
-					<value>SELECT rel.relatedOrg.id, rel.relatedOrg.shortName, rel.relatedOrg.longName FROM OrgOrgRelation rel WHERE rel.type.id = :org_queryParam_relationType AND rel.org.type.id = :org_queryParam_orgType AND rel.relatedOrg.type.id = :org_queryParam_relatedOrgType ORDER BY rel.relatedOrg.shortName ASC</value>
+					<value>
+                           SELECT relatedOrg.id, relatedOrg.shortName, relatedOrg.longName
+                           FROM OrgOrgRelationEntity rel, OrgEntity org, OrgEntity relatedOrg
+                           WHERE rel.orgOrgRelationType = :org_queryParam_relationType AND
+                                 org.orgType = :org_queryParam_orgType AND
+                                 relatedOrg.orgType = :org_queryParam_relatedOrgType AND
+                                 rel.orgId = org.id AND
+                                 rel.relatedOrgId = relatedOrg.id
+                                 ORDER BY relatedOrg.shortName ASC
+                    </value>
 				</entry>
 				<entry key="org.search.orgQuickViewByRelationTypeRelatedOrgTypeOrgId">
-					<value>SELECT rel.relatedOrg.id, rel.relatedOrg.shortName FROM OrgOrgRelation rel WHERE rel.type.id = :org_queryParam_relationType AND rel.org.id = :org_queryParam_orgId AND rel.relatedOrg.type.id = :org_queryParam_relatedOrgType</value>
+					<value>
+                           SELECT relatedOrg.id, relatedOrg.shortName
+                           FROM OrgOrgRelationEntity rel, OrgEntity relatedOrg
+                           WHERE rel.orgOrgRelationType = :org_queryParam_relationType AND rel.orgId = :org_queryParam_orgId AND
+                                 relatedOrg.orgType = :org_queryParam_relatedOrgType AND rel.relatedOrgId = relatedOrg.id
+                    </value>
 				</entry>
 				<entry key="org.search.orgQuickViewByRelationTypeOrgTypeRelatedOrgTypeAltr">
-					<value>SELECT rel.org.id, rel.org.shortName FROM OrgOrgRelation rel WHERE rel.type.id = :org_queryParam_relationType AND (rel.org.type.id in (:org_queryParam_orgTypeList))  AND rel.relatedOrg.type.id = :org_queryParam_relatedOrgType ORDER BY rel.org.shortName ASC</value>
+					<value>
+                        SELECT org.id, org.shortName
+                        FROM OrgOrgRelationEntity rel, OrgEntity org, OrgEntity relatedOrg
+                        WHERE rel.orgOrgRelationType = :org_queryParam_relationType AND
+                              (org.orgType in (:org_queryParam_orgTypeList))  AND
+                              relatedOrg.orgType = :org_queryParam_relatedOrgType AND
+                              rel.orgId = org.id AND
+                              rel.relatedOrgId = relatedOrg.id
+                        ORDER BY org.shortName ASC
+                    </value>
 				</entry>
-				
 				<entry key="org.search.orgQuickViewByRelationTypeOrgTypeRelatedOrgIds">
-					<value>SELECT DISTINCT rel.org.id, rel.org.shortName, rel.org.longName, rel.org.type.id FROM OrgOrgRelation rel, OrgOrgRelation rel2 </value>
+					<value>
+                        SELECT DISTINCT rel.orgId, org.shortName, org.longName, org.orgType
+                        FROM OrgOrgRelationEntity rel, OrgOrgRelationEntity rel2, OrgEntity org
+                        WHERE rel.orgId = org.id
+                    </value>
 				</entry>
 				<entry key="org.queryParam.optionalOrgTypeList">
-					<value>rel.org.type.id IN (:org_queryParam_optionalOrgTypeList)</value>
+					<value>org.orgType IN (:org_queryParam_optionalOrgTypeList)</value>
 				</entry>
 				<entry key="org.queryParam.relatedOrgIds">
-					<value>(rel.relatedOrg.id IN (:org_queryParam_relatedOrgIds) OR (rel.relatedOrg.id NOT IN (:org_queryParam_relatedOrgIds) AND rel2.relatedOrg.id IN (:org_queryParam_relatedOrgIds) AND rel.relatedOrg.id = rel2.org.id))</value>
+					<value>(rel.relatedOrgId IN (:org_queryParam_relatedOrgIds) OR (rel.relatedOrgId NOT IN (:org_queryParam_relatedOrgIds) AND rel2.relatedOrgId IN (:org_queryParam_relatedOrgIds) AND rel.relatedOrgId = rel2.orgId))</value>
 				</entry>
 				<entry key="org.queryParam.relOrgOptionalId">
-					<value>rel.org.id = :org_queryParam_relOrgOptionalId</value>
+					<value>rel.orgId = :org_queryParam_relOrgOptionalId</value>
 				</entry>
 				<entry key="org.queryParam.optionalRelationType">
-					<value>rel.type.id = :org_queryParam_optionalRelationType AND rel2.type.id = :org_queryParam_optionalRelationType</value>
+					<value>rel.orgOrgRelationType = :org_queryParam_optionalRelationType AND rel2.orgOrgRelationType = :org_queryParam_optionalRelationType</value>
 				</entry>
-
                 <entry key="org.queryParam.optionalOrgRelationType">
-                    <value>rel.type.id = :org_queryParam_optionalOrgRelationType</value>
+                    <value>rel.orgOrgRelationType = :org_queryParam_optionalOrgRelationType</value>
                 </entry>
                 <entry key="org.search.relatedOrgQuickViewByRelationType">
-                    <value>SELECT DISTINCT rel.relatedOrg.id, rel.relatedOrg.shortName, rel.relatedOrg.longName, rel.relatedOrg.type.id FROM OrgOrgRelation rel </value>
+                    <value>
+                        SELECT DISTINCT relatedOrg.id, relatedOrg.shortName, relatedOrg.longName, relatedOrg.orgType
+                        FROM OrgOrgRelationEntity rel, OrgEntity relatedOrg
+                        WHERE rel.relatedOrgId = relatedOrg.id
+                    </value>
                 </entry>
                 <entry key="org.search.orgByRelationTypeOrgTypeOrgName">
-                    <value>SELECT DISTINCT rel.org.id, rel.org.shortName, rel.org.longName, rel.org.type.id FROM OrgOrgRelation rel </value>
+                    <value>SELECT DISTINCT org.id, org.shortName, org.longName, org.orgType FROM OrgOrgRelationEntity rel, OrgEntity org WHERE rel.orgId = org.id </value>
                 </entry>
-
                 <entry key="org.search.orgByRelationTypeOrgType">
-                    <value>SELECT DISTINCT rel.org.id, rel.org.shortName, rel.org.longName, rel.org.type.id FROM OrgOrgRelation rel </value>
+                    <value>SELECT DISTINCT relatedOrg.id, relatedOrg.shortName, relatedOrg.longName, relatedOrg.orgType FROM OrgOrgRelationEntity rel, OrgEntity org, OrgEntity relatedOrg WHERE rel.relatedOrgId = relatedOrg.id AND rel.orgId = org.id </value>
                 </entry>
                 <entry key="org.queryParam.relOrgOptionalLongName">
-                    <value>rel.org.longName</value>
+                    <value>org.longName</value>
                 </entry>
                 <entry key="org.queryParam.relOrgOptionalShortName">
-                    <value>rel.org.shortName</value>
+                    <value>org.shortName</value>
                 </entry>
-				
 				<entry key="org.search.test.orgs">
-					<value>SELECT org.id, org.shortName, org.longName, org.type.id, hierarchy.name FROM Org org, in(org.type.orgHierarchies) hierarchy</value>
+					<value>
+                        SELECT DISTINCT org.id, org.shortName, org.longName, org.orgType, hierarchy.name
+                        FROM OrgHierarchyEntity hierarchy, OrgOrgRelationEntity rel, OrgEntity org
+                        WHERE (rel.orgId = org.id OR rel.relatedOrgId = org.id) AND
+                        rel.orgOrgRelationType in elements(hierarchy.orgOrgRelationTypes)
+                    </value>
 				</entry>
 				<entry key="org.search.generic">
-					<value>SELECT org.id, org.shortName, org.longName, org.type.id FROM Org org</value>
+					<value>SELECT org.id, org.shortName, org.longName, org.orgType FROM OrgEntity org </value>
 				</entry>				
 				<entry key="org.queryParam.orgGenericType">
-					<value>org.type.id = :org_queryParam_orgGenericType</value>
+					<value>org.orgType = :org_queryParam_orgGenericType</value>
 				</entry>
 				<entry key="org.queryParam.orgGenericShortName">
 					<value>org.shortName like :org_queryParam_orgGenericShortName</value>
@@ -889,12 +876,9 @@
 				</entry>
 				<entry key="org.queryParam.orgOptionalIds">
 					<value>org.id IN (:org_queryParam_orgOptionalIds)</value>
-				</entry>		
-				<entry key="org.queryParam.orgPositionId">
-					<value>org.org.id = :org_queryParam_orgPositionId</value>
-				</entry>				
+				</entry>
 				<entry key="org.queryParam.orgOptionalType">
-					<value>org.type.id IN (:org_queryParam_orgOptionalType)</value>
+					<value>org.orgType IN (:org_queryParam_orgOptionalType)</value>
 				</entry>	
 				<entry key="org.queryParam.orgOptionalShortName">
 					<value>org.shortName</value>
