@@ -6,6 +6,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -16,12 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.fm.*;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingSchedule;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail;
 import com.sigmasys.kuali.ksa.model.security.Permission;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.fm.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
+import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
+import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import com.sigmasys.kuali.ksa.util.BeanUtils;
 
 /**
@@ -58,6 +65,12 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
     @Autowired
     private AuditableEntityService auditableEntityService;
+    
+    @Autowired
+    private ThirdPartyTransferService thirdPartyService;
+    
+    @Autowired
+    private PaymentBillingService paymentBillingService;
 
 
     /**
@@ -74,37 +87,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // Get a FeeManagement session with the given ID:
         FeeManagementSession currentSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
 
-        if (currentSession == null) {
-            logger.error("Cannot find an FM session with the ID " + feeManagementSessionId);
-            throw new IllegalArgumentException("Cannot find an FM session with the ID " + feeManagementSessionId);
-        }
-
-        // Check the session passed is CURRENT or SIMULATED
-        FeeManagementSessionStatus sessionStatus = currentSession.getStatus();
-
-        if (sessionStatus == null || ((sessionStatus != FeeManagementSessionStatus.CURRENT) && (sessionStatus != FeeManagementSessionStatus.SIMULATED))) {
-            String errorMsg = String.format("Invalid FeeManagement Session status [%s]. Session status must be CURRENT or SIMULATED.", sessionStatus);
-            logger.error(errorMsg);
-            throw new IllegalStateException(errorMsg);
-        }
-
-        // Get the associated Account:
-        Account account = currentSession.getAccount();
-
-        if (account == null) {
-            String errorMsg = String.format("Fee Management Session with id [%s] does not have an associated Account.", feeManagementSessionId);
-            logger.error(errorMsg);
-            throw new IllegalStateException(errorMsg);
-        } else {
-            // Check if the Account associated with the FM Session is blocked:
-            boolean accountBlocked = isAccountBlocked(account);
-
-            if (accountBlocked) {
-                String errorMsg = String.format("The account %s associated with the FM session with id [%s] is blocked.", account.getId(), feeManagementSessionId);
-                logger.error(errorMsg);
-                throw new IllegalStateException(errorMsg);
-            }
-        }
+        // Validate the FM session for reconciliation:
+        validateSessionForReconciliation(currentSession, feeManagementSessionId);
 
         // Get the last CHARGED FM Session:
         FeeManagementSession lastChargedFmSession = getLastChargedSession(currentSession);
@@ -131,7 +115,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         validateCurrentReversals(currentManifests);
 
         // Updated the status of the current FM Session to RECONCILED or SIMULATED_RECONCILED:
-        FeeManagementSessionStatus newFmStatus = (sessionStatus == FeeManagementSessionStatus.CURRENT)
+        FeeManagementSessionStatus newFmStatus = (currentSession.getStatus() == FeeManagementSessionStatus.CURRENT)
                 ? FeeManagementSessionStatus.RECONCILED : FeeManagementSessionStatus.SIMULATED_RECONCILED;
 
         // Update the entity:
@@ -141,14 +125,42 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
     /**
      * Creates charges on the current Fee Management session.
-     * Creates reversals and cancellations and also rate transactions.
+     * Creates reversal and cancellation and also rate transactions.
      *
      * @param feeManagementSessionId FeeManagementSession ID
      */
     @Override
     @Transactional(readOnly = false)
     public void chargeSession(Long feeManagementSessionId) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+        // Get a FeeManagement session with the given ID:
+        FeeManagementSession session = getEntity(feeManagementSessionId, FeeManagementSession.class);
+
+        // Validate the FM Session for charge operation:
+        validateSessionForCharge(session, feeManagementSessionId);
+        
+        // Get all manifests for the session:
+        List<FeeManagementManifest> manifests = getManifests(feeManagementSessionId);
+        List<PaymentBillingTransferDetail> pbtDetails = new ArrayList<PaymentBillingTransferDetail>();
+        List <ThirdPartyPlan> tpPlans = new ArrayList<ThirdPartyPlan>();
+        
+        for (FeeManagementManifest manifest : manifests) {
+        	// If there is no transaction, process manifest charge processing.
+        	// Otherwise, continue to the new manifest.
+        	// Inherently, all ORIGINAL manifests will have a Transaction.
+        	if (manifest.getTransaction() == null) {
+        		processManifestCharge(manifest, session, pbtDetails, tpPlans);
+        	}
+        }
+        
+        // If there were reversals, perform Transfer Reinstatement:
+        if (CollectionUtils.isNotEmpty(pbtDetails) || CollectionUtils.isNotEmpty(tpPlans)) {
+        	performTransferReinstatement(pbtDetails, tpPlans, session.getAccount());
+        }
+        
+        // Set the status of the Session to CHARGE and persist:
+        session.setChargeStatus(FeeManagementSessionStatus.CHARGED);
+        persistEntity(session);
     }
 
     /**
@@ -203,10 +215,131 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
     /***************************************************************************
      *
-     * Private helper methods.
+     *
+     * Private helper methods for "chargeSession".
+     *
+     *
+     ***************************************************************************/
+    
+    /**
+     * Checks all conditions necessary for FM session charge. 
+     * Throws an exception if any of the condition fails validation.
+     * 
+     * @param fmSession					An FM Session.
+     * @param feeManagementSessionId	ID of the FM Session.
+     */
+    private void validateSessionForCharge(FeeManagementSession fmSession, Long feeManagementSessionId) {
+    	
+        if (fmSession == null) {
+            logger.error("Cannot find an FM session with the ID " + feeManagementSessionId);
+            throw new IllegalArgumentException("Cannot find an FM session with the ID " + feeManagementSessionId);
+        }
+
+        // Check the session passed is RECONCILED or SIMULATED_RECONCILED:
+        FeeManagementSessionStatus sessionStatus = fmSession.getStatus();
+
+        if (sessionStatus == null || ((sessionStatus != FeeManagementSessionStatus.RECONCILED) && (sessionStatus != FeeManagementSessionStatus.SIMULATED_RECONCILED))) {
+            String errorMsg = String.format("Invalid FeeManagement Session status [%s]. Session status must be RECONCILED or SIMULATED_RECONCILED to call \"chargeSession\".", sessionStatus);
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        }
+    }
+    
+    /**
+     * The main method for manifest charge processing.
+     * 
+     * @param manifest		An FM manifest.
+     * @param session		An FM session the manifest belongs to.
+     * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
+     * @param tpPlan		A list of Third-party plans. An OUT Parameter.
+     */
+    private void processManifestCharge(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
+    	// TODO: Implement the manifest charge process:
+    }
+    
+    /**
+     * Performs transfer reinstatement.
+     * 
+     * @param pbtDetails	A list of Payment billing transfer details.
+     * @param tpPlan		A list of Third-party plans.
+     * @param account		An Account associated with the the FM Session.
+     */
+    private void performTransferReinstatement(List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans, Account account) {
+    	
+    	// For each PaymentBilling that was removed, generate payment billing schedule using the stored details:
+    	for (PaymentBillingTransferDetail pbtDetail : pbtDetails) {
+    		List<PaymentBillingSchedule> pbtSchedules = paymentBillingService.generatePaymentBillingSchedules(pbtDetail.getId());
+    		
+    		// Persist the schedules:
+    		for (PaymentBillingSchedule pbtSchedule : pbtSchedules) {
+    			persistEntity(pbtSchedule);
+    		}
+    	}
+    	
+    	// For each Third-Party plan that was removed, generate third-party billing transfer for the Account associated with the FM session:
+    	if (account != null) {
+    		String accountId = account.getId();
+    		Date initiationDate = new Date();
+    		
+	    	for (ThirdPartyPlan tpPlan : tpPlans) {
+	    		// Generate a Third-Party transfer detail:
+	    		ThirdPartyTransferDetail tpDetail = thirdPartyService.generateThirdPartyTransfer(tpPlan.getId(), accountId, initiationDate);
+	    		
+	    		persistEntity(tpDetail);
+	    	}
+    	}
+    }
+
+    /***************************************************************************
+     *
+     *
+     * Private helper methods for "reconcileSession".
+     *
      *
      ***************************************************************************/
 
+    /**
+     * Checks all conditions necessary for FM session reconciliation. 
+     * Throws an exception if any of the condition fails validation.
+     * 
+     * @param fmSession					An FM Session.
+     * @param feeManagementSessionId	ID of the FM Session.
+     */
+    private void validateSessionForReconciliation(FeeManagementSession fmSession, Long feeManagementSessionId) {
+    	
+        if (fmSession == null) {
+            logger.error("Cannot find an FM session with the ID " + feeManagementSessionId);
+            throw new IllegalArgumentException("Cannot find an FM session with the ID " + feeManagementSessionId);
+        }
+
+        // Check the session passed is CURRENT or SIMULATED
+        FeeManagementSessionStatus sessionStatus = fmSession.getStatus();
+
+        if (sessionStatus == null || ((sessionStatus != FeeManagementSessionStatus.CURRENT) && (sessionStatus != FeeManagementSessionStatus.SIMULATED))) {
+            String errorMsg = String.format("Invalid FeeManagement Session status [%s]. Session status must be CURRENT or SIMULATED to call \"reconcileSession\".", sessionStatus);
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        }
+
+        // Get the associated Account:
+        Account account = fmSession.getAccount();
+
+        if (account == null) {
+            String errorMsg = String.format("Fee Management Session with id [%s] does not have an associated Account.", feeManagementSessionId);
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        } else {
+            // Check if the Account associated with the FM Session is blocked:
+            boolean accountBlocked = isAccountBlocked(account);
+
+            if (accountBlocked) {
+                String errorMsg = String.format("The account %s associated with the FM session with id [%s] is blocked.", account.getId(), feeManagementSessionId);
+                logger.error(errorMsg);
+                throw new IllegalStateException(errorMsg);
+            }
+        }
+    }
+    
     /**
      * A recursive method that checks all previous FM Sessions in succession in
      * order to find the last CHARGED session.
@@ -523,20 +656,24 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             // Get the first Manifest to match against:
             FeeManagementManifest firstManifest = manifests.get(startIndex);
             boolean matchFound = false;
-
-            for (int i = startIndex + 1, sz = manifests.size(); (i < sz) && !matchFound; i++) {
-                // Check if the next manifest is an inverse one:
-            	FeeManagementManifest anotherManifest = manifests.get(i);
-            	
-                matchFound = manifestsInverse(firstManifest, anotherManifest);
-
-                if (matchFound) {
-                    // Delete both entities, remove both from the list, and start again from the same index:
-                    em.remove(firstManifest);
-                    em.remove(anotherManifest);
-                    manifests.remove(startIndex);
-                    manifests.remove(i);
-                }
+            
+            // Check for the condition to continue:
+            if (eligibleForPreclearing(firstManifest)) {
+	            for (int i = startIndex + 1, sz = manifests.size(); (i < sz) && !matchFound; i++) {
+	                // Check if the next manifest is an inverse one:
+	            	FeeManagementManifest anotherManifest = manifests.get(i);
+	            	
+	                matchFound = eligibleForPreclearing(anotherManifest)
+	                				&& manifestsInverse(firstManifest, anotherManifest);
+	
+	                if (matchFound) {
+	                    // Delete both entities, remove both from the list, and start again from the same index:
+	                    em.remove(firstManifest);
+	                    em.remove(anotherManifest);
+	                    manifests.remove(startIndex);
+	                    manifests.remove(i);
+	                }
+	            }
             }
 
             // If a match not found, increment the start index and keep searching:
@@ -544,6 +681,16 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                 startIndex++;
             }
         }
+    }
+    
+    /**
+     * Check if the given manifest is eligible for Manifest pre-clearing.
+     * 
+     * @param manifest	A FM Manifest for eligibility for pre-clearing.
+     * @return <code>true</code> if the given FM Manifest is eligible for manifest pre-clearing.
+     */
+    private boolean eligibleForPreclearing(FeeManagementManifest manifest) {
+    	return (manifest.getTransaction() == null) || (manifest.getLinkedManifest() == null);
     }
     
     /**
@@ -557,7 +704,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return true if the two manifests are inverse, false otherwise.
      */
     private boolean manifestsInverse(FeeManagementManifest m1, FeeManagementManifest m2) {
-    	if ((m1 != null) && (m2 != null)) {
+    	if ((m1 != null) && (m2 != null) && StringUtils.equals(m1.getTransactionTypeId(), m2.getTransactionTypeId())) {
     		// Check for inverse statuses and equal amounts or same statuses and inverse amounts:
     		if (((m1.getType() == FeeManagementManifestType.CHARGE) && (m2.getType() == FeeManagementManifestType.CANCELLATION))
     				|| ((m1.getType() == FeeManagementManifestType.CANCELLATION) && (m2.getType() == FeeManagementManifestType.CHARGE))) {
