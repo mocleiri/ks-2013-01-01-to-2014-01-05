@@ -115,6 +115,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
         BigDecimal lowerLimit = cashLimitParameter.getLowerLimit();
         BigDecimal upperLimit = cashLimitParameter.getUpperLimit();
+
         if (lowerLimit != null && upperLimit != null && lowerLimit.compareTo(upperLimit) >= 0) {
             String errMsg = "The lower limit must be less than the upper limit, lowerLimit = " + lowerLimit +
                     ", upperLimit = " + upperLimit;
@@ -174,10 +175,14 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      */
     @Override
     public List<CashLimitParameter> getCashLimitParameters(boolean activeOnly) {
+
+        PermissionUtils.checkPermission(Permission.READ_CASH_LIMIT_PARAMETER);
+
         Query query = em.createQuery("select clp from CashLimitParameter clp " +
                 " left outer join fetch clp.tag tag " +
                 (activeOnly ? " where clp.active = true " : "") +
                 " order by clp.code asc");
+
         return query.getResultList();
     }
 
@@ -189,9 +194,14 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      */
     @Override
     public boolean cashLimitParameterExists(String code) {
+
+        PermissionUtils.checkPermission(Permission.READ_CASH_LIMIT_PARAMETER);
+
         Query query = em.createQuery("select 1 from CashLimitParameter where code = :code");
+
         query.setParameter("code", code);
         query.setMaxResults(1);
+
         return CollectionUtils.isNotEmpty(query.getResultList());
     }
 
@@ -203,11 +213,17 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      */
     @Override
     public CashLimitParameter getCashLimitParameterByCode(String code) {
+
+        PermissionUtils.checkPermission(Permission.READ_CASH_LIMIT_PARAMETER);
+
         Query query = em.createQuery("select clp from CashLimitParameter clp " +
                 " left outer join fetch clp.tag tag " +
                 " where clp.code = :code");
+
         query.setParameter("code", code);
+
         List<CashLimitParameter> results = query.getResultList();
+
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
 
@@ -219,11 +235,17 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      */
     @Override
     public CashLimitParameter getCashLimitParameter(Long id) {
+
+        PermissionUtils.checkPermission(Permission.READ_CASH_LIMIT_PARAMETER);
+
         Query query = em.createQuery("select clp from CashLimitParameter clp " +
                 " left outer join fetch clp.tag tag " +
                 " where clp.id = :id");
+
         query.setParameter("id", id);
+
         List<CashLimitParameter> results = query.getResultList();
+
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
 

@@ -29,6 +29,7 @@ public enum Permission {
     // Cash limit permissions
     CREATE_CASH_LIMIT_PARAMETER,
     EDIT_CASH_LIMIT_PARAMETER,
+    READ_CASH_LIMIT_PARAMETER,
     CHECK_CASH_LIMIT,
 
     // UI tab permissions
