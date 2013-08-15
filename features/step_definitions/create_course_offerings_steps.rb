@@ -54,12 +54,13 @@ And /^I create a Course Offering from catalog with Activity Offerings assigned t
 end
 
 And /^I create a Course Offering from catalog with Activity Offerings assigned to subterms in my admin org$/ do
+  delivery_format_list = []
+  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_driver => "Lecture")
+
   @course_offering = create CourseOffering, :term=> @term.term_code,
                             :course => "ENGL211",
-                            :grade_format => "Lecture",
-                            :delivery_format => "Lecture" ,
-                            :suffix => ""
-  #@course_offering = make CourseOffering, :course => "ENGL211MECJ6", :term => "208508"
+                            :delivery_format_list => delivery_format_list
+
   @rdl_list = {}
   @rdl_list["MT"] = make DeliveryLogistics, :days => "MT", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
 

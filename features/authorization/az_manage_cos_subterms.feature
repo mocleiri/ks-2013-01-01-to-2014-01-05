@@ -1,4 +1,4 @@
-@wip
+@nightly
 Feature: EC.AZ Manage Course Offerings with subterms
 
   CO 26.6: As an administrator I want authorization applied to AOs associated with sub terms
@@ -15,7 +15,8 @@ Feature: EC.AZ Manage Course Offerings with subterms
     And I manage the Course Offering in the target term
     When I remove the subterm for the activity offering
     Then the AO subterm is successfully removed
-    When I set a subterm for the activity offering
+    When I edit the Activity Offering
+    And I set a subterm for the activity offering
     Then the AO subterm change is successful
     When I update the subterm for the activity offering
     Then the AO subterm change is successful
@@ -26,7 +27,8 @@ Feature: EC.AZ Manage Course Offerings with subterms
     And I manage the Course Offering in the target term
     When I remove the subterm for the activity offering
     Then the AO subterm is successfully removed
-    When I set a subterm for the activity offering
+    When I edit the Activity Offering
+    And I set a subterm for the activity offering
     Then the AO subterm change is successful
     When I update the subterm for the activity offering
     Then the AO subterm change is successful
