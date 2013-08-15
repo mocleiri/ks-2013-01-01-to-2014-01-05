@@ -27,7 +27,7 @@ Feature: KRMS.ELIG7-4 Compare to Canonical
     When I navigate to the Student Eligibility & Prerequisite section for course "BSCI202" in the historic term
     And I want to edit the Student Eligibility & Prerequisite section
     And I add a course statement after node "B" with course "HIST210"
-    Then the info message "Rule now differs from parent Rule" should be present
+    Then the info message "Course Offering Rule differs from Catalog Rule" should be present
     When I commit changes made to the proposition
 
   #ELIG7.4.EB5 (KSENROLL-7174)
