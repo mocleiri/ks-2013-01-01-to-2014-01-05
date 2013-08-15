@@ -1134,6 +1134,26 @@ class AOPreparationPrerequisiteRule < AORequisitesData
     end
   end
 
+  def sepr_revert_replaced_co_rule
+    sepr_replace_co_rule
+    on ActivityOfferingRequisites do |page|
+      if page.prereq_revert_link.exists?
+        page.loading.wait_while_present
+        page.prereq_revert
+      end
+    end
+  end
+
+  def rp_revert_replaced_co_rule
+    rp_replace_co_rule
+    on ActivityOfferingRequisites do |page|
+      if page.prep_revert_link.exists?
+        page.loading.wait_while_present
+        page.prep_revert
+      end
+    end
+  end
+
   def add_statements_to_rule
     rp_sepr_course_rule( "add", "", "ENGL101")
     rp_sepr_text_rule( "add", "", "free form text input value")

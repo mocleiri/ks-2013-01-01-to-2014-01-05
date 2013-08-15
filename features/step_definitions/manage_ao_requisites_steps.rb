@@ -38,21 +38,20 @@ end
 When /^I revert the previously added rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
-  @prereq.navigate_to_ao_requisites
-  on ActivityOfferingRequisites do |page|
-    page.loading.wait_while_present
-    page.prereq_revert
-  end
+  @prereq.sepr_revert_add_ao_rule
 end
 
 When /^I revert the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
-  @prereq.navigate_to_ao_requisites
-  on ActivityOfferingRequisites do |page|
-    page.loading.wait_while_present
-    page.prereq_revert
-  end
+  @prereq.sepr_revert_replaced_co_rule
+end
+
+When /^I commit after reverting the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
+  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "BSCI361"
+  @prereq.sepr_revert_replaced_co_rule
+  @prereq.commit_changes
 end
 
 When /^I add a rule to the Student Eligibility & Prerequisite section$/ do
@@ -65,6 +64,13 @@ When /^I replace the CO rule in the Student Eligibility & Prerequisite section$/
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "ENGL304"
   @prereq.sepr_replace_co_rule
+end
+
+When /^I commit the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
+  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "BSCI361"
+  @prereq.sepr_replace_co_rule
+  @prereq.commit_changes
 end
 
 When /^I delete a newly added rule in the Student Eligibility & Prerequisite section$/ do
@@ -118,7 +124,7 @@ Then /^there should be no rule in the Student Eligibility & Prerequisite section
   end
 end
 
-Then /^the created rule should exist in the Student Eligibility & Prerequisite section$/ do
+Then /^the created rule should be shown in the Student Eligibility & Prerequisite section$/ do
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
@@ -195,6 +201,14 @@ Then /^the CO warning message should be shown in the Student Eligibility & Prere
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
     page.prereq_message_section.text.should match /Course Offering rule.*enforced.*Activity Offering/
+  end
+end
+
+Then /^the AO warning message should be shown in the Student Eligibility & Prerequisite section$/ do
+  @prereq.open_agenda_section
+  on ActivityOfferingRequisites do |page|
+    page.loading.wait_while_present
+    page.prereq_message_section.text.should match /Activity Offering Rule differs from.*/
   end
 end
 

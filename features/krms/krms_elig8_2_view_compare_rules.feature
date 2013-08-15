@@ -15,8 +15,7 @@ Feature: KRMS.ELIG8-2 View the Catalog and Course Offering rule
 
   @pending
   Scenario: Test whether the AO icon appears after a rule is added to the Activity Offering
-    When I replace the CO rule in the Student Eligibility & Prerequisite section
-    And I commit the changes made to the Activity Offering
+    When I commit the rule that replaced the CO rule in the Student Eligibility & Prerequisite section
     Then the AO icon should be shown for the edited Activity Offering
 
   @pending
@@ -31,6 +30,5 @@ Feature: KRMS.ELIG8-2 View the Catalog and Course Offering rule
 
   @pending
   Scenario: Test whether the AO icon disappears after a rule is reverted back to the Course Offering rule
-    When I revert the rule that replaced the CO rule in the Student Eligibility & Prerequisite section
-    And I commit the changes made to the Activity Offering
+    When I commit after reverting the rule that replaced the CO rule in the Student Eligibility & Prerequisite section
     Then the AO icon should not be shown for the edited Activity Offering
