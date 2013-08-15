@@ -38,3 +38,7 @@ Feature: KRMS.AO Requisites Temporary feature file
   Scenario: Test whether user can compare the catalog, course offering and activity offering rules
     When I compare the rules in the Student Eligibility & Prerequisite section
     Then all three rules for the Student Eligibility & Prerequisite section should be the same
+
+  Scenario: Test whether reverting the copied rule works as expected
+    When I revert the copied and edited rule in the Student Eligibility & Prerequisite section
+    Then there should be no rule in the Student Eligibility & Prerequisite section
