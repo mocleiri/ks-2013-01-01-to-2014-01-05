@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.krad.model.AuditableEntityModel;
 import com.sigmasys.kuali.ksa.krad.model.CashLimitParameterModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.CashLimitService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +39,9 @@ public class SettingsController extends GenericSearchController {
 
     @Autowired
     private AuditableEntityService auditableEntityService;
+
+    @Autowired
+    private CashLimitService cashLimitService;
 
     @Autowired
     protected ConfigService configService;
@@ -326,7 +330,7 @@ public class SettingsController extends GenericSearchController {
                     Tag tag = auditableEntityService.getAuditableEntity(p.getTagString(), Tag.class);
                     parent.setTag(tag);
                 }
-                auditableEntityService.persistAuditableEntity(parent);
+                cashLimitService.persistCashLimitParameter(parent);
             }
             String statusMsg = "Cash Limit Parameters saved";
             GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
