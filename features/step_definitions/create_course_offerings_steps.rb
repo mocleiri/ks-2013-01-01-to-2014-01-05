@@ -1,8 +1,12 @@
-When /^I create a Course Offering with selected lecture Formats$/ do
+When /^I create a Course Offering with "([^"]*)" delivery Formats$/ do |format_type|
   delivery_format_list = []
-  delivery_format_list << (make DeliveryFormat, :format => "Lab", :grade_format => "Course Offering", :final_exam_driver => "Lab")
-  #delivery_format_list << (make DeliveryFormat, :format => "Lab", :grade_format => "Lab", :final_exam_driver => "Lab")
-  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "CHEM132", :delivery_format_list => delivery_format_list
+  if format_type == "selected lecture"
+    delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_driver => "Lecture")
+  else
+    delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_driver => "Lecture")
+    delivery_format_list << (make DeliveryFormat, :format => "Discussion/Lecture", :grade_format => "Course Offering", :final_exam_driver => "Lecture")
+  end
+  @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "ENGL222", :delivery_format_list => delivery_format_list
 end
 
 And /^I create a Course Offering with random Delivery Formats$/ do

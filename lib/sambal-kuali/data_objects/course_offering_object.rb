@@ -158,8 +158,9 @@ class CourseOffering
           create_joint_co()
         end
         page.cross_listed_co_check_box.set if @cross_listed
-        @delivery_format_list.each do |dfl|
-          dfl.create
+        #need to specify which row dfl is being created on, which is 1 greater than the current iteration
+        @delivery_format_list.each_with_index do |dfl, index|
+          dfl.create(index + 1)
         end
         page.create_offering
       end
@@ -1172,29 +1173,22 @@ class DeliveryFormat
     set_options(options)
   end
 
-  def create
+  def create(row)
     if @format == "random" then
       select_random_delivery_formats
     else
       on CreateCOFromCatalog do |page|
-        if page.format_select.include? @format
-          page.format_select.select @format
-          if @format == "Lab"
-            @format = "Lab Only"
-          end
-        else
-          raise "Option #{@format} not in format select"
+        page.target_format_select(row, @format)
+        if @format == "Lab"
+          @format = "Lab Only"
         end
-        if page.grade_roster_level_select.include? @grade_format
-          page.grade_roster_level_select.select @grade_format
-        else
-          raise "Option #{@grade_format} not in grade roster select"
+        if @format == "Lecture"
+          @format = "Lecture Only"
         end
-        if page.final_exam_driver_select.include? @final_exam_driver
-          page.final_exam_driver_select.select @final_exam_driver
-        else
-          raise "Option #{@final_exam_driver} not in final exam select"
-        end
+        page.target_grade_roster_level_select(row, @grade_format)
+        page.target_final_exam_driver_select(row, @final_exam_driver)
+        page.add_format if page.add_format_btn.present?
+        #add button not present if there is only one choice of Format
       end
     end
   end

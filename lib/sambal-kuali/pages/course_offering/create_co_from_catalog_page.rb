@@ -48,11 +48,37 @@ class CreateCOFromCatalog < BasePage
   FINAL_EXAM_COLUMN = 2
   ACTIONS_COLUMN = 5
 
+  #these 3 will work only for first Delivery Format
   element(:format_select) {|b| b.delivery_formats_table.rows[1].cells[FORMAT_COLUMN].select }
   element(:grade_roster_level_select) {|b| b.delivery_formats_table.rows[1].cells[GRADE_ROSTER_LEVEL_COLUMN].select }
   element(:final_exam_driver_select)  {|b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_COLUMN].select }
-  #action(:add_format_btn) { |b| b.frm.button(text: "Add").click; b.loading.wait_while_present }
+  element(:add_format_btn) { |b| b.frm.button(text: "Add Format")}
+  action(:add_format) { |b| b.add_format_btn.click; b.loading.wait_while_present }
   action(:delete_format_btn) {|b| b.frm.button(id: "KS-CourseOffering-FormatOfferingSubSection_del_line0") }
+
+  def target_format_select(row, format)
+    if delivery_formats_table.rows[row].cells[FORMAT_COLUMN].select.include? format
+      delivery_formats_table.rows[row].cells[FORMAT_COLUMN].select.select format
+    else
+      raise "Option #{format} not in format select"
+    end
+  end
+
+  def target_grade_roster_level_select(row, grade_format)
+    if delivery_formats_table.rows[row].cells[GRADE_ROSTER_LEVEL_COLUMN].select.include? grade_format
+      delivery_formats_table.rows[row].cells[GRADE_ROSTER_LEVEL_COLUMN].select.select grade_format
+    else
+      raise "Option #{grade_format} not in grade roster select"
+    end
+  end
+
+  def target_final_exam_driver_select(row, final_exam_driver)
+    if delivery_formats_table.rows[row].cells[FINAL_EXAM_COLUMN].select.include? final_exam_driver
+      delivery_formats_table.rows[row].cells[FINAL_EXAM_COLUMN].select.select final_exam_driver
+    else
+      raise "Option #{final_exam_driver} not in final exam select"
+    end
+  end
 
   def add_random_delivery_format
     begin
@@ -61,7 +87,7 @@ class CreateCOFromCatalog < BasePage
       selected_options = {:del_format => select_random_option(format_select), :grade_format => select_random_option(grade_roster_level_select)}
     end
 
-    #add_format_btn
+    #add_format
     return selected_options
   end
 
