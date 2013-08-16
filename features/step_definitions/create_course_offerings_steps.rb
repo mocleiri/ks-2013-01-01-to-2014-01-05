@@ -36,11 +36,12 @@ Then /^the new Course Offering should be displayed in the list of available offe
 end
 
 And /^I create a Course Offering from catalog with Activity Offerings assigned to subterms$/ do
+  delivery_format_list = []
+  delivery_format_list << (make DeliveryFormat, :format => "Lab", :grade_format => "Lab", :final_exam_driver => "Lab")
+
   @course_offering = create CourseOffering, :term=> @term.term_code,
                             :course => "CHEM132",
-                            :grade_format => "Lab",
-                            :delivery_format => "Lab" ,
-                            :suffix => ""
+                            :delivery_format_list => delivery_format_list
 
   @rdl_list = {}
   @rdl_list["MT"] = make DeliveryLogistics, :days => "MT", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
@@ -81,12 +82,12 @@ And /^I create a Course Offering from catalog with Activity Offerings assigned t
 end
 
 And /^I create a Course Offering from catalog with Activity Offerings$/ do
+  delivery_format_list = []
+  delivery_format_list << (make DeliveryFormat, :format => "Lab", :grade_format => "Lab", :final_exam_driver => "Lab")
+
   @course_offering = create CourseOffering, :term=> @term.term_code,
                             :course => "CHEM132",
-                            :grade_format => "Lab",
-                            :delivery_format => "Lab" ,
-                            :suffix => ""
-  #@course_offering = make CourseOffering, :term=>@term.term_code, :course => "CHEM132"
+                            :delivery_format_list => delivery_format_list
 
   @rdl_list = {}
   @rdl_list["MT"] = make DeliveryLogistics, :days => "MT", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
