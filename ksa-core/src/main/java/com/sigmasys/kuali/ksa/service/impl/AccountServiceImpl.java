@@ -178,24 +178,25 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         AgeDebtMethod ageDebtMethod = AgeDebtMethod.valueOf(ageDebtMethodName);
         List<Account> accounts = getFullAccounts();
 
+        Date currentDate = new Date();
+
         for (Account account : accounts) {
             if (account instanceof ChargeableAccount) {
-                ageDebt((ChargeableAccount) account, ageDebtMethod, ignoreDeferment);
+                ageDebt((ChargeableAccount) account, ageDebtMethod, currentDate, ignoreDeferment);
             }
         }
     }
 
-    protected ChargeableAccount ageDebt(ChargeableAccount chargeableAccount, AgeDebtMethod ageDebtMethod,
+    protected ChargeableAccount ageDebt(ChargeableAccount chargeableAccount, AgeDebtMethod ageDebtMethod, Date ageDate,
                                         boolean ignoreDeferment) {
 
         PermissionUtils.checkPermission(Permission.AGE_ACCOUNT);
 
         LatePeriod latePeriod = chargeableAccount.getLatePeriod();
 
-        final Date curDate = new Date();
-        final Date lateDate1 = CalendarUtils.addCalendarDays(curDate, -latePeriod.getDaysLate1());
-        final Date lateDate2 = CalendarUtils.addCalendarDays(curDate, -latePeriod.getDaysLate2());
-        final Date lateDate3 = CalendarUtils.addCalendarDays(curDate, -latePeriod.getDaysLate3());
+        final Date lateDate1 = CalendarUtils.addCalendarDays(ageDate, -latePeriod.getDaysLate1());
+        final Date lateDate2 = CalendarUtils.addCalendarDays(ageDate, -latePeriod.getDaysLate2());
+        final Date lateDate3 = CalendarUtils.addCalendarDays(ageDate, -latePeriod.getDaysLate3());
 
         BigDecimal lateAmount1 = BigDecimal.ZERO;
         BigDecimal lateAmount2 = BigDecimal.ZERO;
@@ -267,13 +268,12 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         chargeableAccount.setAmountLate1(lateAmount1);
         chargeableAccount.setAmountLate2(lateAmount2);
         chargeableAccount.setAmountLate3(lateAmount3);
-        chargeableAccount.setLateLastUpdate(curDate);
+        chargeableAccount.setLateLastUpdate(ageDate);
 
         persistEntity(chargeableAccount);
 
         return chargeableAccount;
     }
-
 
     /**
      * Aging debts for a chargeable account.
@@ -285,8 +285,21 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public ChargeableAccount ageDebt(String userId, boolean ignoreDeferment) {
+        return ageDebt(userId, new Date(), ignoreDeferment);
+    }
 
-        PermissionUtils.checkPermission(Permission.AGE_ACCOUNT);
+
+    /**
+     * Aging debts for a chargeable account.
+     *
+     * @param userId          Account ID
+     * @param ageDate         Age date
+     * @param ignoreDeferment boolean value
+     * @return a chargeable account being updated
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public ChargeableAccount ageDebt(String userId, Date ageDate, boolean ignoreDeferment) {
 
         String ageDebtMethodName = configService.getParameter(Constants.AGE_DEBT_METHOD);
         if (StringUtils.isBlank(ageDebtMethodName)) {
@@ -297,7 +310,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         AgeDebtMethod ageDebtMethod = AgeDebtMethod.valueOf(ageDebtMethodName);
 
-        return ageDebt(userId, ageDebtMethod, ignoreDeferment);
+        return ageDebt(userId, ageDebtMethod, ageDate, ignoreDeferment);
     }
 
     /**
@@ -311,8 +324,21 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Override
     @Transactional(readOnly = false)
     public ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, boolean ignoreDeferment) {
+        return ageDebt(userId, ageDebtMethod, new Date(), ignoreDeferment);
+    }
 
-        PermissionUtils.checkPermission(Permission.AGE_ACCOUNT);
+    /**
+     * Aging debts for a chargeable account.
+     *
+     * @param userId          Account ID
+     * @param ageDebtMethod   Age Debt method
+     * @param ageDate         Age date
+     * @param ignoreDeferment boolean value
+     * @return a chargeable account being updated
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, Date ageDate, boolean ignoreDeferment) {
 
         Account account = getFullAccount(userId);
         if (account == null) {
@@ -327,7 +353,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             throw new IllegalStateException(errMsg);
         }
 
-        return ageDebt((ChargeableAccount) account, ageDebtMethod, ignoreDeferment);
+        return ageDebt((ChargeableAccount) account, ageDebtMethod, ageDate, ignoreDeferment);
     }
 
     /**

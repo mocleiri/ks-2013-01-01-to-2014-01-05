@@ -47,11 +47,32 @@ public interface AccountService {
      * Aging debts for a chargeable account.
      *
      * @param userId          Account ID
+     * @param ageDate         Age date
+     * @param ignoreDeferment boolean value
+     * @return a chargeable account being updated
+     */
+    ChargeableAccount ageDebt(String userId, Date ageDate, boolean ignoreDeferment);
+
+    /**
+     * Aging debts for a chargeable account.
+     *
+     * @param userId          Account ID
      * @param ageDebtMethod   Age Debt method
      * @param ignoreDeferment boolean value
      * @return a chargeable account being updated
      */
     ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, boolean ignoreDeferment);
+
+    /**
+     * Aging debts for a chargeable account.
+     *
+     * @param userId          Account ID
+     * @param ageDebtMethod   Age Debt method
+     * @param ageDate         Age date
+     * @param ignoreDeferment boolean value
+     * @return a chargeable account being updated
+     */
+    ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, Date ageDate, boolean ignoreDeferment);
 
     /**
      * Returns the total balance due of all active transactions.
