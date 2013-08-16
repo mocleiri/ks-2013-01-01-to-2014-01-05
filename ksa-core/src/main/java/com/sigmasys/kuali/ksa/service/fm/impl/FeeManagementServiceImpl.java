@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.fm.impl;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import javax.jws.WebMethod;
@@ -254,7 +255,199 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param tpPlan		A list of Third-party plans. An OUT Parameter.
      */
     private void processManifestCharge(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
-    	// TODO: Implement the manifest charge process:
+    	
+    	// Check the manifest type:
+    	switch(manifest.getType()) {
+    	case CHARGE:
+    		processChargeTypeManifest(manifest, session, pbtDetails, tpPlans);
+    		break;
+    		
+    	case CORRECTION:
+    	case CANCELLATION:
+    	case DISCOUNT:
+    		processNonChargeTypeManifest(manifest, session, pbtDetails, tpPlans);
+    		break;
+    		
+    	default:
+    		break; // Go to the next manifest.
+    	}
+    }
+    
+    /**
+     * Processes FM manifests only of the CHARGE type.
+     * 
+     * @param manifest 	An FM manifest of the CHARGE type.
+     * @param session	An FM session the manifest belongs to.
+     * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
+     * @param tpPlan		A list of Third-party plans. An OUT Parameter.
+     */
+    private void processChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
+    	// Create a charge on the Account associated with the FM session:
+    	String transactionTypeId = manifest.getTransactionTypeId();
+    	
+    	if (StringUtils.isNotEmpty(transactionTypeId) && (session.getAccount() != null) && (manifest.getAmount() != null)) {
+    		// Create a new charge on the Account:
+    		String accountId = session.getAccount().getId();
+    		BigDecimal amount = manifest.getAmount();
+    		Transaction newCharge = transactionService.createTransaction(transactionTypeId, accountId, new Date(), amount);
+    		
+    		// Update the manifest and session:
+    		manifest.setTransaction(newCharge);
+    		manifest.setSessionCurrent(true);
+    		persistEntity(manifest);
+    		
+    		// If there is a linked manifest, process it:
+    		if (manifest.getLinkedManifest() != null) {
+    			processManifestCharge(manifest.getLinkedManifest(), session, pbtDetails, tpPlans);
+    		}
+    	}
+    }
+    
+    /**
+     * Processes FM manifests of types other than CHARGE or ORIGINAL.
+     * 
+     * @param manifest		An FM manifest.
+     * @param session		An FM session the manifest belongs to.
+     * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
+     * @param tpPlan		A list of Third-party plans. An OUT Parameter.
+     */
+    private void processNonChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
+    	// Check if the linked manifest is complete, then process manifest charge, otherwise, move to the next manifest:
+    	FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
+    	
+    	if (linkedManifest != null) {
+    		if (BooleanUtils.isTrue(linkedManifest.isSessionCurrent()) && (linkedManifest.getTransaction() != null)) {
+    			// TODO: Clear all unlockedAllocations against the transaction in the linked manifest (Implicated Transaction):
+    			Transaction implicatedTransaction = linkedManifest.getTransaction();
+    			
+    			// Process the Implicated Transaction:
+    			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tpPlans);
+    		}
+    	}
+    }
+    
+    /**
+     * Processes an Implicated Transaction, i.e. Transaction associated with a linked manifest.
+     * 
+     * @param manifest				Original manifest.
+     * @param linkedManifest		Linked manifest.
+     * @param implicatedTransaction Linked manifest's Transaction.
+     * @param session				FM Session
+     * @param pbtDetails			A list of Payment billing transfer details. An OUT parameter.
+     * @param tpPlan				A list of Third-party plans. An OUT Parameter.
+     */
+    private void processImplicatedTransaction(FeeManagementManifest manifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction, 
+    					FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
+    	// TODO: Check if allocations remain. If yes, process the Implicated Transaction based on its type:
+    	boolean allocationsRemain = true;
+    	
+    	if (allocationsRemain) {
+    		// Check the status of the Implicated Transaction:
+    		switch (implicatedTransaction.getStatus()) {
+    		case TRANSFERRING:
+    			// Process a TRANSFERRING Implicated Transaction and get back to this method:
+    			processTransferFound(implicatedTransaction, pbtDetails, tpPlans);
+    			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tpPlans);
+    			break;
+    			
+    		case WRITING_OFF:
+    		case RECIPROCAL_OFFSET:
+    		case REFUNDING:
+    		case BOUNCING:
+    			// Record a log message, mark the session for manual review and skip:
+    			logger.warn("Inappropriate status of Implicated Transaction");
+    			session.setReviewRequired(true);
+    			break;
+    			
+    		case REVERSING:
+    		case DISCOUNTING:
+    		case CANCELLING:
+    		case ACTIVE:
+    			validateUnallocatedBalance(linkedManifest, implicatedTransaction, session);
+    			break;
+    			
+    		default:
+    			break;
+    		}
+    	} else {
+    		// If no allocations remain, do transaction reversal:
+    		performTransactionReversal(linkedManifest, implicatedTransaction);
+    	}
+    }
+    
+    /**
+     * Process "Transfer Found" logic found in the "Process Diagrams" document.
+     * 
+     * @param implicatedTransaction	Transaction associated with the linked manifest.
+     * @param pbtDetails			A list of Payment billing transfer details. An OUT parameter.
+     * @param tpPlan				A list of Third-party plans. An OUT Parameter.
+     */
+    private void processTransferFound(Transaction implicatedTransaction, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
+    	// TODO: This has to be implemented
+    }
+    
+    /**
+     * Performs unallocated balance validation for the Implicated Transaction. 
+     * 
+     * @param linkedManifest		The linked manifest.
+     * @param implicatedTransaction	Transaction associated with the linked manifest.
+     * @param session				FM Session.
+     */
+    private void validateUnallocatedBalance(FeeManagementManifest linkedManifest, Transaction implicatedTransaction, FeeManagementSession session) {
+    	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
+    	if (hasEnoughBalanceForCorrection(implicatedTransaction)) {
+    		// Write a warning, mark the session for manual review and reverse the transaction:
+    		logger.warn("Performing transaction reversal. FM session manual review required.");
+    		performTransactionReversal(linkedManifest, implicatedTransaction);
+    	} else {
+    		// TODO: Clear all manual allocations on the Implicated Transaction:
+    		
+        	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
+        	if (hasEnoughBalanceForCorrection(implicatedTransaction)) {
+        		logger.warn("Performing transaction reversal. FM session manual review required.");
+        		performTransactionReversal(linkedManifest, implicatedTransaction);
+        	} else {
+        		// Write a severe warning, mark the session for manual review:
+        		logger.warn("SEVERE: Not enough unallocated balance to perform correction/cancel/discount after clearing manual allocation. FM session manual review required.");
+        	}
+    	}
+    	
+    	// Mark the session for manual review and persist:
+		session.setReviewRequired(true);
+    	persistEntity(session);
+    }
+    
+    /**
+     * Checks if the given Transaction has enough unallocated balance to perform correction/cancel/discount.
+     * 
+     * @param transaction	A Transaction to check its unallocated balance to perform correction/cancel/discount.
+     * @return <code>true</code> if there is enough balance, <code>false</code> otherwise.
+     */
+    private final boolean hasEnoughBalanceForCorrection(Transaction transaction) {
+    	// TODO: calculations go here
+    	return false;
+    }
+    
+    /**
+     * Performs Implicated Transaction reversal. 
+     * 
+     * @param linkedManifest		The linked manifest.
+     * @param implicatedTransaction	Transaction associated with the linked manifest.
+     */
+    private void performTransactionReversal(FeeManagementManifest linkedManifest, Transaction implicatedTransaction) {
+    	// Reverse the transaction:
+    	// TODO: What's the appropriate amount???
+    	BigDecimal reversalAmount = implicatedTransaction.getAmount();
+    	Transaction reversalTransaction = transactionService.reverseTransaction(implicatedTransaction.getId(), "Reversing Implicating Transaction", reversalAmount);
+    	
+    	linkedManifest.setTransaction(reversalTransaction);
+    	linkedManifest.setSessionCurrent(true);
+    	
+    	// Set the correct reversed type:
+    	// TODO: Figure out what "The reversal type should be" means:
+    	
+    	// Persist the linked manifest:
+    	persistEntity(linkedManifest);
     }
     
     /**
@@ -290,6 +483,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	}
     }
 
+    
     /***************************************************************************
      *
      *
