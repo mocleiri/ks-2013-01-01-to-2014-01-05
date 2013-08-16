@@ -15,7 +15,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses(value = {
-        KradViewIntegrityTest.class/*,
+        KradViewIntegrityTest.class,
         DatabaseUtilsTest.class,
         TransactionServiceTest.class,
         AuditableEntityServiceTest.class,
@@ -45,7 +45,7 @@ import org.junit.runners.Suite;
         CashLimitServiceTest.class,
         RateServiceTest.class,
         ThirdPartyTransferServiceTest.class,
-        PaymentBillingServiceTest.class*/})
+        PaymentBillingServiceTest.class})
 public class ServiceTestSuite extends AbstractServiceTest {
 
     public static final String TEST_KSA_CONTEXT = "/META-INF/test-context.xml";
