@@ -187,7 +187,11 @@ class CourseOfferingEdit < BasePage
   element(:admin_orgs_table)  { |b| b.frm.div(id: "KS-CourseOfferingEdit-OrganizationSection").table() }
 
   element(:add_org_id) { |b| b.admin_orgs_table.rows[1].cells[ORG_ID_COLUMN].text_field() }
-  action(:lookup_org) { |b| b.admin_orgs_table.rows[1].cells[ORG_ID_COLUMN].button().click; b.loading.wait_while_present } # Need persistent ID!
+  action(:lookup_org) { |b| b.admin_orgs_table.rows[1].cells[ORG_ID_COLUMN].button().click; b.loading.wait_while_present }
+
+  element(:add_org_id_new) { |b| b.admin_orgs_table.rows[-2].cells[ORG_ID_COLUMN].text_field() }
+  action(:lookup_org_new) { |b| b.admin_orgs_table.rows[-2].cells[ORG_ID_COLUMN].button().click; b.loading.wait_while_present }
+
   action(:add_org_button) { |b| b.button(id: "KS-CourseOfferingEdit-OrganizationSection_add") }
   action(:add_org) { |b| b.add_org_button.click; b.adding.wait_while_present() }
 

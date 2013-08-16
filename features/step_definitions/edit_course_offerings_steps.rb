@@ -140,13 +140,14 @@ Then /^I can submit and the course offering is updated$/ do
   end
 
   @course_offering.search_by_subjectcode
-       @course_offering.view_course_details
-  puts "CO.wait_list = #{@course_offering.wait_list}"
-       on ManageCourseDetails do  |page|
-         page.registration_options.should == @course_offering.reg_options
-         page.final_exam_type.should == @course_offering.final_exam_type
-         page.waited_list.should == @course_offering.wait_list
-         page.honors_flag.should == @course_offering.honors_flag
+  @course_offering.view_course_details
+
+  on ManageCourseDetails do  |page|
+    page.registration_options.should == @course_offering.reg_options
+    page.final_exam_type.should == @course_offering.final_exam_type
+    page.waited_list.should == @course_offering.wait_list
+    page.honors_flag.should == @course_offering.honors_flag
+    page.close
   end
 end
 
@@ -207,6 +208,7 @@ end
 
 When /^I edit a course offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM132")
+
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering

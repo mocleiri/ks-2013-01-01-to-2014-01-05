@@ -345,18 +345,19 @@ class CourseOffering
 
     if options[:affiliated_org_list] != nil
       options[:affiliated_org_list].values.each do |org|
+
         on CourseOfferingEdit do |page|
-          page.lookup_org
+          page.add_org
+        end
+
+        on CourseOfferingEdit do |page|
+          page.lookup_org_new
         end
 
         on OrgLookupPopUp do |page|
           page.short_name.set org.org_name
           page.search
           page.return_value(org.org_name)
-        end
-
-        on CourseOfferingEdit do |page|
-          page.add_org
         end
       end
     end
