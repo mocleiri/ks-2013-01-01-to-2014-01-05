@@ -109,6 +109,12 @@ When /^I compare the replaced rule with the CO and CLU rules in the Student Elig
   @prereq.sepr_compare_ao_to_clu_co_rule
 end
 
+When /^I compare the added rule with the CO and CLU rules in the Student Eligibility & Prerequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
+  @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "HIST111"
+  @prereq.sepr_compare_new_ao_to_clu_co_rule
+end
+
 Then /^I should be able to compare the CO Rule to the AO in the Student Eligibility & Prerequisite section$/ do
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
@@ -233,7 +239,7 @@ end
 Then /^the AO icon should be shown for the edited Activity Offering$/ do
   on ManageCourseOfferings do |page|
     page.loading.wait_while_present
-    ao_code = page.frm.div(id: "activityOfferingsPerCluster_line0").span( :text => "B").parent.parent
+    ao_code = page.frm.div(id: "activityOfferingsPerCluster_line0").span( :text => @activityOR.activity).parent.parent
     ao_code.img.src.should match /ActivityRuleIcon6px.png/
   end
 end
@@ -241,7 +247,7 @@ end
 Then /^the AO icon should not be shown for the edited Activity Offering$/ do
   on ManageCourseOfferings do |page|
     page.loading.wait_while_present
-    ao_code = page.frm.div(id: "activityOfferingsPerCluster_line0").span( :text => "B").parent.parent
+    ao_code = page.frm.div(id: "activityOfferingsPerCluster_line0").span( :text => @activityOR.activity).parent.parent
     if ao_code.img.present?
       ao_code.img.src.should_not match /ActivityRuleIcon6px.png/
     end

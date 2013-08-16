@@ -1135,6 +1135,26 @@ class AOPreparationPrerequisiteRule < AORequisitesData
     end
   end
 
+  def sepr_compare_new_ao_to_clu_co_rule
+    sepr_add_ao_rule
+    on ActivityOfferingRequisites do |page|
+      if page.prereq_compare_link.exists?
+        page.loading.wait_while_present
+        page.prereq_compare
+      end
+    end
+  end
+
+  def rp_compare_new_ao_to_clu_co_rule
+    rp_add_ao_rule
+    on ActivityOfferingRequisites do |page|
+      if page.prep_compare_link.exists?
+        page.loading.wait_while_present
+        page.prep_compare
+      end
+    end
+  end
+
   def sepr_revert_replaced_co_rule
     sepr_replace_co_rule
     on ActivityOfferingRequisites do |page|
