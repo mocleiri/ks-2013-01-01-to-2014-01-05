@@ -10,7 +10,8 @@ import javax.persistence.*;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_ACCESS_LEVEL")
+@Table(name = "KSSA_ACCESS_LEVEL",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE"}), @UniqueConstraint(columnNames = {"NAME"})})
 @AttributeOverrides({
         @AttributeOverride(name = "code", column = @Column(name = "CODE", length = 45, nullable = false, unique = true)),
         @AttributeOverride(name = "name", column = @Column(name = "NAME", length = 45, nullable = false, unique = true))

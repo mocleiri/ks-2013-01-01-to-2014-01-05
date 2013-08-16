@@ -6,12 +6,16 @@ import javax.persistence.*;
 /**
  * Currency model.
  * <p/>
- * User: mike
- * Date: 1/22/12
- * Time: 3:47 PM
+ *
+ * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_CURRENCY")
+@Table(name = "KSSA_CURRENCY",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE"}), @UniqueConstraint(columnNames = {"NAME"})})
+@AttributeOverrides({
+        @AttributeOverride(name = "code", column = @Column(name = "CODE", length = 5, nullable = false, unique = true)),
+        @AttributeOverride(name = "name", column = @Column(name = "NAME", length = 80, nullable = false, unique = true))
+})
 public class Currency extends AuditableEntity<Long> {
 
 
