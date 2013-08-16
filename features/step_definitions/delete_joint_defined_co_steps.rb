@@ -2,7 +2,7 @@ When /^I create a joint\-defined Course Offering$/ do
   @source_term = "201201"
   @joint_defined_co_code = "CHEM181"
   @catalogue_course_code = "CHEM181"
-  @course_offering = make CourseOffering, :course => @catalogue_course_code, :delivery_format => "Lecture"
+  @course_offering = make CourseOffering, :course => @catalogue_course_code
   @course_offering.start_create_by_search
   on CreateCourseOffering do  |page|
     @course = @catalogue_course_code

@@ -6,13 +6,11 @@ When /^I designate a valid term and cross-listed Catalog Course Code$/ do
   source_term = Rollover::MAIN_TEST_TERM_SOURCE
 
   @course_offering_owner = make CourseOffering, :course => "ENGL250", :suffix => suffix, :term => source_term, :cross_listed => true
-  @course_offering_alias = make CourseOffering, :course => "WMST255#{suffix}", :term => source_term, :delivery_format => "Lecture"
-
+  @course_offering_alias = make CourseOffering, :course => "WMST255#{suffix}", :term => source_term
 
 end
 
-And /^I create a Course Offering (with|without) selected cross-listed Catalog Course Code$/ do
-  |crosslisted|
+And /^I create a Course Offering (with|without) selected cross-listed Catalog Course Code$/ do |crosslisted|
   @course_offering_owner.cross_listed = false unless crosslisted == 'with'
   @course_offering_owner.create
 end

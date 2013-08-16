@@ -41,7 +41,8 @@ end
 When /^I create a joint course offering from catalog while creating a new course offering$/ do
   @joint_cos = []
 
-  @primary_co = create CourseOffering, :term => "201201", :course => "BSCI181", :joint_co_to_create => "CHEM181, PHYS181", :delivery_format => "Lecture", :grade_format => "Lecture"
+  @primary_co = create CourseOffering, :term => "201201", :course => "BSCI181",
+                       :joint_co_to_create => "CHEM181, PHYS181"
   @joint_cos << @primary_co
 
   # keep track of the joints created when creating primary-CO
