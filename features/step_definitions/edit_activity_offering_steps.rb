@@ -124,6 +124,8 @@ When /^I jump to an arbitrary AO but cancel the change$/ do
   expected_title = "#{@course_offering.course} - #{@activity_offering.activity_type} #{@activity_offering.code}"
   on ActivityOfferingMaintenance do |page|
     page.ao_header_text.should == expected_title
+    # Click page.cancel to avoid dirty data dialog box when we attempt to return to the page to validate
+    # changes were not persisted
     page.cancel
   end
 
