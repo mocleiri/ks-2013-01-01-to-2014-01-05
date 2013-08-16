@@ -357,6 +357,18 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
     /**
+     * Returns the difference between the outstanding and due balances.
+     *
+     * @param userId          Account ID
+     * @param ignoreDeferment boolean value
+     * @return The future balance amount
+     */
+    @Override
+    public BigDecimal getFutureBalance(String userId, boolean ignoreDeferment) {
+        return getOutstandingBalance(userId, ignoreDeferment).subtract(getDueBalance(userId, ignoreDeferment));
+    }
+
+    /**
      * Returns the total balance due of all active transactions.
      *
      * @param userId          Account ID
@@ -428,24 +440,36 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         PermissionUtils.checkPermission(Permission.READ_BALANCE);
 
         final String sign = notYetEffective ? ">" : "<=";
+
         Query query = em.createQuery("select t from Transaction t " +
                 " where t.account.id = :userId and t.effectiveDate " + sign + " CURRENT_DATE");
         query.setParameter("userId", userId);
+
         List<Transaction> transactions = query.getResultList();
+
         BigDecimal amountBilled = BigDecimal.ZERO;
         BigDecimal amountPaid = BigDecimal.ZERO;
+
         for (Transaction transaction : transactions) {
+
             if (transaction instanceof Debit) {
+
                 Debit debit = (Debit) transaction;
+
                 BigDecimal amount = debit.getAmount() != null ? debit.getAmount() : BigDecimal.ZERO;
+
                 amountBilled = amountBilled.add(amount);
+
             } else if (transaction instanceof Credit) {
+
                 boolean includeAmount = true;
+
                 if (transaction instanceof Deferment) {
                     if (ignoreDeferment || ((Deferment) transaction).isExpired()) {
                         includeAmount = false;
                     }
                 }
+
                 if (includeAmount) {
                     Credit credit = (Credit) transaction;
                     BigDecimal allocatedAmount = credit.getAllocatedAmount();

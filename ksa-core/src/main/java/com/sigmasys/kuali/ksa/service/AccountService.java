@@ -75,6 +75,15 @@ public interface AccountService {
     ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, Date ageDate, boolean ignoreDeferment);
 
     /**
+     * Returns the difference between the outstanding and due balances.
+     *
+     * @param userId          Account ID
+     * @param ignoreDeferment boolean value
+     * @return The future balance amount
+     */
+    BigDecimal getFutureBalance(String userId, boolean ignoreDeferment);
+
+    /**
      * Returns the total balance due of all active transactions.
      *
      * @param userId          Account ID
