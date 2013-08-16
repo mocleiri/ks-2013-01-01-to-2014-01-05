@@ -58,6 +58,10 @@ And /^I create a Course Offering from catalog with Activity Offerings assigned t
   @activity_offering2.save
 end
 
+And /^I create a Course Offering with an Activity Offerings assigned to subterms$/ do
+  step 'I create a Course Offering from catalog with Activity Offerings assigned to subterms in my admin org'
+end
+
 And /^I create a Course Offering from catalog with Activity Offerings assigned to subterms in my admin org$/ do
   delivery_format_list = []
   delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_driver => "Lecture")

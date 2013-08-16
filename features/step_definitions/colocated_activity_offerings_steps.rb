@@ -8,6 +8,27 @@ When /^I create "([2-9])" COs with an AO in each$/ do |number_of_cos_to_create|
   end
 end
 
+When /^I create three Course Offerings with colocated AOs in the new term$/ do
+  @colo_aos = []
+
+  for i in 1..3
+    delivery_format_list = []
+    delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_driver => "Lecture")
+    co = create CourseOffering, :course => "ENGL211", :term => @term.term_code, :delivery_format_list => delivery_format_list
+
+    ao = create ActivityOffering, :parent_course_offering => co, :format => "Lecture Only", :activity_type => "Lecture"
+    ao.save
+    @colo_aos << ao
+  end
+
+  # colocate the first AO to all the others
+  @colo_aos[0].parent_course_offering.manage
+  @colo_aos[0].edit :colocate_ao_list => @colo_aos[1, @colo_aos.length],
+                    :colocate_shared_enrollment => true,
+                    :max_enrollment => 48
+  @colo_aos[0].save
+end
+
 When /^I colocate multiple activities, selecting to "(share|separately manage)" enrollments$/ do |max_enrollment_flag|
 
   should_enrollment_be_shared_flag = true
@@ -116,5 +137,29 @@ When /^I create some dummy test data to speed up AFT development$/ do
   @colo_aos << ao
 
 end
+
+Then /^the Activity Offerings are colocated in the rollover target$/ do
+  @colo_aos_rollover = []
+
+  for i in 0..2
+    co = make CourseOffering, :course =>  @colo_aos[i].parent_course_offering.course,
+              :term => @term_target.term_code
+    ao = make ActivityOffering, :code => "A", :parent_course_offering => co
+    @colo_aos_rollover << ao
+  end
+
+  @colo_aos_rollover[0].parent_course_offering.manage
+  on ManageCourseOfferings do |page|
+    colocated_tooltip_text = page.target_row('A')[1].image(src: /colocate_icon/).alt.upcase
+
+    # validate tooltip text contains each colo
+    @colo_aos_rollover[1, @colo_aos_rollover.length].each do |other_ao|
+      expected = other_ao.parent_course_offering.course.upcase + ' ' + other_ao.code.upcase
+      colocated_tooltip_text.should include expected
+    end
+  end
+
+end
+
 
 

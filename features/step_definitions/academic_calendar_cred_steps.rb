@@ -264,6 +264,7 @@ end
 When /^I add a new term to the Academic Calendar$/ do
   @term = make AcademicTerm, :term_year => @calendar.year
   @calendar.add_term(@term)
+  @term.set_up_soc
 end
 
 When /^I add a new term to the Academic Calendar with a defined instructional period$/ do
