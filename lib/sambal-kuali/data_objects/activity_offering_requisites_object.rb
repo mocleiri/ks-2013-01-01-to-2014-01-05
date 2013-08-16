@@ -45,13 +45,15 @@ class AORequisitesData
   include DataFactory
 
   attr_accessor :submit_btn,
-                :section
+                :section,
+                :activity
 
   def initialize(browser, opts={})
     @browser = browser
 
     defaults = {
-        :section => "Student Eligibility & Prerequisite"
+        :section => "Student Eligibility & Prerequisite",
+        :activity => "A"
     }
 
     options = defaults.merge(opts)

@@ -48,7 +48,7 @@ When /^I revert the rule that replaced the CO rule in the Student Eligibility & 
 end
 
 When /^I commit after reverting the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "B"
   @prereq = make AOPreparationPrerequisiteRule, :activity => "B"
   @prereq.sepr_revert_replaced_co_rule
   @prereq.commit_changes
@@ -67,7 +67,7 @@ When /^I replace the CO rule in the Student Eligibility & Prerequisite section$/
 end
 
 When /^I commit the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "C"
   @prereq = make AOPreparationPrerequisiteRule, :activity => "C"
   @prereq.sepr_replace_co_rule
   @prereq.commit_changes
@@ -194,29 +194,29 @@ Then /^the AO rule should differ from the CO and CLU rules in the Student Eligib
   end
 end
 
-Then /^the CO and AO warning messages should be shown in the Student Eligibility & Prerequisite section$/ do
-  @prereq.open_agenda_section
-  on ActivityOfferingRequisites do |page|
-    page.loading.wait_while_present
-    page.prereq_message_section.text.should match /Course Offering rule.*enforced.*Activity Offering Rule differs from.*/m
-  end
-end
+#Then /^the CO and AO warning messages should be shown in the Student Eligibility & Prerequisite section$/ do
+#  @prereq.open_agenda_section
+#  on ActivityOfferingRequisites do |page|
+#    page.loading.wait_while_present
+#    page.prereq_message_section.text.should match /Course Offering rule.*enforced.*Activity Offering Rule differs from.*/m
+#  end
+#end
 
-Then /^the CO warning message should be shown in the Student Eligibility & Prerequisite section$/ do
+Then /^a (?:error|warning) in the Student Eligibility & Prerequisite section is displayed stating "([^"]*)"$/ do |exp_msg|
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
-    page.prereq_message_section.text.should match /Course Offering rule.*enforced.*Activity Offering/
+    page.prereq_message_section.text.should match /.*#{exp_msg}.*/
   end
 end
-
-Then /^the AO warning message should be shown in the Student Eligibility & Prerequisite section$/ do
-  @prereq.open_agenda_section
-  on ActivityOfferingRequisites do |page|
-    page.loading.wait_while_present
-    page.prereq_message_section.text.should match /Activity Offering Rule differs from.*/
-  end
-end
+#
+#Then /^the AO warning message should be shown in the Student Eligibility & Prerequisite section$/ do
+#  @prereq.open_agenda_section
+#  on ActivityOfferingRequisites do |page|
+#    page.loading.wait_while_present
+#    page.prereq_message_section.text.should match /Activity Offering Rule differs from.*/
+#  end
+#end
 
 
 
