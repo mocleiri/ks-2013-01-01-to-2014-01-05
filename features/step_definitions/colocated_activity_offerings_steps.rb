@@ -27,7 +27,7 @@ Then /^the activities indicate they are colocated$/ do
 
   @colo_aos[0].parent_course_offering.manage
   on ManageCourseOfferings do |page|
-    colocated_tooltip_text = page.target_row('A')[1].image.alt.upcase
+    colocated_tooltip_text = page.target_row('A')[1].image(src: /colocate_icon/).alt.upcase
 
     # validate tooltip text contains each colo
     @colo_aos[1, @colo_aos.length].each do |other_ao|
@@ -57,7 +57,7 @@ Then /^the first colocated AO is not colocated with any remaining AOs$/ do
   # second AO should indicate colocation with all the remaining
   @colo_aos[1].parent_course_offering.manage
   on ManageCourseOfferings do |page|
-    colocated_tooltip_text = page.target_row('A')[1].image.alt.upcase
+    colocated_tooltip_text = page.target_row('A')[1].image(src: /colocate_icon/).alt.upcase
 
     # validate tooltip text contains each colo
     @colo_aos[2, @colo_aos.length].each do |other_ao|
