@@ -1030,7 +1030,7 @@ class CourseOffering
   # deletes a list of COs from the subject-code view using the toolbar
   #
   # @example
-  #   @course_offering.delete_co_list :code_list => ["ENGL222, ..."]
+  #   @course_offering.delete_co_list :co_obj_list => [obj1, obj2, ..."]
   #
   # @param opts [Hash] {:should_confirm_delete => false (default is true), :code_list => ["ENGL222, ..."]}
   # @returns delete confirmation/warning message
@@ -1040,9 +1040,10 @@ class CourseOffering
     }
     opts = defaults.merge(opts)
 
-    co_code_list = opts[:code_list]
     on ManageCourseOfferingList do |page|
-      page.select_cos(co_code_list)
+      opts[:co_obj_list].each do |co|
+        page.select_co(co.course)
+      end
       page.delete_cos
     end
 
