@@ -47,7 +47,6 @@ Feature: EC.Subterms CRED
     When I make the subterm key date blank
     Then a subterm Key Dates warning message is displayed stating "Start date should not be empty"
 
-  @bug @KSENROLL-8637
   Scenario: CAL 4.3 Successfully edit a subterm
     Given I create an Academic Calendar with subterms
     When I edit the subterm information
