@@ -129,8 +129,8 @@ When /^I jump to an arbitrary AO but cancel the change$/ do
   end
   @expected_title = "#{@course_offering.course} - #{@activity_offering.activity_type} #{@activity_offering.code}"
   on ActivityOfferingMaintenance do |page|
-    puts "Expected: #{@expected_title}, Found: #{page.ao_header_text}"
     page.ao_header_text.should == @expected_title
+    page.cancel
   end
 
 end
