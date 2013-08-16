@@ -7,7 +7,7 @@ Feature: KRMS.ELIG8-5 View and Compare the CLU and CO rule to a new AO rule wher
   @pending
   Scenario: Test whether a warning message is given when new AO rule is created where no CO rule existed
     When I add a rule to the Student Eligibility & Prerequisite section
-    Then the AO warning message should be shown in the Student Eligibility & Prerequisite section
+    Then a warning in the Student Eligibility & Prerequisite section is displayed stating "Activity Offering Rule differs from Course Offering Rule"
 
   #ELIG8.5.EB2 (KSENROLL-8710)
   @pending
