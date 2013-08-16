@@ -55,63 +55,57 @@ Then /^the changes of information attributes (are|are not) persisted$/ do |are_a
 end
 
 When /^I save the changes and jump to the (next|previous) AO$/  do |direction|
+  expected_title = "#{@course_offering.course} - "
   on ActivityOfferingMaintenance do |page|
     if direction == "next"
+      expected_title += "#{page.next_ao_text}"
       page.next_ao
-      @expected_title = "#{@course_offering.course} - #{page.next_ao_text}"
     else
+      expected_title += "#{page.prev_ao_text}"
       page.prev_ao
-      @expected_title = "#{@course_offering.course} - #{page.prev_ao_text}"
     end
     page.save_and_continue
-  end
-  puts "#{direction} = #{@expected_title}"
-  on ActivityOfferingMaintenance do |page|
-    puts "Expected: #{@expected_title}, Found: #{page.ao_header_text}"
-    page.ao_header_text.should == @expected_title
+    page.ao_header_text.should == expected_title
   end
 end
 
 When /^I jump to the (next|previous) AO without saving the changes$/ do |direction|
+  expected_title = "#{@course_offering.course} - "
   on ActivityOfferingMaintenance do |page|
     if direction == "next"
+      expected_title += page.next_ao_text
       page.next_ao
-      @expected_title = page.next_ao_text
     else
+      expected_title += page.prev_ao_text
       page.prev_ao
-      @expected_title = page.prev_ao_text
     end
     page.continue_without_saving
-  end
-  puts "#{direction} = #{@expected_title}"
-  on ActivityOfferingMaintenance do |page|
-    puts "new next = #{page.next_ao_text}"
+    page.ao_header_text.should == expected_title
+    page.cancel
   end
 end
 
 When /^I jump to an arbitrary AO without saving the changes$/ do
   on ActivityOfferingMaintenance do |page|
-    @target = "Discussion E"
-    page.jump_to_ao(@target)
+    target = "Discussion E"
+    page.jump_to_ao(target)
     page.continue_without_saving
   end
-  @expected_title = "#{@course_offering.course} - #{@target}"
+  expected_title = "#{@course_offering.course} - #{target}"
   on ActivityOfferingMaintenance do |page|
-    puts "Expected: #{@expected_title}, Found: #{page.ao_header_text}"
-    page.ao_header_text.should == @expected_title
+    page.ao_header_text.should == expected_title
   end
 end
 
 When /^I save the changes and jump to an arbitrary AO$/ do
   on ActivityOfferingMaintenance do |page|
-    @target = "Discussion E"
-    page.jump_to_ao(@target)
+    target = "Discussion E"
+    page.jump_to_ao(target)
     page.save_and_continue
   end
-  @expected_title = "#{@course_offering.course} - #{@target}"
+  expected_title = "#{@course_offering.course} - #{target}"
   on ActivityOfferingMaintenance do |page|
-    puts "Expected: #{@expected_title}, Found: #{page.ao_header_text}"
-    page.ao_header_text.should == @expected_title
+    page.ao_header_text.should == expected_title
   end
 end
 
@@ -123,13 +117,13 @@ end
 
 When /^I jump to an arbitrary AO but cancel the change$/ do
   on ActivityOfferingMaintenance do |page|
-    @target = "Discussion E"
-    page.jump_to_ao(@target)
+    target = "Discussion E"
+    page.jump_to_ao(target)
     page.cancel_save
   end
-  @expected_title = "#{@course_offering.course} - #{@activity_offering.activity_type} #{@activity_offering.code}"
+  expected_title = "#{@course_offering.course} - #{@activity_offering.activity_type} #{@activity_offering.code}"
   on ActivityOfferingMaintenance do |page|
-    page.ao_header_text.should == @expected_title
+    page.ao_header_text.should == expected_title
     page.cancel
   end
 
