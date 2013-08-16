@@ -25,6 +25,7 @@
         <#if view.stickyTopGroup>
             <#local topGroupWrapData="data-sticky='true'"/>
         </#if>
+
     <div id="Uif-TopGroupWrapper" ${topGroupWrapData}>
         <@krad.template component=view.topGroup/>
     </div>

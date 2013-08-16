@@ -41,8 +41,8 @@
     <param name="message.persistence">false</param>
     <param name="message.delivery">async</param>
     <param name="Routing.ImmediateExceptionRouting">false</param>
-    <param name="RouteQueue.timeIncrement">1000</param>
-    <param name="RouteQueue.maxRetryAttempts">3</param>
+    <param name="RouteQueue.timeIncrement">500</param>
+    <param name="RouteQueue.maxRetryAttempts">2</param>
 
     <!--  Quartz Configuration  -->
     <param name="useQuartzDatabase">false</param>

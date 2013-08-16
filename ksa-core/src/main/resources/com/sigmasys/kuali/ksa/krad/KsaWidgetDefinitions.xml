@@ -16,7 +16,7 @@
         </property-->
     </bean>
 
-    <bean id="Uif-KsaTheme" parent="Uif-KradTheme">
+    <bean id="Uif-KsaTheme" parent="GlobalTheme">
         <!-- Additional CSS and JS files can be added here -->
     </bean>
 

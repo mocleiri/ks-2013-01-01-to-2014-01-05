@@ -20,21 +20,21 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>3.1.2.RELEASE</spring.version>
-        <hibernate.version>4.1.7.Final</hibernate.version>
+        <spring.version>3.2.3.RELEASE</spring.version>
+        <hibernate.version>4.2.4.Final</hibernate.version>
         <jta.version>1.0.1B</jta.version>
         <atomikos.version>3.8.0</atomikos.version>
-        <drools.version>5.4.0.Final</drools.version>
-        <kuali.rice.version>2.3.0-M2</kuali.rice.version>
+        <drools.version>5.5.0.Final</drools.version>
+        <kuali.rice.version>2.3.0</kuali.rice.version>
         <kuali.student.version>1.2.1</kuali.student.version>
-        <kuali.student.enrollment.version>1.0.0-M5</kuali.student.enrollment.version>
+        <kuali.student.enrollment.version>1.0.0-M7</kuali.student.enrollment.version>
         <slf4j.version>1.6.4</slf4j.version>
         <jax-ws.version>2.2.6</jax-ws.version>
         <stax-ex.version>1.4</stax-ex.version>
         <cglib.version>2.2.2</cglib.version>
         <tiles.version>2.2.2</tiles.version>
-        <freemarker.version>2.3.19</freemarker.version>
-        <cxf.version>2.5.6</cxf.version>
+        <freemarker.version>2.3.20</freemarker.version>
+        <cxf.version>2.5.10</cxf.version>
         <quartz.version>1.8.6</quartz.version>
         <joda.time.version>1.1.1</joda.time.version>
         <junit.version>4.10</junit.version>
@@ -176,6 +176,24 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
             <version>${cxf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>2.2.12</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-core</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -188,6 +206,12 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
             <version>${cxf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-web</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -198,7 +222,25 @@
 
         <dependency>
             <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-addr</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-bindings-soap</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-databinding-jaxb</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-databinding-aegis</artifactId>
             <version>${cxf.version}</version>
         </dependency>
 
@@ -281,6 +323,30 @@
                     <artifactId>jta</artifactId>
                     <groupId>javax.transaction</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>rice-core-impl</artifactId>
+                    <groupId>org.kuali.rice</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>rice-ksb-web</artifactId>
+                    <groupId>org.kuali.rice</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-tx</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-jdbc</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jaxb-impl</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>antlr-runtime</artifactId>
+                    <groupId>org.antlr</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -324,7 +390,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time-jsptags</artifactId>
-            <version>1.1.1</version>
+            <version>${joda.time.version}</version>
         </dependency>
 
         <!-- Freemarker -->
@@ -510,6 +576,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
         </dependency>
         <dependency>
@@ -773,6 +844,38 @@
                 <exclusion>
                     <artifactId>jaxb-impl</artifactId>
                     <groupId>com.sun.xml.bind</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-frontend-simple</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-api</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-core</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-bindings-xml</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-bindings-soap</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-ws-security</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-transports-http</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                    <groupId>org.apache.cxf</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1138,6 +1241,18 @@
                     <artifactId>quartz</artifactId>
                     <groupId>org.quartz-scheduler</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-databinding-jaxb</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-databinding-aegis</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -1267,6 +1382,18 @@
                 <exclusion>
                     <artifactId>jta</artifactId>
                     <groupId>javax.transaction</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-databinding-jaxb</artifactId>
+                    <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cxf-rt-databinding-aegis</artifactId>
+                    <groupId>org.apache.cxf</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

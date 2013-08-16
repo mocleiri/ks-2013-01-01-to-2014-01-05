@@ -13,7 +13,6 @@ public interface Constants {
     // Persistence units
     String KS_PERSISTENCE_UNIT = "ks";
     String KSA_PERSISTENCE_UNIT = "ksa";
-    String RICE_PERSISTENCE_UNIT = "rice";
 
     // KSA parameter names
     String LOGGING_OPERATION = "ksa.logging.operation";

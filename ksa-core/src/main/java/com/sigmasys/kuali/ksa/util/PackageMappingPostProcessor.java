@@ -6,6 +6,7 @@ import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor;
 
 import javax.persistence.Entity;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -15,17 +16,48 @@ import java.util.Set;
  */
 public class PackageMappingPostProcessor implements PersistenceUnitPostProcessor {
 
-    private String[] packageNames;
+    private String[] packages;
+    private Set<String> excludePackages = Collections.emptySet();
+    private Set<String> excludeClasses = Collections.emptySet();
 
     public void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo pui) {
-        Set<Class> annotatedClasses = AnnotationUtils.findAnnotatedClasses(Entity.class, packageNames);
+
+        Set<Class> annotatedClasses = AnnotationUtils.findAnnotatedClasses(Entity.class, packages);
+
         for (Class entityClass : annotatedClasses) {
-            pui.addManagedClassName(entityClass.getName());
+            String className = entityClass.getName();
+            if (!isExcludedClass(className)) {
+                pui.addManagedClassName(className);
+            }
         }
+
         pui.setExcludeUnlistedClasses(true);
     }
 
-    public void setPackageNames(String[] packageNames) {
-        this.packageNames = packageNames;
+    public void setPackages(String[] packages) {
+        this.packages = packages;
+    }
+
+    public void setExcludePackages(Set<String> excludePackages) {
+        this.excludePackages = (excludePackages != null) ? excludePackages : Collections.<String>emptySet();
+    }
+
+    public void setExcludeClasses(Set<String> excludeClasses) {
+        this.excludeClasses = (excludeClasses != null) ? excludeClasses : Collections.<String>emptySet();
+    }
+
+    private boolean isExcludedClass(String className) {
+
+        if (excludeClasses.contains(className)) {
+            return true;
+        }
+
+        for (String packageName : excludePackages) {
+            if (className.startsWith(packageName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -25,7 +25,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <!-- child modules can define their our bean with this name and list of
          core and their packages containing jpa entities -->
     <bean id="ksaEntityFinder" class="com.sigmasys.kuali.ksa.util.PackageMappingPostProcessor">
-        <property name="packageNames">
+        <property name="packages">
             <list>
                 <value>com.sigmasys.kuali.ksa.model</value>
             </list>
@@ -33,18 +33,10 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     </bean>
 
     <bean id="ksEntityFinder" class="com.sigmasys.kuali.ksa.util.PackageMappingPostProcessor">
-        <property name="packageNames">
+        <property name="packages">
             <list>
                 <value>org.kuali.student.r2.core.class1.atp.model</value>
                 <value>org.kuali.student.enrollment.class1.hold.model</value>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="riceEntityFinder" class="com.sigmasys.kuali.ksa.util.PackageMappingPostProcessor">
-        <property name="packageNames">
-            <list>
-                <value>org.kuali.rice</value>
             </list>
         </property>
     </bean>
@@ -60,13 +52,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
         <property name="persistenceUnitName" value="ks"/>
         <property name="persistenceXmlLocation" value="classpath:/META-INF/ksa-persistence.xml"/>
         <property name="persistenceUnitPostProcessors" ref="ksEntityFinder"/>
-        <property name="loadTimeWeaver" ref="loadTimeWeaver"/>
-    </bean>
-
-    <bean id="riceEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="persistenceUnitName" value="rice"/>
-        <property name="persistenceXmlLocation" value="classpath:/META-INF/ksa-persistence.xml"/>
-        <property name="persistenceUnitPostProcessors" ref="riceEntityFinder"/>
         <property name="loadTimeWeaver" ref="loadTimeWeaver"/>
     </bean>
 

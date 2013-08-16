@@ -2,6 +2,8 @@ package com.sigmasys.kuali.ksa.config;
 
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.ksb.messaging.config.KSBConfigurer;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
  *
  * @author Michael Ivanov
  */
+@Transactional(timeout = 600)
 public class KsbConfigurer extends KSBConfigurer {
 
     public static final String ENABLE_MESSAGING_PARAM_NAME = "message.enable";
@@ -35,5 +38,14 @@ public class KsbConfigurer extends KSBConfigurer {
         return springFiles;
     }
 
+    @Override
+    protected void doAdditionalModuleStartLogic() {
+        // KSA application does not need to use remote services during startup so do nothing
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        super.onApplicationEvent(applicationEvent);
+    }
 
 }

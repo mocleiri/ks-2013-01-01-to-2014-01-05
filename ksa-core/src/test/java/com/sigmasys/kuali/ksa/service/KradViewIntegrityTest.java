@@ -56,7 +56,7 @@ public class KradViewIntegrityTest extends AbstractServiceTest {
         Assert.notNull(configFileLocations);
         Assert.notEmpty(configFileLocations);
 
-        logger.debug("Config File Locations: \n" + configFileLocations);
+        logger.info("Config File Locations: \n" + configFileLocations);
 
         boolean viewExists = false;
         for (String location : configFileLocations) {
