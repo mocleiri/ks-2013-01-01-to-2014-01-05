@@ -360,9 +360,14 @@ Then /^I do not have access to manage the course offering$/ do
   end
 end
 
-Then /^I do not have access to create the course offering$/ do
+Then /^I do not have access to create the course offering from (catalog|existing)$/ do |create_type|
+  create_from_catalog = (create_type == "catalog")
   on CreateCourseOffering do |page|
-    page.choose_from_existing
+    if create_from_catalog then
+      page.choose_from_catalog
+    else
+      page.choose_from_existing
+    end
     page.continue
   end
 

@@ -49,11 +49,13 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Published
   @bug @KSENROLL-8460
   Scenario: AZ 4.1C/Full_published.3 Department Schedule Coordinator Carol has access to create CO's in her admin org
     When I attempt to create a course offering for a subject in my admin org
-    Then I do not have access to create the course offering
+    Then I do not have access to create the course offering from existing
+    Then I do not have access to create the course offering from catalog
 
   Scenario: Full_published.3A Department Schedule Coordinator Carol does not have access to create CO's not in her admin org
     When I attempt to create a course offering for a subject not in my admin org
-    Then I do not have access to create the course offering
+    Then I do not have access to create the course offering from existing
+    And I do not have access to create the course offering from catalog
 
   Scenario: AZ 5.1B/Full_published.4 Department Schedule Coordinator Carol has limited access to delete Co's (in admin org)
     Given there is a "Draft" course offering in my admin org

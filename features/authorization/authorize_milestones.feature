@@ -46,11 +46,13 @@ Feature: EC.Authorize Milestones Feature
     Given It is "After" the first day of classes
     And I am logged in as a Department Schedule Coordinator
     Then I attempt to create a course offering for a subject in my admin org
-    And I do not have access to create the course offering
+    And I do not have access to create the course offering from existing
+    And I do not have access to create the course offering from catalog
     Given It is "Before" the first day of classes and "Before" the first day to add classes
     And I am logged in as a Department Schedule Coordinator
     Then I attempt to create a course offering for a subject in my admin org
-    And I do not have access to create the course offering
+    And I do not have access to create the course offering from existing
+    And I do not have access to create the course offering from catalog
 
   Scenario: Department Schedule Coordinator Carol Access Verification for Manage Course Offerings
     Given It is "After" the first day of classes

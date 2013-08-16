@@ -4,22 +4,22 @@ Feature: EC.Schedule Coordinator Authorization
   Background:
     Given I am logged in as a Schedule Coordinator
 
-  Scenario: AZ 5.1C As a Schedule Coordinator I have access to delete draft Activity Offerings in a Final Edits state
+  Scenario: AZ 5.1C_final_edits1 As a Schedule Coordinator I have access to delete draft Activity Offerings in a Final Edits state
     Given I am working on a term in "Final Edits" SOC state
     And there is a "Draft" course offering present
     Then I have access to delete an activity offering in a "Draft" state
 
-  Scenario: AZ 5.1C As a Schedule Coordinator I have access to delete Activity Offerings in a Final Edits state
+  Scenario: AZ 5.1C_final_edits2 As a Schedule Coordinator I have access to delete approved Activity Offerings in a Final Edits state
     Given I am working on a term in "Final Edits" SOC state
     And there is a "Planned" course offering present
     And I have access to delete an activity offering in a "Approved" state
 
-  Scenario: AZ 5.1C As a Schedule Coordinator I have access to delete Activity Offerings in a Published state
+  Scenario: AZ 5.1C_published As a Schedule Coordinator I have access to delete Activity Offerings in a Published state
     Given I am working on a term in "Published" SOC state
     And there is a "Draft" course offering present
     Then I have access to delete an activity offering in a "Draft" state
 
-  Scenario: AZ 5.1C As a Schedule Coordinator I have access to delete Activity Offerings in a Open state
+  Scenario: AZ 5.1C_open As a Schedule Coordinator I have access to delete Activity Offerings in a Open state
     Given I am working on a term in "Open" SOC state
     And there is a "Open" course offering present
     Then I have access to delete an activity offering in a "Draft" state
