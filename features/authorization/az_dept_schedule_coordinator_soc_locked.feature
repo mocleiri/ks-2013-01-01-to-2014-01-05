@@ -77,7 +77,6 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Locked
     Then I have access to view the activity offering details
     And the next, previous and list all course offering links are enabled
 
-  @bug @KSENROLL-8063
   Scenario: AZ 5.1A/Full_locked.7 Department Schedule Coordinator Carol has limited access to delete AOs
     Given there is a "Draft" course offering in my admin org
     Then I do not have access to select an activity offering in a "Draft" state
