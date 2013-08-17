@@ -50,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -365,19 +366,46 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public BigDecimal getFutureBalance(String userId, boolean ignoreDeferment) {
-        return getOutstandingBalance(userId, ignoreDeferment).subtract(getDueBalance(userId, ignoreDeferment));
+        return getFutureBalance(userId, new Date(), ignoreDeferment);
+    }
+
+    /**
+     * Returns the difference between the outstanding and due balances.
+     *
+     * @param userId          Account ID
+     * @param balanceDate     Balance date
+     * @param ignoreDeferment Boolean value
+     * @return The future balance amount
+     */
+    @Override
+    public BigDecimal getFutureBalance(String userId, Date balanceDate, boolean ignoreDeferment) {
+        BigDecimal outstandingBalance = getOutstandingBalance(userId, balanceDate, ignoreDeferment);
+        return outstandingBalance.subtract(getDueBalance(userId, balanceDate, ignoreDeferment));
     }
 
     /**
      * Returns the total balance due of all active transactions.
      *
      * @param userId          Account ID
-     * @param ignoreDeferment boolean value
+     * @param ignoreDeferment Boolean value
      * @return total amount of balance due
      */
     @Override
     public BigDecimal getDueBalance(String userId, boolean ignoreDeferment) {
-        return getBalance(userId, ignoreDeferment, false);
+        return getBalance(userId, new Date(), ignoreDeferment, false);
+    }
+
+    /**
+     * Returns the total balance due of all active transactions.
+     *
+     * @param userId          Account ID
+     * @param balanceDate     Balance date
+     * @param ignoreDeferment Boolean value
+     * @return total amount of balance due
+     */
+    @Override
+    public BigDecimal getDueBalance(String userId, Date balanceDate, boolean ignoreDeferment) {
+        return getBalance(userId, balanceDate, ignoreDeferment, false);
     }
 
     /**
@@ -432,18 +460,35 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public BigDecimal getOutstandingBalance(String userId, boolean ignoreDeferment) {
-        return getBalance(userId, ignoreDeferment, true);
+        return getBalance(userId, new Date(), ignoreDeferment, true);
     }
 
-    public BigDecimal getBalance(String userId, boolean ignoreDeferment, boolean notYetEffective) {
+    /**
+     * Returns the outstanding balance for the given account
+     *
+     * @param userId          Account ID
+     * @param balanceDate     Balance date
+     * @param ignoreDeferment Boolean value
+     * @return total amount of outstanding balance
+     */
+    @Override
+    public BigDecimal getOutstandingBalance(String userId, Date balanceDate, boolean ignoreDeferment) {
+        return getBalance(userId, balanceDate, ignoreDeferment, true);
+    }
+
+    protected BigDecimal getBalance(String userId, Date balanceDate, boolean ignoreDeferment, boolean notYetEffective) {
 
         PermissionUtils.checkPermission(Permission.READ_BALANCE);
+
+        balanceDate = CalendarUtils.removeTime(balanceDate);
 
         final String sign = notYetEffective ? ">" : "<=";
 
         Query query = em.createQuery("select t from Transaction t " +
-                " where t.account.id = :userId and t.effectiveDate " + sign + " CURRENT_DATE");
+                " where t.account.id = :userId and t.effectiveDate " + sign + " :date");
+
         query.setParameter("userId", userId);
+        query.setParameter("date", balanceDate, TemporalType.DATE);
 
         List<Transaction> transactions = query.getResultList();
 

@@ -84,6 +84,16 @@ public interface AccountService {
     BigDecimal getFutureBalance(String userId, boolean ignoreDeferment);
 
     /**
+     * Returns the difference between the outstanding and due balances.
+     *
+     * @param userId          Account ID
+     * @param balanceDate     Balance date
+     * @param ignoreDeferment Boolean value
+     * @return The future balance amount
+     */
+    BigDecimal getFutureBalance(String userId, Date balanceDate, boolean ignoreDeferment);
+
+    /**
      * Returns the total balance due of all active transactions.
      *
      * @param userId          Account ID
@@ -91,6 +101,16 @@ public interface AccountService {
      * @return total amount of balance due
      */
     BigDecimal getDueBalance(String userId, boolean ignoreDeferment);
+
+    /**
+     * Returns the total balance due of all active transactions.
+     *
+     * @param userId          Account ID
+     * @param balanceDate     Balance date
+     * @param ignoreDeferment Boolean value
+     * @return total amount of balance due
+     */
+    BigDecimal getDueBalance(String userId, Date balanceDate, boolean ignoreDeferment);
 
     /**
      * Returns the total balance to date for the given user ID.
@@ -109,6 +129,16 @@ public interface AccountService {
      * @return total amount of outstanding balance
      */
     BigDecimal getOutstandingBalance(String userId, boolean ignoreDeferment);
+
+    /**
+     * Returns the outstanding balance for the given account
+     *
+     * @param userId          Account ID
+     * @param balanceDate     Balance date
+     * @param ignoreDeferment Boolean value
+     * @return total amount of outstanding balance
+     */
+    BigDecimal getOutstandingBalance(String userId, Date balanceDate, boolean ignoreDeferment);
 
     /**
      * Returns unallocated balance for the given Account ID
