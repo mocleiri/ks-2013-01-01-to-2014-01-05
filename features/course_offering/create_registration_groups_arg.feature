@@ -76,3 +76,13 @@ As an Administrator, I want to create registration groups for a Course Offering
     Then the edit Activity Offering page is displayed
     And I submit the Activity Offering changes
     Then the Manage Course Offerings page is displayed
+
+  #KSENROLL-8103
+  Scenario: Create new cluster for second format offering
+    Given I edit a course offering with 2 format types
+    When I add a delivery format option of Discussion Lecture
+    Then I can submit the edited course offering
+    When I manage the course offering
+    And I create a Discussion Lecture activity offering cluster
+    Then the new activity offering cluster is present
+

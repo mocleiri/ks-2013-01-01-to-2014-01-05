@@ -30,6 +30,14 @@ When /^I edit a course offering with multiple format types$/ do
   end
 end
 
+When /^I edit a course offering with 2 format types$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL271")
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+end
+
 When /^I edit a course offering with multiple (\w+) options$/ do |opt|
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple")
   @course_offering.manage
@@ -105,6 +113,17 @@ And /^I add a delivery format option$/ do
                            :format => "Lecture",
                            :grade_format => "Lecture",
                            :final_exam_driver => "Lecture"
+    page.select_delivery_format(2,delivery_format)
+  end
+end
+
+And /^I add a delivery format option of Discussion Lecture$/ do
+  on CourseOfferingEdit do |page|
+    page.delivery_format_add
+    delivery_format = make DeliveryFormat,
+                           :format => "Discussion/Lecture",
+                           :grade_format => "Course Offering",
+                           :final_exam_driver => "Discussion"
     page.select_delivery_format(2,delivery_format)
   end
 end
@@ -202,6 +221,13 @@ Then /^I can submit and the added delivery format is not present$/ do
   end
 
 end
+
+Then /^I can submit the edited course offering$/ do
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+end
+
 When /^a final exam driver of "([^"]*)"$/ do |final_driver|
     @course_offering.edit_offering :final_exam_driver => final_driver
 end

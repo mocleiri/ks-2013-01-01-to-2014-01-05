@@ -22,7 +22,8 @@ class ActivityOfferingCluster
   include Comparable
 
   #generally set using options hash
-  attr_accessor :private_name,
+  attr_accessor :format,
+                :private_name,
                 :published_name,
                 :is_valid,
                 :expected_msg,
@@ -65,7 +66,9 @@ class ActivityOfferingCluster
   def create
       on ManageCourseOfferings do |page|
         page.add_cluster
-        #page.format_aoc_select -- use default format
+        if @format != nil
+          page.format_aoc_select.select(@format)
+        end
         page.private_name_add.set @private_name
         page.published_name_add.set @published_name
         page.complete_add_aoc

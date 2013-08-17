@@ -29,6 +29,21 @@ When /^I create a(?:n| new) activity offering cluster$/ do
   @course_offering.add_ao_cluster(@ao_cluster)
 end
 
+When /^I create a Discussion Lecture activity offering cluster$/ do
+  @ao_cluster = make ActivityOfferingCluster, :format => "Discussion/Lecture"
+  @course_offering.add_ao_cluster(@ao_cluster)
+end
+
+Then /^the new activity offering cluster is present$/ do
+  found_it = false
+  @course_offering.activity_offering_cluster_list.each do |cluster|
+    if cluster.private_name == @ao_cluster.private_name
+      found_it = true
+    end
+  end
+  found_it.should == true
+end
+
 Given /^the default activity offering cluster is present$/ do
    on ManageCourseOfferings do |page|
      #page.view_by_clusters
