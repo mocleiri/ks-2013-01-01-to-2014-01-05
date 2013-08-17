@@ -398,7 +398,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     private void validateUnallocatedBalance(FeeManagementManifest linkedManifest, Transaction implicatedTransaction, FeeManagementSession session) {
     	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
-    	if (hasEnoughBalanceForCorrection(implicatedTransaction)) {
+    	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
     		// Write a warning, mark the session for manual review and reverse the transaction:
     		logger.warn("Performing transaction reversal. FM session manual review required.");
     		performTransactionReversal(linkedManifest, implicatedTransaction);
@@ -406,7 +406,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		// TODO: Clear all manual allocations on the Implicated Transaction:
     		
         	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
-        	if (hasEnoughBalanceForCorrection(implicatedTransaction)) {
+        	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
         		logger.warn("Performing transaction reversal. FM session manual review required.");
         		performTransactionReversal(linkedManifest, implicatedTransaction);
         	} else {
@@ -426,9 +426,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param transaction	A Transaction to check its unallocated balance to perform correction/cancel/discount.
      * @return <code>true</code> if there is enough balance, <code>false</code> otherwise.
      */
-    private final boolean hasEnoughBalanceForCorrection(Transaction transaction) {
-    	// TODO: calculations go here
-    	return false;
+    private final boolean hasUnallocatedBalanceForCorrection(Transaction transaction) {
+    	return (transaction.getAmount() != null) && (transaction.getUnallocatedAmount() != null)
+    			&& (transaction.getUnallocatedAmount().compareTo(transaction.getAmount()) > 0);
     }
     
     /**
@@ -438,19 +438,24 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param implicatedTransaction	Transaction associated with the linked manifest.
      */
     private void performTransactionReversal(FeeManagementManifest linkedManifest, Transaction implicatedTransaction) {
-    	// Reverse the transaction:
-    	// TODO: What's the appropriate amount???
-    	BigDecimal reversalAmount = implicatedTransaction.getAmount();
-    	Transaction reversalTransaction = transactionService.reverseTransaction(implicatedTransaction.getId(), "Reversing Implicating Transaction", reversalAmount);
+ 
+    	// Only if the transaction has the status of either REVERSING,DISCOUNTING or CANCELLING:
+    	TransactionStatus status = implicatedTransaction.getStatus();
     	
-    	linkedManifest.setTransaction(reversalTransaction);
-    	linkedManifest.setSessionCurrent(true);
-    	
-    	// Set the correct reversed type:
-    	// TODO: Figure out what "The reversal type should be" means:
-    	
-    	// Persist the linked manifest:
-    	persistEntity(linkedManifest);
+    	if ((status == TransactionStatus.CANCELLING) || (status == TransactionStatus.DISCOUNTING) || (status == TransactionStatus.REVERSING)) {
+	    	
+	    	// TODO: Figure out what the statement prefix is:
+	    	// Reverse the transaction:
+	    	BigDecimal reversalAmount = implicatedTransaction.getAmount();
+	    	Transaction reversalTransaction = transactionService.reverseTransaction(implicatedTransaction.getId(), "Reversing Implicating Transaction", 
+	    			reversalAmount, "Some statement prefix", status);
+	    	
+	    	linkedManifest.setTransaction(reversalTransaction);
+	    	linkedManifest.setSessionCurrent(true);
+	    	
+	    	// Persist the linked manifest:
+	    	persistEntity(linkedManifest);
+    	}
     }
     
     /**
