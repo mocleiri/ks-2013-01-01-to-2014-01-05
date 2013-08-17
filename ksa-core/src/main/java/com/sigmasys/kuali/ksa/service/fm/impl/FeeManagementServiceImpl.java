@@ -317,8 +317,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	
     	if (linkedManifest != null) {
     		if (BooleanUtils.isTrue(linkedManifest.isSessionCurrent()) && (linkedManifest.getTransaction() != null)) {
-    			// TODO: Clear all unlockedAllocations against the transaction in the linked manifest (Implicated Transaction):
+    			// Clear all unlockedAllocations against the transaction in the linked manifest (Implicated Transaction):
     			Transaction implicatedTransaction = linkedManifest.getTransaction();
+    			
+    			transactionService.removeAllocations(implicatedTransaction.getId());
     			
     			// Process the Implicated Transaction:
     			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tpPlans);
@@ -338,8 +340,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     private void processImplicatedTransaction(FeeManagementManifest manifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction, 
     					FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
-    	// TODO: Check if allocations remain. If yes, process the Implicated Transaction based on its type:
-    	boolean allocationsRemain = true;
+    	// Check if allocations remain. If yes, process the Implicated Transaction based on its type:
+    	boolean allocationsRemain = (implicatedTransaction.getAllocatedAmount() != null) && (implicatedTransaction.getLockedAllocatedAmount() != null)
+    			&& (implicatedTransaction.getAllocatedAmount().compareTo(implicatedTransaction.getLockedAllocatedAmount().negate()) != 0);
     	
     	if (allocationsRemain) {
     		// Check the status of the Implicated Transaction:
@@ -615,7 +618,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
             // Iterate through the list of current manifests trying to find a match:
             for (FeeManagementManifest currentManifest : currentManifests) {
-                if (manifestsMatch(priorManifest, currentManifest, true)) {
+                if (manifestsMatch(priorManifest, currentManifest)) {
                     // Add a new matching pair, remove the matching prior manifest from the underlying list and break out of the loop:
                     matchingManifests.add(new Pair<FeeManagementManifest, FeeManagementManifest>(priorManifest, currentManifest));
                     itPrior.remove();
@@ -636,29 +639,19 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * 1. registrationId + offeringId + rate, or
      * 2. internalChargeId + rate.
      *
-     * @param prior             A prior FM session's manifest.
-     * @param current           A current FM session's manifest.
-     * @param checkRegistration Whether to check the Registration ID>
+     * @param prior		A prior FM session's manifest.
+     * @param current	A current FM session's manifest.
      * @return    <code>true</code> if the manifests are a match, <code>false</code> otherwise.
      */
-    private boolean manifestsMatch(FeeManagementManifest prior, FeeManagementManifest current, boolean checkRegistration) {
+    private boolean manifestsMatch(FeeManagementManifest prior, FeeManagementManifest current) {
         if ((prior != null) && (current != null)) {
             // Check if rates match first:
             boolean ratesMatch = (prior.getRate() != null) && (current.getRate() != null) && prior.getRate().equals(current.getRate());
 
-            // If rates match, check further:
-            if (ratesMatch) {
-                // Check if Internal Charge IDs match:
-                if (StringUtils.equals(prior.getInternalChargeId(), current.getInternalChargeId())) {
-                    return true;
-                } else if (checkRegistration) {
-                    // Check if registration IDs and Offering IDs match:
-                    return StringUtils.equals(prior.getRegistrationId(), current.getRegistrationId()) && StringUtils.equals(prior.getOfferingId(), current.getOfferingId());
-                } else {
-                    // Just check if the Offering IDs match:
-                    return StringUtils.equals(prior.getOfferingId(), current.getOfferingId());
-                }
-            }
+            // Check if Internal Charge IDs or Registration IDs match:
+            return ratesMatch && 
+            			(StringUtils.equals(prior.getInternalChargeId(), current.getInternalChargeId())
+            				|| StringUtils.equals(prior.getRegistrationId(), current.getRegistrationId()));
         }
 
         return false;
@@ -799,7 +792,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                     || ((fmm2.getType() == FeeManagementManifestType.CHARGE) && (fmm1.getType() == FeeManagementManifestType.CANCELLATION));
 
             // Now check if the manifests match and have the same transactionTypeId and amount:
-            if (statusesForReversal && manifestsMatch(fmm1, fmm2, fullReversal)) {
+            if (statusesForReversal && manifestsMatch(fmm1, fmm2)) {
                 return fullReversal 
                 		? StringUtils.equals(fmm1.getTransactionTypeId(), fmm2.getTransactionTypeId()) && safeAmountsEqual(fmm1, fmm2) 
                 				: true;
