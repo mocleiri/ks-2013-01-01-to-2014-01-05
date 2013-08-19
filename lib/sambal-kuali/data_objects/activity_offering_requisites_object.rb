@@ -1017,62 +1017,62 @@ class AOPreparationPrerequisiteRule < AORequisitesData
     end
   end
 
-  def sepr_delete_added_ao_rule
+  def sepr_suppress_added_ao_rule
     sepr_add_ao_rule
     on ActivityOfferingRequisites do |page|
-      if page.prereq_delete_link.exists?
+      if page.prereq_edit_suppress_link.exists?
         page.loading.wait_while_present
-        page.prereq_delete
+        page.prereq_edit_suppress
       end
     end
   end
 
-  def rp_delete_added_ao_rule
+  def rp_suppress_added_ao_rule
     rp_add_ao_rule
     on ActivityOfferingRequisites do |page|
-      if page.prep_delete_link.exists?
+      if page.prep_edit_suppress_link.exists?
         page.loading.wait_while_present
-        page.prep_delete
+        page.prep_edit_suppress
       end
     end
   end
 
-  def sepr_delete_copied_ao_rule
+  def sepr_suppress_copied_co_rule
     sepr_copy_co_rule
     on ActivityOfferingRequisites do |page|
-      if page.prereq_delete_link.exists?
+      if page.prereq_edit_suppress_link.exists?
         page.loading.wait_while_present
-        page.prereq_delete
+        page.prereq_edit_suppress
       end
     end
   end
 
-  def rp_delete_copied_ao_rule
+  def rp_suppress_copied_co_rule
     rp_copy_co_rule
     on ActivityOfferingRequisites do |page|
-      if page.prep_delete_link.exists?
+      if page.prep_edit_suppress_link.exists?
         page.loading.wait_while_present
-        page.prep_delete
+        page.prep_edit_suppress
       end
     end
   end
 
-  def sepr_delete_copied_edited_ao_rule
+  def sepr_suppress_copied_edited_co_rule
     sepr_copy_edit_co_rule
     on ActivityOfferingRequisites do |page|
-      if page.prereq_delete_link.exists?
+      if page.prereq_edit_suppress_link.exists?
         page.loading.wait_while_present
-        page.prereq_delete
+        page.prereq_edit_suppress
       end
     end
   end
 
-  def rp_delete_copied_edited_ao_rule
+  def rp_suppress_copied_edited_co_rule
     rp_copy_edit_co_rule
     on ActivityOfferingRequisites do |page|
-      if page.prep_delete_link.exists?
+      if page.prep_edit_suppress_link.exists?
         page.loading.wait_while_present
-        page.prep_delete
+        page.prep_edit_suppress
       end
     end
   end
@@ -1176,6 +1176,17 @@ class AOPreparationPrerequisiteRule < AORequisitesData
       end
     end
   end
+
+  #def sepr_modify_copied_co_rule
+  #  navigate_to_ao_requisites
+  #  on ActivityOfferingRequisites do |page|
+  #    if page.prereq_copy_edit_link.exists?
+  #      page.loading.wait_while_present
+  #      page.prereq_copy_edit
+  #      add_statements_to_rule
+  #    end
+  #  end
+  #end
 
   def add_statements_to_rule
     rp_sepr_course_rule( "add", "", "ENGL101")

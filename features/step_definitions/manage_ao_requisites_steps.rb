@@ -73,22 +73,22 @@ When /^I commit the rule that replaced the CO rule in the Student Eligibility & 
   @prereq.commit_changes
 end
 
-When /^I delete a newly added rule in the Student Eligibility & Prerequisite section$/ do
+When /^I suppress a newly added rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "HIST111"
-  @prereq.sepr_delete_added_ao_rule
+  @prereq.sepr_suppress_added_ao_rule
 end
 
-When /^I delete the copied rule in the Student Eligibility & Prerequisite section$/ do
+When /^I suppress the copied rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule
-  @prereq.sepr_delete_copied_ao_rule
+  @prereq.sepr_suppress_copied_co_rule
 end
 
-When /^I delete the copied and edited rule in the Student Eligibility & Prerequisite section$/ do
+When /^I suppress the copied and edited rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule
-  @prereq.sepr_delete_copied_edited_ao_rule
+  @prereq.sepr_suppress_copied_edited_ao_rule
 end
 
 When /^I view the catalog and course offering rule for the Student Eligibility & Prerequisite section$/ do
@@ -114,6 +114,12 @@ When /^I compare the added rule with the CO and CLU rules in the Student Eligibi
   @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "HIST111"
   @prereq.sepr_compare_new_ao_to_clu_co_rule
 end
+
+#When /^I modify the copied CO rule in the Student Eligibility & Prerequisite section$/ do
+#  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
+#  @prereq = make AOPreparationPrerequisiteRule
+#  @prereq.sepr_modify_copied_co_rule
+#end
 
 Then /^I should be able to compare the CO Rule to the AO in the Student Eligibility & Prerequisite section$/ do
   on ActivityOfferingRequisites do |page|
@@ -182,6 +188,8 @@ Then /^the AO, CO and CLU rules for the Student Eligibility & Prerequisite secti
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
+    page.prereq_compare
+    page.loading.wait_while_present
     page.compare_tree.text.should match @prereq.test_ao_compare_text("at least one in literature,ARHU-English required")
   end
 end
@@ -190,17 +198,11 @@ Then /^the AO rule should differ from the CO and CLU rules in the Student Eligib
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
+    page.prereq_compare
+    page.loading.wait_while_present
     page.compare_tree.text.should_not match @prereq.test_ao_compare_text("at least one in literature,ARHU-English required")
   end
 end
-
-#Then /^the CO and AO warning messages should be shown in the Student Eligibility & Prerequisite section$/ do
-#  @prereq.open_agenda_section
-#  on ActivityOfferingRequisites do |page|
-#    page.loading.wait_while_present
-#    page.prereq_message_section.text.should match /Course Offering rule.*enforced.*Activity Offering Rule differs from.*/m
-#  end
-#end
 
 Then /^a (?:error|warning) in the Student Eligibility & Prerequisite section is displayed stating "([^"]*)"$/ do |exp_msg|
   @prereq.open_agenda_section
@@ -209,14 +211,6 @@ Then /^a (?:error|warning) in the Student Eligibility & Prerequisite section is 
     page.prereq_message_section.text.should match /.*#{exp_msg}.*/
   end
 end
-#
-#Then /^the AO warning message should be shown in the Student Eligibility & Prerequisite section$/ do
-#  @prereq.open_agenda_section
-#  on ActivityOfferingRequisites do |page|
-#    page.loading.wait_while_present
-#    page.prereq_message_section.text.should match /Activity Offering Rule differs from.*/
-#  end
-#end
 
 
 
