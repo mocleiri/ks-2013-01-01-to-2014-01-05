@@ -86,8 +86,8 @@ When /^I jump to the (next|previous) AO without saving the changes$/ do |directi
 end
 
 When /^I jump to an arbitrary AO without saving the changes$/ do
+  target = "Discussion E"
   on ActivityOfferingMaintenance do |page|
-    target = "Discussion E"
     page.jump_to_ao(target)
     page.continue_without_saving
   end
@@ -98,8 +98,8 @@ When /^I jump to an arbitrary AO without saving the changes$/ do
 end
 
 When /^I save the changes and jump to an arbitrary AO$/ do
+  target = "Discussion E"
   on ActivityOfferingMaintenance do |page|
-    target = "Discussion E"
     page.jump_to_ao(target)
     page.save_and_continue
   end
