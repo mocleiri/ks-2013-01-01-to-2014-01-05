@@ -1,4 +1,4 @@
-Feature: KRMS.ELIG8-1 Add or Replace rules to Activity Offering whether CO exists or not
+Feature: SA.KRMS AO.ELIG8-1 Add or Replace rules to Activity Offering whether CO exists or not
 
   Background:
     Given I am logged in as admin
