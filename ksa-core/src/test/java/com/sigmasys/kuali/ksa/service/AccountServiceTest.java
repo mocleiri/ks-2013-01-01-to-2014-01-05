@@ -452,27 +452,60 @@ public class AccountServiceTest extends AbstractServiceTest {
 
         account = accountService.createAccount(account, name, address, contact, password);
 
-        // TODO - Add assertions
+        Assert.notNull(account);
+        Assert.notNull(account.getId());
+        Assert.notNull(account.getDefaultPersonName());
+        Assert.notNull(account.getDefaultPostalAddress());
+        Assert.notNull(account.getDefaultElectronicContact());
 
+        Assert.isTrue(account.isKimAccount());
+        Assert.isTrue(account.isAbleToAuthenticate());
 
     }
 
     @Test
-    public void getAccountsByNamePattern() throws Exception {
+    public void getAccountsByNamePattern1() throws Exception {
 
         String searchString = "user";
 
-        List<Account> types = accountService.getAccountsByNamePattern(searchString);
+        Assert.isTrue(accountService.accountExists("user1"));
 
-        Assert.notNull(types);
-        Assert.notEmpty(types, "Searching Accounts for '" + searchString + "' returned " + types.size() + " results instead of 10");
+        List<Account> accounts = accountService.getAccountsByNamePattern(searchString);
+
+        Assert.notNull(accounts);
+        Assert.notEmpty(accounts);
 
         searchString = "adm";
 
-        types = accountService.getAccountsByNamePattern(searchString);
+        Assert.isTrue(accountService.accountExists("admin"));
 
-        Assert.notNull(types);
-        Assert.notEmpty(types, "Searching Accounts for '" + searchString + "' returned " + types.size() + " results instead of 2");
+        accounts = accountService.getAccountsByNamePattern(searchString);
+
+        Assert.notNull(accounts);
+        Assert.notEmpty(accounts);
+
+    }
+
+    @Test
+    public void getAccountsByNamePattern2() throws Exception {
+
+        String searchString = "user";
+
+        Assert.isTrue(accountService.accountExists("user1"));
+
+        List<? extends Account> accounts = accountService.getAccountsByNamePattern(searchString, Account.class);
+
+        Assert.notNull(accounts);
+        Assert.notEmpty(accounts);
+
+        searchString = "adm";
+
+        Assert.isTrue(accountService.accountExists("admin"));
+
+        accounts = accountService.getAccountsByNamePattern(searchString, DirectChargeAccount.class);
+
+        Assert.notNull(accounts);
+        Assert.notEmpty(accounts);
 
     }
 

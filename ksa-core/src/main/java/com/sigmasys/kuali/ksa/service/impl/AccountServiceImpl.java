@@ -71,16 +71,19 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
     private static final Log logger = LogFactory.getLog(AccountServiceImpl.class);
 
-    private static final String GET_FULL_ACCOUNTS_QUERY = "select distinct a from Account a " +
+    private static final String GET_FULL_ACCOUNTS_JOIN =
             "left outer join fetch a.personNames pn " +
-            "left outer join fetch a.postalAddresses pa " +
-            "left outer join fetch a.electronicContacts ec " +
-            "left outer join fetch a.statusType st " +
-            "left outer join fetch a.latePeriod lp " +
-            "left outer join fetch a.keyPairs kp " +
-            "where pn.default = true and " +
-            "      pa.default = true and " +
-            "      ec.default = true";
+                    "left outer join fetch a.postalAddresses pa " +
+                    "left outer join fetch a.electronicContacts ec " +
+                    "left outer join fetch a.statusType st " +
+                    "left outer join fetch a.latePeriod lp " +
+                    "left outer join fetch a.keyPairs kp " +
+                    "where pn.default = true and " +
+                    "      pa.default = true and " +
+                    "      ec.default = true";
+
+    private static final String GET_FULL_ACCOUNTS_QUERY = "select distinct a from Account a " + GET_FULL_ACCOUNTS_JOIN;
+
 
     @Autowired
     private TransactionService transactionService;
@@ -657,11 +660,26 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public List<Account> getAccountsByNamePattern(String pattern) {
+        return getAccountsByNamePattern(pattern, Account.class);
+    }
+
+    /**
+     * This method fetches all KSA accounts that match the substring %name% and Account subclass.
+     *
+     * @param pattern      Name pattern
+     * @param accountClass Account subclass
+     * @return the list of Account instances
+     */
+    @Override
+    public <T extends Account> List<T> getAccountsByNamePattern(String pattern, Class<T> accountClass) {
 
         PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
-        Query query = em.createQuery(GET_FULL_ACCOUNTS_QUERY + " and upper(a.id) like upper(:pattern)");
+        Query query = em.createQuery("select distinct a from " + accountClass.getName() + " a " +
+                GET_FULL_ACCOUNTS_JOIN + " and upper(a.id) like upper(:pattern)");
+
         query.setParameter("pattern", "%" + pattern + "%");
+
         return query.getResultList();
     }
 
@@ -823,14 +841,19 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
     protected PersonName addPersonName(String userId, PersonName personName, boolean createKimName) {
 
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
-
         Account account = getFullAccount(userId);
         if (account == null) {
             String errMsg = "Account with ID = " + userId + " does not exist";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
+
+        return addPersonName(account, personName, createKimName);
+    }
+
+    protected PersonName addPersonName(Account account, PersonName personName, boolean createKimName) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
         Set<PersonName> personNames = account.getPersonNames();
         if (personNames == null) {
@@ -845,15 +868,19 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         personName.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
         personName.setLastUpdate(new Date());
-        //personName.setAccount(account);
-
-        persistEntity(personName);
 
         personNames.add(personName);
+
+        // Persisting a new PersonName instance
+        persistEntity(personName);
+
         account.setPersonNames(personNames);
 
+        // Updating the existing account in the persistent store
+        persistEntity(account);
+
         if (createKimName && account.isKimAccount()) {
-            addKimPersonName(userId, personName);
+            addKimPersonName(account.getId(), personName);
         }
 
         return personName;
@@ -874,14 +901,19 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
     protected PostalAddress addPostalAddress(String userId, PostalAddress postalAddress, boolean createKimAddress) {
 
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
-
         Account account = getFullAccount(userId);
         if (account == null) {
             String errMsg = "Account with ID = " + userId + " does not exist";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
+
+        return addPostalAddress(account, postalAddress, createKimAddress);
+    }
+
+    protected PostalAddress addPostalAddress(Account account, PostalAddress postalAddress, boolean createKimAddress) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
         Set<PostalAddress> addresses = account.getPostalAddresses();
         if (addresses == null) {
@@ -896,15 +928,19 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         postalAddress.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
         postalAddress.setLastUpdate(new Date());
-        //postalAddress.setAccount(account);
-
-        persistEntity(postalAddress);
 
         addresses.add(postalAddress);
+
+        // Persisting a new PostalAddress instance
+        persistEntity(postalAddress);
+
         account.setPostalAddresses(addresses);
 
+        // Updating the existing account in the persistent store
+        persistEntity(account);
+
         if (createKimAddress && account.isKimAccount()) {
-            addKimPostalAddress(userId, postalAddress);
+            addKimPostalAddress(account.getId(), postalAddress);
         }
 
         return postalAddress;
@@ -925,14 +961,19 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
     protected ElectronicContact addElectronicContact(String userId, ElectronicContact electronicContact, boolean createKimContact) {
 
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
-
         Account account = getFullAccount(userId);
         if (account == null) {
             String errMsg = "Account with ID = " + userId + " does not exist";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
+
+        return addElectronicContact(account, electronicContact, createKimContact);
+    }
+
+    protected ElectronicContact addElectronicContact(Account account, ElectronicContact electronicContact, boolean createKimContact) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
         Set<ElectronicContact> contacts = account.getElectronicContacts();
         if (contacts == null) {
@@ -947,15 +988,19 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         electronicContact.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
         electronicContact.setLastUpdate(new Date());
-        //electronicContact.setAccount(account);
-
-        persistEntity(electronicContact);
 
         contacts.add(electronicContact);
+
+        // Persisting a new ElectronicContact instance
+        persistEntity(electronicContact);
+
         account.setElectronicContacts(contacts);
 
+        // Updating the existing account in the persistent store
+        persistEntity(account);
+
         if (createKimContact && account.isKimAccount()) {
-            addKimElectronicContact(userId, electronicContact);
+            addKimElectronicContact(account.getId(), electronicContact);
         }
 
         return electronicContact;
@@ -1575,11 +1620,9 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             throw new IllegalStateException(errMsg);
         }
 
-        persistEntity(account);
-
-        addPersonName(account.getId(), defaultName, false);
-        addPostalAddress(account.getId(), defaultAddress, false);
-        addElectronicContact(account.getId(), defaultContact, false);
+        addPersonName(account, defaultName, false);
+        addPostalAddress(account, defaultAddress, false);
+        addElectronicContact(account, defaultContact, false);
 
         if (account.isKimAccount()) {
             createKimAccount(account, defaultName, defaultAddress, defaultContact, password);
