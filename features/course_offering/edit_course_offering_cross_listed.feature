@@ -22,6 +22,7 @@ Feature: WC.Create and remove cross-listings
 
     When I create a cross-listed Course Offering
     And I remove a cross-listed Course Offering
+    And I edit the course offering
     Then the edit page should not indicate a cross-listing
     And I manage the owner Course Offering
     Then the owner course offering is not indicated as cross-listed with the alias CO
