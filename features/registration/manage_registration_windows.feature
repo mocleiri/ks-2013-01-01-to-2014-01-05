@@ -4,7 +4,6 @@ Feature: EC.Search for a registration window
   Background:
     Given I am logged in as a Schedule Coordinator
 
-  @bug @KSENROLL-8425
   Scenario: Successfully search for Registration Windows
     When I manage Registration Windows for a term and a period
     Then I verify that all Registration Window fields are present
