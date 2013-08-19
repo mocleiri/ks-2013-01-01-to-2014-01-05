@@ -1345,7 +1345,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return removeAllocations(transactionId, true);
     }
 
-    private List<GlTransaction> removeAllocations(Long transactionId, boolean excludeLockAllocations) {
+    protected List<GlTransaction> removeAllocations(Long transactionId, boolean excludeLockAllocations) {
 
         Transaction transaction = getTransaction(transactionId);
         if (transaction == null) {
@@ -1353,6 +1353,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             logger.error(errMsg);
             throw new TransactionNotFoundException(errMsg);
         }
+
+        return removeAllocations(transaction, excludeLockAllocations);
+    }
+
+    protected List<GlTransaction> removeAllocations(Transaction transaction, boolean excludeLockAllocations) {
 
         StringBuilder builder = new StringBuilder("select distinct a from Allocation a " +
                 " where (a.firstTransaction.id = :id or a.secondTransaction.id = :id)");
@@ -1363,7 +1368,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         Query query = em.createQuery(builder.toString());
 
-        query.setParameter("id", transactionId);
+        query.setParameter("id", transaction.getId());
 
         List<Allocation> allocations = query.getResultList();
 
@@ -1562,7 +1567,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         return glTransactions;
-
     }
 
     protected List<GlTransaction> removeAllocation(Long transactionId1, Long transactionId2,
@@ -3485,10 +3489,192 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public long getNumberOfTransactions(TransactionTypeId transactionTypeId) {
+
+        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
+
         Query query = em.createQuery("select count(id) from Transaction where transactionType.id = :transactionTypeId");
+
         query.setParameter("transactionTypeId", transactionTypeId);
+
         return (Long) query.getSingleResult();
     }
+
+    /**
+     * This method is used to progressively undo allocations on a transaction to find an unallocated balance.
+     *
+     * @param transactionId Transaction ID
+     * @param amount        Required balance
+     * @return set of AllocationReversalType values
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Set<AllocationReversalType> reverseAllocations(Long transactionId, BigDecimal amount) {
+
+        PermissionUtils.checkPermissions(Permission.REMOVE_ALLOCATION, Permission.REVERSE_TRANSACTION);
+
+        Transaction transaction = getTransaction(transactionId);
+        if (transaction == null) {
+            String errMsg = "Transaction with ID = " + transactionId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        Set<AllocationReversalType> reversalTypes = new HashSet<AllocationReversalType>();
+
+        BigDecimal prevAmount = transaction.getUnallocatedAmount();
+
+        // Removing non-locked allocations
+        removeAllocations(transaction, true);
+
+        // Getting the updated transaction instance
+        transaction = getTransaction(transactionId);
+
+        BigDecimal unallocatedAmount = transaction.getUnallocatedAmount();
+
+        if (unallocatedAmount.compareTo(prevAmount) > 0) {
+            reversalTypes.add(AllocationReversalType.UNALLOCATED);
+        }
+
+        if (unallocatedAmount.compareTo(amount) >= 0) {
+            return reversalTypes;
+        }
+
+        // At this point only locked allocations left
+        List<Allocation> lockedAllocations = getAllocations(transactionId);
+
+        if (CollectionUtils.isNotEmpty(lockedAllocations)) {
+
+            Set<Allocation> activeLockedAllocations = new HashSet<Allocation>();
+            Set<Allocation> reversingLockedAllocations = new HashSet<Allocation>();
+            Set<Allocation> activeInternallyLockedAllocations = new HashSet<Allocation>();
+            Set<Allocation> reversingInternallyLockedAllocations = new HashSet<Allocation>();
+
+            for (Allocation lockedAllocation : lockedAllocations) {
+                if (lockedAllocation.isLocked()) {
+                    TransactionStatus status1 = lockedAllocation.getFirstTransaction().getStatus();
+                    TransactionStatus status2 = lockedAllocation.getSecondTransaction().getStatus();
+                    if (status1 != null && status2 != null) {
+                        if (status1 == TransactionStatus.ACTIVE || status2 == TransactionStatus.ACTIVE) {
+                            if (lockedAllocation.isInternallyLocked()) {
+                                activeInternallyLockedAllocations.add(lockedAllocation);
+                            } else {
+                                activeLockedAllocations.add(lockedAllocation);
+                            }
+                        } else if (status1 == TransactionStatus.REVERSING || status2 == TransactionStatus.REVERSING) {
+                            if (lockedAllocation.isInternallyLocked()) {
+                                reversingInternallyLockedAllocations.add(lockedAllocation);
+                            } else {
+                                reversingLockedAllocations.add(lockedAllocation);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Removing ACTIVE locked allocations
+            for (Allocation allocation : activeLockedAllocations) {
+                removeAllocation(allocation, true);
+            }
+
+            // Getting the updated transaction instance
+            transaction = getTransaction(transactionId);
+
+            prevAmount = unallocatedAmount;
+
+            unallocatedAmount = transaction.getUnallocatedAmount();
+
+            if (unallocatedAmount.compareTo(prevAmount) > 0) {
+                reversalTypes.add(AllocationReversalType.LOCKED_ALLOCATION);
+            }
+
+            if (unallocatedAmount.compareTo(amount) >= 0) {
+                return reversalTypes;
+            }
+
+            // Reversing transactions implicated in the locked allocations
+            for (Allocation allocation : reversingLockedAllocations) {
+
+                Transaction transaction1 = allocation.getFirstTransaction();
+                Transaction transaction2 = allocation.getSecondTransaction();
+
+                Transaction reverseTransaction = (transaction1.getStatus() == TransactionStatus.REVERSING) ?
+                        transaction1 : transaction2;
+
+                String memoText = "Reversed transaction ID = " + reverseTransaction.getId() + ", amount = " +
+                        transaction.getAmount();
+
+                reverseTransaction(reverseTransaction.getId(), memoText, reverseTransaction.getAmount());
+            }
+
+            // Getting the updated transaction instance
+            transaction = getTransaction(transactionId);
+
+            prevAmount = unallocatedAmount;
+
+            unallocatedAmount = transaction.getUnallocatedAmount();
+
+            if (unallocatedAmount.compareTo(prevAmount) > 0) {
+                reversalTypes.add(AllocationReversalType.MANUAL_REVERSAL);
+            }
+
+            if (unallocatedAmount.compareTo(amount) >= 0) {
+                return reversalTypes;
+            }
+
+            // Removing ACTIVE internally locked allocations
+            for (Allocation allocation : activeInternallyLockedAllocations) {
+                removeAllocation(allocation, true);
+            }
+
+            // Getting the updated transaction instance
+            transaction = getTransaction(transactionId);
+
+            prevAmount = unallocatedAmount;
+
+            unallocatedAmount = transaction.getUnallocatedAmount();
+
+            if (unallocatedAmount.compareTo(prevAmount) > 0) {
+                reversalTypes.add(AllocationReversalType.INTERNALLY_LOCKED_ALLOCATION);
+            }
+
+            if (unallocatedAmount.compareTo(amount) >= 0) {
+                return reversalTypes;
+            }
+
+            // Reversing transactions implicated in the internally locked allocations
+            for (Allocation allocation : reversingInternallyLockedAllocations) {
+
+                Transaction transaction1 = allocation.getFirstTransaction();
+                Transaction transaction2 = allocation.getSecondTransaction();
+
+                Transaction reverseTransaction = (transaction1.getStatus() == TransactionStatus.REVERSING) ?
+                        transaction1 : transaction2;
+
+                String memoText = "Reversed transaction ID = " + reverseTransaction.getId() + ", amount = " +
+                        transaction.getAmount();
+
+                reverseTransaction(reverseTransaction.getId(), memoText, reverseTransaction.getAmount());
+            }
+
+            // Getting the updated transaction instance
+            transaction = getTransaction(transactionId);
+
+            prevAmount = unallocatedAmount;
+
+            unallocatedAmount = transaction.getUnallocatedAmount();
+
+            if (unallocatedAmount.compareTo(prevAmount) > 0) {
+                reversalTypes.add(AllocationReversalType.INTERNALLY_LOCKED_MANUAL_REVERSAL);
+            }
+
+            if (unallocatedAmount.compareTo(amount) >= 0) {
+                return reversalTypes;
+            }
+        }
+
+        return reversalTypes;
+    }
+
 
     private List<Tag> removeTags(Long[] tagIdsToRemove, List<Tag> tags) {
 

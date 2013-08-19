@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
@@ -1051,5 +1052,15 @@ public interface TransactionService {
      * @return the number of transactions
      */
     long getNumberOfTransactions(TransactionTypeId transactionTypeId);
+
+
+    /**
+     * This method is used to progressively undo allocations on a transaction to find an unallocated balance.
+     *
+     * @param transactionId Transaction ID
+     * @param amount        Required balance
+     * @return set of AllocationReversalType values
+     */
+    Set<AllocationReversalType> reverseAllocations(Long transactionId, BigDecimal amount);
 
 }
