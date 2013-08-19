@@ -14,3 +14,8 @@ Feature: SA.KRMS AO.ELIG8-5 View and Compare the CLU and CO rule to a new AO rul
   Scenario: Test whether the AO rule can be compared to the CLU and CO rule
     When I compare the added rule with the CO and CLU rules in the Student Eligibility & Prerequisite section
     Then the AO rule should differ from the CO and CLU rules in the Student Eligibility & Prerequisite section
+
+  #ELIG8.5.EB3 (KSENROLL-8710)
+  Scenario: Test whether the user can view catalog and course offering rules
+    When I view the catalog and course offering rule for the Student Eligibility & Prerequisite section
+    Then both rules for the Student Eligibility & Prerequisite section should be the same
