@@ -8,6 +8,7 @@ Feature: SA.KRMS AO.ELIG8-4 Suppress the Copied rules on Activity Offering level
   Scenario: Test whether deleting the copied CO rule completely removes the rule from the AO level
     When I suppress the copied rule in the Student Eligibility & Prerequisite section
     Then there should be no rule in the Student Eligibility & Prerequisite section
+    And no warning in the Student Eligibility & Prerequisite section is displayed stating "Course Offering rule will be enforced on Activity Offering."
 
   #ELIG8.4.EB2 (KSENROLL-8746)
   @pending

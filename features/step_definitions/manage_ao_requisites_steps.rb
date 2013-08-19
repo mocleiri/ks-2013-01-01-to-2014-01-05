@@ -226,6 +226,14 @@ Then /^a (?:error|warning) in the Student Eligibility & Prerequisite section is 
   end
 end
 
+Then /^no (?:error|warning) in the Student Eligibility & Prerequisite section is displayed stating "([^"]*)"$/ do |exp_msg|
+  @prereq.open_agenda_section
+  on ActivityOfferingRequisites do |page|
+    page.loading.wait_while_present
+    page.prereq_message_section.text.should_not match /.*#{exp_msg}.*/
+  end
+end
+
 
 
 When /^I update the manage activity offering agendas page$/ do
