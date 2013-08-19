@@ -1,5 +1,5 @@
 @nightly
-Feature: KRMS.ELIG7-2 Delete all statements of CO copied from CLU
+Feature: SA.KRMS CO.ELIG7-2 Delete all statements of CO copied from CLU
 
   Background:
     Given I am logged in as admin

@@ -1,5 +1,5 @@
 @nightly
-Feature: KRMS.ELIG9-6 AND, OR and Move
+Feature: SA.KRMS CO.ELIG9-6 AND, OR and Move
 
   Background:
     Given I am logged in as admin

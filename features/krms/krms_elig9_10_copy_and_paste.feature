@@ -1,5 +1,5 @@
 @nightly
-Feature: KRMS.ELIG9-10 Copy and Paste
+Feature: SA.KRMS CO.ELIG9-10 Copy and Paste
 
   Background:
     Given I am logged in as admin

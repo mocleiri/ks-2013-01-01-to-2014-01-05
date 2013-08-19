@@ -1,5 +1,5 @@
 @nightly
-Feature: KRMS.ELIG7-3 Adding CO to empty CLU
+Feature: SA.KRMS CO.ELIG7-3 Adding CO to empty CLU
 
   Background:
     Given I am logged in as admin
