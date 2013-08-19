@@ -66,6 +66,12 @@ When /^I replace the CO rule in the Student Eligibility & Prerequisite section$/
   @prereq.sepr_replace_co_rule
 end
 
+When /^I edit the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "B"
+  @prereq = make AOPreparationPrerequisiteRule, :activity => "B"
+  @prereq.sepr_edit_replaced_co_rule
+end
+
 When /^I commit the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "C"
   @prereq = make AOPreparationPrerequisiteRule, :activity => "C"
@@ -149,6 +155,14 @@ Then /^the created rule should not exist in the Student Eligibility & Prerequisi
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
     page.agenda_management_section.text.should_not match @prereq.test_text("agenda", "ENGL101,ENGL478,HIST416,BSCI202,BSCI361,HIST110,Text to copy,free form text input value")
+  end
+end
+
+Then /^the edited rule should be shown in the Student Eligibility & Prerequisite section$/ do
+  @prereq.open_agenda_section
+  on ActivityOfferingRequisites do |page|
+    page.loading.wait_while_present
+    page.agenda_management_section.text.should match @prereq.test_text("agenda", "ENGL313,Text added while editing,Text to copy")
   end
 end
 

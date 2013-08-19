@@ -510,6 +510,14 @@ class AORequisitesData
     end
   end
 
+  def delete_statement( node)
+    on ManageAORequisites do |page|
+      page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+      page.del_btn
+      page.edit_loading.wait_while_present
+    end
+  end
+
   def delete_group( node)
     on ManageAORequisites do |page|
       page.edit_tree_section.lis.each do |list|
@@ -1017,6 +1025,30 @@ class AOPreparationPrerequisiteRule < AORequisitesData
     end
   end
 
+  def sepr_edit_replaced_co_rule
+    sepr_replace_co_rule
+    commit_changes( true)
+    on ActivityOfferingRequisites do |page|
+      if page.prereq_edit_link.exists?
+        page.loading.wait_while_present
+        page.prereq_edit
+        edit_statements_in_rule
+      end
+    end
+  end
+
+  def rp_edit_replaced_co_rule
+    rp_replace_co_rule
+    commit_changes( true)
+    on ActivityOfferingRequisites do |page|
+      if page.prep_edit_link.exists?
+        page.loading.wait_while_present
+        page.prep_edit
+        edit_statements_in_rule
+      end
+    end
+  end
+
   def sepr_suppress_added_ao_rule
     sepr_add_ao_rule
     on ActivityOfferingRequisites do |page|
@@ -1194,6 +1226,16 @@ class AOPreparationPrerequisiteRule < AORequisitesData
     rp_sepr_all_courses_rule( "group", "A", "HIST416,ENGL478", "", "")
     rp_sepr_text_rule( "add", "", "Text to copy")
     rp_sepr_number_courses_rule( "group", "C", "2", "BSCI202,BSCI361,HIST110", "", "")
+    on ManageAORequisites do |page|
+      page.update_rule_btn
+    end
+  end
+
+  def edit_statements_in_rule
+    delete_statement( "E")
+    delete_group( "B")
+    edit_existing_node( "A", "course", "ENGL313")
+    rp_sepr_text_rule( "add", "", "Text added while editing")
     on ManageAORequisites do |page|
       page.update_rule_btn
     end
