@@ -370,6 +370,8 @@ class AcademicTerm
   end
 
   def make_official
+    search
+    on(CalendarSearch).edit @term_name
     on EditAcademicTerms do |page|
       page.go_to_terms_tab
       page.make_term_official(@term_type)
