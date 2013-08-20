@@ -1,5 +1,5 @@
 @nightly
-Feature: SA.KRMS CO.ELIG9-10 Add Statement and Create Group
+Feature: SA.ELIG9-10 Add Statement and Create Group
 
   Background:
     Given I am logged in as admin

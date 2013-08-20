@@ -1,5 +1,5 @@
 @nightly
-Feature: SA.KRMS CO.ELIG9-11 Delete
+Feature: SA.ELIG9-11 Delete
 
   Background:
     Given I am logged in as admin

@@ -1,5 +1,5 @@
 @nightly
-Feature: SA.KRMS CO.ELIG9-4 Free Text
+Feature: SA.ELIG9-4 Free Text
 
   Background:
     Given I am logged in as admin

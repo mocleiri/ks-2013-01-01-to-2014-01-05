@@ -1,4 +1,4 @@
-Feature: SA.KRMS AO.ELIG8-3 Modify the Copied rules on Activity Offering level
+Feature: SA.ELIG8-3 Modify the Copied rules on Activity Offering level
 
   Background:
     Given I am logged in as admin

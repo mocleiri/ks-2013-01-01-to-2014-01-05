@@ -1,5 +1,5 @@
 @nightly
-Feature: SA.KRMS CO.ELIG9-1 Data Setup
+Feature: SA.ELIG9-1 Data Setup
 
   Background:
     Given I am logged in as admin

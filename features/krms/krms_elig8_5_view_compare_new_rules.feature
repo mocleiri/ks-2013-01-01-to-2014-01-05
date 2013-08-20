@@ -1,4 +1,4 @@
-Feature: SA.KRMS AO.ELIG8-5 View and Compare the CLU and CO rule to a new AO rule where there was no CO rule
+Feature: SA.ELIG8-5 View and Compare the CLU and CO rule to a new AO rule where there was no CO rule
 
   Background:
     Given I am logged in as admin

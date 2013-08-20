@@ -1,5 +1,5 @@
 @nightly
-Feature: SA.KRMS CO.ELIG7-1 Modify CO copied from CLU
+Feature: SA.ELIG7-1 Modify CO copied from CLU
 
   Background:
     Given I am logged in as admin

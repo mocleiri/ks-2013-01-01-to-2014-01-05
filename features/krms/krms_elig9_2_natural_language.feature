@@ -1,5 +1,5 @@
 @nightly
-Feature: SA.KRMS CO.ELIG9-2 Natural Language
+Feature: SA.ELIG9-2 Natural Language
 
   Background:
     Given I am logged in as admin

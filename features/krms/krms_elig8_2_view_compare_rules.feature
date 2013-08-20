@@ -1,5 +1,5 @@
 @nightly
-Feature: SA.KRMS AO.ELIG8-2 View the Catalog and Course Offering rule
+Feature: SA.ELIG8-2 View the Catalog and Course Offering rule
 
   Background:
     Given I am logged in as admin

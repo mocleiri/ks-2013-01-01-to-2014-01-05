@@ -1,5 +1,5 @@
 @nightly
-Feature: SA.KRMS CO.ELIG7-4 Compare to Canonical
+Feature: SA.ELIG7-4 Compare to Canonical
 
   Background:
     Given I am logged in as admin
