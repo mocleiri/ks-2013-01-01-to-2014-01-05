@@ -26,15 +26,12 @@
     <param name="appserver.url">http://localhost:8080</param>
     <param name="app.code">student</param>
     <param name="application.url">${appserver.url}/${app.code}</param>
-
     <param name="module.name">myplan-embedded</param>
     <param name="application.id">myplan</param>
     <param name="config.location">classpath:META-INF/embedded-config-defaults.xml</param>
     <param name="config.location">classpath:META-INF/common-config-defaults.xml</param>
     <param name="config.location">classpath:META-INF/common-config-locations.xml</param>
-
     <param name="krad.url">${appserver.url}/${app.code}/${application.id}</param>
-
     <!-- Connection Pooling Options -->
     <param name="threadPool.on">true</param>
 
@@ -79,9 +76,7 @@
 
     <param name="ks.myplan.jpa.showSql">false</param>
     <param name="ks.myplan.jpa.generateDdl">false</param>
-    <param name="ks.myplan.jpa.JpaProperties.hibernate.transaction.manager_lookup_class">
-        org.hibernate.transaction.JOTMTransactionManagerLookup
-    </param>
+    <param name="ks.myplan.jpa.JpaProperties.hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JOTMTransactionManagerLookup</param>
     <param name="ks.myplan.jpa.JpaProperties.hibernate.hbm2ddl.auto">validate</param>
     <param name="ks.myplan.jpa.JpaProperties.hibernate.connection.release_mode">after_statement</param>
     <param name="ks.myplan.jpa.JpaProperties.hibernate.connection.autocommit">false</param>
@@ -93,13 +88,9 @@
     <param name="ks.myplan.externalizable.images.url">/${app.code}/ks-myplan/images/</param>
 
     <!-- MyPlan properties file containing Error Messages -->
-    <param name="rice.struts.message.resources" override="true">
-        ${rice.struts.message.resources},org.kuali.student.myplan.KSMyPlan-ApplicationResources
-    </param>
+    <param name="rice.struts.message.resources" override="true">${rice.struts.message.resources},org.kuali.student.myplan.KSMyPlan-ApplicationResources</param>
 
-    <param name="resourceBundleNames" override="true">
-        org.kuali.rice.krad.KRADApplicationResources,org.kuali.rice.krad.ApplicationResources,org.kuali.student.myplan.KSMyPlan-ApplicationResources
-    </param>
+    <param name="resourceBundleNames" override="true">org.kuali.rice.krad.KRADApplicationResources,org.kuali.rice.krad.ApplicationResources,org.kuali.student.myplan.KSMyPlan-ApplicationResources</param>
 
     <!-- used to show KS links in Rice Portal -->
     <param name="portal.show.sample.app">true</param>
@@ -173,7 +164,7 @@
     <!-- <param name="ks.embedded.context">classpath:ks-embedded-admin-context.xml</param> -->
 
     <!-- additional context files -->
-    <!-- 
+    <!--
     <param name="ks.authentication.context">classpath:ks-spring-security.xml</param>
     <param name="rice.KS-SYS.additionalSpringFiles">${ks.projects},${ks.embedded.context},${ks.authentication.context},${ks.institutional.context}</param>
 	-->
@@ -193,20 +184,14 @@
     <param name="rice.portal.logout.redirectUrl">${ks.logout.url}</param>
 
     <!-- OrgUrls -->
-    <param name="ks.org.MainEntryPoint" override="false">
-        ${application.url}/org.kuali.student.core.organization.ui.OrgEntry/OrgEntry.jsp
-    </param>
+    <param name="ks.org.MainEntryPoint" override="false">${application.url}/org.kuali.student.core.organization.ui.OrgEntry/OrgEntry.jsp</param>
 
     <!-- LumUrls -->
     <param name="lum.application.url" override="false">${application.url}</param>
-    <param name="ks.lum.MainEntryPoint" override="false">
-        ${lum.application.url}/org.kuali.student.lum.lu.ui.main.LUMMain/LUMMain.jsp?view=CURRICULUM_MANAGEMENT
-    </param>
+    <param name="ks.lum.MainEntryPoint" override="false">${lum.application.url}/org.kuali.student.lum.lu.ui.main.LUMMain/LUMMain.jsp?view=CURRICULUM_MANAGEMENT</param>
 
     <!-- KS Home Url -->
-    <param name="ks.home.MainEntryPoint" override="false">
-        ${lum.application.url}/org.kuali.student.lum.lu.ui.main.LUMMain/LUMMain.jsp
-    </param>
+    <param name="ks.home.MainEntryPoint" override="false">${lum.application.url}/org.kuali.student.lum.lu.ui.main.LUMMain/LUMMain.jsp</param>
 
     <param name="ks.embedded.doDataLoad">false</param>
 
@@ -231,17 +216,8 @@
     <param name="ks.academicRecord.enable.caching">true</param>
 
     <!-- Dictionary Context Overrides -->
-    <param name="uw.ks.core.dictionary.serviceContextLocations">classpath:ks-proposalInfo-dictionary-context.xml,
-        classpath:ks-workflow-dictionary-context.xml, classpath:ks-document-dictionary-context.xml,
-        classpath:ks-comment-dictionary-context.xml, classpath:ks-atp-dictionary-context.xml,
-        classpath:ks-lrc-dictionary-context.xml, classpath:uw-base-dictionary-override.xml,
-        classpath:uw-comment-dictionary-override.xml
-    </param>
-    <param name="uw.ks.lum.dictionary.serviceContextLocations">classpath:ks-courseInfo-dictionary-context.xml,
-        classpath:ks-programInfo-dictionary-context.xml, classpath:ks-statement-dictionary-context.xml,
-        classpath:ks-lrc-dictionary-context.xml, classpath:uw-base-dictionary-override.xml,
-        classpath:uw-courseInfo-dictionary-override.xml
-    </param>
+    <param name="uw.ks.core.dictionary.serviceContextLocations">classpath:ks-proposalInfo-dictionary-context.xml, classpath:ks-workflow-dictionary-context.xml, classpath:ks-document-dictionary-context.xml, classpath:ks-comment-dictionary-context.xml, classpath:ks-atp-dictionary-context.xml, classpath:ks-lrc-dictionary-context.xml, classpath:uw-base-dictionary-override.xml, classpath:uw-comment-dictionary-override.xml</param>
+    <param name="uw.ks.lum.dictionary.serviceContextLocations">classpath:ks-courseInfo-dictionary-context.xml, classpath:ks-programInfo-dictionary-context.xml, classpath:ks-statement-dictionary-context.xml, classpath:ks-lrc-dictionary-context.xml, classpath:uw-base-dictionary-override.xml, classpath:uw-courseInfo-dictionary-override.xml</param>
     <param name="uw.academic.plan.serviceContextLocations">classpath:uw-planItem-dictionary-override.xml</param>
     <!--<param name="css.files" override="true">ks-myplan/css/myplan.css,${css.files}</param>-->
 
