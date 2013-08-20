@@ -18,13 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.fm.*;
-import com.sigmasys.kuali.ksa.model.pb.PaymentBillingSchedule;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail;
 import com.sigmasys.kuali.ksa.model.security.Permission;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
-import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
+import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.fm.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
@@ -65,13 +63,13 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     private TransactionService transactionService;
 
     @Autowired
-    private AuditableEntityService auditableEntityService;
-    
-    @Autowired
     private ThirdPartyTransferService thirdPartyService;
     
     @Autowired
     private PaymentBillingService paymentBillingService;
+    
+    @Autowired
+    private TransactionTransferService transactionTransferService;
 
 
     /**
@@ -143,20 +141,20 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // Get all manifests for the session:
         List<FeeManagementManifest> manifests = getManifests(feeManagementSessionId);
         List<PaymentBillingTransferDetail> pbtDetails = new ArrayList<PaymentBillingTransferDetail>();
-        List <ThirdPartyPlan> tpPlans = new ArrayList<ThirdPartyPlan>();
+        List <ThirdPartyTransferDetail> tptDetails = new ArrayList<ThirdPartyTransferDetail>();
         
         for (FeeManagementManifest manifest : manifests) {
         	// If there is no transaction, process manifest charge processing.
         	// Otherwise, continue to the new manifest.
         	// Inherently, all ORIGINAL manifests will have a Transaction.
         	if (manifest.getTransaction() == null) {
-        		processManifestCharge(manifest, session, pbtDetails, tpPlans);
+        		processManifestCharge(manifest, session, pbtDetails, tptDetails);
         	}
         }
         
         // If there were reversals, perform Transfer Reinstatement:
-        if (CollectionUtils.isNotEmpty(pbtDetails) || CollectionUtils.isNotEmpty(tpPlans)) {
-        	performTransferReinstatement(pbtDetails, tpPlans, session.getAccount());
+        if (CollectionUtils.isNotEmpty(pbtDetails) || CollectionUtils.isNotEmpty(tptDetails)) {
+        	performTransferReinstatement(pbtDetails, tptDetails, session.getAccount());
         }
         
         // Set the status of the Session to CHARGE and persist:
@@ -254,18 +252,18 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
      * @param tpPlan		A list of Third-party plans. An OUT Parameter.
      */
-    private void processManifestCharge(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
+    private void processManifestCharge(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	
     	// Check the manifest type:
     	switch(manifest.getType()) {
     	case CHARGE:
-    		processChargeTypeManifest(manifest, session, pbtDetails, tpPlans);
+    		processChargeTypeManifest(manifest, session, pbtDetails, tptDetails);
     		break;
     		
     	case CORRECTION:
     	case CANCELLATION:
     	case DISCOUNT:
-    		processNonChargeTypeManifest(manifest, session, pbtDetails, tpPlans);
+    		processNonChargeTypeManifest(manifest, session, pbtDetails, tptDetails);
     		break;
     		
     	default:
@@ -281,7 +279,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
      * @param tpPlan		A list of Third-party plans. An OUT Parameter.
      */
-    private void processChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
+    private void processChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	// Create a charge on the Account associated with the FM session:
     	String transactionTypeId = manifest.getTransactionTypeId();
     	
@@ -298,7 +296,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		
     		// If there is a linked manifest, process it:
     		if (manifest.getLinkedManifest() != null) {
-    			processManifestCharge(manifest.getLinkedManifest(), session, pbtDetails, tpPlans);
+    			processManifestCharge(manifest.getLinkedManifest(), session, pbtDetails, tptDetails);
     		}
     	}
     }
@@ -311,7 +309,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
      * @param tpPlan		A list of Third-party plans. An OUT Parameter.
      */
-    private void processNonChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
+    private void processNonChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	// Check if the linked manifest is complete, then process manifest charge, otherwise, move to the next manifest:
     	FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
     	
@@ -323,7 +321,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     			transactionService.removeAllocations(implicatedTransaction.getId());
     			
     			// Process the Implicated Transaction:
-    			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tpPlans);
+    			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
     		}
     	}
     }
@@ -339,7 +337,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param tpPlan				A list of Third-party plans. An OUT Parameter.
      */
     private void processImplicatedTransaction(FeeManagementManifest manifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction, 
-    					FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
+    					FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	// Check if allocations remain. If yes, process the Implicated Transaction based on its type:
     	boolean allocationsRemain = (implicatedTransaction.getAllocatedAmount() != null) && (implicatedTransaction.getLockedAllocatedAmount() != null)
     			&& (implicatedTransaction.getAllocatedAmount().compareTo(implicatedTransaction.getLockedAllocatedAmount().negate()) != 0);
@@ -349,8 +347,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		switch (implicatedTransaction.getStatus()) {
     		case TRANSFERRING:
     			// Process a TRANSFERRING Implicated Transaction and get back to this method:
-    			processTransferFound(implicatedTransaction, pbtDetails, tpPlans);
-    			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tpPlans);
+    			processTransferFound(implicatedTransaction, session, pbtDetails, tptDetails);
+    			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
     			break;
     			
     		case WRITING_OFF:
@@ -383,10 +381,151 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * 
      * @param implicatedTransaction	Transaction associated with the linked manifest.
      * @param pbtDetails			A list of Payment billing transfer details. An OUT parameter.
-     * @param tpPlan				A list of Third-party plans. An OUT Parameter.
+     * @param tpPlan				A list of Third-party transfer details. An OUT Parameter.
      */
-    private void processTransferFound(Transaction implicatedTransaction, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans) {
-    	// TODO: This has to be implemented
+    private void processTransferFound(Transaction implicatedTransaction, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
+    	
+    	// Look for a TransactionTransfer with a reversal status of Not Reversed or Partially Reversed:
+    	TransactionTransfer transactionTransfer = findUnreversedTransactionTransfer(implicatedTransaction);
+    	String memoText = null;
+    	
+    	if (transactionTransfer != null) {
+    		// Check the TransactionTransfer Group ID: 
+    		String transactionTransferGroupId = transactionTransfer.getGroupId();
+    		
+    		if (StringUtils.isNotBlank(transactionTransferGroupId)) {
+    			// Find PaymentBillingTransferDetail object:
+    			PaymentBillingTransferDetail pbtDetail = findPaymentBillingTransferDetail(transactionTransferGroupId);
+    			
+    			// If found, store the details until later and reverse the PaymentBillingPlan:
+    			if (pbtDetail != null) {
+    				// Add the object found to the list:
+    				pbtDetails.add(pbtDetail);
+    				
+    				// Reverse the PaymentBillingPlan:
+    				memoText = String.format("Payment Billing Transfer %d was reversed under fee management for session %d", pbtDetail.getId(), session.getId());
+    				paymentBillingService.reversePaymentBillingTransfer(pbtDetail.getId(), memoText, true);
+    			} else {
+    				// Search for ThirdPartyTransferDetail with the same Transfer GroupId:
+    				ThirdPartyTransferDetail tptDetail = findThirdPartyTransferDetail(transactionTransferGroupId);
+    				
+    				// If found, store the details until later and reverse the ThirdPartyPlan:
+    				if (tptDetail != null) {
+    					// Add the object found to the list:
+    					tptDetails.add(tptDetail);
+    					
+    					// Reverse the ThirdPartyPlan:
+    					memoText = String.format("Payment Billing Transfer %d was reversed under fee management for session %d", tptDetail.getId(), session.getId());
+    					thirdPartyService.reverseThirdPartyTransfer(tptDetail.getId(), memoText);
+    				} else {
+    					// Reverse TransferGroup:
+    					memoText = String.format("Transaction Transfer Group %s was reversed under fee management for session %d", transactionTransferGroupId, session.getId());
+    					transactionTransferService.reverseTransferGroup(transactionTransferGroupId, memoText, true);
+    				}
+    			}
+    		} else {
+    			// Reverse the one-off manual transfer:
+    			memoText = String.format("Transaction Transfer %d was reversed under fee management for session %d", transactionTransfer.getId(), session.getId());
+    			transactionTransferService.reverseTransactionTransfer(transactionTransfer.getId(), memoText);
+    		}
+    	} else {
+    		// Reverse the Implicated Transaction: 
+    		memoText = String.format("No Transaction Transfer object found for Transaction %d", implicatedTransaction.getId());
+    		reverseTransaction(implicatedTransaction, session, TransactionStatus.TRANSFERRING);
+    	}
+    	
+		// Mark session for manual review:
+		if (StringUtils.isNotBlank(memoText)) {
+	    	logger.warn(memoText);
+			session.setReviewRequired(true);
+			persistEntity(session);
+		}    	
+    }
+    
+    /**
+     * Finds a <code>PaymentBillingTransferDetail</code> object of type Charged and with the given Transfer Group ID.
+     * 
+     * @param transferGroupId	Transfer group ID to match <code>PaymentBillingTransferDetail</code> on.
+     * @return Matching <code>PaymentBillingTransferDetail</code> or <code>null</code> if no such object can be found.
+     */
+    private PaymentBillingTransferDetail findPaymentBillingTransferDetail(String transferGroupId) {
+        
+    	PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
+    	
+    	// Create and run a query to find PaymentBillingTransferDetail object:
+    	String jpql = "select d from PaymentBillingTransferDetail d " +
+                " left outer join fetch d.directChargeAccount dca " +
+                " left outer join fetch d.plan p " +
+                " left outer join fetch d.flatFeeCharge fc " +
+                " left outer join fetch d.variableFeeCharge vc " +
+                " left outer join fetch p.transferType t " +
+                " left outer join fetch t.generalLedgerType g " +
+                " where d.transferGroupId = :transferGroupId ";
+    	Query query = em.createQuery(jpql);
+
+        query.setParameter("transferGroupId", transferGroupId);
+
+        List<PaymentBillingTransferDetail> details = query.getResultList();
+
+        return CollectionUtils.isNotEmpty(details) ? details.get(0) : null;
+    }
+    
+    /**
+     * Finds a <code>ThirdPartyTransferDetail</code> object of type Charged and with the given Transfer Group ID.
+     * 
+     * @param transferGroupId	Transfer group ID to match <code>ThirdPartyTransferDetail</code> on.
+     * @return Matching <code>ThirdPartyTransferDetail</code> or <code>null</code> if no such object can be found.
+     */
+    private ThirdPartyTransferDetail findThirdPartyTransferDetail(String transferGroupId) {
+    	
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
+
+        // Create and run a query to find ThirdPartyTransferDetailObject:
+        String jpql = "select d from ThirdPartyTransferDetail d " +
+                " left outer join fetch d.directChargeAccount dca " +
+                " left outer join fetch d.plan p " +
+                " left outer join fetch p.thirdPartyAccount tpa " +
+                " left outer join fetch p.transferType t " +
+                " left outer join fetch t.generalLedgerType g " + 
+                " where d.transferGroupId = :transferGroupId ";
+        Query query = em.createQuery(jpql);
+
+        query.setParameter("transferGroupId", transferGroupId);
+
+        List<ThirdPartyTransferDetail> details = query.getResultList();
+
+        return CollectionUtils.isNotEmpty(details) ? details.get(0) : null;
+    }
+    
+    /**
+     * Finds a Partially Reversed or Not Reversed Transaction Transfer object that contains the 
+     * given Implicated Transaction.
+     * 
+     * @param implicatedTransaction	A Transaction for which to find an unreversed Transaction Transfer.
+     * @return	An unreversed TransactionTransfer for the given Transaction or <code>null</code> if no
+     * 	such Transaction Transfer object can be found.
+     */
+    private TransactionTransfer findUnreversedTransactionTransfer(Transaction implicatedTransaction) {
+    	
+    	PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TRANSFER);
+    	
+    	// Create a query to select a TransactionTransfer using the search criteria:
+    	String jpql = " select t from TransactionTransfer t " +
+                " left outer join fetch t.sourceTransaction " +
+                " left outer join fetch t.destTransaction " +
+                " left outer join fetch t.offsetTransaction " +
+                " left outer join fetch t.sourceReciprocalTransaction " +
+                " left outer join fetch t.destReciprocalTransaction " +
+                " left outer join fetch t.transferType " +
+                " where t.sourceTransaction.id = :transactionId and t.reversalStatusCode in (:reversalStatusCodes)";    	
+        Query query = em.createQuery(jpql);
+
+        query.setParameter("transactionId", implicatedTransaction.getId());
+        query.setParameter("reversalStatusCodes", Arrays.asList(ReversalStatus.NOT_REVERSED_CODE, ReversalStatus.PARTIALLY_REVERSED_CODE));
+        
+        List<TransactionTransfer> transfers = query.getResultList();
+
+        return CollectionUtils.isNotEmpty(transfers) ? transfers.get(0) : null;
     }
     
     /**
@@ -403,7 +542,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		logger.warn("Performing transaction reversal. FM session manual review required.");
     		performTransactionReversal(linkedManifest, implicatedTransaction);
     	} else {
-    		// TODO: Clear all manual allocations on the Implicated Transaction:
+    		// Clear all manual allocations on the Implicated Transaction:
+    		transactionService.reverseAllocations(implicatedTransaction.getId(), implicatedTransaction.getAllocatedAmount());
     		
         	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
         	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
@@ -444,11 +584,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	
     	if ((status == TransactionStatus.CANCELLING) || (status == TransactionStatus.DISCOUNTING) || (status == TransactionStatus.REVERSING)) {
 	    	
-	    	// TODO: Figure out what the statement prefix is:
 	    	// Reverse the transaction:
-	    	BigDecimal reversalAmount = implicatedTransaction.getAmount();
-	    	Transaction reversalTransaction = transactionService.reverseTransaction(implicatedTransaction.getId(), "Reversing Implicating Transaction", 
-	    			reversalAmount, "Some statement prefix", status);
+	    	Transaction reversalTransaction = reverseTransaction(implicatedTransaction, linkedManifest.getSession(), status);
 	    	
 	    	linkedManifest.setTransaction(reversalTransaction);
 	    	linkedManifest.setSessionCurrent(true);
@@ -459,34 +596,51 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     }
     
     /**
+     * Reverses the given transaction and returns the reversal Transaction.
+     * 
+     * @param transaction	Transaction to reverse.
+     * @param session		FM Session
+     * @param status		Transaction status.
+     * @return The reversal Transaction.
+     */
+    private Transaction reverseTransaction(Transaction transaction, FeeManagementSession session, TransactionStatus status) {
+    	BigDecimal reversalAmount = transaction.getAmount();
+    	String statementPrefix = ""; // According to Paul there are no statement prefix
+    	String memoText = String.format("Transaction %d was reversed in the amount of %f by fee management under session %d", 
+    			transaction.getId(), reversalAmount, session.getId());
+    	Transaction reversalTransaction = transactionService.reverseTransaction(transaction.getId(), memoText, reversalAmount, statementPrefix, status);
+    	
+    	return reversalTransaction;
+    }
+    
+    /**
      * Performs transfer reinstatement.
      * 
      * @param pbtDetails	A list of Payment billing transfer details.
      * @param tpPlan		A list of Third-party plans.
      * @param account		An Account associated with the the FM Session.
      */
-    private void performTransferReinstatement(List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyPlan> tpPlans, Account account) {
+    private void performTransferReinstatement(List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails, Account account) {
     	
     	// For each PaymentBilling that was removed, generate payment billing schedule using the stored details:
     	for (PaymentBillingTransferDetail pbtDetail : pbtDetails) {
-    		List<PaymentBillingSchedule> pbtSchedules = paymentBillingService.generatePaymentBillingSchedules(pbtDetail.getId());
+    		PaymentBillingTransferDetail pbtDetailNew = 
+    				paymentBillingService.generatePaymentBillingTransfer(pbtDetail.getPlan().getId(), account.getId(), pbtDetail.getMaxAmount(), pbtDetail.getInitiationDate());
     		
-    		// Persist the schedules:
-    		for (PaymentBillingSchedule pbtSchedule : pbtSchedules) {
-    			persistEntity(pbtSchedule);
-    		}
+    		persistEntity(pbtDetailNew);
     	}
     	
     	// For each Third-Party plan that was removed, generate third-party billing transfer for the Account associated with the FM session:
     	if (account != null) {
     		String accountId = account.getId();
-    		Date initiationDate = new Date();
     		
-	    	for (ThirdPartyPlan tpPlan : tpPlans) {
+	    	for (ThirdPartyTransferDetail tptDetail : tptDetails) {
 	    		// Generate a Third-Party transfer detail:
-	    		ThirdPartyTransferDetail tpDetail = thirdPartyService.generateThirdPartyTransfer(tpPlan.getId(), accountId, initiationDate);
-	    		
-	    		persistEntity(tpDetail);
+	    		if (tptDetail.getPlan() != null) {
+		    		ThirdPartyTransferDetail tptDetailNew = thirdPartyService.generateThirdPartyTransfer(tptDetail.getPlan().getId(), accountId, tptDetail.getInitiationDate());
+		    		
+		    		persistEntity(tptDetailNew);
+	    		}
 	    	}
     	}
     }
@@ -623,7 +777,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
             // Iterate through the list of current manifests trying to find a match:
             for (FeeManagementManifest currentManifest : currentManifests) {
-                if (manifestsMatch(priorManifest, currentManifest)) {
+                if (manifestsMatch(priorManifest, currentManifest, false)) {
                     // Add a new matching pair, remove the matching prior manifest from the underlying list and break out of the loop:
                     matchingManifests.add(new Pair<FeeManagementManifest, FeeManagementManifest>(priorManifest, currentManifest));
                     itPrior.remove();
@@ -641,14 +795,15 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
     /**
      * Compares two FM manifests, prior and current, and check if they match by either:
-     * 1. registrationId + offeringId + rate, or
+     * 1. (registrationId + rate) or (offeringId + rate), or
      * 2. internalChargeId + rate.
      *
-     * @param prior		A prior FM session's manifest.
-     * @param current	A current FM session's manifest.
+     * @param prior				A prior FM session's manifest.
+     * @param current			A current FM session's manifest.
+     * @param matchByOfferingId	Whether to match Manifests by Offering ID vs. Registration ID. 
      * @return    <code>true</code> if the manifests are a match, <code>false</code> otherwise.
      */
-    private boolean manifestsMatch(FeeManagementManifest prior, FeeManagementManifest current) {
+    private boolean manifestsMatch(FeeManagementManifest prior, FeeManagementManifest current, boolean matchByOfferingId) {
         if ((prior != null) && (current != null)) {
             // Check if rates match first:
             boolean ratesMatch = (prior.getRate() != null) && (current.getRate() != null) && prior.getRate().equals(current.getRate());
@@ -656,7 +811,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             // Check if Internal Charge IDs or Registration IDs match:
             return ratesMatch && 
             			(StringUtils.equals(prior.getInternalChargeId(), current.getInternalChargeId())
-            				|| StringUtils.equals(prior.getRegistrationId(), current.getRegistrationId()));
+            				|| (matchByOfferingId 
+            						? StringUtils.equals(prior.getOfferingId(), current.getOfferingId())
+            						: StringUtils.equals(prior.getRegistrationId(), current.getRegistrationId())));
         }
 
         return false;
@@ -797,7 +954,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                     || ((fmm2.getType() == FeeManagementManifestType.CHARGE) && (fmm1.getType() == FeeManagementManifestType.CANCELLATION));
 
             // Now check if the manifests match and have the same transactionTypeId and amount:
-            if (statusesForReversal && manifestsMatch(fmm1, fmm2)) {
+            if (statusesForReversal && manifestsMatch(fmm1, fmm2, true)) {
                 return fullReversal 
                 		? StringUtils.equals(fmm1.getTransactionTypeId(), fmm2.getTransactionTypeId()) && safeAmountsEqual(fmm1, fmm2) 
                 				: true;
