@@ -391,3 +391,15 @@ When /^I search for a course by the "([^"]*)" subject code$/ do |subj|
     @performance_test.end
   end
 end
+
+When /^I search for a course by course code to delete$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set "201301"
+    page.input_code.set "ENGL101H"
+    @performance_test.start
+    page.perf_show
+    @performance_test.end
+  end
+end

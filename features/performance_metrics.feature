@@ -79,7 +79,7 @@ Feature: Performance.Metrics
     Then the transaction takes less than "3" seconds
 
   Scenario: Delete Course Offering
-    When I search for a course by course code
+    When I search for a course by course code to delete
     And I delete the course offering
     Then the transaction takes less than "3" seconds
 
