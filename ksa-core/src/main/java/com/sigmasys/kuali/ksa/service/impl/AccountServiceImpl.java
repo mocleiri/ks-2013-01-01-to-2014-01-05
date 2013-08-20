@@ -1594,6 +1594,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         if (account.isKimAccount()) {
             updateKimAccount(account, password);
+            account.setLastKimUpdate(new Date());
         }
     }
 
@@ -1626,6 +1627,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         if (account.isKimAccount()) {
             createKimAccount(account, defaultName, defaultAddress, defaultContact, password);
+            account.setLastKimUpdate(new Date());
         }
 
         return account;

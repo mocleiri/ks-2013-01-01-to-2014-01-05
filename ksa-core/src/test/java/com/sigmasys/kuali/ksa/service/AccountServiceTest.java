@@ -457,6 +457,7 @@ public class AccountServiceTest extends AbstractServiceTest {
         Assert.notNull(account.getDefaultPersonName());
         Assert.notNull(account.getDefaultPostalAddress());
         Assert.notNull(account.getDefaultElectronicContact());
+        Assert.notNull(account.getLastKimUpdate());
 
         Assert.isTrue(account.isKimAccount());
         Assert.isTrue(account.isAbleToAuthenticate());

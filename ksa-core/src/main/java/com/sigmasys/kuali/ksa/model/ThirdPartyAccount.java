@@ -11,6 +11,15 @@ import javax.persistence.*;
 @DiscriminatorValue(AccountTypeValue.THIRD_PARTY_CODE)
 public class ThirdPartyAccount extends ChargeableAccount {
 
-
+    /**
+     * This type of Account is never stored in KIM.
+     *
+     * @return false
+     */
+    @Override
+    @Transient
+    public Boolean isKimAccount() {
+        return false;
+    }
 }
 
