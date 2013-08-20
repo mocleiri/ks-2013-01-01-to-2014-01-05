@@ -131,11 +131,11 @@ public class ThirdPartyAllowableCharge implements Identifiable {
     }
 
     @Column(name = "DIST_PLAN", length = 1)
-    protected String getDistributionPlanCode() {
+    public String getDistributionPlanCode() {
         return distributionPlanCode;
     }
 
-    protected void setDistributionPlanCode(String distributionPlanCode) {
+    public void setDistributionPlanCode(String distributionPlanCode) {
         this.distributionPlanCode = distributionPlanCode;
         distributionPlan = EnumUtils.findById(ChargeDistributionPlan.class, distributionPlanCode);
     }

@@ -54,7 +54,7 @@
                 <bean id="batchTab" parent="Uif-Link" p:linkText="Batch" p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
-                <bean id="thirdPartyTab" parent="Uif-Link" p:linkText="Third Party &amp; Payment Plans" p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage">
+                <bean id="thirdPartyTab" parent="Uif-Link" p:linkText="Third Party &amp; Payment Plans" p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=CreatePaymentPlanPage">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
                 <bean id="settingsTab" parent="Uif-Link" p:linkText="Settings" p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage">
@@ -139,6 +139,21 @@
         </property>
     </bean>
 
+    <bean name="KsaThirdPartyPaymentPlansNavigation" parent="Uif-KsaPageNavigation">
+        <property name="items">
+            <list>
+                <bean parent="Uif-HeaderTwo" p:headerText="Third Party &amp; Payment Plans"/>
+                <bean parent="Uif-Link" p:linkText="Create Payment Billing Plan" p:target="_self"
+                      p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=CreatePaymentPlanPage"/>
+                <bean parent="Uif-Link" p:linkText="Manage Payment Billing Plans" p:target="_self"
+                      p:href=""/>
+                <bean parent="Uif-Link" p:linkText="Create Third Party Payment Plan" p:target="_self"
+                      p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=CreateThirdPartyPage"/>
+                <bean parent="Uif-Link" p:linkText="Manage Third Party Payment Plans" p:target="_self"
+                      p:href=""/>
+            </list>
+        </property>
+    </bean>
 
     <bean id="Uif-KsaPageNavigation" parent="Uif-MenuNavigationGroup" abstract="true" scope="prototype">
         <property name="items">
