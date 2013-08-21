@@ -9,6 +9,8 @@ drop table KSSA_CONFIG cascade constraints;
 drop table KSSA_ACCESS_LEVEL cascade constraints;
 drop table KSSA_ACNT cascade constraints;
 drop table KSSA_ACNT_AUTHZ cascade constraints;
+drop table KSSA_ACNT_BLOCK cascade constraints;
+drop table KSSA_ACNT_BLOCK_OVERRIDE cascade constraints;
 drop table KSSA_ACNT_ELECTRONIC_CONTACT cascade constraints;
 drop table KSSA_ACNT_KEY_PAIR cascade constraints;
 drop table KSSA_ACNT_PERSON_NAME cascade constraints;
