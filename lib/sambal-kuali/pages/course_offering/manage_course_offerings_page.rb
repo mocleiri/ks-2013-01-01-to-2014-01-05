@@ -248,7 +248,7 @@ class ManageCourseOfferings < BasePage
   def cluster_div_list
     div_list = []
     if cluster_list_div.exists?
-      div_list = cluster_list_div.divs(class: "uif-group uif-boxGroup uif-horizontalBoxGroup uif-collectionItem uif-boxCollectionItem")
+      div_list = cluster_list_div.divs(class: "uif-collectionItem uif-boxCollectionItem")
     end
     #puts "div list #{div_list.length}"
     div_list
