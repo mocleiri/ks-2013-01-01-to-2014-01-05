@@ -18,7 +18,7 @@ WHEN RC.TYPE LIKE 'kuali.resultComponentType.credit.degree.range' THEN 'kuali.re
 WHEN RC.TYPE LIKE 'kuali.resultComponentType.credit.degree.fixed' THEN 'kuali.result.values.group.type.fixed'
 WHEN RC.TYPE LIKE 'kuali.resultComponentType.grade.finalGrade' THEN 'kuali.resultComponentType.grade.finalGrade'
 WHEN RC.TYPE LIKE 'kuali.resultComponentType.credit.degree.multiple' THEN 'kuali.result.values.group.type.multiple'
-END),
+END), 
 (CASE WHEN (UPPER(RC.STATE) like 'ACTIVE' ) THEN 'kuali.result.values.group.state.approved' ELSE NVL(RC.STATE,'state.null') END),
 RC.NAME, NVL(RT.PLAIN,RC.NAME), NVL(RT.FORMATTED,''),
        (CASE
@@ -39,9 +39,9 @@ RC.NAME, NVL(RT.PLAIN,RC.NAME), NVL(RT.FORMATTED,''),
         END) ,
        MIN_CREDIT_VALUE, MAX_CREDIT_VALUE, (CASE WHEN (CREDIT_INCREMENT is null AND RC.TYPE LIKE 'kuali.resultComponentType.credit.degree.range') THEN '1.0' ELSE null END), NVL(RC.EFF_DT,to_date('0001/01/01','YYYY/MM/DD')), RC.EXPIR_DT, RC.VER_NBR, NVL(RC.CREATETIME,to_date('2012/09/17','YYYY/MM/DD'))
        , NVL(RC.CREATEID, 'CMLRCUPGRADE'), to_date('2012/09/17','YYYY/MM/DD'), 'CMLRCUPGRADE'
-FROM
+FROM 
         KSLR_RESCOMP RC
-
+        
         -- Get result component min/max credits and credit increment
 		    -- WARNING: Are these all the result components that need to be converted
         LEFT JOIN (SELECT
@@ -60,7 +60,7 @@ FROM
         GROUP BY owner
         ) RC_CREDITS
         ON RC.ID=RC_CREDITS.RESCOMP_ID
-
+        
         -- Get result component's description
         LEFT JOIN KSLR_RICH_TEXT_T RT
         ON RC.RT_DESCR_ID = RT.ID
@@ -71,7 +71,7 @@ FROM
 
 -- KSLR_RESULT_VALUE to KSEN_LRC_RESULT_VALUE
 INSERT INTO KSEN_LRC_RESULT_VALUE
-SELECT ID, OBJ_ID, 'kuali.result.value.type.value', 'kuali.result.value.state.approved', RV.VALUE, RV.VALUE, RV.VALUE,
+SELECT ID, OBJ_ID, 'kuali.result.value.type.value', 'kuali.result.value.state.approved', RV.VALUE, RV.VALUE, RV.VALUE, 
        (CASE
           -- WARNING: Case statement should be modified if source data makes use of additional scales
 		      -- WARNING: Mapping to scales may be incomplete/incorrect
@@ -86,11 +86,11 @@ SELECT ID, OBJ_ID, 'kuali.result.value.type.value', 'kuali.result.value.state.ap
           WHEN RSLT_COMP_ID LIKE 'kuali.resultComponent.grade.recitalReview' THEN 'kuali.result.scale.grade.review'
           WHEN RSLT_COMP_ID LIKE 'kuali.resultComponent.grade.satisfactory' THEN 'kuali.result.scale.grade.pnp'
 
-        END) as RESULT_SCALE_ID,
-       (CASE
+        END) as RESULT_SCALE_ID, 
+       (CASE 
           WHEN RSLT_COMP_ID LIKE 'kuali.creditType.credit.degree%' THEN TO_NUMBER(RV.VALUE)
           ELSE null
-          END),
+          END), 
         RV.VALUE, NULL, NULL, 0, to_date('2012/09/17','YYYY/MM/DD') , 'CMLRCUPGRADE', NULL, NULL
 FROM KSLR_RESULT_VALUE RV
 WHERE RV.ID NOT IN (SELECT ID FROM KSEN_LRC_RESULT_VALUE)
