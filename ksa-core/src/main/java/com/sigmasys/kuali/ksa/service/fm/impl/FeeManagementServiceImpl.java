@@ -347,7 +347,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		switch (implicatedTransaction.getStatus()) {
     		case TRANSFERRING:
     			// Process a TRANSFERRING Implicated Transaction and get back to this method:
-    			processTransferFound(implicatedTransaction, session, pbtDetails, tptDetails);
+    			processTransferFound(manifest, session, implicatedTransaction, pbtDetails, tptDetails);
     			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
     			break;
     			
@@ -364,7 +364,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		case DISCOUNTING:
     		case CANCELLING:
     		case ACTIVE:
-    			validateUnallocatedBalance(linkedManifest, implicatedTransaction, session);
+    			validateUnallocatedBalance(manifest, linkedManifest, implicatedTransaction, session);
     			break;
     			
     		default:
@@ -372,18 +372,20 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		}
     	} else {
     		// If no allocations remain, do transaction reversal:
-    		performTransactionReversal(linkedManifest, implicatedTransaction);
+    		performTransactionReversal(manifest, linkedManifest, implicatedTransaction);
     	}
     }
     
     /**
      * Process "Transfer Found" logic found in the "Process Diagrams" document.
      * 
+     * @param originalManifest		The original manifest being processed.
+     * @param session				The FM session.
      * @param implicatedTransaction	Transaction associated with the linked manifest.
      * @param pbtDetails			A list of Payment billing transfer details. An OUT parameter.
      * @param tpPlan				A list of Third-party transfer details. An OUT Parameter.
      */
-    private void processTransferFound(Transaction implicatedTransaction, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
+    private void processTransferFound(FeeManagementManifest originalManifest, FeeManagementSession session, Transaction implicatedTransaction, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	
     	// Look for a TransactionTransfer with a reversal status of Not Reversed or Partially Reversed:
     	TransactionTransfer transactionTransfer = findUnreversedTransactionTransfer(implicatedTransaction);
@@ -431,7 +433,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	} else {
     		// Reverse the Implicated Transaction: 
     		memoText = String.format("No Transaction Transfer object found for Transaction %d", implicatedTransaction.getId());
-    		reverseTransaction(implicatedTransaction, session, TransactionStatus.TRANSFERRING);
+    		reverseTransaction(originalManifest, implicatedTransaction, session, TransactionStatus.TRANSFERRING);
     	}
     	
 		// Mark session for manual review:
@@ -531,24 +533,27 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Performs unallocated balance validation for the Implicated Transaction. 
      * 
+     * @param originalManifest		The original manifest being processed.
      * @param linkedManifest		The linked manifest.
      * @param implicatedTransaction	Transaction associated with the linked manifest.
      * @param session				FM Session.
      */
-    private void validateUnallocatedBalance(FeeManagementManifest linkedManifest, Transaction implicatedTransaction, FeeManagementSession session) {
+    private void validateUnallocatedBalance(FeeManagementManifest originalManifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction, FeeManagementSession session) {
     	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
     	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
     		// Write a warning, mark the session for manual review and reverse the transaction:
     		logger.warn("Performing transaction reversal. FM session manual review required.");
-    		performTransactionReversal(linkedManifest, implicatedTransaction);
+    		performTransactionReversal(originalManifest, linkedManifest, implicatedTransaction);
     	} else {
-    		// Clear all manual allocations on the Implicated Transaction:
-    		transactionService.reverseAllocations(implicatedTransaction.getId(), implicatedTransaction.getAllocatedAmount());
+    		// Reverse all allocations on the Implicated Transaction in the amount of the original manifest's amount:
+    		BigDecimal reversalAmount = originalManifest.getAmount();
+    		
+    		transactionService.reverseAllocations(implicatedTransaction.getId(), reversalAmount);
     		
         	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
         	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
         		logger.warn("Performing transaction reversal. FM session manual review required.");
-        		performTransactionReversal(linkedManifest, implicatedTransaction);
+        		performTransactionReversal(originalManifest, linkedManifest, implicatedTransaction);
         	} else {
         		// Write a severe warning, mark the session for manual review:
         		logger.warn("SEVERE: Not enough unallocated balance to perform correction/cancel/discount after clearing manual allocation. FM session manual review required.");
@@ -574,10 +579,11 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Performs Implicated Transaction reversal. 
      * 
+     * @param originalManifest		The original manifest being processed.
      * @param linkedManifest		The linked manifest.
      * @param implicatedTransaction	Transaction associated with the linked manifest.
      */
-    private void performTransactionReversal(FeeManagementManifest linkedManifest, Transaction implicatedTransaction) {
+    private void performTransactionReversal(FeeManagementManifest originalManifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction) {
  
     	// Only if the transaction has the status of either REVERSING,DISCOUNTING or CANCELLING:
     	TransactionStatus status = implicatedTransaction.getStatus();
@@ -585,7 +591,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	if ((status == TransactionStatus.CANCELLING) || (status == TransactionStatus.DISCOUNTING) || (status == TransactionStatus.REVERSING)) {
 	    	
 	    	// Reverse the transaction:
-	    	Transaction reversalTransaction = reverseTransaction(implicatedTransaction, linkedManifest.getSession(), status);
+	    	Transaction reversalTransaction = reverseTransaction(originalManifest, implicatedTransaction, linkedManifest.getSession(), status);
 	    	
 	    	linkedManifest.setTransaction(reversalTransaction);
 	    	linkedManifest.setSessionCurrent(true);
@@ -598,13 +604,14 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Reverses the given transaction and returns the reversal Transaction.
      * 
-     * @param transaction	Transaction to reverse.
-     * @param session		FM Session
-     * @param status		Transaction status.
+     * @param originalManifest	The original Manifest being processed.
+     * @param transaction		Transaction to reverse.
+     * @param session			FM Session
+     * @param status			Transaction status.
      * @return The reversal Transaction.
      */
-    private Transaction reverseTransaction(Transaction transaction, FeeManagementSession session, TransactionStatus status) {
-    	BigDecimal reversalAmount = transaction.getAmount();
+    private Transaction reverseTransaction(FeeManagementManifest originalManifest, Transaction transaction, FeeManagementSession session, TransactionStatus status) {
+    	BigDecimal reversalAmount = originalManifest.getAmount();
     	String statementPrefix = ""; // According to Paul there are no statement prefix
     	String memoText = String.format("Transaction %d was reversed in the amount of %f by fee management under session %d", 
     			transaction.getId(), reversalAmount, session.getId());
