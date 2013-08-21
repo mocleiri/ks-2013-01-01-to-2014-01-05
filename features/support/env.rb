@@ -15,7 +15,6 @@ World Workflows
 
 client = Selenium::WebDriver::Remote::Http::Default.new
 #client.timeout = 15 # seconds default is 60
-#Selenium::WebDriver::Firefox.path = "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
 
 browser = nil
 headless = nil
@@ -67,10 +66,6 @@ if ENV['HEADLESS']
 
   #re-start browser after each failed scenario
   After do | scenario |
-    Dir::mkdir('screenshots') if not File.directory?('screenshots')
-    screenshot = "./screenshots/#{scenario.name.gsub(' ','_').gsub(/[^0-9A-Za-z_]/, '')}.png"
-    @browser.driver.save_screenshot(screenshot)
-    embed screenshot, 'image/png'
     if scenario.failed?
       @browser.close unless @browser == nil
       browser = nil
