@@ -200,11 +200,11 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
             sb.append("<MajorAbbreviation>").append(major.replace("&", "&amp;")).append("</MajorAbbreviation>\n");
             sb.append("<Pathway>").append(pathway.replace("&", "&amp;")).append("</Pathway>\n");
             sb.append("<RegID>").append(regid.replace("&", "&amp;")).append("</RegID>\n");
-            sb.append("<PlanningAudit>\n");
-            for (DegreeAuditCourseRequest course : courses) {
-                sb.append(course.toString());
-            }
-            sb.append("</PlanningAudit>\n");
+//            sb.append("<PlanningAudit>\n");
+//            for (DegreeAuditCourseRequest course : courses) {
+//                sb.append(course.toString());
+//            }
+//            sb.append("</PlanningAudit>\n");
             sb.append("</DegreeAudit>");
             return sb.toString();
         }
