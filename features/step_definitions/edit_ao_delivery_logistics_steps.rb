@@ -13,22 +13,29 @@ When /^I revise an AO's requested delivery logistics$/ do
   @activity_offering.save
 end
 
-When /^I add RDLs for an AO specifying times and facility only$/ do
-  # capture the RDLs
-  @new_rdls = @activity_offering.requested_delivery_logistics_list.values[0]
-  # add new RDL row
-  @activity_offering.edit
-  @new_rdls.add :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => ""
-  @activity_offering.save
-end
+When /^I add RDLs for an AO specifying "(times|times and facility|times and room)" only$/ do |optional_field|
 
-When /^I add RDLs for an AO specifying times and room only$/ do
+  # determine which optional-field the user wants
+  case optional_field
+    when "times and facility"
+      optional_field_facility = "PHYS"
+      optional_field_room = ""
+    when "times and room"
+      optional_field_facility = ""
+      optional_field_room = "0152"
+    else    # "times only"
+      optional_field_facility = ""
+      optional_field_room = ""
+  end
+
   # capture the RDLs
   @new_rdls = @activity_offering.requested_delivery_logistics_list.values[0]
+
   # add new RDL row
   @activity_offering.edit
-  @new_rdls.add :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "", :room => "0152"
+  @new_rdls.add :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => optional_field_facility, :room => optional_field_room
   @activity_offering.save
+
 end
 
 Then /^the AO's delivery logistics shows the new schedule$/ do
