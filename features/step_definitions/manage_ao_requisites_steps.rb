@@ -211,8 +211,8 @@ end
 Then /^the AO rule should differ from the CO and CLU rules in the Student Eligibility & Prerequisite section$/ do
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
-    page.loading.wait_while_present
-    page.prereq_compare
+    #page.loading.wait_while_present
+    #page.prereq_compare
     page.loading.wait_while_present
     page.compare_tree.text.should_not match @prereq.test_ao_compare_text("at least one in literature,ARHU-English required")
   end
