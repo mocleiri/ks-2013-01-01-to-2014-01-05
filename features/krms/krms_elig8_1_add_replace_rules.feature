@@ -15,7 +15,7 @@ Feature: SA.ELIG8-1 Add or Replace rules to Activity Offering whether CO exists 
   Scenario: Test whether CO rule is replaced by a new AO rule and can then be edited
     When I edit the rule that replaced the CO rule in the Student Eligibility & Prerequisite section
     Then a warning in the Student Eligibility & Prerequisite section is displayed stating "Activity Offering Rule differs from Course Offering Rule"
-    Then the edited rule should be shown in the Student Eligibility & Prerequisite section
+    And the edited rule should be shown in the Student Eligibility & Prerequisite section
 
   #ELIG8.1.EB3 (KSENROLL-8709)
   @pending
