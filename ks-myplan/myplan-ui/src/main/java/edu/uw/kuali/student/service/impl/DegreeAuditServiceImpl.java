@@ -440,13 +440,15 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
                 StringBuilder sb = new StringBuilder();
                 sb.append("HTTP Status: " + status.getCode());
                 sb.append(" ");
-                if(rep != null) sb.append(rep.toString());
-                sb.append(" ");
-                InputStream in = rep.getStream();
-                if (in != null) {
-                    int c = 0;
-                    while ((c = in.read()) != -1) {
-                        sb.append((char) c);
+                if(rep != null) {
+                    sb.append(rep.toString());
+                    sb.append(" ");
+                    InputStream in = rep.getStream();
+                    if (in != null) {
+                        int c = 0;
+                        while ((c = in.read()) != -1) {
+                            sb.append((char) c);
+                        }
                     }
                 }
                 throw new Exception(sb.toString());
