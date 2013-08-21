@@ -278,6 +278,19 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         return CollectionUtils.isNotEmpty(plans) ? plans.get(0) : null;
     }
 
+    /**
+     * Retrieves ThirdPartyPlan by searching for matchin names
+     */
+    @Override
+    public List<ThirdPartyPlan> getThirdPartyPlanByNamePattern(String pattern) {
+        Query query = em.createQuery("select distinct p from ThirdPartyPlan p " +
+                                     "where upper(p.name) like upper(:pattern)");
+
+        query.setParameter("pattern", "%" + pattern + "%");
+
+        return query.getResultList();
+    }
+
 
     /**
      * Retrieves ThirdPartyTransferDetail with ACTIVE status by ID from the persistent store.

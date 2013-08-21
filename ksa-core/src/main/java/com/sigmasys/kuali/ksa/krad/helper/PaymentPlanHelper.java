@@ -2,8 +2,10 @@ package com.sigmasys.kuali.ksa.krad.helper;
 
 import com.sigmasys.kuali.ksa.model.Tag;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +20,7 @@ public class PaymentPlanHelper extends ViewHelperServiceImpl {
 
     private AccountService accountService;
     private AuditableEntityService auditableEntityService;
+    private ThirdPartyTransferService thirdPartyTransferService;
 
     public List<ThirdPartyAccount> getAccountsForSuggest(String suggest) {
         List<ThirdPartyAccount> accounts = getAccountService().getAccountsByNamePattern(suggest, ThirdPartyAccount.class);
@@ -26,6 +29,10 @@ public class PaymentPlanHelper extends ViewHelperServiceImpl {
 
     public List<Tag> getTagsForSuggest(String suggest) {
         return getAuditableEntityService().getAuditableEntitiesByNamePattern(suggest, Tag.class);
+    }
+
+    public List<ThirdPartyPlan> getThirdPartyPlansForSuggest(String suggest) {
+        return getThirdPartyTransferService().getThirdPartyPlanByNamePattern(suggest);
     }
 
     private AccountService getAccountService() {
@@ -40,6 +47,13 @@ public class PaymentPlanHelper extends ViewHelperServiceImpl {
             auditableEntityService = ContextUtils.getBean(AuditableEntityService.class);
         }
         return auditableEntityService;
+    }
+
+    private ThirdPartyTransferService getThirdPartyTransferService() {
+        if(thirdPartyTransferService == null) {
+            thirdPartyTransferService = ContextUtils.getBean(ThirdPartyTransferService.class);
+        }
+        return thirdPartyTransferService;
     }
 
 }

@@ -97,6 +97,11 @@ public interface ThirdPartyTransferService {
     ThirdPartyPlan getThirdPartyPlan(Long thirdPartyPlanId);
 
     /**
+     * Retrieves ThirdPartyPlan by searching for matchin names
+     */
+    List<ThirdPartyPlan> getThirdPartyPlanByNamePattern(String pattern);
+
+    /**
      * Retrieves ThirdPartyTransferDetail with ACTIVE status by ID from the persistent store.
      *
      * @param thirdPartyTransferDetailId ThirdPartyTransferDetail ID

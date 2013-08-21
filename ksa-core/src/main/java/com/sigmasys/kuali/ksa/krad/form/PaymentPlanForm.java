@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
@@ -20,6 +21,15 @@ public class PaymentPlanForm extends AbstractViewModel {
     private ThirdPartyPlan     newThirdPartyPlan;
 
     private List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges;
+
+    private String filterPlanName;
+    private List<ThirdPartyPlan> filterThirdPartyPlans;
+
+    private String filterThirdPartyAccount;
+    private List<ThirdPartyAccount> filterThirdPartyAccounts;
+
+    private List<ThirdPartyPlan> thirdPartyPlans;
+
 
     private String responsibleAccount;
     private String responsibleAccountMessage;
@@ -94,4 +104,52 @@ public class PaymentPlanForm extends AbstractViewModel {
         this.transferType = transferType;
     }
 
+    public List<ThirdPartyPlan> getFilterThirdPartyPlans() {
+        if(this.filterThirdPartyPlans == null){
+            this.filterThirdPartyPlans = new ArrayList<ThirdPartyPlan>();
+        }
+        return filterThirdPartyPlans;
+    }
+
+    public void setFilterThirdPartyPlans(List<ThirdPartyPlan> filterThirdPartyPlans) {
+        this.filterThirdPartyPlans = filterThirdPartyPlans;
+    }
+
+    public String getFilterPlanName() {
+        return filterPlanName;
+    }
+
+    public void setFilterPlanName(String filterPlanName) {
+        this.filterPlanName = filterPlanName;
+    }
+
+    public String getFilterThirdPartyAccount() {
+        return filterThirdPartyAccount;
+    }
+
+    public void setFilterThirdPartyAccount(String filterThirdPartyAccount) {
+        this.filterThirdPartyAccount = filterThirdPartyAccount;
+    }
+
+    public List<ThirdPartyAccount> getFilterThirdPartyAccounts() {
+        if(this.filterThirdPartyAccounts == null){
+            this.filterThirdPartyAccounts = new ArrayList<ThirdPartyAccount>();
+        }
+        return filterThirdPartyAccounts;
+    }
+
+    public void setFilterThirdPartyAccounts(List<ThirdPartyAccount> filterThirdPartyAccounts) {
+        this.filterThirdPartyAccounts = filterThirdPartyAccounts;
+    }
+
+    public List<ThirdPartyPlan> getThirdPartyPlans() {
+        if(thirdPartyPlans == null) {
+            thirdPartyPlans = new ArrayList<ThirdPartyPlan>();
+        }
+        return thirdPartyPlans;
+    }
+
+    public void setThirdPartyPlans(List<ThirdPartyPlan> thirdPartyPlans) {
+        this.thirdPartyPlans = thirdPartyPlans;
+    }
 }

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/paymentPlanView")
@@ -26,6 +28,7 @@ public class PaymentPlanController extends GenericSearchController {
     private static final String PAYMENT_PLAN_VIEW = "PaymentPlanView";
     private static final String TRANSFER_TYPE_FIELD = "PaymentPlanViewTransferType";
     private static final String RESPONSIBLE_ACCOUNT_FIELD = "PaymentPlanViewResponsibleAccount";
+    private static final String RESPONSIBLE_ACCOUNT_SUGGEST = "PaymentPlanViewResponsibleAccountSuggest";
 
     private static final Log logger = LogFactory.getLog(PaymentPlanController.class);
 
@@ -69,12 +72,6 @@ public class PaymentPlanController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
-    /**
-     * Retrieves the transaction type.
-     *
-     * @param form PaymentForm
-     * @return ModelAndView
-     */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=getResponsibleAccount")
     public ModelAndView getResponsibleAccount(@ModelAttribute("KualiForm") PaymentPlanForm form) {
         String accountString = form.getResponsibleAccount();
@@ -87,6 +84,85 @@ public class PaymentPlanController extends GenericSearchController {
         }
 
         return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterThirdPartyAccount")
+    public ModelAndView filterThirdPartyAccount(@ModelAttribute("KualiForm") PaymentPlanForm form) {
+        String accountString = form.getFilterThirdPartyAccount();
+        Account account = accountService.getFullAccount(accountString);
+        if(account instanceof ThirdPartyAccount){
+            form.getFilterThirdPartyAccounts().add((ThirdPartyAccount)account);
+        } else {
+            String errorMessage = accountString + " is not a valid Third Party Account";
+            GlobalVariables.getMessageMap().putError(RESPONSIBLE_ACCOUNT_SUGGEST, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+        }
+
+        populateForm(form);
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeThirdPartyAccount")
+    public ModelAndView removeThirdPartyAccount(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+
+        String accountString = request.getParameter("actionParameters[accountId]");
+
+        List<ThirdPartyAccount> updatedAccounts = new ArrayList<ThirdPartyAccount>();
+
+        // Don't remove while iterating through a list.
+        for(ThirdPartyAccount account : form.getFilterThirdPartyAccounts()) {
+            if(! account.getId().equals(accountString)) {
+                updatedAccounts.add(account);
+            }
+        }
+
+        form.setFilterThirdPartyAccounts(updatedAccounts);
+
+        populateForm(form);
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterThirdPartyPlans")
+    public ModelAndView filterThirdPartyPlans(@ModelAttribute("KualiForm") PaymentPlanForm form) {
+        String planString = form.getFilterPlanName();
+        Long planId = Long.parseLong(planString);
+
+        ThirdPartyPlan plan = thirdPartyTransferService.getThirdPartyPlan(planId);
+
+        if(plan != null){
+            form.getFilterThirdPartyPlans().add(plan);
+        }
+
+        populateForm(form);
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeThirdPartyPlan")
+    public ModelAndView removeThirdPartyPlan(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+
+        String planString = request.getParameter("actionParameters[planId]");
+        Long planId = Long.parseLong(planString);
+
+        List<ThirdPartyPlan> updatedPlans = new ArrayList<ThirdPartyPlan>();
+
+        // Don't remove while iterating through a list.
+        for(ThirdPartyPlan plan : form.getFilterThirdPartyPlans()) {
+            if(! plan.getId().equals(planId)) {
+                updatedPlans.add(plan);
+            }
+        }
+
+        form.setFilterThirdPartyPlans(updatedPlans);
+
+        populateForm(form);
+
+        return getUIFModelAndView(form);
+    }
+
+
+    private void populateForm(PaymentPlanForm form) {
     }
 
     @RequestMapping(method = RequestMethod.POST, params="methodToCall=insertThirdParty")

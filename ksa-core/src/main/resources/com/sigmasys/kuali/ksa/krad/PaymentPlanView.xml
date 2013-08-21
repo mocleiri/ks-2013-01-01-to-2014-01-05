@@ -49,6 +49,14 @@
                         </list>
                     </property>
                 </bean>
+                <bean parent="Uif-Page" p:id="ManageThirdPartyPage">
+                    <property name="headerText" value="Manage Third Party Payment Plans"/>
+                    <property name="items">
+                        <list>
+                            <ref bean="manageThirdParty"/>
+                        </list>
+                    </property>
+                </bean>
             </list>
         </property>
         <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.PaymentPlanForm"/>
@@ -61,6 +69,15 @@
             </list>
         </property>
 
+    </bean>
+
+    <bean id="manageThirdParty" parent="Uif-VerticalBoxSection">
+        <property name="items">
+            <list>
+                <ref bean="filterPlansSection"/>
+                <ref bean="thirdPartyPaymentPlans"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="createThirdParty" parent="Uif-VerticalBoxSection">
@@ -77,7 +94,6 @@
         </property>
 
     </bean>
-
     <bean id="paymentPlanDescription" parent="Uif-VerticalBoxSection">
         <property name="headerText" value="Descriptive Information"/>
         <property name="items">
@@ -269,6 +285,139 @@
             </list>
         </property>
     </bean>
+
+    <bean id="filterPlansSection" parent="Uif-Disclosure-VerticalBoxSection">
+        <property name="headerText" value="Filter"/>
+        <property name="items">
+            <list>
+
+                <bean parent="Uif-HorizontalBoxSection">
+                    <property name="items">
+                        <list>
+                            <!-- Plan Name suggest -->
+                            <bean parent="Uif-InputField" p:label="Name of Plan" p:propertyName="filterPlanName">
+                                <property name="suggest">
+                                    <bean parent="Uif-Suggest">
+                                        <property name="valuePropertyName" value="id"/>
+                                        <property name="labelPropertyName" value="name"/>
+                                        <property name="templateOptions" value="minLength:2,delay:0,html:true"/>
+                                        <property name="suggestQuery">
+                                            <bean parent="Uif-AttributeQueryConfig">
+                                                <property name="queryMethodToCall" value="getThirdPartyPlansForSuggest"/>
+                                            </bean>
+                                        </property>
+                                    </bean>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="filterThirdPartyPlans" p:actionLabel="Add this Plan"/>
+                            <bean parent="Uif-ListCollectionGroup" >
+                                <property name="headerText" value="Selected Plans"/>
+                                <property name="readOnly" value="true"/>
+                                <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan"/>
+                                <property name="propertyName" value="filterThirdPartyPlans"/>
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-HorizontalFieldGroup">
+                                            <property name="items">
+                                                <list>
+                                                    <bean parent="Uif-InputField" p:propertyName="name"/>
+                                                    <bean parent="Uif-ActionLink" p:actionLabel="Remove" p:methodToCall="removeThirdPartyPlan" p:actionParameters="planId:@{#line.id}">
+                                                        <property name="actionImage">
+                                                            <bean parent="Uif-Image" p:source="../images/remove.png"/>
+                                                        </property>
+                                                    </bean>
+                                                </list>
+                                            </property>
+                                        </bean>
+                                    </list>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-HorizontalBoxSection">
+                    <property name="items">
+                        <list>
+                            <!-- Third Party Account suggest -->
+                            <bean id="PaymentPlanViewResponsibleAccountSuggest" parent="Uif-InputField" p:label="Responsible Account" p:propertyName="filterThirdPartyAccount">
+                                <property name="suggest">
+                                    <bean parent="Uif-Suggest">
+                                        <property name="valuePropertyName" value="id"/>
+                                        <property name="labelPropertyName" value="id"/>
+                                        <property name="templateOptions" value="minLength:2,delay:0,html:true"/>
+                                        <property name="suggestQuery">
+                                            <bean parent="Uif-AttributeQueryConfig">
+                                                <property name="queryMethodToCall" value="getAccountsForSuggest"/>
+                                            </bean>
+                                        </property>
+                                    </bean>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="filterThirdPartyAccount" p:actionLabel="Add this Account"/>
+                            <bean parent="Uif-ListCollectionGroup" >
+                                <property name="headerText" value="Selected Accounts"/>
+                                <property name="readOnly" value="true"/>
+                                <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.ThirdPartyAccount"/>
+                                <property name="propertyName" value="filterThirdPartyAccounts"/>
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-HorizontalFieldGroup">
+                                            <property name="items">
+                                                <list>
+                                                    <bean parent="Uif-InputField" p:propertyName="id"/>
+                                                    <bean parent="Uif-InputField" p:propertyName="compositeDefaultPersonName"/>
+                                                    <bean parent="Uif-ActionLink" p:actionLabel="Remove" p:methodToCall="removeThirdPartyAccount" p:actionParameters="accountId:@{#line.id}">
+                                                        <property name="actionImage">
+                                                            <bean parent="Uif-Image" p:source="../images/remove.png"/>
+                                                        </property>
+                                                    </bean>
+                                                </list>
+                                            </property>
+                                        </bean>
+                                    </list>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="thirdPartyPaymentPlans" parent="Uif-VerticalBoxSection">
+        <property name="headerText" value="Plans"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:width="85%">
+                    <property name="readOnly" value="true"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan"/>
+                    <property name="propertyName" value="thirdPartyPlans"/>
+                    <property name="layoutManager.sequencePropertyName" value="name"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="true"/>
+                            <!--<entry key="iDisplayLength" value="20"/>-->
+                        </map>
+                    </property>
+
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:label="Name of Plan" p:propertyName="name"/>
+                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="description"/>
+                            <bean parent="Uif-InputField" p:label="Responsible Account" p:propertyName="thirdPartyAccount.id"/>
+                        </list>
+                    </property>
+                </bean>
+
+
+
+            </list>
+        </property>
+    </bean>
+
 
 
 
