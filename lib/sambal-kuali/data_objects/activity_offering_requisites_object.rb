@@ -1032,12 +1032,34 @@ class AOPreparationPrerequisiteRule < AORequisitesData
       if page.prereq_edit_link.exists?
         page.loading.wait_while_present
         page.prereq_edit
-        edit_statements_in_rule
       end
     end
   end
 
   def rp_edit_replaced_co_rule
+    rp_replace_co_rule
+    commit_changes( true)
+    on ActivityOfferingRequisites do |page|
+      if page.prep_edit_link.exists?
+        page.loading.wait_while_present
+        page.prep_edit
+      end
+    end
+  end
+
+  def sepr_edit_update_replaced_co_rule
+    sepr_replace_co_rule
+    commit_changes( true)
+    on ActivityOfferingRequisites do |page|
+      if page.prereq_edit_link.exists?
+        page.loading.wait_while_present
+        page.prereq_edit
+        edit_statements_in_rule
+      end
+    end
+  end
+
+  def rp_edit_update_replaced_co_rule
     rp_replace_co_rule
     commit_changes( true)
     on ActivityOfferingRequisites do |page|

@@ -5,6 +5,12 @@ When /^I navigate to the agendas page and open the Student Eligibility & Prerequ
   @prereq.navigate_to_ao_requisites
 end
 
+When /^I navigate to the agendas page for a CO that I cannot edit and open the Student Eligibility & Prerequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
+  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "PHYS420"
+  @prereq.navigate_to_ao_requisites
+end
+
 When /^I copy and edit the Course Offering rule to the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule
@@ -64,6 +70,12 @@ When /^I replace the CO rule in the Student Eligibility & Prerequisite section$/
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_replace_co_rule
+end
+
+When /^I edit and update the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "B"
+  @prereq = make AOPreparationPrerequisiteRule, :activity => "B"
+  @prereq.sepr_edit_update_replaced_co_rule
 end
 
 When /^I edit the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
@@ -235,6 +247,15 @@ Then /^no (?:error|warning) in the Student Eligibility & Prerequisite section is
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
     page.prereq_message_section.text.should_not match /.*#{exp_msg}.*/
+  end
+end
+
+Then /^I should only be allowed to view the CLU and CO rule in the Student Eligibility & Prerequisite section$/ do
+  on ActivityOfferingRequisites do |page|
+    page.prereq_view_link.present?.should be_true
+    page.prereq_copy_edit_link.present?.should be_false
+    page.prereq_replace_link.present?.should be_false
+    page.prereq_suppress_link.present?.should be_false
   end
 end
 
