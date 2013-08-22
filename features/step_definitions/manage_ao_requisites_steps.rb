@@ -79,8 +79,8 @@ When /^I edit and update the rule that replaced the CO rule in the Student Eligi
 end
 
 When /^I edit the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "B"
-  @prereq = make AOPreparationPrerequisiteRule, :activity => "B"
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "D"
+  @prereq = make AOPreparationPrerequisiteRule, :activity => "D"
   @prereq.sepr_edit_replaced_co_rule
 end
 
@@ -292,5 +292,64 @@ Then /^the AO icon should not be shown for the edited Activity Offering$/ do
     if ao_code.img.present?
       ao_code.img.src.should_not match /ActivityRuleIcon6px.png/
     end
+  end
+end
+
+Then /^I should be able to use all the function buttons on the Edit Rule tab$/ do
+  on ManageAORequisites do |page|
+    @activityOR.move_around( "B", "out")
+    page.edit_tree_section.span(:text => /.*B\..*/).id.should match @activityOR.test_node_level( "secondary")
+
+    @activityOR.move_around( "B", "up")
+    page.edit_tree_section.text.should match /.*B\..+C\..*/m
+
+    @activityOR.move_around( "A", "down")
+    page.edit_tree_section.text.should match /.*[BC]\..+A\..*/m
+
+    @activityOR.move_around( "E", "up in")
+    page.edit_tree_section.text.should match /.*E\..+C\..*/m
+
+    @activityOR.delete_statement( "E")
+    page.edit_tree_section.text.should_not match /.*E\..*/
+
+    @activityOR.copy_cut_paste( "A", "D", "cut")
+    page.edit_tree_section.text.should match /.*D\..+A\..*/m
+
+    @activityOR.copy_cut_paste( "B", "A", "copy")
+    page.edit_tree_section.text.should match /.*B\..+A\..+F\..*/m
+
+    @activityOR.add_new_node( "add", "F")
+    page.rule_dropdown.when_present.select /Free Form Text/
+    page.free_text_field.when_present.set "new statement can be added"
+    page.preview_btn
+    page.edit_tree_section.text.should match /.*F\..+G\..*/m
+
+    @activityOR.add_new_node( "group", "C")
+    page.rule_dropdown.when_present.select /Free Form Text/
+    page.free_text_field.when_present.set "new group can be created"
+    page.preview_btn
+    page.edit_tree_section.span(:text => /.*H\..*/).id.should match @activityOR.test_node_level( "secondary")
+
+    @activityOR.edit_existing_node("D", "text", "existing statement can be edited")
+    page.edit_tree_section.text.should match /existing statement can be edited/
+
+    page.update_rule_btn
+  end
+end
+
+Then /^I should be able to use the functionality of the Edit Rule Logic tab$/ do
+  on ManageAORequisites do |page|
+    @activityOR.switch_tabs
+    page.edit_loading.wait_while_present
+    page.logic_text.set "A OR C OR (E AND B) OR D"
+    page.preview_btn
+    page.preview_tree_section.text.should match /Must meet 1 of the following.+Must meet all of the following/m
+
+    @activityOR.switch_tabs
+    page.edit_loading.wait_while_present
+    page.edit_tree_section.text.should match /.*A\..+C\..+E\..+B\..+D\..*/m
+    page.edit_tree_section.span(:text => /.*B\..*/).id.should match @activityOR.test_node_level( "secondary")
+
+    page.update_rule_btn
   end
 end

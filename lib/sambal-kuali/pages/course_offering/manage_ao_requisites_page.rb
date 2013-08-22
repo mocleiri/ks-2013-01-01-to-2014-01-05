@@ -9,7 +9,7 @@ class ManageAORequisites < BasePage
   element(:tab_section) { |b| b.frm.div(id: "KSAO-RuleEdit-TabSection_tabs")}
   element(:edit_tree_section) { |b| b.frm.div(id: "KRMS-RuleEditor-TreeGroup")}
   element(:logic_tab_section) { |b| b.frm.div(id: "KSAO-EditWithLogic-EditGroup")}
-  element(:preview_tree_section) { |b| b.logic_tab_section.div(id: "KSAO-EditWithLogic-TreeGroup")}
+  element(:preview_tree_section) { |b| b.logic_tab_section.div(id: "KSAO-LogicPreview-Tree")}
   element(:compare_rule_section) { |b| b.frm.div(id: "compareCluCoAndAoRuleLightBox")}
   element(:preview_rule_section) { |b| b.frm.div(id: "KSAO-RulePreview-ActionLinks")}       ####?????????
   element(:grade_section) { |b| b.edit_tree_section.div(:id => /KRMS-GradeScale-Field/)}

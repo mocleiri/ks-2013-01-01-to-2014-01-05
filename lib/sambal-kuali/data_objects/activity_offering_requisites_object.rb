@@ -90,7 +90,7 @@ class AORequisitesData
     end
     if return_to_edit_page == true
       on ManageCourseOfferings do |page|
-        page.ao_requisites("B")
+        page.ao_requisites(@activity)
       end
     end
   end
@@ -444,16 +444,24 @@ class AORequisitesData
     return Regexp.new(test)
   end
 
-  def move_around( node, direction)
+  def select_node( node)
     on ManageAORequisites do |page|
-      if page.edit_tree_section.html =~ /li.+class.+ruleBlockSelected/
-        selection = page.edit_tree_section.li(:class => /ruleBlockSelected/).text
-        if selection !~ /.*#{Regexp.escape(node)}\..*/
+      if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
+        if page.edit_tree_section.html =~ /li.+class.+ruleBlockSelected/
+          selection = page.edit_tree_section.li(:class => /ruleBlockSelected/).text
+          if selection !~ /.*#{Regexp.escape(node)}\..*/
+            page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+          end
+        else
           page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
         end
-      else
-        page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
       end
+    end
+  end
+
+  def move_around( node, direction)
+    select_node( node)
+    on ManageAORequisites do |page|
       if direction == "down"
         page.down_btn
       elsif direction == "up"
@@ -465,6 +473,9 @@ class AORequisitesData
       elsif direction == "out in"
         page.left_btn
         page.right_btn
+      elsif direction == "up in"
+        page.up_btn
+        page.right_btn
       elsif direction == "out up in"
         page.left_btn
         page.up_btn
@@ -475,17 +486,13 @@ class AORequisitesData
 
   def copy_cut_paste( node, node_after, action)
     on ManageAORequisites do |page|
-      if node != "" && node != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).exists?
-        page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
-      end
+      select_node( node)
       if action == "copy"
         page.copy_btn
       elsif action == "cut"
         page.cut_btn
       end
-      if node_after != "" && node_after != nil && page.edit_tree_section.span(:text => /.*#{Regexp.escape(node_after)}\..*/).exists?
-        page.edit_tree_section.span(:text => /.*#{Regexp.escape(node_after)}\..*/).when_present.click
-      end
+      select_node( node_after)
       page.paste_btn
     end
   end
@@ -512,7 +519,7 @@ class AORequisitesData
 
   def delete_statement( node)
     on ManageAORequisites do |page|
-      page.edit_tree_section.span(:text => /.*#{Regexp.escape(node)}\..*/).when_present.click
+      select_node( node)
       page.del_btn
       page.edit_loading.wait_while_present
     end
