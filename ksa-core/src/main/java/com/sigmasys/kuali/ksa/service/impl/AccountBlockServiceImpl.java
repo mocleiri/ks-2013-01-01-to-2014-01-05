@@ -1,9 +1,13 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
+import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.AccountBlock;
+import com.sigmasys.kuali.ksa.model.AccountBlockOverride;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
+import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -12,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Query;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 
@@ -34,6 +40,9 @@ public class AccountBlockServiceImpl extends GenericPersistenceService implement
 
     @Autowired
     private AuditableEntityService entityService;
+
+    @Autowired
+    private AccountService accountService;
 
 
     /**
@@ -135,6 +144,115 @@ public class AccountBlockServiceImpl extends GenericPersistenceService implement
             });
         }
         return accountBlocks;
+    }
+
+    /**
+     * Creates and persists a new instance of AccountBlockOverride in the persistent store.
+     *
+     * @param accountBlockId AccountBlock ID
+     * @param accountId      Account ID
+     * @param expirationDate Expiration date
+     * @param reason         Override reason
+     * @param isSingleUse    Indicates whether AccountBlockOverride is for single use
+     * @return AccountBlockOverride instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public AccountBlockOverride createAccountBlockOverride(Long accountBlockId, String accountId, Date expirationDate,
+                                                           String reason, boolean isSingleUse) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_ACCOUNT_BLOCK_OVERRIDE);
+
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null) {
+            String errMsg = "Account with ID = " + accountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        AccountBlock accountBlock = getAccountBlock(accountBlockId);
+        if (accountBlock == null) {
+            String errMsg = "AccountBlock with ID = " + accountBlockId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (expirationDate == null) {
+            String errMsg = "AccountBlockOverride expiration date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (StringUtils.isBlank(reason)) {
+            String errMsg = "AccountBlockOverride reason cannot be empty";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+
+        AccountBlockOverride blockOverride = new AccountBlockOverride();
+
+        blockOverride.setAccount(account);
+        blockOverride.setAccountBlock(accountBlock);
+        blockOverride.setExpirationDate(expirationDate);
+        blockOverride.setReason(reason);
+        blockOverride.setSingleUse(isSingleUse);
+        blockOverride.setAdminOverride(false);
+        blockOverride.setComplete(false);
+        blockOverride.setCreationDate(new Date());
+        blockOverride.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+
+        persistEntity(blockOverride);
+
+        return blockOverride;
+    }
+
+
+    /**
+     * Retrieves AccountBlockOverride entity from the persistent store.
+     *
+     * @param blockOverrideId AccountBlockOverride ID
+     * @return AccountBlockOverride instance
+     */
+    @Override
+    public AccountBlockOverride getAccountBlockOverride(Long blockOverrideId) {
+
+        PermissionUtils.checkPermission(Permission.READ_ACCOUNT_BLOCK_OVERRIDE);
+
+        Query query = em.createQuery("select a from AccountBlockOverride a " +
+                "left outer join fetch a.account " +
+                "left outer join fetch a.accountBlock " +
+                "where a.id = :id");
+
+        query.setParameter("id", blockOverrideId);
+
+        List<AccountBlockOverride> blockOverrides = query.getResultList();
+
+        return CollectionUtils.isNotEmpty(blockOverrides) ? blockOverrides.get(0) : null;
+    }
+
+    /**
+     * Releases AccountBlockOverride object.
+     *
+     * @param blockOverrideId AccountBlockOverride ID
+     * @return AccountBlockOverride instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public AccountBlockOverride releaseAccountBlockOverride(Long blockOverrideId) {
+
+        PermissionUtils.checkPermission(Permission.RELEASE_ACCOUNT_BLOCK_OVERRIDE);
+
+        AccountBlockOverride blockOverride = getAccountBlockOverride(blockOverrideId);
+        if (blockOverride == null) {
+            String errMsg = "AccountBlockOverride with ID = " + blockOverrideId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        blockOverride.setComplete(true);
+
+        return blockOverride;
     }
 
 

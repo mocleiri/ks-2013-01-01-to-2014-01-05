@@ -2,7 +2,9 @@ package com.sigmasys.kuali.ksa.service;
 
 
 import com.sigmasys.kuali.ksa.model.AccountBlock;
+import com.sigmasys.kuali.ksa.model.AccountBlockOverride;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,5 +56,34 @@ public interface AccountBlockService {
      * @return list of AccountBlock instances
      */
     List<AccountBlock> getAccountBlocks();
+
+    /**
+     * Creates and persists a new instance of AccountBlockOverride in the persistent store.
+     *
+     * @param accountBlockId AccountBlock ID
+     * @param accountId      Account ID
+     * @param expirationDate Expiration date
+     * @param reason         Override reason
+     * @param isSingleUse    Indicates whether AccountBlockOverride is for single use
+     * @return AccountBlockOverride instance
+     */
+    AccountBlockOverride createAccountBlockOverride(Long accountBlockId, String accountId, Date expirationDate,
+                                                    String reason, boolean isSingleUse);
+
+    /**
+     * Retrieves AccountBlockOverride entity from the persistent store.
+     *
+     * @param blockOverrideId AccountBlockOverride ID
+     * @return AccountBlockOverride instance
+     */
+    AccountBlockOverride getAccountBlockOverride(Long blockOverrideId);
+
+    /**
+     * Releases AccountBlockOverride object.
+     *
+     * @param blockOverrideId AccountBlockOverride ID
+     * @return AccountBlockOverride instance
+     */
+    AccountBlockOverride releaseAccountBlockOverride(Long blockOverrideId);
 
 }
