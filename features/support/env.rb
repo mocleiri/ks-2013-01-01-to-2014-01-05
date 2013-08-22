@@ -66,10 +66,6 @@ if ENV['HEADLESS']
 
   #re-start browser after each failed scenario
   After do | scenario |
-    Dir::mkdir('screenshots') if not File.directory?('screenshots')
-    screenshot = "./screenshots/#{scenario.name.gsub(' ','_').gsub(/[^0-9A-Za-z_]/, '')}.png"
-    @browser.driver.save_screenshot(screenshot)
-    embed screenshot, 'image/png'
     if scenario.failed?
       @browser.close unless @browser == nil
       browser = nil
