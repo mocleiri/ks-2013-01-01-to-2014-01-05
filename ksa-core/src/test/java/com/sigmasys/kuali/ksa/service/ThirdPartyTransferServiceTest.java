@@ -315,15 +315,16 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
     }
 
+
     @Test
     public void testThirdPartyNameSearch() throws Exception {
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+
+        _createThirdPartyPlan();
 
         List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlanByNamePattern("name");
 
         Assert.notNull(plans);
         Assert.notEmpty(plans);
-
 
     }
 

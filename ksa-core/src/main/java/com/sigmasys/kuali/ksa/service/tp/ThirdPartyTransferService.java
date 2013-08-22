@@ -97,7 +97,10 @@ public interface ThirdPartyTransferService {
     ThirdPartyPlan getThirdPartyPlan(Long thirdPartyPlanId);
 
     /**
-     * Retrieves ThirdPartyPlan by searching for matchin names
+     * Retrieves ThirdPartyPlan instances by the given name pattern.
+     *
+     * @param pattern Name pattern
+     * @return list of ThirdPartyPlan instances.
      */
     List<ThirdPartyPlan> getThirdPartyPlanByNamePattern(String pattern);
 

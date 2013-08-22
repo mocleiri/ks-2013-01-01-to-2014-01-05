@@ -52,6 +52,11 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
             " left outer join fetch p.transferType t " +
             " left outer join fetch t.generalLedgerType g ";
 
+    private static final String TRANSFER_PLAN_SELECT = "select p from ThirdPartyPlan p " +
+            " left outer join fetch p.thirdPartyAccount a " +
+            " left outer join fetch p.transferType t " +
+            " left outer join fetch t.generalLedgerType g ";
+
     @Autowired
     private TransactionService transactionService;
 
@@ -265,11 +270,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
         PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
 
-        Query query = em.createQuery("select p from ThirdPartyPlan p " +
-                " left outer join fetch p.thirdPartyAccount a " +
-                " left outer join fetch p.transferType t " +
-                " left outer join fetch t.generalLedgerType g " +
-                " where p.id = :id");
+        Query query = em.createQuery(TRANSFER_PLAN_SELECT + " where p.id = :id");
 
         query.setParameter("id", thirdPartyPlanId);
 
@@ -279,12 +280,17 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
-     * Retrieves ThirdPartyPlan by searching for matchin names
+     * Retrieves ThirdPartyPlan instances by the given name pattern.
+     *
+     * @param pattern Name pattern
+     * @return list of ThirdPartyPlan instances.
      */
     @Override
     public List<ThirdPartyPlan> getThirdPartyPlanByNamePattern(String pattern) {
-        Query query = em.createQuery("select distinct p from ThirdPartyPlan p " +
-                                     "where upper(p.name) like upper(:pattern)");
+
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
+
+        Query query = em.createQuery(TRANSFER_PLAN_SELECT + " where upper(p.name) like upper(:pattern)");
 
         query.setParameter("pattern", "%" + pattern + "%");
 
