@@ -50,7 +50,6 @@ Feature: SA.ELIG9-6 AND, OR and Move
     When I want to edit the Student Eligibility & Prerequisite section
     And I move node "D" out of and into the group
     Then node "D" should be a "secondary" node in the tree
-    And node "A" should be after node "D"
 
   #ELIG9.6.EB8 (KSENROLL-5777)
   Scenario: The droplist value should be able to be changed
