@@ -30,4 +30,17 @@ public class KsaFormView extends FormView {
         super.setViewHelperServiceClass(null);
         super.setViewHelperService(viewHelperService);
     }
+
+    /**
+     * The KRAD View's implementation of this method can override the service class even when
+     * the helper service bean has already been set. We have to prevent this behavior.
+     *
+     * @param viewHelperServiceClass ViewHelperService class
+     */
+    @Override
+    public void setViewHelperServiceClass(Class<? extends ViewHelperService> viewHelperServiceClass) {
+        if (getViewHelperService() == null) {
+            super.setViewHelperServiceClass(viewHelperServiceClass);
+        }
+    }
 }
