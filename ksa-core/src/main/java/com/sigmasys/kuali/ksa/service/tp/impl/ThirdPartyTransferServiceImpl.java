@@ -297,6 +297,39 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         return query.getResultList();
     }
 
+    /**
+     * Retrieves ThirdPartyPlan instances for the given ThirdPartyAccount IDs.
+     *
+     * @param thirdPartyAccountIds Set of ThirdPartyAccount IDs
+     * @return list of ThirdPartyPlan instances
+     */
+    @Override
+    public List<ThirdPartyPlan> getThirdPartyPlans(Set<String> thirdPartyAccountIds) {
+
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
+
+        boolean idsExist = CollectionUtils.isNotEmpty(thirdPartyAccountIds);
+
+        Query query = em.createQuery(TRANSFER_PLAN_SELECT + (idsExist ? " where a.id in (:ids)" : "") + " order by p.id desc");
+
+        if (idsExist) {
+            query.setParameter("ids", thirdPartyAccountIds);
+        }
+
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves all ThirdPartyPlan instances.
+     *
+     * @return list of ThirdPartyPlan instances
+     */
+    @Override
+    @WebMethod(exclude = true)
+    public List<ThirdPartyPlan> getThirdPartyPlans() {
+        return getThirdPartyPlans(Collections.<String>emptySet());
+    }
+
 
     /**
      * Retrieves ThirdPartyTransferDetail with ACTIVE status by ID from the persistent store.

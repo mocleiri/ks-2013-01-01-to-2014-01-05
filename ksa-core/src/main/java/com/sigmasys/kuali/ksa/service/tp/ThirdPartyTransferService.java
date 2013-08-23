@@ -9,6 +9,7 @@ import javax.jws.WebService;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The third-party billing service is responsible for the transfer of responsibility for transactions
@@ -100,9 +101,25 @@ public interface ThirdPartyTransferService {
      * Retrieves ThirdPartyPlan instances by the given name pattern.
      *
      * @param pattern Name pattern
-     * @return list of ThirdPartyPlan instances.
+     * @return list of ThirdPartyPlan instances
      */
     List<ThirdPartyPlan> getThirdPartyPlanByNamePattern(String pattern);
+
+    /**
+     * Retrieves ThirdPartyPlan instances for the given ThirdPartyAccount IDs.
+     *
+     * @param thirdPartyAccountIds Set of ThirdPartyAccount IDs
+     * @return list of ThirdPartyPlan instances
+     */
+    List<ThirdPartyPlan> getThirdPartyPlans(Set<String> thirdPartyAccountIds);
+
+    /**
+     * Retrieves all ThirdPartyPlan instances.
+     *
+     * @return list of ThirdPartyPlan instances
+     */
+    @WebMethod(exclude = true)
+    List<ThirdPartyPlan> getThirdPartyPlans();
 
     /**
      * Retrieves ThirdPartyTransferDetail with ACTIVE status by ID from the persistent store.

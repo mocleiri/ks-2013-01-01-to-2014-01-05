@@ -16,8 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * ThirdPartyTransferService tests.
@@ -47,13 +46,21 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     private AccountService accountService;
 
 
+    private ThirdPartyAccount thirdPartyAccount;
     private Account adminAccount;
+
 
     @Before
     public void setUpWithinTransaction() {
-        // set up test data within the transaction
+
+        // Setting up test data within the transaction
         String userId = "admin";
         adminAccount = accountService.getOrCreateAccount(userId);
+
+        thirdPartyAccount = createThirdPartyAccount();
+
+        Assert.notNull(thirdPartyAccount);
+        Assert.notNull(thirdPartyAccount.getId());
     }
 
     protected ThirdPartyAccount createThirdPartyAccount() {
@@ -104,7 +111,7 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     }
 
 
-    protected ThirdPartyPlan _createThirdPartyPlan() throws Exception {
+    protected ThirdPartyPlan _createThirdPartyPlan(String planCode) throws Exception {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
 
@@ -117,22 +124,17 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
         GeneralLedgerType glType = createGeneralLedgerType();
 
-        TransferType transferType = transferService.createTransferType(glType.getId(), "_TT_1", "TT 1", "Transfer Type 1");
+        TransferType transferType = transferService.createTransferType(glType.getId(), planCode + "_TT_1", "TT 1", "Transfer Type 1");
 
         Assert.notNull(transferType);
         Assert.notNull(transferType.getId());
 
-        ThirdPartyAccount account = createThirdPartyAccount();
-
-        Assert.notNull(account);
-        Assert.notNull(account.getId());
-
         ThirdPartyPlan plan = thirdPartyTransferService.createThirdPartyPlan(
-                "TPP code1",
+                planCode,
                 "TPP name 1",
                 "TPP description 1",
                 transferType.getId(),
-                account.getId(),
+                thirdPartyAccount.getId(),
                 new BigDecimal(10e4),
                 new Date(),
                 null,
@@ -159,13 +161,13 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
     @Test
     public void createThirdPartyPlan() throws Exception {
-        _createThirdPartyPlan();
+        _createThirdPartyPlan("TPP code 1");
     }
 
     @Test
     public void generateThirdPartyTransfer() throws Exception {
 
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+        ThirdPartyPlan plan = _createThirdPartyPlan("Plan_1");
 
         ThirdPartyTransferDetail transfer =
                 thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), TEST_USER_ID, new Date());
@@ -179,7 +181,7 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     @Test
     public void generateThirdPartyTransfers1() throws Exception {
 
-        _createThirdPartyPlan();
+        _createThirdPartyPlan("Plan@!~'@^1");
 
         List<ThirdPartyTransferDetail> transfers =
                 thirdPartyTransferService.generateThirdPartyTransfers(TEST_USER_ID, new Date(), true);
@@ -200,7 +202,7 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     @Test
     public void generateThirdPartyTransfers2() throws Exception {
 
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+        ThirdPartyPlan plan = _createThirdPartyPlan("Plan_33456.90");
 
         List<ThirdPartyTransferDetail> transfers =
                 thirdPartyTransferService.generateThirdPartyTransfers(plan.getId(), true);
@@ -221,7 +223,7 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     @Test
     public void generateThirdPartyTransfers3() throws Exception {
 
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+        ThirdPartyPlan plan = _createThirdPartyPlan("Plan_45");
 
         List<ThirdPartyTransferDetail> transfers =
                 thirdPartyTransferService.generateThirdPartyTransfers(plan.getId(), false);
@@ -248,7 +250,7 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     @Test
     public void generateThirdPartyTransfers4() throws Exception {
 
-        _createThirdPartyPlan();
+        _createThirdPartyPlan("Plan_11");
 
         List<ThirdPartyTransferDetail> transfers =
                 thirdPartyTransferService.generateThirdPartyTransfers(TEST_USER_ID);
@@ -269,7 +271,7 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     @Test
     public void reverseThirdPartyTransfers() throws Exception {
 
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+        ThirdPartyPlan plan = _createThirdPartyPlan("Plan_-23");
 
         ThirdPartyTransferDetail transfer =
                 thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), TEST_USER_ID, new Date());
@@ -287,11 +289,10 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
     }
 
-
     @Test
     public void createThirdPartyAllowableCharge() throws Exception {
 
-        ThirdPartyPlan plan = _createThirdPartyPlan();
+        ThirdPartyPlan plan = _createThirdPartyPlan("Plan_1");
 
         ThirdPartyAllowableCharge allowableCharge =
                 thirdPartyTransferService.createThirdPartyAllowableCharge(
@@ -315,11 +316,10 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
     }
 
-
     @Test
-    public void testThirdPartyNameSearch() throws Exception {
+    public void getThirdPartyPlanByNamePattern() throws Exception {
 
-        _createThirdPartyPlan();
+        _createThirdPartyPlan("Plan_@12");
 
         List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlanByNamePattern("name");
 
@@ -327,5 +327,28 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
         Assert.notEmpty(plans);
 
     }
+
+    @Test
+    public void getThirdPartyPlans() throws Exception {
+
+        _createThirdPartyPlan("Plan1");
+        _createThirdPartyPlan("Plan2");
+
+        Set<String> accountIds = new HashSet<String>(Arrays.asList(thirdPartyAccount.getId(), "user1"));
+
+        List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlans(accountIds);
+
+        Assert.notNull(plans);
+        Assert.notEmpty(plans);
+        Assert.isTrue(plans.size() >= 2);
+
+        plans = thirdPartyTransferService.getThirdPartyPlans();
+
+        Assert.notNull(plans);
+        Assert.notEmpty(plans);
+        Assert.isTrue(plans.size() >= 2);
+
+    }
+
 
 }
