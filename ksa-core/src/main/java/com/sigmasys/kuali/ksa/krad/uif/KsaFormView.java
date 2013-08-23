@@ -33,7 +33,7 @@ public class KsaFormView extends FormView {
 
     /**
      * The KRAD View's implementation of this method can override the service class even when
-     * the helper service bean has already been set. We have to prevent this behavior.
+     * the helper service instance has already been set. We have to prevent this behavior.
      *
      * @param viewHelperServiceClass ViewHelperService class
      */
