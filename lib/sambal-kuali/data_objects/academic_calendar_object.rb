@@ -254,11 +254,18 @@ class AcademicTerm
         :end_date=>"09/24/#{calendar_year}",
         :term_type=>"Fall Term",
         :term_code => "#{calendar_year}08" ,
-        :key_date_group_list=> Array.new(1){make KeyDateGroup},
         :term_year=> calendar_year,
         :parent_term=> nil,
         :subterm=> false
     }
+
+    #A subterm can't use the same Key date Group as its parent, because when
+    # the parent selects a certain value, it's gone from the drop-down for the sub.
+    if opts[:subterm] == true
+      defaults[:key_date_group_list] = Array.new(1){make KeyDateGroup, :key_date_group_type=> KeyDateGroup::REGISTRATION_DATE_GROUP}
+    else
+      defaults[:key_date_group_list] = Array.new(1){make KeyDateGroup}
+    end
 
     options = defaults.merge(opts)
     set_options(options)
@@ -303,7 +310,7 @@ class AcademicTerm
     end
   end
 
-  #checks to see if group already exists
+  #checks to see if group already exists   NOT being called!
   def add_key_date_group(key_date_group_object)
     key_date_group_object.term_type = @term_type
     key_date_group_object.create
