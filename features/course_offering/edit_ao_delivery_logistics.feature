@@ -17,15 +17,15 @@ Feature: WC.Edit AO delivery logistics
     Then the AO's delivery logistics shows the new schedule
 
   Scenario: Add an RDL using incomplete logistics - times only
-    When I add RDLs for an AO specifying "times" only
+    When I add RDLs for an AO specifying times only
     Then the AO's delivery logistics shows the new schedule
 
   Scenario: Add an RDL using incomplete logistics - times and facility
-    When I add RDLs for an AO specifying "times and facility" only
+    When I add RDLs for an AO specifying times and facility only
     Then the AO's delivery logistics shows the new schedule
 
   Scenario: Add an RDL using incomplete logistics - times and room
-    When I add RDLs for an AO specifying "times and room" only
+    When I add RDLs for an AO specifying times and room only
     Then an error message is displayed about the required RDL fields
 
   Scenario: Add TBA RDLs for an AO

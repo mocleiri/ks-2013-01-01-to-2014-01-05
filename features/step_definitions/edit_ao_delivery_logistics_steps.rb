@@ -13,7 +13,7 @@ When /^I revise an AO's requested delivery logistics$/ do
   @activity_offering.save
 end
 
-When /^I add RDLs for an AO specifying "(times|times and facility|times and room)" only$/ do |optional_field|
+When /^I add RDLs for an AO specifying (times|times and facility|times and room) only$/ do |optional_field|
 
   # determine which optional-field the user wants
   case optional_field
