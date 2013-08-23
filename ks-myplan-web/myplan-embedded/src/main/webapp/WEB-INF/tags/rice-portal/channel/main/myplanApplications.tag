@@ -26,9 +26,8 @@
                target="_new">Bookmarked Courses</a></li>
         <li><a href="${ConfigProperties.application.url}/myplan/course?methodToCall=start&viewId=CourseSearch-FormView"
                target="_new">Course Search</a></li>
-        <%--TODO: uncomment once plan Audits are available
         <li><a href="${ConfigProperties.application.url}/myplan/audit?methodToCall=audit&viewId=PlanAudit-FormView"
-               target="_new">Plan Audit</a></li>--%>
+               target="_new">Plan Audit</a></li>
         <li><a href="${ConfigProperties.application.url}/myplan/audit?methodToCall=audit&viewId=DegreeAudit-FormView"
                target="_new">Degree Audit</a></li>
         <li>
