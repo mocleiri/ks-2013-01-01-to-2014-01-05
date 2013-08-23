@@ -1005,7 +1005,6 @@ Then /^the text area should contain "(.*)"$/ do |text|
   on ManageCORequisites do |page|
     page.edit_loading.wait_while_present
     page.logic_text.text.should == text
-    page.update_rule_btn
   end
 end
 
@@ -1034,7 +1033,6 @@ Then /^node "(.*)" should be after node "(.*)"$/ do |second,first|
   on ManageCORequisites do |page|
     page.loading.wait_while_present
     page.edit_tree_section.text.should match /.*#{Regexp.escape(first)}\..+#{Regexp.escape(second)}\..*/m
-    page.update_rule_btn
   end
 end
 
@@ -1050,7 +1048,6 @@ Then /^node "(.*)" should be a "(.*)" node in the tree$/ do |node, level|
   on ManageCORequisites do |page|
     page.loading.wait_while_present
     page.edit_tree_section.span(:text => /.*#{node}\..*/).id.should match @courseOR.test_node_level(level)
-    page.update_rule_btn
   end
 end
 
@@ -1058,7 +1055,6 @@ Then /^there should be a dropdown with value "(.*)" before node "(.*)"$/ do |dro
   on ManageCORequisites do |page|
     page.edit_loading.wait_while_present
     page.edit_tree_section.text.should match /.*#{Regexp.escape(drop)}.*#{Regexp.escape(node)}.*/m
-    page.update_rule_btn
   end
 end
 
@@ -1067,6 +1063,5 @@ Then /^the Move In button should be disabled$/ do
     if page.right_btn_element.attribute_value('disabled')
       page.right_btn_element.attribute_value('disabled').should == "true"
     end
-    page.update_rule_btn
   end
 end
