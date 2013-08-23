@@ -34,6 +34,7 @@ When /^I add RDLs for an AO specifying (times|times and facility|times and room)
   # add new RDL row
   @activity_offering.edit
   @new_rdls.add :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => optional_field_facility, :room => optional_field_room
+  # if entering an invalid combination, need to stay on page to see the error message, so skip the page submit
   @activity_offering.save unless optional_field == "times and room"
 end
 
