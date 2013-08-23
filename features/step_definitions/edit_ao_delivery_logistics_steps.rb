@@ -34,8 +34,7 @@ When /^I add RDLs for an AO specifying (times|times and facility|times and room)
   # add new RDL row
   @activity_offering.edit
   @new_rdls.add :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => optional_field_facility, :room => optional_field_room
-  @activity_offering.save
-
+  @activity_offering.save unless optional_field == "times and room"
 end
 
 Then /^the AO's delivery logistics shows the new schedule$/ do
