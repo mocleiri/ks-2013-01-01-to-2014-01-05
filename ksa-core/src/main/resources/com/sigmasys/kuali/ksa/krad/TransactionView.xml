@@ -23,11 +23,15 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <bean id="transactionHelper" class="com.sigmasys.kuali.ksa.krad.helper.TransactionHelper"/>
+
     <bean id="TransactionView" parent="Uif-KsaFormView" p:footer.render="false">
         <property name="title" value="Transaction Overview"/>
         <property name="headerText" value="Transactions"/>
         <property name="entryPageId" value="ViewTransactions"/>
         <property name="navigation" ref="KsaAccountNavigation"/>
+        <property name="viewHelperService" ref="transactionHelper"/>
+
         <property name="items">
             <list merge="true">
                 <bean parent="Uif-Page" p:id="ViewTransactions">
