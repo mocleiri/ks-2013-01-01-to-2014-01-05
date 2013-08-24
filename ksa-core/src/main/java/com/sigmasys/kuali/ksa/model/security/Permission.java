@@ -60,6 +60,7 @@ public enum Permission {
     CREATE_ACCOUNT_BLOCK_OVERRIDE,
     READ_ACCOUNT_BLOCK_OVERRIDE,
     RELEASE_ACCOUNT_BLOCK_OVERRIDE,
+    DELETE_ACCOUNT_BLOCK_OVERRIDE,
 
     // Currency permissions
     EDIT_CURRENCY,
@@ -217,7 +218,7 @@ public enum Permission {
     READ_THIRD_PARTY_PLAN,
     READ_THIRD_PARTY_TRANSFER_DETAIL,
 
-     // Payment billing permissions
+    // Payment billing permissions
     CREATE_PAYMENT_BILLING_PLAN,
     CREATE_PAYMENT_BILLING_ALLOWABLE_CHARGE,
     GENERATE_PAYMENT_BILLING_TRANSFER,

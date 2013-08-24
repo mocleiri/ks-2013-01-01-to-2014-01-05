@@ -48,7 +48,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
     private static final Log logger = LogFactory.getLog(RateServiceImpl.class);
 
-    private static final String GET_RATE_JOIN = "select r from Rate r " +
+    private static final String GET_RATE_SELECT = "select r from Rate r " +
             " inner join fetch r.rateType rt " +
             " inner join fetch r.rateCatalogAtp rca " +
             " left outer join fetch r.defaultRateAmount dra " +
@@ -705,7 +705,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     public Rate getRate(Long rateId) {
         PermissionUtils.checkPermission(Permission.READ_RATE);
-        Query query = em.createQuery(GET_RATE_JOIN + " where r.id = :id");
+        Query query = em.createQuery(GET_RATE_SELECT + " where r.id = :id");
         query.setParameter("id", rateId);
         List<Rate> rates = query.getResultList();
         return CollectionUtils.isNotEmpty(rates) ? rates.get(0) : null;
@@ -731,7 +731,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new IllegalArgumentException(errMsg);
         }
 
-        Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :rateCode and r.subCode = :subCode and rca.id.atpId = :atpId");
+        Query query = em.createQuery(GET_RATE_SELECT + " where r.code = :rateCode and r.subCode = :subCode and rca.id.atpId = :atpId");
 
         query.setParameter("rateCode", rateCode);
         query.setParameter("subCode", subCode);
@@ -753,7 +753,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         PermissionUtils.checkPermission(Permission.READ_RATE);
 
-        Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :code order by r.id desc");
+        Query query = em.createQuery(GET_RATE_SELECT + " where r.code = :code order by r.id desc");
 
         query.setParameter("code", rateCode);
 
@@ -772,7 +772,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         PermissionUtils.checkPermission(Permission.READ_RATE);
 
-        Query query = em.createQuery(GET_RATE_JOIN + " where r.code = :code and r.subCode = :subCode order by r.id desc");
+        Query query = em.createQuery(GET_RATE_SELECT + " where r.code = :code and r.subCode = :subCode order by r.id desc");
 
         query.setParameter("code", rateCode);
         query.setParameter("subCode", subCode);
@@ -797,7 +797,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new IllegalArgumentException(errMsg);
         }
 
-        Query query = em.createQuery(GET_RATE_JOIN + " where rca.id.atpId = :atpId");
+        Query query = em.createQuery(GET_RATE_SELECT + " where rca.id.atpId = :atpId");
         query.setParameter("atpId", atpId);
 
         return query.getResultList();
@@ -812,7 +812,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     public List<Rate> getRatesByCatalogId(Long rateCatalogId) {
         PermissionUtils.checkPermission(Permission.READ_RATE);
-        Query query = em.createQuery(GET_RATE_JOIN + " where rca.rateCatalog.id = :rateCatalogId");
+        Query query = em.createQuery(GET_RATE_SELECT + " where rca.rateCatalog.id = :rateCatalogId");
         query.setParameter("rateCatalogId", rateCatalogId);
         return query.getResultList();
     }
@@ -826,7 +826,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     public List<Rate> getRatesByNamePattern(String namePattern) {
         PermissionUtils.checkPermission(Permission.READ_RATE);
-        Query query = em.createQuery(GET_RATE_JOIN + " where upper(r.name) like upper(:namePattern)");
+        Query query = em.createQuery(GET_RATE_SELECT + " where upper(r.name) like upper(:namePattern)");
         query.setParameter("namePattern", "%" + namePattern + "%");
         return query.getResultList();
     }
@@ -839,7 +839,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @Override
     public List<Rate> getAllRates() {
         PermissionUtils.checkPermission(Permission.READ_RATE);
-        Query query = em.createQuery(GET_RATE_JOIN + " order by r.id desc");
+        Query query = em.createQuery(GET_RATE_SELECT + " order by r.id desc");
         return query.getResultList();
     }
 

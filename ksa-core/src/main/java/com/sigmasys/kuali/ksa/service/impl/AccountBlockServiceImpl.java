@@ -38,6 +38,11 @@ public class AccountBlockServiceImpl extends GenericPersistenceService implement
     private static final Log logger = LogFactory.getLog(AccountBlockServiceImpl.class);
 
 
+    private static final String GET_BLOCK_OVERRIDE_SELECT = "select a from AccountBlockOverride a " +
+            "left outer join fetch a.account ac" +
+            "left outer join fetch a.accountBlock acb ";
+
+
     @Autowired
     private AuditableEntityService entityService;
 
@@ -160,6 +165,25 @@ public class AccountBlockServiceImpl extends GenericPersistenceService implement
     @Transactional(readOnly = false)
     public AccountBlockOverride createAccountBlockOverride(Long accountBlockId, String accountId, Date expirationDate,
                                                            String reason, boolean isSingleUse) {
+        return createAccountBlockOverride(accountBlockId, accountId, expirationDate, reason, isSingleUse, false);
+    }
+
+    /**
+     * Creates and persists an administrative account block override in the persistent store.
+     *
+     * @param accountId      Account ID
+     * @param expirationDate Expiration date
+     * @param reason         Override reason
+     * @return AccountBlockOverride instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public AccountBlockOverride createAdminAccountBlockOverride(String accountId, Date expirationDate, String reason) {
+        return createAccountBlockOverride(null, accountId, expirationDate, reason, false, true);
+    }
+
+    private AccountBlockOverride createAccountBlockOverride(Long accountBlockId, String accountId, Date expirationDate,
+                                                            String reason, boolean isSingleUse, boolean isAdminOverride) {
 
         PermissionUtils.checkPermission(Permission.CREATE_ACCOUNT_BLOCK_OVERRIDE);
 
@@ -168,13 +192,6 @@ public class AccountBlockServiceImpl extends GenericPersistenceService implement
             String errMsg = "Account with ID = " + accountId + " does not exist";
             logger.error(errMsg);
             throw new UserNotFoundException(errMsg);
-        }
-
-        AccountBlock accountBlock = getAccountBlock(accountBlockId);
-        if (accountBlock == null) {
-            String errMsg = "AccountBlock with ID = " + accountBlockId + " does not exist";
-            logger.error(errMsg);
-            throw new IllegalArgumentException(errMsg);
         }
 
         if (expirationDate == null) {
@@ -189,15 +206,26 @@ public class AccountBlockServiceImpl extends GenericPersistenceService implement
             throw new IllegalArgumentException(errMsg);
         }
 
-
         AccountBlockOverride blockOverride = new AccountBlockOverride();
 
+        if (!isAdminOverride) {
+
+            AccountBlock accountBlock = getAccountBlock(accountBlockId);
+            if (accountBlock == null) {
+                String errMsg = "AccountBlock with ID = " + accountBlockId + " does not exist";
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+
+            blockOverride.setAccountBlock(accountBlock);
+        }
+
         blockOverride.setAccount(account);
-        blockOverride.setAccountBlock(accountBlock);
+
         blockOverride.setExpirationDate(expirationDate);
         blockOverride.setReason(reason);
-        blockOverride.setSingleUse(isSingleUse);
-        blockOverride.setAdminOverride(false);
+        blockOverride.setSingleUse(!isAdminOverride && isSingleUse);
+        blockOverride.setAdminOverride(isAdminOverride);
         blockOverride.setComplete(false);
         blockOverride.setCreationDate(new Date());
         blockOverride.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
@@ -219,10 +247,7 @@ public class AccountBlockServiceImpl extends GenericPersistenceService implement
 
         PermissionUtils.checkPermission(Permission.READ_ACCOUNT_BLOCK_OVERRIDE);
 
-        Query query = em.createQuery("select a from AccountBlockOverride a " +
-                "left outer join fetch a.account " +
-                "left outer join fetch a.accountBlock " +
-                "where a.id = :id");
+        Query query = em.createQuery(GET_BLOCK_OVERRIDE_SELECT + " where a.id = :id");
 
         query.setParameter("id", blockOverrideId);
 
@@ -230,6 +255,53 @@ public class AccountBlockServiceImpl extends GenericPersistenceService implement
 
         return CollectionUtils.isNotEmpty(blockOverrides) ? blockOverrides.get(0) : null;
     }
+
+    /**
+     * Returns all AccountBlockOverride objects from the persistent store.
+     *
+     * @return list of AccountBlockOverride instances
+     */
+    @Override
+    public List<AccountBlockOverride> getAccountBlockOverrides() {
+
+        PermissionUtils.checkPermission(Permission.READ_ACCOUNT_BLOCK_OVERRIDE);
+
+        Query query = em.createQuery(GET_BLOCK_OVERRIDE_SELECT + " order by a.id desc");
+
+        return query.getResultList();
+    }
+
+    /**
+     * Returns AccountBlockOverride objects for the given Account ID from the persistent store.
+     *
+     * @return list of AccountBlockOverride instances
+     */
+    @Override
+    public List<AccountBlockOverride> getAccountBlockOverrides(String accountId) {
+
+        PermissionUtils.checkPermission(Permission.READ_ACCOUNT_BLOCK_OVERRIDE);
+
+        Query query = em.createQuery(GET_BLOCK_OVERRIDE_SELECT + " where ac <> null and ac.id = :accountId order by a.id desc");
+
+        query.setParameter("accountId", accountId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Removes AccountBlockOverride entity from the persistent store by ID.
+     *
+     * @param blockOverrideId AccountBlockOverride ID
+     * @return true if AccountBlockOverride entity has been deleted
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public boolean deleteAccountBlockOverride(Long blockOverrideId) {
+        PermissionUtils.checkPermission(Permission.DELETE_ACCOUNT_BLOCK_OVERRIDE);
+        return deleteEntity(blockOverrideId, AccountBlockOverride.class);
+
+    }
+
 
     /**
      * Releases AccountBlockOverride object.

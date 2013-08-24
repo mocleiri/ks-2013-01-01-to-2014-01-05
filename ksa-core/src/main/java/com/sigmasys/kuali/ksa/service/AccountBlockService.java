@@ -71,12 +71,44 @@ public interface AccountBlockService {
                                                     String reason, boolean isSingleUse);
 
     /**
+     * Creates and persists an administrative account block override in the persistent store.
+     *
+     * @param accountId      Account ID
+     * @param expirationDate Expiration date
+     * @param reason         Override reason
+     * @return AccountBlockOverride instance
+     */
+    AccountBlockOverride createAdminAccountBlockOverride(String accountId, Date expirationDate, String reason);
+
+    /**
      * Retrieves AccountBlockOverride entity from the persistent store.
      *
      * @param blockOverrideId AccountBlockOverride ID
      * @return AccountBlockOverride instance
      */
     AccountBlockOverride getAccountBlockOverride(Long blockOverrideId);
+
+    /**
+     * Returns all AccountBlockOverride objects from the persistent store.
+     *
+     * @return list of AccountBlockOverride instances
+     */
+    List<AccountBlockOverride> getAccountBlockOverrides();
+
+    /**
+     * Returns AccountBlockOverride objects for the given Account ID from the persistent store.
+     *
+     * @return list of AccountBlockOverride instances
+     */
+    List<AccountBlockOverride> getAccountBlockOverrides(String accountId);
+
+    /**
+     * Removes AccountBlockOverride entity from the persistent store by ID.
+     *
+     * @param blockOverrideId AccountBlockOverride ID
+     * @return true if AccountBlockOverride entity has been deleted
+     */
+    boolean deleteAccountBlockOverride(Long blockOverrideId);
 
     /**
      * Releases AccountBlockOverride object.
