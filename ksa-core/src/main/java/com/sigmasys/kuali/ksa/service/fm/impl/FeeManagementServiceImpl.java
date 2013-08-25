@@ -148,7 +148,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         	// Otherwise, continue to the new manifest.
         	// Inherently, all ORIGINAL manifests will have a Transaction.
         	if (manifest.getTransaction() == null) {
-        		processManifestCharge(manifest, session, pbtDetails, tptDetails);
+        		processManifestCharge(manifest, false, session, pbtDetails, tptDetails);
         	}
         }
         
@@ -247,12 +247,14 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * The main method for manifest charge processing.
      * 
-     * @param manifest		An FM manifest.
-     * @param session		An FM session the manifest belongs to.
-     * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
-     * @param tpPlan		A list of Third-party plans. An OUT Parameter.
+     * @param manifest		    An FM manifest.
+     * @param isLinkedManifest  Is "manifest" an already linked manifest of the main manifest being processed?
+     * @param session		    An FM session the manifest belongs to.
+     * @param pbtDetails	    A list of Payment billing transfer details. An OUT parameter.
+     * @param tptDetails	    A list of Third-party transfer details. An OUT Parameter.
      */
-    private void processManifestCharge(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
+    private void processManifestCharge(FeeManagementManifest manifest, boolean isLinkedManifest, FeeManagementSession session,
+                                       List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	
     	// Check the manifest type:
     	switch(manifest.getType()) {
@@ -263,7 +265,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	case CORRECTION:
     	case CANCELLATION:
     	case DISCOUNT:
-    		processNonChargeTypeManifest(manifest, session, pbtDetails, tptDetails);
+    		processNonChargeTypeManifest(manifest, isLinkedManifest, session, pbtDetails, tptDetails);
     		break;
     		
     	default:
@@ -274,10 +276,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Processes FM manifests only of the CHARGE type.
      * 
-     * @param manifest 	An FM manifest of the CHARGE type.
-     * @param session	An FM session the manifest belongs to.
+     * @param manifest 	    An FM manifest of the CHARGE type.
+     * @param session	    An FM session the manifest belongs to.
      * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
-     * @param tpPlan		A list of Third-party plans. An OUT Parameter.
+     * @param tptDetails	A list of Third-party transfer details. An OUT Parameter.
      */
     private void processChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	// Create a charge on the Account associated with the FM session:
@@ -296,7 +298,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		
     		// If there is a linked manifest, process it:
     		if (manifest.getLinkedManifest() != null) {
-    			processManifestCharge(manifest.getLinkedManifest(), session, pbtDetails, tptDetails);
+    			processManifestCharge(manifest.getLinkedManifest(), true, session, pbtDetails, tptDetails);
     		}
     	}
     }
@@ -304,17 +306,19 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Processes FM manifests of types other than CHARGE or ORIGINAL.
      * 
-     * @param manifest		An FM manifest.
-     * @param session		An FM session the manifest belongs to.
-     * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
-     * @param tpPlan		A list of Third-party plans. An OUT Parameter.
+     * @param manifest		    An FM manifest.
+     * @param isLinkedManifest  Is "manifest" an already linked Manifest of the main manifest being processed?
+     * @param session		    An FM session the manifest belongs to.
+     * @param pbtDetails	    A list of Payment billing transfer details. An OUT parameter.
+     * @param tptDetails	    A list of Third-party transfer details. An OUT Parameter.
      */
-    private void processNonChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
+    private void processNonChargeTypeManifest(FeeManagementManifest manifest, boolean isLinkedManifest, FeeManagementSession session,
+                                              List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	// Check if the linked manifest is complete, then process manifest charge, otherwise, move to the next manifest:
-    	FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
+    	FeeManagementManifest linkedManifest = isLinkedManifest ? manifest : manifest.getLinkedManifest();
     	
     	if (linkedManifest != null) {
-    		if (BooleanUtils.isTrue(linkedManifest.isSessionCurrent()) && (linkedManifest.getTransaction() != null)) {
+    		if (linkedManifest.getTransaction() != null) {
     			// Clear all unlockedAllocations against the transaction in the linked manifest (Implicated Transaction):
     			Transaction implicatedTransaction = linkedManifest.getTransaction();
     			
@@ -334,7 +338,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param implicatedTransaction Linked manifest's Transaction.
      * @param session				FM Session
      * @param pbtDetails			A list of Payment billing transfer details. An OUT parameter.
-     * @param tpPlan				A list of Third-party plans. An OUT Parameter.
+     * @param tptDetails	        A list of Third-party transfer details. An OUT Parameter.
      */
     private void processImplicatedTransaction(FeeManagementManifest manifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction, 
     					FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
@@ -383,7 +387,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param session				The FM session.
      * @param implicatedTransaction	Transaction associated with the linked manifest.
      * @param pbtDetails			A list of Payment billing transfer details. An OUT parameter.
-     * @param tpPlan				A list of Third-party transfer details. An OUT Parameter.
+     * @param tptDetails	        A list of Third-party transfer details. An OUT Parameter.
      */
     private void processTransferFound(FeeManagementManifest originalManifest, FeeManagementSession session, Transaction implicatedTransaction, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	
@@ -624,7 +628,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * Performs transfer reinstatement.
      * 
      * @param pbtDetails	A list of Payment billing transfer details.
-     * @param tpPlan		A list of Third-party plans.
+     * @param tptDetails	A list of Third-party transfer details. An OUT Parameter.
      * @param account		An Account associated with the the FM Session.
      */
     private void performTransferReinstatement(List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails, Account account) {
