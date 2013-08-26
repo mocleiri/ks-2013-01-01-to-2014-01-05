@@ -62,7 +62,7 @@ end
 
 When /^I add a rule to the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "HIST111"
+  @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "ENGL313"
   @prereq.sepr_add_ao_rule
 end
 
@@ -93,7 +93,7 @@ end
 
 When /^I suppress a newly added rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "HIST111"
+  @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "ENGL313"
   @prereq.sepr_suppress_added_ao_rule
 end
 
@@ -129,7 +129,7 @@ end
 
 When /^I compare the added rule with the CO and CLU rules in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "HIST111"
+  @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "ENGL313"
   @prereq.sepr_compare_new_ao_to_clu_co_rule
 end
 
@@ -261,6 +261,17 @@ end
 
 
 
+###General steps###
+Given /^I have made changes to multiple AO Requisites for the same course offering$/ do
+  @course_offering = make CourseOffering, {:course => "CHEM277", :term => "201208"}
+  @activityOR = make AORequisitesData
+  @activityOR.make_changes_to_multiple_ao_reqs
+end
+
+When /^I copy a course offering from an existing offering that had changes made to its activity offerings$/ do
+  @copyCO = create CourseOffering, :term => "201301", :course => "CHEM277", :create_from_existing => @course_offering
+end
+
 When /^I update the manage activity offering agendas page$/ do
   on ManageAORequisites do |page|
     page.update_rule_btn
@@ -269,6 +280,40 @@ end
 
 When /^I commit the changes made to the Activity Offering$/ do
   @activityOR.commit_changes
+end
+
+Then /^the copied course offering should have the same AO Requisites as the original$/ do
+  #@course_offering = make CourseOffering, {:course => "CHEM277A", :term => "201208"}
+  #@course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.loading.wait_while_present(200)
+    ao_code = page.frm.div(id: "activityOfferingsPerCluster_line0").span( :text => "A").parent.parent
+    ao_code.img.src.should match /ActivityRuleIcon6px.png/
+
+    page.ao_requisites("A")
+  end
+  on ManageAORequisites do |page|
+    page.loading.wait_while_present
+    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "Text to copy,ENGL101,free form text input value")
+    page.prereq_message_section.text.should match /Activity Offering Rule differs from Course Offering Rule/
+    page.coreq_message_section.text.should match /Rule statements deleted/
+    page.submit
+  end
+  on ManageCourseOfferings do |page|
+    page.loading.wait_while_present(200)
+    ao_code = page.frm.div(id: "activityOfferingsPerCluster_line0").span( :text => "D").parent.parent
+    ao_code.img.src.should match /ActivityRuleIcon6px.png/
+
+    page.ao_requisites("D")
+  end
+  on ManageAORequisites do |page|
+    page.loading.wait_while_present
+    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "ENGL101,concurrently enrolled in all courses,Text to copy,free form text input value")
+    page.coreq_message_section.text.should match /Activity Offering Rule differs from Course Offering Rule/
+    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "ENGL101,not have successfully completed,Text to copy,free form text input value")
+    page.coreq_message_section.text.should match /Rule statements deleted/
+    page.submit
+  end
 end
 
 Then /^there should be a new single course statement on the edit tab$/ do
