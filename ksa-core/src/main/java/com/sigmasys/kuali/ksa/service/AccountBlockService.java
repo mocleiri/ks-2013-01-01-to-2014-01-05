@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.service;
 
 
 import com.sigmasys.kuali.ksa.model.AccountBlock;
+import com.sigmasys.kuali.ksa.model.AccountBlockDescriptor;
 import com.sigmasys.kuali.ksa.model.AccountBlockOverride;
 
 import java.util.Date;
@@ -117,5 +118,14 @@ public interface AccountBlockService {
      * @return AccountBlockOverride instance
      */
     AccountBlockOverride releaseAccountBlockOverride(Long blockOverrideId);
+
+    /**
+     * Filters all AccountBlockDescriptor objects for the accountId which are not complete with the future expiration date.
+     *
+     * @param accountId        Account ID
+     * @param blockDescriptors Account block descriptors
+     * @return list of AccountBlockDescriptor instances
+     */
+    List<AccountBlockDescriptor> filterAccountBlockDescriptors(String accountId, List<AccountBlockDescriptor> blockDescriptors);
 
 }

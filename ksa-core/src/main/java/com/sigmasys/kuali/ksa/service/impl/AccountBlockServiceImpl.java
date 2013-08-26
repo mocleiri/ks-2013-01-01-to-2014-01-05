@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.service.impl;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.AccountBlock;
+import com.sigmasys.kuali.ksa.model.AccountBlockDescriptor;
 import com.sigmasys.kuali.ksa.model.AccountBlockOverride;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
@@ -325,6 +326,20 @@ public class AccountBlockServiceImpl extends GenericPersistenceService implement
         blockOverride.setComplete(true);
 
         return blockOverride;
+    }
+
+    /**
+     * Filters all AccountBlockDescriptor objects for the accountId which are not complete with the future expiration date.
+     *
+     * @param accountId        Account ID
+     * @param blockDescriptors Account block descriptors
+     * @return list of AccountBlockDescriptor instances
+     */
+    @Override
+    public List<AccountBlockDescriptor> filterAccountBlockDescriptors(String accountId,
+                                                                      List<AccountBlockDescriptor> blockDescriptors) {
+        // TODO:
+        return null;
     }
 
 

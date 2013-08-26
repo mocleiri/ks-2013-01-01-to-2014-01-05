@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.brm;
 
+import com.sigmasys.kuali.ksa.model.rule.Rule;
 import com.sigmasys.kuali.ksa.model.rule.RuleSet;
 
 
@@ -8,7 +9,6 @@ import com.sigmasys.kuali.ksa.model.rule.RuleSet;
  *
  * @author Michael Ivanov
  */
-@SuppressWarnings("unchecked")
 public interface BrmService {
 
     /**
@@ -23,7 +23,7 @@ public interface BrmService {
     /**
      * Fires all rules from a Rule Set.
      *
-     * @param ruleSetName Rule Set Name
+     * @param ruleSetName Rule Set name
      * @param brmContext  BRM context, can be any type
      * @return the modified BRM context
      */
@@ -47,5 +47,14 @@ public interface BrmService {
      * @param ruleSetNames Rule Set names
      */
     void reloadRuleSets(String... ruleSetNames);
+
+    /**
+     * Attach new or already persistent Rule entities to a rule set specified by ID.
+     *
+     * @param ruleSetName Rule Set name
+     * @param rules       array of Rule instances
+     * @return RuleSet    Updated RuleSet instance
+     */
+    RuleSet attachRulesToRuleSet(String ruleSetName, Rule... rules);
 
 }
