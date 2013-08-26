@@ -10,6 +10,7 @@ Feature: SA.ELIG8-8 Permissions for specific users should change depending on th
     Then I should only be allowed to view the CLU and CO rule in the Student Eligibility & Prerequisite section
 
   #ELIG8.8.EB2.1 (KSENROLL-8872)
+  @pending
   Scenario: Test that Carol can add a new rule in ENGL AO Requisites
     When I replace the CO rule in the Student Eligibility & Prerequisite section
     Then the created rule should be shown in the Student Eligibility & Prerequisite section
