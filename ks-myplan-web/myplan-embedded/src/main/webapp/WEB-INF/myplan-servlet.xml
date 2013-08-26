@@ -30,6 +30,9 @@
     <!-- UW's Implementation of Course Helper -->
     <bean id="courseHelper" class="edu.uw.kuali.student.myplan.util.CourseHelperImpl"/>
 
+    <!-- UW's Implementation of Comment Helper -->
+    <bean id="commentHelper" class="edu.uw.kuali.student.myplan.util.CommentHelperImpl"/>
+
 
 
     <!-- Search Strategy -->
