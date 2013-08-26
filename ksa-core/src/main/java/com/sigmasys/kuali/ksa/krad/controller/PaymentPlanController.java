@@ -19,7 +19,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value = "/paymentPlanView")
@@ -68,6 +70,11 @@ public class PaymentPlanController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
     public ModelAndView get(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
 
+        String pageId = request.getParameter("pageId");
+
+        if("ManageThirdPartyPage".equals(pageId)){
+            populateForm(form);
+        }
 
         return getUIFModelAndView(form);
     }
@@ -77,7 +84,7 @@ public class PaymentPlanController extends GenericSearchController {
         String accountString = form.getResponsibleAccount();
         Account account = accountService.getFullAccount(accountString);
         if(account instanceof ThirdPartyAccount){
-            form.getNewThirdPartyPlan().setThirdPartyAccount((ThirdPartyAccount)account);
+            form.setThirdPartyAccount((ThirdPartyAccount)account);
             form.setResponsibleAccountMessage("");
         } else {
             form.setResponsibleAccountMessage(accountString + " is not a valid Third Party Account");
@@ -163,16 +170,69 @@ public class PaymentPlanController extends GenericSearchController {
 
 
     private void populateForm(PaymentPlanForm form) {
+        List<ThirdPartyAccount> accounts = form.getFilterThirdPartyAccounts();
+        List<ThirdPartyPlan> plans = form.getFilterThirdPartyPlans();
+
+        List<ThirdPartyPlan> allPlans = new ArrayList<ThirdPartyPlan>();
+
+        if((accounts == null || accounts.size() == 0) && (plans == null || plans.size() == 0)){
+            allPlans = thirdPartyTransferService.getThirdPartyPlans();
+        } else if(accounts == null || accounts.size() == 0) {
+            allPlans = form.getFilterThirdPartyPlans();
+        } else {
+            // Accounts have something in them.  Plans might too.
+            Set<String> users = new HashSet<String>();
+            for(ThirdPartyAccount account : accounts){
+                users.add(account.getId());
+            }
+
+            List<ThirdPartyPlan> accountPlans = thirdPartyTransferService.getThirdPartyPlans(users);
+
+            if(plans == null || plans.size() == 0){
+                allPlans = accountPlans;
+            } else {
+                // Make sure that only the accounts that are also within the plans are displayed
+
+                for(ThirdPartyPlan plan : accountPlans){
+                    Long id = plan.getId();
+                    for(ThirdPartyPlan filteredPlan : plans) {
+                        if(filteredPlan.getId().equals(id)) {
+                            allPlans.add(plan);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        form.setThirdPartyPlans(allPlans);
+
     }
 
     @RequestMapping(method = RequestMethod.POST, params="methodToCall=insertThirdParty")
     public ModelAndView insertThirdParty(@ModelAttribute("KualiForm") PaymentPlanForm form) {
 
         ThirdPartyPlan plan = form.getNewThirdPartyPlan();
+        if(plan == null){
+            plan = new ThirdPartyPlan();
+        }
+
+        if(plan.getCode() == null){
+            plan.setCode(form.getCode());
+        }
+
+        if(plan.getName() == null){
+            plan.setName(form.getName());
+        }
+
+        if(plan.getDescription() == null){
+            plan.setDescription(form.getDescription());
+        }
+
 
         boolean errors = false;
 
-        if(plan.getThirdPartyAccount() == null  || plan.getThirdPartyAccount().getId() == null){
+        if(form.getThirdPartyAccount() == null  || form.getThirdPartyAccount().getId() == null){
             String errorMessage = "Invalid third party account";
             GlobalVariables.getMessageMap().putError(RESPONSIBLE_ACCOUNT_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             errors = true;
@@ -184,8 +244,8 @@ public class PaymentPlanController extends GenericSearchController {
         }
 
         Long transferTypeId = null;
-        if(plan.getTransferType() != null) {
-            transferTypeId = plan.getTransferType().getId();
+        if(form.getTransferType() != null) {
+            transferTypeId = Long.parseLong(form.getTransferType());
         } else {
             String errorMessage = "Transfer Type is required";
             GlobalVariables.getMessageMap().putError(TRANSFER_TYPE_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
@@ -205,6 +265,9 @@ public class PaymentPlanController extends GenericSearchController {
                     charge.getMaxAmount(), charge.getMaxPercentage(), charge.getPriority(),
                     charge.getDistributionPlan());
         }
+
+        String message = "Transfer Type saved";
+        GlobalVariables.getMessageMap().putError(PAYMENT_PLAN_VIEW, RiceKeyConstants.ERROR_CUSTOM, message);
 
 
         return getUIFModelAndView(form);

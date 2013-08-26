@@ -18,7 +18,6 @@ public class PaymentPlanForm extends AbstractViewModel {
     private Account account;
 
     private PaymentBillingPlan newPaymentBillingPlan;
-    private ThirdPartyPlan     newThirdPartyPlan;
 
     private List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges;
 
@@ -34,6 +33,14 @@ public class PaymentPlanForm extends AbstractViewModel {
     private String responsibleAccount;
     private String responsibleAccountMessage;
     private String transferType;
+
+    // Fields for a new Third Party plan
+    private ThirdPartyPlan     newThirdPartyPlan;
+    private String code;
+    private String name;
+    private String description;
+    private ThirdPartyAccount thirdPartyAccount;
+
 
 
     public Account getAccount() {
@@ -151,5 +158,40 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     public void setThirdPartyPlans(List<ThirdPartyPlan> thirdPartyPlans) {
         this.thirdPartyPlans = thirdPartyPlans;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public ThirdPartyAccount getThirdPartyAccount() {
+        if(thirdPartyAccount == null){
+            thirdPartyAccount = new ThirdPartyAccount();
+        }
+        return thirdPartyAccount;
+    }
+
+    public void setThirdPartyAccount(ThirdPartyAccount thirdPartyAccount) {
+        this.thirdPartyAccount = thirdPartyAccount;
     }
 }
