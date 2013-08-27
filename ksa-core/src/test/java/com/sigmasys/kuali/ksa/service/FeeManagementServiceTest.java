@@ -2,6 +2,8 @@ package com.sigmasys.kuali.ksa.service;
 
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Transaction;
+import com.sigmasys.kuali.ksa.model.TransactionStatus;
+import com.sigmasys.kuali.ksa.model.TransactionType;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import junit.framework.Assert;
 
@@ -48,23 +50,6 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 
 
 
-	@Test
-	public void testReconcileSession() throws Exception {
-		// Preposition the data:
-		
-		// Call the service method:
-		
-		// Validate the results:
-	}
-	
-	@Test
-	public void testChargeSession() throws Exception {
-		// Preposition the data:
-		
-		// Call the service method:
-		
-		// Validate the results:
-	}
 
     /*****************************************************************
      *
@@ -212,12 +197,47 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 
         // Validate manifest is marked session current:
         assertTrue("FM Session must be current.", manifest.isSessionCurrent());
+
+        // Verify session's status changed to CHARGED:
+        assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
     }
 
     @Test
-    public void testChargeSessionChargeManifestLinkedManifestHasNoTransaction() throws Exception {
+    public void testChargeSessionCorrectionManifestHasNoLinkedManifest() throws Exception {
+        // Create an FM Session:
+        FmSession fmSession = createFmSession(1, false, false, FeeManagementManifestType.CORRECTION);
+        FeeManagementManifest manifest = fmSession.getManifests().get(0);
+        Transaction primaryTransaction = manifest.getTransaction();
+
+        // Call the method:
+        fmService.chargeSession(fmSession.getSession().getId());
+
+        // Validate that a new Transaction was created:
+        Transaction chargeTransaction = manifest.getTransaction();
+
+        assertNull(primaryTransaction);
+        assertNotNull("No CHARGE Transaction was created.", chargeTransaction);
+        assertNotNull("CHARGE Transaction's ID must not be null", chargeTransaction.getId());
+        assertNotNull("New Transaction's amount must not be empty.", chargeTransaction.getAmount());
+        assertTrue("CHARGE Transaction was not a reversal to the manifest.", manifest.getAmount().compareTo(chargeTransaction.getAmount().negate()) == 0);
+
+        // Validate there is no linked manifest:
+        assertNull("Linked manifest must not exist", manifest.getLinkedManifest());
+
+        // Validate manifest is marked session current:
+        assertTrue("FM Session must be current.", manifest.isSessionCurrent());
+
+        // Validate the Session is marked for review:
+        assertTrue("FM Session must be marked for manual review", fmSession.getSession().isReviewRequired());
+
+        // Verify session's status changed to CHARGED:
+        assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
+    }
+
+    @Test
+    public void testChargeSessionCorrectionManifestLinkedManifestHasNoTransaction() throws Exception {
         // Create an FM session with linked manifests:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.CHARGE);
+        FmSession fmSession = createFmSession(1, FeeManagementManifestType.CORRECTION);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
 
         // Nullify the implicated Transaction:
@@ -229,19 +249,142 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
 
-        // Validate that a new Transaction was created:
-        Transaction chargeTransaction = manifest.getTransaction();
+        // Verify that the linked manifest still has no Transaction:
+        assertNull("Linked manifest must not have a transaction", linkedManifest.getTransaction());
 
-        assertNotNull("No CHARGE Transaction was created.", chargeTransaction);
-        assertNotNull("CHARGE Transaction's ID must not be null", chargeTransaction.getId());
-        assertNotNull("New Transaction's amount must not be empty.", chargeTransaction.getAmount());
-        assertTrue("CHARGE Transaction was created in a different amount than the manifest.", manifest.getAmount().compareTo(chargeTransaction.getAmount()) == 0);
+        // Verify the Session is not marked for review and manifest is not marked session current:
+        assertFalse("FM Session must not marked for review", fmSession.getSession().isReviewRequired());
+        assertFalse("Manifests must not be marked session current", manifest.isSessionCurrent());
 
-        // Validate Implicated Transaction does not exist:
-        assertNull("Implicated Transaction must not exist", linkedManifest.getTransaction());
+        // Verify session's status changed to CHARGED:
+        assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
+    }
 
-        // Validate manifest is marked session current:
-        assertTrue("FM Session must be current.", manifest.isSessionCurrent());
+    @Test
+    public void testChargeSessionLinkedManifestHasNonReversalTransactionNoAllocationsRemain() throws Exception {
+        // Create an FM session with linked manifests:
+        FmSession fmSession = createFmSession(1, FeeManagementManifestType.CANCELLATION);
+        FeeManagementManifest manifest = fmSession.getManifests().get(0);
+        FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
+        Transaction implicatedTransaction = linkedManifest.getTransaction();
+
+        implicatedTransaction.setStatus(TransactionStatus.BOUNCING);
+
+        // Call the method:
+        fmService.chargeSession(fmSession.getSession().getId());
+
+        // Verify all allocations were removed:
+        boolean allocationsRemain = (implicatedTransaction.getAllocatedAmount() != null) && (implicatedTransaction.getLockedAllocatedAmount() != null)
+                && (implicatedTransaction.getAllocatedAmount().compareTo(implicatedTransaction.getLockedAllocatedAmount().negate()) != 0);
+
+        assertFalse("There are uncleared allocations remain", allocationsRemain);
+
+        // Verify the original manifest still has no Transaction:
+        assertNull("Primary transaction must not exist", manifest.getTransaction());
+
+        // Verify session's status changed to CHARGED:
+        assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
+    }
+
+    @Test
+    public void testChargeSessionLinkedManifestHasReversalTransactionNoAllocationsRemain() throws Exception {
+        // Create an FM session with linked manifests:
+        FmSession fmSession = createFmSession(1, FeeManagementManifestType.DISCOUNT);
+        FeeManagementManifest manifest = fmSession.getManifests().get(0);
+        FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
+        Transaction implicatedTransaction = linkedManifest.getTransaction();
+
+        // Call the method:
+        fmService.chargeSession(fmSession.getSession().getId());
+
+        // Verify the original manifest was updated with the reverse Transaction:
+        Transaction primaryTransaction = manifest.getTransaction();
+
+        assertNotNull("Primary transaction must exist", primaryTransaction);
+        assertNotNull("Primary transaction ID must exist", primaryTransaction.getId());
+        assertEquals("Reversal transaction amount must be reverse from the manifest", manifest.getAmount(), primaryTransaction.getAmount().negate());
+
+        // Verify session's status changed to CHARGED:
+        assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
+    }
+
+    @Test
+    public void testChargeSessionLinkedManifestHasNonReversalTransactionAllocationsRemain() throws Exception {
+        // Create an FM session with linked manifests and simulate allocation remain:
+        FmSession fmSession = createFmSession(1, FeeManagementManifestType.CORRECTION);
+        FeeManagementManifest manifest = fmSession.getManifests().get(0);
+        FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
+        Transaction implicatedTransaction = linkedManifest.getTransaction();
+
+        implicatedTransaction.setStatus(TransactionStatus.WRITING_OFF);
+        implicatedTransaction.setAllocatedAmount(new BigDecimal(2));
+        implicatedTransaction.setLockedAllocatedAmount(new BigDecimal(3));
+
+        // Call the method:
+        fmService.chargeSession(fmSession.getSession().getId());
+
+        // Verify the main manifest still has no Transaction:
+        assertNull("Primary transaction must not exist", manifest.getTransaction());
+
+        // Verify the session is marked for manual review:
+        assertTrue("FM Session must be marked for manual review", fmSession.getSession().isReviewRequired());
+
+        // Verify session's status changed to CHARGED:
+        assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
+    }
+
+    @Test
+    public void testChargeSessionLinkedManifestHasReversalTransactionAllocationsRemainNotEnoughBalanceForReversal() throws Exception {
+        // Create an FM session with linked manifests and simulate allocation remain:
+        FmSession fmSession = createFmSession(1, FeeManagementManifestType.CANCELLATION);
+        FeeManagementManifest manifest = fmSession.getManifests().get(0);
+        FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
+        Transaction implicatedTransaction = linkedManifest.getTransaction();
+
+        implicatedTransaction.setStatus(TransactionStatus.REVERSING);
+        implicatedTransaction.setAllocatedAmount(new BigDecimal(2));
+        implicatedTransaction.setLockedAllocatedAmount(new BigDecimal(3));
+
+        // Call the method:
+        fmService.chargeSession(fmSession.getSession().getId());
+
+        // Verify the main manifest still has no Transaction:
+        assertNull("Primary transaction must not exist", manifest.getTransaction());
+
+        // Verify the session is marked for manual review:
+        assertTrue("FM Session must be marked for manual review", fmSession.getSession().isReviewRequired());
+
+        // Verify session's status changed to CHARGED:
+        assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
+    }
+
+    @Test
+    public void testChargeSessionLinkedManifestHasReversalTransactionAllocationsRemainEnoughBalanceForReversal() throws Exception {
+        // Create an FM session with linked manifests and simulate allocation remain:
+        FmSession fmSession = createFmSession(1, FeeManagementManifestType.DISCOUNT);
+        FeeManagementManifest manifest = fmSession.getManifests().get(0);
+        FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
+        Transaction implicatedTransaction = linkedManifest.getTransaction();
+
+        implicatedTransaction.setStatus(TransactionStatus.DISCOUNTING);
+        implicatedTransaction.setAllocatedAmount(new BigDecimal(-2));
+        implicatedTransaction.setLockedAllocatedAmount(new BigDecimal(-3));
+
+        // Call the method:
+        fmService.chargeSession(fmSession.getSession().getId());
+
+        // Verify the original manifest was updated with a reversal Transaction:
+        Transaction primaryTransaction = manifest.getTransaction();
+
+        assertNotNull("Primary transaction must exist", primaryTransaction);
+        assertNotNull("Primary transaction ID must exist", primaryTransaction.getId());
+        assertEquals("Reversal transaction amount must be reverse from the manifest", manifest.getAmount(), primaryTransaction.getAmount().negate());
+
+        // Verify the session is marked for manual review:
+        assertTrue("FM Session must be marked for manual review", fmSession.getSession().isReviewRequired());
+
+        // Verify session's status changed to CHARGED:
+        assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
     }
 
     /********************************************************************************
@@ -305,7 +448,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
             // Add linked manifest and implicated transaction:
             if (addLinkedManifests) {
                 FeeManagementManifest linkedManifest = new FeeManagementManifest();
-                Transaction implicatedTransaction = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), manifestAmount.add(new BigDecimal(1d)));
+                Transaction implicatedTransaction = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), manifestAmount);
 
                 //linkedManifest.setSession(fmSession);
                 linkedManifest.setTransaction(implicatedTransaction);
