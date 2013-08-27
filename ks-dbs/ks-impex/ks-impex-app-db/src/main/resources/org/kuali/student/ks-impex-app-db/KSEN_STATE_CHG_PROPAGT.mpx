@@ -23,7 +23,6 @@ STATE_CHG_ID,STATE_PROPAGT_ID
 "kuali.statechange.activityoffering.draft.suspended","kuali.statepropagation.ao2rg.draft.suspended.2.pending.suspended"
 "kuali.statechange.activityoffering.offered.canceled","kuali.statepropagation.ao2fo.offered.canceled.2.offered.canceled"
 "kuali.statechange.activityoffering.offered.canceled","kuali.statepropagation.ao2fo.offered.canceled.2.offered.draft"
-"kuali.statechange.activityoffering.offered.canceled","kuali.statepropagation.ao2fo.offered.canceled.2.offered.pending"
 "kuali.statechange.activityoffering.offered.canceled","kuali.statepropagation.ao2fo.offered.canceled.2.offered.suspended"
 "kuali.statechange.activityoffering.offered.canceled","kuali.statepropagation.ao2rg.offered.canceled.2.offered.canceled"
 "kuali.statechange.activityoffering.offered.canceled","kuali.statepropagation.ao2rg.offered.canceled.2.pending.canceled"
