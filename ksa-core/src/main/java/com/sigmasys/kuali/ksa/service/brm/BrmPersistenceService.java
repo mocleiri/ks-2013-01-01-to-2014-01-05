@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.model.rule.Rule;
 import com.sigmasys.kuali.ksa.model.rule.RuleSet;
 import com.sigmasys.kuali.ksa.model.rule.RuleType;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -85,6 +86,15 @@ public interface BrmPersistenceService {
      * @return the modified rule set
      */
     RuleSet deleteRulesFromRuleSet(Long ruleSetId, Long... ruleIds);
+
+    /**
+     * Removes rules from a rule set
+     *
+     * @param ruleSetId Rule Set ID
+     * @param ruleIds   Collection of Rule IDs to be removed
+     * @return the modified rule set
+     */
+    RuleSet deleteRulesFromRuleSet(Long ruleSetId, Collection<Long> ruleIds);
 
     /**
      * Retrieves all existing rule names

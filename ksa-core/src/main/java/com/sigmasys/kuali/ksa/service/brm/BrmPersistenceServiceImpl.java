@@ -177,6 +177,19 @@ public class BrmPersistenceServiceImpl extends GenericPersistenceService impleme
     @Override
     @Transactional(readOnly = false)
     public RuleSet deleteRulesFromRuleSet(Long ruleSetId, Long... ruleIds) {
+        return deleteRulesFromRuleSet(ruleSetId, Arrays.asList(ruleIds));
+    }
+
+    /**
+     * Removes rules from a rule set
+     *
+     * @param ruleSetId Rule Set ID
+     * @param ruleIds   Collection of Rule IDs to be removed
+     * @return the modified rule set
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public RuleSet deleteRulesFromRuleSet(Long ruleSetId, Collection<Long> ruleIds) {
 
         RuleSet ruleSet = getRuleSet(ruleSetId);
         if (ruleSet == null) {
@@ -185,8 +198,6 @@ public class BrmPersistenceServiceImpl extends GenericPersistenceService impleme
             throw new IllegalArgumentException(errMsg);
         }
 
-        List<Long> idsToDelete = Arrays.asList(ruleIds);
-
         Set<Rule> rules = ruleSet.getRules();
 
         if (rules != null) {
@@ -194,7 +205,7 @@ public class BrmPersistenceServiceImpl extends GenericPersistenceService impleme
             Set<Rule> rulesToDelete = new HashSet<Rule>();
 
             for (Rule rule : rules) {
-                if (idsToDelete.contains(rule.getId())) {
+                if (ruleIds.contains(rule.getId())) {
                     rulesToDelete.add(rule);
                 }
             }

@@ -42,6 +42,7 @@ public interface Constants {
     String DROOLS_CLASSPATH = "drools";
     String DROOLS_FM_RULE_SET_NAME = "Fee Management";
     String DROOLS_PA_RULE_SET_NAME = "Payment Application";
+    String DROOLS_AB_RULE_SET_NAME = "Account Block";
 
     // Quick View parameters
     String QUICKVIEW_INFORMATION_COUNT = "ksa.quickview.information.count";
@@ -51,7 +52,7 @@ public interface Constants {
 
     // Rice constants
     String APPLICATION_HOST_PARAM_NAME = "application.host";
-    
+
     // Fee management constants
     String KSA_FM_PRECLEAR_MANIFEST = "ksa.fm.preclear.manifest";
 

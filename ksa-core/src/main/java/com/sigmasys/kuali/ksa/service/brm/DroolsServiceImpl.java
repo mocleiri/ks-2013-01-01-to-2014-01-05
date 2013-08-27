@@ -238,10 +238,12 @@ public class DroolsServiceImpl implements BrmService {
     @Override
     public RuleSet attachRulesToRuleSet(String ruleSetName, Rule... rules) {
         RuleSet ruleSet = getRuleSet(ruleSetName);
-        Long[] ruleIds = new Long[rules.length];
-        int i = 0;
+        Set<Long> ruleIds = new HashSet<Long>();
         for (Rule rule : rules) {
-            ruleIds[i++] = brmPersistenceService.persistRule(rule);
+            if (rule.getId() != null) {
+                ruleIds.add(rule.getId());
+            }
+            brmPersistenceService.persistRule(rule);
         }
         brmPersistenceService.deleteRulesFromRuleSet(ruleSet.getId(), ruleIds);
         ruleSet = brmPersistenceService.addRulesToRuleSet(ruleSet.getId(), rules);
