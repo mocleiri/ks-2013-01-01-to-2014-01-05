@@ -259,7 +259,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	// Check the manifest type:
     	switch(manifest.getType()) {
     	case CHARGE:
-    		processChargeTypeManifest(manifest, session, pbtDetails, tptDetails);
+    		processChargeTypeManifest(manifest, session, false, pbtDetails, tptDetails);
     		break;
     		
     	case CORRECTION:
@@ -278,17 +278,19 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * 
      * @param manifest 	    An FM manifest of the CHARGE type.
      * @param session	    An FM session the manifest belongs to.
+     * @param isReversal    Is the Charge a reversal? If yes, negate the amount.
      * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
      * @param tptDetails	A list of Third-party transfer details. An OUT Parameter.
      */
-    private void processChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
+    private void processChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, boolean isReversal,
+                                           List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	// Create a charge on the Account associated with the FM session:
     	String transactionTypeId = manifest.getTransactionTypeId();
     	
     	if (StringUtils.isNotEmpty(transactionTypeId) && (session.getAccount() != null) && (manifest.getAmount() != null)) {
     		// Create a new charge on the Account:
     		String accountId = session.getAccount().getId();
-    		BigDecimal amount = manifest.getAmount();
+    		BigDecimal amount = isReversal ? manifest.getAmount().negate() : manifest.getAmount();
     		Transaction newCharge = transactionService.createTransaction(transactionTypeId, accountId, new Date(), amount);
     		
     		// Update the manifest and session:
@@ -321,13 +323,25 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		if (linkedManifest.getTransaction() != null) {
     			// Clear all unlockedAllocations against the transaction in the linked manifest (Implicated Transaction):
     			Transaction implicatedTransaction = linkedManifest.getTransaction();
+                Long implicatedTransactionId = implicatedTransaction.getId();
     			
-    			transactionService.removeAllocations(implicatedTransaction.getId());
-    			
+    			transactionService.removeAllocations(implicatedTransactionId);
+
+                // Reload the Implicated Transaction:
+                em.refresh(implicatedTransaction);
+
     			// Process the Implicated Transaction:
     			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
     		}
-    	}
+    	} else {
+            // If there is no linked manifest, mark the session for manual review:
+            logger.warn(String.format("Processing reversal charge for FM Session %d. Manifest with ID %d does not have a linked manifest.", session.getId(), manifest.getId()));
+            session.setReviewRequired(true);
+            persistEntity(session);
+
+            // Process the reversal as negated charge:
+            processChargeTypeManifest(manifest, session, true, pbtDetails, tptDetails);
+        }
     }
     
     /**
@@ -553,6 +567,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		BigDecimal reversalAmount = originalManifest.getAmount();
     		
     		transactionService.reverseAllocations(implicatedTransaction.getId(), reversalAmount);
+
+            // Refresh the implicated transaction:
+            em.refresh(implicatedTransaction);
     		
         	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
         	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
@@ -591,17 +608,18 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
  
     	// Only if the transaction has the status of either REVERSING,DISCOUNTING or CANCELLING:
     	TransactionStatus status = implicatedTransaction.getStatus();
-    	
-    	if ((status == TransactionStatus.CANCELLING) || (status == TransactionStatus.DISCOUNTING) || (status == TransactionStatus.REVERSING)) {
-	    	
+
+    	if ((status == TransactionStatus.CANCELLING) || (status == TransactionStatus.DISCOUNTING)
+                || (status == TransactionStatus.REVERSING) || (status == TransactionStatus.ACTIVE)) {
+
 	    	// Reverse the transaction:
-	    	Transaction reversalTransaction = reverseTransaction(originalManifest, implicatedTransaction, linkedManifest.getSession(), status);
-	    	
-	    	linkedManifest.setTransaction(reversalTransaction);
-	    	linkedManifest.setSessionCurrent(true);
-	    	
-	    	// Persist the linked manifest:
-	    	persistEntity(linkedManifest);
+	    	Transaction reversalTransaction = reverseTransaction(originalManifest, implicatedTransaction, originalManifest.getSession(), status);
+
+            originalManifest.setTransaction(reversalTransaction);
+            originalManifest.setSessionCurrent(true);
+
+	    	// Persist the original manifest:
+	    	persistEntity(originalManifest);
     	}
     }
     
