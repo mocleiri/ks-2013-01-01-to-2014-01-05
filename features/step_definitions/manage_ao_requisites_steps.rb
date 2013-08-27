@@ -283,8 +283,6 @@ When /^I commit the changes made to the Activity Offering$/ do
 end
 
 Then /^the copied course offering should have the same AO Requisites as the original$/ do
-  #@course_offering = make CourseOffering, {:course => "CHEM277A", :term => "201208"}
-  #@course_offering.manage
   on ManageCourseOfferings do |page|
     page.loading.wait_while_present(200)
     ao_code = page.frm.div(id: "activityOfferingsPerCluster_line0").span( :text => "A").parent.parent
@@ -292,9 +290,9 @@ Then /^the copied course offering should have the same AO Requisites as the orig
 
     page.ao_requisites("A")
   end
-  on ManageAORequisites do |page|
+  on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
-    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "Text to copy,ENGL101,free form text input value")
+    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "CHEM241,CHEM242,CHEM247,Must have been admitted to the (Biochemistry, Chemistry) program,BSCI202,BSCI361,HIST110,ENGL101")
     page.prereq_message_section.text.should match /Activity Offering Rule differs from Course Offering Rule/
     page.coreq_message_section.text.should match /Rule statements deleted/
     page.submit
@@ -306,13 +304,11 @@ Then /^the copied course offering should have the same AO Requisites as the orig
 
     page.ao_requisites("D")
   end
-  on ManageAORequisites do |page|
+  on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
-    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "ENGL101,concurrently enrolled in all courses,Text to copy,free form text input value")
+    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "concurrently enrolled in ENGL101,ENGL478,HIST416,BSCI202,BSCI361,HIST110,Text to copy")
     page.coreq_message_section.text.should match /Activity Offering Rule differs from Course Offering Rule/
-    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "ENGL101,not have successfully completed,Text to copy,free form text input value")
-    page.coreq_message_section.text.should match /Rule statements deleted/
-    page.submit
+    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "ENGL101,not have successfully completed any credits from,BSCI202,BSCI361,HIST110,free form text input value")
   end
 end
 
