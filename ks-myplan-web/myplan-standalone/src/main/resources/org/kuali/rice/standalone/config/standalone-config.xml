@@ -218,7 +218,7 @@
     <!-- If 'true' the "to" address will be changed to the address of the logged in user before sending any e-mail notifications -->
     <param name="myplan.mailService.testMode">true</param>
 
-    <param name="myplan.comment.toAddress">hemanthg@uw.edu</param>
+    <param name="myplan.comment.toAddress">mattmul@uw.edu</param>
 
     <!-- MyPlan Max Search results -->
     <param name="myplan.search.results.max">500</param>
