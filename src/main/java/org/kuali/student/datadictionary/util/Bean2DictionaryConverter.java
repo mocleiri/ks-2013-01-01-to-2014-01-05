@@ -114,7 +114,7 @@ public class Bean2DictionaryConverter {
         Class<?> pt = pd.getPropertyType();
         if (List.class.equals(pt)) {
             if (dataType != null) {
-                log.warn("WARNING: Can't handle lists of primitives just yet: " + calcName(pd.getName()));
+                log.warn("Can't handle lists of primitives just yet: " + calcName(pd.getName()));
             }
             CollectionDefinition cd = new CollectionDefinition();
             cd.setName(calcName(pd.getName()));

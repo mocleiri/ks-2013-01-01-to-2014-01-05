@@ -62,6 +62,12 @@ public class VersionLinesUtility {
 		builder.append("<li><b>Maven Release: </b>");
 		builder.append(projectVersion);
 		
+		builder.append("</li><li><b>Contract Docs Plugin Version: </b>");
+		
+		String contractDocMavenVersion = VersionLinesUtility.class.getPackage().getImplementationVersion();
+		
+        builder.append(contractDocMavenVersion);
+        
 		builder.append("</li><li><b>Page Generated: </b>");
 		builder.append(formattedDate);
 		
