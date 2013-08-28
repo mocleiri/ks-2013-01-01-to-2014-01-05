@@ -5,7 +5,7 @@ class CopyCourseOffering < BasePage
 
   expected_element :exclude_instructor_checkbox
 
-  action(:create_copy) { |b| b.frm.button(id: "ks-uif-primaryActionButton").click; b.loading.wait_while_present(120) }
+  action(:create_copy) { |b| b.frm.button(id: "createFromCopy_btn").click; b.loading.wait_while_present(120) }
 
   element(:exclude_cancelled_aos_checkbox) { |b| b.frm.label(text: /Exclude cancelled Activity Offerings/) }
   action(:select_exclude_cancelled_aos_checkbox) { |b| b.exclude_instructor_checkbox.wait_until_present; b.exclude_instructor_checkbox.click }
