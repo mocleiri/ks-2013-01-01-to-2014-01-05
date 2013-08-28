@@ -31,12 +31,17 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.kuali.student.validation.decorator.mojo.ValidationDecoratorWriterForOneService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  *
  * @author nwright
  */
 @Ignore // need to figure out how to provide the path info for locating the files when running the tests.
 public class KSDictionaryDocMojoTest {
+    private static Logger log = LoggerFactory.getLogger(KSDictionaryDocMojoTest.class);
+    
     private static final String DICTIONARY_DOC_DIRECTORY = "target/site/dictionary";
     public KSDictionaryDocMojoTest() {
     }
@@ -62,7 +67,7 @@ public class KSDictionaryDocMojoTest {
      */
     @Test
     public void testExecute() throws Exception {
-        System.out.println("execute");
+        log.info("execute");
         KSDictionaryDocMojo instance = new KSDictionaryDocMojo();
         List<String> supportFiles = new ArrayList<String> ();
         supportFiles.add("ks-base-dictionary.xml");          

@@ -25,14 +25,19 @@ import org.kuali.student.contract.model.ServiceMethod;
 import org.kuali.student.contract.model.ServiceMethodParameter;
 import org.kuali.student.contract.model.ServiceMethodReturnValue;
 import org.kuali.student.contract.model.XmlType;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ModelFinder;
 import org.kuali.student.contract.model.validation.DictionaryValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author nwright
  */
 public class PureJavaInfcWriterForOneService {
+    
+    private static Logger log = LoggerFactory.getLogger(PureJavaInfcWriterForOneService.class);
 
     private ServiceContractModel model;
     private ModelFinder finder;
@@ -58,25 +63,25 @@ public class PureJavaInfcWriterForOneService {
     public void write() {
         List<ServiceMethod> methods = finder.getServiceMethodsInService(servKey);
         if (methods.size() == 0) {
-            System.out.println("No methods defined for servKey: " + servKey);
+            log.warn("No methods defined for servKey: " + servKey);
             return;
         }
 
         // the main servKey
-        System.out.println("Generating servKeys API's for " + servKey);
+        log.info("Generating servKeys API's for " + servKey);
         new PureJavaInfcServiceWriter(model, directory, rootPackage, servKey, methods).write();
 
         // the beans's
-        System.out.println("Generating info interfaces");
+        log.info("Generating info interfaces");
         for (XmlType xmlType : getXmlTypesUsedJustByService()) {
-            System.out.println("Generating Beans for " + xmlType.getName());
+            log.info("Generating Beans for " + xmlType.getName());
             new PureJavaInfcBeanWriter(model, directory, rootPackage, servKey, xmlType).write();
         }
 
         // the Info interfaces's
-        System.out.println("Generating Info interfaces");
+        log.info("Generating Info interfaces");
         for (XmlType xmlType : getXmlTypesUsedJustByService()) {
-            System.out.println("Generating info interface for " + xmlType.getName());
+            log.info("Generating info interface for " + xmlType.getName());
             new PureJavaInfcInfcWriter(model, directory, rootPackage, servKey, xmlType).write();
         }
     }

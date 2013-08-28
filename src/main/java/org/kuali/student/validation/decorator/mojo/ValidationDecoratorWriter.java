@@ -27,9 +27,12 @@ import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.ServiceMethod;
 import org.kuali.student.contract.model.ServiceMethodError;
 import org.kuali.student.contract.model.XmlType;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ServicesFilter;
 import org.kuali.student.contract.model.validation.DictionaryValidationException;
 import org.kuali.student.contract.model.validation.ServiceContractModelValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -37,6 +40,8 @@ import org.kuali.student.contract.model.validation.ServiceContractModelValidator
  */
 public class ValidationDecoratorWriter {
 
+    private static Logger log = LoggerFactory.getLogger(ValidationDecoratorServiceWriter.class);
+    
     private ServiceContractModel model;
     private String directory;
     private String rootPackage;
@@ -88,7 +93,7 @@ public class ValidationDecoratorWriter {
         for (XmlType type : model.getXmlTypes()) {
             if (type.getService().contains(",")) {
                 if (type.getPrimitive().equalsIgnoreCase(XmlType.COMPLEX)) {
-                    System.out.println(type.getName() + "==>" + type.getService());
+                    log.info(type.getName() + "==>" + type.getService());
                     set.add(type);
                 }
             }

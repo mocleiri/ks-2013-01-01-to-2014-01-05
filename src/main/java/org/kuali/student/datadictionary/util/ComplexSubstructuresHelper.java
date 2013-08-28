@@ -28,7 +28,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ComplexSubstructuresHelper {
+    
+    private static Logger log = LoggerFactory.getLogger(ComplexSubstructuresHelper.class);
+    
 
     public Set<String> getComplexStructures(String className) {
         Set<String> complexStructures = new LinkedHashSet<String>();
@@ -49,7 +56,7 @@ public class ComplexSubstructuresHelper {
             // that is defined in KSDictionaryDocMojo.java
 //            clazz = Class.forName(className);
         } catch (ClassNotFoundException ex) {
-            System.out.println("ComplexSubstructuresHelper: Could not process because the class must be a freestanding object: " + className);
+            log.warn("ComplexSubstructuresHelper: Could not process because the class must be a freestanding object: " + className);
             return;
         }
         try {

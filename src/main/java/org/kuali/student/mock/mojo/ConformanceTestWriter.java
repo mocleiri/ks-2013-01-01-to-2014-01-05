@@ -19,6 +19,8 @@ package org.kuali.student.mock.mojo;
 import org.kuali.student.contract.model.Service;
 import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.util.ServicesFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class writers the conformance tests for service
@@ -27,6 +29,8 @@ import org.kuali.student.contract.model.util.ServicesFilter;
  */
 public class ConformanceTestWriter extends MockImplWriter {
 
+    private static final Logger log = LoggerFactory.getLogger(ConformanceTestWriter.class);
+    
     ///////////////////////
     // CONSTRUCTOR
     ///////////////////////
@@ -45,7 +49,7 @@ public class ConformanceTestWriter extends MockImplWriter {
     public void write() {
         this.validate();
         for (Service service : filterServices()) {
-            System.out.println ("************** generating conformance test for service = " + service.getKey() + " **************");
+            log.info ("************** generating conformance test for service = " + service.getKey() + " **************");
             new ConformanceTestWriterForOneService(model, directory, rootPackage, service.getKey(), isR1).write();
         }
     }

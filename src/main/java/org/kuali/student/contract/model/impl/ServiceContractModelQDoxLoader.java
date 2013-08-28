@@ -647,12 +647,11 @@ public class ServiceContractModelQDoxLoader implements
                     beanField, shortName)));
             ms.setType(calcType(messageStructureJavaClass, getterMethod, setterMethod, beanField, shortName));
             if (ms.getType().equals("Object")) {
-                System.out.println("WARNING " + ms.getId()
+                log.warn(ms.getId()
                         + " has Object as it's type ==> Changing to String");
                 ms.setType("String");
             } else if (ms.getType().equals("ObjectList")) {
-                System.out.println(
-                        "WARNING " + ms.getId()
+                log.warn(ms.getId()
                         + " has a list of Objects as it's type ==> Changing to List of String");
                 ms.setType("StringList");
             }

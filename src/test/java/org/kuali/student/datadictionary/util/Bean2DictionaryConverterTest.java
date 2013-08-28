@@ -17,12 +17,18 @@ import org.kuali.rice.krad.datadictionary.DataDictionaryDefinitionBase;
 import org.kuali.rice.krad.datadictionary.DataObjectEntry;
 import org.kuali.student.contract.model.test.source.AtpInfo;
 import org.kuali.student.r2.core.exemption.dto.ExemptionInfo;
+import org.kuali.student.validation.decorator.mojo.ValidationDecoratorWriterForOneService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author nwright
  */
 public class Bean2DictionaryConverterTest {
+    
+    private static Logger log = LoggerFactory.getLogger(Bean2DictionaryConverterTest.class);
+    
 
     public Bean2DictionaryConverterTest() {
     }
@@ -48,7 +54,7 @@ public class Bean2DictionaryConverterTest {
      */
     @Test
     public void testConvert() {
-        System.out.println("convert");
+        log.info("convert");
         Class<?> clazz = null;
         Stack<DataDictionaryDefinitionBase> parentFields = null;
         Stack<Class<?>> parentClasses = null;

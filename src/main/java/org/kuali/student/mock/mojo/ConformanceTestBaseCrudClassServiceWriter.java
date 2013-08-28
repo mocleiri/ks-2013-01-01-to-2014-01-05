@@ -24,8 +24,11 @@ import org.kuali.student.contract.model.ServiceMethodError;
 import org.kuali.student.contract.model.ServiceMethodParameter;
 import org.kuali.student.contract.model.util.ServicesFilter;
 import org.kuali.student.contract.writer.service.GetterSetterNameCalculator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.OperationsException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +43,8 @@ import java.util.List;
  * @author Mezba Mahtab (mezba.mahtab@utoronto.ca)
  */
 public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWriter {
+    
+    private static final Logger log = LoggerFactory.getLogger(ConformanceTestExtendedCrudClassServiceWriter.class);
 
     /////////////////////////
     // CONSTANTS
@@ -610,7 +615,7 @@ public class ConformanceTestBaseCrudClassServiceWriter extends MockImplServiceWr
             methodCallStr += ");";
             return "testService." + methodCallStr;
         } catch (Exception e) {
-            System.out.println("methodName = " + builtUpMethodName + ", errorCode = " + errorCode);
+            log.error("methodName = " + builtUpMethodName + ", errorCode = " + errorCode, e);
             return errorCode;
         }
 

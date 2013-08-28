@@ -19,13 +19,18 @@ import java.util.List;
 
 import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.ServiceMethod;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ModelFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author nwright
  */
 public class EachMethodServiceWriterForOneService {
+    
+    private static Logger log = LoggerFactory.getLogger(EachMethodServiceWriterForOneService.class);
 
     private ServiceContractModel model;
     private ModelFinder finder;
@@ -51,14 +56,14 @@ public class EachMethodServiceWriterForOneService {
     public void write() {
         List<ServiceMethod> methods = finder.getServiceMethodsInService(servKey);
         if (methods.isEmpty()) {
-            System.out.println("No methods defined for servKey: " + servKey);
+            log.warn("No methods defined for servKey: " + servKey);
             return;
         }
 
         // the service method
-        System.out.println("Generating info interfaces");
+        log.info("Generating info interfaces");
         for (ServiceMethod method : methods) {
-            System.out.println("Generating method for service " + method.getService() + "." + method.getName());
+            log.info("Generating method for service " + method.getService() + "." + method.getName());
             new EachMethodServiceWriterForOneMethod(model, directory, rootPackage, servKey, method).write();
         }
 

@@ -21,10 +21,13 @@ import org.kuali.student.admin.ui.mojo.KSCreateAdminUiMojo;
 import org.kuali.student.common.mojo.AbstractKSMojo;
 import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.impl.ServiceContractModelCache;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.impl.ServiceContractModelQDoxLoader;
 import org.kuali.student.contract.model.util.DateUtility;
 import org.kuali.student.contract.model.util.HtmlContractWriter;
 import org.kuali.student.contract.model.validation.ServiceContractModelValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The plugin entrypoint which is used to generate the html wiki doc of the service interface.
@@ -33,6 +36,8 @@ import org.kuali.student.contract.model.validation.ServiceContractModelValidator
  * @requiresProject true
  */
 public class KSContractDocMojo extends AbstractKSMojo {
+    
+    private static Logger log = LoggerFactory.getLogger(KSContractDocMojo.class);
 
     /**
      * @parameter expression="${htmlDirectory}" default-value="${project.build.directory}/site/services/contractdocs"
@@ -89,7 +94,7 @@ public class KSContractDocMojo extends AbstractKSMojo {
                                                    
     
     public static void main(String[] args) {
-        System.out.println("execute");
+        log.info("execute");
         List<String> srcDirs = new ArrayList<String>();
 //        srcDirs.add(COMMON_DIRECTORY);
 //        srcDirs.add(CORE_DIRECTORY);

@@ -21,11 +21,14 @@ import org.kuali.student.contract.model.ServiceMethod;
 import org.kuali.student.contract.model.ServiceMethodError;
 import org.kuali.student.contract.model.ServiceMethodParameter;
 import org.kuali.student.contract.model.XmlType;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ModelFinder;
 import org.kuali.student.contract.writer.JavaClassWriter;
 import org.kuali.student.contract.writer.service.GetterSetterNameCalculator;
 import org.kuali.student.contract.writer.service.MessageStructureTypeCalculator;
 import org.kuali.student.contract.writer.service.ServiceExceptionWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -34,6 +37,8 @@ import java.util.*;
  * @author nwright
  */
 public class MockImplServiceWriter extends JavaClassWriter {
+    
+    private static Logger log = LoggerFactory.getLogger(MockImplServiceWriter.class);
 
     //////////////////////////////
     // Constants
@@ -715,7 +720,7 @@ public class MockImplServiceWriter extends JavaClassWriter {
                 }
             }
         }
-        System.out.println("Could not find the Id paramter for " + method.getService() + "." + method.getName() + " so returning the first one");
+        log.warn("Could not find the Id paramter for " + method.getService() + "." + method.getName() + " so returning the first one");
         return method.getParameters().get(0);
     }
 

@@ -73,7 +73,7 @@ public class HtmlWriter extends XmlWriter {
     public void writeHeaderBodyAndFooterOutToFile() {
 
         File dir = new File(this.directory);
-        //System.out.println ("Writing java class: " + fileName + " to " + dir.getAbsolutePath ());
+        log.debug ("Writing java class: " + fileName + " to " + dir.getAbsolutePath ());
 
         if (!dir.exists()) {
             if (!dir.mkdirs()) {

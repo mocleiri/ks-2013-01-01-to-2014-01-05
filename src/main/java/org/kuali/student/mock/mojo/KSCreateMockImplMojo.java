@@ -19,12 +19,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.kuali.student.admin.ui.mojo.KSCreateAdminUiMojo;
 import org.kuali.student.common.mojo.AbstractKSMojo;
 import org.kuali.student.contract.model.ServiceContractModel;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -36,6 +40,8 @@ import org.kuali.student.contract.model.ServiceContractModel;
  */
 public class KSCreateMockImplMojo extends AbstractKSMojo {
 
+    private static Logger log = LoggerFactory.getLogger(KSCreateMockImplMojo.class);
+    
     public KSCreateMockImplMojo() {
     }
  
@@ -91,7 +97,7 @@ public class KSCreateMockImplMojo extends AbstractKSMojo {
                                                    
 
     public static void main(String[] args) {
-        System.out.println("execute");
+        log.info("execute");
         List<String> srcDirs = new ArrayList<String>();
         srcDirs.add(COMMON_DIRECTORY);
         srcDirs.add(CORE_DIRECTORY);

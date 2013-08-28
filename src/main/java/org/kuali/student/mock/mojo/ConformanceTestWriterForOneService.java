@@ -18,6 +18,9 @@ package org.kuali.student.mock.mojo;
 
 import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.ServiceMethod;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -27,6 +30,8 @@ import java.util.List;
  * @author Mezba Mahtab (mezba.mahtab@utoronto.ca)
  */
 public class ConformanceTestWriterForOneService extends MockImplWriterForOneService {
+    
+    private static Logger log = LoggerFactory.getLogger(ConformanceTestWriterForOneService.class);
 
     /////////////////////////////
     // CONSTRUCTOR
@@ -51,12 +56,12 @@ public class ConformanceTestWriterForOneService extends MockImplWriterForOneServ
     public void write() {
         List<ServiceMethod> methods = finder.getServiceMethodsInService(servKey);
         if (methods.size() == 0) {
-            System.out.println("No methods defined for servKey: " + servKey);
+            log.warn("No methods defined for servKey: " + servKey);
             return;
         }
 
         // the main servKey
-        System.out.println("Generating Conformance Tests for " + servKey);
+        log.info("Generating Conformance Tests for " + servKey);
         new ConformanceTestBaseCrudClassServiceWriter(model, directory, rootPackage, servKey, methods, isR1).write();
         new ConformanceTestExtendedCrudClassServiceWriter(model, directory, rootPackage, servKey, methods, isR1).write();
     }

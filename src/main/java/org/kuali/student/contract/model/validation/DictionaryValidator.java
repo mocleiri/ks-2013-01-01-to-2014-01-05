@@ -20,7 +20,10 @@ import org.kuali.student.contract.model.Dictionary;
 import org.kuali.student.contract.model.DictionaryModel;
 import org.kuali.student.contract.model.Field;
 import org.kuali.student.contract.model.XmlType;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ModelFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +36,8 @@ import java.util.Set;
  * @author nwright
  */
 public class DictionaryValidator implements ModelValidator {
+    
+    private static Logger log = LoggerFactory.getLogger(DictionaryValidator.class);
 
     private Dictionary dict;
     private DictionaryModel model;
@@ -106,16 +111,16 @@ public class DictionaryValidator implements ModelValidator {
         if (cons != null) {
             return cons;
         }
-        System.out.println("id=[" + id + "]");
+        log.info("id=[" + id + "]");
         if (id == null) {
-            System.out.println("id is null");
+            log.info("id is null");
         } else if (id.equals("")) {
-            System.out.println("id is empty string");
+            log.info("id is empty string");
         } else {
             int i = 0;
             for (byte b : id.getBytes()) {
                 i++;
-                System.out.println(i + ":" + b);
+                log.info(i + ":" + b);
             }
         }
         addError("Dictionary constraint id, " + id

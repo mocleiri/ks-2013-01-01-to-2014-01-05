@@ -17,8 +17,11 @@ package org.kuali.student.contract.model.util;
 
 import org.kuali.student.contract.exception.DictionaryExecutionException;
 import org.kuali.student.contract.model.*;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ModelFinder;
 import org.kuali.student.contract.model.validation.DictionaryValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,8 @@ import java.util.List;
  */
 public class DictionaryMainTypeExpander implements DictionaryExpander {
 
+    private static Logger log = LoggerFactory.getLogger(DictionaryMainTypeExpander.class);
+    
     private List<Dictionary> oldDicts;
     private List<Dictionary> newDicts;
     private DictionaryModel spreadsheet;
@@ -72,7 +77,7 @@ public class DictionaryMainTypeExpander implements DictionaryExpander {
     private void expandMainType(Dictionary d, Type type) {
         for (Type t : finder.expandType(type)) {
             try {
-                System.out.println("Expanding dictionary entry " + d.getId()
+                log.info("Expanding dictionary entry " + d.getId()
                         + " with type " + type.getName() + "  to " + t.getName());
                 Dictionary clone = (Dictionary) d.clone();
                 clone.setType(t.getName());

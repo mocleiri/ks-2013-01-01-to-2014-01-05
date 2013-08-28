@@ -27,6 +27,8 @@ import org.kuali.student.contract.model.ServiceMethodReturnValue;
 import org.kuali.student.contract.model.XmlType;
 import org.kuali.student.contract.model.util.ModelFinder;
 import org.kuali.student.contract.model.validation.DictionaryValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -34,6 +36,8 @@ import org.kuali.student.contract.model.validation.DictionaryValidationException
  */
 public class ValidationDecoratorWriterForOneService {
 
+    private static Logger log = LoggerFactory.getLogger(ValidationDecoratorWriterForOneService.class);
+    
     private ServiceContractModel model;
     private ModelFinder finder;
     private String directory;
@@ -58,12 +62,12 @@ public class ValidationDecoratorWriterForOneService {
     public void write() {
         List<ServiceMethod> methods = finder.getServiceMethodsInService(servKey);
         if (methods.size() == 0) {
-            System.out.println("No methods defined for servKey: " + servKey);
+            log.warn("No methods defined for servKey: " + servKey);
             return;
         }
 
         // the main servKey
-        System.out.println("Generating validation decroators for " + servKey);
+        log.info("Generating validation decroators for " + servKey);
         new ValidationDecoratorServiceWriter(model, directory, rootPackage, servKey, methods).write();
 
     }

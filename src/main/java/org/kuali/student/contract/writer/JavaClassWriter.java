@@ -16,6 +16,9 @@
 package org.kuali.student.contract.writer;
 
 import org.kuali.student.contract.exception.DictionaryExecutionException;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,6 +37,8 @@ import java.util.regex.Pattern;
  */
 public abstract class JavaClassWriter extends XmlWriter {
 
+    private static Logger log = LoggerFactory.getLogger(JavaClassWriter.class);
+    
     private String rootDirectory;
     private String packageName;
     private String className;
@@ -134,7 +139,7 @@ public abstract class JavaClassWriter extends XmlWriter {
     public void writeJavaClassAndImportsOutToFile() {
 
         File dir = new File(this.directory);
-        //System.out.println ("Writing java class: " + fileName + " to " + dir.getAbsolutePath ());
+        log.debug ("Writing java class: " + fileName + " to " + dir.getAbsolutePath ());
 
         if (!dir.exists()) {
             if (!dir.mkdirs()) {

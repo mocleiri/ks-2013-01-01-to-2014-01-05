@@ -25,8 +25,11 @@ import org.kuali.student.contract.model.ServiceMethod;
 import org.kuali.student.contract.model.ServiceMethodParameter;
 import org.kuali.student.contract.model.ServiceMethodReturnValue;
 import org.kuali.student.contract.model.XmlType;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ModelFinder;
 import org.kuali.student.contract.model.validation.DictionaryValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -34,6 +37,8 @@ import org.kuali.student.contract.model.validation.DictionaryValidationException
  */
 public class MockImplWriterForOneService {
 
+    private static Logger log = LoggerFactory.getLogger(MockImplWriterForOneService.class);
+    
     protected ServiceContractModel model;
     protected ModelFinder finder;
     protected String directory;
@@ -61,12 +66,12 @@ public class MockImplWriterForOneService {
     public void write() {
         List<ServiceMethod> methods = finder.getServiceMethodsInService(servKey);
         if (methods.size() == 0) {
-            System.out.println("No methods defined for servKey: " + servKey);
+            log.warn("No methods defined for servKey: " + servKey);
             return;
         }
 
         // the main servKey
-        System.out.println("Generating mock impls for " + servKey);
+        log.info("Generating mock impls for " + servKey);
         new MockImplServiceWriter(model, directory, rootPackage, servKey, methods, isR1).write();
 
     }

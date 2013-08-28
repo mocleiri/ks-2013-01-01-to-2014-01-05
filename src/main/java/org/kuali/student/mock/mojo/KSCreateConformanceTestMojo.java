@@ -21,6 +21,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.kuali.student.common.mojo.AbstractKSMojo;
 import org.kuali.student.contract.model.ServiceContractModel;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +40,8 @@ import java.util.Map;
  */
 public class KSCreateConformanceTestMojo extends AbstractKSMojo {
 
+    private static Logger log = LoggerFactory.getLogger(KSCreateConformanceTestMojo.class);
+    
     ///////////////////////////
     // Data Variables
     ///////////////////////////
@@ -84,7 +89,7 @@ public class KSCreateConformanceTestMojo extends AbstractKSMojo {
     }
 
     public static void main (String [] args) {
-        System.out.println("execute");
+        log.info("execute");
         List<String> srcDirs = new ArrayList<String>();
         srcDirs.add("C:/Users/mahtabme/kuali/student/enrollment/aggregate/branches/services/ks-api/ks-common-api/src/main/java"); // common
         srcDirs.add("C:/Users/mahtabme/kuali/student/enrollment/aggregate/branches/services/ks-api/ks-core-api/src/main"); // core

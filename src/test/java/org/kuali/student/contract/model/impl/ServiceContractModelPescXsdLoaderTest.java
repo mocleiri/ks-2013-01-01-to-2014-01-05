@@ -12,14 +12,20 @@ import org.kuali.student.contract.model.ServiceMethodParameter;
 import org.kuali.student.contract.model.XmlType;
 import org.kuali.student.contract.model.util.MessageStructureDumper;
 import org.kuali.student.contract.model.validation.ServiceContractModelValidator;
+import org.kuali.student.validation.decorator.mojo.ValidationDecoratorWriterForOneService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -27,6 +33,9 @@ import static org.junit.Assert.*;
  * @author nwright
  */
 public class ServiceContractModelPescXsdLoaderTest {
+    
+    private static Logger log = LoggerFactory.getLogger(ServiceContractModelPescXsdLoaderTest.class);
+    
 
     public ServiceContractModelPescXsdLoaderTest() {
     }
@@ -104,12 +113,12 @@ public class ServiceContractModelPescXsdLoaderTest {
      */
     @Test
     public void testGetServiceMethods() {
-        System.out.println("getServiceMethods");
+        log.info("getServiceMethods");
         ServiceContractModel model = getModel();
         List<ServiceMethod> result = model.getServiceMethods();
-        System.out.println("Number of methods=" + result.size());
+        log.info("Number of methods=" + result.size());
         for (ServiceMethod method : result) {
-            System.out.println(dump(method));
+            log.info(dump(method));
         }
         if (result.size() < 1) {
             fail("too few: " + result.size());
@@ -121,7 +130,7 @@ public class ServiceContractModelPescXsdLoaderTest {
      */
     @Test
     public void testGetSourceNames() {
-        System.out.println("getSourceNames");
+        log.info("getSourceNames");
         ServiceContractModel model = getModel();
         List<String> expResult = new ArrayList();
         expResult.add(PESC_COLL_TRANS);
@@ -134,12 +143,12 @@ public class ServiceContractModelPescXsdLoaderTest {
      */
     @Test
     public void testGetServices() {
-        System.out.println("getServices");
+        log.info("getServices");
         ServiceContractModel model = getModel();
         List<Service> result = model.getServices();
         assertEquals(1, result.size());
         for (Service service : result) {
-            System.out.println(service.getKey() + " " + service.getName() + " "
+            log.info(service.getKey() + " " + service.getName() + " "
                     + service.getVersion() + " " + service.getStatus()
                     + " " + service.getComments()
                     + " " + service.getUrl());
@@ -151,7 +160,7 @@ public class ServiceContractModelPescXsdLoaderTest {
      */
     @Test
     public void testGetXmlTypes() {
-        System.out.println("getXmlTypes");
+        log.info("getXmlTypes");
         ServiceContractModel model = getModel();
         List<XmlType> result = model.getXmlTypes();
         if (result.size() < 10) {
@@ -164,7 +173,7 @@ public class ServiceContractModelPescXsdLoaderTest {
      */
     @Test
     public void testGetMessageStructures() {
-        System.out.println("getMessageStructures");
+        log.info("getMessageStructures");
         ServiceContractModel model = getModel();
         List<MessageStructure> result = model.getMessageStructures();
         if (result.size() < 10) {

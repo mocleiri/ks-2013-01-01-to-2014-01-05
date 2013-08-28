@@ -25,14 +25,19 @@ import org.kuali.student.contract.model.ServiceMethod;
 import org.kuali.student.contract.model.ServiceMethodParameter;
 import org.kuali.student.contract.model.ServiceMethodReturnValue;
 import org.kuali.student.contract.model.XmlType;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ModelFinder;
 import org.kuali.student.contract.model.validation.DictionaryValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author nwright
  */
 public class RemoteImplWriterForOneService {
+    
+    private static Logger log = LoggerFactory.getLogger(RemoteImplWriterForOneService.class);
 
     private ServiceContractModel model;
     private ModelFinder finder;
@@ -58,12 +63,12 @@ public class RemoteImplWriterForOneService {
     public void write() {
         List<ServiceMethod> methods = finder.getServiceMethodsInService(servKey);
         if (methods.size() == 0) {
-            System.out.println("No methods defined for servKey: " + servKey);
+            log.warn("No methods defined for servKey: " + servKey);
             return;
         }
 
         // the main servKey
-        System.out.println("Generating remote impl and search unit test for " + servKey + " directory = " + directory);
+        log.info("Generating remote impl and search unit test for " + servKey + " directory = " + directory);
         new RemoteImplServiceWriter(model, directory, rootPackage, servKey, methods).write();
         new RemoteImplServiceTestWriter(model, directory, rootPackage, servKey, methods).write();
         

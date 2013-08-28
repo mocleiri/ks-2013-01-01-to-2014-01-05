@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+
 import org.kuali.rice.krad.datadictionary.AttributeDefinition;
 import org.kuali.rice.krad.datadictionary.AttributeDefinitionBase;
 import org.kuali.rice.krad.datadictionary.CollectionDefinition;
@@ -40,10 +41,15 @@ import org.kuali.rice.krad.datadictionary.validation.constraint.ValidCharactersC
 import org.kuali.rice.krad.datadictionary.validation.constraint.WhenConstraint;
 import org.kuali.rice.krad.uif.control.Control;
 import org.kuali.rice.krad.uif.control.TextControl;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.VersionLinesUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DictionaryFormatter {
 
+    private static Logger log = LoggerFactory.getLogger(DictionaryFormatter.class);
+    
     private DataObjectEntry doe;
     private Map<String, DataObjectEntry> beansOfType;
     private String beanId;
@@ -442,7 +448,7 @@ public class DictionaryFormatter {
                 if (childDoe == null) {
                     // TODO: uncomment this but right now there are xml files that don't have one defined and it seems to work so...
 //                    throw new NullPointerException ("Could not find a data object entry, " + cd.getDataObjectClass() + " for field " + calcName(cd.getName(), parents));
-                    System.out.println("Could not find a data object entry, " + cd.getDataObjectClass() + " for field " + calcName(cd.getName(), parentNames));
+                    log.warn("Could not find a data object entry, " + cd.getDataObjectClass() + " for field " + calcName(cd.getName(), parentNames));
                 } else {
                     parentNames.push(cd.getName());
                     parents.push(ode);

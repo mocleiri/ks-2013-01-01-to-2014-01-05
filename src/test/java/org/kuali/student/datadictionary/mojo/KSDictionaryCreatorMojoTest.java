@@ -20,18 +20,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.maven.project.MavenProject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kuali.student.validation.decorator.mojo.ValidationDecoratorWriterForOneService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author nwright
  */
 public class KSDictionaryCreatorMojoTest {
+    
+    private static Logger log = LoggerFactory.getLogger(KSDictionaryCreatorMojoTest.class);
+    
 
     private static final String CORE_DIRECTORY =
             "C:/svn/ks-1.3/ks-core/ks-core-api/src/main/java";
@@ -78,7 +85,7 @@ public class KSDictionaryCreatorMojoTest {
      */
     @Test
     public void testExecute() throws Exception {
-        System.out.println("execute");
+        log.info("execute");
         List<String> srcDirs = new ArrayList<String>();
         srcDirs.add(TEST_SOURCE_DIRECTORY);
 //        srcDirs.add(ENROLL_PROJECT_JAVA_DIRECTORY);

@@ -27,15 +27,20 @@ import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.ServiceMethod;
 import org.kuali.student.contract.model.ServiceMethodError;
 import org.kuali.student.contract.model.XmlType;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ServicesFilter;
 import org.kuali.student.contract.model.validation.DictionaryValidationException;
 import org.kuali.student.contract.model.validation.ServiceContractModelValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author nwright
  */
 public class RemoteImplWriter {
+    
+    private static Logger log = LoggerFactory.getLogger(RemoteImplWriter.class);
 
     private ServiceContractModel model;
     private String directory;
@@ -90,7 +95,7 @@ public class RemoteImplWriter {
         for (XmlType type : model.getXmlTypes()) {
             if (type.getService().contains(",")) {
                 if (type.getPrimitive().equalsIgnoreCase(XmlType.COMPLEX)) {
-                    System.out.println(type.getName() + "==>" + type.getService());
+                    log.info(type.getName() + "==>" + type.getService());
                     set.add(type);
                 }
             }

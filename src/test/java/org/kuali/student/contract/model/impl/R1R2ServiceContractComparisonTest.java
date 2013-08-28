@@ -24,14 +24,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
 
+import static org.junit.Assert.*;
+
+import org.junit.Ignore;
 import org.kuali.student.contract.model.MessageStructure;
 import org.kuali.student.contract.model.Service;
 import org.kuali.student.contract.model.ServiceContractModel;
@@ -41,6 +43,9 @@ import org.kuali.student.contract.model.XmlType;
 import org.kuali.student.contract.model.util.HtmlContractMessageStructureWriter;
 import org.kuali.student.contract.model.util.ModelFinder;
 import org.kuali.student.contract.model.validation.ServiceContractModelValidator;
+import org.kuali.student.validation.decorator.mojo.ValidationDecoratorWriterForOneService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -48,6 +53,9 @@ import org.kuali.student.contract.model.validation.ServiceContractModelValidator
  */
 @Ignore
 public class R1R2ServiceContractComparisonTest {
+    
+    private static Logger log = LoggerFactory.getLogger(R1R2ServiceContractComparisonTest.class);
+    
 
     public R1R2ServiceContractComparisonTest() {
     }
@@ -63,17 +71,17 @@ public class R1R2ServiceContractComparisonTest {
     @Before
     public void setUp() {
 
-        System.out.println("This section was created by programmatically comparing the message structures.");
-        System.out.println("Run on: " + new Date());
-        System.out.println("See [R1R2ServiceContractComparisonTest.java|https://test.kuali.org/svn/student/tools/maven-kscontractdoc-plugin/trunk/src/test/java/org/kuali/student/contract/model/impl/R1R2ServiceContractComparisonTest.java]");
-        System.out.println("");
-        System.out.println("*TABLE OF CONTENTS*");
-        System.out.println("{toc}");
-        System.out.println("");
-        System.out.println("h1. Loading models of the contracts from the source code");
-        System.out.println("h2. Log from loading model for R1");
+        log.info("This section was created by programmatically comparing the message structures.");
+        log.info("Run on: " + new Date());
+        log.info("See [R1R2ServiceContractComparisonTest.java|https://test.kuali.org/svn/student/tools/maven-kscontractdoc-plugin/trunk/src/test/java/org/kuali/student/contract/model/impl/R1R2ServiceContractComparisonTest.java]");
+        log.info("");
+        log.info("*TABLE OF CONTENTS*");
+        log.info("{toc}");
+        log.info("");
+        log.info("h1. Loading models of the contracts from the source code");
+        log.info("h2. Log from loading model for R1");
         getModel1();
-        System.out.println("h2. Log from loading model for R2");
+        log.info("h2. Log from loading model for R2");
         getModel2();
         getFinder1();
         getFinder2();
@@ -112,11 +120,11 @@ public class R1R2ServiceContractComparisonTest {
      */
     @Test
     public void testCompareModels() {
-        System.out.println("");
-        System.out.println("h1. Message Structure Comparison");
+        log.info("");
+        log.info("h1. Message Structure Comparison");
         compareTypes();
-        System.out.println("");
-        System.out.println("h1. Service Method Comparison");
+        log.info("");
+        log.info("h1. Service Method Comparison");
         compareMethods();
     }
 
@@ -125,16 +133,16 @@ public class R1R2ServiceContractComparisonTest {
             return model1;
         }
         List<String> srcDirs = new ArrayList();
-        System.out.println("User directory=" + System.getProperty("user.dir"));
-        System.out.println("Current directory=" + new File(".").getAbsolutePath());
+        log.info("User directory=" + System.getProperty("user.dir"));
+        log.info("Current directory=" + new File(".").getAbsolutePath());
         srcDirs.add(COMMON_API_DIRECTORY);
         srcDirs.add(CORE_API_DIRECTORY);
         srcDirs.add(LUM_API_DIRECTORY);
-        System.out.println ("Reading as input:");
+        log.info ("Reading as input:");
         for (String directory : srcDirs) {
-            System.out.println ("* " + directory);
+            log.info ("* " + directory);
         }
-        System.out.println ("");
+        log.info ("");
         boolean validateKualiStudent = false;
         ServiceContractModel instance = new ServiceContractModelQDoxLoader(srcDirs, validateKualiStudent);
 
@@ -149,14 +157,14 @@ public class R1R2ServiceContractComparisonTest {
             return model2;
         }
         List<String> srcDirs = new ArrayList();
-        System.out.println("User directory=" + System.getProperty("user.dir"));
-        System.out.println("Current directory=" + new File(".").getAbsolutePath());
+        log.info("User directory=" + System.getProperty("user.dir"));
+        log.info("Current directory=" + new File(".").getAbsolutePath());
         srcDirs.add(ENROLL_PROJECT_JAVA_DIRECTORY);
-        System.out.println ("Reading as input:");
+        log.info ("Reading as input:");
         for (String directory : srcDirs) {
-            System.out.println ("* " + directory);
+            log.info ("* " + directory);
         }
-        System.out.println ("");     
+        log.info ("");     
         boolean validateKualiStudent = true;
         ServiceContractModel instance = new ServiceContractModelQDoxLoader(srcDirs, validateKualiStudent);
 
@@ -217,8 +225,8 @@ public class R1R2ServiceContractComparisonTest {
 
     private void compareTypes() {
         for (Service service : model1.getServices()) {
-            System.out.println("");
-            System.out.println("h2. " + service.getName() + " Structures");
+            log.info("");
+            log.info("h2. " + service.getName() + " Structures");
             for (XmlType type : finder1.findAllComplexTypesInService(service.getKey())) {
                 findCompareType(type);
             }
@@ -384,10 +392,10 @@ public class R1R2ServiceContractComparisonTest {
             if (renamedName != null) {
                 r2 = finder2.findXmlType(renamedName);
                 if (r2 == null) {
-                    System.out.println("# (-) " + r1.getName() + ": was not found even after being renamed to " + renamedName);
+                    log.info("# (-) " + r1.getName() + ": was not found even after being renamed to " + renamedName);
                     return null;
                 }
-                System.out.println("# (/) " + r1.getName() + ": was renamed to " + renamedName);
+                log.info("# (/) " + r1.getName() + ": was renamed to " + renamedName);
                 return r2;
             }
         }
@@ -408,12 +416,12 @@ public class R1R2ServiceContractComparisonTest {
             if (message.isEmpty()) {
                 return;
             }
-            System.out.println("# (/) " + r1.getName() + ":" + message);
+            log.info("# (/) " + r1.getName() + ":" + message);
             return;
         }
         XmlType r2 = findType(r1);
         if (r2 == null) {
-            System.out.println("# " + r1.getName() + ": has no corresponding object in r2");
+            log.info("# " + r1.getName() + ": has no corresponding object in r2");
             return;
         }
         Set<MessageStructure> usedInR2 = new HashSet<MessageStructure>();
@@ -432,11 +440,11 @@ public class R1R2ServiceContractComparisonTest {
                 String issue = this.knownFieldIssues.get(ms.getXmlObject() + "." + ms.getShortName());
                 if (issue != null) {
                     if (!issue.isEmpty()) {
-                        System.out.println("# (*g) " + ms.getXmlObject() + "." + ms.getShortName() + ": " + issue);
+                        log.info("# (*g) " + ms.getXmlObject() + "." + ms.getShortName() + ": " + issue);
                     }
                     continue;
                 }
-                System.out.println("# (+) " + ms.getXmlObject() + "." + ms.getShortName() + " - new field added in R2");
+                log.info("# (+) " + ms.getXmlObject() + "." + ms.getShortName() + " - new field added in R2");
             }
         }
     }
@@ -446,7 +454,7 @@ public class R1R2ServiceContractComparisonTest {
         String issue = this.knownFieldIssues.get(r1.getXmlObject() + "." + r1.getShortName());
         if (issue != null) {
             if (!issue.isEmpty()) {
-                System.out.println("# (*g) " + r1.getXmlObject() + "." + r1.getShortName() + ": " + issue);
+                log.info("# (*g) " + r1.getXmlObject() + "." + r1.getShortName() + ": " + issue);
             }
             return r2;
         }
@@ -456,13 +464,13 @@ public class R1R2ServiceContractComparisonTest {
                         || r1.getShortName().endsWith("TypeInfo")
                         || r1.getShortName().endsWith("Types")
                         || r1.getShortName().endsWith("TypeInfos")) {
-                    System.out.println("# (*g) " + r1.getXmlObject() + "." + r1.getShortName() + " was a type stored on a type: use type-type relationship instead");
+                    log.info("# (*g) " + r1.getXmlObject() + "." + r1.getShortName() + " was a type stored on a type: use type-type relationship instead");
                     return null;
                 }
-                System.out.println("# (!) " + r1.getXmlObject() + "." + r1.getShortName() + " was extra data on type, store in dynamic attribute if actually used");
+                log.info("# (!) " + r1.getXmlObject() + "." + r1.getShortName() + " was extra data on type, store in dynamic attribute if actually used");
                 return null;
             }
-            System.out.println("# (-) " + r1.getXmlObject() + "." + r1.getShortName() + " not found in r2: renamed to one of these? " + calcFieldNames(xmlType2));
+            log.info("# (-) " + r1.getXmlObject() + "." + r1.getShortName() + " not found in r2: renamed to one of these? " + calcFieldNames(xmlType2));
             return null;
         }
         compareType(r1, r2);
@@ -483,12 +491,12 @@ public class R1R2ServiceContractComparisonTest {
         if (r1.getShortName().equals("desc") || r1.getShortName().equals("descr")) {
             if (r1.getType().equals("String")) {
                 if (r2.getType().equals("RichTextInfo")) {
-                    System.out.println("# (*g) " + r1.getXmlObject() + "." + r1.getShortName() + ": description type were changed to RichText, use plain version");
+                    log.info("# (*g) " + r1.getXmlObject() + "." + r1.getShortName() + ": description type were changed to RichText, use plain version");
                     return;
                 }
             }
         }
-        System.out.println("# (!) " + r1.getXmlObject() + "." + r1.getShortName() + ": the type was changed from " + r1.getType() + " to " + r2.getType());
+        log.info("# (!) " + r1.getXmlObject() + "." + r1.getShortName() + ": the type was changed from " + r1.getType() + " to " + r2.getType());
     }
 
     private MessageStructure findMessageStructure(MessageStructure r1, XmlType xmlType2) {
@@ -498,12 +506,12 @@ public class R1R2ServiceContractComparisonTest {
             if (renamed != null) {
                 r2 = finder2.findMessageStructure(xmlType2.getName(), renamed);
                 if (r2 == null) {
-                    System.out.println("# (-) " + r1.getXmlObject() + "." + r1.getShortName()
+                    log.info("# (-) " + r1.getXmlObject() + "." + r1.getShortName()
                             + " was renamed to " + xmlType2.getName() + "." + renamed
                             + " BUT IT STILL DIDN'T EXIST IN R2");
                     return null;
                 }
-                System.out.println("# (*g) " + r1.getXmlObject() + "." + r1.getShortName()
+                log.info("# (*g) " + r1.getXmlObject() + "." + r1.getShortName()
                         + " was renamed to " + xmlType2.getName() + "." + renamed);
             }
         }
@@ -512,8 +520,8 @@ public class R1R2ServiceContractComparisonTest {
 
     private void compareMethods() {
         for (Service service : model1.getServices()) {
-            System.out.println("");
-            System.out.println("h2. " + service.getName() + " Methods");
+            log.info("");
+            log.info("h2. " + service.getName() + " Methods");
             List<ServiceMethod> methodsInService = finder1.findServiceMethods(service.getKey());
             for (ServiceMethod method : methodsInService) {
                 findCompareMethod(method);
@@ -525,7 +533,7 @@ public class R1R2ServiceContractComparisonTest {
         String issue = knownMethodIssues.get (method1.getService() + "Service." + method1.getName());
         if (issue != null) {
             if (!issue.isEmpty()) {
-                System.out.println("# (*g) " + method1.getService() + "Service." + method1.getName()
+                log.info("# (*g) " + method1.getService() + "Service." + method1.getName()
                         + ": " + issue);
             }
             return;
@@ -534,23 +542,23 @@ public class R1R2ServiceContractComparisonTest {
         if (method2 == null) {
 //            String possibleMethods = calcPossibleMethods(method1);
             if (isTypeMethod(method1)) {
-                System.out.println("# (*g) " + method1.getService() + "Service." + method1.getName()
+                log.info("# (*g) " + method1.getService() + "Service." + method1.getName()
                         + " was dropped because it is a type, use TypeService instead");
                 return;
             }
             String possibleMethods = this.calcPossibleMethods(method1);
             if (possibleMethods.isEmpty()) {
-                System.out.println("# (-) " + method1.getService() + "Service." + method1.getName()
+                log.info("# (-) " + method1.getService() + "Service." + method1.getName()
                         + " could not be found in R2");
             } else {
-                System.out.println("# (!) " + method1.getService() + "Service." + method1.getName()
+                log.info("# (!) " + method1.getService() + "Service." + method1.getName()
                         + " might have been renamed to one of these: "
                         + possibleMethods);
             }
             return;
         }
         if (!method1.getName().equals(method2.getName())) {
-            System.out.println("# (*g) " + method1.getService() + "Service." + method1.getName()
+            log.info("# (*g) " + method1.getService() + "Service." + method1.getName()
                     + " was renamed to " + method2.getService() + "Service." + method2.getName());
         }
     }
@@ -562,7 +570,7 @@ public class R1R2ServiceContractComparisonTest {
             if (methodRename != null) {
                 method2 = findMethod2(method1.getService(), methodRename);
                 if (method2 == null) {
-                    System.out.println("# (x) " + method1.getService() + "Service." + method1.getName() 
+                    log.info("# (x) " + method1.getService() + "Service." + method1.getName() 
                             + " could not be found even after being renamed to " + methodRename);
                     return null;
                 }

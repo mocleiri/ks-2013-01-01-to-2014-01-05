@@ -27,9 +27,12 @@ import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.ServiceMethod;
 import org.kuali.student.contract.model.ServiceMethodError;
 import org.kuali.student.contract.model.XmlType;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ServicesFilter;
 import org.kuali.student.contract.model.validation.DictionaryValidationException;
 import org.kuali.student.contract.model.validation.ServiceContractModelValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -37,6 +40,8 @@ import org.kuali.student.contract.model.validation.ServiceContractModelValidator
  */
 public class MockImplWriter {
 
+    private static Logger log = LoggerFactory.getLogger(MockImplWriter.class);
+    
     protected ServiceContractModel model;
     protected String directory;
     protected String rootPackage;
@@ -66,7 +71,7 @@ public class MockImplWriter {
         this.validate();
 
         for (Service service : filterServices()) {
-            System.out.println ("**************writing service=" + service.getKey());
+            log.info ("**************writing service=" + service.getKey());
             new MockImplWriterForOneService(model, directory, rootPackage, service.getKey(), isR1).write();
         }
 

@@ -23,11 +23,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import org.kuali.student.contract.model.MessageStructure;
@@ -40,12 +42,18 @@ import org.kuali.student.contract.model.util.HtmlContractServiceWriter;
 import org.kuali.student.contract.model.util.MessageStructureHierarchyDumper;
 import org.kuali.student.contract.model.util.ModelFinder;
 import org.kuali.student.contract.model.validation.ServiceContractModelValidator;
+import org.kuali.student.validation.decorator.mojo.ValidationDecoratorWriterForOneService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author nwright
  */
 public class ServiceContractModelQDoxLoaderTest {
+    
+    private static Logger log = LoggerFactory.getLogger(ServiceContractModelQDoxLoaderTest.class);
+    
 
     public ServiceContractModelQDoxLoaderTest() {
     }
@@ -84,8 +92,8 @@ public class ServiceContractModelQDoxLoaderTest {
             return model;
         }
         List<String> srcDirs = new ArrayList();
-        System.out.println("User directory=" + System.getProperty("user.dir"));
-        System.out.println("Current directory=" + new File(".").getAbsolutePath());
+        log.info("User directory=" + System.getProperty("user.dir"));
+        log.info("Current directory=" + new File(".").getAbsolutePath());
 //        srcDirs.add (ENROLL_PROJECT_JAVA_DIRECTORY);
         srcDirs.add(TEST_SOURCE_DIRECTORY);
 //        srcDirs.add(RICE_CORE_API_DIRECTORY); 
@@ -142,13 +150,13 @@ public class ServiceContractModelQDoxLoaderTest {
      */
     @Test
     public void testGetServiceMethods() {
-        System.out.println("getServiceMethods");
+        log.info("getServiceMethods");
         ServiceContractModel model = getModel();
         List<ServiceMethod> result = model.getServiceMethods();
-        System.out.println("Number of methods=" + result.size());
+        log.info("Number of methods=" + result.size());
         boolean getAtpFound = false;
         for (ServiceMethod method : result) {
-            System.out.println(dump(method));
+            log.info(dump(method));
             if (method.getName().equals("getAtp")) {
                 getAtpFound = true;
                 assertEquals ("this is an implementation note\nthis is another", method.getImplNotes());
@@ -167,7 +175,7 @@ public class ServiceContractModelQDoxLoaderTest {
      */
 //    @Test
     public void testGetSourceNames() {
-        System.out.println("getSourceNames");
+        log.info("getSourceNames");
         ServiceContractModel model = getModel();
         List<String> expResult = new ArrayList();
         expResult.add(TEST_SOURCE_DIRECTORY);
@@ -180,11 +188,11 @@ public class ServiceContractModelQDoxLoaderTest {
      */
 //    @Test
     public void testGetServices() {
-        System.out.println("getServices");
+        log.info("getServices");
         ServiceContractModel model = getModel();
         List<Service> result = model.getServices();
         for (Service service : result) {
-            System.out.println(service.getKey() + " " + service.getName() + " "
+            log.info(service.getKey() + " " + service.getName() + " "
                     + service.getVersion() + " " + service.getStatus());
         }
         assertEquals(4, result.size());
@@ -195,11 +203,11 @@ public class ServiceContractModelQDoxLoaderTest {
      */
 //    @Test
     public void testGetXmlTypes() {
-        System.out.println("getXmlTypes");
+        log.info("getXmlTypes");
         ServiceContractModel model = getModel();
         List<XmlType> result = model.getXmlTypes();
         for (XmlType xmlType : result) {
-            System.out.println("XmlType=" + xmlType.getName() + " "
+            log.info("XmlType=" + xmlType.getName() + " "
                     + xmlType.getPrimitive());
         }
         if (result.size() < 10) {
@@ -212,12 +220,12 @@ public class ServiceContractModelQDoxLoaderTest {
      */
 //    @Test
     public void testGetMessageStructures() throws FileNotFoundException {
-        System.out.println("getMessageStructures");
+        log.info("getMessageStructures");
         ServiceContractModel model = getModel();
         List<MessageStructure> result = model.getMessageStructures();
         for (MessageStructure ms : result) {
             if (ms.getId().equalsIgnoreCase("academicCalendarInfo.typeKey")) {
-                System.out.println("MessageStructure=" + ms.getId() + " " + ms.getType() + "required=["+ ms.getRequired() + "]");
+                log.info("MessageStructure=" + ms.getId() + " " + ms.getType() + "required=["+ ms.getRequired() + "]");
             }
         }
         if (result.size() < 10) {

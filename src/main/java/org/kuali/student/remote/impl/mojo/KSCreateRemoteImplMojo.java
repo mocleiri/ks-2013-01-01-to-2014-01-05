@@ -19,12 +19,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.kuali.student.common.mojo.AbstractKSMojo;
 import org.kuali.student.contract.model.ServiceContractModel;
+import org.kuali.student.contract.model.impl.ServiceContractModelPescXsdLoader;
 import org.kuali.student.contract.model.util.ServicesFilterByKeys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -35,6 +39,8 @@ import org.kuali.student.contract.model.util.ServicesFilterByKeys;
  * @requiresProject true
  */
 public class KSCreateRemoteImplMojo extends AbstractKSMojo {
+    
+    private static Logger log = LoggerFactory.getLogger(KSCreateRemoteImplMojo.class);
 
     public KSCreateRemoteImplMojo() {
     }
@@ -125,7 +131,7 @@ public class KSCreateRemoteImplMojo extends AbstractKSMojo {
     private static final String STANDALONE_DIRECTORY = "D:/svn/ks/ks-standalone-admin-app/src";
 
     public static void main(String[] args) {
-        System.out.println("execute");
+        log.info("execute");
         List<String> srcDirs = new ArrayList<String>();
         srcDirs.add(COMMON_DIRECTORY);
         srcDirs.add(CORE_DIRECTORY);

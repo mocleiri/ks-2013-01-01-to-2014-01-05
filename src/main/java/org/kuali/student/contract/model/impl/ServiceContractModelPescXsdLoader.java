@@ -22,12 +22,15 @@ import com.sun.xml.xsom.parser.AnnotationParserFactory;
 import com.sun.xml.xsom.parser.SchemaDocument;
 import com.sun.xml.xsom.parser.XSOMParser;
 import com.sun.xml.xsom.util.DomAnnotationParserFactory;
+
 import org.kuali.student.contract.model.MessageStructure;
 import org.kuali.student.contract.model.Service;
 import org.kuali.student.contract.model.ServiceContractModel;
 import org.kuali.student.contract.model.ServiceMethod;
 import org.kuali.student.contract.model.ServiceMethodReturnValue;
 import org.kuali.student.contract.model.XmlType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.EntityResolver;
@@ -50,6 +53,8 @@ import java.util.Set;
 public class ServiceContractModelPescXsdLoader implements
         ServiceContractModel {
 
+    private static Logger log = LoggerFactory.getLogger(ServiceContractModelPescXsdLoader.class);
+    
     private List<String> xsdFileNames;
     private List<Service> services = null;
     private List<ServiceMethod> serviceMethods = null;
@@ -100,7 +105,7 @@ public class ServiceContractModelPescXsdLoader implements
     }
 
     private void parse() {
-        System.out.println("ServiceContractModelQDoxLoader: Starting parse");
+        log.info("ServiceContractModelQDoxLoader: Starting parse");
         services = new ArrayList();
         Service service = new Service();
         services.add(service);
