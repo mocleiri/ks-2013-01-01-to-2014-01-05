@@ -33,7 +33,8 @@
     <!-- UW's Implementation of Comment Helper -->
     <bean id="commentHelper" class="edu.uw.kuali.student.myplan.util.CommentHelperImpl"/>
 
-
+    <!-- UW's Implementation of Plan Helper -->
+    <bean id="planHelper" class="edu.uw.kuali.student.myplan.util.PlanHelperImpl"/>
 
     <!-- Search Strategy -->
     <bean id="courseSearchStrategy" class="org.kuali.student.myplan.course.controller.CourseSearchStrategy"/>
