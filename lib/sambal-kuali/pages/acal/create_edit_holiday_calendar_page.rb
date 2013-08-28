@@ -28,11 +28,11 @@ class CreateEditHolidayCalendar < BasePage #Create/Edit are the same page (only 
   ACTIONS = 8
 
   element(:holiday_type) { |b| b.holiday_table.select(name: "newCollectionLines['holidays'].typeKey") }
-  element(:holiday_start_date) { |b| b.holiday_table.text_field(name: "newCollectionLines['holidays'].startDate") }
+  element(:holiday_start_date) { |b| b.holiday_table.text_field(name: "newCollectionLines['holidays'].startDateUI") }
   element(:holiday_start_time) { |b| b.holiday_table.text_field(name: "newCollectionLines['holidays'].startTime") }
   element(:holiday_start_am) { |b| b.holiday_table.radio(name: "newCollectionLines['holidays'].startTimeAmPm", value: "AM") }
   element(:holiday_start_pm) { |b| b.holiday_table.radio(name: "newCollectionLines['holidays'].startTimeAmPm", value: "PM") }
-  element(:holiday_end_date) { |b| b.holiday_table.text_field(name: "newCollectionLines['holidays'].endDate") }
+  element(:holiday_end_date) { |b| b.holiday_table.text_field(name: "newCollectionLines['holidays'].endDateUI") }
   element(:holiday_end_time) { |b| b.holiday_table.text_field(name: "newCollectionLines['holidays'].endTime") }
   element(:holiday_end_meridian_am) { |b| b.holiday_table.radio(name: "newCollectionLines['holidays'].endTimeAmPm", value: "AM") }
   element(:holiday_end_meridian_pm) { |b| b.holiday_table.radio(name: "newCollectionLines['holidays'].endTimeAmPm", value: "PM") }
