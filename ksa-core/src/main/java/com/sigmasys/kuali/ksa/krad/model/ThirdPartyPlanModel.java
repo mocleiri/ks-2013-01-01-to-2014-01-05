@@ -16,13 +16,12 @@ import java.util.List;
 public class ThirdPartyPlanModel {
 
     private ThirdPartyPlan parent;
-    private BigDecimal maxAmount;
 
     private List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges;
 
 
     public ThirdPartyPlan getParent() {
-        if(parent == null){
+        if (parent == null) {
             parent = new ThirdPartyPlan();
         }
         return parent;
@@ -120,16 +119,16 @@ public class ThirdPartyPlanModel {
         getParent().setRecognitionDate(recognitionDate);
     }
 
-    public String getTransferType(){
+    public String getTransferType() {
         return getParent().getTransferType().getId().toString();
     }
 
-    public void setTransferType(String type){
+    public void setTransferType(String type) {
         getParent().getTransferType().setId(Long.parseLong(type));
     }
 
     public List<ThirdPartyAllowableCharge> getThirdPartyAllowableCharges() {
-        if(thirdPartyAllowableCharges == null){
+        if (thirdPartyAllowableCharges == null) {
             thirdPartyAllowableCharges = new ArrayList<ThirdPartyAllowableCharge>();
         }
         return thirdPartyAllowableCharges;
