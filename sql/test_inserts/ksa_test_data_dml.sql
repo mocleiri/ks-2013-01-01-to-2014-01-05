@@ -1402,8 +1402,8 @@ Insert into KSSA_UI_STRING (ID, LOCALE, TEXT, MAX_LENGTH, IS_OVERRIDDEN) values 
 
 
 --- INSERTING USER PREFERENCES ---
-Insert into KSSA_USER_PREF (ACNT_ID_FK, NAME, VALUE) values ('admin', 'ksa.locale.lang', 'fr');
-Insert into KSSA_USER_PREF (ACNT_ID_FK, NAME, VALUE) values ('admin', 'ksa.locale.country', 'FR');
+Insert into KSSA_USER_PREF (ACNT_ID_FK, NAME, VALUE) values ('admin', 'ksa.locale.lang', 'en');
+Insert into KSSA_USER_PREF (ACNT_ID_FK, NAME, VALUE) values ('admin', 'ksa.locale.country', 'US');
 
 
 --- INSERTING RULE SETS ---
