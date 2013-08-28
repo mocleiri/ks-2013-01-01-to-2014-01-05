@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.kuali.pom</groupId>
     <artifactId>kuali-maven</artifactId>
-    <version>1.3.15</version>
+    <version>3.3.6</version>
   </parent>
   <groupId>org.kuali.maven.plugins</groupId>
   <artifactId>maven-kscontractdoc-plugin</artifactId>
@@ -18,9 +18,8 @@
     <kuali.release.prepare.goals>clean</kuali.release.prepare.goals>
     <kuali.release.arguments>-DskipTests</kuali.release.arguments>
 
-    <!-- <cxf.version>2.2.10</cxf.version> -->
-    <kuali.rice.version>2.2.0-M4</kuali.rice.version>
-    <spring.version>3.1.2.RELEASE</spring.version>
+    <kuali.rice.version>2.3.0</kuali.rice.version>
+    <spring.version>3.2.3.RELEASE</spring.version>
   </properties>
   <dependencies>
     <dependency>
