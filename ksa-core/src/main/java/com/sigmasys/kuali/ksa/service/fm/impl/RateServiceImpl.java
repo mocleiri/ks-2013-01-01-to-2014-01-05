@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
-import org.kuali.student.r2.core.atp.infc.Atp;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.service.AtpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -299,6 +299,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         // Persisting ATP IDs
         Set<String> atpIdSet = new HashSet<String>(atpIds);
+
         if (CollectionUtils.isNotEmpty(atpIdSet)) {
 
             // Checking if there are other rate catalogs with the same code and any ATP IDs from the list
@@ -326,8 +327,12 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                 RateCatalogAtp rateCatalogAtp = new RateCatalogAtp();
                 rateCatalogAtp.setId(new RateCatalogAtpId(rateCatalogCode, atpId));
                 rateCatalogAtp.setRateCatalog(rateCatalog);
+
                 persistEntity(rateCatalogAtp);
             }
+
+            // Validating the catalog transaction type with ATP IDs
+            validateTransactionTypeWithAtps(InvalidRateCatalogException.class, transactionTypeId, atpIdSet);
         }
 
         return rateCatalog;
@@ -527,6 +532,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @param subCode             Rate sub-code
      * @param rateName            Rate name
      * @param rateCatalogCode     RateCatalog code
+     * @param transactionTypeId   Transaction Type ID
      * @param transactionDateType TransactionDateType enum value
      * @param defaultRateAmount   Default Rate amount
      * @param limitAmount         Limit amount
@@ -544,6 +550,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                            String subCode,
                            String rateName,
                            String rateCatalogCode,
+                           String transactionTypeId,
                            TransactionDateType transactionDateType,
                            BigDecimal defaultRateAmount,
                            BigDecimal limitAmount,
@@ -583,6 +590,10 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         RateCatalog rateCatalog = rateCatalogAtp.getRateCatalog();
 
+        if (StringUtils.isBlank(transactionTypeId)) {
+            transactionTypeId = rateCatalog.getTransactionTypeId();
+        }
+
         // Creating a new Rate instance
         Rate rate = new Rate();
 
@@ -605,7 +616,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         // Creating a new default RateAmount instance
         RateAmount rateAmount = new RateAmount();
         rateAmount.setAmount(defaultRateAmount);
-        rateAmount.setTransactionTypeId(rateCatalog.getTransactionTypeId());
+        rateAmount.setTransactionTypeId(transactionTypeId);
         rateAmount.setUnit(0);
 
         // Persisting RateAmount
@@ -941,6 +952,37 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         return isTransactionTypeValid;
     }
 
+    protected void validateTransactionTypeWithAtps(Class<? extends Exception> exceptionClass,
+                                                   String transactionTypeId,
+                                                   Collection<String> atpIds) {
+
+        final List<AtpInfo> atps;
+
+        try {
+            atps = atpService.getAtpsByIds(new ArrayList<String>(atpIds), getAtpContextInfo());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
+        if (atps != null) {
+            for (AtpInfo atp : atps) {
+                Date startDate = atp.getStartDate();
+                Date endDate = atp.getEndDate();
+                if (!isTransactionTypeValid(transactionTypeId, startDate) || !isTransactionTypeValid(transactionTypeId, endDate)) {
+                    String errMsg = "Transaction type '" + transactionTypeId + "' is invalid for ATP ID = " + atp.getId();
+                    logger.error(errMsg);
+                    try {
+                        throw exceptionClass.getConstructor(String.class).newInstance(errMsg);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                        throw new RuntimeException(e.getMessage(), e);
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * Validates the given RateCatalog instance and throws <code>InvalidRateCatalogException</code> if the validation fails.
@@ -1006,6 +1048,14 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                 String errMsg = "RateCatalog's minLimitAmount cannot be greater than maxLimitAmount";
                 logger.error(errMsg);
                 throw new InvalidRateCatalogException(errMsg);
+            }
+        }
+
+        if (rateCatalog.getId() != null) {
+            Set<String> atpIds = getAtpsForRateCatalog(rateCatalog.getId());
+            if (CollectionUtils.isNotEmpty(atpIds)) {
+                String transactionTypeId = rateCatalog.getTransactionTypeId();
+                validateTransactionTypeWithAtps(InvalidRateCatalogException.class, transactionTypeId, atpIds);
             }
         }
 
@@ -1125,18 +1175,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                 }
 
             } else {
-                try {
-                    Atp atp = atpService.getAtp(rate.getAtpId(), getAtpContextInfo());
-                    if (!isTransactionTypeValid(transactionTypeId, atp.getStartDate()) ||
-                            !isTransactionTypeValid(transactionTypeId, atp.getEndDate())) {
-                        String errMsg = "RateAmount's transaction type is invalid, ATP ID = " + rate.getAtpId();
-                        logger.error(errMsg);
-                        throw new InvalidRateException(errMsg);
-                    }
-                } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
-                    throw new IllegalStateException(e.getMessage(), e);
-                }
+
+                // Validating the RateAmount's transaction type with the Rate's ATP ID
+                validateTransactionTypeWithAtps(InvalidRateException.class, transactionTypeId, Arrays.asList(rate.getAtpId()));
             }
 
             if (rateAmount.getId().equals(defaultRateAmount.getId())) {

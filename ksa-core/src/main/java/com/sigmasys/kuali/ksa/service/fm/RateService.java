@@ -226,6 +226,7 @@ public interface RateService {
      * @param subCode             Rate sub-code
      * @param rateName            Rate name
      * @param rateCatalogCode     RateCatalog code
+     * @param transactionTypeId   Transaction Type ID
      * @param transactionDateType TransactionDateType enum value
      * @param defaultRateAmount   Default Rate amount
      * @param limitAmount         Limit amount
@@ -241,6 +242,7 @@ public interface RateService {
                     String subCode,
                     String rateName,
                     String rateCatalogCode,
+                    String transactionTypeId,
                     TransactionDateType transactionDateType,
                     BigDecimal defaultRateAmount,
                     BigDecimal limitAmount,

@@ -112,6 +112,8 @@ public class RateServiceTest extends AbstractServiceTest {
         Date transactionDate = dateFormat.parse("05/23/2012");
         Date recognitionDate = null;
 
+        String transactionTypeId = "cash";
+
         String rateName = rateCode + " name";
 
         int minLimitUnits = 0;
@@ -121,8 +123,8 @@ public class RateServiceTest extends AbstractServiceTest {
         BigDecimal limitAmount = new BigDecimal(7776000.1111);
         BigDecimal rateAmount = new BigDecimal(200.88);
 
-        Rate rate = rateService.createRate(rateCode, subCode, rateName, rateCatalogCode, dateType, rateAmount,
-                limitAmount, minLimitUnits, maxLimitUnits, transactionDate, recognitionDate, atpId, false);
+        Rate rate = rateService.createRate(rateCode, subCode, rateName, rateCatalogCode, transactionTypeId, dateType,
+                rateAmount, limitAmount, minLimitUnits, maxLimitUnits, transactionDate, recognitionDate, atpId, false);
 
         Assert.notNull(rate);
         Assert.notNull(rate.getId());
@@ -320,7 +322,7 @@ public class RateServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void creteRateCatalog() throws Exception {
+    public void createRateCatalog() throws Exception {
 
         String rateCatalogCode = "RC_2013";
 
