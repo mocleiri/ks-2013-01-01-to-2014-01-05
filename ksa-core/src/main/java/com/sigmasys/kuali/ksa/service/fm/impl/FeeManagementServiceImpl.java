@@ -605,22 +605,20 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param implicatedTransaction	Transaction associated with the linked manifest.
      */
     private void performTransactionReversal(FeeManagementManifest originalManifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction) {
- 
-    	// Only if the transaction has the status of either REVERSING,DISCOUNTING or CANCELLING:
-    	TransactionStatus status = implicatedTransaction.getStatus();
 
-    	if ((status == TransactionStatus.CANCELLING) || (status == TransactionStatus.DISCOUNTING)
-                || (status == TransactionStatus.REVERSING) || (status == TransactionStatus.ACTIVE)) {
+        // Reverse the transaction:
+        Transaction reversalTransaction = reverseTransaction(originalManifest, implicatedTransaction, originalManifest.getSession(), implicatedTransaction.getStatus());
 
-	    	// Reverse the transaction:
-	    	Transaction reversalTransaction = reverseTransaction(originalManifest, implicatedTransaction, originalManifest.getSession(), status);
-
+        if (reversalTransaction != null) {
             originalManifest.setTransaction(reversalTransaction);
             originalManifest.setSessionCurrent(true);
 
-	    	// Persist the original manifest:
-	    	persistEntity(originalManifest);
-    	}
+            // Persist the original manifest:
+            persistEntity(originalManifest);
+        } else {
+            logger.error(String.format("Cannot perform reversal on Transaction with ID %d under FM session ID %d.",
+                    implicatedTransaction.getId(), originalManifest.getSession().getId()));
+        }
     }
     
     /**
@@ -633,13 +631,22 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return The reversal Transaction.
      */
     private Transaction reverseTransaction(FeeManagementManifest originalManifest, Transaction transaction, FeeManagementSession session, TransactionStatus status) {
-    	BigDecimal reversalAmount = originalManifest.getAmount();
-    	String statementPrefix = ""; // According to Paul there are no statement prefix
-    	String memoText = String.format("Transaction %d was reversed in the amount of %f by fee management under session %d", 
-    			transaction.getId(), reversalAmount, session.getId());
-    	Transaction reversalTransaction = transactionService.reverseTransaction(transaction.getId(), memoText, reversalAmount, statementPrefix, status);
-    	
-    	return reversalTransaction;
+
+        BigDecimal reversalAmount = originalManifest.getAmount();
+        Transaction reversalTransaction = null;
+
+        // Check if the Transaction status allows for reversal:
+        if ((status == TransactionStatus.ACTIVE) ||
+                ((reversalAmount != null) && (transaction.getAmount() != null) && (reversalAmount.compareTo(transaction.getAmount()) == 0))) {
+
+            String statementPrefix = ""; // According to Paul there are no statement prefix
+            String memoText = String.format("Transaction %d was reversed in the amount of %f by fee management under session %d",
+                    transaction.getId(), reversalAmount, session.getId());
+
+            reversalTransaction = transactionService.reverseTransaction(transaction.getId(), memoText, reversalAmount, statementPrefix, status);
+        }
+
+        return reversalTransaction;
     }
     
     /**
