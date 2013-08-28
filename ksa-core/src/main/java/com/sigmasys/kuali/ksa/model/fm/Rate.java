@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.model.fm;
 import com.sigmasys.kuali.ksa.model.KeyPair;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
@@ -29,6 +30,8 @@ public class Rate extends AbstractRateEntity {
     private Set<RateAmount> rateAmounts;
 
     private RateAmount defaultRateAmount;
+
+    private BigDecimal limitAmountValue;
 
 
     @Id
@@ -113,6 +116,15 @@ public class Rate extends AbstractRateEntity {
 
     public void setDefaultRateAmount(RateAmount defaultRateAmount) {
         this.defaultRateAmount = defaultRateAmount;
+    }
+
+    @Column(name = "LIMIT_AMOUNT")
+    public BigDecimal getLimitAmountValue() {
+        return limitAmountValue;
+    }
+
+    public void setLimitAmountValue(BigDecimal limitAmountValue) {
+        this.limitAmountValue = limitAmountValue;
     }
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

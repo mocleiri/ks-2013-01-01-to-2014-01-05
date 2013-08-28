@@ -218,7 +218,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @param transactionDateType        TransactionDateType enum value
      * @param minAmount                  Minimum transaction amount
      * @param maxAmount                  Maximum transaction amount
-     * @param limitAmount                Limit amount
      * @param minLimitUnits              Minimum number of Limit Units
      * @param maxLimitUnits              Maximum number of Limit Units
      * @param atpIds                     list of ATP IDs
@@ -226,8 +225,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @param isTransactionTypeFinal     Indicates whether the transaction type is final
      * @param isTransactionDateTypeFinal Indicates whether the transaction date type is final
      * @param isRecognitionDateDefinable Indicates whether the recognition date can be set
-     * @param isAmountFinal              Indicates whether the rate amount is final
      * @param isKeyPairFinal             Indicates whether the set of KeyPairs is immutable
+     * @param isLimitAmount              Indicates whether the limit amount exists
+     * @param isLimitAmountFinal         Indicates whether the limit amount is final
      * @return a new RateCatalog instance
      */
     @Override
@@ -238,7 +238,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                                          TransactionDateType transactionDateType,
                                          BigDecimal minAmount,
                                          BigDecimal maxAmount,
-                                         BigDecimal limitAmount,
+                                         BigDecimal minLimitAmount,
+                                         BigDecimal maxLimitAmount,
                                          int minLimitUnits,
                                          int maxLimitUnits,
                                          List<String> atpIds,
@@ -246,8 +247,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                                          boolean isTransactionTypeFinal,
                                          boolean isTransactionDateTypeFinal,
                                          boolean isRecognitionDateDefinable,
-                                         boolean isAmountFinal,
-                                         boolean isKeyPairFinal) {
+                                         boolean isKeyPairFinal,
+                                         boolean isLimitAmount,
+                                         boolean isLimitAmountFinal) {
 
         PermissionUtils.checkPermission(Permission.CREATE_RATE_CATALOG);
 
@@ -271,16 +273,17 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         rateCatalog.setTransactionDateType(transactionDateType);
         rateCatalog.setMinAmount(minAmount);
         rateCatalog.setMaxAmount(maxAmount);
-        rateCatalog.setLimitAmount(limitAmount);
+        rateCatalog.setMinLimitAmount(minLimitAmount);
+        rateCatalog.setMaxLimitAmount(maxLimitAmount);
         rateCatalog.setMinLimitUnits(minLimitUnits);
         rateCatalog.setMaxLimitUnits(maxLimitUnits);
-
 
         rateCatalog.setTransactionTypeFinal(isTransactionTypeFinal);
         rateCatalog.setTransactionDateTypeFinal(isTransactionDateTypeFinal);
         rateCatalog.setRecognitionDateDefinable(isRecognitionDateDefinable);
-        rateCatalog.setAmountFinal(isAmountFinal);
         rateCatalog.setKeyPairFinal(isKeyPairFinal);
+        rateCatalog.setLimitAmount(isLimitAmount);
+        rateCatalog.setLimitAmountFinal(isLimitAmountFinal);
 
         // Persisting RateCatalog's key pairs
         Set<KeyPair> keyPairSet = new HashSet<KeyPair>(keyPairs);
@@ -520,20 +523,19 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     /**
      * Creates a new persistent Rate instance based on the given parameters.
      *
-     * @param rateCode                Rate code
-     * @param subCode                 Rate sub-code
-     * @param rateName                Rate name
-     * @param rateCatalogCode         RateCatalog code
-     * @param transactionTypeId       Rate TransactionType ID
-     * @param amountTransactionTypeId RateAmount TransactionType ID
-     * @param transactionDateType     TransactionDateType enum value
-     * @param defaultRateAmount       Default Rate amount
-     * @param limitAmount             Limit amount
-     * @param transactionDate         Transaction date
-     * @param recognitionDate         Recognition date
-     * @param atpId                   ATP ID
-     * @param isTransactionTypeFinal  Indicates whether the transaction type is final
-     * @param isAmountFinal           Indicates whether the rate amount is final
+     * @param rateCode            Rate code
+     * @param subCode             Rate sub-code
+     * @param rateName            Rate name
+     * @param rateCatalogCode     RateCatalog code
+     * @param transactionDateType TransactionDateType enum value
+     * @param defaultRateAmount   Default Rate amount
+     * @param limitAmount         Limit amount
+     * @param minLimitUnits       Minimum number of units
+     * @param maxLimitUnits       Maximum number of units
+     * @param transactionDate     Transaction date
+     * @param recognitionDate     Recognition date
+     * @param atpId               ATP ID
+     * @param isLimitAmount       Indicates whether the limit amount should exist
      * @return a new Rate instance
      */
     @Override
@@ -542,16 +544,15 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                            String subCode,
                            String rateName,
                            String rateCatalogCode,
-                           String transactionTypeId,
-                           String amountTransactionTypeId,
                            TransactionDateType transactionDateType,
                            BigDecimal defaultRateAmount,
                            BigDecimal limitAmount,
+                           Integer minLimitUnits,
+                           Integer maxLimitUnits,
                            Date transactionDate,
                            Date recognitionDate,
                            String atpId,
-                           boolean isTransactionTypeFinal,
-                           boolean isAmountFinal) {
+                           boolean isLimitAmount) {
 
         PermissionUtils.checkPermission(Permission.CREATE_RATE);
 
@@ -582,31 +583,29 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         RateCatalog rateCatalog = rateCatalogAtp.getRateCatalog();
 
-        if (isTransactionTypeFinal) {
-            amountTransactionTypeId = transactionTypeId;
-        }
-
         // Creating a new Rate instance
         Rate rate = new Rate();
+
         rate.setCode(rateCode);
         rate.setSubCode(subCode);
         rate.setName(rateName);
         rate.setRateType(rateCatalog.getRateType());
-        rate.setTransactionTypeId(transactionTypeId);
         rate.setRateCatalogAtp(rateCatalogAtp);
         rate.setAtpId(atpId);
         rate.setTransactionDate(transactionDate);
         rate.setTransactionDateType(transactionDateType);
         rate.setRecognitionDate(recognitionDate);
-        rate.setLimitAmount(limitAmount);
 
-        rate.setAmountFinal(isAmountFinal);
-        rate.setTransactionTypeFinal(isTransactionTypeFinal);
+        rate.setMinLimitUnits(minLimitUnits);
+        rate.setMaxLimitUnits(maxLimitUnits);
 
-        // Creating a new RateAmount instance
+        rate.setLimitAmountValue(limitAmount);
+        rate.setLimitAmount(isLimitAmount);
+
+        // Creating a new default RateAmount instance
         RateAmount rateAmount = new RateAmount();
         rateAmount.setAmount(defaultRateAmount);
-        rateAmount.setTransactionTypeId(amountTransactionTypeId);
+        rateAmount.setTransactionTypeId(rateCatalog.getTransactionTypeId());
         rateAmount.setUnit(0);
 
         // Persisting RateAmount
@@ -971,12 +970,40 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new InvalidRateTypeException(errMsg);
         }
 
-        BigDecimal lowerBoundAmount = rateCatalog.getMinAmount();
-        BigDecimal upperBoundAmount = rateCatalog.getMaxAmount();
+        BigDecimal minAmount = rateCatalog.getMinAmount();
+        BigDecimal maxAmount = rateCatalog.getMaxAmount();
 
-        if (lowerBoundAmount != null && upperBoundAmount != null) {
-            if (lowerBoundAmount.compareTo(upperBoundAmount) > 0) {
-                String errMsg = "Lower bound amount cannot be greater than upper bound amount";
+        if (minAmount != null && maxAmount != null) {
+            if (minAmount.compareTo(maxAmount) > 0) {
+                String errMsg = "Minimum amount cannot be greater than Maximum amount";
+                logger.error(errMsg);
+                throw new InvalidRateCatalogException(errMsg);
+            }
+        }
+
+        Integer minLimitUnits = rateCatalog.getMinLimitUnits();
+        Integer maxLimitUnits = rateCatalog.getMaxLimitUnits();
+
+        if (rateCatalog.isLimitAmount() && minLimitUnits == null) {
+            String errMsg = "RateCatalog's minLimitUnits must not be null";
+            logger.error(errMsg);
+            throw new InvalidRateCatalogException(errMsg);
+        }
+
+        if (minLimitUnits != null && maxLimitUnits != null) {
+            if (minLimitUnits.compareTo(maxLimitUnits) > 0) {
+                String errMsg = "RateCatalog's minLimitUnits cannot be greater than maxLimitUnits";
+                logger.error(errMsg);
+                throw new InvalidRateCatalogException(errMsg);
+            }
+        }
+
+        BigDecimal minLimitAmount = rateCatalog.getMinLimitAmount();
+        BigDecimal maxLimitAmount = rateCatalog.getMaxLimitAmount();
+
+        if (minLimitAmount != null && maxLimitAmount != null) {
+            if (minLimitAmount.compareTo(maxLimitAmount) > 0) {
+                String errMsg = "RateCatalog's minLimitAmount cannot be greater than maxLimitAmount";
                 logger.error(errMsg);
                 throw new InvalidRateCatalogException(errMsg);
             }
@@ -1081,10 +1108,12 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                 throw new InvalidRateException(errMsg);
             }
 
-            if (rate.isTransactionTypeFinal() && !transactionTypeId.equals(rate.getTransactionTypeId())) {
-                String errMsg = "RateAmount must have the same transaction type as Rate";
-                logger.error(errMsg);
-                throw new InvalidRateException(errMsg);
+            if (rateCatalog != null) {
+                if (rateCatalog.isTransactionTypeFinal() && !transactionTypeId.equals(rateCatalog.getTransactionTypeId())) {
+                    String errMsg = "RateAmount must have the same transaction type as RateCatalog";
+                    logger.error(errMsg);
+                    throw new InvalidRateException(errMsg);
+                }
             }
 
             if (rate.getTransactionDate() != null) {
@@ -1100,7 +1129,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                     Atp atp = atpService.getAtp(rate.getAtpId(), getAtpContextInfo());
                     if (!isTransactionTypeValid(transactionTypeId, atp.getStartDate()) ||
                             !isTransactionTypeValid(transactionTypeId, atp.getEndDate())) {
-                        String errMsg = "RateAmount's transaction type is invalid";
+                        String errMsg = "RateAmount's transaction type is invalid, ATP ID = " + rate.getAtpId();
                         logger.error(errMsg);
                         throw new InvalidRateException(errMsg);
                     }
@@ -1130,10 +1159,10 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new InvalidRateException(errMsg);
         }
 
-        if (rate.getLimitAmount() != null && rate.getLimitAmount().compareTo(defaultRateAmount.getAmount()) < 0) {
+        if (rate.getLimitAmountValue() != null && rate.getLimitAmountValue().compareTo(defaultRateAmount.getAmount()) < 0) {
             String errMsg = "Rate limit amount cannot be less than the default Rate amount";
             logger.error(errMsg);
-            throw new IllegalArgumentException(errMsg);
+            throw new InvalidRateException(errMsg);
         }
 
         if (rate.getTransactionDateType() != null && rate.getTransactionDate() == null) {
@@ -1142,14 +1171,73 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new InvalidRateException(errMsg);
         }
 
-        if (rate.isTransactionTypeFinal() &&
-                !defaultRateAmount.getTransactionTypeId().equals(rate.getTransactionTypeId())) {
-            String errMsg = "Default RateAmount must have the same transaction type as Rate";
+        if (rate.isLimitAmount() && rate.getLimitAmountValue() == null) {
+            String errMsg = "Rate limit amount cannot be null";
             logger.error(errMsg);
             throw new InvalidRateException(errMsg);
         }
 
+        Integer minLimitUnits = rate.getMinLimitUnits();
+        Integer maxLimitUnits = rate.getMaxLimitUnits();
+
+        if (rate.isLimitAmount() && minLimitUnits == null) {
+            String errMsg = "Rate's minLimitUnits cannot be null";
+            logger.error(errMsg);
+            throw new InvalidRateException(errMsg);
+        }
+
+        if (minLimitUnits != null && maxLimitUnits != null) {
+            if (minLimitUnits.compareTo(maxLimitUnits) > 0) {
+                String errMsg = "Rate's minLimitUnits cannot be greater than maxLimitUnits";
+                logger.error(errMsg);
+                throw new InvalidRateException(errMsg);
+            }
+        }
+
         if (rateCatalog != null) {
+
+            if (rate.isLimitAmount() && rateCatalog.isLimitAmount()) {
+
+                BigDecimal minLimitAmount = rateCatalog.getMinLimitAmount();
+                BigDecimal maxLimitAmount = rateCatalog.getMaxLimitAmount();
+
+                if (minLimitAmount != null && rate.getLimitAmountValue().compareTo(minLimitAmount) < 0) {
+                    String errMsg = "Rate limit amount must not be less than minLimitAmount of RateCatalog";
+                    logger.error(errMsg);
+                    throw new InvalidRateException(errMsg);
+                }
+
+                if (maxLimitAmount != null && rate.getLimitAmountValue().compareTo(maxLimitAmount) > 0) {
+                    String errMsg = "Rate limit amount must not be greater than maxLimitAmount of RateCatalog";
+                    logger.error(errMsg);
+                    throw new InvalidRateException(errMsg);
+                }
+            }
+
+            if (rateCatalog.isLimitAmountFinal()) {
+
+                if (minLimitUnits != null && maxLimitUnits != null &&
+                        rateCatalog.getMinLimitUnits() != null && rateCatalog.getMaxLimitAmount() != null) {
+
+                    if (minLimitUnits.compareTo(rateCatalog.getMinLimitUnits()) != 0) {
+                        String errMsg = "minLimitUnits values of Rate and RateCatalog must match";
+                        logger.error(errMsg);
+                        throw new InvalidRateException(errMsg);
+                    }
+
+                    if (maxLimitUnits.compareTo(rateCatalog.getMaxLimitUnits()) != 0) {
+                        String errMsg = "maxLimitUnits values of Rate and RateCatalog must match";
+                        logger.error(errMsg);
+                        throw new InvalidRateException(errMsg);
+                    }
+                }
+
+                if (rate.isLimitAmount() != rateCatalog.isLimitAmount()) {
+                    String errMsg = "Rate's isLimitAmount must be " + rateCatalog.isLimitAmount();
+                    logger.error(errMsg);
+                    throw new InvalidRateException(errMsg);
+                }
+            }
 
             BigDecimal minAmount = rateCatalog.getMinAmount();
             BigDecimal maxAmount = rateCatalog.getMaxAmount();
@@ -1162,25 +1250,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
             if (maxAmount != null && maxAmount.compareTo(defaultRateAmount.getAmount()) < 0) {
                 String errMsg = "Default Rate amount cannot be greater than the upper bound amount";
-                logger.error(errMsg);
-                throw new InvalidRateException(errMsg);
-            }
-
-            if (rateCatalog.isTransactionTypeFinal() && !rate.isTransactionTypeFinal()) {
-                String errMsg = "Rate's transaction type must be final as dictated by RateCatalog";
-                logger.error(errMsg);
-                throw new InvalidRateException(errMsg);
-            }
-
-            if (rateCatalog.isTransactionTypeFinal() &&
-                    !rate.getTransactionTypeId().equals(rateCatalog.getTransactionTypeId())) {
-                String errMsg = "Rate must have the same transaction type as RateCatalog";
-                logger.error(errMsg);
-                throw new InvalidRateException(errMsg);
-            }
-
-            if (rateCatalog.isAmountFinal() && !rate.isAmountFinal()) {
-                String errMsg = "Rate's amount must be final as dictated by RateCatalog";
                 logger.error(errMsg);
                 throw new InvalidRateException(errMsg);
             }

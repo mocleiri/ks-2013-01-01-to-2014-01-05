@@ -22,6 +22,16 @@ public class RateCatalog extends AbstractRateEntity {
 
     private BigDecimal maxAmount;
 
+    private BigDecimal minLimitAmount;
+
+    private BigDecimal maxLimitAmount;
+
+    private String transactionTypeId;
+
+    private Boolean isTransactionTypeFinal;
+
+    private Boolean isLimitAmountFinal;
+
     private Boolean isKeyPairFinal;
 
     private Boolean isRecognitionDateDefinable;
@@ -58,6 +68,53 @@ public class RateCatalog extends AbstractRateEntity {
 
     public void setMaxAmount(BigDecimal maxAmount) {
         this.maxAmount = maxAmount;
+    }
+
+    @Column(name = "MIN_LIMIT_AMOUNT")
+    public BigDecimal getMinLimitAmount() {
+        return minLimitAmount;
+    }
+
+    public void setMinLimitAmount(BigDecimal minLimitAmount) {
+        this.minLimitAmount = minLimitAmount;
+    }
+
+    @Column(name = "MAX_LIMIT_AMOUNT")
+    public BigDecimal getMaxLimitAmount() {
+        return maxLimitAmount;
+    }
+
+    public void setMaxLimitAmount(BigDecimal maxLimitAmount) {
+        this.maxLimitAmount = maxLimitAmount;
+    }
+
+    @Column(name = "TRANSACTION_TYPE_ID", length = 20)
+    public String getTransactionTypeId() {
+        return transactionTypeId;
+    }
+
+    public void setTransactionTypeId(String transactionTypeId) {
+        this.transactionTypeId = transactionTypeId;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_TRANS_TYPE_FINAL")
+    public Boolean isTransactionTypeFinal() {
+        return isTransactionTypeFinal != null ? isTransactionTypeFinal : false;
+    }
+
+    public void setTransactionTypeFinal(Boolean transactionTypeFinal) {
+        isTransactionTypeFinal = transactionTypeFinal;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_LIMIT_AMOUNT_FINAL")
+    public Boolean isLimitAmountFinal() {
+        return isLimitAmountFinal != null ? isLimitAmountFinal : false;
+    }
+
+    public void setLimitAmountFinal(Boolean limitAmountFinal) {
+        isLimitAmountFinal = limitAmountFinal;
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")

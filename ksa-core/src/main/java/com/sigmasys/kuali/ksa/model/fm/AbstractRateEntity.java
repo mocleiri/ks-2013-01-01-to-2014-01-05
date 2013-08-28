@@ -6,7 +6,6 @@ import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
-import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -19,17 +18,11 @@ import java.util.Set;
 @AttributeOverride(name = "code", column = @Column(name = "CODE", length = 30, nullable = false))
 public abstract class AbstractRateEntity extends AuditableEntity<Long> {
 
-    protected Boolean isAmountFinal;
-
-    protected Boolean isTransactionTypeFinal;
-
-    protected String transactionTypeId;
+    protected Boolean isLimitAmount;
 
     protected RateType rateType;
 
     protected Set<KeyPair> keyPairs;
-
-    protected BigDecimal limitAmount;
 
     protected Integer minLimitUnits;
 
@@ -50,32 +43,13 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> {
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_AMOUNT_FINAL")
-    public Boolean isAmountFinal() {
-        return isAmountFinal;
+    @Column(name = "IS_LIMIT_AMOUNT")
+    public Boolean isLimitAmount() {
+        return isLimitAmount != null ? isLimitAmount : false;
     }
 
-    public void setAmountFinal(Boolean amountFinal) {
-        isAmountFinal = amountFinal;
-    }
-
-    @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_TRANS_TYPE_FINAL")
-    public Boolean isTransactionTypeFinal() {
-        return isTransactionTypeFinal;
-    }
-
-    public void setTransactionTypeFinal(Boolean transactionTypeFinal) {
-        isTransactionTypeFinal = transactionTypeFinal;
-    }
-
-    @Column(name = "TRANSACTION_TYPE_ID", length = 20)
-    public String getTransactionTypeId() {
-        return transactionTypeId;
-    }
-
-    public void setTransactionTypeId(String transactionTypeId) {
-        this.transactionTypeId = transactionTypeId;
+    public void setLimitAmount(Boolean limitAmount) {
+        isLimitAmount = limitAmount;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -86,15 +60,6 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> {
 
     public void setRateType(RateType rateType) {
         this.rateType = rateType;
-    }
-
-    @Column(name = "LIMIT_AMOUNT")
-    public BigDecimal getLimitAmount() {
-        return limitAmount;
-    }
-
-    public void setLimitAmount(BigDecimal limitAmount) {
-        this.limitAmount = limitAmount;
     }
 
     @Column(name = "MIN_LIMIT_UNITS")

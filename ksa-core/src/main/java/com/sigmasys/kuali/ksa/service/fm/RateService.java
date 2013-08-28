@@ -115,7 +115,6 @@ public interface RateService {
      * @param transactionDateType        TransactionDateType enum value
      * @param minAmount                  Minimum transaction amount
      * @param maxAmount                  Maximum transaction amount
-     * @param limitAmount                Limit amount
      * @param minLimitUnits              Minimum number of Limit Units
      * @param maxLimitUnits              Maximum number of Limit Units
      * @param atpIds                     list of ATP IDs
@@ -123,8 +122,9 @@ public interface RateService {
      * @param isTransactionTypeFinal     Indicates whether the transaction type is final
      * @param isTransactionDateTypeFinal Indicates whether the transaction date type is final
      * @param isRecognitionDateDefinable Indicates whether the recognition date can be set
-     * @param isAmountFinal              Indicates whether the rate amount is final
      * @param isKeyPairFinal             Indicates whether the set of KeyPairs is immutable
+     * @param isLimitAmount              Indicates whether the limit amount exists
+     * @param isLimitAmountFinal         Indicates whether the limit amount is final
      * @return a new RateCatalog instance
      */
     RateCatalog createRateCatalog(String rateCatalogCode,
@@ -133,7 +133,8 @@ public interface RateService {
                                   TransactionDateType transactionDateType,
                                   BigDecimal minAmount,
                                   BigDecimal maxAmount,
-                                  BigDecimal limitAmount,
+                                  BigDecimal minLimitAmount,
+                                  BigDecimal maxLimitAmount,
                                   int minLimitUnits,
                                   int maxLimitUnits,
                                   List<String> atpIds,
@@ -141,8 +142,9 @@ public interface RateService {
                                   boolean isTransactionTypeFinal,
                                   boolean isTransactionDateTypeFinal,
                                   boolean isRecognitionDateDefinable,
-                                  boolean isAmountFinal,
-                                  boolean isKeyPairFinal);
+                                  boolean isKeyPairFinal,
+                                  boolean isLimitAmount,
+                                  boolean isLimitAmountFinal);
 
     /**
      * Persists RateCatalog in the database.
@@ -220,36 +222,34 @@ public interface RateService {
     /**
      * Creates a new persistent Rate instance based on the given parameters.
      *
-     * @param rateCode                Rate code
-     * @param subCode                 Rate sub-code
-     * @param rateName                Rate name
-     * @param rateCatalogCode         RateCatalog code
-     * @param transactionTypeId       Rate TransactionType ID
-     * @param amountTransactionTypeId RateAmount TransactionType ID
-     * @param transactionDateType     TransactionDateType enum value
-     * @param defaultRateAmount       Default Rate amount
-     * @param limitAmount             Limit amount
-     * @param transactionDate         Transaction date
-     * @param recognitionDate         Recognition date
-     * @param atpId                   ATP ID
-     * @param isTransactionTypeFinal  Indicates whether the transaction type is final
-     * @param isAmountFinal           Indicates whether the rate amount is final
+     * @param rateCode            Rate code
+     * @param subCode             Rate sub-code
+     * @param rateName            Rate name
+     * @param rateCatalogCode     RateCatalog code
+     * @param transactionDateType TransactionDateType enum value
+     * @param defaultRateAmount   Default Rate amount
+     * @param limitAmount         Limit amount
+     * @param minLimitUnits       Minimum number of units
+     * @param maxLimitUnits       Maximum number of units
+     * @param transactionDate     Transaction date
+     * @param recognitionDate     Recognition date
+     * @param atpId               ATP ID
+     * @param isLimitAmount       Indicates whether the limit amount should exist
      * @return a new Rate instance
      */
     Rate createRate(String rateCode,
                     String subCode,
                     String rateName,
                     String rateCatalogCode,
-                    String transactionTypeId,
-                    String amountTransactionTypeId,
                     TransactionDateType transactionDateType,
                     BigDecimal defaultRateAmount,
                     BigDecimal limitAmount,
+                    Integer minLimitUnits,
+                    Integer maxLimitUnits,
                     Date transactionDate,
                     Date recognitionDate,
                     String atpId,
-                    boolean isTransactionTypeFinal,
-                    boolean isAmountFinal);
+                    boolean isLimitAmount);
 
     /**
      * Persists the Rate instance in the database.
