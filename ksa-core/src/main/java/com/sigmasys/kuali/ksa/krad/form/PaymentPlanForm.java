@@ -1,12 +1,15 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,7 +30,7 @@ public class PaymentPlanForm extends AbstractViewModel {
     private String filterThirdPartyAccount;
     private List<ThirdPartyAccount> filterThirdPartyAccounts;
 
-    private List<ThirdPartyPlan> thirdPartyPlans;
+    private List<ThirdPartyPlanModel> thirdPartyPlans;
 
 
     private String responsibleAccount;
@@ -40,6 +43,13 @@ public class PaymentPlanForm extends AbstractViewModel {
     private String name;
     private String description;
     private ThirdPartyAccount thirdPartyAccount;
+    private Date openPeriodStartDate;
+    private Date openPeriodEndDate;
+    private Date chargePeriodStartDate;
+    private Date chargePeriodEndDate;
+    private BigDecimal maxAmount;
+    private Date effectiveDate;
+    private Date recognitionDate;
 
 
 
@@ -149,14 +159,14 @@ public class PaymentPlanForm extends AbstractViewModel {
         this.filterThirdPartyAccounts = filterThirdPartyAccounts;
     }
 
-    public List<ThirdPartyPlan> getThirdPartyPlans() {
+    public List<ThirdPartyPlanModel> getThirdPartyPlans() {
         if(thirdPartyPlans == null) {
-            thirdPartyPlans = new ArrayList<ThirdPartyPlan>();
+            thirdPartyPlans = new ArrayList<ThirdPartyPlanModel>();
         }
         return thirdPartyPlans;
     }
 
-    public void setThirdPartyPlans(List<ThirdPartyPlan> thirdPartyPlans) {
+    public void setThirdPartyPlans(List<ThirdPartyPlanModel> thirdPartyPlans) {
         this.thirdPartyPlans = thirdPartyPlans;
     }
 
@@ -193,5 +203,61 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     public void setThirdPartyAccount(ThirdPartyAccount thirdPartyAccount) {
         this.thirdPartyAccount = thirdPartyAccount;
+    }
+
+    public Date getOpenPeriodStartDate() {
+        return openPeriodStartDate;
+    }
+
+    public void setOpenPeriodStartDate(Date openPeriodStartDate) {
+        this.openPeriodStartDate = openPeriodStartDate;
+    }
+
+    public Date getOpenPeriodEndDate() {
+        return openPeriodEndDate;
+    }
+
+    public void setOpenPeriodEndDate(Date openPeriodEndDate) {
+        this.openPeriodEndDate = openPeriodEndDate;
+    }
+
+    public Date getChargePeriodStartDate() {
+        return chargePeriodStartDate;
+    }
+
+    public void setChargePeriodStartDate(Date chargePeriodStartDate) {
+        this.chargePeriodStartDate = chargePeriodStartDate;
+    }
+
+    public Date getChargePeriodEndDate() {
+        return chargePeriodEndDate;
+    }
+
+    public void setChargePeriodEndDate(Date chargePeriodEndDate) {
+        this.chargePeriodEndDate = chargePeriodEndDate;
+    }
+
+    public BigDecimal getMaxAmount() {
+        return maxAmount;
+    }
+
+    public void setMaxAmount(BigDecimal maxAmount) {
+        this.maxAmount = maxAmount;
+    }
+
+    public Date getEffectiveDate() {
+        return effectiveDate;
+    }
+
+    public void setEffectiveDate(Date effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
+
+    public Date getRecognitionDate() {
+        return recognitionDate;
+    }
+
+    public void setRecognitionDate(Date recognitionDate) {
+        this.recognitionDate = recognitionDate;
     }
 }

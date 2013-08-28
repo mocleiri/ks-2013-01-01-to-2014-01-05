@@ -84,7 +84,7 @@
         <property name="items">
             <list>
                 <ref bean="thirdPartyDescription"/>
-                <ref bean="thirdPartyAdministrative"/>
+                <ref bean="newThirdPartyAdministrative"/>
                 <ref bean="thirdPartyOpenPeriod"/>
                 <ref bean="thirdPartyChargePeriod"/>
                 <ref bean="thirdPartyCharges"/>
@@ -130,11 +130,11 @@
         </property>
     </bean>
 
-    <bean id="thirdPartyAdministrative" parent="Uif-HorizontalBoxSection">
+    <bean id="newThirdPartyAdministrative" parent="Uif-HorizontalBoxSection">
         <property name="headerText" value="Administrative Information"/>
         <property name="items">
             <list>
-                <bean id="PaymentPlanViewResponsibleAccount" parent="Uif-InputField" p:label="Responsible Account" p:labelPlacement="TOP" p:propertyName="responsibleAccount">
+                <bean parent="Uif-InputField" p:label="Responsible Account" p:labelPlacement="TOP" p:propertyName="responsibleAccount">
                     <property name="suggest">
                         <bean parent="Uif-Suggest">
                             <property name="valuePropertyName" value="id"/>
@@ -173,18 +173,60 @@
         </property>
     </bean>
 
+    <bean id="thirdPartyAdministrative" parent="Uif-HorizontalBoxSection">
+        <property name="headerText" value="Administrative Information"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="Responsible Account" p:labelPlacement="TOP" p:propertyName="thirdPartyAccount.id">
+                    <property name="suggest">
+                        <bean parent="Uif-Suggest">
+                            <property name="valuePropertyName" value="id"/>
+                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                            <property name="suggestQuery">
+                                <bean parent="Uif-AttributeQueryConfig">
+                                    <property name="queryMethodToCall" value="getAccountsForSuggest"/>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Uif-VerticalBoxSection" p:methodToCallOnRefresh="getResponsibleAccount" p:refreshWhenChangedPropertyNames="thirdPartyAccount.id">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-VerticalBoxSection" p:style="background-color: #CCC; border-radius: 15px;">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-Disclosure-GridSection" p:readOnly="true" >
+                                            <property name="items">
+                                                <list>
+                                                    <bean parent="Uif-InputField" p:propertyName="thirdPartyAccount.id" p:label="Userid" />
+                                                    <bean parent="Uif-InputField" p:propertyName="thirdPartyAccount.compositeDefaultPersonName" p:label="Name" />
+                                                </list>
+                                            </property>
+                                        </bean>
+                                    </list>
+                                </property>
+                            </bean>
+
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
     <bean id="thirdPartyOpenPeriod" parent="Uif-VerticalBoxSection">
         <property name="headerText" value="Open Period"/>
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
-                    <bean parent="Uif-InputField" p:propertyName="newThirdPartyPlan.openPeriodStartDate" p:labelPlacement="TOP" p:label="Start"
+                    <bean parent="Uif-InputField" p:propertyName="openPeriodStartDate" p:labelPlacement="TOP" p:label="Start"
                           p:constraintText="Format: mm/dd/yyyy">
                         <property name="control">
                             <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
                         </property>
                     </bean>
-                    <bean parent="Uif-InputField" p:propertyName="newThirdPartyPlan.openPeriodEndDate" p:labelPlacement="TOP" p:label="End"
+                    <bean parent="Uif-InputField" p:propertyName="openPeriodEndDate" p:labelPlacement="TOP" p:label="End"
                           p:constraintText="Format: mm/dd/yyyy">
                         <property name="control">
                             <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
@@ -201,13 +243,13 @@
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
-                    <bean parent="Uif-InputField" p:propertyName="newThirdPartyPlan.chargePeriodStartDate" p:labelPlacement="TOP" p:label="Start"
+                    <bean parent="Uif-InputField" p:propertyName="chargePeriodStartDate" p:labelPlacement="TOP" p:label="Start"
                           p:constraintText="Format: mm/dd/yyyy">
                         <property name="control">
                             <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
                         </property>
                     </bean>
-                    <bean parent="Uif-InputField" p:propertyName="newThirdPartyPlan.chargePeriodEndDate" p:labelPlacement="TOP" p:label="End"
+                    <bean parent="Uif-InputField" p:propertyName="chargePeriodEndDate" p:labelPlacement="TOP" p:label="End"
                           p:constraintText="Format: mm/dd/yyyy">
                         <property name="control">
                             <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
@@ -223,7 +265,7 @@
         <property name="headerText" value="Charges"/>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="newThirdPartyPlan.maxAmount" p:label="Maximum Amount" p:labelPlacement="TOP"/>
+                <bean parent="Uif-InputField" p:propertyName="maxAmount" p:label="Maximum Amount" p:labelPlacement="TOP"/>
 
                 <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="6" p:width="85%">
                     <property name="headerText" value="Allowable Charges"/>
@@ -269,13 +311,13 @@
         <property name="headerText" value="Transferred Transaction Settings"/>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="newThirdPartyPlan.effectiveDate" p:labelPlacement="TOP" p:label="Effective Date"
+                <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:labelPlacement="TOP" p:label="Effective Date"
                       p:constraintText="Format: mm/dd/yyyy">
                     <property name="control">
                         <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="newThirdPartyPlan.recognitionDate" p:labelPlacement="TOP" p:label="Recognition Date"
+                <bean parent="Uif-InputField" p:propertyName="recognitionDate" p:labelPlacement="TOP" p:label="Recognition Date"
                       p:constraintText="Format: mm/dd/yyyy">
                     <property name="control">
                         <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
@@ -340,7 +382,7 @@
                     <property name="items">
                         <list>
                             <!-- Third Party Account suggest -->
-                            <bean id="PaymentPlanViewResponsibleAccountSuggest" parent="Uif-InputField" p:label="Responsible Account" p:propertyName="filterThirdPartyAccount">
+                            <bean parent="Uif-InputField" p:label="Responsible Account" p:propertyName="filterThirdPartyAccount">
                                 <property name="suggest">
                                     <bean parent="Uif-Suggest">
                                         <property name="valuePropertyName" value="id"/>
@@ -393,7 +435,7 @@
                 <bean parent="Uif-Message" p:messageText="No plans match filter criteria" p:render="@{thirdPartyPlans.size() == 0}"/>
                 <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:width="85%">
                     <property name="readOnly" value="true"/>
-                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel"/>
                     <property name="propertyName" value="thirdPartyPlans"/>
                     <property name="layoutManager.sequencePropertyName" value="name"/>
                     <property name="layoutManager.richTable.render" value="true"/>
@@ -432,7 +474,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-HorizontalFieldGroup" p:label="Plan Settings">
+                            <bean parent="Uif-VerticalFieldGroup" p:label="Plan Settings">
                                 <property name="items">
                                     <list>
                                        <bean parent="Uif-ImageField" p:source="../images/settings.png" p:style="cursor:pointer;" p:altText="View Plan Settings" p:title=""
@@ -444,9 +486,12 @@
                                             <property name="items">
                                                 <list>
                                                     <ref bean="thirdPartyDescription"/>
-                                                    <!--<ref bean="thirdPartyAdministrative"/>-->
-
-
+                                                    <ref bean="thirdPartyAdministrative"/>
+                                                    <ref bean="thirdPartyOpenPeriod"/>
+                                                    <ref bean="thirdPartyChargePeriod"/>
+                                                    <ref bean="thirdPartyCharges"/>
+                                                    <ref bean="thirdPartyTransferredTransactions"/>
+                                                    <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="updateThirdParty" p:actionLabel="Submit" p:actionParameters="planId:@{#line.parent.id}"/>
                                                 </list>
                                             </property>
                                         </bean>

@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.PaymentPlanForm;
+import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
@@ -80,8 +81,16 @@ public class PaymentPlanController extends GenericSearchController {
     }
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=getResponsibleAccount")
-    public ModelAndView getResponsibleAccount(@ModelAttribute("KualiForm") PaymentPlanForm form) {
-        String accountString = form.getResponsibleAccount();
+    public ModelAndView getResponsibleAccount(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+
+        String accountString = request.getParameter("actionParameters[accountId]");
+        String planString = request.getParameter("actionParameters[planId]");
+
+
+        if(accountString == null){
+            accountString = form.getResponsibleAccount();
+        }
+
         Account account = accountService.getFullAccount(accountString);
         if(account instanceof ThirdPartyAccount){
             form.setThirdPartyAccount((ThirdPartyAccount)account);
@@ -205,7 +214,24 @@ public class PaymentPlanController extends GenericSearchController {
             }
         }
 
-        form.setThirdPartyPlans(allPlans);
+        List<ThirdPartyPlanModel> models = new ArrayList<ThirdPartyPlanModel>(allPlans.size());
+
+        for(ThirdPartyPlan plan : allPlans) {
+            ThirdPartyPlanModel model = new ThirdPartyPlanModel();
+            model.setParent(plan);
+            ThirdPartyAccount account = plan.getThirdPartyAccount();
+            if(account == null){
+                logger.error("Plan: " + plan.getCode() + " has a null third party account");
+            } else {
+                account.getCompositeDefaultPersonName();
+            }
+
+            model.setThirdPartyAllowableCharges(thirdPartyTransferService.getThirdPartyAllowableCharges(plan.getId()));
+            models.add(model);
+
+        }
+
+        form.setThirdPartyPlans(models);
 
     }
 
@@ -229,6 +255,26 @@ public class PaymentPlanController extends GenericSearchController {
             plan.setDescription(form.getDescription());
         }
 
+        if(plan.getOpenPeriodStartDate() == null){
+            plan.setOpenPeriodStartDate(form.getOpenPeriodStartDate());
+        }
+
+        if(plan.getOpenPeriodEndDate() == null){
+            plan.setOpenPeriodEndDate(form.getOpenPeriodEndDate());
+        }
+
+        if(plan.getChargePeriodStartDate() == null){
+            plan.setChargePeriodStartDate(form.getChargePeriodStartDate());
+        }
+
+        if(plan.getChargePeriodEndDate() == null){
+            plan.setChargePeriodEndDate(form.getChargePeriodEndDate());
+        }
+
+        if(plan.getMaxAmount() == null){
+            plan.setMaxAmount(form.getMaxAmount());
+        }
+
 
         boolean errors = false;
 
@@ -241,6 +287,8 @@ public class PaymentPlanController extends GenericSearchController {
         String accountId = null;
         if(plan.getThirdPartyAccount() != null){
             accountId = plan.getThirdPartyAccount().getId();
+        } else if(form.getThirdPartyAccount() != null){
+            accountId = form.getThirdPartyAccount().getId();
         }
 
         Long transferTypeId = null;
@@ -267,7 +315,7 @@ public class PaymentPlanController extends GenericSearchController {
         }
 
         String message = "Transfer Type saved";
-        GlobalVariables.getMessageMap().putError(PAYMENT_PLAN_VIEW, RiceKeyConstants.ERROR_CUSTOM, message);
+        GlobalVariables.getMessageMap().putInfo(PAYMENT_PLAN_VIEW, RiceKeyConstants.ERROR_CUSTOM, message);
 
 
         return getUIFModelAndView(form);
