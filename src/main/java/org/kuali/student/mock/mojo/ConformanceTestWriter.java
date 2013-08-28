@@ -50,7 +50,12 @@ public class ConformanceTestWriter extends MockImplWriter {
         this.validate();
         for (Service service : filterServices()) {
             log.info ("************** generating conformance test for service = " + service.getKey() + " **************");
-            new ConformanceTestWriterForOneService(model, directory, rootPackage, service.getKey(), isR1).write();
+            
+            try {
+                new ConformanceTestWriterForOneService(model, directory, rootPackage, service.getKey(), isR1).write();
+            } catch (Exception e) {
+                log.error ("Failed to generate conformance test for service = " + service.getKey(), e);
+            }
         }
     }
 
