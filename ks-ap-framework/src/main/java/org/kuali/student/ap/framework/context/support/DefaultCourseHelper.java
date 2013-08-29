@@ -37,6 +37,8 @@ import org.kuali.student.r2.core.search.infc.SearchResultRow;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.lum.course.infc.Course;
 import org.kuali.student.r2.lum.course.service.CourseService;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 // TODO: REVIEW https://svn.kuali.org/repos/student/contrib/myplan/trunk/ks-myplan/myplan-ui/src/main/java/edu/uw/kuali/student/myplan/util/CourseHelperImpl.java
@@ -100,6 +102,11 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 				return false;
 			return true;
 		}
+
+		@Override
+		public String toString() {
+			return "CourseTermKey [courseId=" + courseId + ", termId=" + termId + "]";
+		}
 	}
 
 	private static class CourseMarker {
@@ -120,11 +127,21 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 	}
 
 	private static CourseMarker getCourseMarker() {
-		CourseMarker rv = (CourseMarker) TransactionSynchronizationManager.getResource(COURSE_MARKER_KEY);
-		if (rv == null) {
-			TransactionSynchronizationManager.bindResource(COURSE_MARKER_KEY, rv = new CourseMarker());
+		if (TransactionSynchronizationManager.isSynchronizationActive()) {
+			CourseMarker rv = (CourseMarker) TransactionSynchronizationManager.getResource(COURSE_MARKER_KEY);
+			if (rv == null) {
+				TransactionSynchronizationManager.bindResource(COURSE_MARKER_KEY, rv = new CourseMarker());
+				TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+					@Override
+					public void afterCompletion(int status) {
+						TransactionSynchronizationManager.unbindResourceIfPossible(COURSE_MARKER_KEY);
+					}
+				});
+			}
+			return rv;
+		} else {
+			return new CourseMarker();
 		}
-		return rv;
 	}
 
 	@Override
@@ -183,7 +200,10 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 						sb.append(c.getCode());
 					}
 				}
-				coid2key.put(co.getId(), new CourseTermKey(co.getCourseId(), co.getTermId()));
+				CourseTermKey k = new CourseTermKey(co.getCourseId(), co.getTermId());
+				coid2key.put(co.getId(), k);
+				List<ActivityOfferingDisplayInfo> orm = cm.activityOfferingDisplaysByCourseAndTerm.remove(k);
+				LOG.warn("Cleared stale AO display key " + k + " " + orm);
 			}
 
 			if (!additionalCourseIds.isEmpty()) {
@@ -300,11 +320,24 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 				CourseOfferingService courseOfferingService = KsapFrameworkServiceLocator.getCourseOfferingService();
 				ContextInfo context = KsapFrameworkServiceLocator.getContext().getContextInfo();
 				rv = new java.util.LinkedList<ActivityOfferingDisplayInfo>();
+				StringBuilder msg = null;
+				if (LOG.isDebugEnabled())
+					msg = new StringBuilder("CO cache miss ").append(courseId).append(" ").append(termId);
 				for (CourseOfferingInfo co : courseOfferingService.getCourseOfferingsByCourseAndTerm(courseId, termId,
-						context))
-					rv.addAll(KsapFrameworkServiceLocator.getCourseOfferingService()
+						context)) {
+					if (msg != null)
+						msg.append("\n  CO ").append(co.getId());
+					List<ActivityOfferingDisplayInfo> aol = KsapFrameworkServiceLocator.getCourseOfferingService()
 							.getActivityOfferingDisplaysForCourseOffering(co.getId(),
-									KsapFrameworkServiceLocator.getContext().getContextInfo()));
+									KsapFrameworkServiceLocator.getContext().getContextInfo());
+					for (ActivityOfferingDisplayInfo aodi : aol) {
+						if (msg != null)
+							msg.append("\n    AO ").append(aodi.getId());
+						rv.add(aodi);
+					}
+				}
+				if (msg != null)
+					LOG.debug(msg);
 				cm.activityOfferingDisplaysByCourseAndTerm.put(k, rv);
 			} catch (DoesNotExistException e) {
 				throw new IllegalArgumentException("CO lookup failure");
