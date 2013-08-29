@@ -36,11 +36,7 @@
                     <list>
                         <bean parent="Uif-HeaderTwo" p:headerText="REPORTING &amp; RECONCILIATION"/>
                         <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AgedTrialBalance" p:actionLabel="Aged Trial Balance"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="Transactions" p:actionLabel="Transactions"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AccountsReceivable" p:actionLabel="Accounts Receivable"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="ExportXML" p:actionLabel="Export XML"/>
                         <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerMainPage" p:actionLabel="General Ledger"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="FinancialAid" p:actionLabel="Financial Aid"/>
                     </list>
                 </property>
             </bean>
@@ -67,66 +63,6 @@
 
                 <!--End Aged Trial Balance Page-->
 
-                <!--Begin Transactions Page-->
-
-                <bean parent="Uif-Page" p:id="Transactions" p:title="Transactions">
-                    <property name="headerText" value="Transactions"/>
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-HorizontalBoxSection">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-MessageField" p:messageText="Placeholder: Text"/>
-                                    </list>
-                                </property>
-                            </bean>
-                            <!--<ref bean="PageSection"/>-->
-                        </list>
-                    </property>
-                </bean>
-
-                <!--End Transactions Page-->
-
-                <!--Begin Accounts Receivable Page-->
-
-                <bean parent="Uif-Page" p:id="AccountsReceivable" p:title="Accounts Receivable">
-                    <property name="headerText" value="Accounts Receivable"/>
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-HorizontalBoxSection">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-MessageField" p:messageText="Placeholder: Text"/>
-                                    </list>
-                                </property>
-                            </bean>
-                            <!--<ref bean="PageSection"/>-->
-                        </list>
-                    </property>
-                </bean>
-
-                <!--End Accounts Receivable Page-->
-
-                <!--Begin Export XML Page-->
-
-                <bean parent="Uif-Page" p:id="ExportXML" p:title="Export XML">
-                    <property name="headerText" value="Export XML"/>
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-HorizontalBoxSection">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-MessageField" p:messageText="Placeholder: Text"/>
-                                    </list>
-                                </property>
-                            </bean>
-                            <!--<ref bean="PageSection"/>-->
-                        </list>
-                    </property>
-                </bean>
-
-                <!--End Export XML Page-->
-
                 <!--Begin General Ledger Page-->
 
                 <ref bean="GeneralLedgerMainPage"/>
@@ -134,25 +70,6 @@
 
                 <!--End General Ledger Page-->
 
-                <!--Begin Financial Aid Page-->
-
-                <bean parent="Uif-Page" p:id="FinancialAid" p:title="Financial Aid">
-                    <property name="headerText" value="Financial Aid"/>
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-HorizontalBoxSection">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-MessageField" p:messageText="Placeholder: Text"/>
-                                    </list>
-                                </property>
-                            </bean>
-                            <!--<ref bean="PageSection"/>-->
-                        </list>
-                    </property>
-                </bean>
-
-                <!--End Financial Aid Page-->
             </list>
         </property>
         <!--
