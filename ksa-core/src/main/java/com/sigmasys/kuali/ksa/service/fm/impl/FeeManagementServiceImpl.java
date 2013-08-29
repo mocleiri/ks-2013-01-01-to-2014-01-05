@@ -7,6 +7,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingChargeStatus;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -323,12 +324,11 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		if (linkedManifest.getTransaction() != null) {
     			// Clear all unlockedAllocations against the transaction in the linked manifest (Implicated Transaction):
     			Transaction implicatedTransaction = linkedManifest.getTransaction();
-                Long implicatedTransactionId = implicatedTransaction.getId();
-    			
-    			transactionService.removeAllocations(implicatedTransactionId);
+
+    			transactionService.removeAllocations(implicatedTransaction.getId());
 
                 // Reload the Implicated Transaction:
-                em.refresh(implicatedTransaction);
+                implicatedTransaction = refreshTransaction(linkedManifest);
 
     			// Process the Implicated Transaction:
     			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
@@ -366,6 +366,11 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		case TRANSFERRING:
     			// Process a TRANSFERRING Implicated Transaction and get back to this method:
     			processTransferFound(manifest, session, implicatedTransaction, pbtDetails, tptDetails);
+
+                // Refresh the implicated transaction:
+                implicatedTransaction = refreshTransaction(linkedManifest);
+
+                // Process the implicated transaction again:
     			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
     			break;
     			
@@ -451,7 +456,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	} else {
     		// Reverse the Implicated Transaction: 
     		memoText = String.format("No Transaction Transfer object found for Transaction %d", implicatedTransaction.getId());
-    		reverseTransaction(originalManifest, implicatedTransaction, session, TransactionStatus.TRANSFERRING);
+    		reverseTransaction(implicatedTransaction, implicatedTransaction.getAmount(), session);
     	}
     	
 		// Mark session for manual review:
@@ -480,10 +485,11 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                 " left outer join fetch d.variableFeeCharge vc " +
                 " left outer join fetch p.transferType t " +
                 " left outer join fetch t.generalLedgerType g " +
-                " where d.transferGroupId = :transferGroupId ";
+                " where d.transferGroupId = :transferGroupId and d.chargeStatusCode = :chargeStatusCode ";
     	Query query = em.createQuery(jpql);
 
         query.setParameter("transferGroupId", transferGroupId);
+        query.setParameter("chargeStatusCode", PaymentBillingChargeStatus.ACTIVE_CODE);
 
         List<PaymentBillingTransferDetail> details = query.getResultList();
 
@@ -569,7 +575,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		transactionService.reverseAllocations(implicatedTransaction.getId(), reversalAmount);
 
             // Refresh the implicated transaction:
-            em.refresh(implicatedTransaction);
+            implicatedTransaction = refreshTransaction(linkedManifest);
     		
         	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
         	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
@@ -607,7 +613,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     private void performTransactionReversal(FeeManagementManifest originalManifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction) {
 
         // Reverse the transaction:
-        Transaction reversalTransaction = reverseTransaction(originalManifest, implicatedTransaction, originalManifest.getSession(), implicatedTransaction.getStatus());
+        Transaction reversalTransaction = reverseTransaction(implicatedTransaction, originalManifest.getAmount(), originalManifest.getSession());
 
         if (reversalTransaction != null) {
             originalManifest.setTransaction(reversalTransaction);
@@ -624,15 +630,14 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Reverses the given transaction and returns the reversal Transaction.
      * 
-     * @param originalManifest	The original Manifest being processed.
      * @param transaction		Transaction to reverse.
+     * @param reversalAmount    Reversal amount.
      * @param session			FM Session
-     * @param status			Transaction status.
      * @return The reversal Transaction.
      */
-    private Transaction reverseTransaction(FeeManagementManifest originalManifest, Transaction transaction, FeeManagementSession session, TransactionStatus status) {
+    private Transaction reverseTransaction(Transaction transaction, BigDecimal reversalAmount, FeeManagementSession session) {
 
-        BigDecimal reversalAmount = originalManifest.getAmount();
+        TransactionStatus status = transaction.getStatus();
         Transaction reversalTransaction = null;
 
         // Check if the Transaction status allows for reversal:
@@ -643,7 +648,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             String memoText = String.format("Transaction %d was reversed in the amount of %f by fee management under session %d",
                     transaction.getId(), reversalAmount, session.getId());
 
-            reversalTransaction = transactionService.reverseTransaction(transaction.getId(), memoText, reversalAmount, statementPrefix, status);
+            reversalTransaction = transactionService.reverseTransaction(transaction.getId(), memoText, reversalAmount, statementPrefix);
         }
 
         return reversalTransaction;
@@ -679,6 +684,25 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 	    		}
 	    	}
     	}
+    }
+
+    /**
+     * Refreshes the transaction from the store and sets it on the manifest.
+     *
+     * @param manifest  An FM manifest which transactin to refresh.
+     * @return A fresh copy of the transaction.
+     */
+    private Transaction refreshTransaction (FeeManagementManifest manifest) {
+
+        Transaction transaction = manifest.getTransaction();
+
+        if (transaction != null) {
+            // Get a fresh copy:
+            transaction = transactionService.getTransaction(transaction.getId());
+            manifest.setTransaction(transaction);
+        }
+
+        return transaction;
     }
 
     
