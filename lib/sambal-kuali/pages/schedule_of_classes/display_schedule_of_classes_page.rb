@@ -26,6 +26,8 @@ class DisplayScheduleOfClasses < BasePage
   end
 
 
+  element(:course_not_found_info_message_div) { |b| b.frm.div(id: "u96") }
+
   action(:show) { |b| b.frm.button(id: "show_button").click; b.loading.wait_while_present}
 
   element(:course_search_text_info_message) { |b| b.frm.span(id: "course_search_text_info_message") }

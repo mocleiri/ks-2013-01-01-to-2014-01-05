@@ -56,6 +56,15 @@ class ManageCourseOfferings < BasePage
   element(:approve_activity_button){ |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Approve-AO-ClusterTab")}
   action(:approve_activity){ |b| b.approve_activity_button.click; b.loading.wait_while_present}
 
+  element(:cancel_ao_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Cancel-AO-ClusterTab") }
+  action(:cancel_ao) { |b| b.cancel_ao_button.click}
+
+  element(:suspend_ao_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Suspend-AO-ClusterTab") }
+  action(:suspend_ao) { |b| b.suspend_ao_button.click}
+
+  element(:reinstate_ao_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Reinstate-AO-ClusterTab") }
+  action(:reinstate_ao) { |b| b.reinstate_ao_button.click}
+
   element(:delete_aos_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-AO-ClusterTab") }
   action(:delete_aos) { |b| b.delete_aos_button.click}
 

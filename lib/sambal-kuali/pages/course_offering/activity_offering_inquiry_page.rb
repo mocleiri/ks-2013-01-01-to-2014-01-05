@@ -19,7 +19,9 @@ class ActivityOfferingInquiry < BasePage
   value(:term) { |b| b.frm.span(id: "term_control").text }
   value(:type) { |b| b.frm.span(id: "type_name_control").text }
   value(:format_offering) { |b| b.frm.span(id: "u59").text } # Persistent ID needed!
-  value(:total_maximum_enrollment) { |b| b.frm.span(id: "u68").text } # Persistent ID needed!
+  value(:total_maximum_enrollment) { |b| b.frm.span(id: "maximumEnrollment_label").text }
+  element(:actual_delivery_logistics) { |b| b.frm.table(id: "u130") } # Persistent ID needed!
+  element(:requested_delivery_logistics) { |b| b.frm.table(id: "u235") } # Persistent ID needed!
   value(:state) { |b| b.frm.span(id: "u77").text } # Persistent ID needed!
   value(:requires_evaluation) { |b| b.frm.span(id: "u86").text } # Persistent ID needed!
   value(:honors_offering) { |b| b.frm.span(id: "u95").text } # Persistent ID needed!
