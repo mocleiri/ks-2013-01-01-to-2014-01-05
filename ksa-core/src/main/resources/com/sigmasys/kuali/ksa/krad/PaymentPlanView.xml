@@ -279,8 +279,10 @@
                     <property name="layoutManager.richTable.disableTableSort" value="false"/>
                     <property name="layoutManager.richTable.templateOptions">
                         <map merge="true">
-                            <entry key="bPaginate" value="true"/>
-                            <!--<entry key="iDisplayLength" value="20"/>-->
+                            <entry key="bPaginate" value="false"/>
+                            <entry key="bInfo" value="false"/>
+                            <entry key="bFilter" value="false"/>
+                            <entry key="bSort" value="false" />
                         </map>
                     </property>
 
