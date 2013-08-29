@@ -350,6 +350,26 @@ class AORequisitesData
     return converted
   end
 
+  def show_all_courses( section)
+    if section == "logic"
+      on ManageCORequisites do |page|
+        page.preview_tree_section.links.each do |link|
+          if link.text == "Show Courses"
+            link.click
+          end
+        end
+      end
+    elsif section == "agenda"
+      on CourseOfferingRequisites do |page|
+        page.agenda_management_section.links.each do |link|
+          if link.text == "Show Courses"
+            link.click
+          end
+        end
+      end
+    end
+  end
+
   def test_text( section, text)
     string = ".*"
     new_text = convert_text( text, section)

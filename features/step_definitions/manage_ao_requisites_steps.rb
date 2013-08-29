@@ -158,6 +158,7 @@ Then /^the created rule should be shown in the Student Eligibility & Prerequisit
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
+    @prereq.show_all_courses( "agenda")
     page.agenda_management_section.text.should match @prereq.test_text("agenda", "ENGL101,ENGL478,HIST416,BSCI202,BSCI361,HIST110,Text to copy,free form text input value")
   end
 end
@@ -166,6 +167,7 @@ Then /^the created rule should not exist in the Student Eligibility & Prerequisi
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
+    @prereq.show_all_courses( "agenda")
     page.agenda_management_section.text.should_not match @prereq.test_text("agenda", "ENGL101,ENGL478,HIST416,BSCI202,BSCI361,HIST110,Text to copy,free form text input value")
   end
 end
@@ -174,6 +176,7 @@ Then /^the edited rule should be shown in the Student Eligibility & Prerequisite
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
+    @prereq.show_all_courses( "agenda")
     page.agenda_management_section.text.should match @prereq.test_text("agenda", "ENGL313,Text added while editing,Text to copy")
   end
 end
@@ -182,6 +185,7 @@ Then /^the edited rule should exist in the Student Eligibility & Prerequisite se
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
+    @prereq.show_all_courses( "agenda")
     page.agenda_management_section.text.should match @prereq.test_text("agenda", "lower-level English,ENGL478,HIST416,Text to copy,ARHU-English,ENGL101,BSCI202,BSCI361,HIST110,free form text input value")
   end
 end
@@ -190,6 +194,7 @@ Then /^the edited rule should not exist in the Student Eligibility & Prerequisit
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
+    @prereq.show_all_courses( "agenda")
     page.agenda_management_section.text.should_not match @prereq.test_text("agenda", "lower-level English,ENGL478,HIST416,Text to copy,ARHU-English,ENGL101,BSCI202,BSCI361,HIST110,free form text input value")
   end
 end
@@ -292,6 +297,7 @@ Then /^the copied course offering should have the same AO Requisites as the orig
   end
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
+    @activityOR.show_all_courses( "agenda")
     page.agenda_management_section.text.should match @activityOR.test_text("agenda", "CHEM241,CHEM242,CHEM247,Must have been admitted to the (Biochemistry, Chemistry) program,BSCI202,BSCI361,HIST110,ENGL101")
     page.prereq_message_section.text.should match /Activity Offering Rule differs from Course Offering Rule/
     page.coreq_message_section.text.should match /Rule statements deleted/
@@ -306,6 +312,7 @@ Then /^the copied course offering should have the same AO Requisites as the orig
   end
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
+    @activityOR.show_all_courses( "agenda")
     page.agenda_management_section.text.should match @activityOR.test_text("agenda", "concurrently enrolled in ENGL101,ENGL478,HIST416,BSCI202,BSCI361,HIST110,Text to copy")
     page.coreq_message_section.text.should match /Activity Offering Rule differs from Course Offering Rule/
     page.agenda_management_section.text.should match @activityOR.test_text("agenda", "ENGL101,not have successfully completed any credits from,BSCI202,BSCI361,HIST110,free form text input value")
