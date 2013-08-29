@@ -184,7 +184,7 @@
                             <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
                             <bean parent="Uif-InputField" p:propertyName="allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
                             <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
-                            <bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Amount to Refund" p:style="text-align: right; width: 10%;" p:readOnly="false"/>
+                            <bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Amount to Refund" p:readOnly="false"/>
 						</list>
 					</property>
 				</bean>
