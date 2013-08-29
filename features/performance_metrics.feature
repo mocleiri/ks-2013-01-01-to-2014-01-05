@@ -58,11 +58,11 @@ Feature: Performance.Metrics
     And I add a registration window and save
     Then the transaction takes less than "3" seconds
 
-  Scenario: Search Course Offering by Subject
+  Scenario: Search Course Offering by Subject 100+
     When I search for a course by the "ENGL" subject code
     Then the transaction takes less than "3" seconds
 
-  Scenario: Search Course Offering by Subject
+  Scenario: Search Course Offering by Subject 50-100
     When I search for a course by the "CHEM" subject code
     Then the transaction takes less than "3" seconds
 
