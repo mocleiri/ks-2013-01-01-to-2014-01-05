@@ -44,6 +44,8 @@
                                   p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
                             </bean>
                             <ref bean="memoDateRangeSection"/>
+                            <!-- Working on getting memos in a tree instead of a table but this isn't done yet -->
+                            <!--<ref bean="memoTreeSection"/>-->
                             <ref bean="memoTableSection"/>
                         </list>
                     </property>
@@ -77,7 +79,7 @@
                         <list>
                             <bean parent="Uif-Link" p:linkText="Memo List" p:target="_self"
                                   p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=MemosPage&amp;userId=@{account.id}"/>
-                            <ref bean="viewMemoSection"/>
+                            <!--<ref bean="viewMemoSection"/>-->
                             <ref bean="addMemoSection"/>
                             <ref bean="editMemoControlsGroup"/>
                         </list>
@@ -201,6 +203,47 @@
         </property>
     </bean>
 
+    <bean id="memoTreeSection" parent="Uif-TreeSection" p:instructionalText="Data Tree">
+        <property name="title" value="Memo List"/>
+        <property name="propertyName" value="memoTree"/>
+        <property name="defaultNodePrototype">
+
+            <!-- our custom node prototype -->
+            <bean class="org.kuali.rice.krad.uif.container.NodePrototype">
+                <!--
+                  Had to comment out this property because of the following message:
+                  Caused by: java.lang.IllegalStateException: Cannot convert value of type [org.kuali.rice.krad.uif.field.MessageField] to required type [org.kuali.rice.krad.uif.element.Message] for property 'labelPrototype': no matching editors or conversion strategy found
+                -->
+                <property name="labelPrototype">
+                    <bean parent="Uif-Message" p:style="white-space: normal; width: 40%"/>
+                </property>
+
+                <property name="dataGroupPrototype">
+                    <bean parent="Uif-VerticalBoxGroup" p:style="margin-left: 2em;">
+                        <property name="items">
+                            <list>
+                                <bean parent="Uif-HorizontalFieldGroup">
+                                    <property name="items">
+                                        <list>
+                                            <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective Date" p:labelPlacement="LEFT" p:readOnly="true"/>
+                                            <bean parent="Uif-LinkField" p:linkText="View" p:target="_self" p:align="center" p:width="10%"
+                                                  p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=ViewMemoPage&amp;userId=@{account.id}&amp;memoId=@{#np.id}"/>
+                                            <bean parent="Uif-LinkField" p:linkText="Follow-up" p:target="_self" p:align="center" p:width="10%"
+                                                  p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=FollowUpMemoPage&amp;userId=@{account.id}&amp;memoId=@{#np.id}"/>
+                                            <bean parent="Uif-LinkField" p:linkText="Update" p:target="_self" p:align="center" p:width="10%"
+                                                  p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=EditMemoPage&amp;userId=@{account.id}&amp;memoId=@{#np.id}"/>
+                                        </list>
+                                    </property>
+                                </bean>
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    <!-- the end of our Uif-TreeSection -->
+
     <!--
     *******************************************************************************************************************
                                         Add Memorandum section
@@ -248,11 +291,10 @@
                 <bean parent="Uif-InputField" p:propertyName="memoModel.text"
                       p:label="Memo"
                       p:labelPlacement="TOP">
-                    <!-- See KRAD issue for why this is commented out: https://jira.kuali.org/browse/KULRICE-9675 -->
-                    <!--<property name="control">
+                    <property name="control">
                         <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"
                               p:style="resize:none;"/>
-                    </property>-->
+                    </property>
                 </bean>
             </list>
         </property>
