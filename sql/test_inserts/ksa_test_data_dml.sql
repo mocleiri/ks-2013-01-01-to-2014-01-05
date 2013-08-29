@@ -1200,7 +1200,7 @@ INSERT INTO KSSA_TRANSFER_TYPE (ID, CODE, CREATION_DATE, CREATOR_ID, DESCRIPTION
 --   END DATA FOR TABLE KSSA_TRANSFER_TYPE
 ---------------------------------------------------
 
-Insert into KSSA_TP_PLAN (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,END_CHARGE_PERIOD,START_CHARGE_PERIOD,EFFECTIVE_DATE,MAX_AMOUNT,END_OPEN_PERIOD,START_OPEN_PERIOD,RECOGNITION_DATE,ACNT_ID_FK,TRANSFER_TYPE_ID_FK) values (50050,'IBM Fall2012 Tuit',to_timestamp('28-AUG-13 01.48.59.820000000 PM','DD-MON-RR HH.MI.SS.FF AM'),'admin','This plan will pay for Tuition ONLY for eligible IBM employees.  Each eligible employee will receive an authorization letter.',null,to_timestamp('28-AUG-13 01.48.59.820000000 PM','DD-MON-RR HH.MI.SS.FF AM'),'IBM',to_date('20-DEC-13','DD-MON-RR'),to_date('15-AUG-13','DD-MON-RR'),null,null,to_date('20-DEC-13','DD-MON-RR'),to_date('15-AUG-13','DD-MON-RR'),null,'tpuser1',1);
+Insert into KSSA_TP_PLAN (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,END_CHARGE_PERIOD,START_CHARGE_PERIOD,EFFECTIVE_DATE,MAX_AMOUNT,END_OPEN_PERIOD,START_OPEN_PERIOD,RECOGNITION_DATE,ACNT_ID_FK,TRANSFER_TYPE_ID_FK) values (1,'IBM Fall2012 Tuit',to_timestamp('28-AUG-13 01.48.59.820000000 PM','DD-MON-RR HH.MI.SS.FF AM'),'admin','This plan will pay for Tuition ONLY for eligible IBM employees.  Each eligible employee will receive an authorization letter.',null,to_timestamp('28-AUG-13 01.48.59.820000000 PM','DD-MON-RR HH.MI.SS.FF AM'),'IBM',to_date('20-DEC-13','DD-MON-RR'),to_date('15-AUG-13','DD-MON-RR'),null,null,to_date('20-DEC-13','DD-MON-RR'),to_date('15-AUG-13','DD-MON-RR'),null,'tpuser1',1);
 
 
 ---------------------------------------------------
