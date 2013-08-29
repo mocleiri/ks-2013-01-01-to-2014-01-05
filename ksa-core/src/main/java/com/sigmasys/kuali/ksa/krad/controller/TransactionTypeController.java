@@ -195,6 +195,12 @@ public class TransactionTypeController extends GenericSearchController {
                     tt = transactionService.createCreditType(code, "", startDate, priority, description);
                 } else {
                     tt = transactionService.createCreditSubType(code, startDate);
+                    if(priority != tt.getPriority()) {
+                        tt.setPriority(priority);
+                    }
+                    if(!description.equals(tt.getDescription())){
+                        tt.setDescription(description);
+                    }
                 }
 
             } else if ("D".equalsIgnoreCase(type)) {
@@ -202,6 +208,12 @@ public class TransactionTypeController extends GenericSearchController {
                     tt = transactionService.createDebitType(code, "", startDate, priority, description);
                 } else {
                     tt = transactionService.createDebitSubType(code, startDate);
+                    if(priority != tt.getPriority()) {
+                        tt.setPriority(priority);
+                    }
+                    if(!description.equals(tt.getDescription())){
+                        tt.setDescription(description);
+                    }
                 }
 
             } else {
