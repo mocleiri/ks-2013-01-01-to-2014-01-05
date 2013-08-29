@@ -185,11 +185,11 @@
                     <bean parent="Uif-HorizontalBoxSection">
                         <property name="items">
                             <list>
-                                <bean parent="Uif-InputField" p:label="Tags" p:propertyName="newTag">
+                                <bean id="transactionPageFilterTags" parent="Uif-InputField" p:label="Tags" p:propertyName="newTag">
                                     <property name="suggest">
                                         <bean parent="Uif-Suggest">
-                                            <property name="valuePropertyName" value="code"/>
-                                            <property name="labelPropertyName" value="description"/>
+                                            <property name="valuePropertyName" value="name"/>
+                                            <property name="labelPropertyName" value="name"/>
                                             <property name="templateOptions" value="minLength:2,delay:0,html:true"/>
                                             <property name="suggestQuery">
                                                 <bean parent="Uif-AttributeQueryConfig">
@@ -210,14 +210,14 @@
                                             <bean parent="Uif-HorizontalFieldGroup">
                                                 <property name="items">
                                                     <list>
-                                                        <bean parent="Uif-InputField" p:propertyName="code"/>
-                                                        <bean parent="Uif-MessageField"  p:messageText="(A)" p:render="@{#line.isAdministrative()}"/>
                                                         <bean parent="Uif-ActionLink" p:actionLabel="Remove" p:methodToCall="removeTag" p:actionParameters="tagId:@{#line.id}">
                                                             <property name="actionImage">
                                                                 <bean parent="Uif-Image"
                                                                       p:source="../images/remove.png"/>
                                                             </property>
                                                         </bean>
+                                                        <bean parent="Uif-InputField" p:propertyName="name"/>
+                                                        <bean parent="Uif-MessageField"  p:messageText="(A)" p:render="@{#line.isAdministrative()}"/>
                                                     </list>
                                                 </property>
                                             </bean>

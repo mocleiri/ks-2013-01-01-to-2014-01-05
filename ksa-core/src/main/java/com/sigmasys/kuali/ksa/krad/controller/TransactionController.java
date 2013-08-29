@@ -34,7 +34,7 @@ public class TransactionController extends GenericSearchController {
 
     private static final String TRANSACTION_VIEW = "TransactionView";
     private static final String ALLOCATE_TRANSACTION_PAGE = "AllocateTransactionPage";
-
+    private static final String FILTER_TAG_FIELD = "transactionPageFilterTags";
 
     @Autowired
     private AuditableEntityService auditableEntityService;
@@ -138,7 +138,27 @@ public class TransactionController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterTags")
     public ModelAndView filterTags(@ModelAttribute("KualiForm") TransactionForm form) {
         String newTag = form.getNewTag();
+
         Tag tag = auditableEntityService.getAuditableEntity(newTag, Tag.class);
+
+        if(tag == null) {
+            List<Tag> searchTags = auditableEntityService.getAuditableEntitiesByNamePattern(newTag, Tag.class);
+
+            if(searchTags.size() == 0) {
+                String errorMessage = "'" + newTag + "' is not a valid tag";
+                GlobalVariables.getMessageMap().putError(FILTER_TAG_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+                return getUIFModelAndView(form);
+            } else if(searchTags.size() > 1) {
+                String errorMessage = "'" + newTag + "' matches multiple tags, please select one tag at a time to add";
+                GlobalVariables.getMessageMap().putError(FILTER_TAG_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+                return getUIFModelAndView(form);
+            }
+
+            // There can be only one
+            tag = searchTags.get(0);
+
+        }
+
         List<Tag> tags = form.getFilterTags();
         if (tags == null) {
             tags = new ArrayList<Tag>();
