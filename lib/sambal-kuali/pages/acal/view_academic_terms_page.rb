@@ -112,4 +112,12 @@ class ViewAcademicTerms < BasePage
   def key_date_end(term_type, date_group_type, key_date_type)
     target_key_date_row.cells[KEY_DATE_END].text
   end
+
+  #Final Exam
+  element(:final_exam_section) { |b| b.frm.div( id: "acal-term-examdates_line0")}
+  #element(:exam_start_date_field) { |b| b.final_exam_section.text_field( name: "termWrapperList[0].examdates[0].startDate")}
+  #element(:exam_end_date_field) { |b| b.final_exam_section.text_field( name: "termWrapperList[0].examdates[0].endDate")}
+
+  #action(:get_exam_start_date) { |b| b.exam_start_date_field.text}
+  #action(:get_exam_end_date) { |b| b.exam_end_date_field.text}
 end

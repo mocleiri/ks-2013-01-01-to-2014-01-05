@@ -211,5 +211,59 @@ class EditAcademicTerms < BasePage
 
   action(:get_key_date_group_index) { |group_name, b| b.frm.div(text:"#{group_name}").span(index:0).id}
 
+  #Final Exam
+  def final_exam_section( term_type)
+    term_index = term_index_by_term_type( term_type)
+    section = acal_term_list_div.div( id: "acal-term-examdates_line#{term_index}")
+  end
+
+  def exam_start_date( term_type); final_exam_section( term_type).text_field( name: "termWrapperList[0].examdates[0].startDate"); end
+  def exam_end_date( term_type); final_exam_section( term_type).text_field( name: "termWrapperList[0].examdates[0].endDate"); end
+  def exam_delete_link( term_type, term_index); final_exam_section( term_type).a( id: "exam_period_delete_link_line#{term_index}_line#{term_index}"); end
+  def add_exam_period_btn( term_type, term_index); final_exam_section( term_type).button( id: "acal-term-examdates-add_line#{term_index}"); end
+  def exam_error_message( term_type); final_exam_section( term_type).li( class: "uif-errorMessageItem"); end
+  def exam_warning_message( term_type); final_exam_section( term_type).li( class: "uif-warningMessageItem"); end
+
+  def set_exam_start_date( term_type, date)
+    loading.wait_while_present
+    exam_start_date( term_type).set date
+  end
+
+  def set_exam_end_date( term_type, date)
+    loading.wait_while_present
+    exam_end_date( term_type).set date
+  end
+
+  def get_exam_start_date( term_type)
+    loading.wait_while_present
+    exam_start_date( term_type).text
+  end
+
+  def get_exam_end_date( term_type)
+    loading.wait_while_present
+    exam_end_date( term_type).text
+  end
+
+  def exam_delete( term_type)
+    loading.wait_while_present
+    term_index = term_index_by_term_type( term_type)
+    exam_delete_link( term_type, term_index).click
+  end
+
+  def add_exam_period( term_type)
+    loading.wait_while_present
+    term_index = term_index_by_term_type( term_type)
+    add_exam_period_btn( term_type, term_index).click
+  end
+
+  def get_exam_error_message( term_type)
+    loading.wait_while_present
+    exam_error_message( term_type).text
+  end
+
+  def get_exam_warning_message( term_type)
+    loading.wait_while_present
+    exam_warning_message( term_type).text
+  end
 end
 
