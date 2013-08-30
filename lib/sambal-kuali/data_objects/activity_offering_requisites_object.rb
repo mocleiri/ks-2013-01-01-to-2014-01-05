@@ -352,7 +352,7 @@ class AORequisitesData
 
   def show_all_courses( section)
     if section == "logic"
-      on ManageCORequisites do |page|
+      on ManageAORequisites do |page|
         page.preview_tree_section.links.each do |link|
           if link.text == "Show Courses"
             link.click
@@ -360,7 +360,7 @@ class AORequisitesData
         end
       end
     elsif section == "agenda"
-      on CourseOfferingRequisites do |page|
+      on ActivityOfferingRequisites do |page|
         page.agenda_management_section.links.each do |link|
           if link.text == "Show Courses"
             link.click
