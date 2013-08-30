@@ -341,6 +341,12 @@ public class QuickViewController extends GenericSearchController {
             form.setDefermentAmount(deferment.toString());
         }
 
+        BigDecimal outstandingBalance = chargeableAccount.getOutstandingBalance();
+        if(outstandingBalance == null){
+            outstandingBalance = BigDecimal.ZERO;
+        }
+        form.setOutstandingAmount(outstandingBalance);
+
         List<Information> alertFlags = new ArrayList<Information>();
 
         form.setAlertObjects(informationService.getAlerts(userId));

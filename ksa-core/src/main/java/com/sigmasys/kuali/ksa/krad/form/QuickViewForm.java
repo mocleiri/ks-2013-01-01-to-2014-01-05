@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
 import com.sigmasys.kuali.ksa.util.InformationUtils;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,8 @@ public class QuickViewForm extends AbstractViewModel {
     private String futureAmount;
 
     private String defermentAmount;
+
+    private BigDecimal outstandingAmount;
 
     // Biographic Information
 
@@ -383,4 +386,11 @@ public class QuickViewForm extends AbstractViewModel {
         return html;
     }
 
+    public BigDecimal getOutstandingAmount() {
+        return outstandingAmount;
+    }
+
+    public void setOutstandingAmount(BigDecimal outstandingAmount) {
+        this.outstandingAmount = outstandingAmount;
+    }
 }

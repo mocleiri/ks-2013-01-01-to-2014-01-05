@@ -206,6 +206,23 @@
                                     <bean parent="Uif-CurrencyTextControl" p:size="22"/>
                                 </property>
                             </bean>
+                            <bean parent="Uif-InputField" p:propertyName="outstandingAmount"
+                                  p:label="Outstanding"
+                                  p:fieldLabel.renderColon="true"
+                                  p:labelPlacement="LEFT"
+                                  p:maxLength="21">
+                                <property name="cssClasses">
+                                    <list merge="true">
+                                        <value>ksa-bold</value>
+                                        <value>ksa-text-align-right</value>
+                                        <value>ksa-float-label-left</value>
+                                    </list>
+                                </property>
+                                <property name="readOnly" value="true"/>
+                                <property name="control">
+                                    <bean parent="Uif-CurrencyTextControl" p:size="22"/>
+                                </property>
+                            </bean>
                             <bean parent="Uif-HorizontalBoxGroup">
                                 <property name="cssClasses">
                                     <list merge="true">
