@@ -213,7 +213,14 @@ public class TransactionController extends GenericSearchController {
 
 
         Long tagId = Long.parseLong(tagString);
-        Long transactionId = Long.parseLong(transactionIdString);
+        Long transactionId;
+        try {
+            transactionId = Long.parseLong(transactionIdString);
+        } catch (NumberFormatException e) {
+            String errorMessage = "Unable to find a transaction with the id '" + transactionIdString + "'";
+            GlobalVariables.getMessageMap().putError(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
 
         if (tagId != null && transactionId != null) {
             transactionService.removeTagsFromTransaction(transactionId, tagId);
@@ -596,7 +603,7 @@ public class TransactionController extends GenericSearchController {
             for (TransactionModel model : allocations) {
                 BigDecimal amount = model.getNewAllocation();
                 if (amount != null && (amount.compareTo(BigDecimal.ZERO) > 0)) {
-                    transactionService.createAllocation(parent.getId(), model.getParentTransaction().getId(), amount);
+                    transactionService.createLockedAllocation(parent.getId(), model.getParentTransaction().getId(), amount);
                 }
             }
 
