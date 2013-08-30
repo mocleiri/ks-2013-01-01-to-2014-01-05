@@ -176,7 +176,7 @@
 						        <property name="layoutManager.lineGroupPrototype.header.render" value="false"/>
 						        <property name="cssClasses">
 									<list merge="true">
-										<value>termCheckboxRows</value>
+										<value>checkboxRows</value>
 									</list>
 								</property>
 						        <property name="items">
@@ -266,6 +266,7 @@
         </property>
         
 		<property name="headerText" value="@{#line.fullName}"/>
+		<property name="header.headerLevel" value="h4" />
 		<property name="subCollections">
       		<list>
        			<ref bean="dynamic_course_list" />
@@ -283,9 +284,10 @@
         <property name="layoutManager.lineGroupPrototype.header.render" value="false"/>
         <property name="propertyName" value="courses"/>
         <property name="headerText" value="@{#line.type eq 'kuali.ap.plan.course.type.planned' ? 'Planned' : 'Backup'}"/>
+        <property name="header.headerLevel" value="h4" />
         <property name="cssClasses">
 			<list merge="true">
-				<value>termCheckboxRows</value>
+				<value>checkboxRows</value>
 			</list>
 		</property>
         <property name="items">
@@ -298,13 +300,8 @@
 							<bean id="conversation_selected_course" parent="Uif-InputField-LabelTop"
 								p:propertyName="isChecked" p:width="auto">
 								<property name="control">
-									<bean parent="Uif-CheckboxControl" />
-								</property>
-							</bean>
-							<bean id="conversation_selected_course_code" parent="Uif-MessageField"
-								p:messageText="@{#line.courseCode}">
-								<property name="toolTip">
-									<bean parent="Uif-Tooltip" p:tooltipContent="@{#line.courseName}" />
+									<!-- <bean parent="Uif-CheckboxControl" p:checkboxLabel="[span title='@{#line.courseName}']@{#line.courseCode}[/span]"/> -->
+									<bean parent="Uif-CheckboxControl" p:checkboxLabel="[id='course_checkbox_tooltip' messageText='@{#line.courseCode}' toolTip.tooltipContent='@{#line.courseName}']"/>
 								</property>
 							</bean>
 						 </list>
@@ -315,22 +312,23 @@
     </bean>
 	
 	<bean id="conversation_bookmarked_courses" parent="conversation_bookmarked_courses-parent"/>
-	<bean abstract="true" id="conversation_bookmarked_courses-parent" parent="Uif-Disclosure-VerticalBoxSection" p:id="conversation_bookmarked"
+	<bean abstract="true" id="conversation_bookmarked_courses-parent" parent="Uif-Disclosure-HorizontalBoxSection" p:id="conversation_bookmarked"
 		p:headerText="Include bookmarked courses">
+		<property name="header.headerLevel" value="h4" />
 		<property name="disclosure.defaultOpen" value="false"/>
 		<property name="items">
 			<list>
-				<bean parent="Uif-InputField-LabelTop" p:propertyName="selectedBookmarks" p:width="auto" p:required="false">
+				<bean parent="Uif-InputField-LabelTop" p:propertyName="selectedBookmarks" p:required="false">
 					<property name="control">
 						<bean parent="Uif-HorizontalCheckboxesControl"/>
 					</property>
 					<property name="optionsFinder">
 						<bean class="org.kuali.student.ap.plan.review.util.BookmarkedCoursesBuilder" p:addBlankOption="false" 
-								p:useSpanInsteadOfTooltip="true"/>
+								p:useSpanInsteadOfTooltip="false"/>
 					</property>
 					<property name="cssClasses">
 	            		<list merge="true">
-	                		<value>checkboxRows</value>
+	                		<value>bookmarkCheckboxRows</value>
 	            		</list>
 	        		</property>
 				</bean>
@@ -338,7 +336,7 @@
 		</property>
 	</bean>
 	
-	<bean id="bookmark_message_tooltip" parent="Uif-MessageField" p:messageText="Message Field Text">
+	<bean id="course_checkbox_tooltip" parent="Uif-MessageField" p:messageText="Message Field Text">
 		<property name="toolTip">
 			<bean parent="Uif-Tooltip" p:tooltipContent=""/>
 		</property>
