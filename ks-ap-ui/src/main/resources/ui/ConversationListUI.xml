@@ -79,7 +79,7 @@
 								<bean parent="Uif-PrimaryActionButton-Small" p:actionLabel="New" p:disabled="@{hasNoAdvisors}" 
 										p:disabledReason="No available advisors"
 										p:actionScript="showLightboxUrl('review/conversation?methodToCall=create@{mockData ? '&amp;mockData=true' : ''}'+ksapAddGetParameters(), {width:'30%', afterClose: function(){
-														retrieveComponent('conversation_year_list','ajaxRefresh',null,null,true);
+														retrieveComponent('conversation_controls','ajaxRefresh',null,null,true);
 												}})" />
 							</list>
 						</property>
