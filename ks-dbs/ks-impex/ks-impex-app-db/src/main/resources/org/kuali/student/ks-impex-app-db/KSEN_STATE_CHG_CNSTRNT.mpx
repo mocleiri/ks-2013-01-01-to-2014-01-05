@@ -6,7 +6,7 @@ STATE_CHG_ID,STATE_CNSTRNT_ID
 "kuali.statechange.activityoffering.draft.suspended","kuali.stateconstraint.activityoffering.tostate.suspended.soc"
 "kuali.statechange.activityoffering.offered.suspended","kuali.stateconstraint.activityoffering.tostate.suspended.soc"
 "kuali.statechange.activityoffering.suspended.approved","kuali.stateconstraint.activityoffering.suspended.approved.soc"
-"kuali.statechange.activityoffering.suspended.draft","kuali.stateconstraint.activityoffering.suspended.offered.soc"
+"kuali.statechange.activityoffering.suspended.offered","kuali.stateconstraint.activityoffering.suspended.offered.soc"
 "kuali.statechange.courseoffering.draft.canceled","kuali.stateconstraint.courseoffering.tostate.canceled"
 "kuali.statechange.courseoffering.draft.planned","kuali.stateconstraint.courseoffering.draft.planned"
 "kuali.statechange.courseoffering.draft.suspended","kuali.stateconstraint.courseoffering.tostate.suspended.1"
