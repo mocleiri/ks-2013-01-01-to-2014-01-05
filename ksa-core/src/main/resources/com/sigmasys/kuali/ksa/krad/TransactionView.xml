@@ -758,7 +758,7 @@
                                     <list>
                                         <bean parent="Uif-HeaderTwo" p:headerText="Remove locked allocation"/>
                                         <ref bean="addMemoSection"/>
-                                        <bean parent="Uif-ActionField" p:actionLabel="Remove" p:methodToCall="removeAllocation"
+                                        <bean parent="Uif-ActionField" p:actionLabel="Remove" p:methodToCall="removeAllocation" p:onClickScript="jQuery.fancybox.close();"
                                               p:actionParameters="transactionId:@{#line.parentTransaction.id},allocationId:@{#line.allocatedTransaction.id},locked:@{#line.allocation.isLocked()}">
                                         </bean>
                                     </list>
