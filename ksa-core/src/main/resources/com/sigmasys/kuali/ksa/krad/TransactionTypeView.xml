@@ -183,6 +183,7 @@
         <property name="layoutManager.expandDetailsActionPrototype">
             <bean parent="Uif-ExpandDetailsImageAction"/>
         </property>
+        <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
         <property name="layoutManager.rowDetailsGroup">
             <ref bean="transactionTypeSubList"/>
         </property>

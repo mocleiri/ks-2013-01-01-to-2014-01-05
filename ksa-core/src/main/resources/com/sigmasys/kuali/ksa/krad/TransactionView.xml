@@ -300,6 +300,7 @@
         <property name="layoutManager.expandDetailsActionPrototype">
             <bean parent="Uif-ExpandDetailsImageAction"/>
         </property>
+        <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
         <property name="layoutManager.rowDetailsGroup">
             <ref bean="rollupTransactionList"/>
         </property>
@@ -460,6 +461,7 @@
                 <property name="layoutManager.expandDetailsActionPrototype">
                     <bean parent="Uif-ExpandDetailsImageAction" p:render="@{#line.allocations.size() > 0}"/>
                 </property>
+                <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
                 <property name="layoutManager.rowDetailsGroup">
                     <ref bean="runningAllocationList"/>
                 </property>
@@ -895,7 +897,7 @@
                             <list>
                                 <bean parent="Uif-InputField" p:propertyName="code"/>
                                 <bean parent="Uif-ActionLink" p:methodToCall="removeTransactionTag"
-                                      p:actionParameters="tagId:@{#line.id}">
+                                      p:actionParameters="tagId:@{#line.id}"><!-- ,currentTagParent:@{id} -->
                                     <property name="actionImage">
                                         <bean parent="Uif-Image"
                                               p:source="../images/remove.png"/>
