@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,15 +79,19 @@ public class BiographicController extends GenericSearchController {
             throw new IllegalStateException(errMsg);
         }
 
+        form.setPersonNameList(new ArrayList<PersonName>());
         form.getPersonNameList().addAll(account.getPersonNames());
+
+        form.setPostalAddressList(new ArrayList<PostalAddress>());
         form.getPostalAddressList().addAll(account.getPostalAddresses());
 
+        form.setElectronicContactList(new ArrayList<ElectronicContact>());
         form.getElectronicContactList().addAll(account.getElectronicContacts());
 
         return getUIFModelAndView(form);
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=update")
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=update")
     public ModelAndView update(@ModelAttribute("KualiForm") BiographicForm form, HttpServletRequest request) {
 
         Account account = form.getAccount();
