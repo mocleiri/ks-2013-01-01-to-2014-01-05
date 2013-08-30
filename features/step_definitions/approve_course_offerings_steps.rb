@@ -26,6 +26,41 @@ Given /^I manage a course offering with a canceled activity offering present$/ d
   end
 end
 
+Given /^I manage a course offering with a canceled activity offering present in draft SOC state$/ do
+  @course_with_cancel_ao7 = make CourseOffering, :term=> "202000" , :course => "ENGL243"
+  @course_with_cancel_ao7.manage
+  on ManageCourseOfferings do |page|
+    @ao_canceled_code9 = "A"
+    page.ao_status(@ao_canceled_code9).should == "Canceled"
+  end
+end
+
+Given /^I manage a course offering with multiple canceled activity offerings present in draft SOC state$/ do
+  @course_with_cancel_ao8 = make CourseOffering, :term=> "202000" , :course => "ENGL243"
+  @course_with_cancel_ao8.manage
+  on ManageCourseOfferings do |page|
+    @ao_canceled_code10 = "A"
+    @ao_canceled_code11 = "B"
+    #have to put these in canceled status for the test
+    page.select_ao(@ao_canceled_code10)
+    page.select_ao(@ao_canceled_code11)
+    page.cancel_ao
+    on(CancelActivityOffering).cancel_activity
+    page.ao_status(@ao_canceled_code10).should == "Canceled"
+  end
+end
+
+Given /^I manage a course offering with canceled and offered activity offerings present$/ do
+  @course_with_cancel_offered_ao = make CourseOffering, :term=> "201208" , :course => "BSCI399"
+  @course_with_cancel_offered_ao.manage
+  on ManageCourseOfferings do |page|
+    @ao_canceled_code3 = "BB"
+    page.ao_status(@ao_canceled_code3).should == "Canceled"
+    @ao_offered_code3 = "A"
+    page.ao_status(@ao_offered_code3,).should == "Offered"
+  end
+end
+
 Then /^the Cancel button is "([^"]*)"$/ do |cancel_button_state|
   on ManageCourseOfferings do |page|
     if cancel_button_state == "enabled"
@@ -50,6 +85,18 @@ Then /^the Suspend button is "([^"]*)"$/ do |suspend_button_state|
   end
 end
 
+Then /^the Reinstate button is "([^"]*)"$/ do |reinstate_button_state|
+  on ManageCourseOfferings do |page|
+    if reinstate_button_state == "enabled"
+      page.reinstate_ao_button.enabled?.should be_true
+    elsif reinstate_button_state == "disabled"
+      page.reinstate_ao_button.enabled?.should be_false
+    else
+      raise 'Invalid button state. Allowed values are \'enabled\' and \'disabled\''
+    end
+  end
+end
+
 When /^I select an activity offering to work with in Offered status$/ do
   on ManageCourseOfferings do |page|
     page.select_ao(@ao_offered_code1)
@@ -68,9 +115,94 @@ When /^I select the activity offering, which is in Draft status$/ do
   end
 end
 
+When /^I select the activity offering, which is in Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_canceled_code4)
+  end
+end
+
+When /^I deselect the activity offering, which is in Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.deselect_ao(@ao_canceled_code4)
+  end
+end
+
+When /^I select the activity offering, which is in a Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_canceled_code5)
+  end
+end
+
+When /^I deselect the activity offering, which is in a Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.deselect_ao(@ao_canceled_code5)
+  end
+end
+
+When /^I select the activity offering, which is Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_canceled_code6)
+  end
+end
+
+When /^I deselect the activity offering, which is Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.deselect_ao(@ao_canceled_code6)
+  end
+end
+
+When /^I select the activity offering that is in Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_canceled_code7)
+  end
+end
+
+When /^I select the Canceled activity offerings$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_canceled_code10)
+    page.select_ao(@ao_canceled_code11)
+  end
+end
+
+When /^I select the activity offering, which is a Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_canceled_code9)
+  end
+end
+
+When /^I deselect the activity offering that is in Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.deselect_ao(@ao_canceled_code7)
+  end
+end
+
+When /^I select the activity offering that is in a Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_canceled_code8)
+  end
+end
+
+When /^I deselect the activity offering that is in a Canceled status$/ do
+  on ManageCourseOfferings do |page|
+    page.deselect_ao(@ao_canceled_code8)
+  end
+end
+
 Then /^I deselect the activity offering, which is in Draft status$/ do
   on ManageCourseOfferings do |page|
     page.deselect_ao(@ao_draft_code3)
+  end
+end
+
+Then /^I deselect the Canceled activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.deselect_ao(@ao_canceled_code3)
+  end
+end
+
+Then /^I deselect the Offered activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.deselect_ao(@ao_offered_code3)
   end
 end
 
@@ -107,6 +239,18 @@ end
 When /^I select an activity offering to work with in Canceled status$/ do
   on ManageCourseOfferings do |page|
     page.select_ao(@ao_canceled_code)
+  end
+end
+
+When /^I select the Canceled activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_canceled_code3)
+  end
+end
+
+When /^I select the Offered activity offering$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_offered_code3)
   end
 end
 
@@ -149,6 +293,11 @@ When /^I cancel the activity offering$/ do
   on(CancelActivityOffering).cancel_activity
 end
 
+And /^I reinstate the activity offering$/ do
+  on(ManageCourseOfferings).reinstate_ao
+  on(ReinstateActivityOffering).reinstate_activity
+end
+
 When /^I suspend the activity offering$/ do
   on(ManageCourseOfferings).suspend_ao
   on(SuspendActivityOffering).suspend_activity
@@ -178,6 +327,19 @@ end
 Then /^the Suspended activity offering is shown as canceled$/ do
   on ManageCourseOfferings do |page|
     page.ao_status(@ao_suspended_code).should == "Canceled"
+  end
+end
+
+Then /^the Canceled activity offering is shown as draft$/ do
+  on ManageCourseOfferings do |page|
+    page.ao_status(@ao_canceled_code9).should == "Draft"
+  end
+end
+
+Then /^the Canceled activity offerings are shown as draft$/ do
+  on ManageCourseOfferings do |page|
+    page.ao_status(@ao_canceled_code10).should == "Draft"
+    page.ao_status(@ao_canceled_code11).should == "Draft"
   end
 end
 
@@ -277,6 +439,51 @@ Given /^I manage a course offering with an approved activity offering present in
   end
 end
 
+Given /^I manage a course offering with a canceled activity offering present in a published SOC state$/ do
+  @course_with_cancel_ao2 = make CourseOffering, :term=> "201600" , :course => "ENGL243"
+  @course_with_cancel_ao2.manage
+  on ManageCourseOfferings do |page|
+    @ao_canceled_code4 = "A"
+    page.ao_status(@ao_canceled_code4).should == "Canceled"
+  end
+end
+
+Given /^I manage a course offering with a canceled activity offering present in a draft SOC state$/ do
+  @course_with_cancel_ao3 = make CourseOffering, :term=> "202000" , :course => "ENGL243"
+  @course_with_cancel_ao3.manage
+  on ManageCourseOfferings do |page|
+    @ao_canceled_code5 = "A"
+    page.ao_status(@ao_canceled_code5).should == "Canceled"
+  end
+end
+
+Given /^I manage a course offering with a canceled activity offering present in an open SOC state$/ do
+  @course_with_cancel_ao4 = make CourseOffering, :term=> "201900" , :course => "ENGL243"
+  @course_with_cancel_ao4.manage
+  on ManageCourseOfferings do |page|
+    @ao_canceled_code6 = "A"
+    page.ao_status(@ao_canceled_code6).should == "Canceled"
+  end
+end
+
+Given /^I manage a course offering with a canceled activity offering present in a locked SOC state$/ do
+  @course_with_cancel_ao5 = make CourseOffering, :term=> "201800" , :course => "ENGL243"
+  @course_with_cancel_ao5.manage
+  on ManageCourseOfferings do |page|
+    @ao_canceled_code7 = "A"
+    page.ao_status(@ao_canceled_code7).should == "Canceled"
+  end
+end
+
+Given /^I manage a course offering with a canceled activity offering present in a final edits SOC state$/ do
+  @course_with_cancel_ao6 = make CourseOffering, :term=> "201700" , :course => "ENGL243"
+  @course_with_cancel_ao6.manage
+  on ManageCourseOfferings do |page|
+    @ao_canceled_code8 = "A"
+    page.ao_status(@ao_canceled_code8).should == "Canceled"
+  end
+end
+
 And /^actual delivery logistics for the Suspended activity offering are no longer shown$/ do
   on(ManageCourseOfferings).view_activity_offering("D")
   on ActivityOfferingInquiry do |page|
@@ -297,6 +504,31 @@ And /^actual delivery logistics for the Approved activity offering are still sho
   on(ManageCourseOfferings).view_activity_offering("A")
   on ActivityOfferingInquiry do |page|
     page.actual_delivery_logistics.present?.should be_true
+    page.close
+  end
+end
+
+And /^requested delivery logistics are still shown and actual delivery logistics are not shown for the activity offering$/ do
+  on(ManageCourseOfferings).view_activity_offering("A")
+  on ActivityOfferingInquiry do |page|
+    page.requested_delivery_logistics.present?.should be_true
+    page.actual_delivery_logistics.present?.should be_false
+    page.close
+  end
+end
+
+And /^requested delivery logistics are still shown and actual delivery logistics are not shown for both activity offerings$/ do
+  on(ManageCourseOfferings).view_activity_offering("A")
+  on ActivityOfferingInquiry do |page|
+    page.requested_delivery_logistics.present?.should be_true
+    page.actual_delivery_logistics.present?.should be_false
+    page.close
+  end
+  @course_with_cancel_ao8.manage
+  on(ManageCourseOfferings).view_activity_offering("B")
+  on ActivityOfferingInquiry do |page|
+    page.requested_delivery_logistics.present?.should be_true
+    page.actual_delivery_logistics.present?.should be_false
     page.close
   end
 end
