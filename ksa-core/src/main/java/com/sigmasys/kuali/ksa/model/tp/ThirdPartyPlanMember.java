@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.model.tp;
 
+import com.sigmasys.kuali.ksa.model.AccountIdAware;
 import com.sigmasys.kuali.ksa.model.DirectChargeAccount;
 import com.sigmasys.kuali.ksa.model.Identifiable;
 
@@ -13,7 +14,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "KSSA_TP_PLAN_MEMBER", uniqueConstraints = {@UniqueConstraint(columnNames = {"ACNT_ID_FK", "TP_PLAN_ID_FK"})})
-public class ThirdPartyPlanMember implements Identifiable {
+public class ThirdPartyPlanMember extends AccountIdAware implements Identifiable {
 
     /**
      * Identifier

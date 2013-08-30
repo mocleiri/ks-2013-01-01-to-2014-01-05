@@ -46,14 +46,14 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     private static final Log logger = LogFactory.getLog(ThirdPartyTransferServiceImpl.class);
 
     private static final String TRANSFER_DETAIL_SELECT = "select d from ThirdPartyTransferDetail d " +
-            " left outer join fetch d.directChargeAccount dca " +
+            " inner join fetch d.directChargeAccount dca " +
             " left outer join fetch d.plan p " +
             " left outer join fetch p.thirdPartyAccount tpa " +
             " left outer join fetch p.transferType t " +
             " left outer join fetch t.generalLedgerType g ";
 
     private static final String TRANSFER_PLAN_SELECT = "select p from ThirdPartyPlan p " +
-            " left outer join fetch p.thirdPartyAccount a " +
+            " inner join fetch p.thirdPartyAccount a " +
             " left outer join fetch p.transferType t " +
             " left outer join fetch t.generalLedgerType g ";
 
@@ -187,6 +187,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         ThirdPartyPlanMember planMember = new ThirdPartyPlanMember();
 
         planMember.setDirectChargeAccount((DirectChargeAccount) account);
+        planMember.setAccountId(accountId);
         planMember.setPlan(thirdPartyPlan);
         planMember.setPriority(priority);
         planMember.setExecuted(false);
@@ -399,6 +400,31 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         return query.getResultList();
     }
 
+    /**
+     * Retrieves ThirdPartyPlanMember instance from the persistent store by TP plan ID abd Account ID.
+     *
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @param accountId        Account ID
+     * @return ThirdPartyPlanMember instance
+     */
+    @Override
+    public ThirdPartyPlanMember getThirdPartyPlanMember(Long thirdPartyPlanId, String accountId) {
+
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN_MEMBER);
+
+        Query query = em.createQuery("select m from ThirdPartyPlanMember m " +
+                " inner join fetch m.directChargeAccount a " +
+                " inner join fetch m.plan p " +
+                " where p.id = :planId and a.id = :accountId");
+
+        query.setParameter("planId", thirdPartyPlanId);
+        query.setParameter("accountId", accountId);
+
+        List<ThirdPartyPlanMember> planMembers = query.getResultList();
+
+        return CollectionUtils.isNotEmpty(planMembers) ? planMembers.get(0) : null;
+    }
+
 
     /**
      * This method takes an account and follows the established third-party plan and applies it to the account.
@@ -429,23 +455,12 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
             throw new UserNotFoundException(errMsg);
         }
 
-        Query query = em.createQuery("select m from ThirdPartyPlanMember m " +
-                " inner join fetch m.directChargeAccount a " +
-                " inner join m.plan p " +
-                " where p.id = :planId and a.id = :accountId");
-
-        query.setParameter("planId", thirdPartyPlanId);
-        query.setParameter("accountId", accountId);
-
-        List<ThirdPartyPlanMember> members = query.getResultList();
-
-        if (CollectionUtils.isEmpty(members)) {
+        ThirdPartyPlanMember planMember = getThirdPartyPlanMember(thirdPartyPlanId, accountId);
+        if (planMember == null) {
             String errMsg = "Account '" + accountId + "' is not eligible for this plan (ThirdPartyPlan ID = " + thirdPartyPlanId + ")";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
-
-        ThirdPartyPlanMember planMember = members.get(0);
 
         ThirdPartyTransferDetail transferDetail;
 
@@ -471,6 +486,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
             transferDetail = new ThirdPartyTransferDetail();
             transferDetail.setTransferGroupId(transactionTransferService.generateTransferGroupId());
             transferDetail.setDirectChargeAccount((DirectChargeAccount) account);
+            transferDetail.setAccountId(accountId);
             transferDetail.setPlan(thirdPartyPlan);
             transferDetail.setChargeStatus(ThirdPartyChargeStatus.ACTIVE);
             transferDetail.setInitiationDate(initiationDate);
@@ -488,16 +504,16 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         // Setting the total transfer amount variable to the existing transfer amount
         BigDecimal totalTransferAmount = transferDetail.getTransferAmount();
 
+        // Getting transfer details with the same transaction type mask and Transfer Group ID
+        Query query = em.createQuery("select sum(t.transferAmount - t.reversalAmount) from TransactionTransfer t " +
+                " where t.transferAmount <> null and t.reversalAmount <> null and " +
+                " t.groupId = :groupId and t.transactionTypeMask = :typeMask");
+
         for (ThirdPartyAllowableCharge allowableCharge : allowableCharges) {
 
             BigDecimal chargeRemainingFund = allowableCharge.getMaxAmount();
 
             if (chargeRemainingFund != null && planMember.isExecuted()) {
-
-                // Getting transfer details with the same transaction type mask and Transfer Group ID
-                query = em.createQuery("select sum(t.transferAmount - t.reversalAmount) from TransactionTransfer t " +
-                        " where t.transferAmount <> null and t.reversalAmount <> null and " +
-                        " t.groupId = :groupId and t.transactionTypeMask = :typeMask");
 
                 query.setParameter("groupId", transferDetail.getTransferGroupId());
                 query.setParameter("typeMask", allowableCharge.getTransactionTypeMask());
@@ -836,15 +852,34 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         }
 
         if (transferDetail.getChargeStatus() != ThirdPartyChargeStatus.ACTIVE) {
-            String errMsg = "ThirdPartyTransferDetail must be active";
+            String errMsg = "ThirdPartyTransferDetail must be active, ID = " + transferDetailId;
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
+        }
+
+        ThirdPartyPlan plan = transferDetail.getPlan();
+        if (plan == null) {
+            String errMsg = "ThirdPartyTransferDetail does not have any plan associated with it, ID = " + transferDetailId;
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        // Getting the plan member to set "isExecuted" to false
+        ThirdPartyPlanMember planMember = getThirdPartyPlanMember(plan.getId(), transferDetail.getAccountId());
+        if (planMember == null) {
+            String errMsg = "Account '" + transferDetail.getAccountId() +
+                    "' is not eligible for this plan (ThirdPartyPlan ID = " + plan.getId() + ")";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
         }
 
         // Reversing the entire transaction transfer group allowing locked allocations
         transactionTransferService.reverseTransferGroup(transferDetail.getTransferGroupId(), memoText, true);
 
+        // Setting the Transfer Detail status to REVERSED
         transferDetail.setChargeStatus(ThirdPartyChargeStatus.REVERSED);
+
+        planMember.setExecuted(false);
 
         return transferDetail;
     }

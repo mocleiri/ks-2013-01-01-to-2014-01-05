@@ -1,7 +1,7 @@
 package com.sigmasys.kuali.ksa.model.security;
 
 /**
- * Access Control permission constants.
+ * KSA Access Control permission constants.
  *
  * @author Michael Ivanov
  */
@@ -53,10 +53,6 @@ public enum Permission {
     VIEW_ACCOUNT_PROTECTED_INFO,
     REBALANCE_ACCOUNT,
     READ_ACH,
-    CREATE_ACCOUNT_BLOCK,
-    UPDATE_ACCOUNT_BLOCK,
-    DELETE_ACCOUNT_BLOCK,
-    READ_ACCOUNT_BLOCK,
     CREATE_ACCOUNT_BLOCK_OVERRIDE,
     READ_ACCOUNT_BLOCK_OVERRIDE,
     RELEASE_ACCOUNT_BLOCK_OVERRIDE,
@@ -216,6 +212,7 @@ public enum Permission {
     REVERSE_THIRD_PARTY_TRANSFER,
     READ_THIRD_PARTY_ALLOWABLE_CHARGE,
     READ_THIRD_PARTY_PLAN,
+    READ_THIRD_PARTY_PLAN_MEMBER,
     READ_THIRD_PARTY_TRANSFER_DETAIL,
 
     // Payment billing permissions

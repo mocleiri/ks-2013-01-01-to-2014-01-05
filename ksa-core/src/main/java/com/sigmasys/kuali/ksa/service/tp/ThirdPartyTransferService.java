@@ -148,6 +148,15 @@ public interface ThirdPartyTransferService {
     List<ThirdPartyAllowableCharge> getThirdPartyAllowableCharges(Long thirdPartyPlanId);
 
     /**
+     * Retrieves ThirdPartyPlanMember instance from the persistent store by TP plan ID abd Account ID.
+     *
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @param accountId        Account ID
+     * @return ThirdPartyPlanMember instance
+     */
+    ThirdPartyPlanMember getThirdPartyPlanMember(Long thirdPartyPlanId, String accountId);
+
+    /**
      * This method takes an account and follows the established third-party plan and applies it to the account.
      * The return value is a ThirdPartyTransferDetail object that explains what occurred during the plan execution.
      *

@@ -174,8 +174,19 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
         Assert.notNull(transfer);
         Assert.notNull(transfer.getId());
+        Assert.notNull(transfer.getAccountId());
 
         Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.ACTIVE);
+
+        ThirdPartyPlanMember member = thirdPartyTransferService.getThirdPartyPlanMember(plan.getId(), transfer.getAccountId());
+
+        Assert.notNull(member);
+        Assert.notNull(member.getId());
+        Assert.notNull(member.getAccountId());
+        Assert.notNull(member.getPlan());
+        Assert.notNull(member.getDirectChargeAccount());
+
+        Assert.isTrue(member.isExecuted());
     }
 
     @Test
@@ -283,9 +294,20 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
         Assert.notNull(transfer);
         Assert.notNull(transfer.getId());
+        Assert.notNull(transfer.getAccountId());
         Assert.notNull(transfer.getChargeStatus());
 
         Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.REVERSED);
+
+        ThirdPartyPlanMember member = thirdPartyTransferService.getThirdPartyPlanMember(plan.getId(), transfer.getAccountId());
+
+        Assert.notNull(member);
+        Assert.notNull(member.getId());
+        Assert.notNull(member.getAccountId());
+        Assert.notNull(member.getPlan());
+        Assert.notNull(member.getDirectChargeAccount());
+
+        Assert.isTrue(!member.isExecuted());
 
     }
 

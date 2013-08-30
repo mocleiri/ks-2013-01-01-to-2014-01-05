@@ -16,7 +16,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "KSSA_TP_TRANSFER_DETAIL")
-public class ThirdPartyTransferDetail implements Identifiable {
+public class ThirdPartyTransferDetail extends AccountIdAware implements Identifiable {
 
     /**
      * Identifier

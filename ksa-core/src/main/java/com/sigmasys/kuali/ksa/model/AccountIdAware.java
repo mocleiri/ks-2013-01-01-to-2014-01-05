@@ -1,7 +1,6 @@
 package com.sigmasys.kuali.ksa.model;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 
 /**
