@@ -3,7 +3,6 @@
 
 alter table KSSA_ACCESS_LEVEL add constraint UK_taldp2gbih3ka801e17c0dlp2 unique (CODE);
 alter table KSSA_ACCESS_LEVEL add constraint UK_t8a8q7kxfs5c9uyebhfqmhfo2 unique (NAME);
-alter table KSSA_ACNT_BLOCK add constraint UK_4ii9bi1nfwbsbp1hjx82vjij6 unique (CODE);
 alter table KSSA_ALLOWABLE_GL_ACCOUNT add constraint UK_ga9k2hnldofojvdi6ov9x39rt unique (PATTERN);
 alter table KSSA_CASH_LIMIT_EVENT_TRANS add constraint UK_r8972ddjiu8r7so7qxbk8glqm unique (TRANSACTION_ID_FK);
 alter table KSSA_CURRENCY add constraint UK_nm8gb8le6wm4us4hjdpa6hc28 unique (CODE);
@@ -29,7 +28,7 @@ alter table KSSA_ACNT add constraint FK_cbb7ylmp2mcedx63h4jes17g3 foreign key (A
 alter table KSSA_ACNT_AUTHZ add constraint FK_t9hd2icgr1y01gjwdonxr1x4k foreign key (AUTHZ_ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_ACNT_AUTHZ add constraint FK_aw8ih806967cq63gatunr5gnq foreign key (DEPENDENT_ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_ACNT_BLOCK_OVERRIDE add constraint FK_i1iklxcrjfs9ton6qv7d5dqgq foreign key (ACNT_ID_FK) references KSSA_ACNT;
-alter table KSSA_ACNT_BLOCK_OVERRIDE add constraint FK_1vr3l7csogiprnf2nhqx3urx7 foreign key (ACNT_BLOCK_ID_FK) references KSSA_ACNT_BLOCK;
+alter table KSSA_ACNT_BLOCK_OVERRIDE add constraint FK_dqo6vcc1pqimnd95c71fgp9vl foreign key (RULE_ID_FK) references KSSA_RULE;
 alter table KSSA_ACNT_ELECTRONIC_CONTACT add constraint FK_rfi6uptp2k1iis4g0bya1t7cm foreign key (ELECTRONIC_CONTACT_ID_FK) references KSSA_ELECTRONIC_CONTACT;
 alter table KSSA_ACNT_ELECTRONIC_CONTACT add constraint FK_rt5h9xiggvhuk9yo9vcb0i3v1 foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_ACNT_KEY_PAIR add constraint FK_eswwhqsxf4j6fo0mb5l30wpma foreign key (KEY_PAIR_ID_FK) references KSSA_KEY_PAIR;

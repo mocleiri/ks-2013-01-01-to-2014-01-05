@@ -229,7 +229,7 @@ public class DroolsServiceImpl implements BrmService {
     }
 
     /**
-     * Attach new or already persistent Rule entities to a rule set specified by ID.
+     * Attach new or persistent Rule entities to a rule set specified by ID.
      *
      * @param ruleSetName Rule Set name
      * @param rules       array of Rule instances

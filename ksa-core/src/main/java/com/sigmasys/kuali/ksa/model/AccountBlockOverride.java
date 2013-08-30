@@ -1,5 +1,7 @@
 package com.sigmasys.kuali.ksa.model;
 
+import com.sigmasys.kuali.ksa.model.rule.Rule;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -17,15 +19,11 @@ public class AccountBlockOverride implements Identifiable {
 
     private Account account;
 
-    private AccountBlock accountBlock;
+    private Rule rule;
 
     private String reason;
 
-    private Boolean isAdminOverride;
-
-    private Boolean isSingleUse;
-
-    private Boolean isComplete;
+    private Boolean isActive;
 
     private String creatorId;
 
@@ -62,13 +60,13 @@ public class AccountBlockOverride implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACNT_BLOCK_ID_FK")
-    public AccountBlock getAccountBlock() {
-        return accountBlock;
+    @JoinColumn(name = "RULE_ID_FK")
+    public Rule getRule() {
+        return rule;
     }
 
-    public void setAccountBlock(AccountBlock accountBlock) {
-        this.accountBlock = accountBlock;
+    public void setRule(Rule rule) {
+        this.rule = rule;
     }
 
     @Column(name = "REASON", length = 2000)
@@ -81,33 +79,13 @@ public class AccountBlockOverride implements Identifiable {
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_ADMIN_OVERRIDE")
-    public Boolean isAdminOverride() {
-        return isAdminOverride != null ? isAdminOverride : false;
+    @Column(name = "IS_ACTIVE")
+    public Boolean isActive() {
+        return isActive != null ? isActive : false;
     }
 
-    public void setAdminOverride(Boolean adminOverride) {
-        isAdminOverride = adminOverride;
-    }
-
-    @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_SINGLE_USE")
-    public Boolean isSingleUse() {
-        return isSingleUse != null ? isSingleUse : false;
-    }
-
-    public void setSingleUse(Boolean singleUse) {
-        isSingleUse = singleUse;
-    }
-
-    @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_COMPLETE")
-    public Boolean isComplete() {
-        return isComplete != null ? isComplete : false;
-    }
-
-    public void setComplete(Boolean complete) {
-        isComplete = complete;
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 
     @Column(name = "CREATOR_ID", length = 45)

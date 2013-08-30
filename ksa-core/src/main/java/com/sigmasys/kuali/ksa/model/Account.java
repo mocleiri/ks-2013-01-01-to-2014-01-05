@@ -72,9 +72,14 @@ public abstract class Account implements Identifiable {
     protected Date lastKimUpdate;
 
     /**
-     * Last KIM update date
+     * True if the account is stored in KIM
      */
     protected Boolean isKimAccount;
+
+    /**
+     * True if Account Blocking system is enabled for the account
+     */
+    protected Boolean isBlockingEnabled;
 
     /**
      * True if the user can authenticate
@@ -194,12 +199,22 @@ public abstract class Account implements Identifiable {
     }
 
     @Transient
-    public Boolean getIsKimAccount() {
+    public Boolean getKimAccount() {
         return isKimAccount();
     }
 
     public void setKimAccount(Boolean kimAccount) {
         isKimAccount = kimAccount;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_BLOCKING_ENABLED")
+    public Boolean getBlockingEnabled() {
+        return isBlockingEnabled != null ? isBlockingEnabled : false;
+    }
+
+    public void setBlockingEnabled(Boolean blockingEnabled) {
+        isBlockingEnabled = blockingEnabled;
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")
