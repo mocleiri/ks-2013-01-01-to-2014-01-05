@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
+import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -36,6 +37,10 @@ public class PaymentPlanForm extends AbstractViewModel {
     private String responsibleAccount;
     private String responsibleAccountMessage;
     private String transferType;
+
+    private KeyValuesFinder transferTypeOptionsFinder;
+
+
 
     // Fields for a new Third Party plan
     private ThirdPartyPlan     newThirdPartyPlan;
@@ -259,5 +264,13 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     public void setRecognitionDate(Date recognitionDate) {
         this.recognitionDate = recognitionDate;
+    }
+
+    public KeyValuesFinder getTransferTypeOptionsFinder() {
+        return transferTypeOptionsFinder;
+    }
+
+    public void setTransferTypeOptionsFinder(KeyValuesFinder transferTypeOptionsFinder) {
+        this.transferTypeOptionsFinder = transferTypeOptionsFinder;
     }
 }

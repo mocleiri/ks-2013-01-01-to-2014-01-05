@@ -2,14 +2,17 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.PaymentPlanForm;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
+import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
+import com.sigmasys.kuali.ksa.model.TransferType;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,6 +62,8 @@ public class PaymentPlanController extends GenericSearchController {
             form.setAccount(account);
 
         }
+
+        form.setTransferTypeOptionsFinder(this.getTransferTypeOptionsFinder());
 
         return form;
     }
@@ -176,6 +181,13 @@ public class PaymentPlanController extends GenericSearchController {
 
         return getUIFModelAndView(form);
     }
+
+
+    public KeyValuesFinder getTransferTypeOptionsFinder() {
+        // Don't cache the values finder or else new entries will not show when added
+        return new AuditableEntityKeyValuesFinder<TransferType>(TransferType.class);
+    }
+
 
 
     private void populateForm(PaymentPlanForm form) {
