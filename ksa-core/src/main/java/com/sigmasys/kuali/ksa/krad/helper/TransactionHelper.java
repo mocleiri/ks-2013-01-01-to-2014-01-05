@@ -5,16 +5,12 @@ import com.sigmasys.kuali.ksa.model.Tag;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.krad.uif.service.impl.ViewHelperServiceImpl;
 
 import java.util.List;
 
 
 public class TransactionHelper extends ViewHelperServiceImpl {
-
-    protected final Log logger = LogFactory.getLog(getClass());
 
     private AccountService accountService;
     private AuditableEntityService auditableEntityService;
@@ -24,15 +20,13 @@ public class TransactionHelper extends ViewHelperServiceImpl {
     }
 
     public List<Tag> getTagsForSuggest(String suggest) {
+
         List<Tag> tags = getAuditableEntityService().getAuditableEntitiesByNamePattern(suggest, Tag.class);
 
-        for(Tag t : tags) {
-            if(t.isAdministrative()) {
-                t.setDescription("<b>" + t.getCode() + " (A)</b>");
-            } else {
-                t.setDescription(t.getCode());
-            }
+        for (Tag tag : tags) {
+            tag.setDescription(tag.isAdministrative() ? "<b>" + tag.getCode() + " (A)</b>" : tag.getCode());
         }
+
         return tags;
     }
 
