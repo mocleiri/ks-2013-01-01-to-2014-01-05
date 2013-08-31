@@ -186,6 +186,13 @@ public abstract class AbstractViewModel extends UifFormBase {
         this.activity = activity;
     }
 
+    /**
+     * Display a message to the user
+     *
+     * @deprecated  Don't use this anymore.
+     *    Instead use GlobalVariables.getMessageMap().putInfo();, GlobalVariables.getMessageMap().putWarning();, GlobalVariables.getMessageMap().putError();
+     */
+    @Deprecated
     public String getMessage() {
         return message;
     }

@@ -27,8 +27,6 @@ public class MemoForm extends AbstractViewModel {
 
     private Memo memoModel;
 
-    private String statusMessage;
-
     // resuable add edit or followup instructional text
     private String aefInstructionalText;
     /*
@@ -73,14 +71,6 @@ public class MemoForm extends AbstractViewModel {
 
     public void setMemoModel(Memo memoModel) {
         this.memoModel = memoModel;
-    }
-
-    public String getStatusMessage() {
-        return statusMessage;
-    }
-
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
     }
 
     public String getAefInstructionalText() {

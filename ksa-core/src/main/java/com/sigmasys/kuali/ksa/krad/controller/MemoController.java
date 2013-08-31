@@ -292,11 +292,11 @@ public class MemoController extends GenericSearchController {
                 Long persistResult = informationService.persistInformation(memo);
 
                 if (persistResult >= 0) {
-                    form.setStatusMessage("Success");
+                    GlobalVariables.getMessageMap().putInfo("MemoView", RiceKeyConstants.ERROR_CUSTOM, "Memo updated");
                     logger.info("Successful update of memo number " + memoId);
                 } else {
                     String failedMsg = "Failed to update memo number " + memoId + " result code: " + persistResult.toString();
-                    form.setStatusMessage(failedMsg);
+                    GlobalVariables.getMessageMap().putError("MemoView", RiceKeyConstants.ERROR_CUSTOM, failedMsg);
                     logger.error(failedMsg);
                 }
             }
