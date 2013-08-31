@@ -79,6 +79,7 @@
                                 <property name="items">
                                     <list>
                                         <ref bean="accountOverviewGroup"/>
+                                        <bean parent="Uif-Space"/>
                                         <ref bean="agedAccountsGroup"/>
 
                                     </list>
@@ -89,6 +90,7 @@
                                 <property name="items">
                                     <list>
                                         <ref bean="alertGroup"/>
+                                        <bean parent="Uif-Space"/>
                                         <ref bean="memoGroup"/>
                                     </list>
                                 </property>
