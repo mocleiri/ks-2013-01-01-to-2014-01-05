@@ -272,22 +272,6 @@
                         <bean parent="Uif-DateControl" p:size="11" />
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="memoModel.accessLevel.code"
-                      p:label="Level">
-                    <property name="control">
-                        <bean parent="Uif-HorizontalRadioControl">
-                            <property name="options">
-                                <list>
-                                    <bean parent="Uif-KeyLabelPair" p:key="0" p:value="0"/>
-                                    <bean parent="Uif-KeyLabelPair" p:key="1" p:value="1"/>
-                                    <bean parent="Uif-KeyLabelPair" p:key="2" p:value="2"/>
-                                    <bean parent="Uif-KeyLabelPair" p:key="3" p:value="3"/>
-                                    <bean parent="Uif-KeyLabelPair" p:key="4" p:value="4"/>
-                                </list>
-                            </property>
-                        </bean>
-                    </property>
-                </bean>
                 <bean parent="Uif-InputField" p:propertyName="memoModel.text"
                       p:label="Memo"
                       p:labelPlacement="TOP">

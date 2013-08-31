@@ -7,9 +7,10 @@ import com.sigmasys.kuali.ksa.model.Memo;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -176,67 +177,6 @@ public class MemoController extends GenericSearchController {
      * @param response
      * @return
      */
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=submit")
-    @Transactional(readOnly = false)
-    public ModelAndView submit(@ModelAttribute("KualiForm") MemoForm form, BindingResult result,
-                               HttpServletRequest request, HttpServletResponse response) {
-        // do submit stuff...
-
-        return getUIFModelAndView(form);
-    }
-
-    /**
-     * @param form
-     * @param result
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=save")
-    @Transactional(readOnly = false)
-    public ModelAndView save(@ModelAttribute("KualiForm") MemoForm form, BindingResult result,
-                             HttpServletRequest request, HttpServletResponse response) {
-
-        // do save stuff...
-
-        return getUIFModelAndView(form);
-    }
-
-    /**
-     * @param form
-     * @param result
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=cancel")
-    public ModelAndView cancel(@ModelAttribute("KualiForm") MemoForm form, BindingResult result,
-                               HttpServletRequest request, HttpServletResponse response) {
-        // do cancel stuff...
-        return getUIFModelAndView(form);
-    }
-
-    /**
-     * @param form
-     * @param result
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=refresh")
-    public ModelAndView refresh(@ModelAttribute("KualiForm") MemoForm form, BindingResult result,
-                                HttpServletRequest request, HttpServletResponse response) {
-        // do refresh stuff...
-        return getUIFModelAndView(form);
-    }
-
-    /**
-     * @param form
-     * @param result
-     * @param request
-     * @param response
-     * @return
-     */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insertMemo")
     public ModelAndView insertMemo(@ModelAttribute("KualiForm") MemoForm form, BindingResult result,
                                    HttpServletRequest request, HttpServletResponse response) {
@@ -254,7 +194,7 @@ public class MemoController extends GenericSearchController {
         String accountId = memoModel.getAccountId();
         String memoText = memoModel.getText();
 
-        String accessLevelCode = (memoModel.getAccessLevel() != null) ? memoModel.getAccessLevel().getCode() : null;
+        String accessLevelCode = "DEF_MEMO_LEVEL_CD";
 
         Date effectiveDate = memoModel.getEffectiveDate();
         Date expirationDate = memoModel.getExpirationDate();
@@ -268,16 +208,16 @@ public class MemoController extends GenericSearchController {
             Long persistResult = informationService.persistInformation(memo);
 
             if (persistResult >= 0) {
-                form.setStatusMessage("Success");
-                logger.info("Successful insert of memo number " + memo.getId().toString());
+                String statusMsg = "Memo saved";
+                GlobalVariables.getMessageMap().putInfo("MemoView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+
             } else {
                 String failedMsg = "Failed to add memo. result code: " + persistResult.toString();
-                form.setStatusMessage(failedMsg);
-
-                form.setStatusMessage(failedMsg);
+                GlobalVariables.getMessageMap().putError("MemoView", RiceKeyConstants.ERROR_CUSTOM, failedMsg);
             }
         } catch (Exception exp) {
             String errMsg = "'Failed to add memo. " + exp.getLocalizedMessage();
+            GlobalVariables.getMessageMap().putError("MemoView", RiceKeyConstants.ERROR_CUSTOM, errMsg);
             logger.error(errMsg);
         }
 
