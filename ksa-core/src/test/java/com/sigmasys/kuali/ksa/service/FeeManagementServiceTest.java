@@ -6,9 +6,15 @@ import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifestType;
 import com.sigmasys.kuali.ksa.model.fm.FeeManagementSession;
 import com.sigmasys.kuali.ksa.model.fm.FeeManagementSessionStatus;
 import com.sigmasys.kuali.ksa.model.pb.*;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyChargeStatus;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
 import com.sigmasys.kuali.ksa.service.fm.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
+import org.apache.commons.collections.CollectionUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +40,7 @@ import static junit.framework.Assert.*;
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
 public class FeeManagementServiceTest extends AbstractServiceTest {
 
-    private static final String ACCOUNT_ID = "admin1";
+    private static final String ACCOUNT_ID = "admin";
     private static final String TRANSACTION_TYPE_ID = "cash";
     private static final BigDecimal MANIFEST_AMOUNT = new BigDecimal(10);
     private static final BigDecimal IMPLICATED_TRANSACTION_AMOUNT = new BigDecimal(12);
@@ -55,7 +61,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     private TransactionTransferService transactionTransferService;
 
     @Autowired
-    private ThirdPartyTransferService thirdPartyService;
+    private ThirdPartyTransferService thirdPartyTransferService;
 
     @Autowired
     private PaymentBillingService paymentBillingService;
@@ -158,7 +164,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionManifestHasTransaction() throws Exception {
         // Create an FM session and manifest:
-        FmSession fmSession = createFmSession(1, true, false, FeeManagementManifestType.ORIGINAL);
+        FmSession fmSession = createFmSession(1, true, false, false, false, FeeManagementManifestType.ORIGINAL);
 
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
@@ -170,7 +176,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionManifestHasNoTransactionTypeId() throws Exception {
         // Create an FM Session:
-        FmSession fmSession = createFmSession(1, false, false, FeeManagementManifestType.CHARGE);
+        FmSession fmSession = createFmSession(1, false, false, false, false, FeeManagementManifestType.CHARGE);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
 
         // Nullify the Transaction type ID:
@@ -190,7 +196,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionChargeManifestNoLinkedManifest() throws Exception {
         // Create an FM Session:
-        FmSession fmSession = createFmSession(1, false, false, FeeManagementManifestType.CHARGE);
+        FmSession fmSession = createFmSession(1, false, false, false, false, FeeManagementManifestType.CHARGE);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
         Transaction primaryTransaction = manifest.getTransaction();
 
@@ -219,7 +225,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionCorrectionManifestHasNoLinkedManifest() throws Exception {
         // Create an FM Session:
-        FmSession fmSession = createFmSession(1, false, false, FeeManagementManifestType.CORRECTION);
+        FmSession fmSession = createFmSession(1, false, false, false, false, FeeManagementManifestType.CORRECTION);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
         Transaction primaryTransaction = manifest.getTransaction();
 
@@ -251,7 +257,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionCorrectionManifestLinkedManifestHasNoTransaction() throws Exception {
         // Create an FM session with linked manifests:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.CORRECTION);
+        FmSession fmSession = createFmSession(1, false, true, false, false, FeeManagementManifestType.CORRECTION);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
 
         // Nullify the implicated Transaction:
@@ -277,15 +283,13 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionLinkedManifestHasNonReversalTransactionNoAllocationsRemain() throws Exception {
         // Create an FM session with linked manifests:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.CANCELLATION);
+        FmSession fmSession = createFmSession(1, false, true, true, false, FeeManagementManifestType.CANCELLATION);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
         FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
-        Transaction implicatedTransaction = linkedManifest.getTransaction();
+        Transaction linkedTransaction = linkedManifest.getTransaction();
+        Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
 
         implicatedTransaction.setStatus(TransactionStatus.BOUNCING);
-
-        // Create allocations:
-        createAllocations(implicatedTransaction, false);
 
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
@@ -296,11 +300,15 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 
         assertFalse("There are uncleared allocations remain", allocationsRemain);
 
-        // Verify the main manifest still has no Transaction:
-        assertNull("Primary transaction must not exist", manifest.getTransaction());
+        // Verify the original manifest was updated with a reversal Transaction:
+        Transaction primaryTransaction = manifest.getTransaction();
+
+        assertNotNull("Primary transaction must exist", primaryTransaction);
+        assertNotNull("Primary transaction ID must exist", primaryTransaction.getId());
+        assertEquals("Reversal transaction amount must be reverse from the manifest", manifest.getAmount(), primaryTransaction.getAmount().negate());
 
         // Verify the session is not marked for manual review:
-        assertFalse("FM Session must not marked for review", fmSession.getSession().isReviewRequired());
+        assertFalse("FM Session must not be marked for manual review", fmSession.getSession().isReviewRequired());
 
         // Verify session's status changed to CHARGED:
         assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
@@ -309,13 +317,8 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionLinkedManifestHasReversalTransactionNoAllocationsRemain() throws Exception {
         // Create an FM session with linked manifests:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.DISCOUNT);
+        FmSession fmSession = createFmSession(1, false, true, true, false, FeeManagementManifestType.DISCOUNT);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
-        FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
-        Transaction implicatedTransaction = linkedManifest.getTransaction();
-
-        // Create allocations:
-        createAllocations(implicatedTransaction, false);
 
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
@@ -337,15 +340,13 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionLinkedManifestHasNonReversalTransactionAllocationsRemain() throws Exception {
         // Create an FM session with linked manifests and simulate allocation remain:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.CORRECTION);
+        FmSession fmSession = createFmSession(1, false, true, true, true, FeeManagementManifestType.CORRECTION);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
         FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
-        Transaction implicatedTransaction = linkedManifest.getTransaction();
+        Transaction linkedTransaction = linkedManifest.getTransaction();
+        Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
 
         implicatedTransaction.setStatus(TransactionStatus.WRITING_OFF);
-
-        // Create allocations:
-        createAllocations(implicatedTransaction, true);
 
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
@@ -363,15 +364,13 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionLinkedManifestHasReversalTransactionAllocationsRemainNotEnoughBalanceForReversal() throws Exception {
         // Create an FM session with linked manifests and simulate allocation remain:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.CANCELLATION);
+        FmSession fmSession = createFmSession(1, false, true, true, true, FeeManagementManifestType.CANCELLATION);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
         FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
-        Transaction implicatedTransaction = linkedManifest.getTransaction();
+        Transaction linkedTransaction = linkedManifest.getTransaction();
+        Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
 
         implicatedTransaction.setStatus(TransactionStatus.REVERSING);
-
-        // Create allocations:
-        createAllocations(implicatedTransaction, true);
 
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
@@ -389,15 +388,13 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionLinkedManifestHasReversalStatusTransactionAllocationsRemainEnoughBalanceForReversal() throws Exception {
         // Create an FM session with linked manifests and simulate allocation remain:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.DISCOUNT);
+        FmSession fmSession = createFmSession(1, false, true, true, true, FeeManagementManifestType.DISCOUNT);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
         FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
-        Transaction implicatedTransaction = linkedManifest.getTransaction();
+        Transaction linkedTransaction = linkedManifest.getTransaction();
+        Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
 
         implicatedTransaction.setStatus(TransactionStatus.ACTIVE);
-
-        // Create allocations:
-        createAllocations(implicatedTransaction, true);
         implicatedTransaction.setLockedAllocatedAmount(implicatedTransaction.getLockedAllocatedAmount().negate());
 
         // Call the method:
@@ -420,15 +417,13 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionLinkedManifestHasNonReversalStatusTransactionAllocationsRemainEnoughBalanceForReversal() throws Exception {
         // Create an FM session with linked manifests and simulate allocation remain:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.DISCOUNT);
+        FmSession fmSession = createFmSession(1, false, true, true, true, FeeManagementManifestType.DISCOUNT);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
         FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
-        Transaction implicatedTransaction = linkedManifest.getTransaction();
+        Transaction linkedTransaction = linkedManifest.getTransaction();
+        Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
 
         implicatedTransaction.setStatus(TransactionStatus.DISCOUNTING);
-
-        // Create allocations:
-        createAllocations(implicatedTransaction, true);
 
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
@@ -446,15 +441,13 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionTransferNoTransactionTransfer() throws Exception {
         // Create an FM session with linked manifests and simulate allocation remain:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.DISCOUNT);
+        FmSession fmSession = createFmSession(1, false, true, true, true, FeeManagementManifestType.DISCOUNT);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
         FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
-        Transaction implicatedTransaction = linkedManifest.getTransaction();
+        Transaction linkedTransaction = linkedManifest.getTransaction();
+        Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
 
         implicatedTransaction.setStatus(TransactionStatus.TRANSFERRING);
-
-        // Create allocations:
-        createAllocations(implicatedTransaction, true);
 
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
@@ -476,19 +469,21 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testChargeSessionTransferTransactionTransferExistsNoTransferGroup() throws Exception {
         // Create an FM session with linked manifests and simulate allocation remain:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.DISCOUNT);
+        FmSession fmSession = createFmSession(1, false, true, false, false, FeeManagementManifestType.DISCOUNT);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
         FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
-        Transaction implicatedTransaction = linkedManifest.getTransaction();
+        Transaction linkedTransaction = linkedManifest.getTransaction();
 
         // Create a Transaction Transfer:
-        TransactionTransfer transactionTransfer =  transactionTransferService.transferTransaction(implicatedTransaction.getId(),
-                TRANSACTION_TYPE_ID, 1L, ACCOUNT_ID, implicatedTransaction.getAmount(),
+        TransactionTransfer transactionTransfer =  transactionTransferService.transferTransaction(linkedTransaction.getId(),
+                TRANSACTION_TYPE_ID, 1L, ACCOUNT_ID, linkedTransaction.getAmount().divide(new BigDecimal(2)),
                 null, null, "memoText", "statementPrefix", TRANSACTION_TYPE_ID);
 
-        // Refresh the implicated Transaction:
-        implicatedTransaction = transactionService.getTransaction(implicatedTransaction.getId());
-        implicatedTransaction.setStatus(TransactionStatus.TRANSFERRING);
+        // Verify that an Implicated Transaction was created and has a status of TRANSFERRING:
+        Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
+
+        assertNotNull("Implicated TRANSFERRING Transaction must exist now", implicatedTransaction);
+        assertEquals("Implicated Transaction status must be TRANSFERRING", TransactionStatus.TRANSFERRING, implicatedTransaction.getStatus());
 
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
@@ -502,23 +497,29 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         // Verify session's status changed to CHARGED:
         assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
 
-        // Verify the implicated transaction has the status of RECIPROCAL_OFFSET:
-        implicatedTransaction = transactionService.getTransaction(implicatedTransaction.getId());
-        assertEquals("Implicated Transaction must have the status of RECIPROCAL_OFFSET now.", TransactionStatus.RECIPROCAL_OFFSET, implicatedTransaction.getStatus());
+        // Verify the implicated transaction is gone now:
+        implicatedTransaction = getImplicatedTransaction(linkedTransaction);
+        assertNull("Implicated Transaction must be gone now since the Transfer was reversed", implicatedTransaction);
     }
 
     @Test
     public void testChargeSessionTransferPaymentBillingExists() throws Exception {
         // Create an FM session with linked manifests and simulate allocation remain:
-        FmSession fmSession = createFmSession(1, FeeManagementManifestType.DISCOUNT);
+        FmSession fmSession = createFmSession(1, false, true, false, false, FeeManagementManifestType.DISCOUNT);
         FeeManagementManifest manifest = fmSession.getManifests().get(0);
         FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
-        Transaction implicatedTransaction = linkedManifest.getTransaction();
+        Transaction linkedTransaction = linkedManifest.getTransaction();
 
         // Create a Transaction Transfer:
-        TransactionTransfer transactionTransfer =  transactionTransferService.transferTransaction(implicatedTransaction.getId(),
-                TRANSACTION_TYPE_ID, 1L, ACCOUNT_ID, implicatedTransaction.getAmount(),
+        TransactionTransfer transactionTransfer =  transactionTransferService.transferTransaction(linkedTransaction.getId(),
+                TRANSACTION_TYPE_ID, 1L, ACCOUNT_ID, linkedTransaction.getAmount().divide(new BigDecimal(2)),
                 null, null, "memoText", "statementPrefix", TRANSACTION_TYPE_ID);
+
+        // Verify that an Implicated Transaction was created and has a status of TRANSFERRING:
+        Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
+
+        assertNotNull("Implicated TRANSFERRING Transaction must exist now", implicatedTransaction);
+        assertEquals("Implicated Transaction status must be TRANSFERRING", TransactionStatus.TRANSFERRING, implicatedTransaction.getStatus());
 
         // Create payment billing detail:
         PaymentBillingPlan plan = createPaymentBillingPlan();
@@ -529,9 +530,52 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         paymentBillingTransferDetail.setTransferGroupId("TEST");
         paymentBillingTransferDetail.setChargeStatus(PaymentBillingChargeStatus.ACTIVE);
 
-        // Refresh the implicated Transaction:
-        implicatedTransaction = transactionService.getTransaction(implicatedTransaction.getId());
-        implicatedTransaction.setStatus(TransactionStatus.TRANSFERRING);
+        // Call the method:
+        fmService.chargeSession(fmSession.getSession().getId());
+
+        // Verify the main manifest still has no Transaction:
+        assertNull("Primary transaction must not exist", manifest.getTransaction());
+
+        // Verify the session is marked for manual review:
+        assertTrue("FM Session must be marked for manual review", fmSession.getSession().isReviewRequired());
+
+        // Verify session's status changed to CHARGED:
+        assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
+
+        // Verify the implicated transaction is gone now:
+        implicatedTransaction = getImplicatedTransaction(linkedTransaction);
+        assertNull("Implicated Transaction must be gone now since the Transfer was reversed", implicatedTransaction);
+    }
+
+    @Test
+    public void testChargeSessionTransferNoPaymentBillingThirdPartyBillingExists() throws Exception {
+        // Create an FM session with linked manifests and simulate allocation remain:
+        FmSession fmSession = createFmSession(1, false, true, false, false, FeeManagementManifestType.DISCOUNT);
+        FeeManagementManifest manifest = fmSession.getManifests().get(0);
+        FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
+        Transaction linkedTransaction = linkedManifest.getTransaction();
+
+        // Create a Transaction Transfer:
+        TransactionTransfer transactionTransfer =  transactionTransferService.transferTransaction(linkedTransaction.getId(),
+                TRANSACTION_TYPE_ID, 1L, ACCOUNT_ID, linkedTransaction.getAmount().divide(new BigDecimal(2)),
+                null, null, "memoText", "statementPrefix", TRANSACTION_TYPE_ID);
+
+        // Verify that an Implicated Transaction was created and has a status of TRANSFERRING:
+        Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
+
+        assertNotNull("Implicated TRANSFERRING Transaction must exist now", implicatedTransaction);
+        assertEquals("Implicated Transaction status must be TRANSFERRING", TransactionStatus.TRANSFERRING, implicatedTransaction.getStatus());
+
+        // Create third party billing detail:
+        ThirdPartyPlan plan = _createThirdPartyPlan("Plan_1");
+        ThirdPartyTransferDetail thirdPartyTransferDetail = thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), TEST_USER_ID, new Date());
+
+        // Set the transfer group:
+        String transferGroupId = "TEST";
+
+        transactionTransfer.setGroupId(transferGroupId);
+        thirdPartyTransferDetail.setTransferGroupId(transferGroupId);
+        thirdPartyTransferDetail.setChargeStatus(ThirdPartyChargeStatus.ACTIVE);
 
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
@@ -545,19 +589,50 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         // Verify session's status changed to CHARGED:
         assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
 
-        // Verify the implicated transaction has the status of RECIPROCAL_OFFSET:
-        implicatedTransaction = transactionService.getTransaction(implicatedTransaction.getId());
-        assertEquals("Implicated Transaction must have the status of RECIPROCAL_OFFSET now.", TransactionStatus.RECIPROCAL_OFFSET, implicatedTransaction.getStatus());
-    }
-
-    @Test
-    public void testChargeSessionTransferNoPaymentBillingThirdPartyBillingExists() throws Exception {
-
+        // Verify the implicated transaction is gone now:
+        implicatedTransaction = getImplicatedTransaction(linkedTransaction);
+        assertNull("Implicated Transaction must be gone now since the Transfer was reversed", implicatedTransaction);
     }
 
     @Test
     public void testChargeSessionTransferNoPaymentBillingNoThirdPartyTransfer() throws Exception {
+        // Create an FM session with linked manifests and simulate allocation remain:
+        FmSession fmSession = createFmSession(1, false, true, false, false, FeeManagementManifestType.DISCOUNT);
+        FeeManagementManifest manifest = fmSession.getManifests().get(0);
+        FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
+        Transaction linkedTransaction = linkedManifest.getTransaction();
 
+        // Create a Transaction Transfer:
+        TransactionTransfer transactionTransfer =  transactionTransferService.transferTransaction(linkedTransaction.getId(),
+                TRANSACTION_TYPE_ID, 1L, ACCOUNT_ID, linkedTransaction.getAmount().divide(new BigDecimal(2)),
+                null, null, "memoText", "statementPrefix", TRANSACTION_TYPE_ID);
+
+        // Verify that an Implicated Transaction was created and has a status of TRANSFERRING:
+        Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
+
+        assertNotNull("Implicated TRANSFERRING Transaction must exist now", implicatedTransaction);
+        assertEquals("Implicated Transaction status must be TRANSFERRING", TransactionStatus.TRANSFERRING, implicatedTransaction.getStatus());
+
+        // Set the transfer group:
+        String transferGroupId = "TEST";
+
+        transactionTransfer.setGroupId(transferGroupId);
+
+        // Call the method:
+        fmService.chargeSession(fmSession.getSession().getId());
+
+        // Verify the main manifest still has no Transaction:
+        assertNull("Primary transaction must not exist", manifest.getTransaction());
+
+        // Verify the session is marked for manual review:
+        assertTrue("FM Session must be marked for manual review", fmSession.getSession().isReviewRequired());
+
+        // Verify session's status changed to CHARGED:
+        assertEquals("FM Session status has never changed to CHARGED", FeeManagementSessionStatus.CHARGED, fmSession.getSession().getStatus());
+
+        // Verify the implicated transaction is gone now:
+        implicatedTransaction = getImplicatedTransaction(linkedTransaction);
+        assertNull("Implicated Transaction must be gone now since the Transfer was reversed", implicatedTransaction);
     }
 
     /********************************************************************************
@@ -567,26 +642,18 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
      ********************************************************************************/
 
     /**
-     * Creates FM Session, primary manifests WITHOUT Transactions, creates linked manifests with implicated transactions.
-     *
-     * @param numManifests                  Number of FM manifests to create.
-     * @param manifestTypes                 Types of primary manifests to create. Must be the size of "numManifests"
-     * @return An <code>FmSession</code> with new objects.
-     */
-    private FmSession createFmSession(int numManifests, FeeManagementManifestType... manifestTypes) {
-        return createFmSession(numManifests, false, true, manifestTypes);
-    }
-
-    /**
      * Creates an FM Session, Manifests, Linked Manifests, Transactions and Implicated Transactions.
      *
      * @param numManifests                  Number of FM manifests to create.
      * @param addPrimaryTransactions        Whether to add primary manifests' transactions.
-     * @param addLinkedManifests            Whether to add linked manifests and their implicated transactions.
+     * @param addLinkedManifests            Whether to add linked manifests.
+     * @param addImplicatedTransaction      Whether to add implicated Transactions.
+     * @param addLockedAllocation           Whether to add implicated transaction locked allocations in addition to unlocked.
      * @param manifestTypes                 Types of primary manifests to create. Must be the size of "numManifests"
      * @return An <code>FmSession</code> with new objects.
      */
-    private FmSession createFmSession(int numManifests, boolean addPrimaryTransactions, boolean addLinkedManifests, FeeManagementManifestType... manifestTypes) {
+    private FmSession createFmSession(int numManifests, boolean addPrimaryTransactions, boolean addLinkedManifests,
+                                      boolean addImplicatedTransaction, boolean addLockedAllocation, FeeManagementManifestType... manifestTypes) {
         // Create Session:
         Account account = accountService.getOrCreateAccount(ACCOUNT_ID);
         FeeManagementSession fmSession = new FeeManagementSession();
@@ -617,18 +684,23 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
             persistenceService.persistEntity(manifest);
             result.getManifests().add(manifest);
 
-            // Add linked manifest and implicated transaction:
+            // Add linked manifest, linked and implicated transactions:
             if (addLinkedManifests) {
                 FeeManagementManifest linkedManifest = new FeeManagementManifest();
-                Transaction implicatedTransaction = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), IMPLICATED_TRANSACTION_AMOUNT);
+                Transaction linkedTransaction = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), IMPLICATED_TRANSACTION_AMOUNT);
 
-                //linkedManifest.setSession(fmSession);
-                linkedManifest.setTransaction(implicatedTransaction);
+                linkedManifest.setSession(fmSession);
+                linkedManifest.setTransaction(linkedTransaction);
                 linkedManifest.setType(FeeManagementManifestType.CORRECTION);
                 linkedManifest.setLinkedManifest(manifest);
                 persistenceService.persistEntity(manifest);
                 manifest.setLinkedManifest(linkedManifest);
                 persistenceService.persistEntity(linkedManifest);
+
+                // Create implicated transaction and allocation:
+                if (addImplicatedTransaction) {
+                    createAllocations(linkedTransaction, addLockedAllocation);
+                }
             }
         }
 
@@ -645,19 +717,46 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 
         // Create an unlocked allocation:
         BigDecimal allocationAmount = transaction.getAmount().divide(new BigDecimal(2));
-        Transaction tempTransaction = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), transaction.getAmount().negate());
+        Transaction implicatedTransaction = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), transaction.getAmount().negate());
 
-        transactionService.createAllocation(transaction.getId(), tempTransaction.getId(), allocationAmount);
+        transactionService.createAllocation(transaction.getId(), implicatedTransaction.getId(), allocationAmount);
 
         // Create a locked allocation if needed:
         if (addLockedAllocation) {
             // Refresh the transactions:
             transaction = transactionService.getTransaction(transaction.getId());
-            tempTransaction = transactionService.getTransaction(tempTransaction.getId());
+            implicatedTransaction = transactionService.getTransaction(implicatedTransaction.getId());
 
             // Create a locked allocation:
-            transactionService.createAllocation(transaction, tempTransaction, allocationAmount, true, true, false);
+            transactionService.createAllocation(transaction, implicatedTransaction, allocationAmount, true, true, false);
         }
+    }
+
+    /**
+     * Returns the Implicated Transaction, which is a Transaction associated with the Transaction from the Linked Manifest
+     * (Linked Transaction) via an Allocation.
+     *
+     * @param linkedTransaction Transaction from the Linked Manifest (Linked Transaction).
+     * @return An Implicated Transaction if any.
+     */
+    private Transaction getImplicatedTransaction(Transaction linkedTransaction) {
+
+        // Find the Allocation that involves the Linked Transaction:
+        Long linkedTransactionId = linkedTransaction.getId();
+        List<Allocation> allocations = transactionService.getAllocations(linkedTransactionId);
+
+        // If there are allocations, grab the first one and get the Implicated Transaction out of it:
+        if (CollectionUtils.isNotEmpty(allocations)) {
+            Allocation allocation = allocations.get(0);
+
+            if ((allocation.getFirstTransaction() != null) && (allocation.getFirstTransaction().getId().compareTo(linkedTransactionId) != 0)) {
+                return allocation.getFirstTransaction();
+            } else if ((allocation.getSecondTransaction() != null) && (allocation.getSecondTransaction().getId().compareTo(linkedTransactionId) != 0)) {
+                return allocation.getSecondTransaction();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -713,6 +812,71 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
                 1);
 
         return plan;
+    }
+
+    protected ThirdPartyPlan _createThirdPartyPlan(String planCode) throws Exception {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
+
+        Date openPeriodStartDate = dateFormat.parse("01/01/2011");
+        Date openPeriodEndDate = dateFormat.parse("01/01/2020");
+
+        Date chargePeriodStartDate = dateFormat.parse("01/01/2011");
+        Date chargePeriodEndDate = dateFormat.parse("01/01/2020");
+
+
+        String GL_ACCOUNT_ID = "01-0-131120 1326";
+
+        GeneralLedgerType glType = generalLedgerService.createGeneralLedgerType("GL_TYPE1", "Test GL type1",
+                "Test GL Description 1", GL_ACCOUNT_ID, GlOperationType.CREDIT);
+
+        TransferType transferType = transactionTransferService.createTransferType(glType.getId(), planCode + "_TT_1", "TT 1", "Transfer Type 1");
+        ThirdPartyAccount thirdPartyAccount = createThirdPartyAccount();
+
+        ThirdPartyPlan plan = thirdPartyTransferService.createThirdPartyPlan(
+                planCode,
+                "TPP name 1",
+                "TPP description 1",
+                transferType.getId(),
+                thirdPartyAccount.getId(),
+                new BigDecimal(10e4),
+                new Date(),
+                null,
+                openPeriodStartDate,
+                openPeriodEndDate,
+                chargePeriodStartDate,
+                chargePeriodEndDate);
+
+
+        ThirdPartyPlanMember planMember =
+                thirdPartyTransferService.createThirdPartyPlanMember(TEST_USER_ID, plan.getId(), 99);
+
+
+        return plan;
+    }
+
+    protected ThirdPartyAccount createThirdPartyAccount() {
+
+        OrgName orgName = new OrgName();
+        Account adminAccount = accountService.getOrCreateAccount(ACCOUNT_ID);
+        orgName.setName("Org 1");
+        orgName.setCreatorId(ACCOUNT_ID);
+        orgName.setLastUpdate(new Date());
+        orgName.setContact(adminAccount.getDefaultPersonName());
+
+        persistenceService.persistEntity(orgName);
+
+        ThirdPartyAccount account = new ThirdPartyAccount();
+        account.setId("third_party_account");
+        account.setAbleToAuthenticate(true);
+        account.setCreationDate(new Date());
+        account.setCreatorId(ACCOUNT_ID);
+        account.setOrgName(orgName);
+        account.setCreditLimit(new BigDecimal(10e6));
+
+        persistenceService.persistEntity(account);
+
+        return account;
     }
 
     /**

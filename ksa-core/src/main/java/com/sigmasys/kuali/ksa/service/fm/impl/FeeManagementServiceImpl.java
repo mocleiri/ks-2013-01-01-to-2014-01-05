@@ -8,6 +8,8 @@ import javax.jws.WebService;
 import javax.persistence.Query;
 
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingChargeStatus;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -322,13 +324,13 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	
     	if (linkedManifest != null) {
     		if (linkedManifest.getTransaction() != null) {
-    			// Clear all unlockedAllocations against the transaction in the linked manifest (Implicated Transaction):
-    			Transaction implicatedTransaction = linkedManifest.getTransaction();
+    			// Clear all unlockedAllocations against the transaction in the linked manifest (Linked Transaction):
+    			Transaction linkedTransaction = linkedManifest.getTransaction();
 
-    			transactionService.removeAllocations(implicatedTransaction.getId());
+    			transactionService.removeAllocations(linkedTransaction.getId());
 
-                // Reload the Implicated Transaction:
-                implicatedTransaction = refreshTransaction(linkedManifest);
+                // Get the Implicated Transaction:
+                Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
 
     			// Process the Implicated Transaction:
     			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
@@ -342,6 +344,33 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             // Process the reversal as negated charge:
             processChargeTypeManifest(manifest, session, true, pbtDetails, tptDetails);
         }
+    }
+
+    /**
+     * Returns the Implicated Transaction, which is a Transaction associated with the Transaction from the Linked Manifest
+     * (Linked Transaction) via an Allocation.
+     *
+     * @param linkedTransaction Transaction from the Linked Manifest (Linked Transaction).
+     * @return An Implicated Transaction if any.
+     */
+    private Transaction getImplicatedTransaction(Transaction linkedTransaction) {
+
+        // Find the Allocation that involves the Linked Transaction:
+        Long linkedTransactionId = linkedTransaction.getId();
+        List<Allocation> allocations = transactionService.getAllocations(linkedTransactionId);
+
+        // If there are allocations, grab the first one and get the Implicated Transaction out of it:
+        if (CollectionUtils.isNotEmpty(allocations)) {
+            Allocation allocation = allocations.get(0);
+
+            if ((allocation.getFirstTransaction() != null) && (allocation.getFirstTransaction().getId().compareTo(linkedTransactionId) != 0)) {
+                return allocation.getFirstTransaction();
+            } else if ((allocation.getSecondTransaction() != null) && (allocation.getSecondTransaction().getId().compareTo(linkedTransactionId) != 0)) {
+                return allocation.getSecondTransaction();
+            }
+        }
+
+        return null;
     }
     
     /**
@@ -357,7 +386,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     private void processImplicatedTransaction(FeeManagementManifest manifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction, 
     					FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	// Check if allocations remain. If yes, process the Implicated Transaction based on its type:
-    	boolean allocationsRemain = (implicatedTransaction.getAllocatedAmount() != null) && (implicatedTransaction.getLockedAllocatedAmount() != null)
+    	boolean allocationsRemain = (implicatedTransaction != null) &&
+                (implicatedTransaction.getAllocatedAmount() != null) && (implicatedTransaction.getLockedAllocatedAmount() != null)
     			&& (implicatedTransaction.getAllocatedAmount().compareTo(implicatedTransaction.getLockedAllocatedAmount().negate()) != 0);
     	
     	if (allocationsRemain) {
@@ -365,10 +395,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		switch (implicatedTransaction.getStatus()) {
     		case TRANSFERRING:
     			// Process a TRANSFERRING Implicated Transaction and get back to this method:
-    			processTransferFound(manifest, session, implicatedTransaction, pbtDetails, tptDetails);
-
-                // Refresh the implicated transaction:
-                implicatedTransaction = refreshTransaction(linkedManifest);
+    			processTransferFound(linkedManifest, session, implicatedTransaction, pbtDetails, tptDetails);
 
                 // Process the implicated transaction again:
     			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
@@ -395,23 +422,24 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		}
     	} else {
     		// If no allocations remain, do transaction reversal:
-    		performTransactionReversal(manifest, linkedManifest, implicatedTransaction);
+    		performTransactionReversal(manifest, linkedManifest);
     	}
     }
     
     /**
      * Process "Transfer Found" logic found in the "Process Diagrams" document.
      * 
-     * @param originalManifest		The original manifest being processed.
+     * @param linkedManifest		The linked manifest.
      * @param session				The FM session.
      * @param implicatedTransaction	Transaction associated with the linked manifest.
      * @param pbtDetails			A list of Payment billing transfer details. An OUT parameter.
      * @param tptDetails	        A list of Third-party transfer details. An OUT Parameter.
      */
-    private void processTransferFound(FeeManagementManifest originalManifest, FeeManagementSession session, Transaction implicatedTransaction, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
+    private void processTransferFound(FeeManagementManifest linkedManifest, FeeManagementSession session, Transaction implicatedTransaction, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
     	
     	// Look for a TransactionTransfer with a reversal status of Not Reversed or Partially Reversed:
-    	TransactionTransfer transactionTransfer = findUnreversedTransactionTransfer(implicatedTransaction);
+        Transaction linkedTransaction = linkedManifest.getTransaction();
+    	TransactionTransfer transactionTransfer = findUnreversedTransactionTransfer(linkedTransaction);
     	String memoText = null;
     	
     	if (transactionTransfer != null) {
@@ -567,7 +595,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
     		// Write a warning, mark the session for manual review and reverse the transaction:
     		logger.warn("Performing transaction reversal. FM session manual review required.");
-    		performTransactionReversal(originalManifest, linkedManifest, implicatedTransaction);
+    		performTransactionReversal(originalManifest, linkedManifest);
     	} else {
     		// Reverse all allocations on the Implicated Transaction in the amount of the original manifest's amount:
     		BigDecimal reversalAmount = originalManifest.getAmount();
@@ -580,7 +608,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
         	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
         		logger.warn("Performing transaction reversal. FM session manual review required.");
-        		performTransactionReversal(originalManifest, linkedManifest, implicatedTransaction);
+        		performTransactionReversal(originalManifest, linkedManifest);
         	} else {
         		// Write a severe warning, mark the session for manual review:
         		logger.warn("SEVERE: Not enough unallocated balance to perform correction/cancel/discount after clearing manual allocation. FM session manual review required.");
@@ -604,16 +632,16 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     }
     
     /**
-     * Performs Implicated Transaction reversal. 
+     * Performs Linked Transaction reversal.
      * 
      * @param originalManifest		The original manifest being processed.
      * @param linkedManifest		The linked manifest.
-     * @param implicatedTransaction	Transaction associated with the linked manifest.
      */
-    private void performTransactionReversal(FeeManagementManifest originalManifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction) {
+    private void performTransactionReversal(FeeManagementManifest originalManifest, FeeManagementManifest linkedManifest) {
 
         // Reverse the transaction:
-        Transaction reversalTransaction = reverseTransaction(implicatedTransaction, originalManifest.getAmount(), originalManifest.getSession());
+        Transaction linkedTransaction = linkedManifest.getTransaction();
+        Transaction reversalTransaction = reverseTransaction(linkedTransaction, originalManifest.getAmount(), originalManifest.getSession());
 
         if (reversalTransaction != null) {
             originalManifest.setTransaction(reversalTransaction);
@@ -623,7 +651,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             persistEntity(originalManifest);
         } else {
             logger.error(String.format("Cannot perform reversal on Transaction with ID %d under FM session ID %d.",
-                    implicatedTransaction.getId(), originalManifest.getSession().getId()));
+                    linkedTransaction.getId(), originalManifest.getSession().getId()));
         }
     }
     
@@ -665,10 +693,13 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     	
     	// For each PaymentBilling that was removed, generate payment billing schedule using the stored details:
     	for (PaymentBillingTransferDetail pbtDetail : pbtDetails) {
-    		PaymentBillingTransferDetail pbtDetailNew = 
-    				paymentBillingService.generatePaymentBillingTransfer(pbtDetail.getPlan().getId(), account.getId(), pbtDetail.getMaxAmount(), pbtDetail.getInitiationDate());
-    		
-    		persistEntity(pbtDetailNew);
+
+            // Validate the plan still exists:
+            PaymentBillingPlan plan = getEntity(pbtDetail.getPlan().getId(), PaymentBillingPlan.class);
+
+            if (plan != null) {
+                paymentBillingService.generatePaymentBillingTransfer(plan.getId(), account.getId(), pbtDetail.getMaxAmount(), pbtDetail.getInitiationDate());
+            }
     	}
     	
     	// For each Third-Party plan that was removed, generate third-party billing transfer for the Account associated with the FM session:
@@ -676,11 +707,12 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     		String accountId = account.getId();
     		
 	    	for (ThirdPartyTransferDetail tptDetail : tptDetails) {
+
 	    		// Generate a Third-Party transfer detail:
-	    		if (tptDetail.getPlan() != null) {
-		    		ThirdPartyTransferDetail tptDetailNew = thirdPartyService.generateThirdPartyTransfer(tptDetail.getPlan().getId(), accountId, tptDetail.getInitiationDate());
-		    		
-		    		persistEntity(tptDetailNew);
+                ThirdPartyPlan plan = getEntity(tptDetail.getPlan().getId(), ThirdPartyPlan.class);
+
+                if (plan != null) {
+		    		thirdPartyService.generateThirdPartyTransfer(plan.getId(), accountId, tptDetail.getInitiationDate());
 	    		}
 	    	}
     	}
