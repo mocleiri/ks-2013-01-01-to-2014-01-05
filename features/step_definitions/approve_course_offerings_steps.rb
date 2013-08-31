@@ -50,6 +50,21 @@ Given /^I manage a course offering with multiple canceled activity offerings pre
   end
 end
 
+Given /^I manage a course offering with canceled and draft activity offerings present in draft SOC state$/ do
+  @course_with_cancel_ao9 = make CourseOffering, :term=> "202000" , :course => "ENGL243"
+  @course_with_cancel_ao9.manage
+  on ManageCourseOfferings do |page|
+    @ao_canceled_code12 = "A"
+    @ao_draft_code5 = "B"
+    #have to put the first in canceled status for the test
+    page.select_ao(@ao_canceled_code12)
+    page.cancel_ao
+    on(CancelActivityOffering).cancel_activity
+    page.ao_status(@ao_canceled_code12).should == "Canceled"
+    page.ao_status(@ao_draft_code5).should_not == "Canceled"
+  end
+end
+
 Given /^I manage a course offering with canceled and offered activity offerings present$/ do
   @course_with_cancel_offered_ao = make CourseOffering, :term=> "201208" , :course => "BSCI399"
   @course_with_cancel_offered_ao.manage
@@ -161,6 +176,13 @@ When /^I select the Canceled activity offerings$/ do
   on ManageCourseOfferings do |page|
     page.select_ao(@ao_canceled_code10)
     page.select_ao(@ao_canceled_code11)
+  end
+end
+
+When /^I select the Canceled and Draft activity offerings$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_canceled_code12)
+    page.select_ao(@ao_draft_code5)
   end
 end
 
@@ -312,6 +334,15 @@ When /^I cancel the activity offering, verifying that one of the two selections 
   end
 end
 
+When /^I reinstate the activity offering, verifying that one of the two selections is eligible for this action$/ do
+  on(ManageCourseOfferings).reinstate_ao
+  on ReinstateActivityOffering do |page|
+    page.warning_msg_present("1 activity offering(s) will be reinstated").should == true
+    page.warning_msg_present("1 activity offering(s) cannot be reinstated (ineligible status)").should == true
+    page.reinstate_activity
+  end
+end
+
 Then /^the Offered activity offering is shown as canceled$/ do
   on ManageCourseOfferings do |page|
     page.ao_status(@ao_offered_code1).should == "Canceled"
@@ -340,6 +371,13 @@ Then /^the Canceled activity offerings are shown as draft$/ do
   on ManageCourseOfferings do |page|
     page.ao_status(@ao_canceled_code10).should == "Draft"
     page.ao_status(@ao_canceled_code11).should == "Draft"
+  end
+end
+
+Then /^the Canceled and Draft activity offerings are both shown as draft$/ do
+  on ManageCourseOfferings do |page|
+    page.ao_status(@ao_canceled_code12).should == "Draft"
+    page.ao_status(@ao_draft_code5).should == "Draft"
   end
 end
 
@@ -372,6 +410,15 @@ Then /^the Course Offering is shown as Canceled$/ do
     page1.list_all_course_link.click
     on ManageCourseOfferingList do |page2|
       page2.co_status("ENGL221").should == "Canceled"
+    end
+  end
+end
+
+Then /^the Course Offering is shown as Draft$/ do
+  on ManageCourseOfferings do |page1|
+    page1.list_all_course_link.click
+    on ManageCourseOfferingList do |page2|
+      page2.co_status("ENGL243").should == "Draft"
     end
   end
 end
@@ -526,6 +573,15 @@ And /^requested delivery logistics are still shown and actual delivery logistics
   end
   @course_with_cancel_ao8.manage
   on(ManageCourseOfferings).view_activity_offering("B")
+  on ActivityOfferingInquiry do |page|
+    page.requested_delivery_logistics.present?.should be_true
+    page.actual_delivery_logistics.present?.should be_false
+    page.close
+  end
+end
+
+And /^requested delivery logistics are still shown and actual delivery logistics are not shown for the Canceled activity offerings$/ do
+  on(ManageCourseOfferings).view_activity_offering("A")
   on ActivityOfferingInquiry do |page|
     page.requested_delivery_logistics.present?.should be_true
     page.actual_delivery_logistics.present?.should be_false

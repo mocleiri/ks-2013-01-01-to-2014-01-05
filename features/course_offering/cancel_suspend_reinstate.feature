@@ -117,6 +117,16 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Then the Canceled activity offering is shown as draft
     And requested delivery logistics are still shown and actual delivery logistics are not shown for the activity offering
 #TODO - #    And the registration group is shown as pending
+    And the Course Offering is shown as Draft
+
+  #moved this up one compared to the order in the user story, because the test data works out better
+  Scenario: CO 23.1 CSR Reinstate canceled AO with multiple AOs selected, but only one is canceled @ao_canceled_code12 @ao_draft_code5
+    Given I manage a course offering with canceled and draft activity offerings present in draft SOC state
+    When I select the Canceled and Draft activity offerings
+    And I reinstate the activity offering, verifying that one of the two selections is eligible for this action
+    Then the Canceled and Draft activity offerings are both shown as draft
+    And requested delivery logistics are still shown and actual delivery logistics are not shown for the Canceled activity offerings
+#TODO - #    And registration group is shown as pending
 
   Scenario: CO 23.1 CSR Reinstate multiple canceled AOs
     Given I manage a course offering with multiple canceled activity offerings present in draft SOC state
@@ -125,5 +135,3 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Then the Canceled activity offerings are shown as draft
     And requested delivery logistics are still shown and actual delivery logistics are not shown for both activity offerings
 #TODO - #    And registration group is shown as pending
-
-#  Scenario: CO 23.1 CSR Reinstate a canceled AO with multiple AOs selected
