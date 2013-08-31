@@ -421,6 +421,8 @@
                                     <bean parent="Uif-DateControl" p:size="11"/>
                                 </property>
                             </bean>
+                            <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('startDateAuditLightbox');" p:linkText="Reason for change of Start Date" />
+
                             <bean id="startDateAuditLightbox" parent="Uif-VerticalBoxSection">
                                 <property name="hidden" value="true"/>
                                 <property name="items">

@@ -40,6 +40,8 @@ public class TransactionTypeController extends GenericSearchController {
     private static final Integer MIN_PRIORITY = new Integer(1);
     private static final Integer MAX_PRIORITY = new Integer(1000);
 
+    private static final String TAG_GROUP_FIELD = "tagGroup";
+
     private KeyValuesFinder creditDebitTypeOptionsFinder;
 
     @Autowired
@@ -250,7 +252,10 @@ public class TransactionTypeController extends GenericSearchController {
 
 
         List<Tag> tags = form.getTags();
-        this.persistTags(tags);
+        boolean savetags = this.persistTags(tags);
+        if(!savetags) {
+            return getUIFModelAndView(form);
+        }
         tt.setTags(tags);
 
         Long rollupId;
@@ -436,18 +441,32 @@ public class TransactionTypeController extends GenericSearchController {
     }
 
     /**
-     * Loop through all tags in the collection and make sure that they're saved to the database and the ID is updated
+     * Loop through all tags in the collection and make sure that they're real tags
      *
      * @param tags
      */
-    private void persistTags(List<Tag> tags) {
+    private boolean persistTags(List<Tag> tags) {
         //If the tag already has an id then it has been previously persisted.
+        // If the tag is null then somehow one got added that wasn't really a tag. Check again to be sure.
         for (Tag tag : tags) {
-            if (tag.getId() <= 0) {
-                Long id = auditableEntityService.persistAuditableEntity(tag);
-                tag.setId(id);
+            Long id = tag.getId();
+            String name = tag.getName();
+            if(id == null){
+                List<Tag> searchTags = auditableEntityService.getAuditableEntitiesByNamePattern(name, Tag.class);
+                if(searchTags.size() == 0) {
+                    String errorMessage = "'" + name + "' is not a valid tag";
+                    GlobalVariables.getMessageMap().putError(TAG_GROUP_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+                    return false;
+                } else if(searchTags.size() > 1) {
+                    String errorMessage = "'" + name + "' matches multiple tags, please select one tag at a time to add";
+                    GlobalVariables.getMessageMap().putError(TAG_GROUP_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+                    return false;
+                }
+                tag.setId(searchTags.get(0).getId());
             }
+
         }
+        return true;
     }
 
     private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType ttSource) {
