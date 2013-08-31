@@ -347,24 +347,50 @@ public class SettingsController extends GenericSearchController {
     public ModelAndView saveCashLimitParameters(@ModelAttribute("KualiForm") SettingsForm form) {
         List<CashLimitParameterModel> parameters = form.getCashLimitParameters();
 
+
+        boolean errors = false;
+        boolean success = false;
+
         try {
             for (CashLimitParameterModel p : parameters) {
                 CashLimitParameter parent = (CashLimitParameter) p.getParentEntity();
                 if (parent.getTag() == null) {
                     Tag tag = auditableEntityService.getAuditableEntity(p.getTagString(), Tag.class);
+                    if(tag == null) {
+                        String statusMsg = p.getTagString() + " is not a valid tag. Row not saved.";
+                        GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+
+                        errors = true;
+                        continue;
+                    }
+
                     parent.setTag(tag);
                 }
                 cashLimitService.persistCashLimitParameter(parent);
+                success = true;
             }
-            String statusMsg = "Cash Limit Parameters saved";
-            GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
-            logger.info(statusMsg);
+
         } catch (Throwable t) {
             String statusMsg = "System Parameters did not update: " + t.getLocalizedMessage();
             GlobalVariables.getMessageMap().putError("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
             logger.error(statusMsg + " " + t.getMessage());
+            errors = true;
+        }
+
+        if(success && errors) {
+            String statusMsg = "Some Cash Limit Parameters saved, but others contained errors.";
+            GlobalVariables.getMessageMap().putWarning("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+            logger.info(statusMsg);
+
+        } else if(success) {
+            if(success) {
+                String statusMsg = "Cash Limit Parameters saved";
+                GlobalVariables.getMessageMap().putInfo("SettingsView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+                logger.info(statusMsg);
+            }
 
         }
+
 
         return getUIFModelAndView(form);
 
