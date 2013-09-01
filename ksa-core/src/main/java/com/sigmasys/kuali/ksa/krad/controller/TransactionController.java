@@ -224,6 +224,9 @@ public class TransactionController extends GenericSearchController {
 
         if (tagId != null && transactionId != null) {
             transactionService.removeTagsFromTransaction(transactionId, tagId);
+            String message = "Tag removed from transaction";
+            GlobalVariables.getMessageMap().putInfo(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, message);
+
         }
         populateForm(form);
         return getUIFModelAndView(form);

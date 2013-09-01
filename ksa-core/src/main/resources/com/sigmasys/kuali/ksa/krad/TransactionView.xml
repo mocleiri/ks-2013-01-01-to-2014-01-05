@@ -430,12 +430,12 @@
                                                 </bean>
 
                                                 <bean parent="Uif-ImageField" p:source="../images/tag.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
-                                                      p:onClickScript="showLightboxComponent('tagLightboxRunningTotal@{#lineSuffix}');writeHiddenToForm('actionParameters[currentTagParent]', '@{#line.id}');" p:render="@{#line.tags.size() > 0}">
+                                                      p:onClickScript="showLightboxComponent('tagLightboxRunningTotal@{#lineSuffix}');writeHiddenToForm('actionParameters[currentTagParent]', '@{#line.id}');" p:render="@{#line.tagModels.size() > 0}">
                                                     <property name="toolTip">
                                                         <bean parent="Uif-Tooltip" p:tooltipContent="Tags: @{#line.tagList}"/>
                                                     </property>
                                                 </bean>
-                                                <bean id="tagLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:render="@{#line.tags.size() > 0}">
+                                                <bean id="tagLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:render="@{#line.tagModels.size() > 0}">
                                                     <property name="hidden" value="true"/>
                                                     <property name="items">
                                                         <list>
@@ -546,12 +546,12 @@
                                     </bean>
 
                                     <bean parent="Uif-ImageField" p:source="../images/tag.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
-                                          p:onClickScript="showLightboxComponent('tagLightboxRunningTotalDeferment@{#lineSuffix}');writeHiddenToForm('actionParameters[currentTagParent]', '@{#line.id}');" p:render="@{#line.tags.size() > 0}">
+                                          p:onClickScript="showLightboxComponent('tagLightboxRunningTotalDeferment@{#lineSuffix}');writeHiddenToForm('actionParameters[currentTagParent]', '@{#line.id}');" p:render="@{#line.tagModels.size() > 0}">
                                         <property name="toolTip">
                                             <bean parent="Uif-Tooltip" p:tooltipContent="Tags: @{#line.tagList}"/>
                                         </property>
                                     </bean>
-                                    <bean id="tagLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:render="@{#line.tags.size() > 0}">
+                                    <bean id="tagLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:render="@{#line.tagModels.size() > 0}">
                                         <property name="hidden" value="true"/>
                                         <property name="items">
                                             <list>
@@ -687,7 +687,7 @@
                                     </bean>
 
                                     <bean parent="Uif-ImageField" p:source="../images/tag.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
-                                          p:onClickScript="showLightboxComponent('tagLightbox@{#lineSuffix}');writeHiddenToForm('actionParameters[currentTagParent]', '@{#line.id}');" p:render="@{#line.tags.size() > 0}">
+                                          p:onClickScript="showLightboxComponent('tagLightbox@{#lineSuffix}');writeHiddenToForm('actionParameters[currentTagParent]', '@{#line.id}');" p:render="@{#line.tagModels.size() > 0}">
                                         <property name="toolTip">
                                             <bean parent="Uif-Tooltip" p:tooltipContent="Tags: @{#line.tagList}"/>
                                         </property>
@@ -897,15 +897,15 @@
             <property name="title" value="Transaction Tags"/>
             <property name="readOnly" value="true"/>
             <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Tag"/>
-            <property name="propertyName" value="tags"/>
+            <property name="propertyName" value="tagModels"/>
             <property name="items">
                 <list>
                     <bean parent="Uif-HorizontalFieldGroup">
                         <property name="items">
                             <list>
-                                <bean parent="Uif-InputField" p:propertyName="code"/>
-                                <bean parent="Uif-ActionLink" p:methodToCall="removeTransactionTag"
-                                      p:actionParameters="tagId:@{#line.id}"><!-- ,currentTagParent:@{id} -->
+                                <bean parent="Uif-InputField" p:propertyName="tag.code"/>
+                                <bean parent="Uif-ActionLink" p:methodToCall="removeTransactionTag" p:onClickScript="jQuery.fancybox.close();"
+                                      p:actionParameters="tagId:@{#line.tag.id},currentTagParent:@{#line.transactionId}">
                                     <property name="actionImage">
                                         <bean parent="Uif-Image"
                                               p:source="../images/remove.png"/>
@@ -1008,7 +1008,7 @@
                                                                     </property>
                                                                 </bean>
                                                                 <bean parent="Uif-ImageField" p:source="../images/tag.png" p:style="cursor:pointer; float: right;" p:altText="" p:title="" p:readOnly="true"
-                                                                      p:onClickScript="showLightboxComponent('tagLightboxRunningTotalDeferment@{#lineSuffix}');writeHiddenToForm('actionParameters[currentTagParent]', '@{#line.id}');" p:render="@{#line.tags.size() > 0}">
+                                                                      p:onClickScript="showLightboxComponent('tagLightboxRunningTotalDeferment@{#lineSuffix}');writeHiddenToForm('actionParameters[currentTagParent]', '@{#line.id}');" p:render="@{#line.tagModels.size() > 0}">
                                                                     <property name="toolTip">
                                                                         <bean parent="Uif-Tooltip" p:tooltipContent="Tags: @{#line.tagList}"/>
                                                                     </property>
