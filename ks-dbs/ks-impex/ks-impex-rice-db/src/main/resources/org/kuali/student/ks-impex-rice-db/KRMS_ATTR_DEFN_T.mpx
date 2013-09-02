@@ -4,3 +4,8 @@ ATTR_DEFN_ID,NM,NMSPC_CD,LBL,ACTV,CMPNT_NM,VER_NBR,DESC_TXT
 "1004","actionTypeCode","KR-RULE","Error Action","Y","${mpx.null}","1","Error"
 "1005","actionMessage","KR-RULE","Action Message","Y","${mpx.null}","1","Message validation action returns"
 "1006","peopleFlowName","KR_RULE","PeopleFlow Name","Y","${mpx.null}","1","PeopleFlow Name"
+"KS-KRMS-ATTR-DEFN-10000","Weekdays String","KS-SYS","Weekdays String","Y","${mpx.null}","1","weekdays.string"
+"KS-KRMS-ATTR-DEFN-10001","Start Time","KS-SYS","Start Time","Y","${mpx.null}","1","start.time"
+"KS-KRMS-ATTR-DEFN-10002","End Time","KS-SYS","End Time","Y","${mpx.null}","1","end.time"
+"KS-KRMS-ATTR-DEFN-10003","Facility","KS-SYS","Facility","Y","${mpx.null}","1","facility"
+"KS-KRMS-ATTR-DEFN-10004","Room","KS-SYS","Room","Y","${mpx.null}","1","room"
