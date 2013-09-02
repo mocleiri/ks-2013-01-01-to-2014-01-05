@@ -11,6 +11,7 @@ Feature: SA.ELIG8-3 Modify the Copied rules on Activity Offering level
     And the AO rule should differ from the CO and CLU rules in the Student Eligibility & Prerequisite section
 
   #ELIG8.3.EB2 (KSENROLL-8745)
+  @pending
   Scenario: Make sure there is no pre-populated rule on the Activity Offering level
     When I navigate to the agendas page and open the Student Eligibility & Prerequisite section
     Then there should be no rule in the Student Eligibility & Prerequisite section
