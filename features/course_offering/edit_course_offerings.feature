@@ -57,7 +57,7 @@ Feature: WC.Edit Course Offerings
     When I delete the added delivery format option
     Then I can submit and the added delivery format is not present
 
-  #KSENROLL-1504
+  #KSENROLL-9263
   Scenario: Edit an existing course offering's wait list options
     When I edit a course offering
     And I activate a wait list with a level of "Course Offering" and type of "Manual"
