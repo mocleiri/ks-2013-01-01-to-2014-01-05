@@ -99,5 +99,17 @@
         </property>
     </bean>
 
+    <bean id="myplanDataSource" class="org.kuali.rice.student.core.database.DerbyXAPoolDataSource">
+        <property name="transactionManager" ref="transactionManagerXAPool" />
+        <property name="driverClassName" value="${ks.myplan.datasource.driver.name}" />
+        <property name="maxSize" value="${ks.myplan.datasource.maxSize}" />
+        <property name="minSize" value="${ks.myplan.datasource.minSize}" />
+        <property name="maxWait" value="${ks.myplan.datasource.maxWait}" />
+        <property name="validationQuery" value="${ks.myplan.datasource.validationQuery}" />
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE" />
+        <property name="username" value="MYPLANEMBEDDEDTEST" />
+        <property name="password" value="MYPLANEMBEDDEDTEST" />
+    </bean>
+
     <tx:annotation-driven transaction-manager="JtaTxManager" order="1000" />
 </beans>
