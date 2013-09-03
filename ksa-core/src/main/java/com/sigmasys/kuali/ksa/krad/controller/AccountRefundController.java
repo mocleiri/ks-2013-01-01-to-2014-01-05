@@ -30,10 +30,8 @@ import java.util.List;
  * The Controller for the Account Refund page.
  * <p/>
  * <p/>
- * User: Sergey
- * Date: 5/18/13
- * Time: 8:18 PM
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Sergey Godunov
  */
 @Controller
 @RequestMapping(value = "/accountRefund")
@@ -125,9 +123,9 @@ public class AccountRefundController extends DownloadController {
      * TEST METHOD: Creates a bunch of test refunds. This method will be deleted when demo data includes
      * test refunds.
      *
-     * @param form      The form object.
-     * @param userId    ID of the user.
-     * @return          ModelAndView.
+     * @param form   The form object.
+     * @param userId ID of the user.
+     * @return ModelAndView.
      * @throws Exception
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=createTestRefunds")
@@ -141,8 +139,7 @@ public class AccountRefundController extends DownloadController {
         payment.setRefundable(true);
         payment.setRefundRule(String.format("A(9)(%s)", userId));
 
-        Refund refund = refundService.checkForRefund(payment.getId());
-
+        refundService.checkForRefund(payment.getId());
 
         return getUIFModelAndView(form);
     }
@@ -156,6 +153,7 @@ public class AccountRefundController extends DownloadController {
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=verifySelectedRefunds")
     public ModelAndView verifySelectedRefunds(@ModelAttribute("KualiForm") AccountRefundForm form) throws Exception {
+
         // TODO: Implement the logic of Refund verification:
 
         return getUIFModelAndView(form);
@@ -170,6 +168,7 @@ public class AccountRefundController extends DownloadController {
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=cancelSelectedRefunds")
     public ModelAndView cancelSelectedRefunds(@ModelAttribute("KualiForm") AccountRefundForm form) throws Exception {
+
         // TODO: Implement the logic of Refund cancellation:
 
         return getUIFModelAndView(form);
@@ -200,12 +199,11 @@ public class AccountRefundController extends DownloadController {
      * @param form The form object.
      */
     private void findAllRefunds(AccountRefundForm form, String userId) {
-        // Calculate the filtering date range:
-        String dateRangeType = form.getDateRangeType();
-        Date filterDateFrom = null;
-        Date filterDateTo = null;
 
-        if (StringUtils.equals(dateRangeType, RefundDateRangeKeyValuesFinder.RANGE)) {
+        Date filterDateFrom;
+        Date filterDateTo;
+
+        if (StringUtils.equals(form.getDateRangeType(), RefundDateRangeKeyValuesFinder.RANGE)) {
             filterDateFrom = (form.getFilterDateFrom() != null) ? form.getFilterDateFrom() : new Date(0);
             filterDateTo = (form.getFilterDateTo() != null) ? form.getFilterDateTo() : new Date();
         } else { // ALL Dates
@@ -227,9 +225,10 @@ public class AccountRefundController extends DownloadController {
      * @param userId   The current account Id.
      * @param dateFrom Filtering date from.
      * @param dateTo   Filtering date to.
-     * @return
+     * @return list of RefundModel instances
      */
     private List<RefundModel> createRefundModelList(String userId, Date dateFrom, Date dateTo) {
+
         // Get all Refunds for the current Account:
         List<Refund> refunds = refundService.checkForRefund(userId, dateFrom, dateTo);
 
@@ -256,7 +255,7 @@ public class AccountRefundController extends DownloadController {
      * @param userId   The current account Id.
      * @param dateFrom Filtering date from.
      * @param dateTo   Filtering date to.
-     * @return
+     * @return list of potential refunds
      */
     private List<PotentialRefundModel> createPotentialRefundList(String userId, Date dateFrom, Date dateTo) {
 
@@ -265,12 +264,8 @@ public class AccountRefundController extends DownloadController {
         List<Transaction> transactions = transactionService.getTransactions(userId, dateFrom, dateTo);
 
         for (Transaction t : transactions) {
-
-            if(t instanceof Credit) {
-                // Add new PotentialRefundModel object:
-                PotentialRefundModel potentialRefundModel = new PotentialRefundModel(t);
-
-                potentialRefundModels.add(potentialRefundModel);
+            if (t.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
+                potentialRefundModels.add(new PotentialRefundModel(t));
             }
         }
 
