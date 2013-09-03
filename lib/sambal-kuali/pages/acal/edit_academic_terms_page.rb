@@ -82,12 +82,12 @@ class EditAcademicTerms < BasePage
   end
 
   def key_date_group_div_list(term_type)
-    key_date_group_list_parent(term_type).divs(class: "uif-group uif-boxGroup uif-horizontalBoxGroup uif-collectionItem uif-boxCollectionItem")
+    key_date_group_list_parent(term_type).divs(class: "uif-collectionItem uif-boxCollectionItem")
   end
 
   def key_date_group_div(term_type, key_date_group_type)
     key_date_group_div_list(term_type).each do | div |
-      if div.span(text: /#{key_date_group_type.upcase} KEY DATES/ ).exists?
+      if div.span(text: /#{key_date_group_type} Key Dates/ ).exists?
         return div
       end
     end
