@@ -75,5 +75,5 @@ TYP_ID,NM,NMSPC_CD,SRVC_NM,ACTV,VER_NBR
 "KS-KRMS-TYP-55669","kuali.krms.proposition.type.final.exam.timeslot","KS-SYS","simplePropositionTypeService","Y","0"
 "KS-KRMS-TYP-55670","kuali.krms.agenda.type.final.exam.common","KS-SYS","agendaTypeService","Y","0"
 "KS-KRMS-TYP-55671","kuali.krms.rule.type.final.exam.common","KS-SYS","ruleTypeService","Y","0"
-"KS-KRMS-TYP-55672","kuali.krms.proposition.type.final.exam.course.offering","KS-SYS","simplePropositionTypeService","Y","0"
+"KS-KRMS-TYP-55672","kuali.krms.proposition.type.final.exam.course","KS-SYS","simplePropositionTypeService","Y","0"
 "KS-KRMS-TYP-55673","kuali.krms.proposition.type.final.exam.courseset","KS-SYS","simplePropositionTypeService","Y","0"
