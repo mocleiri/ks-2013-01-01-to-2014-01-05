@@ -279,9 +279,18 @@ public class QuickViewController extends GenericSearchController {
         form.setCompositeDefaultPersonName(accountById.getCompositeDefaultPersonName());
         form.setCompositeDefaultPostalAddress(accountById.getCompositeDefaultPostalAddress());
 
-        BigDecimal balance = accountService.getDueBalance(userId, ignoreDeferment) != null ? accountService.getDueBalance(userId, ignoreDeferment) : BigDecimal.ZERO;
-        BigDecimal future = accountService.getUnallocatedBalance(userId) != null ? accountService.getUnallocatedBalance(userId) : BigDecimal.ZERO;
-        BigDecimal deferment = accountService.getDeferredAmount(userId) != null ? accountService.getDeferredAmount(userId) : BigDecimal.ZERO;
+        BigDecimal balance = accountService.getDueBalance(userId, ignoreDeferment);
+        if(balance == null) {
+            balance = BigDecimal.ZERO;
+        }
+        BigDecimal future = accountService.getFutureBalance(userId, ignoreDeferment);
+        if(future == null) {
+            future = BigDecimal.ZERO;
+        }
+        BigDecimal deferment = accountService.getDeferredAmount(userId);
+        if(deferment == null) {
+            deferment = BigDecimal.ZERO;
+        }
 
         // Aging
 
