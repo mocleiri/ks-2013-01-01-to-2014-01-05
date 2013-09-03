@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.krad.model;
 
 
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.util.EnumUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.tree.Node;
@@ -118,12 +119,15 @@ public class TransactionModel extends Transaction {
         List<Tag> tags = transaction.getTags();
         this.tags = new ArrayList<TransactionTagModel>();
 
-        for(Tag tag : tags) {
-            TransactionTagModel model = new TransactionTagModel();
-            model.setTransactionId(parentTransaction.getId());
-            model.setTag(tag);
-            this.tags.add(model);
+        if(tags != null) {
+            for(Tag tag : tags) {
+                TransactionTagModel model = new TransactionTagModel();
+                model.setTransactionId(parentTransaction.getId());
+                model.setTag(tag);
+                this.tags.add(model);
+            }
         }
+
         // more happens in the setter.
         this.setTagModels(this.tags);
 
@@ -741,4 +745,19 @@ public class TransactionModel extends Transaction {
     public void setNewAllocation(BigDecimal newAllocation) {
         this.newAllocation = newAllocation;
     }
+
+    public String getStatusString(){
+        if(parentTransaction != null){
+            return parentTransaction.getStatus().toString();
+        }
+        return "";
+    }
+
+    public void setStatusString(String status) {
+        if(parentTransaction != null){
+            TransactionStatus transactionStatus =  EnumUtils.findById(TransactionStatus.class, status);
+            parentTransaction.setStatus(transactionStatus);
+        }
+    }
+
 }

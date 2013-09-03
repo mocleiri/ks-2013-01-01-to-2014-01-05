@@ -845,11 +845,12 @@
     </bean>
 
     <bean id="transactionDetailFields" parent="Uif-HorizontalBoxGroup">
+        <property name="readOnly" value="true"/>
         <property name="items">
             <list>
                 <bean parent="Uif-VerticalBoxSection" p:style="width: 40%;"><property name="items"><list>
                     <bean parent="Uif-InputField" p:propertyName="transactionDisplayType" p:label="Transaction Type"/>
-                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.status" p:label="Status"/>
+                    <bean parent="Uif-InputField" p:propertyName="statusString" p:label="Status"/>
                     <bean parent="Uif-InputField" p:propertyName="idString" p:label="Transaction ID"/>
 
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.creationDate" p:label="Creation Date"/>
