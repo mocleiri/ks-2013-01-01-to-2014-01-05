@@ -23,6 +23,19 @@ When /^I copy the Course Offering rule to the Student Eligibility & Prerequisite
   @prereq.sepr_copy_co_rule
 end
 
+When /^I commit after copying and editing the Course Offering rule in the Student Eligibility & Prerequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "E"
+  @prereq = make AOPreparationPrerequisiteRule, :activity => "E"
+  @prereq.sepr_copy_edit_co_rule
+  @prereq.commit_changes
+end
+
+When /^I suppress the copied and edited Course Offering rule that was committed in the Student Eligibility & Prerequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "E"
+  @prereq = make AOPreparationPrerequisiteRule, :activity => "E"
+  @prereq.sepr_suppress_committed_copied_edited_co_rule
+end
+
 When /^I revert the copied rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule

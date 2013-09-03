@@ -1394,6 +1394,28 @@ class AOPreparationPrerequisiteRule < AORequisitesData
     end
   end
 
+  def sepr_suppress_committed_copied_edited_co_rule
+    sepr_copy_edit_co_rule
+    commit_changes( true)
+    on ActivityOfferingRequisites do |page|
+      if page.prereq_edit_suppress_link.exists?
+        page.loading.wait_while_present
+        page.prereq_edit_suppress
+      end
+    end
+  end
+
+  def rp_suppress_committed_copied_edited_co_rule
+    rp_copy_edit_co_rule
+    commit_changes( true)
+    on ActivityOfferingRequisites do |page|
+      if page.prep_edit_suppress_link.exists?
+        page.loading.wait_while_present
+        page.prep_edit_suppress
+      end
+    end
+  end
+
   def sepr_view_catalog_co_rule
     navigate_to_ao_requisites
     on ActivityOfferingRequisites do |page|
