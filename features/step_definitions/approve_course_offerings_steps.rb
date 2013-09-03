@@ -491,6 +491,10 @@ Given /^I manage a course offering with a canceled activity offering present in 
   @course_with_cancel_ao2.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code4 = "A"
+    #have to put this in canceled status for the test
+    page.select_ao(@ao_canceled_code4)
+    page.cancel_ao
+    on(CancelActivityOffering).cancel_activity
     page.ao_status(@ao_canceled_code4).should == "Canceled"
   end
 end
@@ -500,6 +504,10 @@ Given /^I manage a course offering with a canceled activity offering present in 
   @course_with_cancel_ao3.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code5 = "A"
+    #need to make it canceled
+    page.select_ao(@ao_canceled_code5)
+    page.cancel_ao
+    on(CancelActivityOffering).cancel_activity
     page.ao_status(@ao_canceled_code5).should == "Canceled"
   end
 end
@@ -509,6 +517,9 @@ Given /^I manage a course offering with a canceled activity offering present in 
   @course_with_cancel_ao4.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code6 = "A"
+    page.select_ao(@ao_canceled_code6)
+    page.cancel_ao
+    on(CancelActivityOffering).cancel_activity
     page.ao_status(@ao_canceled_code6).should == "Canceled"
   end
 end
@@ -518,6 +529,9 @@ Given /^I manage a course offering with a canceled activity offering present in 
   @course_with_cancel_ao5.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code7 = "A"
+    page.select_ao(@ao_canceled_code7)
+    page.cancel_ao
+    on(CancelActivityOffering).cancel_activity
     page.ao_status(@ao_canceled_code7).should == "Canceled"
   end
 end
@@ -527,6 +541,9 @@ Given /^I manage a course offering with a canceled activity offering present in 
   @course_with_cancel_ao6.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code8 = "A"
+    page.select_ao(@ao_canceled_code8)
+    page.cancel_ao
+    on(CancelActivityOffering).cancel_activity
     page.ao_status(@ao_canceled_code8).should == "Canceled"
   end
 end
