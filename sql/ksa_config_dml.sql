@@ -147,8 +147,8 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('kfs.transaction.gl.entry.descript
 
 -- KSA Transaction settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.transaction.recognition.year', '2014');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.transaction.default.startdate', '2013-01-01');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.transaction.default.enddate', '2013-07-01');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.transaction.default.startdate', '2010-01-01');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.transaction.default.enddate', '2014-07-01');
 
 -- IRS 1098T report settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.1098.filer.name', 'Sigma University');
