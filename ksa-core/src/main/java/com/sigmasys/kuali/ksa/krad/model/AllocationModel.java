@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.model.Memo;
 import com.sigmasys.kuali.ksa.model.Transaction;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 public class AllocationModel implements Serializable {
@@ -63,6 +64,10 @@ public class AllocationModel implements Serializable {
     }
 
     public Memo getMemoModel() {
+        if(memoModel == null){
+            memoModel = new Memo();
+            memoModel.setEffectiveDate(new Date());
+        }
         return memoModel;
     }
 
