@@ -606,7 +606,12 @@ public class TransactionController extends GenericSearchController {
             for (TransactionModel model : allocations) {
                 BigDecimal amount = model.getNewAllocation();
                 if (amount != null && (amount.compareTo(BigDecimal.ZERO) > 0)) {
-                    transactionService.createLockedAllocation(parent.getId(), model.getParentTransaction().getId(), amount);
+                    try {
+                        transactionService.createLockedAllocation(parent.getId(), model.getParentTransaction().getId(), amount);
+                    } catch(IllegalStateException e) {
+                        logger.error("Total amount of " + total.toString() + " is greater than the payment amount of " + parent.getAmount() + ".  IllegalStateException: " + e.getMessage());
+                        GlobalVariables.getMessageMap().putError(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+                    }
                 }
             }
 
