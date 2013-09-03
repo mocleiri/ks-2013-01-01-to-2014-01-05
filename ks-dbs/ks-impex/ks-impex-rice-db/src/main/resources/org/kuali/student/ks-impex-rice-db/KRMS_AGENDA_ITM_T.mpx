@@ -689,6 +689,3 @@ AGENDA_ITM_ID,RULE_ID,SUB_AGENDA_ID,AGENDA_ID,VER_NBR,WHEN_TRUE,WHEN_FALSE,ALWAY
 "KS-KRMS-AGENDA-ITM-12028","KS-KRMS-RULE-12031","${mpx.null}","KS-KRMS-AGENDA-11700","2","${mpx.null}","${mpx.null}","${mpx.null}"
 "KS-KRMS-AGENDA-ITM-12029","KS-KRMS-RULE-12032","${mpx.null}","KS-KRMS-AGENDA-11705","2","${mpx.null}","${mpx.null}","${mpx.null}"
 "KS-KRMS-AGENDA-ITM-12030","KS-KRMS-RULE-12036","${mpx.null}","KS-KRMS-AGENDA-11888","2","${mpx.null}","${mpx.null}","${mpx.null}"
-"KS-KRMS-AGENDA-ITM-12031","KS-KRMS-RULE-12037","${mpx.null}","KS-KRMS-AGENDA-11923","1","${mpx.null}","${mpx.null}","${mpx.null}"
-"KS-KRMS-AGENDA-ITM-12032","KS-KRMS-RULE-12038","${mpx.null}","KS-KRMS-AGENDA-11924","1","KS-KRMS-AGENDA-ITM-12033","${mpx.null}","${mpx.null}"
-"KS-KRMS-AGENDA-ITM-12033","KS-KRMS-RULE-12039","${mpx.null}","KS-KRMS-AGENDA-11924","1","${mpx.null}","${mpx.null}","${mpx.null}"

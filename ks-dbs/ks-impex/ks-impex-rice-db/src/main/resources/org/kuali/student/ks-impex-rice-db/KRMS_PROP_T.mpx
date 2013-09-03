@@ -1543,8 +1543,3 @@ PROP_ID,DESC_TXT,TYP_ID,DSCRM_TYP_CD,CMPND_OP_CD,RULE_ID,VER_NBR,CMPND_SEQ_NO
 "KS-KRMS-PROP-14723","Must have successfully completed a minimum of 1 course from <courses>","10019","S","${mpx.null}","KS-KRMS-RULE-12018","2","1"
 "KS-KRMS-PROP-14724","Free Form Text","10031","S","${mpx.null}","KS-KRMS-RULE-12018","2","2"
 "KS-KRMS-PROP-14725","Permission of instructor required","10034","S","${mpx.null}","KS-KRMS-RULE-12018","2","3"
-"KS-KRMS-PROP-14726","Final exam timeslot","KS-KRMS-TYP-55669","S","${mpx.null}","KS-KRMS-RULE-12037","1","1"
-"KS-KRMS-PROP-14727","Final exam for course set","KS-KRMS-TYP-55673","S","${mpx.null}","KS-KRMS-RULE-12038","1","1"
-"KS-KRMS-PROP-14728","Final exam for course set","KS-KRMS-TYP-55673","S","${mpx.null}","KS-KRMS-RULE-12038","1","2"
-"KS-KRMS-PROP-14729","Must meet 1 of the following","10077","C","|","KS-KRMS-RULE-12038","1","1"
-"KS-KRMS-PROP-14730","Final exam for course","KS-KRMS-TYP-55672","S","${mpx.null}","KS-KRMS-RULE-12039","1","1"

@@ -1130,7 +1130,3 @@ TERM_ID,TERM_SPEC_ID,VER_NBR,DESC_TXT
 "KS-KRMS-TERM-13419","10013","1","${mpx.null}"
 "KS-KRMS-TERM-13420","10013","1","${mpx.null}"
 "KS-KRMS-TERM-13421","10013","1","${mpx.null}"
-"KS-KRMS-TERM-13422","KS-TERM-SPEC-10019","1","Matching Timeslot Term"
-"KS-KRMS-TERM-13423","KS-TERM-SPEC-10021","1","Matching Course Set Term"
-"KS-KRMS-TERM-13424","KS-TERM-SPEC-10021","1","Matching Course Set Term"
-"KS-KRMS-TERM-13425","KS-TERM-SPEC-10020","1","Matching Course Term"
