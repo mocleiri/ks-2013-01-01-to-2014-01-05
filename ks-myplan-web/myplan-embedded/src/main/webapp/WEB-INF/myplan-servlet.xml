@@ -36,6 +36,9 @@
     <!-- UW's Implementation of Plan Helper -->
     <bean id="planHelper" class="edu.uw.kuali.student.myplan.util.PlanHelperImpl"/>
 
+    <!-- UW's Implementation of User Session Helper -->
+    <bean id="userSessionHelper" class="edu.uw.kuali.student.myplan.util.UserSessionHelperImpl"/>
+
     <!-- Search Strategy -->
     <bean id="courseSearchStrategy" class="org.kuali.student.myplan.course.controller.CourseSearchStrategy"/>
 
