@@ -117,20 +117,7 @@ public class TransactionModel extends Transaction {
         transactionTypeValue = transaction.getTransactionTypeValue();
 
         List<Tag> tags = transaction.getTags();
-        this.tags = new ArrayList<TransactionTagModel>();
-
-        if(tags != null) {
-            for(Tag tag : tags) {
-                TransactionTagModel model = new TransactionTagModel();
-                model.setTransactionId(parentTransaction.getId());
-                model.setTag(tag);
-                this.tags.add(model);
-            }
-        }
-
-        // more happens in the setter.
-        this.setTagModels(this.tags);
-
+        this.setTags(tags);
 
         // populate TransactionModel's properties from Transaction instance
         setId(transaction.getId());
@@ -554,6 +541,35 @@ public class TransactionModel extends Transaction {
     public String getTagList() {
         return tagList;
     }
+
+    public List<Tag> getTags() {
+        List<Tag> tagList = new ArrayList<Tag>();
+        if(tags != null) {
+            for(TransactionTagModel model : tags){
+                tagList.add(model.getTag());
+            }
+        }
+
+        return tagList;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = new ArrayList<TransactionTagModel>();
+
+        if(tags != null) {
+            for(Tag tag : tags) {
+                TransactionTagModel model = new TransactionTagModel();
+                model.setTransactionId(parentTransaction.getId());
+                model.setTag(tag);
+                this.tags.add(model);
+            }
+        }
+        // more happens in the setter.
+        this.setTagModels(this.tags);
+
+    }
+
+
 
     public List<TransactionTagModel> getTagModels() {
         return tags;
