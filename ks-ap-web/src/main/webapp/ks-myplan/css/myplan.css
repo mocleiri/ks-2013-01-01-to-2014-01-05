@@ -2590,6 +2590,15 @@ div.jGrowl div.jGrowl-notification div.jGrowl-close {
     content: ')' !important;
 }
 
+.ks-plan-CourseSummary-content {
+    margin: 0 !important;
+}
+
+.ks-plan-CourseSummary-link {
+    display: block;
+    width: 280px;
+}
+
 .ks-plan-Header-headline {
     margin: 0 !important;
     width: 440px !important;
@@ -2647,5 +2656,5 @@ div.jGrowl div.jGrowl-notification div.jGrowl-close {
 }
 
 .ks-plan-TermsList-itemHeader {
-		position: relative;
+    position: relative;
 }
