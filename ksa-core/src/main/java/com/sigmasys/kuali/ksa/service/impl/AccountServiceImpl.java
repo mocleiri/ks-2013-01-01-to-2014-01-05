@@ -79,7 +79,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
                     "left outer join fetch a.latePeriod lp " +
                     "left outer join fetch a.keyPairs kp " +
                     "left outer join fetch a.orgName o " +
-                    "left outer join fetch o.personName opn " +
+                    "left outer join fetch o.contact oc " +
                     "where pn.default = true and " +
                     "      pa.default = true and " +
                     "      ec.default = true";
