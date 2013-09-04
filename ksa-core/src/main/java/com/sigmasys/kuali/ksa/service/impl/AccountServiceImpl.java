@@ -71,20 +71,21 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
     private static final Log logger = LogFactory.getLog(AccountServiceImpl.class);
 
+
     private static final String GET_FULL_ACCOUNTS_JOIN =
-            "left outer join fetch a.personNames pn " +
+            " left outer join fetch a.personNames pn " +
                     "left outer join fetch a.postalAddresses pa " +
                     "left outer join fetch a.electronicContacts ec " +
                     "left outer join fetch a.statusType st " +
                     "left outer join fetch a.latePeriod lp " +
                     "left outer join fetch a.keyPairs kp " +
                     "left outer join fetch a.orgName o " +
-                    "left outer join fetch o.contact oc " +
-                    "where pn.default = true and " +
-                    "      pa.default = true and " +
-                    "      ec.default = true";
+                    "left outer join fetch o.contact oc ";
 
-    private static final String GET_FULL_ACCOUNTS_QUERY = "select distinct a from Account a " + GET_FULL_ACCOUNTS_JOIN;
+    private static final String GET_FULL_ACCOUNTS_WHERE =
+            GET_FULL_ACCOUNTS_JOIN + " where pn.default = true and pa.default = true and ec.default = true ";
+
+    private static final String GET_FULL_ACCOUNTS_QUERY = "select distinct a from Account a " + GET_FULL_ACCOUNTS_WHERE;
 
 
     @Autowired
@@ -182,11 +183,10 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         }
 
         AgeDebtMethod ageDebtMethod = AgeDebtMethod.valueOf(ageDebtMethodName);
-        List<Account> accounts = getFullAccounts();
 
         Date currentDate = new Date();
 
-        for (Account account : accounts) {
+        for (Account account :  getFullAccounts()) {
             if (account instanceof ChargeableAccount) {
                 ageDebt((ChargeableAccount) account, ageDebtMethod, currentDate, ignoreDeferment);
             }
@@ -627,14 +627,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
-        Query query = em.createQuery("select a from Account a " +
-                "left outer join fetch a.personNames pn " +
-                "left outer join fetch a.postalAddresses pa " +
-                "left outer join fetch a.electronicContacts ec " +
-                "left outer join fetch a.statusType st " +
-                "left outer join fetch a.latePeriod lp " +
-                "left outer join fetch a.keyPairs kp " +
-                "where a.id = :id");
+        Query query = em.createQuery("select distinct a from Account a " + GET_FULL_ACCOUNTS_JOIN + " where a.id = :id");
+
         query.setParameter("id", userId);
         List<Account> accounts = query.getResultList();
         return (accounts != null && !accounts.isEmpty()) ? accounts.get(0) : null;
@@ -678,7 +672,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         Query query = em.createQuery("select distinct a from " + accountClass.getName() + " a " +
-                GET_FULL_ACCOUNTS_JOIN + " and upper(a.id) like upper(:pattern)");
+                GET_FULL_ACCOUNTS_WHERE + " and upper(a.id) like upper(:pattern)");
 
         query.setParameter("pattern", "%" + pattern + "%");
 

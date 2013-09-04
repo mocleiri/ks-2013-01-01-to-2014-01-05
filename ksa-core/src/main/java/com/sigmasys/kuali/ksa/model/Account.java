@@ -371,20 +371,21 @@ public abstract class Account implements Identifiable {
      */
     @Transient
     public String getCompositeDefaultPersonName() {
+
         StringBuilder defaultNameBuilder = new StringBuilder();
 
-
+        OrgName orgName = getOrgName();
         PersonName personName = getDefaultPersonName();
 
-        if(orgName != null) {
+        if (orgName != null) {
             defaultNameBuilder.append(nvl(orgName.getName()));
         }
 
-        if(orgName != null && personName != null) {
+        if (orgName != null && personName != null) {
             defaultNameBuilder.append(" - ");
         }
 
-        if(personName != null) {
+        if (personName != null) {
             defaultNameBuilder.append(nvl(personName.getDisplayValue()));
         }
 
