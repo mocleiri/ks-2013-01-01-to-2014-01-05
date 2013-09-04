@@ -35,11 +35,13 @@ Feature: EC.Holiday Calendar CRED
     And I search for the Holiday Calendar
     Then the holiday calendar does not appear in the search results
 
+  @bug @KSENROLL-9266
   Scenario: Succesfully add a holidays to a Holiday Calendar
     Given I create a Holiday Calendar
     When I add holidays to the Holiday Calendar
     Then the holidays are updated when I view the Holiday Calendar
 
+  @bug @KSENROLL-9266
   Scenario: Successfully update holidays on a Holiday Calendar
     Given I create a holiday calendar by copying an existing calendar from search
     When I update holiday dates
@@ -57,16 +59,19 @@ Feature: EC.Holiday Calendar CRED
     When I search for the Holiday Calendar using partial name
     Then the holiday calendar appears in the search results
 
+  @bug @KSENROLL-9266
   Scenario: Verify warning message when adding a Holiday with date outside Holiday Calendar date range
     Given I create a Holiday Calendar
     And I add a new Holiday with an end date later than the Holiday Calendar end date
     Then a Holiday Dates warning message is displayed stating "doesn't fall within holiday calendar dates"
 
+  @bug @KSENROLL-9266
   Scenario: Verify warning message when editing a Holiday with date outside Holiday Calendar date range
     Given I create a holiday calendar by copying an existing calendar from search
     And I edit a Holiday date so that the start date is earlier than the Holiday Calendar start date
     Then a Holiday Dates warning message is displayed stating "doesn't fall within holiday calendar dates"
 
+  @bug @KSENROLL-9266
   Scenario: Verify error message when adding a Holiday with start date after end date
     Given I create a Holiday Calendar
     And I add a new Holiday with a date later than the Holiday end date

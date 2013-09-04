@@ -12,8 +12,8 @@ end
 Then /^the holiday calendar is set to Official$/ do
   @holiday_calendar.view :perform_search => false
   on ViewHolidayCalendar do |page|
-    page.open_hcal_info_section
-    page.hcal_state.should == "Official"
+    #page.open_hcal_info_section
+    page.hcal_status.upcase.should == "OFFICIAL"
   end
 end
 

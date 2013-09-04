@@ -4,15 +4,17 @@ class ViewHolidayCalendar < BasePage
   wrapper_elements
 
   element(:hcal_overview_div) { |b| b.frm.div(id: "KS-HolidayCalendar-View-Meta") }
-  value(:hcal_name) { |b| b.hcal_overview_div.div(data_label: "Holiday Calendar Name").span(index: 0).text }
-  value(:hcal_start_date) { |b| b.hcal_overview_div.div(data_label: "Start Date").span(index: 0).text }
-  value(:hcal_end_date) { |b| b.hcal_overview_div.div(data_label: "End Date").span(index: 0).text }
-  value(:hcal_state) { |b| b.hcal_overview_div.div(data_label: "State").span(index: 0).text }
+  value(:hcal_name) { |b| b.hcal_overview_div.div(data_label: "Holiday Calendar Name").span(index: 1).text }
+  value(:hcal_start_date) { |b| b.hcal_overview_div.div(data_label: "Start Date").span(index: 1).text }
+  value(:hcal_end_date) { |b| b.hcal_overview_div.div(data_label: "End Date").span(index: 1).text }
+  #value(:hcal_state) { |b| b.hcal_overview_div.div(data_label: "State").span(index: 0).text }
 
   element(:make_official_link) { |b| b.frm.link(id: "hcal_Official") }
   action(:make_official) { |b| b.make_official_link.click; b.loading.wait_while_present }
 
-  action(:hcal_info_link) { |b| b.frm.link(id: "KS-HolidayCalendar-View-Meta_toggle") }
+  value(:hcal_status) { |b| b.div(id: "u483").span(index: 0).text }
+
+  #element(:hcal_info_link) { |b| b.frm.link(id: "KS-HolidayCalendar-View-Meta_toggle") }
 
   def open_hcal_info_section
     link =  hcal_info_link
