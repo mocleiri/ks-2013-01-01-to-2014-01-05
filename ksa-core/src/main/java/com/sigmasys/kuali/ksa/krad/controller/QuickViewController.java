@@ -100,7 +100,7 @@ public class QuickViewController extends GenericSearchController {
                 pageId = "QuickViewPage";
             }
 
-            if("QuickViewPage".equals(pageId)){
+            if ("QuickViewPage".equals(pageId)) {
                 populateForm(userId, form);
             } else if ("QuickViewAddMemoPage".equals(pageId)) {
                 if (userId == null || userId.isEmpty()) {
@@ -280,15 +280,17 @@ public class QuickViewController extends GenericSearchController {
         form.setCompositeDefaultPostalAddress(accountById.getCompositeDefaultPostalAddress());
 
         BigDecimal balance = accountService.getDueBalance(userId, ignoreDeferment);
-        if(balance == null) {
+        if (balance == null) {
             balance = BigDecimal.ZERO;
         }
+
         BigDecimal future = accountService.getFutureBalance(userId, ignoreDeferment);
-        if(future == null) {
+        if (future == null) {
             future = BigDecimal.ZERO;
         }
+
         BigDecimal deferment = accountService.getDeferredAmount(userId);
-        if(deferment == null) {
+        if (deferment == null) {
             deferment = BigDecimal.ZERO;
         }
 
@@ -350,13 +352,13 @@ public class QuickViewController extends GenericSearchController {
             form.setDefermentAmount(deferment.toString());
         }
 
-        BigDecimal outstandingBalance = chargeableAccount.getOutstandingBalance();
-        if(outstandingBalance == null){
+        BigDecimal outstandingBalance = accountService.getOutstandingBalance(userId, ignoreDeferment);
+        if (outstandingBalance == null) {
             outstandingBalance = BigDecimal.ZERO;
         }
+
         form.setOutstandingAmount(outstandingBalance);
 
-        List<Information> alertFlags = new ArrayList<Information>();
 
         form.setAlertObjects(informationService.getAlerts(userId));
         form.setFlagObjects(informationService.getFlags(userId));
@@ -387,7 +389,7 @@ public class QuickViewController extends GenericSearchController {
         try {
             List<AppliedHoldInfo> holds = holdService.getActiveAppliedHoldsByPerson(userId, context);
 
-            for(AppliedHoldInfo hold : holds) {
+            for (AppliedHoldInfo hold : holds) {
                 Information info = new Information();
 
                 info.setEffectiveDate(hold.getEffectiveDate());

@@ -15,16 +15,6 @@ import javax.persistence.MappedSuperclass;
 public abstract class ChargeableAccount extends Account {
 
     /**
-     * Outstanding balance
-     */
-    protected BigDecimal outstandingBalance;
-
-    /**
-     * Balance due
-     */
-    protected BigDecimal balanceDue;
-
-    /**
      * Amount for DAYS_LATE1 period
      */
     protected BigDecimal amountLate1;
@@ -44,24 +34,6 @@ public abstract class ChargeableAccount extends Account {
      */
     protected Date lateLastUpdate;
 
-
-    @Column(name = "OUTSTANDING")
-    public BigDecimal getOutstandingBalance() {
-        return outstandingBalance;
-    }
-
-    public void setOutstandingBalance(BigDecimal outstandingBalance) {
-        this.outstandingBalance = outstandingBalance;
-    }
-
-    @Column(name = "DUE")
-    public BigDecimal getBalanceDue() {
-        return balanceDue;
-    }
-
-    public void setBalanceDue(BigDecimal balanceDue) {
-        this.balanceDue = balanceDue;
-    }
 
     @Column(name = "LATE1")
     public BigDecimal getAmountLate1() {
