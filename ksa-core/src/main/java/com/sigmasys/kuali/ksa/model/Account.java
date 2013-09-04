@@ -209,7 +209,7 @@ public abstract class Account implements Identifiable {
 
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_BLOCKING_ENABLED")
-    public Boolean getBlockingEnabled() {
+    public Boolean isBlockingEnabled() {
         return isBlockingEnabled != null ? isBlockingEnabled : false;
     }
 

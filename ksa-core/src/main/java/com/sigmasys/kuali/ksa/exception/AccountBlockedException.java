@@ -12,15 +12,15 @@ import java.util.Set;
  */
 public class AccountBlockedException extends PermissionDeniedException {
 
-    private Set<String> ruleNames;
+    private Set<String> blockNames;
 
 
-    public AccountBlockedException(String userId, Permission permission, Set<String> ruleNames) {
+    public AccountBlockedException(String userId, Permission permission, Set<String> blockNames) {
         super(userId, permission);
-        this.ruleNames = ruleNames;
+        this.blockNames = blockNames;
     }
 
-    public Set<String> getRuleNames() {
-        return ruleNames;
+    public Set<String> getBlockNames() {
+        return blockNames;
     }
 }

@@ -1,10 +1,13 @@
 package com.sigmasys.kuali.ksa.service;
 
 
+import com.sigmasys.kuali.ksa.exception.AccountBlockedException;
 import com.sigmasys.kuali.ksa.model.AccountBlockOverride;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Account Block Service
@@ -71,5 +74,16 @@ public interface AccountBlockingService {
      * @return AccountBlockOverride instance
      */
     AccountBlockOverride disableAccountBlockOverride(Long blockOverrideId);
+
+    /**
+     * Checks if there is an account block set for the given Account ID based on the permission and account attributes.
+     *
+     * @param accountId  Account ID
+     * @param permission Permission value
+     * @param attributes Account attributes
+     * @throws AccountBlockedException
+     */
+    void checkBlock(String accountId, Permission permission, Map<String, Object> attributes) throws AccountBlockedException;
+
 
 }

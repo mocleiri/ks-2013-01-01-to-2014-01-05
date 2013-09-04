@@ -1,12 +1,16 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.exception.AccountBlockedException;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.AccountBlockOverride;
+import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.rule.Rule;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
+import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmPersistenceService;
+import com.sigmasys.kuali.ksa.service.brm.BrmService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -18,8 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -29,7 +32,7 @@ import java.util.List;
  * @author Michael Ivanov
  */
 @Service("accountBlockingService")
-@Transactional(readOnly = true)
+@Transactional(readOnly = true, noRollbackFor = AccountBlockedException.class)
 @SuppressWarnings("unchecked")
 public class AccountBlockingServiceImpl extends GenericPersistenceService implements AccountBlockingService {
 
@@ -48,6 +51,9 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
 
     @Autowired
     private BrmPersistenceService brmPersistenceService;
+
+    @Autowired
+    private BrmService brmService;
 
 
     /**
@@ -219,6 +225,81 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
         blockOverride.setActive(active);
 
         return blockOverride;
+    }
+
+    /**
+     * Checks if there is an account block set for the given Account ID based on the permission and account attributes.
+     *
+     * @param accountId  Account ID
+     * @param permission Permission value
+     * @param attributes Account attributes
+     * @throws com.sigmasys.kuali.ksa.exception.AccountBlockedException
+     *
+     */
+    @Override
+    @Transactional(readOnly = false, noRollbackFor = AccountBlockedException.class)
+    public void checkBlock(String accountId, Permission permission, Map<String, Object> attributes) throws AccountBlockedException {
+
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null) {
+            String errMsg = "Account with ID = " + accountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        // If the account blocking is disabled nothing else should be done
+        if (account.isBlockingEnabled()) {
+            logger.info("Account Blocking is disabled for Account ID = " + accountId);
+            return;
+        }
+
+        // Calling BrmService with payment application rules
+        BrmContext brmContext = new BrmContext();
+        brmContext.setAccount(account);
+
+        Map<String, Object> globalParams = new HashMap<String, Object>();
+        globalParams.put("blockNames", new LinkedList<String>());
+
+        brmContext.setGlobalVariables(globalParams);
+
+        brmContext.setAttributes(attributes);
+
+        brmService.fireRules(Constants.DROOLS_AB_RULE_SET_NAME, brmContext);
+
+        Set<String> blockNames = (Set<String>) globalParams.get("blockNames");
+
+        if (CollectionUtils.isNotEmpty(blockNames)) {
+
+            boolean accountIsBlocked = true;
+
+            // Checking AccountBlockOverride objects
+            List<AccountBlockOverride> blockOverrides = getAccountBlockOverrides(accountId);
+
+            if (CollectionUtils.isNotEmpty(blockOverrides)) {
+
+                Set<String> ruleOverrideNames = new HashSet<String>();
+
+                for (AccountBlockOverride blockOverride : blockOverrides) {
+                    if (blockOverride.isActive()) {
+                        Rule rule = blockOverride.getRule();
+                        if (rule != null && blockNames.contains(rule.getName())) {
+                            ruleOverrideNames.add(rule.getName());
+                        }
+                    }
+                }
+
+                // If the set of rule names equals the set of block names retrieved from the BRM engine
+                // then the account is NOT blocked and we DO NOT have to throw AccountBlockedException
+                if (ruleOverrideNames.size() == blockNames.size()) {
+                    accountIsBlocked = false;
+                }
+            }
+
+            if (accountIsBlocked) {
+                throw new AccountBlockedException(accountId, permission, blockNames);
+            }
+        }
+
     }
 
 }
