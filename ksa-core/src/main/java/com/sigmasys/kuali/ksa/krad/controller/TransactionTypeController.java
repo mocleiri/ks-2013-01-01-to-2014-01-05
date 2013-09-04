@@ -148,6 +148,9 @@ public class TransactionTypeController extends GenericSearchController {
             if (ttSource != null) {
                 this.loadFormFromTransactionType(form, ttSource);
             }
+            form.setNewTransactionType(false);
+        } else {
+            form.setNewTransactionType(true);
         }
 
         form.setCreditDebitKeyValuesFinder(this.getCreditDebitTypeOptionsFinder());
@@ -229,7 +232,7 @@ public class TransactionTypeController extends GenericSearchController {
             tt = transactionService.getTransactionType(ttId);
 
             // If start date changed, make sure there's an audit message
-            if(!form.getStartDate().equals(tt.getStartDate())){
+            if(tt.getStartDate() != null && (!form.getStartDate().equals(tt.getStartDate()))){
                 String reason = form.getStartDateAuditReason();
                 if(reason == null || "".equals(reason)){
                     String errMsg = "When changing the start date of an existing transaction type, a reason must be provided";

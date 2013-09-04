@@ -415,7 +415,7 @@
                                   p:fieldLabel.renderColon="true"
                                   p:labelPlacement="TOP"
                                   p:maxLength="10"
-                                  p:required="true" p:onChangeScript="showLightboxComponent('startDateAuditLightbox');">
+                                  p:required="true" p:onChangeScript="if(!@{newTransactionType}) { showLightboxComponent('startDateAuditLightbox');}">
                                 <property name="bindingInfo.bindToForm" value="true"/>
                                 <property name="control">
                                     <bean parent="Uif-DateControl" p:size="11"/>

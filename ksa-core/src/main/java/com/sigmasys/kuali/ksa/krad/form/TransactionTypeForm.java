@@ -28,6 +28,7 @@ public class TransactionTypeForm extends AbstractViewModel {
     private KeyValuesFinder rollupOptionsFinder;
 
     // Fields used for creating a new transaction type
+    private Boolean newTransactionType = false;
     private String type;
     private String code;
     private Integer subCode = -1;
@@ -315,5 +316,13 @@ public class TransactionTypeForm extends AbstractViewModel {
 
     public void setStartDateAuditReason(String startDateAuditReason) {
         this.startDateAuditReason = startDateAuditReason;
+    }
+
+    public Boolean getNewTransactionType() {
+        return newTransactionType;
+    }
+
+    public void setNewTransactionType(Boolean newTransactionType) {
+        this.newTransactionType = newTransactionType;
     }
 }
