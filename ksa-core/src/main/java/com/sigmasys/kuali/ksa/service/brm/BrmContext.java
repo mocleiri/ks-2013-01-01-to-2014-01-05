@@ -3,6 +3,8 @@ package com.sigmasys.kuali.ksa.service.brm;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
+import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.hold.service.HoldService;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -49,23 +51,39 @@ public class BrmContext implements Serializable {
     }
 
     public AccountService getAccountService() {
-        return ContextUtils.getBean(AccountService.class);
+        return getService(AccountService.class);
     }
 
     public TransactionService getTransactionService() {
-        return ContextUtils.getBean(TransactionService.class);
+        return getService(TransactionService.class);
     }
 
     public GeneralLedgerService getGeneralLedgerService() {
-        return ContextUtils.getBean(GeneralLedgerService.class);
+        return getService(GeneralLedgerService.class);
     }
 
     public PaymentService getPaymentService() {
-        return ContextUtils.getBean(PaymentService.class);
+        return getService(PaymentService.class);
     }
 
     public BrmPaymentService getBrmPaymentService() {
-        return ContextUtils.getBean(BrmPaymentService.class);
+        return getService(BrmPaymentService.class);
+    }
+
+    public HoldService getHoldService() {
+        return getService(HoldService.class);
+    }
+
+    public AtpService getAtpService() {
+        return getService(AtpService.class);
+    }
+
+    protected <T> T getService(Class<T> serviceType) {
+        T service = ContextUtils.getBean(serviceType);
+        if (service == null) {
+            throw new IllegalStateException("Cannot find " + serviceType.getName() + " in the application context");
+        }
+        return service;
     }
 
 }
