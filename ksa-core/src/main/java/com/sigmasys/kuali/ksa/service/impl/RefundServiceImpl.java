@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -27,7 +28,6 @@ import com.sigmasys.kuali.ksa.jaxb.BatchAch;
 import com.sigmasys.kuali.ksa.jaxb.BatchCheck;
 import com.sigmasys.kuali.ksa.jaxb.Check;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
-import com.sigmasys.kuali.ksa.util.TransactionUtils;
 
 /**
  * The refund service is the core of KSA-RM-RM. It handles the production of refunds from the system.
@@ -145,8 +145,9 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
                         " and (p.refundRule is not null or p.transactionType.refundRule is not null)";
 
         Query query = em.createQuery(sql);
-        query.setParameter("dateFrom", CalendarUtils.removeTime(dateFrom));
-        query.setParameter("dateTo", CalendarUtils.removeTime(dateTo));
+
+        query.setParameter("dateFrom", CalendarUtils.removeTime(dateFrom), TemporalType.DATE);
+        query.setParameter("dateTo", CalendarUtils.removeTime(dateTo), TemporalType.DATE);
         query.setParameter("statusCode", TransactionStatus.ACTIVE.getId());
         query.setParameter("amountThreshold", amountThreshold);
 
@@ -1389,6 +1390,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return XML check date no earlier than today.
      */
     private XMLGregorianCalendar produceXMLCheckDate(Date checkDate) {
+
         // If a future date, change to the current date:
         Date dateOnCheck = (checkDate.getTime() < System.currentTimeMillis()) ? checkDate : new Date();
 
