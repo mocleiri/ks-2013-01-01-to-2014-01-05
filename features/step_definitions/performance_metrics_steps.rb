@@ -208,6 +208,13 @@ When /^I add a registration window and save$/ do
     page.save
     @performance_test.end
   end
+
+  visit LUMMainPage do |page|
+    while page.alert.exists?
+      page.alert.cancel
+    end
+  end
+
 end
 
 When /^I search for a course by course code$/ do
