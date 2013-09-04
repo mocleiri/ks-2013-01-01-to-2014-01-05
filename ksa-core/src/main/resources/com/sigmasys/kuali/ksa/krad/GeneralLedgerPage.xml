@@ -125,8 +125,7 @@
 					<property name="layoutManager.expandDetailsActionPrototype">
 						<bean parent="Uif-ExpandDetailsImageAction"/>
 					</property>
-                    <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
-                    <property name="layoutManager.rowDetailsGroup">
+					<property name="layoutManager.rowDetailsGroup">
 						<ref bean="generalLedgerAccountSublist"/>
 					</property>
 
@@ -205,8 +204,7 @@
 		<property name="layoutManager.expandDetailsActionPrototype">
 			<bean parent="Uif-ExpandDetailsImageAction"/>
 		</property>
-        <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
-        <property name="layoutManager.rowDetailsGroup">
+		<property name="layoutManager.rowDetailsGroup">
 			<ref bean="generalLedgerTransactionSublist"/>
 		</property>
 
@@ -319,8 +317,7 @@
 		<property name="layoutManager.expandDetailsActionPrototype">
 			<bean parent="Uif-ExpandDetailsImageAction"/>
 		</property>
-        <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
-        <property name="layoutManager.rowDetailsGroup">
+		<property name="layoutManager.rowDetailsGroup">
 			<ref bean="generalLedgerTransactionSublist"/>
 		</property>
 
@@ -351,8 +348,7 @@
 		<property name="layoutManager.expandDetailsActionPrototype">
 			<bean parent="Uif-ExpandDetailsImageAction"/>
 		</property>
-        <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
-        <property name="layoutManager.rowDetailsGroup">
+		<property name="layoutManager.rowDetailsGroup">
 			<ref bean="generalLedgerTransactionSublist"/>
 		</property>
 
