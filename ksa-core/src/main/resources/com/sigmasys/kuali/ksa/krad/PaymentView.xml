@@ -114,7 +114,7 @@
                         <list>
                             <bean id="paymentTypeSuggest" parent="Uif-InputField" p:propertyName="paymentTransactionTypeId"
                                   p:label="Payment Type" p:fieldLabel.renderColon="false" p:labelPlacement="TOP"
-                                  p:maxLength="10" p:required="true">
+                                  p:maxLength="20" p:required="true">
                                 <property name="suggest">
                                     <bean parent="Uif-Suggest">
                                         <property name="valuePropertyName" value="id.id"/>
