@@ -7,6 +7,8 @@ import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.util.ErrorUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,9 +78,9 @@ public abstract class GenericSearchController extends UifControllerBase {
 
     protected ModelAndView handleError(AbstractViewModel viewModel, String errorMessage) {
         logger.error(errorMessage);
-        String htmlErrorMessage = "<font color='red'>" + errorMessage + "</font>";
-        viewModel.setMessage(htmlErrorMessage);
-        return getUIFModelAndView(viewModel);
+        ModelAndView modelAndView = getUIFModelAndView(viewModel);
+        GlobalVariables.getMessageMap().putError(modelAndView.getViewName(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+        return modelAndView;
     }
 
     protected ModelAndView handleError(AbstractViewModel viewModel, Throwable t) {

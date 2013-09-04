@@ -12,6 +12,8 @@ import com.sigmasys.kuali.ksa.util.JaxbUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
@@ -148,7 +150,9 @@ public class BatchTransactionsController extends GenericSearchController {
 
         try {
             accountService.ageDebt(true);
-            setMessage(form, "Debts were successfully aged");
+            String message = "Debts were successfully aged";
+            GlobalVariables.getMessageMap().putInfo(getUIFModelAndView(form).getViewName(), RiceKeyConstants.ERROR_CUSTOM, message);
+
         } catch (Exception e) {
             return handleError(form, e);
         }
