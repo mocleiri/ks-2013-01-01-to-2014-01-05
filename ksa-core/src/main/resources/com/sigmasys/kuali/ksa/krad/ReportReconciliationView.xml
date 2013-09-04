@@ -29,39 +29,20 @@
     <bean id="ReportReconciliationView" parent="Uif-KsaFormView" p:footer.render="false">
         <property name="headerText" value="Reports &amp; Reconciliation"/>
         <property name="title" value="Reports &amp; Reconciliation"/>
-        <property name="entryPageId" value="AgedTrialBalance"/>
-        <property name="navigation">
-            <bean parent="Uif-KsaPageNavigation">
-                <property name="items">
-                    <list>
-                        <bean parent="Uif-HeaderTwo" p:headerText="REPORTING &amp; RECONCILIATION"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AgedTrialBalance" p:actionLabel="Aged Trial Balance"/>
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerMainPage" p:actionLabel="General Ledger"/>
-                    </list>
-                </property>
-            </bean>
+        <property name="entryPageId" value="AgedBalanceView"/>
+        <property name="navigation" ref="KsaReportingNavigation">
         </property>
         <property name="items">
             <list merge="true">
-                <!--Begin Aged Trial Balance Page-->
 
-                <bean parent="Uif-Page" p:id="AgedTrialBalance" p:title="Aged Trial Balance">
-                    <property name="headerText" value="Aged Trial Balance"/>
+                <bean parent="Uif-Page" p:id="AgedBalanceView" p:title="Generate Aged Balance List">
+                    <property name="headerText" value="File Upload"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-HorizontalBoxSection">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-MessageField" p:messageText="Placeholder: Text"/>
-                                    </list>
-                                </property>
-                            </bean>
-                            <!--<ref bean="PageSection"/>-->
+                            <ref bean="agedTransactionDownloadFile"/>
                         </list>
                     </property>
                 </bean>
-
-                <!--End Aged Trial Balance Page-->
 
                 <!--Begin General Ledger Page-->
 
@@ -72,13 +53,20 @@
 
             </list>
         </property>
-        <!--
-                <property name="additionalCssFiles" ref=""/>
-                <property name="additionalJsFiles" ref=""/>
-                <property name="viewHelperServiceClassName" value=""/>
-                <property name="defaultBindingObjectPath" vaue=""/>
-        -->
         <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.ReportReconciliationForm"/>
+    </bean>
+
+
+    <bean id="agedTransactionDownloadFile" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+        <!--p:title="Upload a file for processing">-->
+        <property name="headerText" value="Download Aged Transactions Report"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="agedTransactions"
+                      p:actionLabel="Generate Aged Balance List" p:ajaxSubmit="false" p:disableBlocking="true">
+                </bean>
+            </list>
+        </property>
     </bean>
 
 </beans>

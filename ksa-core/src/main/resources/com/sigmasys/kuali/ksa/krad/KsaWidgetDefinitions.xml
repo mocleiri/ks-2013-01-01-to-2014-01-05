@@ -133,8 +133,6 @@
                       p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView"/>
                 <bean parent="Uif-Link" p:linkText="Refunds"
                       p:href="batchRefundView?methodToCall=get&amp;viewId=BatchRefundView"/>
-                <bean parent="Uif-Link" p:linkText="Generate Aged Balance List"
-                      p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView&amp;pageId=AgedBalanceView"/>
                 <bean parent="Uif-Link" p:linkText="Age All Accounts"
                       p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView&amp;pageId=AgeTransactionsView"/>
             </list>
@@ -156,6 +154,18 @@
             </list>
         </property>
     </bean>
+
+    <bean name="KsaReportingNavigation" parent="Uif-KsaPageNavigation">
+        <property name="items">
+            <list>
+                <bean parent="Uif-HeaderTwo" p:headerText="REPORTING &amp; RECONCILIATION"/>
+                <bean parent="Uif-Link" p:linkText="Aged Trial Balance"
+                      p:href="reportReconciliationView?methodToCall=get&amp;viewId=ReportReconciliationView&amp;pageId=AgedBalanceView"/>
+                <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerMainPage" p:actionLabel="General Ledger"/>
+            </list>
+        </property>
+    </bean>
+
 
     <bean id="Uif-KsaPageNavigation" parent="Uif-MenuNavigationGroup" abstract="true" scope="prototype">
         <property name="items">

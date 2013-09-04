@@ -49,19 +49,11 @@
                         </list>
                     </property>
                 </bean>
-                <bean parent="Uif-Page" p:id="AgedBalanceView" p:title="Generate Aged Balance List">
-                    <property name="headerText" value="File Upload"/>
-                    <property name="items">
-                        <list>
-                            <ref bean="agedTransactionDownloadFile"/>
-                        </list>
-                    </property>
-                </bean>
                 <bean parent="Uif-Page" p:id="AgeTransactionsView" p:title="Age All Transactions">
                     <property name="headerText" value="Age all transactions"/>
                     <property name="items">
                         <list>
-                            <ref bean="ageTransactionsSection"/>
+                            <ref bean="ageTransactionsUploadFile"/>
                         </list>
                     </property>
                 </bean>
@@ -138,7 +130,7 @@
         </property>
     </bean>
 
-    <bean id="ageTransactionsSection" parent="Uif-VerticalBoxSection"
+    <bean id="ageTransactionsUploadFile" parent="Uif-VerticalBoxSection"
           p:layoutManager.orientation="VERTICAL">
         <!--p:title="Upload a file for processing">-->
         <property name="disclosure.render" value="false"/>
@@ -152,16 +144,5 @@
     </bean>
 
 
-    <bean id="agedTransactionDownloadFile" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
-        <!--p:title="Upload a file for processing">-->
-        <property name="headerText" value="Download Aged Transactions Report"/>
-        <property name="items">
-            <list>
-                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="agedTransactions"
-                      p:actionLabel="Generate Aged Balance List" p:ajaxSubmit="false" p:disableBlocking="true">
-                </bean>
-            </list>
-        </property>
-    </bean>
 
 </beans>
