@@ -260,6 +260,7 @@
 
     <!--Completed Menu Items-->
     <bean id="completed_menu_items" parent="Uif-VerticalBoxSubSection" p:cssClasses="fl-container-150">
+        <property name="layoutManager.cssClasses" value="ks-plan-ContextMenu"/>
         <property name="hidden" value="true"/>
         <property name="items">
             <list>
@@ -512,6 +513,7 @@
         <property name="validationMessages.render" value="false"/>
         <property name="collectionObjectClass" value="org.kuali.student.myplan.plan.dataobject.PlannedTerm"/>
         <property name="layoutManager.lineGroupPrototype.header.render" value="true"/>
+        <property name="layoutManager.lineGroupPrototype.header.additionalCssClasses" value="ks-plan-TermsList-itemHeader"/>
         <property name="layoutManager.lineGroupPrototype.headerText" value="@{#line.qtrYear}"/>
         <property name="layoutManager.lineGroupPrototype.validationMessages.render" value="false"/>
         <property name="layoutManager.lineGroupPrototype.cssClasses">
@@ -534,9 +536,8 @@
         <property name="layoutManager.lineGroupPrototype.style"
                   value="width:@{588/T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTermHelper().getNumberOfTermsInAcademicYear()}px;
                   margin:0 @{20/T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTermHelper().getNumberOfTermsInAcademicYear()}px;"/>
-        <property name="layoutManager.lineGroupPrototype.header.upperGroup">
-            <bean parent="Uif-HorizontalBoxGroup">
-
+        <property name="layoutManager.lineGroupPrototype.header.lowerGroup">
+            <bean parent="Uif-HorizontalBoxGroup" p:additionalCssClasses="ks-plan-TermNote"> 
                 <property name="items">
                     <list>
                         <bean parent="menuTermOptionEdit">
@@ -550,7 +551,7 @@
                         <bean p:id="@{#line.atpId.replaceAll('\.','-')}termnote_message" parent="Uif-InputField">
                             <property name="propertyName" value="lookupResults[@{#index}].termNoteUI" />
                             <property name="control">
-                                <bean parent="Uif-TextAreaControl"
+                                <bean parent="Uif-TextAreaControl" p:cssClasses="ks-plan-TermNote-input"
                                       p:watermarkText="No Term Notes">
                                     <property name="disabled" value="true"/>
                                 </bean>
@@ -710,7 +711,7 @@
                       p:render="@{#line.courseCode ne null and #line.courseId ne null}">
                     <property name="group.validationMessages.render" value="false"/>
                     <property name="onClickScript"
-                              value="openMenu('@{#line.uuid}_completed','completed_menu_items','@{#line.atpId}',e,'.uif-collectionItem','fl-container-150 uif-boxLayoutHorizontalItem ks-plan-ContextMenu',{tail:{align:'top'},align:'top',position:'right'},false);"/>
+                              value="openMenu('@{#line.uuid}_completed','completed_menu_items','@{#line.atpId}',e,'.uif-collectionItem','fl-container-150 uif-boxLayoutHorizontalItem',{tail:{align:'top'},align:'top',position:'right'},false);"/>
                     <property name="dataAttributes">
                         <map>
                             <entry key="courseid" value="@{#line.courseId}"/>
@@ -1986,7 +1987,7 @@
     </bean>
 
     <bean id="menuTermOptionEdit" parent="Uif-ActionLink" p:actionLabel="Edit Term Note"
-          p:title="Edit Term Note">
+          p:title="Edit Term Note" p:cssClasses="ks-plan-TermNote-editLabel">
         <property name="actionScript" value="
             var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startTermNoteForm', atpId:jQuery(this).data('atpid'), pageId:'term_note_edit_page'};
             var popupStyle = {width:'300px', height:'16px'};

@@ -44,7 +44,8 @@
     </bean>
 
     <!--View Course Summary Dialog Box content -->
-    <bean id="course_summary_dialog_page" parent="KSAP-PopoverPage" p:id="course_summary_dialog_page" p:headerText="View Course Summary">
+    <bean id="course_summary_dialog_page" parent="KSAP-PopoverPage" p:id="course_summary_dialog_page" p:headerText="View Course Summary" p:additionalCssClasses="ks-plan-Popover ks-plan-CourseSummary">
+        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
         <property name="items">
             <list>
                 <bean parent="course_title_link"/>
@@ -510,21 +511,19 @@
 
     <!--Edit plan item Dialog Box content -->
     <bean id="term_note_edit_page" parent="KSAP-PopoverPage" p:id="term_note_edit_page"
-          p:headerText="Edit @{shortTerm} Term Note">
+          p:headerText="Edit @{shortTerm} Term Note" p:additionalCssClasses="ks-plan-Popover">
+        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
         <property name="items">
             <list>
-                <bean parent="Uif-Message"
-                      p:messageText="Edit @{shortTerm} Term Note"/>
                 <bean parent="planItemNote" p:id="termNote_@{atpId.replaceAll('\.','-')}" p:propertyName="fakeTermNote"
                       p:defaultValue="@{#form.atpId NE null ? #form.termNote : ''}">
                     <property name="label" value="Note for the term"/>
-
                 </bean>
-                <bean parent="KSAP-HorizontalBoxGroup">
+                <bean parent="KSAP-HorizontalBoxGroup" p:additionalCssClasses="ks-plan-Popover-footer">
                     <property name="items">
                         <list>
                             <bean p:id="editTermNote" parent="Uif-PrimaryActionButton-Small"
-                                  p:actionLabel="Save">
+                                  p:actionLabel="Save" p:additionalCssClasses="ks-Button ks-Button--primary">
                                 <property name="actionScript" value="
                                                 var newNote = jQuery('#termNote_@{atpId.replaceAll('\.','-')}_control').val();
                                                 var additionalFormData = {
@@ -553,11 +552,12 @@
 
 
 
-    <bean id="course_title_link" parent="Uif-Link" p:target="" p:style="width:280px; display:block;">
+    <bean id="course_title_link" parent="Uif-Link" p:target="">
         <property name="cssClasses">
             <list merge="true">
                 <value>fl-text-bold</value>
                 <value>myplan-text-wrap</value>
+                <value>ks-plan-CourseSummary-link</value>
             </list>
         </property>
         <property name="linkText"
@@ -571,30 +571,30 @@
     <!-- ################# Course Details Summary Bean ############################# -->
 
     <!-- Course details summary component used in both the popover and dialog box -->
-    <bean id="course_details_summary_info" parent="Uif-VerticalBoxGroup" p:style="margin:0px;">
+    <bean id="course_details_summary_info" parent="Uif-VerticalBoxGroup" p:cssClasses="ks-plan-CourseSummary-content">
         <property name="validationMessages.render" value="false"/>
         <property name="items">
             <list>
                 <ref bean="course_details_summary_data"/>
                 <bean parent="KSAP-SimpleInputField" p:propertyName="courseNote"
-                      p:defaultValue="@{#form.planItemId NE null ? #form.courseNote : ''}">
+                      p:defaultValue="@{#form.planItemId NE null ? #form.courseNote : ''}" p:additionalCssClasses="ks-plan-Note">
                     <property name="label" value="Note for course"/>
                     <property name="fieldLabel.render" value="true"/>
                     <property name="fieldLabel.cssClasses">
                         <list merge="true">
                             <value>myplan-text-normal</value>
+                            <value>ks-plan-Note-label</value>
                         </list>
                     </property>
                     <property name="labelPlacement" value="TOP"/>
-
                     <property name="control">
                         <bean parent="Uif-TextAreaControl"
-                              p:watermarkText="Enter a short note (500 characters max)" p:maxLength="500"
-                              p:style="resize:none; width:97%;">
+                              p:watermarkText="Enter a short note (500 characters max)" p:maxLength="500">
                             <property name="disabled" value="true"/>
                             <property name="cssClasses">
                                 <list merge="true">
                                     <value>ksap-characterCount</value>
+                                    <value>ks-plan-Note-input</value>
                                 </list>
                             </property>
                         </bean>
@@ -610,6 +610,7 @@
         <property name="cssClasses">
             <list merge="true">
                 <value>myplan-course-details</value>
+                <value>ks-plan-CourseSummary-contentDetails</value>
             </list>
         </property>
         <property name="items">
@@ -617,17 +618,18 @@
                 <!-- Scheduled Terms -->
                 <bean parent="Uif-DataField" p:label="Scheduled for"
                       p:propertyName="courseSummaryDetails.scheduledTermsNames"
-                      p:fieldLabel.cssClasses="fl-text-gray myplan-text-normal" p:labelPlacement="LEFT">
+                      p:fieldLabel.cssClasses="fl-text-gray myplan-text-normal ks-plan-CourseSummary-detailLabel" p:labelPlacement="LEFT">
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-data-list</value>
+                            <value>ks-plan-CourseSummary-detail</value>
                         </list>
                     </property>
                     <property name="render"
                               value="@{courseSummaryDetails.scheduledTerms.size() gt 0}"/>
                 </bean>
                 <bean parent="Uif-MessageField" p:label="Scheduled for"
-                      p:fieldLabel.cssClasses="fl-text-gray myplan-text-normal"
+                      p:fieldLabel.cssClasses="fl-text-gray myplan-text-normal ks-plan-CourseSummary-detailLabel"
                       p:render="@{courseSummaryDetails.scheduledTerms.size() eq 0}">
                     <property name="message">
                         <bean parent="Uif-Message" p:messageText="Not currently scheduled"/>
@@ -636,17 +638,18 @@
                 <!-- Last Offered -->
                 <bean parent="Uif-DataField" p:label="Last Offered" p:propertyName="courseSummaryDetails.lastOffered"
                       p:labelPlacement="LEFT">
-                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal"/>
+                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal ks-plan-CourseSummary-detailLabel"/>
                     <property name="render" value="@{courseSummaryDetails.lastOffered ne null and courseSummaryDetails.scheduledTerms.size() eq 0}"/>
                 </bean>
                 <!-- Projected Terms -->
                 <bean parent="Uif-DataField" p:label="Projected for" p:propertyName="courseSummaryDetails.termsOffered"
                       p:labelPlacement="LEFT" p:escapeHtmlInPropertyValue="false">
-                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal"/>
+                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal ks-plan-CourseSummary-detailLabel"/>
                     <property name="propertyEditor" ref="terms_formatter"/>
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-data-list</value>
+                            <value>ks-plan-CourseSummary-detail</value>
                         </list>
                     </property>
                     <property name="render"
@@ -656,12 +659,13 @@
                 <bean id="course_details_popup_requisites_testing" parent="Uif-DataField" p:label="Course Requisites"
                       p:propertyName="courseSummaryDetails.requisites"
                       p:labelPlacement="LEFT" p:escapeHtmlInPropertyValue="false">
-                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal"/>
+                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal ks-plan-CourseSummary-detailLabel"/>
                     <property name="propertyEditor" ref="data_list_formatter"/>
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-data-list</value>
                             <value>myplan-multiline-ellipsis</value>
+                            <value>ks-plan-CourseSummary-detail</value>
                         </list>
                     </property>
                 </bean>
@@ -675,7 +679,7 @@
         </property>
     </bean>
 
-    <bean id="course_details_summary_messages" parent="Uif-VerticalBoxGroup" p:style="margin:0px;">
+    <bean id="course_details_summary_messages" parent="Uif-VerticalBoxGroup" p:cssClasses="ks-plan-Popover-footer">
         <property name="validationMessages.render" value="false"/>
         <property name="items">
             <list>
@@ -801,7 +805,7 @@
 
     <!--  Add to plan button. Used contextually in course details popup actions -->
     <bean id="addToPlanButton" p:id="addToPlanButton" parent="Uif-PrimaryActionButton-Small" p:actionLabel="Add to Plan"
-          p:actionImagePlacement="RIGHT">
+          p:actionImagePlacement="RIGHT" p:cssClasses="ks-Button ks-Button--primary">
         <property name="actionScript"
                   value="fnPopoverSlider('add_planned_course_fields', 'course_popover_group', 'left');"/>
         <property name="actionImage">
@@ -817,7 +821,7 @@
 
     <!--  Add to saved courses. Used contextually in course details popup actions -->
     <bean id="addSavedCourseButton" p:id="addSavedCourseButton" parent="Uif-SecondaryActionButton-Small"
-          p:actionLabel="Bookmark Course">
+          p:actionLabel="Bookmark Course" p:cssClasses="ks-Button ks-Button--primary">
         <property name="onDocumentReadyScript"
                   value="jQuery('#addSavedCourseButton').subscribe('PLAN_ITEM_ADDED', function(data){
                       if (data.planItemType === 'wishlist') {
@@ -1540,29 +1544,30 @@
 
     <!-- Cancel button to close popover -->
     <bean id="closePopoverCancel" parent="Uif-SecondaryActionButton-Small" p:id="closePopoverCancel"
-          p:actionLabel="Cancel">
+          p:actionLabel="Cancel" p:additionalCssClasses="ks-Button">
         <property name="actionScript"
                   value="fnClosePopup();"/>
     </bean>
 
     <!-- Text input for plan item notes field -->
     <bean id="planItemNote" parent="KSAP-SimpleInputField" p:propertyName="fakeCourseNote"
-          p:defaultValue="@{#form.planItemId NE null ? #form.courseNote : ''}">
+          p:defaultValue="@{#form.planItemId NE null ? #form.courseNote : ''}" p:additionalCssClasses="ks-plan-Note">
         <property name="label" value="Note for course"/>
         <property name="fieldLabel.render" value="true"/>
         <property name="fieldLabel.cssClasses">
             <list merge="true">
                 <value>myplan-text-normal</value>
+                <value>ks-plan-Note-label</value>
             </list>
         </property>
         <property name="labelPlacement" value="TOP"/>
         <property name="control">
             <bean parent="Uif-TextAreaControl"
-                  p:watermarkText="Enter a short note (500 characters max)" p:maxLength="500"
-                  p:style="resize:none; width:97%">
+                  p:watermarkText="Enter a short note (500 characters max)" p:maxLength="500">
                 <property name="cssClasses">
                     <list merge="true">
                         <value>ksap-characterCount</value>
+                        <value>ks-plan-Note-input</value>
                     </list>
                 </property>
             </bean>
@@ -1573,6 +1578,7 @@
                 <property name="cssClasses">
                     <list merge="true">
                         <value>counter</value>
+                        <value>ks-plan-Note-counter</value>
                     </list>
                 </property>
             </bean>
