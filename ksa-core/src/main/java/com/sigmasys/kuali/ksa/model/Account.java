@@ -375,8 +375,9 @@ public abstract class Account implements Identifiable {
 
 
         PersonName personName = getDefaultPersonName();
+
         if(orgName != null) {
-            defaultNameBuilder.append(nvl(getOrgName().getName()));
+            defaultNameBuilder.append(nvl(orgName.getName()));
         }
 
         if(orgName != null && personName != null) {

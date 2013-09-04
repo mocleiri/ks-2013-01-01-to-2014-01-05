@@ -112,6 +112,13 @@ public class TransactionController extends GenericSearchController {
             return getUIFModelAndView(form);
         }
         form.setAccount(accountService.getFullAccount(userId));
+        // Just checking
+        try{
+            form.getAccount().getCompositeDefaultPersonName();
+        } catch(Throwable t) {
+            // If this actually happens then some other bad things are about to go wrong.
+            GlobalVariables.getMessageMap().putError(FILTER_TAG_FIELD, RiceKeyConstants.ERROR_CUSTOM, t.getLocalizedMessage());
+        }
 
         if ("ViewTransactions".equals(pageId) || "RollUpTransactions".equals(pageId) || "RunningBalanceTransactions".equals(pageId)) {
 
