@@ -68,17 +68,13 @@ public class PaymentPlanController extends GenericSearchController {
         return form;
     }
 
-    /**
-     * @param form
-     * @param request
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
     public ModelAndView get(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
 
         String pageId = request.getParameter("pageId");
 
-        if("ManageThirdPartyPage".equals(pageId)){
+        if ("ManageThirdPartyPage".equals(pageId)) {
             populateForm(form);
         }
 
@@ -89,16 +85,14 @@ public class PaymentPlanController extends GenericSearchController {
     public ModelAndView getResponsibleAccount(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
 
         String accountString = request.getParameter("actionParameters[accountId]");
-        String planString = request.getParameter("actionParameters[planId]");
 
-
-        if(accountString == null){
+        if (accountString == null) {
             accountString = form.getResponsibleAccount();
         }
 
         Account account = accountService.getFullAccount(accountString);
-        if(account instanceof ThirdPartyAccount){
-            form.setThirdPartyAccount((ThirdPartyAccount)account);
+        if (account instanceof ThirdPartyAccount) {
+            form.setThirdPartyAccount((ThirdPartyAccount) account);
             form.setResponsibleAccountMessage("");
         } else {
             form.setResponsibleAccountMessage(accountString + " is not a valid Third Party Account");
@@ -111,8 +105,8 @@ public class PaymentPlanController extends GenericSearchController {
     public ModelAndView filterThirdPartyAccount(@ModelAttribute("KualiForm") PaymentPlanForm form) {
         String accountString = form.getFilterThirdPartyAccount();
         Account account = accountService.getFullAccount(accountString);
-        if(account instanceof ThirdPartyAccount){
-            form.getFilterThirdPartyAccounts().add((ThirdPartyAccount)account);
+        if (account instanceof ThirdPartyAccount) {
+            form.getFilterThirdPartyAccounts().add((ThirdPartyAccount) account);
         } else {
             String errorMessage = accountString + " is not a valid Third Party Account";
             GlobalVariables.getMessageMap().putError(RESPONSIBLE_ACCOUNT_SUGGEST, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
@@ -131,8 +125,8 @@ public class PaymentPlanController extends GenericSearchController {
         List<ThirdPartyAccount> updatedAccounts = new ArrayList<ThirdPartyAccount>();
 
         // Don't remove while iterating through a list.
-        for(ThirdPartyAccount account : form.getFilterThirdPartyAccounts()) {
-            if(! account.getId().equals(accountString)) {
+        for (ThirdPartyAccount account : form.getFilterThirdPartyAccounts()) {
+            if (!account.getId().equals(accountString)) {
                 updatedAccounts.add(account);
             }
         }
@@ -151,7 +145,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         ThirdPartyPlan plan = thirdPartyTransferService.getThirdPartyPlan(planId);
 
-        if(plan != null){
+        if (plan != null) {
             form.getFilterThirdPartyPlans().add(plan);
         }
 
@@ -169,8 +163,8 @@ public class PaymentPlanController extends GenericSearchController {
         List<ThirdPartyPlan> updatedPlans = new ArrayList<ThirdPartyPlan>();
 
         // Don't remove while iterating through a list.
-        for(ThirdPartyPlan plan : form.getFilterThirdPartyPlans()) {
-            if(! plan.getId().equals(planId)) {
+        for (ThirdPartyPlan plan : form.getFilterThirdPartyPlans()) {
+            if (!plan.getId().equals(planId)) {
                 updatedPlans.add(plan);
             }
         }
@@ -189,35 +183,34 @@ public class PaymentPlanController extends GenericSearchController {
     }
 
 
-
     private void populateForm(PaymentPlanForm form) {
         List<ThirdPartyAccount> accounts = form.getFilterThirdPartyAccounts();
         List<ThirdPartyPlan> plans = form.getFilterThirdPartyPlans();
 
         List<ThirdPartyPlan> allPlans = new ArrayList<ThirdPartyPlan>();
 
-        if((accounts == null || accounts.size() == 0) && (plans == null || plans.size() == 0)){
+        if ((accounts == null || accounts.size() == 0) && (plans == null || plans.size() == 0)) {
             allPlans = thirdPartyTransferService.getThirdPartyPlans();
-        } else if(accounts == null || accounts.size() == 0) {
+        } else if (accounts == null || accounts.size() == 0) {
             allPlans = form.getFilterThirdPartyPlans();
         } else {
             // Accounts have something in them.  Plans might too.
             Set<String> users = new HashSet<String>();
-            for(ThirdPartyAccount account : accounts){
+            for (ThirdPartyAccount account : accounts) {
                 users.add(account.getId());
             }
 
             List<ThirdPartyPlan> accountPlans = thirdPartyTransferService.getThirdPartyPlans(users);
 
-            if(plans == null || plans.size() == 0){
+            if (plans == null || plans.size() == 0) {
                 allPlans = accountPlans;
             } else {
                 // Make sure that only the accounts that are also within the plans are displayed
 
-                for(ThirdPartyPlan plan : accountPlans){
+                for (ThirdPartyPlan plan : accountPlans) {
                     Long id = plan.getId();
-                    for(ThirdPartyPlan filteredPlan : plans) {
-                        if(filteredPlan.getId().equals(id)) {
+                    for (ThirdPartyPlan filteredPlan : plans) {
+                        if (filteredPlan.getId().equals(id)) {
                             allPlans.add(plan);
                             break;
                         }
@@ -228,11 +221,13 @@ public class PaymentPlanController extends GenericSearchController {
 
         List<ThirdPartyPlanModel> models = new ArrayList<ThirdPartyPlanModel>(allPlans.size());
 
-        for(ThirdPartyPlan plan : allPlans) {
+        for (ThirdPartyPlan plan : allPlans) {
+
             ThirdPartyPlanModel model = new ThirdPartyPlanModel();
             model.setParent(plan);
+
             ThirdPartyAccount account = plan.getThirdPartyAccount();
-            if(account == null){
+            if (account == null) {
                 logger.error("Plan: " + plan.getCode() + " has a null third party account");
             } else {
                 account.getCompositeDefaultPersonName();
@@ -247,64 +242,64 @@ public class PaymentPlanController extends GenericSearchController {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, params="methodToCall=insertThirdParty")
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insertThirdParty")
     public ModelAndView insertThirdParty(@ModelAttribute("KualiForm") PaymentPlanForm form) {
 
         ThirdPartyPlan plan = form.getNewThirdPartyPlan();
-        if(plan == null){
+        if (plan == null) {
             plan = new ThirdPartyPlan();
         }
 
-        if(plan.getCode() == null){
+        if (plan.getCode() == null) {
             plan.setCode(form.getCode());
         }
 
-        if(plan.getName() == null){
+        if (plan.getName() == null) {
             plan.setName(form.getName());
         }
 
-        if(plan.getDescription() == null){
+        if (plan.getDescription() == null) {
             plan.setDescription(form.getDescription());
         }
 
-        if(plan.getOpenPeriodStartDate() == null){
+        if (plan.getOpenPeriodStartDate() == null) {
             plan.setOpenPeriodStartDate(form.getOpenPeriodStartDate());
         }
 
-        if(plan.getOpenPeriodEndDate() == null){
+        if (plan.getOpenPeriodEndDate() == null) {
             plan.setOpenPeriodEndDate(form.getOpenPeriodEndDate());
         }
 
-        if(plan.getChargePeriodStartDate() == null){
+        if (plan.getChargePeriodStartDate() == null) {
             plan.setChargePeriodStartDate(form.getChargePeriodStartDate());
         }
 
-        if(plan.getChargePeriodEndDate() == null){
+        if (plan.getChargePeriodEndDate() == null) {
             plan.setChargePeriodEndDate(form.getChargePeriodEndDate());
         }
 
-        if(plan.getMaxAmount() == null){
+        if (plan.getMaxAmount() == null) {
             plan.setMaxAmount(form.getMaxAmount());
         }
 
 
         boolean errors = false;
 
-        if(form.getThirdPartyAccount() == null  || form.getThirdPartyAccount().getId() == null){
+        if (form.getThirdPartyAccount() == null || form.getThirdPartyAccount().getId() == null) {
             String errorMessage = "Invalid third party account";
             GlobalVariables.getMessageMap().putError(RESPONSIBLE_ACCOUNT_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             errors = true;
         }
 
         String accountId = null;
-        if(plan.getThirdPartyAccount() != null){
+        if (plan.getThirdPartyAccount() != null) {
             accountId = plan.getThirdPartyAccount().getId();
-        } else if(form.getThirdPartyAccount() != null){
+        } else if (form.getThirdPartyAccount() != null) {
             accountId = form.getThirdPartyAccount().getId();
         }
 
         Long transferTypeId = null;
-        if(form.getTransferType() != null) {
+        if (form.getTransferType() != null) {
             transferTypeId = Long.parseLong(form.getTransferType());
         } else {
             String errorMessage = "Transfer Type is required";
@@ -312,15 +307,15 @@ public class PaymentPlanController extends GenericSearchController {
             errors = true;
         }
 
-        if(errors){
+        if (errors) {
             return getUIFModelAndView(form);
         }
 
         plan = thirdPartyTransferService.createThirdPartyPlan(plan.getCode(), plan.getName(), plan.getDescription(), transferTypeId, accountId,
-                                          plan.getMaxAmount(), plan.getEffectiveDate(), plan.getRecognitionDate(), plan.getOpenPeriodStartDate(), plan.getOpenPeriodEndDate(),
-                                            plan.getChargePeriodStartDate(), plan.getChargePeriodEndDate());
+                plan.getMaxAmount(), plan.getEffectiveDate(), plan.getRecognitionDate(), plan.getOpenPeriodStartDate(), plan.getOpenPeriodEndDate(),
+                plan.getChargePeriodStartDate(), plan.getChargePeriodEndDate());
 
-        for(ThirdPartyAllowableCharge charge : form.getThirdPartyAllowableCharges()) {
+        for (ThirdPartyAllowableCharge charge : form.getThirdPartyAllowableCharges()) {
             thirdPartyTransferService.createThirdPartyAllowableCharge(plan.getId(), charge.getTransactionTypeMask(),
                     charge.getMaxAmount(), charge.getMaxPercentage(), charge.getPriority(),
                     charge.getDistributionPlan());

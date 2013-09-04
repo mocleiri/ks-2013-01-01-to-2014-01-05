@@ -60,7 +60,6 @@ public class QuickViewController extends GenericSearchController {
         if (userId != null) {
 
             Account account = accountService.getFullAccount(userId);
-
             if (account == null) {
                 String errMsg = "Cannot find Account by ID = " + userId;
                 logger.error(errMsg);
@@ -68,20 +67,11 @@ public class QuickViewController extends GenericSearchController {
             }
 
             form.setAccount(account);
-        } /*else {
-           String errMsg = "'userId' request parameter cannot be null";
-           logger.error(errMsg);
-           throw new IllegalStateException(errMsg);
-        }*/
+        }
 
         return form;
     }
 
-    /**
-     * @param form
-     * @param request
-     * @return
-     */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
     public ModelAndView get(@ModelAttribute("KualiForm") QuickViewForm form, HttpServletRequest request) {
 
@@ -92,6 +82,7 @@ public class QuickViewController extends GenericSearchController {
         logger.info("View: " + viewId + " User: " + userId);
 
         if ("QuickView".equals(viewId)) {
+
             if (!accountService.accountExists(userId)) {
                 throw new IllegalArgumentException("Unknown account for userid '" + userId + "'");
             }
@@ -121,18 +112,12 @@ public class QuickViewController extends GenericSearchController {
                 memo.setAccessLevel(new InformationAccessLevel());
 
                 form.setMemoModel(memo);
-
             }
         }
 
         return getUIFModelAndView(form);
     }
 
-    /**
-     * @param form
-     * @param request
-     * @return
-     */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=refresh")
     public ModelAndView refresh(@ModelAttribute("KualiForm") QuickViewForm form, HttpServletRequest request) {
 
@@ -198,17 +183,10 @@ public class QuickViewController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
-    /**
-     * @param form
-     * @param request
-     * @return
-     */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insertMemo")
     public ModelAndView insertMemo(@ModelAttribute("KualiForm") QuickViewForm form, HttpServletRequest request) {
-        // do insert stuff...
 
         String viewId = request.getParameter("viewId");
-        // example user1
         String userId = request.getParameter("actionParameters[userId]");
 
         logger.info("View: " + viewId + " User: " + userId);
@@ -387,13 +365,16 @@ public class QuickViewController extends GenericSearchController {
         List<InformationModel> models = new ArrayList<InformationModel>();
 
         try {
+
             List<AppliedHoldInfo> holds = holdService.getActiveAppliedHoldsByPerson(userId, context);
 
             for (AppliedHoldInfo hold : holds) {
+
                 Information info = new Information();
 
                 info.setEffectiveDate(hold.getEffectiveDate());
                 info.setText(hold.getDescr().getPlain());
+
                 InformationModel model = new InformationModel(info);
                 models.add(model);
             }

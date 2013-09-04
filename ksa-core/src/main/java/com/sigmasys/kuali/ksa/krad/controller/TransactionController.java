@@ -65,10 +65,10 @@ public class TransactionController extends GenericSearchController {
         String end = configService.getParameter(Constants.KSA_TRANSACTION_DEFAULT_END_DATE);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        try{
+        try {
             form.setStartingDate(sdf.parse(start));
             form.setEndingDate(sdf.parse(end));
-        } catch(Exception e){
+        } catch (Exception e) {
             //log it but no big deal, the code will still work
             logger.error("Error parsing configuration parameters for transaction start and end dates.", e);
         }
@@ -76,11 +76,6 @@ public class TransactionController extends GenericSearchController {
         return form;
     }
 
-
-    /**
-     * @param form
-     * @return
-     */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=save")
     public ModelAndView save(@ModelAttribute("KualiForm") TransactionForm form) {
         auditableEntityService.persistAuditableEntity(form.getCurrency());
@@ -96,7 +91,6 @@ public class TransactionController extends GenericSearchController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView get(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
-        //long debugStart = System.currentTimeMillis();
 
         // just for the transactions by person page
         String pageId = request.getParameter("pageId");
@@ -111,14 +105,8 @@ public class TransactionController extends GenericSearchController {
             form.setStatusMessage("No userId passed to method");
             return getUIFModelAndView(form);
         }
+
         form.setAccount(accountService.getFullAccount(userId));
-        // Just checking
-        try{
-            form.getAccount().getCompositeDefaultPersonName();
-        } catch(Throwable t) {
-            // If this actually happens then some other bad things are about to go wrong.
-            GlobalVariables.getMessageMap().putError(FILTER_TAG_FIELD, RiceKeyConstants.ERROR_CUSTOM, t.getLocalizedMessage());
-        }
 
         if ("ViewTransactions".equals(pageId) || "RollUpTransactions".equals(pageId) || "RunningBalanceTransactions".equals(pageId)) {
 
@@ -138,24 +126,21 @@ public class TransactionController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
-    /**
-     * @param form
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterTags")
     public ModelAndView filterTags(@ModelAttribute("KualiForm") TransactionForm form) {
         String newTag = form.getNewTag();
 
         Tag tag = auditableEntityService.getAuditableEntity(newTag, Tag.class);
 
-        if(tag == null) {
+        if (tag == null) {
             List<Tag> searchTags = auditableEntityService.getAuditableEntitiesByNamePattern(newTag, Tag.class);
 
-            if(searchTags.size() == 0) {
+            if (searchTags.size() == 0) {
                 String errorMessage = "'" + newTag + "' is not a valid tag";
                 GlobalVariables.getMessageMap().putError(FILTER_TAG_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
                 return getUIFModelAndView(form);
-            } else if(searchTags.size() > 1) {
+            } else if (searchTags.size() > 1) {
                 String errorMessage = "'" + newTag + "' matches multiple tags, please select one tag at a time to add";
                 GlobalVariables.getMessageMap().putError(FILTER_TAG_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
                 return getUIFModelAndView(form);
@@ -163,7 +148,6 @@ public class TransactionController extends GenericSearchController {
 
             // There can be only one
             tag = searchTags.get(0);
-
         }
 
         List<Tag> tags = form.getFilterTags();
@@ -180,10 +164,7 @@ public class TransactionController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
-    /**
-     * @param form
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeTag")
     public ModelAndView removeTag(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
@@ -209,10 +190,7 @@ public class TransactionController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
-    /**
-     * @param form
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeTransactionTag")
     public ModelAndView removeTransactionTag(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
         String tagString = request.getParameter("actionParameters[tagId]");
@@ -239,10 +217,7 @@ public class TransactionController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
-    /**
-     * @param form
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=addTransactionTag")
     public ModelAndView addTransactionTag(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
         String transactionIdString = request.getParameter("actionParameters[currentParent]");
@@ -275,6 +250,7 @@ public class TransactionController extends GenericSearchController {
     }
 
     private void populateForm(TransactionForm form) {
+
         Account act = form.getAccount();
         String userId = "";
         if (act != null) {
@@ -316,7 +292,7 @@ public class TransactionController extends GenericSearchController {
 
         List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
         for (Transaction t : transactions) {
-            if(!showInternal && t.isInternal()){
+            if (!showInternal && t.isInternal()) {
                 continue;
             }
 
@@ -359,10 +335,12 @@ public class TransactionController extends GenericSearchController {
         if (startDate == null) {
             form.setStartingDate(actualStartDate);
         }
+
         if (endDate == null) {
             form.setEndingDate(actualEndDate);
         }
-        this.populateRollups(form, models);
+
+        populateRollups(form, models);
     }
 
 
@@ -426,7 +404,6 @@ public class TransactionController extends GenericSearchController {
             form.setMessage(errorMessage);
 
             return getUIFModelAndView(form);
-
         }
 
 
@@ -434,14 +411,12 @@ public class TransactionController extends GenericSearchController {
         // it is a payment and get the amount (if any)
 
         BigDecimal amount = null;
-        Payment payment = null;
         TransactionModel model = null;
 
         for (TransactionModel t : form.getAllTransactions()) {
             if (t.getParentTransaction().getId().equals(transactionId)) {
                 model = t;
-                if (t.getTransactionTypeValue().equals(TransactionTypeValue.PAYMENT)) {
-                    payment = (Payment) t.getParentTransaction();
+                if (t.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
                     amount = t.getRefundAmount();
                 } else {
                     // error here, Refunds must occur on payments
@@ -452,14 +427,17 @@ public class TransactionController extends GenericSearchController {
                 }
             }
         }
+
         if (model == null) {
             // The row isn't in the collection at all.  Something major happened.
             errorMessage = "Invalid Transaction ID";
             GlobalVariables.getMessageMap().putError("TransactionView", RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
         }
+
         try {
-            Refund refund = refundService.checkForRefund(transactionId, amount);
+
+            refundService.checkForRefund(transactionId, amount);
             String success = "Refund saved";
             //GlobalVariables.getMessageMap().putInfo("refundLightbox", RiceKeyConstants.ERROR_CUSTOM, success);
             model.setMessage(success);
@@ -492,6 +470,7 @@ public class TransactionController extends GenericSearchController {
         String errorMessage = "";
         Long transactionId;
         Long allocationId;
+
         try {
             transactionId = Long.parseLong(transactionIdString);
             allocationId = Long.parseLong(allocationIdString);
@@ -526,6 +505,7 @@ public class TransactionController extends GenericSearchController {
             props.put("pageId", "ViewTransactions");
             props.put("viewId", "TransactionView");
         }
+
         props.put("methodToCall", "get");
         props.put("userId", form.getAccount().getId());
 
@@ -615,7 +595,7 @@ public class TransactionController extends GenericSearchController {
                 if (amount != null && (amount.compareTo(BigDecimal.ZERO) > 0)) {
                     try {
                         transactionService.createLockedAllocation(parent.getId(), model.getParentTransaction().getId(), amount);
-                    } catch(IllegalStateException e) {
+                    } catch (IllegalStateException e) {
                         logger.error("Total amount of " + total.toString() + " is greater than the payment amount of " + parent.getAmount() + ".  IllegalStateException: " + e.getMessage());
                         GlobalVariables.getMessageMap().putError(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
                     }
@@ -623,8 +603,8 @@ public class TransactionController extends GenericSearchController {
             }
 
             String userId = form.getAccount().getId();
-//            paymentService.paymentApplication(userId);
-            List<TransactionModel> models = this.getPossibleAllocations(userId, parent);
+
+            List<TransactionModel> models = getPossibleAllocations(userId, parent);
             form.setCurrrentTransactionAllocations(models);
 
             Transaction t = transactionService.getTransaction(parent.getId());
@@ -632,7 +612,6 @@ public class TransactionController extends GenericSearchController {
 
             String statusMsg = "Transaction successfully allocated";
             GlobalVariables.getMessageMap().putInfo(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, statusMsg);
-
         }
 
         return getUIFModelAndView(form);
@@ -670,8 +649,11 @@ public class TransactionController extends GenericSearchController {
 
         // Assuming that transactions are already passed into this method sorted in the proper way for the running balance.
         for (TransactionModel t : transactions) {
+
             Transaction parentTransaction = t.getParentTransaction();
+
             BigDecimal amount = parentTransaction.getAmount();
+
             BigDecimal allocated = parentTransaction.getAllocatedAmount();
             if (allocated == null) {
                 allocated = BigDecimal.ZERO;
@@ -697,10 +679,6 @@ public class TransactionController extends GenericSearchController {
                 form.addAllocatedTotal(locked);
                 form.addUnallocatedTotal(unallocated);
             } else {
-
-                // TODO: ??????
-                //parentTransaction.setAllocatedAmount(BigDecimal.ZERO.subtract(allocated));
-                //parentTransaction.setLockedAllocatedAmount(BigDecimal.ZERO.subtract(locked));
 
                 form.addPaymentTotal(amount);
                 form.subtractAllocatedTotal(allocated);
@@ -744,6 +722,7 @@ public class TransactionController extends GenericSearchController {
             }
 
         }
+
         form.setEndingBalance(balance);
 
         if (nonRolledUp != null) {
@@ -768,7 +747,8 @@ public class TransactionController extends GenericSearchController {
 
         List<Transaction> transactions = transactionService.getTransactions(userId);
 
-        List<TransactionModel> models = new ArrayList<TransactionModel>(transactions.size());
+        List<TransactionModel> models = new LinkedList<TransactionModel>();
+
         for (Transaction t : transactions) {
             if (transactionService.canPay(transaction, t) && (t.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0)) {
                 TransactionModel m = new TransactionModel(t);
@@ -790,7 +770,7 @@ public class TransactionController extends GenericSearchController {
         try {
             List<AppliedHoldInfo> holds = holdService.getActiveAppliedHoldsByPerson(userId, context);
 
-            for(AppliedHoldInfo hold : holds) {
+            for (AppliedHoldInfo hold : holds) {
                 Information info = new Information();
 
                 info.setEffectiveDate(hold.getEffectiveDate());
