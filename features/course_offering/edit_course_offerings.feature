@@ -40,16 +40,19 @@ Feature: WC.Edit Course Offerings
     And I change the delivery format options
     Then I can submit and the course offering is updated
 
+  #KSENROLL-9294
   Scenario: Edit an existing course offering and add a delivery format line
     Given I edit a course offering with multiple delivery format types
     And I add a delivery format option
     Then I can submit and the delivery formats are updated
 
+  #KSENROLL-9294
   Scenario: Edit an existing course offering and modify a delivery format line
     Given I edit a course offering with multiple delivery format types
     And I modify a delivery format option
     Then I can submit and the modified delivery formats are updated
 
+  #KSENROLL-9294
   Scenario: Edit an existing course offering and delete a delivery format line
     Given I edit a course offering with multiple delivery format types
     And I add a delivery format option
