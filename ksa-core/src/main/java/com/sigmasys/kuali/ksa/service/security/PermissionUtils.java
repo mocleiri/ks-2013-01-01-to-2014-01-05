@@ -4,9 +4,12 @@ import com.sigmasys.kuali.ksa.exception.PermissionDeniedException;
 import com.sigmasys.kuali.ksa.model.Allocation;
 import com.sigmasys.kuali.ksa.model.Tag;
 import com.sigmasys.kuali.ksa.model.security.Permission;
+import com.sigmasys.kuali.ksa.service.AccountBlockingService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
+
+import java.util.Map;
 
 /**
  * KSA Permission utility-methods
@@ -17,6 +20,7 @@ public class PermissionUtils {
 
     private static UserSessionManager userSessionManager;
     private static AccessControlService acService;
+    private static AccountBlockingService accountBlockingService;
 
     private PermissionUtils() {
     }
@@ -35,6 +39,17 @@ public class PermissionUtils {
         return acService;
     }
 
+    private static AccountBlockingService getAccountBlockingService() {
+        if (accountBlockingService == null) {
+            accountBlockingService = ContextUtils.getBean(AccountBlockingService.class);
+        }
+        return accountBlockingService;
+    }
+
+    private static String getCurrentUserId() {
+        return getUserSessionManager().getUserId(RequestUtils.getThreadRequest());
+    }
+
     public static boolean hasPermission(Permission permission) {
         if (permission == null) {
             String userId = getUserSessionManager().getUserId(RequestUtils.getThreadRequest());
@@ -44,7 +59,7 @@ public class PermissionUtils {
     }
 
     public static void checkPermission(Permission permission) {
-        checkPermission(permission, null);
+        checkPermission(permission, (Permission) null);
     }
 
     public static void checkPermissions(Permission... permissions) {
@@ -55,6 +70,11 @@ public class PermissionUtils {
         for (Permission permission : permissions) {
             checkPermission(permission, target);
         }
+    }
+
+    public static void checkPermission(Permission permission, Map<String, Object> attributes) {
+        checkPermission(permission);
+        getAccountBlockingService().checkBlock(getCurrentUserId(), permission, attributes);
     }
 
     public static void checkPermission(Permission permission, Object target) {
@@ -101,7 +121,7 @@ public class PermissionUtils {
 
         if (throwException) {
 
-            String userId = getUserSessionManager().getUserId(RequestUtils.getThreadRequest());
+            String userId = getCurrentUserId();
 
             // TODO: ugly temporary fix for KSA permissions - please remove it (Michael)
             if ("admin".equalsIgnoreCase(userId)) {
