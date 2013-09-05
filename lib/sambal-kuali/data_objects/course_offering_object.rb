@@ -502,21 +502,34 @@ class CourseOffering
 
   # checks to see if course offering specified state is present, otherwise creates a new course offering
   # @example
-  #  @course_offering.check_course_in_status
-  # updates the course code
+  #  @course_offering.check_course_in_status(opts)
+  # updates the @course instance variable
   #
-  # @param co_status [String] "Offered", "Draft"
-  def check_course_in_status(co_status)
+  # @param opts :co_status =>  "Offered", "Draft" ... [String]
+  #             :select_co => true/false
+  def check_course_in_status(opts)
+
+    defaults = {
+        :select_co => false
+    }
+
+    options = defaults.merge(opts)
+
     search_by_subjectcode
     on ManageCourseOfferingList do |page|
-      existing_co = page.select_co_by_status(co_status)
+      existing_co = page.select_co_by_status(options[:co_status])
       if existing_co != nil
         @course = existing_co
       else
         @course = create_co_copy(@course, @term)
-        if co_status == OFFERED_STATUS or co_status == PLANNED_STATUS
+        if options[:co_status] == OFFERED_STATUS or options[:co_status] == PLANNED_STATUS
           approve_co
         end
+      end
+      if options[:select_co] then
+        page.select_co(@course)
+      else
+        page.deselect_co(@course)
       end
     end
   end
@@ -525,22 +538,34 @@ class CourseOffering
   # work in progress
   # checks to see if an activity offering in the specified state is present, otherwise creates a new activity offering
   # @example
-  #  @course_offering.check_activity_offering_in_status
-  # updates the course code
+  #  @course_offering.check_activity_offering_in_status(opts)
   #
-  # @param co_status [String] "Offered", "Draft", "Approved"
-  def check_activity_offering_in_status(ao_status)
+  #
+  # @param :ao_status =>  [String] "Offered", "Draft", "Approved"
+  #         :select_ao => true/false
+  def check_activity_offering_in_status(opts)
+
+    defaults = {
+        :select_ao => false
+    }
+
+    options = defaults.merge(opts)
+
     manage_and_init
-    ao_code = ""
+    ao_obj = make ActivityOffering, :parent_course_offering => self
     on ManageCourseOfferings do |page|
-      ao_code = page.select_ao_by_status(ao_status)
-      if ao_code == nil
-        ao_obj = make ActivityOffering, :parent_course_offering => self
+      ao_obj.code = page.select_ao_by_status(options[:ao_status])
+      if ao_obj.code.nil?
         ao_code = ao_obj.create_simple
         ao_obj.code = ao_code[0]
-        if ao_status == ActivityOffering::OFFERED_STATUS
+        if options[:ao_status] == ActivityOffering::OFFERED_STATUS
           approve_ao :ao_obj => ao_obj
         end
+      end
+      if options[:select_ao] then
+        page.select_ao(ao_obj.code)
+      else
+        page.deselect_ao(ao_obj.code)
       end
     end
   end

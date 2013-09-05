@@ -159,7 +159,7 @@ end
 
 Then /^I have access to approve course offerings for scheduling$/ do
   on ManageCourseOfferingList do |page|
-    @course_offering.check_course_in_status(CourseOffering::DRAFT_STATUS)
+    @course_offering.check_course_in_status(:co_status => CourseOffering::DRAFT_STATUS, :select_co => true )
     page.approve_course_offering_button.enabled?.should be_true
     page.deselect_cos([@course_offering.course])
   end
@@ -411,14 +411,14 @@ end
 When /^there is an? "([^"]*)" course offering in my admin org/ do |co_status|
   step "I am logged in as a Schedule Coordinator"
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
-  @course_offering.check_course_in_status(co_status)
+  @course_offering.check_course_in_status(:co_status => co_status)
   step "I am logged in as a Department Schedule Coordinator"
 end
 
 When /^there is a "([^"]*)" course offering not in my admin org/ do |co_status|
   step "I am logged in as a Schedule Coordinator"
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "CHEM612"
-  @course_offering.check_course_in_status(co_status)
+  @course_offering.check_course_in_status(:co_status => co_status)
   step "I am logged in as a Department Schedule Coordinator"
 end
 
@@ -426,11 +426,11 @@ end
 When /^there is an? "([^"]*)" course offering present/ do |co_status|
   step "I am logged in as a Schedule Coordinator"
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
-  @course_offering.check_course_in_status(co_status)
+  @course_offering.check_course_in_status(:co_status => co_status)
 end
 
 When /^there is an activity in "([^"]*)" status/ do |ao_status|
-  @course_offering.check_activity_offering_in_status(ao_status)
+  @course_offering.check_activity_offering_in_status(:ao_status => ao_status)
 end
 
 # About "CL 1", probably should not hard-code, but how to get the private name?
