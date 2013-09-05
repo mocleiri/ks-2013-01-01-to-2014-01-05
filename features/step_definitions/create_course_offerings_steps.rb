@@ -1,10 +1,10 @@
 When /^I create a Course Offering with "([^"]*)" delivery Formats$/ do |format_type|
   delivery_format_list = []
   if format_type == "selected lecture"
-    delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_driver => "Lecture")
+    delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture")
   else
-    delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_driver => "Lecture")
-    delivery_format_list << (make DeliveryFormat, :format => "Discussion/Lecture", :grade_format => "Course Offering", :final_exam_driver => "Lecture")
+    delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture")
+    delivery_format_list << (make DeliveryFormat, :format => "Discussion/Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture")
   end
   @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "ENGL222", :delivery_format_list => delivery_format_list
 end
@@ -37,7 +37,7 @@ end
 
 And /^I create a Course Offering from catalog with Activity Offerings assigned to subterms$/ do
   delivery_format_list = []
-  delivery_format_list << (make DeliveryFormat, :format => "Lab", :grade_format => "Lab", :final_exam_driver => "Lab")
+  delivery_format_list << (make DeliveryFormat, :format => "Lab", :grade_format => "Lab", :final_exam_activity => "Lab")
 
   @course_offering = create CourseOffering, :term=> @term.term_code,
                             :course => "CHEM132",
@@ -64,7 +64,7 @@ end
 
 And /^I create a Course Offering from catalog with Activity Offerings assigned to subterms in my admin org$/ do
   delivery_format_list = []
-  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_driver => "Lecture")
+  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture")
 
   @course_offering = create CourseOffering, :term=> @term.term_code,
                             :course => "ENGL211",
@@ -87,7 +87,7 @@ end
 
 And /^I create a Course Offering from catalog with Activity Offerings$/ do
   delivery_format_list = []
-  delivery_format_list << (make DeliveryFormat, :format => "Lab", :grade_format => "Lab", :final_exam_driver => "Lab")
+  delivery_format_list << (make DeliveryFormat, :format => "Lab", :grade_format => "Lab", :final_exam_activity => "Lab")
 
   @course_offering = create CourseOffering, :term=> @term.term_code,
                             :course => "CHEM132",

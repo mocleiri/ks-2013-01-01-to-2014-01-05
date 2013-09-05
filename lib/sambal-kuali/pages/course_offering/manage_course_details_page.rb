@@ -16,7 +16,7 @@ class ManageCourseDetails < BasePage
   value(:grading_options) { |b| b.frm.div(data_label: "Grading Options").span(index: 0).text }
   value(:registration_options) { |b| b.frm.div(data_label: "Student Registration Options").span(index: 0).text }
   value(:final_exam_type) { |b| b.frm.div(data_label: "Final Exam Type").span(index: 0).text }
-  value(:waited_list) { |b| b.frm.div(data_label: "Wait List").span(index: 0).text }
+  value(:waited_list) { |b| b.frm.div(data_label: "Waitlists").span(index: 0).text }
   value(:honors_flag) { |b| b.frm.div(data_label: "Honors Flag").span(index: 0).text }
   element(:close_button_element) { |b| b.frm.button(text: "Close")}
   action(:close) { |b| b.close_button_element.click;b.loading.wait_while_present}
@@ -34,7 +34,7 @@ class ManageCourseDetails < BasePage
     delivery_format_row(format).cells[GRADE_ROSTER_LEVEL_COLUMN].text
   end
 
-  def get_final_exam_driver  format
+  def get_final_exam_activity  format
     delivery_format_row(format).cells[FINAL_EXAM_COLUMN].text
   end
 

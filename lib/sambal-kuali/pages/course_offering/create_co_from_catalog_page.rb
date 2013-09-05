@@ -45,13 +45,14 @@ class CreateCOFromCatalog < BasePage
   element(:delivery_formats_table) { |b| b.frm.div(id: "KS-CourseOffering-FormatOfferingSubSection").table() }
   FORMAT_COLUMN = 0
   GRADE_ROSTER_LEVEL_COLUMN = 1
-  FINAL_EXAM_COLUMN = 2
+  FINAL_EXAM_DRIVER_COLUMN = 2
+  FINAL_EXAM_ACTIVITY_COLUMN = 3
   ACTIONS_COLUMN = 5
 
   #these 3 will work only for first Delivery Format
   element(:format_select) {|b| b.delivery_formats_table.rows[1].cells[FORMAT_COLUMN].select }
   element(:grade_roster_level_select) {|b| b.delivery_formats_table.rows[1].cells[GRADE_ROSTER_LEVEL_COLUMN].select }
-  element(:final_exam_driver_select)  {|b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_COLUMN].select }
+  element(:final_exam_activity_select)  {|b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_ACTIVITY_COLUMN].select }
   element(:add_format_btn) { |b| b.frm.button(text: "Add Format")}
   action(:add_format) { |b| b.add_format_btn.click; b.loading.wait_while_present }
   action(:delete_format_btn) {|b| b.frm.button(id: "KS-CourseOffering-FormatOfferingSubSection_del_line0") }
@@ -72,19 +73,22 @@ class CreateCOFromCatalog < BasePage
     end
   end
 
-  def target_final_exam_driver_select(row, final_exam_driver)
-    if delivery_formats_table.rows[row].cells[FINAL_EXAM_COLUMN].select.include? final_exam_driver
-      delivery_formats_table.rows[row].cells[FINAL_EXAM_COLUMN].select.select final_exam_driver
+  def target_final_exam_activity_select(row, final_exam_activity)
+    if delivery_formats_table.rows[row].cells[FINAL_EXAM_ACTIVITY_COLUMN].select.include? final_exam_activity
+      delivery_formats_table.rows[row].cells[FINAL_EXAM_ACTIVITY_COLUMN].select.select final_exam_activity
     else
-      raise "Option #{final_exam_driver} not in final exam select"
+      raise "Option #{final_exam_activity} not in final exam select"
     end
   end
 
   def add_random_delivery_format
     begin
-      selected_options = {:del_format => select_random_option(format_select), :grade_format => select_random_option(grade_roster_level_select), :final_exam_driver => select_random_option(final_exam_driver_select)}
+      selected_options = {:del_format => select_random_option(format_select),
+                          :grade_format => select_random_option(grade_roster_level_select),
+                          :final_exam_activity => select_random_option(final_exam_activity_select)}
     rescue
-      selected_options = {:del_format => select_random_option(format_select), :grade_format => select_random_option(grade_roster_level_select)}
+      selected_options = {:del_format => select_random_option(format_select),
+                          :grade_format => select_random_option(grade_roster_level_select)}
     end
 
     #add_format
@@ -95,8 +99,8 @@ class CreateCOFromCatalog < BasePage
     delivery_format_row(format).cells[GRADE_ROSTER_LEVEL_COLUMN].select().select(format)
   end
 
-  def select_final_exam_driver(format)
-    delivery_format_row(format).cells[FINAL_EXAM_COLUMN].select().select(format)
+  def select_final_exam_activity(format)
+    delivery_format_row(format).cells[FINAL_EXAM_ACTIVITY_COLUMN].select().select(format)
   end
 
   def delivery_format_row(format)

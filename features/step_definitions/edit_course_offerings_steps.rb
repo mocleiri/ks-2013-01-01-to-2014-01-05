@@ -112,7 +112,7 @@ And /^I add a delivery format option$/ do
     delivery_format = make DeliveryFormat,
                            :format => "Lecture",
                            :grade_format => "Lecture",
-                           :final_exam_driver => "Lecture"
+                           :final_exam_activity => "Lecture"
     page.select_delivery_format(2,delivery_format)
   end
 end
@@ -123,7 +123,7 @@ And /^I add a delivery format option of Discussion Lecture$/ do
     delivery_format = make DeliveryFormat,
                            :format => "Discussion/Lecture",
                            :grade_format => "Course Offering",
-                           :final_exam_driver => "Discussion"
+                           :final_exam_activity => "Discussion"
     page.select_delivery_format(2,delivery_format)
   end
 end
@@ -132,7 +132,7 @@ And /^I modify a delivery format option$/ do
   delivery_format = make DeliveryFormat,
                          :format => "Lecture",
                          :grade_format => "Lecture",
-                         :final_exam_driver => "Lecture"
+                         :final_exam_activity => "Lecture"
   on CourseOfferingEdit do |page|
     page.select_delivery_format(1, delivery_format, false)
   end
@@ -191,7 +191,7 @@ Then /^I can submit and the delivery formats are updated$/ do
        on ManageCourseDetails do  |page|
          page.get_delivery_format("Lecture Only").should == "Lecture Only"
          page.get_grade_roster_level("Lecture Only").should == "Lecture"
-         page.get_final_exam_driver("Lecture Only").should == "Lecture"
+         page.get_final_exam_activity("Lecture Only").should == "Lecture"
   end
 end
 
@@ -205,7 +205,7 @@ Then /^I can submit and the modified delivery formats are updated$/ do
        on ManageCourseDetails do  |page|
          page.get_delivery_format("Lecture/Discussion").should == "Lecture/Discussion"
          page.get_grade_roster_level("Lecture/Discussion").should == "Lecture"
-         page.get_final_exam_driver("Lecture/Discussion").should == "Lecture"
+         page.get_final_exam_activity("Lecture/Discussion").should == "Lecture"
   end
 end
 
@@ -229,7 +229,7 @@ Then /^I can submit the edited course offering$/ do
 end
 
 When /^a final exam driver of "([^"]*)"$/ do |final_driver|
-    @course_offering.edit_offering :final_exam_driver => final_driver
+    @course_offering.edit_offering :final_exam_activity => final_driver
 end
 
 When /^I edit a course offering$/ do

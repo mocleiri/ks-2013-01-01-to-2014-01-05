@@ -39,7 +39,7 @@ class CourseOffering
                 :wait_list_type,
                 :grade_format,
                 :delivery_format_list,
-                :final_exam_driver,
+                :final_exam_activity,
                 :honors_flag,
                 :grade_options,
                 :reg_options,
@@ -74,7 +74,7 @@ class CourseOffering
   #    :wait_list_type => "Automatic",
   #    :grade_format => "",
   #    :delivery_format_list => [],
-  #    :final_exam_driver => "",
+  #    :final_exam_activity => "",
   #    :honors_flag => "NO",
   #    :affiliated_person_list => {},
   #    :affiliated_org_list => {},
@@ -105,7 +105,7 @@ class CourseOffering
         :wait_list_type => "Automatic",
         :grade_format => "",
         :delivery_format_list => [ (make DeliveryFormat ) ],
-        :final_exam_driver => "",
+        :final_exam_activity => "",
         :honors_flag => "NO",
         :affiliated_person_list => {},
         :affiliated_org_list => {},
@@ -319,11 +319,11 @@ class CourseOffering
       end
     end
 
-    if options[:final_exam_driver] != nil
+    if options[:final_exam_activity] != nil
       on CourseOfferingEdit do |page|
-        page.select_final_exam_driver(options[:final_exam_driver])
+        page.select_final_exam_activity(options[:final_exam_activity])
       end
-      @final_exam_driver = options[:final_exam_driver]
+      @final_exam_activity = options[:final_exam_activity]
     end
 
     if options[:affiliated_person_list] != nil
@@ -1186,7 +1186,7 @@ class DeliveryFormat
 
   attr_accessor :format,
                 :grade_format,
-                :final_exam_driver
+                :final_exam_activity
 
   def initialize(browser, opts={})
     @browser = browser
@@ -1194,7 +1194,7 @@ class DeliveryFormat
     defaults = {
         :format => "random",
         :grade_format => "",
-        :final_exam_driver => ""
+        :final_exam_activity => ""
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -1213,7 +1213,7 @@ class DeliveryFormat
           @format = "Lecture Only"
         end
         page.target_grade_roster_level_select(row, @grade_format)
-        page.target_final_exam_driver_select(row, @final_exam_driver)
+        page.target_final_exam_activity_select(row, @final_exam_activity)
         page.add_format if page.add_format_btn.present?
         #add button not present if there is only one choice of Format
       end
@@ -1239,7 +1239,7 @@ class DeliveryFormat
         @grade_format = selected_options[:grade_format]
       end
 
-      @final_exam_driver = selected_options[:final_exam_driver]
+      @final_exam_activity = selected_options[:final_exam_activity]
       return selected_options
     end
   end
@@ -1249,7 +1249,7 @@ class DeliveryFormat
       selected_options = page.edit_random_delivery_format
       @format = selected_options[:del_format]
       @grade_format = selected_options[:grade_format]
-      @final_exam_driver = selected_options[:final_exam_driver]
+      @final_exam_activity = selected_options[:final_exam_activity]
       return selected_options
     end
   end

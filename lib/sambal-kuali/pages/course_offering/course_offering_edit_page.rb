@@ -59,13 +59,14 @@ class CourseOfferingEdit < BasePage
   element(:delivery_formats_table) { |b| b.frm.div(id: "KS-CourseOffering-FormatOfferingSubSection").table }
   FORMAT_COLUMN = 0
   GRADE_ROSTER_LEVEL_COLUMN = 1
-  FINAL_EXAM_COLUMN = 2
+  FINAL_EXAM_DRIVER_COLUMN = 2
+  FINAL_EXAM_ACTIVITY_COLUMN = 3
   ACTIONS_COLUMN = 3
 
   element(:select_format_type_div) {|b| b.frm.div(id: "KS-CourseOffering-FormatOfferingSubSection") }
   element(:select_format_type_add) {|b| b.select_format_type_div.select(index: 0) }
   element(:select_grade_roster_level_add) {|b| b.select_format_type_div.select(index: 1) }
-  element(:select_final_exam_driver_add) {|b| b.select_format_type_div.select(index: 2) }
+  element(:select_final_exam_activity_add) {|b| b.select_format_type_div.select(index: 2) }
   element(:delivery_format_add_element) {|b| b.button(id: "KS-CourseOffering-FormatOfferingSubSection_add")  }
   action(:delivery_format_add) {|b| b.delivery_format_add_element.click; b.loading.wait_while_present   }
   element(:delivery_format_delete_element_0)  { |b| b.link(id: "KS-CourseOffering-FormatOfferingSubSection_del_line0") }
@@ -74,7 +75,7 @@ class CourseOfferingEdit < BasePage
   action(:delivery_format_delete_1) {|b| b.delivery_format_delete_element_1.click; b.loading.wait_while_present   }
 
   def edit_random_delivery_format
-    selected_options = {:del_format => delivery_formats_table.rows[2].cells[FORMAT_COLUMN].text, :grade_format => select_random_option(delivery_formats_table[2].cells[GRADE_ROSTER_LEVEL_COLUMN]), :final_exam_driver => select_random_option(delivery_formats_table[2].cells[FINAL_EXAM_COLUMN])}
+    selected_options = {:del_format => delivery_formats_table.rows[2].cells[FORMAT_COLUMN].text, :grade_format => select_random_option(delivery_formats_table[2].cells[GRADE_ROSTER_LEVEL_COLUMN]), :final_exam_activity => select_random_option(delivery_formats_table[2].cells[FINAL_EXAM_ACTIVITY_COLUMN])}
     return selected_options
   end
 
@@ -83,7 +84,7 @@ class CourseOfferingEdit < BasePage
       delivery_formats_table.rows[row].cells[FORMAT_COLUMN].select().select(format.format)
     end
     delivery_formats_table.rows[row].cells[GRADE_ROSTER_LEVEL_COLUMN].select().select(format.grade_format)
-    delivery_formats_table.rows[row].cells[FINAL_EXAM_COLUMN].select().select(format.final_exam_driver)
+    delivery_formats_table.rows[row].cells[FINAL_EXAM_ACTIVITY_COLUMN].select().select(format.final_exam_activity)
   end
 
   def select_random_option(sel_list)
@@ -104,12 +105,12 @@ class CourseOfferingEdit < BasePage
     delivery_format_row(format).cells[GRADE_ROSTER_LEVEL_COLUMN].select().select(format)
   end
 
-  def final_exam_driver(format)
-    delivery_format_row(format).cells[FINAL_EXAM_COLUMN].text
+  def final_exam_activity(format)
+    delivery_format_row(format).cells[FINAL_EXAM_ACTIVITY_COLUMN].text
   end
 
-  def select_final_exam_driver(format)
-    delivery_format_row(format).cells[FINAL_EXAM_COLUMN].select().select(format)
+  def select_final_exam_activity(format)
+    delivery_format_row(format).cells[FINAL_EXAM_ACTIVITY_COLUMN].select().select(format)
   end
 
   def select_fixed_credits(credits)
