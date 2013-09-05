@@ -363,8 +363,7 @@
                 <value>myplan-view</value>
             </list>
         </property>
-        <property name="items">
-            <list>
+        <property name="page">
                 <bean parent="Uif-LookupPage" p:id="planned_courses_detail_page">
                     <property name="layoutManager">
                         <bean parent="Uif-HorizontalBoxLayout"/>
@@ -375,7 +374,6 @@
                         </list>
                     </property>
                 </bean>
-            </list>
         </property>
 
         <property name="criteriaFields">
@@ -1085,7 +1083,8 @@
 
     <bean id="recommendedCollection" parent="plannedCollection" p:headerText="Recommended">
         <property name="propertyName" value="recommendedList"/>
-        <property name="render" value="@{#line NE null ? (T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() ? true : (#parentLine.recommendedList.size() GT 0)) : true}"/>
+        <!--<property name="render" value="@{#line NE null ? (T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() ? true : (#parentLine.recommendedList.size() GT 0)) : true}"/>-->
+           <property name="render" value="@{#line NE null ? true : false}"/>
         <property name="cssClasses">
             <list merge="false">
                 <value>myplan-carousel-term</value>

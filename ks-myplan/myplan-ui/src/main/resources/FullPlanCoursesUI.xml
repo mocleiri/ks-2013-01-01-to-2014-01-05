@@ -35,8 +35,7 @@
             </list>
         </property>
         <property name="style" value="width:682px;"/>
-        <property name="items">
-            <list>
+        <property name="page">
                 <bean parent="Uif-LookupPage" p:id="full_planned_courses_detail_page">
                     <property name="layoutManager">
                         <bean parent="Uif-VerticalBoxLayout"/>
@@ -63,7 +62,6 @@
                         </list>
                     </property>
                 </bean>
-            </list>
         </property>
 
         <property name="criteriaFields">
@@ -370,8 +368,8 @@
                 <bean parent="plannedCourseDOCollection"/>
             </list>
         </property>
-        <property name="collectionLookup.render" value="false"/>
-        <property name="collectionLookup.quickfinderAction.render" value="false"/>
+        <!--<property name="collectionLookup.render" value="false"/>-->
+        <!--<property name="collectionLookup.quickfinderAction.render" value="false"/>-->
     </bean>
 
     <bean id="academicRecordDOCollection" parent="Uif-StackedCollectionGroup" p:headerText="Registered">
@@ -419,8 +417,8 @@
                 </bean>
             </list>
         </property>
-        <property name="collectionLookup.render" value="false"/>
-        <property name="collectionLookup.quickfinderAction.render" value="false"/>
+        <!--<property name="collectionLookup.render" value="false"/>-->
+        <!--<property name="collectionLookup.quickfinderAction.render" value="false"/>-->
     </bean>
 
     <bean id="plannedCourseDOCollection" parent="Uif-StackedCollectionGroup" p:headerText="Planned">
@@ -492,8 +490,8 @@
                 </bean>
             </list>
         </property>
-        <property name="collectionLookup.render" value="false"/>
-        <property name="collectionLookup.quickfinderAction.render" value="false"/>
+        <!--<property name="collectionLookup.render" value="false"/>-->
+        <!--<property name="collectionLookup.quickfinderAction.render" value="false"/>-->
     </bean>
 
 </beans>
