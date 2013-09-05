@@ -175,12 +175,19 @@
 
                 <ref bean="menuOptionEdit"/>
 
-                <bean parent="Uif-Link" p:target="" p:href="#"
-                      p:linkText="Place in Cart"
-                      p:title="Place in Cart"
-                      p:style="margin:0;">
-                    <property name="onClickScript"
-                              value="myPlanAjaxPlanItemMove(jQuery(this).data('planitemid'),jQuery(this).data('planitemid'),'planItemId','plannedToCart',e);"/>
+                <bean parent="Uif-ActionLink" p:actionLabel="Place in Cart" p:title="Place in Cart" >
+        					<property name="actionScript" value="
+            					var retrieveData = {action:'sb/cart',
+													viewId: 'ShoppingCart-FormView',
+													methodToCall: 'addFromPlan',
+													planItemId:jQuery(this).data('planitemid'),
+													atpId:jQuery(this).data('termId'),
+													pageId: 'sb_cart_add_from_plan_page'
+												};
+            					var popupStyle = {width:'300px', height:'16px'};
+            					var popupOptions = {tail:{hidden:true}, align:'top', close:true};
+            					openPopup('sb_cart_add_from_plan_inner', retrieveData, 'sb/cart', popupStyle, popupOptions, e);
+        					"/>
                 </bean>
 
                 <bean parent="Uif-Message" p:messageText="Will be moved out of the Total Credit"
