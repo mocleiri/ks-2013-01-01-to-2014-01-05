@@ -211,7 +211,7 @@ When /^I add a registration window and save$/ do
     page.enrollment_via_breadcrumb
 
     while page.alert.exists?
-      page.alert.cancel
+      page.alert.ok
     end
 
   end
