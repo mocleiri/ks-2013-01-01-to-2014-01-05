@@ -3,7 +3,10 @@ package org.kuali.student.myplan.academicplan.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jws.WebParam;
@@ -286,10 +289,10 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		pie.setUpdateId(context.getPrincipalId());
 		pie.setUpdateTime(new Date());
 
-        // Set credits
-        if ( planItem.getCredit() != null ) {
-            pie.setCredit(planItem.getCredit());
-        }
+		// Set credits
+		if (planItem.getCredit() != null) {
+			pie.setCredit(planItem.getCredit());
+		}
 
 		//  Set the learning plan.
 		String planId = planItem.getLearningPlanId();
@@ -403,11 +406,27 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 
 		//  Update attributes.
 		if (planItem.getAttributes() != null) {
-			Set<PlanItemAttributeEntity> attributeEntities = new HashSet<PlanItemAttributeEntity>();
+			Map<String, AttributeInfo> attributeMap = new LinkedHashMap<String, AttributeInfo>();
 			for (AttributeInfo att : planItem.getAttributes()) {
+				attributeMap.put(att.getKey(), att);
+			}
+			Set<PlanItemAttributeEntity> attributeEntities = planItemEntity.getAttributes();
+			if (attributeEntities == null) {
+				planItemEntity.setAttributes(attributeEntities = new HashSet<PlanItemAttributeEntity>());
+			}
+			Iterator<PlanItemAttributeEntity> ai = attributeEntities.iterator();
+			while (ai.hasNext()) {
+				PlanItemAttributeEntity attrEntity = ai.next();
+				String key = attrEntity.getKey();
+				if (attributeMap.containsKey(key)) {
+					attrEntity.setValue(attributeMap.remove(key).getValue());
+				} else {
+					ai.remove();
+				}
+			}
+			for (AttributeInfo att : attributeMap.values()) {
 				attributeEntities.add(new PlanItemAttributeEntity(att, planItemEntity));
 			}
-			planItemEntity.setAttributes(attributeEntities);
 		}
 
 		//  Update text entity.
@@ -465,10 +484,10 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 			learningPlanDao.update(newPlan);
 		}
 
-        // update credits
-         if ( planItem.getCredit() != null ) {
-            planItemEntity.setCredit(planItem.getCredit());
-         }
+		// update credits
+		if (planItem.getCredit() != null) {
+			planItemEntity.setCredit(planItem.getCredit());
+		}
 
 		return planItemDao.find(updatePlanItemId).toDto();
 	}
