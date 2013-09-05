@@ -234,6 +234,15 @@ public class CoreFilter implements Filter {
                 }
 
             } else {
+                // If this is an ajax request, don't send the login form, send a 403 that the krad.initialize.js set up to catch.
+                String requestedWith = request.getHeader("X-Requested-With");
+                if("XMLHttpRequest".equals(requestedWith)) {
+                    response.resetBuffer();
+                    response.sendError(403, request.getContextPath());
+                    return false;
+                }
+
+
                 // No session has been established and this is not a login form submission,
                 // so forward to login page
                 request.getRequestDispatcher(loginUrl).forward(request, response);

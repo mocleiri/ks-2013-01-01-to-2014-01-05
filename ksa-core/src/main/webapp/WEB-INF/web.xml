@@ -20,6 +20,11 @@
         <param-value>classpath:/META-INF/ksa-context.xml</param-value>
     </context-param>
 
+    <error-page>
+        <error-code>403</error-code>
+        <location>/ajaxError.jsp</location>
+    </error-page>
+
     <listener>
         <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
     </listener>
