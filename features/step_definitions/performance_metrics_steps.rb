@@ -207,14 +207,14 @@ When /^I add a registration window and save$/ do
     @performance_test.start
     page.save
     @performance_test.end
-  end
 
-  visit LUMMainPage do |page|
+    page.enrollment_via_breadcrumb
+
     while page.alert.exists?
       page.alert.cancel
     end
-  end
 
+  end
 end
 
 When /^I search for a course by course code$/ do
