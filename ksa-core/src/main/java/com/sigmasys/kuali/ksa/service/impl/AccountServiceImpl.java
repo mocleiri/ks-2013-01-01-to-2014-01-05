@@ -186,7 +186,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         Date currentDate = new Date();
 
-        for (Account account :  getFullAccounts()) {
+        for (Account account : getFullAccounts()) {
             if (account instanceof ChargeableAccount) {
                 ageDebt((ChargeableAccount) account, ageDebtMethod, currentDate, ignoreDeferment);
             }
@@ -384,8 +384,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public BigDecimal getFutureBalance(String userId, Date balanceDate, boolean ignoreDeferment) {
-        BigDecimal outstandingBalance = getOutstandingBalance(userId, balanceDate, ignoreDeferment);
-        return outstandingBalance.subtract(getDueBalance(userId, balanceDate, ignoreDeferment));
+        return getBalance(userId, balanceDate, ignoreDeferment, true);
     }
 
     /**
@@ -397,7 +396,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public BigDecimal getDueBalance(String userId, boolean ignoreDeferment) {
-        return getBalance(userId, new Date(), ignoreDeferment, false);
+        return getDueBalance(userId, new Date(), ignoreDeferment);
     }
 
     /**
@@ -465,7 +464,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public BigDecimal getOutstandingBalance(String userId, boolean ignoreDeferment) {
-        return getBalance(userId, new Date(), ignoreDeferment, true);
+        return getOutstandingBalance(userId, new Date(), ignoreDeferment);
     }
 
     /**
@@ -478,7 +477,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     public BigDecimal getOutstandingBalance(String userId, Date balanceDate, boolean ignoreDeferment) {
-        return getBalance(userId, balanceDate, ignoreDeferment, true);
+        BigDecimal futureBalance = getFutureBalance(userId, balanceDate, ignoreDeferment);
+        return futureBalance.add(getDueBalance(userId, balanceDate, ignoreDeferment));
     }
 
     protected BigDecimal getBalance(String userId, Date balanceDate, boolean ignoreDeferment, boolean notYetEffective) {
@@ -490,7 +490,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         final String sign = notYetEffective ? ">" : "<=";
 
         Query query = em.createQuery("select t from Transaction t " +
-                " where t.account.id = :userId and t.effectiveDate " + sign + " :date");
+                " where t.account.id = :userId and to_date(t.effectiveDate) " + sign + " :date");
 
         query.setParameter("userId", userId);
         query.setParameter("date", balanceDate, TemporalType.DATE);
