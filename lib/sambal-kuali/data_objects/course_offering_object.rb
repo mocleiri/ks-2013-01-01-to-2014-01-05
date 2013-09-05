@@ -69,7 +69,7 @@ class CourseOffering
   #    :suffix=>"",
   #    :activity_offering_cluster_list=>[],
   #    :final_exam_type => "NONE",
-  #    :wait_list => "NO",
+  #    :wait_list => "Active",
   #    :wait_list_level => "Course Offering",
   #    :wait_list_type => "Automatic",
   #    :grade_format => "",
@@ -100,7 +100,7 @@ class CourseOffering
         :suffix=>"",
         :activity_offering_cluster_list=> [ (make ActivityOfferingCluster, :private_name=> :default_cluster ) ],
         :final_exam_type => "STANDARD",
-        :wait_list => "YES",
+        :wait_list => "Active",
         :wait_list_level => "Course Offering",
         :wait_list_type => "Automatic",
         :grade_format => "",
@@ -197,7 +197,7 @@ class CourseOffering
 
     if options[:wait_list] != nil
       on CourseOfferingEdit do |page|
-        if options[:wait_list] == "NO"
+        if options[:wait_list] == "Inactive"
           page.waitlist_off
         else
           page.waitlist_on

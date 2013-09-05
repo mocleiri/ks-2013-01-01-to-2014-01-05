@@ -164,7 +164,7 @@ Then /^I can submit and the course offering is updated$/ do
   on ManageCourseDetails do  |page|
     page.registration_options.should == @course_offering.reg_options
     page.final_exam_type.should == @course_offering.final_exam_type
-    #page.waited_list.should == @course_offering.wait_list
+    page.waited_list.should == @course_offering.wait_list
     page.honors_flag.should == @course_offering.honors_flag
     page.close
   end
