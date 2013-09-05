@@ -63,7 +63,7 @@ Feature: Performance.Metrics
     Then the transaction takes less than "3" seconds
 
   Scenario: Search Course Offering by Subject 50-100
-    When I search for a course by the "CHEM" subject code
+    When I search for a course by the "BSCI" subject code
     Then the transaction takes less than "3" seconds
 
   Scenario: Search Course Offering by Course and edit
