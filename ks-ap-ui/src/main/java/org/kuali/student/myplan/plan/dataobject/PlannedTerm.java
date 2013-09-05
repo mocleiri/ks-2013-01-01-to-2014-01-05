@@ -6,7 +6,6 @@ import java.util.List;
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
 import org.kuali.student.ap.framework.context.PlanConstants;
 import org.kuali.student.enrollment.acal.infc.Term;
-import org.kuali.student.r2.core.atp.dto.AtpInfo;
 
 /**
  * Created by IntelliJ IDEA. User: hemanthg Date: 4/2/12 Time: 3:17 PM To change
@@ -20,7 +19,7 @@ public class PlannedTerm {
 	private List<PlannedCourseDataObject> backupList = new ArrayList<PlannedCourseDataObject>();
 	private List<AcademicRecordDataObject> academicRecord = new ArrayList<AcademicRecordDataObject>();
 	private List<PlannedCourseDataObject> cartList = new ArrayList<PlannedCourseDataObject>();
-    private List<TermNoteDataObject> termNoteList = new ArrayList<TermNoteDataObject>();
+	private List<TermNoteDataObject> termNoteList = new ArrayList<TermNoteDataObject>();
 
 	@SuppressWarnings("unused")
 	private String credits = null;
@@ -63,6 +62,10 @@ public class PlannedTerm {
 
 	public String getAtpId() {
 		return atpId;
+	}
+
+	public String getAtpIdXmlSafe() {
+		return atpId == null ? null : atpId.replace(',', '_');
 	}
 
 	public String getQtrYear() {
@@ -314,29 +317,28 @@ public class PlannedTerm {
 		}
 	}
 
+	public List<TermNoteDataObject> getTermNoteList() {
+		if (termNoteList == null) {
+			termNoteList = new ArrayList<TermNoteDataObject>();
+		}
+		return termNoteList;
+	}
 
-    public List<TermNoteDataObject> getTermNoteList() {
-        if(termNoteList==null){
-            termNoteList = new ArrayList<TermNoteDataObject>();
-        }
-        return termNoteList;
-    }
+	public void setTermNoteList(List<TermNoteDataObject> termNoteList) {
+		this.termNoteList = termNoteList;
+	}
 
-    public void setTermNoteList(List<TermNoteDataObject> termNoteList) {
-        this.termNoteList = termNoteList;
-    }
+	private String termNoteUI;
 
-    private String termNoteUI;
+	public String getTermNoteUI() {
+		String termNote = "";
+		for (TermNoteDataObject note : termNoteList) {
+			termNote = termNote + note.getTermNoteUI() + "\r";
+		}
+		return termNote;
+	}
 
-    public String getTermNoteUI(){
-        String termNote ="";
-        for(TermNoteDataObject note : termNoteList){
-            termNote = termNote+note.getTermNoteUI()+"\r";
-        }
-        return termNote;
-    }
+	public void setTermNoteUI(String termNoteUI) {
 
-    public void setTermNoteUI(String termNoteUI){
-
-    }
+	}
 }
