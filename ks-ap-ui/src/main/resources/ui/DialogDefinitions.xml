@@ -46,11 +46,15 @@
     <!--View Course Summary Dialog Box content -->
     <bean id="course_summary_dialog_page" parent="KSAP-PopoverPage" p:id="course_summary_dialog_page" p:headerText="View Course Summary" p:additionalCssClasses="ks-plan-Popover ks-plan-CourseSummary">
         <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
+        <property name="layoutManager.cssClasses" value="ks-plan-Popover-body"/>
         <property name="items">
             <list>
                 <bean parent="course_title_link"/>
                 <bean parent="course_details_summary_info"/>
             </list>
+        </property>
+        <property name="footer">
+            <ref bean="course_details_summary_messages"/>
         </property>
     </bean>
 
@@ -159,6 +163,9 @@
     <!--Delete confirmation Dialog Box content -->
     <bean id="plan_item_delete_page" parent="KSAP-PopoverPage" p:id="plan_item_delete_page"
           p:headerText="Delete @{courseSummaryDetails.code} @{atpId eq null ? 'Bookmark' : 'from the '+shortTerm+' Plan'}">
+        <property name="additionalCssClasses" value="ks-plan-Popover"/>
+        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
+        <property name="layoutManager.cssClasses" value="ks-plan-Popover-body"/>
         <property name="items">
             <list>
                 <bean parent="Uif-Message"
@@ -182,38 +189,43 @@
                         </list>
                     </property>
                 </bean>
-                <bean parent="KSAP-HorizontalBoxGroup">
-                    <property name="items">
-                        <list>
-                            <bean p:id="deletePlannedCourse" parent="Uif-PrimaryActionButton-Small"
-                                  p:actionLabel="Delete">
-                                <property name="actionScript" value="
-                                                var additionalFormData = {
-                                                    viewId: 'PlannedCourse-FormView',
-                                                    methodToCall: 'removeItem',
-                                                    planItemId: '@{planItemIdXmlSafe}',
-                                                    atpId: '@{atpId}'
-                                                };
-                                                submitPopupForm(additionalFormData, e, false);
-                                            "/>
-                                <property name="onDocumentReadyScript" value="
-                                                jQuery('#deletePlannedCourse').on('PLAN_ITEM_DELETED', function(event, data){
-                                                    fnDisplayMessage(data.message, data.cssClass, 'deletePlannedCourse', true, true);
-                                                }).on('ERROR', function(event, data) {
-                                                    fnDisplayMessage(data.message, data.cssClass, 'deletePlannedCourse', true, true);
-                                                });
-                                            "/>
-                            </bean>
-                            <bean parent="closePopoverCancel"/>
-                        </list>
-                    </property>
-                </bean>
             </list>
+        </property>
+        <property name="footer">
+            <bean parent="KSAP-HorizontalBoxGroup" p:additionalCssClasses="ks-plan-Popover-footer">
+                <property name="items">
+                    <list>
+                        <bean p:id="deletePlannedCourse" parent="Uif-PrimaryActionButton-Small"
+                              p:actionLabel="Delete" p:additionalCssClasses="ks-Button ks-Button--primary">
+                            <property name="actionScript" value="
+                                            var additionalFormData = {
+                                                viewId: 'PlannedCourse-FormView',
+                                                methodToCall: 'removeItem',
+                                                planItemId: '@{planItemIdXmlSafe}',
+                                                atpId: '@{atpId}'
+                                            };
+                                            submitPopupForm(additionalFormData, e, false);
+                                        "/>
+                            <property name="onDocumentReadyScript" value="
+                                            jQuery('#deletePlannedCourse').on('PLAN_ITEM_DELETED', function(event, data){
+                                                fnDisplayMessage(data.message, data.cssClass, 'deletePlannedCourse', true, true);
+                                            }).on('ERROR', function(event, data) {
+                                                fnDisplayMessage(data.message, data.cssClass, 'deletePlannedCourse', true, true);
+                                            });
+                                        "/>
+                        </bean>
+                        <bean parent="closePopoverCancel"/>
+                    </list>
+                </property>
+            </bean>
         </property>
     </bean>
 
     <!--Move Course to another Quarter Dialog Box Content-->
     <bean id="move_dialog_page" parent="KSAP-PopoverPage" p:id="move_dialog_page" p:headerText="Move to Another Quarter">
+        <property name="additionalCssClasses" value="ks-plan-Popover"/>
+        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
+        <property name="layoutManager.cssClasses" value="ks-plan-Popover-body"/>
         <property name="items">
             <list>
                 <bean parent="Uif-Message"
@@ -276,44 +288,49 @@
                         </list>
                     </property>
                 </bean>
-                <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
-                    <property name="items">
-                        <list>
-                            <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
-                                <property name="items">
-                                    <list>
-                                        <bean p:id="movePlannedCourse"
-                                              parent="Uif-PrimaryActionButton-Small"
-                                              p:actionLabel="Move">
-                                            <property name="actionScript" value="
-                                                            var newAtpId = jQuery('#atpIdMove_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}_control').val();
-                                                            var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'movePlanCourse', planItemId:'@{planItemIdXmlSafe}',atpId:newAtpId};
-                                                            submitPopupForm(additionalFormData, e, false);
-                                                        "/>
-                                            <property name="onDocumentReadyScript" value="
-                                                            jQuery('#movePlannedCourse').on('PLAN_ITEM_ADDED', function(event, data){
-                                                                if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                                    fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
-                                                                }
-                                                            }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
-                                                            });
-                                                        "/>
-                                        </bean>
-                                        <bean parent="closePopoverCancel"/>
-                                    </list>
-                                </property>
-                            </bean>
-                            <bean parent="errorPlaceholder"/>
-                        </list>
-                    </property>
-                </bean>
             </list>
+        </property>
+        <property name="footer">
+            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup" p:additionalCssClasses="ks-plan-Popover-footer">
+                <property name="items">
+                    <list>
+                        <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
+                            <property name="items">
+                                <list>
+                                    <bean p:id="movePlannedCourse"
+                                          parent="Uif-PrimaryActionButton-Small"
+                                          p:actionLabel="Move" p:additionalCssClasses="ks-Button ks-Button--primary">
+                                        <property name="actionScript" value="
+                                                        var newAtpId = jQuery('#atpIdMove_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}_control').val();
+                                                        var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'movePlanCourse', planItemId:'@{planItemIdXmlSafe}',atpId:newAtpId};
+                                                        submitPopupForm(additionalFormData, e, false);
+                                                    "/>
+                                        <property name="onDocumentReadyScript" value="
+                                                        jQuery('#movePlannedCourse').on('PLAN_ITEM_ADDED', function(event, data){
+                                                            if (data.planItemType === 'planned' || data.planItemType === 'backup') {
+                                                                fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
+                                                            }
+                                                        }).on('ERROR', function(event, data){
+                                                            fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
+                                                        });
+                                                    "/>
+                                    </bean>
+                                    <bean parent="closePopoverCancel"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="errorPlaceholder"/>
+                    </list>
+                </property>
+            </bean>
         </property>
     </bean>
 
     <!--Copy Course to another Quarter Dialog Box Content-->
     <bean id="copy_dialog_page" parent="KSAP-PopoverPage" p:id="copy_dialog_page" p:headerText="Copy to Another Quarter">
+        <property name="additionalCssClasses" value="ks-plan-Popover"/>
+        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
+        <property name="layoutManager.cssClasses" value="ks-plan-Popover-body"/>
         <property name="items">
             <list>
                 <bean parent="Uif-Message"
@@ -376,87 +393,89 @@
                         </list>
                     </property>
                 </bean>
-                <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
-                    <property name="items">
-                        <list>
-                            <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
-                                <property name="items">
-                                    <list>
-                                        <bean p:id="copyPlannedCourse"
-                                              parent="Uif-PrimaryActionButton-Small"
-                                              p:render="@{setToPlanning}"
-                                              p:actionLabel="Copy">
-                                            <property name="actionScript" value="
-                                                            var newAtpId = jQuery('#atpIdCopy_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}_control').val();
-                                                            var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'copyPlanCourse', planItemId:'@{planItemIdXmlSafe}',atpId:newAtpId};
-                                                            submitPopupForm(additionalFormData, e, false);
-                                                        "/>
-                                            <property name="onDocumentReadyScript" value="
-                                                            jQuery('#copyPlannedCourse').on('PLAN_ITEM_ADDED', function(event, data){
-                                                                if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                                    fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
-                                                                }
-                                                            }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
-                                                            });
-                                                        "/>
-                                        </bean>
-                                        <bean p:id="copyPastPlannedCourse"
-                                              parent="Uif-PrimaryActionButton-Small"
-                                              p:render="@{setToPlanning eq false and planItemId ne null}"
-                                              p:actionLabel="Copy">
-                                            <property name="actionScript" value="
-                                                            var newAtpId = jQuery('#atpIdCopy_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}_control').val();
-                                                            var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'copyPlanCourse', planItemId:'@{planItemIdXmlSafe}',atpId:newAtpId};
-                                                            submitPopupForm(additionalFormData, e, false);
-                                                        "/>
-                                            <property name="onDocumentReadyScript" value="
-                                                            jQuery('#copyPastPlannedCourse').on('PLAN_ITEM_ADDED', function(event, data){
-                                                                if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                                    fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
-                                                                }
-                                                            }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
-                                                            });
-                                                        "/>
-                                        </bean>
-                                        <bean p:id="copyAcademicCourse"
-                                              parent="Uif-PrimaryActionButton-Small"
-                                              p:render="@{setToPlanning eq false and planItemId eq null}"
-                                              p:actionLabel="Copy">
-                                            <property name="actionScript" value="
-                                                            var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'copyPlanCourse', courseId:'@{courseIdXmlSafe}'};
-                                                            submitPopupForm(additionalFormData, e, false);
-                                                        "/>
-                                            <property name="onDocumentReadyScript" value="
-                                                            jQuery('#copyAcademicCourse').on('PLAN_ITEM_ADDED', function(event, data){
-                                                                if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                                    fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
-                                                                }
-                                                            }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
-                                                            });
-                                                        "/>
-                                        </bean>
-                                        <bean parent="closePopoverCancel"/>
-                                    </list>
-                                </property>
-                            </bean>
-                            <bean parent="errorPlaceholder"/>
-                        </list>
-                    </property>
-                </bean>
             </list>
+        </property>
+        <property name="footer">
+            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup" p:additionalCssClasses="ks-plan-Popover-footer">
+                <property name="items">
+                    <list>
+                        <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
+                            <property name="items">
+                                <list>
+                                    <bean p:id="copyPlannedCourse"
+                                          parent="Uif-PrimaryActionButton-Small"
+                                          p:render="@{setToPlanning}"
+                                          p:actionLabel="Copy" p:additionalCssClasses="ks-Button ks-Button--primary">
+                                        <property name="actionScript" value="
+                                                        var newAtpId = jQuery('#atpIdCopy_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}_control').val();
+                                                        var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'copyPlanCourse', planItemId:'@{planItemIdXmlSafe}',atpId:newAtpId};
+                                                        submitPopupForm(additionalFormData, e, false);
+                                                    "/>
+                                        <property name="onDocumentReadyScript" value="
+                                                        jQuery('#copyPlannedCourse').on('PLAN_ITEM_ADDED', function(event, data){
+                                                            if (data.planItemType === 'planned' || data.planItemType === 'backup') {
+                                                                fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
+                                                            }
+                                                        }).on('ERROR', function(event, data){
+                                                            fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
+                                                        });
+                                                    "/>
+                                    </bean>
+                                    <bean p:id="copyPastPlannedCourse"
+                                          parent="Uif-PrimaryActionButton-Small"
+                                          p:render="@{setToPlanning eq false and planItemId ne null}"
+                                          p:actionLabel="Copy" p:additionalCssClasses="ks-Button ks-Button--primary">
+                                        <property name="actionScript" value="
+                                                        var newAtpId = jQuery('#atpIdCopy_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}_control').val();
+                                                        var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'copyPlanCourse', planItemId:'@{planItemIdXmlSafe}',atpId:newAtpId};
+                                                        submitPopupForm(additionalFormData, e, false);
+                                                    "/>
+                                        <property name="onDocumentReadyScript" value="
+                                                        jQuery('#copyPastPlannedCourse').on('PLAN_ITEM_ADDED', function(event, data){
+                                                            if (data.planItemType === 'planned' || data.planItemType === 'backup') {
+                                                                fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
+                                                            }
+                                                        }).on('ERROR', function(event, data){
+                                                            fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
+                                                        });
+                                                    "/>
+                                    </bean>
+                                    <bean p:id="copyAcademicCourse"
+                                          parent="Uif-PrimaryActionButton-Small"
+                                          p:render="@{setToPlanning eq false and planItemId eq null}"
+                                          p:actionLabel="Copy">
+                                        <property name="actionScript" value="
+                                                        var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'copyPlanCourse', courseId:'@{courseIdXmlSafe}'};
+                                                        submitPopupForm(additionalFormData, e, false);
+                                                    "/>
+                                        <property name="onDocumentReadyScript" value="
+                                                        jQuery('#copyAcademicCourse').on('PLAN_ITEM_ADDED', function(event, data){
+                                                            if (data.planItemType === 'planned' || data.planItemType === 'backup') {
+                                                                fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
+                                                            }
+                                                        }).on('ERROR', function(event, data){
+                                                            fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
+                                                        });
+                                                    "/>
+                                    </bean>
+                                    <bean parent="closePopoverCancel"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="errorPlaceholder"/>
+                    </list>
+                </property>
+            </bean>
         </property>
     </bean>
 
     <!--Edit plan item Dialog Box content -->
-    <bean id="plan_item_edit_page" parent="KSAP-PopoverPage" p:id="plan_item_edit_page"
+    <bean id="plan_item_edit_page" parent="KSAP-PopoverPage" p:id="plan_item_edit_page" p:additionalCssClasses="ks-plan-Popover"
           p:headerText="Edit @{courseSummaryDetails.code} @{atpId eq null ? 'Bookmark' : 'from the '+shortTerm+' Plan'}">
+        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
+        <property name="layoutManager.cssClasses" value="ks-plan-Popover-body"/>
         <property name="items">
             <list>
-                <bean parent="Uif-Message"
-                      p:messageText="Edit @{courseSummaryDetails.code} @{atpId eq null ? 'Bookmark' : 'from the '+shortTerm+' Plan'}"/>
                 <bean parent="Uif-InputField" p:id="courseCredits_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}">
                     <property name="label" value="Enter Course Credits"/>
                     <property name="fieldLabel.render" value="true"/>
@@ -475,37 +494,40 @@
                     </property>
                 </bean>
                 <bean parent="planItemNote" p:id="courseNote_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}"/>
-                <bean parent="KSAP-HorizontalBoxGroup">
-                    <property name="items">
-                        <list>
-                            <bean p:id="editPlannedCourse" parent="Uif-PrimaryActionButton-Small"
-                                  p:actionLabel="Save">
-                                <property name="actionScript" value="
-                                                var newNote = jQuery('#courseNote_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}_control').val();
-                                                var newCredit = jQuery('#courseCredits_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}_control').val();
-                                                var additionalFormData = {
-                                                    viewId: 'PlannedCourse-FormView',
-                                                    methodToCall: 'editPlanCourse',
-                                                    planItemId: '@{planItemIdXmlSafe}',
-                                                    atpId: '@{atpId}',
-                                                    courseNote: newNote,
-                                                    courseCredit: newCredit
-                                                };
-                                                submitPopupForm(additionalFormData, e, false);
-                                            "/>
-                                <property name="onDocumentReadyScript" value="
-                                                jQuery('#editPlannedCourse').on('PLAN_NOTE_UPDATED', function(event, data){
-                                                    fnDisplayMessage(data.message, data.cssClass, 'editPlannedCourse', true, true);
-                                                }).on('ERROR', function(event, data) {
-                                                    fnDisplayMessage(data.message, data.cssClass, 'editPlannedCourse', true, true);
-                                                });
-                                            "/>
-                            </bean>
-                            <bean parent="closePopoverCancel"/>
-                        </list>
-                    </property>
-                </bean>
             </list>
+        </property>
+        <property name="footer">
+            <bean parent="KSAP-HorizontalBoxGroup" p:additionalCssClasses="ks-plan-Popover-footer">
+                <property name="items">
+                    <list>
+                        <bean p:id="editPlannedCourse" parent="Uif-PrimaryActionButton-Small"
+                              p:actionLabel="Save">
+                            <property name="additionalCssClasses" value="ks-Button ks-Button--primary"/>
+                            <property name="actionScript" value="
+                                            var newNote = jQuery('#courseNote_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}_control').val();
+                                            var newCredit = jQuery('#courseCredits_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}_control').val();
+                                            var additionalFormData = {
+                                                viewId: 'PlannedCourse-FormView',
+                                                methodToCall: 'editPlanCourse',
+                                                planItemId: '@{planItemIdXmlSafe}',
+                                                atpId: '@{atpId}',
+                                                courseNote: newNote,
+                                                courseCredit: newCredit
+                                            };
+                                            submitPopupForm(additionalFormData, e, false);
+                                        "/>
+                            <property name="onDocumentReadyScript" value="
+                                            jQuery('#editPlannedCourse').on('PLAN_NOTE_UPDATED', function(event, data){
+                                                fnDisplayMessage(data.message, data.cssClass, 'editPlannedCourse', true, true);
+                                            }).on('ERROR', function(event, data) {
+                                                fnDisplayMessage(data.message, data.cssClass, 'editPlannedCourse', true, true);
+                                            });
+                                        "/>
+                        </bean>
+                        <bean parent="closePopoverCancel"/>
+                    </list>
+                </property>
+            </bean>
         </property>
     </bean>
 
@@ -600,7 +622,6 @@
                         </bean>
                     </property>
                 </bean>
-                <ref bean="course_details_summary_messages"/>
             </list>
         </property>
     </bean>
