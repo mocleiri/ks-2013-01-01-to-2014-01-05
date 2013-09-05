@@ -35,7 +35,7 @@ class CreateCOFromCatalog < BasePage
   element(:joint_defined_course_row_1) { |b| b.joint_defined_courses_table.rows[1].text }
   element(:joint_defined_course_row_2) { |b| b.joint_defined_courses_table.rows[2].text }
 
-  element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") }
+  element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter", index: 1) }
   action(:create_offering) { |b| b.frm.button(id: "createUpdateFromCatalog_btn").click; b.loading.wait_while_present }
   action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click; b.loading.wait_while_present }
 
