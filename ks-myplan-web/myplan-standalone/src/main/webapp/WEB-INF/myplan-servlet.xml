@@ -127,9 +127,10 @@
         <property name="studentServiceClient" ref="StudentService"/>
     </bean>
 
-    <bean id="StudentService" class="org.kuali.rice.krad.config.GlobalResourceLoaderServiceFactoryBean">
+    <bean id="StudentService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="{MyPlan}StudentServiceClient"/>
     </bean>
+
 
     <bean id="uifControllerHandlerInterceptor"
           class="org.kuali.rice.krad.web.controller.UifControllerHandlerInterceptor"/>
@@ -140,7 +141,7 @@
         <property name="kualiModuleService" ref="kualiModuleService"/>
     </bean>
 
-    <bean id="kualiModuleService" class="org.kuali.rice.krad.config.GlobalResourceLoaderServiceFactoryBean">
+    <bean id="kualiModuleService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="kualiModuleService"/>
     </bean>
 

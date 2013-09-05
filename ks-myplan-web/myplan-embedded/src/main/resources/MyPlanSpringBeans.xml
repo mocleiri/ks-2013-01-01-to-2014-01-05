@@ -25,15 +25,12 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-    <bean id="kualiConfigurationService" class="org.kuali.rice.krad.service.impl.ConfigurationServiceImpl"/>
+    <bean id="kualiModuleService" class="org.kuali.rice.krad.service.impl.KualiModuleServiceImpl" />
 
-    <bean id="kualiModuleService" class="org.kuali.rice.krad.service.impl.KualiModuleServiceImpl"/>
-
-    <bean id="studentRiceModule" class="org.kuali.rice.krad.service.impl.ModuleServiceBase">
-        <property name="moduleConfiguration" ref="studentRiceModuleConfiguration"/>
-        <property name="kualiModuleService" ref="kualiModuleService"/>
-    </bean>
-
+	<bean id="studentRiceModule" class="org.kuali.rice.krad.service.impl.ModuleServiceBase">
+		<property name="moduleConfiguration" ref="studentRiceModuleConfiguration" />
+		<property name="kualiModuleService" ref="kualiModuleService" />
+	</bean>
     <bean id="studentRiceModuleConfiguration" class="org.kuali.rice.krad.bo.ModuleConfiguration">
         <property name="namespaceCode" value="KS-SYS"/>
         <property name="initializeDataDictionary" value="true"/>

@@ -36,12 +36,13 @@
 
     <bean id="coreDictionaryService"
           class="org.kuali.student.common.dictionary.service.impl.DictionaryServiceImpl">
-        <constructor-arg index="0" value="${uw.ks.core.dictionary.serviceContextLocations}" />
+        <constructor-arg index="0" value="${uw.ks.core.dictionary.serviceContextLocations}"/>
     </bean>
 
     <bean name="planItemInfoDictionaryLocation" class="java.lang.String">
         <constructor-arg value="${uw.academic.plan.serviceContextLocations}"/>
     </bean>
+
 
     <!-- Override acalService bean with UW implementation -->
     <bean id="acalService" class="edu.uw.kuali.student.service.impl.UwAcademicCalendarServiceImpl">
@@ -139,8 +140,9 @@
         <constructor-arg index="0" value="classpath:myplan-enum-search-config.xml"/>
     </bean>
 
-     <!-- Setup mail service -->
-    <bean id="mailer" class="org.kuali.rice.krad.config.GlobalResourceLoaderServiceFactoryBean">
+
+    <!-- Setup mail service -->
+    <bean id="mailer" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="mailer"/>
     </bean>
 

@@ -142,7 +142,7 @@
 
 
     <!-- Setup mail service -->
-    <bean id="mailer" class="org.kuali.rice.krad.config.GlobalResourceLoaderServiceFactoryBean">
+    <bean id="mailer" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="mailer"/>
     </bean>
 
