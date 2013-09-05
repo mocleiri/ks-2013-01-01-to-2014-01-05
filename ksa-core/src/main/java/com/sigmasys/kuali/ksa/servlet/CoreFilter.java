@@ -228,12 +228,16 @@ public class CoreFilter implements Filter {
                     }
 
                 } else {
-                    if (isInitialized)
+
+                    if (isInitialized) {
                         invalidateSession(request, response, INVALID_CREDENTIALS_MSG);
+                    }
+
                     return false;
                 }
 
             } else {
+
                 // If this is an ajax request, don't send the login form, send a 403 that the krad.initialize.js set up to catch.
                 String requestedWith = request.getHeader("X-Requested-With");
                 if("XMLHttpRequest".equals(requestedWith)) {
@@ -248,7 +252,9 @@ public class CoreFilter implements Filter {
                 request.getRequestDispatcher(loginUrl).forward(request, response);
                 return false;
             }
+
         } else {
+
             request = new HttpServletRequestWrapper(request) {
                 @Override
                 public String getRemoteUser() {
