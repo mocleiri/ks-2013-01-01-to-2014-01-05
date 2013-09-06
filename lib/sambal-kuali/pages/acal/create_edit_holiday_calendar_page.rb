@@ -27,17 +27,17 @@ class CreateEditHolidayCalendar < BasePage #Create/Edit are the same page (only 
   INSTRUCTIONAL = 7
   ACTIONS = 8
 
-  element(:holiday_type) { |b| b.holiday_table.select(name: "newCollectionLines['holidays'].typeKey") }
-  element(:holiday_start_date) { |b| b.holiday_table.text_field(name: "newCollectionLines['holidays'].startDateUI") }
-  element(:holiday_start_time) { |b| b.holiday_table.text_field(name: "newCollectionLines['holidays'].startTime") }
-  element(:holiday_start_am) { |b| b.holiday_table.radio(name: "newCollectionLines['holidays'].startTimeAmPm", value: "AM") }
-  element(:holiday_start_pm) { |b| b.holiday_table.radio(name: "newCollectionLines['holidays'].startTimeAmPm", value: "PM") }
-  element(:holiday_end_date) { |b| b.holiday_table.text_field(name: "newCollectionLines['holidays'].endDateUI") }
-  element(:holiday_end_time) { |b| b.holiday_table.text_field(name: "newCollectionLines['holidays'].endTime") }
-  element(:holiday_end_meridian_am) { |b| b.holiday_table.radio(name: "newCollectionLines['holidays'].endTimeAmPm", value: "AM") }
-  element(:holiday_end_meridian_pm) { |b| b.holiday_table.radio(name: "newCollectionLines['holidays'].endTimeAmPm", value: "PM") }
-  element(:instructional) { |b| b.holiday_table.checkbox(name: "newCollectionLines['holidays'].instructional") }
-  element(:add_link) { |b| b.holiday_table.link(id: "KS-HolidayCalendar-HolidaySection_add") }
+  element(:holiday_type) { |b| b.holiday_table.rows[1].cells[HOLIDAY_TYPE].select() }
+  element(:holiday_start_date) { |b| b.holiday_table.rows[1].cells[START_DATE].text_field() }
+  element(:holiday_start_time) { |b| b.holiday_table.rows[1].cells[START_TIME].text_field() }
+  element(:holiday_start_am) { |b| b.holiday_table.rows[1].cells[START_AMPM].radio() }
+  element(:holiday_start_pm) { |b| b.holiday_table.rows[1].cells[START_AMPM].radio(index: 1) }
+  element(:holiday_end_date) { |b| b.holiday_table.rows[1].cells[END_DATE].text_field() }
+  element(:holiday_end_time) { |b| b.holiday_table.rows[1].cells[END_TIME].text_field() }
+  element(:holiday_end_meridian_am) { |b| b.holiday_table.rows[1].cells[END_AMPM].radio() }
+  element(:holiday_end_meridian_pm) { |b| b.holiday_table.rows[1].cells[END_AMPM].radio(index: 1) }
+  element(:instructional) { |b| b.holiday_table.rows[1].cells[INSTRUCTIONAL].checkbox() }
+  element(:add_link) { |b| b.holiday_table.rows[1].cells[ACTIONS].link() }
 
   def target_row(holiday_type)
     holiday_table.row(text: /^\b#{holiday_type}\b$/)

@@ -3,8 +3,8 @@ When /^I create a Holiday Calendar$/ do
 end
 
 Then /^The Make Official button for the Holiday Calendar should become active$/ do
-  @holiday_calendar.view
-  on ViewHolidayCalendar do |page|
+  @holiday_calendar.edit
+  on CreateEditHolidayCalendar do |page|
     page.make_official_link.present?.should be_true
   end
 end
