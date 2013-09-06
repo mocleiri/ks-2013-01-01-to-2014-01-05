@@ -1822,6 +1822,43 @@ public class TransactionServiceTest extends AbstractServiceTest {
         logger.info("Number of transactions = " + numberOfTransactions);
 
         isTrue(numberOfTransactions > 0);
+    }
+
+
+    @Test
+    public void getTransactionsByGlTransactionId() throws Exception {
+
+        String typeId = "cash";
+
+        Transaction transaction1 = transactionService.createTransaction(typeId, TEST_USER_ID, new Date(), new BigDecimal(10e5));
+
+        notNull(transaction1);
+        notNull(transaction1.getId());
+
+        GlTransaction glTransaction = glService.createGlTransaction(transaction1.getId(), GL_ACCOUNT_ID, new BigDecimal(10e4),
+                GlOperationType.DEBIT, "GL transaction statement");
+
+        notNull(glTransaction);
+        notNull(glTransaction.getId());
+        notNull(glTransaction.getTransactions());
+        notEmpty(glTransaction.getTransactions());
+
+        Transaction transaction2 = transactionService.createTransaction(typeId, TEST_USER_ID, new Date(), new BigDecimal(-90));
+
+        notNull(transaction2);
+        notNull(transaction2.getId());
+
+        glTransaction.getTransactions().add(transaction2);
+
+        Long glTransactionId = glService.persistGlTransaction(glTransaction);
+
+        notNull(glTransactionId);
+
+        List<Transaction> transactions = transactionService.getTransactionsByGlTransactionId(glTransaction.getId());
+
+        notNull(transactions);
+        notEmpty(transactions);
+        isTrue(transactions.size() == 2);
 
     }
 

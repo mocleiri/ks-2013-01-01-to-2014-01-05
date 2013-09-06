@@ -1063,4 +1063,12 @@ public interface TransactionService {
      */
     Set<AllocationReversalType> reverseAllocations(Long transactionId, BigDecimal amount);
 
+    /**
+     * Retrieves the list of Transaction objects from the persistent store by GL transaction ID.
+     *
+     * @param glTransactionId GL Transaction ID
+     * @return list ofTransaction instances
+     */
+    List<Transaction> getTransactionsByGlTransactionId(Long glTransactionId);
+
 }

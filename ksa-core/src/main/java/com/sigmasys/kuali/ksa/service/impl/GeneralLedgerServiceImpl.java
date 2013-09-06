@@ -142,9 +142,11 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         glTransaction.setAmount(amount != null ? amount : BigDecimal.ZERO);
         glTransaction.setGlAccountId(glAccountId);
         glTransaction.setGlOperation(operationType);
+
         if (StringUtils.isNotBlank(statement)) {
             glTransaction.setStatement(statement);
         }
+
         glTransaction.setTransactions(new HashSet<Transaction>(Arrays.asList(transaction)));
         glTransaction.setStatus(isQueued ? GlTransactionStatus.QUEUED : GlTransactionStatus.WAITING);
 
@@ -185,6 +187,19 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
                                              GlOperationType operationType, String statement) {
         return createGlTransaction(transactionId, glAccountId, amount, operationType, statement, true);
 
+    }
+
+    /**
+     * Persists GL Transaction in the persistent store
+     *
+     * @param glTransaction GlTransaction instance
+     * @return GL Transaction ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Long persistGlTransaction(GlTransaction glTransaction) {
+        PermissionUtils.checkPermission(Permission.EDIT_GL_TRANSACTION);
+        return persistEntity(glTransaction);
     }
 
     /**

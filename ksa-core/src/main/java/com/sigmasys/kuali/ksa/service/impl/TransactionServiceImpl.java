@@ -3675,6 +3675,25 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return reversalTypes;
     }
 
+    /**
+     * Retrieves the list of Transaction objects from the persistent store by GL transaction ID.
+     *
+     * @param glTransactionId GL Transaction ID
+     * @return list ofTransaction instances
+     */
+    @Override
+    public List<Transaction> getTransactionsByGlTransactionId(Long glTransactionId) {
+
+        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
+
+        Query query = em.createQuery("select t from Transaction t, GlTransaction gt " + GET_TRANSACTION_JOIN +
+                " inner join gt.transactions gts where t.id = gts.id and gt.id = :id");
+
+        query.setParameter("id", glTransactionId);
+
+        return query.getResultList();
+    }
+
 
     private List<Tag> removeTags(Long[] tagIdsToRemove, List<Tag> tags) {
 

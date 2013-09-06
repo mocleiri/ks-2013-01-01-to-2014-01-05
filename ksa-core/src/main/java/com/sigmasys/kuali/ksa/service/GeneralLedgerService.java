@@ -83,6 +83,14 @@ public interface GeneralLedgerService {
     GlTransaction createGlTransaction(Long transactionId, String glAccountId, BigDecimal amount,
                                       GlOperationType operationType, String statement);
 
+    /**
+     * Persists GL Transaction in the persistent store
+     *
+     * @param glTransaction GlTransaction instance
+     * @return GL Transaction ID
+     */
+    Long persistGlTransaction(GlTransaction glTransaction);
+
 
     /**
      * Summarizes the general ledger transactions for the given GL transaction list
