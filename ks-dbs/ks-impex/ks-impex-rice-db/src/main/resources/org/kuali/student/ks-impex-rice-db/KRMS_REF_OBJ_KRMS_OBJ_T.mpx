@@ -615,3 +615,5 @@ REF_OBJ_KRMS_OBJ_ID,COLLECTION_NM,KRMS_OBJ_ID,KRMS_DSCR_TYP,REF_OBJ_ID,REF_DSCR_
 "KS-KRMS-REF-OBJ-KRMS-OBJ-11911","CourseOffering","KS-KRMS-AGENDA-11920","Agenda","3bd925af-bc10-41de-ae7e-35d62ded96f1","http://student.kuali.org/wsdl/courseOffering/CourseOfferingInfo","KS-SYS","Y","1"
 "KS-KRMS-REF-OBJ-KRMS-OBJ-11912","CourseOffering","KS-KRMS-AGENDA-11921","Agenda","bc3cafeb-5c1a-452c-9ab3-dabb992d1178","http://student.kuali.org/wsdl/courseOffering/CourseOfferingInfo","KS-SYS","Y","1"
 "KS-KRMS-REF-OBJ-KRMS-OBJ-11913","CourseOffering","KS-KRMS-AGENDA-11922","Agenda","edda3734-51dc-461c-a406-62b6deb68783","http://student.kuali.org/wsdl/courseOffering/CourseOfferingInfo","KS-SYS","Y","1"
+"KS-KRMS-REF-OBJ-KRMS-OBJ-11914","FinalExamMatrix","KS-KRMS-AGENDA-11923","Agenda","kuali.atp.type.Fall","http://student.kuali.org/wsdl/type/TypeInfo","KS-SYS","Y","0"
+"KS-KRMS-REF-OBJ-KRMS-OBJ-11915","FinalExamMatrix","KS-KRMS-AGENDA-11924","Agenda","kuali.atp.type.Fall","http://student.kuali.org/wsdl/type/TypeInfo","KS-SYS","Y","0"
