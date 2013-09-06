@@ -246,7 +246,7 @@
     </bean>
 
     <!--Planned Menu Items-->
-    <bean id="planned_course_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:cssClasses="fl-container-150">
+    <bean id="planned_course_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
         <property name="items">
             <list>
                 <bean parent="menuOptionPlanItemSummary"/>
@@ -261,7 +261,7 @@
         </property>
     </bean>
 
-    <bean id="planned_placeholder_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:cssClasses="fl-container-150">
+    <bean id="planned_placeholder_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
         <property name="items">
             <list>
                 <bean parent="menuOptionEditPlanItemPlaceholder"/>
@@ -276,7 +276,7 @@
     </bean>
 
     <!--Backup menu items-->
-    <bean id="backup_course_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:cssClasses="fl-container-150">
+    <bean id="backup_course_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
         <property name="items">
             <list>
                 <bean parent="menuOptionPlanItemSummary"/>
@@ -291,7 +291,7 @@
         </property>
     </bean>
 
-    <bean id="backup_placeholder_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:cssClasses="fl-container-150">
+    <bean id="backup_placeholder_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
         <property name="items">
             <list>
                 <bean parent="menuOptionEditPlanItemPlaceholder"/>
@@ -306,8 +306,7 @@
     </bean>
 
     <!--Completed Menu Items-->
-    <bean id="completed_courses_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true"
-          p:cssClasses="fl-container-150">
+    <bean id="completed_courses_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
         <property name="items">
             <list>
                 <bean parent="menuOptionCourseSummary"/>
@@ -318,8 +317,7 @@
 
 
     <!--Completed planned/backup Menu Items-->
-    <bean id="completed_planned_backup_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true"
-          p:cssClasses="fl-container-150">
+    <bean id="completed_planned_backup_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
         <property name="items">
             <list>
                 <bean parent="menuOptionCourseSummary"/>
@@ -331,8 +329,7 @@
     </bean>
 
     <!--Completed planned/backup placeholder items-->
-    <bean id="completed_placeholder_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true"
-          p:cssClasses="fl-container-150">
+    <bean id="completed_placeholder_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
         <property name="items">
             <list>
                 <bean parent="menuOptionMove"/>
@@ -1026,7 +1023,7 @@
         <property name="layoutManager.lineGroupPrototype.id"
                   value="@{#line.planItemDataObject.type}_@{#line.planItemDataObject.atp.replace('.','-')}_@{#line.planItemDataObject.id}_group"/>
         <property name="layoutManager.lineGroupPrototype.cssClasses"
-                  value="uif-verticalBoxGroup uif-collectionItem@{#line.placeHolder ? ' placeholder':''}@{#line.showAlert ? ' alert':''}@{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND #line.placeHolder ? ' noAction' : ''}"/>
+                  value="uif-verticalBoxGroup uif-collectionItem@{#line.placeHolder ? ' placeholder':''}@{#line.showAlert ? ' ksap-alert':''}@{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND #line.placeHolder ? ' noAction' : ''}"/>
         <property name="header">
             <bean parent="Uif-HeaderSix"/>
         </property>

@@ -285,7 +285,7 @@ function openMenu(id, getId, atpId, e, selector, popupClasses, popupOptions, clo
     jQuery("#" + id + "_popup a").each(function () {
         var linkId = jQuery(this).attr("id");
         jQuery(this).siblings("input[data-for='" + linkId + "']").removeAttr("script").attr("name", "script").val(function (index, value) {
-            return value.replace("'" + linkId + "'", "'" + linkId + "_popup'");
+            return value.replace("'#" + linkId + "'", "'#" + linkId + "_popup'");
         });
         jQuery(this).attr("id", linkId + "_popup");
         jQuery.each(jQuery(target).data(), function (key, value) {

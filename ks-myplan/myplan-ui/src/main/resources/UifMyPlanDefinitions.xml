@@ -143,7 +143,7 @@
     <!-- THEMES ######################################################################################## -->
 
     <bean id="MyPlanTheme" abstract="true" parent="MyPlanTheme-parentBean"/>
-    <bean id="MyPlanTheme-parentBean" parent="Uif-KbootTheme">
+    <bean id="MyPlanTheme-parentBean" parent="Uif-KbootTheme" name="kboot">
         <property name="cssFiles">
             <list merge="true">
                 <value>ks-myplan/jquery-popover/jquery.popover.css?@{#ConfigProperties['myplan.buildNumber']}</value>
@@ -175,7 +175,7 @@
 
     <!--Myplan theme with different view-->
     <bean id="MyPlanRetrievedTheme" abstract="true" parent="MyPlanRetrievedTheme-parentBean"/>
-    <bean id="MyPlanRetrievedTheme-parentBean" parent="Uif-ViewTheme">
+    <bean id="MyPlanRetrievedTheme-parentBean" parent="MyPlanTheme">
         <property name="cssFiles">
             <list merge="false"/>
         </property>
