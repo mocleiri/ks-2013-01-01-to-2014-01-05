@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,10 +29,10 @@ import org.kuali.student.myplan.academicplan.model.PlanItemAttributeEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemRichTextEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemTypeEntity;
-import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
+import org.kuali.student.r2.common.entity.BaseAttributeEntity;
 import org.kuali.student.r2.common.exceptions.AlreadyExistsException;
 import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
@@ -40,6 +41,7 @@ import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.infc.Attribute;
+import org.kuali.student.r2.common.infc.HasAttributes;
 import org.kuali.student.r2.common.infc.ValidationResult;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -325,6 +327,64 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		throw new RuntimeException("Not implemented.");
 	}
 
+	/**
+	 * 
+	 * @param attrSource
+	 * @param attributeEntities
+	 * @return
+	 */
+	private List<Attribute> mergeAttributes(HasAttributes attrSource,
+			Set<? extends BaseAttributeEntity<?>> attributeEntities) {
+		if (attrSource.getAttributes() == null)
+			return null;
+
+		Map<String, List<Attribute>> attributeMap = new LinkedHashMap<String, List<Attribute>>();
+		for (Attribute att : attrSource.getAttributes()) {
+			String key = att.getKey();
+			List<Attribute> attl = attributeMap.get(key);
+			if (attl == null)
+				attributeMap.put(key, attl = new LinkedList<Attribute>());
+			attl.add(att);
+		}
+
+		if (attributeEntities != null) {
+			Iterator<? extends BaseAttributeEntity<?>> ai = attributeEntities.iterator();
+			while (ai.hasNext()) {
+				BaseAttributeEntity<?> attrEntity = ai.next();
+				String key = attrEntity.getKey();
+				if (attributeMap.containsKey(key)) {
+					List<Attribute> attl = attributeMap.get(key);
+					if (attl.isEmpty()) {
+						ai.remove();
+					} else {
+						Iterator<Attribute> atti = attl.iterator();
+						Attribute att = null;
+						while (att == null && atti.hasNext()) {
+							Attribute attc = atti.next();
+							if (attc.getId() != null && attc.getId().equals(attrEntity.getId())) {
+								att = attc;
+								atti.remove();
+							}
+						}
+						if (att == null) {
+							att = attl.remove(0);
+						}
+						attrEntity.setValue(att.getValue());
+					}
+					if (attl.isEmpty())
+						attributeMap.remove(key);
+				} else {
+					ai.remove();
+				}
+			}
+		}
+
+		List<Attribute> rv = new LinkedList<Attribute>();
+		for (List<Attribute> attl : attributeMap.values())
+			rv.addAll(attl);
+		return rv;
+	}
+
 	@Override
 	@Transactional
 	public LearningPlanInfo updateLearningPlan(@WebParam(name = "learningPlanId") String learningPlanId,
@@ -340,6 +400,17 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 
 		lpe.setStudentId(learningPlan.getStudentId());
 		lpe.setDescr(new LearningPlanRichTextEntity(learningPlan.getDescr()));
+
+		//  Update attributes.
+		List<Attribute> createAttrs = mergeAttributes(learningPlan, lpe.getAttributes());
+		if (createAttrs != null) {
+			Set<LearningPlanAttributeEntity> attributeEntities = lpe.getAttributes();
+			if (attributeEntities == null) {
+				lpe.setAttributes(attributeEntities = new HashSet<LearningPlanAttributeEntity>());
+			}
+			for (Attribute att : createAttrs)
+				attributeEntities.add(new LearningPlanAttributeEntity(att, lpe));
+		}
 
 		lpe.setAttributes(new HashSet<LearningPlanAttributeEntity>());
 		if (null != learningPlan.getAttributes()) {
@@ -405,28 +476,14 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		}
 
 		//  Update attributes.
-		if (planItem.getAttributes() != null) {
-			Map<String, AttributeInfo> attributeMap = new LinkedHashMap<String, AttributeInfo>();
-			for (AttributeInfo att : planItem.getAttributes()) {
-				attributeMap.put(att.getKey(), att);
-			}
+		List<Attribute> createAttrs = mergeAttributes(planItem, planItemEntity.getAttributes());
+		if (createAttrs != null) {
 			Set<PlanItemAttributeEntity> attributeEntities = planItemEntity.getAttributes();
 			if (attributeEntities == null) {
 				planItemEntity.setAttributes(attributeEntities = new HashSet<PlanItemAttributeEntity>());
 			}
-			Iterator<PlanItemAttributeEntity> ai = attributeEntities.iterator();
-			while (ai.hasNext()) {
-				PlanItemAttributeEntity attrEntity = ai.next();
-				String key = attrEntity.getKey();
-				if (attributeMap.containsKey(key)) {
-					attrEntity.setValue(attributeMap.remove(key).getValue());
-				} else {
-					ai.remove();
-				}
-			}
-			for (AttributeInfo att : attributeMap.values()) {
+			for (Attribute att : createAttrs)
 				attributeEntities.add(new PlanItemAttributeEntity(att, planItemEntity));
-			}
 		}
 
 		//  Update text entity.
