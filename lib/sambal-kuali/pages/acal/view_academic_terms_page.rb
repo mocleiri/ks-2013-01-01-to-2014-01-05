@@ -29,7 +29,7 @@ class ViewAcademicTerms < BasePage
 
   def open_term_section(term_type)
     link =  acal_term_list_div.link(text: "#{term_type}")
-    if link.image.attribute_value("alt") == "collapse" then # expand means is already expanded
+    if link.image(alt: "collapse").visible? then # collapse means collapsed
       link.click
     end
   end
