@@ -113,10 +113,7 @@ class CORequisitesData
     begin
       on CourseOfferingRequisites do |page|
         page.loading.wait_while_present(60)
-        #if( page.send(sections[@section]).element(:tag_name, 'img').attribute_value('alt') != "expand")
-        #  page.send(sections[@section]).when_present.click
-        #end
-        if page.send(sections[@section]).img(id: /KSCO-AgendaManage-RulePrototype_rule[A-F]_col/).exists?
+        if page.send(sections[@section]).img(id: /KSCO-AgendaManage-RulePrototype_rule[A-F]_toggle_col/).present?
           page.send(sections[@section]).when_present.click
         end
       end

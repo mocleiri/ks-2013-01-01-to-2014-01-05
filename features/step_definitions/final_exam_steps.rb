@@ -41,6 +41,42 @@ When /^I copy an existing academic calender that has a defined final exam period
   @calendar.copy_from @source_calendar.name
 end
 
+When /^I create a Course Offering from catalog with a final exam period$/ do
+  @course_offering = make CourseOffering, :term => "201301", :course => "PHYS603"
+
+  @course_offering.start_create_by_search
+  on CreateCourseOffering do  |page|
+    page.continue
+  end
+
+  on CreateCOFromCatalog do |page|
+    @course_offering.suffix = random_alphanums(5).upcase if @course_offering.suffix == ""
+    page.suffix.set @course_offering.suffix
+    @course_offering.course = "#{@course_offering.course}#{@course_offering.suffix}"
+  end
+end
+
+When /^I create and then edit a Course Offering from catalog with a final exam period$/ do
+  @course_offering = make CourseOffering, :term => "201301", :course => "PHYS603"
+
+  @course_offering.start_create_by_search
+  on CreateCourseOffering do  |page|
+    page.continue
+  end
+
+  on CreateCOFromCatalog do |page|
+    @course_offering.suffix = random_alphanums(5).upcase if @course_offering.suffix == ""
+    page.suffix.set @course_offering.suffix
+    @course_offering.course = "#{@course_offering.course}#{@course_offering.suffix}"
+    page.final_exam_option_alternate
+    page.create_offering
+  end
+
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+end
+
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
@@ -77,5 +113,23 @@ end
 Then /^there should be no final exam period$/ do
   on EditAcademicTerms do |page|
     page.final_exam_section( @term.term_type).text.should match /Final Exam Period\nAdd Final Exam Period/
+  end
+end
+
+Then /^the Final Exam Driver Activity value should change each time I choose another type of Final Exam$/ do
+  on CreateCOFromCatalog do |page|
+    page.final_exam_option_standard
+    page.standard_fe_driver_activity_value.should == "Lecture"
+    page.final_exam_option_alternate
+    page.alt_no_fe_driver_activity_value.should == "Alternate exam for this offering"
+    page.final_exam_option_none
+    page.alt_no_fe_driver_activity_value.should == "No final exam for this offering"
+    page.create_offering
+  end
+end
+
+Then /^a warning about the FE on the Edit CO page is displayed stating "([^"]*)"$/ do |exp_msg|
+  on CourseOfferingEdit do |page|
+    page.delivery_assessment_warning.should match /#{exp_msg}/
   end
 end
