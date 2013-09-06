@@ -43,7 +43,7 @@
     <bean id="completed_help_icon" parent="MyPlanHelpImage"
           p:render="@{#parentLine.completedTerm and #parentLine.displayCompletedHelp ? true : false}">
         <property name="onDocumentReadyScript" value="
-            myplanCreateTooltip('completed_help_icon_line@{#index}', '&lt;div class=&#34;ks-plan-Tooltip&#34;&gt;Courses that you registered for in a quarter that is now complete.&lt;/div&gt;',{
+            myplanCreateTooltip('completed_help_icon_line@{#index}', '&lt;div class=&#34;ks-Tooltip&#34;&gt;Courses that you registered for in a quarter that is now complete.&lt;/div&gt;',{
                 position: 'top',
                 align: 'left',
                 alwaysVisible: false,
@@ -66,7 +66,7 @@
     <bean id="registered_help_icon" parent="MyPlanHelpImage"
           p:render="@{!#parentLine.completedTerm and (#parentLine.academicRecord.size() gt 0 or !#parentLine.openForPlanning) and #parentLine.displayRegisteredHelp ? true : false}">
         <property name="onDocumentReadyScript" value="
-            myplanCreateTooltip('registered_help_icon_line@{#index}', '&lt;div class=&#34;ks-plan-Tooltip&#34;&gt;Courses you are enrolled in for the current or a future academic quarter.&lt;/div&gt;',{
+            myplanCreateTooltip('registered_help_icon_line@{#index}', '&lt;div class=&#34;ks-Tooltip&#34;&gt;Courses you are enrolled in for the current or a future academic quarter.&lt;/div&gt;',{
                 position: 'top',
                 align: 'left',
                 alwaysVisible: false,
@@ -88,7 +88,7 @@
 
     <bean id="cart_help_icon" parent="MyPlanHelpImage" p:render="@{#line.displayCartHelp ? true : false}">
         <property name="onDocumentReadyScript" value="
-            myplanCreateTooltip('cart_help_icon_line@{#index}', '&lt;div class=&#34;ks-plan-Tooltip&#34;&gt;Items in the cart are those you have selected to register for but have not been submitted for registration yet.&lt;/div&gt;',{
+            myplanCreateTooltip('cart_help_icon_line@{#index}', '&lt;div class=&#34;ks-Tooltip&#34;&gt;Items in the cart are those you have selected to register for but have not been submitted for registration yet.&lt;/div&gt;',{
                 position: 'top',
                 align: 'left',
                 alwaysVisible: false,
@@ -110,7 +110,7 @@
 
     <bean id="planned_help_icon" parent="MyPlanHelpImage" p:render="@{#line.displayPlannedHelp ? true : false}">
         <property name="onDocumentReadyScript" value="
-            myplanCreateTooltip('planned_help_icon_line@{#index}', '&lt;div class=&#34;ks-plan-Tooltip&#34;&gt;MyPlan allows you to add courses to your plan, but does not register you. Check the Time Schedule each quarter to verify whether your planned courses will be offered.&lt;/div&gt;',{
+            myplanCreateTooltip('planned_help_icon_line@{#index}', '&lt;div class=&#34;ks-Tooltip&#34;&gt;MyPlan allows you to add courses to your plan, but does not register you. Check the Time Schedule each quarter to verify whether your planned courses will be offered.&lt;/div&gt;',{
                 position: 'top',
                 align: 'left',
                 alwaysVisible: false,
@@ -132,7 +132,7 @@
 
     <bean id="backup_help_icon" parent="MyPlanHelpImage" p:render="@{#line.displayBackupHelp ? true : false}">
         <property name="onDocumentReadyScript" value="
-            myplanCreateTooltip('backup_help_icon_line@{#index}', '&lt;div class=&#34;ks-plan-Tooltip&#34;&gt;Courses you are considering in case a planned course is full or unavailable.&lt;/div&gt;',{
+            myplanCreateTooltip('backup_help_icon_line@{#index}', '&lt;div class=&#34;ks-Tooltip&#34;&gt;Courses you are considering in case a planned course is full or unavailable.&lt;/div&gt;',{
                 position: 'top',
                 align: 'left',
                 alwaysVisible: false,
@@ -156,7 +156,7 @@
         <property name="dataAttributes">
             <map>
                 <entry key="help"
-                       value="&lt;div class=&#34;ks-plan-Tooltip&#34;&gt;@{!#line.openForPlanning ? 'The number of credits registered for a completed quarter. Check your transcript to verify completed credits.' : (#line.academicRecord.size() gt 0 ? ' The total number of credits from your planned and registered courses for the current quarter.' : 'The number of credits you plan to enroll in for future quarter.')}&lt;/div&gt;"/>
+                       value="&lt;div class=&#34;ks-Tooltip&#34;&gt;@{!#line.openForPlanning ? 'The number of credits registered for a completed quarter. Check your transcript to verify completed credits.' : (#line.academicRecord.size() gt 0 ? ' The total number of credits from your planned and registered courses for the current quarter.' : 'The number of credits you plan to enroll in for future quarter.')}&lt;/div&gt;"/>
             </map>
         </property>
         <property name="onDocumentReadyScript" value="
@@ -185,7 +185,7 @@
         <property name="dataAttributes">
             <map>
                 <entry key="help"
-                       value="&lt;div class=&#34;ks-plan-Tooltip&#34;&gt;The total number of credits for all course currently in the shopping cart&lt;/div&gt;"/>
+                       value="&lt;div class=&#34;ks-Tooltip&#34;&gt;The total number of credits for all course currently in the shopping cart&lt;/div&gt;"/>
             </map>
         </property>
         <property name="onDocumentReadyScript" value="
@@ -205,7 +205,7 @@
                 }, true, false);
             "/>
         <property name="toolTip">
-            <bean parent="MyPlan-Tooltip" p:tooltipContent="&lt;div class=\ks-plan-Tooltip\&gt;The total number of credits for all course currently in the shopping cart.&lt;/div&gt;">
+            <bean parent="MyPlan-Tooltip" p:tooltipContent="&lt;div class=\ks-Tooltip\&gt;The total number of credits for all course currently in the shopping cart.&lt;/div&gt;">
             </bean>
         </property>
     </bean>
@@ -213,7 +213,7 @@
     <bean id="course_requisite_help_icon" parent="MyPlanHelpImage">
         <property name="toolTip">
             <bean parent="MyPlan-Tooltip-Left"
-                  p:tooltipContent="&lt;div class=\ks-plan-Tooltip\&gt;#{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTextHelper().getText('DETAILS_REQUISITE_TOOLTOP_COREQ_TEXT')}
+                  p:tooltipContent="&lt;div class=\ks-Tooltip\&gt;#{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTextHelper().getText('DETAILS_REQUISITE_TOOLTOP_COREQ_TEXT')}
                                     #{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTextHelper().getText('DETAILS_REQUISITE_TOOLTOP_PREREQ_TEXT')}&lt;/div&gt;"/>
         </property>
     </bean>
@@ -221,7 +221,7 @@
     <bean id="course_quarter_help_icon" parent="MyPlanHelpImage">
         <property name="toolTip">
             <bean parent="MyPlan-Tooltip-Left"
-                  p:tooltipContent="&lt;div class=\ks-plan-Tooltip\&gt;#{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTextHelper().getText('DETAILS_TERMS_TOOLTIP_TEXT')}&lt;/div&gt;"/>
+                  p:tooltipContent="&lt;div class=\ks-Tooltip\&gt;#{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTextHelper().getText('DETAILS_TERMS_TOOLTIP_TEXT')}&lt;/div&gt;"/>
         </property>
     </bean>
 
@@ -237,14 +237,14 @@
     <bean id="course_gened_help_icon" parent="MyPlanHelpImage">
         <property name="toolTip">
             <bean parent="MyPlan-Tooltip-Left"
-                  p:tooltipContent="&lt;div class=\ks-plan-Tooltip\&gt;#{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTextHelper().getText('DETAILS_GENED_TOOLTIP_TEXT')}&lt;/div&gt;"/>
+                  p:tooltipContent="&lt;div class=\ks-Tooltip\&gt;#{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTextHelper().getText('DETAILS_GENED_TOOLTIP_TEXT')}&lt;/div&gt;"/>
         </property>
     </bean>
 
     <bean id="course_sections_help_icon" parent="MyPlanHelpImage">
         <property name="toolTip">
             <bean parent="MyPlan-Tooltip-Right"
-                  p:tooltipContent="&lt;div class=\ks-plan-Tooltip\&gt;&lt;strong&gt;ENRL/LIMIT&lt;/strong&gt; = section enrollment and overall enrollment limit&lt;/br&gt;
+                  p:tooltipContent="&lt;div class=\ks-Tooltip\&gt;&lt;strong&gt;ENRL/LIMIT&lt;/strong&gt; = section enrollment and overall enrollment limit&lt;/br&gt;
                   &lt;strong&gt;ENRL. RESTR.&lt;/strong&gt; = applicable enrollment restrictions for each section&lt;/br&gt;
                   &lt;strong&gt;OTHER&lt;/strong&gt; = additional information for each section&lt;/br&gt;
                   &lt;strong&gt;PCE&lt;/strong&gt; = Professional &amp; Continuing Education&lt;/br&gt;&lt;/div&gt;

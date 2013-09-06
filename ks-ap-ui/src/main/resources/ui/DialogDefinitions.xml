@@ -44,9 +44,7 @@
     </bean>
 
     <!--View Course Summary Dialog Box content -->
-    <bean id="course_summary_dialog_page" parent="KSAP-PopoverPage" p:id="course_summary_dialog_page" p:headerText="View Course Summary" p:additionalCssClasses="ks-plan-Popover ks-plan-CourseSummary">
-        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
-        <property name="layoutManager.cssClasses" value="ks-plan-Popover-body"/>
+    <bean id="course_summary_dialog_page" parent="KSAP-PopoverPage" p:id="course_summary_dialog_page" p:headerText="View Course Summary">
         <property name="items">
             <list>
                 <bean parent="course_title_link"/>
@@ -163,12 +161,9 @@
     <!--Delete confirmation Dialog Box content -->
     <bean id="plan_item_delete_page" parent="KSAP-PopoverPage" p:id="plan_item_delete_page"
           p:headerText="Delete @{courseSummaryDetails.code} @{atpId eq null ? 'Bookmark' : 'from the '+shortTerm+' Plan'}">
-        <property name="additionalCssClasses" value="ks-plan-Popover"/>
-        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
-        <property name="layoutManager.cssClasses" value="ks-plan-Popover-body"/>
         <property name="items">
             <list>
-                <bean parent="Uif-Message"
+                <bean parent="Uif-Message" p:cssClasses="ks-Popover-bodyLabel"
                       p:messageText="Are you sure that you want to delete &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt;? Once deleted, you cannot undo."/>
                 <bean parent="KSAP-HorizontalBoxGroup"
                       p:render="@{planActivities ne null AND planActivities.size() gt 0}">
@@ -192,7 +187,7 @@
             </list>
         </property>
         <property name="footer">
-            <bean parent="KSAP-HorizontalBoxGroup" p:additionalCssClasses="ks-plan-Popover-footer">
+            <bean parent="KSAP-HorizontalBoxGroup">
                 <property name="items">
                     <list>
                         <bean p:id="deletePlannedCourse" parent="Uif-PrimaryActionButton-Small"
@@ -223,32 +218,29 @@
 
     <!--Move Course to another Quarter Dialog Box Content-->
     <bean id="move_dialog_page" parent="KSAP-PopoverPage" p:id="move_dialog_page" p:headerText="Move to Another Quarter">
-        <property name="additionalCssClasses" value="ks-plan-Popover"/>
-        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
-        <property name="layoutManager.cssClasses" value="ks-plan-Popover-body"/>
         <property name="items">
             <list>
-                <bean parent="Uif-Message"
+                <bean parent="Uif-Message" p:cssClasses="ks-Popover-bodyLabel"
                       p:messageText="Which quarter would you like to move &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
 
                 <bean parent="Uif-DataField" p:propertyName="courseSummaryDetails.scheduledTermsNames"
                       p:label="Scheduled For"
-                      p:fieldLabel.cssClasses="fl-text-gray fl-font-size-90 myplan-text-normal"
+                      p:fieldLabel.cssClasses="fl-text-gray fl-font-size-90 myplan-text-normal ks-Popover-itemLabel"
                       p:labelPlacement="LEFT">
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-data-list</value>
+                            <value>ks-Popover-item</value>
                         </list>
                     </property>
                 </bean>
 
-                <bean parent="Uif-HorizontalFieldGroup"
+                <bean parent="Uif-HorizontalFieldGroup" p:cssClasses="ks-Popover-item"
                       p:label="Quarter &amp; Year" p:labelPlacement="TOP">
-                    <property name="fieldLabel.cssClasses" value="myplan-text-normal"/>
+                    <property name="fieldLabel.cssClasses" value="myplan-text-normal ks-Popover-itemLabel"/>
                     <property name="items">
                         <list>
-                            <bean p:id="atpIdMove_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}" parent="KSAP-SimpleInputField" p:propertyName="fakeAtpId"
-                                  p:width="120px">
+                            <bean p:id="atpIdMove_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}" parent="KSAP-SimpleInputField" p:propertyName="fakeAtpId">
                                 <property name="control">
                                     <bean parent="Uif-DropdownControl"/>
                                 </property>
@@ -256,12 +248,13 @@
                                     <bean class="org.kuali.student.myplan.plan.util.TermsListBuilder"/>
                                 </property>
                             </bean>
-                            <bean parent="KSAP-Message" p:width="160px"
+                            <bean parent="KSAP-Message"
                                   p:messageText="Note: This course MAY NOT be offered in your selected quarter. Check back after the Time Schedule is released.">
                                 <property name="cssClasses">
                                     <list merge="true">
                                         <value>fl-font-size-80</value>
                                         <value>fl-text-gray</value>
+                                        <value>ks-Popover-note</value>
                                     </list>
                                 </property>
                             </bean>
@@ -291,7 +284,7 @@
             </list>
         </property>
         <property name="footer">
-            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup" p:additionalCssClasses="ks-plan-Popover-footer">
+            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
                 <property name="items">
                     <list>
                         <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
@@ -328,32 +321,29 @@
 
     <!--Copy Course to another Quarter Dialog Box Content-->
     <bean id="copy_dialog_page" parent="KSAP-PopoverPage" p:id="copy_dialog_page" p:headerText="Copy to Another Quarter">
-        <property name="additionalCssClasses" value="ks-plan-Popover"/>
-        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
-        <property name="layoutManager.cssClasses" value="ks-plan-Popover-body"/>
         <property name="items">
             <list>
-                <bean parent="Uif-Message"
+                <bean parent="Uif-Message" p:cssClasses="ks-Popover-bodyLabel"
                       p:messageText="Which quarter would you like to copy &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
 
                 <bean parent="Uif-DataField" p:propertyName="courseSummaryDetails.scheduledTermsNames"
                       p:label="Scheduled For"
-                      p:fieldLabel.cssClasses="fl-text-gray fl-font-size-90 myplan-text-normal"
+                      p:fieldLabel.cssClasses="fl-text-gray fl-font-size-90 myplan-text-normal ks-Popover-itemLabel"
                       p:labelPlacement="LEFT">
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-data-list</value>
+                            <value>ks-Popover-item</value>
                         </list>
                     </property>
                 </bean>
 
-                <bean parent="Uif-HorizontalFieldGroup"
+                <bean parent="Uif-HorizontalFieldGroup" p:cssClasses="ks-Popover-item"
                       p:label="Quarter &amp; Year" p:labelPlacement="TOP">
-                    <property name="fieldLabel.cssClasses" value="myplan-text-normal"/>
+                    <property name="fieldLabel.cssClasses" value="myplan-text-normal ks-Popover-itemLabel"/>
                     <property name="items">
                         <list>
-                            <bean p:id="atpIdCopy_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}" parent="KSAP-SimpleInputField" p:propertyName="fakeAtpId"
-                                  p:width="120px">
+                            <bean p:id="atpIdCopy_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}" parent="KSAP-SimpleInputField" p:propertyName="fakeAtpId">
                                 <property name="control">
                                     <bean parent="Uif-DropdownControl"/>
                                 </property>
@@ -361,12 +351,13 @@
                                     <bean class="org.kuali.student.myplan.plan.util.TermsListBuilder"/>
                                 </property>
                             </bean>
-                            <bean parent="KSAP-Message" p:width="160px"
+                            <bean parent="KSAP-Message"
                                   p:messageText="Note: This course MAY NOT be offered in your selected quarter. Check back after the Time Schedule is released.">
                                 <property name="cssClasses">
                                     <list merge="true">
                                         <value>fl-font-size-80</value>
                                         <value>fl-text-gray</value>
+                                        <value>ks-Popover-note</value>
                                     </list>
                                 </property>
                             </bean>
@@ -396,7 +387,7 @@
             </list>
         </property>
         <property name="footer">
-            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup" p:additionalCssClasses="ks-plan-Popover-footer">
+            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
                 <property name="items">
                     <list>
                         <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
@@ -470,18 +461,18 @@
     </bean>
 
     <!--Edit plan item Dialog Box content -->
-    <bean id="plan_item_edit_page" parent="KSAP-PopoverPage" p:id="plan_item_edit_page" p:additionalCssClasses="ks-plan-Popover"
+    <bean id="plan_item_edit_page" parent="KSAP-PopoverPage" p:id="plan_item_edit_page"
           p:headerText="Edit @{courseSummaryDetails.code} @{atpId eq null ? 'Bookmark' : 'from the '+shortTerm+' Plan'}">
-        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
-        <property name="layoutManager.cssClasses" value="ks-plan-Popover-body"/>
         <property name="items">
             <list>
                 <bean parent="Uif-InputField" p:id="courseCredits_@{atpId.replaceAll('\.','-')}_@{courseSummaryDetails.courseIdXmlSafe}">
+                    <property name="cssClasses" value="ks-Popover-item ks-Popover-item--divideAfter"/>
                     <property name="label" value="Enter Course Credits"/>
                     <property name="fieldLabel.render" value="true"/>
                     <property name="fieldLabel.cssClasses">
                         <list merge="true">
                             <value>myplan-text-normal</value>
+                            <value>ks-Popover-itemLabel</value>
                         </list>
                     </property>
                     <property name="propertyName" value="fakeCourseCredit"/>
@@ -497,7 +488,7 @@
             </list>
         </property>
         <property name="footer">
-            <bean parent="KSAP-HorizontalBoxGroup" p:additionalCssClasses="ks-plan-Popover-footer">
+            <bean parent="KSAP-HorizontalBoxGroup" p:additionalCssClasses="ks-Popover-footer">
                 <property name="items">
                     <list>
                         <bean p:id="editPlannedCourse" parent="Uif-PrimaryActionButton-Small"
@@ -533,53 +524,52 @@
 
     <!--Edit plan item Dialog Box content -->
     <bean id="term_note_edit_page" parent="KSAP-PopoverPage" p:id="term_note_edit_page"
-          p:headerText="Edit @{shortTerm} Term Note" p:additionalCssClasses="ks-plan-Popover">
-        <property name="header.additionalCssClasses" value="ks-plan-Popover-header"/>
+          p:headerText="Edit @{shortTerm} Term Note">
         <property name="items">
             <list>
                 <bean parent="planItemNote" p:id="termNote_@{atpId.replaceAll('\.','-')}" p:propertyName="fakeTermNote"
                       p:defaultValue="@{#form.atpId NE null ? #form.termNote : ''}">
                     <property name="label" value="Note for the term"/>
                 </bean>
-                <bean parent="KSAP-HorizontalBoxGroup" p:additionalCssClasses="ks-plan-Popover-footer">
-                    <property name="items">
-                        <list>
-                            <bean p:id="editTermNote" parent="Uif-PrimaryActionButton-Small"
-                                  p:actionLabel="Save" p:additionalCssClasses="ks-Button ks-Button--primary">
-                                <property name="actionScript" value="
-                                                var newNote = jQuery('#termNote_@{atpId.replaceAll('\.','-')}_control').val();
-                                                var additionalFormData = {
-                                                    viewId: 'PlannedCourse-FormView',
-                                                    methodToCall: 'editTermNote',
-                                                    atpId: '@{atpId}',
-                                                    termNote: newNote
-                                                };
-                                                submitPopupForm(additionalFormData, e, false);
-                                            "/>
-                                <property name="onDocumentReadyScript" value="
-                                                jQuery('#editTermNote').on('TERM_NOTE_UPDATED', function(event, data){
-                                                    fnDisplayMessage(data.message, data.cssClass, 'editTermNote', true, true);
-                                                }).on('ERROR', function(event, data) {
-                                                    fnDisplayMessage(data.message, data.cssClass, 'editTermNote', true, true);
-                                                });
-                                            "/>
-                            </bean>
-                            <bean parent="closePopoverCancel"/>
-                        </list>
-                    </property>
-                </bean>
             </list>
         </property>
+        <property name="footer">
+            <bean parent="KSAP-HorizontalBoxGroup" p:additionalCssClasses="ks-Popover-footer">
+                <property name="items">
+                    <list>
+                        <bean p:id="editTermNote" parent="Uif-PrimaryActionButton-Small"
+                              p:actionLabel="Save" p:additionalCssClasses="ks-Button ks-Button--primary">
+                            <property name="actionScript" value="
+                                            var newNote = jQuery('#termNote_@{atpId.replaceAll('\.','-')}_control').val();
+                                            var additionalFormData = {
+                                                viewId: 'PlannedCourse-FormView',
+                                                methodToCall: 'editTermNote',
+                                                atpId: '@{atpId}',
+                                                termNote: newNote
+                                            };
+                                            submitPopupForm(additionalFormData, e, false);
+                                        "/>
+                            <property name="onDocumentReadyScript" value="
+                                            jQuery('#editTermNote').on('TERM_NOTE_UPDATED', function(event, data){
+                                                fnDisplayMessage(data.message, data.cssClass, 'editTermNote', true, true);
+                                            }).on('ERROR', function(event, data) {
+                                                fnDisplayMessage(data.message, data.cssClass, 'editTermNote', true, true);
+                                            });
+                                        "/>
+                        </bean>
+                        <bean parent="closePopoverCancel"/>
+                    </list>
+                </property>
+            </bean>
+        </property>
     </bean>
-
-
 
     <bean id="course_title_link" parent="Uif-Link" p:target="">
         <property name="cssClasses">
             <list merge="true">
                 <value>fl-text-bold</value>
                 <value>myplan-text-wrap</value>
-                <value>ks-plan-CourseSummary-link</value>
+                <value>ks-Popover-bodyLabel</value>
             </list>
         </property>
         <property name="linkText"
@@ -593,7 +583,7 @@
     <!-- ################# Course Details Summary Bean ############################# -->
 
     <!-- Course details summary component used in both the popover and dialog box -->
-    <bean id="course_details_summary_info" parent="Uif-VerticalBoxGroup" p:cssClasses="ks-plan-CourseSummary-content">
+    <bean id="course_details_summary_info" parent="Uif-VerticalBoxGroup">
         <property name="validationMessages.render" value="false"/>
         <property name="items">
             <list>
@@ -631,7 +621,10 @@
         <property name="cssClasses">
             <list merge="true">
                 <value>myplan-course-details</value>
-                <value>ks-plan-CourseSummary-contentDetails</value>
+                <value>ks-Popover-item</value>
+                <value>ks-Popover-item--divideBefore</value>
+                <value>ks-Popover-item--divideAfter</value>
+                <value>ks-Popover-item--secondary</value>
             </list>
         </property>
         <property name="items">
@@ -639,18 +632,18 @@
                 <!-- Scheduled Terms -->
                 <bean parent="Uif-DataField" p:label="Scheduled for"
                       p:propertyName="courseSummaryDetails.scheduledTermsNames"
-                      p:fieldLabel.cssClasses="fl-text-gray myplan-text-normal ks-plan-CourseSummary-detailLabel" p:labelPlacement="LEFT">
+                      p:fieldLabel.cssClasses="fl-text-gray myplan-text-normal ks-Popover-detailLabel" p:labelPlacement="LEFT">
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-data-list</value>
-                            <value>ks-plan-CourseSummary-detail</value>
+                            <value>ks-Popover-detail</value>
                         </list>
                     </property>
                     <property name="render"
                               value="@{courseSummaryDetails.scheduledTerms.size() gt 0}"/>
                 </bean>
                 <bean parent="Uif-MessageField" p:label="Scheduled for"
-                      p:fieldLabel.cssClasses="fl-text-gray myplan-text-normal ks-plan-CourseSummary-detailLabel"
+                      p:fieldLabel.cssClasses="fl-text-gray myplan-text-normal ks-Popover-detailLabel"
                       p:render="@{courseSummaryDetails.scheduledTerms.size() eq 0}">
                     <property name="message">
                         <bean parent="Uif-Message" p:messageText="Not currently scheduled"/>
@@ -659,18 +652,18 @@
                 <!-- Last Offered -->
                 <bean parent="Uif-DataField" p:label="Last Offered" p:propertyName="courseSummaryDetails.lastOffered"
                       p:labelPlacement="LEFT">
-                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal ks-plan-CourseSummary-detailLabel"/>
+                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal ks-Popover-detailLabel"/>
                     <property name="render" value="@{courseSummaryDetails.lastOffered ne null and courseSummaryDetails.scheduledTerms.size() eq 0}"/>
                 </bean>
                 <!-- Projected Terms -->
                 <bean parent="Uif-DataField" p:label="Projected for" p:propertyName="courseSummaryDetails.termsOffered"
                       p:labelPlacement="LEFT" p:escapeHtmlInPropertyValue="false">
-                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal ks-plan-CourseSummary-detailLabel"/>
+                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal ks-Popover-detailLabel"/>
                     <property name="propertyEditor" ref="terms_formatter"/>
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-data-list</value>
-                            <value>ks-plan-CourseSummary-detail</value>
+                            <value>ks-Popover-detail</value>
                         </list>
                     </property>
                     <property name="render"
@@ -680,13 +673,13 @@
                 <bean id="course_details_popup_requisites_testing" parent="Uif-DataField" p:label="Course Requisites"
                       p:propertyName="courseSummaryDetails.requisites"
                       p:labelPlacement="LEFT" p:escapeHtmlInPropertyValue="false">
-                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal ks-plan-CourseSummary-detailLabel"/>
+                    <property name="fieldLabel.cssClasses" value="fl-text-gray myplan-text-normal ks-Popover-detailLabel"/>
                     <property name="propertyEditor" ref="data_list_formatter"/>
                     <property name="cssClasses">
                         <list merge="true">
                             <value>myplan-data-list</value>
                             <value>myplan-multiline-ellipsis</value>
-                            <value>ks-plan-CourseSummary-detail</value>
+                            <value>ks-Popover-detail</value>
                         </list>
                     </property>
                 </bean>
@@ -700,7 +693,7 @@
         </property>
     </bean>
 
-    <bean id="course_details_summary_messages" parent="Uif-VerticalBoxGroup" p:cssClasses="ks-plan-Popover-footer">
+    <bean id="course_details_summary_messages" parent="Uif-VerticalBoxGroup" p:cssClasses="ks-Popover-footer">
         <property name="validationMessages.render" value="false"/>
         <property name="items">
             <list>
