@@ -94,6 +94,15 @@ class EditAcademicTerms < BasePage
     return nil
   end
 
+  def key_date_group_index(term_type, key_date_group_type)
+    key_date_group_div_list(term_type).each do | div |
+      if div.span(text: /#{key_date_group_type} Key Dates/ ).exists?
+        return div.id[/\d+$/]
+      end
+    end
+    return nil
+  end
+
   def delete_key_date_group(term_type, key_date_group_type)
     key_date_group_div(term_type, key_date_group_type).button(id: /key_date_group_delete_button/).click
     loading.wait_while_present

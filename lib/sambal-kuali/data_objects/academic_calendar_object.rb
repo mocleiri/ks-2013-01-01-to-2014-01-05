@@ -567,21 +567,16 @@ class KeyDate
       page.open_term_section(@parent_key_date_group.term_type)
       if ! page.key_date_exists?(@parent_key_date_group.term_type, @parent_key_date_group.key_date_group_type, @key_date_type) then
         @term_index = page.term_index_by_term_type(@parent_key_date_group.term_type)
+        key_date_group_index = page.key_date_group_index(@parent_key_date_group.term_type, @parent_key_date_group.key_date_group_type)
 
-        page.key_date_dropdown_addline(@term_index,0).select @key_date_type
+        page.key_date_dropdown_addline(@term_index,key_date_group_index).select @key_date_type
         page.loading.wait_while_present
-        page.key_date_start_date_addline(@term_index,0).set @start_date
+        page.key_date_start_date_addline(@term_index,key_date_group_index).set @start_date
         page.loading.wait_while_present
 
+        page.key_date_end_date_addline(@term_index,key_date_group_index).set @end_date #if @date_range
 
-        #page.key_date_allday_addline(@term_index,0).set @all_day
-        #page.loading.wait_while_present
-        #page.key_date_daterange_addline(@term_index,0).set @date_range
-        #page.loading.wait_while_present
-
-        page.key_date_end_date_addline(@term_index,0).set @end_date #if @date_range
-
-        page.key_date_add(@term_index,0)
+        page.key_date_add(@term_index,key_date_group_index)
       else
         #TODO - need the opposite of set_options here
         edit :key_date_type => @key_date_type, :start_date => @start_date, :end_date  => @end_date, :start_time  => @start_time, :end_time  => @end_time, :start_time_ampm  => @start_time_ampm,  :end_time_ampm => @end_time_ampm
