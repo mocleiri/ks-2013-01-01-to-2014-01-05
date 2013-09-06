@@ -38,7 +38,7 @@
                     <property name="items">
                         <list>
                             <ref bean="biographicTabs"/>
-                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="update" p:actionLabel="Save"/>
+                            <bean parent="Uif-SecondaryActionButton" p:methodToCall="update" p:actionLabel="Save"/>
                         </list>
                     </property>
                 </bean>
