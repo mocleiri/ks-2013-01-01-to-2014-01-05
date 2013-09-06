@@ -21,7 +21,7 @@ Feature: EC.Schedule Coordinator Authorization
 
   Scenario: AZ 5.1C_open As a Schedule Coordinator I have access to delete Activity Offerings in a Open state
     Given I am working on a term in "Open" SOC state
-    And there is a "Open" course offering present
+    And there is a "Draft" course offering present
     Then I have access to delete an activity offering in a "Draft" state
     And  I have access to delete an activity offering in a "Approved" state
 

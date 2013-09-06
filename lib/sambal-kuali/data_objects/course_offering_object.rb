@@ -516,21 +516,22 @@ class CourseOffering
     options = defaults.merge(opts)
 
     search_by_subjectcode
-    on ManageCourseOfferingList do |page|
-      existing_co = page.select_co_by_status(options[:co_status])
-      if existing_co != nil
-        @course = existing_co
-      else
-        @course = create_co_copy(@course, @term)
-        if options[:co_status] == OFFERED_STATUS or options[:co_status] == PLANNED_STATUS
-          approve_co
-        end
+    existing_co = on(ManageCourseOfferingList).select_co_by_status(options[:co_status])
+    if existing_co != nil
+      @course = existing_co
+    else
+      @course = create_co_copy(@course, @term)
+      on(ManageCourseOfferings).list_all_course_link.click
+      on(ManageCourseOfferings).loading.wait_while_present
+
+      if options[:co_status] == OFFERED_STATUS or options[:co_status] == PLANNED_STATUS
+        approve_co
       end
-      if options[:select_co] then
-        page.select_co(@course)
-      else
-        page.deselect_co(@course)
-      end
+    end
+    if options[:select_co] then
+      on(ManageCourseOfferingList).select_co(@course)
+    else
+      on(ManageCourseOfferingList).deselect_co(@course)
     end
   end
 
