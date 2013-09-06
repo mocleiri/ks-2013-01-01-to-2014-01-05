@@ -2590,13 +2590,13 @@ div.jGrowl div.jGrowl-notification div.jGrowl-close {
     content: ')' !important;
 }
 
-.ks-plan-CourseSummary-content {
+.ks-plan-Popover-body {
     margin: 0 !important;
 }
 
-.ks-plan-CourseSummary-link {
-    display: block;
-    width: 280px;
+.ks-plan-Popover-bodyLabel {
+    display: block !important;
+    width: 280px !important;
 }
 
 .ks-plan-Header-headline {
