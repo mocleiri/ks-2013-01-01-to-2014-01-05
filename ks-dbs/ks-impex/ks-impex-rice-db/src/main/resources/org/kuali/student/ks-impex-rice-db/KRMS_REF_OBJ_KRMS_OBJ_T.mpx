@@ -617,3 +617,5 @@ REF_OBJ_KRMS_OBJ_ID,COLLECTION_NM,KRMS_OBJ_ID,KRMS_DSCR_TYP,REF_OBJ_ID,REF_DSCR_
 "KS-KRMS-REF-OBJ-KRMS-OBJ-11913","CourseOffering","KS-KRMS-AGENDA-11922","Agenda","edda3734-51dc-461c-a406-62b6deb68783","http://student.kuali.org/wsdl/courseOffering/CourseOfferingInfo","KS-SYS","Y","1"
 "KS-KRMS-REF-OBJ-KRMS-OBJ-11914","FinalExamMatrix","KS-KRMS-AGENDA-11923","Agenda","kuali.atp.type.Fall","http://student.kuali.org/wsdl/type/TypeInfo","KS-SYS","Y","0"
 "KS-KRMS-REF-OBJ-KRMS-OBJ-11915","FinalExamMatrix","KS-KRMS-AGENDA-11924","Agenda","kuali.atp.type.Fall","http://student.kuali.org/wsdl/type/TypeInfo","KS-SYS","Y","0"
+"KS-KRMS-REF-OBJ-KRMS-OBJ-11916","FinalExamMatrix","KS-KRMS-AGENDA-11925","Agenda","kuali.atp.type.Winter","http://student.kuali.org/wsdl/type/TypeInfo","KS-SYS","Y","0"
+"KS-KRMS-REF-OBJ-KRMS-OBJ-11917","FinalExamMatrix","KS-KRMS-AGENDA-11926","Agenda","kuali.atp.type.Winter","http://student.kuali.org/wsdl/type/TypeInfo","KS-SYS","Y","0"
