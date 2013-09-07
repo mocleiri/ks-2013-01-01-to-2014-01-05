@@ -2006,3 +2006,58 @@ function submitPopupForm(additionalFormData, e, bDialog) {
     };
     ksapAjaxSubmitForm(additionalFormData, successCallback, elementToBlock, "popupForm", blockOptions);
 }
+
+function ksapInitializePlanItems(pageSize) {
+    var popupStyle = {width:'300px', height:'16px'};
+    var popupOptions = {tail:{hidden:true}, position:'right', align:'top', close:true};
+
+    jQuery('.myplan-carousel-list li .myplan-term-current.open, .myplan-carousel-list li .myplan-term-future.open').find('.myplan-term-planned .uif-stackedCollectionLayout, .myplan-term-backup .uif-stackedCollectionLayout').each(function(){
+    	var atpId = jQuery(this).parents('.myplan-carousel-term').data('atpid');
+    	var backup = jQuery(this).parents('.myplan-carousel-term').data('plantype');
+    	var size = jQuery(this).parents('.myplan-carousel-term').data('size');
+    	if (size < 8) { // TODO: remove size limit enforcement
+	    	var jQuickAdd = jQuery('<div />')
+	    			.addClass('quick-add-cell ks-plan-Bucket-addItem')
+	    			.html('Add a course to plan')
+	    			.click(function(e){
+	    		var retrieveData = {
+	    				action : 'plan' ,
+	    				viewId : 'PlannedCourse-FormView' ,
+	    				methodToCall : 'startAddPlannedCourseForm' ,
+	    				atpId : atpId ,
+	    				backup : backup ,
+	    				pageId : 'plan_item_add_page'
+	    			};
+	            openPopup('plan_item_add_page', retrieveData, 'plan', popupStyle, popupOptions, e);
+	    	});
+    	}
+    });
+
+
+    if (jQuery('#planned_courses_detail_list ul:not(.errorLines) li').length > 0) {
+        var iMaxHeight = Math.max.apply(null, jQuery('#planned_courses_detail_list ul:not(.errorLines) li')
+        	.map(function() {
+        		return jQuery(this).height();
+        	}).get(	));
+        jQuery('#planned_courses_detail_list ul:not(.errorLines) li').height(iMaxHeight);
+        var iStart = 0;
+        if (readUrlHash('planView')) {
+            iStart = parseFloat(readUrlHash('planView'));
+        } else if ( jQuery("div:hidden[id^='atp_start_index']").length > 0 ) {
+        	iStart = parseFloat(jQuery("div:hidden[id^='atp_start_index']").text());
+        }
+
+        jQuery('#planned_courses_detail_list').jCarouselLite({
+            btnNext: '.myplan-carousel-next',
+            btnPrev: '.myplan-carousel-prev',
+            scroll: pageSize,
+            visible: pageSize,
+            start: iStart,
+            afterEnd: function(a) {
+                fnBuildTitle(a);
+                setUrlHash('planView', jQuery(a[0]).index());
+            },
+            initCallback: function(a) { fnBuildTitle(a); jQuery.unblockUI(); }
+        });
+    }
+}
