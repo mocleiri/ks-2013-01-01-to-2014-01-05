@@ -2117,7 +2117,7 @@ function ksapInitializePlanItems(pageSize) {
     }).on('PLAN_ITEM_DELETED', function(event, data) {
         fnRemovePlanItem(data.atpId, data.planItemType, data.planItemId);
     }).on('PLAN_ITEM_UPDATED', function(event, data) {
-        fnUpdatePlanItem(data);
+        fnUpdatePlanItem(data); // TODO: REMOVE
     }).on('TERM_NOTE_UPDATED', function(event, data) {
         fnUpdateTermNote(data.atpId, data.termNote);
     }).on('UPDATE_NEW_TERM_TOTAL_CREDITS', function(event, data) {

@@ -74,11 +74,8 @@ public class CommentController extends UifControllerBase {
 	}
 
 	@RequestMapping(params = "methodToCall=startCommentForm")
-	public ModelAndView start(@ModelAttribute("KualiForm") UifFormBase form,
-			BindingResult result, HttpServletRequest request,
-			HttpServletResponse response) {
-		// TODO: factory for context
-		ContextInfo context = new ContextInfo();
+	public ModelAndView start(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result,
+			HttpServletRequest request, HttpServletResponse response) {
 		super.start(form, result, request, response);
 		Person user = GlobalVariables.getUserSession().getPerson();
 		String principleId = user.getPrincipalId();
@@ -86,15 +83,7 @@ public class CommentController extends UifControllerBase {
 		commentForm.setStudentName(KsapFrameworkServiceLocator.getUserSessionHelper().getStudentName());
 		commentForm.setPersonName(KsapFrameworkServiceLocator.getUserSessionHelper().getName(principleId));
 		if (commentForm.getMessageId() != null) {
-			MessageDataObject messageDataObject = null;
-			try {
-				messageDataObject = getCommentQueryHelper().getMessage(
-						commentForm.getMessageId(), context);
-			} catch (Exception e) {
-				logger.error(String.format("Query for comment [%s] failed.",
-						commentForm.getMessageId()), e);
-				return null;
-			}
+			MessageDataObject messageDataObject = CommentQueryHelper.getMessage(commentForm.getMessageId());
 			if (messageDataObject != null) {
 				commentForm.setSubject(messageDataObject.getSubject());
 				commentForm.setBody(messageDataObject.getBody());
@@ -108,10 +97,8 @@ public class CommentController extends UifControllerBase {
 	}
 
 	@RequestMapping(params = "methodToCall=addComment")
-	public ModelAndView addComment(
-			@ModelAttribute("KualiForm") CommentForm form,
-			BindingResult result, HttpServletRequest httprequest,
-			HttpServletResponse httpresponse) {
+	public ModelAndView addComment(@ModelAttribute("KualiForm") CommentForm form, BindingResult result,
+			HttpServletRequest httprequest, HttpServletResponse httpresponse) {
 
 		// TODO: determine factory for ContextInfo /mwfyffe
 		ContextInfo context = new ContextInfo();
@@ -119,8 +106,7 @@ public class CommentController extends UifControllerBase {
 		Person user = GlobalVariables.getUserSession().getPerson();
 		String principleId = user.getPrincipalId();
 		CommentInfo messageInfo = null;
-		String commentBodyText = WordUtils.wrap(form.getCommentBody(), 80,
-				"<br />", true);
+		String commentBodyText = WordUtils.wrap(form.getCommentBody(), 80, "<br />", true);
 		commentBodyText = commentBodyText.replace("\n", "<br />");
 		String messageText = form.getCommentBody();
 		if (messageText.length() > 100) {
@@ -129,18 +115,14 @@ public class CommentController extends UifControllerBase {
 
 		// Look up the message
 		try {
-			messageInfo = getCommentService().getComment(form.getMessageId(),
-					context);
+			messageInfo = getCommentService().getComment(form.getMessageId(), context);
 		} catch (Exception e) {
-			logger.error(
-					String.format("Query for comment [%s] failed.",
-							form.getMessageId()), e);
+			logger.error(String.format("Query for comment [%s] failed.", form.getMessageId()), e);
 			return null;
 		}
 		if (StringUtils.isEmpty(commentBodyText)) {
 			String[] params = {};
-			return doErrorPage(form, CommentConstants.EMPTY_COMMENT, params,
-					CommentConstants.COMMENT_MESSAGE_BOX,
+			return doErrorPage(form, CommentConstants.EMPTY_COMMENT, params, CommentConstants.COMMENT_MESSAGE_BOX,
 					CommentConstants.COMMENT_RESPONSE_PAGE);
 		}
 		/*
@@ -148,16 +130,15 @@ public class CommentController extends UifControllerBase {
 		 * message
 		 */
 		/*
-		 * if (!KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser() ||
-		 * !principleId.equalsIgnoreCase(commentInfo.getReferenceId())) {
+		 * if (!KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()
+		 * || !principleId.equalsIgnoreCase(commentInfo.getReferenceId())) {
 		 * String[] params = {}; return doErrorPage(form,
 		 * CommentConstants.ADVISER_ACCESS_ERROR, params); }
 		 */
 		CommentInfo ci = new CommentInfo();
 		ci.setCommenterId(principleId);
 		List<AttributeInfo> attributes = new java.util.LinkedList<AttributeInfo>();
-		attributes.add(new AttributeInfo(
-				CommentConstants.CREATED_BY_USER_ATTRIBUTE_NAME, principleId));
+		attributes.add(new AttributeInfo(CommentConstants.CREATED_BY_USER_ATTRIBUTE_NAME, principleId));
 		ci.setAttributes(attributes);
 		ci.setTypeKey(CommentConstants.COMMENT_TYPE);
 		ci.setStateKey("ACTIVE");
@@ -167,21 +148,18 @@ public class CommentController extends UifControllerBase {
 		ci.setCommentText(rtiBody);
 
 		try {
-			getCommentService()
-					.createComment(messageInfo.getId(),
-							CommentConstants.COMMENT_REF_TYPE, messageText, ci,
-							context);
+			getCommentService().createComment(messageInfo.getId(), CommentConstants.COMMENT_REF_TYPE, messageText, ci,
+					context);
 		} catch (Exception e) {
 			form.setSubject(messageInfo.getAttributeValue("subject"));
-			form.setFrom(KsapFrameworkServiceLocator.getUserSessionHelper().getName(messageInfo
-					.getAttributeValue("createdBy")));
+			form.setFrom(KsapFrameworkServiceLocator.getUserSessionHelper().getName(
+					messageInfo.getAttributeValue("createdBy")));
 			form.setBody(messageInfo.getCommentText().getPlain());
 			form.setComments(new ArrayList<CommentDataObject>());
 			logger.error("Could not add comment ", e);
 			String[] params = {};
-			return doErrorPage(form, CommentConstants.SPECIAL_CHARACTERS_ERROR,
-					params, CommentConstants.COMMENT_RESPONSE_PAGE,
-					CommentConstants.COMMENT_MESSAGE_BOX);
+			return doErrorPage(form, CommentConstants.SPECIAL_CHARACTERS_ERROR, params,
+					CommentConstants.COMMENT_RESPONSE_PAGE, CommentConstants.COMMENT_MESSAGE_BOX);
 		}
 		form.setCommentBody(null);
 		form.setFeedBackMode(true);
@@ -205,8 +183,7 @@ public class CommentController extends UifControllerBase {
 		String toId, toAddress, toName, fromId, fromAddress, fromName;
 
 		fromId = principleId;
-		String messageLink = ConfigContext.getCurrentContextConfig()
-				.getProperty(CommentConstants.MESSAGE_LINK);
+		String messageLink = ConfigContext.getCurrentContextConfig().getProperty(CommentConstants.MESSAGE_LINK);
 		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
 			toId = KsapFrameworkServiceLocator.getUserSessionHelper().getStudentId();
 			toName = KsapFrameworkServiceLocator.getUserSessionHelper().getStudentName();
@@ -214,12 +191,10 @@ public class CommentController extends UifControllerBase {
 
 		} else {
 			// Get the created by user Id from the message.
-			toId = messageInfo
-					.getAttributeValue(CommentConstants.CREATED_BY_USER_ATTRIBUTE_NAME);
+			toId = messageInfo.getAttributeValue(CommentConstants.CREATED_BY_USER_ATTRIBUTE_NAME);
 			toName = KsapFrameworkServiceLocator.getUserSessionHelper().getName(toId);
 			toName = toName.substring(0, toName.indexOf(" ")).trim();
-			messageLink = ConfigContext.getCurrentContextConfig().getProperty(
-					CommentConstants.ADVISER_MESSAGE_LINK)
+			messageLink = ConfigContext.getCurrentContextConfig().getProperty(CommentConstants.ADVISER_MESSAGE_LINK)
 					+ fromId;
 
 		}
@@ -228,38 +203,28 @@ public class CommentController extends UifControllerBase {
 		toAddress = KsapFrameworkServiceLocator.getUserSessionHelper().getMailAddress(toId);
 		if (toAddress == null) {
 			String[] params = {};
-			return doErrorPage(form, CommentConstants.EMPTY_TO_ADDRESS, params,
-					CommentConstants.COMMENT_RESPONSE_PAGE,
+			return doErrorPage(form, CommentConstants.EMPTY_TO_ADDRESS, params, CommentConstants.COMMENT_RESPONSE_PAGE,
 					CommentConstants.COMMENT_RESPONSE_PAGE);
 		}
 
-		fromAddress = ConfigContext.getCurrentContextConfig().getProperty(
-				CommentConstants.EMAIL_FROM);
-		String subjectProp = pro
-				.getProperty(CommentConstants.EMAIL_COMMENT_SUBJECT);
+		fromAddress = ConfigContext.getCurrentContextConfig().getProperty(CommentConstants.EMAIL_FROM);
+		String subjectProp = pro.getProperty(CommentConstants.EMAIL_COMMENT_SUBJECT);
 		String emailBody = pro.getProperty(CommentConstants.EMAIL_BODY);
 		String subject = String.format(subjectProp, fromName);
-		String body = String.format(emailBody, toName, fromName, messageText,
-				messageLink);
+		String body = String.format(emailBody, toName, fromName, messageText, messageLink);
 
 		if (StringUtils.isNotEmpty(toAddress)) {
 			try {
 				sendMessage(fromAddress, toAddress, subject, body);
-				logger.info("Sent comment email (" + messageText + ") to: "
-						+ toAddress + " From: " + fromAddress);
+				logger.info("Sent comment email (" + messageText + ") to: " + toAddress + " From: " + fromAddress);
 			} catch (Exception e) {
-				logger.error(String.format(
-						"Could not send e-mail from [%s] to [%s].",
-						fromAddress, toAddress), e);
-				GlobalVariables.getMessageMap().putErrorForSectionId(
-						"comment_dialog_response_page",
+				logger.error(String.format("Could not send e-mail from [%s] to [%s].", fromAddress, toAddress), e);
+				GlobalVariables.getMessageMap().putErrorForSectionId("comment_dialog_response_page",
 						CommentConstants.ERROR_KEY_NOTIFICATION_FAILED);
 			}
 		} else {
-			logger.error(String.format("No e-mail address found for [%s].",
-					toName));
-			GlobalVariables.getMessageMap().putErrorForSectionId(
-					"comment_dialog_response_page",
+			logger.error(String.format("No e-mail address found for [%s].", toName));
+			GlobalVariables.getMessageMap().putErrorForSectionId("comment_dialog_response_page",
 					CommentConstants.ERROR_KEY_NOTIFICATION_FAILED);
 		}
 		GlobalVariables.getMessageMap().clearErrorMessages();
@@ -269,10 +234,8 @@ public class CommentController extends UifControllerBase {
 	}
 
 	@RequestMapping(params = "methodToCall=addMessage")
-	public ModelAndView addMessage(
-			@ModelAttribute("KualiForm") CommentForm form,
-			BindingResult result, HttpServletRequest httprequest,
-			HttpServletResponse httpresponse) {
+	public ModelAndView addMessage(@ModelAttribute("KualiForm") CommentForm form, BindingResult result,
+			HttpServletRequest httprequest, HttpServletResponse httpresponse) {
 
 		// TODO: factory for context
 		ContextInfo context = new ContextInfo();
@@ -285,24 +248,21 @@ public class CommentController extends UifControllerBase {
 		 */
 		if (!KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
 			String[] params = {};
-			return doErrorPage(form, CommentConstants.ADVISER_ACCESS_ERROR,
-					params, CommentConstants.MESSAGE_RESPONSE_PAGE,
-					CommentConstants.MESSAGE_RESPONSE_PAGE);
+			return doErrorPage(form, CommentConstants.ADVISER_ACCESS_ERROR, params,
+					CommentConstants.MESSAGE_RESPONSE_PAGE, CommentConstants.MESSAGE_RESPONSE_PAGE);
 		}
-		if (StringUtils.isEmpty(form.getBody())
-				|| StringUtils.isEmpty(form.getSubject())) {
+		if (StringUtils.isEmpty(form.getBody()) || StringUtils.isEmpty(form.getSubject())) {
 			String[] params = {};
 			String section = null;
 			if (StringUtils.isEmpty(form.getBody())) {
 				section = CommentConstants.MESSAGE_MESSAGE_BOX;
 			} else if (StringUtils.isEmpty(form.getSubject())) {
 				section = CommentConstants.MESSAGE_SUBJECT_BOX;
-			} else if (StringUtils.isEmpty(form.getBody())
-					&& StringUtils.isEmpty(form.getSubject())) {
+			} else if (StringUtils.isEmpty(form.getBody()) && StringUtils.isEmpty(form.getSubject())) {
 				section = CommentConstants.MESSAGE_RESPONSE_PAGE;
 			}
-			return doErrorPage(form, CommentConstants.EMPTY_MESSAGE, params,
-					CommentConstants.MESSAGE_RESPONSE_PAGE, section);
+			return doErrorPage(form, CommentConstants.EMPTY_MESSAGE, params, CommentConstants.MESSAGE_RESPONSE_PAGE,
+					section);
 		}
 		String bodyText = WordUtils.wrap(form.getBody(), 80, "<br />", true);
 		bodyText = bodyText.replace("\n", "<br />");
@@ -315,10 +275,8 @@ public class CommentController extends UifControllerBase {
 
 		CommentInfo ci = new CommentInfo();
 		List<AttributeInfo> attributes = new java.util.LinkedList<AttributeInfo>();
-		attributes.add(new AttributeInfo(
-				CommentConstants.SUBJECT_ATTRIBUTE_NAME, form.getSubject()));
-		attributes.add(new AttributeInfo(
-				CommentConstants.CREATED_BY_USER_ATTRIBUTE_NAME, principleId));
+		attributes.add(new AttributeInfo(CommentConstants.SUBJECT_ATTRIBUTE_NAME, form.getSubject()));
+		attributes.add(new AttributeInfo(CommentConstants.CREATED_BY_USER_ATTRIBUTE_NAME, principleId));
 		ci.setAttributes(attributes);
 		ci.setTypeKey(CommentConstants.MESSAGE_TYPE);
 		ci.setStateKey("ACTIVE");
@@ -330,17 +288,14 @@ public class CommentController extends UifControllerBase {
 		String studentPrincipleId = KsapFrameworkServiceLocator.getUserSessionHelper().getStudentId();
 
 		try {
-			getCommentService()
-					.createComment(studentPrincipleId,
-							CommentConstants.MESSAGE_REF_TYPE, messageText, ci,
-							context);
+			getCommentService().createComment(studentPrincipleId, CommentConstants.MESSAGE_REF_TYPE, messageText, ci,
+					context);
 		} catch (Exception e) {
 			logger.error("Could not add Message ", e);
 			form.setStudentName(KsapFrameworkServiceLocator.getUserSessionHelper().getStudentName());
 			String[] params = {};
-			return doErrorPage(form, CommentConstants.SPECIAL_CHARACTERS_ERROR,
-					params, CommentConstants.MESSAGE_RESPONSE_PAGE,
-					CommentConstants.MESSAGE_MESSAGE_BOX);
+			return doErrorPage(form, CommentConstants.SPECIAL_CHARACTERS_ERROR, params,
+					CommentConstants.MESSAGE_RESPONSE_PAGE, CommentConstants.MESSAGE_MESSAGE_BOX);
 		}
 		form.setFeedBackMode(true);
 
@@ -363,40 +318,29 @@ public class CommentController extends UifControllerBase {
 		String toAddress = KsapFrameworkServiceLocator.getUserSessionHelper().getMailAddress(studentPrincipleId);
 		if (toAddress == null) {
 			String[] params = {};
-			return doErrorPage(form, CommentConstants.EMPTY_TO_ADDRESS, params,
-					CommentConstants.MESSAGE_RESPONSE_PAGE,
+			return doErrorPage(form, CommentConstants.EMPTY_TO_ADDRESS, params, CommentConstants.MESSAGE_RESPONSE_PAGE,
 					CommentConstants.MESSAGE_RESPONSE_PAGE);
 		}
-		String messageLink = ConfigContext.getCurrentContextConfig()
-				.getProperty(CommentConstants.MESSAGE_LINK);
-		String fromAddress = ConfigContext.getCurrentContextConfig()
-				.getProperty(CommentConstants.EMAIL_FROM);
-		String subjectProp = pro
-				.getProperty(CommentConstants.EMAIL_MESSAGE_SUBJECT);
+		String messageLink = ConfigContext.getCurrentContextConfig().getProperty(CommentConstants.MESSAGE_LINK);
+		String fromAddress = ConfigContext.getCurrentContextConfig().getProperty(CommentConstants.EMAIL_FROM);
+		String subjectProp = pro.getProperty(CommentConstants.EMAIL_MESSAGE_SUBJECT);
 		String emailBody = pro.getProperty(CommentConstants.EMAIL_BODY);
 		String subject = String.format(subjectProp, adviserName);
-		String body = String.format(emailBody, studentName, adviserName,
-				messageText, messageLink);
+		String body = String.format(emailBody, studentName, adviserName, messageText, messageLink);
 		if (StringUtils.isNotEmpty(toAddress)) {
 			try {
 				sendMessage(fromAddress, toAddress, subject, body);
-				logger.info("Sent message email (" + messageText
-						+ ") to student:" + studentName + "from adviser :"
+				logger.info("Sent message email (" + messageText + ") to student:" + studentName + "from adviser :"
 						+ adviserName);
 
 			} catch (Exception e) {
-				logger.error(String.format(
-						"Could not send e-mail from [%s] to [%s].",
-						fromAddress, toAddress), e);
-				GlobalVariables.getMessageMap().putErrorForSectionId(
-						"message_dialog_response_page",
+				logger.error(String.format("Could not send e-mail from [%s] to [%s].", fromAddress, toAddress), e);
+				GlobalVariables.getMessageMap().putErrorForSectionId("message_dialog_response_page",
 						CommentConstants.ERROR_KEY_NOTIFICATION_FAILED);
 			}
 		} else {
-			logger.error(String.format("No e-mail address found for [%s][%s].",
-					studentName, studentPrincipleId));
-			GlobalVariables.getMessageMap().putErrorForSectionId(
-					"message_dialog_response_page",
+			logger.error(String.format("No e-mail address found for [%s][%s].", studentName, studentPrincipleId));
+			GlobalVariables.getMessageMap().putErrorForSectionId("message_dialog_response_page",
 					CommentConstants.ERROR_KEY_NOTIFICATION_FAILED);
 		}
 		GlobalVariables.getMessageMap().clearErrorMessages();
@@ -406,11 +350,9 @@ public class CommentController extends UifControllerBase {
 	/**
 	 * Initializes the error page.
 	 */
-	private ModelAndView doErrorPage(CommentForm form, String errorKey,
-			String[] params, String page, String section) {
+	private ModelAndView doErrorPage(CommentForm form, String errorKey, String[] params, String page, String section) {
 		GlobalVariables.getMessageMap().clearErrorMessages();
-		GlobalVariables.getMessageMap().putErrorForSectionId(section, errorKey,
-				params);
+		GlobalVariables.getMessageMap().putErrorForSectionId(section, errorKey, params);
 		return getUIFModelAndView(form, page);
 	}
 
@@ -421,9 +363,8 @@ public class CommentController extends UifControllerBase {
 		return commentQueryHelper;
 	}
 
-	private void sendMessage(String fromAddress, String toAddress,
-			String subjectText, String bodyText) throws MessagingException,
-			InvalidAddressException {
+	private void sendMessage(String fromAddress, String toAddress, String subjectText, String bodyText)
+			throws MessagingException, InvalidAddressException {
 		MailMessage mm = new MailMessage();
 		mm.addToAddress(toAddress);
 		mm.setFromAddress(fromAddress);
@@ -438,17 +379,15 @@ public class CommentController extends UifControllerBase {
 
 	private MyPlanMailService getMailService() {
 		if (mailService == null) {
-			mailService = (MyPlanMailService) GlobalResourceLoader
-					.getService(MyPlanMailService.SERVICE_NAME);
+			mailService = (MyPlanMailService) GlobalResourceLoader.getService(MyPlanMailService.SERVICE_NAME);
 		}
 		return mailService;
 	}
 
 	public CommentService getCommentService() {
 		if (commentService == null) {
-			commentService = (CommentService) GlobalResourceLoader
-					.getService(new QName(CommentConstants.NAMESPACE,
-							CommentConstants.SERVICE_NAME));
+			commentService = (CommentService) GlobalResourceLoader.getService(new QName(CommentConstants.NAMESPACE,
+					CommentConstants.SERVICE_NAME));
 		}
 		return commentService;
 	}

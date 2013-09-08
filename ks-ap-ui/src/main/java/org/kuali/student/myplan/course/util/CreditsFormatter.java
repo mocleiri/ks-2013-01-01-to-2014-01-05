@@ -11,7 +11,7 @@ import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
-import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.infc.Course;
 import org.kuali.student.r2.lum.lrc.dto.ResultValueInfo;
 import org.kuali.student.r2.lum.lrc.dto.ResultValueRangeInfo;
 import org.kuali.student.r2.lum.lrc.dto.ResultValuesGroupInfo;
@@ -27,14 +27,14 @@ public class CreditsFormatter {
 	/**
 	 * Formats credit options list as a String.
 	 * 
-	 * @param courseInfo
+	 * @param course
 	 * @return
 	 */
-	public static String formatCredits(CourseInfo courseInfo) {
+	public static String formatCredits(Course course) {
 		LRCService lrc = KsapFrameworkServiceLocator.getLrcService();
 		String credits = "";
 
-		List<ResultValuesGroupInfo> options = courseInfo.getCreditOptions();
+		List<ResultValuesGroupInfo> options = course.getCreditOptions();
 		if (options.size() == 0) {
 			logger.warn("Credit options list was empty.");
 			return credits;
