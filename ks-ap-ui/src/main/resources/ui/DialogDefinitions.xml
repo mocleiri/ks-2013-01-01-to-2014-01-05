@@ -217,11 +217,11 @@
     </bean>
 
     <!--Move Course to another Quarter Dialog Box Content-->
-    <bean id="move_dialog_page" parent="KSAP-PopoverPage" p:id="move_dialog_page" p:headerText="Move to Another Quarter">
+    <bean id="move_dialog_page" parent="KSAP-PopoverPage" p:id="move_dialog_page" p:headerText="Move to Another Term">
         <property name="items">
             <list>
                 <bean parent="Uif-Message" p:cssClasses="ks-Popover-bodyLabel"
-                      p:messageText="Which quarter would you like to move &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
+                      p:messageText="Which term would you like to move &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
 
                 <bean parent="Uif-DataField" p:propertyName="courseSummaryDetails.scheduledTermsNames"
                       p:label="Scheduled For"
@@ -236,7 +236,7 @@
                 </bean>
 
                 <bean parent="Uif-HorizontalFieldGroup" p:cssClasses="ks-Popover-item"
-                      p:label="Quarter &amp; Year" p:labelPlacement="TOP">
+                      p:label="Term &amp; Year" p:labelPlacement="TOP">
                     <property name="fieldLabel.cssClasses" value="myplan-text-normal ks-Popover-itemLabel"/>
                     <property name="items">
                         <list>
@@ -249,7 +249,7 @@
                                 </property>
                             </bean>
                             <bean parent="KSAP-Message"
-                                  p:messageText="Note: This course MAY NOT be offered in your selected quarter. Check back after the Time Schedule is released.">
+                                  p:messageText="Note: This course MAY NOT be offered in your selected term. Check back after the Time Schedule is released.">
                                 <property name="cssClasses">
                                     <list merge="true">
                                         <value>fl-font-size-80</value>
@@ -319,12 +319,12 @@
         </property>
     </bean>
 
-    <!--Copy Course to another Quarter Dialog Box Content-->
-    <bean id="copy_dialog_page" parent="KSAP-PopoverPage" p:id="copy_dialog_page" p:headerText="Copy to Another Quarter">
+    <!--Copy Course to another term Dialog Box Content-->
+    <bean id="copy_dialog_page" parent="KSAP-PopoverPage" p:id="copy_dialog_page" p:headerText="Copy to Another Term">
         <property name="items">
             <list>
                 <bean parent="Uif-Message" p:cssClasses="ks-Popover-bodyLabel"
-                      p:messageText="Which quarter would you like to copy &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
+                      p:messageText="Which term would you like to copy &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
 
                 <bean parent="Uif-DataField" p:propertyName="courseSummaryDetails.scheduledTermsNames"
                       p:label="Scheduled For"
@@ -339,7 +339,7 @@
                 </bean>
 
                 <bean parent="Uif-HorizontalFieldGroup" p:cssClasses="ks-Popover-item"
-                      p:label="Quarter &amp; Year" p:labelPlacement="TOP">
+                      p:label="Term &amp; Year" p:labelPlacement="TOP">
                     <property name="fieldLabel.cssClasses" value="myplan-text-normal ks-Popover-itemLabel"/>
                     <property name="items">
                         <list>
@@ -352,7 +352,7 @@
                                 </property>
                             </bean>
                             <bean parent="KSAP-Message"
-                                  p:messageText="Note: This course MAY NOT be offered in your selected quarter. Check back after the Time Schedule is released.">
+                                  p:messageText="Note: This course MAY NOT be offered in your selected term. Check back after the Time Schedule is released.">
                                 <property name="cssClasses">
                                     <list merge="true">
                                         <value>fl-font-size-80</value>
@@ -1010,7 +1010,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-Message"
-                      p:messageText="Which quarter would you like to @{moveCourse eq false ? 'add' : 'move'} &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
+                      p:messageText="Which term would you like to @{moveCourse eq false ? 'add' : 'move'} &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
 
                 <bean parent="Uif-DataField" p:propertyName="courseSummaryDetails.scheduledTermsNames"
                       p:label="Scheduled For"
@@ -1107,7 +1107,7 @@
     </bean>
 
     <bean id="planned_course_quarter_selection" parent="Uif-HorizontalFieldGroup" p:style="padding-top: 0.5em;"
-          p:label="Quarter &amp; Year" p:labelPlacement="TOP">
+          p:label="Term &amp; Year" p:labelPlacement="TOP">
         <property name="fieldLabel.cssClasses" value="myplan-text-normal"/>
         <property name="fieldLabel.renderColon" value="false"/>
         <property name="group.validationMessages.render" value="false"/>
@@ -1123,7 +1123,7 @@
                     </property>
                 </bean>
                 <bean parent="Uif-Message" p:style="width:160px;"
-                      p:messageText="Note: This course MAY NOT be offered in your selected quarter. Check back after the Time Schedule is released.">
+                      p:messageText="Note: This course MAY NOT be offered in your selected term. Check back after the Time Schedule is released.">
                     <property name="cssClasses">
                         <list merge="true">
                             <value>fl-font-size-80</value>
@@ -1222,7 +1222,7 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-Message"
-                                  p:messageText="Which quarter would you like to add &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
+                                  p:messageText="Which term would you like to add &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
 
                             <bean parent="Uif-DataField" p:propertyName="courseSummaryDetails.scheduledTermsNames"
                                   p:label="Scheduled For"
@@ -1301,7 +1301,7 @@
     </bean>
 
 
-    <bean id="plan_item_course_move_dialog" parent="Uif-VerticalBoxSection" p:headerText="Move to Another Quarter">
+    <bean id="plan_item_course_move_dialog" parent="Uif-VerticalBoxSection" p:headerText="Move to Another Term">
         <property name="header">
             <bean parent="Uif-HeaderSix"/>
         </property>
@@ -1317,7 +1317,7 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-Message"
-                                  p:messageText="Which quarter would you like to move &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
+                                  p:messageText="Which term would you like to move &lt;strong&gt;@{courseSummaryDetails.code}&lt;/strong&gt; to?"/>
 
                             <bean parent="Uif-DataField" p:propertyName="courseSummaryDetails.scheduledTermsNames"
                                   p:label="Scheduled For"
@@ -1522,7 +1522,7 @@
 
     <!-- Atp/Term Selection for Copy and Move plan items-->
     <bean id="courseTermSelection" parent="Uif-HorizontalFieldGroup"
-          p:label="Quarter &amp; Year" p:labelPlacement="TOP">
+          p:label="Term &amp; Year" p:labelPlacement="TOP">
         <property name="fieldLabel.cssClasses" value="myplan-text-normal"/>
         <property name="items">
             <list>
@@ -1536,7 +1536,7 @@
                     </property>
                 </bean>
                 <bean parent="KSAP-Message" p:width="160px"
-                      p:messageText="Note: This course MAY NOT be offered in your selected quarter. Check back after the Time Schedule is released.">
+                      p:messageText="Note: This course MAY NOT be offered in your selected term Check back after the Time Schedule is released.">
                     <property name="cssClasses">
                         <list merge="true">
                             <value>fl-font-size-80</value>
@@ -1550,7 +1550,7 @@
 
     <!-- Placeholder DIV for error messages after submission failure -->
     <bean id="errorPlaceholder" parent="KSAP-SimpleInputField" p:id="errorPlaceholder" p:hidden="true"
-          p:propertyName="courseSummaryDetails.courseIdXmlSafe">
+          p:propertyName="courseSummaryDetails.courseIdXmlSafe" p:cssClasses="ks-Popover-error">
         <property name="control">
             <bean parent="Uif-HiddenControl"/>
         </property>

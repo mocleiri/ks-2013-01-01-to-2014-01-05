@@ -93,29 +93,7 @@
             </list>
         </property>
         <property name="validationMessages.displayMessages" value="false"/>
-        <!--
-        if (user == 'true' &amp;&amp; !jQuery.cookie('new_user_cookie')) {
-                jQuery.cookie('new_user_cookie', 'true');
-                showLightboxUrl('@{#ConfigProperties['myplan.getting.started.page']}');
-            }
-        -->
-        <property name="onDocumentReadyScript" value="
-            var user = jQuery.trim(jQuery('#hidden_new_user_flag').text());
-            var retrieveOptions = {};
-            var sFocusAtpId = '';
-            var aParams = window.location.search.replace('?','').split('&amp;');
-            jQuery.each(aParams, function(index, value) {
-                if (value.split('=')[0].indexOf('focusAtpId') >= 0) {
-                    sFocusAtpId = decodeURIComponent(value.split('=')[1]);
-                }
-            });
-            if(sFocusAtpId != ''){
-                retrieveOptions = {viewId:'PlannedCourses-LookupView', focusAtpId:sFocusAtpId};
-            } else {
-                retrieveOptions = {viewId:'PlannedCourses-LookupView'};
-            }
-            myplanRetrieveComponent('planned_mock_detail','planned_courses_detail','search','lookup', retrieveOptions, null, {message:'&lt;p&gt;&lt;img src=&quot;@{#ConfigProperties['ks.myplan.externalizable.images.url']}ajaxAuditRunning32.gif&quot; alt=&quot;loading...&quot; /&gt;&lt;/p&gt;&lt;p&gt;Please wait while we are fetching your plan...&lt;/p&gt;', fadeIn:0, fadeOut:0});
-        "/>
+        <property name="onDocumentReadyScript" value="ksapLoadPlanItems('@{#ConfigProperties['ks.myplan.externalizable.images.url']}')" />
     </bean>
 
     <!--Cart Menu Items-->
@@ -129,31 +107,11 @@
         <property name="items">
             <list>
 
-                <ref bean="menuOptionCourseSummary"/>
+                <ref bean="menuOptionCourseSummary" />
 
-                <bean parent="Uif-Link" p:target="" p:href="#"
-                      p:linkText="Mark as Planned Course"
-                      p:title="Mark as Planned Course"
-                      p:style="margin:0;">
-                    <property name="onClickScript"
-                              value="myPlanAjaxPlanItemMove(jQuery(this).data('planitemid'),jQuery(this).data('planitemid'),'planItemId','cartToPlanned',e);"/>
-                </bean>
+                <ref bean="menuOptionCopyPlanItem" />
 
-                <bean parent="Uif-Message" p:messageText="Will be moved from the shopping cart to planned courses"
-                      p:cssClasses="fl-text-gray fl-font-size-90 ks-plan-ContextMenu-note"/>
-
-                <bean parent="Uif-Link" p:target="" p:href="#"
-                      p:linkText="Mark as Backup Course"
-                      p:title="Mark as Backup Course"
-                      p:style="margin:0;">
-                    <property name="onClickScript"
-                              value="myPlanAjaxPlanItemMove(jQuery(this).data('planitemid'),jQuery(this).data('planitemid'),'planItemId','cartToBackup',e);"/>
-                </bean>
-
-                <bean parent="Uif-Message" p:messageText="Will be moved from the shopping cart to backup courses"
-                      p:cssClasses="fl-text-gray fl-font-size-90 ks-plan-ContextMenu-note"/>
-
-                <bean parent="menuOptionDelete" p:actionLabel="Remove from Cart" p:title="Remove from Cart"/>
+                <bean parent="menuOptionRemoveFromCart" p:actionLabel="Remove from Cart" p:title="Remove from Cart"/>
 
                 <bean parent="Uif-Message" p:messageText="Cannot Undo" p:style="margin:0;"
                       p:cssClasses="fl-text-gray fl-font-size-90 ks-plan-ContextMenu-note"/>
@@ -175,22 +133,9 @@
 
                 <ref bean="menuOptionEdit"/>
 
-                <bean parent="Uif-ActionLink" p:actionLabel="Place in Cart" p:title="Place in Cart" >
-        					<property name="actionScript" value="
-            					var retrieveData = {action:'sb/cart',
-													viewId: 'ShoppingCart-FormView',
-													methodToCall: 'addFromPlan',
-													planItemId:jQuery(this).data('planitemid'),
-													atpId:jQuery(this).data('termId'),
-													pageId: 'sb_cart_add_from_plan_page'
-												};
-            					var popupStyle = {width:'300px', height:'16px'};
-            					var popupOptions = {tail:{hidden:true}, align:'top', close:true};
-            					openPopup('sb_cart_add_from_plan_inner', retrieveData, 'sb/cart', popupStyle, popupOptions, e);
-        					"/>
-                </bean>
+                <ref bean="menuOptionAddToCart"/>
 
-                <bean parent="Uif-Message" p:messageText="Will be moved out of the Total Credit"
+                <bean parent="Uif-Message" p:messageText="Choose class sections and add to shopping cart for registration"
                       p:cssClasses="fl-text-gray fl-font-size-90 ks-plan-ContextMenu-note"/>
 
                 <bean parent="Uif-Link" p:target="" p:href="#"
@@ -200,9 +145,6 @@
                     <property name="onClickScript"
                               value="myPlanAjaxPlanItemMove(jQuery(this).data('planitemid'),jQuery(this).data('planitemid'),'planItemId','plannedToBackup',e);"/>
                 </bean>
-
-                <bean parent="Uif-Message" p:messageText="Will be moved below the Total Credit line"
-                      p:cssClasses="fl-text-gray fl-font-size-90 ks-plan-ContextMenu-note"/>
 
                 <ref bean="menuOptionMove"/>
 
@@ -231,15 +173,9 @@
 
                 <ref bean="menuOptionEdit"/>
 
-                <bean parent="Uif-Link" p:target="" p:href="#"
-                      p:linkText="Place in Cart"
-                      p:title="Place in Cart"
-                      p:style="margin:0;">
-                    <property name="onClickScript"
-                              value="myPlanAjaxPlanItemMove(jQuery(this).data('planitemid'),jQuery(this).data('planitemid'),'planItemId','backupToCart',e);"/>
-                </bean>
+                <ref bean="menuOptionAddToCart"/>
 
-                <bean parent="Uif-Message" p:messageText="Will be moved out of the Total Credit"
+                <bean parent="Uif-Message" p:messageText="Choose class sections and add to shopping cart for registration"
                       p:cssClasses="fl-text-gray fl-font-size-90 ks-plan-ContextMenu-note"/>
 
                 <bean parent="Uif-Link" p:target="" p:href="#"
@@ -249,12 +185,13 @@
                     <property name="onClickScript"
                               value="myPlanAjaxPlanItemMove(jQuery(this).data('planitemid'),jQuery(this).data('planitemid'),'planItemId','backupToPlanned',e);"/>
                 </bean>
-                <bean parent="Uif-Message" p:messageText="Will be moved above the Total Credit line"
-                      p:cssClasses="fl-text-gray fl-font-size-90 ks-plan-ContextMenu-note"/>
 
                 <ref bean="menuOptionCopyPlanItem"/>
+
                 <ref bean="menuOptionMove"/>
+
                 <ref bean="menuOptionDelete"/>
+
                 <bean parent="Uif-Message" p:messageText="Cannot Undo" p:style="margin:0;"
                       p:cssClasses="fl-text-gray fl-font-size-90 ks-plan-ContextMenu-note"/>
             </list>
@@ -271,8 +208,11 @@
         <property name="hidden" value="true"/>
         <property name="items">
             <list>
+
                 <ref bean="menuOptionCourseSummary"/>
-                <ref bean="menuOptionCopyPlanItem"/>
+
+                <ref bean="menuOptionCopyCourse"/>
+
             </list>
         </property>
     </bean>
@@ -361,55 +301,7 @@
     <!-- Single term view that lists planned course, total credits and backup courses -->
     <bean id="planned_courses_detail" parent="planned_courses_detail_parent" />
     <bean id="planned_courses_detail_parent" parent="Uif-VerticalBoxSubSection" abstract="true" p:cssClasses="ks-plan-View-pageDetails">
-        <property name="onDocumentReadyScript" value="
-            var popupStyle = {width:'300px', height:'16px'};
-            var popupOptions = {tail:{hidden:true}, position:'right', align:'top', close:true};
-
-            jQuery('.myplan-carousel-list li .myplan-term-current.open, .myplan-carousel-list li .myplan-term-future.open').find('.myplan-term-planned .uif-stackedCollectionLayout, .myplan-term-backup .uif-stackedCollectionLayout').each(function(){
-            	var atpId = jQuery(this).parents('.myplan-carousel-term').data('atpid');
-            	var backup = jQuery(this).parents('.myplan-carousel-term').data('plantype');
-            	var size = jQuery(this).parents('.myplan-carousel-term').data('size');
-            	var jQuickAdd = jQuery('&lt;div /&gt;').addClass('quick-add-cell ks-plan-Bucket-addItem').html('Add a course to plan').click(function(e){
-            		var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', atpId:atpId, backup:backup, pageId:'plan_item_add_page'};
-                    openPopup('plan_item_add_page', retrieveData, 'plan', popupStyle, popupOptions, e);
-            	});
-            	if (size &lt; 8) {
-            		jQuery(this).append(jQuickAdd.show());
-            	} else {
-            		jQuery(this).append(jQuickAdd.hide());
-            	}
-            });
-
-
-            if ( jQuery('#planned_courses_detail_list ul:not(.errorLines) li').length > 0 ) {
-                var iMaxHeight = Math.max.apply(null, jQuery('#planned_courses_detail_list ul:not(.errorLines) li').map(function() {
-                    return jQuery(this).height();
-                }).get());
-                jQuery('#planned_courses_detail_list ul:not(.errorLines) li').height(iMaxHeight);
-                var iStart = 0;
-                if (readUrlHash('planView')) {
-                    iStart = parseFloat(readUrlHash('planView'));
-                } else {
-                    if ( jQuery(&quot;div:hidden[id^='atp_start_index']&quot;).length > 0 ) {
-                        iStart = parseFloat(jQuery(&quot;div:hidden[id^='atp_start_index']&quot;).text());
-                    }
-
-                }
-
-                jQuery('#planned_courses_detail_list').jCarouselLite({
-                    btnNext: '.myplan-carousel-next',
-                    btnPrev: '.myplan-carousel-prev',
-                    scroll: @{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTermHelper().getNumberOfTermsInAcademicYear()},
-                    visible: @{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTermHelper().getNumberOfTermsInAcademicYear()},
-                    start: iStart,
-                    afterEnd: function(a) {
-                        fnBuildTitle(a);
-                        setUrlHash('planView', jQuery(a[0]).index());
-                    },
-                    initCallback: function(a) { fnBuildTitle(a); jQuery.unblockUI(); }
-                });
-            }
-        "/>
+        <property name="onDocumentReadyScript" value="ksapInitializePlanItems(@{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTermHelper().getNumberOfTermsInAcademicYear()})" />
         <property name="validationMessages.displayMessages" value="false"/>
         <property name="items">
             <list>
@@ -510,7 +402,7 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-MessageField"
-                                  p:messageText="Create your plan by finding and adding courses to any semester"/>
+                                  p:messageText="Create your plan by finding and adding courses to any term"/>
                         </list>
                     </property>
                     <property name="cssClasses">
@@ -618,35 +510,6 @@
                 <ref bean="backupCollection"/>
             </list>
         </property>
-        <property name="onDocumentReadyScript" value="
-            truncateField('planned_courses_detail_list', true);
-            jQuery('#planned_courses_detail_list')
-                .subscribe('PLAN_ITEM_ADDED', function(data){
-                    fnAddPlanItem(data.atpId, data.planItemType, data.planItemId, data.courseDetails.code, data.courseDetails.courseTitle, data.courseDetails.credit, data.showAlert, data.termName, data.timeScheduleOpen);
-                })
-                .subscribe('PLAN_ITEM_DELETED', function(data){
-                    fnRemovePlanItem(data.atpId, data.planItemType, data.planItemId);
-                })
-                .subscribe('UPDATE_NEW_TERM_TOTAL_CREDITS', function(data){
-                    fnUpdateCredits(data.atpId, data.totalCredits, data.cartCredits);
-                })
-                .subscribe('UPDATE_OLD_TERM_TOTAL_CREDITS', function(data){
-                    fnUpdateCredits(data.atpId, data.totalCredits, data.cartCredits);
-                });
-            jQuery('#planned_courses_detail_list').on('PLAN_ITEM_ADDED', function(event, data) {
-                fnAddPlanItem(data.atpId, data.planItemType, data.planItemId, data.courseDetails.code, data.courseDetails.courseTitle, data.courseDetails.credit, data.showAlert, data.termName, data.timeScheduleOpen);
-            }).on('PLAN_ITEM_DELETED', function(event, data) {
-                fnRemovePlanItem(data.atpId, data.planItemType, data.planItemId);
-            }).on('PLAN_ITEM_UPDATED', function(event, data) {
-                fnUpdatePlanItem(data);
-            }).on('TERM_NOTE_UPDATED', function(event, data) {
-                fnUpdateTermNote(data.atpId, data.termNote);
-            }).on('UPDATE_NEW_TERM_TOTAL_CREDITS', function(event, data) {
-                fnUpdateCredits(data.atpId, data.totalCredits, data.cartCredits);
-            }).on('UPDATE_OLD_TERM_TOTAL_CREDITS', function(event, data) {
-                fnUpdateCredits(data.atpId, data.totalCredits, data.cartCredits);
-            });
-        "/>
     </bean>
 
     <bean id="academicRecordCollection" parent="Uif-StackedCollectionGroup"
@@ -1075,7 +938,7 @@
                             <value>@{#line.timeScheduleOpen ? 'schedule':''}</value>
                             <value>ks-plan-Bucket-item</value>
                             <value>ks-plan-Bucket-item--valid</value>
-                            <value>ks-plan-Bucket-scheduleOpen</value>
+                            <value>ks-plan-Bucket--scheduleOpen</value>
                         </list>
                     </property>
                     <property name="items">
@@ -1341,8 +1204,6 @@
     </bean>
 
     <!--Single Plan Item View-->
-
-
     <bean id="single_planned_courses_detail_list" parent="Uif-ListCollectionSection"
           p:validationMessages.render="false" p:style="width: 620px;">
         <property name="collectionObjectClass" value="org.kuali.student.myplan.plan.dataobject.PlannedTerm"/>
@@ -1365,121 +1226,6 @@
                 <ref bean="single_AcademicRecord_Collection"/>
                 <ref bean="single_Planned_Collection"/>
                 <ref bean="single_Backup_Collection"/>
-            </list>
-        </property>
-    </bean>
-
-
-    <bean id="plan_item_section_add_dialog" parent="Uif-VerticalBoxSection" p:headerText="@{courseInPlan eq false AND courseInBackup eq true ? 'Add to Backup' : 'Add to Plan'}"
-          p:style="margin:0;">
-        <property name="header">
-            <bean parent="Uif-HeaderSix" p:additionalCssClasses="ks-plan-Bucket-header"/>
-        </property>
-        <property name="items">
-            <list>
-                <bean parent="Uif-VerticalBoxGroup" p:style="display:block; margin:0;"
-                      p:validationMessages.render="false">
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>fl-container-300</value>
-                        </list>
-                    </property>
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-Message"
-                                  p:messageText="Would you like to add &lt;strong&gt;@{courseDetails.code} @{sectionCode}&lt;/strong&gt; to @{termName}" p:render="@{courseInPlan eq false AND courseInBackup eq false ? true : false}"/>
-                            <bean parent="Uif-Message"
-                                  p:messageText="You can only add &lt;strong&gt;@{courseDetails.code} @{sectionCode}&lt;/strong&gt; for @{termName} as Plan" p:render="@{courseInPlan eq true AND courseInBackup eq false ? true : false}"/>
-                            <bean parent="Uif-Message"
-                                  p:messageText="You can only add &lt;strong&gt;@{courseDetails.code} @{sectionCode}&lt;/strong&gt; for @{termName} as Backup" p:render="@{courseInPlan eq false AND courseInBackup eq true ? true : false}"/>
-                            <!--  Backup checkbox -->
-                            <ref bean="planned_course_backup"/>
-
-                            <bean id="plan_section_add_actions" parent="Uif-VerticalFieldGroup" p:fieldLabel.render="false"
-                                  p:group.validationMessages.render="false" p:style="margin:0;">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-HorizontalFieldGroup" p:fieldLabel.render="false"
-                                              p:group.validationMessages.render="false">
-                                            <property name="items">
-                                                <list>
-                                                    <bean p:id="addPlannedCourse" parent="Uif-PrimaryActionButton-Small"
-                                                          p:actionLabel="Add To Plan">
-                                                        <property name="actionScript"
-                                                                  value="myplanAjaxSubmitPlanItem('@{courseDetails.courseId}', '@{courseDetails.courseIdXmlSafe}','courseId', 'addPlanCourse', e,true);"/>
-                                                        <property name="onDocumentReadyScript" value="
-                                                jQuery('#addPlannedCourse')
-                                                    .subscribe('PLAN_ITEM_ADDED', function(data){
-                                                        if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                            fnDisplayMessage(data.message, data.cssClass, 'plan_section_add_actions', true, false);
-                                                            jQuery(&quot;#@{courseDetails.courseId}-@{sectionCode}&quot;).replaceWith(&quot;&lt;span class='uif-message fl-font-size-80 fl-text-green'&gt;InPlan&lt;/span&gt;&quot;);
-                                                        }
-                                                    })
-                                                    .subscribe('ERROR', function(data){
-                                                        fnDisplayMessage(data.message, data.cssClass, 'hidden_add_error_block', true, false,true,'hidden_add_error_block');
-                                                    });"/>
-                                                    </bean>
-                                                    <bean p:id="cancelAddPlannedCourse"
-                                                          parent="Uif-SecondaryActionButton-Small"
-                                                          p:actionLabel="Cancel">
-                                                        <property name="actionScript"
-                                                                  value="fnCloseAllPopups();"/>
-                                                    </bean>
-                                                </list>
-                                            </property>
-                                        </bean>
-                                        <bean parent="Uif-HorizontalFieldGroup" p:fieldLabel.render="false"
-                                              p:group.validationMessages.render="false" p:style="margin:0;">
-                                            <property name="items">
-                                                <list>
-                                                    <bean id="hidden_section_add_error_block" p:id="hidden_add_error_block"
-                                                          parent="Uif-InputField"
-                                                          p:propertyName="courseDetails.courseId"
-                                                          p:fieldLabel.render="false"
-                                                          p:style="width: 300px;">
-                                                        <property name="control">
-                                                            <bean parent="Uif-HiddenControl"/>
-                                                        </property>
-                                                    </bean>
-                                                    <bean id="hidden_sectionCode" p:id="hidden_sectionCode"
-                                                          parent="Uif-InputField"
-                                                          p:propertyName="sectionCode"
-                                                          p:fieldLabel.render="false"
-                                                          p:style="width: 300px;"
-                                                          p:render="@{sectionCode ne null ? true : false}">
-                                                        <property name="control">
-                                                            <bean parent="Uif-HiddenControl"/>
-                                                        </property>
-                                                    </bean>
-                                                    <bean id="hidden_sectionAtp" p:id="hidden_sectionAtp"
-                                                          parent="Uif-InputField"
-                                                          p:propertyName="termYear"
-                                                          p:fieldLabel.render="false"
-                                                          p:style="width: 300px;"
-                                                          p:render="@{termYear ne null ? true : false}">
-                                                        <property name="control">
-                                                            <bean parent="Uif-HiddenControl"/>
-                                                        </property>
-                                                    </bean>
-                                                    <bean id="hidden_backUp" p:id="hidden_backUp"
-                                                          parent="Uif-InputField"
-                                                          p:render="@{courseInPlan eq false AND courseInBackup eq true ? true : false}"
-                                                          p:propertyName="courseInBackup"
-                                                          p:fieldLabel.render="false"
-                                                          p:style="width: 300px;">
-                                                        <property name="control">
-                                                            <bean parent="Uif-HiddenControl"/>
-                                                        </property>
-                                                    </bean>
-                                                </list>
-                                            </property>
-                                        </bean>
-                                    </list>
-                                </property>
-                            </bean>
-                        </list>
-                    </property>
-                </bean>
             </list>
         </property>
     </bean>
@@ -1563,6 +1309,16 @@
         "/>
     </bean>
 
+    <bean id="menuOptionCopyCourse" parent="Uif-ActionLink" p:actionLabel="Copy to Another Term"
+          p:title="Copy to Another Term">
+        <property name="actionScript" value="
+            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', courseId:jQuery(this).data('courseid'), atpId:jQuery(this).data('atpid'), pageId:'copy_dialog_page'};
+            var popupStyle = {width:'300px', height:'16px'};
+            var popupOptions = {tail:{hidden:true}, align:'top', close:true};
+            openPopup('copy_dialog_page', retrieveData, 'plan', popupStyle, popupOptions, e);
+        "/>
+    </bean>
+
     <bean id="menuOptionDelete" parent="Uif-ActionLink" p:actionLabel="Delete from Plan"
           p:title="Delete from Plan">
         <property name="cssClasses">
@@ -1598,6 +1354,36 @@
         "/>
     </bean>
 
+		<bean id="menuOptionAddToCart" parent="Uif-ActionLink" p:actionLabel="Add to Shopping Cart" p:title="Add to Shopping Cart" >
+			<property name="actionScript" value="
+				var retrieveData = {action:'sb/cart',
+						viewId: 'ShoppingCart-FormView',
+						methodToCall: 'addFromPlan',
+						planItemId: jQuery(this).data('planitemid'),
+						termId: jQuery(this).data('atpid'),
+						pageId: 'sb_cart_add_from_plan_page'
+					};
+				var popupStyle = {width:'500px', height:'16px'};
+				var popupOptions = {tail:{hidden:true}, align:'top', close:true};
+				openPopup('sb_cart_add_from_plan_inner', retrieveData, 'sb/cart', popupStyle, popupOptions, e);
+			"/>
+		</bean>
+
+		<bean id="menuOptionRemoveFromCart" parent="Uif-ActionLink" p:actionLabel="Remove from Shopping Cart" p:title="Remove From Shopping Cart" >
+			<property name="actionScript" value="
+				var retrieveData = {action:'sb/cart',
+						viewId: 'ShoppingCart-FormView',
+						methodToCall: 'removeFromCart',
+						planItemId: jQuery(this).data('planitemid'),
+						termId: jQuery(this).data('atpid'),
+						pageId: 'sb_cart_remove_page'
+					};
+				var popupStyle = {width:'500px', height:'16px'};
+				var popupOptions = {tail:{hidden:true}, align:'top', close:true};
+				openPopup('sb_cart_remove_inner', retrieveData, 'sb/cart', popupStyle, popupOptions, e);
+			"/>
+		</bean>
+
     <bean id="menuTermOptionEdit" parent="Uif-ActionLink" p:actionLabel="Edit Term Note"
           p:title="Edit Term Note" p:cssClasses="ks-plan-TermNote-editLabel">
         <property name="actionScript" value="
@@ -1607,8 +1393,5 @@
             openPopup('term_note_edit_page', retrieveData, 'plan', popupStyle, popupOptions, e);
         "/>
     </bean>
-
-
-
 
 </beans>
