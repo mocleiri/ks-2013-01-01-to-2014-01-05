@@ -57,11 +57,11 @@ Feature: WC.Schedule of Classes
     And the course offering details displays a listing of AO clusters
 
 #KSENROLL-9199
-#  @pending
-#  Scenario: Display schedule of classes for a particular course and verify that registration groups are displayed
-#    When I search for course offerings by course by entering a course offering code
-#    Then a list of course offerings with that course offering code is displayed
-#    And the course offering details displays a listing of registration groups
+  @pending
+  Scenario: Display schedule of classes for a particular course and verify that registration groups are displayed
+    When I search for course offerings by course by entering a course offering code
+    Then a list of course offerings with that course offering code is displayed
+    And the course offering details displays a listing of registration groups
 
   @draft
   Scenario: Ensure that only courses in published (or closed - later) state are displayed
