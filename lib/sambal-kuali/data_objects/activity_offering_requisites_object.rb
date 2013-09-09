@@ -104,7 +104,9 @@ class AORequisitesData
     begin
       on ActivityOfferingRequisites do |page|
         page.loading.wait_while_present(60)
-        if page.send(sections[@section]).img(id: /KSAO-AgendaManage-RulePrototype_rule[A-F]_col/).exists?
+        puts "#{@section}<<->>#{section[@section]}"
+        if page.send(sections[@section]).img(id: /KSAO-AgendaManage-RulePrototype_rule[A-F]_toggle_col/).exists?
+          puts "exists"
           page.send(sections[@section]).when_present.click
         end
       end
@@ -559,21 +561,21 @@ class AORequisitesData
   end
 
   def make_changes_to_multiple_ao_reqs
-    @prereq = make AOPreparationPrerequisiteRule, :course => "CHEM277"
-    @prereq.sepr_copy_edit_co_rule
-    commit_changes
-
-    @coreq = make AOCorequisiteRule, :course => "CHEM277"
-    @coreq.cr_suppress_co_rule
-    commit_changes
+    #@prereq = make AOPreparationPrerequisiteRule, :course => "CHEM277"
+    #@prereq.sepr_copy_edit_co_rule
+    #commit_changes
+    #
+    #@coreq = make AOCorequisiteRule, :course => "CHEM277"
+    #@coreq.cr_suppress_co_rule
+    #commit_changes
 
     @antireq = make AOAntirequisiteRule, :course => "CHEM277", :activity => "D"
     @antireq.ar_add_ao_rule
     commit_changes
 
-    @coreq2 = make AOCorequisiteRule, :course => "CHEM277", :activity => "D"
-    @coreq2.cr_replace_co_rule
-    commit_changes
+    #@coreq2 = make AOCorequisiteRule, :course => "CHEM277", :activity => "D"
+    #@coreq2.cr_replace_co_rule
+    #commit_changes
   end
 end
 
