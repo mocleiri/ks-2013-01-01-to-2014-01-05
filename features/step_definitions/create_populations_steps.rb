@@ -41,6 +41,7 @@ end
 Then /^the reference population field is highlighted as required$/ do
   on CreatePopulation do |page|
     page.reference_population.attribute_value('class').should match /required.*error/
+    page.cancel
   end
 end
 
