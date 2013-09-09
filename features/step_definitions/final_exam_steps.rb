@@ -77,6 +77,33 @@ When /^I create and then edit a Course Offering from catalog with an alternate f
   end
 end
 
+When /^I create a Course Offering from an existing course offering with no final exam period$/ do
+  @course_offering = make CourseOffering, :term => "201301", :course => "PHYS603"
+  @course_offering.manage
+
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.final_exam_option_none
+    page.submit
+  end
+
+  @course_offering.start_create_by_search
+  on CreateCourseOffering do |page|
+    page.choose_from_existing
+    page.continue
+  end
+  on CreateCOFromExisting do |page|
+    page.select_copy_for_existing_course(@course_offering.term, @course_offering.course)
+    page.create
+  end
+
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+end
+
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
@@ -162,5 +189,11 @@ Then /^I should be able to edit and update the Final Exam status$/ do
     page.final_exam_option_none
     page.final_exam_driver_value.should == "No final exam for this offering"
     page.submit
+  end
+end
+
+Then /^the exam period for the copied course offering should match that of the original$/ do
+  on CourseOfferingEdit do |page|
+    page.final_exam_driver_value.should == "No final exam for this offering"
   end
 end
