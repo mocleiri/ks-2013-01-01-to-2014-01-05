@@ -2007,6 +2007,8 @@ function submitPopupForm(additionalFormData, e, bDialog) {
     ksapAjaxSubmitForm(additionalFormData, successCallback, elementToBlock, "popupForm", blockOptions);
 }
 
+// KSAP 0.7.1 and previous deprecated planner scripts
+
 function ksapLoadPlanItems(imageUrl) {	
 	var user = jQuery.trim(jQuery('#hidden_new_user_flag').text());
 	var retrieveOptions = {};
@@ -2125,5 +2127,47 @@ function ksapInitializePlanItems(pageSize) {
     }).on('UPDATE_OLD_TERM_TOTAL_CREDITS', function(event, data) {
         fnUpdateCredits(data.atpId, data.totalCredits, data.cartCredits);
     });
-
 }
+
+// KSAP 0.7.5 refactored planner scripts
+
+function ksapLoadPlannerItems(imageUrl) {	
+	var retrieveOptions = {};
+	var sFocusAtpId = '';
+	var aParams = window.location.search.replace('?','').split('&amp;');
+	jQuery.each(aParams, function(index, value) {
+	    if (value.split('=')[0].indexOf('focusAtpId') >= 0) {
+	        sFocusAtpId = decodeURIComponent(value.split('=')[1]);
+	    }
+	});
+	if(sFocusAtpId != ''){
+	    retrieveOptions = {viewId:'Planner-LookupView', focusAtpId:sFocusAtpId};
+	} else {
+	    retrieveOptions = {viewId:'Planner-LookupView'};
+	}
+	myplanRetrieveComponent('planner_lookup_wrapper','planner_courses_detail','search','lookup', retrieveOptions, null,
+		{	message: '<p><img src="' + imageUrl +
+				'ajaxAuditRunning32.gif" alt="loading..." /></p><p>Please wait while we are fetching your plan...</p>',
+			fadeIn : 0,
+			fadeOut : 0
+		});
+}
+
+function ksapPlannerOpenDialog(pageId, action, methodToCall) {
+	var retrieveData = {
+			action : action,
+			methodToCall : methodToCall,
+			learningPlanId : jQuery(this).data('learningplanid'),
+			termId : jQuery(this).data('termid'),
+			planItemId : jQuery(this).data('planitemid'),
+			courseId : jQuery(this).data('courseid'),
+			pageId : pageId+"_page"
+		};
+	var popupOptions = {
+			tail : { hidden : true },
+			align : 'top',
+ 			close : true
+		};
+	openPopup(pageId+"_inner", retrieveData, action, popupStyle, popupOptions, e);
+}
+
