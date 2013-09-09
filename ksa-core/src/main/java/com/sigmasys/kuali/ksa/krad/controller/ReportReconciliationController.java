@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,7 +46,6 @@ public class ReportReconciliationController extends DownloadController {
     private ReportService reportService;
 
 
-
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
      */
@@ -67,19 +65,11 @@ public class ReportReconciliationController extends DownloadController {
             }
 
             form.setAccount(account);
-        } /*else {
-           String errMsg = "'userId' request parameter cannot be null";
-           logger.error(errMsg);
-           throw new IllegalStateException(errMsg);
-        }*/
+        }
 
         return form;
     }
 
-    /**
-     * @param form
-     * @return
-     */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
     public ModelAndView get(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
         return getUIFModelAndView(form);
@@ -92,7 +82,7 @@ public class ReportReconciliationController extends DownloadController {
      * @param form The form object.
      * @return The page's form.
      */
-    @RequestMapping(method = {RequestMethod.POST,RequestMethod.GET}, params = "methodToCall=exportAllPendingTransactions")
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=exportAllPendingTransactions")
     public ModelAndView exportAllPendingTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
 
         // Call the service to export all pending transactions:
@@ -107,7 +97,7 @@ public class ReportReconciliationController extends DownloadController {
      * @param form The form object.
      * @return The page's form.
      */
-    @RequestMapping(method = {RequestMethod.POST,RequestMethod.GET}, params = "methodToCall=makeTransactionsEffective")
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=makeTransactionsEffective")
     public ModelAndView makeTransactionsEffective(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
         try {
             // Get all KSA Transactions:
@@ -129,16 +119,17 @@ public class ReportReconciliationController extends DownloadController {
     }
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=agedTransactions")
-    public ModelAndView agedTransactions(@ModelAttribute("KualiForm") ReportReconciliationForm form, BindingResult result,
-                                         HttpServletRequest request,
-                                         HttpServletResponse response) throws IOException {
+    public ModelAndView exportAgedBalanceReport(@ModelAttribute("KualiForm") ReportReconciliationForm form, HttpServletResponse response) throws IOException {
 
         List<Account> accounts = accountService.getAccountsByNamePattern("");
-        List<String> userids = new ArrayList<String>();
-        for(Account account : accounts) {
-            userids.add(account.getId());
+
+        List<String> userId = new ArrayList<String>(accounts.size());
+
+        for (Account account : accounts) {
+            userId.add(account.getId());
         }
-        String report = reportService.generateAgedBalanceReport(userids, false, false);
+
+        String report = reportService.generateAgedBalanceReport(userId, false, false);
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
