@@ -2040,24 +2040,27 @@ function ksapInitializePlanItems(pageSize) {
     	var atpId = jQuery(this).parents('.myplan-carousel-term').data('atpid');
     	var backup = jQuery(this).parents('.myplan-carousel-term').data('plantype');
     	var size = jQuery(this).parents('.myplan-carousel-term').data('size');
-    	if (size < 8) { // TODO: remove size limit enforcement
-	    	var jQuickAdd = jQuery('<div />')
-	    			.addClass('quick-add-cell ks-plan-Bucket-addItem')
-	    			.html('Add a course to plan')
-	    			.click(function(e){
-	    		var retrieveData = {
-	    				action : 'plan' ,
-	    				viewId : 'PlannedCourse-FormView' ,
-	    				methodToCall : 'startAddPlannedCourseForm' ,
-	    				atpId : atpId ,
-	    				backup : backup ,
-	    				pageId : 'plan_item_add_page'
-	    			};
-	            openPopup('plan_item_add_page', retrieveData, 'plan', popupStyle, popupOptions, e);
-	    	});
+      var jQuickAdd = jQuery('<div />')
+                      .addClass('quick-add-cell ks-plan-Bucket-addItem')
+                      .html('Add a course to plan')
+                      .click(function(e){
+              var retrieveData = {
+                              action : 'plan' ,
+                              viewId : 'PlannedCourse-FormView' ,
+                              methodToCall : 'startAddPlannedCourseForm' ,
+                              atpId : atpId ,
+                              backup : backup ,
+                              pageId : 'plan_item_add_page'
+                      };
+           openPopup('plan_item_add_page', retrieveData, 'plan', popupStyle, popupOptions, e);
+      });
+      // TODO: consider removing size limit enforcement
+      if (size < 8) {
+          jQuery(this).append(jQuickAdd).show();
+      } else {
+          jQuery(this).append(jQuickAdd).show();
     	}
     });
-
 
     if (jQuery('#planned_courses_detail_list ul:not(.errorLines) li').length > 0) {
         var iMaxHeight = Math.max.apply(null, jQuery('#planned_courses_detail_list ul:not(.errorLines) li')
