@@ -28,11 +28,9 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sergey
- * Date: 3/12/13
- * Time: 12:12 AM
- * To change this template use File | Settings | File Templates.
+ * GeneralLedgerController.
+ *
+ * @author Sergey Godunov
  */
 @Controller
 @RequestMapping(value = "/generalLedger")
@@ -128,6 +126,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
      * @param form The form object.
      */
     private void searchForPriorBatches(ReportReconciliationForm form) {
+
         // Find all GL Transmissions in all statuses:
         List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsByStatuses(GlTransmissionStatus.TRANSMITTED);
 
@@ -146,6 +145,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
      * @param form The form object.
      */
     private void searchForPendingTransactions(ReportReconciliationForm form) {
+
         // Create a GeneralLedgerAccountModel List:
         MutableDouble grandTotal = new MutableDouble(0);
         List<GeneralLedgerAccountModel> glAccounts = createPendingTransactionGlAccountsList(grandTotal);
@@ -162,6 +162,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
      * @param form The form object.
      */
     private void searchForBatchDetails(ReportReconciliationForm form, String batchId) {
+
         // Get GL Transmissions for the given batch:
         List<GlTransmission> glTransmissions = generalLedgerService.getGlTransmissionsForBatch(batchId, GlTransmissionStatus.TRANSMITTED);
         List<GlTransaction> glTransactions = generalLedgerService.getGlTransactionsForBatch(batchId);
@@ -240,6 +241,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
      * @return A matching GL Type or <code>null</code> if no match can be found.
      */
     private GeneralLedgerType findGlType(List<GeneralLedgerType> generalLedgerTypes, String glAccountId) {
+
         for (GeneralLedgerType glType : generalLedgerTypes) {
             if (StringUtils.equalsIgnoreCase(glType.getGlAccountId(), glAccountId)) {
                 return glType;
@@ -324,6 +326,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
      * @return A list of GeneralLedgerAccountModel object for display.
      */
     private List<GeneralLedgerAccountModel> createPendingTransactionGlAccountsList(MutableDouble grandTotalAmount) {
+
         // Find all GL Transactions in the "Pending" status ('Q'):
         List<GlTransaction> pendingTransactions = generalLedgerService.getGlTransactionsByStatus(GlTransactionStatus.QUEUED);
 
@@ -441,12 +444,16 @@ public class GeneralLedgerController extends ReportReconciliationController {
      */
     private Transaction createMinimalKsaTransactionForView(GlTransaction glTransaction,
                                                            Set<Transaction> ksaTransactions) {
+
         // Calculate the total amount of all KSA Transactions:
         MutableDouble totalAmount = new MutableDouble(0);
+
         final boolean isCredit = (glTransaction.getGlOperation() == GlOperationType.CREDIT);
+
         String originatingAccountId = null;
 
         for (Transaction ksaTransaction : ksaTransactions) {
+
             BigDecimal adjustmentAmount = isCredit ? ksaTransaction.getAmount() : ksaTransaction.getAmount().negate();
 
             totalAmount.add(adjustmentAmount);
@@ -498,9 +505,10 @@ public class GeneralLedgerController extends ReportReconciliationController {
      */
     private void separateGlAccountsForDetails(BatchTransmissionModel batchTransmission, BatchTransmissionDetailsModel batchDetails,
                                               List<GlTransaction> glTransactions) {
+
         // Define two lists of GL Accounts and totals for each group:
-        List<GeneralLedgerAccountModel> accrualGlAccount = new ArrayList<GeneralLedgerAccountModel>();
-        List<GeneralLedgerAccountModel> allOtherGlAccount = new ArrayList<GeneralLedgerAccountModel>();
+        List<GeneralLedgerAccountModel> accrualGlAccount = new LinkedList<GeneralLedgerAccountModel>();
+        List<GeneralLedgerAccountModel> allOtherGlAccount = new LinkedList<GeneralLedgerAccountModel>();
         MutableDouble accrualGlAccountsTotal = new MutableDouble(0);
         MutableDouble allOtherGlAccountsTotal = new MutableDouble(0);
 
@@ -535,6 +543,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
      * @return A Map of GlTransactions mapped to their GL Account IDs.
      */
     private Map<String, List<GlTransaction>> createGlAccountTransactionMap(List<GlTransaction> glTransactions) {
+
         // Create the resulting Map:
         Map<String, List<GlTransaction>> result = new HashMap<String, List<GlTransaction>>();
 

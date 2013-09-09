@@ -27,7 +27,7 @@ import java.util.List;
 @RequestMapping(value = "/batchRefundView")
 public class BatchRefundController extends GenericSearchController {
 
-   private static final Log logger = LogFactory.getLog(BatchRefundController.class);
+    private static final Log logger = LogFactory.getLog(BatchRefundController.class);
 
     @Autowired
     private AuditableEntityService auditableEntityService;
@@ -35,43 +35,39 @@ public class BatchRefundController extends GenericSearchController {
     @Autowired
     private RefundService refundService;
 
-   /**
-    * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
-    */
-   @Override
-   protected BatchRefundForm createInitialForm(HttpServletRequest request) {
-      BatchRefundForm form = new BatchRefundForm();
-      form.setAccounts(new ArrayList<Account>());
-      return form;
-   }
-
-   /**
-    *
-    * @param form
-    * @return
-    */
-   @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
-   public ModelAndView get(@ModelAttribute("KualiForm") BatchRefundForm form) {
-
-      populateForm(form);
-      return getUIFModelAndView(form);
-   }
-
     /**
-     *
-     * @param form
-     * @return
+     * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
      */
+    @Override
+    protected BatchRefundForm createInitialForm(HttpServletRequest request) {
+        BatchRefundForm form = new BatchRefundForm();
+        form.setAccounts(new ArrayList<Account>());
+        return form;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
+    public ModelAndView get(@ModelAttribute("KualiForm") BatchRefundForm form) {
+
+        populateForm(form);
+        return getUIFModelAndView(form);
+    }
+
+
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterAccounts")
     public ModelAndView filterAccounts(@ModelAttribute("KualiForm") BatchRefundForm form) {
+
         String newAccount = form.getNewAccount();
+
         Account acct = accountService.getFullAccount(newAccount);
+
         List<Account> accounts = form.getAccounts();
-        if(accounts == null){
+
+        if (accounts == null) {
             accounts = new ArrayList<Account>();
             form.setAccounts(accounts);
         }
-        if(acct != null){
+
+        if (acct != null) {
             accounts.add(acct);
         }
 
@@ -79,51 +75,44 @@ public class BatchRefundController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
-    /**
-     *
-     * @param form
-     * @return
-     */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterDates")
     public ModelAndView filterDates(@ModelAttribute("KualiForm") BatchRefundForm form) {
-        Date startDate = form.getStartingDate();
-        Date endDate = form.getEndingDate();
-
-
-
         populateForm(form);
         return getUIFModelAndView(form);
     }
 
-    /**
-     *
-     * @param form
-     * @return
-     */
+
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterTags")
     public ModelAndView filterTags(@ModelAttribute("KualiForm") BatchRefundForm form) {
+
         String newTag = form.getNewTag();
+
         Tag tag = auditableEntityService.getAuditableEntity(newTag, Tag.class);
+
         List<Tag> tags = form.getTags();
-        if(tags == null){
+
+        if (tags == null) {
             tags = new ArrayList<Tag>();
             form.setTags(tags);
         }
-        if(tag != null){
+
+        if (tag != null) {
             tags.add(tag);
         }
 
         populateForm(form);
+
         return getUIFModelAndView(form);
     }
 
-    private void populateForm(BatchRefundForm form){
+    private void populateForm(BatchRefundForm form) {
+
         form.setNewAccount("");
         form.setRefunds(new ArrayList<Refund>());
         form.setPotentialRefundModels(new ArrayList<PotentialRefundModel>());
 
         List<Account> accounts = form.getAccounts();
-        if(accounts == null || accounts.size() == 0){
+        if (accounts == null || accounts.isEmpty()) {
             return;
         }
 
@@ -131,34 +120,37 @@ public class BatchRefundController extends GenericSearchController {
         Date startDate = form.getStartingDate();
         Date endDate = form.getEndingDate();
 
-        try{
-            if(startDate == null){
+        try {
+            if (startDate == null) {
                 startDate = df.parse("01-01-1970");
             }
-            if(endDate == null){
+            if (endDate == null) {
                 endDate = df.parse("01-01-2070");
             }
-        } catch(ParseException e){
-            // eh.
+        } catch (ParseException e) {
+            logger.warn(e.getMessage(), e);
         }
 
-        List<String> accountList = new ArrayList<String>();
-        for(Account account : accounts){
-            accountList.add(account.getId());
+        List<String> accountIds = new ArrayList<String>(accounts.size());
+
+        for (Account account : accounts) {
+            accountIds.add(account.getId());
         }
 
-        List<Refund> refunds = refundService.checkForRefund(accountList, startDate, endDate);
+        List<Refund> refunds = refundService.checkForRefund(accountIds, startDate, endDate);
+
         form.setRefunds(refunds);
 
         List<PotentialRefundModel> potentialRefundModels = form.getPotentialRefundModels();
 
-        for(String userid : accountList){
-            logger.info("Retrieving transactions for '" + userid + "' From: " + startDate.toString() + " to: " + endDate.toString());
-            List<Transaction> transactions = transactionService.getTransactions(userid, startDate, endDate);
-            logger.info("Count: " + transactions.size());
+        for (String userId : accountIds) {
 
-            for(Transaction t: transactions){
-                if(t instanceof Credit){
+            logger.info("Retrieving transactions for '" + userId + "' From: " + startDate + " to: " + endDate);
+
+            List<Transaction> transactions = transactionService.getTransactions(userId, startDate, endDate);
+
+            for (Transaction t : transactions) {
+                if (t instanceof Credit) {
                     potentialRefundModels.add(new PotentialRefundModel(new TransactionModel(t)));
                 }
             }
