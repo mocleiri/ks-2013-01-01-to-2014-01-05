@@ -1,5 +1,9 @@
 class DisplayScheduleOfClasses < BasePage
 
+  # contrary to standard convention, we provide a direct URL to this view in order to supply an optional parameter
+  # to force the display of the "Activity Offering Display"-selector widget
+  page_url "#{$test_site}/kr-krad/scheduleOfClassesSearch?viewId=scheduleOfClassesSearchView&pageId=scheduleOfClassesSearchInputPage&methodToCall=start&showAoDisplayWidget=true"
+
   expected_element :term
 
   wrapper_elements

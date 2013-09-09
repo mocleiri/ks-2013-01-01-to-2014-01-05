@@ -49,10 +49,9 @@ module Workflows
   end
 
   def go_to_display_schedule_of_classes
-    visit Enrollment do |page|
-      page.schedule_of_classes
-    end
-
+    # contrary to standard convention, we navigate directly to this view in order to supply an optional parameter
+    # to force the display of the "Activity Offering Display"-selector widget
+    visit DisplayScheduleOfClasses
   end
 
   def go_to_holiday_calendar
