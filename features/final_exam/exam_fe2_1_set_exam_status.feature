@@ -14,5 +14,5 @@ Feature: SA.FE2-1 Set Exam Status
   #FE2.1.EB2 (KSENROLL-9242)
   @pending
   Scenario: Test whether a warning is displayed on the edit CO page that exam status differs from catalog
-    When I create and then edit a Course Offering from catalog with a final exam period
+    When I create and then edit a Course Offering from catalog with an alternate final exam period
     Then a warning about the FE on the Edit CO page is displayed stating "Course exam data differs from Catalog."
