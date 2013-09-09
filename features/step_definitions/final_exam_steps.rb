@@ -56,7 +56,7 @@ When /^I create a Course Offering from catalog with a final exam period$/ do
   end
 end
 
-When /^I create and then edit a Course Offering from catalog with a final exam period$/ do
+When /^I create and then edit a Course Offering from catalog with an alternate final exam period$/ do
   @course_offering = make CourseOffering, :term => "201301", :course => "PHYS603"
 
   @course_offering.start_create_by_search
@@ -128,8 +128,39 @@ Then /^the Final Exam Driver Activity value should change each time I choose ano
   end
 end
 
+Then /^the Final Exam Driver dropdown should only be present for the Standard Final Exam$/ do
+  on CreateCOFromCatalog do |page|
+    page.final_exam_option_standard
+    page.final_exam_driver_div.present?.should == true
+    page.final_exam_option_alternate
+    page.final_exam_driver_div.present?.should == false
+    page.final_exam_option_none
+    page.final_exam_driver_div.present?.should == false
+    page.create_offering
+  end
+end
+
 Then /^a warning about the FE on the Edit CO page is displayed stating "([^"]*)"$/ do |exp_msg|
   on CourseOfferingEdit do |page|
     page.delivery_assessment_warning.should match /#{exp_msg}/
+  end
+end
+
+Then /^the Final Exam Driver column should be populated with text corresponding to the chosen driver$/ do
+  on CreateCOFromCatalog do |page|
+    page.final_exam_option_standard
+    page.final_exam_driver_select "Final Exam Per Activity Offering"
+    page.final_exam_driver_value.should == "Activity Offering"
+    page.final_exam_driver_select "Final Exam Per Course Offering"
+    page.final_exam_driver_value.should == "Course Offering"
+    page.create_offering
+  end
+end
+
+Then /^I should be able to edit and update the Final Exam status$/ do
+  on CourseOfferingEdit do |page|
+    page.final_exam_option_none
+    page.final_exam_driver_value.should == "No final exam for this offering"
+    page.submit
   end
 end

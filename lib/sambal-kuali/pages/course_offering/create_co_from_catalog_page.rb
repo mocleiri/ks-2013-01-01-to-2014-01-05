@@ -25,6 +25,9 @@ class CreateCOFromCatalog < BasePage
   action(:final_exam_option_alternate) { |b| b.frm.radio(value: "ALTERNATE").set; b.loading.wait_while_present }
   action(:final_exam_option_none) { |b| b.frm.radio(value: "NONE").set; b.loading.wait_while_present }
 
+  element(:final_exam_driver_div) { |b| b.frm.div(id: "KS-CourseOfferingEdit-FinalExamDriver")}
+  action(:final_exam_driver_select) { |driver,b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control").select driver}
+
   #element(:cross_listed_co_check_boxes) { |b| b.frm.dvi(id:"KS-CoListed-Checkbox-Group")}
   element(:cross_listed_co_check_box) { |b| b.checkbox(id: "KS-COEditListed-Checkbox-Group_control_0") }
 
@@ -56,7 +59,6 @@ class CreateCOFromCatalog < BasePage
   element(:add_format_btn) { |b| b.frm.button(text: "Add Format")}
   action(:add_format) { |b| b.add_format_btn.click; b.loading.wait_while_present }
   action(:delete_format_btn) {|b| b.frm.button(id: "KS-CourseOffering-FormatOfferingSubSection_del_line0") }
-
   value(:final_exam_driver_value) { |b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_DRIVER_COLUMN].text}
 
   def target_format_select(row, format)
