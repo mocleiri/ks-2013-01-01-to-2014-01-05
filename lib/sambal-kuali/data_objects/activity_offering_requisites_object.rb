@@ -104,9 +104,7 @@ class AORequisitesData
     begin
       on ActivityOfferingRequisites do |page|
         page.loading.wait_while_present(60)
-        puts "#{@section}<<->>#{section[@section]}"
         if page.send(sections[@section]).img(id: /KSAO-AgendaManage-RulePrototype_rule[A-F]_toggle_col/).exists?
-          puts "exists"
           page.send(sections[@section]).when_present.click
         end
       end
