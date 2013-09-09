@@ -57,6 +57,8 @@ class CreateCOFromCatalog < BasePage
   action(:add_format) { |b| b.add_format_btn.click; b.loading.wait_while_present }
   action(:delete_format_btn) {|b| b.frm.button(id: "KS-CourseOffering-FormatOfferingSubSection_del_line0") }
 
+  value(:final_exam_driver_value) { |b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_DRIVER_COLUMN].text}
+
   def target_format_select(row, format)
     if delivery_formats_table.rows[row].cells[FORMAT_COLUMN].select.include? format
       delivery_formats_table.rows[row].cells[FORMAT_COLUMN].select.select format

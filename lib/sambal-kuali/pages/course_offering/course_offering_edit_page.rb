@@ -45,6 +45,9 @@ class CourseOfferingEdit < BasePage
   action(:select_fixed_credit_option) { |b| b.credit_type_option_fixed.set() }
   action(:select_multiple_credit_option) { |b| b.credit_type_option_multiple.set() }
 
+  element(:delivery_assessment_section) { |b| b.frm.div( id: "delivery_and_assessment") }
+  value(:delivery_assessment_warning) { |b| b.delivery_assessment_section.li( class: "uif-warningMessageItem").text}
+
   element(:final_exam_option_div) { |b| b.frm.div(id: "finalExamType") }
   action(:final_exam_option_standard) { |b| b.frm.radio(value: "STANDARD").set; b.loading.wait_while_present}
   action(:final_exam_option_alternate) { |b| b.frm.radio(value: "ALTERNATE").set; b.loading.wait_while_present }

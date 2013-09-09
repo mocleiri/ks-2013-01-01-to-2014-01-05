@@ -119,11 +119,11 @@ end
 Then /^the Final Exam Driver Activity value should change each time I choose another type of Final Exam$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_standard
-    page.standard_fe_driver_activity_value.should == "Lecture"
+    page.final_exam_driver_value.should == ""
     page.final_exam_option_alternate
-    page.alt_no_fe_driver_activity_value.should == "Alternate exam for this offering"
+    page.final_exam_driver_value.should == "Alternate exam for this offering"
     page.final_exam_option_none
-    page.alt_no_fe_driver_activity_value.should == "No final exam for this offering"
+    page.final_exam_driver_value.should == "No final exam for this offering"
     page.create_offering
   end
 end
