@@ -33,6 +33,7 @@ public class BiographicController extends GenericSearchController {
      */
     @Override
     protected BiographicForm createInitialForm(HttpServletRequest request) {
+
         BiographicForm form = new BiographicForm();
         form.setStatusMessage("");
         String userId = request.getParameter("userId");
@@ -49,25 +50,14 @@ public class BiographicController extends GenericSearchController {
 
             form.setAccount(account);
 
-        } /*else {
-          String errMsg = "'userId' request parameter cannot be null";
-          logger.error(errMsg);
-          throw new IllegalStateException(errMsg);
-       }*/
+        }
 
         return form;
     }
 
-    /**
-     * @param form
-     * @param request
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
-    public ModelAndView get(@ModelAttribute("KualiForm") BiographicForm form, HttpServletRequest request) {
 
-        String viewId = request.getParameter("viewId");
-        String pageId = request.getParameter("pageId");
+    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
+    public ModelAndView get(@ModelAttribute("KualiForm") BiographicForm form) {
 
         Account account = form.getAccount();
 
@@ -92,42 +82,42 @@ public class BiographicController extends GenericSearchController {
     }
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=update")
-    public ModelAndView update(@ModelAttribute("KualiForm") BiographicForm form, HttpServletRequest request) {
+    public ModelAndView update(@ModelAttribute("KualiForm") BiographicForm form) {
 
         Account account = form.getAccount();
-        String userid = account.getId();
+        String userId = account.getId();
 
-        try{
+        try {
 
             List<PersonName> personList = form.getPersonNameList();
-            for(PersonName person : personList) {
-                if(person.getId() == null){
-                    accountService.addPersonName(userid, person);
+            for (PersonName person : personList) {
+                if (person.getId() == null) {
+                    accountService.addPersonName(userId, person);
                 } else {
                     accountService.persistPersonName(person);
                 }
             }
 
             List<PostalAddress> addressList = form.getPostalAddressList();
-            for(PostalAddress address : addressList) {
-                if(address.getId() == null){
-                    accountService.addPostalAddress(userid, address);
+            for (PostalAddress address : addressList) {
+                if (address.getId() == null) {
+                    accountService.addPostalAddress(userId, address);
                 } else {
                     accountService.persistPostalAddress(address);
                 }
             }
 
             List<ElectronicContact> contactList = form.getElectronicContactList();
-            for(ElectronicContact contact : contactList) {
-                if(contact.getId() == null){
-                    accountService.addElectronicContact(userid, contact);
+            for (ElectronicContact contact : contactList) {
+                if (contact.getId() == null) {
+                    accountService.addElectronicContact(userId, contact);
                 } else {
                     accountService.persistElectronicContact(contact);
                 }
             }
 
             GlobalVariables.getMessageMap().putInfo("BiographicView", RiceKeyConstants.ERROR_CUSTOM, "Saved");
-        } catch(Throwable t){
+        } catch (Throwable t) {
             GlobalVariables.getMessageMap().putInfo("BiographicView", RiceKeyConstants.ERROR_CUSTOM, "Error saving data: " + t.getLocalizedMessage());
         }
 
