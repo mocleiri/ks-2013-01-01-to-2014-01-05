@@ -10,3 +10,4 @@ Feature: SA.FE2-6 Create CO with FE and then copy
   Scenario: Test whether the copied CO's FE is the same as that of the original
     When I create a Course Offering from an existing course offering with no final exam period
     Then the exam period for the copied course offering should match that of the original
+    And a warning about the FE on the Edit CO page is displayed stating "Course exam data differs from Catalog."
