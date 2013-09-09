@@ -19,7 +19,15 @@ class EditAcademicCalendar < BasePage
   element(:calendar_start_date) { |b| b.frm.text_field(name: "academicCalendarInfo.startDate") }
   element(:calendar_end_date) { |b| b.frm.text_field(name: "academicCalendarInfo.endDate") }
 
-  action(:event_toggle) { |b| b.frm.link(id: "acal-info-event_toggle").click; sleep 1 }
+  element(:event_toggle_link) { |b| b.frm.link(id: "acal-info-event_toggle") }
+
+  def open_events_section()
+    if event_toggle_link.image(alt: "collapse").visible? then # collapse means collapsed
+      event_toggle_link.click
+      sleep 1
+    end
+  end
+
 
   element(:event_type) { |b| b.frm.select(name: "newCollectionLines['events'].eventTypeKey") }
   element(:event_start_date) { |b| b.frm.text_field(name: "newCollectionLines['events'].startDate") }

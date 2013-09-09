@@ -28,10 +28,10 @@ class ViewAcademicCalendar < BasePage
   value(:hcal_start_date) { |b| b.acal_holiday_div.div(data_label: "Start Date").span(index: 1).text }
   value(:hcal_end_date) { |b| b.acal_holiday_div.div(data_label: "End Date").span(index: 1).text }
 
-  def open_event_section
-    link =  acal_event_list_link
-    if link.image.attribute_value("alt") == "collapse" then # expand means is already expanded
-      link.click
+  def open_events_section()
+    if acal_event_list_link.image(alt: "collapse").visible? then # collapse means collapsed
+      acal_event_list_link.click
+      sleep 1
     end
   end
 

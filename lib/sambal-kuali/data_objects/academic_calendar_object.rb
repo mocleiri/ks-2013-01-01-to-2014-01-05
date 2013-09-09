@@ -688,10 +688,7 @@ class CalendarEvent
   def create()
 
     on EditAcademicCalendar do |page|
-      # KSENROLL-9255 - The current version of Rice has a critical bug that will be fixed in
-      # the next upgrade. In order to get around that bug, we have to make all disclosures open
-      # by default. Once the fix is in, please uncomment the next line.
-      #page.event_toggle
+      page.open_events_section
       wait_until { page.event_type.enabled? }
       page.event_type.select @event_type
       page.event_start_date.set @start_date

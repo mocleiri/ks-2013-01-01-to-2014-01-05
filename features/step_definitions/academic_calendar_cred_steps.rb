@@ -413,7 +413,7 @@ Then /^the .*event.*s are listed when I view the Academic Calendar$/ do
 
   on ViewAcademicCalendar do |page|
     page.go_to_calendar_tab
-    page.open_event_section
+    page.open_events_section
     event_row = page.target_event_row_in_view(@event.event_type)
     if event_row == nil
       raise 'Created event not found in event table'
@@ -436,7 +436,7 @@ Then /^the event list is updated when I view the Academic Calendar$/ do
 
   on ViewAcademicCalendar do |page|
     page.go_to_calendar_tab
-    page.open_event_section
+    page.open_events_section
     event_row = nil
     event_row = page.target_event_row_in_view(@event.event_type)
     event_row.should == nil
