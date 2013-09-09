@@ -32,7 +32,6 @@ Feature: Performance.Metrics
 
   Scenario: Holiday Calendar Create
     When I start a blank Holiday Calendar
-    Then the transaction takes less than "3" seconds
     And I create a new Holiday Calendar
     Then the transaction takes less than "3" seconds
 
