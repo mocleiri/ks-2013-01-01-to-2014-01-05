@@ -23,7 +23,9 @@ class ScheduleOfClasses
                 :instructor_long_name,
                 :department_long_name,
                 :type_of_search,
-                :exp_course_list #TODO: exp results can be expanded to include AO info, etc.
+                :exp_course_list, #TODO: exp results can be expanded to include AO info, etc.
+                :exp_cluster_list,
+                :exp_reg_group_list
 
   # provides default data:
   #  defaults = {
@@ -34,6 +36,8 @@ class ScheduleOfClasses
   #    :keyword=>"WRITING FROM SOURCES" ,
   #    :type_of_search=>"Course",    #Course, Department, Instructor, Title & Description
   #    :exp_course_list=>["ENGL103"]
+  #    :exp_cluster_list=>["CL 1"]
+  #    :exp_cluster_list=>["1001"]
   #  }
   # initialize is generally called using TestFactory Foundry .make or method
   def initialize(browser, opts={})
@@ -46,7 +50,9 @@ class ScheduleOfClasses
         :instructor_principal_name=>"f.carolo",
         :keyword=>"WRITING FROM SOURCES" ,
         :type_of_search=>"Course",    #Course, Department, Instructor, Title & Description
-        :exp_course_list=>["ENGL101"]
+        :exp_course_list=>["ENGL101"],
+        :exp_cluster_list=>["CL 1"],
+        :exp_cluster_list=>["1001"]
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -59,7 +65,7 @@ class ScheduleOfClasses
       page.select_type_of_search(@type_of_search)
       case @type_of_search
         when "Course" then page.course_search_parm.set @course_search_parm
-        when "Instructor" then instructor_lookup(@instructor_principal_name)
+        when "Instructor" then page.instructor_search_parm.set @instructor_principal_name
         when "Department" then department_lookup(@department_long_name)
         when "Title & Description" then page.title_description_search_parm.set @keyword
         else raise "ScheduleOfClasses - search type not recognized"
@@ -121,13 +127,20 @@ class ScheduleOfClasses
     end
   end
 
+  # Choose the rendering for SCHoC.  Valid options are "FLAT", "CLUSTER", and "REG_GROUP"
+  def choose_rendering(rendering)
+    on DisplayScheduleOfClasses do |page|
+      page.select_rendering(rendering)
+    end
+  end
+
   # expand course details for the courses in the :exp_course_list
   #
   #  @raises exception if course details are not displayed
   def expand_course_details
     on DisplayScheduleOfClasses do |page|
       page.course_expand(@exp_course_list[0])
-      raise "error expanding course details for #{@exp_course_list[0]}"  unless page.course_ao_information_table(@exp_course_list[0]).exists?
+      raise "error expanding course details for #{@exp_course_list[0]}"  unless page.details_table.exists?
     end
   end
 
@@ -160,12 +173,12 @@ class ScheduleOfClasses
     on DisplayScheduleOfClasses do |page|
       course_list = page.get_results_course_list
       course_list.each do |course_code|
-        page.course_expand(course_code)
-        raise "error expanding course details for #{course_code}"  unless page.course_ao_information_table(course_code).exists?
-        instructor_list = page.get_instructor_list(course_code)
-        raise "data validation issues: instructor #{@instructor_long_name} not found for course: #{course_code}" unless  instructor_list.include?(@instructor_long_name)
-        #page.course_expand(course_code) #closes details
-        #page.course_ao_information_table(course_code).wait_while_present
+        if @exp_course_list.include? course_code
+          page.course_expand(course_code)
+          raise "error expanding course details for #{course_code}"  unless page.details_table.exists?
+          instructor_list = page.get_instructor_list
+          raise "data validation issues: instructor #{@instructor_long_name} not found for course: #{course_code}" unless  instructor_list.include?(@instructor_long_name)
+        end
       end
     end
   end

@@ -28,13 +28,13 @@ Then /^the course offering details for a particular offering can be shown$/ do
 end
 
 And /^the subterm icon appears with the subterm information$/ do
-  icon_title_text = "This activity is in Half Fall 1 - 08/29/2012 - 10/21/2012"
+  icon_title_text = "This activity is in Half Fall 1 - 08/28/2012 - 10/20/2012"
   #TODO: look up text above (term name & dates) from CO & ACal pages
   on DisplayScheduleOfClasses do |page|
-    if !page.results_activities_table.exists?
+    if !page.details_table.exists?
       raise "activities table not found"
     else
-      page.results_activities_table.rows[1..-1].each do |row|
+      page.details_table.rows[1..-1].each do |row|
         # check only rows with data in them
         if row.cells[DisplayScheduleOfClasses::CODE_COL].text =~ /[A-B]/
           row.cells[DisplayScheduleOfClasses::ICON_COL].image.attribute_value("src").should match /subterm_icon\.png/
@@ -50,7 +50,7 @@ Then /^the course offering details for all offerings can be shown$/ do
 end
 
 When /^I search for course offerings by course by entering a course offering code$/ do
-  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "ENGL206", :exp_course_list => ["ENGL206"]
+  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "ENGL206", :exp_course_list => ["ENGL206"], :exp_cluster_list => ["CL 101","CL Leftovers"], :exp_reg_group_list => ["1001","1002","1003","1004"]
   @schedule_of_classes.display
 end
 
@@ -59,7 +59,7 @@ Then /^a list of course offerings with that course offering code is displayed$/ 
 end
 
 When /^I search for course offerings by instructor$/ do
-  @schedule_of_classes = make ScheduleOfClasses, :type_of_search => "Instructor", :instructor_principal_name => "B.JOHND", :exp_course_list => ["BIOL200","CHEM152","ENGL105"]
+  @schedule_of_classes = make ScheduleOfClasses, :type_of_search => "Instructor", :instructor_principal_name => "B.JOHND", :instructor_long_name => "BRITT, JOHN", :exp_course_list => ["BSCI399","CHEM241","ENGL390","HIST708"]
   @schedule_of_classes.display
 end
 
@@ -91,4 +91,20 @@ end
 
 Then /^the course is not displayed in the list of course offerings$/ do
   pending # express the regexp above with the code you wish you had
+end
+
+Then /^the course offering details displays a listing of AO clusters$/ do
+  @schedule_of_classes.choose_rendering DisplayScheduleOfClasses::AO_CLUSTER_RENDERING
+  @schedule_of_classes.expand_course_details
+  on DisplayScheduleOfClasses do |page|
+    page.get_cluster_headers.should == @schedule_of_classes.exp_cluster_list
+  end
+end
+
+Then /^the course offering details displays a listing of registration groups$/ do
+  @schedule_of_classes.choose_rendering DisplayScheduleOfClasses::REG_GROUP_RENDERING
+  @schedule_of_classes.expand_course_details
+  on DisplayScheduleOfClasses do |page|
+    page.get_reg_group_list.should == @schedule_of_classes.exp_reg_group_list
+  end
 end

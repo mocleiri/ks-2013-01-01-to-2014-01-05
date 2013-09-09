@@ -1,5 +1,5 @@
 @nightly
-Feature: EC.Schedule of Classes
+Feature: WC.Schedule of Classes
 
   As an Admin I want to display a published schedule of classes for a specific term in order to
   understand the courses being offered, including both descriptive and scheduling info
@@ -29,9 +29,9 @@ Feature: EC.Schedule of Classes
     Then a list of course offerings with that course offering code is displayed
     And the course offering details for a particular offering can be shown
 
-  @wip
+#KSENROLL-8584
+  @pending
   Scenario: Successfully display schedule of classes for a particular instructor and display course details
-  #this scenario hangs test execution
     When I search for course offerings by instructor
     Then a list of course offerings with activity offerings with that instructor is displayed
 
@@ -48,6 +48,20 @@ Feature: EC.Schedule of Classes
     When I search for course offerings by title and department by entering a keyword
     Then a list of course offerings with that keyword is displayed
     And the course offering details for a particular offering can be shown
+
+#KSENROLL-8584
+  @pending
+  Scenario: Display schedule of classes for a particular course and verify that AO clusters are displayed
+    When I search for course offerings by course by entering a course offering code
+    Then a list of course offerings with that course offering code is displayed
+    And the course offering details displays a listing of AO clusters
+
+#KSENROLL-9199
+#  @pending
+#  Scenario: Display schedule of classes for a particular course and verify that registration groups are displayed
+#    When I search for course offerings by course by entering a course offering code
+#    Then a list of course offerings with that course offering code is displayed
+#    And the course offering details displays a listing of registration groups
 
   @draft
   Scenario: Ensure that only courses in published (or closed - later) state are displayed

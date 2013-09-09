@@ -29,6 +29,16 @@ class DisplayScheduleOfClasses < BasePage
     loading.wait_while_present
   end
 
+  element(:rendering_selection) { |b| b.frm.select(id: "KS-ScheduleOfClasses-AoDisplaySelector_control") }
+
+  def select_rendering(rendering)
+    rendering_selection.select_value rendering
+    loading.wait_while_present
+  end
+
+  FLAT_RENDERING = "FLAT"
+  AO_CLUSTER_RENDERING = "CLUSTER"
+  REG_GROUP_RENDERING = "REG_GROUP"
 
   element(:course_not_found_info_message_div) { |b| b.frm.div(id: "u96") }
 
@@ -37,6 +47,11 @@ class DisplayScheduleOfClasses < BasePage
   element(:course_search_text_info_message) { |b| b.frm.span(id: "course_search_text_info_message") }
 
   element(:results_table) { |b| b.frm.div(id: "KS-ScheduleOfClasses-CourseOfferingListSection").table() }
+  element(:details_row) { |b| b.frm.tr(class: "detailsRow") }
+  element(:details_table) { |b| b.frm.tr(class: "detailsRow").table() }
+
+  element(:cluster_header_1) { |b| b.details_row.span(class: "uif-headerText-span", index:1) }
+  element(:cluster_header_2) { |b| b.details_row.span(class: "uif-headerText-span", index:2) }
 
   element(:results_activities_table) { |b| b.frm.div(id: /findThisId_.*/).table() }
 
@@ -69,10 +84,16 @@ class DisplayScheduleOfClasses < BasePage
      row.cells[COURSE_CODE_COLUMN].text
   end
 
+  def get_cluster_headers
+    header_list = []
+    header_list << cluster_header_1.text
+    header_list << cluster_header_2.text
+  end
+
   def course_expand(course_code)
     target_course_row(course_code).cells[EXPAND_ACTION_COLUMN].image().click
     loading.wait_while_present
-    course_ao_information_table(course_code).wait_until_present
+    details_table.wait_until_present
   end
 
   def course_title(course_code)
@@ -91,6 +112,7 @@ class DisplayScheduleOfClasses < BasePage
     target_course_row(course_code).div(id: /findThisId/).p.text
   end
 
+  REG_GROUP_COLUMN = 0
   AO_CODE_COLUMN = 0
   TYPE_COLUMN = 1
   DAYS_COLUMN = 2
@@ -109,12 +131,21 @@ class DisplayScheduleOfClasses < BasePage
     ao_list
   end
 
-  def get_instructor_list(course_code) #course details must be expanded
+  def get_instructor_list #course details must be expanded
     instructor_list = []
-    course_ao_information_table(course_code).rows[1..-1].each do |row|
+    details_table.rows[1..-1].each do |row|
       instructor_list << row[INSTRUCTOR_COLUMN].text
     end
     instructor_list
+  end
+
+  def get_reg_group_list #course details must be expanded
+    reg_group_list = []
+    details_table.rows[1..-1].each do |row|
+      reg_group_list << row[REG_GROUP_COLUMN].text
+    end
+    reg_group_list.pop  #remove last element, as it will be an empty string
+    reg_group_list
   end
 
   def ao_information_target_row(course_code,activity_offering_code)
