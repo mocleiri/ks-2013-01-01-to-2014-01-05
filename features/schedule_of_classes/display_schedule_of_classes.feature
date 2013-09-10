@@ -81,11 +81,11 @@ Feature: WC.Schedule of Classes
 
 #KSENROLL-9347
   @pending
-#  Scenario: Ensure that only courses in offered state are displayed in Registration Group rendering
-#    When I add an Activity Offering in draft status to an existing Course Offering
-#    And I am using the schedule of classes page
-#    And I search for the Course Offering in the schedule of classes
-#    Then the added Activity Offering is not displayed in the expanded listing rendered by Registration Group
+  Scenario: Ensure that only courses in offered state are displayed in Registration Group rendering
+    When I add an Activity Offering in draft status to an existing Course Offering
+    And I am using the schedule of classes page
+    And I search for the Course Offering in the schedule of classes
+    Then the added Activity Offering is not displayed in the expanded listing rendered by Registration Group
 
 # Scenario: Verify that an appropriate message is displayed if no data is returned by the search
 #  Scenario: Verify that an appropriate message is displayed if no criteria is entered for search by Course
