@@ -22,7 +22,7 @@
 	<import resource="classpath:ks-AtpInfo-dictionary.xml"/>
 	<import resource="classpath:UifKSDefinitions.xml"/>
 	<!-- **********************************************
-	Paste bean definition below into the list of dataDictionaryPackages of org.kuali.rice.krad.bo.ModuleConfiguration 
+	Paste bean definition below into the list of dataDictionaryPackages in StudentSpringBeans.xml 
 	<value>classpath:org/kuali/student/core/ui/admin/atp/AtpInfoAdminInquiryView.xml</value>
 	********************************************** -->
 	<!-- InquiryView -->
@@ -55,7 +55,11 @@
 		                    <bean parent="Uif-DataField" p:propertyName="code" />
 		                    <bean parent="Uif-DataField" p:propertyName="startDate" />
 		                    <bean parent="Uif-DataField" p:propertyName="endDate" />
-		                    <bean parent="Uif-DataField" p:propertyName="adminOrgId" />
+		                    <bean parent="Uif-DataField" p:propertyName="adminOrgId">
+		                        <property name="inquiry">
+		                            <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo" p:inquiryParameters="adminOrgId:id" />
+		                        </property>
+		                    </bean>
 		                    <bean parent="Uif-DataField" p:propertyName="meta.versionInd" />
 		                    <bean parent="Uif-DataField" p:propertyName="meta.createTime" />
 		                    <bean parent="Uif-DataField" p:propertyName="meta.createId" />

@@ -19,22 +19,22 @@
      limitations under the License.
     -->
 
-	<import resource="classpath:ks-AtpInfo-dictionary.xml"/>
+	<import resource="classpath:ks-OrgOrgRelationInfo-dictionary.xml"/>
 	<import resource="classpath:UifKSDefinitions.xml"/>
 	<!-- **********************************************
 	Paste this link below into WEB-INF ksAdminLinks.tag or ksMaintenance.tag in KS with Rice Bundled etc
 	
-	<li><portal:portalLink displayTitle="true" title="AtpInfo Lookup" url="${ConfigProperties.application.url}/kr-krad/lookup?methodToCall=start&dataObjectClassName=org.kuali.student.r2.core.atp.dto.AtpInfo&viewId=KS-AtpInfo-AdminLookupView&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+	<li><portal:portalLink displayTitle="true" title="OrgOrgRelationInfo Lookup" url="${ConfigProperties.application.url}/kr-krad/lookup?methodToCall=start&dataObjectClassName=org.kuali.student.r2.core.organization.dto.OrgOrgRelationInfo&viewId=KS-OrgOrgRelationInfo-AdminLookupView&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
 	Also...
 	Paste bean definition below into the list of dataDictionaryPackages in StudentSpringBeans.xml 
-	<value>classpath:org/kuali/student/core/ui/admin/atp/AtpInfoAdminLookupView.xml</value>
+	<value>classpath:org/kuali/student/core/ui/admin/organization/OrgOrgRelationInfoAdminLookupView.xml</value>
 	********************************************** -->
 	<!-- LookupView -->
-	<bean id="KS-AtpInfo-AdminLookupView" parent="KS-Uif-LookupView"
-		p:title="AtpInfo Lookup"
-		p:header.headerText="AtpInfo Lookup"
-		p:dataObjectClassName="org.kuali.student.r2.core.atp.dto.AtpInfo"
-		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.atp.AtpInfoAdminLookupableImpl">
+	<bean id="KS-OrgOrgRelationInfo-AdminLookupView" parent="KS-Uif-LookupView"
+		p:title="OrgOrgRelationInfo Lookup"
+		p:header.headerText="OrgOrgRelationInfo Lookup"
+		p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgOrgRelationInfo"
+		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.organization.OrgOrgRelationInfoAdminLookupableImpl">
 		
 		<property name="criteriaFields">
 			<list>
@@ -54,17 +54,15 @@
 						p:fieldConversions="key:stateKey" />
 					</property>
 				</bean>
-				<!-- skip name because keyword searching should cover it -->
-				<!-- skip description because keyword searching should cover it -->
-				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="code" />
-				<!-- TODO: deal with  startDate which is a Date -->
-				<!-- TODO: deal with  endDate which is a Date -->
-				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="adminOrgId">
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="orgId">
 					<property name="quickfinder">
 						<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo"
-						p:fieldConversions="id:adminOrgId" />
+						p:fieldConversions="id:orgId" />
 					</property>
 				</bean>
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="relatedOrgId" />
+				<!-- TODO: deal with  effectiveDate which is a Date -->
+				<!-- TODO: deal with  expirationDate which is a Date -->
 				<!-- TODO: deal with seaching on the version indicator which is a string in the contract but a number in the database -->
 				<!-- TODO: deal with  meta.createTime which is a Date -->
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="meta.createId" />
@@ -81,7 +79,7 @@
 		    <list>
 		        <bean parent="Uif-DataField" p:propertyName="id">
 		            <property name="inquiry">
-		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.atp.dto.AtpInfo" p:inquiryParameters="id" />
+		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgOrgRelationInfo" p:inquiryParameters="id" />
 		            </property>
 		        </bean>
 		        <bean parent="Uif-DataField" p:propertyName="typeKey">
@@ -94,15 +92,14 @@
 		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.class1.state.dto.StateInfo" p:inquiryParameters="stateKey:key" />
 		            </property>
 		        </bean>
-		        <bean parent="Uif-DataField" p:propertyName="name" />
-		        <bean parent="Uif-DataField" p:propertyName="code" />
-		        <bean parent="Uif-DataField" p:propertyName="startDate" />
-		        <bean parent="Uif-DataField" p:propertyName="endDate" />
-		        <bean parent="Uif-DataField" p:propertyName="adminOrgId">
+		        <bean parent="Uif-DataField" p:propertyName="orgId">
 		            <property name="inquiry">
-		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo" p:inquiryParameters="adminOrgId:id" />
+		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo" p:inquiryParameters="orgId:id" />
 		            </property>
 		        </bean>
+		        <bean parent="Uif-DataField" p:propertyName="relatedOrgId" />
+		        <bean parent="Uif-DataField" p:propertyName="effectiveDate" />
+		        <bean parent="Uif-DataField" p:propertyName="expirationDate" />
 		    </list>
 		</property>
 	</bean>

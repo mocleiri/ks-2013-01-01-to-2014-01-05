@@ -22,10 +22,11 @@
 	<import resource="classpath:ks-MilestoneInfo-dictionary.xml"/>
 	<import resource="classpath:UifKSDefinitions.xml"/>
 	<!-- **********************************************
-	Paste this link below into WEB-INF ksAdminLinks.tag
-	<li><portal:portalLink displayTitle="true" title="MilestoneInfo Lookup"url="${ConfigProperties.application.url}/kr-krad/lookup?methodToCall=start&dataObjectClassName=org.kuali.student.r2.core.atp.dto.MilestoneInfo&viewId=MilestoneInfoAdminLookupView.xml&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+	Paste this link below into WEB-INF ksAdminLinks.tag or ksMaintenance.tag in KS with Rice Bundled etc
+	
+	<li><portal:portalLink displayTitle="true" title="MilestoneInfo Lookup" url="${ConfigProperties.application.url}/kr-krad/lookup?methodToCall=start&dataObjectClassName=org.kuali.student.r2.core.atp.dto.MilestoneInfo&viewId=KS-MilestoneInfo-AdminLookupView&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
 	Also...
-	Paste bean definition below into the list of dataDictionaryPackages of org.kuali.rice.krad.bo.ModuleConfiguration 
+	Paste bean definition below into the list of dataDictionaryPackages in StudentSpringBeans.xml 
 	<value>classpath:org/kuali/student/core/ui/admin/atp/MilestoneInfoAdminLookupView.xml</value>
 	********************************************** -->
 	<!-- LookupView -->

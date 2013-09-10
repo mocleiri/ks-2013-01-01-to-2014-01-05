@@ -22,7 +22,7 @@
 	<import resource="classpath:ks-AtpAtpRelationInfo-dictionary.xml"/>
 	<import resource="classpath:UifKSDefinitions.xml"/>
 	<!-- **********************************************
-	Paste bean definition below into the list of dataDictionaryPackages of org.kuali.rice.krad.bo.ModuleConfiguration 
+	Paste bean definition below into the list of dataDictionaryPackages in StudentSpringBeans.xml 
 	<value>classpath:org/kuali/student/core/ui/admin/atp/AtpAtpRelationInfoAdminInquiryView.xml</value>
 	********************************************** -->
 	<!-- InquiryView -->
