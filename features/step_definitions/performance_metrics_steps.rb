@@ -410,3 +410,45 @@ When /^I search for a course by course code to delete$/ do
     @performance_test.end
   end
 end
+
+When /^I manage an AO's prerequisites$/ do
+  @performance_test = make PerformanceTest
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
+  @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "ENGL313"
+  #@prereq.sepr_add_ao_rule
+
+  @course_offering = make CourseOffering, {:course => "ENGL313", :term => "201301"}
+  @course_offering.manage
+
+  on ManageCourseOfferings do |page|
+    page.loading.wait_while_present(200)
+    @performance_test.start
+    page.ao_requisites("A")
+    @performance_test.end
+  end
+end
+
+When /^I add a rule to the Prerequisite section$/ do
+
+  on ActivityOfferingRequisites do |page|
+    page.loading.wait_while_present
+    @activityOR.open_agenda_section
+
+    if page.prereq_add_link.exists?
+      page.loading.wait_while_present
+      page.prereq_add
+    end
+    end
+
+  @prereq.rp_sepr_course_rule( "add", "", "ENGL101")
+  @prereq.rp_sepr_text_rule( "add", "", "free form text input value")
+  @prereq.rp_sepr_all_courses_rule( "group", "A", "HIST416,ENGL478", "", "")
+  @prereq.rp_sepr_text_rule( "add", "", "Text to copy")
+  @prereq.rp_sepr_number_courses_rule( "group", "C", "2", "BSCI202,BSCI361,HIST110", "", "")
+
+  on ManageAORequisites do |page|
+    @performance_test.start
+    page.update_rule_btn
+    @performance_test.end
+  end
+end
