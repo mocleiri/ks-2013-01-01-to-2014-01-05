@@ -60,7 +60,10 @@ Feature: WC.Edit Course Offerings
   #KSENROLL-9263
   Scenario: Edit an existing course offering's wait list options
     When I edit a course offering
-    And I activate a wait list with a level of "Course Offering" and type of "Manual"
+    And I "deactivate" the wait list
+    Then I can submit and the course offering is updated
+    Then I edit the same course offering
+    And I "activate" the wait list
     Then I can submit and the course offering is updated
 
   #KSENROLL-1505

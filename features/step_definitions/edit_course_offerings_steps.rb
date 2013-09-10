@@ -232,6 +232,13 @@ When /^a final exam driver of "([^"]*)"$/ do |final_driver|
     @course_offering.edit_offering :final_exam_activity => final_driver
 end
 
+Then /^I edit the same course offering$/ do
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+end
+
 When /^I edit a course offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM132")
 
@@ -261,8 +268,8 @@ Then /^the changes of the affiliated person are persisted$/ do
   end
 end
 
-When /^I activate a wait list with a level of "([^"]*)" and type of "([^"]*)"$/ do |list_level, list_type|
-    @course_offering.edit_offering :wait_list => "YES", :wait_list_level=> list_level, :wait_list_type => list_type
+When /^I "(activate|deactivate)" the wait list$/ do |activate|
+    @course_offering.edit_offering :wait_list => activate
 end
 
 When /^I add an administering organization and activate the honors flag$/ do

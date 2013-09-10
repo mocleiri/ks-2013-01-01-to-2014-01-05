@@ -197,30 +197,14 @@ class CourseOffering
 
     if options[:wait_list] != nil
       on CourseOfferingEdit do |page|
-        if options[:wait_list] == "Inactive"
-          page.waitlist_off
-        else
+        if options[:wait_list] == "activate"
           page.waitlist_on
-        end
-        @wait_list = options[:wait_list]
-      end
-    end
-
-    if options[:wait_list_level] != nil
-      on CourseOfferingEdit do |page|
-        if options[:wait_list_level] == "Activity Offering"
-          page.waitlist_option_activity_offering
+          @wait_list = "Active"
         else
-          page.waitlist_option_course_offering
+          page.waitlist_off
+          page.waitlist_continue_action
+          @wait_list = "Inactive"
         end
-        @wait_list_level = options[:wait_list_level]
-      end
-    end
-
-    if options[:wait_list_type] != nil
-      on CourseOfferingEdit do |page|
-        @wait_list_type = options[:wait_list_type]
-        page.waitlist_select.select(@wait_list_type)
       end
     end
 
