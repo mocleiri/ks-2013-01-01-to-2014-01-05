@@ -472,21 +472,21 @@ When /^I suppress a the new rule change$/ do
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
     @activityOR.open_agenda_section
-
-    if page.prereq_add_link.exists?
+    if page.prereq_suppress_link.exists?
       page.loading.wait_while_present
       @performance_test.start
       page.prereq_suppress
       page.loading.wait_while_present(200)
       @performance_test.end
       page.submit
-      page.loading.wait_while_present(200)
+
     end
   end
 end
 
 When /^I revert the new rule change$/ do
   on ManageCourseOfferings do |page|
+    page.loading.wait_while_present(200)
     page.ao_requisites("A")
   end
 
@@ -494,7 +494,7 @@ When /^I revert the new rule change$/ do
     page.loading.wait_while_present
     @activityOR.open_agenda_section
 
-    if page.prereq_add_link.exists?
+    if page.prereq_revert_link.exists?
       page.loading.wait_while_present
       @performance_test.start
       page.prereq_revert
