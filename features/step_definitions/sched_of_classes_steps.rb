@@ -85,12 +85,24 @@ Then /^a list of course offerings with that keyword is displayed$/ do
   @schedule_of_classes.check_expected_results_by_course
 end
 
-When /^I search for course offerings that are in draft status$/ do
-  pending # express the regexp above with the code you wish you had
+When /^I add an Activity Offering in draft status to an existing Course Offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course=>"ENGL222"
+  @course_offering.manage_and_init
+  @new_ao = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
 end
 
-Then /^the course is not displayed in the list of course offerings$/ do
-  pending # express the regexp above with the code you wish you had
+And /^I search for the Course Offering in the schedule of classes$/ do
+  @schedule_of_classes = make ScheduleOfClasses, :term => "Fall 2012", :course_search_parm => @course_offering.course, :exp_course_list => ["ENGL222"]
+  @schedule_of_classes.display
+end
+
+Then /^the added Activity Offering is not displayed in the expanded listing rendered by (AO Cluster|Registration Group)$/  do |rendering|
+  rendering_param = (rendering=="AO Cluster") ? DisplayScheduleOfClasses::AO_CLUSTER_RENDERING : DisplayScheduleOfClasses::REG_GROUP_RENDERING
+  @schedule_of_classes.choose_rendering rendering_param
+  @schedule_of_classes.expand_course_details
+  on DisplayScheduleOfClasses do |page|
+    page.get_ao_list(rendering_param).should_not include @new_ao.code
+  end
 end
 
 Then /^the course offering details displays a listing of AO clusters$/ do

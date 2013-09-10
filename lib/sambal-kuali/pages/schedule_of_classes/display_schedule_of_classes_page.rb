@@ -113,6 +113,8 @@ class DisplayScheduleOfClasses < BasePage
   end
 
   REG_GROUP_COLUMN = 0
+  REG_GROUP_RENDERING_AO_CODE_COLUMN = 1
+
   AO_CODE_COLUMN = 0
   TYPE_COLUMN = 1
   DAYS_COLUMN = 2
@@ -123,11 +125,13 @@ class DisplayScheduleOfClasses < BasePage
   INSTRUCTOR_COLUMN = 7
   MAX_ENR_COLUMN = 8
 
-  def get_ao_list(course_code) #course details must be expanded
+  def get_ao_list(rendering) #course details must be expanded
+    column = (rendering==REG_GROUP_RENDERING) ? REG_GROUP_RENDERING_AO_CODE_COLUMN : AO_CODE_COLUMN
     ao_list = []
-    course_ao_information_table(course_code).rows[1..-1].each do |row|
-      ao_list << row[AO_CODE_COLUMN].text
+    details_table.rows[1..-1].each do |row|
+      ao_list << row[column].text
     end
+    ao_list.pop  #remove last element, as it will be an empty string
     ao_list
   end
 
