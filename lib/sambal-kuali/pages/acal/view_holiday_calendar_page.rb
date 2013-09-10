@@ -12,7 +12,7 @@ class ViewHolidayCalendar < BasePage
   element(:make_official_link) { |b| b.frm.link(id: "hcal_Official") }
   action(:make_official) { |b| b.make_official_link.click; b.loading.wait_while_present }
 
-  value(:hcal_status) { |b| b.div(id: "u483").span(index: 0).text }
+  value(:hcal_status) { |b| b.span(id: "HCAL-Official-Lozenge_span").text }
 
   #element(:hcal_info_link) { |b| b.frm.link(id: "KS-HolidayCalendar-View-Meta_toggle") }
 
