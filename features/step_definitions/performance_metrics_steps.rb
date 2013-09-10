@@ -472,14 +472,14 @@ When /^I suppress a the new rule change$/ do
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
     @activityOR.open_agenda_section
-    if page.prereq_suppress_link.exists?
+
+    if page.prereq_edit_suppress_link.exists?
       page.loading.wait_while_present
       @performance_test.start
-      page.prereq_suppress
+      page.prereq_edit_suppress
       page.loading.wait_while_present(200)
       @performance_test.end
       page.submit
-
     end
   end
 end
