@@ -421,10 +421,10 @@ When /^I manage an AO's prerequisites$/ do
   @course_offering.manage
 
   on ManageCourseOfferings do |page|
-    page.loading.wait_while_present(200)
-    @performance_test.start
-    page.ao_requisites("A")
-    @performance_test.end
+   page.loading.wait_while_present(200)
+   @performance_test.start
+   page.ao_requisites("A")
+   @performance_test.end
   end
 end
 
