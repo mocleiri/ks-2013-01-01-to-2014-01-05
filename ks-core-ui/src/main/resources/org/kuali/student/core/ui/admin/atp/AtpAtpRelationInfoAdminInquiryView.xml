@@ -23,10 +23,10 @@
 	<import resource="classpath:UifKSDefinitions.xml"/>
 	<!-- **********************************************
 	Paste bean definition below into the list of dataDictionaryPackages of org.kuali.rice.krad.bo.ModuleConfiguration 
-	<value>classpath:org/kuali/student/ui/admin/atp/AtpAtpRelationInfoAdminInquiryView.xml</value>
+	<value>classpath:org/kuali/student/core/ui/admin/atp/AtpAtpRelationInfoAdminInquiryView.xml</value>
 	********************************************** -->
 	<!-- InquiryView -->
-	<bean id="KS-AtpAtpRelationInfo-AdminInquiryView" parent="Uif-InquiryView"
+	<bean id="KS-AtpAtpRelationInfo-AdminInquiryView" parent="KS-Uif-InquiryView"
 		p:title="AtpAtpRelationInfo Inquiry"
 		p:dataObjectClassName="org.kuali.student.r2.core.atp.dto.AtpAtpRelationInfo"
 		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.atp.AtpAtpRelationInfoAdminInquirableImpl">
