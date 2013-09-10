@@ -107,8 +107,7 @@ public abstract class JavaClassWriter extends XmlWriter {
         indentPrintln(" * 	http://www.osedu.org/licenses/ECL-2.0");
         indentPrintln(" *");
         indentPrintln(" * Unless required by applicable law or agreed to in writing, software");
-        indentPrintln(" * distributed under the Lic" +
-                "+ense is distributed on an \"AS IS\" BASIS,");
+        indentPrintln(" * distributed under the License is distributed on an \"AS IS\" BASIS,");
         indentPrintln(" * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
         indentPrintln(" * See the License for the specific language governing permissions and");
         indentPrintln(" * limitations under the License.");
