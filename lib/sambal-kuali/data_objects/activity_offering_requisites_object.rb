@@ -96,15 +96,15 @@ class AORequisitesData
   end
 
   def open_agenda_section
-    sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq_section,
-                "Antirequisite"=>:antirequisite_section, "Corequisite"=>:corequisite_section,
-                "Recommended Preparation"=>:recommended_prep_section,
-                "Repeatable for Credit"=>:repeatable_credit_section,
-                "Course that Restricts Credits"=>:restricted_credit_section}
+    sections = {"Student Eligibility & Prerequisite"=>:eligibility_prereq_section_link,
+                "Antirequisite"=>:antirequisite_section_link, "Corequisite"=>:corequisite_section_link,
+                "Recommended Preparation"=>:recommended_prep_section_link,
+                "Repeatable for Credit"=>:repeatable_credit_section_link,
+                "Course that Restricts Credits"=>:restricted_credit_section_link}
     begin
       on ActivityOfferingRequisites do |page|
         page.loading.wait_while_present(60)
-        if page.send(sections[@section]).img(id: /KSAO-AgendaManage-RulePrototype_rule[A-F]_toggle_col/).exists?
+        if page.send(sections[@section]).img(id: /KSAO-AgendaManage-RulePrototype_rule[A-F]_toggle_col/).present?
           page.send(sections[@section]).when_present.click
         end
       end
@@ -559,21 +559,21 @@ class AORequisitesData
   end
 
   def make_changes_to_multiple_ao_reqs
-    #@prereq = make AOPreparationPrerequisiteRule, :course => "CHEM277"
-    #@prereq.sepr_copy_edit_co_rule
-    #commit_changes
-    #
-    #@coreq = make AOCorequisiteRule, :course => "CHEM277"
-    #@coreq.cr_suppress_co_rule
-    #commit_changes
-
-    @antireq = make AOAntirequisiteRule, :course => "CHEM277", :activity => "D"
-    @antireq.ar_add_ao_rule
+    @prereq = make AOPreparationPrerequisiteRule, :course => "CHEM277"
+    @prereq.sepr_copy_edit_co_rule_for_copy
     commit_changes
 
-    #@coreq2 = make AOCorequisiteRule, :course => "CHEM277", :activity => "D"
-    #@coreq2.cr_replace_co_rule
-    #commit_changes
+    @coreq = make AOCorequisiteRule, :course => "CHEM277"
+    @coreq.cr_suppress_co_rule
+    commit_changes
+
+    @antireq = make AOAntirequisiteRule, :course => "CHEM277", :activity => "D"
+    @antireq.ar_add_ao_rule_for_copy
+    commit_changes
+
+    @coreq2 = make AOCorequisiteRule, :course => "CHEM277", :activity => "D"
+    @coreq2.cr_replace_co_rule_for_copy
+    commit_changes
   end
 end
 
@@ -660,6 +660,17 @@ class AOAntirequisiteRule < AORequisitesData
         page.loading.wait_while_present
         page.antireq_add
         ar_add_statements_to_rule
+      end
+    end
+  end
+
+  def ar_add_ao_rule_for_copy
+    navigate_to_ao_requisites
+    on ActivityOfferingRequisites do |page|
+      if page.antireq_add_link.exists?
+        page.loading.wait_while_present
+        page.antireq_add
+        ar_text_rule( "add", "", "free form text input value")
       end
     end
   end
@@ -941,6 +952,17 @@ class AOCorequisiteRule < AORequisitesData
     end
   end
 
+  def cr_replace_co_rule_for_copy
+    navigate_to_ao_requisites
+    on ActivityOfferingRequisites do |page|
+      if page.coreq_replace_link.exists?
+        page.loading.wait_while_present
+        page.coreq_replace
+        cr_number_courses_rule( "add", "C", "2", "BSCI202,BSCI361,HIST110", "", "")
+      end
+    end
+  end
+
   def cr_edit_replaced_co_rule
     cr_replace_co_rule
     commit_changes( true)
@@ -1134,6 +1156,28 @@ class AOPreparationPrerequisiteRule < AORequisitesData
         page.loading.wait_while_present
         page.prep_copy_edit
         add_statements_to_rule
+      end
+    end
+  end
+
+  def sepr_copy_edit_co_rule_for_copy
+    navigate_to_ao_requisites
+    on ActivityOfferingRequisites do |page|
+      if page.prereq_copy_edit_link.exists?
+        page.loading.wait_while_present
+        page.prereq_copy_edit
+        rp_sepr_course_rule( "add", "", "ENGL101")
+      end
+    end
+  end
+
+  def rp_copy_edit_co_rule_for_copy
+    navigate_to_ao_requisites
+    on ActivityOfferingRequisites do |page|
+      if page.prep_copy_edit_link.exists?
+        page.loading.wait_while_present
+        page.prep_copy_edit
+        rp_sepr_course_rule( "add", "", "ENGL101")
       end
     end
   end

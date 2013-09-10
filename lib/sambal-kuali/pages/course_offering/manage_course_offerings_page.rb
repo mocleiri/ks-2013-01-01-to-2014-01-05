@@ -134,6 +134,10 @@ class ManageCourseOfferings < BasePage
     target_row(code, cluster_private_name).cells[AO_CODE].img(src: /subterm_icon/).present?
   end
 
+  def has_ar_icon(code, cluster_private_name = :default_cluster)
+    target_row(code, cluster_private_name).cells[AO_CODE].img(src: /ActivityRuleIcon6px.png/).present?
+  end
+
   def view_activity_offering(code, cluster_private_name = :default_cluster)
     view_activity_offering_link(code).click
     loading.wait_while_present

@@ -302,33 +302,33 @@ end
 
 Then /^the copied course offering should have the same AO Requisites as the original$/ do
   on ManageCourseOfferings do |page|
-    page.loading.wait_while_present(200)
-    ao_code = page.frm.div(id: "activityOfferingsPerCluster_line0").span( :text => "A").parent.parent
-    ao_code.img.src.should match /ActivityRuleIcon6px.png/
-
     page.ao_requisites("A")
   end
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
     @activityOR.show_all_courses( "agenda")
-    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "CHEM241,CHEM242,CHEM247,Must have been admitted to the (Biochemistry, Chemistry) program,BSCI202,BSCI361,HIST110,ENGL101")
+    page.eligibility_prereq_section.text.should match @activityOR.test_text("agenda", "CHEM241,CHEM242,CHEM247,Must have been admitted to the (Biochemistry, Chemistry) program,ENGL101")
     page.prereq_message_section.text.should match /Activity Offering Rule differs from Course Offering Rule/
     page.coreq_message_section.text.should match /Rule statements deleted/
     page.submit
   end
   on ManageCourseOfferings do |page|
-    page.loading.wait_while_present(200)
-    ao_code = page.frm.div(id: "activityOfferingsPerCluster_line0").span( :text => "D").parent.parent
-    ao_code.img.src.should match /ActivityRuleIcon6px.png/
-
     page.ao_requisites("D")
   end
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
     @activityOR.show_all_courses( "agenda")
-    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "concurrently enrolled in ENGL101,ENGL478,HIST416,BSCI202,BSCI361,HIST110,Text to copy")
+    page.corequisite_section.text.should match @activityOR.test_text("agenda", "concurrently enrolled in a minimum,BSCI202,BSCI361,HIST110")
     page.coreq_message_section.text.should match /Activity Offering Rule differs from Course Offering Rule/
-    page.agenda_management_section.text.should match @activityOR.test_text("agenda", "ENGL101,not have successfully completed any credits from,BSCI202,BSCI361,HIST110,free form text input value")
+    page.antirequisite_section.text.should match @activityOR.test_text("agenda", "free form text input value")
+  end
+end
+
+Then /^both Activity Offerings should have the AR icon present$/ do
+  on ManageCourseOfferings do |page|
+    page.loading.wait_while_present
+    page.has_ar_icon("A")
+    page.has_ar_icon("D")
   end
 end
 
