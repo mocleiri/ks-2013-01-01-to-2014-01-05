@@ -66,6 +66,7 @@ public class KSCreateAdminUiMojo extends AbstractKSMojo {
         servKeys.add("Type");
         servKeys.add("State");
         servKeys.add("LRC");
+//        servKeys.add("Organization");
         ServicesFilterByKeys filter = new ServicesFilterByKeys(servKeys);
 
         AdminUiWriter instance =
@@ -77,17 +78,18 @@ public class KSCreateAdminUiMojo extends AbstractKSMojo {
         instance.write();
 
     }
-    private static final String CORE_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-core-api/src/main";
+    private static final String CORE_DIRECTORY = "D:/svn/org-fixer/ks-api/ks-core-api/src/main";
     // "C:/svn/maven-dictionary-generator/trunk/src/main/java/org/kuali/student/core";
-    private static final String COMMON_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-common-api/src/main/java";
-    private static final String ENROLL_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-enroll-api/src/main/java";
-    private static final String LUM_DIRECTORY = "D:/svn/ks/trunk/ks-api/ks-lum-api/src/main/java";
+    private static final String COMMON_DIRECTORY = "D:/svn/org-fixer/ks-api/ks-common-api/src/main/java";
+    private static final String ENROLL_DIRECTORY = "D:/svn/org-fixer/ks-api/ks-enroll-api/src/main/java";
+    private static final String LUM_DIRECTORY = "D:/svn/org-fixer/ks-api/ks-lum-api/src/main/java";
     private static final String RICE_CORE_API_DIRECTORY = "D:/svn/rice/rice-2.2.0-M3/core/api/src/main/java";
     private static final String RICE_KIM_API_DIRECTORY = "D:/svn/rice/rice-2.2.0-M3/kim/kim-api/src/main/java";
     private static final String TEST_SOURCE_DIRECTORY =
             "src/test/java/org/kuali/student/contract/model/test/source";
     private static final String TARGET_GENERATED_SOURCES = "target/generated-sources";
     private static final String STANDALONE_MAIN_DIRECTORY = "D:/svn/ks/ks-standalone-admin-app/src/main";
+    private static final String ORG_FIXER_CORE_UI_MAIN_DIRECTORY = "D:/svn/org-fixer/ks-core/ks-core-ui/src/main";
 
     public static void main(String[] args) {
         log.info("execute");
@@ -104,7 +106,7 @@ public class KSCreateAdminUiMojo extends AbstractKSMojo {
         pluginContext.put("project", project);
         instance.setPluginContext(pluginContext);
         instance.setSourceDirs(srcDirs);
-        instance.setTargetDir(STANDALONE_MAIN_DIRECTORY);
+        instance.setTargetDir(ORG_FIXER_CORE_UI_MAIN_DIRECTORY);
         try {
             instance.execute();
             //        assertTrue(new File(instance.getOutputDirectory() + "/" + "ks-LprInfo-dictionary.xml").exists());  

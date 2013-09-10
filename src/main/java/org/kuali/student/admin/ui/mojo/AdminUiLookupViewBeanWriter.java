@@ -90,23 +90,25 @@ public class AdminUiLookupViewBeanWriter {
         String serviceContract = service.getImplProject() + "." + service.getName();
         String lookupable = AdminUiLookupableWriter.calcPackage(servKey, rootPackage, xmlType) + "."
                 + AdminUiLookupableWriter.calcClassName(servKey, xmlType);
+        String viewId = "KS-" + infoClass + "-AdminLookupView";
         out.println("");
         out.incrementIndent();
         out.indentPrintln("<import resource=\"classpath:ks-" + infoClass + "-dictionary.xml\"/>");
         out.indentPrintln("<import resource=\"classpath:UifKSDefinitions.xml\"/>");
         out.indentPrintln("<!-- **********************************************");
-        out.indentPrintln("Paste this link below into WEB-INF ksAdminLinks.tag");
+        out.indentPrintln("Paste this link below into WEB-INF ksAdminLinks.tag or ksMaintenance.tag in KS with Rice Bundled etc");
+        out.indentPrintln("");
         out.indentPrintln("<li><portal:portalLink displayTitle=\"true\" title=\"" + xmlType.getName() + " Lookup\""
-                + "url=\"${ConfigProperties.application.url}/kr-krad/lookup?methodToCall=start"
+                + " url=\"${ConfigProperties.application.url}/kr-krad/lookup?methodToCall=start"
                 + "&dataObjectClassName=" + xmlType.getJavaPackage() + "." + infoClass + ""
-                + "&viewId=" + fileName
+                + "&viewId=" + viewId
                 + "&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true\" /></li>");
         out.indentPrintln ("Also...");
-        out.indentPrintln("Paste bean definition below into the list of dataDictionaryPackages of org.kuali.rice.krad.bo.ModuleConfiguration ");
+        out.indentPrintln("Paste bean definition below into the list of dataDictionaryPackages in StudentSpringBeans.xml ");
         out.indentPrintln ("<value>classpath:" + fullDirectoryPath + "/" + fileName + "</value>");
         out.indentPrintln("********************************************** -->");
         out.indentPrintln("<!-- LookupView -->");
-        out.indentPrintln("<bean id=\"KS-" + infoClass + "-AdminLookupView\" parent=\"KS-Uif-LookupView\"");
+        out.indentPrintln("<bean id=\"" + viewId + "\" parent=\"KS-Uif-LookupView\"");
         out.incrementIndent();
         out.indentPrintln("p:title=\"" + xmlType.getName() + " Lookup\"");
         out.indentPrintln("p:header.headerText=\"" + xmlType.getName() + " Lookup\"");
@@ -224,7 +226,7 @@ public class AdminUiLookupViewBeanWriter {
                 out.println(" />");
                 continue;
             }
-            out.println("");
+            out.println(">");
             out.incrementIndent();
             XmlType msType = finder.findXmlType(ms.getLookup().getXmlTypeName());
             if (msType == null) {
@@ -232,14 +234,18 @@ public class AdminUiLookupViewBeanWriter {
                         + ms.getName() 
                         + " lookup=" + ms.getLookup().getXmlTypeName());
             }
-            out.indentPrintln("p:quickfinder.dataObjectClassName=\"" + msType.getJavaPackage() + "." + msType.getName() + "\"");
+            out.indentPrintln("<property name=\"quickfinder\">");
+            out.incrementIndent();
+            out.indentPrintln("<bean parent=\"Uif-QuickFinder\" p:dataObjectClassName=\"" + msType.getJavaPackage() + "." + msType.getName() + "\"");
             MessageStructure pk = this.getPrimaryKey(ms.getLookup().getXmlTypeName());
             if (pk == null) {
                 throw new NullPointerException("could not find primary key for " + ms.getId());
             }
-            out.indentPrintln("p:quickfinder.fieldConversions=\"" + pk.getShortName() + ":" + fieldName + "\"");
-            out.indentPrintln("/>");
+            out.indentPrintln("p:fieldConversions=\"" + pk.getShortName() + ":" + fieldName + "\" />");
             out.decrementIndent();
+            out.indentPrintln("</property>");
+            out.decrementIndent();
+            out.indentPrintln("</bean>");
         }
         parents.pop();
     }

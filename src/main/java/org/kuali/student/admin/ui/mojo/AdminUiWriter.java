@@ -40,7 +40,7 @@ public class AdminUiWriter {
     private ServiceContractModel model;
     private String directory;
     private String rootPackage;
-    public static final String DEFAULT_ROOT_PACKAGE = "org.kuali.student.ui.admin";
+    public static final String DEFAULT_ROOT_PACKAGE = "ui.admin";
     private ServicesFilter filter;
 
     public AdminUiWriter(ServiceContractModel model,

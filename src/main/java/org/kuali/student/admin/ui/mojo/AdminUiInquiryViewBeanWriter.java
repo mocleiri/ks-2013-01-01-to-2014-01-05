@@ -89,7 +89,7 @@ public class AdminUiInquiryViewBeanWriter {
         out.indentPrintln("<import resource=\"classpath:ks-" + infoClass + "-dictionary.xml\"/>");
         out.indentPrintln("<import resource=\"classpath:UifKSDefinitions.xml\"/>");
         out.indentPrintln("<!-- **********************************************");
-        out.indentPrintln("Paste bean definition below into the list of dataDictionaryPackages of org.kuali.rice.krad.bo.ModuleConfiguration ");
+        out.indentPrintln("Paste bean definition below into the list of dataDictionaryPackages in StudentSpringBeans.xml ");
         out.indentPrintln ("<value>classpath:" + fullDirectoryPath + "/" + fileName + "</value>");
         out.indentPrintln("********************************************** -->");
         out.indentPrintln("<!-- InquiryView -->");

@@ -63,8 +63,25 @@ public class AdminUiInquirableWriter extends JavaClassWriter {
         this.methods = methods;
     }
 
+    private static String calcModulePartOfPackage(XmlType xmlType) {
+        if (xmlType.getJavaPackage().contains(".enrollment.")) {
+            return "enrollment";
+        }
+        if (xmlType.getJavaPackage().contains(".core.")) {
+            return "core";
+        }
+        if (xmlType.getJavaPackage().contains(".lum.")) {
+            return "lum";
+        }
+        return null;
+    }
+
     public static String calcPackage(String servKey, String rootPackage, XmlType xmlType) {
-        String pack = rootPackage + "." + servKey.toLowerCase();
+        String module = calcModulePartOfPackage(xmlType);
+        if (module == null) {
+            throw new IllegalArgumentException("unknown module " + xmlType.getJavaPackage());
+        }
+        String pack = "org.kuali.student." + module  + "." + rootPackage + "." + servKey.toLowerCase();
 //  StringBuffer buf = new StringBuffer (service.getVersion ().length ());
 //  for (int i = 0; i < service.getVersion ().length (); i ++)
 //  {
@@ -146,6 +163,7 @@ public class AdminUiInquirableWriter extends JavaClassWriter {
         indentPrintln("private transient " + serviceClass + " " + serviceVar + ";");
         MessageStructure pk = this.getPrimaryKey(xmlType.getName());
         indentPrintln("private final static String PRIMARY_KEY = \"" + pk.getShortName() + "\";");
+        indentPrintln ("private static final long serialVersionUID = 1L;");
 
         println("");
         indentPrintln("@Override");
@@ -181,20 +199,21 @@ public class AdminUiInquirableWriter extends JavaClassWriter {
         indentPrintln("    throw new RuntimeException(ex);");
         indentPrintln("}");
         closeBrace();
-        writeServiceGetterAndSetter (this, serviceClass, serviceVar, xmlType);
+        writeServiceGetterAndSetter(this, serviceClass, serviceVar, xmlType);
     }
-    
+
     private MessageStructure getPrimaryKey(String xmlTypeName) {
         for (MessageStructure ms : finder.findMessageStructures(xmlTypeName)) {
-          if (ms.isPrimaryKey()) {
-              return ms;
-          }
+            if (ms.isPrimaryKey()) {
+                return ms;
+            }
         }
         return null;
     }
-    public static void writeServiceGetterAndSetter (JavaClassWriter out, String serviceClass, String serviceVar, XmlType xmlType) {
-        
-        out.println ("");
+
+    public static void writeServiceGetterAndSetter(JavaClassWriter out, String serviceClass, String serviceVar, XmlType xmlType) {
+
+        out.println("");
         out.indentPrintln("public void set" + serviceClass + "(" + serviceClass + " " + serviceVar + ")");
         out.openBrace();
         out.indentPrintln("    this." + serviceVar + " = " + serviceVar + ";");
@@ -205,7 +224,7 @@ public class AdminUiInquirableWriter extends JavaClassWriter {
         out.indentPrintln("if (" + serviceVar + " == null)");
         out.openBrace();
         String serviceConstants = calcServiceContantsName(serviceClass);
-        out.importsAdd(calcServiceContantsPackage(xmlType) + "." + serviceConstants);
+        out.importsAdd(calcServiceConstantsPackage(xmlType) + "." + serviceConstants);
         out.indentPrintln("QName qname = new QName(" + serviceConstants + ".NAMESPACE," + serviceConstants + ".SERVICE_NAME_LOCAL_PART);");
         out.indentPrintln(serviceVar + " = (" + serviceClass + ") GlobalResourceLoader.getService(qname);");
         out.closeBrace();
@@ -227,21 +246,22 @@ public class AdminUiInquirableWriter extends JavaClassWriter {
 
     {
         SERVICE_CLASS_PACKAGE = new HashMap<String, String>();
+        SERVICE_CLASS_PACKAGE.put("organization", "org.kuali.student.r2.core.constants");
+        SERVICE_CLASS_PACKAGE.put("lum", "org.kuali.student.r2.lum.util.constants");
         SERVICE_CLASS_PACKAGE.put("lum", "org.kuali.student.r2.lum.util.constants");
         SERVICE_CLASS_PACKAGE.put("lum", "org.kuali.student.r2.lum.util.constants");
         SERVICE_CLASS_PACKAGE.put("core", "org.kuali.student.r2.core.constants");
         SERVICE_CLASS_PACKAGE.put("enrollment", "org.kuali.student.r2.common.util.constants");
     }
 
-    public static String calcServiceContantsPackage(XmlType xmlType) {
-        if (xmlType.getJavaPackage().contains(".enrollment.")) {
-            return SERVICE_CLASS_PACKAGE.get("enrollment");
+    public static String calcServiceConstantsPackage(XmlType xmlType) {
+        String pkg = SERVICE_CLASS_PACKAGE.get(xmlType.getService().toLowerCase());
+        if (pkg != null) {
+            return pkg;
         }
-        if (xmlType.getJavaPackage().contains(".core.")) {
-            return SERVICE_CLASS_PACKAGE.get("core");
-        }
-        if (xmlType.getJavaPackage().contains(".lum.")) {
-            return SERVICE_CLASS_PACKAGE.get("lum");
+        String module = calcModulePartOfPackage(xmlType);
+        if (module != null) {
+            return SERVICE_CLASS_PACKAGE.get(module);
         }
         return "org.kuali.student.r2.common.util.constants";
     }

@@ -67,26 +67,7 @@ public class AdminUiLookupableWriter extends JavaClassWriter {
     }
 
     public static String calcPackage(String servKey, String rootPackage, XmlType xmlType) {
-        String pack = rootPackage + "." + servKey.toLowerCase();
-//  StringBuffer buf = new StringBuffer (service.getVersion ().length ());
-//  for (int i = 0; i < service.getVersion ().length (); i ++)
-//  {
-//   char c = service.getVersion ().charAt (i);
-//   c = Character.toLowerCase (c);
-//   if (Character.isLetter (c))
-//   {
-//    buf.append (c);
-//    continue;
-//   }
-//   if (Character.isDigit (c))
-//   {
-//    buf.append (c);
-//   }
-//  }
-//  pack = pack + buf.toString ();
-//        pack = pack + "service.decorators";
-        return pack;
-//        return rootPackage;
+        return AdminUiInquirableWriter.calcPackage(servKey, rootPackage, xmlType);
     }
 
     public static String calcClassName(String servKey, String xmlTypeName) {
@@ -147,6 +128,7 @@ public class AdminUiLookupableWriter extends JavaClassWriter {
         importsAdd("org.apache.log4j.Logger");
         indentPrintln("private static final Logger LOG = Logger.getLogger(" + calcClassName(servKey, xmlType) + ".class);");
         indentPrintln("private transient " + serviceClass + " " + serviceVar + ";");
+        indentPrintln ("private static final long serialVersionUID = 1L;");
 
         println("");
         indentPrintln("@Override");
