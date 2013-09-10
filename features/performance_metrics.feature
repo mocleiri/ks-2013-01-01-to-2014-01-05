@@ -108,7 +108,6 @@ Feature: Performance.Metrics
     When I search for a SOC
     Then the transaction takes less than "3" seconds
 
-  @pending
   Scenario: KRMS Requisites Manage Add Submit
     When I manage an AO's prerequisites
     Then the transaction takes less than "3" seconds
