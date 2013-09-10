@@ -122,8 +122,7 @@
         		<ref bean="conversation_list" />
         	</list>
         </property>
-    </bean>
-    
+    </bean>  
  
  	<bean id="conversation_list" parent="conversation_list-parent"/>
 	<bean id="conversation_list-parent" abstract="true" parent="Uif-ListCollectionSection">
@@ -143,13 +142,14 @@
         <property name="header.additionalCssClasses" value="headerCentered"/>
         <property name="items">
             <list>
-            	<bean id="conversationrow" parent="Uif-HorizontalFieldGroup">
+            	<bean id="conversationrow" parent="Uif-VerticalFieldGroup">
                     <property name="fieldLabel.render" value="false"/>
                     <property name="group.validationMessages.render" value="false"/>
                     <property name="cssClasses">
 	            		<list merge="true">
 	                		<value>@{#line.closed ? '' : 'openConversation'}</value>
 	                		<value>clickableConversation</value>
+	                		<value>@{#line.hasUnreadComments() ? 'unreadConversation' : ''}</value>
 	            		</list>
 	        		</property>
 	        		<property name="onClickScript" value="
@@ -157,17 +157,7 @@
 	        			"/>
                     <property name="items">
                         <list>
-                        	<bean parent="Uif-ImageField" p:altText="Unread Conversation" p:valign="middle"
-    							p:source="../arm-ks/images/bullet_black.png">
-    							<property name="cssClasses">
-				            		<list merge="true">
-				                		<!-- <value>unreadConversationColumn</value> -->
-				                		<value>@{#line.hasUnreadComments() ? 'commentUnread' : 'commentRead'}</value>
-				            		</list>
-				        		</property>
-    						</bean>
-    						
-    						<bean parent="Uif-VerticalFieldGroup">
+                        	<bean parent="Uif-VerticalFieldGroup" p:additionalCssClasses="indentedConversationData">
 			                    <property name="fieldLabel.render" value="false"/>
 			                    <property name="group.validationMessages.render" value="false"/>
 			                    <property name="items">
@@ -188,11 +178,11 @@
 						                </bean>
 						                
 						                <bean id="conversation_comment" parent="Uif-MessageField" p:messageText="@{#line.getLatestComment().commentText.plain}"
-						                	p:additionalCssClasses="ellipsisWrapper,doubleLineEllipsis"/>
-			                        </list>
-			                    </property>
-			                </bean>
-		                </list>
+						                	p:additionalCssClasses="ellipsisWrapper,doubleLineEllipsis" />
+						            </list>
+						        </property>
+						    </bean>
+                        </list>
                     </property>
                 </bean>
         	</list>

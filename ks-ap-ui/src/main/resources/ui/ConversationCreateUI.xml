@@ -39,6 +39,7 @@
         </property>
 		
 		<property name="headerText" value="New Conversation" />
+		<property name="onDocumentReadyScript" value="jQuery.fancybox.update()" />
 	</bean>
 	
 	<bean id="create_conversation_page" parent="create_conversation_page-parent" />
@@ -113,7 +114,7 @@
 		</property>
 	</bean>
 	
-	<bean id="conversation_dynamic_topic_fields" parent="conversation_dynamic_topic_fields-parent" p:refreshWhenChangedPropertyNames="topicType"/>
+	<bean id="conversation_dynamic_topic_fields" parent="conversation_dynamic_topic_fields-parent" />
 	<bean id="conversation_dynamic_topic_fields-parent" parent="Uif-VerticalBoxGroup" abstract="true">
 		<property name="items">
 			<list>
@@ -121,10 +122,16 @@
 				<ref bean="conversation_specificTerms"/>
 				<ref bean="conversation_specificCourses"/>
 				<bean parent="Uif-MessageField" p:messageText="[hr]"/>
-				<bean id="conversation_termAndCourseNotes" parent="Uif-InputField-LabelTop" p:propertyName="includeNotes">
+				<bean id="conversation_termAndCourseNotes" parent="Uif-InputField-LabelTop" p:propertyName="includeNotes" p:progressiveRender="@{topicType ne 'kuali.ap.plan.topic.type.courses'}">
 				    <property name="control">
 				    	<bean parent="Uif-CheckboxControl" 
-				    		p:checkboxLabel="@{topicType eq 'kuali.ap.plan.topic.type.courses' ? 'Include course notes' : 'Include term and course notes'}" />
+				    		p:checkboxLabel="Include term and course notes" />
+				    </property>
+				 </bean>
+				 <bean id="conversation_courseNotes" parent="Uif-InputField-LabelTop" p:propertyName="includeNotes" p:progressiveRender="@{topicType eq 'kuali.ap.plan.topic.type.courses'}">
+				    <property name="control">
+				    	<bean parent="Uif-CheckboxControl" 
+				    		p:checkboxLabel="Include course notes" />
 				    </property>
 				 </bean>
 				 <bean id="conversation_backup" parent="Uif-InputField-LabelTop" p:propertyName="includeBackups" p:progressiveRender="@{topicType ne 'kuali.ap.plan.topic.type.courses'}">
@@ -332,6 +339,8 @@
 	            		</list>
 	        		</property>
 				</bean>
+				<bean id="no_bookmarked_courses_msg" parent="Uif-MessageField" p:messageText="No bookmarked courses available" 
+					p:render="@{bookmarkedCourses.size() eq 0}"/>
 			</list>
 		</property>
 	</bean>
