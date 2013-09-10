@@ -817,8 +817,10 @@ end
 
 And /^the registration group is shown as canceled$/ do
   on ManageCourseOfferings do |page|
-    page.view_all_reg_groups
-
+    if page.view_reg_groups_table("CL 1").present? == false
+      page.view_cluster_reg_groups("CL 1")
+    end
+    page.view_reg_groups_table("CL 1").rows[1].cells[1].text.should == "Canceled"
   end
 end
 
@@ -827,7 +829,6 @@ And /^the registration group is shown as offered$/ do
     if page.view_reg_groups_table("CL 1").present? == false
       page.view_cluster_reg_groups("CL 1")
     end
-    page.get_cluster_reg_groups_list("CL 1").length.should == 1
     page.view_reg_groups_table("CL 1").rows[1].cells[1].text.should == "Offered"
   end
 end
@@ -837,18 +838,7 @@ And /^the registration group is shown as pending$/ do
     if page.view_reg_groups_table("CL 718").present? == false
       page.view_cluster_reg_groups("CL 718")
     end
-    page.get_cluster_reg_groups_list("CL 718").length.should == 1
     page.view_reg_groups_table("CL 718").rows[1].cells[1].text.should == "Pending"
-  end
-end
-
-And /^the registration group is now shown as pending$/ do
-  on ManageCourseOfferings do |page|
-    if page.view_reg_groups_table("CL 1").present? == false
-      page.view_cluster_reg_groups("CL 1")
-    end
-    page.get_cluster_reg_groups_list("CL 1").length.should == 1
-    page.view_reg_groups_table("CL 1").rows[1].cells[1].text.should == "Pending"
   end
 end
 
@@ -857,7 +847,6 @@ And /^registration group is shown as pending$/ do
     if page.view_reg_groups_table("CL 1").present? == false
       page.view_cluster_reg_groups("CL 1")
     end
-    page.get_cluster_reg_groups_list("CL 1").length.should == 1
     page.view_reg_groups_table("CL 1").rows[1].cells[1].text.should == "Pending"
   end
 end

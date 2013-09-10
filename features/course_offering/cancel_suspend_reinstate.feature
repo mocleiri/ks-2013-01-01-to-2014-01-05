@@ -22,7 +22,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Then the Cancel button is "enabled"
     When I cancel the activity offering, verifying that one of the two selections is eligible for this action
     Then the second Draft activity offering is shown as canceled
-#TODO - #    And the registration group is shown as canceled
+    And the registration group is shown as canceled
     And the Course Offering is shown as Canceled
     And the Course Offering is no longer shown in the Schedule of Classes
 
@@ -180,5 +180,5 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And I reinstate the activity offering
     Then this Suspended activity offering is shown as approved
     And actual delivery logistics for the Suspended activity offering are still shown
-    And the registration group is now shown as pending
+    And registration group is shown as pending
     And the Course Offering is now shown as Planned
