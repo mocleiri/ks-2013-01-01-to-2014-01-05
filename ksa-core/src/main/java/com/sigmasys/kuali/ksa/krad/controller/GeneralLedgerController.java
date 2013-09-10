@@ -391,32 +391,21 @@ public class GeneralLedgerController extends ReportReconciliationController {
                                        MutableDouble grandTotalAmount, boolean adjustGlAccountTotal) {
 
         // Get the list of KSA Transactions from the GL Transaction:
-        Set<Transaction> ksaTransactions = glTransaction.getTransactions();
+        List<Transaction> ksaTransactions = transactionService.getTransactionsByGlTransactionId(glTransaction.getId());
+
         Transaction transaction;
-        GeneralLedgerTransactionModel glTransactionModel;
 
         // If GL Transaction is linked to a single KSA Transaction, fetch its details:
-        if (CollectionUtils.size(ksaTransactions) == 1) {
-
+        if (ksaTransactions.size() == 1) {
             // Prefetch associated properties:
-            transaction = (Transaction) CollectionUtils.get(ksaTransactions, 0);
-
-            // Prefetch associations of Transaction:
-            transaction.getCurrency();
-            transaction.getTransactionType();
-            transaction.getRollup();
-            transaction.getGeneralLedgerType();
-
-            // Create a new GeneralLedgerTransactionModel object:
-            glTransactionModel = new GeneralLedgerTransactionModel(transaction);
+            transaction = ksaTransactions.get(0);
         } else {
             // Create a scarcely populated substitute KSA Transaction:
             transaction = createMinimalKsaTransactionForView(glTransaction, ksaTransactions);
-
-            // Create a new GeneralLedgerTransactionModel object:
-            glTransactionModel = new GeneralLedgerTransactionModel();
-            glTransactionModel.setKsaTransaction(transaction);
         }
+
+        // Create a new GeneralLedgerTransactionModel object:
+        GeneralLedgerTransactionModel glTransactionModel = new GeneralLedgerTransactionModel(transaction);
 
         // Link to the GL Account model:
         glTransactionModel.setGlTransaction(glTransaction);
@@ -439,11 +428,11 @@ public class GeneralLedgerController extends ReportReconciliationController {
      * Calculates the total amount of all Transactions.
      *
      * @param glTransaction   GL Transaction, the owner of KSA Transactions.
-     * @param ksaTransactions A Set of KSA Transactions linked to the GL Transaction.
+     * @param ksaTransactions A list of KSA Transactions linked to the GL Transaction.
      * @return A scarcely populated KSA Transaction for the view.
      */
     private Transaction createMinimalKsaTransactionForView(GlTransaction glTransaction,
-                                                           Set<Transaction> ksaTransactions) {
+                                                           List<Transaction> ksaTransactions) {
 
         // Calculate the total amount of all KSA Transactions:
         MutableDouble totalAmount = new MutableDouble(0);
