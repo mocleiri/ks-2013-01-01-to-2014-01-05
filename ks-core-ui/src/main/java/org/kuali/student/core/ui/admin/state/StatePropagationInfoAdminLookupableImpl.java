@@ -21,30 +21,51 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
+import org.kuali.rice.core.api.criteria.Predicate;
+import org.kuali.rice.core.api.criteria.PredicateFactory;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.rice.krad.inquiry.InquirableImpl;
+import org.kuali.rice.krad.lookup.LookupableImpl;
+import org.kuali.rice.krad.web.form.LookupForm;
 import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.core.class1.state.dto.LifecycleInfo;
+import org.kuali.student.r2.core.class1.state.dto.StatePropagationInfo;
 import org.kuali.student.r2.core.class1.state.service.StateService;
 import org.kuali.student.r2.core.constants.StateServiceConstants;
 
 
-public class LifecycleInfoAdminInquirableImpl extends InquirableImpl
+public class StatePropagationInfoAdminLookupableImpl extends LookupableImpl
 {
-	private static final Logger LOG = Logger.getLogger(LifecycleInfoAdminInquirableImpl.class);
+	private static final Logger LOG = Logger.getLogger(StatePropagationInfoAdminLookupableImpl.class);
 	private transient StateService stateService;
-	private final static String PRIMARY_KEY = "key";
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public LifecycleInfo retrieveDataObject(Map<String, String> parameters)
+	protected List<StatePropagationInfo> getSearchResults(LookupForm lookupForm, Map<String, String> fieldValues, boolean unbounded)
 	{
-		String key = parameters.get(PRIMARY_KEY);
+		QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
+		List<Predicate> pList = new ArrayList<Predicate>();
+		for (String fieldName : fieldValues.keySet())
+		{
+			String value = fieldValues.get(fieldName);
+			if (value != null && !value.isEmpty())
+			{
+				if (fieldName.equals("maxResultsToReturn"))
+				{
+					qBuilder.setMaxResults (Integer.parseInt(value));
+					continue;
+				}
+				pList.add(PredicateFactory.equal(fieldName, value));
+			}
+		}
+		if (!pList.isEmpty())
+		{
+			qBuilder.setPredicates(PredicateFactory.and(pList.toArray(new Predicate[pList.size()])));
+		}
 		try
 		{
-			LifecycleInfo info = this.getStateService().getLifecycle(key, getContextInfo());
-			return info;
+			List<StatePropagationInfo> list = this.getStateService().searchForStatePropagations(qBuilder.build(), getContextInfo());
+			return list;
 		}
 		catch (Exception ex) {
 		    throw new RuntimeException(ex);

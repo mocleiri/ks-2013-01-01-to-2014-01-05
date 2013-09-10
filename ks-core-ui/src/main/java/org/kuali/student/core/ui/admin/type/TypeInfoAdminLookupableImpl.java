@@ -1,9 +1,9 @@
 /*
- * Copyright 2011 The Kuali Foundation
+ * Copyright 2013 The Kuali Foundation
  *
  * Licensed under the Educational Community License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may	obtain a copy of the License at
+ * You may obtain a copy of the License at
  *
  * 	http://www.osedu.org/licenses/ECL-2.0
  *
@@ -16,6 +16,10 @@
 package org.kuali.student.core.ui.admin.type;
 
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
@@ -29,16 +33,13 @@ import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.kuali.student.r2.core.class1.type.service.TypeService;
 import org.kuali.student.r2.core.constants.TypeServiceConstants;
 
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class TypeInfoAdminLookupableImpl extends LookupableImpl
 {
 	private static final Logger LOG = Logger.getLogger(TypeInfoAdminLookupableImpl.class);
 	private transient TypeService typeService;
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	protected List<TypeInfo> getSearchResults(LookupForm lookupForm, Map<String, String> fieldValues, boolean unbounded)
 	{

@@ -23,7 +23,7 @@
 	<import resource="classpath:UifKSDefinitions.xml"/>
 	<!-- **********************************************
 	Paste bean definition below into the list of dataDictionaryPackages of org.kuali.rice.krad.bo.ModuleConfiguration 
-	<value>classpath:org/kuali/student/ui/admin/state/LifecycleInfoAdminInquiryView.xml</value>
+	<value>classpath:org/kuali/student/core/ui/admin/state/LifecycleInfoAdminInquiryView.xml</value>
 	********************************************** -->
 	<!-- InquiryView -->
 	<bean id="KS-LifecycleInfo-AdminInquiryView" parent="KS-Uif-InquiryView"

@@ -26,7 +26,7 @@
 	<li><portal:portalLink displayTitle="true" title="StateInfo Lookup"url="${ConfigProperties.application.url}/kr-krad/lookup?methodToCall=start&dataObjectClassName=org.kuali.student.r2.core.class1.state.dto.StateInfo&viewId=StateInfoAdminLookupView.xml&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
 	Also...
 	Paste bean definition below into the list of dataDictionaryPackages of org.kuali.rice.krad.bo.ModuleConfiguration 
-	<value>classpath:org/kuali/student/ui/admin/state/StateInfoAdminLookupView.xml</value>
+	<value>classpath:org/kuali/student/core/ui/admin/state/StateInfoAdminLookupView.xml</value>
 	********************************************** -->
 	<!-- LookupView -->
 	<bean id="KS-StateInfo-AdminLookupView" parent="KS-Uif-LookupView"
@@ -44,11 +44,11 @@
 				<!-- skip name because keyword searching should cover it -->
 				<!-- skip description because keyword searching should cover it -->
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="lifecycleKey">
-                    <property name="quickfinder">
-                        <bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.student.r2.core.class1.state.dto.LifecycleInfo"
-                            p:fieldConversions="key:lifecycleKey" />
-                    </property>
-                </bean>
+					<property name="quickfinder">
+						<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.student.r2.core.class1.state.dto.LifecycleInfo"
+						p:fieldConversions="key:lifecycleKey" />
+					</property>
+				</bean>
 				<!-- TODO: deal with  effectiveDate which is a Date -->
 				<!-- TODO: deal with  expirationDate which is a Date -->
 				<!-- TODO: deal with seaching on the version indicator which is a string in the contract but a number in the database -->
@@ -59,7 +59,7 @@
 				<!-- TODO: deal with dynamic attributes -->
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="maxResultsToReturn"
 				      p:label="Max. Results"
-				      p:defaultValue="30"
+				      p:defaultValue="50"
 				      p:helpSummary="The maximum number of results to return from the query, leave null to not limit the results" />
 			</list>
 		</property>

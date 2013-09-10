@@ -23,7 +23,7 @@
 	<import resource="classpath:UifKSDefinitions.xml"/>
 	<!-- **********************************************
 	Paste bean definition below into the list of dataDictionaryPackages of org.kuali.rice.krad.bo.ModuleConfiguration 
-	<value>classpath:org/kuali/student/ui/admin/type/TypeTypeRelationInfoAdminInquiryView.xml</value>
+	<value>classpath:org/kuali/student/core/ui/admin/type/TypeTypeRelationInfoAdminInquiryView.xml</value>
 	********************************************** -->
 	<!-- InquiryView -->
 	<bean id="KS-TypeTypeRelationInfo-AdminInquiryView" parent="KS-Uif-InquiryView"
