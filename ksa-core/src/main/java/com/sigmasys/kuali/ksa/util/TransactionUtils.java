@@ -1,7 +1,6 @@
 package com.sigmasys.kuali.ksa.util;
 
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -65,8 +64,7 @@ public class TransactionUtils {
             amount = BigDecimal.ZERO;
         }
 
-        return amount.subtract(allocatedAmount.add(lockedAllocatedAmount));
-
+        return amount.abs().subtract(allocatedAmount.add(lockedAllocatedAmount));
     }
 
     /**
