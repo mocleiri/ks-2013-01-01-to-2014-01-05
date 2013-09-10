@@ -22,8 +22,15 @@ public class TransactionManagerHelper {
     }
 
     public static boolean isCommit(DefaultTransactionStatus status) {
-        return !status.isCompleted() && !status.isRollbackOnly() &&
-                !status.isLocalRollbackOnly() && !status.isGlobalRollbackOnly();
+        return status.hasTransaction() &&
+                !status.isCompleted() &&
+                !status.isRollbackOnly() &&
+                !status.isLocalRollbackOnly() &&
+                !status.isGlobalRollbackOnly();
+    }
+
+    public static boolean isRollback(DefaultTransactionStatus status) {
+        return status.hasTransaction() && !status.isCompleted();
     }
 
     public static void doCommit(DefaultTransactionStatus status) {
@@ -44,7 +51,7 @@ public class TransactionManagerHelper {
     }
 
     public static void doRollback(DefaultTransactionStatus status) {
-        if (!status.isCompleted()) {
+        if (isRollback(status)) {
             try {
                 JtaTransactionObject txObject = (JtaTransactionObject) status.getTransaction();
                 UserTransaction userTransaction = txObject.getUserTransaction();

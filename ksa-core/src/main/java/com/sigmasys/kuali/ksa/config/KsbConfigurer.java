@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Michael Ivanov
  */
-@Transactional(timeout = 600)
+@Transactional(timeout = 300, readOnly = true)
 public class KsbConfigurer extends KSBConfigurer {
 
     public static final String ENABLE_MESSAGING_PARAM_NAME = "message.enable";
