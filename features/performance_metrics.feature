@@ -109,7 +109,7 @@ Feature: Performance.Metrics
     Then the transaction takes less than "3" seconds
 
   @pending
-  Scenario: KRMS Requisties Manage, Add, Submit
+  Scenario: KRMS Requisites Manage, Add, Submit
     When I manage an AO's prerequisites
     Then the transaction takes less than "3" seconds
     And I add a rule to the Prerequisite section
