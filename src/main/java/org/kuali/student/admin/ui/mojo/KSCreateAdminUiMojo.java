@@ -63,10 +63,10 @@ public class KSCreateAdminUiMojo extends AbstractKSMojo {
 //        ServicesFilterKualiStudentOnly filter = new ServicesFilterKualiStudentOnly ();
         List<String> servKeys = new ArrayList<String>();
         servKeys.add("Atp");
-        servKeys.add("Type");
-        servKeys.add("State");
-        servKeys.add("LRC");
-//        servKeys.add("Organization");
+//        servKeys.add("Type");
+//        servKeys.add("State");
+//        servKeys.add("LRC");
+        servKeys.add("Organization");
         ServicesFilterByKeys filter = new ServicesFilterByKeys(servKeys);
 
         AdminUiWriter instance =

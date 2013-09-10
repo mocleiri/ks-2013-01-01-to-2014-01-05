@@ -172,9 +172,9 @@ public class AdminUiInquiryViewBeanWriter {
         }
         
         // can't do lookups on things we don't have inquirables on yet        
-        if (lookup.getXmlTypeName().equals("OrgInfo")) {
-            return false;
-        }
+//        if (lookup.getXmlTypeName().equals("OrgInfo")) {
+//            return true;
+//        }
         if (lookup.getXmlTypeName().equals("Principal")) {
             return false;
         }
