@@ -449,6 +449,17 @@ When /^I add a rule to the Prerequisite section$/ do
   on ManageAORequisites do |page|
     @performance_test.start
     page.update_rule_btn
+    page.loading.wait_while_present
     @performance_test.end
   end
 end
+
+When /^then I submit the rule changes$/ do
+  on ActivityOfferingRequisites do |page|
+    @performance_test.start
+    page.submit
+    page.loading.wait_while_present(200)
+    @performance_test.end
+  end
+end
+
