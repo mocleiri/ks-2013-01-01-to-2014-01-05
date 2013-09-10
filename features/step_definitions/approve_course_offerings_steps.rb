@@ -131,6 +131,33 @@ Given /^I manage a course offering with suspended activity offerings present in 
   end
 end
 
+Given /^I manage a course offering with multiple suspended activity offerings present in a published SOC state$/ do
+  @course_with_suspend_ao9 = make CourseOffering, :term=> "201208" , :course => "ENGL222"
+  @course_with_suspend_ao9.manage
+  on ManageCourseOfferings do |page|
+    @ao_suspended_code11 = "A"
+    @ao_suspended_code12 = "B"
+    page.select_ao(@ao_suspended_code11)
+    page.select_ao(@ao_suspended_code12)
+    page.suspend_ao
+    on(SuspendActivityOffering).suspend_activity
+    page.ao_status(@ao_suspended_code11).should == "Suspended"
+  end
+end
+
+Given /^I manage a course offering with suspended and offered activity offerings present in a published SOC state$/ do
+  @course_with_suspend_ao10 = make CourseOffering, :term=> "201208" , :course => "ENGL222"
+  @course_with_suspend_ao10.manage
+  on ManageCourseOfferings do |page|
+    @ao_suspended_code13 = "A"
+    @ao_offered_code4 = "B"
+    page.select_ao(@ao_suspended_code13)
+    page.suspend_ao
+    on(SuspendActivityOffering).suspend_activity
+    page.ao_status(@ao_suspended_code13).should == "Suspended"
+  end
+end
+
 Given /^I manage a course offering with a suspended activity offering present in a published SOC state$/ do
   @course_with_suspend_ao7 = make CourseOffering, :term=> "201208" , :course => "ENGL211"
   @course_with_suspend_ao7.manage
@@ -396,6 +423,20 @@ When /^I select the Suspended activity offering$/ do
   end
 end
 
+When /^I select the Suspended activity offerings$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_suspended_code11)
+    page.select_ao(@ao_suspended_code12)
+  end
+end
+
+When /^I select the Suspended and Offered activity offerings$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_suspended_code13)
+    page.select_ao(@ao_offered_code4)
+  end
+end
+
 When /^I select a Suspended activity offering$/ do
   on ManageCourseOfferings do |page|
     page.select_ao(@ao_suspended_code3)
@@ -541,6 +582,13 @@ Then /^the Suspended activity offering is shown as approved$/ do
   end
 end
 
+Then /^the Suspended activity offerings are shown as offered$/ do
+  on ManageCourseOfferings do |page|
+    page.ao_status(@ao_suspended_code11).should == "Offered"
+    page.ao_status(@ao_suspended_code12).should == "Offered"
+  end
+end
+
 Then /^this Suspended activity offering is shown as approved$/ do
   on ManageCourseOfferings do |page|
     page.ao_status(@ao_suspended_code10).should == "Approved"
@@ -558,6 +606,13 @@ Then /^the Canceled and Draft activity offerings are both shown as draft$/ do
   on ManageCourseOfferings do |page|
     page.ao_status(@ao_canceled_code12).should == "Draft"
     page.ao_status(@ao_draft_code5).should == "Draft"
+  end
+end
+
+Then /^the Suspended and Offered activity offerings are both shown as offered$/ do
+  on ManageCourseOfferings do |page|
+    page.ao_status(@ao_suspended_code13).should == "Offered"
+    page.ao_status(@ao_offered_code4).should == "Offered"
   end
 end
 
@@ -773,6 +828,22 @@ And /^actual delivery logistics for the Suspended activity offering are still sh
   end
 end
 
+And /^actual delivery logistics for the Offered activity offering are still shown$/ do
+  on(ManageCourseOfferings).view_activity_offering("B")
+  on ActivityOfferingInquiry do |page|
+    page.actual_delivery_logistics.present?.should be_true
+    page.close
+  end
+end
+
+And /^actual delivery logistics for the second Suspended activity offering are still shown$/ do
+  on(ManageCourseOfferings).view_activity_offering("B")
+  on ActivityOfferingInquiry do |page|
+    page.actual_delivery_logistics.present?.should be_true
+    page.close
+  end
+end
+
 And /^actual delivery logistics for the Approved activity offering are still shown$/ do
   on(ManageCourseOfferings).view_activity_offering("A")
   on ActivityOfferingInquiry do |page|
@@ -830,6 +901,16 @@ And /^the registration group is shown as offered$/ do
       page.view_cluster_reg_groups("CL 1")
     end
     page.view_reg_groups_table("CL 1").rows[1].cells[1].text.should == "Offered"
+  end
+end
+
+And /^both registration groups are shown as offered$/ do
+  on ManageCourseOfferings do |page|
+    if page.view_reg_groups_table("CL 1").present? == false
+      page.view_cluster_reg_groups("CL 1")
+    end
+    page.view_reg_groups_table("CL 1").rows[1].cells[1].text.should == "Offered"
+    page.view_reg_groups_table("CL 1").rows[2].cells[1].text.should == "Offered"
   end
 end
 
