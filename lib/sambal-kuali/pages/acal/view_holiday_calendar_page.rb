@@ -23,7 +23,7 @@ class ViewHolidayCalendar < BasePage
     end
   end
 
-  element(:holiday_list_table) { |b| b.frm.div(id: "KS-HolidayCalendar-View-Holidays").table }
+  element(:holiday_list_table) { |b| b.frm.div(id: "KS-HolidayCalendar-HolidaySection").table }
   HOLIDAY_TYPE_COL = 0
   HOLIDAY_START_DATE_COL = 1
   HOLIDAY_END_DATE_COL = 2
@@ -42,8 +42,8 @@ class ViewHolidayCalendar < BasePage
   end
 
   def holiday_instructional_status holiday_type
-    yes_no_text = target_row(holiday_type).cells[HOLIDAY_INSTRUCTIONAL_COL].text
-    return yes_no_text == "Yes"
+    true_false_text = target_row(holiday_type).cells[HOLIDAY_INSTRUCTIONAL_COL].text
+    return true_false_text == "true"
   end
 
 end
