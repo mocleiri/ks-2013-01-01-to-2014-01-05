@@ -33,7 +33,7 @@
 		p:title="StateInfo Lookup"
 		p:header.headerText="StateInfo Lookup"
 		p:dataObjectClassName="org.kuali.student.r2.core.class1.state.dto.StateInfo"
-		p:viewHelperServiceClass="org.kuali.student.ui.admin.state.StateInfoAdminLookupableImpl">
+		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.state.StateInfoAdminLookupableImpl">
 		
 		<property name="criteriaFields">
 			<list>

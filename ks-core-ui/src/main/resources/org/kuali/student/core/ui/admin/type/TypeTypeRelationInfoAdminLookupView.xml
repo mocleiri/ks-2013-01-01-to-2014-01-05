@@ -33,7 +33,7 @@
 		p:title="TypeTypeRelationInfo Lookup"
 		p:header.headerText="TypeTypeRelationInfo Lookup"
 		p:dataObjectClassName="org.kuali.student.r2.core.class1.type.dto.TypeTypeRelationInfo"
-		p:viewHelperServiceClass="org.kuali.student.ui.admin.type.TypeTypeRelationInfoAdminLookupableImpl">
+		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.type.TypeTypeRelationInfoAdminLookupableImpl">
 		
 		<property name="criteriaFields">
 			<list>

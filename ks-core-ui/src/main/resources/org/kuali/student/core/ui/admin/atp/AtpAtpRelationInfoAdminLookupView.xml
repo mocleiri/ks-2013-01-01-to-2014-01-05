@@ -33,7 +33,7 @@
 		p:title="AtpAtpRelationInfo Lookup"
 		p:header.headerText="AtpAtpRelationInfo Lookup"
 		p:dataObjectClassName="org.kuali.student.r2.core.atp.dto.AtpAtpRelationInfo"
-		p:viewHelperServiceClass="org.kuali.student.ui.admin.atp.AtpAtpRelationInfoAdminLookupableImpl">
+		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.atp.AtpAtpRelationInfoAdminLookupableImpl">
 		
 		<property name="criteriaFields">
 			<list>

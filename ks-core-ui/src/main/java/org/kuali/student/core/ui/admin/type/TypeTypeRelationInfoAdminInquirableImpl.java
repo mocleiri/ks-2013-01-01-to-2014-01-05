@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.ui.admin.type;
+package org.kuali.student.core.ui.admin.type;
 
 
 import org.apache.log4j.Logger;
-import org.kuali.rice.core.api.criteria.Predicate;
-import org.kuali.rice.core.api.criteria.PredicateFactory;
-import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.rice.krad.lookup.LookupableImpl;
-import org.kuali.rice.krad.web.form.LookupForm;
+import org.kuali.rice.krad.inquiry.InquirableImpl;
 import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.core.class1.type.dto.TypeTypeRelationInfo;
@@ -30,42 +26,23 @@ import org.kuali.student.r2.core.class1.type.service.TypeService;
 import org.kuali.student.r2.core.constants.TypeServiceConstants;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 
-public class TypeTypeRelationInfoAdminLookupableImpl extends LookupableImpl
+public class TypeTypeRelationInfoAdminInquirableImpl extends InquirableImpl
 {
-	private static final Logger LOG = Logger.getLogger(TypeTypeRelationInfoAdminLookupableImpl.class);
+	private static final Logger LOG = Logger.getLogger(TypeTypeRelationInfoAdminInquirableImpl.class);
 	private transient TypeService typeService;
+	private final static String PRIMARY_KEY = "id";
     private static final long serialVersionUID = 1L;
 	@Override
-	protected List<TypeTypeRelationInfo> getSearchResults(LookupForm lookupForm, Map<String, String> fieldValues, boolean unbounded)
+	public TypeTypeRelationInfo retrieveDataObject(Map<String, String> parameters)
 	{
-		QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
-		List<Predicate> pList = new ArrayList<Predicate>();
-		for (String fieldName : fieldValues.keySet())
-		{
-			String value = fieldValues.get(fieldName);
-			if (value != null && !value.isEmpty())
-			{
-				if (fieldName.equals("maxResultsToReturn"))
-				{
-					qBuilder.setMaxResults (Integer.parseInt(value));
-					continue;
-				}
-				pList.add(PredicateFactory.equal(fieldName, value));
-			}
-		}
-		if (!pList.isEmpty())
-		{
-			qBuilder.setPredicates(PredicateFactory.and(pList.toArray(new Predicate[pList.size()])));
-		}
+		String key = parameters.get(PRIMARY_KEY);
 		try
 		{
-			List<TypeTypeRelationInfo> list = this.getTypeService().searchForTypeTypeRelations(qBuilder.build(), getContextInfo());
-			return list;
+			TypeTypeRelationInfo info = this.getTypeService().getTypeTypeRelation(key, getContextInfo());
+			return info;
 		}
 		catch (Exception ex) {
 		    throw new RuntimeException(ex);

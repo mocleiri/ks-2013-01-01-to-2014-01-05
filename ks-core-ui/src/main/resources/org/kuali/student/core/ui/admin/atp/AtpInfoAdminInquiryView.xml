@@ -29,7 +29,7 @@
 	<bean id="KS-AtpInfo-AdminInquiryView" parent="KS-Uif-InquiryView"
 		p:title="AtpInfo Inquiry"
 		p:dataObjectClassName="org.kuali.student.r2.core.atp.dto.AtpInfo"
-		p:viewHelperServiceClass="org.kuali.student.ui.admin.atp.AtpInfoAdminInquirableImpl">
+		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.atp.AtpInfoAdminInquirableImpl">
 		
 		<property name="Items">
 		    <list>

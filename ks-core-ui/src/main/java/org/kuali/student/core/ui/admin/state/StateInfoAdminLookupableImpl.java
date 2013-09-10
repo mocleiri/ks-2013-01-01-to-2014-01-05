@@ -13,35 +13,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.ui.admin.state;
+package org.kuali.student.core.ui.admin.state;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
+import org.kuali.rice.core.api.criteria.Predicate;
+import org.kuali.rice.core.api.criteria.PredicateFactory;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.rice.krad.inquiry.InquirableImpl;
+import org.kuali.rice.krad.lookup.LookupableImpl;
+import org.kuali.rice.krad.web.form.LookupForm;
 import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.core.class1.state.dto.LifecycleInfo;
+import org.kuali.student.r2.core.class1.state.dto.StateInfo;
 import org.kuali.student.r2.core.class1.state.service.StateService;
 import org.kuali.student.r2.core.constants.StateServiceConstants;
 
 
-public class LifecycleInfoAdminInquirableImpl extends InquirableImpl
+public class StateInfoAdminLookupableImpl extends LookupableImpl
 {
-	private static final Logger LOG = Logger.getLogger(LifecycleInfoAdminInquirableImpl.class);
+	private static final Logger LOG = Logger.getLogger(StateInfoAdminLookupableImpl.class);
 	private transient StateService stateService;
-	private final static String PRIMARY_KEY = "key";
     private static final long serialVersionUID = 1L;
 	@Override
-	public LifecycleInfo retrieveDataObject(Map<String, String> parameters)
+	protected List<StateInfo> getSearchResults(LookupForm lookupForm, Map<String, String> fieldValues, boolean unbounded)
 	{
-		String key = parameters.get(PRIMARY_KEY);
+		QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
+		List<Predicate> pList = new ArrayList<Predicate>();
+		for (String fieldName : fieldValues.keySet())
+		{
+			String value = fieldValues.get(fieldName);
+			if (value != null && !value.isEmpty())
+			{
+				if (fieldName.equals("maxResultsToReturn"))
+				{
+					qBuilder.setMaxResults (Integer.parseInt(value));
+					continue;
+				}
+				pList.add(PredicateFactory.equal(fieldName, value));
+			}
+		}
+		if (!pList.isEmpty())
+		{
+			qBuilder.setPredicates(PredicateFactory.and(pList.toArray(new Predicate[pList.size()])));
+		}
 		try
 		{
-			LifecycleInfo info = this.getStateService().getLifecycle(key, getContextInfo());
-			return info;
+			List<StateInfo> list = this.getStateService().searchForStates(qBuilder.build(), getContextInfo());
+			return list;
 		}
 		catch (Exception ex) {
 		    throw new RuntimeException(ex);

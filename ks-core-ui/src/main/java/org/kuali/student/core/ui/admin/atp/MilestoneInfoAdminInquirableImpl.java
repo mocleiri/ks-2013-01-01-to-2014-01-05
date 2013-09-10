@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.ui.admin.state;
+package org.kuali.student.core.ui.admin.atp;
 
 
 import java.util.Map;
@@ -23,24 +23,24 @@ import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.krad.inquiry.InquirableImpl;
 import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.core.class1.state.dto.StateInfo;
-import org.kuali.student.r2.core.class1.state.service.StateService;
-import org.kuali.student.r2.core.constants.StateServiceConstants;
+import org.kuali.student.r2.core.atp.dto.MilestoneInfo;
+import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.constants.AtpServiceConstants;
 
 
-public class StateInfoAdminInquirableImpl extends InquirableImpl
+public class MilestoneInfoAdminInquirableImpl extends InquirableImpl
 {
-	private static final Logger LOG = Logger.getLogger(StateInfoAdminInquirableImpl.class);
-	private transient StateService stateService;
-	private final static String PRIMARY_KEY = "key";
+	private static final Logger LOG = Logger.getLogger(MilestoneInfoAdminInquirableImpl.class);
+	private transient AtpService atpService;
+	private final static String PRIMARY_KEY = "id";
     private static final long serialVersionUID = 1L;
 	@Override
-	public StateInfo retrieveDataObject(Map<String, String> parameters)
+	public MilestoneInfo retrieveDataObject(Map<String, String> parameters)
 	{
 		String key = parameters.get(PRIMARY_KEY);
 		try
 		{
-			StateInfo info = this.getStateService().getState(key, getContextInfo());
+			MilestoneInfo info = this.getAtpService().getMilestone(key, getContextInfo());
 			return info;
 		}
 		catch (Exception ex) {
@@ -48,19 +48,19 @@ public class StateInfoAdminInquirableImpl extends InquirableImpl
 		}
 	}
 
-	public void setStateService(StateService stateService)
+	public void setAtpService(AtpService atpService)
 	{
-		    this.stateService = stateService;
+		    this.atpService = atpService;
 	}
 
-	public StateService getStateService()
+	public AtpService getAtpService()
 	{
-		if (stateService == null)
+		if (atpService == null)
 		{
-			QName qname = new QName(StateServiceConstants.NAMESPACE,StateServiceConstants.SERVICE_NAME_LOCAL_PART);
-			stateService = (StateService) GlobalResourceLoader.getService(qname);
+			QName qname = new QName(AtpServiceConstants.NAMESPACE,AtpServiceConstants.SERVICE_NAME_LOCAL_PART);
+			atpService = (AtpService) GlobalResourceLoader.getService(qname);
 		}
-		return this.stateService;
+		return this.atpService;
 	}
 
 	private ContextInfo getContextInfo() {

@@ -13,34 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.ui.admin.atp;
+package org.kuali.student.core.ui.admin.type;
 
 
-import java.util.Map;
-import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.krad.inquiry.InquirableImpl;
 import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.core.atp.dto.MilestoneInfo;
-import org.kuali.student.r2.core.atp.service.AtpService;
-import org.kuali.student.r2.core.constants.AtpServiceConstants;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
+import org.kuali.student.r2.core.class1.type.service.TypeService;
+import org.kuali.student.r2.core.constants.TypeServiceConstants;
 
+import javax.xml.namespace.QName;
+import java.util.Map;
 
-public class MilestoneInfoAdminInquirableImpl extends InquirableImpl
+public class TypeInfoAdminInquirableImpl extends InquirableImpl
 {
-	private static final Logger LOG = Logger.getLogger(MilestoneInfoAdminInquirableImpl.class);
-	private transient AtpService atpService;
-	private final static String PRIMARY_KEY = "id";
+	private static final Logger LOG = Logger.getLogger(TypeInfoAdminInquirableImpl.class);
+
+	private transient TypeService typeService;
+	private final static String PRIMARY_KEY = "key";
     private static final long serialVersionUID = 1L;
 	@Override
-	public MilestoneInfo retrieveDataObject(Map<String, String> parameters)
+	public TypeInfo retrieveDataObject(Map<String, String> parameters)
 	{
 		String key = parameters.get(PRIMARY_KEY);
 		try
 		{
-			MilestoneInfo info = this.getAtpService().getMilestone(key, getContextInfo());
+			TypeInfo info = this.getTypeService().getType(key, getContextInfo());
 			return info;
 		}
 		catch (Exception ex) {
@@ -48,19 +49,19 @@ public class MilestoneInfoAdminInquirableImpl extends InquirableImpl
 		}
 	}
 
-	public void setAtpService(AtpService atpService)
+	public void setTypeService(TypeService typeService)
 	{
-		    this.atpService = atpService;
+		    this.typeService = typeService;
 	}
 
-	public AtpService getAtpService()
+	public TypeService getTypeService()
 	{
-		if (atpService == null)
+		if (typeService == null)
 		{
-			QName qname = new QName(AtpServiceConstants.NAMESPACE,AtpServiceConstants.SERVICE_NAME_LOCAL_PART);
-			atpService = (AtpService) GlobalResourceLoader.getService(qname);
+			QName qname = new QName(TypeServiceConstants.NAMESPACE,TypeServiceConstants.SERVICE_NAME_LOCAL_PART);
+			typeService = (TypeService) GlobalResourceLoader.getService(qname);
 		}
-		return this.atpService;
+		return this.typeService;
 	}
 
 	private ContextInfo getContextInfo() {

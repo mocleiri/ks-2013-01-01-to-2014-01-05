@@ -29,7 +29,7 @@
 	<bean id="KS-MilestoneInfo-AdminInquiryView" parent="KS-Uif-InquiryView"
 		p:title="MilestoneInfo Inquiry"
 		p:dataObjectClassName="org.kuali.student.r2.core.atp.dto.MilestoneInfo"
-		p:viewHelperServiceClass="org.kuali.student.ui.admin.atp.MilestoneInfoAdminInquirableImpl">
+		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.atp.MilestoneInfoAdminInquirableImpl">
 		
 		<property name="Items">
 		    <list>

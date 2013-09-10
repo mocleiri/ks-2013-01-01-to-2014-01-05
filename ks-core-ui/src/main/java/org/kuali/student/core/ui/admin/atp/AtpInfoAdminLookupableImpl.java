@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.ui.admin.state;
+package org.kuali.student.core.ui.admin.atp;
 
 
 import java.util.ArrayList;
@@ -29,18 +29,18 @@ import org.kuali.rice.krad.lookup.LookupableImpl;
 import org.kuali.rice.krad.web.form.LookupForm;
 import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.core.class1.state.dto.LifecycleInfo;
-import org.kuali.student.r2.core.class1.state.service.StateService;
-import org.kuali.student.r2.core.constants.StateServiceConstants;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.constants.AtpServiceConstants;
 
 
-public class LifecycleInfoAdminLookupableImpl extends LookupableImpl
+public class AtpInfoAdminLookupableImpl extends LookupableImpl
 {
-	private static final Logger LOG = Logger.getLogger(LifecycleInfoAdminLookupableImpl.class);
-	private transient StateService stateService;
+	private static final Logger LOG = Logger.getLogger(AtpInfoAdminLookupableImpl.class);
+	private transient AtpService atpService;
     private static final long serialVersionUID = 1L;
 	@Override
-	protected List<LifecycleInfo> getSearchResults(LookupForm lookupForm, Map<String, String> fieldValues, boolean unbounded)
+	protected List<AtpInfo> getSearchResults(LookupForm lookupForm, Map<String, String> fieldValues, boolean unbounded)
 	{
 		QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
 		List<Predicate> pList = new ArrayList<Predicate>();
@@ -63,7 +63,7 @@ public class LifecycleInfoAdminLookupableImpl extends LookupableImpl
 		}
 		try
 		{
-			List<LifecycleInfo> list = this.getStateService().searchForLifecycles(qBuilder.build(), getContextInfo());
+			List<AtpInfo> list = this.getAtpService().searchForAtps(qBuilder.build(), getContextInfo());
 			return list;
 		}
 		catch (Exception ex) {
@@ -71,19 +71,19 @@ public class LifecycleInfoAdminLookupableImpl extends LookupableImpl
 		}
 	}
 
-	public void setStateService(StateService stateService)
+	public void setAtpService(AtpService atpService)
 	{
-		    this.stateService = stateService;
+		    this.atpService = atpService;
 	}
 
-	public StateService getStateService()
+	public AtpService getAtpService()
 	{
-		if (stateService == null)
+		if (atpService == null)
 		{
-			QName qname = new QName(StateServiceConstants.NAMESPACE,StateServiceConstants.SERVICE_NAME_LOCAL_PART);
-			stateService = (StateService) GlobalResourceLoader.getService(qname);
+			QName qname = new QName(AtpServiceConstants.NAMESPACE,AtpServiceConstants.SERVICE_NAME_LOCAL_PART);
+			atpService = (AtpService) GlobalResourceLoader.getService(qname);
 		}
-		return this.stateService;
+		return this.atpService;
 	}
 
 	private ContextInfo getContextInfo() {

@@ -13,35 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.ui.admin.type;
+package org.kuali.student.core.ui.admin.state;
 
 
+import java.util.Map;
+import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.krad.inquiry.InquirableImpl;
 import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
-import org.kuali.student.r2.core.class1.type.service.TypeService;
-import org.kuali.student.r2.core.constants.TypeServiceConstants;
+import org.kuali.student.r2.core.class1.state.dto.LifecycleInfo;
+import org.kuali.student.r2.core.class1.state.service.StateService;
+import org.kuali.student.r2.core.constants.StateServiceConstants;
 
-import javax.xml.namespace.QName;
-import java.util.Map;
 
-public class TypeInfoAdminInquirableImpl extends InquirableImpl
+public class LifecycleInfoAdminInquirableImpl extends InquirableImpl
 {
-	private static final Logger LOG = Logger.getLogger(TypeInfoAdminInquirableImpl.class);
-
-	private transient TypeService typeService;
+	private static final Logger LOG = Logger.getLogger(LifecycleInfoAdminInquirableImpl.class);
+	private transient StateService stateService;
 	private final static String PRIMARY_KEY = "key";
     private static final long serialVersionUID = 1L;
 	@Override
-	public TypeInfo retrieveDataObject(Map<String, String> parameters)
+	public LifecycleInfo retrieveDataObject(Map<String, String> parameters)
 	{
 		String key = parameters.get(PRIMARY_KEY);
 		try
 		{
-			TypeInfo info = this.getTypeService().getType(key, getContextInfo());
+			LifecycleInfo info = this.getStateService().getLifecycle(key, getContextInfo());
 			return info;
 		}
 		catch (Exception ex) {
@@ -49,19 +48,19 @@ public class TypeInfoAdminInquirableImpl extends InquirableImpl
 		}
 	}
 
-	public void setTypeService(TypeService typeService)
+	public void setStateService(StateService stateService)
 	{
-		    this.typeService = typeService;
+		    this.stateService = stateService;
 	}
 
-	public TypeService getTypeService()
+	public StateService getStateService()
 	{
-		if (typeService == null)
+		if (stateService == null)
 		{
-			QName qname = new QName(TypeServiceConstants.NAMESPACE,TypeServiceConstants.SERVICE_NAME_LOCAL_PART);
-			typeService = (TypeService) GlobalResourceLoader.getService(qname);
+			QName qname = new QName(StateServiceConstants.NAMESPACE,StateServiceConstants.SERVICE_NAME_LOCAL_PART);
+			stateService = (StateService) GlobalResourceLoader.getService(qname);
 		}
-		return this.typeService;
+		return this.stateService;
 	}
 
 	private ContextInfo getContextInfo() {

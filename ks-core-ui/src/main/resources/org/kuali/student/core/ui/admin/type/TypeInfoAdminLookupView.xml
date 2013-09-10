@@ -33,7 +33,7 @@
 		p:title="TypeInfo Lookup"
 		p:header.headerText="TypeInfo Lookup"
 		p:dataObjectClassName="org.kuali.student.r2.core.class1.type.dto.TypeInfo"
-		p:viewHelperServiceClass="org.kuali.student.ui.admin.type.TypeInfoAdminLookupableImpl">
+		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.type.TypeInfoAdminLookupableImpl">
 		
 		<property name="criteriaFields">
 			<list>

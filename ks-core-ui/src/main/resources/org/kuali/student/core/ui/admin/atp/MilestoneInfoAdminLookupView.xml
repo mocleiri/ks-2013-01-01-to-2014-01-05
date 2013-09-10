@@ -33,7 +33,7 @@
 		p:title="MilestoneInfo Lookup"
 		p:header.headerText="MilestoneInfo Lookup"
 		p:dataObjectClassName="org.kuali.student.r2.core.atp.dto.MilestoneInfo"
-		p:viewHelperServiceClass="org.kuali.student.ui.admin.atp.MilestoneInfoAdminLookupableImpl">
+		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.atp.MilestoneInfoAdminLookupableImpl">
 		
 		<property name="criteriaFields">
 			<list>

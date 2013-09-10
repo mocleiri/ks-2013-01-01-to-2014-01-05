@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.ui.admin.atp;
+package org.kuali.student.core.ui.admin.type;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
@@ -29,18 +25,23 @@ import org.kuali.rice.krad.lookup.LookupableImpl;
 import org.kuali.rice.krad.web.form.LookupForm;
 import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.core.atp.dto.MilestoneInfo;
-import org.kuali.student.r2.core.atp.service.AtpService;
-import org.kuali.student.r2.core.constants.AtpServiceConstants;
+import org.kuali.student.r2.core.class1.type.dto.TypeTypeRelationInfo;
+import org.kuali.student.r2.core.class1.type.service.TypeService;
+import org.kuali.student.r2.core.constants.TypeServiceConstants;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
-public class MilestoneInfoAdminLookupableImpl extends LookupableImpl
+public class TypeTypeRelationInfoAdminLookupableImpl extends LookupableImpl
 {
-	private static final Logger LOG = Logger.getLogger(MilestoneInfoAdminLookupableImpl.class);
-	private transient AtpService atpService;
+	private static final Logger LOG = Logger.getLogger(TypeTypeRelationInfoAdminLookupableImpl.class);
+	private transient TypeService typeService;
     private static final long serialVersionUID = 1L;
 	@Override
-	protected List<MilestoneInfo> getSearchResults(LookupForm lookupForm, Map<String, String> fieldValues, boolean unbounded)
+	protected List<TypeTypeRelationInfo> getSearchResults(LookupForm lookupForm, Map<String, String> fieldValues, boolean unbounded)
 	{
 		QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
 		List<Predicate> pList = new ArrayList<Predicate>();
@@ -63,7 +64,7 @@ public class MilestoneInfoAdminLookupableImpl extends LookupableImpl
 		}
 		try
 		{
-			List<MilestoneInfo> list = this.getAtpService().searchForMilestones(qBuilder.build(), getContextInfo());
+			List<TypeTypeRelationInfo> list = this.getTypeService().searchForTypeTypeRelations(qBuilder.build(), getContextInfo());
 			return list;
 		}
 		catch (Exception ex) {
@@ -71,19 +72,19 @@ public class MilestoneInfoAdminLookupableImpl extends LookupableImpl
 		}
 	}
 
-	public void setAtpService(AtpService atpService)
+	public void setTypeService(TypeService typeService)
 	{
-		    this.atpService = atpService;
+		    this.typeService = typeService;
 	}
 
-	public AtpService getAtpService()
+	public TypeService getTypeService()
 	{
-		if (atpService == null)
+		if (typeService == null)
 		{
-			QName qname = new QName(AtpServiceConstants.NAMESPACE,AtpServiceConstants.SERVICE_NAME_LOCAL_PART);
-			atpService = (AtpService) GlobalResourceLoader.getService(qname);
+			QName qname = new QName(TypeServiceConstants.NAMESPACE,TypeServiceConstants.SERVICE_NAME_LOCAL_PART);
+			typeService = (TypeService) GlobalResourceLoader.getService(qname);
 		}
-		return this.atpService;
+		return this.typeService;
 	}
 
 	private ContextInfo getContextInfo() {

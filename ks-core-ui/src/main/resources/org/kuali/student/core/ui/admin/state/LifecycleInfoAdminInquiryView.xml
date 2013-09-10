@@ -29,7 +29,7 @@
 	<bean id="KS-LifecycleInfo-AdminInquiryView" parent="KS-Uif-InquiryView"
 		p:title="LifecycleInfo Inquiry"
 		p:dataObjectClassName="org.kuali.student.r2.core.class1.state.dto.LifecycleInfo"
-		p:viewHelperServiceClass="org.kuali.student.ui.admin.state.LifecycleInfoAdminInquirableImpl">
+		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.state.LifecycleInfoAdminInquirableImpl">
 		
 		<property name="Items">
 		    <list>

@@ -33,7 +33,7 @@
 		p:title="LifecycleInfo Lookup"
 		p:header.headerText="LifecycleInfo Lookup"
 		p:dataObjectClassName="org.kuali.student.r2.core.class1.state.dto.LifecycleInfo"
-		p:viewHelperServiceClass="org.kuali.student.ui.admin.state.LifecycleInfoAdminLookupableImpl">
+		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.state.LifecycleInfoAdminLookupableImpl">
 		
 		<property name="criteriaFields">
 			<list>
