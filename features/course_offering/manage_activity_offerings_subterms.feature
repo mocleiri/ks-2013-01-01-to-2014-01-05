@@ -72,4 +72,4 @@ Feature: EC.Manage Activity Offerings - subterms
     And I make the subterms official
     And I create a Course Offering with an Activity Offerings assigned to subterms
     When I rollover the subterms' parent term to a target term with those subterms are NOT setup
-    Then there is a target term error message on the rollover page stating: Target term and/or subterms are not official
+    Then there is an exception for the course on rollover page stating: Target term does not have subterm types found in AOs

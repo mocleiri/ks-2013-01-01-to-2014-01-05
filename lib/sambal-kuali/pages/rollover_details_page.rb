@@ -43,12 +43,21 @@ class RolloverDetails < BasePage
   value(:activity_offerings_transitioned) { |b| b.frm.div(data_label: "Activity Offerings").span().text[/^(\d+)/] }
   value(:activity_offerings_exceptions) { |b| b.frm.div(data_label: "Activity Offerings").span().text[/\d+(?=.exception)/] }
 
-  element(:non_transitioned_courses_div) { |b| b.frm.div(class: "dataTables_wrapper")}  #TODO need persistent id
-  element(:non_transitioned_courses_search) { |b| b.non_transitioned_courses_div.div(class: "dataTables_filter").text_field() }
-  element(:non_transitioned_courses_table) { |b| b.non_transitioned_courses_div.table() }
+  element(:exceptions_div) { |b| b.frm.div(id: "rollover_exceptions_section")}
+  element(:exceptions_table_search) { |b| b.exceptions_div.div(class: "dataTables_filter").text_field() }
+  element(:exceptions_table) { |b| b.exceptions_div.table() }
 
   COURSE_COLUMN = 0
   REASON_COLUMN = 1
+  DETAILS_COLUMN = 2
+
+   def exceptions_target_row(co_code)
+     exceptions_table.row(text: /\b#{Regexp.escape(co_code)}\b/)
+   end
+
+  def get_exception_details(co_code)
+    exceptions_target_row(co_code).cells[DETAILS_COLUMN].text
+  end
 
   value(:non_transitioned_courses_info) { |b| b.div(class: "dataTables_info") }
   action(:previous) { |b| b.frm.link(text: "Previous").click; b.loading.wait_while_present }

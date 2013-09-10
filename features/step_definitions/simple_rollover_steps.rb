@@ -92,7 +92,7 @@ Then /^the results of the rollover are available$/ do
   #page.course_offerings_exceptions.should ==
   #page.activity_offerings_transitioned.should ==
   #page.activity_offerings_exceptions.should ==
-  #page.non_transitioned_courses_table.rows[1].cells[0].text #first exception
+  #page.exceptions_table.rows[1].cells[0].text #first exception
 end
 
 Then /^course offerings are copied to the target term$/ do
@@ -240,6 +240,12 @@ end
 Then /^there is a target term error message on the rollover page stating: (.*)$/ do |expected_msg|
   on PerformRollover do |page|
     page.target_term_first_validation_msg.should match /.*#{Regexp.escape(expected_msg)}.*/
+  end
+end
+
+Then /^there is an exception for the course on rollover page stating: (.*)$/ do |expected_msg|
+  on RolloverDetails do |page|
+    page.get_exception_details(@course_offering.course).should match /.*#{Regexp.escape(expected_msg)}.*/
   end
 end
 
