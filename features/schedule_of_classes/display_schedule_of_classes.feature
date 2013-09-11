@@ -14,7 +14,6 @@ Feature: WC.Schedule of Classes
 #    And I am using the schedule of classes page
 
 #KSENROLL-8584
-  @pending
   Scenario: Successfully display schedule of classes by subject code and display individual course details
     Given I am using the schedule of classes page
     When I search for course offerings by course by entering a subject code
@@ -22,7 +21,6 @@ Feature: WC.Schedule of Classes
     And the course offering details for a particular offering can be shown
 
 #KSENROLL-8584
-  @pending
   Scenario: CO 26.9 Successfully display schedule of classes by subject code and display subterm information
     Given I am using the schedule of classes page
     When I search for a course offering that has activity offerings assigned to subterms by course code
@@ -30,7 +28,6 @@ Feature: WC.Schedule of Classes
     And the subterm icon appears with the subterm information
 
 #KSENROLL-8584
-  @pending
   Scenario: Successfully display schedule of classes for a particular course and display course details
     Given I am using the schedule of classes page
     When I search for course offerings by course by entering a course offering code
@@ -38,14 +35,12 @@ Feature: WC.Schedule of Classes
     And the course offering details for a particular offering can be shown
 
 #KSENROLL-8584
-  @pending
   Scenario: Successfully display schedule of classes for a particular instructor and display course details
     Given I am using the schedule of classes page
     When I search for course offerings by instructor
     Then a list of course offerings with activity offerings with that instructor is displayed
 
 #KSENROLL-8584
-  @pending
   Scenario: Successfully display schedule of classes for a particular department and display course details
     Given I am using the schedule of classes page
     When I search for course offerings by department
@@ -53,7 +48,6 @@ Feature: WC.Schedule of Classes
     And the course offering details for a particular offering can be shown
 
 #KSENROLL-8584
-  @pending
   Scenario: Successfully display schedule of classes for a particular keyword for a course title or description search
     Given I am using the schedule of classes page
     When I search for course offerings by title and department by entering a keyword
@@ -61,7 +55,6 @@ Feature: WC.Schedule of Classes
     And the course offering details for a particular offering can be shown
 
 #KSENROLL-8584
-  @pending
   Scenario: Display schedule of classes for a particular course and verify that AO clusters are displayed
     Given I am using the schedule of classes page
     When I search for course offerings by course by entering a course offering code
