@@ -7,12 +7,11 @@ Feature: WC.Add Activity Offerings to existing Course Offerings
   Background:
     Given I am logged in as a Schedule Coordinator
 
-
+ #KSENROLL-9442
   Scenario: Add new Activity Offerings
     When I add an Activity Offering to an existing Course Offering
     Then the new Activity Offering is shown in the list of AOs
 
-  # KSENROLL-8061
   Scenario: Copy Activity Offerings
     When I copy an AO with Actual Delivery Logistics
     Then the "ADLs" are successfully copied as RDLs in the new AO

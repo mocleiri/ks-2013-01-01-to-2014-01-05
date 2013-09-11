@@ -4,7 +4,8 @@ Feature: WC.Co-location of Activity Offerings
 
 Background:
   Given I am logged in as a Schedule Coordinator
-    
+
+#KSENROLL-9442
   Scenario: Colocate Activity Offerings using shared enrollments
     When I create "3" COs with an AO in each
     And I colocate multiple activities, selecting to "share" enrollments
@@ -12,6 +13,7 @@ Background:
     And I break colocation on the first colocated AO
     Then the first colocated AO is not colocated with any remaining AOs
 
+#KSENROLL-9442
   Scenario: Colocate Activity Offerings using separately managed enrollments
     When I create "3" COs with an AO in each
     And I colocate multiple activities, selecting to "separately manage" enrollments
@@ -19,7 +21,6 @@ Background:
     And I break colocation on the first colocated AO
     Then the first colocated AO is not colocated with any remaining AOs
 
-  # KSENROLL-8034
   Scenario: Delete a fully colocated AO
     When I designate a valid term and Course Offering Code with a fully colocated AO
     And I delete the fully colocated AO
@@ -30,6 +31,7 @@ Background:
   #Scenario: CCO 2.12B Verify colocation is NOT copied when a Course Offering is copied from a prior term
 
   #KSENROLL-9293
+#KSENROLL-9442
   Scenario: CCO 2.13 Successfully rollover a course offering with colocated Activity Offerings
     Given I create an Academic Calendar
     And I add a new term to the Academic Calendar
