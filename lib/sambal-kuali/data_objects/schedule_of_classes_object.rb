@@ -127,8 +127,7 @@ class ScheduleOfClasses
     end
   end
 
-  # Choose the rendering for SCHoC.  Valid options are "FLAT", "CLUSTER", and "REG_GROUP"
-  def choose_rendering(rendering)
+ def choose_rendering(rendering)
     on DisplayScheduleOfClasses do |page|
       page.select_rendering(rendering)
     end
