@@ -6,6 +6,11 @@ Feature: WC.Schedule of Classes
 
   Background:
     Given I am logged in as a Schedule Coordinator
+    # Although the following step is background for every scenario, it is tweaked to jump directly to the
+    # display schedule of classes page with an added parameter in the URL for selection of rendering
+    # In some of the scenarios, we must do some preliminary setup (adding an AO) before jumping to the
+    # display schedule of classes page.  Thus, this step has been moved into each of the scenarios,
+    # at least for the time being.
 #    And I am using the schedule of classes page
 
 #KSENROLL-8584
