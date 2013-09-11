@@ -9,7 +9,6 @@ import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -1460,7 +1459,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         PaymentBillingQueue billingQueue = new PaymentBillingQueue();
 
-        billingQueue.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+        billingQueue.setCreatorId(userSessionManager.getUserId());
         billingQueue.setCreationDate(new Date());
         billingQueue.setPlan(billingPlan);
         billingQueue.setDirectChargeAccount((DirectChargeAccount) account);

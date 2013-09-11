@@ -7,7 +7,6 @@ import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AccountBlockingService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 
 import java.util.Map;
 
@@ -46,13 +45,9 @@ public class PermissionUtils {
         return accountBlockingService;
     }
 
-    private static String getCurrentUserId() {
-        return getUserSessionManager().getUserId(RequestUtils.getThreadRequest());
-    }
-
     public static boolean hasPermission(Permission permission) {
         if (permission == null) {
-            String userId = getUserSessionManager().getUserId(RequestUtils.getThreadRequest());
+            String userId = getUserSessionManager().getUserId();
             throw new PermissionDeniedException(userId);
         }
         return getAccessControlService().hasPermission(permission);
@@ -74,7 +69,7 @@ public class PermissionUtils {
 
     public static void checkPermission(Permission permission, Map<String, Object> attributes) {
         checkPermission(permission);
-        getAccountBlockingService().checkBlock(getCurrentUserId(), permission, attributes);
+        getAccountBlockingService().checkBlock(permission, attributes);
     }
 
     public static void checkPermission(Permission permission, Object target) {
@@ -121,7 +116,7 @@ public class PermissionUtils {
 
         if (throwException) {
 
-            String userId = getCurrentUserId();
+            String userId = getUserSessionManager().getUserId();
 
             // TODO: ugly temporary fix for KSA permissions - please remove it (Michael)
             if ("admin".equalsIgnoreCase(userId)) {

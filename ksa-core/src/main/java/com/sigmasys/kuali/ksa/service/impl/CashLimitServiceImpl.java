@@ -6,7 +6,6 @@ import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -337,7 +336,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
                 CashLimitEvent cashLimitEvent = new CashLimitEvent();
                 cashLimitEvent.setAccountId(userId);
-                cashLimitEvent.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+                cashLimitEvent.setCreatorId(userSessionManager.getUserId());
                 cashLimitEvent.setEventDate(new Date());
                 cashLimitEvent.setPaymentAmount(paymentAmount);
                 cashLimitEvent.setPayments(new HashSet<Payment>(payments));

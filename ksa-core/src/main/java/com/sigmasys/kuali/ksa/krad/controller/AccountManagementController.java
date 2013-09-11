@@ -18,7 +18,6 @@ import com.sigmasys.kuali.ksa.krad.form.AdminForm;
 import com.sigmasys.kuali.ksa.krad.model.AccountInformationHolder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 
 @Controller
 @RequestMapping(value = "/accountManagement")
@@ -34,7 +33,7 @@ public class AccountManagementController extends GenericSearchController {
     private UserPreferenceService userPreferenceService;
 
     @Autowired
-    protected UserSessionManager userSessionManager;
+    private UserSessionManager userSessionManager;
 
 
     /**
@@ -48,12 +47,12 @@ public class AccountManagementController extends GenericSearchController {
     /**
      * Handles creation of a new form for a new personal account.
      *
-     * @param form    Admin form.
-     * @param request HTTP Servlet request.
+     * @param form Admin form.
      * @return The new form with a new personal account.
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=newPersonAccount")
-    public ModelAndView newPersonAccount(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
+    public ModelAndView newPersonAccount(@ModelAttribute("KualiForm") AdminForm form) {
+
         // Populate the form:
         populateForNewPersonAccount(form, false);
 
@@ -63,12 +62,12 @@ public class AccountManagementController extends GenericSearchController {
     /**
      * Cancels the current page and goes back to the landing page.
      *
-     * @param form
-     * @param request
-     * @return
+     * @param form AdminForm
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=cancel")
-    public ModelAndView returnToLandingPage(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
+    public ModelAndView returnToLandingPage(@ModelAttribute("KualiForm") AdminForm form) {
+
         // Nullify the Account and Account info:
         form.setAccount(null);
         form.setAccountInfo(null);
@@ -81,12 +80,13 @@ public class AccountManagementController extends GenericSearchController {
     /**
      * Handles saving of a new account.
      *
-     * @param form
-     * @param request
-     * @return
+     * @param form    AdminForm
+     * @param request HttpServletRequest
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=saveNewPersonAccount")
     public ModelAndView saveNewPersonAccount(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
+
         // Get the objects to be persisted:
         Account account = setUpAccountFromForm(form);
         AccountProtectedInfo accountProtectedInfo = form.getAccountInfo().getAccountProtectedInfo();
@@ -105,7 +105,7 @@ public class AccountManagementController extends GenericSearchController {
         }
 
         // Return to the landing page:
-        return returnToLandingPage(form, request);
+        return returnToLandingPage(form);
     }
 
     /**
@@ -116,11 +116,12 @@ public class AccountManagementController extends GenericSearchController {
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=editPersonAccount")
     public ModelAndView editPersonAccount(@ModelAttribute("KualiForm") AdminForm form, @RequestParam("accountId") String accountId) {
+
         // Find the Account with the given ID:
         Account account = accountService.getFullAccount(accountId);
 
         // Populate the form with the Account details:
-        populateForExistingAccount(form, account, false);
+        populateForExistingAccount(form, account);
 
         // Set the navigation parameters:
         form.setViewId("AdminView");
@@ -141,6 +142,7 @@ public class AccountManagementController extends GenericSearchController {
       */
     @SuppressWarnings("serial")
     protected void populateForNewPersonAccount(AdminForm form, boolean addBlankOption) {
+
         // Create a new AccountInformationHolder object:
         AccountInformationHolder accountInfo = new AccountInformationHolder();
         Account account = new Account() {
@@ -177,7 +179,7 @@ public class AccountManagementController extends GenericSearchController {
     /*
       * Populates the given form for an existing Account.
       */
-    protected void populateForExistingAccount(AdminForm form, Account account, boolean addBlankOption) {
+    protected void populateForExistingAccount(AdminForm form, Account account) {
 
         // Set the Account attributes:
         String accountId = account.getId();
@@ -216,12 +218,14 @@ public class AccountManagementController extends GenericSearchController {
       * from the one stored in the form object.
       */
     private Account setUpAccountFromForm(AdminForm form) {
-        // Determine if we need to create a new account from the New Account form or can reuse the existing accout:
+
+        // Determine if we need to create a new account from the New Account form or can reuse the existing account:
         Account formAccount = form.getAccount();
-        Account result = formAccount;
+        Account resultAccount = formAccount;
 
         // If there is no ID, then it's a new Account:
-        if (StringUtils.isBlank(formAccount.getId())) {
+        if (formAccount != null && StringUtils.isBlank(formAccount.getId())) {
+
             String selectedAccountType = form.getAccountInfo().getAccountType();
             Account newAccount = null;
 
@@ -230,34 +234,36 @@ public class AccountManagementController extends GenericSearchController {
                 newAccount = new DelegateAccount();
             } else if (StringUtils.equals(selectedAccountType, AccountTypeValue.DIRECT_CHARGE_CODE)) {
                 // Create a new DirectChargeAccount:
-                DirectChargeAccount dcAccount = new DirectChargeAccount();
-
-                dcAccount.setDateOfBirth(form.getAccountInfo().getDateOfBirth());
-                newAccount = dcAccount;
+                newAccount = new DirectChargeAccount();
+                ((DirectChargeAccount) newAccount).setDateOfBirth(form.getAccountInfo().getDateOfBirth());
             }
 
-            // Copy properties from the form stored Account to the new one:
-            BeanUtils.copyProperties(formAccount, newAccount);
+            if (newAccount != null) {
 
-            // For new accounts, set up account id and auditable information:
-            setAccountIdAndAuditableInfo(newAccount);
+                // Copy properties from the form stored Account to the new one:
+                BeanUtils.copyProperties(formAccount, newAccount);
 
-            // Find the existing objects:
-            LatePeriod existingLatePeriod = auditableEntityService.getAuditableEntity(formAccount.getLatePeriod().getId(), LatePeriod.class);
-            AccountStatusType existingAccountStatusType = auditableEntityService.getAuditableEntity(formAccount.getStatusType().getId(), AccountStatusType.class);
+                // For new accounts, set up account id and auditable information:
+                setAccountIdAndAuditableInfo(newAccount);
 
-            newAccount.setLatePeriod(existingLatePeriod);
-            newAccount.setStatusType(existingAccountStatusType);
-            result = newAccount;
-        } else {
+                // Find the existing objects:
+                LatePeriod existingLatePeriod = auditableEntityService.getAuditableEntity(formAccount.getLatePeriod().getId(), LatePeriod.class);
+                AccountStatusType existingAccountStatusType = auditableEntityService.getAuditableEntity(formAccount.getStatusType().getId(), AccountStatusType.class);
+
+                newAccount.setLatePeriod(existingLatePeriod);
+                newAccount.setStatusType(existingAccountStatusType);
+
+                resultAccount = newAccount;
+            }
+
+        } else if (resultAccount != null) {
+
             // For existing accounts just update the auditable information:
-            String currentUser = userSessionManager.getUserId(RequestUtils.getThreadRequest());
-
-            formAccount.setEditorId(currentUser);
-            formAccount.setLastUpdate(new Date());
+            resultAccount.setEditorId(userSessionManager.getUserId());
+            resultAccount.setLastUpdate(new Date());
         }
 
-        return result;
+        return resultAccount;
     }
 
     /*
@@ -266,7 +272,6 @@ public class AccountManagementController extends GenericSearchController {
     private void setAccountIdAndAuditableInfo(Account account) {
         // TODO: Determine what to do about the account ID:
         String id = RandomStringUtils.randomAlphabetic(8);
-        String currentUser = userSessionManager.getUserId(RequestUtils.getThreadRequest());
         // TODO: Figure out what to do with KIM IDs!
         boolean isKimAccount = false;
 
@@ -274,7 +279,7 @@ public class AccountManagementController extends GenericSearchController {
         account.setId(id);
         account.setEntityId(id);
         account.setCreationDate(new Date());
-        account.setCreatorId(currentUser);
+        account.setCreatorId(userSessionManager.getUserId());
         account.setKimAccount(isKimAccount);
     }
 }

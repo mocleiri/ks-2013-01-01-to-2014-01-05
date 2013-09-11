@@ -5,13 +5,11 @@ import com.sigmasys.kuali.ksa.model.ActivityType;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.service.ActivityService;
 import com.sigmasys.kuali.ksa.util.GuidGenerator;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -124,9 +122,7 @@ public class ActivityServiceImpl extends GenericPersistenceService implements Ac
         activity.setTimestamp(new Date());
         if (activity.getId() == null) {
             activity.setId(GuidGenerator.generateLong());
-            HttpServletRequest request = RequestUtils.getThreadRequest();
-            String userId = (request != null) ? userSessionManager.getUserId(request) : null;
-            activity.setCreatorId(userId);
+            activity.setCreatorId(userSessionManager.getUserId());
         }
         if (activity.getTypeId() == null) {
             activity.setTypeId(Constants.ACTIVITY_TYPE_DATA_CHANGE_ID);

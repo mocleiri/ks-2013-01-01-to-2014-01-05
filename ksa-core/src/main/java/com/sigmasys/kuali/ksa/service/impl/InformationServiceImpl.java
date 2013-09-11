@@ -11,7 +11,6 @@ import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -259,7 +258,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
 
         checkUpdatePermission(information.getAccessLevel());
 
-        String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        String userId = userSessionManager.getUserId();
         Date currentDate = new Date();
 
         if (information.getId() != null) {
@@ -428,8 +427,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
             prevMemo.setNextMemo(newMemo);
         }
 
-        String creatorId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
-        newMemo.setCreatorId(creatorId);
+        newMemo.setCreatorId(userSessionManager.getUserId());
 
         Date curDate = new Date();
         newMemo.setCreationDate(curDate);
@@ -521,8 +519,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         flag.setAccessLevel(accessLevel);
         flag.setSeverity(severity);
 
-        String creatorId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
-        flag.setCreatorId(creatorId);
+        flag.setCreatorId(userSessionManager.getUserId());
 
         Date curDate = new Date();
         flag.setCreationDate(curDate);
@@ -607,8 +604,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         alert.setAccount(account);
         alert.setAccessLevel(accessLevel);
 
-        String creatorId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
-        alert.setCreatorId(creatorId);
+        alert.setCreatorId(userSessionManager.getUserId());
 
         Date curDate = new Date();
         alert.setCreationDate(curDate);

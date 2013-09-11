@@ -5,7 +5,6 @@ import com.sigmasys.kuali.ksa.event.LoadAccessControlEvent;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.security.AccessControlService;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -245,9 +244,9 @@ public class AccessControlServiceImpl extends GenericPersistenceService implemen
     @Override
     public boolean hasPermissions(String... permissionNames) {
         // Getting the current user ID from UserSessionManager
-        String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        String userId = userSessionManager.getUserId();
         // Checking if the permissions are cached by UserSessionManager
-        Set<String> permissions = userSessionManager.getUserPermissions(RequestUtils.getThreadRequest());
+        Set<String> permissions = userSessionManager.getUserPermissions();
         if (CollectionUtils.isNotEmpty(permissions)) {
             for (String permissionName : permissionNames) {
                 if (!permissions.contains(permissionName)) {

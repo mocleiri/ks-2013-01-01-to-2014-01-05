@@ -411,7 +411,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
             throw new IllegalStateException(errMsg);
         }
 
-        final String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        final String currentUserId = userSessionManager.getUserId();
 
         final com.sigmasys.kuali.ksa.model.Irs1098T irs1098T = new com.sigmasys.kuali.ksa.model.Irs1098T();
 
@@ -1138,7 +1138,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
         // Create a new Receipt object:
         TransactionReceipt transactionReceipt = new TransactionReceipt();
-        String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        String currentUserId = userSessionManager.getUserId();
 
         Date transactionCreationDate = transaction.getCreationDate();
         Date receiptDate = (transactionCreationDate != null) ? transactionCreationDate : new Date();

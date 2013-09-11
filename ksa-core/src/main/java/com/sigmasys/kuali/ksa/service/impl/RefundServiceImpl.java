@@ -157,8 +157,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         Date refundRequestDate = new Date();
 
-        String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
-        Account refundRequestedBy = accountService.getOrCreateAccount(currentUserId);
+        Account refundRequestedBy = accountService.getOrCreateAccount(userSessionManager.getUserId());
 
         // Iterate through the Payments:
         for (Payment payment : payments) {
@@ -236,8 +235,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             throw new IllegalStateException(errMsg);
         }
 
-        String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
-        Account refundRequestedBy = accountService.getOrCreateAccount(currentUserId);
+        Account refundRequestedBy = accountService.getOrCreateAccount(userSessionManager.getUserId());
 
         return checkForRefund(payment, new Date(), refundRequestedBy, refundAmount);
     }
@@ -333,8 +331,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         Refund refund = getRefund(refundId, false);
 
         // Set the Refund status to VERIFIED:
-        String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
-        Account currentUserAccount = accountService.getOrCreateAccount(currentUserId);
+        Account currentUserAccount = accountService.getOrCreateAccount(userSessionManager.getUserId());
 
         refund.setStatus(RefundStatus.VERIFIED);
         refund.setAuthorizedBy(currentUserAccount);

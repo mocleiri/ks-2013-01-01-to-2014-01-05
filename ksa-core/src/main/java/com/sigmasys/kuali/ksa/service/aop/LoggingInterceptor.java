@@ -1,7 +1,6 @@
 package com.sigmasys.kuali.ksa.service.aop;
 
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
 /**
@@ -81,16 +79,13 @@ public class LoggingInterceptor implements MethodInterceptor {
         Object[] arguments = invocation.getArguments();
         Class<?>[] paramTypes = method.getParameterTypes();
 
-        String userId;
+        String userId = userSessionManager.getUserId();
 
-        HttpServletRequest servletRequest = RequestUtils.getThreadRequest();
-        if (servletRequest != null) {
-            userId = userSessionManager.getUserId(servletRequest);
-        } else {
+        if (userId == null) {
             userId = UNKNOWN_USER_ID;
         }
 
-        StringBuilder logBuffer = new StringBuilder("User '" + (userId != null ? userId : UNKNOWN_USER_ID) + "' ");
+        StringBuilder logBuffer = new StringBuilder("User '" + userId + "' ");
         logBuffer.append("performed the method call: ");
         logBuffer.append(className);
         logBuffer.append(" :: ");

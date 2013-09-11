@@ -5,7 +5,6 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.PersistenceService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import com.sigmasys.kuali.ksa.service.aop.LoggingInterceptor;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.aopalliance.aop.Advice;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
@@ -178,8 +176,7 @@ public class GenericPersistenceService implements PersistenceService {
 
         if (entity instanceof AuditableEntity) {
             AuditableEntity auditableEntity = (AuditableEntity) entity;
-            HttpServletRequest request = RequestUtils.getThreadRequest();
-            String userId = (request != null) ? userSessionManager.getUserId(request) : null;
+            String userId = userSessionManager.getUserId();
             Date currentDate = new Date();
             auditableEntity.setLastUpdate(currentDate);
             if (auditableEntity.getId() == null) {

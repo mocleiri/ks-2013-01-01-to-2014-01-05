@@ -14,7 +14,6 @@ import com.sigmasys.kuali.ksa.service.fm.RateService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.BeanUtils;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -934,7 +933,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     }
 
     private ContextInfo getAtpContextInfo() {
-        String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        String userId = userSessionManager.getUserId();
         ContextInfo contextInfo = new ContextInfo();
         contextInfo.setAuthenticatedPrincipalId(userId);
         contextInfo.setPrincipalId(userId);

@@ -386,7 +386,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         transactionType.setPriority(priority);
         transactionType.setDescription(description);
         transactionType.setCreationDate(new Date());
-        transactionType.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+        transactionType.setCreatorId(userSessionManager.getUserId());
 
         persistTransactionType(transactionType);
 
@@ -502,7 +502,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new CurrencyNotFoundException(errMsg);
         }
 
-        String creatorId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        String creatorId = userSessionManager.getUserId();
 
         if (overrideBlocks) {
             if (!getAccessControlService().isTransactionTypeAllowed(creatorId, id.getId())) {
@@ -1085,21 +1085,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new IllegalStateException(errMsg);
         }
 
-        TransactionType transactionType1 = transaction1.getTransactionType();
-        TransactionType transactionType2 = transaction2.getTransactionType();
-
-        boolean canAllocate = false;
-        if ((transactionType1 instanceof DebitType && transactionType2 instanceof CreditType) ||
-                (transactionType1 instanceof CreditType && transactionType2 instanceof DebitType)) {
-            canAllocate = (unallocatedAmount1.compareTo(BigDecimal.ZERO) > 0 &&
-                    unallocatedAmount2.compareTo(BigDecimal.ZERO) > 0);
-        } else if ((transactionType1 instanceof DebitType && transactionType2 instanceof DebitType) ||
-                (transactionType1 instanceof CreditType && transactionType2 instanceof CreditType)) {
-            canAllocate = (unallocatedAmount1.compareTo(BigDecimal.ZERO) > 0 &&
-                    unallocatedAmount2.compareTo(BigDecimal.ZERO) < 0) ||
-                    (unallocatedAmount1.compareTo(BigDecimal.ZERO) < 0 &&
-                            unallocatedAmount2.compareTo(BigDecimal.ZERO) > 0);
-        }
+        boolean canAllocate = (unallocatedAmount1.compareTo(BigDecimal.ZERO) > 0 && unallocatedAmount2.compareTo(BigDecimal.ZERO) > 0);
 
         if (canAllocate) {
 
@@ -2516,7 +2502,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             logger.warn(e.getMessage(), e);
         }
 
-        String userId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        String userId = userSessionManager.getUserId();
 
         return accountService.accountExists(accountId) && transactionTypeExists &&
                 getAccessControlService().isTransactionTypeAllowed(userId, transactionTypeId);

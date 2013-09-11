@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.sigmasys.kuali.ksa.krad.model.AccountSearchResultModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +26,12 @@ public class AccountSearchController extends AccountManagementController {
     /**
      * Handles display of the Search Person Account page.
      *
-     * @param form
-     * @param request
+     * @param form AdminForm
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=searchPersonAccount")
-    public ModelAndView searchPersonAccount(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
+    public ModelAndView searchPersonAccount(@ModelAttribute("KualiForm") AdminForm form) {
+
         // Populate the form:
         populateForSearchPersonAccount(form);
 
@@ -43,12 +41,12 @@ public class AccountSearchController extends AccountManagementController {
     /**
      * Handles Person Account search and redirection to the search result page.
      *
-     * @param form
-     * @param request
-     * @return
+     * @param form AdminForm
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=doSearchPersonAccount")
-    public ModelAndView doSearchPersonAccount(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
+    public ModelAndView doSearchPersonAccount(@ModelAttribute("KualiForm") AdminForm form) {
+
         // TODO: Inspect the search parameters
 
         // TODO: Search for Accounts: Temporarily load all Accounts to have some data available for testing:
@@ -99,11 +97,13 @@ public class AccountSearchController extends AccountManagementController {
      * @return A <code>List</code> of display elements.
      */
     private List<AccountSearchResultModel> prepareDisplayLines(List<Account> accounts) {
+
         // Create the result collection:
         List<AccountSearchResultModel> lines = new ArrayList<AccountSearchResultModel>();
 
         // Add elements to the resultant collection:
         for (Account account : accounts) {
+
             // Create a new line item:
             AccountSearchResultModel line = new AccountSearchResultModel();
             AccountProtectedInfo accountProtectedInfo = accountService.getAccountProtectedInfo(account.getId());

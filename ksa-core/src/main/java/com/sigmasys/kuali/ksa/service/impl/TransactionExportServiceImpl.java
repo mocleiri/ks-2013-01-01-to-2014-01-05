@@ -179,7 +179,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
 
         final ObjectFactory objectFactory = new ObjectFactory();
 
-        final String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        final String currentUserId = userSessionManager.getUserId();
 
         final Date currentDate = new Date();
         final String currentStringDate = new SimpleDateFormat(Constants.DATE_FORMAT_EXPORT).format(currentDate);

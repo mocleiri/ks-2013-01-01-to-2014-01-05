@@ -7,7 +7,6 @@ import com.sigmasys.kuali.ksa.jaxb.*;
 
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import com.sigmasys.kuali.ksa.util.XmlSchemaValidator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -156,10 +155,9 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
         boolean batchIsQualified = false;
 
-        final String currentUserId = userSessionManager.getUserId(RequestUtils.getThreadRequest());
+        final String currentUserId = userSessionManager.getUserId();
         final Account currentAccount = accountService.getFullAccount(currentUserId);
 
-        // the unmarshaled list
         List<KsaTransaction> ksaTransactions = ksaBatchTransaction.getKsaTransaction();
 
         if (!CollectionUtils.isEmpty(ksaTransactions)) {
@@ -347,7 +345,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
         XmlDocument xmlDocument = new XmlDocument();
         xmlDocument.setXml(xml);
         xmlDocument.setCreationDate(new Date());
-        xmlDocument.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+        xmlDocument.setCreatorId(userSessionManager.getUserId());
         persistEntity(xmlDocument);
         return xmlDocument;
     }

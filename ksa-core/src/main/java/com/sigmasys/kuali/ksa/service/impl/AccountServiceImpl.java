@@ -51,7 +51,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.*;
@@ -605,6 +604,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return true if the account exists, false otherwise
      */
     @Override
+    @Transactional(readOnly = false, noRollbackFor = UserNotFoundException.class)
     public boolean accountExists(String userId) {
         if (StringUtils.isNotEmpty(userId)) {
             try {
@@ -721,12 +721,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             // TODO - populate the missing fields
             // TODO: figure out how to distinguish Delegate and DirectCharge account types
 
-            String creatorId = null;
-
-            HttpServletRequest request = RequestUtils.getThreadRequest();
-            if (request != null) {
-                creatorId = userSessionManager.getUserId(request);
-            }
+            String creatorId = userSessionManager.getUserId();
 
             if (creatorId == null) {
                 creatorId = "system";
@@ -863,7 +858,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             }
         }
 
-        personName.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+        personName.setCreatorId(userSessionManager.getUserId());
         personName.setLastUpdate(new Date());
 
         personNames.add(personName);
@@ -923,7 +918,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             }
         }
 
-        postalAddress.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+        postalAddress.setCreatorId(userSessionManager.getUserId());
         postalAddress.setLastUpdate(new Date());
 
         addresses.add(postalAddress);
@@ -983,7 +978,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             }
         }
 
-        electronicContact.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+        electronicContact.setCreatorId(userSessionManager.getUserId());
         electronicContact.setLastUpdate(new Date());
 
         contacts.add(electronicContact);

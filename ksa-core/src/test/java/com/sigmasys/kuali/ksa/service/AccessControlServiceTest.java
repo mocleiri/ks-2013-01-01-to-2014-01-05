@@ -5,7 +5,6 @@ import com.sigmasys.kuali.ksa.event.EventMulticaster;
 import com.sigmasys.kuali.ksa.event.LoadAccessControlEvent;
 import com.sigmasys.kuali.ksa.event.LoadAccessControlListener;
 import com.sigmasys.kuali.ksa.service.security.AccessControlService;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -112,7 +111,7 @@ public class AccessControlServiceTest extends AbstractServiceTest {
 
         Assert.notEmpty(permissionSet1);
 
-        Set<String> permissionSet2 = userSessionManager.getUserPermissions(RequestUtils.getThreadRequest());
+        Set<String> permissionSet2 = userSessionManager.getUserPermissions();
 
         Assert.notEmpty(permissionSet2);
 

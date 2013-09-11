@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.sigmasys.kuali.ksa.service.security.AccessControlService;
+import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +43,7 @@ public class UserSessionManagerImpl implements UserSessionManager {
      * @param userId   the User ID
      * @return a new HTTP Session
      */
+    @Override
     @Transactional
     public HttpSession createSession(HttpServletRequest request, HttpServletResponse response, String userId) {
         HttpSession session = request.getSession(true);
@@ -61,6 +63,7 @@ public class UserSessionManagerImpl implements UserSessionManager {
      *
      * @param request the HTTP request
      */
+    @Override
     public void destroySession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -76,6 +79,7 @@ public class UserSessionManagerImpl implements UserSessionManager {
      * @param response the HTTP response
      * @return true if the session is valid.
      */
+    @Override
     public boolean isSessionValid(HttpServletRequest request,
                                   HttpServletResponse response) {
         HttpSession session = request.getSession(false);
@@ -88,6 +92,7 @@ public class UserSessionManagerImpl implements UserSessionManager {
      * @param request HttpServletRequest instance
      * @return the user ID
      */
+    @Override
     public String getUserId(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -97,11 +102,23 @@ public class UserSessionManagerImpl implements UserSessionManager {
     }
 
     /**
+     * Returns the user ID for the current LocalThread HttpServletRequest object.
+     *
+     * @return the user ID
+     */
+    @Override
+    public String getUserId() {
+        HttpServletRequest request = RequestUtils.getThreadRequest();
+        return request != null ? getUserId(request) : null;
+    }
+
+    /**
      * Returns a set of user permissions for the given HttpServletRequest.
      *
      * @param request HttpServletRequest instance
      * @return a set of user permission names.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Set<String> getUserPermissions(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -109,6 +126,16 @@ public class UserSessionManagerImpl implements UserSessionManager {
             return (Set<String>) session.getAttribute(USER_PERMISSIONS);
         }
         throw new IllegalStateException("HTTP session is null");
+    }
+
+    /**
+     * Returns a set of user permissions for the current user.
+     *
+     * @return a set of user permission names.
+     */
+    @Override
+    public Set<String> getUserPermissions() {
+        return getUserPermissions(RequestUtils.getThreadRequest());
     }
 
 }

@@ -12,7 +12,6 @@ import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmPersistenceService;
 import com.sigmasys.kuali.ksa.service.brm.BrmService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -106,7 +105,7 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
         blockOverride.setReason(reason);
         blockOverride.setActive(true);
         blockOverride.setCreationDate(new Date());
-        blockOverride.setCreatorId(userSessionManager.getUserId(RequestUtils.getThreadRequest()));
+        blockOverride.setCreatorId(userSessionManager.getUserId());
 
         persistEntity(blockOverride);
 
@@ -228,13 +227,25 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
     }
 
     /**
+     * Checks if there is an account block set for the current user based on the permission and account attributes.
+     *
+     * @param permission Permission value
+     * @param attributes Account attributes
+     * @throws AccountBlockedException
+     */
+    @Override
+    @Transactional(readOnly = false, noRollbackFor = AccountBlockedException.class)
+    public void checkBlock(Permission permission, Map<String, Object> attributes) throws AccountBlockedException {
+        checkBlock(userSessionManager.getUserId(), permission, attributes);
+    }
+
+    /**
      * Checks if there is an account block set for the given Account ID based on the permission and account attributes.
      *
      * @param accountId  Account ID
      * @param permission Permission value
      * @param attributes Account attributes
-     * @throws com.sigmasys.kuali.ksa.exception.AccountBlockedException
-     *
+     * @throws AccountBlockedException
      */
     @Override
     @Transactional(readOnly = false, noRollbackFor = AccountBlockedException.class)
@@ -258,7 +269,24 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
         brmContext.setAccount(account);
 
         Map<String, Object> globalParams = new HashMap<String, Object>();
+
         globalParams.put("blockNames", new LinkedList<String>());
+        globalParams.put("permission", permission);
+
+        String atpId = (String) attributes.get("atpId");
+        if (atpId == null) {
+            atpId = "";
+        }
+
+        globalParams.put("atpId", atpId);
+
+        String holdIssueId = (String) attributes.get("holdIssueId");
+        if (holdIssueId == null) {
+            holdIssueId = "";
+        }
+
+        globalParams.put("holdIssueId", holdIssueId);
+
 
         brmContext.setGlobalVariables(globalParams);
 

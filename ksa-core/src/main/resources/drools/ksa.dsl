@@ -30,6 +30,17 @@
 [then][]Use "{transactionTypeId}" to charge ${amountPerCredit} per credit where section is "{sectionCodes}" with status "{statuses}" = context.getFeeManagementService().createTransactionForNumberOfCredits(feeBase,"{transactionTypeId}",new BigDecimal({amountPerCredit}),"{sectionCodes}","{statuses}");
 
 
+# ACCOUNT BLOCKING DSL definitions
+# Assumption: atpId, holdIssueId, permission are global parameters
+
+# LHS definitions
+[when][]ATP is "{atpId}" = atpId == "{atpId}"
+[when][]Hold Issue is "{holdIssueId}" = holdIssueId == "{holdIssueId}"
+[when][]Permission is "{permission}" = permission == Permission.valueOf("{permission}")
+[when][]Account ID is "{userId}" = account.id == "{userId}"
+
+
+
 # PAYMENT APPLICATION DSL definitions
 
 # LHS definitions

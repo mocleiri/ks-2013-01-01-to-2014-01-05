@@ -95,7 +95,7 @@ public abstract class AbstractViewModel extends UifFormBase {
     protected Map<String, String> getUserPreferences() {
         Map<String, String> preferencesMap = (Map<String, String>) getSession().getAttribute(USER_PREF_ATTR_NAME);
         if (preferencesMap == null) {
-            String userId = getUserSessionManager().getUserId(RequestUtils.getThreadRequest());
+            String userId = getUserSessionManager().getUserId();
             if (userId == null) {
                 throw new IllegalStateException("User ID is null");
             }
@@ -189,8 +189,8 @@ public abstract class AbstractViewModel extends UifFormBase {
     /**
      * Display a message to the user
      *
-     * @deprecated  Don't use this anymore.
-     *    Instead use GlobalVariables.getMessageMap().putInfo();, GlobalVariables.getMessageMap().putWarning();, GlobalVariables.getMessageMap().putError();
+     * @deprecated Don't use this anymore.
+     *             Instead use GlobalVariables.getMessageMap().putInfo();, GlobalVariables.getMessageMap().putWarning();, GlobalVariables.getMessageMap().putError();
      */
     @Deprecated
     public String getMessage() {
