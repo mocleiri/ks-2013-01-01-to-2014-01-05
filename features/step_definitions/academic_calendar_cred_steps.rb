@@ -362,6 +362,7 @@ When /^I add events to the Academic Calendar$/ do
   on CalendarSearch do |page|
     page.edit @calendar.name
     @event = create CalendarEvent, :acal_year =>  @calendar.year
+    @event1 = create CalendarEvent, :acal_year =>  @calendar.year , :event_type => "Homecoming Week"
   end
 end
 
