@@ -10,11 +10,13 @@ Feature: EC.Academic Calendar Terms
     When I add a new term to the Academic Calendar
     Then the term is listed when I view the Academic Calendar
 
+  @bug @KSENROLL-7146
   Scenario: Successfully create a new term for an academic calendar copy
     Given I copy an existing Academic Calendar
     When I add a new term to the Academic Calendar
     Then the term is listed when I view the Academic Calendar
 
+  @bug @KSENROLL-7146
   Scenario: Successfully edit term information for an academic calendar
     Given I copy an existing Academic Calendar
     And I add a new term to the Academic Calendar
@@ -45,16 +47,19 @@ Feature: EC.Academic Calendar Terms
     When I edit an instructional Key Date
     Then the updated Key Date is listed with the academic term information
 
+  @bug @KSENROLL-7146
   Scenario: Delete a Key Date for an academic term
     Given I copy an existing Academic Calendar
     When I delete an instructional Key Date
     Then the Key Date is not listed with the academic term information
 
+  @bug @KSENROLL-7146
   Scenario: Delete a Key Date Group for an academic term
     Given I copy an existing Academic Calendar
     When I delete an instructional Key Date Group
     Then the Key Date Group is not listed with the academic term information
 
+  @bug @KSENROLL-7146
   Scenario: Copy Key Dates for an academic term
     Given I copy an existing Academic Calendar
     Then the Key Dates are copied without date values
@@ -87,7 +92,8 @@ Feature: EC.Academic Calendar Terms
     When I edit the key date so that the start date is later than the Academic Term end date
     Then a Key Dates warning message is displayed stating "doesn't fall within.*dates"
 
-  Scenario: Verify an error message is displayed when a key date is made blank
+  @bug @KSENROLL-7146
+  Scenario: Verify a warning message is displayed when a key date is made blank
     Given I create an Academic Calendar with a term
     And I add an instructional Key Date
     When I make the key date blank
