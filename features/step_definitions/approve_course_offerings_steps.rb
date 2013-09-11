@@ -779,6 +779,9 @@ Given /^I manage a course offering with a canceled activity offering present in 
   @course_with_cancel_ao4.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code6 = "A"
+    page.select_ao(@ao_canceled_code6)
+    page.cancel_ao
+    on(CancelActivityOffering).cancel_activity
     page.ao_status(@ao_canceled_code6).should == "Canceled"
   end
 end
