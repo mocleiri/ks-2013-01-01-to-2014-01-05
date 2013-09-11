@@ -62,7 +62,6 @@ Feature: WC.Schedule of Classes
     And the course offering details displays a listing of AO clusters
 
 #KSENROLL-9199
-  @pending
   Scenario: Display schedule of classes for a particular course and verify that registration groups are displayed
     Given I am using the schedule of classes page
     When I search for course offerings by course by entering a course offering code
