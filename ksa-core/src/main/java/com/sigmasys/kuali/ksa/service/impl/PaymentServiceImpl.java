@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmService;
+import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,11 +167,16 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
                         if (canPay) {
 
                             BigDecimal amount = transaction.getUnallocatedAmount();
+
                             logger.info("First transaction ID = " + transactionId + ", unallocated amount = "
-                                    + amount.toPlainString());
+                                    + TransactionUtils.formatAmount(amount) + ", transaction amount = " +
+                                    TransactionUtils.formatAmount(transaction.getAmount()));
+
                             BigDecimal amount1 = transaction1.getUnallocatedAmount();
+
                             logger.info("Second transaction ID = " + transactionId1 + ", unallocated amount = " +
-                                    amount1.toPlainString());
+                                    TransactionUtils.formatAmount(amount1) + ", transaction amount = " +
+                                    TransactionUtils.formatAmount(transaction1.getAmount()));
 
                             if (amount.compareTo(BigDecimal.ZERO) > 0 && amount1.compareTo(BigDecimal.ZERO) > 0) {
 
@@ -184,7 +190,7 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
                                     amountToAllocate = minAmount;
                                 }
 
-                                logger.info("Amount to allocate = " + amountToAllocate.toPlainString());
+                                logger.info("Amount to allocate = " + TransactionUtils.formatAmount(amountToAllocate));
 
                                 CompositeAllocation allocation = transactionService.createAllocation(transaction,
                                         transaction1, amountToAllocate, isQueued, false, false);
@@ -193,7 +199,7 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
                                         transaction.getTransactionTypeValue() + "(" +
                                         transactionId + ") and " + transaction1.getTransactionTypeValue() +
                                         "(" + transactionId1 + ") transactions. Allocated amount = " +
-                                        allocation.getAllocation().getAmount());
+                                        TransactionUtils.formatAmount(allocation.getAllocation().getAmount()));
 
                                 // Adding new GL transactions to the list
                                 glTransactions.addAll(allocation.getGlTransactions());

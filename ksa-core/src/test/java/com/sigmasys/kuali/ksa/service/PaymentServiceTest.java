@@ -70,10 +70,10 @@ public class PaymentServiceTest extends AbstractServiceTest {
 
         List<Transaction> transactions = new LinkedList<Transaction>();
 
-        transactions.add(transactionService.createTransaction("1310", "admin", new Date(), new BigDecimal(-35.99)));
-        transactions.add(transactionService.createTransaction("cash", "admin", new Date(), new BigDecimal(10e11)));
-        transactions.add(transactionService.createTransaction("cash", "admin", new Date(), new BigDecimal(-10e3)));
-        transactions.add(transactionService.createTransaction("1540", "admin", new Date(), new BigDecimal(10e8)));
+        transactions.add(transactionService.createTransaction("1310", "admin", new Date(), new BigDecimal(350.99)));
+        transactions.add(transactionService.createTransaction("cash", "admin", new Date(), new BigDecimal(100000002)));
+        transactions.add(transactionService.createTransaction("cash", "admin", new Date(), new BigDecimal(308888)));
+        transactions.add(transactionService.createTransaction("1540", "admin", new Date(), new BigDecimal(4000001)));
         transactions.add(transactionService.createTransaction("ach", "admin", new Date(), new BigDecimal(300.07)));
         transactions.add(transactionService.createTransaction("1292", "admin", new Date(), new BigDecimal(-0.98)));
         transactions.add(transactionService.createTransaction("ach", "admin", new Date(), new BigDecimal(524.39)));

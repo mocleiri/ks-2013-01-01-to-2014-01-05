@@ -1079,13 +1079,31 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         BigDecimal unallocatedAmount1 = transaction1.getUnallocatedAmount();
         BigDecimal unallocatedAmount2 = transaction2.getUnallocatedAmount();
 
-        if (unallocatedAmount1.abs().compareTo(newAmount) < 0 || unallocatedAmount2.abs().compareTo(newAmount) < 0) {
+        if (unallocatedAmount1.compareTo(newAmount) < 0 || unallocatedAmount2.compareTo(newAmount) < 0) {
             String errMsg = "Not enough balance to cover the allocation amount " + newAmount;
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
 
-        boolean canAllocate = (unallocatedAmount1.compareTo(BigDecimal.ZERO) > 0 && unallocatedAmount2.compareTo(BigDecimal.ZERO) > 0);
+        TransactionType transactionType1 = transaction1.getTransactionType();
+        TransactionType transactionType2 = transaction2.getTransactionType();
+
+        BigDecimal transactionAmount1 =  transaction1.getAmount();
+        BigDecimal transactionAmount2 =  transaction2.getAmount();
+
+        boolean canAllocate = false;
+
+        if ((transactionType1 instanceof DebitType && transactionType2 instanceof CreditType) ||
+                (transactionType1 instanceof CreditType && transactionType2 instanceof DebitType)) {
+
+            canAllocate = (transactionAmount1.compareTo(BigDecimal.ZERO) > 0 && transactionAmount2.compareTo(BigDecimal.ZERO) > 0);
+
+        } else if ((transactionType1 instanceof DebitType && transactionType2 instanceof DebitType) ||
+                (transactionType1 instanceof CreditType && transactionType2 instanceof CreditType)) {
+
+            canAllocate = (transactionAmount1.compareTo(BigDecimal.ZERO) > 0 && transactionAmount2.compareTo(BigDecimal.ZERO) < 0) ||
+                    (transactionAmount1.compareTo(BigDecimal.ZERO) < 0 && transactionAmount2.compareTo(BigDecimal.ZERO) > 0);
+        }
 
         if (canAllocate) {
 
@@ -1124,7 +1142,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         } else {
             String errMsg = "Illegal allocation. Transaction IDs: " + transactionId1 + ", " + transactionId2 +
-                    " Amount: " + newAmount;
+                    "; Transaction types: " + transaction1.getTransactionType().getId().getId() + ", " +
+                    transaction1.getTransactionType().getId().getId() + "; Amount: " + newAmount;
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
