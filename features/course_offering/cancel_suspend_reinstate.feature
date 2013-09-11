@@ -62,6 +62,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Given I manage a course offering with an approved activity offering present in a locked SOC state
     When I select the activity offering, which is in Approved status
     Then the Suspend button is "enabled"
+    Then I deselect the activity offering, which is in Approved status
 
 #  Scenario: CO 22.1  BSCI421 in 201208  this one has problems because uses the same ref. data as a Cancel test (and gets changed)
 
@@ -78,6 +79,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Given I manage a course offering with a canceled activity offering present
     When I select an activity offering that is in Canceled status
     Then the Suspend button is "disabled"
+    Then I deselect Canceled activity offering
 
   Scenario: CO 23.1 CSR Reinstate button active only for canceled/suspended AOs
     Given I manage a course offering with canceled and offered activity offerings present
@@ -156,7 +158,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Then the Reinstate button is "enabled"
     Then I deselect the first Suspended activity offering
 
-  Scenario: CO 23.3 CSR Reinstate an AO with ADLs that is the only AO in the CO in published SOC state - Scenario 8
+  Scenario: CO 23.3 CSR Reinstate an AO with ADLs that is the only AO in the CO in published SOC state - Scenario 8a
     Given I manage a course offering with a suspended activity offering present in a published SOC state
     When I select activity offering, which is Suspended
     And I reinstate the activity offering
@@ -165,7 +167,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And the registration group is shown as offered
     And the Course Offering is shown as Offered
 
-  Scenario: CO 23.3 CSR Reinstate an AO with ADLs in final edits SOC state - Scenario 9
+  Scenario: CO 23.3 CSR Reinstate an AO with ADLs in final edits SOC state - Scenario 9a
     Given I manage a course offering with a suspended activity offering present in a final edits SOC state
     When I select the activity offering, which is Suspended
     And I reinstate the activity offering
@@ -174,7 +176,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And the registration group is shown as pending
     And the Course Offering is shown as Planned
 
-  Scenario: CO 23.3 CSR Reinstate an AO with ADLs in locked SOC state - Scenario 5
+  Scenario: CO 23.3 CSR Reinstate an AO with ADLs in locked SOC state - Scenario 5a
     Given I manage a course offering with a suspended activity offering present in a locked SOC state
     When I select this activity offering, which is Suspended
     And I reinstate the activity offering
@@ -183,7 +185,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And registration group is shown as pending
     And the Course Offering is now shown as Planned
 
-  Scenario: CO 23.3 CSR Reinstate multiple suspended AOs in published SOC state - Scenario 6
+  Scenario: CO 23.3 CSR Reinstate multiple suspended AOs in published SOC state - Scenario 6a
     Given I manage a course offering with multiple suspended activity offerings present in a published SOC state
     When I select the Suspended activity offerings
     And I reinstate the activity offering
@@ -192,10 +194,45 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And actual delivery logistics for the second Suspended activity offering are still shown
     And both registration groups are shown as offered
 
-  Scenario: CO 23.3 CSR Reinstate suspended and offered AOs in published SOC state - Scenario 7
+  Scenario: CO 23.3 CSR Reinstate suspended and offered AOs in published SOC state - Scenario 7a
     Given I manage a course offering with suspended and offered activity offerings present in a published SOC state
     When I select the Suspended and Offered activity offerings
     And I reinstate the activity offering, verifying that one of the two selections is eligible for this action
     Then the Suspended and Offered activity offerings are both shown as offered
     And actual delivery logistics for the Suspended activity offering are still shown
     And actual delivery logistics for the Offered activity offering are still shown
+
+  Scenario: CO 23.3 CSR Reinstate suspended AO with RDLs in published SOC state - Scenario 1b
+    Given I manage a course offering with one suspended activity offering present in a published SOC state
+    When I select activity offering, which is Suspended status
+    And I reinstate the activity offering
+    Then the Suspended activity offering is shown as draft
+    And requested delivery logistics are still shown and actual delivery logistics are not shown for the second activity offering
+    And the second registration group is shown as pending
+
+  Scenario: CO 23.3 CSR Reinstate an AO with RDLs in final edits SOC state - Scenario 2b
+    Given I manage a course offering with suspended activity offering present in a final edits SOC state
+    When I select activity offering, which is in Suspended status
+    And I reinstate the activity offering
+    Then the Suspended activity offering is shown as draft status
+    And requested delivery logistics are still shown and actual delivery logistics are not shown for the fourth activity offering
+    And the fourth registration group is shown as pending
+
+  Scenario: CO 23.3 CSR Reinstate an AO with RDLs in locked SOC state - Scenario 3b
+    Given I manage a course offering with suspended activity offering present in a locked SOC state
+    When I select activity offering, which is in a Suspended status
+    And I reinstate the activity offering
+    Then the Suspended activity offering is shown as a draft status
+    And requested delivery logistics are still shown and actual delivery logistics are not shown for the activity offering
+    And registration group is shown as pending
+
+  Scenario: CO 23.3 CSR Reinstate multiple suspended AOs with RDLs in published SOC state - Scenario 4b
+    Given I manage a course offering with two suspended activity offerings present in a published SOC state
+    When I select both Suspended activity offerings
+    And I reinstate the activity offering
+    Then both Suspended activity offerings are shown as draft
+    And requested delivery logistics are still shown and actual delivery logistics are not shown for the second activity offering
+    And requested delivery logistics are still shown and actual delivery logistics are not shown for the third activity offering
+    And the second registration group is shown as pending
+    And the third registration group is shown as pending
+
