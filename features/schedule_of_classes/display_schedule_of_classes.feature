@@ -69,7 +69,6 @@ Feature: WC.Schedule of Classes
     And the course offering details displays a listing of registration groups
 
 #KSENROLL-9346
-  @pending
   Scenario: Ensure that only courses in offered state are displayed in AO Cluster rendering
     When I add an Activity Offering in draft status to an existing Course Offering
     And I am using the schedule of classes page
