@@ -76,7 +76,6 @@ Feature: WC.Schedule of Classes
     Then the added Activity Offering is not displayed in the expanded listing rendered by AO Cluster
 
 #KSENROLL-9347
-  @pending
   Scenario: Ensure that only courses in offered state are displayed in Registration Group rendering
     When I add an Activity Offering in draft status to an existing Course Offering
     And I am using the schedule of classes page
