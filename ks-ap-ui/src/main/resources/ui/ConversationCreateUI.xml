@@ -39,7 +39,6 @@
         </property>
 		
 		<property name="headerText" value="New Conversation" />
-		<property name="onDocumentReadyScript" value="jQuery.fancybox.update()" />
 	</bean>
 	
 	<bean id="create_conversation_page" parent="create_conversation_page-parent" />
@@ -78,7 +77,7 @@
 		<property name="items">
 			<list>
 				<bean parent="Uif-MessageField" p:messageText="Start a conversation with..."/>
-				<bean parent="Uif-InputField-LabelTop" p:propertyName="advisorId" p:width="auto" p:required="true">
+				<bean parent="Uif-InputField-LabelTop" p:propertyName="advisorId" p:width="auto">
 					<property name="control">
 						<bean parent="Uif-VerticalRadioControl" />
 					</property>
@@ -335,7 +334,7 @@
 		<property name="disclosure.defaultOpen" value="false"/>
 		<property name="items">
 			<list>
-				<bean parent="Uif-InputField-LabelTop" p:propertyName="selectedBookmarks" p:required="false">
+				<bean parent="Uif-InputField-LabelTop" p:propertyName="selectedBookmarks">
 					<property name="control">
 						<bean parent="Uif-HorizontalCheckboxesControl"/>
 					</property>
@@ -367,7 +366,7 @@
 			<list>
 				<bean id="messageTitleShort" parent="Uif-MessageField" p:messageText="Contact @{selectedAdvisorName} about @{messageTitleShort}"/>
 				<bean id="messageTitleFull" parent="Uif-MessageField" p:messageText="Contact @{selectedAdvisorName} about @{messageTitle}" p:style="display:none;"/>
-			    <bean parent="Uif-InputField" p:propertyName="messageText" p:required="true">
+			    <bean parent="Uif-InputField" p:propertyName="messageText">
 				    <property name="control">
 				 		<bean parent="Uif-TextAreaControl"/>
 				    </property>
