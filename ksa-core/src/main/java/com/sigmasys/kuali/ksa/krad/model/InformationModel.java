@@ -43,6 +43,18 @@ public class InformationModel {
         return information.getEffectiveDate();
     }
 
+    public void setEffectiveDate(Date date) {
+        information.setEffectiveDate(date);
+    }
+
+    public Date getExpirationDate() {
+        return information.getExpirationDate();
+    }
+
+    public void setExpirationDate(Date date) {
+        information.setExpirationDate(date);
+    }
+
     public String getAccessLevel() {
         InformationAccessLevel level = information.getAccessLevel();
         return (level != null) ? level.getName() : "";
@@ -51,4 +63,19 @@ public class InformationModel {
     public String getAuditTooltip() {
         return AuditTooltipUtil.getAuditTooltip(information);
     }
+
+    public String getTransactionName() {
+        if(this.getParentEntity().getTransaction() != null) {
+            return this.getParentEntity().getTransaction().getTransactionType().getDescription();
+        }
+        return "";
+    }
+
+    public Long getTransactionId() {
+        if(this.getParentEntity().getTransaction() != null) {
+            return this.getParentEntity().getTransaction().getId();
+        }
+        return null;
+    }
+
 }

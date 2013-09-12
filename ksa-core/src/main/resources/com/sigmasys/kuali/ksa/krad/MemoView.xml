@@ -39,13 +39,7 @@
                         <list>
                             <bean parent="Uif-Link" p:linkText="Quick View" p:target="_self"
                                   p:href="quickView?methodToCall=get&amp;viewId=QuickView&amp;userId=@{account.id}"/>
-                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="refresh"
-                                  p:actionLabel="Refresh"
-                                  p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
-                            </bean>
                             <ref bean="memoDateRangeSection"/>
-                            <!-- Working on getting memos in a tree instead of a table but this isn't done yet -->
-                            <!--<ref bean="memoTreeSection"/>-->
                             <ref bean="memoTableSection"/>
                         </list>
                     </property>
@@ -150,10 +144,70 @@
         p:layoutManager.numberOfColumns="5"
         p:disclosure.render="false"
         p:progressiveRenderViaAJAX="true"
-        p:instructionalText="The following is a list of memos for the selected account @{account.id}"
         p:width="85%">
         <property name="readOnly" value="true"/>
-        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Memo"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.MemoModel"/>
+        <property name="propertyName" value="memoModels"/>
+        <property name="layoutManager.sequencePropertyName" value="id"/>
+        <property name="layoutManager.richTable.render" value="true"/>
+        <property name="layoutManager.renderSequenceField" value="false"/>
+        <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+        <property name="layoutManager.richTable.disableTableSort" value="false"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-ImageField" p:source="../images/memo.png"/>
+                <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective Date"/>
+                <bean parent="Uif-InputField" p:propertyName="text" p:label="Description"/>
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Actions">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-ImageField" p:source="../images/transaction_transfer_list.png" p:style="cursor:pointer;" p:altText="Memo Details" p:title=""
+                                  p:onClickScript="showLightboxComponent('memoDetailsLightbox@{#lineSuffix}');">
+                                <property name="toolTip">
+                                    <bean parent="Uif-Tooltip" p:tooltipContent="Click to view details"/>
+                                </property>
+                            </bean>
+                            <ref bean="memoDetailsLightbox"/>
+                            <bean parent="Uif-ImageField" p:source="../images/follow-up_memo.png" p:style="cursor:pointer;" p:altText="Add Follow Up" p:title=""
+                                  p:onClickScript="showLightboxComponent('memoAddFollowup@{#lineSuffix}');">
+                                <property name="toolTip">
+                                    <bean parent="Uif-Tooltip" p:tooltipContent="Click to add a follow-up message to this memo"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-ImageField" p:source="../images/audit_guy.png" p:altText="Audit Information" p:title="">
+                                <property name="toolTip">
+                                    <bean parent="Uif-Tooltip" p:tooltipContent="@{#line.auditTooltip}"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-ImageField" p:source="../images/delete.png" p:style="cursor:pointer;" p:altText="Expire memo" p:title=""
+                                  p:onClickScript="showLightboxComponent('memoExpireMemo@{#lineSuffix}');">
+                                <property name="toolTip">
+                                    <bean parent="Uif-Tooltip" p:tooltipContent="Click to expire this memo now"/>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+        <property name="layoutManager.expandDetailsActionPrototype">
+            <bean parent="Uif-ExpandDetailsImageAction" p:render="@{#line.memoModels.size() > 0}"/>
+        </property>
+        <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
+        <property name="layoutManager.rowDetailsGroup">
+            <ref bean="memoTableDetailSection"/>
+        </property>
+
+    </bean>
+
+    <bean id="memoTableDetailSection" parent="Uif-Disclosure-TableCollectionSection"
+          p:layoutManager.numberOfColumns="5"
+          p:disclosure.render="false"
+          p:progressiveRenderViaAJAX="true"
+          p:width="85%">
+        <property name="readOnly" value="true"/>
+        <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.MemoModel"/>
         <property name="propertyName" value="memoModels"/>
         <property name="layoutManager.sequencePropertyName" value="id"/>
         <property name="layoutManager.richTable.render" value="false"/>
@@ -162,85 +216,131 @@
         <property name="layoutManager.richTable.disableTableSort" value="false"/>
         <property name="items">
             <list>
-<!-- TODO New memo field
-                <bean parent="Uif-InputField" p:propertyName="status"
-                      p:label="Status"
-                      p:maxLength="10">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-TextControl" p:size="11"/>
+                <bean parent="Uif-ImageField" p:source="../images/memo.png"/>
+                <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective Date"/>
+                <bean parent="Uif-InputField" p:propertyName="text" p:label="Description"/>
+                <bean parent="Uif-HorizontalFieldGroup" p:label="Actions">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-ImageField" p:source="../images/transaction_transfer_list.png" p:style="cursor:pointer;" p:altText="Memo Details" p:title=""
+                                  p:onClickScript="showLightboxComponent('memoDetailsLightbox@{#lineSuffix}');">
+                                <property name="toolTip">
+                                    <bean parent="Uif-Tooltip" p:tooltipContent="Click to view details"/>
+                                </property>
+                            </bean>
+                            <ref bean="memoDetailsLightbox"/>
+                            <bean parent="Uif-ImageField" p:source="../images/audit_guy.png" p:altText="Audit Information" p:title="">
+                                <property name="toolTip">
+                                    <bean parent="Uif-Tooltip" p:tooltipContent="@{#line.auditTooltip}"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-ImageField" p:source="../images/delete.png" p:style="cursor:pointer;" p:altText="Expire memo" p:title=""
+                                  p:onClickScript="showLightboxComponent('memoExpireMemo@{#lineSuffix}');">
+                                <property name="toolTip">
+                                    <bean parent="Uif-Tooltip" p:tooltipContent="Click to expire this memo now"/>
+                                </property>
+                            </bean>
+                        </list>
                     </property>
                 </bean>
--->
-                <bean parent="Uif-InputField" p:propertyName="effectiveDate"
-                      p:label="Effective Date"
-                      p:maxLength="10"
-                        p:width="10%">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-DateControl" p:size="11"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-InputField" p:propertyName="text"
-                      p:label="Description"
-                      p:width="60%">
-                    <property name="bindingInfo.bindToForm" value="true"/>
-                    <property name="control">
-                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"
-                              p:style="resize:none;"/>
-                    </property>
-                </bean>
-                <!-- using a button means the controller would need to redirect to the appropriate page -->
-                <bean parent="Uif-LinkField" p:linkText="View" p:target="_self" p:align="center" p:width="10%"
-                      p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=ViewMemoPage&amp;userId=@{account.id}&amp;memoId=@{#line.id}"/>
-                <bean parent="Uif-LinkField" p:linkText="Follow-up" p:target="_self" p:align="center" p:width="10%"
-                      p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=FollowUpMemoPage&amp;userId=@{account.id}&amp;memoId=@{#line.id}"/>
-                <bean parent="Uif-LinkField" p:linkText="Update" p:target="_self" p:align="center" p:width="10%"
-                      p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=EditMemoPage&amp;userId=@{account.id}&amp;memoId=@{#line.id}"/>
+
             </list>
         </property>
     </bean>
 
-    <bean id="memoTreeSection" parent="Uif-TreeSection" p:instructionalText="Data Tree">
-        <property name="title" value="Memo List"/>
-        <property name="propertyName" value="memoTree"/>
-        <property name="defaultNodePrototype">
 
-            <!-- our custom node prototype -->
-            <bean class="org.kuali.rice.krad.uif.container.NodePrototype">
-                <!--
-                  Had to comment out this property because of the following message:
-                  Caused by: java.lang.IllegalStateException: Cannot convert value of type [org.kuali.rice.krad.uif.field.MessageField] to required type [org.kuali.rice.krad.uif.element.Message] for property 'labelPrototype': no matching editors or conversion strategy found
-                -->
-                <property name="labelPrototype">
-                    <bean parent="Uif-Message" p:style="white-space: normal; width: 40%"/>
-                </property>
-
-                <property name="dataGroupPrototype">
-                    <bean parent="Uif-VerticalBoxGroup" p:style="margin-left: 2em;">
-                        <property name="items">
-                            <list>
-                                <bean parent="Uif-HorizontalFieldGroup">
-                                    <property name="items">
-                                        <list>
-                                            <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective Date" p:labelPlacement="LEFT" p:readOnly="true"/>
-                                            <bean parent="Uif-LinkField" p:linkText="View" p:target="_self" p:align="center" p:width="10%"
-                                                  p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=ViewMemoPage&amp;userId=@{account.id}&amp;memoId=@{#np.id}"/>
-                                            <bean parent="Uif-LinkField" p:linkText="Follow-up" p:target="_self" p:align="center" p:width="10%"
-                                                  p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=FollowUpMemoPage&amp;userId=@{account.id}&amp;memoId=@{#np.id}"/>
-                                            <bean parent="Uif-LinkField" p:linkText="Update" p:target="_self" p:align="center" p:width="10%"
-                                                  p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=EditMemoPage&amp;userId=@{account.id}&amp;memoId=@{#np.id}"/>
-                                        </list>
-                                    </property>
-                                </bean>
-                            </list>
-                        </property>
-                    </bean>
-                </property>
-            </bean>
+    <bean id="memoDetailsLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+        <property name="hidden" value="true"/>
+        <property name="items">
+            <list>
+                <!--<bean parent="Uif-HeaderTwo" p:headerText="Transaction Details"/>-->
+                <ref bean="memoDetail"/>
+            </list>
         </property>
     </bean>
-    <!-- the end of our Uif-TreeSection -->
+
+
+    <bean id="memoDetail" parent="Uif-VerticalBoxSection" p:headerText="Memo Details">
+        <property name="items">
+            <list>
+                <!-- Item to render is a MemoModel object -->
+                <bean  parent="Uif-Disclosure-VerticalBoxSection" p:headerText="Memo">
+                    <property name="items">
+                        <list>
+
+                            <bean parent="Uif-InputField" p:propertyName="text"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean  parent="Uif-Disclosure-VerticalBoxSection" p:headerText="Information">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-HorizontalBoxGroup">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-InputField" p:propertyName="parentEntity.creatorId" p:label="Created By" p:labelPlacement="TOP" />
+                                        <bean parent="Uif-InputField" p:propertyName="parentEntity.creationDate" p:label="Created On" p:labelPlacement="TOP" />
+                                    </list>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-HorizontalBoxGroup">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-InputField" p:propertyName="parentEntity.editorId" p:label="Edited By" p:labelPlacement="TOP" />
+                                        <bean parent="Uif-InputField" p:propertyName="parentEntity.lastUpdate" p:label="Edited On" p:labelPlacement="TOP" />
+                                    </list>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+                <bean  parent="Uif-Disclosure-VerticalBoxSection" p:headerText="Associations">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:propertyName="parentEntity.account.compositeDefaultPersonName" p:label="Default Name on Account" p:labelPlacement="TOP" />
+                            <bean parent="Uif-InputField" p:propertyName="transactionName" p:label="Transaction" p:labelPlacement="TOP"/>
+                            <!--
+                            <bean parent="Uif-ImageField" p:source="../images/transaction_transfer_list.png"
+                                  p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');"
+                                  p:render="@{!#empty(transactionName)}"/>
+                            <bean id="transactionDetailLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:render="@{!#empty(transactionName)}">
+                                <property name="hidden" value="true"/>
+                                <property name="items">
+                                    <list>
+                                        <ref bean="transactionDetail"/>
+                                    </list>
+                                </property>
+                            </bean>
+                            -->
+                        </list>
+                    </property>
+                </bean>
+                <bean  parent="Uif-Disclosure-VerticalBoxSection" p:headerText="Effective Date Ranges">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Start" p:labelPlacement="TOP" p:readOnly="false">
+                                <property name="control">
+                                    <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="expirationDate" p:label="End" p:labelPlacement="TOP" p:readOnly="false">
+                                <property name="control">
+                                    <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="updateMemo" p:actionLabel="Save"
+                      p:actionParameters="memoId:@{#line.id}" p:onClickScript="jQuery.fancybox.close();"/>
+
+            </list>
+        </property>
+    </bean>
+
+
+
 
     <!--
     *******************************************************************************************************************

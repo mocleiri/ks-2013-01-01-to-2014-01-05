@@ -1,13 +1,11 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.krad.model.MemoModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Memo;
-import org.kuali.rice.core.api.util.tree.Node;
-import org.kuali.rice.core.api.util.tree.Tree;
+import com.sigmasys.kuali.ksa.model.Transaction;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by: dmulderink on 10/4/12 at 7:52 AM
@@ -21,9 +19,7 @@ public class MemoForm extends AbstractViewModel {
 
     private Date toDate;
 
-    private List<Memo> memoModels;
-
-    private Tree<Memo, String> memoTree = new Tree<Memo, String>();
+    private List<MemoModel> memoModels;
 
     private Memo memoModel;
 
@@ -57,11 +53,39 @@ public class MemoForm extends AbstractViewModel {
         this.toDate = toDate;
     }
 
-    public List<Memo> getMemoModels() {
+    public void setMemos(List<Memo> memos) {
+        this.memoModels = new ArrayList<MemoModel>();
+        Map<Long, MemoModel> idList = new HashMap<Long, MemoModel>();
+
+        for(Memo memo : memos) {
+            Memo previousMemo = memo.getPreviousMemo();
+
+            // Make sure the rest of the data is retrieved
+            memo.getAccount().getCompositeDefaultPersonName();
+            Transaction t = memo.getTransaction();
+            if(t != null) {
+                t.getTransactionType().getDescription();
+            }
+
+            MemoModel model = new MemoModel(memo);
+
+            if(previousMemo == null || (!idList.keySet().contains(previousMemo.getId()))) {
+                memoModels.add(model);
+                idList.put(memo.getId(), model);
+            } else {
+                MemoModel parent = idList.get(previousMemo.getId());
+                List<MemoModel> parentModels = parent.getMemoModels();
+                parentModels.add(model);
+            }
+
+        }
+    }
+
+    public List<MemoModel> getMemoModels() {
         return memoModels;
     }
 
-    public void setMemoModels(List<Memo> memoModels) {
+    public void setMemoModels(List<MemoModel> memoModels) {
         this.memoModels = memoModels;
     }
 
@@ -81,44 +105,4 @@ public class MemoForm extends AbstractViewModel {
         this.aefInstructionalText = aefInstructionalText;
     }
 
-    public Tree<Memo, String> getMemoTree(){
-
-        Node<Memo, String> rootNode = new Node<Memo, String>(new Memo(), "Root");
-        memoTree.setRootElement(rootNode);
-
-        if(this.memoModels == null){ return memoTree; }
-
-        List<Long> storedIds = new ArrayList<Long>(memoModels.size());
-        // Need to put the memos in order
-        for(Memo memo : memoModels){
-            addNode(rootNode, new Node<Memo, String>(memo, memo.getText()), storedIds);
-        }
-
-        return memoTree;
-    }
-
-
-    private void addNode(Node<Memo, String> root, Node<Memo, String> newNode, List<Long> storedIds){
-        // Is this really the root?
-        Memo rootMemo = root.getData();
-        Long id = rootMemo.getId();
-
-        Memo newMemo = newNode.getData();
-        Long newId = newMemo.getId();
-
-        if(storedIds.contains(newId)){
-            // Already in the tree somewhere, return.
-            return;
-        }
-
-        root.addChild(newNode);
-        storedIds.add(newId);
-
-        if(newMemo.getNextMemo() != null){
-            Memo next = newMemo.getNextMemo();
-            addNode(newNode, new Node<Memo, String>(next, next.getText()), storedIds);
-        }
-
-
-    }
 }

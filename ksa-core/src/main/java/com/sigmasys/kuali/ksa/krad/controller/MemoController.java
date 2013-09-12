@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.MemoForm;
+import com.sigmasys.kuali.ksa.krad.model.MemoModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.InformationAccessLevel;
 import com.sigmasys.kuali.ksa.model.Memo;
@@ -92,7 +93,7 @@ public class MemoController extends GenericSearchController {
 
             List<Memo> memos = informationService.getMemos(userId);
 
-            form.setMemoModels(memos);
+            form.setMemos(memos);
 
         } else if (pageId != null && pageId.equals("AddMemoPage")) {
             if (userId == null || userId.isEmpty()) {
@@ -240,13 +241,43 @@ public class MemoController extends GenericSearchController {
         // example user1
         String userId = request.getParameter("actionParameters[userId]");
         // a record index from a table selection or a known memoId
-        String memoId = request.getParameter("actionParameters[memoId]");
+        String memoIdString = request.getParameter("actionParameters[memoId]");
+        Long memoId;
+        try {
+            memoId = Long.parseLong(memoIdString);
+        } catch(NumberFormatException e) {
+            GlobalVariables.getMessageMap().putError("MemoView", RiceKeyConstants.ERROR_CUSTOM, "Memo with id " + memoIdString + " is not valid");
+            return getUIFModelAndView(form);
+        }
 
         logger.info("View: " + viewId + " User: " + userId + " Memo ID: " + memoId);
 
-        this.updateMemo(form, memoId);
+        Memo updatedMemo = null;
+        for(MemoModel model : form.getMemoModels()) {
+            if(model.getId().equals(memoId)) {
+                updatedMemo = (Memo)model.getParentEntity();
+            } else {
+                for(MemoModel childModel : model.getMemoModels()) {
+                    if(childModel.getId().equals(memoId)) {
+                        updatedMemo = (Memo) childModel.getParentEntity();
+                        break;
+                    }
+                }
+            }
 
-        return getUIFModelAndView(form);
+            if(updatedMemo != null) {
+                break;
+            }
+        }
+
+        if(updatedMemo != null) {
+            informationService.persistInformation(updatedMemo);
+            GlobalVariables.getMessageMap().putInfo("MemoView", RiceKeyConstants.ERROR_CUSTOM, "Memo updated");
+        } else {
+            GlobalVariables.getMessageMap().putError("MemoView", RiceKeyConstants.ERROR_CUSTOM, "Memo with id " + memoIdString + " not found");
+        }
+
+            return getUIFModelAndView(form);
     }
 
     /**
