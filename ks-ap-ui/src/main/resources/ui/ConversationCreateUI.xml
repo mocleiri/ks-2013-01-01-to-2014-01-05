@@ -267,6 +267,11 @@
         <property name="disclosure.render" value="true"/>
         <property name="layoutManager.lineGroupPrototype.header.render" value="false"/>
         <property name="layoutManager.lineGroupPrototype.disclosure.render" value="true"/>
+        <property name="cssClasses">
+			<list merge="true">
+				<value>indentedContent</value>
+			</list>
+		</property>
         <property name="items">
             <list>
             </list>
@@ -309,6 +314,11 @@
 								<property name="control">
 									<!-- <bean parent="Uif-CheckboxControl" p:checkboxLabel="[span title='@{#line.courseName}']@{#line.courseCode}[/span]"/> -->
 									<bean parent="Uif-CheckboxControl" p:checkboxLabel="[id='course_checkbox_tooltip' messageText='@{#line.courseCode}' toolTip.tooltipContent='@{#line.courseName}']"/>
+								</property>
+								<property name="cssClasses">
+									<list merge="true">
+										<value>checkboxItem</value>
+									</list>
 								</property>
 							</bean>
 						 </list>

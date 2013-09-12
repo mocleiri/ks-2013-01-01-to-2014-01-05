@@ -51,7 +51,7 @@
 	<bean id="conversation_main_page" parent="conversation_main_page-parent" />
 	<bean abstract="true" id="conversation_main_page-parent" parent="Uif-Page" p:id="conversation_main">
 		<property name="layoutManager">
-			<bean parent="Uif-HorizontalBoxLayout" />
+			<bean parent="Uif-VerticalBoxLayout" />
 		</property>
 		<property name="cssClasses">
       		<list merge="true">
@@ -78,7 +78,7 @@
 							<list>
 								<bean parent="Uif-PrimaryActionButton-Small" p:actionLabel="New" p:disabled="@{hasNoAdvisors}" 
 										p:disabledReason="No available advisors"
-										p:actionScript="showLightboxUrl('review/conversation?methodToCall=create@{mockData ? '&amp;mockData=true' : ''}'+ksapAddGetParameters(), {width:'30%', afterClose: function(){
+										p:actionScript="showLightboxUrl('reviewCreate?methodToCall=create@{mockData ? '&amp;mockData=true' : ''}'+ksapAddGetParameters(), {width:'30%', afterClose: function(){
 														retrieveComponent('conversation_controls','ajaxRefresh',null,null,true);
 												}})" />
 							</list>
@@ -87,6 +87,11 @@
 				</property>
 			</bean>
 		</property>
+		<property name="header.headerTagCssClasses">
+            <list merge="true">
+                <value>conversation-summary-itemHeader</value>
+            </list>
+        </property>
 		<property name="items">
 			<list>
 				<bean parent="Uif-MessageField" p:messageText="[hr]"/>
@@ -153,7 +158,7 @@
 	            		</list>
 	        		</property>
 	        		<property name="onClickScript" value="
-	        			location.href='review/view?learningPlanId=@{#line.learningPlanId}';
+	        			location.href='reviewView?learningPlanId=@{#line.learningPlanId}';
 	        			"/>
                     <property name="items">
                         <list>
