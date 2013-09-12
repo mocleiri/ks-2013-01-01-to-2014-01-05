@@ -30,6 +30,7 @@ import org.kuali.student.myplan.academicplan.model.PlanItemEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemRichTextEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemTypeEntity;
 import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
 import org.kuali.student.r2.common.entity.BaseAttributeEntity;
@@ -487,7 +488,18 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		}
 
 		//  Update text entity.
-		planItemEntity.setDescr(new PlanItemRichTextEntity(planItem.getDescr()));
+		RichTextInfo descrInfo = planItem.getDescr();
+		if (descrInfo == null) {
+			planItemEntity.setDescr(null);
+		} else {
+			PlanItemRichTextEntity descr = planItemEntity.getDescr();
+			if (descr == null) {
+				descr = new PlanItemRichTextEntity(planItem.getDescr());
+			} else {
+				descr.setPlain(descrInfo.getPlain());
+				descr.setFormatted(descrInfo.getFormatted());
+			}
+		}
 
 		//  Update meta data.
 		planItemEntity.setUpdateId(context.getPrincipalId());
