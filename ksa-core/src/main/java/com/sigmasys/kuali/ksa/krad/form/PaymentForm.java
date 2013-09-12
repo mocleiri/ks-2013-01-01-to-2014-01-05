@@ -50,6 +50,7 @@ public class PaymentForm extends AbstractViewModel {
     private Memo memoModel;
     private boolean ageAccount;
     private boolean allocatePayment;
+    private boolean runPaymentApplication;
     private boolean addAdditionalPayment;
 
 
@@ -299,5 +300,13 @@ public class PaymentForm extends AbstractViewModel {
 
     public void setAllocations(List<TransactionModel> models) {
         this.allocations = models;
+    }
+
+    public boolean isRunPaymentApplication() {
+        return runPaymentApplication;
+    }
+
+    public void setRunPaymentApplication(boolean runPaymentApplication) {
+        this.runPaymentApplication = runPaymentApplication;
     }
 }

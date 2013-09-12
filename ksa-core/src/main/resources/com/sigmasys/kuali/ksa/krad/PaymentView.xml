@@ -289,6 +289,11 @@
                         <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Allocate this payment"/>
                     </property>
                 </bean>
+                <bean parent="Uif-InputField" p:propertyName="runPaymentApplication">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Run Payment Application"/>
+                    </property>
+                </bean>
                 <bean parent="Uif-InputField" p:propertyName="addAdditionalPayment">
                     <property name="control">
                         <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Add another payment"/>

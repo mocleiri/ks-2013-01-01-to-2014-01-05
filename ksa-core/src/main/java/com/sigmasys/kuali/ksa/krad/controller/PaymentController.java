@@ -193,8 +193,22 @@ public class PaymentController extends GenericSearchController {
 
         if (payment != null && payment.getId() != null && form.isAgeAccount()) {
             accountService.ageDebt(payment.getAccount().getId(), false);
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Account Aged");
+
         }
 
+        if(form.isRunPaymentApplication()) {
+            if (userId != null && !userId.trim().isEmpty()) {
+                try {
+                    paymentService.paymentApplication(userId);
+
+                    GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Payments successfully applied");
+                } catch(Throwable e) {
+                    GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getLocalizedMessage());
+                    return getUIFModelAndView(form);
+                }
+            }
+        }
         // determine next screen and set up data
         if(form.isAllocatePayment()){
             form.setPageId(ALLOCATE_PAYMENT_PAGE);
