@@ -28,7 +28,8 @@ Then /^the course offering details for a particular offering can be shown$/ do
 end
 
 And /^the subterm icon appears with the subterm information$/ do
-  icon_title_text = "This activity is in Half Fall 1 - 08/28/2012 - 10/20/2012"
+  #icon_title_text = "This activity is in Half Fall 1 - 08/28/2012 - 10/20/2012"  # local env
+  icon_title_text = "This activity is in Half Fall 1 - 08/29/2012 - 10/21/2012"   # env2
   #TODO: look up text above (term name & dates) from CO & ACal pages
   on DisplayScheduleOfClasses do |page|
     if !page.details_table.exists?
