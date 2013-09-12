@@ -197,3 +197,15 @@ Then /^the exam period for the copied course offering should match that of the o
     page.final_exam_driver_value.should == "No final exam for this offering"
   end
 end
+
+Then /^the Use Exam Matrix checkbox should only be present for the Standard Final Exam$/ do
+  on CreateCOFromCatalog do |page|
+    page.final_exam_option_standard
+    page.use_exam_matrix_div.present?.should == true
+    page.final_exam_option_alternate
+    page.use_exam_matrix_div.present?.should == false
+    page.final_exam_option_none
+    page.use_exam_matrix_div.present?.should == false
+    page.create_offering
+  end
+end

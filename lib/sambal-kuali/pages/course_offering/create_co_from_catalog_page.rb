@@ -26,7 +26,11 @@ class CreateCOFromCatalog < BasePage
   action(:final_exam_option_none) { |b| b.frm.radio(value: "NONE").set; b.loading.wait_while_present }
 
   element(:final_exam_driver_div) { |b| b.frm.div(id: "KS-CourseOfferingEdit-FinalExamDriver")}
-  action(:final_exam_driver_select) { |driver,b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control").select driver}
+  action(:final_exam_driver_select) { |driver,b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control").select driver; b.loading.wait_while_present }
+
+  element(:use_exam_matrix_div) { |b| b.frm.div(id: "finalExamMatrix")}
+  element(:use_exam_matrix_label) { |b| b.use_exam_matrix_div.label(id: "finalExamMatrix_label")}
+  action(:use_exam_matrix) { |b| b.use_exam_matrix_label.click; b.loading.wait_while_present }
 
   #element(:cross_listed_co_check_boxes) { |b| b.frm.dvi(id:"KS-CoListed-Checkbox-Group")}
   element(:cross_listed_co_check_box) { |b| b.checkbox(id: "KS-COEditListed-Checkbox-Group_control_0") }
