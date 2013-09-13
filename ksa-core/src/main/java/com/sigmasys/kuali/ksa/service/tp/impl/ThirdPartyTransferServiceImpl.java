@@ -401,6 +401,17 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
+     * Retrieves ThirdPartyPlanMember objects from the persistent store for the given plan ID.
+     *
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @return list of ThirdPartyPlanMember instances
+     */
+    @Override
+    public List<ThirdPartyPlanMember> getThirdPartyPlanMembers(Long thirdPartyPlanId) {
+        return getThirdPartyPlanMembers(thirdPartyPlanId, null);
+    }
+
+    /**
      * Retrieves ThirdPartyPlanMember instance from the persistent store by TP plan ID abd Account ID.
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID
@@ -409,20 +420,26 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     public ThirdPartyPlanMember getThirdPartyPlanMember(Long thirdPartyPlanId, String accountId) {
+        List<ThirdPartyPlanMember> planMembers = getThirdPartyPlanMembers(thirdPartyPlanId, accountId);
+        return CollectionUtils.isNotEmpty(planMembers) ? planMembers.get(0) : null;
+    }
+
+    protected List<ThirdPartyPlanMember> getThirdPartyPlanMembers(Long thirdPartyPlanId, String accountId) {
 
         PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN_MEMBER);
 
         Query query = em.createQuery("select m from ThirdPartyPlanMember m " +
                 " inner join fetch m.directChargeAccount a " +
                 " inner join fetch m.plan p " +
-                " where p.id = :planId and a.id = :accountId");
+                " where p.id = :planId " + ((accountId != null) ? "and a.id = :accountId" : ""));
 
         query.setParameter("planId", thirdPartyPlanId);
-        query.setParameter("accountId", accountId);
 
-        List<ThirdPartyPlanMember> planMembers = query.getResultList();
+        if (accountId != null) {
+            query.setParameter("accountId", accountId);
+        }
 
-        return CollectionUtils.isNotEmpty(planMembers) ? planMembers.get(0) : null;
+        return query.getResultList();
     }
 
 

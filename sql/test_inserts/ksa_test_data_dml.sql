@@ -1507,13 +1507,13 @@ global List holdIssueNames
 ')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (8, 'Block 1', 3, 0, null,
- '(Account ID is "admin") and Permission is "CREATE_PAYMENT" and Transaction Type is "cash"', 'Apply block')!
+ '(Account ID is "user1" and Permission is "CREATE_PAYMENT" and Transaction Type is "cash")', 'Apply block')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (9, 'Block 2', 3, 0, null,
- 'ATP is "20002001HOLIDAYCALENDAR" and Hold Issue is "Unpaid Library Fine"', 'Apply block')!
+ '(ATP is "20002001HOLIDAYCALENDAR" and Hold Issue is "Unpaid Library Fine")', 'Apply block')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (10, 'Block 3', 3, 0, null,
- 'ATP is "20122" and Hold Issue is "Disciplinary Suspension" and Permission is "CREATE_REFUND"', 'Apply block')!
+ '(ATP is "20122" and Hold Issue is "Disciplinary Suspension" and Permission is "CREATE_REFUND")', 'Apply block')!
 
 --- PA associations
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 1)!

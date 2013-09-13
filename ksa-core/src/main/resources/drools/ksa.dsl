@@ -31,7 +31,7 @@
 
 
 # ACCOUNT BLOCKING DSL definitions
-# Assumption: transactionTypeId, atpId, holdIssueName, permission are global parameters
+# Assumption: transactionTypeIds, atpIds, holdIssueNames, permissionNames are global parameters
 
 # LHS definitions
 [when][]ATP is "{atpId}" = eval(atpIds.contains("{atpId}"))

@@ -148,6 +148,14 @@ public interface ThirdPartyTransferService {
     List<ThirdPartyAllowableCharge> getThirdPartyAllowableCharges(Long thirdPartyPlanId);
 
     /**
+     * Retrieves ThirdPartyPlanMember objects from the persistent store for the given plan ID.
+     *
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @return list of ThirdPartyPlanMember instances
+     */
+    List<ThirdPartyPlanMember> getThirdPartyPlanMembers(Long thirdPartyPlanId);
+
+    /**
      * Retrieves ThirdPartyPlanMember instance from the persistent store by TP plan ID abd Account ID.
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID

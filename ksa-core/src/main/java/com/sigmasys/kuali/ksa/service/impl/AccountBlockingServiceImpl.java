@@ -40,7 +40,7 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
 
 
     private static final String GET_BLOCK_OVERRIDE_SELECT = "select a from AccountBlockOverride a " +
-            "inner join fetch a.account ac" +
+            "inner join fetch a.account ac " +
             "inner join fetch a.rule r " +
             "inner join fetch r.type t ";
 
