@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.service;
 
 
+import com.sigmasys.kuali.ksa.exception.AccountBlockedException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import org.junit.Before;
@@ -26,7 +27,6 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
     private AccountBlockingService accountBlockingService;
 
 
-
     @Before
     public void setUpWithinTransaction() {
         // Set up test data within the transaction
@@ -48,7 +48,22 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
 
         attributes.put(Constants.BRM_AB_TRANSACTION_TYPE_IDS, transactionTypeIds);
 
-        accountBlockingService.checkBlock(userId, attributes, Permission.CREATE_PAYMENT, Permission.CREATE_CHARGE);
+        try {
+
+            accountBlockingService.checkBlock(userId, attributes, Permission.CREATE_PAYMENT, Permission.CREATE_CHARGE);
+
+        } catch (AccountBlockedException abe) {
+
+            logger.info(abe.getMessage());
+
+            Assert.notNull(abe.getAccountId());
+            Assert.notNull(abe.getBlockNames());
+
+            Assert.isTrue(abe.getAccountId().equals(userId));
+            Assert.notEmpty(abe.getBlockNames());
+            Assert.isTrue(abe.getBlockNames().contains("Block 1"));
+
+        }
 
     }
 
