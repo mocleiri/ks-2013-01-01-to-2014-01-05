@@ -42,7 +42,7 @@ class DisplayScheduleOfClasses < BasePage
 
   element(:course_not_found_info_message_div) { |b| b.frm.div(id: "u96") }
 
-  action(:show) { |b| b.frm.button(id: "show_button").click; b.loading.wait_while_present}
+  action(:show) { |b| b.frm.button(id: "show_button").click; b.loading.wait_while_present(60)}
 
   element(:course_search_text_info_message) { |b| b.frm.span(id: "course_search_text_info_message") }
 
@@ -110,6 +110,10 @@ class DisplayScheduleOfClasses < BasePage
 
   def course_description(course_code) #must call 'course_expand' first
     target_course_row(course_code).div(id: /findThisId/).p.text
+  end
+
+  def get_requisites_message_text(course_code)
+    target_course_row(course_code).cells[EXPAND_ACTION_COLUMN].span(class: "uif-message").text
   end
 
   REG_GROUP_COLUMN = 0

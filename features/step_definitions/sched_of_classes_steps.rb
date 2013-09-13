@@ -121,3 +121,16 @@ Then /^the course offering details displays a listing of registration groups$/ d
     page.get_reg_group_list.should == @schedule_of_classes.exp_reg_group_list
   end
 end
+
+When /^I search for course offerings by course by entering a course offering code to view the course offering requisites$/ do
+  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "ENGL304", :exp_course_list => ["ENGL304"],
+                                                 :term => "Fall 2012"
+  @schedule_of_classes.display
+end
+
+Then /^the course offering requisites should be displayed stating "([^"]+)"$/ do |exp_msg|
+  @schedule_of_classes.expand_course_details
+  on DisplayScheduleOfClasses do |page|
+    page.get_requisites_message_text(@schedule_of_classes.course_search_parm).should match /#{exp_msg}/
+  end
+end

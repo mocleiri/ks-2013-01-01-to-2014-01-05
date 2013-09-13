@@ -82,6 +82,12 @@ Feature: WC.Schedule of Classes
     And I search for the Course Offering in the schedule of classes
     Then the added Activity Offering is not displayed in the expanded listing rendered by Registration Group
 
+#KSENROLL-9414
+  @draft
+  Scenario: Confirm requisites' natural language for a particular course is displayed correctly
+    When I search for course offerings by course by entering a course offering code to view the course offering requisites
+    Then the course offering requisites should be displayed stating "Student Eligibility & Prerequisite.*Two lower-level English courses.*Or permission of ARHU-English.*Antirequisite.*any courses from ENGL403 or ENGL404"
+
 # Scenario: Verify that an appropriate message is displayed if no data is returned by the search
 #  Scenario: Verify that an appropriate message is displayed if no criteria is entered for search by Course
 #  Scenario: Verify that an appropriate message is displayed if no criteria is entered for search by Department
