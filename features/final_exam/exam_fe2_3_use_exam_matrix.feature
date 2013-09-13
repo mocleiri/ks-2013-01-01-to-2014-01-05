@@ -10,10 +10,4 @@ Feature: SA.FE2-3 Use Exam Matrix or not
   @pending
   Scenario: Test whether the Use Exam Matrix checkbox is only available for Standard FE
     When I create a Course Offering from catalog with a final exam period
-    Then the Use Exam Matrix checkbox should only be present for the Standard Final Exam
-
-  #FE2.3.EB2 (KSENROLL-9244)
-  @pending
-  Scenario: Test whether the user can choose between matrix only, no matrix or both after Use Exam Matrix has been selected
-    When I create a Course Offering from catalog with a final exam period
-    Then there should be three options to choose from after the Use Exam Matrix checkbox has been selected
+    Then the option for the Use Final Exam Matrix should only be available for a course offering with a Standard Final Exam

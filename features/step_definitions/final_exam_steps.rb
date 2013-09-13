@@ -78,30 +78,44 @@ When /^I create and then edit a Course Offering from catalog with an alternate f
 end
 
 When /^I create a Course Offering from an existing course offering with no final exam period$/ do
-  @course_offering = make CourseOffering, :term => "201301", :course => "PHYS603"
+  @course_offering = make CourseOffering, :term => "201301", :course => "CHEM272"
   @course_offering.manage
-
   on ManageCourseOfferings do |page|
+    page.loading.wait_while_present
+    page.alert.ok
     page.edit_course_offering
   end
+  @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
   on CourseOfferingEdit do |page|
-    page.final_exam_option_none
     page.submit
   end
 
-  @course_offering.start_create_by_search
-  on CreateCourseOffering do |page|
-    page.choose_from_existing
-    page.continue
-  end
-  on CreateCOFromExisting do |page|
-    page.select_copy_for_existing_course(@course_offering.term, @course_offering.course)
-    page.create
-  end
-
+  @course_offering_copy = create CourseOffering, :term=> term , :create_from_existing => @course_offering
   on ManageCourseOfferings do |page|
     page.edit_course_offering
   end
+
+  #on ManageCourseOfferings do |page|
+  #  page.loading.wait_while_present
+  #  page.alert.ok
+  #  page.edit_course_offering
+  #end
+  #on CourseOfferingEdit do |page|
+  #  page.final_exam_option_none
+  #  page.submit
+  #end
+  #
+  #@course_offering.start_create_by_search
+  #on CreateCourseOffering do |page|
+  #  page.choose_from_existing
+  #  page.continue
+  #end
+  #on CreateCOFromExisting do |page|
+  #  page.select_copy_for_existing_course(@course_offering.term, @course_offering.course)
+  #  page.create
+  #end
+
+
 end
 
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
@@ -198,7 +212,7 @@ Then /^the exam period for the copied course offering should match that of the o
   end
 end
 
-Then /^the Use Exam Matrix checkbox should only be present for the Standard Final Exam$/ do
+Then /^the option for the Use Final Exam Matrix should only be available for a course offering with a Standard Final Exam$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_standard
     page.use_exam_matrix_div.present?.should == true
