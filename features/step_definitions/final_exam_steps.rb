@@ -155,7 +155,7 @@ Then /^the Final Exam Driver Activity value should change each time I choose ano
   end
 end
 
-Then /^the Final Exam Driver dropdown should only be present for the Standard Final Exam$/ do
+Then /^the option to specify a Final Exam Driver should only be available for a course offering with a Standard Final Exam$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_standard
     page.final_exam_driver_div.present?.should == true
@@ -173,7 +173,7 @@ Then /^a warning about the FE on the Edit CO page is displayed stating "([^"]*)"
   end
 end
 
-Then /^the Final Exam Driver column should be populated with text corresponding to the chosen driver$/ do
+Then /^the status of the Final Exam Driver should change to indicate the driver chosen for the Standard Final Exam$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_standard
     page.final_exam_driver_select "Final Exam Per Activity Offering"

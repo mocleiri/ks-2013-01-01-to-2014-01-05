@@ -9,13 +9,13 @@ Feature: SA.FE2-2 Create Exam from AO or CO
   @pending
   Scenario: Test whether the Final Exam Driver dropdown is only available for Standard FE
     When I create a Course Offering from catalog with a final exam period
-    Then the Final Exam Driver dropdown should only be present for the Standard Final Exam
+    Then the option to specify a Final Exam Driver should only be available for a course offering with a Standard Final Exam
 
   #FE2.2.EB2 (KSENROLL-9243)
   @pending
   Scenario: Test whether the FE Driver column's value changes when changing the Driver
     When I create a Course Offering from catalog with a final exam period
-    Then the Final Exam Driver column should be populated with text corresponding to the chosen driver
+    Then the status of the Final Exam Driver should change to indicate the driver chosen for the Standard Final Exam
 
   #FE2.3.EB2 (KSENROLL-9243)
   @pending
