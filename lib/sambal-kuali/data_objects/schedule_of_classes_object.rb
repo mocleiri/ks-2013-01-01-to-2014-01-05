@@ -70,7 +70,7 @@ class ScheduleOfClasses
         when "Title & Description" then page.title_description_search_parm.set @keyword
         else raise "ScheduleOfClasses - search type not recognized"
       end
-
+      sleep(1)
       page.show
     end
   end
