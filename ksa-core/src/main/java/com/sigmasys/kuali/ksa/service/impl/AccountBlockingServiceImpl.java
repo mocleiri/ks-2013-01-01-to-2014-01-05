@@ -227,29 +227,29 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
     }
 
     /**
-     * Checks if there is an account block set for the current user based on the permission and account attributes.
+     * Checks if there is an account block set for the current user based on the permissions and account attributes.
      *
-     * @param permission Permission value
-     * @param attributes Account attributes
+     * @param attributes  Account attributes
+     * @param permissions Permission values
      * @throws AccountBlockedException
      */
     @Override
     @Transactional(readOnly = false, noRollbackFor = AccountBlockedException.class)
-    public void checkBlock(Permission permission, Map<String, Object> attributes) throws AccountBlockedException {
-        checkBlock(userSessionManager.getUserId(), permission, attributes);
+    public void checkBlock(Map<String, Object> attributes, Permission... permissions) throws AccountBlockedException {
+        checkBlock(userSessionManager.getUserId(), attributes, permissions);
     }
 
     /**
-     * Checks if there is an account block set for the given Account ID based on the permission and account attributes.
+     * Checks if there is an account block set for the given Account ID based on the permissions and account attributes.
      *
-     * @param accountId  Account ID
-     * @param permission Permission value
-     * @param attributes Account attributes
+     * @param accountId   Account ID
+     * @param attributes  Account attributes
+     * @param permissions Permission values
      * @throws AccountBlockedException
      */
     @Override
     @Transactional(readOnly = false, noRollbackFor = AccountBlockedException.class)
-    public void checkBlock(String accountId, Permission permission, Map<String, Object> attributes) throws AccountBlockedException {
+    public void checkBlock(String accountId, Map<String, Object> attributes, Permission... permissions) throws AccountBlockedException {
 
         Account account = accountService.getFullAccount(accountId);
         if (account == null) {
@@ -270,31 +270,48 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
 
         Map<String, Object> globalParams = new HashMap<String, Object>();
 
-        globalParams.put("blockNames", new LinkedList<String>());
-        globalParams.put("permission", permission);
+        globalParams.put(Constants.BRM_AB_BLOCK_NAMES, new LinkedList<String>());
 
-        String atpId = (String) attributes.get("atpId");
-        if (atpId == null) {
-            atpId = "";
+        List<String> permissionNames = new ArrayList<String>(permissions.length);
+        for ( Permission permission : permissions) {
+            permissionNames.add(permission.name());
         }
 
-        globalParams.put("atpId", atpId);
+        globalParams.put(Constants.BRM_AB_PERMISSION_NAMES, permissionNames);
 
-        String holdIssueId = (String) attributes.get("holdIssueId");
-        if (holdIssueId == null) {
-            holdIssueId = "";
+        List<String> atpIds = (List<String>) attributes.get(Constants.BRM_AB_ATP_IDS);
+        if (atpIds == null) {
+            atpIds = Collections.emptyList();
         }
 
-        globalParams.put("holdIssueId", holdIssueId);
+        globalParams.put(Constants.BRM_AB_ATP_IDS, atpIds);
+
+        List<String> holdIssueNames = (List<String>) attributes.get(Constants.BRM_AB_HOLD_ISSUE_NAMES);
+        if (holdIssueNames == null) {
+            holdIssueNames = Collections.emptyList();
+        }
+
+        globalParams.put(Constants.BRM_AB_HOLD_ISSUE_NAMES, holdIssueNames);
+
+        List<String> transactionTypeIds = (List<String>) attributes.get(Constants.BRM_AB_TRANSACTION_TYPE_IDS);
+        if (transactionTypeIds == null) {
+            transactionTypeIds = Collections.emptyList();
+        }
+
+        globalParams.put(Constants.BRM_AB_TRANSACTION_TYPE_IDS, transactionTypeIds);
 
 
+        // Adding global variables to BRM context
         brmContext.setGlobalVariables(globalParams);
 
+        // Adding attributes to BRM context
         brmContext.setAttributes(attributes);
 
-        brmService.fireRules(Constants.DROOLS_AB_RULE_SET_NAME, brmContext);
+        // Firing Account Blocking rules
+        brmService.fireRules(Constants.BRM_AB_RULE_SET_NAME, brmContext);
 
-        Set<String> blockNames = (Set<String>) globalParams.get("blockNames");
+        // Getting the affected block names from the global parameters
+        Set<String> blockNames = (Set<String>) globalParams.get(Constants.BRM_AB_BLOCK_NAMES);
 
         if (CollectionUtils.isNotEmpty(blockNames)) {
 
@@ -324,7 +341,7 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
             }
 
             if (accountIsBlocked) {
-                throw new AccountBlockedException(accountId, permission, blockNames);
+                throw new AccountBlockedException(accountId, blockNames);
             }
         }
 

@@ -1,8 +1,6 @@
 package com.sigmasys.kuali.ksa.exception;
 
 
-import com.sigmasys.kuali.ksa.model.security.Permission;
-
 import java.util.Set;
 
 /**
@@ -10,13 +8,13 @@ import java.util.Set;
  *
  * @author Michael Ivanov
  */
-public class AccountBlockedException extends PermissionDeniedException {
+public class AccountBlockedException extends GenericException {
 
     private Set<String> blockNames;
 
 
-    public AccountBlockedException(String userId, Permission permission, Set<String> blockNames) {
-        super(userId, permission);
+    public AccountBlockedException(String accountId, Set<String> blockNames) {
+        super("Account '" + accountId + "' is blocked");
         this.blockNames = blockNames;
     }
 

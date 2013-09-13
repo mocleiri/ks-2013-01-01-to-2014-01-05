@@ -10,6 +10,7 @@ import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
+import com.sigmasys.kuali.ksa.service.atp.AtpService;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
@@ -21,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
-import org.kuali.student.r2.core.atp.service.AtpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -872,6 +872,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return true if the ATP ID exists, false - otherwise
      */
     @Override
+    @Transactional(readOnly = true, noRollbackFor = DoesNotExistException.class)
     public boolean atpExists(String atpId) {
         // Checking if the ATP ID exists using AtpService
         boolean atpExists;

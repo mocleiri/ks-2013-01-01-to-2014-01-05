@@ -38,11 +38,18 @@ public interface Constants {
     // Charge constants
     String CHARGE_DEFAULT_CANCELLATION_RULE = "ksa.charge.cancellation.rule";
 
-    // Drools parameters
-    String DROOLS_CLASSPATH = "drools";
-    String DROOLS_FM_RULE_SET_NAME = "Fee Management";
-    String DROOLS_PA_RULE_SET_NAME = "Payment Application";
-    String DROOLS_AB_RULE_SET_NAME = "Account Block";
+    // BRM parameters
+    String BRM_CLASSPATH = "drools";
+    String BRM_FM_RULE_SET_NAME = "Fee Management";
+    String BRM_PA_RULE_SET_NAME = "Payment Application";
+    String BRM_AB_RULE_SET_NAME = "Account Block";
+
+    // BRM account blocking parameter names
+    String BRM_AB_BLOCK_NAMES = "blockNames";
+    String BRM_AB_PERMISSION_NAMES = "permissionNames";
+    String BRM_AB_HOLD_ISSUE_NAMES = "holdIssueNames";
+    String BRM_AB_ATP_IDS = "atpIds";
+    String BRM_AB_TRANSACTION_TYPE_IDS = "transactionTypeIds";
 
     // Quick View parameters
     String QUICKVIEW_INFORMATION_COUNT = "ksa.quickview.information.count";
@@ -54,7 +61,7 @@ public interface Constants {
     String APPLICATION_HOST_PARAM_NAME = "application.host";
 
     // Fee management constants
-    String KSA_FM_PRECLEAR_MANIFEST = "ksa.fm.preclear.manifest";
+    String FM_PRECLEAR_MANIFEST = "ksa.fm.preclear.manifest";
 
     // ---------------------------------------------------------------
     // DATE FORMATS
@@ -101,7 +108,6 @@ public interface Constants {
     // KFS constants (mostly used by Transaction XML export services)
     String KFS_CHART_OF_ACCOUNTS_CODE_PARAM_NAME = "kfs.coa.code";
     String KFS_ORGANIZATION_CODE_PARAM_NAME = "kfs.organization.code";
-    String KFS_BATCH_NUMBER_PREFIX_PARAM_NAME = "kfs.batch.number.prefix";
     String KFS_DOCUMENT_NUMBER_PREFIX_PARAM_NAME = "kfs.document.number.prefix";
     String KFS_EMAIL_ADDRESS_PARAM_NAME = "kfs.email.address";
     String KFS_POSTAL_ADDRESS_PARAM_NAME = "kfs.postal.address";

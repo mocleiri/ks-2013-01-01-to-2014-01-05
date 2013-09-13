@@ -106,7 +106,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
         
         // Optionally, remove inverse manifests from the list of current manifests:
-        boolean preclearCurrentManifests = BooleanUtils.toBoolean(configService.getParameter(Constants.KSA_FM_PRECLEAR_MANIFEST));
+        boolean preclearCurrentManifests = BooleanUtils.toBoolean(configService.getParameter(Constants.FM_PRECLEAR_MANIFEST));
         
         if (preclearCurrentManifests) {
         	// Remove inverse manifests:

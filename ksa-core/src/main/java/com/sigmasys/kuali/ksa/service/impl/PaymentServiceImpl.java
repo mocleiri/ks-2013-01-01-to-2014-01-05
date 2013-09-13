@@ -248,7 +248,7 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
 
         brmContext.setGlobalVariables(globalParams);
 
-        brmService.fireRules(Constants.DROOLS_PA_RULE_SET_NAME, brmContext);
+        brmService.fireRules(Constants.BRM_PA_RULE_SET_NAME, brmContext);
 
         return (List<GlTransaction>) globalParams.get("resultList");
     }

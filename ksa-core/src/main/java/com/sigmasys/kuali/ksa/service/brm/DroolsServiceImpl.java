@@ -39,7 +39,7 @@ public class DroolsServiceImpl implements BrmService {
     private static final Log logger = LogFactory.getLog(DroolsServiceImpl.class);
 
 
-    public static final String DSL_FILE_NAME = Constants.DROOLS_CLASSPATH + "/" + "ksa.dsl";
+    public static final String DSL_FILE_NAME = Constants.BRM_CLASSPATH + "/" + "ksa.dsl";
 
     public static final String DROOLS_CONTEXT_NAME = "droolsContext";
 

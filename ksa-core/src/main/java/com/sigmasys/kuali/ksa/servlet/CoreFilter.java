@@ -159,7 +159,7 @@ public class CoreFilter implements Filter {
                 // Very simple password checking. Nothing hashed or encrypted.
                 final IdentityService identityService = KimApiServiceLocator.getIdentityService();
                 if (identityService == null) {
-                    String errMsg = "IdentityService cannot be null.";
+                    String errMsg = "IdentityService cannot be null";
                     logger.error(errMsg);
                     invalidateSession(request, response, errMsg);
                     return false;
@@ -240,7 +240,7 @@ public class CoreFilter implements Filter {
 
                 // If this is an ajax request, don't send the login form, send a 403 that the krad.initialize.js set up to catch.
                 String requestedWith = request.getHeader("X-Requested-With");
-                if("XMLHttpRequest".equals(requestedWith)) {
+                if ("XMLHttpRequest".equals(requestedWith)) {
                     response.resetBuffer();
                     response.sendError(403, request.getContextPath());
                     return false;

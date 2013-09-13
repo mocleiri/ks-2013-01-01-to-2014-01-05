@@ -2,9 +2,9 @@ package com.sigmasys.kuali.ksa.service.brm;
 
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.service.*;
+import com.sigmasys.kuali.ksa.service.atp.AtpService;
+import com.sigmasys.kuali.ksa.service.hold.HoldService;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
-import org.kuali.student.r2.core.atp.service.AtpService;
-import org.kuali.student.r2.core.hold.service.HoldService;
 
 import java.io.Serializable;
 import java.util.HashMap;

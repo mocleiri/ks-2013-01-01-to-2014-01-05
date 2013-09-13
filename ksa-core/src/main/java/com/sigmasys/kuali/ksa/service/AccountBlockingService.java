@@ -76,23 +76,23 @@ public interface AccountBlockingService {
     AccountBlockOverride disableAccountBlockOverride(Long blockOverrideId);
 
     /**
-     * Checks if there is an account block set for the current user based on the permission and account attributes.
+     * Checks if there is an account block set for the current user based on the permissions and account attributes.
      *
-     * @param permission Permission value
-     * @param attributes Account attributes
+     * @param attributes  Account attributes
+     * @param permissions Permission values
      * @throws AccountBlockedException
      */
-    void checkBlock(Permission permission, Map<String, Object> attributes) throws AccountBlockedException;
+    void checkBlock(Map<String, Object> attributes, Permission... permissions);
 
     /**
-     * Checks if there is an account block set for the given Account ID based on the permission and account attributes.
+     * Checks if there is an account block set for the given Account ID based on the permissions and account attributes.
      *
-     * @param accountId  Account ID
-     * @param permission Permission value
-     * @param attributes Account attributes
+     * @param accountId   Account ID
+     * @param attributes  Account attributes
+     * @param permissions Permission values
      * @throws AccountBlockedException
      */
-    void checkBlock(String accountId, Permission permission, Map<String, Object> attributes) throws AccountBlockedException;
+    void checkBlock(String accountId, Map<String, Object> attributes, Permission... permissions) throws AccountBlockedException;
 
 
 }

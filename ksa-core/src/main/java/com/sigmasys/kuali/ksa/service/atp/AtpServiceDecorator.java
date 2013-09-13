@@ -10,10 +10,13 @@ import org.kuali.student.r2.core.class1.atp.service.impl.AtpServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * KSA-specific ATP service implementation.
+ * KSA-specific AtpService implementation.
+ *
+ * @author Michael Ivanov
  */
 @Transactional
-public class AtpServiceDecorator extends AtpServiceImpl {
+public class AtpServiceDecorator extends AtpServiceImpl implements AtpService {
+
 
     @Override
     public AtpInfo updateAtp(String atpId, AtpInfo atpInfo, ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException {

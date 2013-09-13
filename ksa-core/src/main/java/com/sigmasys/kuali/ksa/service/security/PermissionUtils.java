@@ -69,7 +69,7 @@ public class PermissionUtils {
 
     public static void checkPermission(Permission permission, Map<String, Object> attributes) {
         checkPermission(permission);
-        getAccountBlockingService().checkBlock(permission, attributes);
+        getAccountBlockingService().checkBlock(attributes, permission);
     }
 
     public static void checkPermission(Permission permission, Object target) {

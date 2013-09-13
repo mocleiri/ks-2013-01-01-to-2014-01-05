@@ -31,14 +31,17 @@
 
 
 # ACCOUNT BLOCKING DSL definitions
-# Assumption: atpId, holdIssueId, permission are global parameters
+# Assumption: transactionTypeId, atpId, holdIssueName, permission are global parameters
 
 # LHS definitions
-[when][]ATP is "{atpId}" = atpId == "{atpId}"
-[when][]Hold Issue is "{holdIssueId}" = holdIssueId == "{holdIssueId}"
-[when][]Permission is "{permission}" = permission == Permission.valueOf("{permission}")
+[when][]ATP is "{atpId}" = atpIds.contains("{atpId})"
+[when][]Transaction Type is "{transactionTypeId}" = transactionTypeIds.contains("{transactionTypeId}")
+[when][]Hold Issue is "{holdIssueName}" = holdIssueNames.contains("{holdIssueName}")
+[when][]Permission is "{permission}" = permissions.contains("{permission}")
 [when][]Account ID is "{userId}" = account.id == "{userId}"
 
+# RHS definitions
+[then][]Block account = blockNames.add(drools.getRule().getName());
 
 
 # PAYMENT APPLICATION DSL definitions

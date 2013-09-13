@@ -217,7 +217,7 @@
     <!-- /////////////////////////////////// HOLD Service Configuration /////////////////////////////////////////// -->
 
     <!-- Hold Service -->
-    <bean id="holdService" class="org.kuali.student.enrollment.class1.hold.service.impl.HoldServiceImpl">
+    <bean id="holdService" class="com.sigmasys.kuali.ksa.service.hold.HoldServiceDecorator">
         <property name="holdIssueDao" ref="holdIssueDao"/>
         <property name="appliedHoldDao" ref="appliedHoldDao"/>
         <property name="criteriaLookupService" ref="criteriaLookupService"/>
