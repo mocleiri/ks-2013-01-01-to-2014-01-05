@@ -274,7 +274,7 @@ Given /^I manage a course offering with a suspended activity offering present in
 end
 
 Given /^I manage a course offering with suspended activity offering present in a final edits SOC state$/ do
-  @course_with_suspend_ao12 = make CourseOffering, :term=> "201705" , :course => "CHEM272"
+  @course_with_suspend_ao12 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201705", :course => "CHEM272")
   @course_with_suspend_ao12.manage
   on ManageCourseOfferings do |page|
     #have to remove the 'D' AO ADLs & suspend it
