@@ -259,7 +259,7 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
         }
 
         // If the account blocking is disabled nothing else should be done
-        if (account.isBlockingEnabled()) {
+        if (!account.isBlockingEnabled()) {
             logger.info("Account Blocking is disabled for Account ID = " + accountId);
             return;
         }
@@ -270,7 +270,7 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
 
         Map<String, Object> globalParams = new HashMap<String, Object>();
 
-        globalParams.put(Constants.BRM_AB_BLOCK_NAMES, new LinkedList<String>());
+        globalParams.put(Constants.BRM_AB_BLOCK_NAMES, new HashSet<String>());
 
         List<String> permissionNames = new ArrayList<String>(permissions.length);
         for ( Permission permission : permissions) {

@@ -25,7 +25,7 @@ Insert into KSSA_ACNT_PROTECTED_INFO (ID,BANK_DETAILS,TAX_REFERENCE,BANK_TYPE_ID
 --   DATA FOR TABLE KSSA_ACNT
 --   FILTER = none used
 ---------------------------------------------------
-Insert into KSSA_ACNT (TYPE,ID,CAN_AUTHENTICATE,CREATION_DATE,CREDIT_LIMIT,ENTITY_ID,IS_KIM_ACNT,LAST_KIM_UPDATE,LATE1,LATE2,LATE3,LATE_LAST_UPDATE,LATE_PERIOD_ID_FK,ACNT_STATUS_TYPE_ID_FK) values ('ACD','user1','N',to_timestamp('02-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),0,'pgriffin','N',null,null,null,null,null,1,1);
+Insert into KSSA_ACNT (TYPE,ID,CAN_AUTHENTICATE,CREATION_DATE,CREDIT_LIMIT,ENTITY_ID,IS_KIM_ACNT,LAST_KIM_UPDATE,LATE1,LATE2,LATE3,LATE_LAST_UPDATE,LATE_PERIOD_ID_FK,ACNT_STATUS_TYPE_ID_FK, IS_BLOCKING_ENABLED) values ('ACD','user1','N',to_timestamp('02-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),0,'pgriffin','N',null,null,null,null,null,1,1,'Y');
 Insert into KSSA_ACNT (TYPE,ID,CAN_AUTHENTICATE,CREATION_DATE,CREDIT_LIMIT,ENTITY_ID,IS_KIM_ACNT,LAST_KIM_UPDATE,LATE1,LATE2,LATE3,LATE_LAST_UPDATE,LATE_PERIOD_ID_FK,ACNT_STATUS_TYPE_ID_FK) values ('ACD','user2','N',to_timestamp('02-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),0,'lgriffin','N',null,null,null,null,null,1,1);
 Insert into KSSA_ACNT (TYPE,ID,CAN_AUTHENTICATE,CREATION_DATE,CREDIT_LIMIT,ENTITY_ID,IS_KIM_ACNT,LAST_KIM_UPDATE,LATE1,LATE2,LATE3,LATE_LAST_UPDATE,LATE_PERIOD_ID_FK,ACNT_STATUS_TYPE_ID_FK) values ('ACD','user3','N',to_timestamp('02-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),0,'mgriffin','N',null,null,null,null,null,1,1);
 INSERT INTO KSSA_ACNT (TYPE, ID, CAN_AUTHENTICATE, CREATION_DATE, CREATOR_ID, CREDIT_LIMIT, ENTITY_ID, IS_KIM_ACNT, LATE_PERIOD_ID_FK, ACNT_STATUS_TYPE_ID_FK) VALUES ('ACD', 'user4', 'N', TO_TIMESTAMP('22-JAN-2013', 'DD-MON-RR HH.MI.SS.FF AM'), 'pheald', 0, 'gquagmire', 'N', 1, 1);
@@ -1486,6 +1486,36 @@ global FeeBase feeBase;
 
 ')!
 
+Insert into KSSA_RULE_SET (ID, NAME, RULE_TYPE_ID_FK, HEADER) values (2, 'Account Blocking', 3,
+'import java.util.*;
+import java.math.*;
+import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.rule.*;
+import com.sigmasys.kuali.ksa.service.brm.*;
+import com.sigmasys.kuali.ksa.model.security.*;
+import org.apache.commons.lang.*;
+
+expander ksa.dsl
+
+global Set blockNames;
+
+global List permissionNames;
+global List transactionTypeIds;
+global List atpIds;
+global List holdIssueNames
+
+')!
+
+Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (8, 'Block 1', 3, 0, null,
+ '(Account ID is "admin") and Permission is "CREATE_PAYMENT" and Transaction Type is "cash"', 'Apply block')!
+
+Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (9, 'Block 2', 3, 0, null,
+ 'ATP is "20002001HOLIDAYCALENDAR" and Hold Issue is "Unpaid Library Fine"', 'Apply block')!
+
+Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (10, 'Block 3', 3, 0, null,
+ 'ATP is "20122" and Hold Issue is "Disciplinary Suspension" and Permission is "CREATE_REFUND"', 'Apply block')!
+
+--- PA associations
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 1)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 2)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 3)!
@@ -1493,6 +1523,11 @@ Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 4)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 5)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 6)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 7)!
+
+-- AB associations
+Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (2, 8)!
+Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (2, 9)!
+Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (2, 10)!
 
 set sqlterminator ';'
 

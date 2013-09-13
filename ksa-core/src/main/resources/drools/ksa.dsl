@@ -34,14 +34,14 @@
 # Assumption: transactionTypeId, atpId, holdIssueName, permission are global parameters
 
 # LHS definitions
-[when][]ATP is "{atpId}" = atpIds.contains("{atpId})"
-[when][]Transaction Type is "{transactionTypeId}" = transactionTypeIds.contains("{transactionTypeId}")
-[when][]Hold Issue is "{holdIssueName}" = holdIssueNames.contains("{holdIssueName}")
-[when][]Permission is "{permission}" = permissions.contains("{permission}")
+[when][]ATP is "{atpId}" = eval(atpIds.contains("{atpId}"))
+[when][]Transaction Type is "{transactionTypeId}" = eval(transactionTypeIds.contains("{transactionTypeId}"))
+[when][]Hold Issue is "{holdIssueName}" = eval(holdIssueNames.contains("{holdIssueName}"))
+[when][]Permission is "{permission}" = eval(permissionNames.contains("{permission}"))
 [when][]Account ID is "{userId}" = account.id == "{userId}"
 
 # RHS definitions
-[then][]Block account = blockNames.add(drools.getRule().getName());
+[then][]Apply block = blockNames.add(drools.getRule().getName());
 
 
 # PAYMENT APPLICATION DSL definitions

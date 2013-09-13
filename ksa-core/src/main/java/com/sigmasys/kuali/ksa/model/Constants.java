@@ -42,7 +42,7 @@ public interface Constants {
     String BRM_CLASSPATH = "drools";
     String BRM_FM_RULE_SET_NAME = "Fee Management";
     String BRM_PA_RULE_SET_NAME = "Payment Application";
-    String BRM_AB_RULE_SET_NAME = "Account Block";
+    String BRM_AB_RULE_SET_NAME = "Account Blocking";
 
     // BRM account blocking parameter names
     String BRM_AB_BLOCK_NAMES = "blockNames";
