@@ -298,14 +298,26 @@
                 <bean parent="Uif-HorizontalFieldGroup" p:label="Quick Move" p:width="20%;">
                     <property name="items">
                         <list>
-                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionLabel="Max"
-                                  p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:max"/>
-                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionLabel="Plus 1"
-                                  p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:plus1"/>
-                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionLabel="Minus 1"
-                                  p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:minus1"/>
-                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionLabel="Min"
-                                  p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:min"/>
+                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:max">
+                                <property name="actionImage">
+                                    <bean parent="Uif-Image" p:source="../images/up-icon.png" p:altText="Max"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:plus1">
+                                <property name="actionImage">
+                                    <bean parent="Uif-Image" p:source="../images/up-equal.png" p:altText="Add 1"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:minus1">
+                                <property name="actionImage">
+                                    <bean parent="Uif-Image" p:source="../images/down-equal.png" p:altText="Minus 1"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-ActionLink" p:methodToCall="priority" p:actionParameters="model:@{#line.currentTransactionType.id.id},priority:min">
+                                <property name="actionImage">
+                                    <bean parent="Uif-Image" p:source="../images/down-icon.png" p:altText="Min"/>
+                                </property>
+                            </bean>
                         </list>
                     </property>
                 </bean>
