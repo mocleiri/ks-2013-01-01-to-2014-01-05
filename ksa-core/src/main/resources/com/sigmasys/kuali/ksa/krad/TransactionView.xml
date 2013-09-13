@@ -161,13 +161,22 @@
                         <bean parent="Uif-HorizontalFieldGroup" >
                         <property name="items">
                             <list>
-                                <bean parent="Uif-InputField" p:propertyName="startingDate" p:labelPlacement="LEFT" p:label="From"
+                                <bean parent="Uif-InputField" p:propertyName="zeroBalanceDate" p:labelPlacement="TOP" p:label="Show Transactions from"
+                                      p:fieldLabel.renderColon="false">
+                                    <property name="control">
+                                        <bean parent="Uif-DropdownControl" p:width="100%"/>
+                                    </property>
+                                    <property name="optionsFinder" value="@{getZeroBalanceDateFinder()}"/>
+                                </bean>
+
+
+                                <bean parent="Uif-InputField" p:propertyName="startingDate" p:labelPlacement="TOP" p:label="From"
                                       p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
                                     <property name="control">
                                         <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
                                     </property>
                                 </bean>
-                                <bean parent="Uif-InputField" p:propertyName="endingDate" p:labelPlacement="LEFT" p:label="to"
+                                <bean parent="Uif-InputField" p:propertyName="endingDate" p:labelPlacement="TOP" p:label="To"
                                       p:fieldLabel.renderColon="false" p:constraintText="Format: mm/dd/yyyy">
                                     <property name="control">
                                         <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
@@ -784,6 +793,7 @@
     </bean>
 
 	<bean id="transactionDetailLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+        <!--<property name="retrieveViaAjax" value="true"/>-->
 		<property name="hidden" value="true"/>
 		<property name="items">
 			<list>
@@ -797,21 +807,28 @@
         <property name="items">
             <list>
                 <ref bean="transactionDetailFields"/>
-                <bean parent="Uif-InputField" p:label="Tags" p:propertyName="newTag" p:readOnly="false">
-                    <property name="suggest">
-                        <bean parent="Uif-Suggest">
-                            <property name="valuePropertyName" value="code"/>
-                            <property name="templateOptions" value="minLength:2,delay:0"/>
-                            <property name="suggestQuery">
-                                <bean parent="Uif-AttributeQueryConfig">
-                                    <property name="queryMethodToCall" value="getTagsForSuggest"/>
-                                </bean>
-                            </property>
-                        </bean>
+                <bean  parent="Uif-Disclosure-VerticalBoxSection" p:headerText="Transaction Tags">
+                    <property name="disclosure.defaultOpen" value="false" />
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:label="Tags" p:propertyName="newTag" p:readOnly="false">
+                                <property name="suggest">
+                                    <bean parent="Uif-Suggest">
+                                        <property name="valuePropertyName" value="code"/>
+                                        <property name="templateOptions" value="minLength:2,delay:0"/>
+                                        <property name="suggestQuery">
+                                            <bean parent="Uif-AttributeQueryConfig">
+                                                <property name="queryMethodToCall" value="getTagsForSuggest"/>
+                                            </bean>
+                                        </property>
+                                    </bean>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="addTransactionTag" p:actionLabel="Add Tag" p:onClickScript="jQuery.fancybox.close();"/>
+                            <ref bean="transactionTags"/>
+                        </list>
                     </property>
                 </bean>
-                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="addTransactionTag" p:actionLabel="Add Tag"/>
-                <ref bean="transactionTags"/>
                 <bean parent="Uif-Disclosure-VerticalBoxSection" >
                     <property name="headerText" value="Memos"/>
                     <property name="disclosure.defaultOpen" value="false" />
@@ -891,7 +908,7 @@
         </property>
     </bean>
 
-    <bean id="transactionTags" parent="Uif-VerticalBoxSection" p:headerText="Transaction Tags">
+    <bean id="transactionTags" parent="Uif-VerticalBoxSection">
     <property name="items">
     <list>
         <bean parent="Uif-ListCollectionGroup" >

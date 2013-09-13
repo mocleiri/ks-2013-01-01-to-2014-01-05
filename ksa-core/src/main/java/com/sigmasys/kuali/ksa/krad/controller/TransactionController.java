@@ -11,6 +11,7 @@ import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
 import com.sigmasys.kuali.ksa.service.RefundService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.student.r2.common.dto.ContextInfo;
@@ -260,6 +261,8 @@ public class TransactionController extends GenericSearchController {
             return;
         }
 
+        form.setZeroBalanceDates(new HashSet<Date>());
+
         form.setAlertObjects(informationService.getAlerts(userId));
         form.setFlagObjects(informationService.getFlags(userId));
         form.setHolds(this.getHolds(userId));
@@ -267,11 +270,22 @@ public class TransactionController extends GenericSearchController {
         Boolean showInternal = form.getShowInternal();
         Date startDate = form.getStartingDate();
         Date endDate = form.getEndingDate();
+        Date zeroBalanceDate = form.getZeroBalanceDate();
 
         Date actualStartDate = startDate;
         Date actualEndDate = endDate;
 
+        if(zeroBalanceDate != null) {
+            actualStartDate = zeroBalanceDate;
+            form.setStartingDate(zeroBalanceDate);
+            actualEndDate = null;
+        }
+
         form.setStartingBalance(accountService.getBalance(userId, startDate));
+
+        if(form.getStartingBalance().compareTo(BigDecimal.ZERO) <= 0) {
+            form.getZeroBalanceDates().add(startDate);
+        }
 
         form.setChargeTotal(BigDecimal.ZERO);
         form.setPaymentTotal(BigDecimal.ZERO);
@@ -280,7 +294,7 @@ public class TransactionController extends GenericSearchController {
         form.setUnallocatedTotal(BigDecimal.ZERO);
 
         // All transactions
-        List<Transaction> transactions = transactionService.getTransactions(userId, startDate, endDate);
+        List<Transaction> transactions = transactionService.getTransactions(userId, actualStartDate, actualEndDate);
 
         List<Tag> tags = form.getFilterTags();
 
@@ -689,6 +703,10 @@ public class TransactionController extends GenericSearchController {
 
             }
             t.setRunningBalance(balance);
+            if(balance.compareTo(BigDecimal.ZERO) <= 0) {
+                Date dt = DateUtils.addDays(t.getEffectiveDate(), 1);
+                form.getZeroBalanceDates().add(dt);
+            }
             unGroupedTransactionModelList.add(t);
 
             Rollup tmRollup = t.getRollup();

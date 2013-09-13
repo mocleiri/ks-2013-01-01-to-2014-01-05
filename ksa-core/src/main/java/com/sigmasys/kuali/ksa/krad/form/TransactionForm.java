@@ -3,16 +3,16 @@ package com.sigmasys.kuali.ksa.krad.form;
 import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
+import com.sigmasys.kuali.ksa.krad.util.TransactionZeroBalanceKeyValues;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
-import org.kuali.rice.core.api.util.tree.Node;
 import org.kuali.rice.core.api.util.tree.Tree;
+import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class TransactionForm extends AbstractViewModel {
 
@@ -50,6 +50,9 @@ public class TransactionForm extends AbstractViewModel {
 
     private String newTag;
     private List<Tag> filterTags;
+
+    private Date       zeroBalanceDate;
+    private Set<Date> zeroBalanceDates;
 
 
     // Not sure if any of these below this line are still used.
@@ -444,23 +447,6 @@ public class TransactionForm extends AbstractViewModel {
         return Integer.valueOf(ContextUtils.getBean(ConfigService.class).getParameter(Constants.QUICKVIEW_INFORMATION_COUNT));
     }
 
-    public Tree<Memo, String> getMemoTree(){
-        logger.info("TJB: Returning MemoTree.");
-
-
-        Node<Memo, String> rootNode = new Node<Memo, String>(new Memo(), "Root");
-        memoTree.setRootElement(rootNode);
-
-        if(this.memos == null){ return memoTree; }
-
-        // Need to put the memos in order
-        for(Memo memo : memos){
-            rootNode.addChild(new Node<Memo, String>(memo, memo.getDisplayValue()));
-        }
-
-        return memoTree;
-    }
-
     public Date getStartingDate() {
         return startingDate;
     }
@@ -661,4 +647,32 @@ public class TransactionForm extends AbstractViewModel {
     }
 
 
+    public Set<Date> getZeroBalanceDates() {
+        if(zeroBalanceDates == null) {
+            zeroBalanceDates = new HashSet<Date>();
+        }
+        return zeroBalanceDates;
+    }
+
+    public void setZeroBalanceDates(Set<Date> zeroBalanceDates) {
+        this.zeroBalanceDates = zeroBalanceDates;
+    }
+
+    public KeyValuesFinder getZeroBalanceDateFinder() {
+        // Don't cache the values finder or else new entries will not show when added
+
+        TransactionZeroBalanceKeyValues keyValues = new TransactionZeroBalanceKeyValues();
+        keyValues.setBlankOption(true);
+        keyValues.setValues(new ArrayList<Date>(this.getZeroBalanceDates()));
+        return keyValues;
+    }
+
+
+    public Date getZeroBalanceDate() {
+        return zeroBalanceDate;
+    }
+
+    public void setZeroBalanceDate(Date zeroBalanceDate) {
+        this.zeroBalanceDate = zeroBalanceDate;
+    }
 }
