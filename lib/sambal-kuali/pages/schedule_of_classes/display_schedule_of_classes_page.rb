@@ -53,17 +53,14 @@ class DisplayScheduleOfClasses < BasePage
   element(:cluster_header_1) { |b| b.details_row.span(class: "uif-headerText-span", index:1) }
   element(:cluster_header_2) { |b| b.details_row.span(class: "uif-headerText-span", index:2) }
 
-  element(:results_activities_table) { |b| b.frm.div(id: /findThisId_.*/).table() }
+  element(:results_activities_table_div) { |b| b.frm.div(id: "SchOfClasses-aoFlatDisplay_line0") }
+  element(:results_activities_table) { |b| b.results_activities_table_div.table() }
 
   # Course table
   EXPAND_ACTION_COLUMN = 0
   COURSE_CODE_COLUMN = 1
   TITLE_COLUMN = 2
   CREDITS_COLUMN = 3
-
-  # Activities table
-  CODE_COL = 0
-  ICON_COL = 9
 
   def target_course_row(course_code)
     results_table.wait_until_present
@@ -119,6 +116,7 @@ class DisplayScheduleOfClasses < BasePage
   REG_GROUP_COLUMN = 0
   REG_GROUP_RENDERING_AO_CODE_COLUMN = 1
 
+  # Activities table
   AO_CODE_COLUMN = 0
   TYPE_COLUMN = 1
   DAYS_COLUMN = 2
@@ -128,6 +126,7 @@ class DisplayScheduleOfClasses < BasePage
   ROOM_COLUMN = 6
   INSTRUCTOR_COLUMN = 7
   MAX_ENR_COLUMN = 8
+  ICON_COLUMN = 9
 
   def get_ao_list(rendering) #course details must be expanded
     column = (rendering==REG_GROUP_RENDERING) ? REG_GROUP_RENDERING_AO_CODE_COLUMN : AO_CODE_COLUMN

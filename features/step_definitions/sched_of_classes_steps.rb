@@ -37,9 +37,9 @@ And /^the subterm icon appears with the subterm information$/ do
     else
       page.details_table.rows[1..-1].each do |row|
         # check only rows with data in them
-        if row.cells[DisplayScheduleOfClasses::CODE_COL].text =~ /[A-B]/
-          row.cells[DisplayScheduleOfClasses::ICON_COL].image.attribute_value("src").should match /subterm_icon\.png/
-          row.cells[DisplayScheduleOfClasses::ICON_COL].image.title.should == icon_title_text
+        if row.cells[DisplayScheduleOfClasses::AO_CODE_COLUMN].text =~ /[A-B]/
+          row.cells[DisplayScheduleOfClasses::ICON_COLUMN].image.attribute_value("src").should match /subterm_icon\.png/
+          row.cells[DisplayScheduleOfClasses::ICON_COLUMN].image.title.should == icon_title_text
         end
       end
     end
