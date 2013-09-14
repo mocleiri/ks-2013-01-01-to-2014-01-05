@@ -904,10 +904,14 @@ Then /^the Course Offering is now shown as Planned$/ do
 end
 
 Given /^I manage a course offering with a suspended activity offering present$/ do
-  @course_with_suspend_ao = make CourseOffering, :term=> "201208" , :course => "BSCI421"
+  @course_with_suspend_ao = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "BSCI421")
   @course_with_suspend_ao.manage
   on ManageCourseOfferings do |page|
     @ao_suspended_code = "D"
+    #have to put it in suspended status for the test
+    page.select_ao(@ao_suspended_code)
+    page.suspend_ao
+    on(SuspendActivityOffering).suspend_activity
     page.ao_status(@ao_suspended_code).should == "Suspended"
   end
 end
@@ -1218,7 +1222,7 @@ And /^the Suspended activity offering is no longer shown in the Schedule of Clas
     else
       page.results_activities_table.rows[1..-1].each do |row|
         # check only rows with data in them
-        row.cells[DisplayScheduleOfClasses::CODE_COL].text.should_not == "D"
+        row.cells[DisplayScheduleOfClasses::AO_CODE_COLUMN].text.should_not == "D"
       end
     end
   end
