@@ -151,4 +151,27 @@ public class CommonUtils {
         }
     }
 
+    public static boolean containsAny(Collection<String> collection, String values) {
+        for (String value : values.split(",")) {
+            if (collection.contains(value.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean containsAll(Collection<String> collection, String values) {
+        String[] valueArray = values.split(",");
+        if (valueArray.length == 0) {
+            return false;
+        }
+        for (String value : valueArray) {
+            if (!collection.contains(value.trim())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
 }

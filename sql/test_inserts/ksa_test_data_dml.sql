@@ -1493,6 +1493,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.rule.*;
 import com.sigmasys.kuali.ksa.service.brm.*;
 import com.sigmasys.kuali.ksa.model.security.*;
+import com.sigmasys.kuali.ksa.util.*;
 import org.apache.commons.lang.*;
 
 expander ksa.dsl
@@ -1507,7 +1508,7 @@ global List holdIssueNames
 ')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (8, 'Block 1', 3, 0, null,
- '(Account ID is "user1" and Permission is "CREATE_PAYMENT" and Transaction Type is "cash")', 'Apply block')!
+ '(Account ID is "user1" and Permission is "CREATE_PAYMENT, CREATE_CHARGE" and Transaction Type is "cash, finaid")', 'Apply block')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (9, 'Block 2', 3, 0, null,
  '(ATP is "20002001HOLIDAYCALENDAR" and Hold Issue is "Unpaid Library Fine")', 'Apply block')!

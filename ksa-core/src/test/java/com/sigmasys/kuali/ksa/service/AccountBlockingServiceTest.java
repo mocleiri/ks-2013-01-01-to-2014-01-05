@@ -50,7 +50,7 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
 
         try {
 
-            accountBlockingService.checkBlock(userId, attributes, Permission.CREATE_PAYMENT, Permission.CREATE_CHARGE);
+            accountBlockingService.checkBlock(userId, attributes, Permission.CREATE_PAYMENT, Permission.CREATE_ALLOCATION);
 
         } catch (AccountBlockedException abe) {
 

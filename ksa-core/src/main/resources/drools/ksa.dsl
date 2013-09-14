@@ -34,10 +34,10 @@
 # Assumption: transactionTypeIds, atpIds, holdIssueNames, permissionNames are global parameters
 
 # LHS definitions
-[when][]ATP is "{atpId}" = eval(atpIds.contains("{atpId}"))
-[when][]Transaction Type is "{transactionTypeId}" = eval(transactionTypeIds.contains("{transactionTypeId}"))
-[when][]Hold Issue is "{holdIssueName}" = eval(holdIssueNames.contains("{holdIssueName}"))
-[when][]Permission is "{permission}" = eval(permissionNames.contains("{permission}"))
+[when][]ATP is "{atpIds}" = eval(CommonUtils.containsAny(atpIds, "{atpIds}"))
+[when][]Transaction Type is "{transactionTypeIds}" = eval(CommonUtils.containsAny(transactionTypeIds, "{transactionTypeIds}"))
+[when][]Hold Issue is "{holdIssueNames}" = eval(CommonUtils.containsAny(holdIssueNames, "{holdIssueNames}"))
+[when][]Permission is "{permissionNames}" = eval(CommonUtils.containsAny(permissionNames, "{permissionNames}"))
 [when][]Account ID is "{userId}" = account.id == "{userId}"
 
 # RHS definitions
