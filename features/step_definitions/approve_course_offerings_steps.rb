@@ -27,10 +27,13 @@ Given /^I manage a course offering with a canceled activity offering present$/ d
 end
 
 Given /^I manage a course offering with a canceled activity offering present in draft SOC state$/ do
-  @course_with_cancel_ao7 = make CourseOffering, :term=> "202000" , :course => "ENGL243"
+  @course_with_cancel_ao7 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "202000", :course => "ENGL243")
   @course_with_cancel_ao7.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code9 = "A"
+    page.select_ao(@ao_canceled_code9)
+    page.cancel_ao
+    on(CancelActivityOffering).cancel_activity
     page.ao_status(@ao_canceled_code9).should == "Canceled"
   end
 end
@@ -141,6 +144,7 @@ Given /^I manage a course offering with multiple suspended activity offerings pr
     page.select_ao(@ao_suspended_code12)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code11).should == "Suspended"
   end
 end
@@ -224,9 +228,11 @@ Given /^I manage a course offering with a suspended and a draft activity offerin
     page.copy(@ao_draft_code7)
 
     @ao_suspended_code19 = "B"
+    page.loading.wait_while_present
     page.select_ao(@ao_suspended_code19)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code19).should == "Suspended"
   end
 end
@@ -971,7 +977,7 @@ Given /^I manage a course offering with an approved activity offering present in
 end
 
 Given /^I manage a course offering with a canceled activity offering present in a published SOC state$/ do
-  @course_with_cancel_ao2 = make CourseOffering, :term=> "201600" , :course => "ENGL243"
+  @course_with_cancel_ao2 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201600", :course => "ENGL243")
   @course_with_cancel_ao2.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code4 = "A"
@@ -984,7 +990,7 @@ Given /^I manage a course offering with a canceled activity offering present in 
 end
 
 Given /^I manage a course offering with a canceled activity offering present in a draft SOC state$/ do
-  @course_with_cancel_ao3 = make CourseOffering, :term=> "202000" , :course => "ENGL243"
+  @course_with_cancel_ao3 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "202000", :course => "ENGL243")
   @course_with_cancel_ao3.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code5 = "A"
@@ -997,7 +1003,7 @@ Given /^I manage a course offering with a canceled activity offering present in 
 end
 
 Given /^I manage a course offering with a canceled activity offering present in an open SOC state$/ do
-  @course_with_cancel_ao4 = make CourseOffering, :term=> "201900" , :course => "ENGL243"
+  @course_with_cancel_ao4 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201900", :course => "ENGL243")
   @course_with_cancel_ao4.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code6 = "A"
@@ -1009,7 +1015,7 @@ Given /^I manage a course offering with a canceled activity offering present in 
 end
 
 Given /^I manage a course offering with a canceled activity offering present in a locked SOC state$/ do
-  @course_with_cancel_ao5 = make CourseOffering, :term=> "201800" , :course => "ENGL243"
+  @course_with_cancel_ao5 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201800", :course => "ENGL243")
   @course_with_cancel_ao5.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code7 = "A"
@@ -1021,10 +1027,14 @@ Given /^I manage a course offering with a canceled activity offering present in 
 end
 
 Given /^I manage a course offering with a canceled activity offering present in a final edits SOC state$/ do
-  @course_with_cancel_ao6 = make CourseOffering, :term=> "201700" , :course => "ENGL243"
+  @course_with_cancel_ao6 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201700", :course => "ENGL243")
   @course_with_cancel_ao6.manage
   on ManageCourseOfferings do |page|
     @ao_canceled_code8 = "A"
+    page.select_ao(@ao_canceled_code8)
+    page.cancel_ao
+    on(CancelActivityOffering).cancel_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_canceled_code8).should == "Canceled"
   end
 end
