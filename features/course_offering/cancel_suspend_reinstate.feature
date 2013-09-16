@@ -64,7 +64,11 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Then the Suspend button is "enabled"
     Then I deselect the activity offering, which is in Approved status
 
-#  Scenario: CO 22.1  BSCI421 in 201208  this one has problems because uses the same ref. data as a Cancel test (and gets changed)
+  Scenario: CO 22.1 CSR Suspend a draft Activity Offering
+    Given I manage a course offering with a draft activity offering present in a published SOC state
+    Then I can suspend an activity in Draft status
+    And a suspended success message is displayed
+    And the Draft activity offering is shown as suspended
 
   Scenario: CO 22.1 CSR Suspend approved Activity Offering with ADLs
     Given I manage a course offering with an approved activity offering present in a final edits SOC state

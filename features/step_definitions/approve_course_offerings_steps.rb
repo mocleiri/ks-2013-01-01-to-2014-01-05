@@ -430,6 +430,15 @@ When /^I select the Canceled and Draft activity offerings$/ do
   end
 end
 
+When /^I can suspend an activity in Draft status$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@ao_draft_code8)
+    page.suspend_ao_button.enabled?.should be_true
+    page.suspend_ao
+    on(SuspendActivityOffering).suspend_activity
+  end
+end
+
 When /^I select the activity offering, which is a Canceled status$/ do
   on ManageCourseOfferings do |page|
     page.select_ao(@ao_canceled_code9)
@@ -803,6 +812,12 @@ Then /^the Suspended activity offering is shown as approved$/ do
   end
 end
 
+Then /^the Draft activity offering is shown as suspended$/ do
+  on ManageCourseOfferings do |page|
+    page.ao_status(@ao_draft_code8).should == "Suspended"
+  end
+end
+
 Then /^the Suspended activity offerings are shown as offered$/ do
   on ManageCourseOfferings do |page|
     page.ao_status(@ao_suspended_code11).should == "Offered"
@@ -935,6 +950,16 @@ Given /^I manage a course offering with a suspended activity offering present$/ 
     on(SuspendActivityOffering).suspend_activity
     page.loading.wait_while_present
     page.ao_status(@ao_suspended_code).should == "Suspended"
+  end
+end
+
+Given /^I manage a course offering with a draft activity offering present in a published SOC state$/ do
+  @course_with_draft_ao3 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "BSCI421")
+  @course_with_draft_ao3.manage
+  on ManageCourseOfferings do |page|
+    @ao_offered_code6 = "A"
+    page.copy(@ao_offered_code6)
+    @ao_draft_code8 = "F"
   end
 end
 
