@@ -549,8 +549,6 @@ end
 Then /^I have access to edit the waitlists flag$/ do
   on CourseOfferingEdit do |page|
     page.waitlist_checkbox.enabled?.should be_true
-    page.waitlist_div.radio.enabled?.should be_true #waitlist level
-    page.waitlist_select.enabled?.should be_true
   end
 end
 

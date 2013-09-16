@@ -11,7 +11,7 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Final Edits
     And I have access to edit the grading options
     And I have access to edit the registration options
     And I have access to edit the credit type
-    And I have access to edit the format type
+    #And I have access to edit the format type #need to update after changes here  KSENROLL-9589
     And I have access to edit the waitlists flag
     And I have access to edit the affiliated personnel
     And I have access to edit the administrating org
