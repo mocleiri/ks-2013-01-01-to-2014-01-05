@@ -54,7 +54,8 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
 
         } catch (AccountBlockedException abe) {
 
-            logger.info(abe.getMessage());
+            logger.info("Message = " + abe.getMessage() + ", Account ID = " + abe.getAccountId() +
+                    ", Block names = " + abe.getBlockNames());
 
             Assert.notNull(abe.getAccountId());
             Assert.notNull(abe.getBlockNames());

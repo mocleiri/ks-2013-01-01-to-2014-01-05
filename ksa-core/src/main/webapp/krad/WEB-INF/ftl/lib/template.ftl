@@ -17,7 +17,7 @@
 -->
 <#macro template component=[] body='' componentUpdate=false includeSrc=false tmplParms...>
 <#-- compress to avoid white space in tags -->
-    <#compress>
+    <!--#compress-->
 
         <#if !(component!?size > 0)>
             <#return>
@@ -108,5 +108,5 @@
     <#-- generate tooltip for component -->
         <@krad.tooltip component=component/>
 
-    </#compress>
+    <!--/#compress-->
 </#macro>

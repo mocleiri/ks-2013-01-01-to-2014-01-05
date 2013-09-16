@@ -151,22 +151,36 @@ public class CommonUtils {
         }
     }
 
-    public static boolean containsAny(Collection<String> collection, String values) {
-        for (String value : values.split(",")) {
-            if (collection.contains(value.trim())) {
+    public static boolean containsAny(Collection<String> collection, String values, String delimiter) {
+        return containsAny(collection, values, delimiter, true);
+    }
+
+    public static boolean containsAll(Collection<String> collection, String values, String delimiter) {
+        return containsAll(collection, values, delimiter, true);
+    }
+
+    public static boolean containsAny(Collection<String> collection, String values, String delimiter, boolean trimValues) {
+        for (String value : values.split(delimiter)) {
+            if (trimValues) {
+                value = value.trim();
+            }
+            if (collection.contains(value)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean containsAll(Collection<String> collection, String values) {
-        String[] valueArray = values.split(",");
+    public static boolean containsAll(Collection<String> collection, String values, String delimiter, boolean trimValues) {
+        String[] valueArray = values.split(delimiter);
         if (valueArray.length == 0) {
             return false;
         }
         for (String value : valueArray) {
-            if (!collection.contains(value.trim())) {
+            if (trimValues) {
+                value = value.trim();
+            }
+            if (!collection.contains(value)) {
                 return false;
             }
         }
