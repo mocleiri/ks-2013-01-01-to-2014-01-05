@@ -34,6 +34,7 @@ Given /^I manage a course offering with a canceled activity offering present in 
     page.select_ao(@ao_canceled_code9)
     page.cancel_ao
     on(CancelActivityOffering).cancel_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_canceled_code9).should == "Canceled"
   end
 end
@@ -49,6 +50,7 @@ Given /^I manage a course offering with multiple canceled activity offerings pre
     page.select_ao(@ao_canceled_code11)
     page.cancel_ao
     on(CancelActivityOffering).cancel_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_canceled_code10).should == "Canceled"
   end
 end
@@ -63,6 +65,7 @@ Given /^I manage a course offering with canceled and draft activity offerings pr
     page.select_ao(@ao_canceled_code12)
     page.cancel_ao
     on(CancelActivityOffering).cancel_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_canceled_code12).should == "Canceled"
     page.ao_status(@ao_draft_code5).should_not == "Canceled"
   end
@@ -80,7 +83,7 @@ Given /^I manage a course offering with canceled and offered activity offerings 
 end
 
 Given /^I manage a course offering with suspended activity offering present$/ do
-  @course_with_suspend_ao2 = make CourseOffering, :term=> "201208" , :course => "BSCI411"
+  @course_with_suspend_ao2 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "BSCI411")
   @course_with_suspend_ao2.manage
   on ManageCourseOfferings do |page|
     @ao_suspended_code2 = "B"
@@ -88,6 +91,7 @@ Given /^I manage a course offering with suspended activity offering present$/ do
     page.select_ao(@ao_suspended_code2)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code2).should == "Suspended"
   end
 end
@@ -103,6 +107,7 @@ Given /^I manage a course offering with suspended activity offerings present in 
     page.select_ao(@ao_suspended_code4)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code3).should == "Suspended"
   end
 end
@@ -116,6 +121,7 @@ Given /^I manage a course offering with suspended activity offerings present in 
     page.select_ao(@ao_suspended_code5)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code5).should == "Suspended"
   end
 end
@@ -130,6 +136,7 @@ Given /^I manage a course offering with suspended activity offerings present in 
     page.select_ao(@ao_suspended_code7)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code6).should == "Suspended"
   end
 end
@@ -158,6 +165,7 @@ Given /^I manage a course offering with suspended and offered activity offerings
     page.select_ao(@ao_suspended_code13)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code13).should == "Suspended"
   end
 end
@@ -170,6 +178,7 @@ Given /^I manage a course offering with a suspended activity offering present in
     page.select_ao(@ao_suspended_code8)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code8).should == "Suspended"
   end
 end
@@ -182,22 +191,23 @@ Given /^I manage a course offering with a single suspended activity offering pre
     page.select_ao(@ao_suspended_code20)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code20).should == "Suspended"
   end
 end
 
 Given /^I manage a course offering with one suspended activity offering present in a published SOC state$/ do
-  @course_with_suspend_ao11 = make CourseOffering, :term=> "201208" , :course => "HIST355"
+  @course_with_suspend_ao11 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "HIST355")
   @course_with_suspend_ao11.manage
   on ManageCourseOfferings do |page|
     @ao_offered_code5 = "A"
-    page.ao_status(@ao_offered_code5).should == "Offered"
     page.copy(@ao_offered_code5)
 
     @ao_suspended_code14 = "B"
     page.select_ao(@ao_suspended_code14)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code14).should == "Suspended"
   end
 end
@@ -216,6 +226,7 @@ Given /^I manage a course offering with two suspended activity offerings present
     page.select_ao(@ao_suspended_code18)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code17).should == "Suspended"
   end
 end
@@ -245,19 +256,20 @@ Given /^I manage a course offering with a suspended activity offering present in
     page.select_ao(@ao_suspended_code10)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code10).should == "Suspended"
   end
 end
 
 Given /^I manage a course offering with suspended activity offering present in a locked SOC state$/ do
   @course_with_suspend_ao13 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201800", :course => "CHEM612")
-  #@course_with_suspend_ao13 = make CourseOffering, :term=> "201800" , :course => "CHEM612"
   @course_with_suspend_ao13.manage
   on ManageCourseOfferings do |page|
     @ao_suspended_code16 = "A"
     page.select_ao(@ao_suspended_code16)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code16).should == "Suspended"
   end
 end
@@ -271,6 +283,7 @@ Given /^I manage a course offering with a suspended activity offering present in
     page.select_ao(@ao_suspended_code9)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code9).should == "Suspended"
     page.cluster_select_all_aos
     page.deselect_ao(@ao_suspended_code9)
@@ -289,6 +302,7 @@ Given /^I manage a course offering with suspended activity offering present in a
     page.select_ao(@ao_suspended_code15)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code15).should == "Suspended"
   end
 end
@@ -301,6 +315,7 @@ Given /^I manage a course offering with a single suspended activity offering pre
     page.select_ao(@ao_suspended_code21)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code21).should == "Suspended"
   end
 end
@@ -918,6 +933,7 @@ Given /^I manage a course offering with a suspended activity offering present$/ 
     page.select_ao(@ao_suspended_code)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_suspended_code).should == "Suspended"
   end
 end
@@ -985,6 +1001,7 @@ Given /^I manage a course offering with a canceled activity offering present in 
     page.select_ao(@ao_canceled_code4)
     page.cancel_ao
     on(CancelActivityOffering).cancel_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_canceled_code4).should == "Canceled"
   end
 end
@@ -998,6 +1015,7 @@ Given /^I manage a course offering with a canceled activity offering present in 
     page.select_ao(@ao_canceled_code5)
     page.cancel_ao
     on(CancelActivityOffering).cancel_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_canceled_code5).should == "Canceled"
   end
 end
@@ -1010,6 +1028,7 @@ Given /^I manage a course offering with a canceled activity offering present in 
     page.select_ao(@ao_canceled_code6)
     page.cancel_ao
     on(CancelActivityOffering).cancel_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_canceled_code6).should == "Canceled"
   end
 end
@@ -1022,6 +1041,7 @@ Given /^I manage a course offering with a canceled activity offering present in 
     page.select_ao(@ao_canceled_code7)
     page.cancel_ao
     on(CancelActivityOffering).cancel_activity
+    page.loading.wait_while_present
     page.ao_status(@ao_canceled_code7).should == "Canceled"
   end
 end
