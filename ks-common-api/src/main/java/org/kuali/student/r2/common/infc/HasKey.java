@@ -34,7 +34,7 @@ public interface HasKey
      * A Key:<ul>
 
      *    <li>A Key is used when the actual value is important</li>
-     *    <li>A Key value might be kuali.org.School</li>
+     *    <li>A Key value might be kuali.org.type.school</li>
      *    <li>A Key on occasion may be used or seen by an end
      *        user.</li>
      *    <li>Keys are assumed to have the same values in different KS
