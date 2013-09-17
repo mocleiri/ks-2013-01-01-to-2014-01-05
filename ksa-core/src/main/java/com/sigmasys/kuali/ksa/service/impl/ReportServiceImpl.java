@@ -1080,7 +1080,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
             ChargeableAccount chargeableAccount = (ChargeableAccount) account;
             LatePeriod latePeriod = account.getLatePeriod();
             if (latePeriod != null) {
-                AccountReport.Balances.AgedBalance agedBalance = objectFactory.createAccountReportBalancesAgedBalance();
+                AgedBalance agedBalance = objectFactory.createAgedBalance();
                 agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate1());
                 agedBalance.getPeriodLengthAndPeriodBalance().add(getFormattedAmount(chargeableAccount.getAmountLate1()));
                 agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate2());

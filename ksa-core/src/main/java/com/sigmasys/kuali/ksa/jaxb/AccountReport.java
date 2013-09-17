@@ -279,7 +279,7 @@ public class AccountReport {
     public static class Balances {
 
         @XmlElement(name = "aged-balance")
-        protected AccountReport.Balances.AgedBalance agedBalance;
+        protected AgedBalance agedBalance;
 
         @XmlElement(name = "prior-balance", required = true)
         protected BigDecimal priorBalance;
@@ -312,9 +312,9 @@ public class AccountReport {
          * Gets the value of the agedBalance property.
          *
          * @return possible object is
-         *         {@link AccountReport.Balances.AgedBalance }
+         *         {@link AgedBalance }
          */
-        public AccountReport.Balances.AgedBalance getAgedBalance() {
+        public AgedBalance getAgedBalance() {
             return agedBalance;
         }
 
@@ -322,9 +322,9 @@ public class AccountReport {
          * Sets the value of the agedBalance property.
          *
          * @param value allowed object is
-         *              {@link AccountReport.Balances.AgedBalance }
+         *              {@link AgedBalance }
          */
-        public void setAgedBalance(AccountReport.Balances.AgedBalance value) {
+        public void setAgedBalance(AgedBalance value) {
             this.agedBalance = value;
         }
 
@@ -470,67 +470,6 @@ public class AccountReport {
          */
         public void setFutureBalance(BigDecimal value) {
             this.futureBalance = value;
-        }
-
-
-        /**
-         * <p>Java class for anonymous complex type.
-         * <p/>
-         * <p>The following schema fragment specifies the expected content contained within this class.
-         * <p/>
-         * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;sequence maxOccurs="unbounded">
-         *         &lt;element name="period-length" type="{http://www.w3.org/2001/XMLSchema}int"/>
-         *         &lt;element name="period-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
-         *       &lt;/sequence>
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
-         * </pre>
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-                "periodLengthAndPeriodBalance"
-        })
-        public static class AgedBalance {
-
-            @XmlElements({
-                    @XmlElement(name = "period-length", required = true, type = Integer.class),
-                    @XmlElement(name = "period-balance", required = true, type = BigDecimal.class)
-            })
-            protected List<Comparable> periodLengthAndPeriodBalance;
-
-            /**
-             * Gets the value of the periodLengthAndPeriodBalance property.
-             * <p/>
-             * <p/>
-             * This accessor method returns a reference to the live list,
-             * not a snapshot. Therefore any modification you make to the
-             * returned list will be present inside the JAXB object.
-             * This is why there is not a <CODE>set</CODE> method for the periodLengthAndPeriodBalance property.
-             * <p/>
-             * <p/>
-             * For example, to add a new item, do as follows:
-             * <pre>
-             *    getPeriodLengthAndPeriodBalance().add(newItem);
-             * </pre>
-             * <p/>
-             * <p/>
-             * <p/>
-             * Objects of the following type(s) are allowed in the list
-             * {@link Integer }
-             * {@link BigDecimal }
-             */
-            public List<Comparable> getPeriodLengthAndPeriodBalance() {
-                if (periodLengthAndPeriodBalance == null) {
-                    periodLengthAndPeriodBalance = new ArrayList<Comparable>();
-                }
-                return this.periodLengthAndPeriodBalance;
-            }
-
         }
 
     }

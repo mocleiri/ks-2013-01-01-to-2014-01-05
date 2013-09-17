@@ -244,6 +244,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="preferred-delivery-mode" type="xs:string"/>
+                <xs:element name="bill-id" type="xs:string"/>
                 <xs:element name="cycle">
                     <xs:complexType>
                         <xs:sequence>
@@ -260,19 +261,12 @@
                             <xs:element name="with-deferments">
                                 <xs:complexType>
                                     <xs:sequence>
-                                        <xs:element name="aged-balance">
-                                            <xs:complexType>
-                                                <xs:sequence maxOccurs="unbounded">
-                                                    <xs:element name="period-length" type="xs:int"/>
-                                                    <xs:element name="period-balance" type="xs:decimal"/>
-                                                </xs:sequence>
-                                            </xs:complexType>
-                                        </xs:element>
+                                        <xs:element ref="aged-balance"/>
                                         <xs:element name="total-balance" type="xs:decimal"/>
                                         <xs:element name="future-balance" type="xs:decimal"/>
                                         <xs:element name="due-balance" type="xs:decimal"/>
                                         <xs:element name="overdue-balance" type="xs:decimal"/>
-                                        <xs:element name="total-defered" type="xs:decimal"/>
+                                        <xs:element name="total-deferred" type="xs:decimal"/>
                                         <xs:element name="next-deferment-expiration" type="xs:date"/>
                                     </xs:sequence>
                                 </xs:complexType>
@@ -280,14 +274,7 @@
                             <xs:element name="without-deferments">
                                 <xs:complexType>
                                     <xs:sequence>
-                                        <xs:element name="aged-balance">
-                                            <xs:complexType>
-                                                <xs:sequence maxOccurs="unbounded">
-                                                    <xs:element name="period-length" type="xs:int"/>
-                                                    <xs:element name="period-balance" type="xs:decimal"/>
-                                                </xs:sequence>
-                                            </xs:complexType>
-                                        </xs:element>
+                                        <xs:element ref="aged-balance"/>
                                         <xs:element name="total-balance" type="xs:decimal"/>
                                         <xs:element name="future-balance" type="xs:decimal"/>
                                         <xs:element name="due-balance" type="xs:decimal"/>
@@ -318,6 +305,16 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element ref="transaction-list"/>
+                <xs:element name="message" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="aged-balance">
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:element name="period-length" type="xs:int"/>
+                <xs:element name="period-balance" type="xs:decimal"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

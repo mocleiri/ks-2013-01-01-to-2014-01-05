@@ -19,7 +19,7 @@ import java.math.BigDecimal;
  * This object contains factory methods for each
  * Java content interface and Java element interface
  * generated in the com.sigmasys.kuali.ksa.jaxb package.
- * <p>An ObjectFactory allows you to programatically
+ * <p>An ObjectFactory allows you to programmatically
  * construct new instances of the Java representation
  * for XML content. The Java representation of XML
  * content can consist of schema derived interfaces
@@ -59,8 +59,8 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link AccountReport.Balances.AgedBalance }
      */
-    public AccountReport.Balances.AgedBalance createAccountReportBalancesAgedBalance() {
-        return new AccountReport.Balances.AgedBalance();
+    public AgedBalance createAgedBalance() {
+        return new AgedBalance();
     }
 
     /**
@@ -148,13 +148,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link KsaBill.Balances.WithoutDeferments.AgedBalance }
-     */
-    public KsaBill.Balances.WithoutDeferments.AgedBalance createKsaBillBalancesWithoutDefermentsAgedBalance() {
-        return new KsaBill.Balances.WithoutDeferments.AgedBalance();
-    }
-
-    /**
      * Create an instance of {@link ElectronicContact }
      */
     public ElectronicContact createElectronicContact() {
@@ -218,13 +211,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link KsaBill.TransactionList.Rollup }
-     */
-    public KsaBill.TransactionList.Rollup createKsaBillTransactionListRollup() {
-        return new KsaBill.TransactionList.Rollup();
-    }
-
-    /**
      * Create an instance of {@link BatchAch.BatchControl }
      */
     public BatchAch.BatchControl createBatchAchBatchControl() {
@@ -243,13 +229,6 @@ public class ObjectFactory {
      */
     public BatchAccountResponse.Accepted createBatchAccountResponseAccepted() {
         return new BatchAccountResponse.Accepted();
-    }
-
-    /**
-     * Create an instance of {@link KsaBill.TransactionList }
-     */
-    public KsaBill.TransactionList createKsaBillTransactionList() {
-        return new KsaBill.TransactionList();
     }
 
     /**
@@ -334,13 +313,6 @@ public class ObjectFactory {
      */
     public BatchAccount createBatchAccount() {
         return new BatchAccount();
-    }
-
-    /**
-     * Create an instance of {@link KsaBill.Balances.WithDeferments.AgedBalance }
-     */
-    public KsaBill.Balances.WithDeferments.AgedBalance createKsaBillBalancesWithDefermentsAgedBalance() {
-        return new KsaBill.Balances.WithDeferments.AgedBalance();
     }
 
     /**
