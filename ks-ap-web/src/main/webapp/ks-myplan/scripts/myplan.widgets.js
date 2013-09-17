@@ -154,7 +154,11 @@ function openPopup(getId, retrieveData, formAction, popupStyle, popupOptions, e)
     var successCallback = function (htmlContent) {
         var component;
         if (jQuery("#requestStatus", htmlContent).length <= 0) {
-            var popupForm = jQuery('<form />').attr("id", "popupForm").attr("action", formAction).attr("method", "post");
+            var popupForm = jQuery('<form />')
+            		.attr("id", "popupForm")
+            		.attr("action", formAction)
+            		.attr("accept-charset", "UTF-8")
+            		.attr("method", "post");
             component = jQuery("#" + getId, htmlContent).wrap(popupForm).parent();
         } else {
             var pageId = jQuery("#pageId").val();
