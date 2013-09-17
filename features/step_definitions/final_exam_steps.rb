@@ -82,7 +82,7 @@ When /^I create a Course Offering from an existing course offering with no final
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.loading.wait_while_present
-    page.alert.ok
+    sleep 5
     page.edit_course_offering
   end
   @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
@@ -116,6 +116,19 @@ When /^I create a Course Offering from an existing course offering with no final
   #end
 
 
+end
+
+When /^I create a course offering for a subject with a standard final exam in my admin org$/ do
+  @course_offering = make CourseOffering, :term=> "201301", :course => "ENGL304"
+  @course_offering.start_create_by_search
+end
+
+When /^I edit a course offering with a standard final exm in my admin org$/ do
+  @course_offering = make CourseOffering, :term=> "201301", :course=>"ENGL304"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
 end
 
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
@@ -221,5 +234,28 @@ Then /^the option for the Use Final Exam Matrix should only be available for a c
     page.final_exam_option_none
     page.use_exam_matrix_div.present?.should == false
     page.create_offering
+  end
+end
+
+Then /^I should not be able to update the status of the final exam period$/ do
+  on CourseOfferingEdit do |page|
+    page.final_exam_option_div.radio(value: "STANDARD").present?.should == false
+    page.final_exam_option_div.radio(value: "ALTERNATE").present?.should == false
+    page.final_exam_option_div.radio(value: "NONE").present?.should == false
+    page.span( id: "finalExamType_control").text.should == "Standard final Exam"
+  end
+end
+
+Then /^I do not have access to the final exam status for the course offering from catalog$/ do
+  on CreateCourseOffering do |page|
+    page.choose_from_catalog
+    page.continue
+  end
+
+  on CreateCOFromCatalog do |page|
+    page.final_exam_option_div.radio(value: "STANDARD").present?.should == false
+    page.final_exam_option_div.radio(value: "ALTERNATE").present?.should == false
+    page.final_exam_option_div.radio(value: "NONE").present?.should == false
+    page.span( id: "finalExamType_control").text.should == "Standard final Exam"
   end
 end

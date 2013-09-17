@@ -472,7 +472,7 @@ class CourseOffering
     on CreateCourseOffering do  |page|
       page.target_term.set @term
       #page.target_term.fire_event "onchange"
-      page.catalogue_course_code.click
+      #page.catalogue_course_code.click
       page.catalogue_course_code.set @course[0,7]   #always use canonical code
     end
   end

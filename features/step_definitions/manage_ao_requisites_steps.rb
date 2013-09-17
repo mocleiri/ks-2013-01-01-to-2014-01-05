@@ -281,7 +281,7 @@ end
 
 ###General steps###
 Given /^I have made changes to multiple AO Requisites for the same course offering$/ do
-  @course_offering = make CourseOffering, {:course => "CHEM277", :term => "201208"}
+  @course_offering = make CourseOffering, :term => "201208", :course => "CHEM277"
   @activityOR = make AORequisitesData
   @activityOR.make_changes_to_multiple_ao_reqs
 end
