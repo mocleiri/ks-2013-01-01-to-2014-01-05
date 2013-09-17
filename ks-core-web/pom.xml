@@ -9,11 +9,11 @@
     <artifactId>ks-core-web</artifactId>
     <name>KS Core Web</name>
     <properties>
-<!--        <ks.gwt.module.org>org.kuali.student.core.organization.ui.OrgEntry</ks.gwt.module.org>-->
+        <!--        <ks.gwt.module.org>org.kuali.student.core.organization.ui.OrgEntry</ks.gwt.module.org>-->
     </properties>
     <build>
         <plugins>
-<!--            <plugin>
+            <!--            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <executions>
