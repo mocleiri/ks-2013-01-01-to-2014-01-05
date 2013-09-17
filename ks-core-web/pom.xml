@@ -4,16 +4,16 @@
     <parent>
         <groupId>org.kuali.student.core</groupId>
         <artifactId>ks-core</artifactId>
-        <version>2.0.2-cm-contrib-org-SNAPSHOT</version>
+        <version>2.0.2-cm-contrib-org-build-1</version>
     </parent>
     <artifactId>ks-core-web</artifactId>
     <name>KS Core Web</name>
     <properties>
-<!--        <ks.gwt.module.org>org.kuali.student.core.organization.ui.OrgEntry</ks.gwt.module.org>-->
+        <!--        <ks.gwt.module.org>org.kuali.student.core.organization.ui.OrgEntry</ks.gwt.module.org>-->
     </properties>
     <build>
         <plugins>
-<!--            <plugin>
+            <!--            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <executions>
