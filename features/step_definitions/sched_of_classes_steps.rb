@@ -131,6 +131,6 @@ end
 Then /^the course offering requisites should be displayed stating "([^"]+)"$/ do |exp_msg|
   @schedule_of_classes.expand_course_details
   on DisplayScheduleOfClasses do |page|
-    page.get_requisites_message_text(@schedule_of_classes.course_search_parm).should match /#{exp_msg}/
+    page.get_requisites_message_text.should match /#{exp_msg}/
   end
 end

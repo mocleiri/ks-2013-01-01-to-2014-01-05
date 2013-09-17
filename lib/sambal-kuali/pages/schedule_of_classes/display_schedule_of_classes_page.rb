@@ -109,8 +109,8 @@ class DisplayScheduleOfClasses < BasePage
     target_course_row(course_code).div(id: /findThisId/).p.text
   end
 
-  def get_requisites_message_text(course_code)
-    target_course_row(course_code).cells[EXPAND_ACTION_COLUMN].span(class: "uif-message").text
+  def get_requisites_message_text
+    details_row.div(:class => /uif-messageField/).text
   end
 
   REG_GROUP_COLUMN = 0
