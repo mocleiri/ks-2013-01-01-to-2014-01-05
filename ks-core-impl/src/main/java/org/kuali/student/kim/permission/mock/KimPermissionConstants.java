@@ -35,7 +35,10 @@ public class KimPermissionConstants {
     public static final String CAN_INVOKE_SERVICE_METHOD_READ_ORGANIZATION_PERSON_RELATION_DATA_PERMISSION = "Can Invoke Service Method Read Organization Person Relation Data";
     public static final String CAN_INVOKE_SERVICE_METHOD_UPDATE_ORGANIZATION_PERSON_RELATION_DATA_PERMISSION = "Can Invoke Service Method Update Organization Person Relation Data";
     public static final String CAN_INVOKE_SERVICE_METHOD_DELETE_ORGANIZATION_PERSON_RELATION_DATA_PERMISSION = "Can Invoke Service Method Delete Organization Person Relation Data";
-   
+    public static final String CAN_INVOKE_SERVICE_METHOD_READ_ORGANIZATION_POSITION_RESTRICTION_DATA_PERMISSION = "Can Invoke Service Method Read Organization Position Restriction Data";
+    public static final String CAN_INVOKE_SERVICE_METHOD_UPDATE_ORGANIZATION_POSITION_RESTRICTION_DATA_PERMISSION = "Can Invoke Service Method Update Organization Position Restriction Data";
+    public static final String CAN_INVOKE_SERVICE_METHOD_DELETE_ORGANIZATION_POSITION_RESTRICTION_DATA_PERMISSION = "Can Invoke Service Method Delete Organization Position Restriction Data";
+    
     /**
      * org role constants
      */
