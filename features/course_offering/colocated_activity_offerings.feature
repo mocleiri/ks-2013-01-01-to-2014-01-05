@@ -30,8 +30,6 @@ Background:
 
   #Scenario: CCO 2.12B Verify colocation is NOT copied when a Course Offering is copied from a prior term
 
-  #KSENROLL-9293
-#KSENROLL-9442
   Scenario: CCO 2.13 Successfully rollover a course offering with colocated Activity Offerings
     Given I create an Academic Calendar
     And I add a new term to the Academic Calendar
