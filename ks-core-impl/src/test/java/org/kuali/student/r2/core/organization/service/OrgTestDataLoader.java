@@ -29,13 +29,13 @@ public class OrgTestDataLoader {
     }
 
     public void loadData(){
-        this.loadOrg("1", "kuali.org.CorporateEntity", "Kuali University System", "KUSystem");
-        this.loadOrg("3", "kuali.org.Office", "Chancellor''s Office", "ChancellorsOffice");
-        this.loadOrg("4", "kuali.org.CorporateEntity", "Kuali University", "KU");
-        this.loadOrg("5", "kuali.org.Board", "Board of Trustees", "Trustees");
-        this.loadOrg("6", "kuali.org.Office", "Office of the President", "PresidentsOffice");
-        this.loadOrg("7", "kuali.org.AdvisoryGroup", "President''s Cabinet for College-Wide Planning", "PresidentsCabinet");
-        this.loadOrg("8", "kuali.org.AdvisoryGroup", "President''s Council for College-Wide Planning", "PresidentsCouncil");
+        this.loadOrg("1", "kuali.org.type.corporate.entity", "Kuali University System", "KUSystem");
+        this.loadOrg("3", "kuali.org.type.office", "Chancellor''s Office", "ChancellorsOffice");
+        this.loadOrg("4", "kuali.org.type.corporate.entity", "Kuali University", "KU");
+        this.loadOrg("5", "kuali.org.type.board", "Board of Trustees", "Trustees");
+        this.loadOrg("6", "kuali.org.type.office", "Office of the President", "PresidentsOffice");
+        this.loadOrg("7", "kuali.org.type.advisory.group", "President''s Cabinet for College-Wide Planning", "PresidentsCabinet");
+        this.loadOrg("8", "kuali.org.type.advisory.group", "President''s Council for College-Wide Planning", "PresidentsCouncil");
     }
 
     public void loadOrg(String id, String typeKey, String longName, String shortName){

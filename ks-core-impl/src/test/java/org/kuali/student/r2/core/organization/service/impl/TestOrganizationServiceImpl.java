@@ -91,30 +91,30 @@ public class TestOrganizationServiceImpl {
 
         SearchResultInfo searchResult = orgService.search(searchRequest, callContext);
         List<SearchResultRowInfo> rows = searchResult.getRows();
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.CorporateEntity");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Board");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Division");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.School");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Program");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Center");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.College");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Department");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Office");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Association");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.AdvisoryGroup");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.WorkGroup");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Section");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Senate");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.Committee");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.AdhocCommittee");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.COC");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.corporate.entity");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.board");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.division");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.school");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.program");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.center");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.college");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.academic.department");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.office");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.association");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.advisory.group");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.work.group");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.section");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.senate");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.committee");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.adhoc.committee");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.coc");
 
-        searchRequest.addParam(OrganizationServiceConstants.OrganizationSearchParameters.ORG_OPTIONAL_ID, "kuali.org.CorporateEntity");
+        searchRequest.addParam(OrganizationServiceConstants.OrganizationSearchParameters.ORG_OPTIONAL_ID, "kuali.org.type.corporate.entity");
 
         searchResult = orgService.search(searchRequest, callContext);
 
         rows = searchResult.getRows();
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.CorporateEntity");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.corporate.entity");
     }
 
 
@@ -124,21 +124,21 @@ public class TestOrganizationServiceImpl {
 
         SearchResultInfo searchResult = orgService.search(searchRequest, callContext);
         List<SearchResultRowInfo> rows = searchResult.getRows();
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.President");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.EVPP");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.ViceChancellor");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.VicePresident");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.AssocDean");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.AssocProvost");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.Chancellor");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.Dean");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.ExecutiveOfficer");
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.AdministrativeOfficer");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.president");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.evpp");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.vice.chancellor");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.vice.president");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.assoc.dean");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.assoc.provost");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.chancellor");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.dean");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.executive.officer");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.administrative.officer");
 
-        searchRequest.addParam("org.queryParam.orgOptionalId", "kuali.org.PersonRelation.Head");
+        searchRequest.addParam("org.queryParam.orgOptionalId", "kuali.org.person.relation.type.head");
         searchResult = orgService.search(searchRequest, callContext);
 
-        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.PersonRelation.Head");
+        validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.head");
     }
 
     private void validateContainsRow(List<SearchResultRowInfo> rows, String key, String typeKey) {
@@ -171,7 +171,7 @@ public class TestOrganizationServiceImpl {
             assertEquals("Kuali University System", orgInfo.getLongName());
             assertEquals("", orgInfo.getShortDescr().getPlain());
             assertEquals("", orgInfo.getLongDescr().getPlain());
-            assertEquals("kuali.org.CorporateEntity", orgInfo.getTypeKey());
+            assertEquals("kuali.org.type.corporate.entity", orgInfo.getTypeKey());
 
             List<String> orgIds = orgService.searchForOrgIds(qbc, callContext);
             assertNotNull(orgIds);
@@ -221,7 +221,7 @@ public class TestOrganizationServiceImpl {
             assertEquals("1", orgPositionRestriction.getId());
             assertEquals("2", orgPositionRestriction.getOrgId());
             assertEquals(Integer.valueOf(100), orgPositionRestriction.getMaxNumRelations());
-            assertEquals("kuali.org.PersonRelation.Member", orgPositionRestriction.getOrgPersonRelationTypeKey());
+            assertEquals("kuali.org.person.relation.type.member", orgPositionRestriction.getOrgPersonRelationTypeKey());
 
             List<String> orgPositionRestrictionIds = orgService.searchForOrgPositionRestrictionIds(qbc, callContext);
             assertNotNull(orgPositionRestrictionIds);
@@ -243,7 +243,7 @@ public class TestOrganizationServiceImpl {
             assertEquals(1, orgPersonRelationInfos.size());
             OrgPersonRelationInfo orgPersonRelationInfo = orgPersonRelationInfos.get(0);
             assertEquals("1", orgPersonRelationInfo.getId());
-            assertEquals("kuali.org.PersonRelation.Head", orgPersonRelationInfo.getTypeKey());
+            assertEquals("kuali.org.person.relation.type.head", orgPersonRelationInfo.getTypeKey());
             assertEquals("68", orgPersonRelationInfo.getOrgId());
             assertEquals("KIM-1", orgPersonRelationInfo.getPersonId());
 
@@ -272,7 +272,7 @@ public class TestOrganizationServiceImpl {
         orgInfo.setLongName("TestOrgLongName");
         orgInfo.setShortName("TestOrgShortName");
         orgInfo.setStateKey("Active");
-        orgInfo.setTypeKey("kuali.org.Program");
+        orgInfo.setTypeKey("kuali.org.type.program");
         orgInfo.setEffectiveDate(df.parse("20090101"));
         orgInfo.setExpirationDate(df.parse("21001231"));
         AttributeInfo attribute = new AttributeInfo();
@@ -301,7 +301,7 @@ public class TestOrganizationServiceImpl {
         orgCode2.setTypeKey("kuali.org.organization.code.type.codeA");
         orgInfo.getOrgCodes().add(orgCode2);
 
-        OrgInfo createOrg1 = orgService.createOrg("kuali.org.Program", orgInfo, callContext);
+        OrgInfo createOrg1 = orgService.createOrg("kuali.org.type.program", orgInfo, callContext);
         OrgInfo createOrg = orgService.getOrg(createOrg1.getId(), callContext);
 
         //Validate all fields
@@ -310,7 +310,7 @@ public class TestOrganizationServiceImpl {
         assertEquals("TestOrgLongName", createOrg.getLongName());
         assertEquals("TestOrgShortName", createOrg.getShortName());
         assertEquals("Active", createOrg.getStateKey());
-        assertEquals("kuali.org.Program", createOrg.getTypeKey());
+        assertEquals("kuali.org.type.program", createOrg.getTypeKey());
         assertEquals(df.parse("20090101"), createOrg.getEffectiveDate());
         assertEquals(df.parse("21001231"), createOrg.getExpirationDate());
         boolean found = false;
@@ -331,7 +331,7 @@ public class TestOrganizationServiceImpl {
         updateInfo.setLongName("Updated TestOrgLongName");
         updateInfo.setShortName("Updated TestOrgShortName");
         updateInfo.setStateKey("Updated Active");
-        updateInfo.setTypeKey("kuali.org.Program");
+        updateInfo.setTypeKey("kuali.org.type.program");
         updateInfo.setEffectiveDate(df.parse("20090111"));
         updateInfo.setExpirationDate(df.parse("21001211"));
         for (AttributeInfo attrInfo : updateInfo.getAttributes()) {
@@ -357,7 +357,7 @@ public class TestOrganizationServiceImpl {
         assertEquals("Updated Description for new OrgInfo", updated.getShortDescr().getPlain());
         assertEquals("Updated TestOrgLongName", updated.getLongName());
         assertEquals("Updated TestOrgShortName", updated.getShortName());
-        assertEquals("kuali.org.Program", updated.getTypeKey());
+        assertEquals("kuali.org.type.program", updated.getTypeKey());
         assertEquals(df.parse("20090111"), updated.getEffectiveDate());
         assertEquals(df.parse("21001211"), updated.getExpirationDate());
         boolean found1 = false;
@@ -402,9 +402,9 @@ public class TestOrganizationServiceImpl {
         orgPersonRelationInfo.setExpirationDate(df.parse("21001231"));
         orgPersonRelationInfo.setOrgId("28");
         orgPersonRelationInfo.setPersonId("KIM-12345");
-        orgPersonRelationInfo.setTypeKey("kuali.org.PersonRelation.Dean");
+        orgPersonRelationInfo.setTypeKey("kuali.org.person.relation.type.dean");
 
-        OrgPersonRelationInfo createdOPRInfo = orgService.createOrgPersonRelation("28", "KIM-12345", "kuali.org.PersonRelation.Dean", orgPersonRelationInfo, callContext);
+        OrgPersonRelationInfo createdOPRInfo = orgService.createOrgPersonRelation("28", "KIM-12345", "kuali.org.person.relation.type.dean", orgPersonRelationInfo, callContext);
 
         //Validate all fields
         assertEquals("Active", createdOPRInfo.getStateKey());
@@ -412,7 +412,7 @@ public class TestOrganizationServiceImpl {
         assertEquals(df.parse("21001231"), createdOPRInfo.getExpirationDate());
         assertEquals("28", createdOPRInfo.getOrgId());
         assertEquals("KIM-12345", createdOPRInfo.getPersonId());
-        assertEquals("kuali.org.PersonRelation.Dean", createdOPRInfo.getTypeKey());
+        assertEquals("kuali.org.person.relation.type.dean", createdOPRInfo.getTypeKey());
         assertNotNull(createdOPRInfo.getId());
 
         // now test remove (and clean up changes made)
@@ -490,9 +490,9 @@ public class TestOrganizationServiceImpl {
         orgPositionRestrictionInfo.setStdDuration(stdDuration);
         orgPositionRestrictionInfo.setTitle("Title for PositionRestriction");
         orgPositionRestrictionInfo.setOrgId("1");
-        orgPositionRestrictionInfo.setOrgPersonRelationTypeKey("kuali.org.PersonRelation.Treasurer");
+        orgPositionRestrictionInfo.setOrgPersonRelationTypeKey("kuali.org.person.relation.type.treasurer");
 
-        OrgPositionRestrictionInfo created = orgService.createOrgPositionRestriction("1", "kuali.org.PersonRelation.Treasurer", orgPositionRestrictionInfo, callContext);
+        OrgPositionRestrictionInfo created = orgService.createOrgPositionRestriction("1", "kuali.org.person.relation.type.treasurer", orgPositionRestrictionInfo, callContext);
 
         //validate fields
         assertEquals("Description For Position Restriction", created.getDescr().getPlain());
@@ -502,7 +502,7 @@ public class TestOrganizationServiceImpl {
         assertEquals(new Integer(123456), created.getStdDuration().getTimeQuantity());
         assertEquals("Title for PositionRestriction", created.getTitle());
         assertEquals("1", created.getOrgId());
-        assertEquals("kuali.org.PersonRelation.Treasurer", created.getOrgPersonRelationTypeKey());
+        assertEquals("kuali.org.person.relation.type.treasurer", created.getOrgPersonRelationTypeKey());
     }
 
 
@@ -546,7 +546,7 @@ public class TestOrganizationServiceImpl {
 
         boolean found = false;
         for (TypeInfo type : orgTypeInfos) {
-            if (type.getKey().equals("kuali.org.Division")) {
+            if (type.getKey().equals("kuali.org.type.division")) {
                 assertEquals("Division", type.getName());
                 found = true;
             }
@@ -645,7 +645,7 @@ public class TestOrganizationServiceImpl {
 
     @Test
     public void getOrgPersonRelationTypesForOrgType() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
-        List<TypeInfo> orgPersonRelationsByOrgType = orgService.getOrgPersonRelationTypesForOrgType("kuali.org.College", callContext);
+        List<TypeInfo> orgPersonRelationsByOrgType = orgService.getOrgPersonRelationTypesForOrgType("kuali.org.type.college", callContext);
         assertEquals(2, orgPersonRelationsByOrgType.size());
 
         orgPersonRelationsByOrgType = orgService.getOrgPersonRelationTypesForOrgType("K12", callContext);
@@ -721,14 +721,14 @@ public class TestOrganizationServiceImpl {
 
     @Test
     public void getOrgPersonRelationsByOrg() throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        List<OrgPersonRelationInfo> orgPersonRelations = orgService.getOrgPersonRelationsByTypeAndOrgAndPerson("kuali.org.PersonRelation.Professor", "68", "KIM-1", callContext);
+        List<OrgPersonRelationInfo> orgPersonRelations = orgService.getOrgPersonRelationsByTypeAndOrgAndPerson("kuali.org.person.relation.type.professor", "68", "KIM-1", callContext);
         assertNotNull(orgPersonRelations);
         assertEquals(1, orgPersonRelations.size());
     }
 
     @Test
     public void getOrgPersonRelationsByTypeAndOrg() throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        List<OrgPersonRelationInfo> orgPersonRelations = orgService.getOrgPersonRelationsByTypeAndOrg("kuali.org.PersonRelation.Professor", "68", callContext);
+        List<OrgPersonRelationInfo> orgPersonRelations = orgService.getOrgPersonRelationsByTypeAndOrg("kuali.org.person.relation.type.professor", "68", callContext);
         assertNotNull(orgPersonRelations);
         assertEquals(2, orgPersonRelations.size());
     }
@@ -742,7 +742,7 @@ public class TestOrganizationServiceImpl {
 
     @Test
     public void getOrgPersonRelationsByTypeAndPerson() throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        List<OrgPersonRelationInfo> orgPersonRelations = orgService.getOrgPersonRelationsByTypeAndPerson("kuali.org.PersonRelation.Head", "KIM-1", callContext);
+        List<OrgPersonRelationInfo> orgPersonRelations = orgService.getOrgPersonRelationsByTypeAndPerson("kuali.org.person.relation.type.head", "KIM-1", callContext);
         assertNotNull(orgPersonRelations);
         assertEquals(2, orgPersonRelations.size());
     }
@@ -756,7 +756,7 @@ public class TestOrganizationServiceImpl {
 
     @Test
     public void getOrgOrgRelationTypesForOrgType() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
-        List<TypeInfo> orgOrgRelationTypeInfos = orgService.getOrgOrgRelationTypesForOrgType("kuali.org.Division", callContext);
+        List<TypeInfo> orgOrgRelationTypeInfos = orgService.getOrgOrgRelationTypesForOrgType("kuali.org.type.division", callContext);
         assertEquals(4, orgOrgRelationTypeInfos.size());
 
         orgOrgRelationTypeInfos = orgService.getOrgOrgRelationTypesForOrgType("org.klingon", callContext);
@@ -765,19 +765,19 @@ public class TestOrganizationServiceImpl {
 
     @Test
     public void hasOrgPersonRelation() throws DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
-        Boolean hasRelation = orgService.hasOrgPersonRelation("68", "KIM-1", "kuali.org.PersonRelation.Head", callContext);
+        Boolean hasRelation = orgService.hasOrgPersonRelation("68", "KIM-1", "kuali.org.person.relation.type.head", callContext);
         assertNotNull(hasRelation);
         assertTrue(hasRelation);
 
-        hasRelation = orgService.hasOrgPersonRelation("68x", "KIM-1", "kuali.org.PersonRelation.Head", callContext);
+        hasRelation = orgService.hasOrgPersonRelation("68x", "KIM-1", "kuali.org.person.relation.type.head", callContext);
         assertNotNull(hasRelation);
         assertFalse(hasRelation);
 
-        hasRelation = orgService.hasOrgPersonRelation("68", "KIM--1", "kuali.org.PersonRelation.Head", callContext);
+        hasRelation = orgService.hasOrgPersonRelation("68", "KIM--1", "kuali.org.person.relation.type.head", callContext);
         assertNotNull(hasRelation);
         assertFalse(hasRelation);
 
-        hasRelation = orgService.hasOrgPersonRelation("68", "KIM-1", "kuali.org.PersonRelation.HeadTTT", callContext);
+        hasRelation = orgService.hasOrgPersonRelation("68", "KIM-1", "kuali.org.person.relation.type.headTTT", callContext);
         assertNotNull(hasRelation);
         assertFalse(hasRelation);
     }
@@ -808,7 +808,7 @@ public class TestOrganizationServiceImpl {
 
     @Test
     public void getOrgsByType() throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        String orgTypeKey = "kuali.org.Department";
+        String orgTypeKey = "kuali.org.type.academic.department";
         List<String> orgIds = orgService.getOrgIdsByType(orgTypeKey, callContext);
         assertNotNull(orgIds);
         assertEquals(28, orgIds.size());
@@ -860,7 +860,7 @@ public class TestOrganizationServiceImpl {
         for (OrgPositionRestrictionInfo restriction : orgPositionRestrictions) {
             if (restriction.getId().equals("40")) {
                 assertEquals("67", restriction.getOrgId());
-                assertEquals("kuali.org.PersonRelation.Chair", restriction.getOrgPersonRelationTypeKey());
+                assertEquals("kuali.org.person.relation.type.chair", restriction.getOrgPersonRelationTypeKey());
                 found = true;
             }
         }
@@ -869,7 +869,7 @@ public class TestOrganizationServiceImpl {
 
     @Test
     public void getOrgPositionRestrictionsByType() throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        String orgPersonRelationTypeKey = "kuali.org.PersonRelation.President";
+        String orgPersonRelationTypeKey = "kuali.org.person.relation.type.president";
         List<String> orgPositionRestrictionIds = orgService.getOrgPositionRestrictionIdsByType(orgPersonRelationTypeKey, callContext);
         assertNotNull(orgPositionRestrictionIds);
         assertEquals(2, orgPositionRestrictionIds.size());
