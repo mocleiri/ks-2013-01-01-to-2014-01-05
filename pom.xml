@@ -171,7 +171,7 @@
         <ks.gwt.compile.style>OBF</ks.gwt.compile.style>
         <!-- gwt modules to build -->
         <ks.gwt.module.lum>org.kuali.student.lum.lu.ui.main.LUMMain</ks.gwt.module.lum>
-<!--        <ks.gwt.module.org>org.kuali.student.core.organization.ui.OrgEntry</ks.gwt.module.org>-->
+        <!--        <ks.gwt.module.org>org.kuali.student.core.organization.ui.OrgEntry</ks.gwt.module.org>-->
         <!-- phases -->
         <ks.contractdoc.phase>site</ks.contractdoc.phase>
         <ks.dictionarydoc.phase>site</ks.dictionarydoc.phase>
@@ -183,10 +183,8 @@
         <!-- should align to the same or earlier phase than the contract doc or dictionary doc phase -->
         <ks.prepare-contract-dependencies.phase>site</ks.prepare-contract-dependencies.phase>
         <ks.vdecorator.phase>none</ks.vdecorator.phase>
-
-	<!-- Remove this once the top level Kuali pom is on this version (or higher) -->
+        <!-- Remove this once the top level Kuali pom is on this version (or higher) -->
         <plugin.externals.version>1.0.10</plugin.externals.version>
-	
     </properties>
     <prerequisites>
         <maven>${maven.min.version}</maven>
