@@ -6,7 +6,6 @@ Feature: WC.Edit Activity Offering Attributes
     And I manage a given Course Offering
     And I edit an Activity Offering
 
-#KSENROLL-9442
   Scenario: Edit Activity Offering code
     When I edit an activity offering code
     And I submit the AO changes
@@ -15,7 +14,6 @@ Feature: WC.Edit Activity Offering Attributes
     And I submit the AO changes
     Then the activity offering code change is persisted
 
-#KSENROLL-9442
   Scenario: Edit Activity Offering Information attributes
     When I am editing the information attributes for an activity offering
     And I submit the AO changes
@@ -26,43 +24,36 @@ Feature: WC.Edit Activity Offering Attributes
     And I cancel the AO changes
     Then the changes of information attributes are not persisted
 
-#KSENROLL-9442
   Scenario: Add Activity Offering Personnel attributes
     When I add Personnel attributes
     And I submit the AO changes
     Then the changes of the Personnel attributes are persisted
 
-#KSENROLL-9442
   Scenario: Delete Activity Offering Personnel attributes
     When I delete Personnel attributes
     And I submit the AO changes
     Then the deleted Personnel line should not be present
 
-#KSENROLL-9442
   Scenario: Edit Activity Offering Personnel attributes
     When I change Personnel attributes
     And I submit the AO changes
     Then the changes of the Personnel attributes are persisted
 
-#KSENROLL-9442
   Scenario: Edit Miscellaneous Activity Offering attributes
     When I change Miscellaneous Activity Offering attributes
     And I submit the AO changes
     Then the miscellaneous changes are persisted
 
-#KSENROLL-9442
   Scenario: Change Activity Offering Information attributes without submitting
     Given I am editing the information attributes for an activity offering
     When I save the changes and remain on the Edit AO page
     Then the changes of Activity Offering attributes are persisted
 
-#KSENROLL-9442
   Scenario: Change Activity Offering Information attributes, save and jump to previous AO
     Given I am editing the information attributes for an activity offering
     When I save the changes and jump to the previous AO
     Then the changes of information attributes are persisted
 
-#KSENROLL-9442
   Scenario: Change Activity Offering Information attributes, save and jump to next AO
     Given I am editing the information attributes for an activity offering
     When I save the changes and jump to the next AO
@@ -83,7 +74,6 @@ Feature: WC.Edit Activity Offering Attributes
     When I jump to an arbitrary AO without saving the changes
     Then the changes of information attributes are not persisted
 
-#KSENROLL-9442
   Scenario: Change Activity Offering Information attributes and jump to an arbitrary AO
     Given I am editing the information attributes for an activity offering
     When I save the changes and jump to an arbitrary AO
