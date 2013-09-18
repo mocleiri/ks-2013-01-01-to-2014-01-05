@@ -9,13 +9,16 @@ Feature: WC.delete activity offerings
 
 # KSENROLL-7232
   Scenario: Delete multiple AOs
-    When I create a Course Offering with 3 Activity Offerings
+    When I create a Course Offering and add 3 Activity Offerings
     And I delete 2 Activity Offerings
-    Then the Course Offering should contain 1 Activity Offerings
+    Then the Course Offering should contain 1 additional Activity Offering
     And the 2 AOs are Successfully deleted
 
 # KSENROLL-7232
   Scenario: Delete an AO in cross-listed course offering
     When I designate a valid term and cross-listed Course Offering Code
-    And I delete the AO with Draft state
-    Then The AO is Successfully deleted
+    And add an Activity Offering to the cross-listed CO
+    Then the AO count reflects the added AO
+    When I delete the added AO
+    Then I receive a warning that the course is cross-listed
+    And the AO is Successfully deleted
