@@ -26,6 +26,9 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
     @Autowired
     private AccountBlockingService accountBlockingService;
 
+    @Autowired
+    private PersistenceService persistenceService;
+
 
     @Before
     public void setUpWithinTransaction() {
@@ -35,9 +38,10 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void checkBlock1() throws Exception {
+    public void checkBlock1() {
 
         String userId = "user1";
+
         String transactionTypeId1 = "cash";
         String transactionTypeId2 = "chip";
         String transactionTypeId3 = "finaid";
@@ -62,10 +66,87 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
 
             Assert.isTrue(abe.getAccountId().equals(userId));
             Assert.notEmpty(abe.getBlockNames());
+
             Assert.isTrue(abe.getBlockNames().contains("Block 1"));
 
         }
 
     }
+
+    @Test
+    public void checkBlock2() {
+
+        String userId = "user1";
+
+        String transactionTypeId1 = "cash";
+        String transactionTypeId2 = "finaid2";
+
+        String atpId1 = "0000000";
+        String atpId2 = "20122";
+
+        String holdIssueName1 = "Disciplinary Suspension";
+        String holdIssueName2 = "Name 2";
+
+        Map<String, Object> attributes = new HashMap<String, Object>();
+
+
+        attributes.put(Constants.BRM_AB_TRANSACTION_TYPE_IDS, Arrays.asList(transactionTypeId1, transactionTypeId2));
+        attributes.put(Constants.BRM_AB_ATP_IDS, Arrays.asList(atpId1, atpId2));
+        attributes.put(Constants.BRM_AB_HOLD_ISSUE_NAMES, Arrays.asList(holdIssueName1, holdIssueName2));
+
+        try {
+
+            accountBlockingService.checkBlock(userId, attributes, Permission.CREATE_PAYMENT, Permission.CREATE_REFUND);
+
+        } catch (AccountBlockedException abe) {
+
+            logger.info("Message = " + abe.getMessage() + ", Account ID = " + abe.getAccountId() +
+                    ", Block names = " + abe.getBlockNames());
+
+            Assert.notNull(abe.getAccountId());
+            Assert.notNull(abe.getBlockNames());
+
+            Assert.isTrue(abe.getAccountId().equals(userId));
+
+            Assert.notEmpty(abe.getBlockNames());
+            Assert.isTrue(abe.getBlockNames().size() > 1);
+
+            Assert.isTrue(abe.getBlockNames().contains("Block 1"));
+            Assert.isTrue(abe.getBlockNames().contains("Block 3"));
+
+        }
+
+    }
+
+
+    @Test
+    public void checkBlock3() {
+
+        String userId = "user1";
+
+        String transactionTypeId1 = "finaid";
+
+
+        Account account = accountService.getFullAccount(userId);
+
+        Assert.notNull(account);
+        Assert.notNull(account.getId());
+        Assert.isTrue(account.getId().equals(userId));
+
+        Assert.isTrue(account.isBlockingEnabled());
+
+        account.setBlockingEnabled(false);
+
+        persistenceService.persistEntity(account);
+
+        Map<String, Object> attributes = new HashMap<String, Object>();
+
+        attributes.put(Constants.BRM_AB_TRANSACTION_TYPE_IDS, Arrays.asList(transactionTypeId1));
+
+        // No AccountBlockingException should be thrown because "isBlockingEnabled" is false
+        accountBlockingService.checkBlock(userId, attributes, Permission.CREATE_PAYMENT, Permission.CREATE_CHARGE);
+
+    }
+
 
 }
