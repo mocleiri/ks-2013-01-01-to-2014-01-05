@@ -181,6 +181,8 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And the registration group is shown as pending
     And the Course Offering is shown as Planned
 
+  # requires an MSE here to turn RDLs into ADLs ... need to create a custom term so can do it safely
+  @wip
   Scenario: CO 23.3 for Scenario 5a CSR Reinstate an AO with ADLs in locked SOC state
     Given I manage a course offering with a suspended activity offering present in a locked SOC state
     When I select this activity offering, which is Suspended

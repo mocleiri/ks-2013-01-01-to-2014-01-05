@@ -592,6 +592,12 @@ class ActivityOffering
     populations_used
   end
 
+  # suspends the activity offering
+  def suspend
+    on(ManageCourseOfferings).suspend_ao
+    on(SuspendActivityOffering).suspend_activity
+  end
+
 end
 
 # stores test data for creating/editing and validating seatpool and provides convenience methods for navigation and data entry

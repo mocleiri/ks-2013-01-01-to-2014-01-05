@@ -249,15 +249,23 @@ Given /^I manage a course offering with a suspended and a draft activity offerin
 end
 
 Given /^I manage a course offering with a suspended activity offering present in a locked SOC state$/ do
-  @course_with_suspend_ao8 = make CourseOffering, :term=> "201800" , :course => "ENGL462"
+  @course_with_suspend_ao8 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201800" , :course => "ENGL462")
+  # need to turn RDLs into ADLs
+  go_to_manage_soc
+  on ManageSocPage do |page1|
+    page1.term_code.set @term_code
+    page1.go_action
+    page1.send_to_scheduler_action
+  end
+
   @course_with_suspend_ao8.manage
-  on ManageCourseOfferings do |page|
+  on ManageCourseOfferings do |page2|
     @ao_suspended_code10 = "A"
-    page.select_ao(@ao_suspended_code10)
-    page.suspend_ao
+    page2.select_ao(@ao_suspended_code10)
+    page2.suspend_ao
     on(SuspendActivityOffering).suspend_activity
-    page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code10).should == "Suspended"
+    page2.loading.wait_while_present
+    page2.ao_status(@ao_suspended_code10).should == "Suspended"
   end
 end
 
@@ -296,8 +304,6 @@ Given /^I manage a course offering with suspended activity offering present in a
   @course_with_suspend_ao12 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201705", :course => "CHEM272")
   @course_with_suspend_ao12.manage
   on ManageCourseOfferings do |page|
-    #have to remove the 'D' AO ADLs & suspend it
-    #?? Remove ADLs, add RDL
     @ao_suspended_code15 = "D"
     page.select_ao(@ao_suspended_code15)
     page.suspend_ao
@@ -952,8 +958,7 @@ Given /^I manage a course offering with a draft activity offering present in a p
   @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "BSCI421")
   @course_offering.manage_and_init
 
-  @offered_ao = @course_offering.get_ao_obj_by_code("A")
-  @draft_ao = @offered_ao.create :create_by_copy => true
+  @draft_ao = @course_offering.get_ao_obj_by_code("A")
 end
 
 Given /^I manage a course offering with an approved activity offering present$/ do
