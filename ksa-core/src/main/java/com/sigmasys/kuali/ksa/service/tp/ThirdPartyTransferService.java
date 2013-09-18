@@ -140,6 +140,14 @@ public interface ThirdPartyTransferService {
     ThirdPartyTransferDetail getThirdPartyTransferDetail(Long thirdPartyPlanId, String accountId);
 
     /**
+     * Retrieves ThirdPartyTransferDetail objects with all statuses by Account ID
+     *
+     * @param accountId Account ID
+     * @return list of ThirdPartyTransferDetail instances
+     */
+    List<ThirdPartyTransferDetail> getThirdPartyTransferDetails(String accountId);
+
+    /**
      * Returns a list of third-party allowable charges by ThirdPartyPlan ID sorted by priority in the descending order.
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID

@@ -354,7 +354,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
-     * Retrieves ThirdPartyTransferDetail with ACTIVE status by ThirdPartyPlan and Account IDs
+     * Retrieves ThirdPartyTransferDetail with ACTIVE status by ThirdPartyPlan and Account ID
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID
      * @param accountId        Account ID
@@ -376,6 +376,24 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         List<ThirdPartyTransferDetail> details = query.getResultList();
 
         return CollectionUtils.isNotEmpty(details) ? details.get(0) : null;
+    }
+
+    /**
+     * Retrieves ThirdPartyTransferDetail objects with all statuses by Account ID
+     *
+     * @param accountId Account ID
+     * @return list of ThirdPartyTransferDetail instances
+     */
+    @Override
+    public List<ThirdPartyTransferDetail> getThirdPartyTransferDetails(String accountId) {
+
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
+
+        Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where dca.id = :accountId order by d.id desc");
+
+        query.setParameter("accountId", accountId);
+
+        return query.getResultList();
     }
 
 
