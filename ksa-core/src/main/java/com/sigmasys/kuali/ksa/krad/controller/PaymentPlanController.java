@@ -2,26 +2,34 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.PaymentPlanForm;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
+import com.sigmasys.kuali.ksa.krad.model.TransactionTransferModel;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
+import com.sigmasys.kuali.ksa.model.TransactionTransfer;
 import com.sigmasys.kuali.ksa.model.TransferType;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
+import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
+import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +48,9 @@ public class PaymentPlanController extends GenericSearchController {
 
     @Autowired
     private ThirdPartyTransferService thirdPartyTransferService;
+
+    @Autowired
+    private TransactionTransferService transactionTransferService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -68,10 +79,21 @@ public class PaymentPlanController extends GenericSearchController {
         return form;
     }
 
+    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=navigate")
+    public ModelAndView navigate(@ModelAttribute("KualiForm") PaymentPlanForm form, BindingResult result,
+                                 HttpServletRequest request, HttpServletResponse response) {
+        String pageId = form.getActionParamaterValue(UifParameters.NAVIGATE_TO_PAGE_ID);
+
+        if ("ManageThirdPartyPage".equals(pageId)) {
+            populateForm(form);
+        }
+
+        return getUIFModelAndView(form);
+    }
 
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
-    public ModelAndView get(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
-
+    public ModelAndView get(@ModelAttribute("KualiForm") PaymentPlanForm form, BindingResult result,
+                                 HttpServletRequest request, HttpServletResponse response) {
         String pageId = request.getParameter("pageId");
 
         if ("ManageThirdPartyPage".equals(pageId)) {
@@ -80,6 +102,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         return getUIFModelAndView(form);
     }
+
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=getResponsibleAccount")
     public ModelAndView getResponsibleAccount(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
@@ -176,6 +199,55 @@ public class PaymentPlanController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=transactionTransferList")
+    public ModelAndView transactionTransferList(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+
+        String memberIdString = request.getParameter("actionParameters[memberId]");
+
+        String planIdString = request.getParameter("actionParameters[planId]");
+        Long planId = Long.parseLong(planIdString);
+
+
+        List<ThirdPartyPlanModel> plans = form.getThirdPartyPlans();
+        ThirdPartyPlanModel currentPlan = null;
+        for(ThirdPartyPlanModel plan : plans) {
+            if(planId.equals(plan.getParent().getId())) {
+                currentPlan = plan;
+                break;
+            }
+        }
+
+        if(currentPlan == null){
+            ThirdPartyPlan plan = thirdPartyTransferService.getThirdPartyPlan(planId);
+            currentPlan = new ThirdPartyPlanModel();
+            currentPlan.setParent(plan);
+        }
+
+        List<TransactionTransferModel> transferDetails = currentPlan.getThirdPartyTransferDetails();
+        if(transferDetails == null || transferDetails.size() == 0) {
+            TransactionTransferModel transferModel = new TransactionTransferModel();
+            List<ThirdPartyTransferDetail> details = thirdPartyTransferService.getThirdPartyTransferDetails(memberIdString);
+            if(details != null) {
+                for(ThirdPartyTransferDetail detail : details) {
+                    transferModel.setThirdPartyTransferDetail(detail);
+                    if(detail != null && detail.getTransferGroupId() != null) {
+                        List<TransactionTransfer> transfers = transactionTransferService.getTransactionTransfersByGroupId(detail.getTransferGroupId());
+                        transferModel.setTransactionTransfers(transfers);
+                    }
+                    transferDetails.add(transferModel);
+                }
+            }
+
+        }
+
+
+        form.setThirdPartyPlan(currentPlan);
+
+        form.setPageId("ViewTransactionTransferListPage");
+
+        return getUIFModelAndView(form);
+    }
+
 
     public KeyValuesFinder getTransferTypeOptionsFinder() {
         // Don't cache the values finder or else new entries will not show when added
@@ -234,6 +306,13 @@ public class PaymentPlanController extends GenericSearchController {
             }
 
             model.setThirdPartyAllowableCharges(thirdPartyTransferService.getThirdPartyAllowableCharges(plan.getId()));
+
+            List<ThirdPartyPlanMember> members = thirdPartyTransferService.getThirdPartyPlanMembers(plan.getId());
+            model.setThirdPartyPlanMembers(members);
+            for(ThirdPartyPlanMember member : members) {
+                member.getDirectChargeAccount().getCompositeDefaultPersonName();
+            }
+
             models.add(model);
 
         }

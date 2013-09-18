@@ -33,6 +33,7 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     private List<ThirdPartyPlanModel> thirdPartyPlans;
 
+    private ThirdPartyPlanModel thirdPartyPlan;
 
     private String responsibleAccount;
     private String responsibleAccountMessage;
@@ -272,5 +273,13 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     public void setTransferTypeOptionsFinder(KeyValuesFinder transferTypeOptionsFinder) {
         this.transferTypeOptionsFinder = transferTypeOptionsFinder;
+    }
+
+    public ThirdPartyPlanModel getThirdPartyPlan() {
+        return thirdPartyPlan;
+    }
+
+    public void setThirdPartyPlan(ThirdPartyPlanModel thirdPartyPlan) {
+        this.thirdPartyPlan = thirdPartyPlan;
     }
 }

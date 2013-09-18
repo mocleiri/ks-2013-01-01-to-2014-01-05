@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.krad.model;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ public class ThirdPartyPlanModel {
 
     private List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges;
 
+    private List<ThirdPartyPlanMember> thirdPartyPlanMembers;
+
+    private List<TransactionTransferModel> thirdPartyTransferDetails;
 
     public ThirdPartyPlan getParent() {
         if (parent == null) {
@@ -136,5 +140,24 @@ public class ThirdPartyPlanModel {
 
     public void setThirdPartyAllowableCharges(List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges) {
         this.thirdPartyAllowableCharges = thirdPartyAllowableCharges;
+    }
+
+    public List<ThirdPartyPlanMember> getThirdPartyPlanMembers() {
+        return thirdPartyPlanMembers;
+    }
+
+    public void setThirdPartyPlanMembers(List<ThirdPartyPlanMember> thirdPartyPlanMembers) {
+        this.thirdPartyPlanMembers = thirdPartyPlanMembers;
+    }
+
+    public List<TransactionTransferModel> getThirdPartyTransferDetails() {
+        if(thirdPartyTransferDetails == null) {
+            thirdPartyTransferDetails = new ArrayList<TransactionTransferModel>();
+        }
+        return thirdPartyTransferDetails;
+    }
+
+    public void setThirdPartyTransferDetails(List<TransactionTransferModel> thirdPartyTransferDetails) {
+        this.thirdPartyTransferDetails = thirdPartyTransferDetails;
     }
 }

@@ -85,6 +85,11 @@ public class ThirdPartyPlanMember extends AccountIdAware implements Identifiable
         return isExecuted != null ? isExecuted : false;
     }
 
+    @Transient
+    public Boolean getExecuted() {
+        return this.isExecuted();
+    }
+
     public void setExecuted(Boolean executed) {
         isExecuted = executed;
     }
