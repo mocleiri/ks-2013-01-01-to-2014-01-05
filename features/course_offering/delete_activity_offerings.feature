@@ -7,14 +7,14 @@ Feature: WC.delete activity offerings
   Background:
     Given I am logged in as a Schedule Coordinator
 
-# KSENROLL-8061
+# KSENROLL-7232
   Scenario: Delete multiple AOs
-    When I create a Course Offering with "3" Activity Offerings
-    And I delete "2" Activity Offerings
-    Then The Course Offering should contain "1" Activity Offerings
-    And The "2" AOs are Successfully deleted
+    When I create a Course Offering with 3 Activity Offerings
+    And I delete 2 Activity Offerings
+    Then the Course Offering should contain 1 Activity Offerings
+    And the 2 AOs are Successfully deleted
 
-# KSENROLL-8061
+# KSENROLL-7232
   Scenario: Delete an AO in cross-listed course offering
     When I designate a valid term and cross-listed Course Offering Code
     And I delete the AO with Draft state
