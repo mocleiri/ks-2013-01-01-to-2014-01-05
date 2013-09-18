@@ -157,9 +157,9 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
-     * Creates and persists a new third-party plan member for the given account and plan IDs
+     * Creates and persists a new third-party plan member for the given DirectChargeAccount and plan IDs
      *
-     * @param accountId        Account ID
+     * @param accountId        DirectChargeAccount ID
      * @param thirdPartyPlanId ThirdPartyPlan ID
      * @param priority         Priority
      * @return ThirdPartyPlanMember instance
@@ -354,10 +354,10 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
-     * Retrieves ThirdPartyTransferDetail with ACTIVE status by ThirdPartyPlan and Account ID
+     * Retrieves ThirdPartyTransferDetail with ACTIVE status by ThirdPartyPlan and DirectChargeAccount ID
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID
-     * @param accountId        Account ID
+     * @param accountId        DirectChargeAccount ID
      * @return ThirdPartyTransferDetail instance
      */
     @Override
@@ -379,9 +379,9 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
-     * Retrieves ThirdPartyTransferDetail objects with all statuses by Account ID
+     * Retrieves ThirdPartyTransferDetail objects with all statuses by DirectChargeAccount ID
      *
-     * @param accountId Account ID
+     * @param accountId DirectChargeAccount ID
      * @return list of ThirdPartyTransferDetail instances
      */
     @Override
@@ -430,10 +430,10 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
-     * Retrieves ThirdPartyPlanMember instance from the persistent store by TP plan ID abd Account ID.
+     * Retrieves ThirdPartyPlanMember instance from the persistent store by TP plan ID and DirectChargeAccount ID.
      *
      * @param thirdPartyPlanId ThirdPartyPlan ID
-     * @param accountId        Account ID
+     * @param accountId        DirectChargeAccount ID
      * @return ThirdPartyPlanMember instance
      */
     @Override

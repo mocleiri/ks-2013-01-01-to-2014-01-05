@@ -372,5 +372,72 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void getThirdPartyTransfers() throws Exception {
+
+        ThirdPartyPlan plan = _createThirdPartyPlan("Plan_!!99");
+
+        List<ThirdPartyTransferDetail> transfers =
+                thirdPartyTransferService.generateThirdPartyTransfers(plan.getId(), false);
+
+        Assert.notNull(transfers);
+        Assert.notEmpty(transfers);
+
+        for (ThirdPartyTransferDetail transfer : transfers) {
+
+            Assert.notNull(transfer);
+            Assert.notNull(transfer.getId());
+
+            Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.ACTIVE);
+        }
+
+        transfers = thirdPartyTransferService.getThirdPartyTransferDetails(TEST_USER_ID);
+
+        Assert.notNull(transfers);
+        Assert.notEmpty(transfers);
+
+        for (ThirdPartyTransferDetail transfer : transfers) {
+
+            Assert.notNull(transfer);
+            Assert.notNull(transfer.getId());
+
+            Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.ACTIVE);
+        }
+
+        ThirdPartyTransferDetail reversedTransfer =
+                thirdPartyTransferService.reverseThirdPartyTransfer(transfers.get(0).getId(), "Reversed Memo");
+
+        Assert.notNull(reversedTransfer);
+        Assert.notNull(reversedTransfer.getId());
+        Assert.notNull(reversedTransfer.getAccountId());
+        Assert.notNull(reversedTransfer.getChargeStatus());
+
+        Assert.isTrue(reversedTransfer.getChargeStatus() == ThirdPartyChargeStatus.REVERSED);
+
+
+        transfers = thirdPartyTransferService.getThirdPartyTransferDetails(TEST_USER_ID);
+
+        Assert.notNull(transfers);
+        Assert.notEmpty(transfers);
+
+        boolean reversedTransferExists = false;
+
+        for (ThirdPartyTransferDetail transfer : transfers) {
+
+            Assert.notNull(transfer);
+            Assert.notNull(transfer.getId());
+
+            if (reversedTransfer.getId().equals(transfer.getId())) {
+
+                Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.REVERSED);
+
+                reversedTransferExists = true;
+            }
+        }
+
+        Assert.isTrue(reversedTransferExists);
+
+    }
+
 
 }
