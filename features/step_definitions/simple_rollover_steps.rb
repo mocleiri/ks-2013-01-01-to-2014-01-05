@@ -234,7 +234,17 @@ And /^I rollover the subterms' parent term to a target term with those subterms 
 end
 
 And /^I rollover the term to a new academic term$/ do
-  step "I rollover the subterms' parent term to a target term with those subterms are NOT setup"
+  @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1 #, :name => "TWj64w1q3e"
+  @term_target = make AcademicTerm, :term_year => @calendar_target.year
+  @calendar_target.add_term(@term_target)
+  @term_target.make_official
+  @term_target.set_up_soc
+
+  @rollover = make Rollover, :target_term => @term_target.term_code ,
+                   :source_term => @term.term_code,
+                   :exp_success => false
+  @rollover.perform_rollover
+  @rollover.wait_for_rollover_to_complete
 end
 
 Then /^there is a target term error message on the rollover page stating: (.*)$/ do |expected_msg|

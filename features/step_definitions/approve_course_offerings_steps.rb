@@ -1376,3 +1376,31 @@ Then /^the selected Activity Offerings should be in Approved state$/ do
     end
   end
 end
+Given /^I manage a course offering with a cancelled activity offering$/ do
+  pending
+end
+Then /^I am unable to colocate the activity offering$/ do
+  pending
+end
+
+Given /^a new academic term has course offerings in cancelled and suspended status$/ do
+  @calendar = create AcademicCalendar #, :year => "2235", :name => "fSZtG62zfU"
+  @term = make AcademicTerm, :term_year => @calendar.year
+  @calendar.add_term(@term)
+  @term.set_up_soc
+
+  delivery_format_list = []
+  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture")
+
+  @course_offering = create CourseOffering, :term=> @term.term_code,
+                            :course => "ENGL211",
+                            :delivery_format_list => delivery_format_list
+
+  @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering,
+                              :format => "Lecture Only", :activity_type => "Lecture"
+  @activity_offering.save
+end
+
+When /^an academic term has activity offerings in cancelled and suspended status$/ do
+  pending
+end
