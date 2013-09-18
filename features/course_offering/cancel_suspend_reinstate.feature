@@ -64,7 +64,8 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Then the Suspend button is "enabled"
     Then I deselect the activity offering, which is in Approved status
 
-  Scenario: CO 22.1 CSR Suspend a draft Activity Offering
+  @wip
+  Scenario: CO 22.1 CSR Suspend a draft Activity Offering in a published SOC state
     Given I manage a course offering with a draft activity offering present in a published SOC state
     Then I can suspend an activity in Draft status
     And a suspended success message is displayed
