@@ -62,3 +62,6 @@ STATE_CHG_ID,STATE_CNSTRNT_ID
 "kuali.statechange.registrationgroup.pending.suspended","kuali.stateconstraint.registrationgroup.tostate.suspended.1"
 "kuali.statechange.registrationgroup.pending.suspended","kuali.stateconstraint.registrationgroup.tostate.suspended.2"
 "kuali.statechange.registrationgroup.suspended.canceled","kuali.stateconstraint.registrationgroup.tostate.canceled"
+"kuali.statechange.registrationgroup.suspended.offered","kuali.stateconstraint.registrationgroup.tostate.offered.all"
+"kuali.statechange.registrationgroup.suspended.pending","kuali.stateconstraint.registrationgroup.tostate.pending.exists"
+"kuali.statechange.registrationgroup.suspended.pending","kuali.stateconstraint.registrationgroup.tostate.pending.none"
