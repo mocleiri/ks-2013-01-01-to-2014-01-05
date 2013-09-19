@@ -594,8 +594,11 @@ class ActivityOffering
 
   # suspends the activity offering
   def suspend
-    on(ManageCourseOfferings).suspend_ao
+    on ManageCourseOfferings do |page|
+    page.select_ao(self.code)
+    page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
+    end
   end
 
 end
