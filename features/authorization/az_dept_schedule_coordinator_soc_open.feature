@@ -106,6 +106,7 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Open
     And I have access to approve an activity offering
     #TODO - approve step needs to be more specific re: AO status approved vs draft
 
+  @bug @KSENROLL-9601
   Scenario: AZ 5.1A/Full_open.7 Department Schedule Coordinator Carol has limited access to delete AOs in a Open State
     Given there is a "Draft" course offering in my admin org
     Then I have access to delete an activity offering in "Draft" status for the course offering

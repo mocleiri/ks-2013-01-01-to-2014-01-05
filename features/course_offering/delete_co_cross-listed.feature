@@ -6,7 +6,7 @@ Feature: WC.Delete cross-listed COs
   Background:
     Given I am logged in as a Schedule Coordinator
 
-
+  @bug @KSENROLL-9601
   Scenario: Deletion of a cross-listing results in both the CLU and the non-CLU being deleted
     When I create a cross-listed Course Offering
     And I delete the alias Course Offering

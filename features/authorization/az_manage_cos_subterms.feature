@@ -22,6 +22,7 @@ Feature: EC.AZ Manage Course Offerings with subterms
     When I update the subterm for the activity offering
     Then the AO subterm change is successful
 
+  @bug @KSENROLL-9601
   Scenario: CO 26.6B Carol has access to add/remove/update the subterm for an AO (in admin org) when SOC=FINAL EDITS
     Given I advance the SOC state from open to final edits state
     And I am logged in as a Department Schedule Coordinator
