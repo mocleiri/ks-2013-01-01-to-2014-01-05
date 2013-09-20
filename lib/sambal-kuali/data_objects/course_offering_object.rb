@@ -119,7 +119,8 @@ class CourseOffering
         :create_from_existing => nil,
         :joint_co_to_create => nil,
         :cross_listed => false,
-        :cross_listed_codes => []
+        :cross_listed_codes => [],
+        :do_verification => false
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -162,7 +163,8 @@ class CourseOffering
         @delivery_format_list.each_with_index do |dfl, index|
           dfl.create(index + 1)
         end
-        page.create_offering
+
+        page.create_offering unless @do_verification == true
       end
     end
   end

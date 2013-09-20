@@ -42,18 +42,7 @@ When /^I copy an existing academic calender that has a defined final exam period
 end
 
 When /^I create a Course Offering from catalog with a final exam period$/ do
-  @course_offering = make CourseOffering, :term => "201301", :course => "PHYS603"
-
-  @course_offering.start_create_by_search
-  on CreateCourseOffering do  |page|
-    page.continue
-  end
-
-  on CreateCOFromCatalog do |page|
-    @course_offering.suffix = random_alphanums(5).upcase if @course_offering.suffix == ""
-    page.suffix.set @course_offering.suffix
-    @course_offering.course = "#{@course_offering.course}#{@course_offering.suffix}"
-  end
+  @course_offering = create CourseOffering, :term => "201301", :course => "PHYS603", :do_verification => true
 end
 
 When /^I create and then edit a Course Offering from catalog with an alternate final exam period$/ do
@@ -233,7 +222,7 @@ Then /^the option for the Use Final Exam Matrix should only be available for a c
     page.use_exam_matrix_div.present?.should == false
     page.final_exam_option_none
     page.use_exam_matrix_div.present?.should == false
-    page.create_offering
+    #page.create_offering
   end
 end
 
