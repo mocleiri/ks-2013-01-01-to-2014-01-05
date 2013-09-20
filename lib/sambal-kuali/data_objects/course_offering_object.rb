@@ -60,8 +60,6 @@ class CourseOffering
   PLANNED_STATUS = "Planned"
   OFFERED_STATUS = "Offered"
 
-
-
   # provides default data:
   #  defaults = {
   #    :term=>Rollover::MAIN_TEST_TERM_SOURCE,
@@ -158,6 +156,8 @@ class CourseOffering
           create_joint_co()
         end
         page.cross_listed_co_check_box.set if @cross_listed
+
+        page.final_exam_driver_select("Final Exam Per Activity Offering")
         #need to specify which row dfl is being created on, which is 1 greater than the current iteration
         @delivery_format_list.each_with_index do |dfl, index|
           dfl.create(index + 1)
