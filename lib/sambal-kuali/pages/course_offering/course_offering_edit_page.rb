@@ -88,7 +88,7 @@ class CourseOfferingEdit < BasePage
       delivery_formats_table.rows[row].cells[FORMAT_COLUMN].select().select(format.format)
     end
     delivery_formats_table.rows[row].cells[GRADE_ROSTER_LEVEL_COLUMN].select().select(format.grade_format)
-    delivery_formats_table.rows[row].cells[FINAL_EXAM_ACTIVITY_COLUMN].select().select(format.final_exam_activity)
+    #delivery_formats_table.rows[row].cells[FINAL_EXAM_ACTIVITY_COLUMN].select().select(format.final_exam_activity)
   end
 
   def select_random_option(sel_list)

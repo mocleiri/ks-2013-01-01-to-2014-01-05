@@ -111,8 +111,9 @@ And /^I add a delivery format option$/ do
     page.delivery_format_add
     delivery_format = make DeliveryFormat,
                            :format => "Lecture",
-                           :grade_format => "Lecture",
-                           :final_exam_activity => "Lecture"
+                           :grade_format => "Lecture"
+                           #:grade_format => "Lecture",
+                           #:final_exam_activity => "Lecture"
     page.select_delivery_format(2,delivery_format)
   end
 end
@@ -122,8 +123,9 @@ And /^I add a delivery format option of Discussion Lecture$/ do
     page.delivery_format_add
     delivery_format = make DeliveryFormat,
                            :format => "Discussion/Lecture",
-                           :grade_format => "Course Offering",
-                           :final_exam_activity => "Discussion"
+                           :grade_format => "Course Offering"
+                           #:grade_format => "Course Offering",
+                           #:final_exam_activity => "Discussion"
     page.select_delivery_format(2,delivery_format)
   end
 end
@@ -205,7 +207,7 @@ Then /^I can submit and the modified delivery formats are updated$/ do
        on ManageCourseDetails do  |page|
          page.get_delivery_format("Lecture/Discussion").should == "Lecture/Discussion"
          page.get_grade_roster_level("Lecture/Discussion").should == "Lecture"
-         page.get_final_exam_activity("Lecture/Discussion").should == "Lecture"
+         #page.get_final_exam_activity("Lecture/Discussion").should == "Lecture"
   end
 end
 
