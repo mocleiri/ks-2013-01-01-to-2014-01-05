@@ -1,6 +1,7 @@
 @pending
-#This feature incorporates CO 21.2, 22.2 and 23.5
 Feature: EC.Authorization for Cancel Suspend and Reinstate
+
+  This feature incorporates CO 21.2, 22.2 and 23.5
 
   Background:
     Given I am logged in as a Schedule Coordinator
