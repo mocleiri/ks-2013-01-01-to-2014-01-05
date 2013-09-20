@@ -93,5 +93,5 @@ Feature: data_setup.Setup Environment
     And the rollover can be released to departments
 
   Scenario: Set up a term in draft state
-    When I initiate a rollover to create a term in default state EC
+    When I initiate a rollover to create a term in draft state EC
     Then the results of the rollover are available
