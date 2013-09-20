@@ -26,7 +26,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And the Course Offering is shown as Canceled
     And the Course Offering is no longer shown in the Schedule of Classes
 
-  Scenario: CO 21.1 CSR Cancel a suspended Activity Offering
+  Scenario: CO 21.1.2 CSR Cancel a suspended Activity Offering
     Given I manage a course offering with a suspended activity offering present
     When I select an activity offering to work with in Suspended status
     Then the Cancel button is "enabled"
@@ -49,42 +49,6 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Then the Cancel button is "enabled"
     When I cancel the activity offering
     Then the Offered activity offering is displayed as canceled
-
-  Scenario: CO 22.1.1 CSR Check Suspend button availability in draft, open, and locked SOC states
-    Given I manage a course offering with a draft activity offering present in a draft SOC state
-    When I select the activity offering, which is in Draft status
-    Then the Suspend button is "disabled"
-    Then I deselect the activity offering, which is in Draft status
-    Given I manage a course offering with a draft activity offering present in an open SOC state
-    When I select the activity offering, which is in a Draft status
-    Then the Suspend button is "disabled"
-    Then I deselect the activity offering, which is in a Draft status
-    Given I manage a course offering with an approved activity offering present in a locked SOC state
-    When I select the activity offering, which is in Approved status
-    Then the Suspend button is "enabled"
-    Then I deselect the activity offering, which is in Approved status
-
-  @wip
-  Scenario: CO 22.1.2 CSR Suspend a draft Activity Offering in a published SOC state
-    Given I manage a course offering with a draft activity offering present in a published SOC state
-    Then I can suspend an activity in Draft status
-    And a suspended success message is displayed
-    And the Draft activity offering is shown as suspended
-
-  Scenario: CO 22.1.3 CSR Suspend approved Activity Offering with ADLs
-    Given I manage a course offering with an approved activity offering present in a final edits SOC state
-    When I select the activity offering, which is in approved status
-    Then the Suspend button is "enabled"
-    When I suspend the activity offering
-    Then a suspended success message is displayed
-    And the Approved activity offering is displayed as suspended
-    And actual delivery logistics for the Approved activity offering are still shown
-
-  Scenario: CO 22.1.4 CSR Suspend a canceled Activity Offering in a published SOC state
-    Given I manage a course offering with a canceled activity offering present
-    When I select an activity offering that is in Canceled status
-    Then the Suspend button is "disabled"
-    Then I deselect Canceled activity offering
 
   Scenario: CO 23.1.1 CSR Check Reinstate button availability for canceled and offered AOs
     Given I manage a course offering with canceled and offered activity offerings present
