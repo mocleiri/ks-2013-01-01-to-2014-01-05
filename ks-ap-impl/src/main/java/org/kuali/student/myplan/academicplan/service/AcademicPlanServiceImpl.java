@@ -330,11 +330,12 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 
 	/**
 	 * 
+	 * @param createNewPlanItem 
 	 * @param attrSource
 	 * @param attributeEntities
 	 * @return
 	 */
-	private List<Attribute> mergeAttributes(HasAttributes attrSource,
+	private List<Attribute> mergeAttributes(boolean createNewPlanItem, HasAttributes attrSource,
 			Set<? extends BaseAttributeEntity<?>> attributeEntities) {
 		if (attrSource.getAttributes() == null)
 			return null;
@@ -349,33 +350,37 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		}
 
 		if (attributeEntities != null) {
-			Iterator<? extends BaseAttributeEntity<?>> ai = attributeEntities.iterator();
-			while (ai.hasNext()) {
-				BaseAttributeEntity<?> attrEntity = ai.next();
-				String key = attrEntity.getKey();
-				if (attributeMap.containsKey(key)) {
-					List<Attribute> attl = attributeMap.get(key);
-					if (attl.isEmpty()) {
-						ai.remove();
-					} else {
-						Iterator<Attribute> atti = attl.iterator();
-						Attribute att = null;
-						while (att == null && atti.hasNext()) {
-							Attribute attc = atti.next();
-							if (attc.getId() != null && attc.getId().equals(attrEntity.getId())) {
-								att = attc;
-								atti.remove();
+			if (createNewPlanItem) {
+				attributeEntities.clear();
+			} else {
+				Iterator<? extends BaseAttributeEntity<?>> ai = attributeEntities.iterator();
+				while (ai.hasNext()) {
+					BaseAttributeEntity<?> attrEntity = ai.next();
+					String key = attrEntity.getKey();
+					if (attributeMap.containsKey(key)) {
+						List<Attribute> attl = attributeMap.get(key);
+						if (attl.isEmpty()) {
+							ai.remove();
+						} else {
+							Iterator<Attribute> atti = attl.iterator();
+							Attribute att = null;
+							while (att == null && atti.hasNext()) {
+								Attribute attc = atti.next();
+								if (attc.getId() != null && attc.getId().equals(attrEntity.getId())) {
+									att = attc;
+									atti.remove();
+								}
 							}
+							if (att == null) {
+								att = attl.remove(0);
+							}
+							attrEntity.setValue(att.getValue());
 						}
-						if (att == null) {
-							att = attl.remove(0);
-						}
-						attrEntity.setValue(att.getValue());
+						if (attl.isEmpty())
+							attributeMap.remove(key);
+					} else {
+						ai.remove();
 					}
-					if (attl.isEmpty())
-						attributeMap.remove(key);
-				} else {
-					ai.remove();
 				}
 			}
 		}
@@ -403,7 +408,7 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		lpe.setDescr(new LearningPlanRichTextEntity(learningPlan.getDescr()));
 
 		//  Update attributes.
-		List<Attribute> createAttrs = mergeAttributes(learningPlan, lpe.getAttributes());
+		List<Attribute> createAttrs = mergeAttributes(false, learningPlan, lpe.getAttributes());
 		if (createAttrs != null) {
 			Set<LearningPlanAttributeEntity> attributeEntities = lpe.getAttributes();
 			if (attributeEntities == null) {
@@ -477,7 +482,7 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		}
 
 		//  Update attributes.
-		List<Attribute> createAttrs = mergeAttributes(planItem, planItemEntity.getAttributes());
+		List<Attribute> createAttrs = mergeAttributes(createNewPlanItem, planItem, planItemEntity.getAttributes());
 		if (createAttrs != null) {
 			Set<PlanItemAttributeEntity> attributeEntities = planItemEntity.getAttributes();
 			if (attributeEntities == null) {
