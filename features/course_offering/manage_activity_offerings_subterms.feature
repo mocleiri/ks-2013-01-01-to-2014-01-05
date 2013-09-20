@@ -32,9 +32,7 @@ Feature: EC.Manage Activity Offerings - subterms
     Given I create an Academic Calendar with subterms
     And I make the subterms official
     And I create a Course Offering from catalog with Activity Offerings assigned to subterms
-    #And I create the target Academic Term with subterms
-    And I rollover the subterms' parent term to a target term with those subterms setup
-    And I approve the Course Offering for scheduling in the target term
+    And I approve the Course Offering for scheduling
     When I advance the SOC state from open to published state
     Then the Course Offering is in offered state
     And I setup a second target term with those subterms setup

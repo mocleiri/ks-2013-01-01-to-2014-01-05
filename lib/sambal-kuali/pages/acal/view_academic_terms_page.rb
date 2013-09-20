@@ -73,6 +73,10 @@ class ViewAcademicTerms < BasePage
     acal_term_list_div.span(class: /text-lozenge/, index: index.to_i).text
   end
 
+  def term_status_by_term_code(term_code)
+    acal_term_list_div.span(data_aft_id: "#{term_code}-Draft-Lozenge").text
+  end
+
   #date_group_type - instructional, registration
   def key_date_group_div(term_type, date_group_type)
     index = term_index_by_term_type(term_type)

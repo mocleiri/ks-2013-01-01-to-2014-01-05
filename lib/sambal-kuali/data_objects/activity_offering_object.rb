@@ -594,12 +594,33 @@ class ActivityOffering
 
   # suspends the activity offering
   def suspend
+    @parent_course_offering.manage
     on ManageCourseOfferings do |page|
     page.select_ao(self.code)
     page.suspend_ao
     on(SuspendActivityOffering).suspend_activity
     end
   end
+
+  # cancels the activity offering
+  def cancel
+    @parent_course_offering.manage
+    on ManageCourseOfferings do |page|
+      page.select_ao(self.code)
+      page.cancel_ao
+      on(CancelActivityOffering).cancel_activity
+    end
+  end
+
+  # suspends the activity offering
+  def approve
+    @parent_course_offering.manage
+    on ManageCourseOfferings do |page|
+      page.select_ao(self.code)
+      page.approve_activity
+    end
+  end
+
 
 end
 

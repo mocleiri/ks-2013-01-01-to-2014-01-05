@@ -15,6 +15,10 @@ class ManageSoc
   include StringFactory
   include Workflows
 
+  OPEN_STATE_KEY = "kuali.soc.state.open"
+  PUBLISHING_STATE_KEY = "kuali.soc.state.publishing"
+  IN_PROGRESS_STATE_KEY = "kuali.soc.scheduling.state.inprogress"
+
   #generally set using options hash
   attr_accessor :term_code, :co_code
 
@@ -175,4 +179,52 @@ class ManageSoc
     end
   end
 
+  # initiates a manual SOC state-change
+  #
+  # @example
+  #   @manual_soc_state_change.perform_manual_soc_state_change :new_soc_state => "Publishing"
+  #
+  # @param opts [String] new_soc_state => "Publishing", "In Progress" (default is "Open")}
+  def perform_manual_soc_state_change(new_soc_state="open")
+    case new_soc_state
+      when "Publishing"
+        soc_state = ManageSoc::PUBLISHING_STATE_KEY
+      when "In Progress"
+        soc_state = ManageSoc::IN_PROGRESS_STATE_KEY
+      else
+        soc_state = ManageSoc::OPEN_STATE_KEY
+    end
+
+    visit ManualSocStateChangePage
+    on ManualSocStateChangePage do |page|
+      page.change_soc_state_termCode.value = @term_code
+      page.change_soc_state_newSocState.value = soc_state
+      page.change_soc_state
+    end
+  end
+
+  #can't do this for a subterm
+  def set_up_soc
+    go_to_create_soc
+    on CreateSocForTerm do |page|
+      page.term_code.set @term_code
+      page.submit
+    end
+  end
+
+  def advance_soc_from_open_to_final_edits
+    search
+    change_action "Lock"
+    check_state_change_button_exists "Schedule"
+    change_action "Schedule"
+    check_state_change_button_exists "FinalEdit"
+    change_action "FinalEdit"
+    check_state_change_button_exists "Publish"
+  end
+
+  def advance_soc_from_open_to_published
+    advance_soc_from_open_to_final_edits()
+    change_action "Publish"
+    check_state_change_button_exists "Close"
+  end
 end

@@ -281,12 +281,12 @@ When /^I add an administering organization and activate the honors flag$/ do
 end
 
 When /^I manually change a given soc-state to "(Open|Publishing|In Progress)"$/ do |newSocState|
-  @manualSocStateChanger = make ManualSocStateChange
-  @manualSocStateChanger.perform_manual_soc_state_change :new_soc_state=>newSocState
+  @manage_soc = make ManageSoc, :term_code => Rollover::SOC_STATES_SOURCE_TERM
+  @manage_soc.perform_manual_soc_state_change(newSocState)
 end
 
 Then /^I verify that I "(can|cannot)" manage course offerings$/ do |can_manage|
-  course_offering = make CourseOffering, :term => @manualSocStateChanger.term
+  course_offering = make CourseOffering, :term => @manage_soc.term_code
   course_offering.search_by_subjectcode
 
   case can_manage

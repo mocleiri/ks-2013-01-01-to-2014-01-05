@@ -3,17 +3,7 @@ When /^I initiate a rollover by specifying source and target terms$/ do
   @rollover.perform_rollover
 end
 
-When /^I initiate a rollover to create a term in open state$/ do
-  @rollover = make Rollover, :source_term => Rollover::MAIN_TEST_TERM_SOURCE, :target_term => Rollover::MAIN_TEST_TERM_TARGET
-  @rollover.perform_rollover
-end
-
-When /^I initiate a rollover to create a term in open state$/ do
-  @rollover = make Rollover, :source_term => Rollover::MAIN_TEST_TERM_SOURCE, :target_term => Rollover::MAIN_TEST_TERM_TARGET
-  @rollover.perform_rollover
-end
-
-When /^I initiate a rollover to create a term in default state EC/ do
+When /^I initiate a rollover to create a term in draft state EC/ do
   @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::DRAFT_SOC_TERM
   @rollover.perform_rollover
 end
@@ -48,7 +38,7 @@ When /^I initiate a rollover to create a term in closed state EC$/ do
   @rollover.perform_rollover
 end
 
-When /^I initiate a rollover to create a term in default state WC/ do
+When /^I initiate a rollover to create a term in draft state WC/ do
   @rollover = make Rollover, :source_term => "201205", :target_term => "201805"
   @rollover.perform_rollover
 end
@@ -78,7 +68,7 @@ When /^I approve the "(.*)" subject code for scheduling in the target term$/ do 
 end
 
 And /^I manage SOC for the target term$/ do
-  @manageSoc = make ManageSoc, :term_code =>@rollover.target_term
+  @manage_soc = make ManageSoc, :term_code =>@rollover.target_term
 end
 
 Then /^the results of the rollover are available$/ do
@@ -153,7 +143,8 @@ And /^I setup a target term with those subterms setup$/ do
     subterm.make_official
   end
 
-  @term_target.set_up_soc
+  @manage_soc = make ManageSoc, :term_code => @term_target.term_code
+  @manage_soc.set_up_soc
 end
 
 And /^I create the target Academic Term with subterms$/ do
@@ -172,7 +163,8 @@ And /^I create the target Academic Term with subterms$/ do
     subterm.make_official
   end
 
-  @term_target.set_up_soc
+  @manage_soc = make ManageSoc, :term_code => @term_target.term_code
+  @manage_soc.set_up_soc
 end
 
 And /^I setup a second target term with those subterms setup$/ do
@@ -191,7 +183,8 @@ And /^I setup a second target term with those subterms setup$/ do
     subterm.make_official
   end
 
-  @term_target2.set_up_soc
+  @manage_soc = make ManageSoc, :term_code => @term_target2.term_code
+  @manage_soc.set_up_soc
 end
 
 And /^I rollover the subterms' parent term to a target term with those subterms setup$/ do
@@ -210,7 +203,8 @@ And /^I rollover the subterms' parent term to a target term with those subterms 
     subterm.make_official
   end
 
-  @term_target.set_up_soc
+  @manage_soc = make ManageSoc, :term_code => @term_target.term_code
+  @manage_soc.set_up_soc
 
   @rollover = make Rollover, :target_term => @term_target.term_code , :source_term => @term.term_code
   @rollover.perform_rollover
@@ -224,7 +218,9 @@ And /^I rollover the subterms' parent term to a target term with those subterms 
   @term_target = make AcademicTerm, :term_year => @calendar_target.year
   @calendar_target.add_term(@term_target)
   @term_target.make_official
-  @term_target.set_up_soc
+
+  @manage_soc = make ManageSoc, :term_code => @term_target.term_code
+  @manage_soc.set_up_soc
 
   @rollover = make Rollover, :target_term => @term_target.term_code ,
                    :source_term => @term.term_code,
@@ -238,7 +234,9 @@ And /^I rollover the term to a new academic term$/ do
   @term_target = make AcademicTerm, :term_year => @calendar_target.year
   @calendar_target.add_term(@term_target)
   @term_target.make_official
-  @term_target.set_up_soc
+
+  @manage_soc = make ManageSoc, :term_code => @term_target.term_code
+  @manage_soc.set_up_soc
 
   @rollover = make Rollover, :target_term => @term_target.term_code ,
                    :source_term => @term.term_code,
@@ -267,9 +265,9 @@ Then /^I approve the Course Offering for scheduling in the target term$/ do
   @course_offering_target.approve_co
 end
 
-Then /^I manage the Course Offering in the target term$/ do
+Then /^I manage the Course Offering in the term$/ do
   #NB - redefining course/activity_offering here for subsequent steps
-  @course_offering = make CourseOffering, :term=> @term_target.term_code,
+  @course_offering = make CourseOffering, :term=> @term.term_code,
                                  :course => @course_offering.course
   #@course_offering = make CourseOffering, :term=> "234008",
   #                               :course =>"ENGL211CDRQV"
@@ -278,38 +276,19 @@ Then /^I manage the Course Offering in the target term$/ do
   @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
 end
 
-
-
 Then /^I advance the SOC state from open to published state$/ do
-  @manageSoc = make ManageSoc, :term_code =>@rollover.target_term
-  @manageSoc.search
-  @manageSoc.change_action "Lock"
-  @manageSoc.check_state_change_button_exists "Schedule"
-  @manageSoc.change_action "Schedule"
-  @manageSoc.check_state_change_button_exists "FinalEdit"
-  @manageSoc.change_action "FinalEdit"
-  @manageSoc.check_state_change_button_exists "Publish"
-  @manageSoc.change_action "Publish"
-  @manageSoc.check_state_change_button_exists "Close"
-  #@manageSoc.verify_publish_state_changes
+  #@manage_soc = make ManageSoc, :term_code =>@rollover.target_term
+  @manage_soc.advance_soc_from_open_to_published
 end
 
 Then /^I advance the SOC state from open to final edits state$/ do
-  @manageSoc = make ManageSoc, :term_code =>@rollover.target_term
-  @manageSoc.search
-  @manageSoc.change_action "Lock"
-  @manageSoc.check_state_change_button_exists "Schedule"
-  @manageSoc.change_action "Schedule"
-  @manageSoc.check_state_change_button_exists "FinalEdit"
-  @manageSoc.change_action "FinalEdit"
-  @manageSoc.check_state_change_button_exists "Publish"
+  #@manage_soc = make ManageSoc, :term_code =>@rollover.target_term
+  @manage_soc.advance_soc_from_open_to_final_edits
 end
-
-
 
 Then /^the Course Offering is in offered state$/ do
   #@course_offering_target = make CourseOffering, :course => "CHEM132TUSNA", :term => "213108"
-  @course_offering_target.manage
+  @course_offering.manage
 
   on ManageCourseOfferings do |page|
     page.list_all_course_link.click
@@ -317,7 +296,7 @@ Then /^the Course Offering is in offered state$/ do
   end
 
   on ManageCourseOfferingList do |page|
-    page.co_status(@course_offering_target.course).should == "Offered"
+    page.co_status(@course_offering.course).should == "Offered"
   end
 
 end
@@ -363,7 +342,7 @@ Then /^the Activity Offerings are assigned to the target subterms$/ do
 end
 
 Then /^I can create a Course Offering in the second term from the existing CO in the first term$/ do
-  @course_offering_copy = create CourseOffering, :term=>  @term_target2.term_code, :create_from_existing=>@course_offering_target
+  @course_offering_copy = create CourseOffering, :term=>  @term_target2.term_code, :create_from_existing=>@course_offering
 end
 
 Then /^the Activity Offerings for the copied CO are assigned to the target subterms$/ do

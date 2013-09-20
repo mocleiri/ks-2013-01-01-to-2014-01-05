@@ -46,5 +46,5 @@ Feature: WC.Rollover Terms
     And the rollover can be released to departments
 
   Scenario: Set up a term in draft state WC team
-    When I initiate a rollover to create a term in default state WC
+    When I initiate a rollover to create a term in draft state WC
     Then the results of the rollover are available

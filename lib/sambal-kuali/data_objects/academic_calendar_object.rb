@@ -405,16 +405,6 @@ class AcademicTerm
     weekdays
   end
 
-  #can't do this for a subterm
-  def set_up_soc
-    raise "can't make subterm official" if @subterm
-    go_to_create_soc
-    on CreateSocForTerm do |page|
-      page.term_code.set @term_code
-      page.submit
-    end
-  end
-
   def change_exam_start_date( start_date)
     search
     on(CalendarSearch).edit @term_name

@@ -264,7 +264,8 @@ end
 When /^I add a new term to the Academic Calendar$/ do
   @term = make AcademicTerm, :term_year => @calendar.year
   @calendar.add_term(@term)
-  @term.set_up_soc
+  @manage_soc = make ManageSoc, :term_code => @term.term_code
+  @manage_soc.set_up_soc
 end
 
 When /^I add a new term to the Academic Calendar with a defined instructional period$/ do
@@ -694,7 +695,9 @@ Given /^I create an Academic Calendar with subterms$/ do
                           :end_date => "09/24/#{@calendar.year}"
   @calendar.add_term(@subterm_list[1])
 
-  @term.set_up_soc
+  @manage_soc = make ManageSoc, :term_code => @term.term_code
+  @manage_soc.set_up_soc
+  @manage_soc.perform_manual_soc_state_change("open")
 end
 
 Given /^I make the subterms official$/ do
