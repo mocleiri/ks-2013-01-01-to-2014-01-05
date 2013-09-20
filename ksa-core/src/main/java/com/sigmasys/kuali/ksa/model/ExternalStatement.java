@@ -19,10 +19,9 @@ public class ExternalStatement implements Identifiable {
     private Long id;
 
     /**
-     * Unique key used by third parties
+     * BillRecord reference
      */
-    private String uniqueKey;
-
+    private BillRecord billRecord;
 
     /**
      * MIME type of the statement
@@ -30,19 +29,14 @@ public class ExternalStatement implements Identifiable {
     private String mimeType;
 
     /**
-     * Start date
-     */
-    private Date fromDate;
-
-    /**
-     * End date
-     */
-    private Date toDate;
-
-    /**
      * URI of the statement
      */
     private String uri;
+
+    /**
+     * Indicates whether the statement is directly available at the URI specified by "uri" property
+     */
+    private Boolean isDirectUri;
 
     /**
      * Creator ID
@@ -64,17 +58,6 @@ public class ExternalStatement implements Identifiable {
      */
     private Date lastUpdate;
 
-    /**
-     * Boolean that tells the system whether the URI should act as a redirect,
-     * or if the system should fetch the file at the location and send it to the user.
-     */
-    private Boolean isRedirect;
-
-    /**
-     * Reference to CREDIT type
-     */
-    private Account account;
-
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
@@ -93,7 +76,17 @@ public class ExternalStatement implements Identifiable {
         this.id = id;
     }
 
-    @Column(name = "MIME_TYPE", length = 45)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BILL_RECORD_ID_FK")
+    public BillRecord getBillRecord() {
+        return billRecord;
+    }
+
+    public void setBillRecord(BillRecord billRecord) {
+        this.billRecord = billRecord;
+    }
+
+    @Column(name = "MIME_TYPE", length = 100)
     public String getMimeType() {
         return mimeType;
     }
@@ -102,40 +95,23 @@ public class ExternalStatement implements Identifiable {
         this.mimeType = mimeType;
     }
 
-    @Column(name = "UNIQUE_KEY", length = 255)
-    public String getUniqueKey() {
-        return uniqueKey;
-    }
-
-    public void setUniqueKey(String uniqueKey) {
-        this.uniqueKey = uniqueKey;
-    }
-
-    @Column(name = "FROM_DATE")
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    @Column(name = "TO_DATE")
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
-    }
-
-    @Column(name = "URI", length = 255)
+    @Column(name = "URI", length = 1000)
     public String getUri() {
         return uri;
     }
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_DIRECT_URI")
+    public Boolean isDirectUri() {
+        return isDirectUri != null ? isDirectUri : false;
+    }
+
+    public void setDirectUri(Boolean directUri) {
+        isDirectUri = directUri;
     }
 
     @Column(name = "CREATOR_ID", length = 45)
@@ -174,25 +150,7 @@ public class ExternalStatement implements Identifiable {
         this.lastUpdate = lastUpdate;
     }
 
-    @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "IS_REDIRECT")
-    public Boolean isRedirect() {
-        return isRedirect;
-    }
 
-    public void setRedirect(Boolean redirect) {
-        isRedirect = redirect;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACNT_ID_FK")
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
 }
 	
 

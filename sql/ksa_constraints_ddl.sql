@@ -52,6 +52,10 @@ alter table KSSA_BILL_AUTHORITY add constraint FK_c0rp5x1tmpkbbg52rl021roqm fore
 alter table KSSA_BILL_AUTHORITY add constraint FK_4lvr1ao9tbbca997jp1n3dkmh foreign key (POSTAL_ADDRESS_ID_FK) references KSSA_POSTAL_ADDRESS;
 alter table KSSA_BILL_RECEIVER add constraint FK_cnhmuyjcryep2tep3g6mgpdsj foreign key (OWNER_ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_BILL_RECEIVER add constraint FK_je54b59d8npkiuvd5qhajg7x9 foreign key (RECEIVER_ACNT_ID_FK) references KSSA_ACNT;
+alter table KSSA_BILL_RECORD add constraint FK_2lbeuxpcu8xsxc19ra84rgo3e foreign key (ACNT_ID_FK) references KSSA_ACNT;
+alter table KSSA_BILL_RECORD add constraint FK_99ra2lv950o7qub9xjpkt5um2 foreign key (XML_DOCUMENT_ID_FK) references KSSA_XML;
+alter table KSSA_BILL_RECORD_TRANSACTION add constraint FK_qwhj8h74b34vj31cf65qtkqx3 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
+alter table KSSA_BILL_RECORD_TRANSACTION add constraint FK_982899ea00ph95aoovq8eijm1 foreign key (BILL_RECORD_ID_FK) references KSSA_BILL_RECORD;
 alter table KSSA_CASH_LIMIT_EVENT add constraint FK_jwg32a5bgowpgagwdy059ebt4 foreign key (XML_ID_FK) references KSSA_XML;
 alter table KSSA_CASH_LIMIT_EVENT_TRANS add constraint FK_r8972ddjiu8r7so7qxbk8glqm foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_CASH_LIMIT_EVENT_TRANS add constraint FK_5w11v78u0riw580vt2admpgm6 foreign key (CASH_LIMIT_EVENT_ID_FK) references KSSA_CASH_LIMIT_EVENT;
@@ -59,7 +63,7 @@ alter table KSSA_CASH_LIMIT_PARAMETER add constraint FK_s2ricy2gxqg7qlwyk9sjoqgn
 alter table KSSA_COLLECTION_ACNT add constraint FK_oq2m419ekcgli91u4crql3nfa foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_COLLECTION_ACNT add constraint FK_i0gl45ygw1kkrjy9gg5uu01s7 foreign key (AGENCY_ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_CREDIT_PERMISSION add constraint FK_nx4h4jeey7e7qapqav2wx5cm6 foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSSA_TRANSACTION_TYPE;
-alter table KSSA_EXTERNAL_STATEMENT add constraint FK_8lhmda6syl0sse40lae29ktdh foreign key (ACNT_ID_FK) references KSSA_ACNT;
+alter table KSSA_EXTERNAL_STATEMENT add constraint FK_e6sflyj4sjg593c3fj7yy6n81 foreign key (BILL_RECORD_ID_FK) references KSSA_BILL_RECORD;
 alter table KSSA_FLAG_TYPE add constraint FK_if1mrx5to67a5boufy199t5ut foreign key (ACCESS_LEVEL_ID_FK) references KSSA_ACCESS_LEVEL;
 alter table KSSA_FM_MANIFEST add constraint FK_h06ye14dj0idwxqnhmiexnubl foreign key (LINKED_MANIFEST_ID_FK) references KSSA_FM_MANIFEST;
 alter table KSSA_FM_MANIFEST add constraint FK_jey91dljqmlol37k3m6jqv5em foreign key (RATE_ID_FK) references KSSA_RATE;
@@ -94,9 +98,9 @@ alter table KSSA_GL_TRANS_TRANSACTION add constraint FK_1my950k340rmx2c3ydexadmi
 alter table KSSA_INFORMATION add constraint FK_gy8g1avxg2det6j1tl283kuva foreign key (ACCESS_LEVEL_ID_FK) references KSSA_ACCESS_LEVEL;
 alter table KSSA_INFORMATION add constraint FK_jkmvsju06ltyhp1m4dhx7jt8p foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_INFORMATION add constraint FK_9w42lpdu788owfio9c1yv0ls foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
+alter table KSSA_INFORMATION add constraint FK_ga8qrg1b82u3ni0olwintyqlj foreign key (FLAG_TYPE_ID_FK) references KSSA_FLAG_TYPE;
 alter table KSSA_INFORMATION add constraint FK_uhpxb6v7kivqiaqebsrktivo foreign key (NEXT_ID) references KSSA_INFORMATION;
 alter table KSSA_INFORMATION add constraint FK_apdxe9rlaruk7p1n1x8geltge foreign key (PREV_ID) references KSSA_INFORMATION;
-alter table KSSA_INFORMATION add constraint FK_ga8qrg1b82u3ni0olwintyqlj foreign key (FLAG_TYPE_ID_FK) references KSSA_FLAG_TYPE;
 alter table KSSA_IRS_1098T add constraint FK_qwl4b4v2oxppgrmh6r6fsjgrl foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_IRS_1098T add constraint FK_j0uib0dd0178l66216i5imjre foreign key (STUDENT_POSTAL_ADDRESS_ID_FK) references KSSA_POSTAL_ADDRESS;
 alter table KSSA_IRS_1098T add constraint FK_uyku2l4yahd2xk54noldsaoc foreign key (XML_ID_FK) references KSSA_XML;

@@ -25,6 +25,8 @@ drop table KSSA_BANK_TYPE cascade constraints;
 drop table KSSA_BATCH_RECEIPT cascade constraints;
 drop table KSSA_BILL_AUTHORITY cascade constraints;
 drop table KSSA_BILL_RECEIVER cascade constraints;
+drop table KSSA_BILL_RECORD cascade constraints;
+drop table KSSA_BILL_RECORD_TRANSACTION cascade constraints;
 drop table KSSA_CASH_LIMIT_EVENT cascade constraints;
 drop table KSSA_CASH_LIMIT_EVENT_TRANS cascade constraints;
 drop table KSSA_CASH_LIMIT_PARAMETER cascade constraints;
