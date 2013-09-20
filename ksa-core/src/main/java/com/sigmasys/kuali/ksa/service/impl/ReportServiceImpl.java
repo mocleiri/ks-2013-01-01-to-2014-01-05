@@ -1361,12 +1361,51 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
     }
 
+    /**
+     * Produces a new bill based on the given parameters.
+     *
+     * @param accountId                    Account ID
+     * @param message                      Bill message
+     * @param billDate                     Bill date
+     * @param startDate                    Start date
+     * @param endDate                      End date
+     * @param rollupIdsOnSameDate          Rollup IDs on the same date
+     * @param rollupIdsOnSameStatement     Rollup IDs on the same statement
+     * @param showOnlyUnbilledTransactions true if only unbilled transactions have to be shown
+     * @param showDeferments               true if deferments have to be shown
+     * @param showInternalTransactions     true if internal transactions have to be shown
+     * @param runPaymentApplication        if true then Payment Application will be run
+     * @return String representation of BillRecord XML
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public String generateBill(String accountId,
+                               String message,
+                               Date billDate,
+                               Date startDate,
+                               Date endDate,
+                               Set<Long> rollupIdsOnSameDate,
+                               Set<Long> rollupIdsOnSameStatement,
+                               boolean showOnlyUnbilledTransactions,
+                               boolean showDeferments,
+                               boolean showInternalTransactions,
+                               boolean runPaymentApplication) {
+
+
+        PermissionUtils.checkPermission(Permission.GENERATE_BILL);
+
+        // TODO:
+
+       return null;
+    }
+
 
 /* =====================================================================
-*
-* Helper methods.
-*
-* ==================================================================== */
+ *
+ * Helper methods.
+ *
+ * ====================================================================
+ */
 
     /**
      * Used by IRS 8300 report generator.

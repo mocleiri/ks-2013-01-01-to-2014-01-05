@@ -25,11 +25,6 @@ public class BillRecord implements Identifiable {
     private Account account;
 
     /**
-     * XmlDocument reference
-     */
-    private XmlDocument xmlDocument;
-
-    /**
      * Transactions associated with the current BillRecord
      */
     private Set<Transaction> transactions;
@@ -62,7 +57,7 @@ public class BillRecord implements Identifiable {
     /**
      * Only not previously billed transactions will be shown in the bill
      */
-    private Boolean showUnbilledTransactions;
+    private Boolean showOnlyUnbilledTransactions;
 
     /**
      * Internal transactions will be shown in the bill
@@ -115,16 +110,6 @@ public class BillRecord implements Identifiable {
 
     public void setAccount(Account account) {
         this.account = account;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "XML_DOCUMENT_ID_FK")
-    public XmlDocument getXmlDocument() {
-        return xmlDocument;
-    }
-
-    public void setXmlDocument(XmlDocument xmlDocument) {
-        this.xmlDocument = xmlDocument;
     }
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -193,13 +178,13 @@ public class BillRecord implements Identifiable {
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")
-    @Column(name = "SHOW_UNBILLED_TRANS")
-    public Boolean isShowUnbilledTransactions() {
-        return showUnbilledTransactions != null ? showUnbilledTransactions : false;
+    @Column(name = "SHOW_ONLY_UNBILLED_TRANS")
+    public Boolean isShowOnlyUnbilledTransactions() {
+        return showOnlyUnbilledTransactions != null ? showOnlyUnbilledTransactions : false;
     }
 
-    public void setShowUnbilledTransactions(Boolean showUnbilledTransactions) {
-        this.showUnbilledTransactions = showUnbilledTransactions;
+    public void setShowOnlyUnbilledTransactions(Boolean showOnlyUnbilledTransactions) {
+        this.showOnlyUnbilledTransactions = showOnlyUnbilledTransactions;
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")

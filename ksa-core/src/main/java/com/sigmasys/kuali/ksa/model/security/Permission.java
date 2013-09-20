@@ -198,6 +198,10 @@ public enum Permission {
     GENERATE_IRS_8300,
     READ_IRS_8300,
 
+    // Bill permissions
+    GENERATE_BILL,
+    READ_BILL,
+
     // Report permissions
     GENERATE_AGED_BALANCE_REPORT,
     READ_BATCH_FAILED_REPORT,
