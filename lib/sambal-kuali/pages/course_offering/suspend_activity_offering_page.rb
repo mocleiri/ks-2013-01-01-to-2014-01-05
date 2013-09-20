@@ -12,7 +12,7 @@ class SuspendActivityOffering < BasePage
 
   element(:suspend_activity_button) { |b| b.frm.button(id: "AoSuspendConfirmationCancelButton") } # why's it called that?
   action(:suspend_activity) { |b| b.suspend_activity_button.click; b.loading.wait_while_present(120) }
-  element(:cancel_button) { |b| b.sticky_footer_div.button(text: "Cancel") }
+  element(:cancel_button) { |b| b.sticky_footer_div.link(text: "Cancel") }
   action(:cancel) { |b| b.cancel_button.click; b.loading.wait_while_present(120) }
 
 end

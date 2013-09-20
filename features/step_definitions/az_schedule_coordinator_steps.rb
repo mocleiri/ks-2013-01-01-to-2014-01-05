@@ -221,3 +221,87 @@ Then /^I edit the activity offering I do not have access to change the subterm$/
   end
 
 end
+
+Then /^I have access to suspend an Activity Offering$/ do
+  on ManageCourseOfferings do |page|
+    #page.select_ao("A")
+    @course_offering.copy_ao :ao_code=> "A"
+    page.select_ao(@course_offering.activity_offering_cluster_list[0].ao_list.last.code)
+    page.suspend_ao
+  end
+
+  on SuspendActivityOffering do |page|
+    page.suspend_activity_button.present?.should == true
+    #page.cancel
+    page.suspend_activity
+  end
+end
+
+Then /^I do not have access to suspend an Activity Offering$/ do
+  on ManageCourseOfferings do |page|
+    if page.target_row("A").checkbox.present?
+      page.select_ao("A")
+    end
+
+    page.suspend_ao_button.enabled?.should == false
+
+    if page.target_row("A").checkbox.present?
+      page.deselect_ao("A")
+    end
+  end
+end
+
+Then /^I have access to cancel an Activity Offering$/ do
+  on ManageCourseOfferings do |page|
+    @course_offering.copy_ao :ao_code=> "A"
+    page.select_ao(@course_offering.activity_offering_cluster_list[0].ao_list.last.code)
+    page.cancel_ao
+  end
+
+  on CancelActivityOffering do |page|
+    page.cancel_activity_button.present?.should == true
+    #page.cancel
+    page.cancel_activity
+  end
+end
+
+Then /^I do not have access to cancel an Activity Offering$/ do
+  on ManageCourseOfferings do |page|
+    if page.target_row("A").checkbox.present?
+       page.select_ao("A")
+    end
+
+    page.cancel_ao_button.enabled?.should == false
+
+    if page.target_row("A").checkbox.present?
+     page.deselect_ao("A")
+    end
+  end
+end
+
+Then /^I have access to reinstate an Activity Offering$/ do
+    on ManageCourseOfferings do |page|
+      page.select_ao(@course_offering.activity_offering_cluster_list[0].ao_list.last.code)
+      page.reinstate_ao
+    end
+
+    on ReinstateActivityOffering do |page|
+      if page.reinstate_activity_button.enabled?.should == true
+        page.reinstate_activity
+      end
+    end
+end
+
+Then /^I do not have access to reinstate an Activity Offering$/ do
+  on ManageCourseOfferings do |page|
+    if page.target_row("A").checkbox.present?
+      page.select_ao("A")
+    end
+
+    page.reinstate_ao_button.enabled?.should == false
+
+    if page.target_row("A").checkbox.present?
+      page.deselect_ao("A")
+    end
+  end
+end
