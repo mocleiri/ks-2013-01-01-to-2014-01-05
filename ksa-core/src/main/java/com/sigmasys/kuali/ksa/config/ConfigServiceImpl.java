@@ -14,19 +14,18 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 /**
- * KSA Config Service
+ * KSA Config Service implementation
  *
  * @author Michael Ivanov
- *         Date: 3/22/12
- *         Time: 4:58 PM
  */
 @Service("configService")
-@Transactional(readOnly = true)
+@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 public class ConfigServiceImpl implements ConfigService, InitializingBean {
 
     @Autowired
@@ -46,7 +45,7 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
     }
 
     private void initLocalizedParameters() {
-         // Setting up locale if "locale" initial parameters exist
+        // Setting up locale if "locale" initial parameters exist
         String localeLang = getParameter(Constants.LOCALE_LANG);
         if (localeLang != null && !localeLang.trim().isEmpty()) {
             String localeCountry = getParameter(Constants.LOCALE_COUNTRY);
@@ -128,7 +127,7 @@ public class ConfigServiceImpl implements ConfigService, InitializingBean {
     public List<ConfigParameter> reloadParameters() {
         parameterConfigurer.loadDatabaseParameters();
         List<ConfigParameter> updatedParameters = getParameters();
-         // After re-loading all config parameters we have to fire LoadConfigEvent
+        // After re-loading all config parameters we have to fire LoadConfigEvent
         EventMulticaster.getInstance().fireEvent(new LoadConfigEvent(updatedParameters));
         return updatedParameters;
     }
