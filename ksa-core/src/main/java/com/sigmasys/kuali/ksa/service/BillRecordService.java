@@ -23,9 +23,9 @@ public interface BillRecordService {
      * @param startDate                    Start date
      * @param endDate                      End date
      * @param showOnlyUnbilledTransactions true if only unbilled transactions have to be shown
-     * @param showDeferments               true if deferments have to be shown
      * @param showInternalTransactions     true if internal transactions have to be shown
-     * @param runPaymentApplication        if true then Payment Application will be run
+     * @param showDeferments               true if deferments have to be shown
+     * @param showDependents               true if dependents have to be shown
      * @param transactionIds               Set of Transaction IDs associated with this BillRecord
      * @return BillRecord instance
      */
@@ -34,12 +34,10 @@ public interface BillRecordService {
                                 Date billDate,
                                 Date startDate,
                                 Date endDate,
-                                Set<Long> rollupIdsOnSameDate,
-                                Set<Long> rollupIdsOnSameStatement,
                                 boolean showOnlyUnbilledTransactions,
-                                boolean showDeferments,
                                 boolean showInternalTransactions,
-                                boolean runPaymentApplication,
+                                boolean showDeferments,
+                                boolean showDependents,
                                 Set<Long> transactionIds);
 
     /**

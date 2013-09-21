@@ -35,11 +35,6 @@ public class BillRecord implements Identifiable {
     private String message;
 
     /**
-     * MIME type of the statement
-     */
-    private String mimeType;
-
-    /**
      * Start date
      */
     private Date startDate;
@@ -136,15 +131,6 @@ public class BillRecord implements Identifiable {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    @Column(name = "MIME_TYPE", length = 45)
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
     }
 
     @Temporal(TemporalType.DATE)

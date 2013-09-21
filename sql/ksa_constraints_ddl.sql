@@ -97,9 +97,9 @@ alter table KSSA_GL_TRANS_TRANSACTION add constraint FK_1my950k340rmx2c3ydexadmi
 alter table KSSA_INFORMATION add constraint FK_gy8g1avxg2det6j1tl283kuva foreign key (ACCESS_LEVEL_ID_FK) references KSSA_ACCESS_LEVEL;
 alter table KSSA_INFORMATION add constraint FK_jkmvsju06ltyhp1m4dhx7jt8p foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_INFORMATION add constraint FK_9w42lpdu788owfio9c1yv0ls foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
+alter table KSSA_INFORMATION add constraint FK_ga8qrg1b82u3ni0olwintyqlj foreign key (FLAG_TYPE_ID_FK) references KSSA_FLAG_TYPE;
 alter table KSSA_INFORMATION add constraint FK_uhpxb6v7kivqiaqebsrktivo foreign key (NEXT_ID) references KSSA_INFORMATION;
 alter table KSSA_INFORMATION add constraint FK_apdxe9rlaruk7p1n1x8geltge foreign key (PREV_ID) references KSSA_INFORMATION;
-alter table KSSA_INFORMATION add constraint FK_ga8qrg1b82u3ni0olwintyqlj foreign key (FLAG_TYPE_ID_FK) references KSSA_FLAG_TYPE;
 alter table KSSA_IRS_1098T add constraint FK_qwl4b4v2oxppgrmh6r6fsjgrl foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_IRS_1098T add constraint FK_j0uib0dd0178l66216i5imjre foreign key (STUDENT_POSTAL_ADDRESS_ID_FK) references KSSA_POSTAL_ADDRESS;
 alter table KSSA_IRS_1098T add constraint FK_uyku2l4yahd2xk54noldsaoc foreign key (XML_ID_FK) references KSSA_XML;

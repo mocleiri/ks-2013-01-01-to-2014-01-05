@@ -200,7 +200,11 @@ public enum Permission {
 
     // Bill permissions
     GENERATE_BILL,
+    CREATE_BILL_RECORD,
     READ_BILL,
+    DELETE_BILL,
+    UPDATE_BILL,
+
 
     // Report permissions
     GENERATE_AGED_BALANCE_REPORT,
