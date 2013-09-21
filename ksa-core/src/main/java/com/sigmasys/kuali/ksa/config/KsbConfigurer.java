@@ -2,8 +2,15 @@ package com.sigmasys.kuali.ksa.config;
 
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.ksb.messaging.config.KSBConfigurer;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStoppedEvent;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -13,8 +20,7 @@ import java.util.List;
  *
  * @author Michael Ivanov
  */
-@Transactional(timeout = 300, readOnly = true)
-public class KsbConfigurer extends KSBConfigurer {
+public class KsbConfigurer extends KSBConfigurer implements BeanFactoryAware {
 
     public static final String ENABLE_MESSAGING_PARAM_NAME = "message.enable";
 
@@ -22,6 +28,19 @@ public class KsbConfigurer extends KSBConfigurer {
     private static final String OJB_MESSAGE_CLIENT_SPRING = "classpath:org/kuali/rice/ksb/config/KsbOjbMessageClientSpringBeans.xml";
 
     private boolean enableMessaging;
+
+    private PlatformTransactionManager transactionManager;
+    private DefaultTransactionDefinition transactionDefinition;
+
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        transactionManager = beanFactory.getBean("transactionManager", PlatformTransactionManager.class);
+        transactionDefinition = new DefaultTransactionDefinition();
+        transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        transactionDefinition.setTimeout(300);
+        transactionDefinition.setReadOnly(true);
+    }
 
     @PostConstruct
     private void postConstruct() {
@@ -45,7 +64,18 @@ public class KsbConfigurer extends KSBConfigurer {
 
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
-        super.onApplicationEvent(applicationEvent);
+        if (applicationEvent instanceof ContextRefreshedEvent || applicationEvent instanceof ContextStoppedEvent) {
+            LOG.info("Processing ApplicationEvent: " + applicationEvent.getClass().getName());
+            TransactionStatus transaction = transactionManager.getTransaction(transactionDefinition);
+            try {
+                super.onApplicationEvent(applicationEvent);
+                transactionManager.commit(transaction);
+            } catch (Throwable t) {
+                transactionManager.rollback(transaction);
+                LOG.error(t.getMessage(), t);
+                throw new RuntimeException(t.getMessage(), t);
+            }
+        }
     }
 
 }
