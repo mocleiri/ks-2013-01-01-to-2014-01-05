@@ -350,6 +350,15 @@ Then /^the Suspend button is "([^"]*)"$/ do |suspend_button_state|
   end
 end
 
+Then /^I am not able to suspend the activity offering$/ do
+  @activity_offering.parent_course_offering.manage
+  on ManageCourseOfferings do |page|
+      page.select_ao(@activity_offering.code)
+      page.suspend_ao_button.enabled?.should be_false
+      page.deselect_ao(@activity_offering.code)
+    end
+end
+
 Then /^the Reinstate button is "([^"]*)"$/ do |reinstate_button_state|
   on ManageCourseOfferings do |page|
     if reinstate_button_state == "enabled"
@@ -436,8 +445,15 @@ When /^I select the Canceled and Draft activity offerings$/ do
   end
 end
 
-When /^I can suspend an activity in Draft status$/ do
-  @draft_ao.suspend
+When /^I can suspend the activity offering$/ do
+  @activity_offering.suspend
+
+  on ManageCourseOfferings do |page|
+    sleep 2 #TODO: required by headless
+    page.growl_text.should == "The selected activity offering was successfully suspended."
+    page.ao_status(@activity_offering.code).should == "Suspended"
+  end
+
 end
 
 When /^I select the activity offering, which is a Canceled status$/ do
@@ -954,11 +970,12 @@ Given /^I manage a course offering with a suspended activity offering present$/ 
   end
 end
 
-Given /^I manage a course offering with a draft activity offering present in a published SOC state$/ do
-  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "BSCI421")
+Given /^I manage a course offering with a draft activity offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "HIST240")
   @course_offering.manage_and_init
 
-  @draft_ao = @course_offering.get_ao_obj_by_code("A")
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+  @activity_offering.status.should == "Draft"
 end
 
 Given /^I manage a course offering with an approved activity offering present$/ do
@@ -979,12 +996,19 @@ Given /^I manage a course offering with an offered activity offering present$/ d
   end
 end
 
-Given /^I manage a course offering with a draft activity offering present in a draft SOC state$/ do
-  @course_with_draft_ao1 = make CourseOffering, :term=> "202000" , :course => "ENGL362"
-  @course_with_draft_ao1.manage
+Given /^an activity offering in draft status (can|cannot) be suspended$/ do |can_suspend|
+  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL362"
+  @course_offering.manage
   on ManageCourseOfferings do |page|
-    @ao_draft_code3 = "A"
-    page.ao_status(@ao_draft_code3).should == "Draft"
+    page.ao_status("A").should == "Draft"
+    page.select_ao("A")
+    case can_suspend
+      when "cannot"
+        page.suspend_ao_button.enabled?.should be_false
+      else  # "can"
+        page.suspend_ao_button.enabled?.should be_true
+    end
+    page.deselect_ao("A")
   end
 end
 
@@ -1006,27 +1030,24 @@ Given /^I manage a course offering with an approved activity offering present in
   end
 end
 
-Given /^I manage a course offering with an approved activity offering present in a final edits SOC state$/ do
-  @course_with_approved_ao2 = make CourseOffering, :term=> "201700" , :course => "ENGL362"
-  @course_with_approved_ao2.manage
-  on ManageCourseOfferings do |page|
-    @ao_approved_code4 = "A"
-    page.ao_status(@ao_approved_code4).should == "Approved"
-  end
+Given /^I manage a course offering with an approved activity offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL362")
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+  @activity_offering.approve :navigate_to_page => false, :send_to_scheduler => true
+
+  on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Approved"
 end
 
-Given /^I manage a course offering with a canceled activity offering present in a published SOC state$/ do
-  @course_with_cancel_ao2 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201600", :course => "ENGL243")
-  @course_with_cancel_ao2.manage
-  on ManageCourseOfferings do |page|
-    @ao_canceled_code4 = "A"
-    #have to put this in canceled status for the test
-    page.select_ao(@ao_canceled_code4)
-    page.cancel_ao
-    on(CancelActivityOffering).cancel_activity
-    page.loading.wait_while_present
-    page.ao_status(@ao_canceled_code4).should == "Canceled"
-  end
+Given /^I manage a course offering with a canceled activity offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL222")
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+  @activity_offering.cancel :navigate_to_page => false
+
+  on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Canceled"
 end
 
 Given /^I manage a course offering with a canceled activity offering present in a draft SOC state$/ do
@@ -1123,7 +1144,7 @@ And /^actual delivery logistics for the second Suspended activity offering are s
 end
 
 And /^actual delivery logistics for the Approved activity offering are still shown$/ do
-  on(ManageCourseOfferings).view_activity_offering("A")
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
   on ActivityOfferingInquiry do |page|
     page.actual_delivery_logistics.present?.should be_true
     page.close
@@ -1296,14 +1317,6 @@ And /^the Course Offering is no longer shown in the Schedule of Classes$/ do
   end
 end
 
-And /^a suspended success message is displayed$/ do
-  #validate the success-growl is being shown
-  on ManageCourseOfferings do |page|
-    sleep 2 #TODO: required by headless
-    page.growl_text.should == "The selected activity offering was successfully suspended."
-  end
-end
-
 And /^a resinstated success message is displayed$/ do
   #validate the success-growl is being shown
   on ManageCourseOfferings do |page|
@@ -1374,9 +1387,11 @@ Then /^the selected Activity Offerings should be in Approved state$/ do
     end
   end
 end
-Given /^I manage a course offering with a cancelled activity offering$/ do
+
+Given /^I manage a course offering with an activity offering in cancelled status$/ do
   pending
 end
+
 Then /^I am unable to colocate the activity offering$/ do
   pending
 end

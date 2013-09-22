@@ -242,7 +242,8 @@ class ActivityOffering
   #
   # NB: 'save' is a separate step from edit as it allows validation steps to occur during the edit process
   #
-  # @param opts [Hash] key => value for attribute to be updated - additional opts :edit_already_started (bool), TODO :defer_submit
+  # @param opts [Hash] key => value for attribute to be updated -
+  #   additional opts :edit_already_started (bool), :send_to_scheduler (bool) :TODO :defer_save
   def edit opts={}
 
     on(ManageCourseOfferings).edit @code unless opts[:edit_already_started]
@@ -258,6 +259,7 @@ class ActivityOffering
     edit_personnel_list opts
     edit_seat_pool_list opts
 
+    on(ActivityOfferingMaintenance).send_to_scheduler if opts[:send_to_scheduler]
   end #END: edit
 
   # PRIVATE helper methods for edit()
@@ -593,18 +595,32 @@ class ActivityOffering
   end
 
   # suspends the activity offering
-  def suspend
-    @parent_course_offering.manage
+  def suspend opts={}
+
+    defaults = {
+        :navigate_to_page => true
+    }
+    options = defaults.merge(opts)
+
+    @parent_course_offering.manage if options[:navigate_to_page]
+
     on ManageCourseOfferings do |page|
-    page.select_ao(self.code)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
+      page.select_ao(self.code)
+      page.suspend_ao
+      on(SuspendActivityOffering).suspend_activity
     end
   end
 
   # cancels the activity offering
-  def cancel
-    @parent_course_offering.manage
+  def cancel opts={}
+
+    defaults = {
+        :navigate_to_page => true
+    }
+    options = defaults.merge(opts)
+
+    @parent_course_offering.manage if options[:navigate_to_page]
+
     on ManageCourseOfferings do |page|
       page.select_ao(self.code)
       page.cancel_ao
@@ -613,11 +629,27 @@ class ActivityOffering
   end
 
   # suspends the activity offering
-  def approve
-    @parent_course_offering.manage
+  def approve opts={}
+
+    defaults = {
+        :navigate_to_page => true,
+        :send_to_scheduler => false
+    }
+    options = defaults.merge(opts)
+
+    @parent_course_offering.manage if options[:navigate_to_page]
+
     on ManageCourseOfferings do |page|
       page.select_ao(self.code)
-      page.approve_activity
+      if page.approve_activity_button.enabled?
+        page.approve_activity
+      elsif options[:send_to_scheduler]
+        page.deselect_ao(self.code)
+        edit :send_to_scheduler => true
+        save
+      else
+        raise "error: approve_activity_button is disabled"
+      end
     end
   end
 
