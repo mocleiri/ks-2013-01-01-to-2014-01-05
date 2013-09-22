@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Method;
 
@@ -19,7 +18,6 @@ import java.lang.reflect.Method;
  * @author Michael Ivanov
  */
 @Service
-@Transactional
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class LoggingInterceptor implements MethodInterceptor {
 
@@ -86,6 +84,7 @@ public class LoggingInterceptor implements MethodInterceptor {
         }
 
         StringBuilder logBuffer = new StringBuilder("User '" + userId + "' ");
+
         logBuffer.append("performed the method call: ");
         logBuffer.append(className);
         logBuffer.append(" :: ");
@@ -95,18 +94,20 @@ public class LoggingInterceptor implements MethodInterceptor {
         logBuffer.append("(");
 
         for (int i = 0; i < arguments.length; i++) {
+
             if (i > 0) {
                 logBuffer.append(", ");
             }
+
             logBuffer.append(paramTypes[i].getSimpleName());
             logBuffer.append(" '");
             logBuffer.append(arguments[i]);
             logBuffer.append("'");
         }
+
         logBuffer.append(")");
 
         logger.info(logBuffer.toString());
-
     }
 
 }

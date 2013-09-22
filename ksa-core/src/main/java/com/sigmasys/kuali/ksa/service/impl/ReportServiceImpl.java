@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
@@ -87,6 +88,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      */
     @Override
     @WebMethod(exclude = true)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Advice> getAdvices(BeanFactory beanFactory) {
         List<Advice> advices = super.getAdvices(beanFactory);
         if (advices == null) {

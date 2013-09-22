@@ -14,6 +14,7 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -31,7 +32,7 @@ import java.util.*;
  * @author Michael Ivanov
  */
 @SuppressWarnings("unchecked")
-@Transactional
+@Transactional(propagation = Propagation.SUPPORTS)
 public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
 
     private static final Log logger = LogFactory.getLog(InitialParameterConfigurer.class);

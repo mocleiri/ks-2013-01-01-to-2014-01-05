@@ -9,6 +9,7 @@ import org.aopalliance.aop.Advice;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -47,6 +48,7 @@ public class GenericPersistenceService implements PersistenceService {
      * Adds AOP advice to the current instance.
      */
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Advice> getAdvices(BeanFactory beanFactory) {
         LinkedList<Advice> advices = new LinkedList<Advice>();
         if (configService != null && Boolean.valueOf(configService.getParameter(Constants.LOGGING_OPERATION))) {

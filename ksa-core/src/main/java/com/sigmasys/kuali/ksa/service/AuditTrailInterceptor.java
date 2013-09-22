@@ -21,7 +21,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.orm.jpa.EntityManagerFactoryInfo;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
@@ -41,7 +40,6 @@ import java.util.Iterator;
  * @author Michael Ivanov
  */
 @SuppressWarnings("serial")
-@Transactional
 public class AuditTrailInterceptor extends EmptyInterceptor {
 
     private static final Log logger = LogFactory.getLog(AuditTrailInterceptor.class);

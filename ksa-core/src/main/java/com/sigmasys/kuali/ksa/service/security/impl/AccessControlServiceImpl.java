@@ -21,6 +21,7 @@ import org.kuali.rice.kim.api.role.RoleService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kim.impl.KIMPropertyConstants;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
@@ -36,7 +37,7 @@ import java.util.regex.Pattern;
  * @author Michael Ivanov
  */
 @Service("accessControlService")
-@Transactional(readOnly = true)
+@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 @SuppressWarnings("unchecked")
 public class AccessControlServiceImpl extends GenericPersistenceService implements AccessControlService {
 

@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Method;
@@ -54,6 +55,7 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
      * Adds AOP advice to the current instance.
      */
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Advice> getAdvices(BeanFactory beanFactory) {
         List<Advice> advices = super.getAdvices(beanFactory);
         if (advices == null) {
