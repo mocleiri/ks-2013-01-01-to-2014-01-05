@@ -6,11 +6,12 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
   Background:
     Given I am logged in as a Schedule Coordinator
 
-  Scenario: CO 21.1B: CSR Verify that a user cannot cancel, suspend or reinstate a co-located AO
-    Given I manage a course offering with an activity offering in cancelled status
-    Then I am unable cancel or suspend the activity offering
+  Scenario: CO 21.1B: CSR Verify that a user cannot cancel suspend or reinstate a co-located AO
+    Given I manage a course offering with a colocated activity offering
+    Then I am not able to suspend the activity offering
+    And I am not able to cancel the activity offering
 
-  Scenario: CO 21.1C1: CSR Verify that a user cannot colocate a suspended activity offering
+  Scenario: CO 21.1C1: CSR Verify that a user cannot colocate a canceled activity offering
     Given I manage a course offering with an activity offering in cancelled status
     Then I am unable to colocate the activity offering
 
@@ -22,18 +23,15 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     Given I manage a course offering with an activity offering in cancelled status
     Then I am unable submit the activity offering to the scheduler
 
-  Scenario: CO 21.1E1: CSR Verify when a course offering in cancelled status is copied, the copy is in draft status
-    Given I manage a course offering in cancelled status
-    When I copy the course offering
+  Scenario: CO 21.1E1: CSR Verify when a course offering in cancelled status is copied the copy is in draft status
+    When I copy a course offering in cancelled status
     Then the course offering copy is in draft status
 
-
-  Scenario: CO 21.1E2: CSR Verify when an activity offering in cancelled status is copied, the copy is in draft status
+  Scenario: CO 21.1E2: CSR Verify when an activity offering in cancelled status is copied the copy is in draft status
     Given I manage a course offering with an activity offering in cancelled status
     When I copy the activity offering
     Then the activity offering copy is in draft status
 
-  @pending
   Scenario: CO 21.1F: CSR Verify Course and Activity Offerings in a rollover source term are changed to draft status in the rollover target term
     Given a new academic term has course and activity offerings in cancelled and suspended status
     When I rollover the term to a new academic term

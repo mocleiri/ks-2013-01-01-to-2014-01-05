@@ -75,13 +75,8 @@ Then /^the activity offering delivery logistics are copied to the rollover term 
       page.get_requested_logistics_facility(row).should == del_logisitics.facility_long_name
       page.get_requested_logistics_room(row).should == del_logisitics.room
     end
-
   end
-
-
 end
-
-
 
 Then /^I copy the course offering$/ do
   @course_offering_copy = create CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :create_by_copy=>@course_offering

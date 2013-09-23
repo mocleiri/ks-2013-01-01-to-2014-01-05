@@ -350,6 +350,15 @@ Then /^the Suspend button is "([^"]*)"$/ do |suspend_button_state|
   end
 end
 
+Then /^I am not able to cancel the activity offering$/ do
+  @activity_offering.parent_course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.select_ao(@activity_offering.code)
+    page.cancel_ao_button.enabled?.should be_false
+    page.deselect_ao(@activity_offering.code)
+  end
+end
+
 Then /^I am not able to suspend the activity offering$/ do
   @activity_offering.parent_course_offering.manage
   on ManageCourseOfferings do |page|
@@ -1040,7 +1049,56 @@ Given /^I manage a course offering with an approved activity offering$/ do
   on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Approved"
 end
 
+Then /^the activity offering copy is in draft status$/ do
+  on ManageCourseOfferings do |page|
+    page.ao_status(@activity_offering_copy.code).should == "Draft"
+  end
+end
+
+Given /^I manage a course offering with an activity offering in cancelled status$/ do
+  @course_offering = make CourseOffering, :term=> "201208", :course => "ENGL221"
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+
+  on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Canceled"
+end
+
+Given /^I copy a course offering in cancelled status$/ do
+  source_co = make CourseOffering, :term=> "201208", :course => "ENGL221"
+
+  source_co.search_by_subjectcode
+
+  on ManageCourseOfferingList do |page|
+    page.co_status(source_co.course).should == "Canceled"
+  end
+
+  @course_offering = create CourseOffering, :create_by_copy => (source_co)
+end
+
+Given /^the course offering copy is in draft status$/ do
+  @course_offering.search_by_subjectcode
+
+  on ManageCourseOfferingList do |page|
+    page.co_status(@course_offering.course).should == "Draft"
+  end
+
+
+end
+
+
+Given /^I manage a course offering with an activity offering in suspended status$/ do
+  @course_offering = make CourseOffering, :term=> "201208", :course => "BSCI421"
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+
+  on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Suspended"
+end
+
+
 Given /^I manage a course offering with a canceled activity offering$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL222")
   @course_offering.manage_and_init
 
@@ -1388,12 +1446,35 @@ Then /^the selected Activity Offerings should be in Approved state$/ do
   end
 end
 
-Given /^I manage a course offering with an activity offering in cancelled status$/ do
-  pending
+Given /^I manage a course offering with a colocated activity offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course => "CHEM441"
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+  @activity_offering.status.should == "Offered"
+
+  on ManageCourseOfferings do |page|
+    page.target_row(@activity_offering.code)[1].image(src: /colocate_icon/).present?.should be_true
+  end
 end
 
+Then /^I am unable submit the activity offering to the scheduler$/ do
+  @activity_offering.edit
+
+  on ActivityOfferingMaintenance do |page|
+    page.send_to_scheduler_checkbox.enabled?.should be_false
+    page.cancel
+  end
+end
+
+
 Then /^I am unable to colocate the activity offering$/ do
-  pending
+  @activity_offering.edit
+
+  on ActivityOfferingMaintenance do |page|
+    page.colocated_checkbox.enabled?.should be_false
+    page.cancel
+  end
 end
 
 Given /^a new academic term has course and activity offerings in cancelled and suspended status$/ do
