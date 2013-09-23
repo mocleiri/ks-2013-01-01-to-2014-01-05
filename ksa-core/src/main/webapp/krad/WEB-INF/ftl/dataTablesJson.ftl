@@ -32,7 +32,7 @@
 
     <#-- define a macro to allow the use of locals -->
     <#macro uif_table_json manager filteredCollectionSize totalCollectionSize>
-        <#compress>
+        <!--#compress-->
             <#local allRowFields=manager.allRowFields/>
 {
     <#-- see http://datatables.net/usage/server-side for documentation on these top-level properties -->
@@ -89,7 +89,7 @@
             </#list>
     ]
 }
-        </#compress>
+        <!--/#compress-->
     </#macro>
 
     <#-- call our macro to render the JSON data -->

@@ -169,10 +169,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link KsaBill.BillAddressedTo }
+     * Create an instance of {@link com.sigmasys.kuali.ksa.jaxb.KsaBill.BillRecipient }
      */
-    public KsaBill.BillAddressedTo createKsaBillBillAddressedTo() {
-        return new KsaBill.BillAddressedTo();
+    public KsaBill.BillRecipient createKsaBillRecipient() {
+        return new KsaBill.BillRecipient();
     }
 
     /**

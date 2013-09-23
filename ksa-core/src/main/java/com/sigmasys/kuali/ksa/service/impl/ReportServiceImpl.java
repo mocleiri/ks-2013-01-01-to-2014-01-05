@@ -14,8 +14,7 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.sigmasys.kuali.ksa.model.security.Permission;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
+
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -29,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sigmasys.kuali.ksa.model.security.Permission;
+import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.jaxb.*;
@@ -38,6 +39,7 @@ import com.sigmasys.kuali.ksa.jaxb.GeneralLedgerReport.GeneralLedgerReportEntry;
 import com.sigmasys.kuali.ksa.jaxb.Irs1098T;
 import com.sigmasys.kuali.ksa.jaxb.PersonName;
 import com.sigmasys.kuali.ksa.jaxb.PostalAddress;
+import com.sigmasys.kuali.ksa.jaxb.ElectronicContact;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.service.*;
@@ -47,7 +49,6 @@ import com.sigmasys.kuali.ksa.util.*;
  * Report Service implementation.
  *
  * @author Michael Ivanov
- * @author Sergey Godunov
  */
 @Service("reportService")
 @Transactional(readOnly = true)
@@ -1396,9 +1397,105 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
         PermissionUtils.checkPermission(Permission.GENERATE_BILL);
 
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null) {
+            String errMsg = "Account with ID = " + accountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        if (startDate != null && endDate != null && startDate.after(endDate)) {
+            String errMsg = "Start date cannot be greater than End date";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (billDate == null) {
+            String errMsg = "Bill date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        List<Transaction> transactions = transactionService.getTransactions(accountId, startDate, endDate);
+
+        if (CollectionUtils.isNotEmpty(transactions)) {
+
+            TransactionUtils.orderByEffectiveDate(transactions, false);
+
+            if (startDate == null) {
+                startDate = transactions.get(transactions.size() - 1).getEffectiveDate();
+            }
+
+            if (endDate == null) {
+                startDate = transactions.get(0).getEffectiveDate();
+            }
+
+            final ObjectFactory objectFactory = ObjectFactory.getInstance();
+
+            KsaBill ksaBill = objectFactory.createKsaBill();
+
+            KsaBill.AccountOwner accountOwner = objectFactory.createKsaBillAccountOwner();
+
+            accountOwner.setAccountIdentifier(accountId);
+
+            com.sigmasys.kuali.ksa.model.PersonName defaultPersonName = account.getDefaultPersonName();
+
+            PersonName personName = objectFactory.createPersonName();
+            personName.setDefault(true);
+            personName.setTitle(defaultPersonName.getTitle());
+            personName.setSuffix(defaultPersonName.getSuffix());
+            personName.setFirstName(defaultPersonName.getFirstName());
+            personName.setMiddleName(defaultPersonName.getMiddleName());
+            personName.setLastName(defaultPersonName.getLastName());
+            personName.setKimType(defaultPersonName.getKimNameType());
+
+            accountOwner.setPersonName(personName);
+
+            com.sigmasys.kuali.ksa.model.PostalAddress defaultPostalAddress = account.getDefaultPostalAddress();
+
+            PostalAddress postalAddress = objectFactory.createPostalAddress();
+            postalAddress.setAddressLine1(defaultPostalAddress.getStreetAddress1());
+            postalAddress.setAddressLine2(defaultPostalAddress.getStreetAddress2());
+            postalAddress.setAddressLine3(defaultPostalAddress.getStreetAddress3());
+            postalAddress.setCity(defaultPostalAddress.getCity());
+            postalAddress.setStateCode(defaultPostalAddress.getState());
+            postalAddress.setPostalCode(defaultPostalAddress.getPostalCode());
+            postalAddress.setCountryCode(defaultPostalAddress.getCountry());
+
+            accountOwner.setPostalAddress(postalAddress);
+
+            com.sigmasys.kuali.ksa.model.ElectronicContact defaultContact = account.getDefaultElectronicContact();
+
+            ElectronicContact contact = objectFactory.createElectronicContact();
+
+            ElectronicContact.TelephoneNumber phoneNumber = objectFactory.createElectronicContactTelephoneNumber();
+            phoneNumber.setNumber(defaultContact.getPhoneNumber());
+            phoneNumber.setExtension(defaultContact.getPhoneExtension());
+            phoneNumber.setCountryCode(defaultContact.getPhoneCountry());
+
+            contact.setEmailAddress(defaultContact.getEmailAddress());
+            contact.setTelephoneNumber(phoneNumber);
+
+            accountOwner.setElectronicContact(contact);
+
+            ksaBill.setAccountOwner(accountOwner);
+
+            KsaBill.Cycle billCycle = objectFactory.createKsaBillCycle();
+            billCycle.setBillGenerated(CalendarUtils.toXmlGregorianCalendar(new Date()));
+            billCycle.setBillDate(CalendarUtils.toXmlGregorianCalendar(billDate, true));
+            billCycle.setBillStart(CalendarUtils.toXmlGregorianCalendar(startDate, true));
+            billCycle.setBillEnd(CalendarUtils.toXmlGregorianCalendar(endDate, true));
+
+            ksaBill.setCycle(billCycle);
+
+            // TODO
+
+        }
+
+
         // TODO:
 
-       return null;
+        return null;
     }
 
 

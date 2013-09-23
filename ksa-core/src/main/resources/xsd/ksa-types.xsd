@@ -288,14 +288,14 @@
                 <xs:element name="account-owner">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="account-identifier"/>
+                            <xs:element name="account-identifier" type="xs:string"/>
                             <xs:element ref="person-name"/>
                             <xs:element ref="postal-address"/>
                             <xs:element ref="electronic-contact"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="bill-addressed-to">
+                <xs:element name="bill-recipient" minOccurs="0">
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element ref="person-name"/>

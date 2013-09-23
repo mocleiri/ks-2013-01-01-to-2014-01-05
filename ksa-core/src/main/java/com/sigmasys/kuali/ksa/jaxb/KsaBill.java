@@ -59,7 +59,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                             &lt;element name="future-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
  *                             &lt;element name="due-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
  *                             &lt;element name="overdue-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *                             &lt;element name="total-defered" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+ *                             &lt;element name="total-deferred" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
  *                             &lt;element name="next-deferment-expiration" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *                           &lt;/sequence>
  *                         &lt;/restriction>
@@ -100,7 +100,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;/complexContent>
  *           &lt;/complexType>
  *         &lt;/element>
- *         &lt;element name="bill-addressed-to">
+ *         &lt;element name="bill-recipient">
  *           &lt;complexType>
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
@@ -128,7 +128,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
         "cycle",
         "balances",
         "accountOwner",
-        "billAddressedTo",
+        "billRecipient",
         "transactionList",
         "message"
 })
@@ -145,8 +145,8 @@ public class KsaBill {
     protected KsaBill.Balances balances;
     @XmlElement(name = "account-owner", required = true)
     protected KsaBill.AccountOwner accountOwner;
-    @XmlElement(name = "bill-addressed-to", required = true)
-    protected KsaBill.BillAddressedTo billAddressedTo;
+    @XmlElement(name = "bill-recipient")
+    protected BillRecipient billRecipient;
     @XmlElement(name = "transaction-list", required = true)
     protected TransactionList transactionList;
     protected String message;
@@ -252,23 +252,23 @@ public class KsaBill {
     }
 
     /**
-     * Gets the value of the billAddressedTo property.
+     * Gets the value of the billRecipient property.
      *
      * @return possible object is
-     *         {@link KsaBill.BillAddressedTo }
+     *         {@link com.sigmasys.kuali.ksa.jaxb.KsaBill.BillRecipient }
      */
-    public KsaBill.BillAddressedTo getBillAddressedTo() {
-        return billAddressedTo;
+    public BillRecipient getBillRecipient() {
+        return billRecipient;
     }
 
     /**
-     * Sets the value of the billAddressedTo property.
+     * Sets the value of the billRecipient property.
      *
      * @param value allowed object is
-     *              {@link KsaBill.BillAddressedTo }
+     *              {@link com.sigmasys.kuali.ksa.jaxb.KsaBill.BillRecipient }
      */
-    public void setBillAddressedTo(KsaBill.BillAddressedTo value) {
-        this.billAddressedTo = value;
+    public void setBillRecipient(BillRecipient value) {
+        this.billRecipient = value;
     }
 
     /**
@@ -342,7 +342,7 @@ public class KsaBill {
     public static class AccountOwner {
 
         @XmlElement(name = "account-identifier", required = true)
-        protected Object accountIdentifier;
+        protected String accountIdentifier;
         @XmlElement(name = "person-name", required = true)
         protected PersonName personName;
         @XmlElement(name = "postal-address", required = true)
@@ -354,9 +354,9 @@ public class KsaBill {
          * Gets the value of the accountIdentifier property.
          *
          * @return possible object is
-         *         {@link Object }
+         *         {@link String }
          */
-        public Object getAccountIdentifier() {
+        public String getAccountIdentifier() {
             return accountIdentifier;
         }
 
@@ -364,9 +364,9 @@ public class KsaBill {
          * Sets the value of the accountIdentifier property.
          *
          * @param value allowed object is
-         *              {@link Object }
+         *              {@link String }
          */
-        public void setAccountIdentifier(Object value) {
+        public void setAccountIdentifier(String value) {
             this.accountIdentifier = value;
         }
 
@@ -453,7 +453,7 @@ public class KsaBill {
      *                   &lt;element name="future-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
      *                   &lt;element name="due-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
      *                   &lt;element name="overdue-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
-     *                   &lt;element name="total-defered" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+     *                   &lt;element name="total-deferred" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
      *                   &lt;element name="next-deferment-expiration" type="{http://www.w3.org/2001/XMLSchema}date"/>
      *                 &lt;/sequence>
      *               &lt;/restriction>
@@ -549,7 +549,7 @@ public class KsaBill {
          *         &lt;element name="future-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
          *         &lt;element name="due-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
          *         &lt;element name="overdue-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
-         *         &lt;element name="total-defered" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
+         *         &lt;element name="total-deferred" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
          *         &lt;element name="next-deferment-expiration" type="{http://www.w3.org/2001/XMLSchema}date"/>
          *       &lt;/sequence>
          *     &lt;/restriction>
@@ -900,7 +900,7 @@ public class KsaBill {
             "postalAddress",
             "electronicContact"
     })
-    public static class BillAddressedTo {
+    public static class BillRecipient {
 
         @XmlElement(name = "person-name", required = true)
         protected PersonName personName;
