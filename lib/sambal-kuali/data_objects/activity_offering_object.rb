@@ -628,7 +628,7 @@ class ActivityOffering
     end
   end
 
-  # suspends the activity offering
+  # approves the activity offering
   def approve opts={}
 
     defaults = {
@@ -650,6 +650,16 @@ class ActivityOffering
       else
         raise "error: approve_activity_button is disabled"
       end
+    end
+  end
+
+  # offers the activity offering (in published SOC, at least)
+  def offer
+    @parent_course_offering.manage
+    on(ManageCourseOfferings).edit(self.code)
+    on ActivityOfferingMaintenance do |page|
+      page.send_revised_delivery_logistics
+      page.submit
     end
   end
 

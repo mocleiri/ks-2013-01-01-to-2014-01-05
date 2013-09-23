@@ -7,31 +7,17 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Given I am logged in as a Schedule Coordinator
 
   Scenario: CO 21.1.1 CSR Cancel draft, offered, and canceled Activity Offerings
-    Given I manage a course offering with offered and canceled activity offerings present
-    When I select the first activity offering in Draft status
-    Then the Cancel button is "enabled"
-    When I cancel the activity offering
-    Then the first Draft activity offering is shown as canceled
-    When I select an activity offering to work with in Offered status
-    Then the Cancel button is "enabled"
-    When I cancel the activity offering
-    Then the Offered activity offering is shown as canceled
-    When I select an activity offering to work with in Canceled status
-    Then the Cancel button is "disabled"
-    When I select the second activity offering in Draft status
-    Then the Cancel button is "enabled"
-    When I cancel the activity offering, verifying that one of the two selections is eligible for this action
-    Then the second Draft activity offering is shown as canceled
-    And the registration group is shown as canceled
+    Given I manage a course offering with draft, offered, and canceled activity offerings present
+    Then I am able to cancel an activity offering in Draft status
+    And I am able to cancel an activity offering in Offered status
+    And the cancel button is unavailable when I select an activity offering in Canceled status, unless I also select an activity offering in Draft status
+    And after canceling, the registration group is shown as canceled
     And the Course Offering is shown as Canceled
     And the Course Offering is no longer shown in the Schedule of Classes
 
   Scenario: CO 21.1.2 CSR Cancel a suspended Activity Offering
     Given I manage a course offering with a suspended activity offering present
-    When I select an activity offering to work with in Suspended status
-    Then the Cancel button is "enabled"
-    When I cancel the activity offering
-    Then the Suspended activity offering is shown as canceled
+    Then I am able to cancel an activity offering in Suspended status
     And actual delivery logistics for the Suspended activity offering are no longer shown
     And the Suspended activity offering is no longer shown in the Schedule of Classes
 
@@ -45,19 +31,11 @@ Feature: EC.Cancel Suspend Reinstate AOs
 
   Scenario: CO 21.1.4 CSR Cancel offered Activity Offering that is the only AO for the CO
     Given I manage a course offering with an offered activity offering present
-    When I select the activity offering, which is in Offered status
-    Then the Cancel button is "enabled"
-    When I cancel the activity offering
-    Then the Offered activity offering is displayed as canceled
+    Then I am able to cancel an activity offering in Offered status
 
   Scenario: CO 23.1.1 CSR Check Reinstate button availability for canceled and offered AOs
     Given I manage a course offering with canceled and offered activity offerings present
-    When I select the Canceled activity offering
-    Then the Reinstate button is "enabled"
-    Then I deselect the Canceled activity offering
-    When I select the Offered activity offering
-    Then the Reinstate button is "disabled"
-    Then I deselect the Offered activity offering
+    Then the reinstate button is available when I select an activity offering in Canceled status, but unavailable when I select an activity offering in Offered status
 
   Scenario: CO 23.1.2 CSR Check Reinstate button availability in all SOC states
     Given I manage a course offering with a canceled activity offering present in a published SOC state

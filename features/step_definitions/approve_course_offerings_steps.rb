@@ -3,18 +3,31 @@ When /^I create two new Course Offerings$/ do
   @course_offering_ENGL202 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> Rollover::MAIN_TEST_TERM_TARGET, :course => "ENGL202")
 end
 
-Given /^I manage a course offering with offered and canceled activity offerings present$/ do
-  @course_with_cancel_ao = make CourseOffering, :term=> "201208" , :course => "ENGL221"
-  @course_with_cancel_ao.manage
-  on ManageCourseOfferings do |page|
-    @ao_offered_code1 = "A"
-    page.ao_status(@ao_offered_code1).should == "Offered"
-    page.copy(@ao_offered_code1)
+Given /^I manage a course offering with draft, offered, and canceled activity offerings present$/ do
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "ENGL221")
+  @course_offering.manage_and_init
 
-    @ao_canceled_code = "B"
-    page.ao_status(@ao_canceled_code).should == "Canceled"
-    page.copy(@ao_canceled_code)
+  @offered_ao = @course_offering.get_ao_obj_by_code("A")
+  on ManageCourseOfferings do |page1|
+    page1.copy(@offered_ao.code)
+    page1.copy(@offered_ao.code)
+    @course_offering.manage_and_init
+    @draft_ao1 = @course_offering.get_ao_obj_by_code("C")
+    @draft_ao2 = @course_offering.get_ao_obj_by_code("D")
+    @offered_ao.offer
+    page1.loading.wait_while_present
+    page1.ao_status(@offered_ao.code).should == "Offered"
+    page1.ao_status(@draft_ao1.code).should == "Draft"
+    page1.ao_status(@draft_ao2.code).should == "Draft"
   end
+
+  @canceled_ao = @course_offering.get_ao_obj_by_code("B")
+  @canceled_ao.cancel
+  on ManageCourseOfferings do |page2|
+    page2.loading.wait_while_present
+    page2.ao_status(@canceled_ao.code).should == "Canceled"
+  end
+
 end
 
 Given /^I manage a course offering with a canceled activity offering present$/ do
@@ -72,13 +85,18 @@ Given /^I manage a course offering with canceled and draft activity offerings pr
 end
 
 Given /^I manage a course offering with canceled and offered activity offerings present$/ do
-  @course_with_cancel_offered_ao = make CourseOffering, :term=> "201208" , :course => "BSCI399"
-  @course_with_cancel_offered_ao.manage
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "BSCI379P")
+  @course_offering.manage_and_init
+
+  @offered_ao = @course_offering.get_ao_obj_by_code("A")
+  @offered_ao.offer
+  @canceled_ao = @course_offering.get_ao_obj_by_code("C")
+  @canceled_ao.cancel
+
   on ManageCourseOfferings do |page|
-    @ao_canceled_code3 = "BB"
-    page.ao_status(@ao_canceled_code3).should == "Canceled"
-    @ao_offered_code3 = "A"
-    page.ao_status(@ao_offered_code3,).should == "Offered"
+    page.loading.wait_while_present
+    page.ao_status(@offered_ao.code).should == "Offered"
+    page.ao_status(@canceled_ao.code).should == "Canceled"
   end
 end
 
@@ -382,7 +400,7 @@ end
 
 When /^I select an activity offering to work with in Offered status$/ do
   on ManageCourseOfferings do |page|
-    page.select_ao(@ao_offered_code1)
+    page.select_ao(@offered_ao.code)
   end
 end
 
@@ -573,12 +591,6 @@ When /^I select the activity offering, which is in an Approved status$/ do
   end
 end
 
-When /^I select an activity offering to work with in Canceled status$/ do
-  on ManageCourseOfferings do |page|
-    page.select_ao(@ao_canceled_code)
-  end
-end
-
 When /^I select the Canceled activity offering$/ do
   on ManageCourseOfferings do |page|
     page.select_ao(@ao_canceled_code3)
@@ -697,9 +709,11 @@ When /^I select an activity offering that is in Canceled status$/ do
   end
 end
 
-When /^I select an activity offering to work with in Suspended status$/ do
+Then /^I am able to cancel an activity offering in Suspended status$/ do
+  @suspended_ao.cancel
   on ManageCourseOfferings do |page|
-    page.select_ao(@ao_suspended_code)
+    page.loading.wait_while_present
+    page.ao_status(@suspended_ao.code).should == "Canceled"
   end
 end
 
@@ -709,11 +723,51 @@ When /^I select an activity offering to work with in Approved status$/ do
   end
 end
 
-When /^I select the first activity offering in Draft status$/ do
+Then /^I am able to cancel an activity offering in Draft status$/ do
+  @draft_ao1.cancel
   on ManageCourseOfferings do |page|
-    @ao_draft_code1 = "C"
-    page.ao_status(@ao_draft_code1).should == "Draft"
-    page.select_ao(@ao_draft_code1)
+    page.loading.wait_while_present
+    page.ao_status(@draft_ao1.code).should == "Canceled"
+  end
+end
+
+And /^I am able to cancel an activity offering in Offered status$/ do
+  @offered_ao.cancel
+  on ManageCourseOfferings do |page|
+    page.loading.wait_while_present
+    page.ao_status(@offered_ao.code).should == "Canceled"
+  end
+end
+
+And /^the cancel button is unavailable when I select an activity offering in Canceled status, unless I also select an activity offering in Draft status$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@canceled_ao.code)
+    page.cancel_ao_button.enabled?.should be_false
+    page.select_ao(@draft_ao2.code)
+    page.cancel_ao_button.enabled?.should be_true
+    page.cancel_ao
+  end
+
+  on CancelActivityOffering do |page|
+    page.warning_msg_present("1 activity offering(s) will be canceled").should == true
+    page.warning_msg_present("1 activity offering(s) cannot be canceled (ineligible status)").should == true
+    page.cancel_activity
+  end
+
+  on ManageCourseOfferings do |page|
+    page.loading.wait_while_present
+    page.ao_status(@draft_ao2.code).should == "Canceled"
+  end
+end
+
+Then /^the reinstate button is available when I select an activity offering in Canceled status, but unavailable when I select an activity offering in Offered status$/ do
+  on ManageCourseOfferings do |page|
+    page.select_ao(@canceled_ao.code)
+    page.reinstate_ao_button.enabled?.should be_true
+    page.deselect_ao(@canceled_ao.code)
+    page.select_ao(@offered_ao.code)
+    page.reinstate_ao_button.enabled?.should be_false
+    page.deselect_ao(@offered_ao.code)
   end
 end
 
@@ -760,7 +814,7 @@ end
 
 Then /^the Offered activity offering is shown as canceled$/ do
   on ManageCourseOfferings do |page|
-    page.ao_status(@ao_offered_code1).should == "Canceled"
+    page.ao_status(@offered_ao).should == "Canceled"
   end
 end
 
@@ -902,13 +956,13 @@ Then /^the second Draft activity offering is shown as canceled$/ do
   end
 end
 
-Then /^the Course Offering is shown as Canceled$/ do
+And /^the Course Offering is shown as Canceled$/ do
   on ManageCourseOfferings do |page1|
     page1.list_all_course_link.click
+  end
     on ManageCourseOfferingList do |page2|
       page2.co_status("ENGL221").should == "Canceled"
     end
-  end
 end
 
 Then /^the Course Offering is shown as Draft$/ do
@@ -966,16 +1020,14 @@ Then /^the Course Offering is now shown as Planned$/ do
 end
 
 Given /^I manage a course offering with a suspended activity offering present$/ do
-  @course_with_suspend_ao = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "BSCI421")
-  @course_with_suspend_ao.manage
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "BSCI421")
+  @course_offering.manage_and_init
+  #have to put it in suspended status for the test
+  @suspended_ao = @course_offering.get_ao_obj_by_code("D")
+  @suspended_ao.suspend
   on ManageCourseOfferings do |page|
-    @ao_suspended_code = "D"
-    #have to put it in suspended status for the test
-    page.select_ao(@ao_suspended_code)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
     page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code).should == "Suspended"
+    page.ao_status(@suspended_ao.code).should == "Suspended"
   end
 end
 
@@ -989,6 +1041,7 @@ Given /^I manage a course offering with a draft activity offering$/ do
 end
 
 Given /^I manage a course offering with an approved activity offering present$/ do
+# refactoring has to wait for MSE solution ??
   @course_with_approve_ao = make CourseOffering, :term=> "201700" , :course => "ENGL243"
   @course_with_approve_ao.manage
   on ManageCourseOfferings do |page|
@@ -998,11 +1051,14 @@ Given /^I manage a course offering with an approved activity offering present$/ 
 end
 
 Given /^I manage a course offering with an offered activity offering present$/ do
-  @course_with_offered_ao = make CourseOffering, :term=> "201208" , :course => "ENGL402"
-  @course_with_offered_ao.manage
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "ENGL402")
+  @course_offering.manage_and_init
+
+  @offered_ao = @course_offering.get_ao_obj_by_code("A")
+  @offered_ao.offer
   on ManageCourseOfferings do |page|
-    @ao_offered_code2 = "A"
-    page.ao_status(@ao_offered_code2).should == "Offered"
+    page.loading.wait_while_present
+    page.ao_status(@offered_ao.code).should == "Offered"
   end
 end
 
@@ -1321,7 +1377,7 @@ And /^requested delivery logistics are still shown and actual delivery logistics
   end
 end
 
-And /^the registration group is shown as canceled$/ do
+And /^after canceling, the registration group is shown as canceled$/ do
   on ManageCourseOfferings do |page|
     if page.view_reg_groups_table("CL 1").present? == false
       page.view_cluster_reg_groups("CL 1")

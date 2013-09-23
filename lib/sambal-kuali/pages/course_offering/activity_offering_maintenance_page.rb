@@ -21,6 +21,9 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   element(:submit_button) { |b| b.save_cancel_div.button(text: "Update") }
   action(:submit) { |b| sleep 2; b.loading.wait_while_present; sleep 2; b.submit_button.click; b.loading.wait_while_present(120) }
   action(:cancel) { |b| b.save_cancel_div.link(text: "Cancel").click; b.loading.wait_while_present }
+  element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter", index: 1) }
+  element(:send_revised_delivery_logistics_checkbox) { |b| b.sticky_footer_div.checkbox(name: "document.newMaintainableObject.dataObject.sendRDLsToSchedulerAfterMSE") }
+  action(:send_revised_delivery_logistics) { |b| b.send_revised_delivery_logistics_checkbox.click }
 
   #unsaved changes dialog - appears when navigating between AOs
   element(:save_continue_alert_div) { |b| b.frm.div(id: "ActivityOfferingEdit-NavigationConfirmation") }
