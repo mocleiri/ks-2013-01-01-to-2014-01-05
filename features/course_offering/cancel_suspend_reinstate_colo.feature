@@ -74,14 +74,14 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
 
   Scenario: CO 22.1B1 CSR Verify that RDLs for a suspended Activity Offering can be sent to the scheduler in SOC state final edits
     Given I am working on a term in "Final Edits" SOC state
-    And I manage a course offering with a suspended activity offering
+    And I create a course offering from catalog with a suspended activity offering
     When I add requested delivery logistics to the activity offering
     Then I am able to send the activity offering to the scheduler
     And the actual delivery logistics are displayed for the updated activity offering
 
   Scenario: CO 22.1B2 CSR Verify that RDLs for a suspended Activity Offering can be sent to the scheduler in SOC state published
     Given I am working on a term in "Published" SOC state
-    And I manage a course offering with a suspended activity offering
+    And I create a course offering from catalog with a suspended activity offering
     When I add requested delivery logistics to the activity offering
     Then I am able to send the activity offering to the scheduler
     And the actual delivery logistics are displayed for the updated activity offering

@@ -980,6 +980,7 @@ Given /^I manage a course offering with a suspended activity offering present$/ 
 end
 
 Given /^I manage a course offering with a draft activity offering$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "HIST240")
   @course_offering.manage_and_init
 
@@ -1006,6 +1007,7 @@ Given /^I manage a course offering with an offered activity offering present$/ d
 end
 
 Given /^an activity offering in draft status (can|cannot) be suspended$/ do |can_suspend|
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL362"
   @course_offering.manage
   on ManageCourseOfferings do |page|
@@ -1040,6 +1042,7 @@ Given /^I manage a course offering with an approved activity offering present in
 end
 
 Given /^I manage a course offering with an approved activity offering$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL362")
   @course_offering.manage_and_init
 
@@ -1100,18 +1103,48 @@ Given /^the course offering copy is in draft status$/ do
   on ManageCourseOfferingList do |page|
     page.co_status(@course_offering.course).should == "Draft"
   end
-
-
 end
 
+Given /^I create a course offering from catalog with a suspended activity offering$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM if @term_for_test.nil?
+  delivery_format_list = []
+  delivery_format_list << (make DeliveryFormat, :format => "Lab", :grade_format => "Lab", :final_exam_activity => "Lab")
 
-Given /^I manage a course offering with an activity offering in suspended status$/ do
-  @course_offering = make CourseOffering, :term=> "201208", :course => "BSCI421"
-  @course_offering.manage_and_init
+  @course_offering = create CourseOffering, :term=> @term_for_test,
+                            :course => "CHEM132",
+                            :delivery_format_list => delivery_format_list
 
-  @activity_offering = @course_offering.get_ao_obj_by_code("D")
-
+  @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering,
+                              :format => "Lab Only", :activity_type => "Lab" , :requested_delivery_logistics_list => {}
+  @activity_offering.save
+  @activity_offering.suspend :navigate_to_page => false
   on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Suspended"
+end
+
+Given /^I add requested delivery logistics to the activity offering$/ do
+  @rdl_list = {}
+  @rdl_list["MTW"] = make DeliveryLogistics, :days => "MTW", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+
+  @activity_offering.edit :requested_delivery_logistics_list => @rdl_list
+
+  @activity_offering.save
+end
+
+Given /^I am able to send the activity offering to the scheduler$/ do
+  @activity_offering.edit :send_to_scheduler => true
+  @activity_offering.save
+end
+
+Given /^the actual delivery logistics are displayed for the updated activity offering$/ do
+  @activity_offering.parent_course_offering.manage
+
+  on ManageCourseOfferings do |page|
+    page.target_row(@activity_offering.code).cells[ManageCourseOfferings::AO_DAYS].text.should == (@rdl_list["MTW"]).days
+    page.target_row(@activity_offering.code).cells[ManageCourseOfferings::AO_ST_TIME].text.should == "#{(@rdl_list["MTW"]).start_time} #{(@rdl_list["MTW"]).start_time_ampm.upcase}"
+    page.target_row(@activity_offering.code).cells[ManageCourseOfferings::AO_END_TIME].text.should == "#{(@rdl_list["MTW"]).end_time} #{(@rdl_list["MTW"]).end_time_ampm.upcase}"
+    page.target_row(@activity_offering.code).cells[ManageCourseOfferings::AO_BLDG].text.should == (@rdl_list["MTW"]).facility
+    page.target_row(@activity_offering.code).cells[ManageCourseOfferings::AO_ROOM].text.should == (@rdl_list["MTW"]).room
+  end
 end
 
 
