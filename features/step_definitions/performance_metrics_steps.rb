@@ -371,7 +371,7 @@ When /^I add Delivery Logistics and save$/ do
     page.add_room.set "1116"
     page.add_new_delivery_logistics
     @performance_test.start
-    page.submit
+    page.save
     @performance_test.end
   end
 end
