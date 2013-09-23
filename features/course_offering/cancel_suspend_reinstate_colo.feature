@@ -12,41 +12,41 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     And I am not able to cancel the activity offering
 
   Scenario: CO 21.1C1: CSR Verify that a user cannot colocate a canceled activity offering
-    Given I manage a course offering with an activity offering in cancelled status
+    Given I manage a course offering with an activity offering in canceled status
     Then I am unable to colocate the activity offering
 
   Scenario: CO 21.1C2: CSR Verify that a user cannot colocate a suspended activity offering
     Given I manage a course offering with an activity offering in suspended status
     Then I am unable to colocate the activity offering
 
-  Scenario: CO 21.1D: CSR Verify that a user cannot submit a cancelled activity offering to the scheduler
-    Given I manage a course offering with an activity offering in cancelled status
+  Scenario: CO 21.1D: CSR Verify that a user cannot submit a canceled activity offering to the scheduler
+    Given I manage a course offering with an activity offering in canceled status
     Then I am unable submit the activity offering to the scheduler
 
-  Scenario: CO 21.1E1: CSR Verify when a course offering in cancelled status is copied the copy is in draft status
-    When I copy a course offering in cancelled status
+  Scenario: CO 21.1E1: CSR Verify when a course offering in canceled status is copied the copy is in draft status
+    When I copy a course offering in canceled status
     Then the course offering copy is in draft status
 
-  Scenario: CO 21.1E2: CSR Verify when an activity offering in cancelled status is copied the copy is in draft status
-    Given I manage a course offering with an activity offering in cancelled status
+  Scenario: CO 21.1E2: CSR Verify when an activity offering in canceled status is copied the copy is in draft status
+    Given I manage a course offering with an activity offering in canceled status
     When I copy the activity offering
     Then the activity offering copy is in draft status
 
   Scenario: CO 21.1F: CSR Verify Course and Activity Offerings in a rollover source term are changed to draft status in the rollover target term
-    Given a new academic term has course and activity offerings in cancelled and suspended status
+    Given a new academic term has course and activity offerings in canceled and suspended status
     When I rollover the term to a new academic term
     Then the course and activity offerings in the rollover target term are in draft status
 
   @draft @not_delivered
-  Scenario: CO 21.1G: CSR Verify a cancelled Activity Offerings can be excluded in Course Offering create from existing
-    Given I manage a course offering with an activity offering in cancelled status
-    When the course offering is copied to a subsequent term excluding cancelled activity offerings
-    Then the cancelled activity offering is not copied
+  Scenario: CO 21.1G: CSR Verify a canceled Activity Offerings can be excluded in Course Offering create from existing
+    Given I manage a course offering with an activity offering in canceled status
+    When the course offering is copied to a subsequent term excluding canceled activity offerings
+    Then the canceled activity offering is not copied
 
-  Scenario: CO 21.1H: CSR Verify that for Course Offering create from existing an Activity Offering in Cancelled status becomes Draft status in the copy
-    Given I manage a course offering with an activity offering in cancelled status
+  Scenario: CO 21.1H: CSR Verify that for Course Offering create from existing an Activity Offering in canceled status becomes Draft status in the copy
+    Given I manage a course offering with an activity offering in canceled status
     When I create a new course offering in a subsequent term by copying the existing course offering
-    Then the cancelled activity offering copy is in draft status
+    Then the canceled activity offering copy is in draft status
 
   Scenario: CO 22.1A1 CSR Check Suspend option availability in draft open and locked SOC states
     Given I am working on a term in "Draft" SOC state
@@ -64,7 +64,7 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
   Scenario: CO 22.1A3 CSR Suspend approved Activity Offering with ADLs
     Given I am working on a term in "Final Edits" SOC state
     When I manage a course offering with an approved activity offering
-    Then I can suspend the activity offering
+    Then I suspend the activity offering
     And actual delivery logistics for the Approved activity offering are still shown
 
   Scenario: CO 22.1A4 CSR Suspend a canceled Activity Offering in a published SOC state
@@ -72,4 +72,25 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     When I manage a course offering with a canceled activity offering
     Then I am not able to suspend the activity offering
 
+  Scenario: CO 22.1B1 CSR Verify that RDLs for a suspended Activity Offering can be sent to the scheduler in SOC state final edits
+    Given I am working on a term in "Final Edits" SOC state
+    And I manage a course offering with a suspended activity offering
+    When I add requested delivery logistics to the activity offering
+    Then I am able to send the activity offering to the scheduler
+    And the actual delivery logistics are displayed for the updated activity offering
 
+  Scenario: CO 22.1B2 CSR Verify that RDLs for a suspended Activity Offering can be sent to the scheduler in SOC state published
+    Given I am working on a term in "Published" SOC state
+    And I manage a course offering with a suspended activity offering
+    When I add requested delivery logistics to the activity offering
+    Then I am able to send the activity offering to the scheduler
+    And the actual delivery logistics are displayed for the updated activity offering
+
+  Scenario: CO 22.1C1: CSR Verify when a course offering in suspended status is copied the copy is in draft status
+    When I copy a course offering in suspended status
+    Then the course offering copy is in draft status
+
+  Scenario: CO 22.1C2: CSR Verify when an activity offering in suspended status is copied the copy is in draft status
+    Given I manage a course offering with an activity offering in suspended status
+    When I copy the activity offering
+    Then the activity offering copy is in draft status

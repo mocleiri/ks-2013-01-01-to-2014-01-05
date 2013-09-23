@@ -454,7 +454,7 @@ When /^I select the Canceled and Draft activity offerings$/ do
   end
 end
 
-When /^I can suspend the activity offering$/ do
+Then /^I( can)? suspend the activity offering$/ do
   @activity_offering.suspend
 
   on ManageCourseOfferings do |page|
@@ -1055,7 +1055,7 @@ Then /^the activity offering copy is in draft status$/ do
   end
 end
 
-Given /^I manage a course offering with an activity offering in cancelled status$/ do
+Given /^I manage a course offering with an activity offering in canceled status$/ do
   @course_offering = make CourseOffering, :term=> "201208", :course => "ENGL221"
   @course_offering.manage_and_init
 
@@ -1064,13 +1064,13 @@ Given /^I manage a course offering with an activity offering in cancelled status
   on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Canceled"
 end
 
-Given /^the cancelled activity offering copy is in draft status$/ do
+Given /^the canceled activity offering copy is in draft status$/ do
   @course_offering_copy.manage
 
   on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Draft"
 end
 
-Given /^I copy a course offering in cancelled status$/ do
+Given /^I copy a course offering in canceled status$/ do
   source_co = make CourseOffering, :term=> "201208", :course => "ENGL221"
 
   source_co.search_by_subjectcode
@@ -1080,6 +1080,18 @@ Given /^I copy a course offering in cancelled status$/ do
   end
 
   @course_offering = create CourseOffering, :create_by_copy => (source_co)
+end
+
+Given /^I copy a course offering in suspended status$/ do
+  course_offering_suspended = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "BSCI121")
+  course_offering_suspended.manage_and_init
+
+  @activity_offering = course_offering_suspended.get_ao_obj_by_code("A")
+  @activity_offering.suspend
+  course_offering_suspended.search_by_subjectcode
+
+  on(ManageCourseOfferingList).co_status(course_offering_suspended.course).should == "Suspended"
+  @course_offering = create CourseOffering, :create_by_copy => course_offering_suspended
 end
 
 Given /^the course offering copy is in draft status$/ do
@@ -1097,7 +1109,7 @@ Given /^I manage a course offering with an activity offering in suspended status
   @course_offering = make CourseOffering, :term=> "201208", :course => "BSCI421"
   @course_offering.manage_and_init
 
-  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+  @activity_offering = @course_offering.get_ao_obj_by_code("D")
 
   on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Suspended"
 end
@@ -1483,7 +1495,7 @@ Then /^I am unable to colocate the activity offering$/ do
   end
 end
 
-Given /^a new academic term has course and activity offerings in cancelled and suspended status$/ do
+Given /^a new academic term has course and activity offerings in canceled and suspended status$/ do
   @calendar = create AcademicCalendar #, :year => "2235", :name => "fSZtG62zfU"
   @term = make AcademicTerm, :term_year => @calendar.year
   @calendar.add_term(@term)
@@ -1495,14 +1507,14 @@ Given /^a new academic term has course and activity offerings in cancelled and s
   delivery_format_list = []
   delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture")
 
-  @course_offering_cancelled = create CourseOffering, :term=> @term.term_code,
+  @course_offering_canceled = create CourseOffering, :term=> @term.term_code,
                             :course => "ENGL211",
                             :delivery_format_list => delivery_format_list
 
-  @activity_offering_cancelled = create ActivityOffering, :parent_course_offering => @course_offering_cancelled,
+  @activity_offering_canceled = create ActivityOffering, :parent_course_offering => @course_offering_canceled,
                               :format => "Lecture Only", :activity_type => "Lecture"
-  @activity_offering_cancelled.save
-  @activity_offering_cancelled.cancel
+  @activity_offering_canceled.save
+  @activity_offering_canceled.cancel
 
   @course_offering_suspended = create CourseOffering, :term=> @term.term_code,
                              :course => "ENGL211",
@@ -1525,16 +1537,16 @@ Then /^the course and activity offerings in the rollover target term are in draf
     page.ao_status(@activity_offering_suspended.code).should == "Draft"
   end
 
-  @course_offering_cancelled_target = make CourseOffering, :term=> @term_target.term_code,
-                                           :course => @course_offering_cancelled.course
-  @course_offering_cancelled_target.manage
+  @course_offering_canceled_target = make CourseOffering, :term=> @term_target.term_code,
+                                           :course => @course_offering_canceled.course
+  @course_offering_canceled_target.manage
   on ManageCourseOfferings do |page|
-    page.ao_status(@activity_offering_cancelled.code).should == "Draft"
+    page.ao_status(@activity_offering_canceled.code).should == "Draft"
   end
 
-  @course_offering_cancelled_target.search_by_subjectcode
+  @course_offering_canceled_target.search_by_subjectcode
   on ManageCourseOfferingList do |page|
-    page.co_status(@course_offering_cancelled_target.course).should == "Draft"
+    page.co_status(@course_offering_canceled_target.course).should == "Draft"
     page.co_status(@course_offering_suspended_target.course).should == "Draft"
   end
 end
