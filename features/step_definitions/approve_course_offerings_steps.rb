@@ -1064,6 +1064,12 @@ Given /^I manage a course offering with an activity offering in cancelled status
   on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Canceled"
 end
 
+Given /^the cancelled activity offering copy is in draft status$/ do
+  @course_offering_copy.manage
+
+  on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Draft"
+end
+
 Given /^I copy a course offering in cancelled status$/ do
   source_co = make CourseOffering, :term=> "201208", :course => "ENGL221"
 

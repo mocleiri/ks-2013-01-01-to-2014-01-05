@@ -43,7 +43,12 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     When the course offering is copied to a subsequent term excluding cancelled activity offerings
     Then the cancelled activity offering is not copied
 
-  Scenario: CO 22.1A CSR Check Suspend option availability in draft open and locked SOC states
+  Scenario: CO 21.1H: CSR Verify that for Course Offering create from existing an Activity Offering in Cancelled status becomes Draft status in the copy
+    Given I manage a course offering with an activity offering in cancelled status
+    When I create a new course offering in a subsequent term by copying the existing course offering
+    Then the cancelled activity offering copy is in draft status
+
+  Scenario: CO 22.1A1 CSR Check Suspend option availability in draft open and locked SOC states
     Given I am working on a term in "Draft" SOC state
     Then an activity offering in draft status cannot be suspended
     Given I am working on a term in "Open" SOC state
@@ -51,18 +56,18 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     Given I am working on a term in "Locked" SOC state
     Then an activity offering in draft status can be suspended
 
-  Scenario: CO 22.1B CSR Suspend a draft Activity Offering in a published SOC state
+  Scenario: CO 22.1A2 CSR Suspend a draft Activity Offering in a published SOC state
     Given I am working on a term in "Published" SOC state
     When I manage a course offering with a draft activity offering
     Then I can suspend the activity offering
 
-  Scenario: CO 22.1.C CSR Suspend approved Activity Offering with ADLs
+  Scenario: CO 22.1A3 CSR Suspend approved Activity Offering with ADLs
     Given I am working on a term in "Final Edits" SOC state
     When I manage a course offering with an approved activity offering
     Then I can suspend the activity offering
     And actual delivery logistics for the Approved activity offering are still shown
 
-  Scenario: CO 22.1.D CSR Suspend a canceled Activity Offering in a published SOC state
+  Scenario: CO 22.1A4 CSR Suspend a canceled Activity Offering in a published SOC state
     Given I am working on a term in "Published" SOC state
     When I manage a course offering with a canceled activity offering
     Then I am not able to suspend the activity offering
