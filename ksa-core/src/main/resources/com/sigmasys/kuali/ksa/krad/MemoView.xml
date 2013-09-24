@@ -37,22 +37,10 @@
                     <property name="headerText" value="Memo List"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-Link" p:linkText="Quick View" p:target="_self"
-                                  p:href="quickView?methodToCall=get&amp;viewId=QuickView&amp;userId=@{account.id}"/>
+                            <bean parent="Uif-Link" p:href="#" p:linkText="Create a New Memo" p:onClickScript="showLightboxComponent('memoNewLightbox');"/>
+                            <ref bean="memoNewLightbox"/>
                             <ref bean="memoDateRangeSection"/>
                             <ref bean="memoTableSection"/>
-                        </list>
-                    </property>
-                </bean>
-                <bean parent="Uif-Page" p:id="AddMemoPage" p:title="@{account.id}"
-                      p:instructionalText="Memos are freeform text items, which can be entered by system users to provide a history of when and why certain things have happened on the account.">
-                    <property name="headerText" value="Add Memo"/>
-                    <property name="items">
-                        <list>
-                            <bean parent="Uif-Link" p:linkText="Memo List" p:target="_self"
-                                  p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=MemosPage&amp;userId=@{account.id}"/>
-                            <ref bean="addMemoSection"/>
-                            <ref bean="addMemoControlsGroup"/>
                         </list>
                     </property>
                 </bean>
@@ -170,9 +158,10 @@
                             <ref bean="memoDetailsLightbox"/>
                             <bean parent="Uif-ImageField" p:source="../images/follow-up_memo.png" p:style="cursor:pointer;" p:altText="Add Follow Up" p:title=""
                                   p:onClickScript="showLightboxComponent('memoAddFollowup@{#lineSuffix}');">
-                                <property name="toolTip">
+                                <!--<property name="toolTip">
                                     <bean parent="Uif-Tooltip" p:tooltipContent="Click to add a follow-up message to this memo"/>
                                 </property>
+                                -->
                             </bean>
                             <bean parent="Uif-ImageField" p:source="../images/audit_guy.png" p:altText="Audit Information" p:title="">
                                 <property name="toolTip">
@@ -333,13 +322,59 @@
                 </bean>
 
                 <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="updateMemo" p:actionLabel="Save"
-                      p:actionParameters="memoId:@{#line.id}" p:onClickScript="jQuery.fancybox.close();"/>
+                      p:actionParameters="memoId:@{#line.id}" p:preSubmitCall="jQuery.fancybox.close(); return true;"/>
 
             </list>
         </property>
     </bean>
 
 
+    <bean id="memoNewLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+        <property name="hidden" value="true"/>
+        <property name="items">
+            <list>
+                <ref bean="memoNewSection"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="memoNewSection" parent="Uif-VerticalBoxSection" p:headerText="Add a New Memo">
+        <property name="readOnly" value="false"/>
+        <property name="items">
+            <list>
+                <!-- Item to render is a MemoModel object -->
+                <bean  parent="Uif-Disclosure-VerticalBoxSection" p:headerText="Memo">
+                    <property name="items">
+                        <list>
+
+                            <bean parent="Uif-InputField" p:propertyName="newMemoModel.text"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean  parent="Uif-Disclosure-VerticalBoxSection" p:headerText="Effective Date Ranges">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:propertyName="newMemoModel.effectiveDate" p:label="Start" p:labelPlacement="TOP" p:readOnly="false">
+                                <property name="control">
+                                    <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="newMemoModel.expirationDate" p:label="End" p:labelPlacement="TOP" p:readOnly="false">
+                                <property name="control">
+                                    <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insertMemo" p:actionLabel="Save"
+                       p:preSubmitCall="jQuery.fancybox.close(); return true;"/>
+
+            </list>
+        </property>
+    </bean>
 
 
     <!--
@@ -377,23 +412,6 @@
                         <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"
                               p:style="resize:none;"/>
                     </property>
-                </bean>
-            </list>
-        </property>
-    </bean>
-
-    <!--
-    *******************************************************************************************************************
-                                        Add Memo controls group
-    A group of controls to support the add of a memorandum
-    ********************************************************************************************************************
-    -->
-    <bean id="addMemoControlsGroup" parent="Uif-HorizontalBoxGroup">
-        <property name="items">
-            <list>
-                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insertMemo"
-                      p:actionLabel="Submit"
-                      p:onClickScript="writeHiddenToForm(&quot;actionParameters[userId]&quot;, &quot;@{account.id}&quot;);">
                 </bean>
             </list>
         </property>

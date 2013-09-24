@@ -103,7 +103,7 @@ public class MemoController extends GenericSearchController {
             // create a Memo, set defaults for the view
             Account account = accountService.getFullAccount(userId);
             String accountId = account.getId();
-            // don't create a persistent memo when adding a memo, just initialize one for use
+            // don't create a persistent memo when adding a memo, jus0t initialize one for use
             // rather persist when the user submits (button control) an insert on the memo
             Memo memo = new Memo();
             memo.setAccount(account);
@@ -186,31 +186,48 @@ public class MemoController extends GenericSearchController {
         String viewId = request.getParameter("viewId");
         String userId = request.getParameter("userId");
 
+        String parentMemoId = request.getParameter("actionParameters[parentMemoID]");
+        Memo parentMemo = null;
+        Long parentId = null;
+        if(parentMemoId != null) {
+            // This is a follow up memo.
+            try {
+                parentId = Long.parseLong(parentMemoId);
+            } catch(NumberFormatException e) {
+                GlobalVariables.getMessageMap().putError("MemoView", RiceKeyConstants.ERROR_CUSTOM, "Invalid parent memo ID: '" + parentMemoId + "'");
+                return getUIFModelAndView(form);
+            }
+            parentMemo = informationService.getMemo(parentId);
+        }
+
         logger.info("View: " + viewId + " User: " + userId);
 
         // TODO validate the field entries before inserting
 
-        Memo memoModel = form.getMemoModel();
+        MemoModel memoModel = form.getNewMemoModel();
 
-        String accountId = memoModel.getAccountId();
+        String accountId = form.getAccount().getId();
         String memoText = memoModel.getText();
 
         String accessLevelCode = "DEF_MEMO_LEVEL_CD";
 
         Date effectiveDate = memoModel.getEffectiveDate();
         Date expirationDate = memoModel.getExpirationDate();
-        Memo previousMemo = memoModel.getPreviousMemo();
-        Long previousMemoId = previousMemo != null ? previousMemo.getId() : null;
 
         try {
 
-            Memo memo = informationService.createMemo(accountId, memoText, accessLevelCode, effectiveDate, expirationDate, previousMemoId);
+            Memo memo = informationService.createMemo(accountId, memoText, accessLevelCode, effectiveDate, expirationDate, parentId);
 
             Long persistResult = informationService.persistInformation(memo);
 
             if (persistResult >= 0) {
                 String statusMsg = "Memo saved";
                 GlobalVariables.getMessageMap().putInfo("MemoView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+
+                List<Memo> memos = informationService.getMemos(userId);
+
+                form.setMemos(memos);
+
 
             } else {
                 String failedMsg = "Failed to add memo. result code: " + persistResult.toString();

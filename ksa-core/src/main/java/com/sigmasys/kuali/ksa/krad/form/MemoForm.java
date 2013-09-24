@@ -7,9 +7,6 @@ import com.sigmasys.kuali.ksa.model.Transaction;
 
 import java.util.*;
 
-/**
- * Created by: dmulderink on 10/4/12 at 7:52 AM
- */
 public class MemoForm extends AbstractViewModel {
 
 
@@ -22,6 +19,8 @@ public class MemoForm extends AbstractViewModel {
     private List<MemoModel> memoModels;
 
     private Memo memoModel;
+
+    private MemoModel newMemoModel;
 
     // resuable add edit or followup instructional text
     private String aefInstructionalText;
@@ -105,4 +104,15 @@ public class MemoForm extends AbstractViewModel {
         this.aefInstructionalText = aefInstructionalText;
     }
 
+    public MemoModel getNewMemoModel() {
+        if(newMemoModel == null) {
+            newMemoModel = new MemoModel();
+            newMemoModel.setParentEntity(new Memo());
+        }
+        return newMemoModel;
+    }
+
+    public void setNewMemoModel(MemoModel newMemoModel) {
+        this.newMemoModel = newMemoModel;
+    }
 }

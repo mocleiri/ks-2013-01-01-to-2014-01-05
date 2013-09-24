@@ -35,6 +35,10 @@ public class InformationModel {
         return information.getText();
     }
 
+    public void setText(String text) {
+        information.setText(text);
+    }
+
     public String getDisplayValue() {
         return information.getDisplayValue();
     }
