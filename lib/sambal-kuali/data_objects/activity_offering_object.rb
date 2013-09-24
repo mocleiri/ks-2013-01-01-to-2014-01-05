@@ -628,6 +628,24 @@ class ActivityOffering
     end
   end
 
+  # cancels the activity offering
+  def reinstate opts={}
+
+    defaults = {
+        :navigate_to_page => true
+    }
+    options = defaults.merge(opts)
+
+    @parent_course_offering.manage if options[:navigate_to_page]
+
+    on ManageCourseOfferings do |page|
+      page.select_ao(self.code)
+      page.reinstate_ao
+      on(ReinstateActivityOffering).reinstate_activity
+    end
+  end
+
+
   # approves the activity offering
   def approve opts={}
 

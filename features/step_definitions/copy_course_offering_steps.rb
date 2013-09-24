@@ -79,7 +79,7 @@ Then /^the activity offering delivery logistics are copied to the rollover term 
 end
 
 Then /^I copy the course offering$/ do
-  @course_offering_copy = create CourseOffering, :term=>Rollover::OPEN_SOC_TERM, :create_by_copy=>@course_offering
+  @course_offering_copy = create CourseOffering, :create_by_copy=>@course_offering
 end
 
 When /^I create a new course offering in a subsequent term by copying the existing course offering$/ do

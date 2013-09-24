@@ -373,23 +373,47 @@ Then /^the Suspend button is "([^"]*)"$/ do |suspend_button_state|
   end
 end
 
-Then /^I am not able to cancel the activity offering$/ do
+Then /^I am (able|not able) to cancel the activity offering$/ do  |can_cancel|
   @activity_offering.parent_course_offering.manage
   on ManageCourseOfferings do |page|
     page.select_ao(@activity_offering.code)
-    page.cancel_ao_button.enabled?.should be_false
+    if can_cancel == "able"
+      page.cancel_ao_button.enabled?.should be_true
+    else
+      page.cancel_ao_button.enabled?.should be_false
+    end
     page.deselect_ao(@activity_offering.code)
   end
 end
 
-Then /^I am not able to suspend the activity offering$/ do
+Then /^I am (able|not able) to suspend the activity offering$/ do |can_suspend|
   @activity_offering.parent_course_offering.manage
   on ManageCourseOfferings do |page|
       page.select_ao(@activity_offering.code)
-      page.suspend_ao_button.enabled?.should be_false
+      if can_suspend == "able"
+        page.suspend_ao_button.enabled?.should be_true
+      else
+        page.suspend_ao_button.enabled?.should be_false
+      end
       page.deselect_ao(@activity_offering.code)
     end
 end
+
+Then /^I am (able|not able) to reinstate the activity offering$/ do |can_suspend|
+  @activity_offering.parent_course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.select_ao(@activity_offering.code)
+    if can_suspend == "able"
+      page.reinstate_ao_button.enabled?.should be_true
+      @activity_offering.reinstate :navigate_to_page => false
+      on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Draft"
+    else
+      page.reinstate_ao_button.enabled?.should be_false
+    end
+    page.deselect_ao(@activity_offering.code)
+  end
+end
+
 
 Then /^the Reinstate button is "([^"]*)"$/ do |reinstate_button_state|
   on ManageCourseOfferings do |page|
@@ -1221,6 +1245,18 @@ Given /^I manage a course offering with a canceled activity offering$/ do
 
   on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Canceled"
 end
+
+Given /^I manage a course offering with a suspended activity offering$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL222")
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+  @activity_offering.suspend :navigate_to_page => false
+
+  on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Suspended"
+end
+
 
 Given /^I manage a course offering with a canceled activity offering present in a draft SOC state$/ do
   @course_with_cancel_ao3 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "202000", :course => "ENGL243")

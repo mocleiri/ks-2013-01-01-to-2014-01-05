@@ -40,17 +40,22 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Given I manage a course offering with an offered activity offerings present
     Then the reinstate button is unavailable when I select an activity offering
 
-  Scenario: CO 23.1.2 CSR Check Reinstate button availability in all SOC states
-    Given I manage a course offering with a canceled activity offering present in a published SOC state
-    When I select the activity offering, the Reinstate button is "enabled" #this step should also deselect
-    Given I manage a course offering with a canceled activity offering present in a draft SOC state
-    When I select the activity offering, the Reinstate button is "enabled"
-    Given I manage a course offering with a canceled activity offering present in an open SOC state
-    When I select the activity offering, the Reinstate button is "enabled"
-    Given I manage a course offering with a canceled activity offering present in a locked SOC state
-    When I select the activity offering, the Reinstate button is "enabled"
-    Given I manage a course offering with a canceled activity offering present in a final edits SOC state
-    When I select the activity offering, the Reinstate button is "enabled"
+  Scenario: CO 23.1.2 CSR Check Reinstate for a cancelled activity offering in all SOC states
+    Given I am working on a term in "Published" SOC state
+    When I manage a course offering with a canceled activity offering
+    Then I am able to reinstate the activity offering
+    Given I am working on a term in "Final Edits" SOC state
+    When I manage a course offering with a canceled activity offering
+    Then I am able to reinstate the activity offering
+    Given I am working on a term in "Locked" SOC state
+    When I manage a course offering with a canceled activity offering
+    Then I am able to reinstate the activity offering
+    Given I am working on a term in "Open" SOC state
+    When I manage a course offering with a canceled activity offering
+    Then I am able to reinstate the activity offering
+    Given I am working on a term in "Draft" SOC state
+    When I manage a course offering with a canceled activity offering
+    Then I am able to reinstate the activity offering
 
   Scenario: CO 23.1.3 CSR Reinstate a canceled AO
     Given I manage a course offering with a canceled activity offering present in draft SOC state
@@ -83,20 +88,17 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Then the Reinstate button is "enabled"
     #Then I deselect the Suspended activity offering
 
-  Scenario: CO 23.3A.2 CSR Reinstate suspended AOs with ADLs in locked, final edits, published SOC states
-    #same as   Scenario: CO 23.1.2 CSR Check Reinstate button availability in all SOC states
-    Given I manage a course offering with suspended activity offerings present in a locked SOC state
-    When I select a Suspended activity offering
-    Then the Reinstate button is "enabled"
-    Then I deselect Suspended activity offering
-    Given I manage a course offering with suspended activity offerings present in a final edits SOC state
-    When I select Suspended activity offering
-    Then the Reinstate button is "enabled"
-    Then I deselect a Suspended activity offering
-    Given I manage a course offering with suspended activity offerings present in a published SOC state
-    When I select the first Suspended activity offering
-    Then the Reinstate button is "enabled"
-    Then I deselect the first Suspended activity offering
+  Scenario: CO 23.3A.2 CSR Reinstate suspended AOs with ADLs in locked final edits and published SOC states
+    Given I am working on a term in "Published" SOC state
+    When I manage a course offering with a suspended activity offering
+    Then I am able to reinstate the activity offering
+    Given I am working on a term in "Final Edits" SOC state
+    When I manage a course offering with a suspended activity offering
+    Then I am able to reinstate the activity offering
+    Given I am working on a term in "Locked" SOC state
+    When I manage a course offering with a suspended activity offering
+    Then I am able to reinstate the activity offering
+
 
   Scenario: CO 23.3A.8 CSR Reinstate an AO with ADLs that is the only AO in the CO, in published SOC state
     Given I manage a course offering with a suspended activity offering present in a published SOC state
