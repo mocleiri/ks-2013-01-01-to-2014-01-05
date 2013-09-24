@@ -2,14 +2,16 @@ package org.kuali.student.ap.framework.context.support;
 
 import static org.kuali.rice.core.api.criteria.PredicateFactory.like;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
@@ -30,6 +32,7 @@ import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.kuali.student.r2.lum.course.infc.Course;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -107,12 +110,15 @@ public class DefaultTermHelper implements TermHelper {
 				List<AtpInfo> atps = atpService.getAtpsByDates(start, end, ctx);
 				List<String> termIds = new java.util.ArrayList<String>(atps.size());
 				List<String> acalIds = new java.util.ArrayList<String>(atps.size());
-				List<String> termTypes = Arrays.asList(AcademicCalendarServiceConstants.TERM_TYPE_KEYS);
+				List<TypeInfo> termTypes = academicCalendarService.getTermTypes(ctx);
+				Set<String> termTypeKeys = new HashSet<String>();
+				for (TypeInfo termType : termTypes)
+					termTypeKeys.add(termType.getKey());
 				for (AtpInfo atp : atps) {
 					String atpType = atp.getTypeKey();
 					if (AcademicCalendarServiceConstants.ACADEMIC_CALENDAR_TYPE_KEY.equals(atpType))
 						acalIds.add(atp.getId());
-					else if (termTypes.contains(atpType))
+					else if (termTypeKeys.contains(atpType))
 						termIds.add(atp.getId());
 				}
 				List<AcademicCalendarInfo> acals = academicCalendarService.getAcademicCalendarsByIds(acalIds, ctx);
@@ -352,6 +358,45 @@ public class DefaultTermHelper implements TermHelper {
 		} catch (PermissionDeniedException e) {
 			throw new IllegalStateException("Acal lookup failure", e);
 		}
+	}
+
+	@Override
+	public List<Term> getTermsByDateRange(Date startDate, Date endDate) {
+		ContextInfo ctx = KsapFrameworkServiceLocator.getContext().getContextInfo();
+		AtpService atpService = KsapFrameworkServiceLocator.getAtpService();
+		AcademicCalendarService academicCalendarService = KsapFrameworkServiceLocator.getAcademicCalendarService();
+		List<AtpInfo> atps;
+		try {
+			atps = atpService.getAtpsByDates(startDate, endDate, ctx);
+		} catch (InvalidParameterException e) {
+			throw new IllegalArgumentException("ATP lookup failure", e);
+		} catch (MissingParameterException e) {
+			throw new IllegalArgumentException("ATP lookup failure", e);
+		} catch (OperationFailedException e) {
+			throw new IllegalStateException("ATP lookup failure", e);
+		} catch (PermissionDeniedException e) {
+			throw new IllegalStateException("ATP lookup failure", e);
+		}
+		List<Term> terms = new ArrayList<Term>(atps.size());
+		List<TypeInfo> termTypes;
+		try {
+			termTypes = academicCalendarService.getTermTypes(ctx);
+		} catch (InvalidParameterException e) {
+			throw new IllegalArgumentException("ACAL lookup failure", e);
+		} catch (MissingParameterException e) {
+			throw new IllegalArgumentException("ACAL lookup failure", e);
+		} catch (OperationFailedException e) {
+			throw new IllegalStateException("ACAL lookup failure", e);
+		} catch (PermissionDeniedException e) {
+			throw new IllegalStateException("ACAL lookup failure", e);
+		}
+		Set<String> termTypeKeys = new HashSet<String>();
+		for (TypeInfo termType : termTypes)
+			termTypeKeys.add(termType.getKey());
+		for (AtpInfo atp : atps)
+			if (termTypeKeys.contains(atp.getTypeKey()))
+				terms.add(getTerm(atp.getId()));
+		return terms;
 	}
 
 	@Override

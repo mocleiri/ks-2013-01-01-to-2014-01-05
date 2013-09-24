@@ -1,5 +1,6 @@
 package org.kuali.student.ap.framework.context;
 
+import java.util.Date;
 import java.util.List;
 
 import org.kuali.student.enrollment.acal.infc.Term;
@@ -163,6 +164,13 @@ public interface TermHelper {
 	 * @return
 	 */
 	List<Term> getPlanningTerms();
+
+	/**
+	 * Gets a list of terms by date range.
+	 * 
+	 * @return A list of terms, by date range.
+	 */
+	List<Term> getTermsByDateRange(Date startDate, Date endDate);
 
 	/**
 	 * 
