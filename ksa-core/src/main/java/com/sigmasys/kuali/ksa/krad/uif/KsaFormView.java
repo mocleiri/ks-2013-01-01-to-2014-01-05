@@ -11,8 +11,6 @@ import org.kuali.rice.krad.uif.view.FormView;
  */
 public class KsaFormView extends FormView {
 
-    private boolean isIndexed;
-
     @Override
     public void setHeader(Header header) {
         if (header != null && header.getUpperGroup() != null) {
@@ -45,13 +43,4 @@ public class KsaFormView extends FormView {
             super.setViewHelperServiceClass(viewHelperServiceClass);
         }
     }
-
-    @Override
-    public void index() {
-        if (getViewIndex() == null || !isIndexed) {
-            super.index();
-            isIndexed = true;
-        }
-    }
-
 }
