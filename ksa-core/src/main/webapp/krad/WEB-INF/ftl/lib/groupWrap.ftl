@@ -16,28 +16,9 @@
 
 -->
 <#macro groupWrap group>
-
-    <@div component=group>
-
-        <@template component=group.header/>
-
-        <#if group.disclosure.render>
-            <div id="${group.id}_disclosureContent" data-role="disclosureContent"
-                 data-open="${group.disclosure.defaultOpen?string}" class="uif-disclosureContent">
-        </#if>
-
-        <@template component=group.validationMessages/>
-        <@template component=group.instructionalMessage/>
-
-        <#nested/>
-
-        <@template component=group.footer/>
-
-        <#if group.disclosure.render>
-            </div>
-            <@template component=group.disclosure parent=group/>
-        </#if>
-
-    </@div>
-
+	<#inline 'groupWrap-open' />
+	<#if !group.renderLoading>
+		<#nested/>
+	</#if>
+	<#inline 'groupWrap-close' />
 </#macro>

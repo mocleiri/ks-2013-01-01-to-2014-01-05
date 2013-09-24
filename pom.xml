@@ -33,7 +33,7 @@
         <stax-ex.version>1.4</stax-ex.version>
         <cglib.version>2.2.2</cglib.version>
         <tiles.version>2.2.2</tiles.version>
-        <freemarker.version>2.3.20</freemarker.version>
+        <freemarker.version>2.3.20-patch2</freemarker.version>
         <cxf.version>2.5.10</cxf.version>
         <quartz.version>1.8.6</quartz.version>
         <joda.time.version>1.1.1</joda.time.version>

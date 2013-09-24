@@ -46,7 +46,11 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="controllerTransaction"/>
     </aop:config>
 
-    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    <bean id="freeMarkerInlineRenderBootstrap"
+          class="org.kuali.rice.krad.uif.freemarker.FreeMarkerInlineRenderBootstrap"/>
+
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer"
+          depends-on="freeMarkerInlineRenderBootstrap">
         <property name="templateLoaderPath" value="/"/>
         <property name="freemarkerSettings">
             <props>
@@ -61,12 +65,6 @@
         <property name="prefix" value=""/>
         <property name="suffix" value=".ftl"/>
     </bean>
-
-    <!--bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-            <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-            <property name="prefix" value="/krad/WEB-INF/jsp/"/>
-            <property name="suffix" value=".jsp"/>
-    </bean-->
 
     <bean id="kradHandlerMapping"
           class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
