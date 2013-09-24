@@ -60,7 +60,12 @@
 						p:fieldConversions="id:orgId" />
 					</property>
 				</bean>
-				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="personId" />
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="personId" >
+					<property name="quickfinder">
+						<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.rice.kim.api.identity.Person"
+						p:fieldConversions="principalId:personId" />
+					</property>
+				</bean>
 				<!-- TODO: deal with  effectiveDate which is a Date -->
 				<!-- TODO: deal with  expirationDate which is a Date -->
 				<!-- TODO: deal with seaching on the version indicator which is a string in the contract but a number in the database -->
@@ -97,7 +102,11 @@
 		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo" p:inquiryParameters="orgId:id" />
 		            </property>
 		        </bean>
-		        <bean parent="Uif-DataField" p:propertyName="personId" />
+		        <bean parent="Uif-DataField" p:propertyName="personId" >
+		       	   <property name="inquiry">
+		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.rice.kim.api.identity.Person" p:inquiryParameters="personId:principalId" />
+		            </property>
+		        </bean>
 		        <bean parent="Uif-DataField" p:propertyName="effectiveDate" />
 		        <bean parent="Uif-DataField" p:propertyName="expirationDate" />
 		    </list>
