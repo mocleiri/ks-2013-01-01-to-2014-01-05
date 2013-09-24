@@ -961,7 +961,7 @@ And /^the Course Offering is shown as Canceled$/ do
     page1.list_all_course_link.click
   end
     on ManageCourseOfferingList do |page2|
-      page2.co_status("ENGL221").should == "Canceled"
+      page2.co_status(@course_offering.course).should == "Canceled"
     end
 end
 
@@ -1452,23 +1452,30 @@ end
 
 And /^the Suspended activity offering is no longer shown in the Schedule of Classes$/ do
   go_to_display_schedule_of_classes
-  @schedule_of_classes = make ScheduleOfClasses, :term => "Fall 2012", :course_search_parm => "BSCI421", :exp_course_list => ["BSCI421"]
+  @schedule_of_classes = make ScheduleOfClasses, :term => "Fall 2012", :course_search_parm => @course_offering.course, :exp_course_list => [@course_offering.course]
   @schedule_of_classes.display
-  @schedule_of_classes.expand_course_details
   on DisplayScheduleOfClasses do |page|
-    if !page.results_activities_table.exists?
-      raise "activities table not found"
-    else
-      page.results_activities_table.rows[1..-1].each do |row|
-        # check only rows with data in them
-        row.cells[DisplayScheduleOfClasses::AO_CODE_COLUMN].text.should_not == "D"
+    if !page.course_not_found_info_message_div.ul.exists?
+      if page.get_results_course_list.include?(@course_offering.course)
+        # course not listed - that's fine
+      else
+        # check the listing for the specific AO
+        @schedule_of_classes.expand_course_details
+        if !page.results_activities_table.exists?
+          raise "activities table not found"
+        else
+          page.results_activities_table.rows[1..-1].each do |row|
+            # check only rows with data in them
+            row.cells[DisplayScheduleOfClasses::AO_CODE_COLUMN].text.should_not == "D"
+          end
+        end
       end
     end
   end
 end
 
 And /^the Course Offering is no longer shown in the Schedule of Classes$/ do
-  course_code = "ENGL221"
+  course_code = @course_offering.course
   go_to_display_schedule_of_classes
   @schedule_of_classes = make ScheduleOfClasses, :term => "Fall 2012", :course_search_parm => course_code, :exp_course_list => [course_code]
   @schedule_of_classes.display
