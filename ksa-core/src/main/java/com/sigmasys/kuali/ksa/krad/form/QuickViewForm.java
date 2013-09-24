@@ -7,11 +7,9 @@ import com.sigmasys.kuali.ksa.util.ContextUtils;
 import com.sigmasys.kuali.ksa.util.InformationUtils;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by: dmulderink on 9/28/12 at 2:25 PM
@@ -143,13 +141,14 @@ public class QuickViewForm extends AbstractViewModel {
 
 
     public List<InformationModel> getAlertsFlags() {
+
         List<InformationModel> list = new ArrayList<InformationModel>();
 
-        list.addAll(this.getAlerts());
-        list.addAll(this.getFlags());
-        list.addAll(this.getHolds());
-        return InformationUtils.orderModelsByEffectiveDate(list, false);
+        list.addAll(getAlerts());
+        list.addAll(getFlags());
+        list.addAll(getHolds());
 
+        return InformationUtils.orderModelsByEffectiveDate(list, false);
     }
 
     public Date getLastAgeDate() {
@@ -202,7 +201,7 @@ public class QuickViewForm extends AbstractViewModel {
     }
 
     public List<Memo> getMemoModels() {
-        if(memoModels == null){
+        if (memoModels == null) {
             memoModels = new ArrayList<Memo>();
         }
         return memoModels;
@@ -261,21 +260,21 @@ public class QuickViewForm extends AbstractViewModel {
         this.statusMessage = statusMessage;
     }
 
-    public String getInfoType(Information i){
-        if(i instanceof Alert){
+    public String getInfoType(Information i) {
+        if (i instanceof Alert) {
             return "alert";
-        } else if(i instanceof Flag){
+        } else if (i instanceof Flag) {
             return "flag";
-        } else if(i instanceof Memo){
+        } else if (i instanceof Memo) {
             return "memo";
         }
         return "";
 
     }
 
-    public String getInfoType(InformationModel i){
+    public String getInfoType(InformationModel i) {
         String type = getInfoType(i.getParentEntity());
-        if("".equals(type)) {
+        if ("".equals(type)) {
             type = "hold";
         }
         return type;
@@ -294,7 +293,7 @@ public class QuickViewForm extends AbstractViewModel {
 
     public void setAlertObjects(List<Alert> alerts) {
         List<InformationModel> models = new ArrayList<InformationModel>(alerts.size());
-        for(Alert alert : alerts){
+        for (Alert alert : alerts) {
             models.add(new InformationModel(alert));
         }
         setAlerts(models);
@@ -317,7 +316,7 @@ public class QuickViewForm extends AbstractViewModel {
 
     public void setFlagObjects(List<Flag> flags) {
         List<InformationModel> models = new ArrayList<InformationModel>(flags.size());
-        for(Flag flag : flags){
+        for (Flag flag : flags) {
             models.add(new InformationModel(flag));
         }
         setFlags(models);
@@ -328,7 +327,7 @@ public class QuickViewForm extends AbstractViewModel {
     }
 
     public List<InformationModel> getHolds() {
-        if(holds == null) {
+        if (holds == null) {
             holds = new ArrayList<InformationModel>();
         }
         return holds;

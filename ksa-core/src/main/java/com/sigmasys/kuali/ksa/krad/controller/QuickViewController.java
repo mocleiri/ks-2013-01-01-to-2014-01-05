@@ -84,7 +84,7 @@ public class QuickViewController extends GenericSearchController {
         if ("QuickView".equals(viewId)) {
 
             if (!accountService.accountExists(userId)) {
-                throw new IllegalArgumentException("Unknown account for userid '" + userId + "'");
+                throw new IllegalArgumentException("Unknown account for userId '" + userId + "'");
             }
 
             if (pageId == null) {
@@ -92,8 +92,11 @@ public class QuickViewController extends GenericSearchController {
             }
 
             if ("QuickViewPage".equals(pageId)) {
+
                 populateForm(userId, form);
+
             } else if ("QuickViewAddMemoPage".equals(pageId)) {
+
                 if (userId == null || userId.isEmpty()) {
                     throw new IllegalArgumentException("'userId' request parameter must be specified");
                 }
@@ -127,12 +130,14 @@ public class QuickViewController extends GenericSearchController {
         logger.info("View: " + viewId + " User: " + userId);
 
         if ("QuickView".equals(viewId)) {
+
             if (!accountService.accountExists(userId)) {
-                throw new IllegalArgumentException("Unknown account for userid '" + userId + "'");
+                String errMsg = "Unknown account for userId '" + userId + "'";
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
             }
 
             populateForm(userId, form);
-
         }
 
         return getUIFModelAndView(form);
@@ -142,7 +147,7 @@ public class QuickViewController extends GenericSearchController {
      * Ageing debts.
      *
      * @param form Kuali form instance
-     * @return ModelandView
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=ageDebt")
     public ModelAndView ageDebt(@ModelAttribute("KualiForm") QuickViewForm form) {
@@ -220,9 +225,9 @@ public class QuickViewController extends GenericSearchController {
 
                 form.setStatusMessage(failedMsg);
             }
-        } catch (Exception exp) {
-            String errMsg = "'Failed to add memo. " + exp.getMessage();
-            logger.error(errMsg);
+        } catch (Exception e) {
+            logger.error("'Failed to add memo. " + e.getMessage(), e);
+            GlobalVariables.getMessageMap().putError("QuickView", RiceKeyConstants.ERROR_CUSTOM, e.getLocalizedMessage());
         }
 
         return getUIFModelAndView(form);
@@ -231,8 +236,8 @@ public class QuickViewController extends GenericSearchController {
     /**
      * Populate the form per business needs for a single account by the account identifier
      *
-     * @param userId
-     * @param form
+     * @param userId User ID
+     * @param form   QuickViewForm
      */
     private void populateForm(String userId, QuickViewForm form) {
 
@@ -243,7 +248,9 @@ public class QuickViewController extends GenericSearchController {
 
         Account accountById = accountService.getFullAccount(userId);
         if (accountById == null) {
-            throw new IllegalStateException("Cannot find Account by ID = " + userId);
+            String errMsg = "Cannot find Account with ID = " + userId;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
         }
 
         form.setAccount(accountById);
@@ -380,6 +387,7 @@ public class QuickViewController extends GenericSearchController {
             }
 
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             GlobalVariables.getMessageMap().putError("QuickView", RiceKeyConstants.ERROR_CUSTOM, e.getLocalizedMessage());
         }
 
