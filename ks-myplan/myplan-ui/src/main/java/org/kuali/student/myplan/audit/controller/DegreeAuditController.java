@@ -298,7 +298,6 @@ public class DegreeAuditController extends UifControllerBase {
                     GlobalVariables.getMessageMap().putError("degreeAudit.programParamSeattle",
                             DegreeAuditConstants.AUDIT_RUN_FAILED, params);
                     form.setAuditHtml(String.format(DegreeAuditConstants.AUDIT_FAILED_HTML,
-                            ConfigContext.getCurrentContextConfig().getProperty(DegreeAuditConstants.APPLICATION_URL),
                             DegreeAuditConstants.AUDIT_STATUS_ERROR_MSG));
                 }
             }
@@ -319,7 +318,6 @@ public class DegreeAuditController extends UifControllerBase {
                 if (message != null) {
                     String errorMessage = getErrorMessageFromXml(message);
                     String html = String.format(DegreeAuditConstants.AUDIT_FAILED_HTML,
-                            ConfigContext.getCurrentContextConfig().getProperty(DegreeAuditConstants.APPLICATION_URL),
                             errorMessage);
                     form.setAuditHtml(html);
                 }
@@ -372,8 +370,7 @@ public class DegreeAuditController extends UifControllerBase {
                     String[] params = {};
                     GlobalVariables.getMessageMap().putError("planAudit.programParamSeattle",
                             DegreeAuditConstants.AUDIT_RUN_FAILED, params);
-                    form.setAuditHtml(String.format(DegreeAuditConstants.AUDIT_FAILED_HTML,
-                            ConfigContext.getCurrentContextConfig().getProperty(DegreeAuditConstants.APPLICATION_URL)));
+                    form.setAuditHtml(String.format(DegreeAuditConstants.AUDIT_FAILED_HTML, DegreeAuditConstants.AUDIT_STATUS_ERROR_MSG));
                 }
             }
 
@@ -394,7 +391,6 @@ public class DegreeAuditController extends UifControllerBase {
                 if (message != null) {
                     String errorMessage = getErrorMessageFromXml(message);
                     String html = String.format(DegreeAuditConstants.AUDIT_FAILED_HTML,
-                            ConfigContext.getCurrentContextConfig().getProperty(DegreeAuditConstants.APPLICATION_URL),
                             errorMessage);
                     form.setAuditHtml(html);
                 }
@@ -439,7 +435,7 @@ public class DegreeAuditController extends UifControllerBase {
                         list.add(new AttributeInfo(CHOICE, choiceKey));
                         list.add(new AttributeInfo(SECTION, choice.section));
                         list.add(new AttributeInfo(SECONDARY_ACTIVITY, choice.secondaryActivity));
-                        if (StringUtils.hasText(choice.credit))  {
+                        if (StringUtils.hasText(choice.credit)) {
                             planItem.setCredit(Float.valueOf(choice.credit));
                         }
 
@@ -456,7 +452,7 @@ public class DegreeAuditController extends UifControllerBase {
                     list.add(new AttributeInfo(BUCKET, BUCKET_CLEAN));
                     list.add(new AttributeInfo(SECTION, item.getSectionCode()));
                     list.add(new AttributeInfo(SECONDARY_ACTIVITY, item.getSecondaryActivityCode()));
-                    if (StringUtils.hasText(item.getCredit()))  {
+                    if (StringUtils.hasText(item.getCredit())) {
                         planItem.setCredit(Float.valueOf(item.getCredit()));
                     }
 
@@ -696,7 +692,7 @@ public class DegreeAuditController extends UifControllerBase {
     }
 
     public UserSessionHelper getUserSessionHelper() {
-        if(userSessionHelper == null){
+        if (userSessionHelper == null) {
             userSessionHelper = new UserSessionHelperImpl();
         }
         return userSessionHelper;

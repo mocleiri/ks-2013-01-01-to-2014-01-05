@@ -117,6 +117,15 @@
                         <value>/v4/registration/</value>
                     </list>
                 </entry>
+                <entry key="PlanAudit-FormView">
+                    <list>
+                        <value>/v5/degreeaudit</value>
+                        <value>/v4/public/section</value>
+                        <value>/v4/public/term/current</value>
+                        <value>/v4/enrollment</value>
+                        <value>/v4/registration/</value>
+                    </list>
+                </entry>
                 <entry key="SingleTerm-InquiryView">
                     <list>
                         <value>/v4/public/section</value>
