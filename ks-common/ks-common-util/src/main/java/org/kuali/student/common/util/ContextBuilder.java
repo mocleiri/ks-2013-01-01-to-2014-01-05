@@ -21,7 +21,7 @@ import org.kuali.student.r2.common.dto.LocaleInfo;
 import java.util.Locale;
 
 /**
- * This class provides a default ContextInfo
+ * This class //TODO ...
  *
  * @author Kuali Student Team
  */

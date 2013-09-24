@@ -22,6 +22,11 @@ import org.kuali.rice.krad.uif.field.InputField;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class //TODO ...
+ *
+ * @author Kuali Student Team
+ */
 public class KSInputField extends InputField{
 
     /*@Override

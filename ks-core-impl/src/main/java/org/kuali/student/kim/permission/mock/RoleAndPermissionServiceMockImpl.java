@@ -15,33 +15,46 @@
  */
 package org.kuali.student.kim.permission.mock;
 
-import java.util.*;
-import javax.jws.WebParam;
-
 import org.joda.time.DateTime;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.delegation.DelegationType;
 import org.kuali.rice.core.api.exception.RiceIllegalArgumentException;
 import org.kuali.rice.core.api.exception.RiceIllegalStateException;
+import org.kuali.rice.core.api.membership.MemberType;
 import org.kuali.rice.kim.api.KimConstants;
+import org.kuali.rice.kim.api.common.assignee.Assignee;
 import org.kuali.rice.kim.api.common.delegate.DelegateMember;
 import org.kuali.rice.kim.api.common.delegate.DelegateType;
-
-import org.kuali.rice.kim.api.group.GroupService;
-import org.kuali.rice.kim.api.role.*;
-import org.kuali.rice.core.api.membership.MemberType;
-import org.kuali.rice.kim.api.common.assignee.Assignee;
-import org.kuali.student.common.mock.MockService;
-
 import org.kuali.rice.kim.api.common.template.Template;
 import org.kuali.rice.kim.api.common.template.TemplateQueryResults;
 import org.kuali.rice.kim.api.group.Group;
+import org.kuali.rice.kim.api.group.GroupService;
 import org.kuali.rice.kim.api.permission.Permission;
 import org.kuali.rice.kim.api.permission.PermissionQueryResults;
 import org.kuali.rice.kim.api.permission.PermissionService;
+import org.kuali.rice.kim.api.role.DelegateMemberQueryResults;
+import org.kuali.rice.kim.api.role.Role;
+import org.kuali.rice.kim.api.role.RoleMember;
+import org.kuali.rice.kim.api.role.RoleMemberQueryResults;
+import org.kuali.rice.kim.api.role.RoleMembership;
+import org.kuali.rice.kim.api.role.RoleMembershipQueryResults;
+import org.kuali.rice.kim.api.role.RoleQueryResults;
+import org.kuali.rice.kim.api.role.RoleResponsibility;
+import org.kuali.rice.kim.api.role.RoleResponsibilityAction;
+import org.kuali.rice.kim.api.role.RoleService;
 import org.kuali.rice.kim.framework.permission.PermissionTypeService;
 import org.kuali.rice.krad.kim.ViewPermissionTypeServiceImpl;
+import org.kuali.student.common.mock.MockService;
 import org.kuali.student.common.util.UUIDHelper;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author nwright
@@ -1046,8 +1059,8 @@ public class RoleAndPermissionServiceMockImpl implements RoleService, Permission
      *
      * @param template
      * @return
-     * @throws RiceIllegalArgumentException
-     * @throws RiceIllegalStateException
+     * @throws org.kuali.rice.core.api.exception.RiceIllegalArgumentException
+     * @throws org.kuali.rice.core.api.exception.RiceIllegalStateException
      */
     public Template createTemplate(Template template) throws RiceIllegalArgumentException, RiceIllegalStateException {// CREATE
         Template orig = this.findPermTemplateByNamespaceCodeAndName(template.getNamespaceCode(), template.getName());

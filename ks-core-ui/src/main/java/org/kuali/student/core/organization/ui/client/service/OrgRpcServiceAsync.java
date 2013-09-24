@@ -42,7 +42,6 @@ public interface OrgRpcServiceAsync extends BaseDataOrchestrationRpcServiceAsync
     public void getOrgOrgRelationType(String orgOrgRelationTypeKey,AsyncCallback<TypeInfo> callback);
     public void getOrgPersonRelationTypes(AsyncCallback<List<TypeInfo>> callback);
     public void getOrgTypes(AsyncCallback<List<TypeInfo>> callback);
-    public void getOrgDisplayTree(String orgId, String orgHierarchy, int maxLevels, AsyncCallback<List<OrgTreeInfo>> callback);
     public void getPositionRestrictionsByOrg(String orgId, AsyncCallback<List<OrgPositionRestrictionInfo>> callback);
     public void addPositionRestrictionToOrg(OrgPositionRestrictionInfo orgPositionRestrictionInfo, AsyncCallback<OrgPositionRestrictionInfo> callback);
     public void updateOrganization(OrgInfo orgInfo, AsyncCallback<OrgInfo> callback);

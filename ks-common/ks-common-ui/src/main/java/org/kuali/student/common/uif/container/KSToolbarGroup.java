@@ -23,15 +23,15 @@ public class KSToolbarGroup extends Group {
         this.noLeftBorder = noLeftBorder;
     }
 
-    /**
-     * @see org.kuali.rice.krad.uif.component.ComponentBase#copy()
-     */
-    @Override
-    protected <T> void copyProperties(T component) {
-        super.copyProperties(component);
-
-        KSToolbarGroup ksToolbarGroupCopy = (KSToolbarGroup) component;
-
-        ksToolbarGroupCopy.setNoLeftBorder(this.noLeftBorder);
-    }
+//    /**
+//     * @see org.kuali.rice.krad.uif.component.ComponentBase#copy()
+//     */
+//    @Override
+//    protected <T> void copyProperties(T component) {
+//        super.copyProperties(component);
+//
+//        KSToolbarGroup ksToolbarGroupCopy = (KSToolbarGroup) component;
+//
+//        ksToolbarGroupCopy.setNoLeftBorder(this.noLeftBorder);
+//    }
 }

@@ -15,9 +15,9 @@
     permissions and limitations under the License.
 
 -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
@@ -26,16 +26,33 @@
                            http://www.springframework.org/schema/tx
                            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
                            http://www.springframework.org/schema/aop
-                           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+                           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
     <!-- This context requires that a spring Transaction Manager named 'transactionManager' be defined -->
-    <import resource="classpath:ks-core-api-data-dictionary-validator-configuration.xml" />
 
-    <bean id="ksCacheManager" class="net.sf.ehcache.CacheManager">
-        <constructor-arg index="0" type="java.net.URL" value="${ks.cache.config.file}" />
-    </bean>
+    <!--
+        <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="properties" value="#{bootstrapConfig.getProperties()}" />
+        </bean>
 
+        <bean id="bootstrapConfig" class="org.kuali.rice.core.impl.config.property.ConfigFactoryBean">
+            <property name="configLocations">
+                <list>
+                    <value>classpath:org/kuali/rice/standalone/config/standalone-config.xml</value>
+                </list>
+            </property>
+        </bean>
+
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="staticMethod" value="org.kuali.rice.core.impl.config.property.ConfigInitializer.initialize" />
+            <property name="arguments">
+                <list><ref bean="bootstrapConfig"/></list>
+            </property>
+        </bean>
+        <bean class="org.kuali.rice.core.framework.resourceloader.RiceSpringResourceLoaderConfigurer">
+            <property name="localServiceName" value="KSCoreContext"/>
+        </bean>
+    -->
     <bean id="ks.messageServiceMock" class="org.kuali.student.core.messages.service.impl.MessageServiceMock">
         <property name="messageFiles">
             <list>
@@ -73,7 +90,6 @@
                 <entry key="hibernate.transaction.manager_lookup_class" value="${ks.core.jpa.JpaProperties.hibernate.transaction.manager_lookup_class}"/>
                 <entry key="hibernate.hbm2ddl.auto" value="${ks.core.jpa.JpaProperties.hibernate.hbm2ddl.auto}"/>
                 <entry key="hibernate.connection.release_mode" value="${ks.core.jpa.JpaProperties.hibernate.connection.release_mode}"/>
-                <entry key="hibernate.default_batch_fetch_size" value="${ks.core.jpa.JpaProperties.hibernate.default_batch_fetch_size}"/>
                 <!--<entry key="hibernate.connection.autocommit" value="${ks.core.jpa.JpaProperties.hibernate.connection.autocommit}"/>-->
             </map>
         </property>
@@ -88,43 +104,79 @@
 
     <!--  Organization Service Config -->
     <bean id="orgDao"
-          class="org.kuali.student.r1.core.organization.dao.impl.OrganizationDaoImpl">
+          class="org.kuali.student.r2.core.organization.dao.OrgDao">
         <property name="em" ref="coreEntityManager" />
     </bean>
 
-    <bean id="extendedOrgDao"
-          class="org.kuali.student.r2.core.class1.organization.dao.ExtendedOrgDao">
-        <property name="em" ref="coreEntityManager"/>
+    <bean id="orgHierarchyDao"
+          class="org.kuali.student.r2.core.organization.dao.OrgHierarchyDao">
+        <property name="em" ref="coreEntityManager" />
     </bean>
 
-    <bean id="organizationSearch"
-          class="org.kuali.student.r1.core.organizationsearch.service.impl.OrganizationHierarchySearch">
-        <property name="organizationDao" ref="orgDao"/>
+    <bean id="orgOrgRelationDao"
+          class="org.kuali.student.r2.core.organization.dao.OrgOrgRelationDao">
+        <property name="em" ref="coreEntityManager" />
+    </bean>
+
+    <bean id="orgPersonRelationDao"
+          class="org.kuali.student.r2.core.organization.dao.OrgPersonRelationDao">
+        <property name="em" ref="coreEntityManager" />
+    </bean>
+
+    <bean id="orgPositionRestrictionDao"
+          class="org.kuali.student.r2.core.organization.dao.OrgPositionRestrictionDao">
+        <property name="em" ref="coreEntityManager" />
     </bean>
 
     <bean id="orgServiceImpl"
-          class="org.kuali.student.r2.core.class1.organization.service.impl.OrganizationServiceImpl">
-        <property name="organizationDao" ref="orgDao" />
-        <property name="searchManager" ref="orgSearchManager" />
-        <property name="extendedOrgDao" ref="extendedOrgDao"/>
-        <property name="dictionaryServiceDelegate" ref="coreDictionaryService"/>
-        <property name="criteriaLookupService" ref="coreCriteriaLookupService"/>
-        <property name="searchOperations">
-            <map>
-                <entry key="org.search.orgQuickViewByRelationTypeOrgTypeRelatedOrgIds" value-ref="organizationSearch"/>
-            </map>
-        </property>
+          class="org.kuali.student.r2.core.organization.service.impl.OrganizationServiceImpl">
+        <property name="orgDao" ref="orgDao" />
+        <property name="orgHierarchyDao" ref="orgHierarchyDao" />
+        <property name="orgOrgRelationDao" ref="orgOrgRelationDao"/>
+        <property name="orgPersonRelationDao" ref="orgPersonRelationDao"/>
+        <property name="orgPositionRestrictionDao" ref="orgPositionRestrictionDao"/>
+        <property name="orgCriteriaLookupService" ref="coreCriteriaLookupService"/>
+        <property name="orgHierarchyCriteriaLookupService" ref="coreCriteriaLookupService"/>
+        <property name="orgOrgRelationCriteriaLookupService" ref="coreCriteriaLookupService"/>
+        <property name="orgPersonRelationCriteriaLookupService" ref="coreCriteriaLookupService"/>
+        <property name="orgPositionRestrictionCriteriaLookupService" ref="coreCriteriaLookupService"/>
+        <property name="searchService" ref="coreSearchDispatcher" />
+        <property name="typeService" ref="typeService" />
     </bean>
 
-    <bean id="orgSearchableDao"
-          class="org.kuali.student.r2.common.dao.impl.SearchableCrudDaoImpl">
-        <property name="em" ref="coreEntityManager"/>
+    <bean id="organizationHierarchySearch"
+          class="org.kuali.student.r1.core.organizationsearch.service.impl.OrganizationHierarchySearch">
+        <property name="orgDao" ref="orgDao"/>
+        <property name="orgOrgRelationDao" ref="orgOrgRelationDao" />
     </bean>
 
     <bean id="orgSearchManager"
           class="org.kuali.student.r2.common.class1.search.SearchManagerImpl">
         <constructor-arg index="0" value="classpath:organization-search-config.xml" />
-        <property name="dao" ref="orgSearchableDao"/>
+        <property name="dao" ref="enrollSearchableDao"/>
+    </bean>
+
+    <bean id="orgSearchServiceImpl"
+          class="org.kuali.student.r2.core.search.OrganizationSearchServiceImpl">
+        <property name="searchManager" ref="orgSearchManager" />
+        <property name="searchOperations">
+            <map>
+                <entry key="org.search.orgQuickViewByRelationTypeOrgTypeRelatedOrgIds" value-ref="organizationHierarchySearch"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="ks.exp.organizationSearchService" class="org.kuali.rice.ksb.api.bus.support.ServiceBusExporter">
+        <property name="serviceDefinition">
+            <bean class="org.kuali.rice.ksb.api.bus.support.SoapServiceDefinition">
+                <property name="jaxWsService" value="true" />
+                <property name="service" ref="orgSearchServiceImpl" />
+                <property name="serviceInterface" value="org.kuali.student.r2.core.search.service.SearchService"/>
+                <property name="localServiceName" value="OrganizationSearchService" />
+                <property name="serviceNameSpaceURI" value="http://student.kuali.org/wsdl/organizationsearch" />
+                <property name="busSecurity" value="${ks.core.bus.security}" />
+            </bean>
+        </property>
     </bean>
 
     <bean id="ks.exp.organizationService" class="org.kuali.rice.ksb.api.bus.support.ServiceBusExporter">
@@ -247,18 +299,11 @@
         <property name="dao" ref="enrollSearchableDao"/>
     </bean>
 
-    <bean id="atpServiceValidation" class="org.kuali.student.r2.core.class1.atp.service.decorators.AtpServiceValidationDecorator">
-        <property name="nextDecorator" ref="atpServiceImpl" />
-        <property name="validator" ref="validator" />
-    </bean>
-
-    <alias name="atpServiceValidation" alias="AtpService" />
-
     <bean id="ks.exp.atpService" class="org.kuali.rice.ksb.api.bus.support.ServiceBusExporter">
         <property name="serviceDefinition">
             <bean class="org.kuali.rice.ksb.api.bus.support.SoapServiceDefinition">
                 <property name="jaxWsService" value="true" />
-                <property name="service" ref="AtpService" />
+                <property name="service" ref="atpServiceImpl" />
                 <property name="serviceInterface" value="org.kuali.student.r2.core.atp.service.AtpService" />
                 <property name="localServiceName" value="AtpService" />
                 <property name="serviceNameSpaceURI" value="http://student.kuali.org/wsdl/atp" />
@@ -438,7 +483,6 @@
 
     <bean id="typeServiceCacheDecorator" class="org.kuali.student.r2.common.class1.type.decorators.TypeServiceCacheDecorator">
         <property name="nextDecorator" ref="typeService" />
-        <property name="cacheManager" ref="ksCacheManager"/>
     </bean>
 
 
@@ -465,24 +509,9 @@
         <property name="em" ref="coreEntityManager"/>
     </bean>
 
-    <bean id="stateChangeDao" class="org.kuali.student.r2.core.class1.state.dao.StateChangeDao">
-        <property name="em" ref="coreEntityManager" />
-    </bean>
-
-    <bean id="stateConstraintDao" class="org.kuali.student.r2.core.class1.state.dao.StateConstraintDao">
-        <property name="em" ref="coreEntityManager" />
-    </bean>
-
-    <bean id="statePropagationDao" class="org.kuali.student.r2.core.class1.state.dao.StatePropagationDao">
-        <property name="em" ref="coreEntityManager" />
-    </bean>
-
     <bean id="stateService" class="org.kuali.student.r2.core.class1.state.service.impl.StateServiceImpl">
         <property name="stateDao" ref="stateDao" />
         <property name="lifecycleDao" ref="lifecycleDao" />
-        <property name="stateChangeDao" ref="stateChangeDao" />
-        <property name="stateConstraintDao" ref="stateConstraintDao" />
-        <property name="statePropagationDao" ref="statePropagationDao"/>
         <property name="stateCriteriaLookupService">
             <bean parent="coreCriteriaLookupService">
                 <property name="predicateTransforms">
@@ -529,7 +558,6 @@
 
     <bean id="stateServiceCacheDecorator" class="org.kuali.student.r2.core.class1.state.decorators.StateServiceCacheDecorator">
         <property name="nextDecorator" ref="stateService" />
-        <property name="cacheManager" ref="ksCacheManager"/>
     </bean>
 
     <bean id="ks.exp.stateService" class="org.kuali.rice.ksb.api.bus.support.ServiceBusExporter">
@@ -869,6 +897,7 @@
         <property name="searchServices">
             <list>
                 <ref bean="atpServiceClient"/>
+                <ref bean="orgSearchServiceImpl" />
             </list>
         </property>
     </bean>
@@ -901,7 +930,10 @@
         <aop:aspect id="dataAccessToBusinessException"
                     ref="mapExceptionAdvisor">
             <aop:after-throwing
-                    pointcut="execution(* org.kuali.student.r2.core.organization.service.*.*(..))"
+                    pointcut="execution(* org.kuali.student.r2.core.organization.service.impl.OrganizationServiceImpl.*(..))"
+                    method="afterThrowing" throwing="ex" />
+            <aop:after-throwing
+                    pointcut="execution(* org.kuali.student.r2.core.search.OrganizationSearchServiceImpl.*(..))"
                     method="afterThrowing" throwing="ex" />
             <aop:after-throwing
                     pointcut="execution(* org.kuali.student.r1.core.personsearch.service.*.*(..))"
@@ -917,100 +949,5 @@
                     method="afterThrowing" throwing="ex" />
         </aop:aspect>
     </aop:config>
-
-    <bean id="calStateTransitionsHelper" class="org.kuali.student.r2.core.class1.state.service.impl.StateTransitionsHelperImpl">
-        <property name="stateHelperMap" ref="calStateHelperMap" />
-        <property name="relatedObjectHelperMap" ref="calRelatedObjectHelperMap"/>
-        <property name="stateService" ref="stateServiceCacheDecorator"/>
-    </bean>
-
-    <bean id="atpStateHelper" class="org.kuali.student.r2.core.acal.service.statehelper.AtpStateHelperImpl"/>
-
-    <bean id="milestoneStateHelper" class="org.kuali.student.r2.core.acal.service.statehelper.MilestoneStateHelperImpl"/>
-
-    <bean id="atpToMilestoneRelatedObjectHelper" class="org.kuali.student.r2.core.acal.service.statehelper.AtpToMilestoneRelatedObjectHelper"/>
-
-    <util:map id="calStateHelperMap" map-class="java.util.HashMap">
-        <entry key="kuali.atp" value-ref="atpStateHelper"/>
-        <entry key="kuali.milestone" value-ref="milestoneStateHelper"/>
-    </util:map>
-
-    <util:map id="calRelatedObjectHelperMap" map-class="java.util.HashMap">
-        <entry key="kuali.atp:kuali.milestone" value-ref="atpToMilestoneRelatedObjectHelper"/>
-    </util:map>
-
-    <alias name="acalServiceValidation" alias="AcademicCalendarService"/>
-
-    <bean id="acalServiceValidation"
-          class="org.kuali.student.r2.core.acal.service.decorators.AcademicCalendarServiceValidationDecorator">
-        <property name="nextDecorator" ref="acalServiceCalculation" />
-        <property name="validator" ref="validator" />
-    </bean>
-
-    <!-- necessary to use ACSCalculationDecorator's copyHolidayCalendar() -->
-    <bean id="acalServiceCalculation" class="org.kuali.student.r2.core.acal.service.decorators.AcademicCalendarServiceCalculationDecorator">
-        <property name="atpService" ref="atpServiceClient" />
-        <property name="nextDecorator" ref="academicCalendarServiceCacheDecorator" />
-    </bean>
-    <!-- -->
-
-    <bean id="academicCalendarServiceCacheDecorator" class="org.kuali.student.r2.core.acal.service.decorators.AcademicCalendarServiceCacheDecorator">
-        <property name="nextDecorator" ref="acalServiceImpl" />
-        <property name="cacheManager" ref="ksCacheManager"/>
-    </bean>
-
-    <!-- change id to "acalServiceImpl" if the above bean is used -->
-    <bean id="acalServiceImpl" class="org.kuali.student.r2.core.acal.service.impl.AcademicCalendarServiceImpl">
-        <property name="atpService" ref="atpServiceClient" />
-        <property name="stateService" ref="stateServiceCacheDecorator" />
-        <property name="typeService" ref="typeServiceCacheDecorator" />
-        <property name="acalAssembler" ref="acalAssembler" />
-        <property name="termAssembler" ref="termAssembler" />
-        <property name="holidayCalendarAssembler" ref="holidayCalendarAssembler" />
-        <property name="holidayAssembler" ref="holidayAssembler" />
-        <property name="keyDateAssembler" ref="keyDateAssembler" />
-        <property name="acalEventAssembler" ref = "acalEventAssembler" />
-        <property name="stateTransitionsHelper" ref="calStateTransitionsHelper"/>
-        <property name="examPeriodTransformer" ref="examPeriodTransformer" />
-    </bean>
-
-    <bean id="ks.exp.acalService" class="org.kuali.rice.ksb.api.bus.support.ServiceBusExporter">
-        <property name="serviceDefinition">
-            <bean class="org.kuali.rice.ksb.api.bus.support.SoapServiceDefinition">
-                <property name="jaxWsService" value="true" />
-                <property name="service" ref="AcademicCalendarService" />
-                <property name="serviceInterface" value="org.kuali.student.r2.core.acal.service.AcademicCalendarService" />
-                <property name="localServiceName" value="AcademicCalendarService" />
-                <property name="serviceNameSpaceURI" value="http://student.kuali.org/wsdl/acal" />
-                <property name="busSecurity" value="${ks.lum.bus.security}" />
-            </bean>
-        </property>
-    </bean>
-
-    <bean id="acalAssembler" class="org.kuali.student.r2.core.acal.service.assembler.AcademicCalendarAssembler">
-        <property name="atpService" ref="atpServiceClient" />
-    </bean>
-
-    <bean id="termAssembler" class="org.kuali.student.r2.core.acal.service.assembler.TermAssembler">
-        <property name="termCodeGenerator" ref = "termCodeGenerator" />
-    </bean>
-
-    <bean id="termCodeGenerator" class="org.kuali.student.r2.core.acal.service.impl.TermCodeGeneratorImpl"/>
-
-    <bean id="holidayCalendarAssembler" class="org.kuali.student.r2.core.acal.service.assembler.HolidayCalendarAssembler" />
-
-    <bean id="holidayAssembler" class="org.kuali.student.r2.core.acal.service.assembler.HolidayAssembler" />
-
-    <bean id="keyDateAssembler" class="org.kuali.student.r2.core.acal.service.assembler.KeyDateAssembler" />
-
-    <bean id="acalEventAssembler" class="org.kuali.student.r2.core.acal.service.assembler.AcalEventAssembler"/>
-
-    <!-- KSENROLL-9340 Overriding this bean in ks-enroll-context.xml so it uses the same entity manager as the service impl-->
-    <bean id="CoreSearchServiceImpl" class="org.kuali.student.r2.core.class1.search.CoreSearchServiceImpl">
-        <property name="entityManager" ref="coreEntityManager"/>
-    </bean>
-
-    <bean id="examPeriodTransformer" class="org.kuali.student.r2.core.acal.service.transformer.ExamPeriodTransformer">
-    </bean>
 
 </beans>

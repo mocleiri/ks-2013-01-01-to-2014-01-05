@@ -206,7 +206,8 @@ public class OrgPersonRelationAssembler implements Assembler<Data, OrgPersonHelp
             orgPersonHelper.setId(relation.getId());
             orgPersonHelper.setOrgId(relation.getOrgId());
             if(!orgPersonMeta.isCanEdit()){
-                orgPersonHelper.setTypeKey(orgService.getOrgPersonRelationByTypeAndOrg(relation.getTypeKey(),relation.getOrgId(), context).getTypeKey());
+                //This call no longer makes any sense
+                //orgPersonHelper.setTypeKey(orgService.getOrgPersonRelationByTypeAndOrg(relation.getTypeKey(),relation.getOrgId(), context).getTypeKey());
             }
             else{
                 orgPersonHelper.setTypeKey(relation.getTypeKey());

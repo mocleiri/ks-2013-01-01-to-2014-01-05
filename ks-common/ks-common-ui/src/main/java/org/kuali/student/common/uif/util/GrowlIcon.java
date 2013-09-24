@@ -16,6 +16,11 @@
  */
 package org.kuali.student.common.uif.util;
 
+/**
+ * This class //TODO ...
+ *
+ * @author Kuali Student Team
+ */
 public enum GrowlIcon {
     ERROR,
     INFORMATION,

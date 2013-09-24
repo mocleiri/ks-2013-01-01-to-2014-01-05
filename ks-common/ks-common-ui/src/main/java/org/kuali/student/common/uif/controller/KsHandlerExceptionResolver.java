@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This class extends the UifHandlerExceptionResolver with KS specific handling
+ * This class //TODO ...
  *
  * @author Kuali Student Team
  */
@@ -32,7 +32,7 @@ public class KsHandlerExceptionResolver extends UifHandlerExceptionResolver {
     @Override
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         if(ex instanceof AuthorizationException) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return new ModelAndView("/ks-common/WEB-INF/ftl/permissiondenied");
         }
         return super.resolveException(request, response, handler, ex);

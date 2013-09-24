@@ -1,5 +1,6 @@
 package org.kuali.rice.krad.uif.util;
 
+// TODO: KSENROLL-8469 temporarily overriding KRAD's Uif-Url as it was throwing stack traces. should be resolved in Rice 2.3.1
 import org.kuali.rice.krad.datadictionary.uif.UifDictionaryBeanBase;
 
 import com.google.common.collect.Maps;
@@ -29,12 +30,10 @@ import java.util.Map;
  *
  * @author Kuali Rice Team (rice.collab@kuali.org)
  */
-
-// TODO: KSENROLL-9318 temporarily overriding KRAD's Uif-Url as it was throwing stack traces. should be resolved in Rice 2.3.1
-
 @BeanTag(name = "url-bean", parent = "Uif-Url")
 public class UrlInfo extends UifDictionaryBeanBase implements Serializable {
 
+    public static final String VIEW_ID = "viewId";
     private static final long serialVersionUID = 3195177614468120958L;
 
     private String href;
@@ -105,7 +104,7 @@ public class UrlInfo extends UifDictionaryBeanBase implements Serializable {
         }
 
         if (StringUtils.isNotBlank(viewId)) {
-            allRequestParameters.put(UifConstants.UrlParams.VIEW_ID, viewId);
+            allRequestParameters.put(VIEW_ID, viewId);
         }
 
         if (StringUtils.isNotBlank(pageId)) {
@@ -121,7 +120,7 @@ public class UrlInfo extends UifDictionaryBeanBase implements Serializable {
         }
 
         //add the request parameters
-        generatedUrl = generatedUrl + KRADUtils.getRequestStringFromMap(allRequestParameters);
+//        generatedUrl = generatedUrl + KRADUtils.getRequestStringFromMap(allRequestParameters);
 
         return generatedUrl;
     }
@@ -343,32 +342,32 @@ public class UrlInfo extends UifDictionaryBeanBase implements Serializable {
     public void setOriginalHref(String originalHref) {
         this.originalHref = originalHref;
     }
-
-    @Override
-    protected <T> void copyProperties(T dictionaryBaseBean) {
-        super.copyProperties(dictionaryBaseBean);
-
-        UrlInfo urlInfoCopy = (UrlInfo) dictionaryBaseBean;
-
-        urlInfoCopy.setHref(this.href);
-        urlInfoCopy.setOriginalHref(this.originalHref);
-        urlInfoCopy.setBaseUrl(this.baseUrl);
-        urlInfoCopy.setControllerMapping(this.controllerMapping);
-        urlInfoCopy.setViewType(this.viewType);
-        urlInfoCopy.setViewId(this.viewId);
-        urlInfoCopy.setPageId(this.pageId);
-        urlInfoCopy.setFormKey(this.formKey);
-        urlInfoCopy.setMethodToCall(this.methodToCall);
-
-        if (this.requestParameters != null) {
-            Map<String, String> requestParametersCopy = Maps.newHashMapWithExpectedSize(this.requestParameters.size());
-            for (Map.Entry requestParameter : requestParameters.entrySet()) {
-                requestParametersCopy.put(requestParameter.getKey().toString(), requestParameter.getValue().toString());
-            }
-
-//            urlInfoCopy.setExpressionGraph(requestParametersCopy);
-            urlInfoCopy.setRequestParameters(requestParametersCopy);
-        }
-    }
+//
+//    @Override
+//    protected <T> void copyProperties(T dictionaryBaseBean) {
+//        super.copyProperties(dictionaryBaseBean);
+//
+//        UrlInfo urlInfoCopy = (UrlInfo) dictionaryBaseBean;
+//
+//        urlInfoCopy.setHref(this.href);
+//        urlInfoCopy.setOriginalHref(this.originalHref);
+//        urlInfoCopy.setBaseUrl(this.baseUrl);
+//        urlInfoCopy.setControllerMapping(this.controllerMapping);
+//        urlInfoCopy.setViewType(this.viewType);
+//        urlInfoCopy.setViewId(this.viewId);
+//        urlInfoCopy.setPageId(this.pageId);
+//        urlInfoCopy.setFormKey(this.formKey);
+//        urlInfoCopy.setMethodToCall(this.methodToCall);
+//
+//        if (this.requestParameters != null) {
+//            Map<String, String> requestParametersCopy = Maps.newHashMapWithExpectedSize(this.requestParameters.size());
+//            for (Map.Entry requestParameter : requestParameters.entrySet()) {
+//                requestParametersCopy.put(requestParameter.getKey().toString(), requestParameter.getValue().toString());
+//            }
+//
+////            urlInfoCopy.setExpressionGraph(requestParametersCopy);
+//            urlInfoCopy.setRequestParameters(requestParametersCopy);
+//        }
+//    }
 }
 
