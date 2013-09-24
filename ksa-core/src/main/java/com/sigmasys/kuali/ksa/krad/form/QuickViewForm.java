@@ -25,13 +25,13 @@ public class QuickViewForm extends AbstractViewModel {
 
     // Account Overview
 
-    private String pastDueAmount;
+    private BigDecimal pastDueAmount;
 
-    private String balanceAmount;
+    private BigDecimal balanceAmount;
 
-    private String futureAmount;
+    private BigDecimal futureAmount;
 
-    private String defermentAmount;
+    private BigDecimal defermentAmount;
 
     private BigDecimal outstandingAmount;
 
@@ -52,16 +52,16 @@ public class QuickViewForm extends AbstractViewModel {
     private Date lastAgeDate;
 
     // sum of aged values
-    private String agedTotal;
+    private BigDecimal agedTotal;
 
     // amountLate1
-    private String aged30;
+    private BigDecimal aged30;
 
     // amountLate2
-    private String aged60;
+    private BigDecimal aged60;
 
     // amountLate3
-    private String aged90;
+    private BigDecimal aged90;
 
     // Aged debit flag
     private String ignoreDeferment;
@@ -92,35 +92,35 @@ public class QuickViewForm extends AbstractViewModel {
         this.account = account;
     }
 
-    public String getPastDueAmount() {
-        return this.getFormattedAmount(pastDueAmount);
+    public BigDecimal getPastDueAmount() {
+        return pastDueAmount;
     }
 
-    public void setPastDueAmount(String pastDueAmount) {
+    public void setPastDueAmount(BigDecimal pastDueAmount) {
         this.pastDueAmount = pastDueAmount;
     }
 
-    public String getBalanceAmount() {
-        return this.getFormattedAmount(balanceAmount);
+    public BigDecimal getBalanceAmount() {
+        return balanceAmount;
     }
 
-    public void setBalanceAmount(String balanceAmount) {
+    public void setBalanceAmount(BigDecimal balanceAmount) {
         this.balanceAmount = balanceAmount;
     }
 
-    public String getFutureAmount() {
-        return this.getFormattedAmount(futureAmount);
+    public BigDecimal getFutureAmount() {
+        return futureAmount;
     }
 
-    public void setFutureAmount(String futureAmount) {
+    public void setFutureAmount(BigDecimal futureAmount) {
         this.futureAmount = futureAmount;
     }
 
-    public String getDefermentAmount() {
-        return this.getFormattedAmount(defermentAmount);
+    public BigDecimal getDefermentAmount() {
+        return defermentAmount;
     }
 
-    public void setDefermentAmount(String defermentAmount) {
+    public void setDefermentAmount(BigDecimal defermentAmount) {
         this.defermentAmount = defermentAmount;
     }
 
@@ -160,35 +160,35 @@ public class QuickViewForm extends AbstractViewModel {
         this.lastAgeDate = lastAgeDate;
     }
 
-    public String getAgedTotal() {
-        return this.getFormattedAmount(agedTotal);
+    public BigDecimal getAgedTotal() {
+        return agedTotal;
     }
 
-    public void setAgedTotal(String agedTotal) {
+    public void setAgedTotal(BigDecimal agedTotal) {
         this.agedTotal = agedTotal;
     }
 
-    public String getAged30() {
-        return this.getFormattedAmount(aged30);
+    public BigDecimal getAged30() {
+        return aged30;
     }
 
-    public void setAged30(String aged30) {
+    public void setAged30(BigDecimal aged30) {
         this.aged30 = aged30;
     }
 
-    public String getAged60() {
-        return this.getFormattedAmount(aged60);
+    public BigDecimal getAged60() {
+        return aged60;
     }
 
-    public void setAged60(String aged60) {
+    public void setAged60(BigDecimal aged60) {
         this.aged60 = aged60;
     }
 
-    public String getAged90() {
-        return this.getFormattedAmount(aged90);
+    public BigDecimal getAged90() {
+        return aged90;
     }
 
-    public void setAged90(String aged90) {
+    public void setAged90(BigDecimal aged90) {
         this.aged90 = aged90;
     }
 
@@ -251,17 +251,6 @@ public class QuickViewForm extends AbstractViewModel {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
-    }
-
-    public String getFormattedAmount(String amount) {
-        String formattedNumber = "";
-        if (getCurrency() != null && amount != null) {
-            NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault());
-            numberFormat.setCurrency(java.util.Currency.getInstance(getCurrency().getCode()));
-            double doubleAmount = Double.parseDouble(amount);
-            formattedNumber = numberFormat.format(doubleAmount);
-        }
-        return formattedNumber;
     }
 
     public String getStatusMessage() {

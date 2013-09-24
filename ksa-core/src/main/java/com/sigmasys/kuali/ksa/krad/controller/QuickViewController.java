@@ -290,24 +290,24 @@ public class QuickViewController extends GenericSearchController {
 
         BigDecimal pastDue = BigDecimal.ZERO;
         if (chargeableAccount.getAmountLate1() != null) {
-            form.setAged30(chargeableAccount.getAmountLate1().toString());
+            form.setAged30(chargeableAccount.getAmountLate1());
             pastDue = pastDue.add(chargeableAccount.getAmountLate1());
         } else {
-            form.setAged30(BigDecimal.ZERO.toString());
+            form.setAged30(BigDecimal.ZERO);
         }
 
         if (chargeableAccount.getAmountLate2() != null) {
-            form.setAged60(chargeableAccount.getAmountLate2().toString());
+            form.setAged60(chargeableAccount.getAmountLate2());
             pastDue = pastDue.add(chargeableAccount.getAmountLate2());
         } else {
-            form.setAged60(BigDecimal.ZERO.toString());
+            form.setAged60(BigDecimal.ZERO);
         }
 
         if (chargeableAccount.getAmountLate3() != null) {
-            form.setAged90(chargeableAccount.getAmountLate3().toString());
+            form.setAged90(chargeableAccount.getAmountLate3());
             pastDue = pastDue.add(chargeableAccount.getAmountLate3());
         } else {
-            form.setAged90(BigDecimal.ZERO.toString());
+            form.setAged90(BigDecimal.ZERO);
         }
 
         BigDecimal agedTotal = BigDecimal.ZERO;
@@ -320,14 +320,14 @@ public class QuickViewController extends GenericSearchController {
             agedTotal = agedTotal.add(chargeableAccount.getAmountLate3());
         }
 
-        form.setAgedTotal(agedTotal.toString());
+        form.setAgedTotal(agedTotal);
 
-        form.setPastDueAmount(pastDue.toString());
-        form.setBalanceAmount(balance.toString());
-        form.setFutureAmount(future.toString());
+        form.setPastDueAmount(pastDue);
+        form.setBalanceAmount(balance);
+        form.setFutureAmount(future);
 
         if (deferment != null) {
-            form.setDefermentAmount(deferment.toString());
+            form.setDefermentAmount(deferment);
         }
 
         BigDecimal outstandingBalance = accountService.getOutstandingBalance(userId, ignoreDeferment);
