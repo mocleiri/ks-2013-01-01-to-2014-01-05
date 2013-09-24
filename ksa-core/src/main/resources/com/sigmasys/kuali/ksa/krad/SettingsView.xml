@@ -996,7 +996,7 @@
                         <list>
                             <bean parent="Uif-HeaderTwo" p:headerText="Administrative Tag"/>
                             <bean parent="Uif-Message" p:messageText="Warning: Changes to tag types will be applied to all"/>
-                            <bean parent="Uif-Message" p:messageText="existing tags.  Unchecking the 'Adminitrative' tag checkbox"/>
+                            <bean parent="Uif-Message" p:messageText="existing tags.  Unchecking the 'Administrative' tag checkbox"/>
                             <bean parent="Uif-Message" p:messageText="will cause all previous tags with this symbol to"/>
                             <bean parent="Uif-Message" p:messageText="be visible and available to everyone.  Checking a previously"/>
                             <bean parent="Uif-Message" p:messageText="unchecked 'Administrative' checkbox makes tags with this"/>

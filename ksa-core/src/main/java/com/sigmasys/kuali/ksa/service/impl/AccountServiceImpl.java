@@ -1192,7 +1192,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         // Get the Account search query and build additional search conditions:
         StringBuilder searchQueryBuilder = new StringBuilder(GET_FULL_ACCOUNTS_QUERY);
 
-        boolean searchPatternsExist = searchPatterns != null && searchPatterns.length > 0;
+        boolean searchPatternsExist = searchPatterns.length > 0;
 
         if (searchPatternsExist) {
 
@@ -1221,13 +1221,12 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             for (int i = 0; i < searchPatterns.length; i++) {
 
                 // Set parameter for each search attribute:
-                String pattern = "%" + StringUtils.lowerCase(searchPatterns[i]) + "%";
+                String pattern = "%" + searchPatterns[i].toLowerCase() + "%";
 
                 for (int j = 0; j < searchAttributes.length; j++) {
                     query.setParameter(i * searchAttributes.length + j + 1, pattern);
                 }
             }
-
         }
 
         return query.getResultList();

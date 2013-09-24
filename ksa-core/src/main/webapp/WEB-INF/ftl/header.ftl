@@ -1,6 +1,6 @@
 <#--
 
-    Copyright 2005-2012 The Kuali Foundation
+    Copyright 2005-2013 The Kuali Foundation
 
     Licensed under the Educational Community License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -30,10 +30,10 @@
         <#local headerCloseTag="</${element.headerLevel}>"/>
     </#if>
 
-    <@krad.div component=element>
-        <#-- upper group -->
-        <@krad.template component=element.upperGroup/>
+<div class="clearfix uif-header-contentWrapper">
 
-    </@krad.div>
+    <@krad.template component=element.upperGroup/>
+
+</div>
 
 </#macro>

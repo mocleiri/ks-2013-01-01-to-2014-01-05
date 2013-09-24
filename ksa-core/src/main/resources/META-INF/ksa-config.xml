@@ -6,7 +6,10 @@
 
     <param name="app.context.name">ksa</param>
 
+
+    <!-- KRAD settings -->
     <param name="krad.url">/ksa/uif</param>
+    <param name="rice.krad.dev.mode">false</param>
 
     <param name="validate.data.dictionary">true</param>
 

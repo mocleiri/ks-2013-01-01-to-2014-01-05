@@ -21,26 +21,26 @@
 
 <div id="Uif-Application" style="display:none;" class="uif-application">
 
-    <!-- APPLICATION HEADER -->
-    <#if view.applicationHeader?has_content>
-        <#assign stickyDataAttribute=""/>
-        <#if view.stickyApplicationHeader>
-            <#assign stickyDataAttribute="data-sticky='true'"/>
-        </#if>
-
-        <div id="Uif-ApplicationHeader-Wrapper" ${stickyDataAttribute}>
-            <@krad.template component=view.applicationHeader/>
-
-            <!-- Backdoor info (here to inherit stickyness with the header, if set) -->
-            <@krad.backdoor/>
-        </div>
-    <#else>
-        <!-- Backdoor info -->
-        <@krad.backdoor/>
-    </#if>
-
     <@krad.form render=view.renderForm postUrl="${view.formPostUrl!KualiForm.formPostUrl}"
     onSubmitScript="${view.onSubmitScript!}" disableNativeAutocomplete=view.disableNativeAutocomplete>
+
+        <!-- APPLICATION HEADER -->
+        <#if view.applicationHeader?has_content>
+            <#assign stickyDataAttribute=""/>
+            <#if view.stickyApplicationHeader>
+                <#assign stickyDataAttribute="data-sticky='true'"/>
+            </#if>
+
+            <div id="Uif-ApplicationHeader-Wrapper" ${stickyDataAttribute}>
+                <@krad.template component=view.applicationHeader/>
+
+                <!-- Backdoor info (here to inherit stickyness with the header, if set) -->
+                <@krad.backdoor/>
+            </div>
+        <#else>
+            <!-- Backdoor info -->
+            <@krad.backdoor/>
+        </#if>
 
         <#if view.renderForm>
         <#-- write out view, page id as hidden so the view can be reconstructed if necessary -->

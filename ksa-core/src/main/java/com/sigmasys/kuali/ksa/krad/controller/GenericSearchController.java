@@ -58,6 +58,8 @@ public abstract class GenericSearchController extends UifControllerBase {
             searchValue = "";
         }
 
+        logger.debug("Search value = " + searchValue);
+
         SearchTypeValue searchTypeValue = SearchTypeValue.valueOf(searchType);
         switch (searchTypeValue) {
             case ACCOUNT:

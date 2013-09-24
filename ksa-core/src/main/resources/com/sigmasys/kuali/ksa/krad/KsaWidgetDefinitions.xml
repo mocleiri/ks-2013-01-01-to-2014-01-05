@@ -193,6 +193,7 @@
                 <value>js/ksa.js</value>
             </list>
         </property>
+        <property name="validateClientSide" value="false"/>
         <property name="theme" ref="Uif-KsaTheme"/>
         <property name="breadcrumbs" ref="Uif-KsaBreadcrumbs"/>
         <property name="onLoadScript" value="window.onbeforeunload = null;"/>
