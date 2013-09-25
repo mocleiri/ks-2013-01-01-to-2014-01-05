@@ -67,11 +67,10 @@ When /^I create and then edit a Course Offering from catalog with an alternate f
 end
 
 When /^I create a Course Offering from an existing course offering with no final exam period$/ do
-  @course_offering = make CourseOffering, :term => "201301", :course => "CHEM272"
+  @course_offering = make CourseOffering, :term => "201301", :course => "CHEM277"
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.loading.wait_while_present
-    sleep 5
     page.edit_course_offering
   end
   @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
@@ -79,32 +78,10 @@ When /^I create a Course Offering from an existing course offering with no final
     page.submit
   end
 
-  @course_offering_copy = create CourseOffering, :term=> term , :create_from_existing => @course_offering
+  @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
   on ManageCourseOfferings do |page|
     page.edit_course_offering
   end
-
-  #on ManageCourseOfferings do |page|
-  #  page.loading.wait_while_present
-  #  page.alert.ok
-  #  page.edit_course_offering
-  #end
-  #on CourseOfferingEdit do |page|
-  #  page.final_exam_option_none
-  #  page.submit
-  #end
-  #
-  #@course_offering.start_create_by_search
-  #on CreateCourseOffering do |page|
-  #  page.choose_from_existing
-  #  page.continue
-  #end
-  #on CreateCOFromExisting do |page|
-  #  page.select_copy_for_existing_course(@course_offering.term, @course_offering.course)
-  #  page.create
-  #end
-
-
 end
 
 When /^I create a course offering for a subject with a standard final exam in my admin org$/ do
