@@ -198,3 +198,15 @@ And /^the course offering "(.*?)" has tooltip text "(.*?)"$/ do |arg1, arg2|
   end
 end
 
+Then /^the course offering "(.*?)" has Audit grading option icon and tooltip popped up$/ do |arg1|
+  @schedule_of_classes.display
+  on DisplayScheduleOfClasses do |page|
+    page.target_course_row(arg1)[4].image(src: /a/).present?.should be_true
+    display_style = @browser.divs(:class=>"jquerybubblepopup jquerybubblepopup-black")[0].style
+    (result = display_style == "").should == true
+
+    page.target_course_row(arg1)[4].image(src: /a/).hover
+    display_style1 = @browser.divs(:class=>"jquerybubblepopup jquerybubblepopup-black")[0].style
+    (display_style1.include? "display: block").should == true
+  end
+end

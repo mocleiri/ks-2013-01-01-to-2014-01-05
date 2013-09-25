@@ -61,6 +61,7 @@ class DisplayScheduleOfClasses < BasePage
   COURSE_CODE_COLUMN = 1
   TITLE_COLUMN = 2
   CREDITS_COLUMN = 3
+  ADDITIONAL_INFO = 4
 
   def target_course_row(course_code)
     results_table.wait_until_present

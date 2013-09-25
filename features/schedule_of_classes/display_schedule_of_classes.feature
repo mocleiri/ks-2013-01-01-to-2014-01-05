@@ -59,6 +59,10 @@ Feature: WC.Schedule of Classes
     Then the course offering "ENGL250" has cross listed icon
     And  the course offering "ENGL250" has tooltip text "this course is crosslisted with:<BR>WMST255"
 
+  @pending
+  Scenario: Verify additional info icons and tool tips on Schedule of Classes
+    When I loaded the list of Schedule of Classes for term "Fall 2012" and Course "CHEM131S"
+    Then the course offering "CHEM131S" has Audit grading option icon and tooltip popped up
 
 # Scenario: Verify that an appropriate message is displayed if no data is returned by the search
 #  Scenario: Verify that an appropriate message is displayed if no criteria is entered for search by Course
