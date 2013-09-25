@@ -3090,7 +3090,7 @@ label.scheduled {
 
 .myplan-recommendation-message .uif-readOnlyContent {
 	position: relative;
-	padding: 15px;
+	padding: 5px 10px;
     font-size: 11px;
 	border: 1px solid #D6EED7;
 	color: #555;
@@ -3115,7 +3115,7 @@ label.scheduled {
 	content: "";
 	position: absolute;
 	bottom: -13px; /* value = - border-top-width - border-bottom-width */
-	right: 29px; /* controls horizontal position */
+	right: 19px; /* controls horizontal position */
     border-width: 13px 10px 0;
 	border-style: solid;
     border-color: #D6EED7 transparent;
@@ -3127,7 +3127,7 @@ label.scheduled {
 	content: "";
 	position: absolute;
 	bottom: -11px; /* value = - border-top-width - border-bottom-width */
-    right: 31px; /* value = (:before left) + (:before border-left) - (:after border-left) */
+    right: 21px; /* value = (:before left) + (:before border-left) - (:after border-left) */
 	border-width: 11px 8px 0;
 	border-style: solid;
 	border-color: #F9FFF9 transparent;
