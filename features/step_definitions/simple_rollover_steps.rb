@@ -286,6 +286,11 @@ Then /^I advance the SOC state from open to final edits state$/ do
   @manage_soc.advance_soc_from_open_to_final_edits
 end
 
+Then /^I advance the SOC state from open to scheduler complete state$/ do
+  #@manage_soc = make ManageSoc, :term_code =>@rollover.target_term
+  @manage_soc.advance_soc_from_open_to_scheduler_run
+end
+
 Then /^the Course Offering is in offered state$/ do
   #@course_offering_target = make CourseOffering, :course => "CHEM132TUSNA", :term => "213108"
   @course_offering.manage

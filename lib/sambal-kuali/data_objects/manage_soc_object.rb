@@ -212,6 +212,14 @@ class ManageSoc
     end
   end
 
+  def advance_soc_from_open_to_scheduler_run
+    search
+    change_action "Lock"
+    check_state_change_button_exists "Schedule"
+    change_action "Schedule"
+    check_state_change_button_exists "FinalEdit"
+  end
+
   def advance_soc_from_open_to_final_edits
     search
     change_action "Lock"

@@ -295,26 +295,73 @@ Given /^I manage a course offering with a suspended and a draft activity offerin
   end
 end
 
-Given /^I manage a course offering with a suspended activity offering present in a locked SOC state$/ do
-  @course_with_suspend_ao8 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201800" , :course => "ENGL462")
-  # need to turn RDLs into ADLs
-  go_to_manage_soc
-  on ManageSocPage do |page1|
-    page1.term_code.set @term_code
-    page1.go_action
-    page1.send_to_scheduler_action
-  end
+Given /^a new academic term has course and activity offerings in canceled and suspended status$/ do
+  @calendar = create AcademicCalendar #, :year => "2235", :name => "fSZtG62zfU"
+  @term = make AcademicTerm, :term_year => @calendar.year
+  @calendar.add_term(@term)
 
-  @course_with_suspend_ao8.manage
-  on ManageCourseOfferings do |page2|
-    @ao_suspended_code10 = "A"
-    page2.select_ao(@ao_suspended_code10)
-    page2.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
-    page2.loading.wait_while_present
-    page2.ao_status(@ao_suspended_code10).should == "Suspended"
-  end
+  @manage_soc = make ManageSoc, :term_code => @term.term_code
+  @manage_soc.set_up_soc
+  @manage_soc.perform_manual_soc_state_change
+
+  delivery_format_list = []
+  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture")
+
+  @course_offering_canceled = create CourseOffering, :term=> @term.term_code,
+                                     :course => "ENGL211",
+                                     :delivery_format_list => delivery_format_list
+
+  @activity_offering_canceled = create ActivityOffering, :parent_course_offering => @course_offering_canceled,
+                                       :format => "Lecture Only", :activity_type => "Lecture"
+  @activity_offering_canceled.save
+  @activity_offering_canceled.cancel
+
+  @course_offering_suspended = create CourseOffering, :term=> @term.term_code,
+                                      :course => "ENGL211",
+                                      :delivery_format_list => delivery_format_list
+
+  @activity_offering_suspended = create ActivityOffering, :parent_course_offering => @course_offering_suspended,
+                                        :format => "Lecture Only", :activity_type => "Lecture"
+
+  @activity_offering_suspended.save
+  @activity_offering_suspended.approve
+  @manage_soc.advance_soc_from_open_to_final_edits
+  @activity_offering_suspended.suspend
 end
+
+#Given /^a new academic term has course and activity offerings in canceled and suspended status$/ do
+#  @calendar = create AcademicCalendar #, :year => "2235", :name => "fSZtG62zfU"
+#  @term = make AcademicTerm, :term_year => @calendar.year
+#  @calendar.add_term(@term)
+#
+#  @manage_soc = make ManageSoc, :term_code => @term.term_code
+#  @manage_soc.set_up_soc
+#  @manage_soc.perform_manual_soc_state_change
+#
+#  delivery_format_list = []
+#  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture")
+#
+#  @course_offering_canceled = create CourseOffering, :term=> @term.term_code,
+#                                     :course => "ENGL211",
+#                                     :delivery_format_list => delivery_format_list
+#
+#  @activity_offering_canceled = create ActivityOffering, :parent_course_offering => @course_offering_canceled,
+#                                       :format => "Lecture Only", :activity_type => "Lecture"
+#  @activity_offering_canceled.save
+#  @activity_offering_canceled.cancel
+#
+#  @course_offering_suspended = create CourseOffering, :term=> @term.term_code,
+#                                      :course => "ENGL211",
+#                                      :delivery_format_list => delivery_format_list
+#
+#  @activity_offering_suspended = create ActivityOffering, :parent_course_offering => @course_offering_suspended,
+#                                        :format => "Lecture Only", :activity_type => "Lecture"
+#
+#  @activity_offering_suspended.save
+#  @activity_offering_suspended.approve
+#  @manage_soc.advance_soc_from_open_to_final_edits
+#  @activity_offering_suspended.suspend
+#end
 
 Given /^I manage a course offering with suspended activity offering present in a locked SOC state$/ do
   @course_with_suspend_ao13 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201800", :course => "CHEM612")
@@ -787,10 +834,6 @@ And /^I am able to cancel the activity offering$/ do
   end
 end
 
-And /^I reinstate the activity offering$/ do
-  @activity_offering.reinstate
-end
-
 When /^I reinstate the activity offerings$/ do
   @canceled_ao1.reinstate
   @canceled_ao2.reinstate
@@ -1086,7 +1129,7 @@ Then /^the Course Offering is now shown as Planned$/ do
   on ManageCourseOfferings do |page1|
     page1.list_all_course_link.click
     on ManageCourseOfferingList do |page2|
-      page2.co_status("ENGL462").should == "Planned"
+      page2.co_status(@course_offering.code).should == "Planned"
     end
   end
 end
@@ -1285,6 +1328,14 @@ end
 Given /^I am able to send the activity offering to the scheduler$/ do
   @activity_offering.edit :send_to_scheduler => true
   @activity_offering.save
+end
+
+And /^actual delivery logistics for the activity offering are still shown$/ do
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+  on ActivityOfferingInquiry do |page|
+    page.actual_delivery_logistics.present?.should be_true
+    page.close
+  end
 end
 
 Given /^the actual delivery logistics are displayed for the updated activity offering$/ do
@@ -1518,7 +1569,7 @@ And /^the registration group is shown as pending$/ do
     if page.view_reg_groups_table().present? == false
       page.view_cluster_reg_groups()
     end
-    page.view_reg_groups_table().rows[1].cells[1].text.should == "Pending"
+    page.target_reg_group_row(@activity_offering.code).rows[1].cells[1].text.should == "Pending"
   end
 end
 
@@ -1699,39 +1750,39 @@ Then /^I am unable to colocate the activity offering$/ do
   end
 end
 
-Given /^a new academic term has course and activity offerings in canceled and suspended status$/ do
-  @calendar = create AcademicCalendar #, :year => "2235", :name => "fSZtG62zfU"
-  @term = make AcademicTerm, :term_year => @calendar.year
-  @calendar.add_term(@term)
-
-  @manage_soc = make ManageSoc, :term_code => @term.term_code
-  @manage_soc.set_up_soc
-  @manage_soc.perform_manual_soc_state_change
-
-  delivery_format_list = []
-  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture")
-
-  @course_offering_canceled = create CourseOffering, :term=> @term.term_code,
-                            :course => "ENGL211",
-                            :delivery_format_list => delivery_format_list
-
-  @activity_offering_canceled = create ActivityOffering, :parent_course_offering => @course_offering_canceled,
-                              :format => "Lecture Only", :activity_type => "Lecture"
-  @activity_offering_canceled.save
-  @activity_offering_canceled.cancel
-
-  @course_offering_suspended = create CourseOffering, :term=> @term.term_code,
-                             :course => "ENGL211",
-                             :delivery_format_list => delivery_format_list
-
-  @activity_offering_suspended = create ActivityOffering, :parent_course_offering => @course_offering_suspended,
-                                        :format => "Lecture Only", :activity_type => "Lecture"
-
-  @activity_offering_suspended.save
-  @activity_offering_suspended.approve
-  @manage_soc.advance_soc_from_open_to_final_edits
-  @activity_offering_suspended.suspend
-end
+#Given /^a new academic term has course and activity offerings in canceled and suspended status$/ do
+#  @calendar = create AcademicCalendar #, :year => "2235", :name => "fSZtG62zfU"
+#  @term = make AcademicTerm, :term_year => @calendar.year
+#  @calendar.add_term(@term)
+#
+#  @manage_soc = make ManageSoc, :term_code => @term.term_code
+#  @manage_soc.set_up_soc
+#  @manage_soc.perform_manual_soc_state_change
+#
+#  delivery_format_list = []
+#  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture")
+#
+#  @course_offering_canceled = create CourseOffering, :term=> @term.term_code,
+#                            :course => "ENGL211",
+#                            :delivery_format_list => delivery_format_list
+#
+#  @activity_offering_canceled = create ActivityOffering, :parent_course_offering => @course_offering_canceled,
+#                              :format => "Lecture Only", :activity_type => "Lecture"
+#  @activity_offering_canceled.save
+#  @activity_offering_canceled.cancel
+#
+#  @course_offering_suspended = create CourseOffering, :term=> @term.term_code,
+#                             :course => "ENGL211",
+#                             :delivery_format_list => delivery_format_list
+#
+#  @activity_offering_suspended = create ActivityOffering, :parent_course_offering => @course_offering_suspended,
+#                                        :format => "Lecture Only", :activity_type => "Lecture"
+#
+#  @activity_offering_suspended.save
+#  @activity_offering_suspended.approve
+#  @manage_soc.advance_soc_from_open_to_final_edits
+#  @activity_offering_suspended.suspend
+#end
 
 Then /^the course and activity offerings in the rollover target term are in draft status$/ do
   @course_offering_suspended_target = make CourseOffering, :term=> @term_target.term_code,
@@ -1753,4 +1804,25 @@ Then /^the course and activity offerings in the rollover target term are in draf
     page.co_status(@course_offering_canceled_target.course).should == "Draft"
     page.co_status(@course_offering_suspended_target.course).should == "Draft"
   end
+end
+Given /^a new academic term has an activity offering in approved status$/ do
+    @calendar = create AcademicCalendar #, :year => "2235", :name => "fSZtG62zfU"
+    @term = make AcademicTerm, :term_year => @calendar.year
+    @calendar.add_term(@term)
+
+    @manage_soc = make ManageSoc, :term_code => @term.term_code
+    @manage_soc.set_up_soc
+    @manage_soc.perform_manual_soc_state_change
+
+    delivery_format_list = []
+    delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture")
+
+    @course_offering = create CourseOffering, :term=> @term.term_code,
+                                :course => "ENGL462",
+                                :delivery_format_list => delivery_format_list
+
+    @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering,
+                                         :format => "Lecture Only", :activity_type => "Lecture"
+    @activity_offering.save
+    @activity_offering.approve
 end
