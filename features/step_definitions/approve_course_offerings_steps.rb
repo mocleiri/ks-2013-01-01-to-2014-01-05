@@ -203,16 +203,21 @@ Given /^I manage a course offering with multiple suspended activity offerings pr
 end
 
 Given /^I manage a course offering with suspended and offered activity offerings present in a published SOC state$/ do
-  @course_with_suspend_ao10 = make CourseOffering, :term=> "201208" , :course => "ENGL222"
-  @course_with_suspend_ao10.manage
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "ENGL222")
+  @course_offering.manage_and_init
+
+  @suspended_ao = @course_offering.get_ao_obj_by_code("A")
+  @offered_ao = @course_offering.get_ao_obj_by_code("B")
   on ManageCourseOfferings do |page|
-    @ao_suspended_code13 = "A"
-    @ao_offered_code4 = "B"
-    page.select_ao(@ao_suspended_code13)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
+    @suspended_ao.edit :send_to_scheduler => true
+    @suspended_ao.save
+    @offered_ao.edit :send_to_scheduler => true
+    @offered_ao.save
+    @suspended_ao.suspend
+    @course_offering.manage_and_init
     page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code13).should == "Suspended"
+    page.ao_status(@suspended_ao.code).should == "Suspended"
+    page.ao_status(@offered_ao.code).should == "Offered"
   end
 end
 
@@ -231,67 +236,67 @@ Given /^I manage a course offering with a suspended activity offering present in
 end
 
 Given /^I manage a course offering with a single suspended activity offering present in a published SOC state$/ do
-  @course_with_suspend_ao16 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "HIST255")
-  @course_with_suspend_ao16.manage
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "HIST255")
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
   on ManageCourseOfferings do |page|
-    @ao_suspended_code20 = "A"
-    page.select_ao(@ao_suspended_code20)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
+    @activity_offering.suspend
+    @course_offering.manage_and_init
     page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code20).should == "Suspended"
+    page.ao_status(@activity_offering.code).should == "Suspended"
+    page.select_ao(@activity_offering.code)
   end
 end
 
 Given /^I manage a course offering with one suspended activity offering present in a published SOC state$/ do
-  @course_with_suspend_ao11 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "HIST355")
-  @course_with_suspend_ao11.manage
-  on ManageCourseOfferings do |page|
-    @ao_offered_code5 = "A"
-    page.copy(@ao_offered_code5)
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "HIST355")
+  @course_offering.manage_and_init
 
-    @ao_suspended_code14 = "B"
-    page.select_ao(@ao_suspended_code14)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
+  @activity_offering = @course_offering.get_ao_obj_by_code("B")
+  on ManageCourseOfferings do |page|
+    @activity_offering.suspend
+    @course_offering.manage_and_init
     page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code14).should == "Suspended"
+    page.ao_status(@activity_offering.code).should == "Suspended"
+    page.select_ao(@activity_offering.code)
   end
 end
 
 Given /^I manage a course offering with two suspended activity offerings present in a published SOC state$/ do
-  @course_with_suspend_ao14 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "HIST355")
-  @course_with_suspend_ao14.manage
-  on ManageCourseOfferings do |page|
-    @ao_draft_code6 = "A"
-    page.copy(@ao_draft_code6)
-    page.copy(@ao_draft_code6)
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "HIST355")
+  @course_offering.manage_and_init
 
-    @ao_suspended_code17 = "B"
-    @ao_suspended_code18 = "C"
-    page.select_ao(@ao_suspended_code17)
-    page.select_ao(@ao_suspended_code18)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
+  @draft_ao = @course_offering.get_ao_obj_by_code("A")
+  on ManageCourseOfferings do |page|
+    page.copy(@draft_ao.code)
+    page.copy(@draft_ao.code)
+    @course_offering.manage_and_init
+    @suspended_ao1 = @course_offering.get_ao_obj_by_code("B")
+    @suspended_ao2 = @course_offering.get_ao_obj_by_code("C")
+    @suspended_ao1.suspend
+    @suspended_ao2.suspend
+    @course_offering.manage_and_init
     page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code17).should == "Suspended"
+    page.ao_status(@suspended_ao1.code).should == "Suspended"
+    page.ao_status(@suspended_ao2.code).should == "Suspended"
   end
 end
 
 Given /^I manage a course offering with a suspended and a draft activity offering present in a published SOC state$/ do
-  @course_with_suspend_ao15 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "HIST355")
-  @course_with_suspend_ao15.manage
-  on ManageCourseOfferings do |page|
-    @ao_draft_code7 = "A"
-    page.copy(@ao_draft_code7)
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "HIST355")
+  @course_offering.manage_and_init
 
-    @ao_suspended_code19 = "B"
+  @draft_ao = @course_offering.get_ao_obj_by_code("A")
+  on ManageCourseOfferings do |page|
+    page.copy(@draft_ao.code)
     page.loading.wait_while_present
-    page.select_ao(@ao_suspended_code19)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
+    @suspended_ao = @course_offering.get_ao_obj_by_code("B")
+    @suspended_ao.suspend
+    @course_offering.manage_and_init
     page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code19).should == "Suspended"
+    page.ao_status(@suspended_ao.code).should == "Suspended"
+    page.ao_status(@draft_ao.code).should == "Draft"
   end
 end
 
@@ -330,15 +335,16 @@ Given /^a new academic term has course and activity offerings in canceled and su
 end
 
 Given /^I manage a course offering with suspended activity offering present in a locked SOC state$/ do
-  @course_with_suspend_ao13 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201800", :course => "CHEM612")
-  @course_with_suspend_ao13.manage
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201800", :course => "CHEM612")
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
   on ManageCourseOfferings do |page|
-    @ao_suspended_code16 = "A"
-    page.select_ao(@ao_suspended_code16)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
+    @activity_offering.suspend
+    @course_offering.manage_and_init
     page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code16).should == "Suspended"
+    page.ao_status(@activity_offering.code).should == "Suspended"
+    page.select_ao(@activity_offering.code)
   end
 end
 
@@ -362,28 +368,30 @@ Given /^I manage a course offering with a suspended activity offering present in
 end
 
 Given /^I manage a course offering with suspended activity offering present in a final edits SOC state$/ do
-  @course_with_suspend_ao12 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201705", :course => "CHEM272")
-  @course_with_suspend_ao12.manage
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201700", :course => "CHEM277")
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("C")
   on ManageCourseOfferings do |page|
-    @ao_suspended_code15 = "D"
-    page.select_ao(@ao_suspended_code15)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
+    @activity_offering.suspend
+    @course_offering.manage_and_init
     page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code15).should == "Suspended"
+    page.ao_status(@activity_offering.code).should == "Suspended"
+    page.select_ao(@activity_offering.code)
   end
 end
 
 Given /^I manage a course offering with a single suspended activity offering present in a final edits SOC state$/ do
-  @course_with_suspend_ao17 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201700", :course => "CHEM612")
-  @course_with_suspend_ao17.manage
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201700", :course => "CHEM612")
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
   on ManageCourseOfferings do |page|
-    @ao_suspended_code21 = "A"
-    page.select_ao(@ao_suspended_code21)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
+    @activity_offering.suspend
+    @course_offering.manage_and_init
     page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code21).should == "Suspended"
+    page.ao_status(@activity_offering.code).should == "Suspended"
+    page.select_ao(@activity_offering.code)
   end
 end
 
@@ -702,18 +710,6 @@ When /^I select activity offering, which is Suspended$/ do
   end
 end
 
-When /^I select activity offering, which is Suspended status$/ do
-  on ManageCourseOfferings do |page|
-    page.select_ao(@ao_suspended_code14)
-  end
-end
-
-When /^I select activity offering, which is in Suspended status$/ do
-  on ManageCourseOfferings do |page|
-    page.select_ao(@ao_suspended_code15)
-  end
-end
-
 When /^I select activity offering, which is in a Suspended status$/ do
   on ManageCourseOfferings do |page|
     page.select_ao(@ao_suspended_code16)
@@ -857,7 +853,7 @@ When /^I cancel the activity offering$/ do
   on(CancelActivityOffering).cancel_activity
 end
 
-And /^I reinstate the activity offering$/ do
+When /^I reinstate the activity offering$/ do
   @activity_offering.reinstate :navigate_to_page => false
 end
 
@@ -871,10 +867,23 @@ When /^I cancel the activity offering, verifying that one of the two selections 
   end
 end
 
-When /^I reinstate the activity offering, receiving a warning message that one of the two selections is eligible for this action$/ do
+When /^I reinstate the activity offerings, receiving a warning message that one of the two selections is eligible for this action$/ do
   on(ManageCourseOfferings) do |page1|
-    page1.select_ao("A")
-    page1.select_ao("B")
+    page1.select_ao(@suspended_ao.code)
+    page1.select_ao(@offered_ao.code)
+    page1.reinstate_ao
+  end
+  on ReinstateActivityOffering do |page2|
+    page2.warning_msg_present("1 activity offering(s) will be reinstated").should == true
+    page2.warning_msg_present("1 activity offering(s) cannot be reinstated (ineligible status)").should == true
+    page2.reinstate_activity
+  end
+end
+
+When /^I reinstate both activity offerings, receiving a warning message that one of the two selections is eligible for this action$/ do
+  on(ManageCourseOfferings) do |page1|
+    page1.select_ao(@suspended_ao.code)
+    page1.select_ao(@draft_ao.code)
     page1.reinstate_ao
   end
   on ReinstateActivityOffering do |page2|
@@ -925,19 +934,7 @@ end
 
 Then /^the Suspended activity offering is shown as draft$/ do
   on ManageCourseOfferings do |page|
-    page.ao_status(@ao_suspended_code14).should == "Draft"
-  end
-end
-
-Then /^the Suspended activity offering is shown as draft status$/ do
-  on ManageCourseOfferings do |page|
-    page.ao_status(@ao_suspended_code15).should == "Draft"
-  end
-end
-
-Then /^the Suspended activity offering is shown as a draft status$/ do
-  on ManageCourseOfferings do |page|
-    page.ao_status(@ao_suspended_code16).should == "Draft"
+    page.ao_status(@activity_offering.code).should == "Draft"
   end
 end
 
@@ -955,15 +952,15 @@ end
 
 Then /^the Suspended activity offering is shown as draft and the draft activity offering is shown as draft$/ do
   on ManageCourseOfferings do |page|
-    page.ao_status(@ao_suspended_code19).should == "Draft"
-    page.ao_status(@ao_draft_code7).should == "Draft"
+    page.ao_status(@suspended_ao.code).should == "Draft"
+    page.ao_status(@draft_ao.code).should == "Draft"
   end
 end
 
 Then /^both Suspended activity offerings are shown as draft$/ do
   on ManageCourseOfferings do |page|
-    page.ao_status(@ao_suspended_code17).should == "Draft"
-    page.ao_status(@ao_suspended_code18).should == "Draft"
+    page.ao_status(@suspended_ao1.code).should == "Draft"
+    page.ao_status(@suspended_ao2.code).should == "Draft"
   end
 end
 
@@ -1008,8 +1005,8 @@ end
 
 Then /^the Suspended and Offered activity offerings are both shown as offered$/ do
   on ManageCourseOfferings do |page|
-    page.ao_status(@ao_suspended_code13).should == "Offered"
-    page.ao_status(@ao_offered_code4).should == "Offered"
+    page.ao_status(@suspended_ao.code).should == "Offered"
+    page.ao_status(@offered_ao.code).should == "Offered"
   end
 end
 
@@ -1051,24 +1048,6 @@ Then /^the Course Offering is shown as Draft$/ do
     page1.list_all_course_link.click
     on ManageCourseOfferingList do |page2|
       page2.co_status(@course_offering.course).should == "Draft"
-    end
-  end
-end
-
-Then /^the Course Offering is now shown as Draft$/ do
-  on ManageCourseOfferings do |page1|
-    page1.list_all_course_link.click
-    on ManageCourseOfferingList do |page2|
-      page2.co_status(@course_with_suspend_ao16.course).should == "Draft"
-    end
-  end
-end
-
-Then /^the Course Offering is now shown as Draft status$/ do
-  on ManageCourseOfferings do |page1|
-    page1.list_all_course_link.click
-    on ManageCourseOfferingList do |page2|
-      page2.co_status(@course_with_suspend_ao17.course).should == "Draft"
     end
   end
 end
@@ -1409,7 +1388,7 @@ And /^actual delivery logistics for the Approved activity offering are no longer
   end
 end
 
-And /^actual delivery logistics for the Suspended activity offering are still shown$/ do
+And /^actual delivery logistics for the first Suspended activity offering are still shown$/ do
   on(ManageCourseOfferings).view_activity_offering(@suspended_ao1.code)
   on ActivityOfferingInquiry do |page|
     page.actual_delivery_logistics.present?.should be_true
@@ -1417,8 +1396,16 @@ And /^actual delivery logistics for the Suspended activity offering are still sh
   end
 end
 
+And /^actual delivery logistics for the Suspended activity offering are still shown$/ do
+  on(ManageCourseOfferings).view_activity_offering(@suspended_ao.code)
+  on ActivityOfferingInquiry do |page|
+    page.actual_delivery_logistics.present?.should be_true
+    page.close
+  end
+end
+
 And /^actual delivery logistics for the Offered activity offering are still shown$/ do
-  on(ManageCourseOfferings).view_activity_offering("B")
+  on(ManageCourseOfferings).view_activity_offering(@offered_ao.code)
   on ActivityOfferingInquiry do |page|
     page.actual_delivery_logistics.present?.should be_true
     page.close
@@ -1450,17 +1437,8 @@ And /^requested delivery logistics are still shown and actual delivery logistics
   end
 end
 
-And /^requested delivery logistics are still shown and actual delivery logistics are not shown for the fourth activity offering$/ do
-  on(ManageCourseOfferings).view_activity_offering("D")
-  on ActivityOfferingInquiry do |page|
-    page.requested_delivery_logistics.present?.should be_true
-    page.actual_delivery_logistics.present?.should be_false
-    page.close
-  end
-end
-
 And /^requested delivery logistics are still shown and actual delivery logistics are not shown for the second activity offering$/ do
-  on(ManageCourseOfferings).view_activity_offering("B")
+  on(ManageCourseOfferings).view_activity_offering(@suspended_ao.code)
   on ActivityOfferingInquiry do |page|
     page.requested_delivery_logistics.present?.should be_true
     page.actual_delivery_logistics.present?.should be_false
@@ -1469,7 +1447,7 @@ And /^requested delivery logistics are still shown and actual delivery logistics
 end
 
 And /^requested delivery logistics are still shown and actual delivery logistics are not shown for the third activity offering$/ do
-  on(ManageCourseOfferings).view_activity_offering("C")
+  on(ManageCourseOfferings).view_activity_offering(@suspended_ao2.code)
   on ActivityOfferingInquiry do |page|
     page.requested_delivery_logistics.present?.should be_true
     page.actual_delivery_logistics.present?.should be_false
@@ -1548,21 +1526,13 @@ And /^registration group is shown as pending$/ do
   end
 end
 
-And /^the second registration group is shown as pending$/ do
+And /^all associated registration group are shown as pending$/ do
   on ManageCourseOfferings do |page|
-    if page.view_reg_groups_table("CL 1").present? == false
-      page.view_cluster_reg_groups("CL 1")
+    if page.view_reg_groups_table().present? == false
+      page.view_cluster_reg_groups()
     end
-    page.view_reg_groups_table("CL 1").rows[2].cells[1].text.should == "Pending"
-  end
-end
-
-And /^the third registration group is shown as pending$/ do
-  on ManageCourseOfferings do |page|
-    if page.view_reg_groups_table("CL 1").present? == false
-      page.view_cluster_reg_groups("CL 1")
-    end
-    page.view_reg_groups_table("CL 1").rows[3].cells[1].text.should == "Pending"
+    page.view_reg_groups_table().rows[2].cells[1].text.should == "Pending"
+    page.view_reg_groups_table().rows[3].cells[1].text.should == "Pending"
   end
 end
 
