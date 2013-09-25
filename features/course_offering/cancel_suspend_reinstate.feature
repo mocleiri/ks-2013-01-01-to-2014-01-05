@@ -123,8 +123,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
 
   Scenario: CO 23.3A.6 CSR Reinstate multiple suspended AOs with ADLs in published SOC state
     Given I manage a course offering with multiple suspended activity offerings present in a published SOC state
-    #When I select the Suspended activity offerings
-    And I reinstate the activity offering
+    And I reinstate both activity offerings
     Then the Suspended activity offerings are shown as offered
     And actual delivery logistics for the Suspended activity offering are still shown
     And actual delivery logistics for the second Suspended activity offering are still shown

@@ -182,17 +182,23 @@ Given /^I manage a course offering with suspended activity offerings present in 
 end
 
 Given /^I manage a course offering with multiple suspended activity offerings present in a published SOC state$/ do
-  @course_with_suspend_ao9 = make CourseOffering, :term=> "201208" , :course => "ENGL222"
-  @course_with_suspend_ao9.manage
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "ENGL222")
+  @course_offering.manage_and_init
+
+  @suspended_ao1 = @course_offering.get_ao_obj_by_code("A")
+  @suspended_ao2 = @course_offering.get_ao_obj_by_code("B")
   on ManageCourseOfferings do |page|
-    @ao_suspended_code11 = "A"
-    @ao_suspended_code12 = "B"
-    page.select_ao(@ao_suspended_code11)
-    page.select_ao(@ao_suspended_code12)
-    page.suspend_ao
-    on(SuspendActivityOffering).suspend_activity
+    #have to put these in offered, then suspended status for the test
+    @suspended_ao1.edit :send_to_scheduler => true
+    @suspended_ao1.save
+    @suspended_ao2.edit :send_to_scheduler => true
+    @suspended_ao2.save
+    @suspended_ao1.suspend
+    @suspended_ao2.suspend
+    @course_offering.manage_and_init
     page.loading.wait_while_present
-    page.ao_status(@ao_suspended_code11).should == "Suspended"
+    page.ao_status(@suspended_ao1.code).should == "Suspended"
+    page.ao_status(@suspended_ao2.code).should == "Suspended"
   end
 end
 
@@ -652,13 +658,6 @@ When /^I select the Suspended activity offering$/ do
   end
 end
 
-When /^I select the Suspended activity offerings$/ do
-  on ManageCourseOfferings do |page|
-    page.select_ao(@ao_suspended_code11)
-    page.select_ao(@ao_suspended_code12)
-  end
-end
-
 When /^I select the Suspended and Offered activity offerings$/ do
   on ManageCourseOfferings do |page|
     page.select_ao(@ao_suspended_code13)
@@ -795,6 +794,11 @@ end
 When /^I reinstate the activity offerings$/ do
   @canceled_ao1.reinstate
   @canceled_ao2.reinstate
+end
+
+When /^I reinstate both activity offerings$/ do
+  @suspended_ao1.reinstate
+  @suspended_ao2.reinstate
 end
 
 Then /^I am able to cancel the draft activity offering$/ do
@@ -968,8 +972,8 @@ end
 
 Then /^the Suspended activity offerings are shown as offered$/ do
   on ManageCourseOfferings do |page|
-    page.ao_status(@ao_suspended_code11).should == "Offered"
-    page.ao_status(@ao_suspended_code12).should == "Offered"
+    page.ao_status(@suspended_ao1.code).should == "Offered"
+    page.ao_status(@suspended_ao2.code).should == "Offered"
   end
 end
 
@@ -1388,8 +1392,8 @@ And /^actual delivery logistics for the Approved activity offering are no longer
   end
 end
 
-And /^actual delivery logistics for the activity offering are still shown$/ do
-  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+And /^actual delivery logistics for the Suspended activity offering are still shown$/ do
+  on(ManageCourseOfferings).view_activity_offering(@suspended_ao1.code)
   on ActivityOfferingInquiry do |page|
     page.actual_delivery_logistics.present?.should be_true
     page.close
@@ -1405,7 +1409,7 @@ And /^actual delivery logistics for the Offered activity offering are still show
 end
 
 And /^actual delivery logistics for the second Suspended activity offering are still shown$/ do
-  on(ManageCourseOfferings).view_activity_offering("B")
+  on(ManageCourseOfferings).view_activity_offering(@suspended_ao2.code)
   on ActivityOfferingInquiry do |page|
     page.actual_delivery_logistics.present?.should be_true
     page.close
