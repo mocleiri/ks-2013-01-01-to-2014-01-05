@@ -70,6 +70,7 @@ As an Administrator, I want to create registration groups for a Course Offering
     And I return from the edit Activity Offering page
     Then the Manage Course Offerings page is displayed
 
+  @bug @KSENROLL-9714
   Scenario: ARG 6.10-2 Access Edit AO directly from within the clusters on the new Mge AO page can submit ao changes
     Given I manage registration groups for a new course offering
     When I edit the Activity Offering
