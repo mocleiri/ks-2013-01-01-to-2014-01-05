@@ -53,6 +53,8 @@ import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
@@ -78,6 +80,7 @@ import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:course-test-context.xml"})
+@TransactionConfiguration(transactionManager = "JtaTxManager", defaultRollback = true)
 public class TestCourseServiceImpl{
    // @Client(value = "org.kuali.student.lum.course.service.impl.CourseServiceImpl", additionalContextFile = "classpath:course-test-context.xml")
     //public CourseService courseService;
@@ -97,8 +100,8 @@ public class TestCourseServiceImpl{
     }
  
     @Test
+    @Transactional
     public void testCreateCourse() throws Exception {
-        System.out.println("testCreateCourse");
         CourseDataGenerator generator = new CourseDataGenerator();
         CourseInfo cInfo = null;
         try {
@@ -125,9 +128,9 @@ public class TestCourseServiceImpl{
         }
     }
 
-  @Test
+    @Test
+    @Transactional
     public void testGetCourse() {
-        System.out.println("testGetCourse");
         try {
             CourseDataGenerator generator = new CourseDataGenerator();
             CourseInfo cInfo = generator.getCourseTestData();
@@ -240,9 +243,9 @@ public class TestCourseServiceImpl{
         }
     }
 
-   @Test
+    @Test
+    @Transactional
     public void testUpdateCourse() throws Exception {
-        System.out.println("testUpdateCourse");
 
         CourseDataGenerator generator = new CourseDataGenerator();
         CourseInfo cInfo = null;
@@ -250,7 +253,6 @@ public class TestCourseServiceImpl{
         CourseInfo updatedCourse = null;
         CourseInfo createdCourse = null;
         try {
-            System.out.println("Getting test data...");
             cInfo = generator.getCourseTestData();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -261,7 +263,6 @@ public class TestCourseServiceImpl{
         cInfo.setSpecialTopicsCourse(true);
         cInfo.setPilotCourse(true);
         try {
-            System.out.println("creating course...");
             createdCourse = courseService.createCourse(cInfo, contextInfo );
         } catch (DataValidationErrorException e) {
             dumpValidationErrors(cInfo);
@@ -385,7 +386,6 @@ public class TestCourseServiceImpl{
         
         // Perform the update
         try {
-            System.out.println("updating course...");
             updatedCourse = courseService.updateCourse(updActFrmtId, createdCourse, contextInfo);
         } catch (DataValidationErrorException e) {
             dumpValidationErrors(createdCourse);
@@ -421,7 +421,6 @@ public class TestCourseServiceImpl{
 
         // Now explicitly get it
         try {
-            System.out.println("Getting course again...");
             retrievedCourse = courseService.getCourse(createdCourse.getId(), contextInfo);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -440,11 +439,9 @@ public class TestCourseServiceImpl{
             retrievedCourse.getMeta().setVersionInd(Integer.toString(--currVersion));
         }
         try {
-            System.out.println("Updating course again trying to get a version mismatch...");
             courseService.updateCourse(updActFrmtId, retrievedCourse, contextInfo);
             fail("Failed to throw VersionMismatchException");
         } catch (VersionMismatchException e) {
-            System.out.println("Correctly received " + e.getMessage());
         } catch (DataValidationErrorException e) {
             dumpValidationErrors(retrievedCourse);
             fail("DataValidationError: " + e.getMessage());
@@ -495,8 +492,8 @@ public class TestCourseServiceImpl{
     }
 
     @Test
+    @Transactional
     public void testDeleteCourse() {
-        System.out.println("testDeleteCourse");
         try {
             CourseDataGenerator generator = new CourseDataGenerator();
             CourseInfo cInfo = generator.getCourseTestData();
@@ -524,7 +521,8 @@ public class TestCourseServiceImpl{
      * This method tests setting code, attributes in course cross listing
      *
      */
-   @Test
+    @Test
+    @Transactional
     public void testCourseCrossListing() {
         CourseDataGenerator generator = new CourseDataGenerator();
         try {
@@ -590,16 +588,14 @@ public class TestCourseServiceImpl{
             }
             
         } catch (Exception e) {
-            System.out.println("caught exception: " + e.getClass().getName());
-            System.out.println("message: " + e.getMessage());
-            e.printStackTrace(System.out);
             e.printStackTrace();
             fail(e.getMessage());
         }        
             
     }
     
-   @Test
+    @Test
+    @Transactional
     public void testCreditOptions() {
         CourseDataGenerator generator = new CourseDataGenerator();
         try {
@@ -610,8 +606,8 @@ public class TestCourseServiceImpl{
             ResultValuesGroupInfo rc1 = new ResultValuesGroupInfo();
             rc1.setTypeKey(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE);
             ResultValueRangeInfo resultValueRangeInfo = new ResultValueRangeInfo();
-            resultValueRangeInfo.setMinValue("1.0");
-            resultValueRangeInfo.setMaxValue("5.0");
+            resultValueRangeInfo.setMinValue("5.0");
+            resultValueRangeInfo.setMaxValue("6.0");
             resultValueRangeInfo.setIncrement("0.5");
             rc1.setResultValueRange(resultValueRangeInfo);
             
@@ -660,27 +656,24 @@ public class TestCourseServiceImpl{
             for(ResultValuesGroupInfo rc : co) { 
                 if(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE.equals(rc.getTypeKey())){
                     assertEquals(3, rc.getResultValueKeys().size());
-                    assertTrue(rc.getResultValueKeys().contains("kuali.result.value.credit.degree.1.0"));
-                    assertTrue(rc.getResultValueKeys().contains("kuali.result.value.credit.degree.1.5"));
-                    assertTrue(rc.getResultValueKeys().contains("kuali.result.value.credit.degree.2.0"));
+                    assertTrue(rc.getResultValueKeys().contains("1.0"));
+                    assertTrue(rc.getResultValueKeys().contains("1.5"));
+                    assertTrue(rc.getResultValueKeys().contains("2.0"));
                 }
                 
                 if(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE.equals(rc.getTypeKey())){
                     if("kuali.creditType.credit.degree.1.0-5.0".equals(rc.getKey())) {
-                        assertEquals(9, rc.getResultValueKeys().size());
-                        assertTrue(rc.getResultValueKeys().contains("kuali.result.value.credit.degree.1.5"));
-                    } else {                        
                         assertEquals(5, rc.getResultValueKeys().size());
-                        assertTrue(rc.getResultValueKeys().contains("kuali.result.value.credit.degree.3.0"));
+                        assertTrue(rc.getResultValueKeys().contains("2.0"));
+                    } else {                        
+                        assertEquals(3, rc.getResultValueKeys().size());
+                        assertTrue(rc.getResultValueKeys().contains("5.5"));
                     }
                 }                
             }
                         
             
         } catch (Exception e) {
-            System.out.println("caught exception: " + e.getClass().getName());
-            System.out.println("message: " + e.getMessage());
-            e.printStackTrace(System.out);
             e.printStackTrace();
             fail(e.getMessage());
         }        
@@ -688,7 +681,6 @@ public class TestCourseServiceImpl{
     
   //  @Test
     public void testDynamicAttributes() {
-        System.out.println("testDynamicAttributes");
         CourseDataGenerator generator = new CourseDataGenerator();
         try {
             CourseInfo cInfo = generator.getCourseTestData();
@@ -752,9 +744,6 @@ public class TestCourseServiceImpl{
             assertEquals("ACTIVITY_VALUE", cInfo.getFormats().get(0).getActivities().get(0).getAttributes().contains("ACTIVITY_KEY"));
             
         } catch (Exception e) {
-            System.out.println("caught exception: " + e.getClass().getName());
-            System.out.println("message: " + e.getMessage());
-            e.printStackTrace(System.out);
             e.printStackTrace();
             fail(e.getMessage());
         }
@@ -768,7 +757,6 @@ public class TestCourseServiceImpl{
 
     @Test
     public void testGetMetadata() {
-        System.out.println("testGetMetadata");
         MetadataServiceImpl metadataService = new MetadataServiceImpl(courseService);
         metadataService.setUiLookupContext("classpath:lum-ui-test-lookup-context.xml");
         Metadata metadata = metadataService.getMetadata("org.kuali.student.r2.lum.course.dto.CourseInfo");
@@ -801,6 +789,7 @@ public class TestCourseServiceImpl{
     }
 
     @Test
+    @Transactional
     public void testCourseVersioning() throws IllegalArgumentException, SecurityException, IntrospectionException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchFieldException, AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DoesNotExistException, CircularRelationshipException, DependentObjectsExistException, UnsupportedActionException, IllegalVersionSequencingException {
         CourseDataGenerator generator = new CourseDataGenerator();
         CourseInfo cInfo = generator.getCourseTestData();
@@ -887,6 +876,7 @@ public class TestCourseServiceImpl{
     }
 
     @Test(expected = InvalidParameterException.class)
+    @Transactional
     public void testCreateCourseStatement_duplicateTree() throws Exception {
         String courseId = "COURSE-STMT-1";
         String nlUsageTypeKey = "KUALI.RULE";
@@ -897,6 +887,7 @@ public class TestCourseServiceImpl{
     }
 
     @Test(expected = MissingParameterException.class)
+    @Transactional
     public void testCreateCourseStatement_nullCourseId() throws Exception {
 
         StatementTreeViewInfo statementTreeViewInfo = createStatementTree();
@@ -904,7 +895,8 @@ public class TestCourseServiceImpl{
         StatementTreeViewInfo createdTree = R1R2ConverterUtil.convert(courseService.createCourseStatement(null, R1R2ConverterUtil.convert(statementTreeViewInfo, org.kuali.student.r1.core.statement.dto.StatementTreeViewInfo.class), contextInfo),StatementTreeViewInfo.class);
     }
 
-   @Test(expected = MissingParameterException.class)
+    @Test(expected = MissingParameterException.class)
+    @Transactional
     public void testCreateCourseStatement_nullTree() throws Exception {
         String courseId = "COURSE-STMT-1";
 
@@ -913,6 +905,7 @@ public class TestCourseServiceImpl{
     }
 
     @Test(expected = DoesNotExistException.class)
+    @Transactional
     public void testDeleteCourseStatement() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DataValidationErrorException, CircularReferenceException, VersionMismatchException {
         final String courseId = "COURSE-STMT-1";
 
@@ -930,6 +923,7 @@ public class TestCourseServiceImpl{
     }
 
     @Test(expected = DoesNotExistException.class)
+    @Transactional
     public void testDeleteCourseStatement_badTree() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         final String courseId = "COURSE-STMT-1";
 
@@ -939,6 +933,7 @@ public class TestCourseServiceImpl{
     }
 
     @Test(expected = DoesNotExistException.class)
+    @Transactional
     public void testDeleteCourseStatement_badCourse() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         StatementTreeViewInfo statementTreeViewInfo = createStatementTree();
         courseService.deleteCourseStatement("xxx", R1R2ConverterUtil.convert(statementTreeViewInfo, org.kuali.student.r1.core.statement.dto.StatementTreeViewInfo.class), contextInfo);
@@ -946,17 +941,20 @@ public class TestCourseServiceImpl{
     }
 
     @Test(expected = MissingParameterException.class)
+    @Transactional
     public void testDeleteCourseStatement_nullCourseId() throws Exception {
         StatementTreeViewInfo statementTreeViewInfo = createStatementTree();
         courseService.deleteCourseStatement(null, R1R2ConverterUtil.convert(statementTreeViewInfo, org.kuali.student.r1.core.statement.dto.StatementTreeViewInfo.class), contextInfo);
     }
 
     @Test(expected = MissingParameterException.class)
+    @Transactional
     public void testDeleteCourseStatement_nullTreeId() throws Exception {
         courseService.deleteCourseStatement("xxx", null, contextInfo);
     }
 
     @Test
+    @Transactional
     public void testUpdateCourseStatement() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DataValidationErrorException, CircularReferenceException, VersionMismatchException {
         final String courseId = "COURSE-STMT-1";
 
@@ -1205,6 +1203,7 @@ public class TestCourseServiceImpl{
     }
     
     @Test
+    @Transactional
     public void testGetVersionMethodsForInvalidParameters() throws Exception {
         String[] getVersionMethods = {"getVersionBySequenceNumber", "getVersions", "getFirstVersion", "getVersionsInDateRange", "getCurrentVersion", "getCurrentVersionOnDate"};
         
@@ -1237,7 +1236,8 @@ public class TestCourseServiceImpl{
         invokeForExpectedException(methods, InvalidParameterException.class);
     }
     
-   @Test
+    @Test
+    @Transactional
     public void testGetCurrentVersion() throws Exception {
         CourseDataGenerator generator = new CourseDataGenerator();
         CourseInfo cInfo = generator.getCourseTestData();
@@ -1257,6 +1257,7 @@ public class TestCourseServiceImpl{
     }
     
     @Test
+    @Transactional
     public void testGetCurrentVersionOnDate() throws Exception {
         CourseDataGenerator generator = new CourseDataGenerator();
         CourseInfo cInfo = generator.getCourseTestData();
@@ -1291,6 +1292,7 @@ public class TestCourseServiceImpl{
     }
     
     @Test
+    @Transactional
     public void testGetVersions() throws Exception {
         
         CourseDataGenerator generator = new CourseDataGenerator();
@@ -1314,6 +1316,7 @@ public class TestCourseServiceImpl{
     }
     
     @Test
+    @Transactional
     public void testGetFirstVersion() throws Exception {
         
         CourseDataGenerator generator = new CourseDataGenerator();
@@ -1332,7 +1335,8 @@ public class TestCourseServiceImpl{
         //assertEquals(firstVersion.getSequenceNumber(), createdCourse.getVersion().getSequenceNumber());
     }
     
-   @Test
+    @Test
+    @Transactional
     public void testGetVersionBySequenceNumber() throws Exception {
         
         CourseDataGenerator generator = new CourseDataGenerator();
@@ -1353,6 +1357,7 @@ public class TestCourseServiceImpl{
     }
     
     @Test
+    @Transactional
     public void testGetVersionsInDateRange() throws Exception {
         CourseDataGenerator generator = new CourseDataGenerator();
         CourseInfo cInfo = generator.getCourseTestData();

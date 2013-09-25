@@ -20,31 +20,16 @@ import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.DtoConstants;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
-import org.kuali.student.r2.common.exceptions.AlreadyExistsException;
-import org.kuali.student.r2.common.exceptions.CircularReferenceException;
-import org.kuali.student.r2.common.exceptions.CircularRelationshipException;
-import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
-import org.kuali.student.r2.common.exceptions.DependentObjectsExistException;
-import org.kuali.student.r2.common.exceptions.DoesNotExistException;
-import org.kuali.student.r2.common.exceptions.IllegalVersionSequencingException;
-import org.kuali.student.r2.common.exceptions.InvalidParameterException;
-import org.kuali.student.r2.common.exceptions.MissingParameterException;
-import org.kuali.student.r2.common.exceptions.OperationFailedException;
-import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
-import org.kuali.student.r2.common.exceptions.ReadOnlyException;
-import org.kuali.student.r2.common.exceptions.UnsupportedActionException;
-import org.kuali.student.r2.common.exceptions.VersionMismatchException;
+import org.kuali.student.r2.common.exceptions.*;
+import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
+import org.kuali.student.r2.core.search.dto.SearchResultInfo;
+import org.kuali.student.r2.core.search.service.SearchManager;
 import org.kuali.student.r2.common.util.constants.ProgramServiceConstants;
 import org.kuali.student.r2.common.validator.Validator;
 import org.kuali.student.r2.common.validator.ValidatorFactory;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.service.AtpService;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
-import org.kuali.student.r2.core.document.dto.RefDocRelationInfo;
-import org.kuali.student.r2.core.document.service.DocumentService;
-import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
-import org.kuali.student.r2.core.search.dto.SearchResultInfo;
-import org.kuali.student.r2.core.search.service.SearchManager;
 import org.kuali.student.r2.core.versionmanagement.dto.VersionDisplayInfo;
 import org.kuali.student.r2.lum.clu.dto.CluCluRelationInfo;
 import org.kuali.student.r2.lum.clu.dto.CluInfo;
@@ -53,13 +38,7 @@ import org.kuali.student.r2.lum.clu.service.CluService;
 import org.kuali.student.r2.lum.course.dto.LoDisplayInfo;
 import org.kuali.student.r2.lum.course.infc.LoDisplay;
 import org.kuali.student.r2.lum.course.service.impl.CourseServiceUtils;
-import org.kuali.student.r2.lum.program.dto.CoreProgramInfo;
-import org.kuali.student.r2.lum.program.dto.CredentialProgramInfo;
-import org.kuali.student.r2.lum.program.dto.HonorsProgramInfo;
-import org.kuali.student.r2.lum.program.dto.MajorDisciplineInfo;
-import org.kuali.student.r2.lum.program.dto.MinorDisciplineInfo;
-import org.kuali.student.r2.lum.program.dto.ProgramRequirementInfo;
-import org.kuali.student.r2.lum.program.dto.ProgramVariationInfo;
+import org.kuali.student.r2.lum.program.dto.*;
 import org.kuali.student.r2.lum.program.service.ProgramService;
 import org.kuali.student.r2.lum.program.service.assembler.CoreProgramAssembler;
 import org.kuali.student.r2.lum.program.service.assembler.CredentialProgramAssembler;
@@ -69,13 +48,13 @@ import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebParam;
-import javax.jws.WebService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import org.kuali.student.r2.core.document.dto.RefDocRelationInfo;
+import org.kuali.student.r2.core.document.service.DocumentService;
 
-@WebService(endpointInterface = "org.kuali.student.r2.lum.program.service.ProgramService", serviceName = "ProgramService", portName = "ProgramService", targetNamespace = "http://student.kuali.org/wsdl/program/ProgramService")
 public class ProgramServiceImpl implements ProgramService{
 	final static Logger LOG = Logger.getLogger(ProgramServiceImpl.class);
 
@@ -665,7 +644,7 @@ public class ProgramServiceImpl implements ProgramService{
             if ( ! ProgramAssemblerConstants.CREDENTIAL_PROGRAM_TYPES.contains(clu.getTypeKey()) ) {
                 throw new DoesNotExistException("Specified CLU is not a Credential Program");
             }
-            ;
+
             credentialProgramInfo = credentialProgramAssembler.assemble(clu, null, false,contextInfo);
         } catch (AssemblyException e) {
             LOG.error("Error assembling CredentialProgram", e);
@@ -993,17 +972,17 @@ public class ProgramServiceImpl implements ProgramService{
     }
 
     @Override
-    public List<TypeInfo> getSearchTypes(@WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException {
+    public List<TypeInfo> getSearchTypes( ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException {
         throw new UnsupportedOperationException("getSearchTypes");
     }
 
     @Override
-    public TypeInfo getSearchType(@WebParam(name = "searchTypeKey") String searchTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
+    public TypeInfo getSearchType(String searchTypeKey,  ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
         throw new UnsupportedOperationException("getSearchType");
     }
 
     @Override
-    public SearchResultInfo search(SearchRequestInfo searchRequestInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws MissingParameterException, OperationFailedException, PermissionDeniedException {
+    public SearchResultInfo search(SearchRequestInfo searchRequestInfo,  ContextInfo contextInfo) throws MissingParameterException, OperationFailedException, PermissionDeniedException {
         throw new UnsupportedOperationException("ProgramService.search");
     }
 
