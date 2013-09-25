@@ -44,6 +44,20 @@ Feature: WC.Schedule of Classes
     When I search for course offerings by course by entering a course offering code to view the course offering requisites
     Then the course offering requisites should be displayed stating "Student Eligibility & Prerequisite.*Two lower-level English courses.*Or permission of ARHU-English.*Antirequisite.*any courses from ENGL403 or ENGL404"
 
+#KSENROLL-9524
+#Create AFT scenarios to test for Co-located and Cross-listed icons and tool tips on Schedule of Classes
+  @pending
+  Scenario: Verify Co-located icons and tool tips on Schedule of Classes
+    When I loaded the list of Schedule of Classes for term "Fall 2012" and Course "CHEM131S"
+    Then the activity A of the course offering "CHEM131S" has a colocated icon
+    And  the activity A of the course offering "CHEM131S" has tooltip text "This activity is colocated with:<BR>CHEM131 A"
+
+
+  @pending
+  Scenario: Verify Cross-listed icons and tool tips on Schedule of Classes
+    When I loaded the Schedule of Classes for term "Fall 2012" and Course "ENGL250"
+    Then the course offering "ENGL250" has cross listed icon
+    And  the course offering "ENGL250" has tooltip text "this course is crosslisted with:<BR>WMST255"
 
 
 # Scenario: Verify that an appropriate message is displayed if no data is returned by the search

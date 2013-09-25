@@ -142,3 +142,59 @@ Then /^the course offering requisites should be displayed stating "([^"]+)"$/ do
     page.get_requisites_message_text.should match /#{exp_msg}/
   end
 end
+
+When /^I loaded the list of Schedule of Classes for term "(.*?)" and Course "(.*?)"$/ do |arg1, arg2|
+  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => arg2,
+                                                 :exp_course_list => ["CHEM131S"],
+                                                 :term => arg1
+  @schedule_of_classes.display
+end
+
+Then /^the activity A of the course offering "(.*?)" has a colocated icon$/ do |arg1|
+  @schedule_of_classes.display
+  @schedule_of_classes.expand_course_details
+  on DisplayScheduleOfClasses do |page|
+    if !page.details_table.exists?
+      raise "activities table not found"
+    else
+      page.details_table.rows[1].cells[DisplayScheduleOfClasses::AO_CODE_COLUMN].image(src: /colocate_icon/).present?.should be_true
+    end
+  end
+end
+
+And /^the activity A of the course offering "(.*?)" has tooltip text "(.*?)"$/ do |arg1, arg2|
+  @schedule_of_classes.display
+  @schedule_of_classes.expand_course_details
+  on DisplayScheduleOfClasses do |page|
+    if !page.details_table.exists?
+      raise "activities table not found"
+    else
+      colocated_tooltip_text = page.details_table.rows[1].cells[DisplayScheduleOfClasses::AO_CODE_COLUMN].image(src: /colocate_icon/).alt.upcase
+      colocated_tooltip_text.should == arg2.upcase
+    end
+  end
+end
+
+
+When /^I loaded the Schedule of Classes for term "(.*?)" and Course "(.*?)"$/ do |arg1, arg2|
+  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => arg2,
+                              :exp_course_list => ["ENGL250"],
+                              :term => arg1
+  @schedule_of_classes.display
+end
+
+Then /^the course offering "(.*?)" has cross listed icon$/ do |arg1|
+  @schedule_of_classes.display
+  on DisplayScheduleOfClasses do |page|
+    page.target_course_row(arg1)[1].image(src: /cross-listed/).present?.should be_true
+  end
+end
+
+And /^the course offering "(.*?)" has tooltip text "(.*?)"$/ do |arg1, arg2|
+  @schedule_of_classes.display
+  on DisplayScheduleOfClasses do |page|
+    cross_listed_tooltip_text = page.target_course_row(arg1)[1].image(src: /cross-listed/).alt.upcase
+    cross_listed_tooltip_text.should == arg2.upcase
+  end
+end
+
