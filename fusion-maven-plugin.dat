@@ -1,10 +1,10 @@
-# module = ks-api branch Path = enrollment/ks-api/branches/CM-KRAD revision = 47116
-ks-api::enrollment_ks-api_branches_CM-KRAD::01ef471e2d214cd90fdcb37d53a27ce7f224a595
-# module = ks-core branch Path = enrollment/ks-core/branches/CM-KRAD revision = 47116
-ks-core::enrollment_ks-core_branches_CM-KRAD::06357305e60fe4db3bd2a34b13c7e48f0c88124c
-# module = ks-lum branch Path = enrollment/ks-lum/branches/CM-KRAD revision = 47116
-ks-lum::enrollment_ks-lum_branches_CM-KRAD::82e21c6447f309c5b7ff1c964defd12b7e346a2a
-# module = ks-deployments branch Path = enrollment/ks-deployments/branches/CM-KRAD revision = 47116
-ks-deployments::enrollment_ks-deployments_branches_CM-KRAD::9f6b68b958b958175e9fe0d7fbcd775b841bfc7a
-# module = ks-enroll branch Path = enrollment/ks-enroll/branches/CM-2.0 revision = 47116
-ks-enroll::enrollment_ks-enroll_branches_CM-2.0::99cac94c17da9c339fa20320972d704de45e7754
+# module = ks-api branch Path = enrollment/ks-api/tags/builds/ks-api-2.0/2.0.1-cm-krad/build-96 revision = 56558
+ks-api::enrollment_ks-api_tags_builds_ks-api-2.0_2.0.1-cm-krad_build-96::bae72d72d0a5d154822a4da7332216dadff9cc5e
+# module = ks-core branch Path = enrollment/ks-core/tags/builds/ks-core-2.0/2.0.1-cm-krad/build-96 revision = 56558
+ks-core::enrollment_ks-core_tags_builds_ks-core-2.0_2.0.1-cm-krad_build-96::0e752b6d1fd250e378f71b4252db7e772d6ab5fa
+# module = ks-deployments branch Path = enrollment/ks-deployments/tags/builds/ks-deployments-2.0/2.0.1-cm-krad/build-96 revision = 56558
+ks-deployments::enrollment_ks-deployments_tags_builds_ks-deployments-2.0_2.0.1-cm-krad_build-96::611ab3ef5c7f81b9ae44aa203a0acf1d4404327b
+# module = ks-enroll branch Path = enrollment/ks-enroll/tags/builds/ks-enroll-1.0/1.0.0-cm-krad/build-96 revision = 56558
+ks-enroll::enrollment_ks-enroll_tags_builds_ks-enroll-1.0_1.0.0-cm-krad_build-96::fdb43d175b861ab74f4f9032d015e230b6208b82
+# module = ks-lum branch Path = enrollment/ks-lum/tags/builds/ks-lum-2.0/2.0.1-cm-krad/build-96 revision = 56558
+ks-lum::enrollment_ks-lum_tags_builds_ks-lum-2.0_2.0.1-cm-krad_build-96::8b0c5c897704213a137d53f9ff4cb0f6ed126879
