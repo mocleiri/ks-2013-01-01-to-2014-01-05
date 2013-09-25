@@ -60,7 +60,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                             &lt;element name="due-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
  *                             &lt;element name="overdue-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
  *                             &lt;element name="total-deferred" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
- *                             &lt;element name="next-deferment-expiration" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *                           &lt;/sequence>
  *                         &lt;/restriction>
  *                       &lt;/complexContent>
@@ -454,7 +453,6 @@ public class KsaBill {
      *                   &lt;element name="due-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
      *                   &lt;element name="overdue-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
      *                   &lt;element name="total-deferred" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
-     *                   &lt;element name="next-deferment-expiration" type="{http://www.w3.org/2001/XMLSchema}date"/>
      *                 &lt;/sequence>
      *               &lt;/restriction>
      *             &lt;/complexContent>
@@ -550,7 +548,6 @@ public class KsaBill {
          *         &lt;element name="due-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
          *         &lt;element name="overdue-balance" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
          *         &lt;element name="total-deferred" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
-         *         &lt;element name="next-deferment-expiration" type="{http://www.w3.org/2001/XMLSchema}date"/>
          *       &lt;/sequence>
          *     &lt;/restriction>
          *   &lt;/complexContent>
@@ -564,8 +561,7 @@ public class KsaBill {
                 "futureBalance",
                 "dueBalance",
                 "overdueBalance",
-                "totalDeferred",
-                "nextDefermentExpiration"
+                "totalDeferred"
         })
         public static class WithDeferments {
 
@@ -581,9 +577,7 @@ public class KsaBill {
             protected BigDecimal overdueBalance;
             @XmlElement(name = "total-deferred", required = true)
             protected BigDecimal totalDeferred;
-            @XmlElement(name = "next-deferment-expiration", required = true)
-            @XmlSchemaType(name = "date")
-            protected XMLGregorianCalendar nextDefermentExpiration;
+
 
             /**
              * Gets the value of the agedBalance property.
@@ -703,26 +697,6 @@ public class KsaBill {
              */
             public void setTotalDeferred(BigDecimal value) {
                 this.totalDeferred = value;
-            }
-
-            /**
-             * Gets the value of the nextDefermentExpiration property.
-             *
-             * @return possible object is
-             *         {@link XMLGregorianCalendar }
-             */
-            public XMLGregorianCalendar getNextDefermentExpiration() {
-                return nextDefermentExpiration;
-            }
-
-            /**
-             * Sets the value of the nextDefermentExpiration property.
-             *
-             * @param value allowed object is
-             *              {@link XMLGregorianCalendar }
-             */
-            public void setNextDefermentExpiration(XMLGregorianCalendar value) {
-                this.nextDefermentExpiration = value;
             }
 
         }
@@ -1007,10 +981,10 @@ public class KsaBill {
         @XmlElement(name = "bill-generated", required = true)
         @XmlSchemaType(name = "date")
         protected XMLGregorianCalendar billGenerated;
-        @XmlElement(name = "bill-start", required = true)
+        @XmlElement(name = "bill-start")
         @XmlSchemaType(name = "date")
         protected XMLGregorianCalendar billStart;
-        @XmlElement(name = "bill-end", required = true)
+        @XmlElement(name = "bill-end")
         @XmlSchemaType(name = "date")
         protected XMLGregorianCalendar billEnd;
 

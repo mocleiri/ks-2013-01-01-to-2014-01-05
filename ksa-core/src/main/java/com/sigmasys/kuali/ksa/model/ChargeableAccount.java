@@ -3,8 +3,7 @@ package com.sigmasys.kuali.ksa.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 
 /**
  * A super class for chargeable accounts
@@ -13,6 +12,11 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 public abstract class ChargeableAccount extends Account {
+
+    /**
+     * Late period
+     */
+    protected LatePeriod latePeriod;
 
     /**
      * Amount for DAYS_LATE1 period
@@ -30,10 +34,21 @@ public abstract class ChargeableAccount extends Account {
     protected BigDecimal amountLate3;
 
     /**
-     * Amount for DAYS_LATE3 period
+     * Late last update date
      */
     protected Date lateLastUpdate;
 
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "LATE_PERIOD_ID_FK")
+    public LatePeriod getLatePeriod() {
+        return latePeriod;
+    }
+
+    public void setLatePeriod(LatePeriod latePeriod) {
+        this.latePeriod = latePeriod;
+    }
 
     @Column(name = "LATE1")
     public BigDecimal getAmountLate1() {

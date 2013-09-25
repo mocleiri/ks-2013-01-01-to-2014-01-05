@@ -164,7 +164,11 @@ public class AccountManagementController extends GenericSearchController {
         account.setElectronicContacts(new HashSet<ElectronicContact>(Arrays.asList(electronicContact)));
         account.setCreditLimit(new BigDecimal(0));
         account.setStatusType(new AccountStatusType());
-        account.setLatePeriod(new LatePeriod());
+
+        if (account instanceof ChargeableAccount) {
+            ((ChargeableAccount) account).setLatePeriod(new LatePeriod());
+        }
+
         account.setAbleToAuthenticate(Boolean.TRUE);
         accountInfo.setAccountProtectedInfo(accountProtectedInfo);
         accountInfo.setDateOfBirth(new Date());
@@ -246,11 +250,14 @@ public class AccountManagementController extends GenericSearchController {
                 // For new accounts, set up account id and auditable information:
                 setAccountIdAndAuditableInfo(newAccount);
 
-                // Find the existing objects:
-                LatePeriod existingLatePeriod = auditableEntityService.getAuditableEntity(formAccount.getLatePeriod().getId(), LatePeriod.class);
+                if (formAccount instanceof ChargeableAccount && newAccount instanceof ChargeableAccount) {
+                    LatePeriod existingLatePeriod =
+                            auditableEntityService.getAuditableEntity(((ChargeableAccount) formAccount).getLatePeriod().getId(), LatePeriod.class);
+                    ((ChargeableAccount) newAccount).setLatePeriod(existingLatePeriod);
+                }
+
                 AccountStatusType existingAccountStatusType = auditableEntityService.getAuditableEntity(formAccount.getStatusType().getId(), AccountStatusType.class);
 
-                newAccount.setLatePeriod(existingLatePeriod);
                 newAccount.setStatusType(existingAccountStatusType);
 
                 resultAccount = newAccount;

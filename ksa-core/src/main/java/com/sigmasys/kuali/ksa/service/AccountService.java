@@ -157,6 +157,15 @@ public interface AccountService {
     BigDecimal getDeferredAmount(String userId);
 
     /**
+     * Returns the deferred amount.
+     *
+     * @param userId      Account ID
+     * @param balanceDate Balance date
+     * @return deferred amount
+     */
+    BigDecimal getDeferredAmount(String userId, Date balanceDate);
+
+    /**
      * This method is used to verify that an account exists before a transaction or other operations are
      * performed on the account. There is an initial inquiry into the KSA store. If no account exists, then there is
      * an inquiry into KIM. If KIM also returns no result, then false is returned. If a KIM account does exist, then

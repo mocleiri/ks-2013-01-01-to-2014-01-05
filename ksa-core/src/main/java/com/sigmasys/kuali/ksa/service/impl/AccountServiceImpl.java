@@ -566,19 +566,32 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
     /**
-     * Returns the deferred amount
+     * Returns the deferred amount.
      *
      * @param userId Account ID
      * @return deferred amount
      */
     @Override
     public BigDecimal getDeferredAmount(String userId) {
+        return getDeferredAmount(userId, new Date());
+    }
+
+    /**
+     * Returns the deferred amount.
+     *
+     * @param userId      Account ID
+     * @param balanceDate Balance date
+     * @return deferred amount
+     */
+    @Override
+    public BigDecimal getDeferredAmount(String userId, Date balanceDate) {
         List<Deferment> deferments = transactionService.getDeferments(userId);
         BigDecimal totalAmount = BigDecimal.ZERO;
-        Date curDate = new Date();
+        balanceDate = CalendarUtils.removeTime(balanceDate);
         for (Deferment deferment : deferments) {
             Date expirationDate = deferment.getExpirationDate();
-            if (expirationDate == null || curDate.before(expirationDate)) {
+            if (balanceDate.compareTo(deferment.getEffectiveDate()) >= 0 &&
+                    (expirationDate == null || balanceDate.before(expirationDate))) {
                 totalAmount = totalAmount.add(deferment.getAmount());
             }
         }
@@ -729,7 +742,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
             final Date creationDate = new Date();
 
-            Account account = new DirectChargeAccount();
+            DirectChargeAccount account = new DirectChargeAccount();
 
             account.setId(person.getPrincipalName());
 

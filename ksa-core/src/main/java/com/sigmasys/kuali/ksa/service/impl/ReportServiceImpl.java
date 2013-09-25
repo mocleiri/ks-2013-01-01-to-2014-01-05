@@ -771,17 +771,33 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
             // Get the account:
             Account account = accountService.getFullAccount(accountId);
 
+            if (account == null) {
+                String errMsg = "Account with ID = " + accountId + " does not exist";
+                logger.error(errMsg);
+                throw new UserNotFoundException(errMsg);
+            }
+
+            if (!(account instanceof ChargeableAccount)) {
+                String errMsg = "Account '" + accountId + "' must be ChargeableAccount";
+                logger.error(errMsg);
+                throw new UserNotFoundException(errMsg);
+            }
+
+            ChargeableAccount chargeableAccount = (ChargeableAccount) account;
+
+
             // Optionally age the account's debt:
             if (ageAccount) {
                 accountService.ageDebt(accountId, ignoreDeferments);
             }
 
             // Try to find a matching AgeBreakdown:
-            int indexOfExistingAgeBreakdown = indexOfAgeBreakdown(detailsList, account);
+            int indexOfExistingAgeBreakdown = indexOfAgeBreakdown(detailsList, chargeableAccount);
 
             // Create a new AgeBreakdown if there is no match:
             if (indexOfExistingAgeBreakdown == -1) {
-                LatePeriod latePeriod = account.getLatePeriod();
+
+                LatePeriod latePeriod = chargeableAccount.getLatePeriod();
 
                 if (latePeriod != null) {
                     AgedBalanceReport.AgeBreakdown ageBreakdown = new AgedBalanceReport.AgeBreakdown();
@@ -798,15 +814,11 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
             agedAccountDetail.setAccountIdentifier(accountId);
             agedAccountDetail.setAccountName(account.getCompositeDefaultPersonName());
 
-            // Set amounts late:
-            if (account instanceof ChargeableAccount) {
-                ChargeableAccount chargeableAccount = (ChargeableAccount) account;
-                AgedAccountDetail.AccountBalances accountBalances = new AgedAccountDetail.AccountBalances();
-                accountBalances.setPeriod1Balance(getFormattedAmount(chargeableAccount.getAmountLate1()));
-                accountBalances.setPeriod2Balance(getFormattedAmount(chargeableAccount.getAmountLate2()));
-                accountBalances.setPeriod3Balance(getFormattedAmount(chargeableAccount.getAmountLate3()));
-                agedAccountDetail.setAccountBalances(accountBalances);
-            }
+            AgedAccountDetail.AccountBalances accountBalances = new AgedAccountDetail.AccountBalances();
+            accountBalances.setPeriod1Balance(getFormattedAmount(chargeableAccount.getAmountLate1()));
+            accountBalances.setPeriod2Balance(getFormattedAmount(chargeableAccount.getAmountLate2()));
+            accountBalances.setPeriod3Balance(getFormattedAmount(chargeableAccount.getAmountLate3()));
+            agedAccountDetail.setAccountBalances(accountBalances);
 
             // Add the ageAccountDetail to the list of all details:
             if (indexOfExistingAgeBreakdown == -1) {
@@ -1025,7 +1037,6 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                 } else {
                     defermentAmount = defermentAmount.add(transaction.getAmount());
                 }
-
             }
 
             if (details) {
@@ -1053,9 +1064,6 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
         accountReport.setAccountIdentifier(accountId);
 
-        // TODO: set the correct company name
-        String companyName = null;
-
         AccountReport.Name name = new AccountReport.Name();
         com.sigmasys.kuali.ksa.model.PersonName defaultPersonName = account.getDefaultPersonName();
         if (defaultPersonName != null) {
@@ -1070,6 +1078,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
             personName.setDefault(true);
             name.setPersonName(personName);
         } else {
+            // TODO: set the correct company name
             name.setCompanyName("");
         }
 
@@ -1081,7 +1090,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
         if (ageAccount && account instanceof ChargeableAccount) {
             ChargeableAccount chargeableAccount = (ChargeableAccount) account;
-            LatePeriod latePeriod = account.getLatePeriod();
+            LatePeriod latePeriod = chargeableAccount.getLatePeriod();
             if (latePeriod != null) {
                 AgedBalance agedBalance = objectFactory.createAgedBalance();
                 agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate1());
@@ -1487,15 +1496,83 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         KsaBill.Cycle billCycle = objectFactory.createKsaBillCycle();
         billCycle.setBillGenerated(CalendarUtils.toXmlGregorianCalendar(new Date()));
         billCycle.setBillDate(CalendarUtils.toXmlGregorianCalendar(billDate, true));
-        billCycle.setBillStart(CalendarUtils.toXmlGregorianCalendar(startDate, true));
-        billCycle.setBillEnd(CalendarUtils.toXmlGregorianCalendar(endDate, true));
+
+        if (startDate != null) {
+            billCycle.setBillStart(CalendarUtils.toXmlGregorianCalendar(startDate, true));
+        }
+
+        if (endDate != null) {
+            billCycle.setBillEnd(CalendarUtils.toXmlGregorianCalendar(endDate, true));
+        }
 
         ksaBill.setCycle(billCycle);
 
+        // Calling ageDebt() with deferments
         ChargeableAccount chargeableAccount = accountService.ageDebt(accountId, billDate, false);
 
         KsaBill.Balances balances = objectFactory.createKsaBillBalances();
+
         KsaBill.Balances.WithDeferments withDeferments = objectFactory.createKsaBillBalancesWithDeferments();
+
+        AgedBalance agedBalance = objectFactory.createAgedBalance();
+
+        LatePeriod latePeriod = chargeableAccount.getLatePeriod();
+
+        if (latePeriod != null) {
+
+            agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate1());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate1());
+
+            agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate2());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate2());
+
+            agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate3());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate3());
+        }
+
+        withDeferments.setAgedBalance(agedBalance);
+
+        withDeferments.setOverdueBalance(chargeableAccount.getAmountLate1().add(
+                chargeableAccount.getAmountLate2()).add(chargeableAccount.getAmountLate3()));
+
+        withDeferments.setDueBalance(accountService.getDueBalance(accountId, billDate, false));
+        withDeferments.setFutureBalance(accountService.getFutureBalance(accountId, billDate, false));
+        withDeferments.setTotalBalance(accountService.getOutstandingBalance(accountId, billDate, false));
+        withDeferments.setTotalDeferred(accountService.getDeferredAmount(accountId, billDate));
+
+        balances.setWithDeferments(withDeferments);
+
+        // Calling ageDebt() without deferments
+        chargeableAccount = accountService.ageDebt(accountId, billDate, false);
+
+        KsaBill.Balances.WithoutDeferments withoutDeferments = objectFactory.createKsaBillBalancesWithoutDeferments();
+
+        agedBalance = objectFactory.createAgedBalance();
+
+        latePeriod = chargeableAccount.getLatePeriod();
+
+        if (latePeriod != null) {
+
+            agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate1());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate1());
+
+            agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate2());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate2());
+
+            agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate3());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate3());
+        }
+
+        withoutDeferments.setAgedBalance(agedBalance);
+
+        withoutDeferments.setOverdueBalance(chargeableAccount.getAmountLate1().add(
+                chargeableAccount.getAmountLate2()).add(chargeableAccount.getAmountLate3()));
+
+        withoutDeferments.setDueBalance(accountService.getDueBalance(accountId, billDate, true));
+        withoutDeferments.setFutureBalance(accountService.getFutureBalance(accountId, billDate, true));
+        withoutDeferments.setTotalBalance(accountService.getOutstandingBalance(accountId, billDate, true));
+
+        balances.setWithoutDeferments(withoutDeferments);
 
 
         // TODO
@@ -1575,10 +1652,10 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      *
      * @param ageBreakdownAndAgeAccountDetailList
      *                A list of report detail objects.
-     * @param account Account to match its late date periods.
+     * @param account ChargeableAccount to match its late date periods.
      * @return Index of a matching <code>AgedBalanceReport.AgeBreakdown</code> object.
      */
-    private int indexOfAgeBreakdown(List<Object> ageBreakdownAndAgeAccountDetailList, Account account) {
+    private int indexOfAgeBreakdown(List<Object> ageBreakdownAndAgeAccountDetailList, ChargeableAccount account) {
         // Get the Account's LatePeriod object:
         LatePeriod latePeriod = account.getLatePeriod();
 

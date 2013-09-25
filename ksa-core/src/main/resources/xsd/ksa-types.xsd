@@ -250,8 +250,8 @@
                         <xs:sequence>
                             <xs:element name="bill-date" type="xs:date"/>
                             <xs:element name="bill-generated" type="xs:date"/>
-                            <xs:element name="bill-start" type="xs:date"/>
-                            <xs:element name="bill-end" type="xs:date"/>
+                            <xs:element name="bill-start" type="xs:date" minOccurs="0"/>
+                            <xs:element name="bill-end" type="xs:date" minOccurs="0"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
@@ -267,7 +267,6 @@
                                         <xs:element name="due-balance" type="xs:decimal"/>
                                         <xs:element name="overdue-balance" type="xs:decimal"/>
                                         <xs:element name="total-deferred" type="xs:decimal"/>
-                                        <xs:element name="next-deferment-expiration" type="xs:date"/>
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>

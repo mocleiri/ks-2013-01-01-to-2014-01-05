@@ -80,11 +80,6 @@ public abstract class Account implements Identifiable {
     protected BigDecimal creditLimit;
 
     /**
-     * Late period
-     */
-    protected LatePeriod latePeriod;
-
-    /**
      * Organization name (For non-personal accounts only)
      */
     protected OrgName orgName;
@@ -227,16 +222,6 @@ public abstract class Account implements Identifiable {
 
     public void setCreditLimit(BigDecimal creditLimit) {
         this.creditLimit = creditLimit;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "LATE_PERIOD_ID_FK")
-    public LatePeriod getLatePeriod() {
-        return latePeriod;
-    }
-
-    public void setLatePeriod(LatePeriod latePeriod) {
-        this.latePeriod = latePeriod;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
