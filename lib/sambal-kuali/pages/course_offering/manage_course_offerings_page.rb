@@ -138,6 +138,10 @@ class ManageCourseOfferings < BasePage
     target_row(code, cluster_private_name).cells[AO_CODE].img(src: /ActivityRuleIcon6px.png/).present?
   end
 
+  def has_colo_icon(code, cluster_private_name = :default_cluster)
+    target_row(code, cluster_private_name).cells[AO_CODE].img(src: /colocate_icon/).present?
+  end
+
   def view_activity_offering(code, cluster_private_name = :default_cluster)
     view_activity_offering_link(code).click
     loading.wait_while_present
@@ -270,7 +274,7 @@ class ManageCourseOfferings < BasePage
   def target_cluster(private_name)
     #TODO - add code to cache hash of divs
     div_list = cluster_div_list
-    return div_list[0] unless private_name != :default_cluster
+    return div_list[0] if private_name == :default_cluster
     cluster_div_list.each do |div_element|
       if cluster_div_private_name(div_element) == private_name then
         return div_element
@@ -408,15 +412,15 @@ class ManageCourseOfferings < BasePage
     target_cluster(private_name).link(text: /View Registration Groups/)
   end
 
-  def view_cluster_reg_groups(private_name)
+  def view_cluster_reg_groups(private_name = :default_cluster)
     view_cluster_reg_groups_link(private_name).click
   end
 
-  def view_reg_groups_table(private_name)
-    target_cluster(private_name).table(:index=>1)
+  def view_reg_groups_table(private_name = :default_cluster)
+    target_cluster(private_name).table(index: 1)
   end
 
-  def get_cluster_reg_groups_list(private_name)
+  def get_cluster_reg_groups_list(private_name = :default_cluster)
     reg_group_list = []
     if view_reg_groups_table(private_name).exists? then
       view_reg_groups_table(private_name).rows[1..-1].each do |row|
@@ -427,6 +431,15 @@ class ManageCourseOfferings < BasePage
       reg_group_list = []
     end
     reg_group_list
+  end
+
+  #reg group can have more than one ao_code (ie the combination that of ao's for the rg)
+  #TODO: enhance to handle multiple codes properly
+  def target_reg_group_row(codes, cluster_private_name = :default_cluster)
+    view_reg_groups_table(cluster_private_name).rows[1..-1].each do |row|
+       return row if row.cells[2].text == codes
+    end
+    raise "error: target_reg_group_row not found for #{codes}"
   end
 
 end

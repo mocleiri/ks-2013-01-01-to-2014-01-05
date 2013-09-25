@@ -90,21 +90,23 @@ Feature: EC.Cancel Suspend Reinstate AOs
     Then I am able to reinstate the activity offering
 
 
-  Scenario: CO 23.3A.8 CSR Reinstate an AO with ADLs that is the only AO in the CO, in published SOC state
-    Given I manage a course offering with a suspended activity offering present in a published SOC state
-    When I select activity offering #TODO: , which is Suspended
-    And I reinstate the activity offering
-    Then the Suspended activity offering is shown as offered
-    And actual delivery logistics for the Suspended activity offering are still shown
+  Scenario: CO 23.3A.8 CSR Reinstate an AO with ADLs that is the only AO in the CO in published SOC state
+    Given I am working on a term in "Published" SOC state
+    And I manage a course offering with an offered activity offering present
+    And I suspend the activity offering
+    When I reinstate the activity offering
+    Then the activity offering is in offered status
+    And actual delivery logistics for the activity offering are still shown
     And the registration group is shown as offered
     And the Course Offering is shown as Offered
 
   Scenario: CO 23.3A.9 CSR Reinstate an AO with ADLs in final edits SOC state
-    Given I manage a course offering with a suspended activity offering present in a final edits SOC state
-    When I select the activity offering #TODO:, which is Suspended
-    And I reinstate the activity offering
-    Then the Suspended activity offering is shown as approved
-    And actual delivery logistics for the Suspended activity offering are still shown
+    Given I am working on a term in "Final Edits" SOC state
+    And I manage a course offering with an approved activity offering present
+    And I suspend the activity offering
+    When I reinstate the activity offering
+    Then the activity offering is in approved status
+    And actual delivery logistics for the activity offering are still shown
     And the registration group is shown as pending
     And the Course Offering is shown as Planned
 

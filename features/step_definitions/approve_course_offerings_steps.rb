@@ -521,7 +521,7 @@ When /^I select the Canceled and Draft activity offerings$/ do
   end
 end
 
-Then /^I( can)? suspend the activity offering$/ do
+Then /^I(?: can)? suspend the activity offering$/ do
   @activity_offering.suspend
 
   on ManageCourseOfferings do |page|
@@ -844,16 +844,10 @@ When /^I cancel the activity offering$/ do
   on(CancelActivityOffering).cancel_activity
 end
 
-#And /^I reinstate the activity offering$/ do
-#  #TODO: use ao object
-#  on(ManageCourseOfferings).reinstate_ao
-#  on(ReinstateActivityOffering).reinstate_activity
-#end
-#
-When /^I suspend the activity offering$/ do
-  on(ManageCourseOfferings).suspend_ao
-  on(SuspendActivityOffering).suspend_activity
+And /^I reinstate the activity offering$/ do
+  @activity_offering.reinstate :navigate_to_page => false
 end
+
 
 When /^I cancel the activity offering, verifying that one of the two selections is eligible for this action$/ do
   on(ManageCourseOfferings).cancel_ao
@@ -900,6 +894,15 @@ Then /^the activity offering is shown as draft$/ do
     page.ao_status(@activity_offering.code).should == "Draft"
   end
 end
+
+Then /^the activity offering is in offered status$/ do
+  on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Offered"
+end
+
+Then /^the activity offering is in approved status$/ do
+  on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Approved"
+end
+
 
 Then /^the Suspended activity offering is shown as offered$/ do
   on ManageCourseOfferings do |page|
@@ -1061,7 +1064,7 @@ Then /^the Course Offering is shown as Offered$/ do
   on ManageCourseOfferings do |page1|
     page1.list_all_course_link.click
     on ManageCourseOfferingList do |page2|
-      page2.co_status("ENGL211").should == "Offered"
+      page2.co_status(@course_offering.course).should == "Offered"
     end
   end
 end
@@ -1070,7 +1073,7 @@ Then /^the Course Offering is shown as Planned$/ do
   on ManageCourseOfferings do |page1|
     page1.list_all_course_link.click
     on ManageCourseOfferingList do |page2|
-      page2.co_status("CHEM242").should == "Planned" #TODO: use the object here
+      page2.co_status(@course_offering.course).should == "Planned" #TODO: use the object here
     end
   end
 end
@@ -1106,6 +1109,16 @@ Given /^I manage a course offering with a draft activity offering$/ do
 end
 
 Given /^I manage a course offering with an approved activity offering present$/ do
+  @term_for_test = "201208" if @term_for_test.nil?
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test , :course => "ENGL295")
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+  @activity_offering.edit :send_to_scheduler => true
+  @activity_offering.save
+  on ManageCourseOfferings do |page|
+    page.ao_status(@activity_offering.code).should == "Approved"
+  end
 # TODO: change to copy
   @course_offering = make CourseOffering, :term=> "201700" , :course => "ENGL243"
   @course_offering.manage_and_init
@@ -1115,14 +1128,14 @@ Given /^I manage a course offering with an approved activity offering present$/ 
 end
 
 Given /^I manage a course offering with an offered activity offering present$/ do
-  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "ENGL402")
+  @term_for_test = "201208" if @term_for_test.nil?
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test , :course => "ENGL295")
   @course_offering.manage_and_init
 
   @activity_offering = @course_offering.get_ao_obj_by_code("A")
   @activity_offering.edit :send_to_scheduler => true
   @activity_offering.save
   on ManageCourseOfferings do |page|
-    page.loading.wait_while_present
     page.ao_status(@activity_offering.code).should == "Offered"
   end
 end
@@ -1375,8 +1388,8 @@ And /^actual delivery logistics for the Approved activity offering are no longer
   end
 end
 
-And /^actual delivery logistics for the Suspended activity offering are still shown$/ do
-  on(ManageCourseOfferings).view_activity_offering("A")
+And /^actual delivery logistics for the activity offering are still shown$/ do
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
   on ActivityOfferingInquiry do |page|
     page.actual_delivery_logistics.present?.should be_true
     page.close
@@ -1470,47 +1483,47 @@ end
 
 And /^the registration group is shown as canceled$/ do
   on ManageCourseOfferings do |page|
-    if page.view_reg_groups_table("CL 1").present? == false
-      page.view_cluster_reg_groups("CL 1")
+    if page.view_reg_groups_table().present? == false
+      page.view_cluster_reg_groups()
     end
-    page.view_reg_groups_table("CL 1").rows[1].cells[1].text.should == "Canceled"
+    page.view_reg_groups_table().rows[1].cells[1].text.should == "Canceled"
   end
 end
 
 And /^the registration group is shown as offered$/ do
   on ManageCourseOfferings do |page|
-    if page.view_reg_groups_table("CL 1").present? == false
-      page.view_cluster_reg_groups("CL 1")
+    if page.view_reg_groups_table().present? == false
+      page.view_cluster_reg_groups()
     end
-    page.view_reg_groups_table("CL 1").rows[1].cells[1].text.should == "Offered"
+    page.target_reg_group_row(@activity_offering.code).cells[1].text.should == "Offered"
   end
 end
 
 And /^both registration groups are shown as offered$/ do
   on ManageCourseOfferings do |page|
-    if page.view_reg_groups_table("CL 1").present? == false
-      page.view_cluster_reg_groups("CL 1")
+    if page.view_reg_groups_table().present? == false
+      page.view_cluster_reg_groups()
     end
-    page.view_reg_groups_table("CL 1").rows[1].cells[1].text.should == "Offered"
-    page.view_reg_groups_table("CL 1").rows[2].cells[1].text.should == "Offered"
+    page.view_reg_groups_table().rows[1].cells[1].text.should == "Offered"
+    page.view_reg_groups_table().rows[2].cells[1].text.should == "Offered"
   end
 end
 
 And /^the registration group is shown as pending$/ do
   on ManageCourseOfferings do |page|
-    if page.view_reg_groups_table("CL 718").present? == false
-      page.view_cluster_reg_groups("CL 718")
+    if page.view_reg_groups_table().present? == false
+      page.view_cluster_reg_groups()
     end
-    page.view_reg_groups_table("CL 718").rows[1].cells[1].text.should == "Pending"
+    page.view_reg_groups_table().rows[1].cells[1].text.should == "Pending"
   end
 end
 
 And /^registration group is shown as pending$/ do
   on ManageCourseOfferings do |page|
-    if page.view_reg_groups_table("CL 1").present? == false  #TODO: can set up the method where the first RG is the default
-      page.view_cluster_reg_groups("CL 1")
+    if page.view_reg_groups_table().present? == false  #TODO: can set up the method where the first RG is the default
+      page.view_cluster_reg_groups()
     end
-    page.view_reg_groups_table("CL 1").rows[1].cells[1].text.should == "Pending"
+    page.view_reg_groups_table().rows[1].cells[1].text.should == "Pending"
   end
 end
 
