@@ -288,7 +288,7 @@ public class QuickViewForm extends AbstractViewModel {
     }
 
     public String getAlertTooltip() {
-        return this.getInformationTooltip("Alerts", alerts);
+        return TransactionForm.getInformationTooltip("Alerts", alerts);
     }
 
     public void setAlertObjects(List<Alert> alerts) {
@@ -311,7 +311,7 @@ public class QuickViewForm extends AbstractViewModel {
     }
 
     public String getFlagTooltip() {
-        return this.getInformationTooltip("Flags", flags);
+        return TransactionForm.getInformationTooltip("Flags", flags);
     }
 
     public void setFlagObjects(List<Flag> flags) {
@@ -338,40 +338,7 @@ public class QuickViewForm extends AbstractViewModel {
     }
 
     public String getHoldTooltip() {
-        return this.getInformationTooltip("Holds", holds);
-    }
-
-    private int getItemsPerPage() {
-        return Integer.valueOf(ContextUtils.getBean(ConfigService.class).getParameter(Constants.QUICKVIEW_INFORMATION_COUNT));
-    }
-
-
-    private String getInformationTooltip(String name, List<InformationModel> items) {
-
-        int itemsPerPage = getItemsPerPage();
-
-        String html = "<b>" + name + " (";
-
-        if (items == null || items.size() == 0) {
-            html += "0/0)</b><br/><p>No " + name + "</p>";
-            return html;
-        }
-
-        int size = items.size();
-
-        if (size > itemsPerPage) {
-            html += itemsPerPage + "/" + size + ")</b><br/>";
-        } else {
-            html += size + "/" + size + ")</b><br/>";
-        }
-
-        html += "<p>";
-        for (int i = 0; i < items.size() && i < itemsPerPage; i++) {
-            html += items.get(i).getDisplayValue() + "<br/>";
-        }
-        html += "</p>";
-
-        return html;
+        return TransactionForm.getInformationTooltip("Holds", holds);
     }
 
     public BigDecimal getOutstandingAmount() {

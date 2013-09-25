@@ -41,8 +41,8 @@
                             <bean id="viewTransactionAccountInfo" parent="Uif-HorizontalBoxSection" p:style="border-bottom: 1px solid #000">
                                 <property name="items">
                                 <list>
-                                    <bean parent="Uif-HeaderTwo" p:headerText="@{account.compositeDefaultPersonName}"/>
-                                    <bean parent="Uif-InputField" p:propertyName="account.id" p:style="margin-top: 15px;" p:readOnly="@{true}"/>
+                                    <bean parent="Uif-InputField" p:propertyName="account.compositeDefaultPersonName" p:style="font-size: 20px" p:readOnly="@{true}"/>
+                                    <bean parent="Uif-InputField" p:propertyName="account.id" p:readOnly="@{true}"/>
                                     <ref bean="Ksa-TransactionAlerts"/>
                                     <ref bean="Ksa-TransactionFlags"/>
                                     <ref bean="Ksa-TransactionHolds"/>

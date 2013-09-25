@@ -84,6 +84,8 @@
         <property name="items">
             <list>
                 <ref bean="paymentPlanDescription"/>
+                <ref bean="thirdPartyOpenPeriod"/>
+                <ref bean="thirdPartyChargePeriod"/>
             </list>
         </property>
 

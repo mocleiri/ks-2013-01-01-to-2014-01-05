@@ -443,7 +443,7 @@ public class TransactionForm extends AbstractViewModel {
         this.endingBalance = endingBalance;
     }
 
-    private int getItemsPerPage() {
+    private static int getItemsPerPage() {
         return Integer.valueOf(ContextUtils.getBean(ConfigService.class).getParameter(Constants.QUICKVIEW_INFORMATION_COUNT));
     }
 
@@ -618,7 +618,7 @@ public class TransactionForm extends AbstractViewModel {
     }
 
 
-    private String getInformationTooltip(String name, List<InformationModel> items) {
+    public static String getInformationTooltip(String name, List<InformationModel> items) {
 
         int itemsPerPage = getItemsPerPage();
 

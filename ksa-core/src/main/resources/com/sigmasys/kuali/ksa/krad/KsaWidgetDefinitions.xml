@@ -98,6 +98,10 @@
                       p:href="generate1098T?methodToCall=display1098TForm&amp;viewId=Generate1098TView&amp;userId=@{account.id}"/>
                 <bean parent="Uif-Link" p:linkText="Refund" p:target="_self"
                       p:href="accountRefund?methodToCall=displayInitialPage&amp;viewId=AccountRefundView&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Payment Billing Plans" p:target="_self"
+                      p:href="userPaymentPlanView?methodToCall=get&amp;viewId=UserPaymentPlanView&amp;pageId=PaymentPlans&amp;userId=@{account.id}"/>
+                <bean parent="Uif-Link" p:linkText="Third Party Payment Plans" p:target="_self"
+                      p:href="userPaymentPlanView?methodToCall=get&amp;viewId=UserPaymentPlanView&amp;pageId=ThirdPartyPaymentPlans&amp;userId=@{account.id}"/>
             </list>
         </property>
     </bean>

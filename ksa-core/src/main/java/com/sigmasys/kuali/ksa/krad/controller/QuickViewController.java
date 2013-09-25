@@ -1,17 +1,14 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.QuickViewForm;
-import com.sigmasys.kuali.ksa.krad.model.InformationModel;
+import com.sigmasys.kuali.ksa.krad.util.AccountUtil;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
-import com.sigmasys.kuali.ksa.service.hold.HoldService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.core.hold.dto.AppliedHoldInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -42,9 +38,6 @@ public class QuickViewController extends GenericSearchController {
 
     @Autowired
     private InformationService informationService;
-
-    @Autowired
-    private HoldService holdService;
 
 
     /**
@@ -347,7 +340,7 @@ public class QuickViewController extends GenericSearchController {
 
         form.setAlertObjects(informationService.getAlerts(userId));
         form.setFlagObjects(informationService.getFlags(userId));
-        form.setHolds(this.getHolds(userId));
+        form.setHolds(AccountUtil.getHolds(userId));
 
         List<Memo> memos = informationService.getMemos(userId);
 
@@ -362,36 +355,4 @@ public class QuickViewController extends GenericSearchController {
 
         form.setMemoModels(memos);
     }
-
-    private List<InformationModel> getHolds(String userId) {
-
-        ContextInfo context = new ContextInfo();
-        String effectiveUser = GlobalVariables.getUserSession().getActualPerson().getPrincipalId();
-        context.setAuthenticatedPrincipalId(effectiveUser);
-
-        List<InformationModel> models = new ArrayList<InformationModel>();
-
-        try {
-
-            List<AppliedHoldInfo> holds = holdService.getActiveAppliedHoldsByPerson(userId, context);
-
-            for (AppliedHoldInfo hold : holds) {
-
-                Information info = new Information();
-
-                info.setEffectiveDate(hold.getEffectiveDate());
-                info.setText(hold.getDescr().getPlain());
-
-                InformationModel model = new InformationModel(info);
-                models.add(model);
-            }
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            GlobalVariables.getMessageMap().putError("QuickView", RiceKeyConstants.ERROR_CUSTOM, e.getLocalizedMessage());
-        }
-
-        return models;
-    }
-
 }

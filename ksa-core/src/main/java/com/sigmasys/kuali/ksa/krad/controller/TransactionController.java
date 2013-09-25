@@ -5,18 +5,16 @@ import com.sigmasys.kuali.ksa.krad.form.TransactionForm;
 import com.sigmasys.kuali.ksa.krad.model.AllocationModel;
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
+import com.sigmasys.kuali.ksa.krad.util.AccountUtil;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
 import com.sigmasys.kuali.ksa.service.RefundService;
-import com.sigmasys.kuali.ksa.service.hold.HoldService;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.core.hold.dto.AppliedHoldInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -51,9 +50,6 @@ public class TransactionController extends GenericSearchController {
 
     @Autowired
     private ConfigService configService;
-
-    @Autowired
-    private HoldService holdService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -92,6 +88,7 @@ public class TransactionController extends GenericSearchController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView get(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
+        logger.info("TJB: Transaction Page Start: " + new Timestamp((new Date()).getTime()));
 
         // just for the transactions by person page
         String pageId = request.getParameter("pageId");
@@ -121,8 +118,10 @@ public class TransactionController extends GenericSearchController {
         } else if ("ViewMemos".equals(pageId)) {
             form.setMemos(informationService.getMemos(userId));
         } else if ("ViewHolds".equals(pageId)) {
-            form.setHolds(this.getHolds(userId));
+            form.setHolds(AccountUtil.getHolds(userId));
         }
+
+        logger.info("TJB: Transaction Page End: " + new Timestamp((new Date()).getTime()));
 
         return getUIFModelAndView(form);
     }
@@ -265,7 +264,7 @@ public class TransactionController extends GenericSearchController {
 
         form.setAlertObjects(informationService.getAlerts(userId));
         form.setFlagObjects(informationService.getFlags(userId));
-        form.setHolds(this.getHolds(userId));
+        form.setHolds(AccountUtil.getHolds(userId));
 
         Boolean showInternal = form.getShowInternal();
         Date startDate = form.getStartingDate();
@@ -777,32 +776,6 @@ public class TransactionController extends GenericSearchController {
         return models;
     }
 
-    private List<InformationModel> getHolds(String userId) {
-
-        ContextInfo context = new ContextInfo();
-        String effectiveUser = GlobalVariables.getUserSession().getActualPerson().getPrincipalId();
-        context.setAuthenticatedPrincipalId(effectiveUser);
-
-        List<InformationModel> models = new ArrayList<InformationModel>();
-
-        try {
-            List<AppliedHoldInfo> holds = holdService.getActiveAppliedHoldsByPerson(userId, context);
-
-            for (AppliedHoldInfo hold : holds) {
-                Information info = new Information();
-
-                info.setEffectiveDate(hold.getEffectiveDate());
-                info.setText(hold.getDescr().getPlain());
-                InformationModel model = new InformationModel(info);
-                models.add(model);
-            }
-
-        } catch (Exception e) {
-            GlobalVariables.getMessageMap().putError(TRANSACTION_VIEW, RiceKeyConstants.ERROR_CUSTOM, e.getLocalizedMessage());
-        }
-
-        return models;
-    }
 
 
 }
