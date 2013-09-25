@@ -25,9 +25,9 @@ public class GlBreakdown extends AbstractGlBreakdown {
     private String glOperationCode;
 
     /**
-     * Reference to DEBIT type
+     * Reference to Transaction type
      */
-    private DebitType debitType;
+    private TransactionType transactionType;
 
     /**
      * Reference to general ledger type
@@ -59,12 +59,12 @@ public class GlBreakdown extends AbstractGlBreakdown {
             @JoinColumn(name = "TRANSACTION_TYPE_ID_FK", referencedColumnName = "ID"),
             @JoinColumn(name = "TRANSACTION_TYPE_SUB_CODE_FK", referencedColumnName = "SUB_CODE")
     })
-    public DebitType getDebitType() {
-        return debitType;
+    public TransactionType getTransactionType() {
+        return transactionType;
     }
 
-    public void setDebitType(DebitType debitType) {
-        this.debitType = debitType;
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -84,7 +84,7 @@ public class GlBreakdown extends AbstractGlBreakdown {
 
     protected void setGlOperationCode(String glOperationCode) {
         this.glOperationCode = glOperationCode;
-        glOperation =  EnumUtils.findById(GlOperationType.class, glOperationCode);
+        glOperation = EnumUtils.findById(GlOperationType.class, glOperationCode);
     }
 
     @Transient

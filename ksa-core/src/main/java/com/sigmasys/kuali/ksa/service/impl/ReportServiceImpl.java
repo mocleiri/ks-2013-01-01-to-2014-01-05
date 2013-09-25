@@ -1394,7 +1394,6 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                                boolean showInternalTransactions,
                                boolean runPaymentApplication) {
 
-
         PermissionUtils.checkPermission(Permission.GENERATE_BILL);
 
         Account account = accountService.getFullAccount(accountId);
@@ -1416,6 +1415,10 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
             throw new IllegalArgumentException(errMsg);
         }
 
+        if (runPaymentApplication) {
+            paymentService.paymentApplication(accountId);
+        }
+
         List<Transaction> transactions = transactionService.getTransactions(accountId, startDate, endDate);
 
         if (CollectionUtils.isNotEmpty(transactions)) {
@@ -1429,68 +1432,73 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
             if (endDate == null) {
                 startDate = transactions.get(0).getEffectiveDate();
             }
-
-            final ObjectFactory objectFactory = ObjectFactory.getInstance();
-
-            KsaBill ksaBill = objectFactory.createKsaBill();
-
-            KsaBill.AccountOwner accountOwner = objectFactory.createKsaBillAccountOwner();
-
-            accountOwner.setAccountIdentifier(accountId);
-
-            com.sigmasys.kuali.ksa.model.PersonName defaultPersonName = account.getDefaultPersonName();
-
-            PersonName personName = objectFactory.createPersonName();
-            personName.setDefault(true);
-            personName.setTitle(defaultPersonName.getTitle());
-            personName.setSuffix(defaultPersonName.getSuffix());
-            personName.setFirstName(defaultPersonName.getFirstName());
-            personName.setMiddleName(defaultPersonName.getMiddleName());
-            personName.setLastName(defaultPersonName.getLastName());
-            personName.setKimType(defaultPersonName.getKimNameType());
-
-            accountOwner.setPersonName(personName);
-
-            com.sigmasys.kuali.ksa.model.PostalAddress defaultPostalAddress = account.getDefaultPostalAddress();
-
-            PostalAddress postalAddress = objectFactory.createPostalAddress();
-            postalAddress.setAddressLine1(defaultPostalAddress.getStreetAddress1());
-            postalAddress.setAddressLine2(defaultPostalAddress.getStreetAddress2());
-            postalAddress.setAddressLine3(defaultPostalAddress.getStreetAddress3());
-            postalAddress.setCity(defaultPostalAddress.getCity());
-            postalAddress.setStateCode(defaultPostalAddress.getState());
-            postalAddress.setPostalCode(defaultPostalAddress.getPostalCode());
-            postalAddress.setCountryCode(defaultPostalAddress.getCountry());
-
-            accountOwner.setPostalAddress(postalAddress);
-
-            com.sigmasys.kuali.ksa.model.ElectronicContact defaultContact = account.getDefaultElectronicContact();
-
-            ElectronicContact contact = objectFactory.createElectronicContact();
-
-            ElectronicContact.TelephoneNumber phoneNumber = objectFactory.createElectronicContactTelephoneNumber();
-            phoneNumber.setNumber(defaultContact.getPhoneNumber());
-            phoneNumber.setExtension(defaultContact.getPhoneExtension());
-            phoneNumber.setCountryCode(defaultContact.getPhoneCountry());
-
-            contact.setEmailAddress(defaultContact.getEmailAddress());
-            contact.setTelephoneNumber(phoneNumber);
-
-            accountOwner.setElectronicContact(contact);
-
-            ksaBill.setAccountOwner(accountOwner);
-
-            KsaBill.Cycle billCycle = objectFactory.createKsaBillCycle();
-            billCycle.setBillGenerated(CalendarUtils.toXmlGregorianCalendar(new Date()));
-            billCycle.setBillDate(CalendarUtils.toXmlGregorianCalendar(billDate, true));
-            billCycle.setBillStart(CalendarUtils.toXmlGregorianCalendar(startDate, true));
-            billCycle.setBillEnd(CalendarUtils.toXmlGregorianCalendar(endDate, true));
-
-            ksaBill.setCycle(billCycle);
-
-            // TODO
-
         }
+
+        final ObjectFactory objectFactory = ObjectFactory.getInstance();
+
+        KsaBill ksaBill = objectFactory.createKsaBill();
+
+        KsaBill.AccountOwner accountOwner = objectFactory.createKsaBillAccountOwner();
+
+        accountOwner.setAccountIdentifier(accountId);
+
+        com.sigmasys.kuali.ksa.model.PersonName defaultPersonName = account.getDefaultPersonName();
+
+        PersonName personName = objectFactory.createPersonName();
+        personName.setDefault(true);
+        personName.setTitle(defaultPersonName.getTitle());
+        personName.setSuffix(defaultPersonName.getSuffix());
+        personName.setFirstName(defaultPersonName.getFirstName());
+        personName.setMiddleName(defaultPersonName.getMiddleName());
+        personName.setLastName(defaultPersonName.getLastName());
+        personName.setKimType(defaultPersonName.getKimNameType());
+
+        accountOwner.setPersonName(personName);
+
+        com.sigmasys.kuali.ksa.model.PostalAddress defaultPostalAddress = account.getDefaultPostalAddress();
+
+        PostalAddress postalAddress = objectFactory.createPostalAddress();
+        postalAddress.setAddressLine1(defaultPostalAddress.getStreetAddress1());
+        postalAddress.setAddressLine2(defaultPostalAddress.getStreetAddress2());
+        postalAddress.setAddressLine3(defaultPostalAddress.getStreetAddress3());
+        postalAddress.setCity(defaultPostalAddress.getCity());
+        postalAddress.setStateCode(defaultPostalAddress.getState());
+        postalAddress.setPostalCode(defaultPostalAddress.getPostalCode());
+        postalAddress.setCountryCode(defaultPostalAddress.getCountry());
+
+        accountOwner.setPostalAddress(postalAddress);
+
+        com.sigmasys.kuali.ksa.model.ElectronicContact defaultContact = account.getDefaultElectronicContact();
+
+        ElectronicContact contact = objectFactory.createElectronicContact();
+
+        ElectronicContact.TelephoneNumber phoneNumber = objectFactory.createElectronicContactTelephoneNumber();
+        phoneNumber.setNumber(defaultContact.getPhoneNumber());
+        phoneNumber.setExtension(defaultContact.getPhoneExtension());
+        phoneNumber.setCountryCode(defaultContact.getPhoneCountry());
+
+        contact.setEmailAddress(defaultContact.getEmailAddress());
+        contact.setTelephoneNumber(phoneNumber);
+
+        accountOwner.setElectronicContact(contact);
+
+        ksaBill.setAccountOwner(accountOwner);
+
+        KsaBill.Cycle billCycle = objectFactory.createKsaBillCycle();
+        billCycle.setBillGenerated(CalendarUtils.toXmlGregorianCalendar(new Date()));
+        billCycle.setBillDate(CalendarUtils.toXmlGregorianCalendar(billDate, true));
+        billCycle.setBillStart(CalendarUtils.toXmlGregorianCalendar(startDate, true));
+        billCycle.setBillEnd(CalendarUtils.toXmlGregorianCalendar(endDate, true));
+
+        ksaBill.setCycle(billCycle);
+
+        ChargeableAccount chargeableAccount = accountService.ageDebt(accountId, billDate, false);
+
+        KsaBill.Balances balances = objectFactory.createKsaBillBalances();
+        KsaBill.Balances.WithDeferments withDeferments = objectFactory.createKsaBillBalancesWithDeferments();
+
+
+        // TODO
 
 
         // TODO:

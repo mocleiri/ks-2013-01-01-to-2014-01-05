@@ -37,8 +37,8 @@ public class TransactionTypeController extends GenericSearchController {
 
     private static final Log logger = LogFactory.getLog(TransactionTypeController.class);
 
-    private static final Integer MIN_PRIORITY = new Integer(1);
-    private static final Integer MAX_PRIORITY = new Integer(1000);
+    private static final Integer MIN_PRIORITY = 1;
+    private static final Integer MAX_PRIORITY = 1000;
 
     private static final String TAG_GROUP_FIELD = "tagGroup";
 
@@ -67,9 +67,9 @@ public class TransactionTypeController extends GenericSearchController {
     }
 
     /**
-     * @param form
-     * @param request
-     * @return
+     * @param form    TransactionTypeForm
+     * @param request HttpServletRequest
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
     public ModelAndView get(@ModelAttribute("KualiForm") TransactionTypeForm form, HttpServletRequest request) {
@@ -118,12 +118,12 @@ public class TransactionTypeController extends GenericSearchController {
                 subCode = "1";
             }
 
-            TransactionTypeId ttId = new TransactionTypeId(entityId, Integer.parseInt(subCode));
+            TransactionTypeId transactionTypeId = new TransactionTypeId(entityId, Integer.parseInt(subCode));
 
-            TransactionType tt = transactionService.getTransactionType(ttId);
-            logger.info("Retrieved Transaction Type: " + tt.getDescription());
+            TransactionType transactionType = transactionService.getTransactionType(transactionTypeId);
+            logger.info("Retrieved Transaction Type: " + transactionType.getDescription());
 
-            form.setTransactionType(tt);
+            form.setTransactionType(transactionType);
         }
 
         return getUIFModelAndView(form);
@@ -131,14 +131,14 @@ public class TransactionTypeController extends GenericSearchController {
 
 
     /**
-     * @param form
-     * @return
+     * @param form TransactionTypeForm
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=create")
     public ModelAndView create(@ModelAttribute("KualiForm") TransactionTypeForm form, HttpServletRequest request) {
 
         form.reset();
-        form.setType("C");
+        form.setType(TransactionType.CREDIT_TYPE);
 
         String modelToCopy = request.getParameter("model");
 
@@ -160,21 +160,24 @@ public class TransactionTypeController extends GenericSearchController {
     }
 
     /**
-     * @param form
-     * @return
+     * @param form TransactionTypeForm
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insert")
     public ModelAndView insert(@ModelAttribute("KualiForm") TransactionTypeForm form) {
 
         String type = form.getType();
         String code = form.getCode();
-        // If the subcode is anything other than -1 then this is an edit.
+
+        // If the sub-code is anything other than -1 then this is an edit.
         Integer subCode = form.getSubCode();
         Date startDate = form.getStartDate();
         Integer priority = form.getPriority();
+
         if (priority == null) {
             priority = 1;
         }
+
         String description = form.getDescription();
 
         List<GlBreakdown> breakdowns = new ArrayList<GlBreakdown>();
@@ -192,32 +195,32 @@ public class TransactionTypeController extends GenericSearchController {
 
         boolean typeExists = transactionService.transactionTypeExists(code);
 
-        TransactionType tt;
+        TransactionType transactionType;
 
         if (subCode == null || subCode == -1) {
-            if ("C".equalsIgnoreCase(type)) {
+            if (TransactionType.CREDIT_TYPE.equalsIgnoreCase(type)) {
                 if (!typeExists) {
-                    tt = transactionService.createCreditType(code, "", startDate, priority, description);
+                    transactionType = transactionService.createCreditType(code, "", startDate, priority, description);
                 } else {
-                    tt = transactionService.createCreditSubType(code, startDate);
-                    if(priority != tt.getPriority()) {
-                        tt.setPriority(priority);
+                    transactionType = transactionService.createCreditSubType(code, startDate);
+                    if (!priority.equals(transactionType.getPriority())) {
+                        transactionType.setPriority(priority);
                     }
-                    if(!description.equals(tt.getDescription())){
-                        tt.setDescription(description);
+                    if (!description.equals(transactionType.getDescription())) {
+                        transactionType.setDescription(description);
                     }
                 }
 
-            } else if ("D".equalsIgnoreCase(type)) {
+            } else if (TransactionType.DEBIT_TYPE.equalsIgnoreCase(type)) {
                 if (!typeExists) {
-                    tt = transactionService.createDebitType(code, "", startDate, priority, description);
+                    transactionType = transactionService.createDebitType(code, "", startDate, priority, description);
                 } else {
-                    tt = transactionService.createDebitSubType(code, startDate);
-                    if(priority != tt.getPriority()) {
-                        tt.setPriority(priority);
+                    transactionType = transactionService.createDebitSubType(code, startDate);
+                    if (!priority.equals(transactionType.getPriority())) {
+                        transactionType.setPriority(priority);
                     }
-                    if(!description.equals(tt.getDescription())){
-                        tt.setDescription(description);
+                    if (!description.equals(transactionType.getDescription())) {
+                        transactionType.setDescription(description);
                     }
                 }
 
@@ -229,37 +232,38 @@ public class TransactionTypeController extends GenericSearchController {
             }
         } else {
             TransactionTypeId ttId = new TransactionTypeId(code, subCode);
-            tt = transactionService.getTransactionType(ttId);
+            transactionType = transactionService.getTransactionType(ttId);
 
             // If start date changed, make sure there's an audit message
-            if(tt.getStartDate() != null && (!form.getStartDate().equals(tt.getStartDate()))){
+            if (transactionType.getStartDate() != null && (!form.getStartDate().equals(transactionType.getStartDate()))) {
                 String reason = form.getStartDateAuditReason();
-                if(reason == null || "".equals(reason)){
+                if (reason == null || "".equals(reason)) {
                     String errMsg = "When changing the start date of an existing transaction type, a reason must be provided";
                     logger.error(errMsg);
                     GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, errMsg);
                     return getUIFModelAndView(form);
                 }
 
-                this.persistAudit(form, tt);
+                this.persistAudit(form, transactionType);
             }
 
 
-            tt.setStartDate(startDate);
-            tt.setPriority(priority);
-            tt.setDescription(description);
+            transactionType.setStartDate(startDate);
+            transactionType.setPriority(priority);
+            transactionType.setDescription(description);
         }
 
-        // If there are errors further on and they want to resubmit things, make sure they're modifying the same tt, not creating a new subcode.
-        form.setSubCode(tt.getId().getSubCode());
+        // If there are errors further on and they want to resubmit things, make sure they're modifying the same transactionType, not creating a new subcode.
+        form.setSubCode(transactionType.getId().getSubCode());
 
 
         List<Tag> tags = form.getTags();
-        boolean savetags = this.persistTags(tags);
-        if(!savetags) {
+
+        if (!persistTags(tags)) {
             return getUIFModelAndView(form);
         }
-        tt.setTags(tags);
+
+        transactionType.setTags(tags);
 
         Long rollupId;
         try {
@@ -270,32 +274,41 @@ public class TransactionTypeController extends GenericSearchController {
 
         if (rollupId != null) {
             Rollup r = auditableEntityService.getAuditableEntity(rollupId, Rollup.class);
-            tt.setRollup(r);
+            transactionType.setRollup(r);
         }
 
-        TransactionTypeId ttId = transactionService.persistTransactionType(tt);
-        if (tt instanceof DebitType) {
-            ((DebitType)tt).setCancellationRule(form.getCancellationRule());
-            transactionService.persistTransactionType(tt);
+        TransactionTypeId transactionTypeId = transactionService.persistTransactionType(transactionType);
+
+        if (transactionType instanceof DebitType) {
+
+            ((DebitType) transactionType).setCancellationRule(form.getCancellationRule());
+
+            transactionService.persistTransactionType(transactionType);
 
             for (GlBreakdown breakdown : breakdowns) {
-                breakdown.setDebitType((DebitType) tt);
+                breakdown.setTransactionType(transactionType);
             }
-            transactionService.createGlBreakdowns(defaultGlType.getId(), ttId, breakdowns);
+
+            transactionService.createGlBreakdowns(defaultGlType.getId(), transactionTypeId, breakdowns);
+
         } else {
+
+            CreditType creditType = (CreditType) transactionType;
+
             String unAllocatedGlOperation = form.getUnallocatedGLOperation();
-            GlOperationType unallocatedGlOperationType = (GlOperationType.CREDIT.getId().equals(unAllocatedGlOperation)) ?
-                    GlOperationType.CREDIT : GlOperationType.DEBIT;
-            ((CreditType) tt).setUnallocatedGlOperation(unallocatedGlOperationType);
-            String unallocatedGLAccount = form.getUnallocatedGLAccount();
-            ((CreditType) tt).setUnallocatedGlAccount(unallocatedGLAccount);
-            ((CreditType) tt).setClearPeriod(form.getClearPeriod());
-            ((CreditType) tt).setRefundable(form.getRefundable());
-            ((CreditType) tt).setRefundRule(form.getRefundRule());
-            ((CreditType) tt).setAuthorizationText(form.getAuthorizationText());
 
+            GlOperationType unallocatedGlOperationType =
+                    (GlOperationType.CREDIT.getId().equals(unAllocatedGlOperation)) ?
+                            GlOperationType.CREDIT : GlOperationType.DEBIT;
 
-            transactionService.persistTransactionType(tt);
+            creditType.setUnallocatedGlOperation(unallocatedGlOperationType);
+            creditType.setUnallocatedGlAccount(form.getUnallocatedGLAccount());
+            creditType.setClearPeriod(form.getClearPeriod());
+            creditType.setRefundable(form.getRefundable());
+            creditType.setRefundRule(form.getRefundRule());
+            creditType.setAuthorizationText(form.getAuthorizationText());
+
+            transactionService.persistTransactionType(transactionType);
         }
 
         GlobalVariables.getMessageMap().putInfo("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, "Transaction Type saved");
@@ -304,14 +317,14 @@ public class TransactionTypeController extends GenericSearchController {
     }
 
     /**
-     * @param form
-     * @return
+     * @param form TransactionTypeForm
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=edit")
     public ModelAndView edit(@ModelAttribute("KualiForm") TransactionTypeForm form, HttpServletRequest request) {
 
         form.reset();
-        form.setType("C");
+        form.setType(TransactionType.CREDIT_TYPE);
 
         String modelToCopy = request.getParameter("model");
         Integer subCode = new Integer(request.getParameter("subCode"));
@@ -370,11 +383,12 @@ public class TransactionTypeController extends GenericSearchController {
     }
 
     /**
-     * @param form
-     * @return
+     * @param form TransactionTypeForm
+     * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=priority")
     public ModelAndView priority(@ModelAttribute("KualiForm") TransactionTypeForm form, HttpServletRequest request) {
+
         String modelToCopy = request.getParameter("actionParameters[model]");
         //Integer subCode = new Integer(request.getParameter("actionParameters[subCode]"));
 
@@ -384,20 +398,20 @@ public class TransactionTypeController extends GenericSearchController {
 
         boolean error = false;
 
-        if("min".equalsIgnoreCase(priorityChange)) {
+        if ("min".equalsIgnoreCase(priorityChange)) {
             tt.setPriority(MIN_PRIORITY);
-        } else if("max".equalsIgnoreCase(priorityChange)) {
+        } else if ("max".equalsIgnoreCase(priorityChange)) {
             tt.setPriority(MAX_PRIORITY);
-        } else if("plus1".equalsIgnoreCase(priorityChange)) {
-            if(tt.getPriority().equals(MAX_PRIORITY)) {
+        } else if ("plus1".equalsIgnoreCase(priorityChange)) {
+            if (tt.getPriority().equals(MAX_PRIORITY)) {
                 String message = "Transaction type '" + tt.getId().getId() + "' - " + tt.getDescription() + " is already at the highest priority";
                 GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, message);
                 error = true;
             } else {
                 tt.setPriority(tt.getPriority() + 1);
             }
-        } else if("minus1".equalsIgnoreCase(priorityChange)) {
-            if(tt.getPriority().equals(MIN_PRIORITY)) {
+        } else if ("minus1".equalsIgnoreCase(priorityChange)) {
+            if (tt.getPriority().equals(MIN_PRIORITY)) {
                 String message = "Transaction type '" + tt.getId().getId() + "' - " + tt.getDescription() + " is already at the lowest priority";
                 GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, message);
                 error = true;
@@ -406,17 +420,17 @@ public class TransactionTypeController extends GenericSearchController {
             }
         } else {
             // Try to parse the priorityChange and use that value
-            try{
+            try {
                 Integer value = Integer.parseInt(priorityChange);
                 tt.setPriority(value);
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 String message = "Invalid priority value";
                 GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, message);
                 error = true;
             }
         }
 
-        if(! error) {
+        if (!error) {
             transactionService.persistTransactionType(tt);
             Map<String, TransactionTypeGroupModel> groups = form.getTransactionTypeGroups();
             TransactionTypeGroupModel model = groups.get(modelToCopy);
@@ -446,7 +460,8 @@ public class TransactionTypeController extends GenericSearchController {
     /**
      * Loop through all tags in the collection and make sure that they're real tags
      *
-     * @param tags
+     * @param tags list of tags
+     * @return true or false
      */
     private boolean persistTags(List<Tag> tags) {
         //If the tag already has an id then it has been previously persisted.
@@ -454,13 +469,13 @@ public class TransactionTypeController extends GenericSearchController {
         for (Tag tag : tags) {
             Long id = tag.getId();
             String name = tag.getName();
-            if(id == null){
+            if (id == null) {
                 List<Tag> searchTags = auditableEntityService.getAuditableEntitiesByNamePattern(name, Tag.class);
-                if(searchTags.size() == 0) {
+                if (searchTags.size() == 0) {
                     String errorMessage = "'" + name + "' is not a valid tag";
                     GlobalVariables.getMessageMap().putError(TAG_GROUP_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
                     return false;
-                } else if(searchTags.size() > 1) {
+                } else if (searchTags.size() > 1) {
                     String errorMessage = "'" + name + "' matches multiple tags, please select one tag at a time to add";
                     GlobalVariables.getMessageMap().putError(TAG_GROUP_FIELD, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
                     return false;
@@ -472,25 +487,25 @@ public class TransactionTypeController extends GenericSearchController {
         return true;
     }
 
-    private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType ttSource) {
+    private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType transactionType) {
 
-        form.setType((ttSource instanceof CreditType ? "C" : "D"));
+        form.setType((transactionType instanceof CreditType ? TransactionType.CREDIT_TYPE : TransactionType.DEBIT_TYPE));
 
-        form.setCode(ttSource.getId().getId());
+        form.setCode(transactionType.getId().getId());
         form.setStartDate(new Date());
-        form.setDescription(ttSource.getDescription());
+        form.setDescription(transactionType.getDescription());
 
-        if (ttSource.getRollup() != null) {
-            form.setRollupId(ttSource.getRollup().getId().toString());
+        if (transactionType.getRollup() != null) {
+            form.setRollupId(transactionType.getRollup().getId().toString());
         }
 
-        form.setTags(new ArrayList<Tag>(ttSource.getTags()));
+        form.setTags(new ArrayList<Tag>(transactionType.getTags()));
 
-        if (ttSource instanceof DebitType) {
+        if (transactionType instanceof DebitType) {
 
-            form.setCancellationRule(((DebitType)ttSource).getCancellationRule());
+            form.setCancellationRule(((DebitType) transactionType).getCancellationRule());
 
-            List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns(ttSource.getId());
+            List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns(transactionType.getId());
 
             List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>(sourceBreakdowns.size());
 
@@ -504,8 +519,9 @@ public class TransactionTypeController extends GenericSearchController {
 
             form.setGlBreakdowns(breakdowns);
 
-        } else if(ttSource instanceof CreditType){
-            CreditType creditType = (CreditType)ttSource;
+        } else if (transactionType instanceof CreditType) {
+
+            CreditType creditType = (CreditType) transactionType;
 
             form.setGlBreakdowns(Collections.<GlBreakdownModel>emptyList());
 
@@ -515,7 +531,7 @@ public class TransactionTypeController extends GenericSearchController {
             form.setAuthorizationText(creditType.getAuthorizationText());
             form.setUnallocatedGLAccount(creditType.getUnallocatedGlAccount());
             GlOperationType operation = creditType.getUnallocatedGlOperation();
-            if(operation != null){
+            if (operation != null) {
                 form.setUnallocatedGLOperation(operation.getId());
             }
         }
@@ -525,7 +541,8 @@ public class TransactionTypeController extends GenericSearchController {
 
         boolean errors = false;
         String type = form.getType();
-        if (!"D".equals(type)) {
+
+        if (TransactionType.DEBIT_TYPE.equals(type)) {
             // Breakdowns only apply to Debit types
             return errors;
         }
@@ -596,7 +613,7 @@ public class TransactionTypeController extends GenericSearchController {
         return errors;
     }
 
-    private void persistAudit(TransactionTypeForm form, TransactionType transactionType){
+    private void persistAudit(TransactionTypeForm form, TransactionType transactionType) {
         ActivityType activityType = activityService.getActivityType("LOGMEMO");
 
         Activity activity = new Activity();
@@ -604,7 +621,6 @@ public class TransactionTypeController extends GenericSearchController {
         activity.setLogDetail(form.getStartDateAuditReason());
         activity.setEntityType("TransactionType");
         activity.setEntityId(transactionType.getId().toString());
-
 
 
         activityService.persistActivity(activity);

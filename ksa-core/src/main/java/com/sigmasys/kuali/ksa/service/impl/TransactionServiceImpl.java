@@ -1088,8 +1088,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         TransactionType transactionType1 = transaction1.getTransactionType();
         TransactionType transactionType2 = transaction2.getTransactionType();
 
-        BigDecimal transactionAmount1 =  transaction1.getAmount();
-        BigDecimal transactionAmount2 =  transaction2.getAmount();
+        BigDecimal transactionAmount1 = transaction1.getAmount();
+        BigDecimal transactionAmount2 = transaction2.getAmount();
 
         boolean canAllocate = false;
 
@@ -1630,10 +1630,16 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         Query query = em.createQuery("select g from " +
                 (transaction.isGlOverridden() ? "GlBreakdownOverride" : "GlBreakdown") +
                 " g where " +
-                (transaction.isGlOverridden() ? "g.transaction.id" : "g.generalLedgerType.id") +
-                " = :id order by g.breakdown desc");
+                (transaction.isGlOverridden() ?
+                        "g.transaction.id = :id" :
+                        "g.generalLedgerType.id = :id and g.transactionType.id = :transactionTypeId") +
+                " order by g.breakdown desc");
 
         query.setParameter("id", transaction.isGlOverridden() ? transaction.getId() : glType.getId());
+
+        if (!transaction.isGlOverridden()) {
+            query.setParameter("transactionTypeId", transaction.getTransactionType().getId());
+        }
 
         List<AbstractGlBreakdown> breakdowns = query.getResultList();
 
@@ -1670,16 +1676,16 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new InvalidGeneralLedgerTypeException(errMsg);
         }
 
-        TransactionType debitType = getTransactionType(transactionTypeId);
-        if (!(debitType instanceof DebitType)) {
-            String errMsg = "Transaction Type with ID = " + glTypeId + " must be DebitType";
+        TransactionType transactionType = getTransactionType(transactionTypeId);
+        if (transactionType == null) {
+            String errMsg = "Transaction Type with ID = " + glTypeId + " does not exist";
             logger.error(errMsg);
             throw new InvalidTransactionTypeException(errMsg);
         }
 
         // Removing all existing GL breakdowns for the same transaction type
-        Query query = em.createQuery("delete from GlBreakdown where debitType.id = :debitTypeId");
-        query.setParameter("debitTypeId", transactionTypeId);
+        Query query = em.createQuery("delete from GlBreakdown where transactionType.id = :transactionTypeId");
+        query.setParameter("transactionTypeId", transactionTypeId);
         query.executeUpdate();
 
         boolean hasZeroPercent = false;
@@ -1707,7 +1713,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             totalPercentage = totalPercentage.add(breakdown.getBreakdown());
 
-            breakdown.setDebitType((DebitType) debitType);
+            breakdown.setTransactionType(transactionType);
             breakdown.setGeneralLedgerType(glType);
 
             Long breakdownId = persistEntity(breakdown);
@@ -1730,10 +1736,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *
      * @param transactionId  transaction ID
      * @param forceEffective indicates whether it has to be forced
+     * @return true is the transaction has been made effective, false - otherwise
      */
     @Override
     @Transactional(readOnly = false)
-    public void makeEffective(Long transactionId, boolean forceEffective) {
+    public boolean makeEffective(Long transactionId, boolean forceEffective) {
 
         PermissionUtils.checkPermission(Permission.CREATE_GL_TRANSACTION);
 
@@ -1746,20 +1753,21 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         if (transaction.isGlEntryGenerated() ||
                 (new Date().before(transaction.getEffectiveDate()) && !forceEffective)) {
-            logger.info("Cannot make transaction effective, ID = " + transaction);
-            return;
+            logger.warn("Cannot make transaction effective, ID = " + transaction);
+            return false;
         }
 
         if (transaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT) {
             logger.info("Transaction is a deferment, ID = " + transaction);
             transaction.setGlEntryGenerated(true);
-            return;
+            return true;
         }
 
         GeneralLedgerType glType = transaction.getGeneralLedgerType();
 
         String glAccount = null;
         GlOperationType glOperationType = null;
+
         if (transaction.getTransactionType() instanceof CreditType) {
             CreditType creditType = (CreditType) transaction.getTransactionType();
             glAccount = creditType.getUnallocatedGlAccount();
@@ -1769,13 +1777,16 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             glOperationType = glType.getGlOperationOnCharge();
         }
 
-        // TODO: This logic needs to be revised, discuss it with Paul
-        // Using the default GL type
-        if (glAccount == null || glOperationType == null) {
-            logger.info("Default GL type is being used...");
-            glType = glService.getDefaultGeneralLedgerType();
-            glAccount = glType.getGlAccountId();
-            glOperationType = glType.getGlOperationOnCharge();
+        if (glAccount == null) {
+            String errMsg = "No GL Account found for Transaction [ID=" + transactionId + "]";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        if (glOperationType == null) {
+            String errMsg = "No GL Operation Type found for Transaction [ID=" + transactionId + "]";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
         }
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_EXPORT);
@@ -1792,9 +1803,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         BigDecimal initialAmount = transaction.getAmount();
         BigDecimal remainingAmount = initialAmount;
 
-        List<AbstractGlBreakdown> glBreakDowns = getGlBreakdowns(transaction);
-        if (CollectionUtils.isNotEmpty(glBreakDowns)) {
-            for (AbstractGlBreakdown glBreakdown : glBreakDowns) {
+        List<AbstractGlBreakdown> glBreakdowns = getGlBreakdowns(transaction);
+
+        if (CollectionUtils.isNotEmpty(glBreakdowns)) {
+
+            for (AbstractGlBreakdown glBreakdown : glBreakdowns) {
 
                 BigDecimal percentage = glBreakdown.getBreakdown();
                 if (percentage == null) {
@@ -1820,11 +1833,16 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                     break;
                 }
             }
+
+            transaction.setGlEntryGenerated(true);
+
+            return true;
+
+        } else {
+            logger.warn("No GL Breakdowns found for Transaction [ID=" + transactionId + "]");
         }
 
-        transaction.setGlEntryGenerated(true);
-
-        //persistTransaction(transaction);
+        return false;
     }
 
     /**
@@ -3468,21 +3486,22 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     /**
      * Retrieve a list of all GL Breakdowns for a given debit type ID
      *
-     * @param debitTypeId Debit Type ID
-     * @return a list of GlBreakdown instances
+     * @param transactionTypeId TransactionType ID
+     * @return list of GlBreakdown instances
      */
     @Override
-    public List<GlBreakdown> getGlBreakdowns(TransactionTypeId debitTypeId) {
+    public List<GlBreakdown> getGlBreakdowns(TransactionTypeId transactionTypeId) {
 
         PermissionUtils.checkPermission(Permission.READ_GL_BREAKDOWN);
 
         Query query = em.createQuery("select g from GlBreakdown g " +
-                " left outer join fetch g.debitType dt " +
+                " left outer join fetch g.transactionType tt " +
                 " left outer join fetch g.generalLedgerType glt " +
-                " where dt.id =  :debitTypeId " +
+                " where tt.id =  :transactionTypeId " +
                 " order by g.breakdown desc");
 
-        query.setParameter("debitTypeId", debitTypeId);
+        query.setParameter("transactionTypeId", transactionTypeId);
+
         return query.getResultList();
     }
 

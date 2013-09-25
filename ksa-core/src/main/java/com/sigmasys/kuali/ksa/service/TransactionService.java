@@ -653,8 +653,9 @@ public interface TransactionService {
      *
      * @param transactionId  transaction ID
      * @param forceEffective indicates whether it has to be forced
+     * @return true is the transaction has been made effective, false - otherwise
      */
-    void makeEffective(Long transactionId, boolean forceEffective);
+    boolean makeEffective(Long transactionId, boolean forceEffective);
 
 
     /**
@@ -1039,10 +1040,10 @@ public interface TransactionService {
     /**
      * Retrieve a list of all GL Breakdowns for a given debit type ID
      *
-     * @param debitTypeId Debit Type ID
-     * @return a list of GlBreakdown instances
+     * @param transactionTypeId TransactionType ID
+     * @return list of GlBreakdown instances
      */
-    List<GlBreakdown> getGlBreakdowns(TransactionTypeId debitTypeId);
+    List<GlBreakdown> getGlBreakdowns(TransactionTypeId transactionTypeId);
 
 
     /**
