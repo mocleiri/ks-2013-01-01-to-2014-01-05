@@ -7,6 +7,7 @@ Feature: WC.Schedule of Classes
   Background:
     Given I am logged in as a Schedule Coordinator
     And I am using the schedule of classes page
+    Then the nearest valid future Term is chosen in the Term select list
 
   Scenario: Successfully display schedule of classes by subject code and display individual course details
     When I search for course offerings by course by entering a subject code
@@ -42,6 +43,8 @@ Feature: WC.Schedule of Classes
   Scenario: Confirm requisites' natural language for a particular course is displayed correctly
     When I search for course offerings by course by entering a course offering code to view the course offering requisites
     Then the course offering requisites should be displayed stating "Student Eligibility & Prerequisite.*Two lower-level English courses.*Or permission of ARHU-English.*Antirequisite.*any courses from ENGL403 or ENGL404"
+
+
 
 # Scenario: Verify that an appropriate message is displayed if no data is returned by the search
 #  Scenario: Verify that an appropriate message is displayed if no criteria is entered for search by Course

@@ -1,5 +1,15 @@
 Then /^I am using the schedule of classes page$/ do
-  go_to_display_schedule_of_classes
+  @schedule_of_classes_landing_page = go_to_display_schedule_of_classes
+end
+
+Then /^the nearest valid future Term is chosen in the Term select list$/ do
+  #
+  #  The term selector should default to the "nearest valid future term" where "future" is derived from comparing the
+  #  start date of the term to "now". So, this test will break when "now" is past the start date of Winter 2015. Also,
+  #  the test susceptible to changes in the term data. However, it didn't seem quite worth while to try and reproduce
+  #  the algorithm to prevent the breakage.
+  #
+  @schedule_of_classes_landing_page.term.value.should match /kuali\.atp\.2015Winter/
 end
 
 When /^I search for course offerings by course by entering a subject code$/ do
@@ -16,8 +26,6 @@ When /^I search for course offerings by course by entering a subject code: (.*)$
   @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => subject_code
   @schedule_of_classes.display
 end
-
-
 
 Then /^a list of course offerings with that subject code is displayed$/ do
   @schedule_of_classes.check_results_for_subject_code_match(@schedule_of_classes.course_search_parm)
