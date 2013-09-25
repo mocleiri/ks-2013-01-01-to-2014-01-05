@@ -329,40 +329,6 @@ Given /^a new academic term has course and activity offerings in canceled and su
   @activity_offering_suspended.suspend
 end
 
-#Given /^a new academic term has course and activity offerings in canceled and suspended status$/ do
-#  @calendar = create AcademicCalendar #, :year => "2235", :name => "fSZtG62zfU"
-#  @term = make AcademicTerm, :term_year => @calendar.year
-#  @calendar.add_term(@term)
-#
-#  @manage_soc = make ManageSoc, :term_code => @term.term_code
-#  @manage_soc.set_up_soc
-#  @manage_soc.perform_manual_soc_state_change
-#
-#  delivery_format_list = []
-#  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture")
-#
-#  @course_offering_canceled = create CourseOffering, :term=> @term.term_code,
-#                                     :course => "ENGL211",
-#                                     :delivery_format_list => delivery_format_list
-#
-#  @activity_offering_canceled = create ActivityOffering, :parent_course_offering => @course_offering_canceled,
-#                                       :format => "Lecture Only", :activity_type => "Lecture"
-#  @activity_offering_canceled.save
-#  @activity_offering_canceled.cancel
-#
-#  @course_offering_suspended = create CourseOffering, :term=> @term.term_code,
-#                                      :course => "ENGL211",
-#                                      :delivery_format_list => delivery_format_list
-#
-#  @activity_offering_suspended = create ActivityOffering, :parent_course_offering => @course_offering_suspended,
-#                                        :format => "Lecture Only", :activity_type => "Lecture"
-#
-#  @activity_offering_suspended.save
-#  @activity_offering_suspended.approve
-#  @manage_soc.advance_soc_from_open_to_final_edits
-#  @activity_offering_suspended.suspend
-#end
-
 Given /^I manage a course offering with suspended activity offering present in a locked SOC state$/ do
   @course_with_suspend_ao13 = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201800", :course => "CHEM612")
   @course_with_suspend_ao13.manage
