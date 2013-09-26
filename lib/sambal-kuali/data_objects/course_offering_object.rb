@@ -120,7 +120,8 @@ class CourseOffering
         :joint_co_to_create => nil,
         :cross_listed => false,
         :cross_listed_codes => [],
-        :do_verification => false
+        :do_verification => false,
+        :final_exam_driver => "Final Exam Per Course Offering"
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -158,7 +159,14 @@ class CourseOffering
         end
         page.cross_listed_co_check_box.set if @cross_listed
 
-        page.final_exam_driver_select("Final Exam Per Activity Offering")
+        if @final_exam_type == "STANDARD"
+          page.final_exam_option_standard
+          page.final_exam_driver_select(@final_exam_driver)
+        elsif @final_exam_type == "ALTERNATE"
+          page.final_exam_option_alternate
+        else
+          page.final_exam_option_none
+        end
         #need to specify which row dfl is being created on, which is 1 greater than the current iteration
         @delivery_format_list.each_with_index do |dfl, index|
           dfl.create(index + 1)

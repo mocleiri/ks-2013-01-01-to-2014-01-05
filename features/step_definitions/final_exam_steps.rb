@@ -46,20 +46,7 @@ When /^I create a Course Offering from catalog with a final exam period$/ do
 end
 
 When /^I create and then edit a Course Offering from catalog with an alternate final exam period$/ do
-  @course_offering = make CourseOffering, :term => "201301", :course => "PHYS603"
-
-  @course_offering.start_create_by_search
-  on CreateCourseOffering do  |page|
-    page.continue
-  end
-
-  on CreateCOFromCatalog do |page|
-    @course_offering.suffix = random_alphanums(5).upcase if @course_offering.suffix == ""
-    page.suffix.set @course_offering.suffix
-    @course_offering.course = "#{@course_offering.course}#{@course_offering.suffix}"
-    page.final_exam_option_alternate
-    page.create_offering
-  end
+  @course_offering = create CourseOffering, :term => "201301", :course => "PHYS603", :final_exam_type => "ALTERNATE"
 
   on ManageCourseOfferings do |page|
     page.edit_course_offering
@@ -139,7 +126,10 @@ end
 Then /^the Final Exam Driver Activity value should change each time I choose another type of Final Exam$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_standard
-    page.final_exam_driver_value.should == ""
+    page.final_exam_driver_select "Final Exam Per Course Offering"
+    page.final_exam_driver_value.should == "Course Offering"
+    page.final_exam_driver_select "Final Exam Per Activity Offering"
+    page.final_exam_driver_value.should == "Activity Offering"
     page.final_exam_option_alternate
     page.final_exam_driver_value.should == "Alternate exam for this offering"
     page.final_exam_option_none
