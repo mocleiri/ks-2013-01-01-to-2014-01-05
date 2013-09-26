@@ -5,7 +5,7 @@ import com.sigmasys.kuali.ksa.krad.form.TransactionForm;
 import com.sigmasys.kuali.ksa.krad.model.AllocationModel;
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
-import com.sigmasys.kuali.ksa.krad.util.AccountUtil;
+import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
@@ -118,7 +118,7 @@ public class TransactionController extends GenericSearchController {
         } else if ("ViewMemos".equals(pageId)) {
             form.setMemos(informationService.getMemos(userId));
         } else if ("ViewHolds".equals(pageId)) {
-            form.setHolds(AccountUtil.getHolds(userId));
+            form.setHolds(AccountUtils.getHolds(userId));
         }
 
         logger.info("TJB: Transaction Page End: " + new Timestamp((new Date()).getTime()));
@@ -264,7 +264,7 @@ public class TransactionController extends GenericSearchController {
 
         form.setAlertObjects(informationService.getAlerts(userId));
         form.setFlagObjects(informationService.getFlags(userId));
-        form.setHolds(AccountUtil.getHolds(userId));
+        form.setHolds(AccountUtils.getHolds(userId));
 
         Boolean showInternal = form.getShowInternal();
         Date startDate = form.getStartingDate();

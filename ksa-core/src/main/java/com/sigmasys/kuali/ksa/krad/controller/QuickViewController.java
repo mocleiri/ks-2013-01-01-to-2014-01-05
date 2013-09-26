@@ -1,7 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.QuickViewForm;
-import com.sigmasys.kuali.ksa.krad.util.AccountUtil;
+import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
@@ -340,7 +340,7 @@ public class QuickViewController extends GenericSearchController {
 
         form.setAlertObjects(informationService.getAlerts(userId));
         form.setFlagObjects(informationService.getFlags(userId));
-        form.setHolds(AccountUtil.getHolds(userId));
+        form.setHolds(AccountUtils.getHolds(userId));
 
         List<Memo> memos = informationService.getMemos(userId);
 
