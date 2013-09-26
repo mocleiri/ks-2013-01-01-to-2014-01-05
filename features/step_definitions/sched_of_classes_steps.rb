@@ -159,8 +159,11 @@ Then /^the activity A of the course offering "(.*?)" has a colocated icon$/ do |
       raise "activities table not found"
     else
       page.details_table.rows[1].cells[DisplayScheduleOfClasses::AO_CODE_COLUMN].image(src: /colocate_icon/).present?.should be_true
+      before_popup_style = @browser.divs(:class=>"jquerybubblepopup jquerybubblepopup-black" )[0].style
+      (before_popup_style == "").should == true
       page.details_table.rows[1].cells[DisplayScheduleOfClasses::AO_CODE_COLUMN].image(src: /colocate_icon/).hover
-      sleep 1
+      popup_style = @browser.divs(:class=>"jquerybubblepopup jquerybubblepopup-black" )[0].style
+      (popup_style.include? "display: block").should == true
     end
   end
 end
@@ -190,8 +193,11 @@ Then /^the course offering "(.*?)" has cross listed icon$/ do |arg1|
   @schedule_of_classes.display
   on DisplayScheduleOfClasses do |page|
     page.target_course_row(arg1)[DisplayScheduleOfClasses::COURSE_CODE_COLUMN].image(src: /cross-listed/).present?.should be_true
+    before_popup_style = @browser.divs(:class=>"jquerybubblepopup jquerybubblepopup-black" )[0].style
+    (before_popup_style == "").should == true
     page.target_course_row(arg1)[DisplayScheduleOfClasses::COURSE_CODE_COLUMN].image(src: /cross-listed/).hover
-    sleep 1
+    popup_style = @browser.divs(:class=>"jquerybubblepopup jquerybubblepopup-black" )[0].style
+    (popup_style.include? "display: block").should == true
   end
 end
 
