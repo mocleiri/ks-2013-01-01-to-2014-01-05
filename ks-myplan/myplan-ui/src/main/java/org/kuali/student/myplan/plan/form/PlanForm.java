@@ -23,6 +23,7 @@ import org.kuali.student.myplan.course.dataobject.CourseDetails;
 import org.kuali.student.myplan.course.dataobject.CourseSummaryDetails;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.PlannedCourseSummary;
+import org.kuali.student.myplan.plan.dataobject.RecommendedItemDataObject;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 
 import java.util.Date;
@@ -135,6 +136,7 @@ public class PlanForm extends UifFormBase {
     private String type = "course";
 
     private String credit;
+
     private String note;
 
     private Date dateAdded;
@@ -142,6 +144,8 @@ public class PlanForm extends UifFormBase {
     private String generalPlaceholder;
 
     private String placeholderCode;
+
+    private String placeholderTitle;
 
     /**
      * ********************************************************
@@ -453,6 +457,14 @@ public class PlanForm extends UifFormBase {
         this.recommended = recommended;
     }
 
+    public String getPlaceholderTitle() {
+        return placeholderTitle;
+    }
+
+    public void setPlaceholderTitle(String placeholderTitle) {
+        this.placeholderTitle = placeholderTitle;
+    }
+
     /**
      * Only used in the UI for getting the short Term
      */
@@ -494,6 +506,26 @@ public class PlanForm extends UifFormBase {
         courseDetails.setCourseSummaryDetails(this.getCourseSummaryDetails());
         courseDetails.setPlannedCourseSummary(this.getPlannedCourseSummary());
         return courseDetails;
+    }
+
+
+    /**
+     * returns the recommended item data object for the term given.
+     */
+    public RecommendedItemDataObject getTermRecommendation() {
+        for (RecommendedItemDataObject recommendedItem : getPlannedCourseSummary().getRecommendedItemDataObjects()) {
+            if (recommendedItem.getAtpId().equals(getAtpId())) {
+                return recommendedItem;
+            }
+        }
+        return new RecommendedItemDataObject();
+    }
+
+    /**
+     * Added this for using in the recommendations property editor
+     */
+    public CourseDetails getCoursePlanSummary() {
+        return getCourseAndPlanSummary();
     }
 
     /*Added this because the List<?> is not accepted by the property editors.*/

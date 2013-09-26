@@ -27,7 +27,8 @@
         <property name="persistFormToSession" value="false"/>
         <property name="breadcrumbs.render" value="false"/>
         <property name="applyDirtyCheck" value="false"/>
-        <property name="onLoadScript" value="try{Typekit.load();}catch(e){} setConfigParam('adviser', @{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()});"/>
+        <property name="onLoadScript"
+                  value="try{Typekit.load();}catch(e){} setConfigParam('adviser', @{T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()});"/>
         <property name="header">
             <bean parent="Uif-ViewHeader">
                 <property name="headerLevel" value="h2"/>
@@ -43,7 +44,8 @@
         <property name="persistFormToSession" value="false"/>
         <property name="breadcrumbs.render" value="false"/>
         <property name="applyDirtyCheck" value="false"/>
-        <property name="onLoadScript" value="try{Typekit.load();}catch(e){} setConfigParam('adviser', @{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()});"/>
+        <property name="onLoadScript"
+                  value="try{Typekit.load();}catch(e){} setConfigParam('adviser', @{T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()});"/>
     </bean>
 
     <bean id="MyPlanFormView" abstract="true" parent="MyPlanBaseFormView">
@@ -69,7 +71,8 @@
         <property name="persistFormToSession" value="false"/>
         <property name="breadcrumbs.render" value="false"/>
         <property name="applyDirtyCheck" value="false"/>
-        <property name="onLoadScript" value="try{Typekit.load();}catch(e){} setConfigParam('adviser', @{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()});"/>
+        <property name="onLoadScript"
+                  value="try{Typekit.load();}catch(e){} setConfigParam('adviser', @{T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()});"/>
     </bean>
 
     <bean id="MyPlanLookupView" abstract="true" parent="MyPlanBaseLookupView">
@@ -95,7 +98,8 @@
         <property name="persistFormToSession" value="false"/>
         <property name="breadcrumbs.render" value="false"/>
         <property name="applyDirtyCheck" value="false"/>
-        <property name="onLoadScript" value="try{Typekit.load();}catch(e){} setConfigParam('adviser', @{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()});"/>
+        <property name="onLoadScript"
+                  value="try{Typekit.load();}catch(e){} setConfigParam('adviser', @{T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()});"/>
     </bean>
 
     <bean id="MyPlanInquiryView" abstract="true" parent="MyPlanBaseInquiryView">
@@ -120,7 +124,8 @@
         </property>
         <property name="breadcrumbs.render" value="false"/>
         <property name="applyDirtyCheck" value="false"/>
-        <property name="onLoadScript" value="try{Typekit.load();}catch(e){} setConfigParam('adviser', @{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()});"/>
+        <property name="onLoadScript"
+                  value="try{Typekit.load();}catch(e){} setConfigParam('adviser', @{T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()});"/>
     </bean>
 
     <bean id="MyPlanMaintenanceView" abstract="true" parent="MyPlanBaseMaintenanceView">
@@ -154,6 +159,7 @@
         </property>
         <property name="scriptFiles">
             <list merge="true">
+                <value>https://use.typekit.net/jpx3dug.js</value>
                 <value>ks-myplan/scripts/myplan.widgets.js?@{#ConfigProperties['myplan.buildNumber']}</value>
                 <value>ks-myplan/scripts/myplan.events.js?@{#ConfigProperties['myplan.buildNumber']}</value>
                 <value>ks-myplan/plugins/polling.js?@{#ConfigProperties['myplan.buildNumber']}</value>

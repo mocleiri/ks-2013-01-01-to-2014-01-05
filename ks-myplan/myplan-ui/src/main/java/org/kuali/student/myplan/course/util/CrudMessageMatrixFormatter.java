@@ -1,6 +1,7 @@
 package org.kuali.student.myplan.course.util;
 
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
+import edu.uw.kuali.student.myplan.util.UserSessionHelperImpl;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
@@ -8,13 +9,14 @@ import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService
 import org.kuali.student.myplan.course.dataobject.CourseDetails;
 import org.kuali.student.myplan.course.dataobject.CourseOfferingInstitution;
 import org.kuali.student.myplan.course.service.CourseDetailsInquiryHelperImpl;
+import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.AcademicRecordDataObject;
 import org.kuali.student.myplan.plan.dataobject.PlanItemDataObject;
 import org.kuali.student.myplan.plan.dataobject.RecommendedItemDataObject;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.DateFormatHelper;
-import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.utils.UserSessionHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import javax.xml.namespace.QName;
@@ -33,7 +35,13 @@ public class CrudMessageMatrixFormatter extends PropertyEditorSupport {
 
     private transient CourseOfferingService courseOfferingService;
 
+    private boolean excludeRecommendations;
+
+    @Autowired
     private CourseHelper courseHelper;
+
+    @Autowired
+    private UserSessionHelper userSessionHelper;
 
 
     public CourseHelper getCourseHelper() {
@@ -45,6 +53,17 @@ public class CrudMessageMatrixFormatter extends PropertyEditorSupport {
 
     public void setCourseHelper(CourseHelper courseHelper) {
         this.courseHelper = courseHelper;
+    }
+
+    public UserSessionHelper getUserSessionHelper() {
+        if (userSessionHelper == null) {
+            userSessionHelper = new UserSessionHelperImpl();
+        }
+        return userSessionHelper;
+    }
+
+    public void setUserSessionHelper(UserSessionHelper userSessionHelper) {
+        this.userSessionHelper = userSessionHelper;
     }
 
     protected CourseOfferingService getCourseOfferingService() {
@@ -59,6 +78,14 @@ public class CrudMessageMatrixFormatter extends PropertyEditorSupport {
         this.courseOfferingService = courseOfferingService;
     }
 
+    public boolean isExcludeRecommendations() {
+        return excludeRecommendations;
+    }
+
+    public void setExcludeRecommendations(boolean excludeRecommendations) {
+        this.excludeRecommendations = excludeRecommendations;
+    }
+
     @Override
     public void setValue(Object value) {
         super.setValue(value);
@@ -70,7 +97,6 @@ public class CrudMessageMatrixFormatter extends PropertyEditorSupport {
         CourseDetails courseDetails = (CourseDetails) super.getValue();
         StringBuffer sb = new StringBuffer();
         String singleQuarterUrl = "inquiry?methodToCall=start&viewId=SingleTerm-InquiryView&term_atp_id=";
-        String oneYearPlanUrl = "plan?methodToCall=start&viewId=PlannedCourses-FormView&focusAtpId=";
         boolean currentTermRegistered = false;
 
         /*When academic terms are not null then populating message
@@ -103,8 +129,8 @@ public class CrudMessageMatrixFormatter extends PropertyEditorSupport {
                 String term = withdrawnTerm;
                 String atpId = AtpHelper.termToYearTerm(term).toATP();
                 if (counter == 0) {
-                    if (UserSessionHelper.isAdviser()) {
-                        String user = UserSessionHelper.getStudentName();
+                    if (getUserSessionHelper().isAdviser()) {
+                        String user = getUserSessionHelper().getStudentName();
                         sb = sb.append("<dd>").append(user + " withdrew from this course in ")
                                 .append("<a href=").append(singleQuarterUrl).append(atpId).append(">").append(term).append("</a>");
                     } else {
@@ -129,8 +155,8 @@ public class CrudMessageMatrixFormatter extends PropertyEditorSupport {
                 if (atpId.compareToIgnoreCase(currentTerm) >= 0) {
                     if (counter2 == 0) {
                         String message = "You are enrolled in ";
-                        if (UserSessionHelper.isAdviser()) {
-                            String user = UserSessionHelper.getStudentName();
+                        if (getUserSessionHelper().isAdviser()) {
+                            String user = getUserSessionHelper().getStudentName();
                             message = user + " is currently enrolled in this course for ";
                         }
                         StringBuffer sec = new StringBuffer();
@@ -156,8 +182,8 @@ public class CrudMessageMatrixFormatter extends PropertyEditorSupport {
                 } else {
                     if (counter3 == 0) {
                         String message = "You took this course in ";
-                        if (UserSessionHelper.isAdviser()) {
-                            String user = UserSessionHelper.getStudentName();
+                        if (getUserSessionHelper().isAdviser()) {
+                            String user = getUserSessionHelper().getStudentName();
                             message = user + " took this course in ";
                         }
                         sb = sb.append("<dd>").append(message).append("<a href=").append(singleQuarterUrl).append(atpId).append(">").append(term).append("</a>");
@@ -176,11 +202,13 @@ public class CrudMessageMatrixFormatter extends PropertyEditorSupport {
 
         Map<String, RecommendedItemDataObject> plannedRecommendations = new HashMap<String, RecommendedItemDataObject>();
         List<RecommendedItemDataObject> recommendedItemDataObjects = new ArrayList<RecommendedItemDataObject>();
-        for (RecommendedItemDataObject recommendedItemDataObject : courseDetails.getPlannedCourseSummary().getRecommendedItemDataObjects()) {
-            if (recommendedItemDataObject.isPlanned()) {
-                plannedRecommendations.put(recommendedItemDataObject.getAtpId(), recommendedItemDataObject);
-            } else {
-                recommendedItemDataObjects.add(recommendedItemDataObject);
+        if (!isExcludeRecommendations()) {
+            for (RecommendedItemDataObject recommendedItemDataObject : courseDetails.getPlannedCourseSummary().getRecommendedItemDataObjects()) {
+                if (recommendedItemDataObject.isPlanned()) {
+                    plannedRecommendations.put(recommendedItemDataObject.getAtpId(), recommendedItemDataObject);
+                } else {
+                    recommendedItemDataObjects.add(recommendedItemDataObject);
+                }
             }
         }
 
@@ -233,7 +261,13 @@ public class CrudMessageMatrixFormatter extends PropertyEditorSupport {
                     if (planItemsMap.get(key).contains(",")) {
                         String[] terms = planItemsMap.get(key).split(",");
                         for (String term : terms) {
-                            sb = startsSub.append("<a href=\"").append(singleQuarterUrl).append(AtpHelper.termToYearTerm(term).toATP()).append("\">").append(term).append(" plan").append("</a>").append(", ");
+                            String recommendation = "";
+                            String atpId = AtpHelper.termToYearTerm(term).toATP();
+                            if (plannedRecommendations.get(atpId) != null) {
+                                RecommendedItemDataObject recommendedItemDataObject = plannedRecommendations.get(atpId);
+                                recommendation = String.format(" as recommended by %s on %s ", recommendedItemDataObject.getAdviserName(), recommendedItemDataObject.getDateAdded());
+                            }
+                            sb = startsSub.append("<a href=\"").append(singleQuarterUrl).append(atpId).append("\">").append(term).append(" plan").append("</a>").append(recommendation).append(", ");
                         }
                         String formattedString = sb.substring(0, sb.lastIndexOf(","));
                         StringBuffer formattedSubBuf = new StringBuffer();

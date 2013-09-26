@@ -15,7 +15,7 @@ public class DegreeAuditForm {
 
 
     public String getAuditId() {
-        return (auditId != null) ? auditId : "";
+        return auditId;
     }
 
     public void setAuditId(String auditId) {

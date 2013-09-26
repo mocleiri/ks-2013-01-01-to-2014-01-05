@@ -39,7 +39,7 @@
                             <property name="propertyReplacers">
                                 <list>
                                     <bean parent="Uif-ConditionalBeanPropertyReplacer" p:propertyName="items"
-                                          p:condition="@{#{ T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() }}">
+                                          p:condition="@{#{ T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser() }}">
                                         <property name="replacement">
                                             <list>
                                                 <bean parent="Uif-Message" p:style="margin:0; display:none;" p:messageText="Testing" > </bean>
@@ -556,7 +556,7 @@
             <bean parent="KSAP-VerticalBoxGroup">
                 <property name="footer">
                     <bean parent="KSAP-EmptyLookupCriteriaFooter"/>
-                </property>
+        </property>
             </bean>
         </property>
         <property name="resultsGroup">
@@ -606,7 +606,7 @@
                 </property>
             </bean>
         </property>
-        <property name="header.render" value="@{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()}"/>
+        <property name="header.render" value="@{T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()}"/>
         <property name="cssClasses">
             <list merge="true">
                 <value>ksap-module</value>
@@ -790,20 +790,20 @@
             </list>
         </property>-->
         <property name="page">
-            <bean parent="Uif-LookupPage" p:id="messages_detail_page" p:headerText="Messages &amp; Comments">
-                <property name="validationMessages">
-                    <null/>
-                </property>
-                <property name="layoutManager">
-                    <bean parent="Uif-HorizontalBoxLayout"/>
-                </property>
-                <property name="items">
-                    <list>
-                        <bean parent="messages_detail" p:width="710px"/>
-                        <bean parent="KSAP-RightPane" p:width="230px"/>
-                    </list>
-                </property>
-            </bean>
+                <bean parent="Uif-LookupPage" p:id="messages_detail_page" p:headerText="Messages &amp; Comments">
+                    <property name="validationMessages">
+                        <null/>
+                    </property>
+                    <property name="layoutManager">
+                        <bean parent="Uif-HorizontalBoxLayout"/>
+                    </property>
+                    <property name="items">
+                        <list>
+                            <bean parent="messages_detail" p:width="710px"/>
+                            <bean parent="KSAP-RightPane" p:width="230px"/>
+                        </list>
+                    </property>
+                </bean>
         </property>
 
         <property name="criteriaFields">
@@ -811,6 +811,13 @@
         </property>
         <property name="resultFields">
             <list/>
+        </property>
+        <property name="criteriaGroup">
+            <bean parent="KSAP-VerticalBoxGroup">
+                <property name="footer">
+                    <bean parent="KSAP-EmptyLookupCriteriaFooter"/>
+                </property>
+            </bean>
         </property>
     </bean>
 
@@ -836,7 +843,7 @@
         <property name="propertyName" value="lookupResults"/>
         <property name="renderAddLine" value="false"/>
         <property name="renderLineActions" value="false"/>
-        <property name="collectionLookup.quickfinderAction.render" value="false"/>
+        <!--<property name="collectionLookup.quickfinderAction.render" value="false"/>-->
         <property name="layoutManager.renderSequenceField" value="false"/>
         <property name="header.render" value="false"/>
         <property name="layoutManager.applyDefaultCellWidths" value="false"/>
@@ -878,6 +885,7 @@
                        }"/>
             </map>
         </property>
+
         <property name="items">
             <list>
                 <bean p:id="@{#line.messageId}_subject" parent="Uif-VerticalFieldGroup" p:label="Subject">

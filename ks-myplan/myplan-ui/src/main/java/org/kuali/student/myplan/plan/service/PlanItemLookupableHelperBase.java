@@ -1,6 +1,8 @@
 package org.kuali.student.myplan.plan.service;
 
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
+import edu.uw.kuali.student.myplan.util.PlanHelperImpl;
+import edu.uw.kuali.student.myplan.util.UserSessionHelperImpl;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.krad.web.form.LookupForm;
@@ -23,6 +25,7 @@ import org.kuali.student.myplan.plan.dataobject.PlannedCourseDataObject;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.EnumerationHelper;
 import org.kuali.student.myplan.plan.util.OrgHelper;
+import org.kuali.student.myplan.plan.util.PlanHelper;
 import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
@@ -30,6 +33,7 @@ import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.xml.namespace.QName;
@@ -48,6 +52,12 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
     private transient CourseOfferingService courseOfferingService;
     @Autowired
     private CourseHelper courseHelper;
+
+    @Autowired
+    private UserSessionHelper userSessionHelper;
+
+    @Autowired
+    private PlanHelper planHelper;
 
     protected List<PlannedCourseDataObject> getPlanItems(String planItemType, String studentId, boolean includePlaceHolders)
             throws InvalidParameterException, MissingParameterException, DoesNotExistException, OperationFailedException {
@@ -71,6 +81,7 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
             Map<String, List<String>> sectionsWithdrawn = new HashMap<String, List<String>>();
             Map<String, List<String>> sectionsSuspended = new HashMap<String, List<String>>();
             for (PlanItemInfo planItemInfo : planItemInfoList) {
+
                 populatePlannedCourseList(planItemInfo, planItemType, plannedCourseList, plannedSections, sectionsSuspended, sectionsWithdrawn, subjectAreas, includePlaceHolders);
 
             }
@@ -110,7 +121,7 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
             Map<String, List<String>> sectionsWithdrawn = new HashMap<String, List<String>>();
             Map<String, List<String>> sectionsSuspended = new HashMap<String, List<String>>();
             for (PlanItemInfo planItemInfo : planItemInfoList) {
-                if (planItemInfo.getTypeKey().equalsIgnoreCase(planItemType) && planItemInfo.getPlanPeriods().get(0).compareTo(startAtp) >= 0) {
+                if (!CollectionUtils.isEmpty(planItemInfo.getPlanPeriods()) && planItemInfo.getTypeKey().equalsIgnoreCase(planItemType) && planItemInfo.getPlanPeriods().get(0).compareTo(startAtp) >= 0) {
                     populatePlannedCourseList(planItemInfo, planItemType, plannedCourseList, plannedSections, sectionsSuspended, sectionsWithdrawn, subjectAreas, addPlaceHolders);
                 }
             }
@@ -150,22 +161,26 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
                     statusAlerts.add(String.format(PlanConstants.COURSE_NOT_SCHEDULE_ALERT, plannedCourse.getCourseDetails().getCode(), plannedCourse.getPlanItemDataObject().getTermName()));
                     plannedCourse.setSectionsAvailable(false);
                 }
-                if (sectionsWithdrawn.containsKey(key)) {
-                    List<String> sectionList = sectionsWithdrawn.get(key);
-                    String[] sections = sectionList.toArray(new String[sectionList.size()]);
-                    statusAlerts.add(String.format(PlanConstants.WITHDRAWN_ALERT, getCourseHelper().joinStringsByDelimiter(',', sections)));
-                    plannedCourse.setShowAlert(true);
+
+                if (!PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED.equals(plannedCourse.getPlanItemDataObject().getPlanType())) {
+                    if (sectionsWithdrawn.containsKey(key)) {
+                        List<String> sectionList = sectionsWithdrawn.get(key);
+                        String[] sections = sectionList.toArray(new String[sectionList.size()]);
+                        statusAlerts.add(String.format(PlanConstants.WITHDRAWN_ALERT, getCourseHelper().joinStringsByDelimiter(',', sections)));
+                        plannedCourse.setShowAlert(true);
+                    }
+                    if (sectionsSuspended.containsKey(key)) {
+                        List<String> sectionList = sectionsSuspended.get(key);
+                        String[] sections = sectionList.toArray(new String[sectionList.size()]);
+                        statusAlerts.add(String.format(PlanConstants.SUSPENDED_ALERT, getCourseHelper().joinStringsByDelimiter(',', sections)));
+                        plannedCourse.setShowAlert(true);
+                    }
+                    if (!statusAlerts.isEmpty()) {
+                        plannedCourse.setStatusAlerts(statusAlerts);
+                    }
+                    plannedCourse.setPlanActivities(activityOfferingItems);
                 }
-                if (sectionsSuspended.containsKey(key)) {
-                    List<String> sectionList = sectionsSuspended.get(key);
-                    String[] sections = sectionList.toArray(new String[sectionList.size()]);
-                    statusAlerts.add(String.format(PlanConstants.SUSPENDED_ALERT, getCourseHelper().joinStringsByDelimiter(',', sections)));
-                    plannedCourse.setShowAlert(true);
-                }
-                if (!statusAlerts.isEmpty()) {
-                    plannedCourse.setStatusAlerts(statusAlerts);
-                }
-                plannedCourse.setPlanActivities(activityOfferingItems);
+
             }
         }
     }
@@ -191,7 +206,14 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
             }
 
             if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED.equals(planItemInfo.getTypeKey())) {
-                plannedCourse.setAdviserName(UserSessionHelper.getName(planItemInfo.getMeta().getCreateId()));
+                plannedCourse.setAdviserName(getUserSessionHelper().getName(planItemInfo.getMeta().getCreateId()));
+                plannedCourse.setProposed(PlanConstants.LEARNING_PLAN_ITEM_PROPOSED_STATE_KEY.equals(planItemInfo.getStateKey()));
+            } else {
+                if (!CollectionUtils.isEmpty(planItemInfo.getPlanPeriods())) {
+                    String atpId = planItemInfo.getPlanPeriods().get(0);
+                    PlanItemInfo recommendedPlanItem = getPlanHelper().getPlanItemByAtpAndType(planItemInfo.getLearningPlanId(), planItemInfo.getRefObjectId(), atpId, PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED);
+                    plannedCourse.setAdviserRecommended(recommendedPlanItem != null && PlanConstants.LEARNING_PLAN_ITEM_ACCEPTED_STATE_KEY.equals(recommendedPlanItem.getStateKey()));
+                }
             }
             //  If the course info lookup fails just log the error and omit the item.
             try {
@@ -285,7 +307,14 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
             plannedCourse.setCourseDetails(new CourseSummaryDetails());
             plannedCourse.setPlaceHolderCredit(planItemInfo.getCredit() == null ? "" : String.valueOf(planItemInfo.getCredit().intValue()));
             if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED.equals(planItemInfo.getTypeKey())) {
-                plannedCourse.setAdviserName(UserSessionHelper.getName(planItemInfo.getMeta().getCreateId()));
+                plannedCourse.setAdviserName(getUserSessionHelper().getName(planItemInfo.getMeta().getCreateId()));
+                plannedCourse.setProposed(PlanConstants.LEARNING_PLAN_ITEM_PROPOSED_STATE_KEY.equals(planItemInfo.getStateKey()));
+            } else {
+                if (!CollectionUtils.isEmpty(planItemInfo.getPlanPeriods())) {
+                    String atpId = planItemInfo.getPlanPeriods().get(0);
+                    PlanItemInfo recommendedPlanItem = getPlanHelper().getPlanItemByAtpAndType(planItemInfo.getLearningPlanId(), planItemInfo.getRefObjectId(), atpId, PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED);
+                    plannedCourse.setAdviserRecommended(recommendedPlanItem != null && PlanConstants.LEARNING_PLAN_ITEM_ACCEPTED_STATE_KEY.equals(recommendedPlanItem.getStateKey()));
+                }
             }
             plannedCourseList.add(plannedCourse);
 
@@ -303,7 +332,14 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
             plannedCourse.setCourseDetails(new CourseSummaryDetails());
             plannedCourse.setPlaceHolderCredit(planItemInfo.getCredit() == null ? "" : String.valueOf(planItemInfo.getCredit().intValue()));
             if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED.equals(planItemInfo.getTypeKey())) {
-                plannedCourse.setAdviserName(UserSessionHelper.getName(planItemInfo.getMeta().getCreateId()));
+                plannedCourse.setAdviserName(getUserSessionHelper().getName(planItemInfo.getMeta().getCreateId()));
+                plannedCourse.setProposed(PlanConstants.LEARNING_PLAN_ITEM_PROPOSED_STATE_KEY.equals(planItemInfo.getStateKey()));
+            } else {
+                if (!CollectionUtils.isEmpty(planItemInfo.getPlanPeriods())) {
+                    String atpId = planItemInfo.getPlanPeriods().get(0);
+                    PlanItemInfo recommendedPlanItem = getPlanHelper().getPlanItemByAtpAndType(planItemInfo.getLearningPlanId(), planItemInfo.getRefObjectId(), atpId, PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED);
+                    plannedCourse.setAdviserRecommended(recommendedPlanItem != null && PlanConstants.LEARNING_PLAN_ITEM_ACCEPTED_STATE_KEY.equals(recommendedPlanItem.getStateKey()));
+                }
             }
             plannedCourseList.add(plannedCourse);
 
@@ -320,7 +356,7 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
     private String getCoursePlaceHolderTitle(String coursePlaceHolder, Map<String, String> subjectAreas) {
         DeconstructedCourseCode courseCode = getCourseHelper().getCourseDivisionAndNumber(coursePlaceHolder);
         String subjectTitle = subjectAreas.get(courseCode.getSubject());
-        String subjectLevel = courseCode.getNumber().toUpperCase().replace("XX", "00");
+        String subjectLevel = courseCode.getNumber().toUpperCase().replace(CourseSearchConstants.COURSE_LEVEL_XX, CourseSearchConstants.COURSE_LEVEL_ZERO);
         return String.format("%s %s level", subjectTitle, subjectLevel);
     }
 
@@ -394,5 +430,27 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
 
     public void setCourseHelper(CourseHelper courseHelper) {
         this.courseHelper = courseHelper;
+    }
+
+    public UserSessionHelper getUserSessionHelper() {
+        if (userSessionHelper == null) {
+            userSessionHelper = new UserSessionHelperImpl();
+        }
+        return userSessionHelper;
+    }
+
+    public void setUserSessionHelper(UserSessionHelper userSessionHelper) {
+        this.userSessionHelper = userSessionHelper;
+    }
+
+    public PlanHelper getPlanHelper() {
+        if (planHelper == null) {
+            planHelper = new PlanHelperImpl();
+        }
+        return planHelper;
+    }
+
+    public void setPlanHelper(PlanHelper planHelper) {
+        this.planHelper = planHelper;
     }
 }

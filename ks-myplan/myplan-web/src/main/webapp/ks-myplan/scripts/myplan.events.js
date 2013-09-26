@@ -11,10 +11,12 @@ function planItemTemplate(data) {
 
     var item = jQuery("<div/>").attr({
         "id": itemId + "_group",
-        "class": "uif-verticalBoxGroup uif-collectionItem"
+        "class": "uif-verticalBoxGroup uif-collectionItem" + ((data.adviserRecommended == "true") ? " accepted" : ((data.planItemType == "recommended") ? " proposed" : ""))
     });
 
-    var title = jQuery("<div/>").attr("class", "itemTitle uif-boxLayoutHorizontalItem").append(data.planItemShortTitle);
+    var shortTitle = data.planItemShortTitle;
+
+    var title = jQuery("<div/>").attr("class", "itemTitle uif-boxLayoutHorizontalItem").append(shortTitle);
     actionGroup.append(title);
 
     if (data.sections != null && data.sections != "") {
@@ -23,17 +25,19 @@ function planItemTemplate(data) {
     }
 
     if (data.credit != null && data.credit != "") {
-        var credit = jQuery("<div/>").attr("class", "itemCredit uif-boxLayoutHorizontalItem").append("(" + data.credit + ")");
+        var itemCredit = "(" + data.credit + ")";
+        var credit = jQuery("<div/>").attr("class", "itemCredit uif-boxLayoutHorizontalItem").append(itemCredit);
         actionGroup.append(credit);
     }
 
     var action = jQuery("<div/>").attr("id", itemId).attr({
-        "title": data.planItemShortTitle + " " + ((data.sections != null && data.sections != "") ? data.sections + " " : "") + "'" + data.planItemLongTitle + "'",
+        "title": ((data.placeHolder == "true" && data.planItemShortTitle == data.planItemLongTitle) ? "" : data.planItemShortTitle) + " " + ((data.sections != null && data.sections != "") ? data.sections + " " : "") + "'" + data.planItemLongTitle + "'" + ((data.placeHolder == "true") ? " placeholder" : ""),
         "class": "uif-horizontalFieldGroup itemAction uif-tooltip uif-boxLayoutHorizontalItem",
         "data-atpid": data.atpId.replace(/-/g, "."),
         "data-planitemid": data.planItemId,
         "data-placeholder": data.placeHolder,
-        "style": "width:" + ((data.note) ? "99px; padding-right: 16px;" : "115px;")
+        "data-type": data.planItemType,
+        "style": "width:" + ((data.note) ? "103px; padding-right:15px;" : "118px;")
     });
 
     if (data.placeHolder == "true") {
@@ -58,11 +62,21 @@ function planItemTemplate(data) {
 
     itemGroup.append(action);
 
+    var click = "jQuery('#" + itemId + "').click(function(e) { ";
+
+    if (!getConfigParam("adviser")) {
+        click += "openMenu('" + data.planItemId + "_" + data.planItemType + "','" + data.planItemType + "_" + ((data.placeHolder == "true") ? "placeholder" : "course" ) + "_menu','" + data.atpId.replace(/-/g, ".") + "',e,'.uif-collectionItem','fl-container-150 uif-boxLayoutHorizontalItem',{tail:{align:'top'},align:'top',position:'right'},false);";
+    } else {
+        click += "var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:'" + data.planItemId + "', atpId:'" + data.atpId.replace(/-/g, ".") + "', pageId:'recommended_dialog_page'" + ((data.placeHolder != "true") ? ", courseId:'" + data.courseId + "'" : "" ) + "}; openPopup('recommended_dialog_page', retrieveData, 'plan', {width:'300px', height:'16px'}, {tail:{hidden:true}, position:'right', align:'middle', close:true}, e);";
+    }
+
+    click += "});";
+
     var script = jQuery("<input/>").attr({
         "type": "hidden",
         "name": "script",
         "data-role": "script"
-    }).val("jQuery('#" + itemId + "').click(function(e) { openMenu('" + data.planItemId + "_" + data.planItemType + "','" + data.planItemType + "_" + ((data.placeHolder == "true") ? "placeholder" : "course" ) + "_menu','" + data.atpId.replace(/-/g, ".") + "',e,'.uif-collectionItem','fl-container-150 uif-boxLayoutHorizontalItem',{tail:{align:'top'},align:'top',position:'right'},false); });")
+    }).val(click);
 
     if (data.note) {
         var note = jQuery("<div/>").attr({
@@ -71,7 +85,13 @@ function planItemTemplate(data) {
         }).append(image.clone());
         itemGroup.append(note);
         var decoded = jQuery("<div/>").html(data.note).text();
-        var createTooltip = " createTooltip('" + itemId + "_note', ' <p>" + decoded + "</p><p><a data-planitemtype=" + data.planItemType + " data-planitemid=" + data.planItemId + " data-atpid=" + data.atpId.replace(/-/g, ".") + " onclick=editNote(jQuery(this),event);>Edit Note</a></p> ', {position:'top',align:'left',alwaysVisible:false,tail:{align:'left',hidden:false},themePath:'../ks-myplan/jquery-popover/jquerypopover-theme/',themeName:'ksap-notes',selectable:true,width:'250px',openingSpeed:50,closingSpeed:50,openingDelay:500,closingDelay:0,themeMargins:{total:'17px',difference:'10px'},distance:'0px'},true,true);";
+        var noteContent;
+        if (!getConfigParam("adviser")) {
+            noteContent = "<p>" + decoded + "</p><p><a data-planitemtype=" + data.planItemType + " data-planitemid=" + data.planItemId + " data-atpid=" + data.atpId.replace(/-/g, ".") + " onclick=editNote(jQuery(this),event);>Edit Note</a></p>";
+        } else {
+            noteContent = '&quot;' + decoded + '&quot; - ' + data.adviserName;
+        }
+        var createTooltip = " createTooltip('" + itemId + "_note', '" + noteContent + "', {position:'top',align:'left',alwaysVisible:false,tail:{align:'left',hidden:false},themePath:'../ks-myplan/jquery-popover/jquerypopover-theme/',themeName:'ksap-" + ((data.planItemType == "recommended") ? "adviser" : "notes") + "',selectable:true,openingSpeed:50,closingSpeed:50,openingDelay:500,closingDelay:0,themeMargins:{total:'17px',difference:'10px'},distance:'0px'},true,true);";
         script.val(script.val() + createTooltip);
     }
 
@@ -113,10 +133,15 @@ function fnUpdatePlanItem(data) {
 function fnUpdateNote(data) {
     var noteId = data.planItemType + "_" + data.atpId + "_" + data.planItemId + "_note";
     jQuery("#" + noteId).off();
-    var createTooltip = "createTooltip('" + noteId + "', ' <p>" + data.note + "</p><p><a data-planitemtype=" + data.planItemType + " data-planitemid=" + data.planItemId + " data-atpid=" + data.atpId.replace(/-/g, ".") + " onclick=editNote(jQuery(this),event);>Edit Note</a></p> ', {position:'top',align:'left',alwaysVisible:false,tail:{align:'left',hidden:false},themePath:'../ks-myplan/jquery-popover/jquerypopover-theme/',themeName:'ksap-notes',selectable:true,width:'250px',openingSpeed:50,closingSpeed:50,openingDelay:500,closingDelay:0,themeMargins:{total:'17px',difference:'10px'},distance:'0px'},true,true);";
-    var noteScript = jQuery("input[data-for='" + noteId + "'][data-role='script']")[0];
-    jQuery(noteScript).attr("name", "script").removeAttr("script").val(createTooltip);
-    evalHiddenScript(jQuery(noteScript));
+    if (data.note) {
+        var decoded = jQuery("<div/>").html(data.note).text();
+        var createTooltip = "createTooltip('" + noteId + "', ' <p>" + decoded + "</p><p><a data-planitemtype=" + data.planItemType + " data-planitemid=" + data.planItemId + " data-atpid=" + data.atpId.replace(/-/g, ".") + " onclick=editNote(jQuery(this),event);>Edit Note</a></p> ', {position:'top',align:'left',alwaysVisible:false,tail:{align:'left',hidden:false},themePath:'../ks-myplan/jquery-popover/jquerypopover-theme/',themeName:'ksap-notes',selectable:true,width:'250px',openingSpeed:50,closingSpeed:50,openingDelay:500,closingDelay:0,themeMargins:{total:'17px',difference:'10px'},distance:'0px'},true,true);";
+        var noteScript = jQuery("input[data-for='" + noteId + "'][data-role='script']")[0];
+        jQuery(noteScript).attr("name", "script").removeAttr("script").val(createTooltip);
+        evalHiddenScript(jQuery(noteScript));
+    } else {
+        jQuery("#" + noteId).remove();
+    }
 }
 /*
  #################################################################
@@ -287,4 +312,22 @@ function fnUpdateQuarterViewCredits(termCredits) {
             jQuery(this).text(termCredits).fadeIn(250);
         });
     }
+}
+
+/*
+ #################################################################
+ Function: update style from recommended item
+ #################################################################
+ */
+function fnUpdateRecommendedItem(data) {
+    var itemId = data.planItemType + "_" + data.atpId + "_" + data.planItemId;
+    jQuery("#" + itemId + "_group").removeClass("proposed").addClass("accepted");
+    /*var image = jQuery("<img/>").attr("src", "/student/ks-myplan/images/pixel.gif");
+     var accepted = jQuery("<div/>").attr({
+     "class": "itemAccepted uif-boxLayoutHorizontalItem"
+     }).append(image.clone());
+     jQuery("#" + itemId).before(accepted);*/
+    jQuery("#" + itemId + "_group").css({backgroundColor: "#faf5ca"}).animate({backgroundColor: "#ffffff"}, 1500, "linear", function () {
+        jQuery(this).removeAttr("style");
+    });
 }

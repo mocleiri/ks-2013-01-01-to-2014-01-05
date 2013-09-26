@@ -10,13 +10,13 @@ import org.kuali.student.myplan.academicplan.service.AcademicPlanService;
 import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.RecommendedItemDataObject;
+import org.kuali.student.myplan.plan.util.DateFormatHelper;
 import org.kuali.student.myplan.plan.util.PlanHelper;
 import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import javax.xml.namespace.QName;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +35,9 @@ public class PlanHelperImpl implements PlanHelper {
 
     @Autowired
     private transient CourseHelper courseHelper;
+
+    @Autowired
+    private transient UserSessionHelper userSessionHelper;
 
     /**
      * Gets a plan item of a particular type for a particular ATP.
@@ -90,7 +93,7 @@ public class PlanHelperImpl implements PlanHelper {
      */
     @Override
     public PlanItemInfo getPlannedOrBackupPlanItem(String courseId, String atpId) {
-        String studentId = UserSessionHelper.getStudentRegId();
+        String studentId = getUserSessionHelper().getStudentId();
         LearningPlan learningPlan = getLearningPlan(studentId);
         if (learningPlan == null) {
             return null;
@@ -116,6 +119,26 @@ public class PlanHelperImpl implements PlanHelper {
 
         //  A null here means that no plan item exists for the given course and ATP IDs.
         return planItem;
+    }
+
+
+    /**
+     * returns List of planItemInfo's for given planItem Types.
+     *
+     * @param studentId
+     * @param planItemTypes
+     * @return
+     */
+    public List<PlanItemInfo> getPlanItemsByTypes(String studentId, List<String> planItemTypes) {
+        List<PlanItemInfo> planItemInfos = new ArrayList<PlanItemInfo>();
+        for (String planItemType : planItemTypes) {
+            try {
+                planItemInfos.addAll(getAcademicPlanService().getPlanItemsInPlanByType(getLearningPlan(studentId).getId(), planItemType, PlanConstants.CONTEXT_INFO));
+            } catch (Exception e) {
+                logger.error("Could not load planItems for student with regId" + studentId);
+            }
+        }
+        return planItemInfos;
     }
 
     /**
@@ -157,6 +180,7 @@ public class PlanHelperImpl implements PlanHelper {
 
     /**
      * returns a list of recommended items that are there for a given refObjId (versionIndependentId)
+     * Valid only for courses not for placeholders
      *
      * @param refObjId
      * @return
@@ -166,7 +190,7 @@ public class PlanHelperImpl implements PlanHelper {
 
         List<RecommendedItemDataObject> recommendedItemDataObjects = new ArrayList<RecommendedItemDataObject>();
         try {
-            List<LearningPlanInfo> learningPlans = getAcademicPlanService().getLearningPlansForStudentByType(UserSessionHelper.getStudentRegId(),
+            List<LearningPlanInfo> learningPlans = getAcademicPlanService().getLearningPlansForStudentByType(getUserSessionHelper().getStudentId(),
                     PlanConstants.LEARNING_PLAN_TYPE_PLAN, PlanConstants.CONTEXT_INFO);
 
             if (!CollectionUtils.isEmpty(learningPlans)) {
@@ -181,9 +205,8 @@ public class PlanHelperImpl implements PlanHelper {
                     for (PlanItemInfo planItemInfo : planItems) {
                         if (PlanConstants.COURSE_TYPE.equals(planItemInfo.getRefObjectType()) && planItemInfo.getRefObjectId().equals(refObjId)) {
                             RecommendedItemDataObject recommendedItemDataObject = new RecommendedItemDataObject();
-                            recommendedItemDataObject.setAdviserName(UserSessionHelper.getNameCapitalized(planItemInfo.getMeta().getCreateId()));
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
-                            String dateAdded = simpleDateFormat.format(planItemInfo.getMeta().getCreateTime());
+                            recommendedItemDataObject.setAdviserName(getUserSessionHelper().getCapitalizedName(planItemInfo.getMeta().getCreateId()));
+                            String dateAdded = DateFormatHelper.getDateFomatted(planItemInfo.getMeta().getCreateTime().toString());
                             recommendedItemDataObject.setDateAdded(dateAdded);
                             recommendedItemDataObject.setNote(planItemInfo.getDescr().getPlain());
                             recommendedItemDataObject.setAtpId(planItemInfo.getPlanPeriods().get(0));
@@ -210,6 +233,17 @@ public class PlanHelperImpl implements PlanHelper {
 
     public void setCourseHelper(CourseHelper courseHelper) {
         this.courseHelper = courseHelper;
+    }
+
+    public UserSessionHelper getUserSessionHelper() {
+        if (userSessionHelper == null) {
+            userSessionHelper = new UserSessionHelperImpl();
+        }
+        return userSessionHelper;
+    }
+
+    public void setUserSessionHelper(UserSessionHelper userSessionHelper) {
+        this.userSessionHelper = userSessionHelper;
     }
 
     public AcademicPlanService getAcademicPlanService() {

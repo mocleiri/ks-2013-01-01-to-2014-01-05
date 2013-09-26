@@ -101,6 +101,19 @@ if (readUrlHash("modified")) {
     window.location.assign(url.split("#")[0] + ((aHash.length > 0) ? "#" + aHash.join("&") : ""));
 }
 
+window.onpageshow = function (event) {
+    if (event.persisted) {
+        if (readUrlHash("modified")) {
+            var url = window.location.href;
+            var aHash = window.location.href.split("#")[1].replace("#", "").split("&");
+            aHash.splice(aHash.indexOf("modified=true"), 1);
+            window.location.assign(url.split("#")[0] + ((aHash.length > 0) ? "#" + aHash.join("&") : ""));
+        } else {
+            window.location.reload();
+        }
+    }
+};
+
 jQuery(document).ready(function () {
     jQuery("head").append('<!--[if ie 9]><style type="text/css" media="screen"> \
         button.uif-primaryActionButton,button.uif-secondaryActionButton, \
@@ -273,6 +286,8 @@ function openMenu(id, getId, atpId, e, selector, popupClasses, popupOptions, clo
             }
         }
     }
+    var backup = false;
+
     var popupHtml = jQuery('<div />').attr("id", id + "_popup").attr("class", popupClasses).html(jQuery("#" + getId).html());
 
     var popupSettings = jQuery.extend(popupOptionsDefault, popupOptions);
@@ -285,7 +300,7 @@ function openMenu(id, getId, atpId, e, selector, popupClasses, popupOptions, clo
     jQuery("#" + id + "_popup a").each(function () {
         var linkId = jQuery(this).attr("id");
         jQuery(this).siblings("input[data-for='" + linkId + "']").removeAttr("script").attr("name", "script").val(function (index, value) {
-            return value.replace("'#" + linkId + "'", "'#" + linkId + "_popup'");
+            return value.replace("'" + linkId + "'", "'" + linkId + "_popup'");
         });
         jQuery(this).attr("id", linkId + "_popup");
         jQuery.each(jQuery(target).data(), function (key, value) {
@@ -451,6 +466,7 @@ function submitPopupForm(additionalFormData, e, bDialog) {
 function ksapAjaxSubmitForm(data, successCallback, elementToBlock, formId, blockingSettings) {
     var submitOptions = {
         data: data,
+        headers: { "cache-control": "no-cache" },
         success: function (response) {
             var tempDiv = document.createElement('div');
             tempDiv.innerHTML = response;
@@ -619,6 +635,7 @@ function myplanAjaxSubmitForm(methodToCall, successCallback, additionalData, ele
 
     var submitOptions = {
         data: data,
+        headers: { "cache-control": "no-cache" },
         success: function (response) {
             var tempDiv = document.createElement('div');
             tempDiv.innerHTML = response;

@@ -18,6 +18,7 @@ package org.kuali.student.myplan.audit.controller;
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
 import edu.uw.kuali.student.myplan.util.DegreeAuditHelperImpl;
 import edu.uw.kuali.student.myplan.util.DegreeAuditHelperImpl.Choice;
+import edu.uw.kuali.student.myplan.util.UserSessionHelperImpl;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
@@ -50,6 +51,7 @@ import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -94,7 +96,11 @@ public class DegreeAuditController extends UifControllerBase {
 
     private CourseOfferingService courseOfferingService;
 
+    @Autowired
     private CourseHelper courseHelper;
+
+    @Autowired
+    private UserSessionHelper userSessionHelper;
 
     private DegreeAuditHelper degreeAuditHelper;
 
@@ -130,7 +136,7 @@ public class DegreeAuditController extends UifControllerBase {
         }
 
         try {
-            String regId = UserSessionHelper.getStudentRegId();
+            String regId = getUserSessionHelper().getStudentId();
             if (StringUtils.hasText(regId)) {
                 logger.info("audit regId " + regId);
 
@@ -206,7 +212,7 @@ public class DegreeAuditController extends UifControllerBase {
     private boolean doesPlannedCourseExist() {
         try {
             List<LearningPlanInfo> learningPlanList =
-                    getAcademicPlanService().getLearningPlansForStudentByType(UserSessionHelper.getStudentRegId(),
+                    getAcademicPlanService().getLearningPlansForStudentByType(getUserSessionHelper().getStudentId(),
                             LEARNING_PLAN_TYPE_PLAN, CONTEXT_INFO);
 
             for (LearningPlanInfo learningPlanInfo : learningPlanList) {
@@ -274,7 +280,7 @@ public class DegreeAuditController extends UifControllerBase {
                                  HttpServletRequest request, HttpServletResponse response) {
         DegreeAuditForm form = auditForm.getDegreeAudit();
         try {
-            String regid = UserSessionHelper.getStudentRegId();
+            String regid = getUserSessionHelper().getStudentId();
             if (StringUtils.hasText(regid)) {
                 String programId = getDegreeAuditHelper().getFormProgramID(form);
                 if (!programId.equalsIgnoreCase(DegreeAuditConstants.DEFAULT_KEY)) {
@@ -291,9 +297,7 @@ public class DegreeAuditController extends UifControllerBase {
                     String[] params = {};
                     GlobalVariables.getMessageMap().putError("degreeAudit.programParamSeattle",
                             DegreeAuditConstants.AUDIT_RUN_FAILED, params);
-                    form.setAuditHtml(String.format(DegreeAuditConstants.AUDIT_FAILED_HTML,
-                            ConfigContext.getCurrentContextConfig().getProperty(DegreeAuditConstants.APPLICATION_URL),
-                            DegreeAuditConstants.AUDIT_STATUS_ERROR_MSG));
+                    form.setAuditHtml(String.format(DegreeAuditConstants.AUDIT_FAILED_HTML, DegreeAuditConstants.AUDIT_STATUS_ERROR_MSG));
                 }
             }
 
@@ -312,9 +316,7 @@ public class DegreeAuditController extends UifControllerBase {
                 String message = cause.getMessage();
                 if (message != null) {
                     String errorMessage = getErrorMessageFromXml(message);
-                    String html = String.format(DegreeAuditConstants.AUDIT_FAILED_HTML,
-                            ConfigContext.getCurrentContextConfig().getProperty(DegreeAuditConstants.APPLICATION_URL),
-                            errorMessage);
+                    String html = String.format(DegreeAuditConstants.AUDIT_FAILED_HTML, errorMessage);
                     form.setAuditHtml(html);
                 }
             }
@@ -337,7 +339,7 @@ public class DegreeAuditController extends UifControllerBase {
         PlanAuditForm form = auditForm.getPlanAudit();
         // Plan Audit Report Process
         try {
-            String regid = UserSessionHelper.getStudentRegId();
+            String regid = getUserSessionHelper().getStudentId();
             if (StringUtils.hasText(regid)) {
                 String programId = getDegreeAuditHelper().getFormProgramID(form);
                 if (!programId.equals(DegreeAuditConstants.DEFAULT_KEY)) {
@@ -366,8 +368,7 @@ public class DegreeAuditController extends UifControllerBase {
                     String[] params = {};
                     GlobalVariables.getMessageMap().putError("planAudit.programParamSeattle",
                             DegreeAuditConstants.AUDIT_RUN_FAILED, params);
-                    form.setAuditHtml(String.format(DegreeAuditConstants.AUDIT_FAILED_HTML,
-                            ConfigContext.getCurrentContextConfig().getProperty(DegreeAuditConstants.APPLICATION_URL)));
+                    form.setAuditHtml(String.format(DegreeAuditConstants.AUDIT_FAILED_HTML, DegreeAuditConstants.AUDIT_STATUS_ERROR_MSG));
                 }
             }
 
@@ -387,9 +388,7 @@ public class DegreeAuditController extends UifControllerBase {
                 String message = cause.getMessage();
                 if (message != null) {
                     String errorMessage = getErrorMessageFromXml(message);
-                    String html = String.format(DegreeAuditConstants.AUDIT_FAILED_HTML,
-                            ConfigContext.getCurrentContextConfig().getProperty(DegreeAuditConstants.APPLICATION_URL),
-                            errorMessage);
+                    String html = String.format(DegreeAuditConstants.AUDIT_FAILED_HTML, errorMessage);
                     form.setAuditHtml(html);
                 }
             }
@@ -433,7 +432,7 @@ public class DegreeAuditController extends UifControllerBase {
                         list.add(new AttributeInfo(CHOICE, choiceKey));
                         list.add(new AttributeInfo(SECTION, choice.section));
                         list.add(new AttributeInfo(SECONDARY_ACTIVITY, choice.secondaryActivity));
-                        if (StringUtils.hasText(choice.credit))  {
+                        if (StringUtils.hasText(choice.credit)) {
                             planItem.setCredit(Float.valueOf(choice.credit));
                         }
 
@@ -450,7 +449,7 @@ public class DegreeAuditController extends UifControllerBase {
                     list.add(new AttributeInfo(BUCKET, BUCKET_CLEAN));
                     list.add(new AttributeInfo(SECTION, item.getSectionCode()));
                     list.add(new AttributeInfo(SECONDARY_ACTIVITY, item.getSecondaryActivityCode()));
-                    if (StringUtils.hasText(item.getCredit()))  {
+                    if (StringUtils.hasText(item.getCredit())) {
                         planItem.setCredit(Float.valueOf(item.getCredit()));
                     }
 
@@ -470,7 +469,7 @@ public class DegreeAuditController extends UifControllerBase {
     private Map<String, String> getPlanItemSnapShots() {
         Map<String, String> map = new HashMap<String, String>();
 
-        String regid = UserSessionHelper.getStudentRegId();
+        String regid = getUserSessionHelper().getStudentId();
 
         PlannedTermsHelperBase plannedTermsHelperBase = new PlannedTermsHelperBase();
         List<PlanItemInfo> itemList =
@@ -515,7 +514,9 @@ public class DegreeAuditController extends UifControllerBase {
 
         //Processing the Handoff logic and adding the messy and clean courses for plan audit
         PlanAuditForm form = getDegreeAuditHelper().processHandOff(auditForm.getPlanAudit(),
-                UserSessionHelper.getStudentRegId());
+                getUserSessionHelper().getStudentId());
+
+        int selectionsNeeded = 0;
 
         if (!form.getMessyItems().isEmpty()) {
             Map<String, String> prevChoices = getPlanItemSnapShots();
@@ -527,6 +528,8 @@ public class DegreeAuditController extends UifControllerBase {
                     if (prevChoices.containsKey(key)) {
                         String choice = prevChoices.get(key);
                         messy.setSelectedCredit(choice);
+                    } else {
+                        selectionsNeeded++;
                     }
                 }
             }
@@ -536,6 +539,12 @@ public class DegreeAuditController extends UifControllerBase {
         boolean showHandOffScreen = !(form.getMessyItems().isEmpty() && form.getIgnoreList().isEmpty());
         form.setShowHandOffScreen(showHandOffScreen);
         logger.info("Ended the hand off screen at" + System.currentTimeMillis());
+
+        /*Log used to know how many selection a adviser needed from student and also to know
+            at what rate are the advisers seeing this screen for selections from students*/
+        if (getUserSessionHelper().isAdviser() && selectionsNeeded > 0) {
+            logger.info(String.format("Adviser needs %s selections from student to run the Plan Audit", selectionsNeeded));
+        }
         return getUIFModelAndView(auditForm);
 
     }
@@ -550,7 +559,7 @@ public class DegreeAuditController extends UifControllerBase {
     public void getJsonResponse(HttpServletResponse response, HttpServletRequest request) {
         String programId = request.getParameter("programId").replace("$", " ");
         String auditId = request.getParameter("auditId");
-        String regId = UserSessionHelper.getStudentRegId();
+        String regId = getUserSessionHelper().getStudentId();
 
         try {
             String status = getDegreeAuditService().getAuditStatus(regId, programId, auditId);
@@ -687,6 +696,17 @@ public class DegreeAuditController extends UifControllerBase {
             degreeAuditHelper = new DegreeAuditHelperImpl();
         }
         return degreeAuditHelper;
+    }
+
+    public UserSessionHelper getUserSessionHelper() {
+        if (userSessionHelper == null) {
+            userSessionHelper = new UserSessionHelperImpl();
+        }
+        return userSessionHelper;
+    }
+
+    public void setUserSessionHelper(UserSessionHelper userSessionHelper) {
+        this.userSessionHelper = userSessionHelper;
     }
 }
 

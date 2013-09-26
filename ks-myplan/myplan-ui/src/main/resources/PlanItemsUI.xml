@@ -109,7 +109,8 @@
     <bean id="menuOptionCourseSummary" parent="Uif-Link" p:linkText="View Course Summary"
           p:title="View Course Summary">
         <property name="onClickScript" value="
-            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', courseId:jQuery(this).data('courseid'), pageId:'course_summary_dialog_page'};
+            var backupFlag = jQuery(this).data('type')=='backup';
+            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', courseId:jQuery(this).data('courseid'),backup:backupFlag, pageId:'course_summary_dialog_page'};
             var popupStyle = {width:'300px', height:'16px'};
             var popupOptions = {tail:{hidden:true}, align:'top', close:true};
             openPopup('course_summary_dialog_page', retrieveData, 'plan', popupStyle, popupOptions, e);
@@ -119,7 +120,8 @@
     <bean id="menuOptionPlanItemSummary" parent="Uif-Link" p:linkText="View Course Summary"
           p:title="View Course Summary">
         <property name="onClickScript" value="
-            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), pageId:'course_summary_dialog_page'};
+            var backupFlag = jQuery(this).data('type')=='backup';
+            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'),backup:backupFlag, pageId:'course_summary_dialog_page'};
             var popupStyle = {width:'300px', height:'16px'};
             var popupOptions = {tail:{hidden:true}, align:'top', close:true};
             openPopup('course_summary_dialog_page', retrieveData, 'plan', popupStyle, popupOptions, e);
@@ -129,7 +131,8 @@
     <bean id="menuOptionEditPlanItemCourse" parent="Uif-Link" p:linkText="Edit Course/Note"
           p:title="Edit Course/Note">
         <property name="onClickScript" value="
-            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), atpId:jQuery(this).data('atpid'), pageId:'plan_item_add_page'};
+            var backupFlag = jQuery(this).data('type')=='backup';
+            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), atpId:jQuery(this).data('atpid'),backup:backupFlag, pageId:'plan_item_add_page'};
             var popupStyle = {width:'300px', height:'16px'};
             var popupOptions = {tail:{hidden:true}, align:'top', close:true};
             openPopup('plan_item_add_page', retrieveData, 'plan', popupStyle, popupOptions, e);
@@ -139,7 +142,8 @@
     <bean id="menuOptionEditPlanItemPlaceholder" parent="Uif-Link" p:linkText="Edit Placeholder/Note"
           p:title="Edit Placeholder/Note">
         <property name="onClickScript" value="
-            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), atpId:jQuery(this).data('atpid'), pageId:'plan_item_add_page'};
+            var backupFlag = jQuery(this).data('type')=='backup';
+            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), atpId:jQuery(this).data('atpid'),backup:backupFlag, pageId:'plan_item_add_page'};
             var popupStyle = {width:'300px', height:'16px'};
             var popupOptions = {tail:{hidden:true}, align:'top', close:true};
             openPopup('plan_item_add_page', retrieveData, 'plan', popupStyle, popupOptions, e);
@@ -193,7 +197,8 @@
     <bean id="menuOptionMove" parent="Uif-Link" p:linkText="Move to Another Quarter"
           p:title="Move to Another Quarter">
         <property name="onClickScript" value="
-            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), atpId:jQuery(this).data('atpid'), pageId:'move_dialog_page'};
+            var backupFlag = jQuery(this).data('type')=='backup';
+            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), atpId:jQuery(this).data('atpid'), backup:backupFlag, pageId:'move_dialog_page'};
             var popupStyle = {width:'300px', height:'16px'};
             var popupOptions = {tail:{hidden:true}, align:'top', close:true};
             openPopup('move_dialog_page', retrieveData, 'plan', popupStyle, popupOptions, e);
@@ -203,7 +208,8 @@
     <bean id="menuOptionCopyPlanItem" parent="Uif-Link" p:linkText="Copy to Another Quarter"
           p:title="Copy to Another Quarter">
         <property name="onClickScript" value="
-            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), atpId:jQuery(this).data('atpid'), pageId:'copy_dialog_page'};
+            var backupFlag = jQuery(this).data('type')=='backup';
+            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), atpId:jQuery(this).data('atpid'),backup:backupFlag, pageId:'copy_dialog_page'};
             var popupStyle = {width:'300px', height:'16px'};
             var popupOptions = {tail:{hidden:true}, align:'top', close:true};
             openPopup('copy_dialog_page', retrieveData, 'plan', popupStyle, popupOptions, e);
@@ -213,7 +219,8 @@
     <bean id="menuOptionCopyCourse" parent="Uif-Link" p:linkText="Copy to Another Quarter"
           p:title="Copy to Another Quarter">
         <property name="onClickScript" value="
-            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', courseId:jQuery(this).data('courseid'), atpId:jQuery(this).data('atpid'), pageId:'copy_dialog_page'};
+            var backupFlag = jQuery(this).data('type')=='backup';
+            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', courseId:jQuery(this).data('courseid'), atpId:jQuery(this).data('atpid'),backup:backupFlag, pageId:'copy_dialog_page'};
             var popupStyle = {width:'300px', height:'16px'};
             var popupOptions = {tail:{hidden:true}, align:'top', close:true};
             openPopup('copy_dialog_page', retrieveData, 'plan', popupStyle, popupOptions, e);
@@ -228,7 +235,8 @@
             </list>
         </property>
         <property name="onClickScript" value="
-            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), atpId:jQuery(this).data('atpid'), pageId:'plan_item_delete_page'};
+            var backupFlag = jQuery(this).data('type')=='backup';
+            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:jQuery(this).data('planitemid'), atpId:jQuery(this).data('atpid'),backup:backupFlag, pageId:'plan_item_delete_page'};
             var popupStyle = {width:'300px', height:'16px'};
             var popupOptions = {tail:{hidden:true}, align:'top', close:true};
             openPopup('plan_item_delete_page', retrieveData, 'plan', popupStyle, popupOptions, e);
@@ -246,7 +254,7 @@
     </bean>
 
     <!--Planned Menu Items-->
-    <bean id="planned_course_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
+    <bean id="planned_course_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:cssClasses="fl-container-150">
         <property name="items">
             <list>
                 <bean parent="menuOptionPlanItemSummary"/>
@@ -261,7 +269,7 @@
         </property>
     </bean>
 
-    <bean id="planned_placeholder_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
+    <bean id="planned_placeholder_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:cssClasses="fl-container-150">
         <property name="items">
             <list>
                 <bean parent="menuOptionEditPlanItemPlaceholder"/>
@@ -276,7 +284,7 @@
     </bean>
 
     <!--Backup menu items-->
-    <bean id="backup_course_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
+    <bean id="backup_course_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:cssClasses="fl-container-150">
         <property name="items">
             <list>
                 <bean parent="menuOptionPlanItemSummary"/>
@@ -291,7 +299,7 @@
         </property>
     </bean>
 
-    <bean id="backup_placeholder_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
+    <bean id="backup_placeholder_menu" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:cssClasses="fl-container-150">
         <property name="items">
             <list>
                 <bean parent="menuOptionEditPlanItemPlaceholder"/>
@@ -306,7 +314,8 @@
     </bean>
 
     <!--Completed Menu Items-->
-    <bean id="completed_courses_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
+    <bean id="completed_courses_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true"
+          p:cssClasses="fl-container-150">
         <property name="items">
             <list>
                 <bean parent="menuOptionCourseSummary"/>
@@ -317,7 +326,8 @@
 
 
     <!--Completed planned/backup Menu Items-->
-    <bean id="completed_planned_backup_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
+    <bean id="completed_planned_backup_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true"
+          p:cssClasses="fl-container-150">
         <property name="items">
             <list>
                 <bean parent="menuOptionCourseSummary"/>
@@ -329,7 +339,8 @@
     </bean>
 
     <!--Completed planned/backup placeholder items-->
-    <bean id="completed_placeholder_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="150px">
+    <bean id="completed_placeholder_menu_items" parent="KSAP-VerticalBoxGroup" p:hidden="true"
+          p:cssClasses="fl-container-150">
         <property name="items">
             <list>
                 <bean parent="menuOptionMove"/>
@@ -649,6 +660,8 @@
                 fnAddPlanItem(data);
             }).on('PLAN_ITEM_DELETED', function(event, data) {
                 fnRemovePlanItem(data);
+            }).on('RECOMMENDED_ITEM_UPDATED', function(event, data) {
+                fnUpdateRecommendedItem(data);
             }).on('PLAN_ITEM_UPDATED', function(event, data) {
                 fnUpdatePlanItem(data);
             }).on('UPDATE_NEW_TERM_TOTAL_CREDITS', function(event, data) {
@@ -691,7 +704,7 @@
         </property>
     </bean>
 
-    <bean id="academicRecordAction" parent="KSAP-HorizontalFieldGroup" p:style="width:99px; padding-right:16px;">
+    <bean id="academicRecordAction" parent="KSAP-HorizontalFieldGroup" p:style="width:103px; padding-right:15px;">
         <property name="id" value="record_@{#line.atpId.replace('.','-')}_@{#line.uuid}"/>
         <property name="title" value="@{#line.courseTitle}"/>
         <property name="onClickScript"
@@ -764,6 +777,7 @@
     </bean>
 
     <bean id="academicRecordGroup" parent="KSAP-HorizontalFieldGroup">
+        <property name="group.cssClasses" value=""/>
         <property name="items">
             <list>
                 <bean parent="academicRecordAction"/>
@@ -773,6 +787,7 @@
     </bean>
 
     <bean id="academicRecordGroupAdviser" parent="KSAP-HorizontalFieldGroup">
+        <property name="group.cssClasses" value=""/>
         <property name="items">
             <list>
                 <bean parent="academicRecordActionAdviser"/>
@@ -786,7 +801,8 @@
         <property name="collectionObjectClass"
                   value="org.kuali.student.myplan.plan.dataobject.AcademicRecordDataObject"/>
         <property name="propertyName" value="academicRecord"/>
-        <property name="render" value="@{#line NE null ? (#line.completedTerm OR #line.currentTermForView OR #line.academicRecord.size() GT 0) : true}"/>
+        <property name="render"
+                  value="@{#line NE null ? (#line.completedTerm OR #line.currentTermForView OR #line.academicRecord.size() GT 0) : true}"/>
         <property name="bindingInfo.bindToForm" value="true"/>
         <property name="layoutManager.lineGroupPrototype.id"
                   value="record_@{#line.atpId.replace('.','-')}_@{#line.uuid}_group"/>
@@ -831,7 +847,7 @@
         <property name="propertyReplacers">
             <list>
                 <bean parent="Uif-ConditionalBeanPropertyReplacer" p:propertyName="items"
-                      p:condition="T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()">
+                      p:condition="T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()">
                     <property name="replacement">
                         <list>
                             <bean parent="academicRecordGroupAdviser"/>
@@ -910,7 +926,7 @@
         <property name="propertyReplacers">
             <list>
                 <bean parent="Uif-ConditionalBeanPropertyReplacer" p:propertyName="toolTip"
-                      p:condition="T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()">
+                      p:condition="T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()">
                     <property name="replacement">
                         <bean parent="MyPlan-Tooltip-Left">
                             <property name="tooltipContent"
@@ -929,7 +945,7 @@
     </bean>
 
     <bean id="planItemAction" parent="KSAP-HorizontalFieldGroup"
-          p:style="width:@{#line.note EQ null ? '115px;' : '99px; padding-right:16px;'}">
+          p:style="width:@{#line.note EQ null ? '118px;' : '103px; padding-right:15px;'}">
         <property name="id"
                   value="@{#line.planItemDataObject.type}_@{#line.planItemDataObject.atp.replace('.','-')}_@{#line.planItemDataObject.id}"/>
         <property name="title"
@@ -940,6 +956,7 @@
                 <entry key="planitemid" value="@{#line.planItemDataObject.id}"/>
                 <entry key="atpid" value="@{#line.planItemDataObject.atp}"/>
                 <entry key="plannedsections" value="@{#line.sections}"/>
+                <entry key="type" value="@{#line.planItemDataObject.type}"/>
             </map>
         </property>
         <!-- TODO: after M2 upgrade : add SpEL for page name in openMenu param to swtich menu -->
@@ -1023,7 +1040,7 @@
         <property name="layoutManager.lineGroupPrototype.id"
                   value="@{#line.planItemDataObject.type}_@{#line.planItemDataObject.atp.replace('.','-')}_@{#line.planItemDataObject.id}_group"/>
         <property name="layoutManager.lineGroupPrototype.cssClasses"
-                  value="uif-verticalBoxGroup uif-collectionItem@{#line.placeHolder ? ' placeholder':''}@{#line.showAlert ? ' ksap-alert':''}@{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND #line.placeHolder ? ' noAction' : ''}"/>
+                  value="uif-verticalBoxGroup uif-collectionItem@{#line.planItemDataObject.type EQ 'recommended' ? (!#line.proposed ? ' accepted' : ' proposed') : (#line.adviserRecommended ? ' accepted':'')}@{#line.placeHolder ? ' placeholder':''}@{#line.showAlert ? ' alert':''}@{T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser() AND #line.placeHolder ? ' noAction' : ''}"/>
         <property name="header">
             <bean parent="Uif-HeaderSix"/>
         </property>
@@ -1045,7 +1062,7 @@
         <property name="propertyReplacers">
             <list>
                 <bean parent="Uif-ConditionalBeanPropertyReplacer" p:propertyName="items"
-                      p:condition="T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()">
+                      p:condition="T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()">
                     <property name="replacement">
                         <list>
                             <bean parent="planItemGroupAdviser"/>
@@ -1068,6 +1085,16 @@
         </property>
     </bean>
 
+    <bean id="recommendedAccepted" parent="Uif-ImageField"
+          p:source="@{#ConfigProperties['ks.myplan.externalizable.images.url']}pixel.gif"
+          p:render="@{!#line.proposed}">
+        <property name="cssClasses">
+            <list merge="false">
+                <value>itemAccepted</value>
+            </list>
+        </property>
+    </bean>
+
     <bean id="recommendedAction" parent="planItemAction">
         <property name="onClickScript" value="
             var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:'@{#line.planItemDataObject.id}', atpId:'@{#line.planItemDataObject.atp}', pageId:'recommended_dialog_page'};
@@ -1080,8 +1107,8 @@
 
     <bean id="recommendedCollection" parent="plannedCollection" p:headerText="Recommended">
         <property name="propertyName" value="recommendedList"/>
-        <!--<property name="render" value="@{#line NE null ? (T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() ? true : (#parentLine.recommendedList.size() GT 0)) : true}"/>-->
-           <property name="render" value="@{#line NE null ? true : false}"/>
+        <!--<property name="render"
+                  value="@{#line NE null ? (T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser() ? true : (#parentLine.recommendedList.size() GT 0)) : true}"/>-->
         <property name="cssClasses">
             <list merge="false">
                 <value>myplan-carousel-term</value>
@@ -1094,7 +1121,8 @@
                 <entry key="atpId" value="@{#line.atpId}"/>
                 <entry key="size" value="@{#line.recommendedList.size()}"/>
                 <entry key="limit" value="false"/>
-                <entry key="keep-header" value="@{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()}"/>
+                <entry key="keep-header"
+                       value="@{T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()}"/>
             </map>
         </property>
         <property name="header.rightGroup.items">
@@ -1106,10 +1134,25 @@
                 <bean parent="planItemGroup">
                     <property name="items">
                         <list>
+                            <!--<bean parent="recommendedAccepted"/>-->
                             <bean parent="planItemAlert"/>
                             <bean parent="recommendedAction"/>
-                            <bean parent="planItemNoteIcon" p:toolTip.tooltipContent="@{#line.note NE null ? #line.note.replaceAll('\n','&lt;br&gt;') : ''}">
-                                <property name="propertyReplacers"><list/></property>
+                            <bean parent="planItemNoteIcon">
+                                <property name="propertyReplacers">
+                                    <list/>
+                                </property>
+                                <property name="toolTip">
+                                    <bean parent="MyPlan-Tooltip-Left">
+                                        <property name="tooltipContent"
+                                                  value="@{#line.note NE null ? '&quot;' + #line.note.replaceAll('\n','&lt;br&gt;') + '&quot; - ' + #line.adviserName : ''}"/>
+                                        <property name="templateOptions">
+                                            <map merge="true">
+                                                <entry key="themeMargins" value="{ total:'17px', difference:'10px' }"/>
+                                                <entry key="themeName" value="ksap-adviser"/>
+                                            </map>
+                                        </property>
+                                    </bean>
+                                </property>
                             </bean>
                         </list>
                     </property>
@@ -1120,10 +1163,24 @@
             <list/>
         </property>
         <property name="footer">
-            <bean parent="term_no_courses" p:render="@{!#line.openForPlanning AND #line.recommendedList.size() EQ 0}"/>
+            <bean parent="term_no_courses" p:render="@{!#line.openForPlanning AND #line.recommendedList.size() EQ 0}">
+                <property name="items">
+                    <list>
+                        <bean parent="KSAP-Message" p:messageText="No recommendations">
+                            <property name="style"
+                                      value="margin-top:1px; font-size:0.8462em; height:25px; line-height:25px; padding:0 5px; display:block; text-align:center;"/>
+                            <property name="cssClasses">
+                                <list merge="true">
+                                    <value>fl-text-gray</value>
+                                    <value>myplan-text-italic</value>
+                                </list>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
         </property>
     </bean>
-
 
 
     <bean id="backupCollection" parent="plannedCollection" p:headerText="Backup">

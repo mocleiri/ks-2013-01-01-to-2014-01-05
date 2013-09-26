@@ -261,11 +261,7 @@
                 if (data.atpId == '@{dataObject.atpId.replaceAll('\.','-')}') {
                     fnUpdateQuarterViewCredits(data.totalCredits);
                 }
-            }).on('PLAN_ITEM_DELETED', function(event, data) {
-                if (data.atpId == '@{dataObject.atpId.replaceAll('\.','-')}' &amp;&amp; data.planItemType != 'wishlist') {
-                    myplanRetrieveComponent(data.atpId + '_' + data.planItemType, data.atpId + '_' + data.planItemType, 'start', 'inquiry', {viewId:'SingleTerm-InquiryView', term_atp_id:'@{dataObject.atpId}'}, null, {css:{top:'1px',left:'1px',border:'none',background:'none'},overlayCSS:{backgroundColor: '#fff'}});
-                }
-            }).on('PLAN_ITEM_ADDED', function(event, data) {
+            }).on('PLAN_ITEM_ADDED PLAN_ITEM_DELETED RECOMMENDED_ITEM_UPDATED', function(event, data) {
                 if (data.atpId == '@{dataObject.atpId.replaceAll('\.','-')}' &amp;&amp; data.planItemType != 'wishlist') {
                     myplanRetrieveComponent(data.atpId + '_' + data.planItemType, data.atpId + '_' + data.planItemType, 'start', 'inquiry', {viewId:'SingleTerm-InquiryView', term_atp_id:'@{dataObject.atpId}'}, null, {css:{top:'1px',left:'1px',border:'none',background:'none'},overlayCSS:{backgroundColor: '#fff'}});
                 }
@@ -339,19 +335,6 @@
             <list>
                 <!-- Backup list NOT empty-->
                 <bean parent="single_Recommended_Collection"/>
-            </list>
-        </property>
-        <property name="propertyReplacers">
-            <list>
-                <bean parent="Uif-ConditionalBeanPropertyReplacer" p:propertyName="items"
-                      p:condition="dataObject.recommendedList.size() EQ 0">
-                    <property name="replacement">
-                        <list>
-                            <!-- Backup list is empty -->
-                            <bean parent="single_Backup_Collection_Empty"/>
-                        </list>
-                    </property>
-                </bean>
             </list>
         </property>
     </bean>
@@ -805,9 +788,10 @@
         </property>
     </bean>
 
-    <bean id="singleQuarterItemPlaceholderCode" parent="KSAP-MessageField" p:messageText="@{#line.placeHolderCode}">
+    <bean id="singleQuarterItemPlaceholderCode" parent="KSAP-MessageField"
+          p:messageText="@{#line.placeHolderCode} '@{#line.placeHolderValue}'">
         <property name="render" value="@{#line.placeHolder}"/>
-        <property name="title" value="@{#line.placeHolderValue}"/>
+        <property name="title" value="@{#line.placeHolderCode} '@{#line.placeHolderValue}'"/>
         <property name="cssClasses">
             <list merge="true">
                 <value>itemTitle</value>
@@ -850,7 +834,8 @@
 
                 <!-- Past quarters OR Current Quarter and no Time Schedule OR Time Schedule Open and NOT Scheduled -->
                 <bean parent="singleQuarterStudentActions">
-                    <property name="render" value="@{!T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND ((dataObject.completedTerm) OR (!#line.timeScheduleOpen AND !dataObject.completedTerm AND dataObject.currentTermForView) OR (#line.timeScheduleOpen AND !#line.sectionsAvailable))}"/>
+                    <property name="render"
+                              value="@{!T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser() AND ((dataObject.completedTerm) OR (!#line.timeScheduleOpen AND !dataObject.completedTerm AND dataObject.currentTermForView) OR (#line.timeScheduleOpen AND !#line.sectionsAvailable))}"/>
                     <property name="items">
                         <list>
                             <bean parent="singleQuarterMoveCourse"/>
@@ -862,7 +847,7 @@
                 <!-- Time Schedule Open and Scheduled -->
                 <bean parent="singleQuarterStudentActions">
                     <property name="render"
-                              value="@{!T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND #line.timeScheduleOpen AND #line.sectionsAvailable}"/>
+                              value="@{!T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser() AND #line.timeScheduleOpen AND #line.sectionsAvailable}"/>
                     <property name="items">
                         <list>
                             <bean parent="singleQuarterSectionsToggle"/>
@@ -874,7 +859,7 @@
                 <!-- Future Quarters and no Time Schedule -->
                 <bean parent="singleQuarterStudentActions">
                     <property name="render"
-                              value="@{!T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND !#line.timeScheduleOpen AND !dataObject.completedTerm AND !dataObject.currentTermForView}"/>
+                              value="@{!T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser() AND !#line.timeScheduleOpen AND !dataObject.completedTerm AND !dataObject.currentTermForView}"/>
                     <property name="items">
                         <list>
                             <bean parent="singleQuarterCopyCourse"/>
@@ -889,7 +874,7 @@
                     <property name="style"
                               value="display:inline-block; font-size:11px; margin:0 0 0 30px; text-align:right; float:right;"/>
                     <property name="render"
-                              value="@{T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND #line.timeScheduleOpen AND #line.sectionsAvailable}"/>
+                              value="@{T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser() AND #line.timeScheduleOpen AND #line.sectionsAvailable}"/>
                 </bean>
 
             </list>
@@ -901,6 +886,8 @@
             <list>
                 <bean parent="singleQuarterItemAlert"/>
 
+                <!--<bean parent="recommendedAccepted"/>-->
+
                 <bean parent="singleQuarterItemCourseCode"/>
 
                 <bean parent="singleQuarterItemCourseLink"/>
@@ -909,44 +896,31 @@
 
                 <bean parent="singleQuarterItemCredit"/>
 
-                <bean parent="planItemNoteIcon"/>
+                <bean parent="planItemNoteIcon">
+                    <property name="propertyReplacers">
+                        <list/>
+                    </property>
+                    <property name="toolTip">
+                        <bean parent="MyPlan-Tooltip-Left">
+                            <property name="tooltipContent"
+                                      value="@{#line.note NE null ? '&quot;' + #line.note.replaceAll('\n','&lt;br&gt;') + '&quot; - ' + #line.adviserName : ''}"/>
+                            <property name="templateOptions">
+                                <map merge="true">
+                                    <entry key="themeMargins" value="{ total:'17px', difference:'10px' }"/>
+                                    <entry key="themeName" value="ksap-adviser"/>
+                                </map>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
 
-                <bean parent="singleQuarterSectionsToggle">
+                <bean parent="singleQuarterAddRecommended">
                     <property name="style"
                               value="display:inline-block; font-size:11px; margin:0 0 0 30px; text-align:right; float:right;"/>
                     <property name="render"
-                              value="@{#line.timeScheduleOpen AND #line.sectionsAvailable}"/>
+                              value="@{!T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser() AND #line.proposed}"/>
                 </bean>
 
-            </list>
-        </property>
-    </bean>
-
-    <bean id="singleQuarterPlanItemActions" parent="KSAP-VerticalFieldGroup">
-        <property name="items">
-            <list>
-                <!--<bean parent="singleQuarterStudentActions">
-                    <property name="render"
-                              value="@{!T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND !#line.timeScheduleOpen AND !dataObject.completedTerm AND dataObject.currentTermForView}"/>
-                    <property name="items">
-                        <list>
-                            <bean parent="singleQuarterMoveCourse"/>
-                            <bean parent="singleQuarterDeleteCourse"/>
-                        </list>
-                    </property>
-                </bean>
-
-
-                <bean parent="singleQuarterStudentActions">
-                    <property name="render"
-                              value="@{!T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser() AND #line.timeScheduleOpen AND !#line.sectionsAvailable}"/>
-                    <property name="items">
-                        <list>
-                            <bean parent="singleQuarterMoveCourse"/>
-                            <bean parent="singleQuarterDeleteCourse"/>
-                        </list>
-                    </property>
-                </bean>-->
             </list>
         </property>
     </bean>
@@ -984,6 +958,9 @@
                             <list merge="true">
                                 <value>myplan-course-item</value>
                                 <value>@{#line.placeHolder ? 'placeholder':''}</value>
+                                <value>@{#line.planItemDataObject.type EQ 'recommended' ? (!#line.proposed ? 'accepted'
+                                    : 'proposed') : (#line.adviserRecommended ? 'accepted':'')}
+                                </value>
                             </list>
                         </property>
                     </bean>
@@ -1075,6 +1052,9 @@
                 <value>uif-subCollection</value>
                 <value>myplan-recommended-collection</value>
             </list>
+        </property>
+        <property name="subCollections">
+            <list/>
         </property>
     </bean>
 
@@ -1207,7 +1187,7 @@
         <property name="propertyReplacers">
             <list>
                 <bean parent="Uif-ConditionalBeanPropertyReplacer" p:propertyName="items"
-                      p:condition="T(org.kuali.student.myplan.utils.UserSessionHelper).isAdviser()">
+                      p:condition="T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()">
                     <property name="replacement">
                         <list>
                             <bean parent="activityCode" p:rowSpan="1"
@@ -1381,6 +1361,17 @@
             var popupStyle = {width:'300px', height:'16px'};
             var popupOptions = {tail:{hidden:true}, position:'left', align:'middle', close:true};
             openPopup('plan_item_delete_page', retrieveData, 'plan', popupStyle, popupOptions, e);
+        "/>
+    </bean>
+
+    <bean id="singleQuarterAddRecommended" parent="Uif-ActionLink" p:actionLabel="Add to Plan"
+          p:style="display:inline-block;">
+        <property name="actionScript" value="
+            var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', planItemId:'@{#line.planItemDataObject.id}', atpId:'@{#line.planItemDataObject.atp}', pageId:'recommended_dialog_page'};
+            if (!@{#line.placeHolder}) retrieveData.courseId = '@{#line.courseDetails.courseId}';
+            var popupStyle = {width:'300px', height:'16px'};
+            var popupOptions = {tail:{hidden:true}, position:'left', align:'middle', close:true};
+            openPopup('recommended_dialog_page', retrieveData, 'plan', popupStyle, popupOptions, e);
         "/>
     </bean>
 

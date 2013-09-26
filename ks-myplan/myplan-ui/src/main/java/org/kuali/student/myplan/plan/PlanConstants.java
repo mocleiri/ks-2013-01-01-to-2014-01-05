@@ -74,9 +74,11 @@ public class PlanConstants extends AcademicPlanServiceConstants {
     public static final String COURSE_NOT_FOUND = "myplan.text.error.quickAdd.courseNotFound";
     public static final String CREDIT_REQUIRED = "myplan.text.error.quickAdd.creditRequired";
     public static final String NOTE_REQUIRED = "myplan.text.error.quickAdd.noteRequired";
+    public static final String DEFAULT_PLACEHOLDER_ERROR = "myplan.text.error.default.placeholder";
     public static final String UPDATE_FAILED = "myplan.text.error.quickAdd.updateFailed";
     public static final String EMPTY_SEARCH = "myplan.text.error.quickAdd.emptySearch";
     public static final String ACCESS_DENIED = "myplan.text.error.permissionDenied";
+    public static final String COURSE_LEVEL_NOT_FOUND = "myplan.text.error.quickAdd.courseLevelNotFound";
 
     //  Global context info for use in service methods which need caching, but don't use the context argument.
     public static final ContextInfo CONTEXT_INFO = new ContextInfo();
@@ -137,13 +139,22 @@ public class PlanConstants extends AcademicPlanServiceConstants {
     public static final String MULTIPLE = ",";
 
 
-    public static final String REMOVED_RECOMMEND_NOTIFICATION_SUBJECT = "%s has removed their course recommendation ";
-    public static final String REMOVED_RECOMMEND_NOTIFICATION_BODY = "%s has removed their recommendation for adding %s to your plan for %s. <br><br>%s%s removed this recommendation on %s. For more information on why this recommendation was removed, contact this adviser directly.<br><br>";
+    public static final String REMOVED_RECOMMEND_NOTIFICATION_SUBJECT = "myplan.recommendation.remove.notification.subject";
+    public static final String REMOVED_RECOMMEND_NOTIFICATION_MESSAGE_SUBJECT = "myplan.recommendation.remove.notification.message.subject";
+    public static final String REMOVED_RECOMMEND_NOTIFICATION_BODY = "myplan.recommendation.remove.notification.body";
+    public static final String REMOVED_RECOMMEND_NOTIFICATION_INFO = "myplan.recommendation.remove.email.notification.info.line";
 
-    public static final String ADD_RECOMMEND_NOTIFICATION_SUBJECT = "%s recommended a course for your plan ";
-    public static final String ADD_RECOMMEND_NOTIFICATION_BODY = "%s recommended that you add %s to your plan for %s. <br><br>%sThis recommendation was made on %s. To accept this adviser’s course recommendation, %s.<br><br>";
+    public static final String ADD_RECOMMEND_NOTIFICATION_SUBJECT = "myplan.recommendation.add.notification.subject";
+    public static final String ADD_RECOMMEND_NOTIFICATION_MESSAGE_SUBJECT = "myplan.recommendation.add.notification.message.subject";
+    public static final String ADD_RECOMMEND_NOTIFICATION_BODY = "myplan.recommendation.add.notification.body";
+    public static final String ADD_RECOMMEND_NOTIFICATION_INFO = "myplan.recommendation.add.email.notification.info.line";
 
     public static final String RECOMMENDATION_EMAIL_BODY = "myplan.recommendation.email.body";
+    
+    public static final String PROPERTIES_FILE_PATH = "/org/kuali/student/myplan/KSMyPlan-ApplicationResources.properties";
+
+    public static final String DEFAULT_KEY = "default";
+    public static final String DEFAULT_SELECT = "Select a placeholder";
 
     /**
      * Names of javascript events that can be scheduled in response to the outcome of a plan item request.
@@ -160,7 +171,7 @@ public class PlanConstants extends AcademicPlanServiceConstants {
         /*atpId, courseId, sectionCode, primarySection, courseCredits*/
         SECTION_ITEM_DELETED,
         /*planItemId, atpId, type*/
-        RECOMMENDED_ITEM_DELETED,
+        RECOMMENDED_ITEM_UPDATED,
         /* atpId, newTotalCredits */
         UPDATE_NEW_TERM_TOTAL_CREDITS,
         /*atpId, oldTotalCredits*/

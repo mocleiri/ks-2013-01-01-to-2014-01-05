@@ -1,12 +1,10 @@
 package org.kuali.rice.krad.uif.widget.extension;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.krad.datadictionary.parse.BeanTag;
 import org.kuali.rice.krad.datadictionary.parse.BeanTagAttribute;
 import org.kuali.rice.krad.uif.UifConstants;
 import org.kuali.rice.krad.uif.component.ClientSideState;
 import org.kuali.rice.krad.uif.component.Component;
-import org.kuali.rice.krad.uif.container.TabGroup;
 import org.kuali.rice.krad.uif.view.View;
 import org.kuali.rice.krad.uif.widget.WidgetBase;
 

@@ -1071,7 +1071,7 @@ div.activityAction div.blockElement {
 .myplan-carousel-list ul li .uif-header {
     padding: 0 10px;
     height: 25px;
-    line-height: 25px;
+    line-height: 24px;
     background-color: #F5F5F5;
     background-image: -ms-linear-gradient(top, #F5F5F5 0%, #EBEBEB 100%);
     background-image: -moz-linear-gradient(center top, #F5F5F5 0%, #EBEBEB 100%);
@@ -1084,6 +1084,17 @@ div.activityAction div.blockElement {
     border-top: solid 1px #e2e2e2;
     border-bottom: solid 1px #e2e2e2;
     margin-bottom: -1px;
+}
+
+.myplan-carousel-list ul li .myplan-term-recommended .uif-header {
+    background-color: #d5edd5;
+    background-image: -ms-linear-gradient(top, #d5edd5 0%, #c7e1c7 100%);
+    background-image: -moz-linear-gradient(center top, #d5edd5 0%, #c7e1c7 100%);
+    background-image: -o-linear-gradient(top, #d5edd5 0%, #c7e1c7 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #d5edd5), color-stop(1, #c7e1c7));
+    background-image: -webkit-linear-gradient(top, #d5edd5 0%, #c7e1c7 100%);
+    background-image: linear-gradient(to bottom, #d5edd5 0%, #c7e1c7 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d5edd5', endColorstr='#c7e1c7');
 }
 
 .myplan-carousel-list ul li .uif-header h6.uif-headerText {
@@ -1152,7 +1163,7 @@ div.activityAction div.blockElement {
     font-family: Helvetica, Arial, Verdana, sans-serif;
     height: 25px;
     line-height: 25px;
-    padding: 0 4px 0 26px;
+    padding: 0 3px 0 24px;
     color: #000;
     position: relative;
 }
@@ -1165,13 +1176,25 @@ div.activityAction div.blockElement {
     cursor: pointer;
 }
 
-.myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem.ksap-alert {
-    padding: 0 4px;
+.myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem.ksap-alert,
+.myplan-carousel-list ul li .myplan-carousel-term.myplan-term-recommended .uif-stackedCollectionLayout .uif-collectionItem.accepted{
+    padding: 0 3px;
 }
 
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem.placeholder {
     font-family: Georgia, serif;
     font-style: italic;
+}
+
+.myplan-carousel-list ul li .myplan-carousel-term.myplan-term-recommended .uif-stackedCollectionLayout .uif-collectionItem.proposed .itemTitle,
+.myplan-quarter-detail .myplan-recommended-collection .myplan-course-item.proposed .itemCode {
+    font-weight: 700;
+}
+
+.myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem.accepted .itemTitle,
+.myplan-quarter-detail .myplan-course-item.accepted .itemCode {
+    color: #008A00;
+    font-weight: 500;
 }
 
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem:hover,
@@ -1216,6 +1239,7 @@ div.activityAction div.blockElement {
 
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem .itemCredit {
     color: #888;
+    font-size: 0.909em;
 }
 
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem .itemGrade {
@@ -1223,22 +1247,27 @@ div.activityAction div.blockElement {
     font-weight: bold;
     position: absolute;
     right: 0px;
-    margin: 0 4px;
+    margin: 0 3px;
 }
 
+.myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem .itemAccepted,
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem .itemAlert,
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem .itemTitle,
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem .itemActivities {
-    margin-right: 4px;
+    margin-right: 3px;
 }
 
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem .itemNote {
     position: absolute;
-    right: 4px;
+    right: 3px;
     top: 6px;
     margin: 0;
     padding: 0px;
     line-height: 12px;
+}
+
+.myplan-carousel-list ul li .myplan-carousel-term.myplan-term-recommended .uif-stackedCollectionLayout .uif-collectionItem .itemNote {
+    top: 4px;
 }
 
 .myplan-quarter-detail .myplan-course-item .itemNote {
@@ -1265,11 +1294,26 @@ div.activityAction div.blockElement {
     background-position: -54px -115px;
 }
 
+.myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem .itemAccepted img,
+.myplan-quarter-detail .myplan-course-item .itemAccepted img {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    background: url('../images/myplan_icon_sprites.png') no-repeat -54px -180px;
+}
+
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem .itemNote img,
 .myplan-quarter-detail .myplan-course-item .itemNote img {
     width: 12px;
     height: 12px;
     background-position: -3px -183px;
+}
+
+.myplan-carousel-list ul li .myplan-carousel-term.myplan-term-recommended .uif-stackedCollectionLayout .uif-collectionItem .itemNote img,
+.myplan-quarter-detail .myplan-recommended-collection .myplan-course-item .itemNote img {
+    width: 16px;
+    height: 16px;
+    background-position: -37px -181px;
 }
 
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem .itemNote:hover img {
@@ -1509,7 +1553,7 @@ div.activityAction div.blockElement {
 }
 
 .myplan-audit-message-info {
-    background: #F4F8FD url('../images/Iconinfo16x.png') no-repeat 5px center;
+    background: #F4F8FD url('../icons/16/infomation.png') no-repeat 5px center;
     padding-left: 26px !important;
 }
 
@@ -2991,6 +3035,17 @@ label.scheduled {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e7e7e7', endColorstr='#dfdfdf');
 }
 
+.myplan-quarter-detail .uif-collectionGroup.myplan-recommended-collection .uif-header {
+    background-color: #d5edd5;
+    background-image: -ms-linear-gradient(top, #d5edd5 0%, #caddca 100%);
+    background-image: -moz-linear-gradient(center top, #d5edd5 0%, #caddca 100%);
+    background-image: -o-linear-gradient(top, #d5edd5 0%, #caddca 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #d5edd5), color-stop(1, #caddca));
+    background-image: -webkit-linear-gradient(top, #d5edd5 0%, #caddca 100%);
+    background-image: linear-gradient(to bottom, #d5edd5 0%, #caddca 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d5edd5', endColorstr='#caddca');
+}
+
 .myplan-quarter-detail h4 {
     vertical-align: middle;
     display: inline-block;
@@ -3042,6 +3097,7 @@ label.scheduled {
     height: 16px;
 }
 
+.myplan-quarter-detail .myplan-course-item .itemAccepted,
 .myplan-quarter-detail .myplan-course-item .itemAlert,
 .myplan-quarter-detail .myplan-course-item .itemCode,
 .myplan-quarter-detail .myplan-course-item .itemTitle,
@@ -3054,11 +3110,10 @@ label.scheduled {
     top: -2px;
 }
 
+/*
 .myplan-quarter-detail .myplan-course-item .itemCode {
     font-weight: bold;
 }
-
-/*
 .myplan-quarter-detail .myplan-course-item .itemCredit:before {
     content: "(";
     margin: 0;
@@ -3099,15 +3154,64 @@ label.scheduled {
     margin: 0 10px 0 0;
 }
 
-.myplan-adviser-recommendation .uif-readOnlyContent {
-    display: block;
-    border: dashed 1px #ccc;
-    border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    padding: 10px;
-    color: #666;
+.myplan-recommendation-message {
+    margin: 10px 0 10px 0;
 }
+
+.myplan-recommendation-message .uif-readOnlyContent {
+    position: relative;
+    padding: 5px 10px;
+    font-size: 11px;
+    border: 1px solid #D6EED7;
+    color: #555;
+    font-style: italic;
+    background: #F9FFF9;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    display: block;
+    width: 268px;
+}
+
+.myplan-recommendation-message .uif-readOnlyContent.left {
+    margin-left: 30px;
+}
+
+.myplan-recommendation-message .uif-readOnlyContent.right {
+    margin-right: 30px;
+}
+
+.myplan-recommendation-message .uif-readOnlyContent:before {
+    content: "";
+    position: absolute;
+    bottom: -13px; /* value = - border-top-width - border-bottom-width */
+    right: 19px; /* controls horizontal position */
+    border-width: 13px 10px 0;
+    border-style: solid;
+    border-color: #D6EED7 transparent;
+    display: block;
+    width: 0;
+}
+
+.myplan-recommendation-message .uif-readOnlyContent:after {
+    content: "";
+    position: absolute;
+    bottom: -11px; /* value = - border-top-width - border-bottom-width */
+    right: 21px; /* value = (:before left) + (:before border-left) - (:after border-left) */
+    border-width: 11px 8px 0;
+    border-style: solid;
+    border-color: #F9FFF9 transparent;
+    display: block;
+    width: 0;
+}
+
+.myplan-recommendation-meta {
+    font-size: 10px;
+    color: #008A00;
+    line-height: 16px;
+    margin: 0 0 1.5em 0;
+}
+
 /* Styles for Run Audit Panel ################################################################################## */
 .myplan-audit-tabs {
     border-bottom: solid 4px #f9ac23;

@@ -46,7 +46,6 @@
         </#list>
     </div>
 
-    <@krad.script component=container value="createTabs('${container.id}', '${container.tabsWidget.id}',
-        ${container.tabsWidget.templateOptionsJSString}, '${container.tabsWidget.position.toString()}');"/>
+    <@krad.script component=parent value="createTabs('${manager.id}', ${container.tabsWidget.templateOptionsJSString});"/>
 
 </#macro>

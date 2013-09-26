@@ -1,6 +1,7 @@
 package org.kuali.student.myplan.plan.service;
 
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
+import edu.uw.kuali.student.myplan.util.UserSessionHelperImpl;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
@@ -25,6 +26,7 @@ import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.AtpHelper.YearTerm;
 import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.xml.namespace.QName;
 import java.util.*;
@@ -51,6 +53,9 @@ public class PlannedTermsHelperBase {
 
     private transient CourseHelper courseHelper;
 
+    @Autowired
+    private static UserSessionHelper userSessionHelper;
+
 
     public static List<PlannedTerm> populatePlannedTerms(List<PlannedCourseDataObject> plannedCoursesList, List<PlannedCourseDataObject> backupCoursesList, List<PlannedCourseDataObject> recommendedCoursesList, List<StudentCourseRecordInfo> studentCourseRecordInfos, String focusAtpId, int futureTerms, boolean fullPlanView) {
 
@@ -73,7 +78,6 @@ public class PlannedTermsHelperBase {
             focusQuarterYear[1] = year;
         }
 
-        Set<String> plannedAndBackupItems = new HashSet<String>();
 
         /*
         *  Populating the PlannedTerm List.
@@ -93,7 +97,6 @@ public class PlannedTermsHelperBase {
 
             for (PlannedCourseDataObject plan : plannedCoursesList) {
                 String atp = plan.getPlanItemDataObject().getAtp();
-                plannedAndBackupItems.add(String.format("%s|%s", plan.getPlanItemDataObject().getRefObjId(), atp));
                 boolean exists = false;
                 for (PlannedTerm term : plannedTerms) {
                     if (term.getAtpId().equalsIgnoreCase(atp)) {
@@ -133,7 +136,6 @@ public class PlannedTermsHelperBase {
             int count = plannedTerms.size();
             for (PlannedCourseDataObject bl : backupCoursesList) {
                 String atp = bl.getPlanItemDataObject().getAtp();
-                plannedAndBackupItems.add(String.format("%s|%s", bl.getPlanItemDataObject().getRefObjId(), atp));
                 boolean added = false;
                 for (int i = 0; i < count; i++) {
                     if (atp.equalsIgnoreCase(plannedTerms.get(i).getAtpId())) {
@@ -175,10 +177,6 @@ public class PlannedTermsHelperBase {
             int count = plannedTerms.size();
             for (PlannedCourseDataObject bl : recommendedCoursesList) {
                 String atp = bl.getPlanItemDataObject().getAtp();
-                /*Not adding the recommended course if it is already planned for the qtr*/
-                if (plannedAndBackupItems.contains(String.format("%s|%s", bl.getPlanItemDataObject().getRefObjId(), atp)) && !UserSessionHelper.isAdviser()) {
-                    continue;
-                }
                 boolean added = false;
                 for (int i = 0; i < count; i++) {
                     if (atp.equalsIgnoreCase(plannedTerms.get(i).getAtpId())) {
@@ -510,7 +508,7 @@ public class PlannedTermsHelperBase {
         List<PlannedCourseDataObject> plannedCourseDataObjects = new ArrayList<PlannedCourseDataObject>();
         String startAtp = AtpHelper.getFirstOpenForPlanTerm();
         try {
-            plannedCourseDataObjects = planItemLookupableHelperBase.getPlannedCoursesFromAtp(PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED, UserSessionHelper.getStudentRegId(), startAtp, false);
+            plannedCourseDataObjects = planItemLookupableHelperBase.getPlannedCoursesFromAtp(PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED, getUserSessionHelper().getStudentId(), startAtp, false);
         } catch (Exception e) {
             logger.error("Could not retrieve the planItems" + e);
         }
@@ -592,6 +590,15 @@ public class PlannedTermsHelperBase {
         return academicPlanService;
     }
 
+
+    public void setAcademicRecordService(AcademicRecordService academicRecordService) {
+        this.academicRecordService = academicRecordService;
+    }
+
+    public void setAcademicPlanService(AcademicPlanService academicPlanService) {
+        this.academicPlanService = academicPlanService;
+    }
+
     protected CourseOfferingService getCourseOfferingService() {
         if (this.courseOfferingService == null) {
             //   TODO: Use constants for namespace.
@@ -615,9 +622,19 @@ public class PlannedTermsHelperBase {
         this.courseHelper = courseHelper;
     }
 
+    public static UserSessionHelper getUserSessionHelper() {
+        if(userSessionHelper == null){
+            userSessionHelper = new UserSessionHelperImpl();
+        }
+        return userSessionHelper;
+    }
+
+    public static void setUserSessionHelper(UserSessionHelper userSessionHelper) {
+        PlannedTermsHelperBase.userSessionHelper = userSessionHelper;
+    }
+
     public String getTotalCredits(String termId) {
-        Person user = GlobalVariables.getUserSession().getPerson();
-        String studentID = user.getPrincipalId();
+        String studentID = getUserSessionHelper().getStudentId();
         YearTerm yearTerm = AtpHelper.atpToYearTerm(termId);
         ArrayList<String> creditList = new ArrayList<String>();
         try {

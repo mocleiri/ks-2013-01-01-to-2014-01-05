@@ -17,6 +17,7 @@ package org.kuali.student.myplan.course.controller;
 
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
 import edu.uw.kuali.student.myplan.util.TermInfoComparator;
+import edu.uw.kuali.student.myplan.util.UserSessionHelperImpl;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.kuali.rice.core.api.config.property.ConfigContext;
@@ -38,9 +39,7 @@ import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService
 import org.kuali.student.lum.course.service.assembler.CourseAssemblerConstants;
 import org.kuali.student.lum.lu.service.LuService;
 import org.kuali.student.lum.lu.service.LuServiceConstants;
-import org.kuali.student.myplan.academicplan.dto.LearningPlanInfo;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
-import org.kuali.student.myplan.academicplan.infc.LearningPlan;
 import org.kuali.student.myplan.academicplan.infc.PlanItem;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanService;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanServiceConstants;
@@ -52,7 +51,7 @@ import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.EnumerationHelper;
-import org.kuali.student.myplan.plan.util.OrgHelper;
+import org.kuali.student.myplan.plan.util.PlanHelper;
 import org.kuali.student.myplan.plan.util.SearchHelper;
 import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.kuali.student.r2.common.dto.ContextInfo;
@@ -108,6 +107,12 @@ public class CourseSearchController extends UifControllerBase {
 
     @Autowired
     private CourseSearchStrategy searcher = new CourseSearchStrategy();
+
+    @Autowired
+    private UserSessionHelper userSessionHelper;
+
+    @Autowired
+    private PlanHelper planHelper;
 
 
     private CourseHelper courseHelper;
@@ -334,7 +339,7 @@ public class CourseSearchController extends UifControllerBase {
 
 
         /*populating the CourseSearchItem list*/
-        String user = UserSessionHelper.getStudentRegId();
+        String user = getUserSessionHelper().getStudentId();
         List<CourseSearchItem> courses = courseSearch(form, user);
 
         /*Building the Json String*/
@@ -355,7 +360,7 @@ public class CourseSearchController extends UifControllerBase {
             String label = item.getStatus().getLabel();
             if (label.length() > 0) {
                 status = "<span id=\\\"" + courseId + "_status\\\" class=\\\"" + label.toLowerCase() + "\\\">" + label + "</span>";
-            } else if (UserSessionHelper.isAdviser()) {
+            } else if (getUserSessionHelper().isAdviser()) {
                 status = "<span id=\\\"" + courseId + "_status\\\">" + CourseSearchItem.EMPTY_RESULT_VALUE_KEY + "</span>";
             } else {
                 status = "<span id=\\\"" + courseId + "_status\\\"><input type=\\\"image\\\" title=\\\"Bookmark or Add to Plan\\\" src=\\\"/student/ks-myplan/images/pixel.gif\\\" alt=\\\"Bookmark or Add to Plan\\\" class=\\\"uif-field uif-imageField myplan-add\\\" data-courseid= \\\"" + courseId + "\\\"onclick=\\\"openMenu('" + courseId + "_add','add_course_items',null,event,null,'myplan-container-75',{tail:{align:'middle'},align:'middle',position:'right'},false);\\\" /></span>";
@@ -570,38 +575,26 @@ public class CourseSearchController extends UifControllerBase {
 
     private Map<String, CourseSearchItem.PlanState> getCourseStatusMap(String studentID) throws Exception {
         logger.info("Start of method getCourseStatusMap of CourseSearchController:" + System.currentTimeMillis());
-        AcademicPlanService academicPlanService = getAcademicPlanService();
-
-
-        ContextInfo context = new ContextInfo();
-
-
-        String planTypeKey = AcademicPlanServiceConstants.LEARNING_PLAN_TYPE_PLAN;
 
         Map<String, CourseSearchItem.PlanState> savedCourseSet = new HashMap<String, CourseSearchItem.PlanState>();
 
         /*
          *  For each plan item in each plan set the state based on the type.
          */
-        List<LearningPlanInfo> learningPlanList = academicPlanService.getLearningPlansForStudentByType(studentID, planTypeKey, context);
-        for (LearningPlan learningPlan : learningPlanList) {
-            String learningPlanID = learningPlan.getId();
-            List<PlanItemInfo> planItemList = academicPlanService.getPlanItemsInPlan(learningPlanID, context);
-            for (PlanItem planItem : planItemList) {
-                String courseID = planItem.getRefObjectId();
-                CourseSearchItem.PlanState state;
-                if (planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST)) {
-                    state = CourseSearchItem.PlanState.SAVED;
-                } else if (planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED)
-                        || planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP)) {
-                    state = CourseSearchItem.PlanState.IN_PLAN;
-                } else if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED.equals(planItem.getTypeKey())) {
-                    state = CourseSearchItem.PlanState.UNPLANNED;
-                } else {
-                    throw new RuntimeException("Unknown plan item type.");
-                }
-                savedCourseSet.put(courseID, state);
+        List<String> planItemTypes = Arrays.asList(PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED, PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST, PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP);
+            List<PlanItemInfo> planItemList = getPlanHelper().getPlanItemsByTypes(getUserSessionHelper().getStudentId(), planItemTypes);
+        for (PlanItem planItem : planItemList) {
+            String courseID = planItem.getRefObjectId();
+            CourseSearchItem.PlanState state;
+            if (planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST)) {
+                state = CourseSearchItem.PlanState.SAVED;
+            } else if (planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED)
+                    || planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP)) {
+                state = CourseSearchItem.PlanState.IN_PLAN;
+            } else {
+                throw new RuntimeException("Unknown plan item type.");
             }
+            savedCourseSet.put(courseID, state);
         }
         logger.info("End of method getCourseStatusMap of CourseSearchController:" + System.currentTimeMillis());
         return savedCourseSet;
@@ -805,7 +798,24 @@ public class CourseSearchController extends UifControllerBase {
         this.campusSearch = campusSearch;
     }
 
+    public UserSessionHelper getUserSessionHelper() {
+        if (userSessionHelper == null) {
+            userSessionHelper = new UserSessionHelperImpl();
+        }
+        return userSessionHelper;
+    }
 
+    public void setUserSessionHelper(UserSessionHelper userSessionHelper) {
+        this.userSessionHelper = userSessionHelper;
+    }
+
+    public PlanHelper getPlanHelper() {
+        return planHelper;
+    }
+
+    public void setPlanHelper(PlanHelper planHelper) {
+        this.planHelper = planHelper;
+    }
 }
 
 
