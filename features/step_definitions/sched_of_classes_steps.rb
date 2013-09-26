@@ -9,7 +9,8 @@ Then /^the nearest valid future Term is chosen in the Term select list$/ do
   #  the test susceptible to changes in the term data. However, it didn't seem quite worth while to try and reproduce
   #  the algorithm to prevent the breakage.
   #
-  @schedule_of_classes_landing_page.term.value.should match /kuali\.atp\.2015Winter/
+  #  For now just make sure a term was selected.
+  @schedule_of_classes_landing_page.term.value.should match /kuali\.atp\.20/
 end
 
 When /^I search for course offerings by course by entering a subject code$/ do
