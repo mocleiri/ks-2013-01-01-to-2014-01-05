@@ -1136,8 +1136,8 @@
                 <bean parent="planItemGroup">
                     <property name="items">
                         <list>
-                            <bean parent="recommendedAccepted"/>
-                            <bean parent="planItemAlert" p:render="@{#line.showAlert AND #line.proposed}"/>
+                            <!--<bean parent="recommendedAccepted"/>-->
+                            <bean parent="planItemAlert"/>
                             <bean parent="recommendedAction"/>
                             <bean parent="planItemNoteIcon">
                                 <property name="propertyReplacers">

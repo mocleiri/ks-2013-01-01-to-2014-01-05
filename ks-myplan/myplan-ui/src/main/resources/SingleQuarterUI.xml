@@ -886,9 +886,9 @@
     <bean id="singleQuarterRecommendedItemGroup" parent="singleQuarterPlanItemGroup">
         <property name="items">
             <list>
-                <bean parent="singleQuarterItemAlert" p:render="@{#line.showAlert AND #line.proposed}"/>
+                <bean parent="singleQuarterItemAlert"/>
 
-                <bean parent="recommendedAccepted"/>
+                <!--<bean parent="recommendedAccepted"/>-->
 
                 <bean parent="singleQuarterItemCourseCode"/>
 

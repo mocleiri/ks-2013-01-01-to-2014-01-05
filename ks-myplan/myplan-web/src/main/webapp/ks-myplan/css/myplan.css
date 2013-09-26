@@ -1113,8 +1113,7 @@ div.activityAction div.blockElement {
     cursor: pointer;
 }
 
-.myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem.alert,
-.myplan-carousel-list ul li .myplan-carousel-term.myplan-term-recommended .uif-stackedCollectionLayout .uif-collectionItem.accepted{
+.myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem.alert {
     padding: 0 3px;
 }
 
@@ -1122,9 +1121,14 @@ div.activityAction div.blockElement {
     font-family: Georgia, serif;
     font-style: italic;
 }
-.myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem.accepted,
+.myplan-carousel-list ul li .myplan-carousel-term.myplan-term-recommended .uif-stackedCollectionLayout .uif-collectionItem.proposed .itemTitle,
+.myplan-quarter-detail .myplan-recommended-collection .myplan-course-item.proposed .itemCode {
+    font-weight: 700;
+}
+.myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem.accepted .itemTitle,
 .myplan-quarter-detail .myplan-course-item.accepted .itemCode {
     color: #008A00;
+    font-weight: 500;
 }
 
 .myplan-carousel-list ul li .myplan-carousel-term .uif-stackedCollectionLayout .uif-collectionItem:hover,
@@ -3039,11 +3043,10 @@ label.scheduled {
     top: -2px;
 }
 
+/*
 .myplan-quarter-detail .myplan-course-item .itemCode {
     font-weight: bold;
 }
-
-/*
 .myplan-quarter-detail .myplan-course-item .itemCredit:before {
     content: "(";
     margin: 0;
