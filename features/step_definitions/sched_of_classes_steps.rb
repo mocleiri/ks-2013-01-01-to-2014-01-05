@@ -159,6 +159,8 @@ Then /^the activity A of the course offering "(.*?)" has a colocated icon$/ do |
       raise "activities table not found"
     else
       page.details_table.rows[1].cells[DisplayScheduleOfClasses::AO_CODE_COLUMN].image(src: /colocate_icon/).present?.should be_true
+      page.details_table.rows[1].cells[DisplayScheduleOfClasses::AO_CODE_COLUMN].image(src: /colocate_icon/).hover
+      sleep 1
     end
   end
 end
@@ -187,14 +189,16 @@ end
 Then /^the course offering "(.*?)" has cross listed icon$/ do |arg1|
   @schedule_of_classes.display
   on DisplayScheduleOfClasses do |page|
-    page.target_course_row(arg1)[1].image(src: /cross-listed/).present?.should be_true
+    page.target_course_row(arg1)[DisplayScheduleOfClasses::COURSE_CODE_COLUMN].image(src: /cross-listed/).present?.should be_true
+    page.target_course_row(arg1)[DisplayScheduleOfClasses::COURSE_CODE_COLUMN].image(src: /cross-listed/).hover
+    sleep 1
   end
 end
 
 And /^the course offering "(.*?)" has tooltip text "(.*?)"$/ do |arg1, arg2|
   @schedule_of_classes.display
   on DisplayScheduleOfClasses do |page|
-    cross_listed_tooltip_text = page.target_course_row(arg1)[1].image(src: /cross-listed/).alt.upcase
+    cross_listed_tooltip_text = page.target_course_row(arg1)[DisplayScheduleOfClasses::COURSE_CODE_COLUMN].image(src: /cross-listed/).alt.upcase
     cross_listed_tooltip_text.should == arg2.upcase
   end
 end
@@ -202,11 +206,11 @@ end
 Then /^the course offering "(.*?)" has Audit grading option icon and tooltip popped up$/ do |arg1|
   @schedule_of_classes.display
   on DisplayScheduleOfClasses do |page|
-    page.target_course_row(arg1)[4].image(src: /a/).present?.should be_true
+    page.target_course_row(arg1)[DisplayScheduleOfClasses::ADDITIONAL_INFO].image(src: /a/).present?.should be_true
     display_style = @browser.divs(:class=>"jquerybubblepopup jquerybubblepopup-black")[0].style
     (result = display_style == "").should == true
 
-    page.target_course_row(arg1)[4].image(src: /a/).hover
+    page.target_course_row(arg1)[DisplayScheduleOfClasses::ADDITIONAL_INFO].image(src: /a/).hover
     display_style1 = @browser.divs(:class=>"jquerybubblepopup jquerybubblepopup-black")[0].style
     (display_style1.include? "display: block").should == true
   end
