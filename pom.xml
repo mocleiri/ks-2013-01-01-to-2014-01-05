@@ -213,9 +213,9 @@
                             <autocommit>true</autocommit>
                             <srcFiles>
                                 <srcFile>${sql.dir}/ksa_create_ddl.sql</srcFile>
-                                <!--<srcFile>${sql.dir}/ksa_config_dml.sql</srcFile>-->
-                                <!--<srcFile>${sql.dir}/test_inserts/ksa_test_data_dml.sql</srcFile>-->
-                                <!--<srcFile>${sql.dir}/ksa_constraints_ddl.sql</srcFile>-->
+                                <srcFile>${sql.dir}/ksa_config_dml.sql</srcFile>
+                                <srcFile>${sql.dir}/test_inserts/ksa_test_data_dml.sql</srcFile>
+                                <srcFile>${sql.dir}/ksa_constraints_ddl.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>
