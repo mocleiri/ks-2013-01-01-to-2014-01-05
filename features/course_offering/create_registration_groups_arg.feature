@@ -9,6 +9,7 @@ As an Administrator, I want to create registration groups for a Course Offering
   #ARG 6.1 - see Simple Rollover feature
   #ARG 6.2 When creating a CO by copy AOC and AOs should also be copied and RGs are generated - see copy_activity_offering_clusters.feature
 
+  @bug @KSENROLL-9714
   Scenario: ARG 6.3 Registration groups are automatically generated when adding or copying an AO
     Given I manage registration groups for a new course offering
     When I copy an Activity Offering
