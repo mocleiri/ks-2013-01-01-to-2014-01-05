@@ -11,7 +11,7 @@ class CopyCourseOffering < BasePage
   action(:select_exclude_cancelled_aos_checkbox) { |b| b.exclude_instructor_checkbox.wait_until_present; b.exclude_instructor_checkbox.click }
 
   element(:exclude_scheduling_checkbox) { |b| b.frm.label(text: /Exclude scheduling information/) }
-  action(:select_exclude_sheduling_checkbox) { |b| b.exclude_instructor_checkbox.wait_until_present; b.exclude_instructor_checkbox.click }
+  action(:select_exclude_scheduling_checkbox) { |b| b.exclude_instructor_checkbox.wait_until_present; b.exclude_instructor_checkbox.click }
 
   element(:exclude_instructor_checkbox) { |b| b.frm.label(text: /Exclude instructor information/) }
   action(:select_exclude_instructor_checkbox) { |b| b.exclude_instructor_checkbox.wait_until_present; b.exclude_instructor_checkbox.click }

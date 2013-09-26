@@ -30,9 +30,18 @@ And /^I copy a course offering from an existing offering$/ do
   @course_offering = create CourseOffering, :term=> Rollover::FINAL_EDITS_SOC_TERM, :course => "CHEM132", :create_from_existing=>(make CourseOffering, :term=> "201201", :course => "CHEM132")
 end
 
+And /^I copy a course offering from an existing offering and choose to exclude instructor information$/ do
+  @course_offering = create CourseOffering, :term=> Rollover::FINAL_EDITS_SOC_TERM, :course => "CHEM132", :exclude_instructor => true, :create_from_existing=>(make CourseOffering, :term=> "201201", :course => "CHEM132")
+end
+
 Then /^the new Course Offering should be displayed in the list of available offerings\.$/ do
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
+end
+
+Then /^the new Course Offering should not contain any instructor information in its activity offerings$/ do
+  @course_offering.manage
+  @course_offering.get_instructor_list.should == ""
 end
 
 And /^I create a Course Offering from catalog with Activity Offerings assigned to subterms$/ do

@@ -121,7 +121,10 @@ class CourseOffering
         :cross_listed => false,
         :cross_listed_codes => [],
         :do_verification => false,
-        :final_exam_driver => "Final Exam Per Course Offering"
+        :final_exam_driver => "Final Exam Per Course Offering",
+        :exclude_cancelled_aos => false,
+        :exclude_scheduling => false,
+        :exclude_instructor => false
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -1003,8 +1006,11 @@ class CourseOffering
 
     on CreateCOFromExisting do |page|
       page.select_copy_for_existing_course(term, course)
+
+      page.select_exclude_cancelled_aos_checkbox if @exclude_cancelled_aos
+      page.select_exclude_scheduling_checkbox if @exclude_scheduling
+      page.select_exclude_instructor_checkbox if @exclude_instructor
       page.create
-      #TODO add parms for selecting what to exclude from copy
     end
     co_code = ""
     on ManageCourseOfferings do |page|
@@ -1114,6 +1120,15 @@ class CourseOffering
     formatted_credits_list
   end
 
+  def get_instructor_list
+    instructor_list = ""
+    on ManageCourseOfferings do |page|
+      page.activity_offering_results_table.rows[1..-1].each do |row|
+        instructor_list << row.cells[ManageCourseOfferings::AO_INSTRUCTOR].text
+      end
+    end
+    instructor_list
+  end
 
   # merged with delete_co
   #def delete_co_warning_message(args={})
