@@ -346,7 +346,7 @@ public class PlanController extends UifControllerBase {
 
                     if (PlanConstants.PLACE_HOLDER_TYPE_GEN_ED.equals(planItem.getRefObjectType())
                             || PlanConstants.PLACE_HOLDER_TYPE.equals(planItem.getRefObjectType())) {
-                        planForm.setGeneralPlaceholder(String.format("%s|%s", planItem.getRefObjectId(),planItem.getRefObjectType()));
+                        planForm.setGeneralPlaceholder(String.format("%s|%s", planItem.getRefObjectId(), planItem.getRefObjectType()));
                         if (planItem.getCredit() != null) {
                             planForm.setCredit(String.valueOf(planItem.getCredit().intValue()));
                         }
@@ -2448,6 +2448,9 @@ public class PlanController extends UifControllerBase {
 
         try {
             newPlanItem = getAcademicPlanService().createPlanItem(pii, getUserSessionHelper().makeContextInfoInstance());
+        } catch (AlreadyExistsException e) {
+            logger.error("Could not create plan item.", e);
+            throw new DuplicateEntryException("plan Item already exists", e);
         } catch (Exception e) {
             logger.error("Could not create plan item.", e);
             throw new RuntimeException("Could not create plan item.", e);
