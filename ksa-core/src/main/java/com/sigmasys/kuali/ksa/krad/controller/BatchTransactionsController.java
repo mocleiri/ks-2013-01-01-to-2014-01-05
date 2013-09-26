@@ -3,7 +3,6 @@ package com.sigmasys.kuali.ksa.krad.controller;
 import com.sigmasys.kuali.ksa.jaxb.KsaBatchTransactionResponse;
 import com.sigmasys.kuali.ksa.krad.form.FileUploadForm;
 import com.sigmasys.kuali.ksa.model.BatchReceiptStatus;
-import com.sigmasys.kuali.ksa.model.Transaction;
 import com.sigmasys.kuali.ksa.service.TransactionImportService;
 import com.sigmasys.kuali.ksa.util.ErrorUtils;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
@@ -22,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,7 +28,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/batchTransactionsView")
-@Transactional(timeout = 300, propagation = Propagation.REQUIRES_NEW)
+@Transactional(timeout = 1200, propagation = Propagation.REQUIRES_NEW)
 public class BatchTransactionsController extends GenericSearchController {
 
 
@@ -56,7 +54,6 @@ public class BatchTransactionsController extends GenericSearchController {
 
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=submit")
-    @Transactional(readOnly = false)
     public ModelAndView submit(@ModelAttribute("KualiForm") FileUploadForm form) {
 
         // do submit stuff...
@@ -135,8 +132,11 @@ public class BatchTransactionsController extends GenericSearchController {
     public ModelAndView ageDebts(@ModelAttribute("KualiForm") FileUploadForm form) {
 
         try {
+
             accountService.ageDebt(true);
+
             String message = "Debts were successfully aged";
+
             GlobalVariables.getMessageMap().putInfo(getUIFModelAndView(form).getViewName(), RiceKeyConstants.ERROR_CUSTOM, message);
 
         } catch (Exception e) {
@@ -152,15 +152,11 @@ public class BatchTransactionsController extends GenericSearchController {
 
         try {
 
-            List<Transaction> transactions = transactionService.getTransactions();
+            boolean result = transactionService.makeAllTransactionsEffective(false);
 
-            Date today = new Date();
-            for (Transaction t : transactions) {
-                if (!t.isGlEntryGenerated() && t.getEffectiveDate().before(today)) {
-                    logger.info("Calling 'makeEffective' for ID: " + t.getId());
-                    transactionService.makeEffective(t.getId(), false);
-                }
-            }
+            String msg = result ? "Transactions have been made effective" : "None of transactions has been made effective";
+
+            GlobalVariables.getMessageMap().putInfo(getUIFModelAndView(form).getViewName(), RiceKeyConstants.ERROR_CUSTOM, msg);
 
         } catch (Exception e) {
             return handleError(form, e);

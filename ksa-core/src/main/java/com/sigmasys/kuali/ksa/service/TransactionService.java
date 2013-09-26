@@ -647,13 +647,21 @@ public interface TransactionService {
     List<GlTransaction> allocateReversals(List<Transaction> transactions);
 
     /**
+     * Makes effective all transactions for which GL entries have not been generated yet.
+     *
+     * @param forceEffective indicates whether it has to be forced
+     * @return true if any transaction has been made effective, false - otherwise
+     */
+    boolean makeAllTransactionsEffective(boolean forceEffective);
+
+    /**
      * Moves a transaction from a pre-effective state to an effective state. Once a transaction is effective, its
      * general ledger entries are created. In certain cases, a transaction might be moved to an effective state
      * before its effective date, in which case, forceEffective is passed as true.
      *
      * @param transactionId  transaction ID
      * @param forceEffective indicates whether it has to be forced
-     * @return true is the transaction has been made effective, false - otherwise
+     * @return true if the transaction has been made effective, false - otherwise
      */
     boolean makeEffective(Long transactionId, boolean forceEffective);
 

@@ -9,8 +9,12 @@ import com.sigmasys.kuali.ksa.service.TransactionExportService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +36,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/reportReconciliationView")
+@Transactional(timeout = 1200, propagation = Propagation.REQUIRES_NEW)
 public class ReportReconciliationController extends DownloadController {
 
     private static final Log logger = LogFactory.getLog(ReportReconciliationController.class);
@@ -99,18 +104,15 @@ public class ReportReconciliationController extends DownloadController {
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=makeTransactionsEffective")
     public ModelAndView makeTransactionsEffective(@ModelAttribute("KualiForm") ReportReconciliationForm form) {
-        try {
-            // Get all KSA Transactions:
-            List<Transaction> transactions = transactionService.getTransactions();
-            Date today = new Date();
 
-            for (Transaction t : transactions) {
-                // Make the Transaction effective:
-                if (!t.isGlEntryGenerated() && t.getEffectiveDate().before(today)) {
-                    logger.info("Calling 'makeEffective' for ID: " + t.getId());
-                    transactionService.makeEffective(t.getId(), false);
-                }
-            }
+        try {
+
+            boolean result = transactionService.makeAllTransactionsEffective(false);
+
+            String msg = result ? "Transactions have been made effective" : "None of transactions has been made effective";
+
+            GlobalVariables.getMessageMap().putInfo(getUIFModelAndView(form).getViewName(), RiceKeyConstants.ERROR_CUSTOM, msg);
+
         } catch (Exception e) {
             return handleError(form, e);
         }
@@ -138,14 +140,14 @@ public class ReportReconciliationController extends DownloadController {
         String reportDate = df.format(today);
 
         String filename = reportDate + "_Aged_Balance_List.xml";
+
         // Set the response headers
         response.setContentType("application/xml");
         response.setContentLength(report.length());
         response.setHeader("Expires", "0");
         response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
         response.setHeader("Pragma", "public");
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"" + filename + "\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 
         // Copy the input stream to the response
         FileCopyUtils.copy(IOUtils.toInputStream(report), response.getOutputStream());

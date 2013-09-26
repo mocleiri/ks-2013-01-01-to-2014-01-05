@@ -768,6 +768,25 @@ public class TransactionServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void makeAllTransactionsEffective() throws Exception {
+
+        transactionService.createTransaction("cash", "admin", new Date(), new BigDecimal(10e5));
+        transactionService.createTransaction("chip", "admin", new Date(), new BigDecimal(350));
+        transactionService.createTransaction("1020", "admin", new Date(), new BigDecimal(-900));
+
+        Assert.isTrue(transactionService.makeAllTransactionsEffective(false));
+    }
+
+    @Test
+    public void makeAllTransactionsEffectiveForced() throws Exception {
+
+        transactionService.createTransaction("finaid", "admin", new Date(), new BigDecimal(350));
+        transactionService.createTransaction("1020", "admin", new Date(), new BigDecimal(3900));
+
+        Assert.isTrue(transactionService.makeAllTransactionsEffective(true));
+    }
+
+    @Test
     public void writeOffTransaction() throws Exception {
 
         // Must be a Charge

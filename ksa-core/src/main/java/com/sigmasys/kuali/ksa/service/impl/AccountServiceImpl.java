@@ -572,8 +572,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return deferred amount
      */
     @Override
-    public BigDecimal getDeferredAmount(String userId) {
-        return getDeferredAmount(userId, new Date());
+    public BigDecimal getDeferredBalance(String userId) {
+        return getDeferredBalance(userId, new Date());
     }
 
     /**
@@ -584,7 +584,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return deferred amount
      */
     @Override
-    public BigDecimal getDeferredAmount(String userId, Date balanceDate) {
+    public BigDecimal getDeferredBalance(String userId, Date balanceDate) {
         List<Deferment> deferments = transactionService.getDeferments(userId);
         BigDecimal totalAmount = BigDecimal.ZERO;
         balanceDate = CalendarUtils.removeTime(balanceDate);

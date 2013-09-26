@@ -1730,13 +1730,44 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
+     * Makes effective all transactions for which GL entries have not been generated yet.
+     *
+     * @param forceEffective indicates whether it has to be forced
+     * @return true if any the transaction has been made effective, false - otherwise
+     */
+    @Override
+    @Transactional(readOnly = false, timeout = 1200)
+    public synchronized boolean makeAllTransactionsEffective(boolean forceEffective) {
+
+        Query query = em.createQuery("select id from Transaction where glEntryGenerated = false");
+
+        List<Long> transactionIds = query.getResultList();
+
+        if (CollectionUtils.isNotEmpty(transactionIds)) {
+
+            boolean isEffective = false;
+
+            for (Long transactionId : transactionIds) {
+                boolean result = makeEffective(transactionId, forceEffective);
+                if (!isEffective && result) {
+                    isEffective = true;
+                }
+            }
+
+            return isEffective;
+        }
+
+        return false;
+    }
+
+    /**
      * Moves a transaction from a pre-effective state to an effective state. Once a transaction is effective, its
      * general ledger entries are created. In certain cases, a transaction might be moved to an effective state
      * before its effective date, in which case, forceEffective is passed as true.
      *
      * @param transactionId  transaction ID
      * @param forceEffective indicates whether it has to be forced
-     * @return true is the transaction has been made effective, false - otherwise
+     * @return true if the transaction has been made effective, false - otherwise
      */
     @Override
     @Transactional(readOnly = false)

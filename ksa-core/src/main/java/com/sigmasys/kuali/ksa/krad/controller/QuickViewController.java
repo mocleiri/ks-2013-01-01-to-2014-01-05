@@ -267,7 +267,7 @@ public class QuickViewController extends GenericSearchController {
             future = BigDecimal.ZERO;
         }
 
-        BigDecimal deferment = accountService.getDeferredAmount(userId);
+        BigDecimal deferment = accountService.getDeferredBalance(userId);
         if (deferment == null) {
             deferment = BigDecimal.ZERO;
         }

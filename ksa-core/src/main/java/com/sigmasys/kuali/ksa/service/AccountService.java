@@ -154,7 +154,7 @@ public interface AccountService {
      * @param userId Account ID
      * @return deferred amount
      */
-    BigDecimal getDeferredAmount(String userId);
+    BigDecimal getDeferredBalance(String userId);
 
     /**
      * Returns the deferred amount.
@@ -163,7 +163,7 @@ public interface AccountService {
      * @param balanceDate Balance date
      * @return deferred amount
      */
-    BigDecimal getDeferredAmount(String userId, Date balanceDate);
+    BigDecimal getDeferredBalance(String userId, Date balanceDate);
 
     /**
      * This method is used to verify that an account exists before a transaction or other operations are

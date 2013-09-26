@@ -1538,7 +1538,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         withDeferments.setDueBalance(accountService.getDueBalance(accountId, billDate, false));
         withDeferments.setFutureBalance(accountService.getFutureBalance(accountId, billDate, false));
         withDeferments.setTotalBalance(accountService.getOutstandingBalance(accountId, billDate, false));
-        withDeferments.setTotalDeferred(accountService.getDeferredAmount(accountId, billDate));
+        withDeferments.setTotalDeferred(accountService.getDeferredBalance(accountId, billDate));
 
         balances.setWithDeferments(withDeferments);
 
