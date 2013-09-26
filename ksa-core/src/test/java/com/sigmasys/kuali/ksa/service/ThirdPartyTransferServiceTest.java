@@ -373,6 +373,38 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void getThirdPartyPlansByMember() throws Exception {
+
+        _createThirdPartyPlan("Plan3");
+        _createThirdPartyPlan("Plan4");
+
+        List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlansByMember(TEST_USER_ID);
+
+        Assert.notNull(plans);
+        Assert.notEmpty(plans);
+        Assert.isTrue(plans.size() >= 2);
+
+        boolean plan3Exists = false;
+        boolean plan4Exists = false;
+
+        for (ThirdPartyPlan plan : plans) {
+
+            Assert.notNull(plan);
+            Assert.notNull(plan.getId());
+
+            if ("Plan3".equals(plan.getCode())) {
+                plan3Exists = true;
+            }
+
+            if ("Plan4".equals(plan.getCode())) {
+                plan4Exists = true;
+            }
+        }
+
+        Assert.isTrue(plan3Exists && plan4Exists);
+    }
+
+    @Test
     public void getThirdPartyTransfers() throws Exception {
 
         ThirdPartyPlan plan = _createThirdPartyPlan("Plan_!!99");

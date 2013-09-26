@@ -52,10 +52,12 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
             " left outer join fetch p.transferType t " +
             " left outer join fetch t.generalLedgerType g ";
 
-    private static final String TRANSFER_PLAN_SELECT = "select p from ThirdPartyPlan p " +
-            " inner join fetch p.thirdPartyAccount a " +
+    private static final String TRANSFER_PLAN_JOIN = " inner join fetch p.thirdPartyAccount a " +
             " left outer join fetch p.transferType t " +
             " left outer join fetch t.generalLedgerType g ";
+
+    private static final String TRANSFER_PLAN_SELECT = "select p from ThirdPartyPlan p " + TRANSFER_PLAN_JOIN;
+
 
     @Autowired
     private TransactionService transactionService;
@@ -316,6 +318,25 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         if (idsExist) {
             query.setParameter("ids", thirdPartyAccountIds);
         }
+
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves a list of ThirdPartyPlan objects for the given plan member.
+     *
+     * @param accountId Third Party Plan Member Account ID
+     * @return list of ThirdPartyPlan instances
+     */
+    @Override
+    public List<ThirdPartyPlan> getThirdPartyPlansByMember(String accountId) {
+
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
+
+        Query query = em.createQuery("select p from ThirdPartyPlan p, ThirdPartyPlanMember m " +
+                TRANSFER_PLAN_JOIN + " where p.id = m.plan.id and m.directChargeAccount.id = :accountId order by p.id desc");
+
+        query.setParameter("accountId", accountId);
 
         return query.getResultList();
     }

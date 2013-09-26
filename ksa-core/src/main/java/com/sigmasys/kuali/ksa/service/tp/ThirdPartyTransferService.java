@@ -114,6 +114,14 @@ public interface ThirdPartyTransferService {
     List<ThirdPartyPlan> getThirdPartyPlans(Set<String> thirdPartyAccountIds);
 
     /**
+     * Retrieves a list of ThirdPartyPlan objects for the given plan member.
+     *
+     * @param accountId Third Party Plan Member Account ID
+     * @return list of ThirdPartyPlan instances
+     */
+    List<ThirdPartyPlan> getThirdPartyPlansByMember(String accountId);
+
+    /**
      * Retrieves all ThirdPartyPlan instances.
      *
      * @return list of ThirdPartyPlan instances
