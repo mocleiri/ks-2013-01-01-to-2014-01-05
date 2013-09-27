@@ -24,6 +24,11 @@
             <artifactId>ks-enroll-api</artifactId>
             <version>${ks.enroll.api.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.kuali.student.api</groupId>
+            <artifactId>ks-common-api</artifactId>
+            <version>${ks.api.version}</version>
+        </dependency>
          <dependency>
              <groupId>org.kuali.student.api</groupId>
              <artifactId>ks-core-api</artifactId>

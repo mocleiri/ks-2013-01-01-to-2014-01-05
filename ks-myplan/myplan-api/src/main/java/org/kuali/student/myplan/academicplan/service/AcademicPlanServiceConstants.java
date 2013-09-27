@@ -1,7 +1,8 @@
 package org.kuali.student.myplan.academicplan.service;
 
-import org.kuali.student.lum.lu.LUConstants;
 import org.kuali.student.r2.common.constants.CommonServiceConstants;
+import org.kuali.student.r2.common.util.constants.LuServiceConstants;
+
 
 /**
  * kmuthu Don't forget to add comment
@@ -31,7 +32,7 @@ public class AcademicPlanServiceConstants {
     public static final String LEARNING_PLAN_ITEM_SHARED_FALSE_KEY = "false";
 
     /*RefObjTypes*/
-    public static final String COURSE_TYPE = LUConstants.CLU_TYPE_CREDIT_COURSE;
+    public static final String COURSE_TYPE = LuServiceConstants.CREDIT_COURSE_LU_TYPE_KEY;
     public static final String SECTION_TYPE = "kuali.lui.type.activity.offering";
     // todo change for CM 2.0  to uw.course.genedrequirement
     public static final String PLACE_HOLDER_TYPE_GEN_ED = "kuali.uw.lu.genedreq";  // from KSEM_ENUM_T.enum_key
