@@ -51,7 +51,7 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
     }
 
     public InitialParameterConfigurer(String configTableName, int order) {
-        if ( StringUtils.isBlank(configTableName) ) {
+        if (StringUtils.isBlank(configTableName)) {
             String errMsg = "Configuration table name is required";
             logger.error(errMsg);
             throw new ConfigurationException(errMsg);
@@ -121,13 +121,19 @@ public class InitialParameterConfigurer extends PropertyPlaceholderConfigurer {
             logger.debug("Initializing rice configuration...");
 
             // Additional properties set up
-            String hostName = props.getProperty(Constants.APPLICATION_HOST_PARAM_NAME);
+            String hostName = props.getProperty(Constants.RICE_APPLICATION_HOST);
             if (hostName == null) {
                 hostName = RequestUtils.getIPAddress();
             }
 
             logger.debug("Setting the Rice application host name to " + hostName);
-            riceConfig.putProperty(Constants.APPLICATION_HOST_PARAM_NAME, hostName);
+
+            riceConfig.putProperty(Constants.RICE_APPLICATION_HOST, hostName);
+
+            String messageEnable = props.getProperty(Constants.RICE_MESSAGING_ENABLED);
+            if (messageEnable != null) {
+                riceConfig.putProperty(Constants.RICE_MESSAGING_ENABLED, messageEnable);
+            }
 
             riceConfig.parseConfig();
             ConfigContext.init(riceConfig);

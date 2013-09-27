@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -1743,7 +1742,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     public synchronized boolean makeAllTransactionsEffective(boolean forceEffective) {
 
         DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
-        transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        transactionDefinition.setPropagationBehavior(getTransactionBatchPropagation());
         transactionDefinition.setTimeout(1200);
 
         org.springframework.transaction.TransactionStatus userTransaction = getTransaction(transactionDefinition);
@@ -1758,11 +1757,13 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             if (CollectionUtils.isNotEmpty(transactionIds)) {
 
+                final int transactionBatchSize = getTransactionBatchSize();
+
                 int transactionCommitCount = 0;
 
                 for (Long transactionId : transactionIds) {
 
-                    if (++transactionCommitCount > 10) {
+                    if (++transactionCommitCount > transactionBatchSize) {
                         commit(userTransaction);
                         userTransaction = getTransaction(transactionDefinition);
                         transactionCommitCount = 0;

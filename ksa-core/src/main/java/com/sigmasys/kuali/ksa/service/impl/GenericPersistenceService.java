@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.service.impl;
 
 
 import org.aopalliance.aop.Advice;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -79,6 +80,18 @@ public class GenericPersistenceService implements PersistenceService, BeanFactor
 
     protected void rollback(TransactionStatus transactionStatus) {
         transactionManager.rollback(transactionStatus);
+    }
+
+    protected int getTransactionBatchPropagation() {
+        String batchEnabled = configService.getParameter(Constants.TRANSACTION_BATCH_ENABLED);
+        return (StringUtils.isNotBlank(batchEnabled) && Boolean.parseBoolean(batchEnabled)) ?
+                TransactionDefinition.PROPAGATION_REQUIRES_NEW :
+                TransactionDefinition.PROPAGATION_REQUIRED;
+    }
+
+    protected int getTransactionBatchSize() {
+        String batchSize = configService.getParameter(Constants.TRANSACTION_BATCH_SIZE);
+        return StringUtils.isNotBlank(batchSize) ? Integer.parseInt(batchSize) : 10;
     }
 
     @Override

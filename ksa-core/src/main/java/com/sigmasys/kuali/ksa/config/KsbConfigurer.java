@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.config;
 
+import com.sigmasys.kuali.ksa.model.Constants;
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.ksb.messaging.config.KSBConfigurer;
 import org.springframework.beans.factory.BeanFactory;
@@ -22,8 +23,6 @@ import java.util.List;
  */
 public class KsbConfigurer extends KSBConfigurer implements BeanFactoryAware {
 
-    public static final String ENABLE_MESSAGING_PARAM_NAME = "message.enable";
-
     private static final String MESSAGE_CLIENT_SPRING = "classpath:org/kuali/rice/ksb/config/KsbMessageClientSpringBeans.xml";
     private static final String OJB_MESSAGE_CLIENT_SPRING = "classpath:org/kuali/rice/ksb/config/KsbOjbMessageClientSpringBeans.xml";
 
@@ -44,7 +43,7 @@ public class KsbConfigurer extends KSBConfigurer implements BeanFactoryAware {
 
     @PostConstruct
     private void postConstruct() {
-        enableMessaging = ConfigContext.getCurrentContextConfig().getBooleanProperty(ENABLE_MESSAGING_PARAM_NAME, true);
+        enableMessaging = ConfigContext.getCurrentContextConfig().getBooleanProperty(Constants.RICE_MESSAGING_ENABLED, true);
     }
 
     @Override

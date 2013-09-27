@@ -5,7 +5,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -75,7 +74,6 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
     private void postConstruct() {
         schemaValidator = new XmlSchemaValidator(XML_SCHEMA_LOCATION, IMPORT_SCHEMA_LOCATION);
         transactionDefinition = new DefaultTransactionDefinition();
-        transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         transactionDefinition.setTimeout(1200);
     }
 
@@ -237,13 +235,17 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
             if (batchReceiptStatus != BatchReceiptStatus.FAILED && (batchIsQualified || !singleBatchFailure)) {
 
+                final int transactionBatchSize = getTransactionBatchSize();
+
                 int transactionCommitCount = 0;
+
+                transactionDefinition.setPropagationBehavior(getTransactionBatchPropagation());
 
                 TransactionStatus userTransaction = getTransaction(transactionDefinition);
 
                 for (KsaTransaction ksaTransaction : acceptedKsaTransactionList) {
 
-                    if (++transactionCommitCount > 10) {
+                    if (++transactionCommitCount > transactionBatchSize) {
                         commit(userTransaction);
                         userTransaction = getTransaction(transactionDefinition);
                         transactionCommitCount = 0;

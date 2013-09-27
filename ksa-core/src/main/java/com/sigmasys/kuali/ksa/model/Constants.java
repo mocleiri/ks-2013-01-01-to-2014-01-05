@@ -44,6 +44,10 @@ public interface Constants {
     String BRM_PA_RULE_SET_NAME = "Payment Application";
     String BRM_AB_RULE_SET_NAME = "Account Blocking";
 
+    // DB transaction parameters
+    String TRANSACTION_BATCH_ENABLED = "ksa.transaction.batch.enabled";
+    String TRANSACTION_BATCH_SIZE = "ksa.transaction.batch.size";
+
     // BRM account blocking parameter names
     String BRM_AB_BLOCK_NAMES = "blockNames";
     String BRM_AB_PERMISSION_NAMES = "permissionNames";
@@ -58,7 +62,8 @@ public interface Constants {
     String WS_NAMESPACE = "http://sigmasys.com/";
 
     // Rice constants
-    String APPLICATION_HOST_PARAM_NAME = "application.host";
+    String RICE_APPLICATION_HOST = "application.host";
+    String RICE_MESSAGING_ENABLED = "rice.messaging.enabled";
 
     // Fee management constants
     String FM_PRECLEAR_MANIFEST = "ksa.fm.preclear.manifest";

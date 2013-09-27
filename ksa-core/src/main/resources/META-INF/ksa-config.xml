@@ -36,11 +36,10 @@
     <param name="rice.kim.jpa.enabled">true</param>
 
     <!-- UserTransaction properties -->
-    <param name="transaction.timeout">300</param>
+    <param name="transaction.timeout">600</param>
 
     <!--  Bus Configuration  -->
     <param name="dev.mode">false</param>
-    <param name="message.enable">true</param>
     <param name="message.persistence">false</param>
     <param name="message.delivery">async</param>
     <param name="Routing.ImmediateExceptionRouting">false</param>

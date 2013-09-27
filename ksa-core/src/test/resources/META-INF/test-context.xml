@@ -9,7 +9,7 @@
           depends-on="jndiBinder">
         <constructor-arg index="0" value="KSSA_CONFIG"/>
         <constructor-arg index="1" value="0"/>
-        <property name="location" value="classpath:/ksa.properties"/>
+        <property name="location" value="classpath:/ksa-test.properties"/>
         <property name="dataSource" ref="ksaDataSource"/>
         <property name="riceConfig" ref="riceConfig"/>
         <property name="ignoreResourceNotFound" value="true"/>

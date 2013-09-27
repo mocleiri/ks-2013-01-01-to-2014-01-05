@@ -82,6 +82,7 @@ insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('FM_SESSION_LOG_SE
 --  SYSTEM CONFIGURATION PARAMETERS --
 -- Rice-specific parameters --
 insert into KSSA_CONFIG (NAME, VALUE) values ('application.host', 'localhost');
+insert into KSSA_CONFIG (NAME, VALUE) values ('rice.messaging.enabled', 'true');
 
 -- KSA-specific parameters --
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.locale.lang', 'en');
@@ -127,8 +128,12 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.memo.level', 'DEF_MEMO_LEVEL_
 -- Account settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.account.status.type', 'N/A');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.account.credit.limit', '20000');
+
 -- Age Debt method can either be "BALANCE_FORWARD" or "OPEN_ITEM"
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.account.age.debt.method', 'BALANCE_FORWARD');
+
+-- View parameters
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.quickview.information.count', '4');
 
 
 -- KFS constants
