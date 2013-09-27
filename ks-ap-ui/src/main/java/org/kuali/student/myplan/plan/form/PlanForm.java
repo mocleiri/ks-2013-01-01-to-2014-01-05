@@ -51,83 +51,81 @@ public class PlanForm extends UifFormBase {
         ERROR
     }
 
-    /**
-     * Storage for the status of a request for add, change, or delete of a plan item.
-     */
+    // Storage for the status of a request for add, change, or delete of a plan item.
     private REQUEST_STATUS requestStatus;
 
-    //  Saved courses params.
+    // Stored plan item id
     private String planItemId;
 
+    // Stored course id
     private String courseId;
 
-    // Quick Add params
+    // Stored course code
     private String courseCd;
-    
-    private BigDecimal courseCredit;
-    
+
+    // Stored course credit
+    private String courseCredit;
+
+    // Stored course note
     private String courseNote;
 
-    /*properties used for section Planning*/
+    // Stored activity/section code
     private String sectionCode;
 
+    // Stored activity/section code
     private String primarySectionCode;
 
+    // Stored plan item id (parent)
     private String primaryPlanItemId;
 
+    // Stored institute related to course/plan
     private String instituteCode;
 
+    // Indicator if activity stored is parent
     private boolean primary;
 
-    private List<String> sectionsToDelete;
-
-    //Flag Used for student to hide or un hide
-    // plan view to adviser
+    //Flag Used for student to hide/unhide plan view to adviser
     private String enableAdviserView= PlanConstants.LEARNING_PLAN_ITEM_SHARED_TRUE_KEY;
 
+    // Stored information for the displayed course
     private CourseSummaryDetails courseSummaryDetails;
 
+    // Activities/sections for a course
     private List<ActivityOfferingItem> planActivities;
 
+    // Summary of the stored course
     private PlannedCourseSummary plannedCourseSummary;
 
-    //  Form fields.
+    // Stored Atp
     private String atpId;
 
+    // Term name of displayed atp
     private String termName;
 
-    private boolean other = false;
-
-    //  Additional fields needed for the Other option.
-    private String termYear;
-
-    //   Form checkbox to determine plan item type (planned or backup).
+    // Stored indicator of planned or backup
     private boolean backup = false;
-
-    // Used for populating the menu oprions for the Academic record course link
-    private String acadRecAtpId;
 
     //   based on this Add to plan page items are populated
     private boolean moveCourse = false;
 
-    // boolean to show or hide Other option.
-    private boolean showOther = false;
-
     /*Flag used for populating the exact menu items for a course in past,present, future terms */
+    //Not set at anytime but used to indicate a render option
     private boolean setToPlanning=false;
 
+    // Number of messages
     private int messagesCount=0;
 
+    // Number of bookmarks
     private int bookmarkedCount=0;
 
+    // Indicator that the user is new
     private boolean newUser;
 
-    private boolean courseInPlan;
-
-    private boolean courseInBackup;
-
+    // Status indicator for adding to the shopping cart
     private StatusInfo statusInfo = new StatusInfo();
 
+    // Stored term note
+    private String termNote;
 
     public int getBookmarkedCount() {
         return bookmarkedCount;
@@ -195,13 +193,15 @@ public class PlanForm extends UifFormBase {
 		this.courseCd = courseCd;
 	}
 
-	public BigDecimal getCourseCredit() {
+	public String getCourseCredit() {
 		return courseCredit;
 	}
 
-	public void setCourseCredit(BigDecimal courseCredit) {
+	public void setCourseCredit(String courseCredit) {
 		this.courseCredit = courseCredit;
 	}
+
+
 
 	public String getCourseNote() {
 		return courseNote;
@@ -211,7 +211,7 @@ public class PlanForm extends UifFormBase {
 		this.courseNote = courseNote;
 	}
 
-	public String getAtpId() {
+    public String getAtpId() {
         return atpId;
     }
 
@@ -222,14 +222,6 @@ public class PlanForm extends UifFormBase {
             }
         }
         this.atpId = atpId;
-    }
-
-    public boolean isOther() {
-        return other;
-    }
-
-    public void setOther(boolean other) {
-        this.other = other;
     }
 
     public String getCourseId() {
@@ -254,14 +246,6 @@ public class PlanForm extends UifFormBase {
 
     public void setBackup(boolean backup) {
         this.backup = backup;
-    }
-
-    public String getTermYear() {
-        return termYear;
-    }
-
-    public void setTermYear(String termYear) {
-        this.termYear = termYear;
     }
 
     public CourseSummaryDetails getCourseSummaryDetails() {
@@ -298,22 +282,6 @@ public class PlanForm extends UifFormBase {
         this.moveCourse = moveCourse;
     }
 
-    public String getAcadRecAtpId() {
-        return acadRecAtpId;
-    }
-
-    public void setAcadRecAtpId(String acadRecAtpId) {
-        this.acadRecAtpId = acadRecAtpId;
-    }
-
-    public boolean isShowOther() {
-        return showOther;
-    }
-
-    public void setShowOther(boolean showOther) {
-        this.showOther = showOther;
-    }
-
     public String getEnableAdviserView() {
         return enableAdviserView;
     }
@@ -336,22 +304,6 @@ public class PlanForm extends UifFormBase {
 
     public void setSectionCode(String sectionCode) {
         this.sectionCode = sectionCode;
-    }
-
-    public boolean isCourseInPlan() {
-        return courseInPlan;
-    }
-
-    public void setCourseInPlan(boolean courseInPlan) {
-        this.courseInPlan = courseInPlan;
-    }
-
-    public boolean isCourseInBackup() {
-        return courseInBackup;
-    }
-
-    public void setCourseInBackup(boolean courseInBackup) {
-        this.courseInBackup = courseInBackup;
     }
 
     public String getPrimarySectionCode() {
@@ -386,14 +338,6 @@ public class PlanForm extends UifFormBase {
         this.primaryPlanItemId = primaryPlanItemId;
     }
 
-    public List<String> getSectionsToDelete() {
-        return sectionsToDelete;
-    }
-
-    public void setSectionsToDelete(List<String> sectionsToDelete) {
-        this.sectionsToDelete = sectionsToDelete;
-    }
-
     public List<ActivityOfferingItem> getPlanActivities() {
         return planActivities;
     }
@@ -409,33 +353,6 @@ public class PlanForm extends UifFormBase {
             shortTermName = KsapFrameworkServiceLocator.getTermHelper().getYearTerm(getAtpId()).getShortName();
         }
         return shortTermName;
-    }
-
-    /**
-     * Returns the list of events that should be
-     */
-    public String getPlannerJavascriptEventsAsJSON() {
-
-
-
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonOut = null;
-        try {
-            //  Turn the list of javascript events into a string of JSON.
-            jsonOut = mapper.writeValueAsString(javascriptEvents);
-            jsonOut = StringEscapeUtils.unescapeJava(jsonOut);
-            jsonOut = jsonOut.replaceAll("\"\\{", "{");
-            jsonOut = jsonOut.replaceAll("}\"", "}");
-            jsonOut = StringEscapeUtils.escapeHtml(jsonOut);
-        } catch (Exception e) {
-            logger.error("Could not convert javascript events to JSON.", e);
-            jsonOut = "";
-        }
-
-        //  TODO: Determine if there is a config that can be set to avoid having to do this.
-
-
-        return jsonOut;
     }
 
     /**
@@ -485,4 +402,48 @@ public class PlanForm extends UifFormBase {
     public void setStatusInfo(StatusInfo statusInfo){
         this.statusInfo=statusInfo;
     }
+
+    public String getTermNote() {
+        return termNote;
+    }
+
+    public void setTermNote(String termNote) {
+        this.termNote = termNote;
+    }
+
+
+    /**
+     * Fake Property Wrappers
+     * Used to display form values in Datafield/InputFields but pass them back in javascript
+     */
+
+    public String getFakeTermNote() {
+        return getTermNote();
+    }
+
+    public void setFakeTermNote(String fakeTermNote) {}
+
+    public String getFakeCourseNote() {
+        return getCourseNote();
+    }
+
+    public void setFakeCourseNote(String fakeCourseNote) {}
+
+    public String getFakeCourseCredit() {
+        return getCourseCredit();
+    }
+
+    public void setFakeCourseCredit(BigDecimal fakeCourseCredit) {}
+
+    public String getFakeAtpId() {
+        return getAtpId();
+    }
+
+    public void setFakeAtpId(String fakeAtpId) {}
+
+    public boolean isFakeBackup() {
+        return isBackup();
+    }
+
+    public void setFakeBackup(boolean fakeBackup) {}
 }

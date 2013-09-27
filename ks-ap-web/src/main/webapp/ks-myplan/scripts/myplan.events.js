@@ -6,15 +6,15 @@
 function fnAddPlanItem (atpId, type, planItemId, courseCode, courseTitle, courseCredits) {
     var item = '<div id="' + planItemId + '_div" class="uif-group uif-boxGroup uif-verticalBoxGroup uif-collectionItem uif-boxCollectionItem">' +
         '<div class="uif-boxLayout uif-verticalBoxLayout clearfix">' +
-            '<div id="' + planItemId + '_' + type + '" class="uif-field uif-fieldGroup uif-horizontalFieldGroup myplan-course-valid" title="' + courseTitle + '" data-planitemid="' + planItemId + '" data-atpid="' + atpId.replace(/-/g,".") + '">' +
+            '<div id="' + planItemId + '_' + type + '" class="uif-field uif-fieldGroup uif-horizontalFieldGroup myplan-course-valid ks-plan-Bucket-item ks-plan-Bucket-item--valid" title="' + courseTitle + '" data-planitemid="' + planItemId + '" data-atpid="' + atpId.replace(/-/g,".") + '">' +
                 '<fieldset>' +
                     '<div class="uif-group uif-boxGroup uif-horizontalBoxGroup">' +
                         '<div class="uif-boxLayout uif-horizontalBoxLayout clearfix">' +
-                            '<div class="uif-field uif-messageField code uif-boxLayoutHorizontalItem uif-boxLayoutHorizontalItem">' +
+                            '<div class="uif-field uif-messageField code ks-plan-Bucket-itemCode uif-boxLayoutHorizontalItem uif-boxLayoutHorizontalItem">' +
                                 '<span class="uif-message">' + courseCode + '</span>' +
                             '</div>' +
-                            '<div class="uif-field uif-messageField credit uif-boxLayoutHorizontalItem uif-boxLayoutHorizontalItem">' +
-                                '<span class="uif-message">(' + courseCredits + ')</span>' +
+                            '<div class="uif-field uif-messageField credit ks-plan-Bucket-itemCreditCount uif-boxLayoutHorizontalItem uif-boxLayoutHorizontalItem">' +
+                                '<span class="uif-message">' + courseCredits + '</span>' +
                             '</div>' +
                         '</div>' +
                     '</div>' +
@@ -66,6 +66,7 @@ function fnUpdateSavedCount (savedItemCount) {
 	    jQuery(this).html(savedItemCount - 1).fadeIn(250);
 	});
 }
+
 /*
 #################################################################
     Function: update the credits total in the quarter plan view
@@ -77,6 +78,26 @@ function fnUpdateCredits (atpId, termCredits, cartCredits) {
     });
     jQuery("." + atpId + ".myplan-term-cart .myplan-carousel-term-total .credits span.uif-message").fadeOut(250, function() {
         jQuery(this).html(cartCredits).fadeIn(250);
+    });
+}
+
+/*
+ #################################################################
+ Function: update the credits total in the quarter plan view
+ #################################################################
+ */
+function fnUpdateTermNote (atpId, newNote) {
+    jQuery("#"+atpId+"termnote_message textarea").fadeOut(250, function() {
+        jQuery(this).html(newNote).fadeIn(250);
+    });
+}
+function fnUpdateSearchList(courseId, type){
+    jQuery("#"+courseId+"_status").fadeOut(250, function() {
+        if(type=="planned"){
+            jQuery(this).html("Planned").addClass("planned").fadeIn(250);
+        }else if(type=="bookmark"){
+            jQuery(this).html("Bookmarked").addClass("bookmarked").fadeIn(250);
+        }
     });
 }
 /*
@@ -123,7 +144,7 @@ function fnRestoreSearchAddButton (courseId) {
 function fnRestoreDetailsAddButton (courseId) {
     jQuery("#" + courseId + "_bookmarked").wrap("<div></div>");
     jQuery("#" + courseId + "_bookmarked").parent("div").fadeOut(250, function() {
-        jQuery(this).html('<button id="'+ courseId +'_addSavedCourse" class="uif-action uif-secondaryActionButton uif-boxLayoutHorizontalItem" onclick="myPlanAjaxPlanItemMove(\''+ courseId +'\', \'courseId\', \'addSavedCourse\', event);">Bookmark Course</button>');
+        jQuery(this).html('<button id="'+ courseId +'_addSavedCourse" class="uif-action uif-secondaryActionButton uif-boxLayoutHorizontalItem"  onclick="var additionalFormData = {viewId:\'PlannedCourse-FormView\', methodToCall:\'addSavedCourse\', courseId:\'' + courseId + '\'}; submitHiddenForm(\'plan\', additionalFormData, event);">Bookmark Course</button>');
         jQuery(this).siblings("input[data-role='script']").removeAttr("script").attr("name", "script").val("jQuery(document).ready(function () {jQuery('#"+ courseId +"_addSavedCourse').subscribe('PLAN_ITEM_ADDED', function (data) {if (data.planItemType === 'wishlist') {fnDisplayMessage(data.message, data.cssClass, data.courseDetails.courseId + '_addSavedCourse', true, false,false);}});});");
         runHiddenScripts();
         jQuery(this).fadeIn(250);

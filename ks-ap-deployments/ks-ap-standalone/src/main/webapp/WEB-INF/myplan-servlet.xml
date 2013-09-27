@@ -21,7 +21,6 @@
     <context:component-scan base-package="org.kuali.student.myplan.plan"/>
     <context:component-scan base-package="org.kuali.student.myplan.comment"/>
     <context:component-scan base-package="org.kuali.student.myplan.quickAdd"/>
-    <context:component-scan base-package="org.kuali.student.ap.sb"/>
 
     <!-- Global Resource Loader Service Bean for a Student Service-->
     <bean id="StudentService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
@@ -46,12 +45,12 @@
         <property name="templateLoaderPath" value="/"/>
         <property name="freemarkerSettings">
             <props>
-        <!-- 
                 <prop key="template_update_delay">0</prop>
                 <prop key="cache_storage">freemarker.cache.NullCacheStorage</prop>
-         -->
+        <!-- 
                 <prop key="template_update_delay">1000000</prop>
                 <prop key="cache_storage">freemarker.cache.StrongCacheStorage</prop>
+         -->
             </props>
         </property>
     </bean>

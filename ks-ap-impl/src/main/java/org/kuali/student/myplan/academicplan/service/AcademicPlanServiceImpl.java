@@ -3,7 +3,11 @@ package org.kuali.student.myplan.academicplan.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jws.WebParam;
@@ -25,10 +29,11 @@ import org.kuali.student.myplan.academicplan.model.PlanItemAttributeEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemRichTextEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemTypeEntity;
-import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
+import org.kuali.student.r2.common.entity.BaseAttributeEntity;
 import org.kuali.student.r2.common.exceptions.AlreadyExistsException;
 import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
@@ -37,6 +42,7 @@ import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.infc.Attribute;
+import org.kuali.student.r2.common.infc.HasAttributes;
 import org.kuali.student.r2.common.infc.ValidationResult;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -286,6 +292,11 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		pie.setUpdateId(context.getPrincipalId());
 		pie.setUpdateTime(new Date());
 
+		// Set credits
+		if (planItem.getCredit() != null) {
+			pie.setCredit(planItem.getCredit());
+		}
+
 		//  Set the learning plan.
 		String planId = planItem.getLearningPlanId();
 		if (planId == null) {
@@ -317,6 +328,64 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		throw new RuntimeException("Not implemented.");
 	}
 
+	/**
+	 *
+	 * @param attrSource
+	 * @param attributeEntities
+	 * @return
+	 */
+	private List<Attribute> mergeAttributes(HasAttributes attrSource,
+			Set<? extends BaseAttributeEntity<?>> attributeEntities) {
+		if (attrSource.getAttributes() == null)
+			return null;
+
+		Map<String, List<Attribute>> attributeMap = new LinkedHashMap<String, List<Attribute>>();
+		for (Attribute att : attrSource.getAttributes()) {
+			String key = att.getKey();
+			List<Attribute> attl = attributeMap.get(key);
+			if (attl == null)
+				attributeMap.put(key, attl = new LinkedList<Attribute>());
+			attl.add(att);
+		}
+
+		if (attributeEntities != null) {
+			Iterator<? extends BaseAttributeEntity<?>> ai = attributeEntities.iterator();
+			while (ai.hasNext()) {
+				BaseAttributeEntity<?> attrEntity = ai.next();
+				String key = attrEntity.getKey();
+				if (attributeMap.containsKey(key)) {
+					List<Attribute> attl = attributeMap.get(key);
+					if (attl.isEmpty()) {
+						ai.remove();
+					} else {
+						Iterator<Attribute> atti = attl.iterator();
+						Attribute att = null;
+						while (att == null && atti.hasNext()) {
+							Attribute attc = atti.next();
+							if (attc.getId() != null && attc.getId().equals(attrEntity.getId())) {
+								att = attc;
+								atti.remove();
+							}
+						}
+						if (att == null) {
+							att = attl.remove(0);
+						}
+						attrEntity.setValue(att.getValue());
+					}
+					if (attl.isEmpty())
+						attributeMap.remove(key);
+				} else {
+					ai.remove();
+				}
+			}
+		}
+
+		List<Attribute> rv = new LinkedList<Attribute>();
+		for (List<Attribute> attl : attributeMap.values())
+			rv.addAll(attl);
+		return rv;
+	}
+
 	@Override
 	@Transactional
 	public LearningPlanInfo updateLearningPlan(@WebParam(name = "learningPlanId") String learningPlanId,
@@ -332,6 +401,17 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 
 		lpe.setStudentId(learningPlan.getStudentId());
 		lpe.setDescr(new LearningPlanRichTextEntity(learningPlan.getDescr()));
+
+		//  Update attributes.
+		List<Attribute> createAttrs = mergeAttributes(learningPlan, lpe.getAttributes());
+		if (createAttrs != null) {
+			Set<LearningPlanAttributeEntity> attributeEntities = lpe.getAttributes();
+			if (attributeEntities == null) {
+				lpe.setAttributes(attributeEntities = new HashSet<LearningPlanAttributeEntity>());
+			}
+			for (Attribute att : createAttrs)
+				attributeEntities.add(new LearningPlanAttributeEntity(att, lpe));
+		}
 
 		lpe.setAttributes(new HashSet<LearningPlanAttributeEntity>());
 		if (null != learningPlan.getAttributes()) {
@@ -397,16 +477,29 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		}
 
 		//  Update attributes.
-		if (planItem.getAttributes() != null) {
-			Set<PlanItemAttributeEntity> attributeEntities = new HashSet<PlanItemAttributeEntity>();
-			for (AttributeInfo att : planItem.getAttributes()) {
-				attributeEntities.add(new PlanItemAttributeEntity(att, planItemEntity));
+		List<Attribute> createAttrs = mergeAttributes(planItem, planItemEntity.getAttributes());
+		if (createAttrs != null) {
+			Set<PlanItemAttributeEntity> attributeEntities = planItemEntity.getAttributes();
+			if (attributeEntities == null) {
+				planItemEntity.setAttributes(attributeEntities = new HashSet<PlanItemAttributeEntity>());
 			}
-			planItemEntity.setAttributes(attributeEntities);
+			for (Attribute att : createAttrs)
+				attributeEntities.add(new PlanItemAttributeEntity(att, planItemEntity));
 		}
 
 		//  Update text entity.
-		planItemEntity.setDescr(new PlanItemRichTextEntity(planItem.getDescr()));
+		RichTextInfo descrInfo = planItem.getDescr();
+		if (descrInfo == null) {
+			planItemEntity.setDescr(null);
+		} else {
+			PlanItemRichTextEntity descr = planItemEntity.getDescr();
+			if (descr == null) {
+				descr = new PlanItemRichTextEntity(planItem.getDescr());
+			} else {
+				descr.setPlain(descrInfo.getPlain());
+				descr.setFormatted(descrInfo.getFormatted());
+			}
+		}
 
 		//  Update meta data.
 		planItemEntity.setUpdateId(context.getPrincipalId());
@@ -458,6 +551,11 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 			newPlan.setUpdateId(context.getPrincipalId());
 			newPlan.setUpdateTime(new Date());
 			learningPlanDao.update(newPlan);
+		}
+
+		// update credits
+		if (planItem.getCredit() != null) {
+			planItemEntity.setCredit(planItem.getCredit());
 		}
 
 		return planItemDao.find(updatePlanItemId).toDto();
@@ -543,12 +641,12 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		 * data dictionary.
 		 */
 		try {
-			KsapFrameworkServiceLocator.getCourseService().getCourse(planItemInfo.getRefObjectId(), context);
-		} catch (DoesNotExistException e) {
-			validationResultInfos.add(makeValidationResultInfo(
-					String.format("Could not find course with ID [%s].", planItemInfo.getRefObjectId()), "refObjectId",
-					ValidationResult.ErrorLevel.ERROR));
-		} catch (Exception e) {
+			if (KsapFrameworkServiceLocator.getCourseHelper().getCourseInfo(planItemInfo.getRefObjectId()) == null) {
+				validationResultInfos.add(makeValidationResultInfo(
+						String.format("Could not find course with ID [%s].", planItemInfo.getRefObjectId()),
+						"refObjectId", ValidationResult.ErrorLevel.ERROR));
+			}
+		} catch (RuntimeException e) {
 			validationResultInfos.add(makeValidationResultInfo(e.getLocalizedMessage(), "refObjectId",
 					ValidationResult.ErrorLevel.ERROR));
 		}
@@ -566,7 +664,7 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 				for (String atpId : planItemInfo.getPlanPeriods()) {
 					boolean valid = false;
 					try {
-						valid = isValidAtp(atpId, context);
+						valid = isValidTerm(atpId);
 						if (!valid) {
 							validationResultInfos.add(makeValidationResultInfo(
 									String.format("ATP ID [%s] was not valid.", atpId), "atpId",
@@ -652,14 +750,12 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		return vri;
 	}
 
-	private boolean isValidAtp(String atpId, ContextInfo context) {
+	private boolean isValidTerm(String atpId) {
 		try {
-			KsapFrameworkServiceLocator.getAtpService().getAtp(atpId, context);
-		} catch (DoesNotExistException e) {
-			return false;
+			return KsapFrameworkServiceLocator.getTermHelper().getTerm(atpId) != null;
 		} catch (Exception e) {
 			throw new RuntimeException("Query to ATP service failed.", e);
 		}
-		return true;
 	}
+
 }

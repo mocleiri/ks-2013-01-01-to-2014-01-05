@@ -21,7 +21,9 @@
     <!-- VIEWS ######################################################################################## -->
 
     <bean id="MyPlanView" abstract="true" parent="Uif-View">
+    	<!-- 
         <property name="preloadPoolSize" value="5"/>
+    	 -->
         <property name="theme">
             <bean parent="MyPlanBaseTheme"/>
         </property>
@@ -33,7 +35,9 @@
 
     <!-- View without the header and footer and just the theme -->
     <bean id="MyPlanBaseFormView" abstract="true" parent="Uif-FormView">
+    	<!--
         <property name="preloadPoolSize" value="5"/>
+    	 -->
         <property name="theme">
             <bean parent="MyPlanBaseTheme"/>
         </property>
@@ -60,7 +64,9 @@
     </bean>
 
     <bean id="MyPlanBaseLookupView" abstract="true" parent="Uif-LookupView">
+    	<!-- 
         <property name="preloadPoolSize" value="5"/>
+    	 -->
         <property name="theme">
             <bean parent="MyPlanBaseTheme"/>
         </property>
@@ -87,7 +93,9 @@
     </bean>
 
     <bean id="MyPlanBaseInquiryView" abstract="true" parent="Uif-InquiryView">
+    	<!-- 
         <property name="preloadPoolSize" value="5"/>
+    	 -->
         <property name="theme">
             <bean parent="MyPlanBaseTheme"/>
         </property>
@@ -114,7 +122,9 @@
     </bean>
 
     <bean id="MyPlanBaseMaintenanceView" abstract="true" parent="Uif-MaintenanceView">
+    	<!-- 
         <property name="preloadPoolSize" value="5"/>
+    	 -->
         <property name="theme">
             <bean parent="MyPlanBaseTheme"/>
         </property>
@@ -281,6 +291,8 @@
             <list merge="true">
                 <value>@{#parentLine.completedTerm ? 'locked' : (#parentLine.openForPlanning ? 'unlocked' : 'locked')}</value>
                 <value>myplan-registration-status</value>
+                <value>ks-plan-Icon</value>
+                <value>@{#parentLine.completedTerm ? 'ks-plan-Icon--locked' : (#parentLine.openForPlanning ? 'ks-plan-Icon--unlocked' : 'ks-plan-Icon--locked')}</value>
             </list>
         </property>
     </bean>
@@ -445,10 +457,10 @@
         <property name="onDocumentReadyScript" value="
             myplanRetrieveComponent('messages_widget','messages_summary','search','lookup',{viewId:'MessagesSummary-LookupView'});
             jQuery('#messages_widget')
-                .subscribe('MESSAGE_SENT', function(){
+                .on('MESSAGE_SENT', function(){
                     myplanRetrieveComponent('messages_summary','messages_summary','search','lookup',{viewId:'MessagesSummary-LookupView'});
                 })
-                .subscribe('COMMENT_SENT', function(){
+                .on('COMMENT_SENT', function(){
                     myplanRetrieveComponent('messages_summary','messages_summary','search','lookup',{viewId:'MessagesSummary-LookupView'});
                 });
         "/>
@@ -467,21 +479,20 @@
         </property>
         <property name="onDocumentReadyScript" value="
             myplanRetrieveComponent('watch_list','saved_courses_summary','search','lookup',{viewId:'SavedCoursesSummary-LookupView'});
-            jQuery('#watch_list')
-                .subscribe('PLAN_ITEM_DELETED', function(data){
-                    if (data.planItemType === 'wishlist') {
-                        myplanRetrieveComponent('saved_courses_summary','saved_courses_summary','search','lookup',{viewId:'SavedCoursesSummary-LookupView'});
-                        jQuery('div.jquerybubblepopup.jquerybubblepopup-myplan .jquerybubblepopup-tail').fadeOut(250, function() {
-                            jQuery(this).remove();
-                            fnCloseAllPopups();
-                        });
-                    }
-                })
-                .subscribe('PLAN_ITEM_ADDED', function(data){
-                    if (data.planItemType === 'wishlist') {
-                        myplanRetrieveComponent('saved_courses_summary','saved_courses_summary','search','lookup',{viewId:'SavedCoursesSummary-LookupView'},data.planItemId);
-                    }
-                });
+            var obj = jQuery('div.myplan-saved-courses-summary.myplan-stacked-list',jQuery('body').html());
+            obj.on('PLAN_ITEM_DELETED', function(event, data){
+                if (data.planItemType === 'wishlist') {
+                    myplanRetrieveComponent('saved_courses_summary','saved_courses_summary','search','lookup',{viewId:'SavedCoursesSummary-LookupView'});
+                    jQuery('div.jquerybubblepopup.jquerybubblepopup-myplan .jquerybubblepopup-tail').fadeOut(250, function() {
+                        jQuery(this).remove();
+                        fnCloseAllPopups();
+                    });
+                }
+            }).on('PLAN_ITEM_ADDED', function(event, data){
+                if (data.planItemType === 'wishlist') {
+                    myplanRetrieveComponent('saved_courses_summary','saved_courses_summary','search','lookup',{viewId:'SavedCoursesSummary-LookupView'},data.planItemId);
+                }
+            });
         "/>
     </bean>
 
@@ -497,9 +508,9 @@
         </property>
         <property name="onDocumentReadyScript" value="
             myplanRetrieveComponent('degree_audits_list','degree_audits_summary','search','lookup',{viewId:'DegreeAuditsSummary-LookupView'});
-            jQuery('#degree_audits_summary').subscribe('REFRESH_AUDITS', function(data){
+            jQuery('#degree_audits_summary').on('REFRESH_AUDITS', function(data){
                 myplanRetrieveComponent('degree_audits_summary','degree_audits_summary','search','lookup',{viewId:'DegreeAuditsSummary-LookupView'});
-            }).subscribe('AUDIT_COMPLETE', function(data){
+            }).on('AUDIT_COMPLETE', function(data){
                 myplanRetrieveComponent('degree_audits_summary','degree_audits_summary','search','lookup',{viewId:'DegreeAuditsSummary-LookupView'});
             });
         "/>
@@ -826,7 +837,31 @@
             <null/>
         </property>
         <property name="header">
-            <bean parent="Uif-HeaderSix"/>
+            <bean parent="Uif-HeaderSix">
+		        <property name="cssClasses">
+		        	<list merge="true">
+			        	<value>ks-Popover-header</value>
+		        	</list>
+		        </property>
+            </bean>
+        </property>
+        <property name="cssClasses">
+        	<list merge="true">
+	        	<value>ks-Popover</value>
+        	</list>
+        </property>
+        <property name="layoutManager.cssClasses">
+        	<list merge="true">
+	        	<value>ks-Popover-body</value>
+        	</list>
+        </property>
+        <property name="footer">
+            <bean parent="KSAP-VerticalBoxGroup-NoMargin" />
+        </property>
+        <property name="footer.cssClasses">
+        	<list merge="true">
+	        	<value>ks-Popover-footer</value>
+        	</list>
         </property>
         <property name="width" value="300px"/>
     </bean>
