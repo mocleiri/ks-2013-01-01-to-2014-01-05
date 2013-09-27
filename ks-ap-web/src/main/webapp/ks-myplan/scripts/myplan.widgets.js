@@ -111,7 +111,7 @@ function openPopup(getId, retrieveData, formAction, popupStyle, popupOptions, e)
     fnCloseAllPopups();
 
     var popupOptionsDefault = {
-        themePath:"../ks-myplan/jquery-popover/jquerypopover-theme/",
+        themePath:getConfigParam("kradUrl")+"/../ks-myplan/jquery-popover/jquerypopover-theme/",
         manageMouseEvents:true,
         selectable:true,
         tail:{align:"middle", hidden:false},
@@ -176,6 +176,12 @@ function openPopup(getId, retrieveData, formAction, popupStyle, popupOptions, e)
             });
         }
         runHiddenScripts(getId);
+        // TODO: dont jump and focus when running hidden scripts
+		var targetOffset = jQuery("#popupForm").offset().top - 100;
+		jQuery('html,body').animate({
+			scrollTop : targetOffset
+		}, 250);
+		jQuery("#popupForm input:first").focus();
         elementToBlock.unblock();
     };
 
