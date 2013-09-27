@@ -17,6 +17,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   element(:save_button) { |b| b.save_cancel_div.button(text: "Save Progress") }
   action(:save) { |b| sleep 2; b.loading.wait_while_present; sleep 2; b.save_button.click; b.loading.wait_while_present(120) }
   action(:send_to_scheduler_checkbox) { |b| b.div(data_label: "Send revised delivery logistics to the scheduler for processing upon save.").checkbox }
+  element(:unable_to_send_to_scheduler_msg) { |b| b.save_cancel_div.parent.label(text: /Delivery logistics cannot be sent to the scheduler/) }
   action(:send_to_scheduler) { |b| b.send_to_scheduler_checkbox.set }
 
   element(:submit_button) { |b| b.save_cancel_div.button(text: "Update") }

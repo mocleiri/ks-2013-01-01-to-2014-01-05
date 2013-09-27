@@ -1179,7 +1179,7 @@ Then /^I am unable submit the activity offering to the scheduler$/ do
   @activity_offering.edit
 
   on ActivityOfferingMaintenance do |page|
-    page.send_to_scheduler_checkbox.enabled?.should be_false
+    page.unable_to_send_to_scheduler_msg.exists?.should be_true
     page.cancel
   end
 end
