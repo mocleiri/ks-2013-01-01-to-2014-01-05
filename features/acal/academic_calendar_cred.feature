@@ -48,6 +48,7 @@ Feature: EC.Academic Calendar CRED
     When I add a Holiday Calendar to the Academic Calendar
     Then the Holiday Calendar is listed when I view the Academic Calendar
 
+  @bug @KSENROLL-9601
   Scenario: Remove a Holiday Calendar from an Academic Calendar
     Given I add a Holiday Calendar to the Academic Calendar
     When I remove the Holiday Calendar
