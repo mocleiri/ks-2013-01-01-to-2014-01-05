@@ -243,7 +243,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
                 for (KsaTransaction ksaTransaction : acceptedKsaTransactionList) {
 
-                    if (transactionCommitCount++ > 100) {
+                    if (++transactionCommitCount > 10) {
                         commit(userTransaction);
                         userTransaction = getTransaction(transactionDefinition);
                         transactionCommitCount = 0;

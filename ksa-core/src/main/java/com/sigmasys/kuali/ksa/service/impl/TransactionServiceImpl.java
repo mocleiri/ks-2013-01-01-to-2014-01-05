@@ -1762,7 +1762,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
                 for (Long transactionId : transactionIds) {
 
-                    if (transactionCommitCount++ > 100) {
+                    if (++transactionCommitCount > 10) {
                         commit(userTransaction);
                         userTransaction = getTransaction(transactionDefinition);
                         transactionCommitCount = 0;
