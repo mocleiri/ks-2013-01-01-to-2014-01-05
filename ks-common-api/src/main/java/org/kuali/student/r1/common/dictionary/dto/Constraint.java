@@ -51,6 +51,9 @@ public class Constraint extends BaseConstraint {
     @XmlElement
     protected boolean readOnly = false;
 
+    @XmlElement
+    protected boolean hide = false;
+
     // LookupConstraints
 	protected LookupConstraint lookupDefinition;// If the user wants to match
 	// against two searches, that
@@ -202,5 +205,13 @@ public class Constraint extends BaseConstraint {
 
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
+    }
+
+    public boolean isHide() {
+        return hide;
+    }
+
+    public void setHide(boolean hide) {
+        this.hide = hide;
     }
 }

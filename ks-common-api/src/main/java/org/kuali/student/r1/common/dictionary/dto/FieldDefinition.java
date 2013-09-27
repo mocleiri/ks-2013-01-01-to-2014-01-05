@@ -42,9 +42,6 @@ public class FieldDefinition extends Constraint {
 //										// readOnly=false
 	
 	@XmlElement
-	protected boolean hide = false;
-	
-	@XmlElement
 	protected boolean mask = false;
 	
 	@XmlElement
@@ -85,12 +82,6 @@ public class FieldDefinition extends Constraint {
 	}
 	public void setDefaultValuePath(String defaultValuePath) {
 		this.defaultValuePath = defaultValuePath;
-	}
-	public boolean isHide() {
-		return hide;
-	}
-	public void setHide(boolean hide) {
-		this.hide = hide;
 	}
 	public boolean isMask() {
 		return mask;
