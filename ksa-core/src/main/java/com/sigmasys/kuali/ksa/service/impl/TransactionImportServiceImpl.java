@@ -1,5 +1,16 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.util.CollectionUtils;
+
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.service.*;
@@ -8,13 +19,7 @@ import com.sigmasys.kuali.ksa.jaxb.*;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
 import com.sigmasys.kuali.ksa.util.XmlSchemaValidator;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+
 
 import javax.annotation.PostConstruct;
 import javax.jws.WebService;
@@ -34,7 +39,6 @@ import java.util.UUID;
  * @author Michael Ivanov
  */
 @Service("transactionImportService")
-@Transactional(readOnly = true)
 @WebService(serviceName = TransactionImportService.SERVICE_NAME, portName = TransactionImportService.PORT_NAME,
         targetNamespace = Constants.WS_NAMESPACE)
 @SuppressWarnings("unchecked")
@@ -61,12 +65,18 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
     @Autowired
     private RefundService refundService;
 
+
     private XmlSchemaValidator schemaValidator;
+
+    private DefaultTransactionDefinition transactionDefinition;
 
 
     @PostConstruct
     private void postConstruct() {
         schemaValidator = new XmlSchemaValidator(XML_SCHEMA_LOCATION, IMPORT_SCHEMA_LOCATION);
+        transactionDefinition = new DefaultTransactionDefinition();
+        transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        transactionDefinition.setTimeout(600);
     }
 
     /**
@@ -91,16 +101,18 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
      * @return XML response
      */
     @Override
-    @Transactional(readOnly = false)
-    public String processTransactions(String xml) {
+    public synchronized String processTransactions(String xml) {
+
         // Validate XML against the schema
         String errorMessage = schemaValidator.validateXmlAndGetErrorMessage(xml);
-        if (errorMessage == null) {
-            return parseTransactions(xml);
+
+        if (errorMessage != null) {
+            errorMessage = "XML validation error: " + errorMessage;
+            logger.error(errorMessage + ":\n" + xml);
+            throw new RuntimeException(errorMessage);
         }
-        errorMessage = "XML validation error: " + errorMessage;
-        logger.error(errorMessage + ":\n" + xml);
-        throw new RuntimeException(errorMessage);
+
+        return parseTransactions(xml);
     }
 
     /**
@@ -139,7 +151,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
         String failureValue = configService.getParameter(Constants.IMPORT_SINGLE_BATCH_FAILURE);
         Boolean singleBatchFailure = Boolean.valueOf(failureValue);
 
-        // determine if batch or single transaction
+        // determine if batch or single userTransaction
         Object object = parseXml(new StringReader(xml));
 
         KsaBatchTransaction ksaBatchTransaction;
@@ -181,11 +193,11 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
             for (KsaTransaction ksaTransaction : ksaTransactions) {
 
-                // pre determine, qualify the transaction create accepted and rejected lists of transactions
+                // pre determine, qualify the userTransaction create accepted and rejected lists of transactions
                 Date effectiveDate = CalendarUtils.toDate(ksaTransaction.getEffectiveDate());
                 String errMsg = "";
                 if (!verifyRequiredValues(ksaTransaction)) {
-                    errMsg = "Required values are missing from transaction, External ID = " +
+                    errMsg = "Required values are missing from userTransaction, External ID = " +
                             ksaTransaction.getIncomingIdentifier();
                 } else if (!accountService.accountExists(ksaTransaction.getAccountIdentifier())) {
                     errMsg = "Account '" + ksaTransaction.getAccountIdentifier() + "' does not exist";
@@ -208,14 +220,14 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                 }
 
                 if (errMsg.length() > 0) {
-                    // place the transaction in the failed list
+                    // place the userTransaction in the failed list
                     failed.getKsaTransactionAndReason().add(ksaTransaction);
                     failed.getKsaTransactionAndReason().add(errMsg);
                     numberOfFailed++;
                     failedValue = failedValue.add(ksaTransaction.getAmount());
                     totalValue = totalValue.add(ksaTransaction.getAmount());
                 } else {
-                    // place the transaction in the accepted list
+                    // place the userTransaction in the accepted list
                     acceptedKsaTransactionList.add(ksaTransaction);
                 }
 
@@ -225,7 +237,17 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
             if (batchReceiptStatus != BatchReceiptStatus.FAILED && (batchIsQualified || !singleBatchFailure)) {
 
+                int transactionCommitCount = 0;
+
+                TransactionStatus userTransaction = getTransaction(transactionDefinition);
+
                 for (KsaTransaction ksaTransaction : acceptedKsaTransactionList) {
+
+                    if (transactionCommitCount++ > 100) {
+                        commit(userTransaction);
+                        userTransaction = getTransaction(transactionDefinition);
+                        transactionCommitCount = 0;
+                    }
 
                     try {
 
@@ -270,10 +292,13 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                         failedValue = failedValue.add(ksaTransaction.getAmount());
 
                         // add the reason to the KsaTransactionAndReason
-                        failed.getKsaTransactionAndReason().add("Unable to create or persist transaction id " +
+                        failed.getKsaTransactionAndReason().add("Unable to create or persist userTransaction id " +
                                 ksaTransaction.getAccountIdentifier());
                     }
                 }
+
+                commit(userTransaction);
+
             } else {
                 for (KsaTransaction acceptedTrans : acceptedKsaTransactionList) {
                     accepted.getKsaTransactionAndTransactionDetails().add(acceptedTrans);
@@ -306,7 +331,8 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
         // log the batch summary statics and values
 
-        // Convert the batch response object to XML or return the exception
+        TransactionStatus userTransaction = getTransaction(transactionDefinition);
+
         try {
 
             String responseXml = JaxbUtils.toXml(ksaBatchTransactionResponse);
@@ -332,10 +358,14 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
             persistEntity(batchReceipt);
 
+            commit(userTransaction);
+
             return responseXml;
 
-
         } catch (Exception e) {
+
+            rollback(userTransaction);
+
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -390,7 +420,8 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
      * @param batchId Batch ID
      * @return true if the given batch ID already exists, false - otherwise
      */
-    private boolean batchIdExists(String batchId) {
+    @Transactional(readOnly = true)
+    public boolean batchIdExists(String batchId) {
         Query query = em.createQuery("select br.externalId from BatchReceipt br where br.externalId = :batchId");
         query.setParameter("batchId", batchId);
         query.setMaxResults(1);

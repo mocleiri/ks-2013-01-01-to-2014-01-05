@@ -23,7 +23,6 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Michael Ivanov
  */
-@Transactional
 public abstract class GenericSearchController extends UifControllerBase {
 
     private static final String ACCOUNT_SEARCH_PAGE_ID = "AccountSearchPage";

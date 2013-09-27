@@ -2,7 +2,6 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.ReportReconciliationForm;
 import com.sigmasys.kuali.ksa.model.Account;
-import com.sigmasys.kuali.ksa.model.Transaction;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.ReportService;
 import com.sigmasys.kuali.ksa.service.TransactionExportService;
@@ -13,8 +12,6 @@ import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +33,6 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/reportReconciliationView")
-@Transactional(timeout = 1200, propagation = Propagation.REQUIRES_NEW)
 public class ReportReconciliationController extends DownloadController {
 
     private static final Log logger = LogFactory.getLog(ReportReconciliationController.class);

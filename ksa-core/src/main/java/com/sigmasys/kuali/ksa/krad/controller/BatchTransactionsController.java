@@ -28,7 +28,6 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/batchTransactionsView")
-@Transactional(timeout = 1200, propagation = Propagation.REQUIRES_NEW)
 public class BatchTransactionsController extends GenericSearchController {
 
 

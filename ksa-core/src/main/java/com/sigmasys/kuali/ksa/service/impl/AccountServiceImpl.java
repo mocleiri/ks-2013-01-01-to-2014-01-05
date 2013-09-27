@@ -39,15 +39,10 @@ import org.kuali.rice.kim.impl.identity.principal.PrincipalBo;
 import org.kuali.rice.kim.impl.identity.type.EntityTypeContactInfoBo;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.KRADServiceLocator;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
@@ -66,7 +61,7 @@ import java.util.regex.Pattern;
 @Service("accountService")
 @Transactional(readOnly = true)
 @SuppressWarnings("unchecked")
-public class AccountServiceImpl extends GenericPersistenceService implements AccountService, BeanFactoryAware {
+public class AccountServiceImpl extends GenericPersistenceService implements AccountService {
 
     private static final Log logger = LogFactory.getLog(AccountServiceImpl.class);
 
@@ -93,17 +88,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     @Autowired
     private ActivityService activityService;
 
-
-    private PlatformTransactionManager transactionManager;
-    private DefaultTransactionDefinition transactionDefinition;
-
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) {
-        transactionManager = beanFactory.getBean("transactionManager", PlatformTransactionManager.class);
-        transactionDefinition = new DefaultTransactionDefinition();
-        transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-    }
 
     /**
      * This process creates a temporary subset of the account as if the account were being administered
@@ -169,7 +153,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @param ignoreDeferment boolean value
      */
     @Override
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, timeout = 1200)
     public void ageDebt(boolean ignoreDeferment) {
 
         PermissionUtils.checkPermission(Permission.AGE_ACCOUNT);
@@ -727,7 +711,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         PermissionUtils.checkPermission(Permission.CREATE_ACCOUNT);
 
-        TransactionStatus transaction = transactionManager.getTransaction(transactionDefinition);
+        TransactionStatus transaction = getTransaction();
 
         try {
 
@@ -819,12 +803,12 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             //address.setAccount(account);
             //electronicContact.setAccount(account);
 
-            transactionManager.commit(transaction);
+            commit(transaction);
 
             return account;
 
         } catch (Throwable t) {
-            transactionManager.rollback(transaction);
+            rollback(transaction);
             logger.error(t.getMessage(), t);
             throw new RuntimeException(t);
         }

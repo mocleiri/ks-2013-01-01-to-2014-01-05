@@ -11,14 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.sigmasys.kuali.ksa.krad.form.EmptyForm;
-import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.TransactionExportService;
 
 /**
@@ -29,14 +26,10 @@ import com.sigmasys.kuali.ksa.service.TransactionExportService;
  */
 @Controller
 @RequestMapping(value = "/exportTransactions")
-@Transactional(timeout = 300, propagation = Propagation.REQUIRES_NEW)
 public class TransactionExportController extends GenericSearchController {
 
     @Autowired
     private TransactionExportService transactionExportService;
-
-    @Autowired
-    private GeneralLedgerService generalLedgerService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -47,7 +40,7 @@ public class TransactionExportController extends GenericSearchController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView get(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ModelAndView get(HttpServletResponse response) throws IOException {
 
         // Get the XML content for the export:
         String xml = transactionExportService.exportTransactions();
@@ -60,8 +53,8 @@ public class TransactionExportController extends GenericSearchController {
 
 
     @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView post(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        return get(request, response);
+    public ModelAndView post(HttpServletResponse response) throws IOException {
+        return get(response);
     }
 
     /**

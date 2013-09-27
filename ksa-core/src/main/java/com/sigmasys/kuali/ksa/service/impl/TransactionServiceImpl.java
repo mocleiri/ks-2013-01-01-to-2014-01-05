@@ -18,13 +18,17 @@ import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.security.AccessControlService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
 
 /**
  * Transaction service JPA implementation.
@@ -1736,28 +1740,53 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return true if any the transaction has been made effective, false - otherwise
      */
     @Override
-    @Transactional(readOnly = false, timeout = 1200)
     public synchronized boolean makeAllTransactionsEffective(boolean forceEffective) {
 
-        Query query = em.createQuery("select id from Transaction where glEntryGenerated = false");
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        transactionDefinition.setTimeout(600);
 
-        List<Long> transactionIds = query.getResultList();
+        org.springframework.transaction.TransactionStatus userTransaction = getTransaction(transactionDefinition);
 
-        if (CollectionUtils.isNotEmpty(transactionIds)) {
+        try {
+
+            Query query = em.createQuery("select id from Transaction where glEntryGenerated = false");
+
+            List<Long> transactionIds = query.getResultList();
 
             boolean isEffective = false;
 
-            for (Long transactionId : transactionIds) {
-                boolean result = makeEffective(transactionId, forceEffective);
-                if (!isEffective && result) {
-                    isEffective = true;
+            if (CollectionUtils.isNotEmpty(transactionIds)) {
+
+                int transactionCommitCount = 0;
+
+                for (Long transactionId : transactionIds) {
+
+                    if (transactionCommitCount++ > 100) {
+                        commit(userTransaction);
+                        userTransaction = getTransaction(transactionDefinition);
+                        transactionCommitCount = 0;
+                    }
+
+                    boolean result = makeEffective(transactionId, forceEffective);
+
+                    if (!isEffective && result) {
+                        isEffective = true;
+                    }
                 }
             }
 
-            return isEffective;
-        }
+            commit(userTransaction);
 
-        return false;
+            return isEffective;
+
+        } catch (Exception e) {
+
+            rollback(userTransaction);
+
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -2026,7 +2055,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new IllegalArgumentException(errMsg);
         }
 
-        final TransactionStatus transactionStatus = transaction.getStatus();
+        TransactionStatus transactionStatus = transaction.getStatus();
         if (transactionStatus == null) {
             String errMsg = "Transaction status must not be null";
             logger.error(errMsg);

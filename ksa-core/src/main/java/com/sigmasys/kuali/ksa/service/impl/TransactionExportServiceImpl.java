@@ -33,7 +33,7 @@ import static com.sigmasys.kuali.ksa.util.TransactionUtils.*;
  * @author Michael Ivanov
  */
 @Service("transactionExportService")
-@Transactional(readOnly = true)
+@Transactional(timeout = 1200)
 @WebService(serviceName = TransactionExportService.SERVICE_NAME, portName = TransactionExportService.PORT_NAME,
         targetNamespace = Constants.WS_NAMESPACE)
 @SuppressWarnings("unchecked")
@@ -72,7 +72,6 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
      * @return XML content that contains the transactions to be exported
      */
     @Override
-    @Transactional(readOnly = false)
     public String exportTransactions() {
         List<GlTransmission> transmissions = glService.createGlTransmissions(null, null, true);
         return convertGlTransmissionsToXml(null, transmissions, true);
@@ -85,7 +84,6 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
      * @return XML content that contains the transactions to be exported
      */
     @Override
-    @Transactional(readOnly = false)
     public String exportTransactionsForBatch(String batchId) {
         return convertGlTransmissionsToXml(batchId, glService.getGlTransmissionsForBatch(batchId, GlTransmissionStatus.TRANSMITTED));
     }
@@ -101,7 +99,6 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
      * @return XML content that contains the transactions to be exported
      */
     @Override
-    @Transactional(readOnly = false)
     public String exportTransactionsForDates(Date startDate, Date endDate, boolean isEffectiveDate) {
         return convertGlTransmissionsToXml(glService.createGlTransmissions(startDate, endDate, isEffectiveDate));
     }
@@ -113,7 +110,6 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
      * @return XML content that contains the transactions to be exported
      */
     @Override
-    @Transactional(readOnly = false)
     public String exportTransactionsForPeriods(String... recognitionPeriods) {
         return convertGlTransmissionsToXml(glService.createGlTransmissions(null, null, true, recognitionPeriods));
     }

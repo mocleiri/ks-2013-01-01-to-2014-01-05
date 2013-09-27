@@ -1,17 +1,25 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+
+import org.aopalliance.aop.Advice;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.util.CollectionUtils;
+
 import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.PersistenceService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import com.sigmasys.kuali.ksa.service.aop.LoggingInterceptor;
-import org.aopalliance.aop.Advice;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -32,7 +40,7 @@ import java.util.List;
 @Service("persistenceService")
 @Transactional(readOnly = true)
 @SuppressWarnings("unchecked")
-public class GenericPersistenceService implements PersistenceService {
+public class GenericPersistenceService implements PersistenceService, BeanFactoryAware {
 
     @PersistenceContext(unitName = Constants.KSA_PERSISTENCE_UNIT)
     protected EntityManager em;
@@ -42,6 +50,33 @@ public class GenericPersistenceService implements PersistenceService {
 
     @Autowired
     protected ConfigService configService;
+
+
+    private PlatformTransactionManager transactionManager;
+
+
+    protected TransactionStatus getTransaction(TransactionDefinition transactionDefinition) {
+        return transactionManager.getTransaction(transactionDefinition);
+    }
+
+    protected TransactionStatus getTransaction() {
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        return transactionManager.getTransaction(transactionDefinition);
+    }
+
+    protected void commit(TransactionStatus transactionStatus) {
+        transactionManager.commit(transactionStatus);
+    }
+
+    protected void rollback(TransactionStatus transactionStatus) {
+        transactionManager.rollback(transactionStatus);
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        transactionManager = beanFactory.getBean("transactionManager", PlatformTransactionManager.class);
+    }
 
 
     /**
