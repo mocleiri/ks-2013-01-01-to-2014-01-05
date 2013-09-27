@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.QuickViewForm;
+import com.sigmasys.kuali.ksa.krad.model.MemoModel;
 import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
@@ -11,12 +12,14 @@ import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Iterator;
@@ -181,50 +184,57 @@ public class QuickViewController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+    /**
+     * @param form
+     * @param result
+     * @param request
+     * @param response
+     * @return
+     */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insertMemo")
-    public ModelAndView insertMemo(@ModelAttribute("KualiForm") QuickViewForm form, HttpServletRequest request) {
+    public ModelAndView insertMemo(@ModelAttribute("KualiForm") QuickViewForm form, BindingResult result,
+                                   HttpServletRequest request, HttpServletResponse response) {
+        String userId = request.getParameter("userId");
 
-        String viewId = request.getParameter("viewId");
-        String userId = request.getParameter("actionParameters[userId]");
+        MemoModel memoModel = form.getNewMemoModel();
 
-        logger.info("View: " + viewId + " User: " + userId);
-
-        // TODO validate the field entries before inserting
-
-        Memo memoModel = form.getMemoModel();
-
-        String accountId = memoModel.getAccountId();
+        String accountId = form.getAccount().getId();
         String memoText = memoModel.getText();
 
-        String accessLevelCode = (memoModel.getAccessLevel() != null) ? memoModel.getAccessLevel().getCode() : null;
+        String accessLevelCode = "DEF_MEMO_LEVEL_CD";
 
         Date effectiveDate = memoModel.getEffectiveDate();
         Date expirationDate = memoModel.getExpirationDate();
-        Memo previousMemo = memoModel.getPreviousMemo();
-        Long previousMemoId = previousMemo != null ? previousMemo.getId() : null;
 
         try {
 
-            Memo memo = informationService.createMemo(accountId, memoText, accessLevelCode, effectiveDate, expirationDate, previousMemoId);
+            Memo memo = informationService.createMemo(accountId, memoText, accessLevelCode, effectiveDate, expirationDate, null);
 
             Long persistResult = informationService.persistInformation(memo);
 
             if (persistResult >= 0) {
-                form.setStatusMessage("Success");
-                logger.info("Successful insert of memo number " + memo.getId().toString());
+                String statusMsg = "Memo saved";
+                GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, statusMsg);
+
+                List<Memo> memos = informationService.getMemos(userId);
+
+                form.setMemoModels(memos);
+
+                form.setNewMemoModel(null);
+
             } else {
                 String failedMsg = "Failed to add memo. result code: " + persistResult.toString();
-                form.setStatusMessage(failedMsg);
-
-                form.setStatusMessage(failedMsg);
+                GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, failedMsg);
             }
-        } catch (Exception e) {
-            logger.error("'Failed to add memo. " + e.getMessage(), e);
-            GlobalVariables.getMessageMap().putError("QuickView", RiceKeyConstants.ERROR_CUSTOM, e.getLocalizedMessage());
+        } catch (Exception exp) {
+            String errMsg = "'Failed to add memo. " + exp.getLocalizedMessage();
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errMsg);
+            logger.error(errMsg);
         }
 
         return getUIFModelAndView(form);
     }
+
 
     /**
      * Populate the form per business needs for a single account by the account identifier

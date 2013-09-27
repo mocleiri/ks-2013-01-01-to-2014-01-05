@@ -56,6 +56,9 @@ public class MemoForm extends AbstractViewModel {
         this.memoModels = new ArrayList<MemoModel>();
         Map<Long, MemoModel> idList = new HashMap<Long, MemoModel>();
 
+        // List for holding the child memos that came in before the parent
+        List<Memo> childMemos = new ArrayList<Memo>();
+
         for(Memo memo : memos) {
             Memo previousMemo = memo.getPreviousMemo();
 
@@ -68,15 +71,26 @@ public class MemoForm extends AbstractViewModel {
 
             MemoModel model = new MemoModel(memo);
 
-            if(previousMemo == null || (!idList.keySet().contains(previousMemo.getId()))) {
+            if(previousMemo == null) {
                 memoModels.add(model);
                 idList.put(memo.getId(), model);
+            } else if(!idList.keySet().contains(previousMemo.getId())){
+                childMemos.add(memo);
             } else {
                 MemoModel parent = idList.get(previousMemo.getId());
                 List<MemoModel> parentModels = parent.getMemoModels();
                 parentModels.add(model);
             }
 
+        }
+
+        for(Memo child : childMemos) {
+            MemoModel parent = idList.get(child.getPreviousMemo().getId());
+            if(parent != null) {
+                List<MemoModel> parentModels = parent.getMemoModels();
+                MemoModel model = new MemoModel(child);
+                parentModels.add(model);
+            }
         }
     }
 
@@ -107,7 +121,9 @@ public class MemoForm extends AbstractViewModel {
     public MemoModel getNewMemoModel() {
         if(newMemoModel == null) {
             newMemoModel = new MemoModel();
-            newMemoModel.setParentEntity(new Memo());
+            Memo memo = new Memo();
+            memo.setEffectiveDate(new Date());
+            newMemoModel.setParentEntity(memo);
         }
         return newMemoModel;
     }

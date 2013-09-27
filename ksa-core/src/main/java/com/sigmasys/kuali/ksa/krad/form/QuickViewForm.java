@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
+import com.sigmasys.kuali.ksa.krad.model.MemoModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
 import com.sigmasys.kuali.ksa.util.InformationUtils;
@@ -44,6 +45,8 @@ public class QuickViewForm extends AbstractViewModel {
     private List<InformationModel> alerts;
     private List<InformationModel> flags;
     private List<InformationModel> holds;
+
+    private MemoModel newMemoModel;
 
 
     // the last aging date
@@ -348,4 +351,19 @@ public class QuickViewForm extends AbstractViewModel {
     public void setOutstandingAmount(BigDecimal outstandingAmount) {
         this.outstandingAmount = outstandingAmount;
     }
+
+    public MemoModel getNewMemoModel() {
+        if(newMemoModel == null) {
+            newMemoModel = new MemoModel();
+            Memo memo = new Memo();
+            memo.setEffectiveDate(new Date());
+            newMemoModel.setParentEntity(memo);
+        }
+        return newMemoModel;
+    }
+
+    public void setNewMemoModel(MemoModel newMemoModel) {
+        this.newMemoModel = newMemoModel;
+    }
+
 }

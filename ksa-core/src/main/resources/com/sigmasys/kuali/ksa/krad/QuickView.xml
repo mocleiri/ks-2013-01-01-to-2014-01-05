@@ -536,6 +536,9 @@
                             <ref bean="quickViewMemosTable"/>
                             <bean parent="Uif-Link" p:linkText="Details"
                                   p:href="memoView?methodToCall=get&amp;viewId=MemoView&amp;pageId=MemosPage&amp;userId=@{account.id}"/>
+                            <bean parent="Uif-Link" p:href="#" p:linkText="Create a New Memo" p:onClickScript="showLightboxComponent('memoNewLightbox');"/>
+                            <ref bean="memoNewLightbox"/>
+
                         </list>
                     </property>
                 </bean>

@@ -201,10 +201,24 @@ public class MemoController extends GenericSearchController {
         }
 
         logger.info("View: " + viewId + " User: " + userId);
+        MemoModel memoModel = null;
+        if(parentMemo == null) {
+            memoModel = form.getNewMemoModel();
+        } else {
+            // loop through the form's memos and find the right one
+            for(MemoModel model : form.getMemoModels()) {
+                if(parentId.equals(model.getId())) {
+                    memoModel = model.getFollowupMemoModel();
+                    break;
+                }
+            }
+        }
 
-        // TODO validate the field entries before inserting
-
-        MemoModel memoModel = form.getNewMemoModel();
+        if(memoModel == null) {
+            // something went wrong here
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Unable to find parent memo.");
+            return getUIFModelAndView(form);
+        }
 
         String accountId = form.getAccount().getId();
         String memoText = memoModel.getText();
@@ -228,6 +242,7 @@ public class MemoController extends GenericSearchController {
 
                 form.setMemos(memos);
 
+                form.setNewMemoModel(null);
 
             } else {
                 String failedMsg = "Failed to add memo. result code: " + persistResult.toString();

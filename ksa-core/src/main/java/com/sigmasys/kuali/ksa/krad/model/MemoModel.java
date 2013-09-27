@@ -13,6 +13,8 @@ public class MemoModel extends InformationModel {
 
     private List<MemoModel> memoModels;
 
+    private MemoModel followupMemoModel;
+
     public MemoModel() {
 
     }
@@ -30,5 +32,19 @@ public class MemoModel extends InformationModel {
 
     public void setMemoModels(List<MemoModel> memoModels) {
         this.memoModels = memoModels;
+    }
+
+    public MemoModel getFollowupMemoModel() {
+        if(followupMemoModel == null) {
+            followupMemoModel = new MemoModel();
+            Memo memo = new Memo();
+            memo.setEffectiveDate(this.getParentEntity().getEffectiveDate());
+            followupMemoModel.setParentEntity(memo);
+        }
+        return followupMemoModel;
+    }
+
+    public void setFollowupMemoModel(MemoModel followupMemoModel) {
+        this.followupMemoModel = followupMemoModel;
     }
 }
