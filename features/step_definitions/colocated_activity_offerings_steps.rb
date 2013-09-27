@@ -1,8 +1,19 @@
+When /^there is a course offering with a colocated activity offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course => "CHEM441"
+  @course_offering.manage
+
+  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  colocated_ao_parent = make CourseOffering, :course => "CHEM641", :term => "201208"
+  colocated_ao = make ActivityOffering, :code => "A", :parent_course_offering => colocated_ao_parent
+  @activity_offering.colocate_ao_list << colocated_ao
+  on(ManageCourseOfferings).has_colo_icon(@activity_offering.code).should be_true
+end
+
 When /^I create "([2-9])" COs with an AO in each$/ do |number_of_cos_to_create|
   @colo_aos = []
 
   for i in 1..number_of_cos_to_create.to_i
-    co = create CourseOffering, :create_by_copy => (make CourseOffering, :course => "ENGL211", :term => Rollover::MAIN_TEST_TERM_TARGET)
+    co = create CourseOffering, :create_by_copy => (make CourseOffering, :course => "ENGL255", :term => Rollover::MAIN_TEST_TERM_TARGET)
     ao = make ActivityOffering, :code => "A", :parent_course_offering => co
     @colo_aos << ao
   end
@@ -88,7 +99,6 @@ Then /^the first colocated AO is not colocated with any remaining AOs$/ do
       #validation should also include ensuring DLs still exist
     end
   end
-
 end
 
 When /^I designate a valid term and Course Offering Code with a fully colocated AO$/ do
@@ -109,6 +119,38 @@ Then /^The AO is successfully deleted$/ do
     on(ManageCourseOfferings).codes_list # this line is broken
   rescue RuntimeError => e
     e.message.should include "error in activity_offering_results_table - no AOs"
+  end
+end
+
+Then /^the activity offering is colocated for the copied the CO$/ do
+  @course_offering_copy.manage
+  on(ManageCourseOfferings).has_colo_icon(@activity_offering.code).should be_true
+end
+
+Then /^the activity offering in the course offering copy is not colocated$/ do
+  @course_offering_copy.manage
+  on(ManageCourseOfferings).has_colo_icon(@activity_offering.code).should be_false
+end
+
+When /^I copy a colocated activity offering$/ do
+  @activity_offering_copy = create ActivityOffering, :create_by_copy => true,
+                                   :code => @colo_aos[0].code,
+                                   :parent_course_offering => @colo_aos[0].parent_course_offering
+end
+
+Then /^the activity offering copy is added to the colocated set$/ do
+  @activity_offering_copy.parent_course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.has_colo_icon(@activity_offering_copy.code).should be_true
+
+    colocated_tooltip_text = page.target_row(@activity_offering_copy.code)[1].image(src: /colocate_icon/).alt.upcase
+
+    # validate tooltip text contains each colo
+    @colo_aos.each do |other_ao|
+      expected = other_ao.parent_course_offering.course.upcase + ' ' + other_ao.code.upcase
+      colocated_tooltip_text.should include expected
+
+    end
   end
 end
 
