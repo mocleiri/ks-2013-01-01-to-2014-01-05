@@ -1813,12 +1813,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         if (transaction.isGlEntryGenerated() ||
                 (new Date().before(transaction.getEffectiveDate()) && !forceEffective)) {
-            logger.warn("Cannot make transaction effective, ID = " + transaction);
+            logger.warn("Cannot make transaction effective, ID = " + transactionId);
             return false;
         }
 
         if (transaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT) {
-            logger.info("Transaction is a deferment, ID = " + transaction);
+            logger.info("Transaction is a deferment, ID = " + transactionId);
             transaction.setGlEntryGenerated(true);
             return true;
         }
