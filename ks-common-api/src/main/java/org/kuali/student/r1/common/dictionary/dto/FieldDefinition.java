@@ -40,8 +40,6 @@ public class FieldDefinition extends Constraint {
 //										// is readOnly=true, otherwise oncreate,
 //										// when null, required will imply
 //										// readOnly=false
-	@XmlElement
-	protected boolean readOnly = false;
 	
 	@XmlElement
 	protected boolean hide = false;
@@ -87,12 +85,6 @@ public class FieldDefinition extends Constraint {
 	}
 	public void setDefaultValuePath(String defaultValuePath) {
 		this.defaultValuePath = defaultValuePath;
-	}
-	public boolean isReadOnly() {
-		return readOnly;
-	}
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
 	}
 	public boolean isHide() {
 		return hide;

@@ -48,7 +48,10 @@ public class Constraint extends BaseConstraint {
 	@XmlElement
 	protected List<MustOccurConstraint> occursConstraint;
 
-	// LookupConstraints
+    @XmlElement
+    protected boolean readOnly = false;
+
+    // LookupConstraints
 	protected LookupConstraint lookupDefinition;// If the user wants to match
 	// against two searches, that
 	// search must be defined as
@@ -192,4 +195,12 @@ public class Constraint extends BaseConstraint {
 	public void setErrorLevel(ErrorLevel errorLevel) {
 		this.errorLevel = errorLevel;
 	}	
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
 }
