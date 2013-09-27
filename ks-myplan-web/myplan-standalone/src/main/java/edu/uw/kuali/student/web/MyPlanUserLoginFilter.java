@@ -1,6 +1,6 @@
 package edu.uw.kuali.student.web;
 
-import org.kuali.rice.kew.web.UserLoginFilter;
+import org.kuali.rice.krad.web.filter.UserLoginFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
