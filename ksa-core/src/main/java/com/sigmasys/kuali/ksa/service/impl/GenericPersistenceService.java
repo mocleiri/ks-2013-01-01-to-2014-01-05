@@ -62,7 +62,7 @@ public class GenericPersistenceService implements PersistenceService, BeanFactor
     protected TransactionStatus getTransaction() {
         DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
         transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        return transactionManager.getTransaction(transactionDefinition);
+        return getTransaction(transactionDefinition);
     }
 
     protected void commit(TransactionStatus transactionStatus) {
