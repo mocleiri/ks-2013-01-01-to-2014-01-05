@@ -120,7 +120,7 @@ class CourseOffering
         :joint_co_to_create => nil,
         :cross_listed => false,
         :cross_listed_codes => [],
-        :do_verification => false,
+        :defer_save => false,
         :final_exam_driver => "Final Exam Per Course Offering",
         :exclude_cancelled_aos => false,
         :exclude_scheduling => false,
@@ -175,7 +175,7 @@ class CourseOffering
           dfl.create(index + 1)
         end
 
-        page.create_offering unless @do_verification == true
+        page.create_offering unless @defer_save == true
       end
     end
   end

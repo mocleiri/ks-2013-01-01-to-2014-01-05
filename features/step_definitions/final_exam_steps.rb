@@ -42,7 +42,7 @@ When /^I copy an existing academic calender that has a defined final exam period
 end
 
 When /^I create a Course Offering from catalog with a final exam period$/ do
-  @course_offering = create CourseOffering, :term => "201301", :course => "PHYS603", :do_verification => true
+  @course_offering = create CourseOffering, :term => "201301", :course => "PHYS603", :defer_save => true
 end
 
 When /^I create and then edit a Course Offering from catalog with an alternate final exam period$/ do
@@ -199,6 +199,7 @@ Then /^I should not be able to update the status of the final exam period$/ do
     page.final_exam_option_div.radio(value: "ALTERNATE").present?.should == false
     page.final_exam_option_div.radio(value: "NONE").present?.should == false
     page.span( id: "finalExamType_control").text.should == "Standard final Exam"
+    page.cancel
   end
 end
 
