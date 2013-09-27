@@ -189,7 +189,6 @@ public class KradDictionaryCreator {
 		if (writeGenerated) {
 			this.writeSpringHeaderOpen(gwriter);
 			this.writeWarning(gwriter);
-			this.writeGeneratedImports(gwriter);
 			this.writeGeneratedObjectStructure(gwriter);
 			this.writeSpringHeaderClose(gwriter);
 		}
@@ -351,16 +350,6 @@ public class KradDictionaryCreator {
 		out.indentPrintln("that are encoded here.");
 		out.decrementIndent();
 		out.indentPrintln("************************************************************* -->");
-	}
-
-	private void writeGeneratedImports(XmlWriter out) {
-		// don't actually generate imports because it slows down the springbean
-		// generation
-		out.writeCommentBox("The following file is required for this file to load:\n ks-base-dictionary.xml\nplus any of its dependencies");
-		out.indentPrintln("<import resource=\"classpath:ks-base-dictionary.xml\"/>");
-		// TODO: only write out the ones that are used in this structure
-		// out.indentPrintln("<import resource=\"classpath:ks-RichTextInfo-dictionary.xml\"/>");
-		// out.indentPrintln("<import resource=\"classpath:ks-MetaInfo-dictionary.xml\"/>");
 	}
 
 	private void writeManualImports(XmlWriter out) {

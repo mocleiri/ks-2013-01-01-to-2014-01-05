@@ -46,7 +46,7 @@ public class KSDictionaryCreatorMojo extends AbstractKSMojo {
     /**
      * @parameter expression=true
      */
-    private boolean writeGenerated;
+    private boolean writeGenerated = true;
     
     /**
      * @parameter 
