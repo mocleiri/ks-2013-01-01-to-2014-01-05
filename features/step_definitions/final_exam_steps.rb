@@ -84,6 +84,41 @@ When /^I edit a course offering with a standard final exm in my admin org$/ do
   end
 end
 
+When /^I create an Academic Calender and add an official term$/ do
+  @calendar = create AcademicCalendar
+  #@calendar.create
+
+  @term = make AcademicTerm, :term_year => @calendar.year
+  @calendar.add_term(@term)
+  @manage_soc = make ManageSoc, :term_code => @term.term_code
+  @manage_soc.set_up_soc
+
+  @calendar.search
+  on CalendarSearch do |page|
+    page.edit @calendar.name
+  end
+  on EditAcademicTerms do |page|
+    page.go_to_terms_tab
+    @term.make_official
+    page.save
+  end
+end
+
+When /^I create multiple Course Offerings each with a different Exam Offering in the new term$/ do
+  @co_one = create CourseOffering, :term => @term.term_code, :course => "PHYS603",
+                            :final_exam_type => "NONE"
+  @co_two = create CourseOffering, :term => @term.term_code, :course => "PHYS603",
+                            :final_exam_type => "ALTERNATE"
+  @co_three = create CourseOffering, :term => @term.term_code, :course => "PHYS603",
+                            :final_exam_driver => "Final Exam Per Activity Offering"
+
+  delivery_format_list = []
+  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering",
+                                :final_exam_driver => "Course Offering")
+  @co_four = create CourseOffering, :term => @term.term_code, :course => "PHYS603", @use_final_exam_matrix => false,
+                           :delivery_format_list => delivery_format_list
+end
+
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
@@ -214,5 +249,47 @@ Then /^I do not have access to the final exam status for the course offering fro
     page.final_exam_option_div.radio(value: "ALTERNATE").present?.should == false
     page.final_exam_option_div.radio(value: "NONE").present?.should == false
     page.span( id: "finalExamType_control").text.should == "Standard final Exam"
+  end
+end
+
+Then /^all the exam settings and messages are retained after the rollover is completed$/ do
+  #@co_one
+  @test_co_one = make CourseOffering, :term => @term_target.term_code, :course => @co_one.course
+  @test_co_one.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
+    page.final_exam_driver_value_0.should == "No final exam for this offering"
+  end
+  #@co_two
+  @test_co_two = make CourseOffering, :term => @term_target.term_code, :course => @co_two.course
+  @test_co_two.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
+    page.final_exam_driver_value_0.should == "Alternate exam for this offering"
+  end
+  #@co_three
+  @test_co_three = make CourseOffering, :term => @term_target.term_code, :course => @co_three.course
+  @test_co_three.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.final_exam_driver_value_0.should == "Activity Offering"
+  end
+  #@co_four
+  @test_co_four = make CourseOffering, :term => @term_target.term_code, :course => @co_four.course
+  @test_co_four.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.final_exam_driver_value_0.should == "Course Offering"
+    #TODO: add assertion to check if use final exam matrix is checked or not
   end
 end

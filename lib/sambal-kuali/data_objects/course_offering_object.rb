@@ -124,7 +124,8 @@ class CourseOffering
         :final_exam_driver => "Final Exam Per Course Offering",
         :exclude_cancelled_aos => false,
         :exclude_scheduling => false,
-        :exclude_instructor => false
+        :exclude_instructor => false,
+        :use_final_exam_matrix => true
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -165,11 +166,13 @@ class CourseOffering
         if @final_exam_type == "STANDARD"
           page.final_exam_option_standard
           page.final_exam_driver_select(@final_exam_driver)
+          page.check_final_exam_matrix( @use_final_exam_matrix)
         elsif @final_exam_type == "ALTERNATE"
           page.final_exam_option_alternate
         else
           page.final_exam_option_none
         end
+
         #need to specify which row dfl is being created on, which is 1 greater than the current iteration
         @delivery_format_list.each_with_index do |dfl, index|
           dfl.create(index + 1)
@@ -1196,7 +1199,8 @@ class DeliveryFormat
 
   attr_accessor :format,
                 :grade_format,
-                :final_exam_activity
+                :final_exam_activity,
+                :final_exam_driver
 
   def initialize(browser, opts={})
     @browser = browser
@@ -1204,7 +1208,8 @@ class DeliveryFormat
     defaults = {
         :format => "random",
         :grade_format => "",
-        :final_exam_activity => ""
+        :final_exam_activity => "",
+        :final_exam_driver => ""
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -1223,7 +1228,7 @@ class DeliveryFormat
           @format = "Lecture Only"
         end
         page.target_grade_roster_level_select(row, @grade_format)
-        page.target_final_exam_activity_select(row, @final_exam_activity)
+        page.target_final_exam_activity_select(row, @final_exam_activity) if @final_exam_driver == "Activity Offering"
         page.add_format if page.add_format_btn.present?
         #add button not present if there is only one choice of Format
       end

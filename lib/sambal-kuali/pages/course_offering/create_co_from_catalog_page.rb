@@ -128,4 +128,12 @@ class CreateCOFromCatalog < BasePage
     end
   end
 
+  def check_final_exam_matrix( use_final_exam_matrix)
+    checkbox_status = use_exam_matrix_div.input(id: "finalExamMatrix_control").attribute_value('checked')
+    if use_final_exam_matrix == true and checkbox_status != "checked"
+      use_exam_matrix
+    elsif use_final_exam_matrix == false and checkbox_status == "checked"
+      use_exam_matrix
+    end
+  end
 end
