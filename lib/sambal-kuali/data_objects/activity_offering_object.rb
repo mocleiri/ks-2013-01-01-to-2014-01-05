@@ -191,6 +191,7 @@ class ActivityOffering
       page.activity_type.select @activity_type
       page.quantity.set "1"
       page.complete_add_activity
+      sleep 2
       post_add_ao_list = page.codes_list
       #end
       new_code =  post_add_ao_list - pre_add_ao_list
