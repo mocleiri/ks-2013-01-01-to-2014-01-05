@@ -35,9 +35,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kuali.student.enroll</groupId>
+            <groupId>org.kuali.student.api</groupId>
             <artifactId>ks-enroll-api</artifactId>
-            <version>${ks.api.version}</version>
+            <version>${ks.enroll.api.version}</version>
         </dependency>
 
         <dependency>
@@ -47,7 +47,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.kuali.student.common</groupId>
+            <groupId>org.kuali.student.core</groupId>
             <artifactId>ks-common-test</artifactId>
             <version>${ks.core.version}</version>
             <scope>test</scope>
