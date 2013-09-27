@@ -252,17 +252,17 @@
         <dependency>
             <groupId>org.kuali.student.lum</groupId>
             <artifactId>ks-lum-rice</artifactId>
-            <version>${kuali.student.version}</version>
+            <version>${ks.lum.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kuali.student.lum</groupId>
             <artifactId>ks-lum-api</artifactId>
-            <version>${kuali.student.version}</version>
+            <version>${ks.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kuali.student.lum</groupId>
             <artifactId>ks-lum-impl</artifactId>
-            <version>${kuali.student.version}</version>
+            <version>${ks.lum.version}</version>
             <!--  This is a workaround for the commons-beanutils bug mentioned above and
                 should be removed once the issue is resolved. -->
             <exclusions>
@@ -275,22 +275,22 @@
         <dependency>
             <groupId>org.kuali.student.lum</groupId>
             <artifactId>ks-lum-ui</artifactId>
-            <version>${kuali.student.version}</version>
+            <version>${ks.lum.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kuali.student.core</groupId>
             <artifactId>ks-core-impl</artifactId>
-            <version>${kuali.student.version}</version>
+            <version>${ks.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kuali.student.common</groupId>
             <artifactId>ks-common-ui</artifactId>
-            <version>${kuali.student.version}</version>
+            <version>${ks.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kuali.student.security</groupId>
             <artifactId>ks-sts</artifactId>
-            <version>${kuali.student.version}</version>
+            <version>${ks.core.version}</version>
         </dependency>
 
         <dependency>
