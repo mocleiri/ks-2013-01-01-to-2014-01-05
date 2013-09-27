@@ -2,6 +2,8 @@ package com.sigmasys.kuali.ksa.service.impl;
 
 
 import org.aopalliance.aop.Advice;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,8 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class GenericPersistenceService implements PersistenceService, BeanFactoryAware {
 
+    private static final Log logger = LogFactory.getLog(GenericPersistenceService.class);
+
     @PersistenceContext(unitName = Constants.KSA_PERSISTENCE_UNIT)
     protected EntityManager em;
 
@@ -66,7 +70,11 @@ public class GenericPersistenceService implements PersistenceService, BeanFactor
     }
 
     protected void commit(TransactionStatus transactionStatus) {
-        transactionManager.commit(transactionStatus);
+        if (!transactionStatus.isCompleted()) {
+            transactionManager.commit(transactionStatus);
+        } else {
+            logger.warn("Trying to commit already completed transaction [" + transactionStatus + "]");
+        }
     }
 
     protected void rollback(TransactionStatus transactionStatus) {
