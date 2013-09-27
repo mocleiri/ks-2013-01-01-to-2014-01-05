@@ -1,9 +1,6 @@
-﻿﻿--------------------------------------------------------
---  File created - Tuesday-April-10-2012   
---------------------------------------------------------
+---------------------------------------------------
 
-
-Insert into KSSA_ACCESS_LEVEL (ID,CODE,NAME,CREATE_PERMISSION,READ_PERMISSION,UPDATE_PERMISSION,DELETE_PERMISSION,EXPIRE_PERMISSION) values (1,'DEF_MEMO_LEVEL_CD','Default Memo Access Level', 'CREATE_MEMO','READ_MEMO','UPDATE_MEMO','DELETE_MEMO','EXPIRE_MEMO');
+Insert into KSSA_ACCESS_LEVEL (ID,CODE,NAME,CREATE_PERMISSION,READ_PERMISSION,UPDATE_PERMISSION,DELETE_PERMISSION,EXPIRE_PERMISSION) values (1,'DEF_MEMO_LEVEL_CD','Default Memo Access Level','CREATE_MEMO','READ_MEMO','UPDATE_MEMO','DELETE_MEMO','EXPIRE_MEMO');
 Insert into KSSA_ACCESS_LEVEL (ID,CODE,NAME,CREATE_PERMISSION,READ_PERMISSION,UPDATE_PERMISSION,DELETE_PERMISSION,EXPIRE_PERMISSION) values (2,'DEF_FLAG_LEVEL_CD','Default Flag Access Level', 'CREATE_FLAG','READ_FLAG','UPDATE_FLAG','DELETE_FLAG','EXPIRE_FLAG');
 Insert into KSSA_ACCESS_LEVEL (ID,CODE,NAME,CREATE_PERMISSION,READ_PERMISSION,UPDATE_PERMISSION,DELETE_PERMISSION,EXPIRE_PERMISSION) values (3,'DEF_ALERT_LEVEL_CD','Default Alert Access Level', 'CREATE_ALERT','READ_ALERT','UPDATE_ALERT','DELETE_ALERT','EXPIRE_ALERT');
 Insert into KSSA_ACCESS_LEVEL (ID,CODE,NAME,CREATE_PERMISSION,READ_PERMISSION,UPDATE_PERMISSION,DELETE_PERMISSION,EXPIRE_PERMISSION) values (4,'DEF_FLAG_TYPE_LEVEL_CD','Default Flag Type Access Level', 'CREATE_FLAG_TYPE','READ_FLAG_TYPE','UPDATE_FLAG_TYPE','DELETE_FLAG_TYPE',null);
@@ -419,13 +416,13 @@ Insert into KSSA_POSTAL_ADDRESS (ID,COUNTRY_CODE,CREATOR_ID,IS_DEFAULT,EDITOR_ID
 Insert into KSSA_POSTAL_ADDRESS (ID,COUNTRY_CODE,CREATOR_ID,IS_DEFAULT,EDITOR_ID,KIM_ADDRESS_TYPE,LAST_UPDATE,POSTAL_CODE,STATE_CODE,CITY,LINE1,LINE2,LINE3) values (3,'USA','pheald','Y',null,null,to_timestamp('02-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'00093','RI','Qahog','31 Spooner Street',null,null);
 Insert into KSSA_POSTAL_ADDRESS (ID,COUNTRY_CODE,CREATOR_ID,IS_DEFAULT,EDITOR_ID,KIM_ADDRESS_TYPE,LAST_UPDATE,POSTAL_CODE,STATE_CODE,CITY,LINE1,LINE2,LINE3) values (4,'USA','pheald','Y',null,null,to_timestamp('02-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'00093','RI','Qahog','28 Spooner Street','C/O Mr. Glenn Quagmire',null);
 INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (14, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00093', 'RI', '15 Spooner Street');
-INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (15, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00093', 'RI', '12 Spooner Street') ;
-INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (16, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00093', 'RI', '12 Spooner Street')  ;
-INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (17, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00090', 'RI', 'State Penetentiary')  ;
+INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (15, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00093', 'RI', '12 Spooner Street');
+INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (16, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00093', 'RI', '12 Spooner Street');
+INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (17, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00090', 'RI', 'State Penetentiary');
 INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (18, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00091', 'RI', '1092 Shepherd''s Bush Road');
-INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (19, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00093', 'RI', '31 Spooner Street')          ;
-INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (20, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00090', 'RI', '1 Rich Court')               ;
-INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (21, 'Boulder', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '80000', 'CO', '2013 IBM Parkway')               ;
+INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (19, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00093', 'RI', '31 Spooner Street');
+INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (20, 'Qahog', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '00090', 'RI', '1 Rich Court');
+INSERT INTO KSSA_POSTAL_ADDRESS (ID, CITY, COUNTRY_CODE, CREATOR_ID, IS_DEFAULT, LAST_UPDATE, POSTAL_CODE, STATE_CODE, LINE1) VALUES (21, 'Boulder', 'USA', 'pheald', 'Y', TO_TIMESTAMP('02-APR-12 12.00.00.', 'DD-MON-RR HH.MI.SS.FF AM'), '80000', 'CO', '2013 IBM Parkway');
 
 
 
@@ -434,14 +431,14 @@ Insert into KSSA_ACNT_POSTAL_ADDRESS (POSTAL_ADDRESS_ID_FK, ACNT_ID_FK) values (
 Insert into KSSA_ACNT_POSTAL_ADDRESS (POSTAL_ADDRESS_ID_FK, ACNT_ID_FK) values (3, 'user2');
 Insert into KSSA_ACNT_POSTAL_ADDRESS (POSTAL_ADDRESS_ID_FK, ACNT_ID_FK) values (4, 'user3');
 INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user4', 14);
-INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user5', 15) ;
-INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user6', 16)  ;
-INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user7', 17) ;
-INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('sigma', 18)  ;
-INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user9', 19)  ;
-INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user10', 20)  ;
-INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('tpuser1', 21)  ;
-INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('tpuser2', 21)  ;
+INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user5', 15);
+INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user6', 16);
+INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user7', 17);
+INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('sigma', 18);
+INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user9', 19);
+INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('user10', 20);
+INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('tpuser1', 21);
+INSERT INTO KSSA_ACNT_POSTAL_ADDRESS (ACNT_ID_FK, POSTAL_ADDRESS_ID_FK) VALUES ('tpuser2', 21);
 
 
 ---------------------------------------------------
@@ -1433,106 +1430,6 @@ Insert into KSSA_USER_PREF (ACNT_ID_FK, NAME, VALUE) values ('admin', 'ksa.local
 Insert into KSSA_USER_PREF (ACNT_ID_FK, NAME, VALUE) values ('admin', 'ksa.locale.country', 'US');
 
 
---- INSERTING RULE SETS ---
-set sqlblanklines on
-set sqlterminator '!'
-
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (1, 'Rule 1', 3, 0, null,
-'(Major is "EMBA" and Section is "EM11" with status "")',
-'Use code "1179" to charge $31280.36
- Use code "1121" to charge $386.36
- Set status to "C", key pair "MAND_FEES" to "Y" where section is "EM11"')!
-
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (2, 'Rule 2', 3, 1, null,
-'(Key pair "member-code" is "12,22,42")',
-'Use code "1060" to charge $199.38')!
-
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (3, 'Rule 3', 3, 20, null,
-'(LU code is "ENTS[0-9A-Z]{4}" with status "")',
-'Use code "1180" to charge $950
- Set status to "C", key pair "MAND_FEES" to "Y" where code is "ENTS[0-9A-Z]{4}"')!
-
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (4, 'Rule 4', 3, 0, null,
- '(Section is "BR[0-9A-Z]{2}" with status "" and Student is resident)',
- 'Use "1186" to charge $525 per credit where section is "BR[0-9A-Z]{2}" with status ""
-  Use code "1187" to charge $53
-  Set status to "C", key pair "MAND_FEES" to "Y" where section is "BR[0-9A-Z]{2}"')!
-
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (5, 'Rule 5', 3, 0, null,
- '(Section is "BR[0-9A-Z]{2}" with status "" and Student is not resident)',
- 'Use "1186" to charge $1131.00 per credit where section is "BR[0-9A-Z]{2}" with status ""
-  Use code "1187" to charge $53
-  Set status to "C", key pair "MAND_FEES" to "Y" where section is "BR[0-9A-Z]{2}"')!
-
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (6, 'Rule 6', 3, 0, null,
- '(Key pair "member-code" is "10,11,12,13,14,15,16,17,18,19,20" and Student is resident and Number of credits > 9 with status "")',
- 'Use code "1000" to charge $3483.00
-  Set status to "C", key pair "MAND_FEES" to "Y" where status is ""')!
-
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (7, 'Rule 7', 3, 0, null,
- '(Key pair "member-code" is "10,11,12,13,14,15,16,17,18,19,20" and Student is not resident and Number of credits > 9 with status "")',
- 'Use code "1020" to charge $12168.48
-  Set status to "C", key pair "MAND_FEES" to "Y" where status is ""')!
-
-
-Insert into KSSA_RULE_SET (ID, NAME, RULE_TYPE_ID_FK, HEADER) values (1, 'Fee Management', 3,
-'import java.util.*;
-import java.math.*;
-import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.rule.*;
-import com.sigmasys.kuali.ksa.service.brm.*;
-
-expander ksa.dsl
-
-global FeeBase feeBase;
-
-')!
-
-Insert into KSSA_RULE_SET (ID, NAME, RULE_TYPE_ID_FK, HEADER) values (2, 'Account Blocking', 3,
-'import java.util.*;
-import java.math.*;
-import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.rule.*;
-import com.sigmasys.kuali.ksa.service.brm.*;
-import com.sigmasys.kuali.ksa.model.security.*;
-import com.sigmasys.kuali.ksa.util.*;
-import org.apache.commons.lang.*;
-
-expander ksa.dsl
-
-global Set blockNames;
-
-global List permissionNames;
-global List transactionTypeIds;
-global List atpIds;
-global List holdIssueNames
-
-')!
-
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (8, 'Block 1', 3, 0, null,
- '(Account ID is "user1" and Permission is "CREATE_PAYMENT, CREATE_CHARGE" and Transaction Type is "cash, finaid")', 'Apply block')!
-
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (9, 'Block 2', 3, 0, null,
- '(ATP is "20002001HOLIDAYCALENDAR" and Hold Issue is "Unpaid Library Fine")', 'Apply block')!
-
-Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (10, 'Block 3', 3, 0, null,
- '(ATP is "20122" and Hold Issue is "Disciplinary Suspension" and Permission is "CREATE_REFUND")', 'Apply block')!
-
---- PA associations
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 1)!
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 2)!
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 3)!
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 4)!
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 5)!
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 6)!
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 7)!
-
--- AB associations
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (2, 8)!
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (2, 9)!
-Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (2, 10)!
-
-set sqlterminator ';'
 
 
 

@@ -57,6 +57,7 @@ insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('ACNT_AUTHZ_SEQ', 
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('ACNT_BLOCK_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('ACNT_BLOCK_OVERRIDE_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('BILL_RECEIVER_SEQ', 1001);
+insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('BILL_RECORD_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('TRANSFER_TYPE_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('TRANSFER_SEQ', 1001);
 insert into KSSA_SEQUENCE_TABLE (SEQ_NAME, SEQ_VALUE) values ('TP_ALLOWABLE_CHARGE_SEQ', 1001);
@@ -198,92 +199,6 @@ insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (4, 'XDRL', 'Drools XM
 
 -- Allowable GL account values --
 insert into KSSA_ALLOWABLE_GL_ACCOUNT (ID, PATTERN) values (1, '.*');
-
-
-
-
---- INSERTING RULE SETS ---
-set sqlblanklines on
-set sqlterminator '!'
-
-insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values
-(99, 'Payment Application Rule', 3, 0, null, '(Context is initialized)',
-'
-Initialize list of GL transactions as "glTransactions"
-Initialize list of GL transactions as "glTransactionsForRemovedAllocations"
-
-Get list of transactions from "01/01/2011" to "12/31/2013", store result in "transactions"
-
-Remove allocations from "transactions", add result to "glTransactionsForRemovedAllocations"
-
-Allocate reversals for "transactions"  , add result to "glTransactions"
-
-Get payments from "transactions", store result in "allPayments"
-Get charges from "transactions", store result in "allCharges"
-Sort "allCharges" by effective date in ascending order
-
-Get payments from "allPayments" for 2011 year, store result in "payments2011"
-Get payments from "allPayments" for 2012 year, store result in "payments2012"
-Get payments from "allPayments" for 2013 year, store result in "payments2013"
-
-Get charges from "allCharges" for 2011 year, store result in "charges2011"
-Sort "charges2011" by priority in descending order
-
-Get charges from "allCharges" for 2012 year    , store result in "charges2012"
-Sort "charges2012" by priority in descending order
-
-Get charges from "allCharges" for 2013 year    , store result in "charges2013"
-Sort "charges2013" by priority in descending order
-
-Get payments with tag "FinAid" from "allPayments" for 2011 year, store result in "finaidPayments2011"
-Sort "finaidPayments2011" by effective date in ascending order
-Sort "finaidPayments2011" by priority in descending order
-Get payments with tag "FinAid" from "allPayments" for 2012 year, store result in "finaidPayments2012"
-Sort "finaidPayments2012" by effective date in ascending order
-Sort "finaidPayments2012" by priority in descending order
-Get payments with tag "FinAid" from "allPayments" for 2013 year, store result in "finaidPayments2013"
-Sort "finaidPayments2013" by effective date in ascending order
-Sort "finaidPayments2013" by priority in descending order
-
-Apply payments for "finaidPayments2011, charges2011", add result          to "glTransactions"
-Apply payments for "finaidPayments2012, charges2012", add result to "glTransactions"
-Apply payments for "finaidPayments2013, charges2013", add result to "glTransactions"
-
-Apply payments with maximum amount $200 for "finaidPayments2012, allCharges", add result to "glTransactions"
-Apply payments with maximum amount $200 for "finaidPayments2011,allCharges", add result to "glTransactions"
-Apply payments with maximum amount $200 for "finaidPayments2013,allCharges", add result to "glTransactions"
-
-Remove "finaidPayments2011, finaidPayments2012, finaidPayments2013" from "transactions"
-
-Calculate matrix scores for "transactions"
-Sort "transactions" by matrix score in ascending order
-
-Apply payments for "transactions", add result to "glTransactions"
-
-Summarize GL transactions "glTransactions"
-
-Set global variable "resultList" to "glTransactions"
-
-')!
-
-insert into KSSA_RULE_SET (ID, NAME, RULE_TYPE_ID_FK, HEADER) values (99, 'Payment Application', 3,
-'
-import java.util.*;
-import java.math.*;
-import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.model.rule.*;
-import com.sigmasys.kuali.ksa.service.brm.*;
-import com.sigmasys.kuali.ksa.util.*;
-
-expander ksa.dsl
-
-global List resultList;
-
-')!
-
-insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (99, 99)!
-
-set sqlterminator ';'
 
 
 

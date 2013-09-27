@@ -7,9 +7,20 @@ whenever sqlerror continue
 
 whenever sqlerror exit failure
 
+set sqlblanklines on
+
 @ksa_create_ddl.sql
+
 @ksa_config_dml.sql
+
 @test_inserts/ksa_test_data_dml.sql
+
+set sqlterminator '!'
+
+@ksa_load_rules_dml.sql
+
+set sqlterminator ';'
+
 @ksa_constraints_ddl.sql
 
 commit;

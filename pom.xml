@@ -38,12 +38,15 @@
         <quartz.version>1.8.6</quartz.version>
         <joda.time.version>1.1.1</joda.time.version>
         <junit.version>4.10</junit.version>
-        <oracle.version>11.2.0.2</oracle.version>
-        <oracle.artifactId>ojdbc6_g</oracle.artifactId>
-        <db.test.url></db.test.url>
-        <db.test.username></db.test.username>
-        <db.test.password></db.test.password>
+        <oracle.version>11.2.0.3</oracle.version>
+        <oracle.artifactId>ojdbc6</oracle.artifactId>
+
+        <!-- Default KSA test DB connection parameters -->
+        <db.test.url>jdbc:oracle:thin:@localhost:1521:XE</db.test.url>
+        <db.test.username>ksa</db.test.username>
+        <db.test.password>ksa123</db.test.password>
         <sql.dir>../sql</sql.dir>
+
     </properties>
 
     <repositories>
@@ -114,6 +117,14 @@
                                 <id>load-database</id>
                                 <phase>initialize</phase>
                             </execution>
+                            <execution>
+                                <id>load-rules</id>
+                                <phase>initialize</phase>
+                            </execution>
+                            <execution>
+                                <id>create-constraints</id>
+                                <phase>initialize</phase>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
@@ -179,6 +190,7 @@
                 </configuration>
 
                 <executions>
+
                     <execution>
                         <id>validate-dba-config</id>
                         <phase>none</phase>
@@ -186,9 +198,10 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <sqlCommand>SELECT SYSDATE FROM DUAL</sqlCommand>
+                            <sqlCommand>SELECT 1 FROM DUAL</sqlCommand>
                         </configuration>
                     </execution>
+
                     <execution>
                         <id>drop-database</id>
                         <phase>none</phase>
@@ -203,6 +216,7 @@
                             <onError>continue</onError>
                         </configuration>
                     </execution>
+
                     <execution>
                         <id>load-database</id>
                         <phase>none</phase>
@@ -215,6 +229,34 @@
                                 <srcFile>${sql.dir}/ksa_create_ddl.sql</srcFile>
                                 <srcFile>${sql.dir}/ksa_config_dml.sql</srcFile>
                                 <srcFile>${sql.dir}/test_inserts/ksa_test_data_dml.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>load-rules</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <delimiter>!</delimiter>
+                            <autocommit>true</autocommit>
+                            <srcFiles>
+                                <srcFile>${sql.dir}/ksa_load_rules_dml.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>create-constraints</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <autocommit>true</autocommit>
+                            <srcFiles>
                                 <srcFile>${sql.dir}/ksa_constraints_ddl.sql</srcFile>
                             </srcFiles>
                         </configuration>
@@ -1805,8 +1847,8 @@
 
         <dependency>
             <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>11.2.0.3</version>
+            <artifactId>${oracle.artifactId}</artifactId>
+            <version>${oracle.version}</version>
             <scope>provided</scope>
         </dependency>
 
