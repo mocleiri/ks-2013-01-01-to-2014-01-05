@@ -76,7 +76,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
         schemaValidator = new XmlSchemaValidator(XML_SCHEMA_LOCATION, IMPORT_SCHEMA_LOCATION);
         transactionDefinition = new DefaultTransactionDefinition();
         transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        transactionDefinition.setTimeout(600);
+        transactionDefinition.setTimeout(1200);
     }
 
     /**
