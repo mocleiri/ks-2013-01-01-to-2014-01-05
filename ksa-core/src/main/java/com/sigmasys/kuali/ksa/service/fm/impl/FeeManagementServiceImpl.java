@@ -902,10 +902,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
             // Check if Internal Charge IDs or Registration IDs match:
             return ratesMatch && 
-            			(StringUtils.equals(prior.getInternalChargeId(), current.getInternalChargeId())
+            			(equalsExceptNull(prior.getInternalChargeId(), current.getInternalChargeId())
             				|| (matchByOfferingId 
-            						? StringUtils.equals(prior.getOfferingId(), current.getOfferingId())
-            						: StringUtils.equals(prior.getRegistrationId(), current.getRegistrationId())));
+            						? equalsExceptNull(prior.getOfferingId(), current.getOfferingId())
+            						: equalsExceptNull(prior.getRegistrationId(), current.getRegistrationId())));
         }
 
         return false;
@@ -1005,8 +1005,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                 if (matchFound) {
                     // Add a Pair, remove both from the list, and start again from the same index:
                     reversalManifests.add(new Pair<FeeManagementManifest, FeeManagementManifest>(firstManifest, copyList.get(i)));
-                    copyList.remove(startIndex);
                     copyList.remove(i);
+                    copyList.remove(startIndex);
                 }
             }
 
@@ -1168,7 +1168,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param m2 A <code>FeeManagementManifest</code>.
      * @return true if "amount" attributes are equal.
      */
-    private boolean safeAmountsEqual(FeeManagementManifest m1, FeeManagementManifest m2) {
+    private static boolean safeAmountsEqual(FeeManagementManifest m1, FeeManagementManifest m2) {
     	return (m1.getAmount() != null) && (m2.getAmount() != null) && (m1.getAmount().compareTo(m2.getAmount()) == 0);
     }
     
@@ -1181,8 +1181,20 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param m2 A <code>FeeManagementManifest</code>.
      * @return true if "amount" attributes are inverse.
      */
-    private boolean safeAmountsInverse(FeeManagementManifest m1, FeeManagementManifest m2) {
+    private static boolean safeAmountsInverse(FeeManagementManifest m1, FeeManagementManifest m2) {
     	return (m1.getAmount() != null) && (m2.getAmount() != null) && (m1.getAmount().compareTo(m2.getAmount().negate()) == 0);
+    }
+
+    /**
+     * Compares two Strings for equality using <code>StringUtils.equals</code>
+     * except this method returns <code>false</code> when both String are null.
+     *
+     * @param str1  The first String to compare.
+     * @param str2  The second String to compare.
+     * @return true if Strings are equal and not null together.
+     */
+    private static boolean equalsExceptNull(String str1, String str2) {
+        return (str1 != null) && (str2 != null) && StringUtils.equals(str1, str2);
     }
     
     /**
