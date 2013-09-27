@@ -1,4 +1,4 @@
-@wip
+@nightly
 Feature: EC.Cancel Suspend Reinstate Colocated AOs
 
   CO 21.1: As an Administrator, I want to cancel one or more Colocated activity offerings so that they are no longer offered for the term
@@ -6,6 +6,7 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
   Background:
     Given I am logged in as a Schedule Coordinator
 
+  @bug
   Scenario: CO 21.1B: CSR Verify that a user cannot cancel suspend or reinstate a co-located AO
     Given I manage a course offering with a colocated activity offering
     Then I am not able to suspend the activity offering
@@ -15,8 +16,9 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     Given I manage a course offering with an activity offering in canceled status
     Then I am unable to colocate the activity offering
 
+  @bug
   Scenario: CO 21.1C2: CSR Verify that a user cannot colocate a suspended activity offering
-    Given I manage a course offering with an activity offering in suspended status
+    Given I manage a course offering with a suspended activity offering
     Then I am unable to colocate the activity offering
 
   Scenario: CO 21.1D: CSR Verify that a user cannot submit a canceled activity offering to the scheduler
@@ -37,11 +39,11 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     When I rollover the term to a new academic term
     Then the course and activity offerings in the rollover target term are in draft status
 
-  @draft @not_delivered
-  Scenario: CO 21.1G: CSR Verify a canceled Activity Offerings can be excluded in Course Offering create from existing
-    Given I manage a course offering with an activity offering in canceled status
-    When the course offering is copied to a subsequent term excluding canceled activity offerings
-    Then the canceled activity offering is not copied
+#  @draft @not_delivered
+#  Scenario: CO 21.1G: CSR Verify a canceled Activity Offerings can be excluded in Course Offering create from existing
+#    Given I manage a course offering with an activity offering in canceled status
+#    When the course offering is copied to a subsequent term excluding canceled activity offerings
+#    Then the canceled activity offering is not copied
 
   Scenario: CO 21.1H: CSR Verify that for Course Offering create from existing an Activity Offering in canceled status becomes Draft status in the copy
     Given I manage a course offering with an activity offering in canceled status
@@ -91,6 +93,6 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     Then the course offering copy is in draft status
 
   Scenario: CO 22.1C2: CSR Verify when an activity offering in suspended status is copied the copy is in draft status
-    Given I manage a course offering with an activity offering in suspended status
+    Given I manage a course offering with a suspended activity offering
     When I copy the activity offering
     Then the activity offering copy is in draft status

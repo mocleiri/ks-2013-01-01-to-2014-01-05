@@ -12,6 +12,7 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
   action(:next_ao) { |b| b.frm.link(id: "edit_ao_next").click; b.loading.wait_while_present }
   element(:next_ao_text) { |b| b.frm.link(id: "edit_ao_next").text }
 
+  element(:sticky_footer) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") }
   element(:save_cancel_div) { |b| b.frm.div(id: "ActivityOfferingEdit_SubmitCancel") }
   element(:save_button) { |b| b.save_cancel_div.button(text: "Save Progress") }
   action(:save) { |b| sleep 2; b.loading.wait_while_present; sleep 2; b.save_button.click; b.loading.wait_while_present(120) }
