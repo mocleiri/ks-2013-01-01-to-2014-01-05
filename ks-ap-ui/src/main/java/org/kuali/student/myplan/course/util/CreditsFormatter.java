@@ -122,17 +122,22 @@ public class CreditsFormatter {
 
 			if (minString != null)
 				try {
-					min = max = new BigDecimal(minString);
+					min = new BigDecimal(minString);
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid min credits value for course " + course.getId(), e);
 				}
 
 			if (maxString != null)
 				try {
-					min = max = new BigDecimal(minString);
+					max = new BigDecimal(maxString);
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid min credits value for course " + course.getId(), e);
 				}
+
+			if (min == null)
+				min = max;
+			if (max == null)
+				max = min;
 
 		} else if (type.equals("kuali.result.values.group.type.multiple")) {
 			List<String> rvks = rci.getResultValueKeys();
