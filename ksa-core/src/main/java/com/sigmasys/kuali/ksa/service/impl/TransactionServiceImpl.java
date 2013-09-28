@@ -1749,7 +1749,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         try {
 
-            Query query = em.createQuery("select id from Transaction where glEntryGenerated = false");
+            Query query = em.createQuery("select id from Transaction where glEntryGenerated != true");
 
             List<Long> transactionIds = query.getResultList();
 
