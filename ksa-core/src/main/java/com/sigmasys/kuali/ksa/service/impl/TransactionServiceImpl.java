@@ -1751,7 +1751,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
             transactionDefinition.setPropagationBehavior(getTransactionBatchPropagation());
-            transactionDefinition.setTimeout(1200);
+            transactionDefinition.setTimeout(3600);
 
             org.springframework.transaction.TransactionStatus userTransaction = getTransaction(transactionDefinition);
 
