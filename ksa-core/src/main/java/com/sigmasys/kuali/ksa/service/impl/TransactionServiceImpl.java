@@ -1741,53 +1741,46 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     public synchronized boolean makeAllTransactionsEffective(boolean forceEffective) {
 
-        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
-        transactionDefinition.setPropagationBehavior(getTransactionBatchPropagation());
-        transactionDefinition.setTimeout(1200);
+        Query query = em.createQuery("select id from Transaction where glEntryGenerated != true");
 
-        org.springframework.transaction.TransactionStatus userTransaction = getTransaction(transactionDefinition);
+        List<Long> transactionIds = query.getResultList();
 
-        try {
+        boolean isEffective = false;
 
-            Query query = em.createQuery("select id from Transaction where glEntryGenerated != true");
+        if (CollectionUtils.isNotEmpty(transactionIds)) {
 
-            List<Long> transactionIds = query.getResultList();
+            DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+            transactionDefinition.setPropagationBehavior(getTransactionBatchPropagation());
+            transactionDefinition.setTimeout(1200);
 
-            boolean isEffective = false;
+            org.springframework.transaction.TransactionStatus userTransaction = getTransaction(transactionDefinition);
 
-            if (CollectionUtils.isNotEmpty(transactionIds)) {
+            final int transactionBatchSize = getTransactionBatchSize();
 
-                final int transactionBatchSize = getTransactionBatchSize();
+            int transactionCommitCount = 0;
 
-                int transactionCommitCount = 0;
+            for (Long transactionId : transactionIds) {
 
-                for (Long transactionId : transactionIds) {
+                boolean result = makeEffective(transactionId, forceEffective);
 
-                    if (++transactionCommitCount > transactionBatchSize) {
-                        commit(userTransaction);
-                        userTransaction = getTransaction(transactionDefinition);
-                        transactionCommitCount = 0;
-                    }
+                if (++transactionCommitCount > transactionBatchSize) {
+                    commit(userTransaction);
+                    userTransaction = getTransaction(transactionDefinition);
+                    transactionCommitCount = 0;
+                }
 
-                    boolean result = makeEffective(transactionId, forceEffective);
-
-                    if (!isEffective && result) {
-                        isEffective = true;
-                    }
+                if (!isEffective && result) {
+                    isEffective = true;
                 }
             }
 
-            commit(userTransaction);
+            if (transactionCommitCount != 0) {
+                commit(userTransaction);
+            }
 
-            return isEffective;
-
-        } catch (Exception e) {
-
-            rollback(userTransaction);
-
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
         }
+
+        return isEffective;
     }
 
     /**

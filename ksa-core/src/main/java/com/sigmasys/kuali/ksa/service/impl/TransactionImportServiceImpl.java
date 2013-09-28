@@ -245,12 +245,6 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
                 for (KsaTransaction ksaTransaction : acceptedKsaTransactionList) {
 
-                    if (++transactionCommitCount > transactionBatchSize) {
-                        commit(userTransaction);
-                        userTransaction = getTransaction(transactionDefinition);
-                        transactionCommitCount = 0;
-                    }
-
                     try {
 
                         Transaction transaction = persistTransaction(ksaTransaction);
@@ -279,7 +273,14 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
                         transactionDetails.setTransactionId(transaction.getId().toString());
                         transactionDetails.setAcceptedDate(creationDate);
+
                         accepted.getKsaTransactionAndTransactionDetails().add(transactionDetails);
+
+                        if (++transactionCommitCount > transactionBatchSize) {
+                            commit(userTransaction);
+                            userTransaction = getTransaction(transactionDefinition);
+                            transactionCommitCount = 0;
+                        }
 
                     } catch (Exception e) {
 
@@ -299,7 +300,9 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                     }
                 }
 
-                commit(userTransaction);
+                if (transactionCommitCount != 0) {
+                    commit(userTransaction);
+                }
 
             } else {
                 for (KsaTransaction acceptedTrans : acceptedKsaTransactionList) {
