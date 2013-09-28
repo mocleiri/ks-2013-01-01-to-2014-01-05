@@ -37,7 +37,7 @@
 
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
-            <tx:method name="*"/>
+            <tx:method name="*" timeout="3600" rollback-for="java.util.Exception"/>
         </tx:attributes>
     </tx:advice>
 
