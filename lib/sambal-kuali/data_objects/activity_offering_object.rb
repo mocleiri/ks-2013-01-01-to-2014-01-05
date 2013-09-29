@@ -642,8 +642,8 @@ class ActivityOffering
     on ManageCourseOfferings do |page|
       page.select_ao(self.code)
       page.reinstate_ao
-      on(ReinstateActivityOffering).reinstate_activity
     end
+    on(ReinstateActivityOffering).reinstate_activity
   end
 
 

@@ -77,10 +77,10 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And requested delivery logistics are still shown and actual delivery logistics are not shown for both activity offerings
     And registration group is shown as pending
 
-    @duplicate?
-  Scenario: CO 23.3A.1 CSR Check Reinstate button availability for suspended AOs
-    Given I manage a course offering with a suspended activity offering
-    Then the Reinstate button is "enabled"
+#  see CO 23.3A.2
+#  Scenario: CO 23.3A.1 CSR Check Reinstate button availability for suspended AOs
+#    Given I manage a course offering with a suspended activity offering
+#    Then the Reinstate button is "enabled"
 
   Scenario: CO 23.3A.2 CSR Reinstate suspended AOs with ADLs in locked final edits and published SOC states
     Given I am working on a term in "Published" SOC state
@@ -113,7 +113,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And the registration group is shown as pending
     And the Course Offering is shown as Planned
 
-    @bug?
+  @bug @KSENROLL-9870
   Scenario: CO 23.3A.5 CSR Reinstate an AO with ADLs in locked SOC state
     Given a new academic term has an activity offering in approved status
     And I add requested delivery logistics to the activity offering

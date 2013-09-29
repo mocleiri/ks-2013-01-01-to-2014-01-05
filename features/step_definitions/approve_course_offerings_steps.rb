@@ -161,16 +161,19 @@ Given /^I manage a course offering with two suspended activity offerings present
   @course_offering.manage_and_init
 
   @draft_ao = @course_offering.get_ao_obj_by_code("A")
+  @suspended_ao = create ActivityOffering, :create_by_copy => true,
+                    :code => @draft_ao.code,
+                    :parent_course_offering => @course_offering
+  @suspended_ao2 = create ActivityOffering, :create_by_copy => true,
+                         :code => @draft_ao.code,
+                         :parent_course_offering => @course_offering
+  @suspended_ao.approve :send_to_scheduler => true
+  @suspended_ao2.approve :send_to_scheduler => true
+
+  @suspended_ao.suspend
+  @suspended_ao2.suspend
+
   on ManageCourseOfferings do |page|
-    page.copy(@draft_ao.code)
-    page.copy(@draft_ao.code)
-    @course_offering.manage_and_init
-    @suspended_ao = @course_offering.get_ao_obj_by_code("B")
-    @suspended_ao2 = @course_offering.get_ao_obj_by_code("C")
-    @suspended_ao.suspend
-    @suspended_ao2.suspend
-    @course_offering.manage_and_init
-    page.loading.wait_while_present
     page.ao_status(@suspended_ao.code).should == "Suspended"
     page.ao_status(@suspended_ao2.code).should == "Suspended"
   end
@@ -334,8 +337,7 @@ When /^I reinstate the activity offerings$/ do
 end
 
 When /^I reinstate both activity offerings$/ do
-  @suspended_ao.reinstate
-  @suspended_ao2.reinstate
+  @course_offering.reinstate_ao_list :ao_obj_list => [@suspended_ao, @suspended_ao2]
 end
 
 Then /^I am able to cancel the draft activity offering$/ do
@@ -806,7 +808,7 @@ end
 
 Given /^I manage a course offering with a canceled activity offering$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL211")
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL362")
   @course_offering.manage_and_init
 
   @activity_offering = @course_offering.get_ao_obj_by_code("A")
@@ -881,7 +883,7 @@ Given /^I manage a course offering with a canceled activity offering present in 
 end
 
 And /^actual delivery logistics for the Suspended activity offering are no longer shown$/ do
-  on(ManageCourseOfferings).view_activity_offering("D")
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
   on ActivityOfferingInquiry do |page|
     page.actual_delivery_logistics.present?.should be_false
     page.close
@@ -1011,8 +1013,8 @@ And /^both registration groups are shown as offered$/ do
     if page.view_reg_groups_table().present? == false
       page.view_cluster_reg_groups()
     end
-    page.view_reg_groups_table().rows[1].cells[1].text.should == "Offered"
-    page.view_reg_groups_table().rows[2].cells[1].text.should == "Offered"
+    page.target_reg_group_row(@suspended_ao.code).cells[1].text.should == "Offered"
+    page.target_reg_group_row(@suspended_ao2.code).cells[1].text.should == "Offered"
   end
 end
 

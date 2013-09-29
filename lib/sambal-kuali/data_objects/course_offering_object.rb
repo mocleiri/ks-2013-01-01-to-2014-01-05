@@ -831,6 +831,30 @@ class CourseOffering
     end
   end
 
+  #reinstate list of activity offerings
+  #
+  #   @example
+  #   @course_offering.reinstate_ao_list :ao_obj_list => [ao_obj1, ao_obj2]
+  #        :cluster_private_name default value is first cluster
+  #
+  #@param  opts [Hash] {:ao_obj_list => [activity_offering1,activity_offering2, ...], :cluster_private_name => "priv_name"}
+  def reinstate_ao_list(opts)
+
+    defaults = {
+        :cluster_private_name => :default_cluster
+    }
+    options = defaults.merge(opts)
+
+    on ManageCourseOfferings do |page|
+      options[:ao_obj_list].each do |ao|
+        page.select_aos([ao.code], options[:cluster_private_name])
+      end
+      page.reinstate_ao
+    end
+    on(ReinstateActivityOffering).reinstate_activity
+  end
+
+
 
   def get_ao_list(cluster_private_name = :default_cluster)
    get_cluster_obj_by_private_name(cluster_private_name).ao_list

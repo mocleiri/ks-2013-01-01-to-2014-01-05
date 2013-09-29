@@ -6,19 +6,12 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
   Background:
     Given I am logged in as a Schedule Coordinator
 
-  @bug
-  Scenario: CO 21.1B: CSR Verify that a user cannot cancel suspend or reinstate a co-located AO
+  Scenario: CO 21.1B: CSR Verify that a user cannot cancel a co-located AO
     Given I manage a course offering with a colocated activity offering
-    Then I am not able to suspend the activity offering
-    And I am not able to cancel the activity offering
+    Then I am not able to cancel the activity offering
 
   Scenario: CO 21.1C1: CSR Verify that a user cannot colocate a canceled activity offering
     Given I manage a course offering with an activity offering in canceled status
-    Then I am unable to colocate the activity offering
-
-  @bug
-  Scenario: CO 21.1C2: CSR Verify that a user cannot colocate a suspended activity offering
-    Given I manage a course offering with a suspended activity offering
     Then I am unable to colocate the activity offering
 
   Scenario: CO 21.1D: CSR Verify that a user cannot submit a canceled activity offering to the scheduler
