@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service;
 
+import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.model.pb.*;
@@ -9,20 +10,26 @@ import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
 import com.sigmasys.kuali.ksa.service.fm.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
+import com.sigmasys.kuali.ksa.service.fm.impl.FeeManagementServiceImpl;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
 
 /**
  * FeeManagementService unit tests.
@@ -39,8 +46,17 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     private static final BigDecimal IMPLICATED_TRANSACTION_AMOUNT = new BigDecimal(12);
     private static final String OFFERING_ID = "offeringId";
     private static final String INTERNAL_CHARGE_ID = "internalChargeId";
+    private static final String REGISTRATION_ID = "registrationId";
+    private static final Date EFFECTIVE_DATE = new Date();
+    private static final Date RECOGNITION_DATE = new Date();
 
-	@Autowired
+    @PersistenceContext(unitName = Constants.KSA_PERSISTENCE_UNIT)
+    protected EntityManager em;
+
+    @Autowired
+    protected ConfigService configService;
+
+    @Autowired
 	private FeeManagementService fmService;
 	
 	@Autowired
@@ -209,21 +225,97 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     @Test
     public void testReconcileSessionValidateCurrentReversals() throws Exception {
         // Create an FM Session and an Account:
-        FmSession fmSession = createFmSessionForReconciliation(false);
+        FmSession fmSession = createFmSessionForReconciliation(false, false, true);
 
         // Call the method:
         fmService.reconcileSession(fmSession.getSession().getId());
 
         // Validate the result:
-        removeManifestPointingAtEachOther(fmSession.getManifests());
 
-        assertTrue(fmSession.getManifests().isEmpty());
+        // Go through the list of manifests. Validate each one points at another
+        // manifest on the same list and they are both reversal manifests, ie
+        // one CHARGE one CANCELLATION and same (offering or internalCharge)
+        for (FeeManagementManifest manifest : fmSession.getManifests()) {
+            // Get linked manifest:
+            FeeManagementManifest linkedManifest = manifest.getLinkedManifest();
+
+            assertTrue(fmSession.getManifests().contains(linkedManifest));
+            assertEquals(manifest, linkedManifest.getLinkedManifest());
+            assertTrue(FeeManagementServiceImpl.equalsExceptNull(manifest.getOfferingId(), linkedManifest.getOfferingId())
+                    || FeeManagementServiceImpl.equalsExceptNull(manifest.getInternalChargeId(), linkedManifest.getInternalChargeId()));
+            assertTrue(((manifest.getType() == FeeManagementManifestType.CHARGE) && (linkedManifest.getType() == FeeManagementManifestType.CANCELLATION))
+                    || ((manifest.getType() == FeeManagementManifestType.CANCELLATION) && (linkedManifest.getType() == FeeManagementManifestType.CHARGE)));
+        }
+
         assertEquals(FeeManagementSessionStatus.RECONCILED, fmSession.getSession().getStatus());
     }
 
     @Test
-    public void testReconcileSessionLastChargedSessionPrev() throws Exception {
+    public void testReconcileSessionValidatePreclearing() throws Exception {
+        // Create an FM Session:
+        FmSession fmSession = createFmSessionForReconciliation(false, true, false);
 
+        // Get Preclearing manifest and verify they are attached to an FM Session and in the EM context:
+        List<Pair<FeeManagementManifest, FeeManagementManifest>> preclearingManifests = getManifestsForPreclearing(fmSession);
+
+        for (Pair<FeeManagementManifest, FeeManagementManifest> pair : preclearingManifests) {
+            assertNotNull(pair.getA().getSession());
+            assertNotNull(pair.getB().getSession());
+            assertTrue(em.contains(pair.getA()));
+            assertTrue(em.contains(pair.getB()));
+        }
+
+        // Set the parameter for preclearing to "true":
+        List<ConfigParameter> configParameters = configService.getParameters();
+        boolean paramFound = false;
+
+        for (ConfigParameter param : configParameters) {
+            if (StringUtils.equals(Constants.FM_PRECLEAR_MANIFEST, param.getName())) {
+                param.setValue("true");
+                paramFound = true;
+
+                break;
+            }
+        }
+
+        // If the parameter is not found, create one:
+        if (!paramFound) {
+            configParameters.add(new ConfigParameter(Constants.FM_PRECLEAR_MANIFEST, "true"));
+        }
+
+        // Update the ConfigService:
+        configService.updateParameters(configParameters);
+
+        // Call the method:
+        fmService.reconcileSession(fmSession.getSession().getId());
+
+        // Validate the result:
+
+        // Validate each Preclearing manifest in each pair has been detached from the FM session and from the EM context:
+        for (Pair<FeeManagementManifest, FeeManagementManifest> pair : preclearingManifests) {
+            assertNull(pair.getA().getSession());
+            assertNull(pair.getB().getSession());
+            assertFalse(em.contains(pair.getA()));
+            assertFalse(em.contains(pair.getB()));
+        }
+
+        assertEquals(FeeManagementSessionStatus.RECONCILED, fmSession.getSession().getStatus());
+    }
+
+    @Test
+    @Ignore
+    // TODO: Fix the shallow copy problem by copying properties one-by-one.
+    public void testReconcileSessionLastChargedSessionPrev() throws Exception {
+        // Create Current and Prior FM Sessions:
+        FmSession currentSession = createFmSessionForReconciliation(true, false, false);
+        FmSession priorSession = createPriorChargedFmSession(currentSession);
+
+        // Call the service method:
+        fmService.reconcileSession(currentSession.getSession().getId());
+
+        // Validate the results:
+
+        assertEquals(FeeManagementSessionStatus.RECONCILED, currentSession.getSession().getStatus());
     }
 
     /*****************************************************************
@@ -801,7 +893,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
      *
      ********************************************************************************/
 
-    private FmSession createFmSessionForReconciliation(boolean preclearing) throws Exception {
+    private FmSession createFmSessionForReconciliation(boolean priorSessionAdjustment, boolean preclearing, boolean currentSessionReversal) throws Exception {
 
         // Create Session with an Account and Manifests:
         FmSession result = new FmSession();
@@ -813,13 +905,20 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         persistenceService.persistEntity(fmSession);
         result.setSession(fmSession);
 
+        // Add Manifests for prior session adjustment:
+        if (priorSessionAdjustment) {
+            createManifestsForPriorSessionAdjustment(result);
+        }
+
         // Add Manifests for preclearing (optional):
         if (preclearing) {
-            createManifestForPreclearing(result);
+            createManifestsForPreclearing(result);
         }
 
         // Create current session's reversal manifests:
-        createCurrentSessionReversalManifests(result);
+        if (currentSessionReversal) {
+            createCurrentSessionReversalManifests(result);
+        }
 
         return result;
     }
@@ -887,6 +986,128 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         result.getManifests().add(cancellationManifest);
     }
 
+    /**
+     * Creates Current session Manifests for Prior session adjustment.
+     */
+    private void createManifestsForPriorSessionAdjustment(FmSession fmSession) throws Exception {
+        // Create an Already Charged manifest:
+        FeeManagementManifest alreadyCharged = new FeeManagementManifest();
+        Transaction transaction1 = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), MANIFEST_AMOUNT);
+        Rate rate = _createRate();
+
+        alreadyCharged.setSession(fmSession.getSession());
+        alreadyCharged.setType(FeeManagementManifestType.CHARGE);
+        alreadyCharged.setAmount(MANIFEST_AMOUNT);
+        alreadyCharged.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        alreadyCharged.setRegistrationId(REGISTRATION_ID);
+        alreadyCharged.setRate(rate);
+        alreadyCharged.setTransaction(transaction1);
+        alreadyCharged.setRecognitionDate(RECOGNITION_DATE);
+        alreadyCharged.setEffectiveDate(EFFECTIVE_DATE);
+
+        persistenceService.persistEntity(alreadyCharged);
+        fmSession.getManifests().add(alreadyCharged);
+
+        // Create a Not Yet Charged manifest:
+        FeeManagementManifest notYetCharged = new FeeManagementManifest();
+        Transaction transaction2 = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), MANIFEST_AMOUNT);
+
+        notYetCharged.setSession(fmSession.getSession());
+        notYetCharged.setType(FeeManagementManifestType.CHARGE);
+        notYetCharged.setAmount(MANIFEST_AMOUNT);
+        notYetCharged.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        notYetCharged.setInternalChargeId(INTERNAL_CHARGE_ID);
+        notYetCharged.setRate(rate);
+        notYetCharged.setTransaction(transaction2);
+        notYetCharged.setRecognitionDate(RECOGNITION_DATE);
+        notYetCharged.setEffectiveDate(EFFECTIVE_DATE);
+        persistenceService.persistEntity(notYetCharged);
+        fmSession.getManifests().add(notYetCharged);
+    }
+
+    /**
+     * Creates a Prior Charged FM Session.
+     */
+    private FmSession createPriorChargedFmSession(FmSession currentSession) {
+
+        // Create Session with an Account and Manifests:
+        FmSession priorSession = new FmSession();
+        FeeManagementSession fmSession = new FeeManagementSession();
+        Account account = accountService.getOrCreateAccount(ACCOUNT_ID);
+
+        fmSession.setChargeStatus(FeeManagementSessionStatus.CHARGED);
+        fmSession.setAccount(account);
+        persistenceService.persistEntity(fmSession);
+        priorSession.setSession(fmSession);
+        currentSession.getSession().setPrevSession(priorSession.getSession());
+
+        // Create ALREADY CHARGED Prior Manifests matching Current ones by (Registration or Internal Charge) + Rate
+        /* CHARGE matching by RegistrationId + Rate */
+        FeeManagementManifest alreadyCharged = new FeeManagementManifest();
+        Transaction transaction1 = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), MANIFEST_AMOUNT);
+        Rate rate = currentSession.getManifests().get(0).getRate();
+
+        alreadyCharged.setSession(priorSession.getSession());
+        alreadyCharged.setType(FeeManagementManifestType.CHARGE);
+        alreadyCharged.setAmount(MANIFEST_AMOUNT);
+        alreadyCharged.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        alreadyCharged.setRegistrationId(REGISTRATION_ID);
+        alreadyCharged.setRate(rate);
+        alreadyCharged.setTransaction(transaction1);
+        alreadyCharged.setRecognitionDate(RECOGNITION_DATE);
+        alreadyCharged.setEffectiveDate(EFFECTIVE_DATE);
+        persistenceService.persistEntity(alreadyCharged);
+        priorSession.getManifests().add(alreadyCharged);
+
+        // Create NOT YET CHARGED Prior Manifests matching Current ones by (Registration or Internal Charge) + Rate:
+        /* CANCELLATION matching by InternalChargeId + Rate */
+        FeeManagementManifest notYetCharged = new FeeManagementManifest();
+        Transaction transaction2 = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), MANIFEST_AMOUNT);
+
+        notYetCharged.setSession(priorSession.getSession());
+        notYetCharged.setType(FeeManagementManifestType.CANCELLATION);
+        notYetCharged.setAmount(MANIFEST_AMOUNT);
+        notYetCharged.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        notYetCharged.setInternalChargeId(INTERNAL_CHARGE_ID);
+        notYetCharged.setRate(rate);
+        notYetCharged.setTransaction(transaction2);
+        notYetCharged.setRecognitionDate(new Date());
+        notYetCharged.setEffectiveDate(null);
+        persistenceService.persistEntity(notYetCharged);
+        priorSession.getManifests().add(notYetCharged);
+
+        // Create Prior Manifest not matched to Current ones by (Registration or Internal Charge) + Rate:
+        /* DISCOUNT not matching by either (RegistrationID or InternalChargeID) and Rate */
+        FeeManagementManifest unmatched = new FeeManagementManifest();
+        Transaction transaction3 = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), MANIFEST_AMOUNT);
+
+        unmatched.setSession(priorSession.getSession());
+        unmatched.setType(FeeManagementManifestType.DISCOUNT);
+        unmatched.setAmount(MANIFEST_AMOUNT);
+        unmatched.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        unmatched.setInternalChargeId("duh");
+        unmatched.setRate(rate);
+        unmatched.setTransaction(transaction3);
+        persistenceService.persistEntity(unmatched);
+        priorSession.getManifests().add(unmatched);
+
+        // Create manifests to be ignored, CORRECTION and ORIGINAL:
+        FeeManagementManifest original = new FeeManagementManifest();
+        FeeManagementManifest correction = new FeeManagementManifest();
+
+        original.setSession(priorSession.getSession());
+        correction.setSession(priorSession.getSession());
+        original.setType(FeeManagementManifestType.ORIGINAL);
+        correction.setType(FeeManagementManifestType.CORRECTION);
+
+        persistenceService.persistEntity(original);
+        persistenceService.persistEntity(correction);
+        priorSession.getManifests().add(original);
+        priorSession.getManifests().add(correction);
+
+        return priorSession;
+    }
+
     /*
      * Creates a new Rate.
      */
@@ -948,7 +1169,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
      *
      * @param result FmResult class store new manifests in.
      */
-    private void createManifestForPreclearing(FmSession result) {
+    private void createManifestsForPreclearing(FmSession result) {
 
         // Create a pair of manifests of inverse Type (CHARGE vs. CANCELLATION) and same Amount:
         FeeManagementManifest chargeManifest = new FeeManagementManifest();
@@ -960,8 +1181,8 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         cancellationManifest.setType(FeeManagementManifestType.CANCELLATION);
         chargeManifest.setAmount(MANIFEST_AMOUNT);
         cancellationManifest.setAmount(MANIFEST_AMOUNT);
-        chargeManifest.setTransactionTypeId(TRANSACTION_TYPE_ID);
-        cancellationManifest.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        chargeManifest.setTransactionTypeId("Preclearing1");
+        cancellationManifest.setTransactionTypeId("Preclearing1");
 
         persistenceService.persistEntity(chargeManifest);
         persistenceService.persistEntity(cancellationManifest);
@@ -978,8 +1199,8 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         cancellationManifest.setType(FeeManagementManifestType.CHARGE);
         chargeManifest.setAmount(MANIFEST_AMOUNT);
         cancellationManifest.setAmount(MANIFEST_AMOUNT.negate());
-        chargeManifest.setTransactionTypeId(TRANSACTION_TYPE_ID);
-        cancellationManifest.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        chargeManifest.setTransactionTypeId("Preclearing2");
+        cancellationManifest.setTransactionTypeId("Preclearing2");
 
         persistenceService.persistEntity(chargeManifest);
         persistenceService.persistEntity(cancellationManifest);
@@ -996,38 +1217,13 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         cancellationManifest.setType(FeeManagementManifestType.CANCELLATION);
         chargeManifest.setAmount(MANIFEST_AMOUNT);
         cancellationManifest.setAmount(MANIFEST_AMOUNT.negate());
-        chargeManifest.setTransactionTypeId(TRANSACTION_TYPE_ID);
-        cancellationManifest.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        chargeManifest.setTransactionTypeId("Preclearing3");
+        cancellationManifest.setTransactionTypeId("Preclearing3");
 
         persistenceService.persistEntity(chargeManifest);
         persistenceService.persistEntity(cancellationManifest);
         result.getManifests().add(chargeManifest);
         result.getManifests().add(cancellationManifest);
-    }
-
-    /**
-     * Creates a Prior Charged FM Session.
-     */
-    private FmSession createPriorChargedFmSession() {
-
-        // Create Session with an Account and Manifests:
-        FmSession result = new FmSession();
-        FeeManagementSession fmSession = new FeeManagementSession();
-        Account account = accountService.getOrCreateAccount(ACCOUNT_ID);
-
-        fmSession.setChargeStatus(FeeManagementSessionStatus.CHARGED);
-        fmSession.setAccount(account);
-        persistenceService.persistEntity(fmSession);
-        result.setSession(fmSession);
-
-        // Create ALREADY CHARGED Prior Manifests matching Current ones by (Registration or Internal Charge) + Rate
-
-        // Create NOT YET CHARGED Prior Manifests matching Current ones by (Registration or Internal Charge) + Rate:
-
-        // Create Prior Manifest not matched to Current ones by (Registration or Internal Charge) + Rate:
-
-
-        return result;
     }
 
     /**
@@ -1072,6 +1268,40 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
             assertTrue((linkedManifest == null) || !manifests.contains(linkedManifest));
             it.remove();
         }
+    }
+
+    /**
+     * Returns pairs of manifest for Preclearing.
+     *
+     * @param fmSession FM Session.
+     * @return A list of Pairs of manifests for preclearing.
+     */
+    private List<Pair<FeeManagementManifest, FeeManagementManifest>> getManifestsForPreclearing(FmSession fmSession) {
+
+        // Go through the list of manifests. Find FM Manifests with the same Transaction ID.
+        // Separate them into pairs of reversal manifests:
+        List<Pair<FeeManagementManifest, FeeManagementManifest>> reversalPairs = new ArrayList<Pair<FeeManagementManifest, FeeManagementManifest>>();
+
+        for (int i=0,sz=fmSession.getManifests().size(); i<sz; i++) {
+            FeeManagementManifest manifest = fmSession.getManifests().get(i);
+
+            if (StringUtils.startsWith(manifest.getTransactionTypeId(), "Preclearing")) {
+
+                for (int j=i+1; j<sz; j++) {
+                    FeeManagementManifest anotherManifest = fmSession.getManifests().get(j);
+
+                    if (StringUtils.equals(manifest.getTransactionTypeId(), anotherManifest.getTransactionTypeId())) {
+                        Pair<FeeManagementManifest, FeeManagementManifest> pair = new Pair<FeeManagementManifest, FeeManagementManifest>();
+
+                        pair.setA(manifest);
+                        pair.setB(anotherManifest);
+                        reversalPairs.add(pair);
+                    }
+                }
+            }
+        }
+
+        return reversalPairs;
     }
 
     /********************************************************************************

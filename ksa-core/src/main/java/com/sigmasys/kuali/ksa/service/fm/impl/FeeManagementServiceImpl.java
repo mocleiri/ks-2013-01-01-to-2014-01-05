@@ -1109,10 +1109,12 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 	
 	                if (matchFound) {
 	                    // Delete both entities, remove both from the list, and start again from the same index:
+                        firstManifest.setSession(null);
+                        anotherManifest.setSession(null);
 	                    em.remove(firstManifest);
 	                    em.remove(anotherManifest);
-	                    manifests.remove(startIndex);
-	                    manifests.remove(i);
+                        manifests.remove(i);
+                        manifests.remove(startIndex);
 	                }
 	            }
             }
@@ -1193,10 +1195,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param str2  The second String to compare.
      * @return true if Strings are equal and not null together.
      */
-    private static boolean equalsExceptNull(String str1, String str2) {
+    public static boolean equalsExceptNull(String str1, String str2) {
         return (str1 != null) && (str2 != null) && StringUtils.equals(str1, str2);
     }
-    
+
     /**
      * Validates that full-reversal manifests point at each other. Repoints them at each other if necessary.
      *
