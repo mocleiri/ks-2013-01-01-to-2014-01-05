@@ -187,16 +187,16 @@ class RegistrationWindow
     puts "Deleting Registration Window #{@appointment_window_info_name}"
     on RegistrationWindowsCreate do |page|
       page.remove(@appointment_window_info_name, @period_key)
-      page.loading.wait_while_present
-      while true
-        begin
-          sleep 1
-          wait_until { page.window_collection_table.exists? }
-          break
-        rescue Selenium::WebDriver::Error::StaleElementReferenceError
-          puts "rescued StaleElementReferenceError"
-        end
-      end
+
+      #while true
+      #  begin
+      #    sleep 1
+      #    wait_until { page.window_collection_table.exists? }
+      #    break
+      #  rescue Selenium::WebDriver::Error::StaleElementReferenceError
+      #    puts "rescued StaleElementReferenceError"
+      #  end
+      #end
       if confirm_delete
         page.confirm_delete
       else
