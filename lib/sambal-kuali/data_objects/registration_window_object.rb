@@ -78,7 +78,7 @@ class RegistrationWindow
       page1.search_by_term_and_year @year, @term_type
     end
     on RegistrationWindowsPeriodLookup do |page2|
-      page2.show_windows_by_period
+      page2.show_windows_by_period @period_key
     end
   end
 
@@ -121,6 +121,7 @@ class RegistrationWindow
           puts "rescued StaleElementReferenceError"
         end
       end
+      page.save
     end
 
   end
@@ -160,6 +161,7 @@ class RegistrationWindow
 
     on RegistrationWindowsCreate do |page|
       page.edit(options[:appointment_window_info_name], options[:period_key], options[:start_date], options[:start_time], options[:start_time_am_pm], options[:end_date], options[:end_time], options[:end_time_am_pm])
+      page.save
     end
     if (options[:update_opts])
       set_options(options)
@@ -202,6 +204,7 @@ class RegistrationWindow
       else
         page.cancel_delete
       end
+      page.save
     end
   end
 

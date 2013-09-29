@@ -32,8 +32,8 @@ class RegistrationWindowsPeriodLookup < RegistrationWindowsBase
 
   expected_element :period_id
 
-  def show_windows_by_period
-    period_id.select 'All Registration Periods for this Term'
+  def show_windows_by_period(period='All Registration Periods for this Term')
+    period_id.select period
     show
   end
 

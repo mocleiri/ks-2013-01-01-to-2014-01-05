@@ -25,6 +25,7 @@ end
 And /^I verify that the registration window is not created$/ do
   on RegistrationWindowsCreate do |page|
     page.is_window_created(@registration_window.appointment_window_info_name, period_key = @registration_window.period_key).should be_false
+    page.save
   end
 end
 
@@ -86,7 +87,7 @@ end
 Then /^I verify that the Registration Window is not modified$/ do
   on RegistrationWindowsPeriodLookup do |page1|
     puts "Refreshing the page ..."
-    page1.show_windows_by_period
+    page1.show_windows_by_period  @registration_window.period_key
   end
   on RegistrationWindowsCreate do |page|
     puts "Verifying the Registration Window #{@registration_window.appointment_window_info_name} for period #{@registration_window.period_key} is not modified."
