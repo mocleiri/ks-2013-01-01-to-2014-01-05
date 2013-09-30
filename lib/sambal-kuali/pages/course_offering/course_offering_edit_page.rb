@@ -78,6 +78,7 @@ class CourseOfferingEdit < BasePage
   action(:delivery_format_delete_1) {|b| b.delivery_format_delete_element_1.click; b.loading.wait_while_present   }
   value(:final_exam_driver_value_0) { |b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_DRIVER_COLUMN].text}
   value(:final_exam_driver_value_1) { |b| b.delivery_formats_table.rows[2].cells[FINAL_EXAM_DRIVER_COLUMN].text}
+  action(:final_exam_driver_select) { |driver,b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control").select driver; b.loading.wait_while_present }
 
   def edit_random_delivery_format
     selected_options = {:del_format => delivery_formats_table.rows[2].cells[FORMAT_COLUMN].text, :grade_format => select_random_option(delivery_formats_table[2].cells[GRADE_ROSTER_LEVEL_COLUMN]), :final_exam_activity => select_random_option(delivery_formats_table[2].cells[FINAL_EXAM_ACTIVITY_COLUMN])}

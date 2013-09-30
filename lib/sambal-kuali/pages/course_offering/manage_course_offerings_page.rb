@@ -32,6 +32,8 @@ class ManageCourseOfferings < BasePage
   action(:manage_course_offering_requisites) { |b| b.manage_course_offering_requisites_link.click; b.loading.wait_while_present(200) }
   element(:view_all_reg_groups_link) { |b| b.manage_offering_links_div.link(text: /View All Registration Groups/) }
   action(:view_all_reg_groups) { |b| b.view_all_reg_groups_link.click; b.loading.wait_while_present }
+  element(:view_exam_offerings_link) { |b| b.manage_offering_links_div.link(:text => /View Exam Offerings/) }
+  action(:view_exam_offerings) { |b| b.view_exam_offerings_link.click; b.loading.wait_while_present }
 
   value(:cross_listed_message) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AliasMessage").span.text }
 

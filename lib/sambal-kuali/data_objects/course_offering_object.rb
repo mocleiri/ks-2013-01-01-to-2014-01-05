@@ -326,6 +326,13 @@ class CourseOffering
       @final_exam_activity = options[:final_exam_activity]
     end
 
+    if options[:final_exam_driver] != nil
+      on CourseOfferingEdit do |page|
+        page.final_exam_driver_select(options[:final_exam_driver])
+      end
+      @final_exam_driver = options[:final_exam_driver]
+    end
+
     if options[:affiliated_person_list] != nil
       options[:affiliated_person_list].values.each do |person|
         on CourseOfferingEdit do |page|

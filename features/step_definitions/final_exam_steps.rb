@@ -119,6 +119,74 @@ When /^I create multiple Course Offerings each with a different Exam Offering in
                            :delivery_format_list => delivery_format_list
 end
 
+When /^I have ensured that the Fall Term of the Calender is setup with a Final Exam Period$/ do
+  @source_calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar"
+  @term = make AcademicTerm, :term_year => @source_calendar.year, :start_date=>"08/20/#{@source_calendar.year}",
+               :end_date=>"12/10/#{@source_calendar.year}"
+
+  @source_calendar.search
+  on CalendarSearch do |page|
+    page.edit @source_calendar.name
+  end
+  on EditAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section @term.term_type
+    @term.create_final_exam_period
+  end
+end
+
+When /^I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Course Offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL304"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Course Offering"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+
+  @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Activity Offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL305"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+
+  @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I view the Exam Offerings for a CO created from an existing CO with multiple AOs and a standard final exam driven by Activity Offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course => "HIST110"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering",
+                                 :final_exam_activity => "Lecture"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+
+  @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
@@ -291,5 +359,22 @@ Then /^all the exam settings and messages are retained after the rollover is com
   on CourseOfferingEdit do |page|
     page.final_exam_driver_value_0.should == "Course Offering"
     #TODO: add assertion to check if use final exam matrix is checked or not
+  end
+end
+
+Then /^there should be a Course Offering table that is in the ([^"]*) state$/ do |exp_state|
+  on ViewExamOfferings do |page|
+    page.co_table_header_text.should match /by Course Offering/
+    page.eo_by_co_status.should match /#{exp_state}/
+  end
+end
+
+Then /^there should be an Activity Offering table that is in the ([^"]*) state$/ do |exp_state|
+  on ViewExamOfferings do |page|
+    page.ao_table_header_text.should match /by Activity Offering/
+    page.eo_by_ao_status("A").should match /#{exp_state}/
+    page.eo_by_ao_status("C").should match /#{exp_state}/
+    page.eo_by_ao_status("F").should match /#{exp_state}/
+    page.eo_by_ao_status("J").should match /#{exp_state}/
   end
 end
