@@ -15,7 +15,8 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     Then I am unable to colocate the activity offering
 
   Scenario: CO 21.1D: CSR Verify that a user cannot submit a canceled activity offering to the scheduler
-    Given I manage a course offering with an activity offering in canceled status
+    Given I am working on a term in "Final Edits" SOC state
+    And I manage a course offering with an activity offering in canceled status
     Then I am unable submit the activity offering to the scheduler
 
   Scenario: CO 21.1E1: CSR Verify when a course offering in canceled status is copied the copy is in draft status
@@ -27,6 +28,7 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     When I copy the activity offering
     Then the activity offering copy is in draft status
 
+  @bug @KSENROLL-9870
   Scenario: CO 21.1F: CSR Verify Course and Activity Offerings in a rollover source term are changed to draft status in the rollover target term
     Given a new academic term has course and activity offerings in canceled and suspended status
     When I rollover the term to a new academic term
@@ -39,7 +41,7 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
 #    Then the canceled activity offering is not copied
 
   Scenario: CO 21.1H: CSR Verify that for Course Offering create from existing an Activity Offering in canceled status becomes Draft status in the copy
-    Given I manage a course offering with an activity offering in canceled status
+    Given there is an existing course offering with an activity offering in canceled status
     When I create a new course offering in a subsequent term by copying the existing course offering
     Then the canceled activity offering copy is in draft status
 
@@ -67,6 +69,7 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     When I manage a course offering with a canceled activity offering
     Then I am not able to suspend the activity offering
 
+  @bug @KSENROLL-9870
   Scenario: CO 22.1B1 CSR Verify that RDLs for a suspended Activity Offering can be sent to the scheduler in SOC state final edits
     Given I am working on a term in "Final Edits" SOC state
     And I create a course offering from catalog with a suspended activity offering
@@ -74,6 +77,7 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     Then I am able to send the activity offering to the scheduler
     And the actual delivery logistics are displayed for the updated activity offering
 
+  @bug @KSENROLL-9870
   Scenario: CO 22.1B2 CSR Verify that RDLs for a suspended Activity Offering can be sent to the scheduler in SOC state published
     Given I am working on a term in "Published" SOC state
     And I create a course offering from catalog with a suspended activity offering

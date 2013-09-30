@@ -156,7 +156,7 @@ Given /^I manage a course offering with suspended and offered activity offerings
   end
 end
 
-Given /^I manage a course offering with two suspended activity offerings present in a published SOC state$/ do
+Given /^I suspend two activity offerings in offered status for a course offering in a published SOC state$/ do
   @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "HIST355")
   @course_offering.manage_and_init
 
@@ -169,6 +169,27 @@ Given /^I manage a course offering with two suspended activity offerings present
                          :parent_course_offering => @course_offering
   @suspended_ao.approve :send_to_scheduler => true
   @suspended_ao2.approve :send_to_scheduler => true
+
+  @suspended_ao.suspend
+  @suspended_ao2.suspend
+
+  on ManageCourseOfferings do |page|
+    page.ao_status(@suspended_ao.code).should == "Suspended"
+    page.ao_status(@suspended_ao2.code).should == "Suspended"
+  end
+end
+
+Given /^I suspend two draft activity offerings for a course offering in a published SOC state$/ do
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208" , :course => "HIST355")
+  @course_offering.manage_and_init
+
+  @draft_ao = @course_offering.get_ao_obj_by_code("A")
+  @suspended_ao = create ActivityOffering, :create_by_copy => true,
+                         :code => @draft_ao.code,
+                         :parent_course_offering => @course_offering
+  @suspended_ao2 = create ActivityOffering, :create_by_copy => true,
+                          :code => @draft_ao.code,
+                          :parent_course_offering => @course_offering
 
   @suspended_ao.suspend
   @suspended_ao2.suspend
@@ -644,7 +665,7 @@ end
 
 Given /^an activity offering in draft status (can|cannot) be suspended$/ do |can_suspend|
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL362"
+  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "HIST357"
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.ao_status("A").should == "Draft"
@@ -692,8 +713,8 @@ Given /^I manage a course offering with an approved activity offering present in
 end
 
 Given /^I manage a course offering with an approved activity offering$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL362")
+  @term_for_test = Rollover::OPEN_SOC_TERM if @term_for_test.nil?
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL373")
   @course_offering.manage_and_init
 
   @activity_offering = @course_offering.get_ao_obj_by_code("A")
@@ -709,6 +730,17 @@ Then /^the activity offering copy is in draft status$/ do
 end
 
 Given /^I manage a course offering with an activity offering in canceled status$/ do
+  @term_for_test = Rollover::OPEN_SOC_TERM if @term_for_test.nil?
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL362")
+  @course_offering.manage_and_init
+
+  @activity_offering = @course_offering.get_ao_obj_by_code("A")
+  @activity_offering.cancel :navigate_to_page => false
+
+  on(ManageCourseOfferings).ao_status(@activity_offering.code).should == "Canceled"
+end
+
+Given /^there is an existing course offering with an activity offering in canceled status$/ do
   @course_offering = make CourseOffering, :term=> "201208", :course => "ENGL221"
   @course_offering.manage_and_init
 
@@ -724,10 +756,12 @@ Given /^the canceled activity offering copy is in draft status$/ do
 end
 
 Given /^I copy a course offering in canceled status$/ do
-  source_co = make CourseOffering, :term=> "201208", :course => "ENGL221"
+  source_co = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> "201208", :course => "BSCI181")
+
+  source_ao = make ActivityOffering, :code => 'A', :parent_course_offering => source_co
+  source_ao.cancel
 
   source_co.search_by_subjectcode
-
   on ManageCourseOfferingList do |page|
     page.co_status(source_co.course).should == "Canceled"
   end

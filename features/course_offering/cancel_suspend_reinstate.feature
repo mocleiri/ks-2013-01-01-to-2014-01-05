@@ -126,7 +126,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And the Course Offering is now shown as Planned
 
   Scenario: CO 23.3A.6 CSR Reinstate multiple suspended AOs with ADLs in published SOC state
-    Given I manage a course offering with two suspended activity offerings present in a published SOC state
+    Given I suspend two activity offerings in offered status for a course offering in a published SOC state
     And I reinstate both activity offerings
     Then the Suspended activity offerings are shown as offered
     And actual delivery logistics for the first Suspended activity offering are still shown
@@ -165,7 +165,7 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And the registration group is shown as pending
 
   Scenario: CO 23.3B.4 CSR Reinstate multiple suspended AOs with RDLs in published SOC state
-    Given I manage a course offering with two suspended activity offerings present in a published SOC state
+    Given I suspend two draft activity offerings for a course offering in a published SOC state
     And I reinstate both activity offerings
     Then both Suspended activity offerings are shown as draft
     And requested delivery logistics are still shown and actual delivery logistics are not shown for the second activity offering
