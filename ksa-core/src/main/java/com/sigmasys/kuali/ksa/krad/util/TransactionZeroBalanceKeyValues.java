@@ -5,10 +5,7 @@ import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * User: dmulderink
@@ -28,14 +25,19 @@ public class TransactionZeroBalanceKeyValues extends KeyValuesBase {
             keyValues.add(new ConcreteKeyValue("", ""));
         }
 
+       DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+
+
+       GregorianCalendar allTransactionsDate = new GregorianCalendar(1900, Calendar.JANUARY, 1);
+       String zeroString = df.format(allTransactionsDate.getTime());
+
+       keyValues.add(new ConcreteKeyValue(zeroString, "All Transactions"));
        if(this.zeroBalance == null){
            return keyValues;
        }
 
-       DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-
        for(Date zero : zeroBalance) {
-           String zeroString = df.format(zero);
+           zeroString = df.format(zero);
            keyValues.add(new ConcreteKeyValue(zeroString, "Zero Balance on " + zeroString));
        }
 
