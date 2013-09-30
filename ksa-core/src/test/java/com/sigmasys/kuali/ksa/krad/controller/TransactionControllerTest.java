@@ -84,14 +84,15 @@ public class TransactionControllerTest extends AbstractServiceTest {
 
     @Test
     public void getRollups() throws Exception {
-// Passing request parameters needed to perform get() method
+
+        // Passing request parameters needed to perform get() method
         // Passing request parameters needed to perform get() method
         MockHttpServletRequest request = getRequest();
 
         request.setParameter("userId", userId);
         request.setParameter("pageId", "ViewTransactions");
 
-        List<Transaction> transactions = transactionService.getTransactions(userId);
+        transactionService.getTransactions(userId);
 
         ModelAndView modelAndView = transactionController.get(form, request);
 
@@ -101,7 +102,7 @@ public class TransactionControllerTest extends AbstractServiceTest {
 
         List<TransactionModel> rollups = form.getRollupTransactions();
         // Every rollup should have at least one transaction in it's sub list (otherwise, how did it get there
-        for(TransactionModel rollup : rollups){
+        for (TransactionModel rollup : rollups) {
             List<TransactionModel> subs = rollup.getSubTransactions();
             Assert.notNull(subs);
             Assert.isTrue(subs.size() > 0);
@@ -112,6 +113,7 @@ public class TransactionControllerTest extends AbstractServiceTest {
 
     @Test
     public void getInformations() throws Exception {
+
         // Passing request parameters needed to perform get() method
         // Passing request parameters needed to perform get() method
         MockHttpServletRequest request = getRequest();
@@ -131,10 +133,10 @@ public class TransactionControllerTest extends AbstractServiceTest {
         List<InformationModel> formAlerts = form.getAlerts();
         Assert.notNull(alerts);
         Assert.notNull(formAlerts);
-        for(Alert a : alerts){
+        for (Alert a : alerts) {
             boolean found = false;
-            for(InformationModel formA : formAlerts){
-                if(formA.getText().equals(a.getText())){
+            for (InformationModel formA : formAlerts) {
+                if (formA.getText().equals(a.getText())) {
                     found = true;
                     break;
                 }
@@ -146,10 +148,10 @@ public class TransactionControllerTest extends AbstractServiceTest {
         List<InformationModel> formFlags = form.getFlags();
         Assert.notNull(flags);
         Assert.notNull(formFlags);
-        for(Flag f : flags){
+        for (Flag f : flags) {
             boolean found = false;
-            for(InformationModel formF : formFlags){
-                if(formF.getText().equals(f.getText())){
+            for (InformationModel formF : formFlags) {
+                if (formF.getText().equals(f.getText())) {
                     found = true;
                     break;
                 }

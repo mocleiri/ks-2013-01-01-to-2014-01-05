@@ -11,7 +11,6 @@ import java.rmi.registry.Registry;
 import java.util.Map;
 import java.util.Properties;
 
-import org.springframework.core.Ordered;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -20,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author Michael Ivanov
  */
-public class LocalJndiBinder implements Ordered {
+public class LocalJndiBinder {
 
     private static final Log logger = LogFactory.getLog(LocalJndiBinder.class);
 
@@ -30,7 +29,8 @@ public class LocalJndiBinder implements Ordered {
 
     private static InitialContext initialContext;
 
-    public LocalJndiBinder(Map<String, Object> beans) throws Exception {
+
+    public LocalJndiBinder() throws Exception {
 
         if (isInitialized.get()) {
             return;
@@ -56,8 +56,6 @@ public class LocalJndiBinder implements Ordered {
 
             logger.debug("JNDI binder initialized on " + REGISTRY_PORT_NUMBER + " port");
 
-            setBindings(beans);
-
         } catch (RemoteException t) {
             logger.error(t.getMessage(), t);
         } finally {
@@ -66,30 +64,31 @@ public class LocalJndiBinder implements Ordered {
 
     }
 
-    protected void setBindings(Map<String, Object> beans) {
+    public void setBindings(Map<String, Object> bindings) {
 
         if (initialContext == null) {
             logger.error("Initial context is null");
             throw new IllegalStateException("Initial context is null");
         }
 
-        for (Map.Entry<String, Object> beanMapping : beans.entrySet()) {
-            try {
-                String name = beanMapping.getKey();
-                Object bean = beanMapping.getValue();
-                initialContext.rebind(name, bean);
-                logger.debug("Added JNDI binding: name = " + name + " value = " + bean.getClass().getName());
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+        if (bindings != null) {
+
+            for (Map.Entry<String, Object> beanMapping : bindings.entrySet()) {
+
+                try {
+
+                    String name = beanMapping.getKey();
+                    Object bean = beanMapping.getValue();
+
+                    initialContext.rebind(name, bean);
+
+                    logger.debug("Added JNDI binding: name = " + name + " value = " + bean.getClass().getName());
+
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
+                }
             }
         }
-
-    }
-
-    @Override
-    public int getOrder() {
-        // This service should be initialized ahead of all others
-        return 0;
     }
 
 }
