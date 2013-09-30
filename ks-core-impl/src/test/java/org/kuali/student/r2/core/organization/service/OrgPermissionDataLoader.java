@@ -51,7 +51,7 @@ public class OrgPermissionDataLoader extends AbstractMockServicesAwareDataLoader
     public static final String USER_ADMIN = "ADMIN";
 
     private void loadNeededTemplates() {
-        this.createTemplate(PermissionServiceConstants.KS_ENRL_NAMESPACE, KimPermissionConstants.CAN_INVOKE_SERVICE_METHOD_TEMPLATE_NAME, KimPermissionConstants.DEFAULT_KIM_TYPE_ID);
+        this.createTemplate(PermissionServiceConstants.KS_SYS_NAMESPACE, KimPermissionConstants.CAN_INVOKE_SERVICE_METHOD_TEMPLATE_NAME, KimPermissionConstants.DEFAULT_KIM_TYPE_ID);
     }
 
     private Template createTemplate(String namespaceCode, String name, String kimTypeId) {
@@ -74,7 +74,7 @@ public class OrgPermissionDataLoader extends AbstractMockServicesAwareDataLoader
             details.put(KimPermissionConstants.VIEW_ID_ATTR_DEFINITION, viewId);
         }
         Permission permission = createPermission(template,
-                PermissionServiceConstants.KS_ENRL_NAMESPACE,
+                PermissionServiceConstants.KS_SYS_NAMESPACE,
                 permName, details);
         return permission;
     }
@@ -217,16 +217,16 @@ public class OrgPermissionDataLoader extends AbstractMockServicesAwareDataLoader
         loadNeededTemplates();
 
         Template template =
-                this.permissionService.findPermTemplateByNamespaceCodeAndName(PermissionServiceConstants.KS_ENRL_NAMESPACE,
+                this.permissionService.findPermTemplateByNamespaceCodeAndName(PermissionServiceConstants.KS_SYS_NAMESPACE,
                         KimPermissionConstants.CAN_INVOKE_SERVICE_METHOD_TEMPLATE_NAME);
 
         // Make sure we have a handle on all the templates we need
         assertNotNull(template);
 
-        Role viewRole = createRole(PermissionServiceConstants.KS_ENRL_NAMESPACE,
+        Role viewRole = createRole(PermissionServiceConstants.KS_SYS_NAMESPACE,
                 KimPermissionConstants.KS_ORG_VIEW_ROLE_NAME,
                 KimPermissionConstants.DEFAULT_KIM_TYPE_ID);
-        Role maintenanceRole = createRole(PermissionServiceConstants.KS_ENRL_NAMESPACE,
+        Role maintenanceRole = createRole(PermissionServiceConstants.KS_SYS_NAMESPACE,
                 KimPermissionConstants.KS_ORG_MAINTENANCE_ROLE_NAME,
                 KimPermissionConstants.DEFAULT_KIM_TYPE_ID);
 

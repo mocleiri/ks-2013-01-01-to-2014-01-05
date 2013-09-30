@@ -33,23 +33,19 @@ import org.kuali.student.r2.common.exceptions.ReadOnlyException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.common.infc.HasId;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
-import org.kuali.student.r2.core.constants.OrganizationServiceConstants;
 import org.kuali.student.r2.core.organization.dto.OrgHierarchyInfo;
 import org.kuali.student.r2.core.organization.dto.OrgInfo;
 import org.kuali.student.r2.core.organization.dto.OrgOrgRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.r2.core.organization.dto.OrgTreeViewInfo;
-import org.kuali.student.r2.core.organization.service.OrganizationService;
 import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 
 import javax.xml.namespace.QName;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @author Matthew S Edgren
@@ -195,7 +191,7 @@ public class OrganizationServiceAuthorizationDecorator extends OrganizationServi
                                  String permission,
                                  ContextInfo context) throws PermissionDeniedException, OperationFailedException {
         if (!permService.isAuthorized(context.getPrincipalId(),
-                PermissionServiceConstants.KS_ENRL_NAMESPACE, permission,
+                PermissionServiceConstants.KS_SYS_NAMESPACE, permission,
                 details)) {
             StringBuilder sb = new StringBuilder();
             sb.append(context.getPrincipalId());
