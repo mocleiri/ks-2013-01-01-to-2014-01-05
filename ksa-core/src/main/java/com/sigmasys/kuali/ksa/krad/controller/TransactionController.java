@@ -25,6 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -269,14 +271,23 @@ public class TransactionController extends GenericSearchController {
         Boolean showInternal = form.getShowInternal();
         Date startDate = form.getStartingDate();
         Date endDate = form.getEndingDate();
-        Date zeroBalanceDate = form.getZeroBalanceDate();
+        String zeroBalanceDate = form.getZeroBalanceDate();
 
         Date actualStartDate = startDate;
         Date actualEndDate = endDate;
 
         if(zeroBalanceDate != null) {
-            actualStartDate = zeroBalanceDate;
-            form.setStartingDate(zeroBalanceDate);
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            Date zeroDate = null;
+            try {
+                if(! "1900-01-01".equals(zeroBalanceDate)) {
+                    zeroDate = df.parse(zeroBalanceDate);
+                }
+            } catch(ParseException e) {
+                logger.error("Error parsing zero balance date of '" + zeroBalanceDate + "'");
+            }
+            actualStartDate = zeroDate;
+            form.setStartingDate(actualStartDate);
             actualEndDate = null;
         }
 

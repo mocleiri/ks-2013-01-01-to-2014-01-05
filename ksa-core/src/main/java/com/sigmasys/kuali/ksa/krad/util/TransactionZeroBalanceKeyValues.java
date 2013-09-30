@@ -5,6 +5,7 @@ import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.krad.keyvalues.KeyValuesBase;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -25,7 +26,7 @@ public class TransactionZeroBalanceKeyValues extends KeyValuesBase {
             keyValues.add(new ConcreteKeyValue("", ""));
         }
 
-       DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+       DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 
        GregorianCalendar allTransactionsDate = new GregorianCalendar(1900, Calendar.JANUARY, 1);

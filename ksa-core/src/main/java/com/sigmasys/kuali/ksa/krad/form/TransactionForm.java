@@ -51,7 +51,7 @@ public class TransactionForm extends AbstractViewModel {
     private String newTag;
     private List<Tag> filterTags;
 
-    private Date       zeroBalanceDate;
+    private String       zeroBalanceDate;
     private Set<Date> zeroBalanceDates;
 
 
@@ -668,11 +668,11 @@ public class TransactionForm extends AbstractViewModel {
     }
 
 
-    public Date getZeroBalanceDate() {
+    public String getZeroBalanceDate() {
         return zeroBalanceDate;
     }
 
-    public void setZeroBalanceDate(Date zeroBalanceDate) {
+    public void setZeroBalanceDate(String zeroBalanceDate) {
         this.zeroBalanceDate = zeroBalanceDate;
     }
 }
