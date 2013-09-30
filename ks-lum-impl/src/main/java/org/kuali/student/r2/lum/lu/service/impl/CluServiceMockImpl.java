@@ -304,7 +304,7 @@ public class CluServiceMockImpl implements CluService {
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         // GET_BY_ID
         if (!this.cluMap.containsKey(cluId)) {
-            throw new DoesNotExistException(cluId);
+            throw new OperationFailedException(cluId);
         }
         return new CluInfo(this.cluMap.get(cluId));
     }
@@ -582,7 +582,7 @@ public class CluServiceMockImpl implements CluService {
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         // GET_BY_ID
         if (!this.cluSetMap.containsKey(cluSetId)) {
-            throw new DoesNotExistException(cluSetId);
+            throw new OperationFailedException(cluSetId);
         }
         return new CluSetInfo(this.cluSetMap.get(cluSetId));
     }
@@ -646,8 +646,8 @@ public class CluServiceMockImpl implements CluService {
     @Override
     public List<String> getAllCluIdsInCluSet(String cluSetId, ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        CluSetInfo cluSetInfo = cluSetMap.get(cluSetId);
-        return cluSetInfo.getCluIds();
+        // UNKNOWN
+        throw new OperationFailedException("getAllCluIdsInCluSet has not been implemented");
     }
 
     @Override
@@ -1112,19 +1112,8 @@ public class CluServiceMockImpl implements CluService {
     }
 
     @Override
-    public List<VersionDisplayInfo> getVersions(String refObjectTypeURI, String refObjectId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        List<VersionDisplayInfo> versionInfos = new ArrayList<VersionDisplayInfo>();
-        if (CluServiceConstants.CLU_NAMESPACE_URI.equals(refObjectTypeURI)) {
-            for (CluInfo cluInfo : cluMap.values()) {
-                VersionInfo version = cluInfo.getVersion();
-                if (version.getVersionIndId().equals(refObjectId)) {
-                    versionInfos.add(new VersionDisplayInfo(cluInfo.getId(), version.getVersionIndId(), version.getSequenceNumber(), version.getCurrentVersionStart(), version.getCurrentVersionEnd(), version.getVersionComment(), version.getVersionedFromId()));
-                }
-            }
-        } else {
-            throw new UnsupportedOperationException("This method does not know how to handle object type:" + refObjectTypeURI);
-        }
-        return versionInfos;
+    public List<VersionDisplayInfo> getVersions(String refObjectUri, String refObjectId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -1169,7 +1158,7 @@ public class CluServiceMockImpl implements CluService {
 
     @Override
     public SearchResultInfo search(SearchRequestInfo searchRequestInfo, ContextInfo contextInfo) throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
-        return getSearchService().search(searchRequestInfo, contextInfo);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     private StatusInfo newStatus() {
