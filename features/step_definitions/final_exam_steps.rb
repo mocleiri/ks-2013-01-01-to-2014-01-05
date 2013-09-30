@@ -187,6 +187,60 @@ When /^I view the Exam Offerings for a CO created from an existing CO with multi
   end
 end
 
+When /^I view the Exam Offerings for a CO with multiple AOs and a standard final exam driven by Activity Offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL201"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering",
+                                 :final_exam_activity => "Lecture"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I view the Exam Offerings for a CO with two new AOs and a standard final exam driven by Activity Offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL201"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering",
+                                 :final_exam_activity => "Lecture"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+  @new_ao_one = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+  @new_ao_two = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I create a CO with two new AOs and then view the Exam Offerings where the CO has a standard final exam driven by Activity Offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL202"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering",
+                                 :final_exam_activity => "Lecture"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+  @new_ao_one = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+  @new_ao_two = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+
+  @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
@@ -376,5 +430,11 @@ Then /^there should be an Activity Offering table that is in the ([^"]*) state$/
     page.eo_by_ao_status("C").should match /#{exp_state}/
     page.eo_by_ao_status("F").should match /#{exp_state}/
     page.eo_by_ao_status("J").should match /#{exp_state}/
+  end
+end
+
+Then /^there should be ([^"]*) Exam Offerings for the CO$/ do |no_of_aos|
+  on ViewExamOfferings do |page|
+    page.count_no_of_eos.should == no_of_aos
   end
 end

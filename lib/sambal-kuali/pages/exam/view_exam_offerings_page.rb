@@ -63,4 +63,14 @@ class ViewExamOfferings < BasePage
   def eo_by_ao_status(code)
     eo_by_ao_target_row(code).cells[AO_STATUS].text
   end
+
+  def count_no_of_eos
+    row_count = 0
+    eo_by_ao_results_table.rows.each do |row|
+      if row.cells[AO_CODE].text =~ /^[A-Z]$/
+        row_count += 1
+      end
+    end
+    return "#{row_count}"
+  end
 end
