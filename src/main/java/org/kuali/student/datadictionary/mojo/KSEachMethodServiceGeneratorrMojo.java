@@ -38,7 +38,7 @@ import org.kuali.student.contract.writer.service.EachMethodServiceWriter;
 public class KSEachMethodServiceGeneratorrMojo extends AbstractKSMojo {
 
     /**
-     * @parameter property="${outputDirectory}" default-value="${project.build.directory}/generated-sources"
+     * @parameter property="outputDirectory" default-value="${project.build.directory}/generated-sources"
      */
     private File outputDirectory;
 
@@ -52,7 +52,7 @@ public class KSEachMethodServiceGeneratorrMojo extends AbstractKSMojo {
     }
 
        /**
-     * @parameter property="${rootPackage}" default-value="org.kuali.student.enrollment"
+     * @parameter property="rootPackage" default-value="org.kuali.student.enrollment"
      */
     private String rootPackage;
 

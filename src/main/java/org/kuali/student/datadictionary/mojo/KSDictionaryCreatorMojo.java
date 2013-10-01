@@ -46,20 +46,20 @@ public class KSDictionaryCreatorMojo extends AbstractKSMojo {
 	private static final Logger log = LoggerFactory.getLogger(KSDictionaryCreatorMojo.class);
 	
     /**
-     * @parameter property=true
+     * @parameter default-value=true
      **/
     private boolean throwExceptionIfNotAllFilesProcessed;
    
     /**
-     * @parameter property="${outputDirectory}" default-value="${project.build.directory}/generated-sources/datadictionary"
+     * @parameter property="outputDirectory" default-value="${project.build.directory}/generated-sources/datadictionary"
      */
     private File outputDirectory;
     /**
-     * @parameter property=false
+     * @parameter default-value=false
      */
     private boolean writeManual;
     /**
-     * @parameter property=true
+     * @parameter default-value=true
      */
     private boolean writeGenerated;
     

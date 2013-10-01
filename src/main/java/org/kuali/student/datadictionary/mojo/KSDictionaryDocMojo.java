@@ -89,7 +89,7 @@ public class KSDictionaryDocMojo extends AbstractKSMojo {
 	private static final Logger log = LoggerFactory.getLogger(KSDictionaryDocMojo.class);
 	
     /**
-     * @parameter property="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -103,7 +103,7 @@ public class KSDictionaryDocMojo extends AbstractKSMojo {
      **/
     private List<String> supportFiles = new ArrayList<String>();
     /**
-     * @parameter property="${htmlDirectory}" default-value="${project.build.directory}/site/services/dictionarydocs"
+     * @parameter property="htmlDirectory" default-value="${project.build.directory}/site/services/dictionarydocs"
      */
     private File htmlDirectory;
 
