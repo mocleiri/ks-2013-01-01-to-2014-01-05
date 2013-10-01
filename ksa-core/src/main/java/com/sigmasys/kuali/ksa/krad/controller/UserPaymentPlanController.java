@@ -1,7 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.UserPaymentPlanForm;
-import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
+//import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
@@ -141,7 +141,7 @@ public class UserPaymentPlanController extends GenericSearchController {
         form.setFlagObjects(informationService.getFlags(userId));
         form.setHolds(AccountUtils.getHolds(userId));
 
-        List<ThirdPartyMemberModel> memberModels = new ArrayList<ThirdPartyMemberModel>();
+        /*List<ThirdPartyMemberModel> memberModels = new ArrayList<ThirdPartyMemberModel>();
 
         List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlansByMember(userId);
 
@@ -159,7 +159,7 @@ public class UserPaymentPlanController extends GenericSearchController {
             memberModels.add(model);
         }
 
-        form.setThirdPartyMembers(memberModels);
+        form.setThirdPartyMembers(memberModels);*/
 
     }
 

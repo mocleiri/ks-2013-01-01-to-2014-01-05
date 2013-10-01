@@ -1,7 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
-import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
+//import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Alert;
 import com.sigmasys.kuali.ksa.model.Flag;
@@ -22,7 +22,7 @@ public class UserPaymentPlanForm extends AbstractViewModel {
 
 
     private String addThirdPartyPlanName;
-    private List<ThirdPartyMemberModel> thirdPartyMembers;
+    //private List<ThirdPartyMemberModel> thirdPartyMembers;
 
 
     public Account getAccount() {
@@ -103,7 +103,7 @@ public class UserPaymentPlanForm extends AbstractViewModel {
         this.addThirdPartyPlanName = addThirdPartyPlanName;
     }
 
-    public List<ThirdPartyMemberModel> getThirdPartyMembers() {
+    /*public List<ThirdPartyMemberModel> getThirdPartyMembers() {
         if(thirdPartyMembers == null) {
             thirdPartyMembers = new ArrayList<ThirdPartyMemberModel>();
         }
@@ -112,5 +112,5 @@ public class UserPaymentPlanForm extends AbstractViewModel {
 
     public void setThirdPartyMembers(List<ThirdPartyMemberModel> thirdPartyMembers) {
         this.thirdPartyMembers = thirdPartyMembers;
-    }
+    }*/
 }
