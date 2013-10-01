@@ -43,7 +43,7 @@
 
         <!-- Kuali Student Dependencies -->
         <dependency>
-            <groupId>org.kuali.student.lum</groupId>
+            <groupId>org.kuali.student.api</groupId>
             <artifactId>ks-lum-api</artifactId>
             <version>${ks.api.version}</version>
         </dependency>
@@ -53,7 +53,7 @@
             <version>${ks.lum.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kuali.student.core</groupId>
+            <groupId>org.kuali.student.api</groupId>
             <artifactId>ks-core-api</artifactId>
             <version>${ks.api.version}</version>
             <exclusions>
@@ -64,13 +64,13 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.kuali.student.enroll</groupId>
+            <groupId>org.kuali.student.api</groupId>
             <artifactId>ks-enroll-api</artifactId>
             <version>${ks.api.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.kuali.student.common</groupId>
+            <groupId>org.kuali.student.core</groupId>
             <artifactId>ks-common-util</artifactId>
             <version>${ks.core.version}</version>
         </dependency>
@@ -84,7 +84,7 @@
         -->
 
         <dependency>
-            <groupId>org.kuali.student.common</groupId>
+            <groupId>org.kuali.student.core</groupId>
             <artifactId>ks-common-test</artifactId>
             <version>${ks.core.version}</version>
             <scope>test</scope>

@@ -21,6 +21,14 @@
         </repository>
     </repositories>
 
+    <properties>
+        <ks.api.version>2.0.1-cm</ks.api.version>
+        <ks.core.version>2.0.1-cm</ks.core.version>
+        <ks.enroll.api.version>2.0.0-M7</ks.enroll.api.version>
+        <ks.enroll.version>1.0.0-M7</ks.enroll.version>
+        <ks.lum.version>2.0.1-cm</ks.lum.version>
+    </properties>
+
 
     <!-- REMOVE ME <properties> <ks.gwt.module.org>org.kuali.student.core.organization.ui.OrgEntry</ks.gwt.module.org>
    <ks.gwt.module.lum>org.kuali.student.lum.lu.ui.main.LUMMain</ks.gwt.module.lum>
@@ -181,9 +189,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.kuali.student.common</groupId>
+            <groupId>org.kuali.student.core</groupId>
             <artifactId>ks-common-impl</artifactId>
-            <version>${kuali.student.version}</version>
+            <version>${ks.core.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-beanutils</groupId>
@@ -255,7 +263,7 @@
             <version>${ks.lum.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kuali.student.lum</groupId>
+            <groupId>org.kuali.student.api</groupId>
             <artifactId>ks-lum-api</artifactId>
             <version>${ks.api.version}</version>
         </dependency>
@@ -283,12 +291,12 @@
             <version>${ks.core.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kuali.student.common</groupId>
+            <groupId>org.kuali.student.core</groupId>
             <artifactId>ks-common-ui</artifactId>
             <version>${ks.core.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kuali.student.security</groupId>
+            <groupId>org.kuali.student.core</groupId>
             <artifactId>ks-sts</artifactId>
             <version>${ks.core.version}</version>
         </dependency>

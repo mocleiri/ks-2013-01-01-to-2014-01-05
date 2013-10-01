@@ -894,7 +894,7 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>org.kuali.student.common</groupId>
+                <groupId>org.kuali.student.core</groupId>
                 <artifactId>ks-hibernate</artifactId>
                 <version>${ks.core.version}</version>
                 <type>pom</type>
