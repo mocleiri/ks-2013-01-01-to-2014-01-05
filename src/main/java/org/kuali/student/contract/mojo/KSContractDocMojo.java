@@ -55,7 +55,7 @@ public class KSContractDocMojo extends AbstractKSMojo {
     private static Logger log = LoggerFactory.getLogger(KSContractDocMojo.class);
 
     /**
-     * @parameter expression="${htmlDirectory}" default-value="${project.build.directory}/site/services/contractdocs"
+     * @parameter property="${htmlDirectory}" default-value="${project.build.directory}/site/services/contractdocs"
      */
     private File htmlDirectory;
 
