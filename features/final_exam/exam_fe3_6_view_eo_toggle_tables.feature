@@ -1,6 +1,6 @@
 Feature: SA.FE3-6 View Exam Offerings table renedered depending on FE Driver
-  FE 3.10: As a Central Administrator I want to create AO driven exam offerings dynamically after the bulk creation
-  so that new exam offerings will be created as new Activity Offerings are created
+  FE 3.6 As a Central Administrator I want new exam offerings to be created if the exam driver changes after the
+  bulk creation so that exam offerings are in sync with their drivers
 
   Background:
     Given I am logged in as admin
