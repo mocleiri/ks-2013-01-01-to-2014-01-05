@@ -125,6 +125,14 @@
                                 <phase>validate</phase>
                             </execution>
                             <execution>
+                                <id>ks-atp-drop-tables</id>
+                                <phase>initialize</phase>
+                            </execution>
+                            <execution>
+                                <id>ks-atp-load-data</id>
+                                <phase>initialize</phase>
+                            </execution>
+                            <execution>
                                 <id>drop-database</id>
                                 <phase>initialize</phase>
                             </execution>
@@ -185,10 +193,46 @@
                     <url>${ksa.db.test.url}</url>
                     <username>${ksa.db.test.username}</username>
                     <password>${ksa.db.test.password}</password>
+                    <delimiterType>row</delimiterType>
+                    <delimiter>/</delimiter>
                 </configuration>
 
                 <executions>
-
+                    <execution>
+                        <id>ks-atp-drop-tables</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <url>${ks.db.test.url}</url>
+                            <username>${ks.db.test.username}</username>
+                            <password>${ks.db.test.password}</password>
+                            <srcFiles>
+                                <srcFile>${sql.dir}/atp/drop-atp-tables.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>ks-atp-load-data</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <url>${ks.db.test.url}</url>
+                            <username>${ks.db.test.username}</username>
+                            <password>${ks.db.test.password}</password>
+                            <srcFiles>
+                                <srcFile>${sql.dir}/atp/ks-enroll-atp-create-schema.sql</srcFile>
+                                <srcFile>${sql.dir}/atp/KSEN_MSTONE.sql</srcFile>
+                                <srcFile>${sql.dir}/atp/KSEN_ATP.sql</srcFile>
+                                <srcFile>${sql.dir}/atp/KSEN_ATPMSTONE_RELTN.sql</srcFile>
+                                <srcFile>${sql.dir}/atp/KSEN_ATPATP_RELTN.sql</srcFile>
+                                <srcFile>${sql.dir}/atp/ks-enroll-atp-constraints.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>validate-dba-config</id>
                         <phase>none</phase>
