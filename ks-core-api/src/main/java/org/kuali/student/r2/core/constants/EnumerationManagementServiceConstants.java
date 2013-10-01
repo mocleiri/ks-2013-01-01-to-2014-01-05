@@ -36,5 +36,4 @@ public class EnumerationManagementServiceConstants {
     public static final String NAMESPACE = CommonServiceConstants.REF_OBJECT_URI_GLOBAL_PREFIX + "enumerationmanagement";
     public static final String REF_OBJECT_URI_ENUMERATION_MANAGEMENT = NAMESPACE + "/" + EnumerationInfo.class.getSimpleName();
     public static final String REF_OBJECT_URI_ENUMERATION_MANAGEMENT_VALUE = NAMESPACE + "/" + EnumeratedValueInfo.class.getSimpleName();
-
 }
