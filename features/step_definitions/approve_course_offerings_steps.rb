@@ -1215,7 +1215,7 @@ Then /^I am unable submit the activity offering to the scheduler$/ do
   @activity_offering.edit
 
   on ActivityOfferingMaintenance do |page|
-    page.unable_to_send_to_scheduler_msg.exists?.should be_true
+    page.send_RDLs_to_scheduler_msg.should match /Delivery logistics cannot be sent to the scheduler/
     page.cancel
   end
 end
