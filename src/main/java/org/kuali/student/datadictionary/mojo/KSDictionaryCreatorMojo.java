@@ -119,7 +119,10 @@ public class KSDictionaryCreatorMojo extends AbstractKSMojo {
         	if (!className.endsWith("info") || className.matches("\\.r1\\."))
         		continue;
         	
-			lowerClasses.add(className);
+        	// exclude things in packages that are not local
+        	if (this.localPackages.contains(type.getJavaPackage())) {
+        		lowerClasses.add(className);
+        	}
 		}
 
         String dictionaryDirectory = this.outputDirectory.toString();
