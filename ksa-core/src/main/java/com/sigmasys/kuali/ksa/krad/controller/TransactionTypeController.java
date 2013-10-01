@@ -287,6 +287,9 @@ public class TransactionTypeController extends GenericSearchController {
 
             for (GlBreakdown breakdown : breakdowns) {
                 breakdown.setTransactionType(transactionType);
+
+                // Breakdowns are actually stored at integers (well, greater than 1) so multiply by 100 to get the right number in the database
+                breakdown.setBreakdown(breakdown.getBreakdown().multiply(BigDecimal.valueOf(100)));
             }
 
             transactionService.createGlBreakdowns(defaultGlType.getId(), transactionTypeId, breakdowns);
@@ -513,7 +516,7 @@ public class TransactionTypeController extends GenericSearchController {
                 GlBreakdownModel breakdownModel = new GlBreakdownModel();
                 breakdownModel.setGlAccount(sourceBreakdown.getGlAccount());
                 breakdownModel.setOperation(sourceBreakdown.getGlOperation().getId());
-                breakdownModel.setBreakdown(sourceBreakdown.getBreakdown());
+                breakdownModel.setBreakdown(sourceBreakdown.getBreakdown().divide(BigDecimal.valueOf(100)));
                 breakdowns.add(breakdownModel);
             }
 
@@ -542,7 +545,7 @@ public class TransactionTypeController extends GenericSearchController {
         boolean errors = false;
         String type = form.getType();
 
-        if (TransactionType.DEBIT_TYPE.equals(type)) {
+        if (!TransactionType.DEBIT_TYPE.equals(type)) {
             // Breakdowns only apply to Debit types
             return errors;
         }
