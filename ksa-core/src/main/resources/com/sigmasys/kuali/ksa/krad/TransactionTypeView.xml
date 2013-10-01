@@ -548,7 +548,7 @@
     </util:list>
 
 
-    <bean id="glBreakdownList" parent="Uif-Disclosure-VerticalBoxSection" p:style="text-decoration:underline" p:progressiveRender="@{#dp.type eq 'D'}">
+    <bean id="glBreakdownList" parent="Uif-Disclosure-VerticalBoxSection" p:style="text-decoration:underline"> <!-- p:progressiveRender="@{#dp.type eq 'D'}"> -->
         <property name="headerText" value="Default General Ledger Breakdown"/>
         <property name="items">
             <list>

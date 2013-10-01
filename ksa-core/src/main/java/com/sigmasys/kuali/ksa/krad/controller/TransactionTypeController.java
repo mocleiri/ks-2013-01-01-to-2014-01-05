@@ -98,9 +98,9 @@ public class TransactionTypeController extends GenericSearchController {
 
                 group.addTransactionType(ttModel);
 
-                if (transactionType instanceof DebitType) {
-                    ttModel.setGlBreakdowns(transactionService.getGlBreakdowns(transactionType.getId()));
-                }
+                //if (transactionType instanceof DebitType) {
+                ttModel.setGlBreakdowns(transactionService.getGlBreakdowns(transactionType.getId()));
+                //}
             }
 
             form.setTransactionTypeGroups(map);
@@ -282,18 +282,7 @@ public class TransactionTypeController extends GenericSearchController {
         if (transactionType instanceof DebitType) {
 
             ((DebitType) transactionType).setCancellationRule(form.getCancellationRule());
-
             transactionService.persistTransactionType(transactionType);
-
-            for (GlBreakdown breakdown : breakdowns) {
-                breakdown.setTransactionType(transactionType);
-
-                // Breakdowns are actually stored at integers (well, greater than 1) so multiply by 100 to get the right number in the database
-                breakdown.setBreakdown(breakdown.getBreakdown().multiply(BigDecimal.valueOf(100)));
-            }
-
-            transactionService.createGlBreakdowns(defaultGlType.getId(), transactionTypeId, breakdowns);
-
         } else {
 
             CreditType creditType = (CreditType) transactionType;
@@ -313,6 +302,16 @@ public class TransactionTypeController extends GenericSearchController {
 
             transactionService.persistTransactionType(transactionType);
         }
+
+        for (GlBreakdown breakdown : breakdowns) {
+            breakdown.setTransactionType(transactionType);
+
+            // Breakdowns are actually stored at integers (well, greater than 1) so multiply by 100 to get the right number in the database
+            breakdown.setBreakdown(breakdown.getBreakdown().multiply(BigDecimal.valueOf(100)));
+        }
+
+        transactionService.createGlBreakdowns(defaultGlType.getId(), transactionTypeId, breakdowns);
+
 
         GlobalVariables.getMessageMap().putInfo("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, "Transaction Type saved");
 
@@ -504,29 +503,28 @@ public class TransactionTypeController extends GenericSearchController {
 
         form.setTags(new ArrayList<Tag>(transactionType.getTags()));
 
+        List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns(transactionType.getId());
+
+        List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>(sourceBreakdowns.size());
+
+        for (GlBreakdown sourceBreakdown : sourceBreakdowns) {
+            GlBreakdownModel breakdownModel = new GlBreakdownModel();
+            breakdownModel.setGlAccount(sourceBreakdown.getGlAccount());
+            breakdownModel.setOperation(sourceBreakdown.getGlOperation().getId());
+            breakdownModel.setBreakdown(sourceBreakdown.getBreakdown().divide(BigDecimal.valueOf(100)));
+            breakdowns.add(breakdownModel);
+        }
+
+        form.setGlBreakdowns(breakdowns);
+
         if (transactionType instanceof DebitType) {
 
             form.setCancellationRule(((DebitType) transactionType).getCancellationRule());
 
-            List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns(transactionType.getId());
-
-            List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>(sourceBreakdowns.size());
-
-            for (GlBreakdown sourceBreakdown : sourceBreakdowns) {
-                GlBreakdownModel breakdownModel = new GlBreakdownModel();
-                breakdownModel.setGlAccount(sourceBreakdown.getGlAccount());
-                breakdownModel.setOperation(sourceBreakdown.getGlOperation().getId());
-                breakdownModel.setBreakdown(sourceBreakdown.getBreakdown().divide(BigDecimal.valueOf(100)));
-                breakdowns.add(breakdownModel);
-            }
-
-            form.setGlBreakdowns(breakdowns);
 
         } else if (transactionType instanceof CreditType) {
 
             CreditType creditType = (CreditType) transactionType;
-
-            form.setGlBreakdowns(Collections.<GlBreakdownModel>emptyList());
 
             form.setClearPeriod(creditType.getClearPeriod());
             form.setRefundable(creditType.isRefundable());
@@ -545,10 +543,11 @@ public class TransactionTypeController extends GenericSearchController {
         boolean errors = false;
         String type = form.getType();
 
-        if (!TransactionType.DEBIT_TYPE.equals(type)) {
+        //if (!TransactionType.DEBIT_TYPE.equals(type)) {
             // Breakdowns only apply to Debit types
-            return errors;
-        }
+        //    return errors;
+        //}
+
 
         // Handle the GL Breakdown sections.
         BigDecimal total = new BigDecimal(0);
