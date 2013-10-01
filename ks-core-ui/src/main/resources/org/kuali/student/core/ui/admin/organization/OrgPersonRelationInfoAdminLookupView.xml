@@ -101,7 +101,7 @@
 		            <property name="inquiry">
 		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo" p:inquiryParameters="orgId:id" />
 		            </property>
-		        </bean>
+		        </bean>		      
 		        <bean parent="Uif-DataField" p:propertyName="personId" >
 		       	   <property name="inquiry">
 		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.rice.kim.api.identity.Person" p:inquiryParameters="personId:principalId" />
