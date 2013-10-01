@@ -2,7 +2,7 @@
 --  File created - Tuesday-June-18-2013   
 --------------------------------------------------------
 
-DROP TABLE "BK_BOOK_T" cascade constraints;
+/*DROP TABLE "BK_BOOK_T" cascade constraints;
 DROP TABLE "BK_BOOK_TYP_T" cascade constraints;
 DROP TABLE "BK_ORDER_DOC_T" cascade constraints;
 DROP TABLE "BK_ORDER_ENTRY_T" cascade constraints;
@@ -374,6 +374,9 @@ DROP SEQUENCE "KRSB_SVC_DSCRPTR_S";
 DROP SEQUENCE "TRVL_ID_SEQ";
 DROP SEQUENCE "TRVL_PER_DIEM_ID_SEQ";
 DROP SEQUENCE "TRV_FO_ID_S";
+*/
+
+
 --------------------------------------------------------
 --  DDL for Sequence BK_ADDRESS_ID_S
 --------------------------------------------------------
