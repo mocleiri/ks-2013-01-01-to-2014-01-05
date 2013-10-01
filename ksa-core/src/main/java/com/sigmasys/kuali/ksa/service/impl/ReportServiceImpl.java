@@ -79,6 +79,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
     @Autowired
     private CashLimitService cashLimitService;
 
+
     @PostConstruct
     private void postConstruct() {
         schemaValidator = new XmlSchemaValidator(XML_SCHEMA_LOCATION, REPORT_SCHEMA_LOCATION);
@@ -1573,6 +1574,20 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         withoutDeferments.setTotalBalance(accountService.getOutstandingBalance(accountId, billDate, true));
 
         balances.setWithoutDeferments(withoutDeferments);
+
+        ksaBill.setBalances(balances);
+
+        List<Transaction> tempTransactions = new ArrayList<Transaction>(transactions);
+
+        if (showOnlyUnbilledTransactions) {
+
+            Query query = em.createQuery("select b.transactions from BillRecord b where b.account.id = :accountId");
+            query.setParameter("accountId", accountId);
+
+            List<Transaction> transactionsToExclude = query.getResultList();
+
+            // TODO
+        }
 
 
         // TODO

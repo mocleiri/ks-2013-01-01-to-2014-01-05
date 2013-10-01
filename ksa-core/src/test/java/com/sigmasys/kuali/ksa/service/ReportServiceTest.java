@@ -10,9 +10,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.sigmasys.kuali.ksa.model.CashLimitEventStatus.QUEUED;
@@ -34,6 +38,16 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
 
     @Autowired
     private AuditableEntityService entityService;
+
+    @Autowired
+    private BillRecordService billRecordService;
+
+    @Autowired
+    private TransactionService transactionService;
+
+
+    @PersistenceContext(unitName = Constants.KSA_PERSISTENCE_UNIT)
+    private EntityManager em;
 
 
     @Before
@@ -288,5 +302,40 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
         Assert.hasLength(report);
 
     }
+
+    @Test
+    public void getBillRecordTransactions() {
+
+        String accountId = "admin";
+
+        Transaction transaction1 = transactionService.createTransaction("cash", accountId, new Date(), new BigDecimal(55));
+        Transaction transaction2 = transactionService.createTransaction("1020", accountId, new Date(), new BigDecimal(-8));
+
+        Assert.notNull(transaction1);
+        Assert.notNull(transaction1.getId());
+
+        Assert.notNull(transaction2);
+        Assert.notNull(transaction2.getId());
+
+        BillRecord billRecord = billRecordService.createBillRecord(accountId, "Bill test message", new Date(),
+                new Date(), new Date(), false, true, true, true,
+                new HashSet<Long>(Arrays.asList(transaction1.getId(), transaction2.getId())));
+
+        Assert.notNull(billRecord);
+        Assert.notNull(billRecord.getId());
+
+        Query query = em.createQuery("select b.transactions from BillRecord b where b.account.id = :accountId");
+        query.setParameter("accountId", accountId);
+
+        List<Transaction> transactions = query.getResultList();
+
+        Assert.notNull(transactions);
+        Assert.notEmpty(transactions);
+        Assert.isTrue(transactions.size() >= 2);
+
+    }
+
+
+
 
 }

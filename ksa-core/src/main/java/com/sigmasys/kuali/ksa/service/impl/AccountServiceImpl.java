@@ -574,7 +574,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
         balanceDate = CalendarUtils.removeTime(balanceDate);
         for (Deferment deferment : deferments) {
             Date expirationDate = deferment.getExpirationDate();
-            if (balanceDate.compareTo(deferment.getEffectiveDate()) >= 0 &&
+            if (balanceDate.compareTo(deferment.getCreationDate()) >= 0 &&
                     (expirationDate == null || balanceDate.before(expirationDate))) {
                 totalAmount = totalAmount.add(deferment.getAmount());
             }

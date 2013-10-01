@@ -125,6 +125,14 @@
                                 <phase>validate</phase>
                             </execution>
                             <execution>
+                                <id>rice-reset-tables</id>
+                                <phase>initialize</phase>
+                            </execution>
+                            <execution>
+                                <id>ks-hold-reset-tables</id>
+                                <phase>initialize</phase>
+                            </execution>
+                            <execution>
                                 <id>ks-atp-drop-tables</id>
                                 <phase>initialize</phase>
                             </execution>
@@ -193,11 +201,42 @@
                     <url>${ksa.db.test.url}</url>
                     <username>${ksa.db.test.username}</username>
                     <password>${ksa.db.test.password}</password>
-                    <delimiterType>row</delimiterType>
-                    <delimiter>/</delimiter>
                 </configuration>
 
                 <executions>
+                    <execution>
+                        <id>rice-reset-tables</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <url>${rice.db.test.url}</url>
+                            <username>${rice.db.test.username}</username>
+                            <password>${rice.db.test.password}</password>
+                            <srcFiles>
+                                <srcFile>${sql.dir}/rice-export.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>ks-hold-reset-tables</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <delimiter>/</delimiter>
+                            <url>${ks.db.test.url}</url>
+                            <username>${ks.db.test.username}</username>
+                            <password>${ks.db.test.password}</password>
+                            <srcFiles>
+                                <srcFile>${sql.dir}/hold/ks-enroll-hold-create-schema.sql</srcFile>
+                                <srcFile>${sql.dir}/hold/ks-enroll-hold-data.sql</srcFile>
+                                <srcFile>${sql.dir}/hold/ks-enroll-hold-constraints.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>ks-atp-drop-tables</id>
                         <phase>none</phase>
@@ -205,6 +244,7 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
+                            <delimiter>/</delimiter>
                             <url>${ks.db.test.url}</url>
                             <username>${ks.db.test.username}</username>
                             <password>${ks.db.test.password}</password>
@@ -220,6 +260,7 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
+                            <delimiter>/</delimiter>
                             <url>${ks.db.test.url}</url>
                             <username>${ks.db.test.username}</username>
                             <password>${ks.db.test.password}</password>
