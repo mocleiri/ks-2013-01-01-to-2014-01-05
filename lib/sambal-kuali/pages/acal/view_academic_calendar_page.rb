@@ -6,10 +6,10 @@ class ViewAcademicCalendar < BasePage
   action(:go_to_calendar_tab) { |b| b.frm.a(id: "ui-id-1").click; b.loading.wait_while_present}
   action(:go_to_terms_tab) { |b| b.frm.a(id: "ui-id-2").click; b.loading.wait_while_present}
 
-  element(:acal_overview_div) { |b| b.frm.div(id: "KS-AcademicCalendar-AcalOverview") }
-  value(:acal_name) { |b| b.acal_overview_div.div(data_label: "Academic Calendar Name").span(index: 0).text }
-  value(:acal_start_date) { |b| b.acal_overview_div.div(data_label: "Start Date").span(index: 0).text }
-  value(:acal_end_date) { |b| b.acal_overview_div.div(data_label: "End Date").span(index: 0).text }
+  element(:acal_subsection_div) { |b| b.frm.div(id: "KS-AcademicCalendar-MetaSubSection") }
+  value(:acal_name) { |b| b.acal_subsection_div.div(data_label: "Academic Calendar Name").span(index: 1).text }
+  value(:acal_start_date) { |b| b.acal_subsection_div.div(data_label: "Start Date").span(index: 1).text }
+  value(:acal_end_date) { |b| b.acal_subsection_div.div(data_label: "End Date").span(index: 1).text }
 
   element(:event_type) { |b| b.frm.select(name: "newCollectionLines['events'].eventTypeKey") }
   element(:event_start_date) { |b| b.frm.text_field(name: "newCollectionLines['events'].startDate") }
