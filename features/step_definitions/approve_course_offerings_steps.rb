@@ -714,7 +714,7 @@ end
 
 Given /^I manage a course offering with an approved activity offering$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM if @term_for_test.nil?
-  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL373")
+  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term=> @term_for_test, :course => "ENGL362")
   @course_offering.manage_and_init
 
   @activity_offering = @course_offering.get_ao_obj_by_code("A")
