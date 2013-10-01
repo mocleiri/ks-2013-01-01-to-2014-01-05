@@ -73,6 +73,12 @@ module Workflows
     end
   end
 
+  def go_to_manage_time_slots
+    visit Enrollment do |page|
+      page.manage_time_slots
+    end
+  end
+
   def go_to_create_course_offerings
     visit Enrollment do |page|
       page.create_course_offerings

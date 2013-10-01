@@ -15,6 +15,7 @@ class Enrollment < BasePage
   action(:search_for_calendar_or_term) { |p| p.frm.link(text: "Search for Calendar or Term").click }
   action(:create_academic_calendar) { |p| p.frm.link(text: "Create New Calendar (Academic Year)").click }
   action(:create_holiday_calendar) { |p| p.frm.link(text: "Create Holiday Calendar").click }
+  action(:manage_time_slots) { |p| p.frm.link(text: "Manage Time Slots").click }
   action(:perform_rollover) { |p| p.frm.link(text: "Perform Rollover").click }
   action(:manage_populations) { |p| p.frm.link(text: "Manage Populations").click }
   action(:view_rollover_details) { |p| p.frm.link(text: "View Rollover Details").click }
