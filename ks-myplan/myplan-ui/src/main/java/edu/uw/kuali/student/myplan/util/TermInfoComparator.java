@@ -16,15 +16,15 @@ public class TermInfoComparator implements Comparator<AtpTypeInfo> {
 
     @Override
     public int compare(AtpTypeInfo o1, AtpTypeInfo o2) {
-        String atpKey1 = o1.getId().replaceAll("\\.","_").toUpperCase();
-        String atpKey2 = o2.getId().replaceAll("\\.","_").toUpperCase();
+        String atpKey1 = o1.getId().replaceAll("\\.", "_").toUpperCase();
+        String atpKey2 = o2.getId().replaceAll("\\.", "_").toUpperCase();
         return TermOrder.valueOf(atpKey1).compareTo(TermOrder.valueOf(atpKey2));
     }
 
     private enum TermOrder {
-          KUALI_UW_ATP_TYPE_AUTUMN,
-          KUALI_UW_ATP_TYPE_WINTER,
-          KUALI_UW_ATP_TYPE_SPRING,
-          KUALI_UW_ATP_TYPE_SUMMER
+        KUALI_ATP_TYPE_FALL,
+        KUALI_ATP_TYPE_WINTER,
+        KUALI_ATP_TYPE_SPRING,
+        KUALI_ATP_TYPE_SUMMER
     }
 }

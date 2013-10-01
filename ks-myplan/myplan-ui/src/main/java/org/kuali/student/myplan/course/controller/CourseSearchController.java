@@ -119,7 +119,7 @@ public class CourseSearchController extends UifControllerBase {
 
     private CampusSearch campusSearch = new CampusSearch();
 
-    //  Java to JSON outputter.
+    //  Java to JSON outPutter.
     private transient ObjectMapper mapper = new ObjectMapper();
 
 
@@ -304,7 +304,7 @@ public class CourseSearchController extends UifControllerBase {
             }
 
             loadScheduledTerms(courseList, subjectArea);
-            if (!CourseSearchForm.SEARCH_TERM_ANY_ITEM.equals(form.getSearchTerm())) {
+            if (!CourseSearchConstants.SEARCH_TERM_ANY_ITEM.equals(form.getSearchTerm())) {
                 List<CourseSearchItem> filteredCourses = new ArrayList<CourseSearchItem>();
                 filteredCourses = filterCoursesByTerm(courseList, form.getSearchTerm());
                 populateFacets(form, filteredCourses);

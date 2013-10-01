@@ -113,7 +113,7 @@ public class CourseOfferingServiceUtils {
         String typeName = sectionNode.elementText("SectionType");
         info.setTypeName(typeName);
 
-        String campus = sectionNode.elementText("CourseCampus");
+        String campus = sectionNode.elementText("course.campus");
 
 
         {
@@ -362,10 +362,10 @@ public class CourseOfferingServiceUtils {
         {
             String gradingSystem = secondarySection.elementText("GradingSystem");
             if ("standard".equals(gradingSystem)) {
-                info.setGradingOptionId("kuali.uw.resultcomponent.grade.standard");
+                info.setGradingOptionId("uw.result.group.grading.option.standard");
                 info.setGradingOptionName(null);
             } else if ("credit/no credit".equals(gradingSystem)) {
-                info.setGradingOptionId("kuali.uw.resultcomponent.grade.crnc");
+                info.setGradingOptionId("uw.result.group.grading.option.crnc");
                 info.setGradingOptionName("Credit/No-Credit grading");
             }
         }

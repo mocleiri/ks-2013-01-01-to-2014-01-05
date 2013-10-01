@@ -147,44 +147,46 @@ public class DegreeAuditController extends UifControllerBase {
                 degreeAuditForm.setCampusParam(DEFAULT_CAMPUS_ID);
                 planAuditForm.setCampusParam(DEFAULT_CAMPUS_ID);
 
+                if (DegreeAuditConstants.DEGREE_AUDIT_VIEW_ID.equals(auditForm.getViewId())) {
+                    Date startDate = new Date();
+                    Date endDate = new Date();
 
-                Date startDate = new Date();
-                Date endDate = new Date();
-                ContextInfo context = new ContextInfo();
 
-                List<AuditReportInfo> reportList = degreeAuditService.getAuditsForStudentInDateRange(regId, startDate,
-                        endDate, context);
+                    List<AuditReportInfo> reportList = degreeAuditService.getAuditsForStudentInDateRange(regId, startDate,
+                            endDate, DegreeAuditConstants.CONTEXT_INFO);
 
-                Map<String, PlanAuditItem> auditsInLearningPlan = getDegreeAuditHelper().getPlanItemSnapShots(regId);
+                    Map<String, PlanAuditItem> auditsInLearningPlan = getDegreeAuditHelper().getPlanItemSnapShots(regId);
 
-                if (degreeAuditId == null) {
-                    // Grab first degree audit
-                    for (AuditReportInfo report : reportList) {
-                        if (!report.isWhatIfAudit() && !auditsInLearningPlan.containsKey(report.getAuditId())) {
-                            degreeAuditId = report.getAuditId();
-                            break;
+                    if (degreeAuditId == null) {
+                        // Grab first degree audit
+                        for (AuditReportInfo report : reportList) {
+                            if (!report.isWhatIfAudit() && !auditsInLearningPlan.containsKey(report.getAuditId())) {
+                                degreeAuditId = report.getAuditId();
+                                break;
+                            }
                         }
                     }
+                    // TODO: For now we are getting the auditType from the end user. This needs to be removed before going
+                    // live and hard coded to audit type key html
+                    if (StringUtils.hasText(degreeAuditId)) {
+                        AuditReportInfo degreeReport = degreeAuditService.getAuditReport(degreeAuditId,
+                                degreeAuditForm.getAuditType(), DegreeAuditConstants.CONTEXT_INFO);
+                        degreeAuditForm.setAuditId(degreeAuditId);
+                        getDegreeAuditHelper().copyCampusToForm(degreeReport, degreeAuditForm);
+                        copyReportToForm(degreeReport, degreeAuditForm);
+                    }
                 }
-                // TODO: For now we are getting the auditType from the end user. This needs to be removed before going
-                // live and hard coded to audit type key html
-                if (StringUtils.hasText(degreeAuditId)) {
-                    AuditReportInfo degreeReport = degreeAuditService.getAuditReport(degreeAuditId,
-                            degreeAuditForm.getAuditType(), context);
-                    degreeAuditForm.setAuditId(degreeAuditId);
-                    getDegreeAuditHelper().copyCampusToForm(degreeReport, degreeAuditForm);
-                    copyReportToForm(degreeReport, degreeAuditForm);
-                }
-
-                if (planAuditId == null) {
-                    // Grab first plan audit Id
-                    planAuditId = getRecentPlanAudit(regId);
-                }
-                if (StringUtils.hasText(planAuditId)) {
-                    AuditReportInfo planReport = degreeAuditService.getAuditReport(planAuditId, planAuditForm.getAuditType(), context);
-                    planAuditForm.setAuditId(planAuditId);
-                    getDegreeAuditHelper().copyCampusToForm(planReport, planAuditForm);
-                    copyReportToForm(planReport, planAuditForm);
+                if (DegreeAuditConstants.PLAN_AUDIT_VIEW_ID.equals(auditForm.getViewId())) {
+                    if (planAuditId == null) {
+                        // Grab first plan audit Id
+                        planAuditId = getRecentPlanAudit(regId);
+                    }
+                    if (StringUtils.hasText(planAuditId)) {
+                        AuditReportInfo planReport = degreeAuditService.getAuditReport(planAuditId, planAuditForm.getAuditType(), DegreeAuditConstants.CONTEXT_INFO);
+                        planAuditForm.setAuditId(planAuditId);
+                        getDegreeAuditHelper().copyCampusToForm(planReport, planAuditForm);
+                        copyReportToForm(planReport, planAuditForm);
+                    }
                 }
 
             }
@@ -295,7 +297,7 @@ public class DegreeAuditController extends UifControllerBase {
                     copyReportToForm(report, form);
                 } else {
                     String[] params = {};
-                    GlobalVariables.getMessageMap().putError("degreeAudit.programParamSeattle",
+                    GlobalVariables.getMessageMap().putError(DEGREE_AUDIT_PROGRAM_PARAM_SEATTLE,
                             DegreeAuditConstants.AUDIT_RUN_FAILED, params);
                     form.setAuditHtml(String.format(DegreeAuditConstants.AUDIT_FAILED_HTML, DegreeAuditConstants.AUDIT_STATUS_ERROR_MSG));
                 }
@@ -303,13 +305,13 @@ public class DegreeAuditController extends UifControllerBase {
 
         } catch (DataRetrievalFailureException e) {
             String[] params = {};
-            GlobalVariables.getMessageMap().putError("degreeAudit.programParamSeattle",
+            GlobalVariables.getMessageMap().putError(DEGREE_AUDIT_PROGRAM_PARAM_SEATTLE,
                     DegreeAuditConstants.NO_SYSTEM_KEY, params);
 
         } catch (Exception e) {
             logger.error("Could not complete audit run");
             String[] params = {};
-            GlobalVariables.getMessageMap().putError("degreeAudit.programParamSeattle",
+            GlobalVariables.getMessageMap().putError(DEGREE_AUDIT_PROGRAM_PARAM_SEATTLE,
                     DegreeAuditConstants.AUDIT_RUN_FAILED, params);
             Throwable cause = e.getCause();
             if (cause != null) {
@@ -366,7 +368,7 @@ public class DegreeAuditController extends UifControllerBase {
 
                 } else {
                     String[] params = {};
-                    GlobalVariables.getMessageMap().putError("planAudit.programParamSeattle",
+                    GlobalVariables.getMessageMap().putError(PLAN_AUDIT_PROGRAM_PARAM_SEATTLE,
                             DegreeAuditConstants.AUDIT_RUN_FAILED, params);
                     form.setAuditHtml(String.format(DegreeAuditConstants.AUDIT_FAILED_HTML, DegreeAuditConstants.AUDIT_STATUS_ERROR_MSG));
                 }
@@ -375,13 +377,13 @@ public class DegreeAuditController extends UifControllerBase {
         } catch (DataRetrievalFailureException e) {
             String[] params = {};
             form.setCampusParam("306");
-            GlobalVariables.getMessageMap().putError("planAudit.programParamSeattle",
+            GlobalVariables.getMessageMap().putError(PLAN_AUDIT_PROGRAM_PARAM_SEATTLE,
                     DegreeAuditConstants.NO_SYSTEM_KEY, params);
 
         } catch (Exception e) {
             logger.error("Could not complete audit run", e);
             String[] params = {};
-            GlobalVariables.getMessageMap().putError("planAudit.programParamSeattle",
+            GlobalVariables.getMessageMap().putError(PLAN_AUDIT_PROGRAM_PARAM_SEATTLE,
                     DegreeAuditConstants.AUDIT_RUN_FAILED, params);
             Throwable cause = e.getCause();
             if (cause != null) {

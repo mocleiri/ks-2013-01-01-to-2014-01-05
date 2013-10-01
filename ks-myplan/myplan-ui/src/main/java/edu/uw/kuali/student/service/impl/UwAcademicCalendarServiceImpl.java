@@ -38,8 +38,6 @@ public class UwAcademicCalendarServiceImpl implements AcademicCalendarService {
      */
     private static final short PUBLISHED_QUARTER_COUNT = 3;
 
-    private static final String TERM_KEY_PREFIX = "kuali.uw.atp.";
-
     private static int CRITERIA_LENGTH = 23;
 
     private StudentServiceClient studentServiceClient;
@@ -419,7 +417,7 @@ public class UwAcademicCalendarServiceImpl implements AcademicCalendarService {
 
                     TermInfo ti = new TermInfo();
                     //  Create the ATP ID.
-                    ti.setId(TERM_KEY_PREFIX + ccl.getYear() + "." + ccl.getQuarterNumber());
+                    ti.setId(ccl.getYear() + ccl.getQuarterNumber());
                     ti.setName(ccl.getQuarterName() + " " + ccl.getYear());
 
                     List<AttributeInfo> attributes = new ArrayList<AttributeInfo>();

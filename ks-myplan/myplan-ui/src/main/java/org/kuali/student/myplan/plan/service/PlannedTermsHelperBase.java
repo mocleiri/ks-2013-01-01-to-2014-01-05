@@ -107,9 +107,8 @@ public class PlannedTermsHelperBase {
                 if (!exists) {
                     PlannedTerm term = new PlannedTerm();
                     term.setAtpId(atp);
-                    String[] splitStr = AtpHelper.atpIdToTermNameAndYear(atp);
                     StringBuilder sb = new StringBuilder();
-                    sb.append(splitStr[0]).append(" ").append(splitStr[1]);
+                    sb.append(AtpHelper.atpIdToTermName(atp));
                     String QtrYear = sb.substring(0, 1).toUpperCase().concat(sb.substring(1));
                     term.setQtrYear(QtrYear);
                     term.getPlannedList().add(plan);
@@ -147,8 +146,7 @@ public class PlannedTermsHelperBase {
                     PlannedTerm plannedTerm = new PlannedTerm();
                     plannedTerm.setAtpId(atp);
                     StringBuffer str = new StringBuffer();
-                    String[] splitStr = AtpHelper.atpIdToTermNameAndYear(atp);
-                    str = str.append(splitStr[0]).append(" ").append(splitStr[1]);
+                    str = str.append(AtpHelper.atpIdToTermName(atp));
                     String QtrYear = str.substring(0, 1).toUpperCase().concat(str.substring(1, str.length()));
                     plannedTerm.setQtrYear(QtrYear);
                     plannedTerm.getBackupList().add(bl);
@@ -188,8 +186,7 @@ public class PlannedTermsHelperBase {
                     PlannedTerm plannedTerm = new PlannedTerm();
                     plannedTerm.setAtpId(atp);
                     StringBuffer str = new StringBuffer();
-                    String[] splitStr = AtpHelper.atpIdToTermNameAndYear(atp);
-                    str = str.append(splitStr[0]).append(" ").append(splitStr[1]);
+                    str = str.append(AtpHelper.atpIdToTermName(atp));
                     String QtrYear = str.substring(0, 1).toUpperCase().concat(str.substring(1, str.length()));
                     plannedTerm.setQtrYear(QtrYear);
                     plannedTerm.getRecommendedList().add(bl);
@@ -623,7 +620,7 @@ public class PlannedTermsHelperBase {
     }
 
     public static UserSessionHelper getUserSessionHelper() {
-        if(userSessionHelper == null){
+        if (userSessionHelper == null) {
             userSessionHelper = new UserSessionHelperImpl();
         }
         return userSessionHelper;

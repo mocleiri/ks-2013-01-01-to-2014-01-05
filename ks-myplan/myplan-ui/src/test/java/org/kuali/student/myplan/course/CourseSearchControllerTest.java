@@ -107,7 +107,7 @@ public class CourseSearchControllerTest {
         CourseSearchController.Credit nothing = controller.getCreditByID("nothing");
         assertNull(nothing);
 
-        CourseSearchController.Credit something = controller.getCreditByID("kuali.creditType.credit.degree.1-4");
+        CourseSearchController.Credit something = controller.getCreditByID("kuali.result.value.credit.degree.1-4");
         assertNotNull(something);
     }
 
@@ -255,8 +255,8 @@ public class CourseSearchControllerTest {
         List<AtpTypeInfo> termInfos = new ArrayList<AtpTypeInfo>();
         AtpTypeInfo termInfo = new AtpTypeInfo();
         termInfo.setDurationType("kuali.uw.atp.duration.quarter");
-        termInfo.setSeasonalType("kuali.uw.atp.season.autumn");
-        termInfo.setId("kuali.uw.atp.type.autumn");
+        termInfo.setSeasonalType("kuali.uw.atp.season.Fall");
+        termInfo.setId("kuali.atp.type.Fall");
         termInfo.setName("autumn");
         termInfo.setDescr("autumn quarter");
         termInfo.setEffectiveDate(null);

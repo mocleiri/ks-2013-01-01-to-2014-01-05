@@ -13,6 +13,7 @@ import org.kuali.student.common.search.dto.SearchRequest;
 import org.kuali.student.common.search.dto.SearchResult;
 import org.kuali.student.enrollment.academicrecord.dto.*;
 import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService;
+import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
@@ -365,8 +366,8 @@ public class UwAcademicRecordServiceImpl implements AcademicRecordService {
 
         for (int i = 0; i < 2; i++) {
             String registrationResponseText = null;
-            if (currentTerm[0].equalsIgnoreCase("4")) {
-                currentTerm[0] = "1";
+            if (currentTerm[0].equalsIgnoreCase(PlanConstants.ATP_TERM_4)) {
+                currentTerm[0] = PlanConstants.ATP_TERM_1;
                 currentTerm[1] = String.valueOf(Integer.parseInt(currentTerm[1]) + 1);
                 AtpHelper.YearTerm yearTerm = new AtpHelper.YearTerm(Integer.parseInt(currentTerm[1].trim()), Integer.parseInt(currentTerm[0].trim()));
                 String atpId = yearTerm.toATP();

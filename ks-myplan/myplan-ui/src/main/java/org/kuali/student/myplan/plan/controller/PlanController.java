@@ -938,7 +938,7 @@ public class PlanController extends UifControllerBase {
                 updateRecommendedItem(planItem, learningPlan, events);
             }
         } catch (DuplicateEntryException e) {
-            return doDuplicatePlanItem(form, formatAtpIdForUI(newAtpId), courseDetails.getCode());
+            return doDuplicatePlanItem(form, newAtpId, courseDetails.getCode());
         } catch (Exception e) {
             return doOperationFailedError(form, "Unable to add plan item.", e);
         }
@@ -1538,7 +1538,7 @@ public class PlanController extends UifControllerBase {
         Map<String, String> params = new HashMap<String, String>();
         params.put("planItemId", planItem.getId());
         params.put("planItemType", formatTypeKey(planItem.getTypeKey()));
-        params.put("atpId", formatAtpIdForUI(planItem.getPlanPeriods().get(0)));
+        params.put("atpId", planItem.getPlanPeriods().get(0));
         events.put(PlanConstants.JS_EVENT_NAME.RECOMMENDED_ITEM_UPDATED, params);
     }
 
@@ -2551,7 +2551,7 @@ public class PlanController extends UifControllerBase {
         if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED.equals(planItem.getTypeKey()) ||
                 PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP.equals(planItem.getTypeKey())
                 || PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED.equals(planItem.getTypeKey())) {
-            params.put("atpId", formatAtpIdForUI(planItem.getPlanPeriods().get(0)));
+            params.put("atpId", planItem.getPlanPeriods().get(0));
 
             if (PlanConstants.SECTION_TYPE.equals(planItem.getRefObjectType())) {
                 String itemsToBeUpdated = null;
@@ -2605,7 +2605,7 @@ public class PlanController extends UifControllerBase {
 
         Map<String, String> params = new HashMap<String, String>();
 
-        params.put("atpId", formatAtpIdForUI(atpId));
+        params.put("atpId", atpId);
         String totalCredits = getPlannedTermsHelper().getTotalCredits(atpId);
         params.put("totalCredits", totalCredits);
 
@@ -2636,7 +2636,7 @@ public class PlanController extends UifControllerBase {
             String atpId = planItem.getPlanPeriods().get(0);
             String termName = AtpHelper.atpIdToTermName(atpId);
 
-            params.put("atpId", formatAtpIdForUI(atpId));
+            params.put("atpId", atpId);
 
             boolean showAlert = false;
             StringBuffer statusAlert = new StringBuffer();
@@ -2765,10 +2765,6 @@ public class PlanController extends UifControllerBase {
         return String.format("%s %s level", subjectTitle, subjectLevel);
     }
 
-
-    private String formatAtpIdForUI(String atpId) {
-        return atpId.replaceAll("\\.", "-");
-    }
 
     private String formatTypeKey(String typeKey) {
         return typeKey.substring(typeKey.lastIndexOf(".") + 1);
