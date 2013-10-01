@@ -1,10 +1,12 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.UserPaymentPlanForm;
+import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
@@ -22,6 +24,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/userPaymentPlanView")
@@ -103,6 +108,31 @@ public class UserPaymentPlanController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=reexecuteThirdPartyPlan")
+    public ModelAndView reexecuteThirdPartyPlan(@ModelAttribute("KualiForm") UserPaymentPlanForm form, BindingResult result,
+                            HttpServletRequest request, HttpServletResponse response) {
+
+        String planIdString = request.getParameter("actionParameters[planId]");
+        Long planId;
+
+        try {
+            planId = Long.parseLong(planIdString);
+        } catch(NumberFormatException e) {
+            String errorMessage = planIdString + " is not a valid Third Party Plan";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        String userId = form.getAccount().getId();
+
+        thirdPartyTransferService.generateThirdPartyTransfer (planId, userId, new Date());
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan re-executed");
+
+        populateForm(form);
+
+        return getUIFModelAndView(form);
+    }
+
 
     private void populateForm(UserPaymentPlanForm form) {
         String userId = form.getAccount().getId();
@@ -110,6 +140,26 @@ public class UserPaymentPlanController extends GenericSearchController {
         form.setAlertObjects(informationService.getAlerts(userId));
         form.setFlagObjects(informationService.getFlags(userId));
         form.setHolds(AccountUtils.getHolds(userId));
+
+        List<ThirdPartyMemberModel> memberModels = new ArrayList<ThirdPartyMemberModel>();
+
+        List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlansByMember(userId);
+
+        for(ThirdPartyPlan plan : plans) {
+            ThirdPartyMemberModel model = new ThirdPartyMemberModel();
+            model.setPlan(plan);
+            ThirdPartyPlanMember member = thirdPartyTransferService.getThirdPartyPlanMember(plan.getId(), userId);
+            model.setPlanMember(member);
+
+            if(member.isExecuted()) {
+                ThirdPartyTransferDetail transferDetail = thirdPartyTransferService.getThirdPartyTransferDetail(plan.getId(), userId);
+                model.setTransferDetail(transferDetail);
+            }
+
+            memberModels.add(model);
+        }
+
+        form.setThirdPartyMembers(memberModels);
 
     }
 
