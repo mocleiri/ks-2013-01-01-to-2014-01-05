@@ -241,6 +241,64 @@ When /^I create a CO with two new AOs and then view the Exam Offerings where the
   end
 end
 
+When /^I view the Exam Offerings for a CO with a standard final exam driven by Course Offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL304"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Course Offering"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I view the Exam Offerings for a CO with a standard final exam driven by Activity Offering$/ do
+  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL304"
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I view the Exam Offerings after changing the Final Exam Driver to Course Offering$/ do
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Course Offering"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I view the Exam Offerings after changing the Final Exam Driver to Activity Offering$/ do
+  @course_offering.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
@@ -423,6 +481,19 @@ Then /^there should be a Course Offering table that is in the ([^"]*) state$/ do
   end
 end
 
+Then /^the Course Offering table should only show that it is in the ([^"]*) state$/ do |exp_state|
+  on ViewExamOfferings do |page|
+    page.co_table_header_text.should match /by Course Offering/
+    page.eo_by_co_status.should match /#{exp_state}/
+    page.eo_by_co_days.should == ""
+    page.eo_by_co_st_time.should == ""
+    page.eo_by_co_end_time.should == ""
+    page.eo_by_co_bldg.should == ""
+    page.eo_by_co_room.should == ""
+    page.count_no_of_eos_by_co.should == "1"
+  end
+end
+
 Then /^there should be an Activity Offering table that is in the ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
     page.ao_table_header_text.should match /by Activity Offering/
@@ -433,8 +504,39 @@ Then /^there should be an Activity Offering table that is in the ([^"]*) state$/
   end
 end
 
-Then /^there should be ([^"]*) Exam Offerings for the CO$/ do |no_of_aos|
+Then /^the Activity Offering table should for all ([^"]*) Exam Offerings only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
   on ViewExamOfferings do |page|
-    page.count_no_of_eos.should == no_of_aos
+    page.ao_table_header_text.should match /by Activity Offering/
+    page.return_array_of_ao_codes.each do |code|
+      page.eo_by_ao_status(code).should match /#{exp_state}/
+      page.eo_by_ao_type(code).should == "Lecture"
+      page.eo_by_ao_days(code).should == ""
+      page.eo_by_ao_st_time(code).should == ""
+      page.eo_by_ao_end_time(code).should == ""
+      page.eo_by_ao_bldg(code).should == ""
+      page.eo_by_ao_room(code).should == ""
+    end
+    page.count_no_of_eos_by_ao.should == no_of_aos
+  end
+end
+
+Then /^there should be an Activity Offering table where all Exam Offerings is in the ([^"]*) state$/ do |exp_state|
+  on ViewExamOfferings do |page|
+    page.ao_table_header_text.should match /by Activity Offering/
+    page.return_array_of_ao_codes.each do |code|
+      page.eo_by_ao_status(code).should match /#{exp_state}/
+    end
+  end
+end
+
+Then /^there should be ([^"]*) Exam (?:Offerings|Offering) by Activity Offering for the course$/ do |no_of_aos|
+  on ViewExamOfferings do |page|
+    page.count_no_of_eos_by_ao.should == no_of_aos
+  end
+end
+
+Then /^there should be 1 Exam Offering by Course Offering for the course$/ do
+  on ViewExamOfferings do |page|
+    page.count_no_of_eos_by_co.should == "1"
   end
 end

@@ -29,17 +29,48 @@ class ViewExamOfferings < BasePage
     eo_by_co_target_row.cells[CO_STATUS].text
   end
 
+  def eo_by_co_days
+    eo_by_co_target_row.cells[CO_DAYS].text
+  end
+
+  def eo_by_co_st_time
+    eo_by_co_target_row.cells[CO_ST_TIME].text
+  end
+
+  def eo_by_co_end_time
+    eo_by_co_target_row.cells[CO_END_TIME].text
+  end
+
+  def eo_by_co_bldg
+    eo_by_co_target_row.cells[CO_BLDG].text
+  end
+
+  def eo_by_co_room
+    eo_by_co_target_row.cells[CO_ROOM].text
+  end
+
+  def count_no_of_eos_by_co
+    row_count = 0
+    eo_by_co_results_table.rows.each do |row|
+      if row.text !~ /^Status.*$/ and row.text != ""
+        row_count += 1
+      end
+    end
+    return "#{row_count}"
+  end
+
   ############## Activity Offering page for View Exam Offerings ####################
   element(:eo_by_ao_table_section) { |b| b.frm.div(id: "KS-CourseOfferingManagement-ExamOfferingByAOTableSection")}
   value(:ao_table_header_text) { |b| b.eo_by_ao_table_section.span(class: "uif-headerText-span").text}
 
   AO_STATUS = 0
   AO_CODE = 1
-  AO_DAYS = 2
-  AO_ST_TIME = 3
-  AO_END_TIME = 4
-  AO_BLDG = 5
-  AO_ROOM = 6
+  AO_TYPE = 2
+  AO_DAYS = 3
+  AO_ST_TIME = 4
+  AO_END_TIME = 5
+  AO_BLDG = 6
+  AO_ROOM = 7
 
   def eo_by_ao_results_table
     return eo_by_ao_table_section.table unless !eo_by_ao_table_section.table.exists?
@@ -64,7 +95,31 @@ class ViewExamOfferings < BasePage
     eo_by_ao_target_row(code).cells[AO_STATUS].text
   end
 
-  def count_no_of_eos
+  def eo_by_ao_type(code)
+    eo_by_ao_target_row(code).cells[AO_TYPE].text
+  end
+
+  def eo_by_ao_days(code)
+    eo_by_ao_target_row(code).cells[AO_DAYS].text
+  end
+
+  def eo_by_ao_st_time(code)
+    eo_by_ao_target_row(code).cells[AO_ST_TIME].text
+  end
+
+  def eo_by_ao_end_time(code)
+    eo_by_ao_target_row(code).cells[AO_END_TIME].text
+  end
+
+  def eo_by_ao_bldg(code)
+    eo_by_ao_target_row(code).cells[AO_BLDG].text
+  end
+
+  def eo_by_ao_room(code)
+    eo_by_ao_target_row(code).cells[AO_ROOM].text
+  end
+
+  def count_no_of_eos_by_ao
     row_count = 0
     eo_by_ao_results_table.rows.each do |row|
       if row.cells[AO_CODE].text =~ /^[A-Z]$/
@@ -72,5 +127,15 @@ class ViewExamOfferings < BasePage
       end
     end
     return "#{row_count}"
+  end
+
+  def return_array_of_ao_codes
+    array = []
+    eo_by_ao_results_table.rows.each do |row|
+      if row.cells[AO_CODE].text =~ /^[A-Z]$/
+        array << row.cells[AO_CODE].text
+      end
+    end
+    return array
   end
 end
