@@ -986,14 +986,9 @@ public class KradDictionaryCreator {
 		if (ms != null) {
 			return initLower(ms.getShortName());
 		}
-		System.out
-				.println("XmlKradBaseDictionaryCreator: could not find a title attribute for "
+		
+		throw new RuntimeException("XmlKradBaseDictionaryCreator: could not find a title attribute for "
 						+ this.className);
-		// ms = this.findMessageStructure("id");
-		// if (ms != null) {
-		// return initLower(ms.getShortName());
-		// }
-		return null;
 	}
 
 	private MessageStructure findMessageStructureEndsWith(

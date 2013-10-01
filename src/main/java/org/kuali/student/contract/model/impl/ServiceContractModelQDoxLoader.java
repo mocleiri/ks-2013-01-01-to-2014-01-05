@@ -120,8 +120,12 @@ public class ServiceContractModelQDoxLoader implements
         serviceMethods = new ArrayList<ServiceMethod>();
         xmlTypeMap = new LinkedHashMap<String, XmlType>();
         messageStructures = new ArrayList<MessageStructure>();
-        DefaultDocletTagFactory dtf = new DefaultDocletTagFactory();
-        JavaDocBuilder builder = new JavaDocBuilder(dtf);
+        
+    	ClassLibrary classLibrary = new ClassLibrary();
+    	classLibrary.addDefaultLoader();
+        
+		JavaDocBuilder builder = new JavaDocBuilder(classLibrary);
+        
         for (String sourceDirectory : sourceDirectories) {
             checkIfExists(sourceDirectory);
             builder.addSourceTree(new File(sourceDirectory));
