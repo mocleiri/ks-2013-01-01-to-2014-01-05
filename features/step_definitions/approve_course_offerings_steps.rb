@@ -1291,6 +1291,8 @@ Given /^a new academic term has an activity offering in approved status$/ do
     @term = make AcademicTerm, :term_year => @calendar.year
     @calendar.add_term(@term)
 
+    @term.create_final_exam_period
+
     @manage_soc = make ManageSoc, :term_code => @term.term_code
     @manage_soc.set_up_soc
     @manage_soc.perform_manual_soc_state_change

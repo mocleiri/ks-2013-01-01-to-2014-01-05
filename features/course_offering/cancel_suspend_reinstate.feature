@@ -113,7 +113,6 @@ Feature: EC.Cancel Suspend Reinstate AOs
     And the registration group is shown as pending
     And the Course Offering is shown as Planned
 
-  @bug @KSENROLL-9870
   Scenario: CO 23.3A.5 CSR Reinstate an AO with ADLs in locked SOC state
     Given a new academic term has an activity offering in approved status
     And I add requested delivery logistics to the activity offering

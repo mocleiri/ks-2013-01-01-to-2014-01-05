@@ -441,12 +441,19 @@ class AcademicTerm
     end
   end
 
-  def create_final_exam_period
+  def create_final_exam_period(opts={})
+    defaults = {
+        :term_type => @term_type,
+        :start_date => @start_date,
+        :end_date => @end_date
+    }
+    options = defaults.merge(opts)
+
     on EditAcademicTerms do |page|
-      if page.add_exam_period_btn( @term_type, page.term_index_by_term_type( @term_type)).present?
-        page.add_exam_period @term_type
-        page.set_exam_start_date @term_type, @start_date
-        page.set_exam_end_date @term_type, @end_date
+      if page.add_exam_period_btn( options[:term_type], page.term_index_by_term_type( options[:term_type])).present?
+        page.add_exam_period options[:term_type]
+        page.set_exam_start_date options[:term_type], options[:start_date]
+        page.set_exam_end_date options[:term_type], options[:end_date]
         page.save
       end
     end
