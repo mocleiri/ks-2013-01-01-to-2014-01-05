@@ -1,14 +1,12 @@
-
 -- This Oracle script creates database objects in KSA schema.
 -- It needs to be run by the schema owner
 -- Creating sequence table
 
-create table KSSA_SEQUENCE_TABLE ( SEQ_NAME varchar2(255 char) not null,  SEQ_VALUE number(10,0) not null, primary key (SEQ_NAME) ) ;
+create table KSSA_SEQUENCE_TABLE (SEQ_NAME varchar2(255) not null,  SEQ_VALUE number(10,0) not null, primary key (SEQ_NAME));
 
 -- KSA config table
 
-create table KSSA_CONFIG ( NAME varchar2(512) not null,  VALUE varchar2(1024), LOCKED varchar2(1), primary key (NAME) ) ;
-
+create table KSSA_CONFIG (NAME varchar2(512) not null,  VALUE varchar2(1024), LOCKED varchar2(1), primary key (NAME));
 
 -- Creating base tables
 

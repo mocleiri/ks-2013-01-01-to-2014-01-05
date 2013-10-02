@@ -292,6 +292,7 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
+                            <delimiter>;</delimiter>
                             <autocommit>true</autocommit>
                             <srcFiles>
                                 <srcFile>${sql.dir}/ksa_drop_ddl.sql</srcFile>
@@ -307,6 +308,7 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
+                            <delimiter>;</delimiter>
                             <autocommit>true</autocommit>
                             <srcFiles>
                                 <srcFile>${sql.dir}/ksa_create_ddl.sql</srcFile>
