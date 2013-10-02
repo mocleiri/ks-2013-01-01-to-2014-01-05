@@ -15,10 +15,10 @@ Feature: SA.FE3-9 View Exam Offerings
   @pending
   Scenario: Test that the AO table is shown when viewing the exam offerings and that it's state is draft
     When I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Activity Offering
-    Then there should be an Activity Offering table that is in the Draft state
+    Then the Activity Offering table should for all 1 Exam Offerings only show that it is in the Draft state
 
   #FE3.9.EB3 (KSENROLL-9788)
   @pending
   Scenario: Test that the AO table is shown with all AOs when viewing the exam offerings and that it's state is draft
     When I view the Exam Offerings for a CO created from an existing CO with multiple AOs and a standard final exam driven by Activity Offering
-    Then there should be an Activity Offering table that is in the Draft state
+    Then the Activity Offering table should for all 10 Exam Offerings only show that it is in the Draft state
