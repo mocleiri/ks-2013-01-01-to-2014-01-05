@@ -35,7 +35,7 @@ class TimeSlot
 
     defaults = {
         :code => "",
-        :term_type => "FallFull",
+        :term_type => "Fall - Full",
         :days => "MWF",
         :start_time => "9:00 AM",
         :end_time => "9:40 AM"

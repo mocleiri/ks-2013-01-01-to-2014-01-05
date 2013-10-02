@@ -10,9 +10,17 @@ class TimeSlotMaintenance < BasePage
   action(:show_time_slots) { |b| b.time_slot_type_selector_div.button(text: "Show Time Slots").click; b.loading.wait_while_present }
 
   element(:time_slot_toolbar_div) { |b| b.frm.div(id: "TimeSlotToolBar-Section") }
-  element(:add_time_slot) { |b| b.time_slot_toolbar_div.button(text: "Add Time Slot").click }
+  action(:initiate_add_time_slot) { |b| b.time_slot_toolbar_div.button(text: "Add Time Slot").click }
 
-  element(:time_slot_search_results_table) { |b| b.frm.div(id: "TimeSlotSearchResultsDisplayCheckBoxes").table() }
+  element(:add_time_slot_popup_field_termType) { |b| b.frm.div(id: "addOrEditTermKey").select_list }
+  element(:add_time_slot_popup_field_days) { |b| b.frm.div(id: "addOrEditDays").text_field }
+  element(:add_time_slot_popup_field_startTime) { |b| b.frm.div(id: "addOrEditStartTime").text_field }
+  element(:add_time_slot_popup_field_startTime_am_pm) { |b| b.frm.div(id: "addOrEditStartTimeAmPm").select_list }
+  element(:add_time_slot_popup_field_endTime) { |b| b.frm.div(id: "addOrEditEndTime").text_field }
+  element(:add_time_slot_popup_field_endTime_am_pm) { |b| b.frm.div(id: "addOrEditEndTimeAmPm").select_list }
+  action(:save_add_time_slot) { |b| b.frm.button(id: "addOrEdit_action").click }
+
+  element(:time_slot_search_results_table) { |b| b.frm.div(id: "TimeSlotSearchResultsDisplayTable").table() }
 
   TIME_SLOT_RESULTS_SELECT = 0
   TIME_SLOT_RESULTS_CODE = 1
