@@ -263,8 +263,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
         PermissionUtils.checkPermission(Permission.CHECK_CASH_LIMIT);
 
-        String cashTracking = configService.getParameter(Constants.CASH_TRACKING_SYSTEM);
-        if (!"ON".equalsIgnoreCase(cashTracking)) {
+        if (!"ON".equalsIgnoreCase(configService.getParameter(Constants.CASH_TRACKING_SYSTEM))) {
             return false;
         }
 
@@ -376,12 +375,15 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
                 persistEntity(cashLimitEvent);
 
-                // Sending email notification
-                String subject = configService.getParameter(Constants.CASH_TRACKING_EMAIL_SUBJECT);
-                String body = "\n\nCash Limit Event (ID = " + cashLimitEvent.getId() + ") has been created. " +
-                        "The form 8300 can now be filed with IRS.";
+                if ("ON".equalsIgnoreCase(configService.getParameter(Constants.CASH_TRACKING_NOTIFICATION))) {
 
-                smtpService.sendEmail(new String[]{recipient}, subject, body);
+                    // Sending email notification
+                    String subject = configService.getParameter(Constants.CASH_TRACKING_EMAIL_SUBJECT);
+                    String body = "\n\nCash Limit Event (ID = " + cashLimitEvent.getId() + ") has been created. " +
+                            "The form 8300 can now be filed with IRS.";
+
+                    smtpService.sendEmail(new String[]{recipient}, subject, body);
+                }
 
                 return true;
             }

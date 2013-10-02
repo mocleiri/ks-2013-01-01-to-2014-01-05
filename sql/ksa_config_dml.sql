@@ -105,6 +105,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.payment.billing.rounding.prob
 
 -- Combined Cash Limit Tracking Settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.system', 'ON');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.notification', 'OFF');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.amount', '10000');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.days', '365');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.tag', 'Cash');

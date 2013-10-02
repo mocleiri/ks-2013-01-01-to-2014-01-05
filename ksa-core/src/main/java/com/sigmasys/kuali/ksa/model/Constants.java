@@ -29,6 +29,7 @@ public interface Constants {
 
     // Cash tracking constants
     String CASH_TRACKING_SYSTEM = "ksa.cash.tracking.system";
+    String CASH_TRACKING_NOTIFICATION = "ksa.cash.tracking.notification";
     String CASH_TRACKING_AMOUNT = "ksa.cash.tracking.amount";
     String CASH_TRACKING_DAYS = "ksa.cash.tracking.days";
     String CASH_TRACKING_TAG = "ksa.cash.tracking.tag";
