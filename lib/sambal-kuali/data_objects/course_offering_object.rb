@@ -34,9 +34,7 @@ class CourseOffering
                 :affiliated_person_list,
                 :affiliated_org_list
   #string - generally set using options hash
-  attr_accessor :wait_list,
-                :wait_list_level,
-                :wait_list_type,
+  attr_accessor :waitlist,
                 :grade_format,
                 :delivery_format_list,
                 :final_exam_activity,
@@ -98,9 +96,7 @@ class CourseOffering
         :suffix=>"",
         :activity_offering_cluster_list=> [ (make ActivityOfferingCluster, :private_name=> :default_cluster ) ],
         :final_exam_type => "STANDARD",
-        :wait_list => "Active",
-        :wait_list_level => "Course Offering",
-        :wait_list_type => "Automatic",
+        :waitlist => true,
         :grade_format => "",
         :delivery_format_list => [ (make DeliveryFormat ) ],
         :final_exam_activity => "",
@@ -155,7 +151,7 @@ class CourseOffering
       end
 
       on CreateCOFromCatalog do |page|
-        @suffix = random_alphanums(5).upcase if @suffix == ""
+        @suffix = random_alphanums(3).upcase if @suffix == ""
         page.suffix.set @suffix
         @course = "#{@course}#{@suffix}"
         if @joint_co_to_create != nil
@@ -177,8 +173,12 @@ class CourseOffering
         @delivery_format_list.each_with_index do |dfl, index|
           dfl.create(index + 1)
         end
+        if ! @waitlists
+          page.waitlist_off
+          page.waitlist_continue_action
+        end
 
-        page.create_offering unless @defer_save == true
+        page.create_offering unless @defer_save
       end
     end
   end
@@ -211,16 +211,15 @@ class CourseOffering
       @affiliated_person_list = options[:affiliated_person_list]
     end
 
-    if options[:wait_list] != nil
+    if options[:waitlist] != nil
       on CourseOfferingEdit do |page|
-        if options[:wait_list] == "activate"
+        if options[:waitlist]
           page.waitlist_on
-          @wait_list = "Active"
         else
           page.waitlist_off
           page.waitlist_continue_action
-          @wait_list = "Inactive"
         end
+        @waitlist = options[:waitlist]
       end
     end
 

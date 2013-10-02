@@ -136,4 +136,15 @@ class CreateCOFromCatalog < BasePage
       use_exam_matrix
     end
   end
+
+  element(:waitlist_div)  { |b| b.frm.div(id: "KS-CourseOfferingEdit-HasWaitlist") }
+  element(:waitlist_checkbox) { |b| b.waitlist_div.checkbox() }
+  value(:has_waitlist?) { |b| b.waitlist_checkbox.value }
+  action(:waitlist_on )  { |b| b.waitlist_checkbox.set; b.loading.wait_while_present }
+  action(:waitlist_off )  { |b| b.waitlist_checkbox.clear; b.loading.wait_while_present }
+
+  element(:waitlist_popup_div) { |b| b.div(id: "CourseOfferingEdit-Waitlist-Inactivate-Prompt") }
+  action(:waitlist_continue_action) { |b| b.waitlist_popup_div.radio(index: 0).click; b.loading.wait_while_present }
+  action(:waitlist_cancel_action) { |b| b.waitlist_popup_div.radio(index: 1).click; b.loading.wait_while_present }
+
 end

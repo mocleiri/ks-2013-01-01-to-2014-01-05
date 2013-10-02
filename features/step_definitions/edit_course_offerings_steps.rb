@@ -166,7 +166,7 @@ Then /^I can submit and the course offering is updated$/ do
   on ManageCourseDetails do  |page|
     page.registration_options.should == @course_offering.reg_options
     page.final_exam_type.should == @course_offering.final_exam_type
-    page.waited_list.should == @course_offering.wait_list
+    page.waitlist_state.should == @course_offering.waitlist
     page.honors_flag.should == @course_offering.honors_flag
     page.close
   end
@@ -271,7 +271,7 @@ Then /^the changes of the affiliated person are persisted$/ do
 end
 
 When /^I "(activate|deactivate)" the wait list$/ do |activate|
-    @course_offering.edit_offering :wait_list => activate
+    @course_offering.edit_offering :waitlist => true
 end
 
 When /^I add an administering organization and activate the honors flag$/ do

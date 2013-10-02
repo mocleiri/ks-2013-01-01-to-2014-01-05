@@ -22,6 +22,11 @@ class ActivityOfferingInquiry < BasePage
   value(:total_maximum_enrollment) { |b| b.frm.span(id: "maximumEnrollment_label").text }
   element(:actual_delivery_logistics) { |b| b.frm.table(id: "u130") } # Persistent ID needed!
   element(:requested_delivery_logistics) { |b| b.frm.table(id: "u235") } # Persistent ID needed!
+  value(:waitlists_active?) { |b| b.frm.div(data_label: "Waitlist Active").span(text: "Yes").exists? }
+  value(:waitlists_processing) { |b| b.frm.div(data_label: "Waitlist Processing").span(index: 2).text }
+  value(:waitlists_max_size) { |b| b.frm.div(data_label: "Waitlist Max Size").span(index: 2).text }
+  value(:waitlists_allow_holds?) { |b| b.frm.div(data_label: "Allow Holds in Waitlist").span(text: "Yes").exists? }
+
   value(:state) { |b| b.frm.span(id: "u77").text } # Persistent ID needed!
   value(:requires_evaluation) { |b| b.frm.span(id: "u86").text } # Persistent ID needed!
   value(:honors_offering) { |b| b.frm.span(id: "u95").text } # Persistent ID needed!

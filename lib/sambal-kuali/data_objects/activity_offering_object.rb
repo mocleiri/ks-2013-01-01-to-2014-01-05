@@ -44,6 +44,8 @@ class ActivityOffering
                 :colocate_shared_enrollment
   #type ActivityOffering object - generally set using options hash
   attr_accessor :parent_course_offering
+  #type Waitlist object - generally set using options hash
+  attr_accessor :waitlist_config
 
   # [String]
   OFFERED_STATUS = "Offered"
@@ -71,6 +73,7 @@ class ActivityOffering
   #    :colocate_ao_list => [],
   #    :colocate_shared_enrollment => false,
   #    :subterm => "None"
+  #    :waitlist_config => (make Waitlist)
   #  }
   # some basic e.g. list/hash values:
   # :seat_pool_list =>  {"random"=> (make SeatPool)}
@@ -103,7 +106,8 @@ class ActivityOffering
         :create_by_copy => nil, #if true create copy using :ao_code
         :colocate_ao_list => [],
         :colocate_shared_enrollment => false,
-        :subterm => nil
+        :subterm => nil,
+        :waitlist_config => (make Waitlist)
     }
 
     options = defaults.merge(opts)
@@ -210,7 +214,8 @@ class ActivityOffering
         :honors_course => @honors_course,
         :colocate_ao_list => @colocate_ao_list,
         :colocate_shared_enrollment => @colocate_shared_enrollment,
-        :subterm => @subterm
+        :subterm => @subterm,
+        :waitlist_config => @waitlist_config
     }
 
     edit(init)
@@ -247,20 +252,30 @@ class ActivityOffering
   #   additional opts :edit_already_started (bool), :send_to_scheduler (bool) :TODO :defer_save
   def edit opts={}
 
-    on(ManageCourseOfferings).edit @code unless opts[:edit_already_started]
+    defaults = {
+        :defer_save => true,
+        :edit_already_started => false,
+        :send_to_scheduler => false
+    }
+    options = defaults.merge(opts)
 
-    edit_code opts
-    edit_subterm opts
-    edit_colocation opts
-    edit_max_enrollment_no_colocation opts
-    edit_requested_delivery_logistics opts
-    edit_course_url opts
-    edit_evaluation opts
-    edit_honors_course opts
-    edit_personnel_list opts
-    edit_seat_pool_list opts
+    on(ManageCourseOfferings).edit @code unless options[:edit_already_started]
 
-    on(ActivityOfferingMaintenance).send_to_scheduler if opts[:send_to_scheduler]
+    edit_code options
+    edit_subterm options
+    edit_colocation options
+    edit_max_enrollment_no_colocation options
+    edit_requested_delivery_logistics options
+    edit_course_url options
+    edit_evaluation options
+    edit_honors_course options
+    edit_personnel_list options
+    edit_seat_pool_list options
+    edit_waitlist_config options
+
+    on(ActivityOfferingMaintenance).send_to_scheduler if options[:send_to_scheduler]
+    self.save unless options[:defer_save]
+
   end #END: edit
 
   # PRIVATE helper methods for edit()
@@ -333,6 +348,7 @@ class ActivityOffering
     end
 
   end #END: edit_colocation
+  private :edit_colocation
 
   def edit_break_colocation opts={}
 
@@ -341,6 +357,7 @@ class ActivityOffering
     }
 
   end #END: edit_break_colocation
+  private :edit_break_colocation
 
   def edit_max_enrollment_no_colocation opts={}
 
@@ -357,6 +374,7 @@ class ActivityOffering
     end
 
   end #END: edit_max_enrollment_no_colocation
+  private :edit_max_enrollment_no_colocation
 
   def edit_requested_delivery_logistics opts={}
 
@@ -375,6 +393,7 @@ class ActivityOffering
     end
 
   end #END: edit_request_delivery_logistics
+  private :edit_requested_delivery_logistics
 
   def edit_course_url opts={}
 
@@ -386,6 +405,7 @@ class ActivityOffering
     @course_url = opts[:course_url]
 
   end #END: edit_course_url
+  private :edit_course_url
 
   def edit_evaluation opts={}
 
@@ -404,6 +424,7 @@ class ActivityOffering
     @requires_evaluation =  opts[:requires_evaluation]
 
   end #END: edit_evaluation
+  private :edit_evaluation
 
   def edit_honors_course opts={}
 
@@ -422,6 +443,7 @@ class ActivityOffering
     @honors_course = opts[:honors_course]
 
   end #END: edit_honors_course
+  private :edit_honors_course
 
   def edit_personnel_list opts={}
 
@@ -436,6 +458,7 @@ class ActivityOffering
     @personnel_list = opts[:personnel_list]
 
   end #END: edit_personnel_list
+  private :edit_personnel_list
 
   def edit_seat_pool_list opts={}
 
@@ -451,16 +474,15 @@ class ActivityOffering
     end
 
   end #END: edit_seat_pool_list
+  private  :edit_seat_pool_list
 
-  private :edit_colocation,
-          :edit_break_colocation,
-          :edit_max_enrollment_no_colocation,
-          :edit_requested_delivery_logistics,
-          :edit_course_url,
-          :edit_evaluation,
-          :edit_honors_course,
-          :edit_personnel_list,
-          :edit_seat_pool_list
+  def edit_waitlist_config opts={}
+
+    return nil if opts[:waitlist_config].nil?
+    opts[:waitlist_config].edit
+
+  end #END: edit_waitlist_config
+  private :edit_waitlist_config
 
   def add_personnel person
     person.add
@@ -474,7 +496,7 @@ class ActivityOffering
 
   #completes activity offering edit operation
   #this is a separate step from edit as it allows validation steps to occur during the edit process
-  def save()
+  def save
     on ActivityOfferingMaintenance do |page|
       page.submit
     end
@@ -1245,4 +1267,92 @@ class DeliveryLogistics
     end
   end
 
+end
+
+# stores test data for creating/editing and validating waitlist data and provides convenience methods for navigation and data entry
+#
+# Waitlist is contained in ActivityOffering
+#
+# class attributes are initialized with default data unless values are explicitly provided
+#
+# Typical usage: (with optional setting of explicit data value in [] )
+#
+# waitlist = make Waitlist, :=> "user1", :affiliation =>"Instructor"
+#
+# @activity_offering.edit_offering :affiliated_person_list => personnel_list
+#
+#create generally called from ActivityOffering/CourseOffering class
+# Note the use of the ruby options hash pattern re: setting attribute values
+class Waitlist
+  include Foundry
+  include DataFactory
+  include DateFactory
+  include StringFactory
+  include Workflows
+
+  #generally set using options hash
+  attr_accessor :enabled,
+                :type, #Confirmation, Automatic, Manual
+                :limit_size, #0 means not enabled
+                :allow_hold_list
+
+  # provides default data:
+  # defaults = {
+  #    :enabled => false, #must be enabled for parent_course_offering
+  #    :type => "Automatic",
+  #    :limit_size => 0
+  #    :allow_hold_list => false
+  # }
+  # initialize is generally called using TestFactory Foundry .make or .create methods
+  def initialize(browser, opts={})
+    @browser = browser
+
+    defaults = {
+        :enabled => true,
+        :type => "Automatic",  #Automatic, Confirmation, Manual
+        :limit_size => 0,
+        :allow_hold_list => false
+    }
+
+    set_options(defaults.merge(opts))
+  end
+
+  # edits waitlist options based on instance vars
+  #
+  #  @param opts [Hash] key => value for attribute to be updated
+  def edit
+
+    on ActivityOfferingMaintenance do |page|
+      @enabled ? page.waitlist_checkbox.set : page.waitlist_checkbox.clear
+    end
+
+    return unless @enabled
+
+    on ActivityOfferingMaintenance do |page|
+      case @type
+        when "Automatic"
+          page.waitlist_automatic_radio.set
+        when "Confirmation"
+          page.waitlist_confirmation_radio.set
+        when "Manual"
+          page.waitlist_manual_radio.set
+        else
+          raise "error: '#{opts[:type]}' waitlist type not found"
+      end
+    end
+
+
+    on ActivityOfferingMaintenance do |page|
+      if @limit_size > 0
+        page.waitlist_limit_checkbox.set
+        page.waitlist_limit.set @limit_size
+      else
+        page.waitlist_limit_checkbox.clear
+      end
+    end
+
+    on ActivityOfferingMaintenance do |page|
+      @allow_hold_list ? page.waitlist_allow_hold_checkbox.set : page.waitlist_allow_hold_checkbox.clear
+    end
+  end
 end

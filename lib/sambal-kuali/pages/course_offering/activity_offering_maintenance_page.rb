@@ -1,6 +1,8 @@
-class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
+class ActivityOfferingMaintenance < BasePage
 
-  #expected_title /Kuali :: Edit Activity Offering/
+  wrapper_elements
+  validation_elements
+  frame_element
 
   expected_element :mainpage_section
 
@@ -70,6 +72,18 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   element(:mainpage_section){|b| b.frm.div(id:"ActivityOffering-MaintenanceView")}
 
+  element(:actual_logistics_div) { |b| b.frm.div(id: /^ActivityOffering-DeliveryLogistic.*-Actuals$/) }
+  element(:actual_logistics_table) { |b| b.actual_logistics_div.table() }
+
+  TBA_COLUMN = 0
+  DAYS_COLUMN = 1
+  ST_TIME_COLUMN = 2
+  END_TIME_COLUMN = 3
+  FACILITY_COLUMN = 4
+  ROOM_COLUMN = 5
+  FEATURES_COLUMN = 6
+  LOGISTICS_ACTION_COLUMN = 7
+
   element(:add_logistics_div) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-New") }
   element(:add_tba){ |b|b.add_logistics_div.div(data_label: "TBA").checkbox()}
   element(:add_days) { |b| b.add_logistics_div.div(data_label: "Days").text_field() }
@@ -93,8 +107,48 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
 
   element(:delete_requested_delivery_logistics_button) { |b| b.requested_logistics_table.button(text: "delete") } #TODO: identify button by row (days + start_time)
   action(:delete_requested_delivery_logistics) { |b| b.delete_requested_delivery_logistics_button.click; b.loading.wait_while_present }
+  element(:requested_logistics_div) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-Requested") }
+  element(:requested_logistics_table) { |b| b.requested_logistics_div.table() }
 
+  def self.adl_table_accessor_maker(method_name, column)
+    define_method method_name.to_s do |row|
+      row.cells[column].text()
+    end
+  end
+
+  adl_table_accessor_maker :get_actual_logistics_tba, TBA_COLUMN
+  adl_table_accessor_maker :get_actual_logistics_days, DAYS_COLUMN
+  adl_table_accessor_maker :get_actual_logistics_start_time, ST_TIME_COLUMN
+  adl_table_accessor_maker :get_actual_logistics_end_time, END_TIME_COLUMN
+  adl_table_accessor_maker :get_actual_logistics_facility, FACILITY_COLUMN
+  adl_table_accessor_maker :get_actual_logistics_room, ROOM_COLUMN
+  adl_table_accessor_maker :get_actual_logistics_features, FEATURES_COLUMN
+
+  def self.rdl_table_accessor_maker(method_name, column)
+    define_method method_name.to_s do |row|
+      row.cells[column].text()
+    end
+  end
+
+  rdl_table_accessor_maker :get_requested_logistics_tba, TBA_COLUMN
+  rdl_table_accessor_maker :get_requested_logistics_days, DAYS_COLUMN
+  rdl_table_accessor_maker :get_requested_logistics_start_time, ST_TIME_COLUMN
+  rdl_table_accessor_maker :get_requested_logistics_end_time, END_TIME_COLUMN
+  rdl_table_accessor_maker :get_requested_logistics_facility, FACILITY_COLUMN
+  rdl_table_accessor_maker :get_requested_logistics_room, ROOM_COLUMN
+  rdl_table_accessor_maker :get_requested_logistics_features, FEATURES_COLUMN
+
+  element(:personnel_div) { |b| b.frm.div(id: "ao-personnelgroup") }
+  element(:personnel_table) { |b| b.frm.personnel_div.table() }
+  ID_COLUMN = 0
+  PERS_NAME_COLUMN = 1
+  AFFILIATION_COLUMN = 2
+  INST_EFFORT_COLUMN = 3
   PERS_ACTION_COLUMN = 4
+
+  def get_affiliation(id)
+    target_person_row(id).cells[AFFILIATION_COLUMN].text
+  end
 
   element(:personnel_id) { |b| b.personnel_div.text_field(name: "document.newMaintainableObject.dataObject.instructors[0].offeringInstructorInfo.personId") }
   element(:personnel_name) { |b| b.personnel_div.text_field(name: "document.newMaintainableObject.dataObject.instructors[0].offeringInstructorInfo.personName") }
@@ -155,8 +209,45 @@ class ActivityOfferingMaintenance < ActivityOfferingMaintenanceBase
     loading.wait_while_present
   end
 
+  value(:no_waitlists_msg) { |b| b.frm.div(id: "ActivityOfferingEdit-NoWaitlist").span(text: /Waitlists are deactivated/).text }
+  element(:waitlist_section) { |b| b.frm.div(id: "ActivityOfferingEdit-WailtList-Info-Section") }
+  element(:waitlist_checkbox) { |b| b.frm.checkbox(id: "ActivityOfferingEdit-HasWaitlist_control") }
+  element(:waitlist_confirmation_radio) { |b| b.waitlist_section.radio(index: 0) }
+  element(:waitlist_automatic_radio) { |b| b.waitlist_section.radio(index: 1) }
+  element(:waitlist_manual_radio) { |b| b.waitlist_section.radio(index: 2) }
+  element(:waitlist_limit_checkbox) { |b| b.waitlist_section.div(data_label: "Limit Waitlist Size").checkbox }
+  element(:waitlist_limit) { |b| b.waitlist_section.text_field(id: "u100716_control") }
+  element(:waitlist_allow_hold_checkbox) { |b| b.waitlist_section.div(data_label: "Allow Hold List").checkbox }
 
+  def waitlist_processing_type
+    radio_list = waitlist_section.div(data_label: "Waitlist Type").fieldset.radios
+    radio_list.each do |radio|
+      return radio.parent.label.text if radio.set?
+    end
+  end
+
+  PRIORITY_COLUMN = 0
+  SEATS_COLUMN = 1
+  PERCENT_COLUMN = 2
+  POP_NAME_COLUMN = 3
+  EXP_MILESTONE_COLUMN = 4
   SEATS_ACTION_COLUMN = 5
+
+  def pool_percentage(pop_name)
+    target_pool_row(pop_name).div(id: /seatLimitPercent_line/).text
+  end
+
+  value(:seat_pool_count) { |b| b.frm.div(data_label: "Seat Pools").span(index: 2).text }
+  value(:seats_remaining_span) { |b| b.frm.div(id: "seatsRemaining").span(index: 2) }
+  value(:seats_remaining) { |b| b.seats_remaining_span.text }
+  value(:percent_seats_remaining) { |b| b.seats_remaining_span.text[/\d+(?=%)/] }
+  value(:seat_count_remaining) { |b| b.seats_remaining_span.text[/\d+(?=.S)/] }
+  value(:max_enrollment_count) { |b| b.frm.div(id: "seatsRemaining").text[/\d+(?=\))/] }
+  value(:seatpoolname){|b| b.frm.div(id: "ao-seatpoolgroup").table.rows[1].cells[3].text_field.value}
+
+  def target_person_row(id)
+    personnel_table.row(text: /#{Regexp.escape(id.to_s)}/)
+  end
 
   #seat pool validation elements
   element(:seatpool_error_list) { |b| b.frm.ul(class: "uif-validationMessagesList") }
