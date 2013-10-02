@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
+import com.sigmasys.kuali.ksa.model.Memo;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
@@ -20,6 +21,8 @@ public class ThirdPartyMemberModel {
     private ThirdPartyPlan plan;
 
     private ThirdPartyTransferDetail transferDetail;
+
+    private MemoModel memo;
 
     public ThirdPartyPlanMember getPlanMember() {
         return planMember;
@@ -43,6 +46,13 @@ public class ThirdPartyMemberModel {
 
     public void setTransferDetail(ThirdPartyTransferDetail transferDetail) {
         this.transferDetail = transferDetail;
+    }
+
+    public Long getTransferDetailId() {
+        if(this.transferDetail != null) {
+            return transferDetail.getId();
+        }
+        return 0L;
     }
 
     public Date getInitiationDate() {
@@ -81,4 +91,15 @@ public class ThirdPartyMemberModel {
         return null;
     }
 
+    public MemoModel getMemo() {
+        if(memo == null) {
+            memo = new MemoModel(new Memo());
+            memo.setEffectiveDate(new Date());
+        }
+        return memo;
+    }
+
+    public void setMemo(MemoModel memo) {
+        this.memo = memo;
+    }
 }

@@ -1,7 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.UserPaymentPlanForm;
-//import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
+import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+//import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 
 @Controller
 @RequestMapping(value = "/userPaymentPlanView")
@@ -133,6 +135,53 @@ public class UserPaymentPlanController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=reverseThirdPartyPlan")
+    public ModelAndView reverseThirdPartyPlan(@ModelAttribute("KualiForm") UserPaymentPlanForm form, BindingResult result,
+                                                HttpServletRequest request, HttpServletResponse response) {
+
+        String transferDetailIdString = request.getParameter("actionParameters[transferDetailId]");
+        Long transferDetailId;
+
+        try {
+            transferDetailId = Long.parseLong(transferDetailIdString);
+        } catch(NumberFormatException e) {
+            String errorMessage = transferDetailIdString + " is not a valid Third Party Transfer Detail Id";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        if(transferDetailId == 0L) {
+            String errorMessage = transferDetailIdString + " is not a valid Third Party Transfer Detail Id";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        List<ThirdPartyMemberModel> models = form.getThirdPartyMembers();
+
+        String memoText = null;
+
+        // Need to loop through and find the right one to get the memo text
+        for(ThirdPartyMemberModel model : models) {
+            if(transferDetailId.equals(model.getTransferDetail().getId())) {
+                memoText = model.getMemo().getText();
+                break;
+            }
+        }
+
+        if(memoText == null || "".equals(memoText)) {
+            String errorMessage = "Memo description is required when reversing a Third Party Payment Plan.  Plan not reversed.";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        thirdPartyTransferService.reverseThirdPartyTransfer(transferDetailId, memoText);
+
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan reversed");
+
+        populateForm(form);
+
+        return getUIFModelAndView(form);
+    }
 
     private void populateForm(UserPaymentPlanForm form) {
         String userId = form.getAccount().getId();
@@ -141,7 +190,7 @@ public class UserPaymentPlanController extends GenericSearchController {
         form.setFlagObjects(informationService.getFlags(userId));
         form.setHolds(AccountUtils.getHolds(userId));
 
-        /*List<ThirdPartyMemberModel> memberModels = new ArrayList<ThirdPartyMemberModel>();
+        List<ThirdPartyMemberModel> memberModels = new ArrayList<ThirdPartyMemberModel>();
 
         List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlansByMember(userId);
 
@@ -149,6 +198,7 @@ public class UserPaymentPlanController extends GenericSearchController {
             ThirdPartyMemberModel model = new ThirdPartyMemberModel();
             model.setPlan(plan);
             ThirdPartyPlanMember member = thirdPartyTransferService.getThirdPartyPlanMember(plan.getId(), userId);
+            member.getDirectChargeAccount().getCompositeDefaultPersonName();
             model.setPlanMember(member);
 
             if(member.isExecuted()) {
@@ -159,7 +209,7 @@ public class UserPaymentPlanController extends GenericSearchController {
             memberModels.add(model);
         }
 
-        form.setThirdPartyMembers(memberModels);*/
+        form.setThirdPartyMembers(memberModels);
 
     }
 
