@@ -32,31 +32,26 @@ Feature: EC.Waitlists
     Then the limit waitlist size is successfully updated
 
   Scenario: WL 1.7.2 Successfully modify the waitlist limit size
-    Given I manage an activity offering with waitlists enabled
-    And I set the limit waitlist size
+    Given I manage an activity offering with the limit waitlist size set
     When I modify the limit waitlist size
     Then the limit waitlist size is successfully updated
 
   Scenario: WL 1.7.3 Successfully remove the waitlist limit size
-    Given I manage an activity offering with waitlists enabled
-    And I set the limit waitlist size
+    Given I manage an activity offering with the limit waitlist size set
     When I remove the limit waitlist size
-    Then the limit waitlist size is successfully updated to unlimited #need to check view AO
+    Then the limit waitlist size is successfully updated to unlimited
 
-  Scenario: WL 1.8.1 Successfully set the waitlist processing type to manual
-    Given I manage an activity offering with waitlists enabled
-    And the processing type is automatic
-    Then I can update the processing type to manual
+  Scenario: WL 1.8.1 Successfully set the waitlist processing type to Manual
+    Given I manage an activity offering with waitlists processing type set to Automatic
+    Then I can update the processing type to Manual
 
-  Scenario: WL 1.9.1 Successfully set the WL processing type to automatic
-    Given I manage an activity offering with waitlists enabled
-    And the processing type is semi-automatic
-    Then I can update the processing type to automatic
+  Scenario: WL 1.9.1 Successfully set the WL processing type to Automatic
+    Given I manage an activity offering with waitlists processing type set to Confirmation
+    Then I can update the processing type to Automatic
 
-  Scenario: WL 1.10.1 Successfully set the WL processing type to semi-automatic
-    Given I manage an activity offering with waitlists enabled
-    And the processing type is automatic
-    Then I can update the processing type to semi-automatic
+  Scenario: WL 1.10.1 Successfully set the WL processing type to Confirmation
+    Given I manage an activity offering with waitlists processing type set to Automatic
+    Then I can update the processing type to Confirmation
 
   Scenario: WL 1.11.1 Successfully enable the waitlist holds option
     Given I manage an activity offering with waitlists enabled
@@ -64,8 +59,7 @@ Feature: EC.Waitlists
     Then the allow holds list option is successfully updated
 
   Scenario: WL 1.11.2 Successfully disable the waitlist holds option
-    Given I manage an activity offering with waitlists enabled
-    And the allow holds list option is enabled
+    Given I manage an activity offering with waitlists the allow holds list option is enabled
     When I disable the allow holds list option
     Then the allow holds list option is successfully updated
 

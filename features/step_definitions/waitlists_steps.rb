@@ -12,6 +12,48 @@ Given /^I manage an activity offering with waitlists enabled$/ do
   @activity_offering.save
 end
 
+Given /^I manage an activity offering with the limit waitlist size set$/ do
+  @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => true
+  waitlist_config = make Waitlist, :limit_size => 30
+  @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering, :waitlist_config => waitlist_config
+  @activity_offering.save
+
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_max_size.should == "Limit to 30"
+    page.close
+  end
+end
+
+Given /^I manage an activity offering with waitlists processing type set to (.*)$/ do |processing_type|
+  @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => true
+  waitlist_config = make Waitlist, :type => processing_type
+  @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering, :waitlist_config => waitlist_config
+  @activity_offering.save
+
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_processing.should == processing_type
+    page.close
+  end
+end
+
+Given /^I can update the processing type to (.*)$/ do |processing_type|
+  waitlist = @activity_offering.waitlist_config
+  waitlist.type = processing_type
+  @activity_offering.edit :waitlist_config => waitlist
+  @activity_offering.save
+
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_processing.should == processing_type
+    page.close
+  end
+end
+
 Then /^I make changes to the default waitlist configuration$/ do
   waitlist = @activity_offering.waitlist_config
   waitlist.type = "Manual"
@@ -24,6 +66,34 @@ end
 Then /^I set the limit waitlist size$/ do
   waitlist = @activity_offering.waitlist_config
   waitlist.limit_size = 25
+  @activity_offering.edit :waitlist_config => waitlist
+  @activity_offering.save
+end
+
+Then /^I remove the limit waitlist size$/ do
+  waitlist = @activity_offering.waitlist_config
+  waitlist.limit_size = 0
+  @activity_offering.edit :waitlist_config => waitlist
+  @activity_offering.save
+end
+
+Then /^I modify the limit waitlist size$/ do
+  waitlist = @activity_offering.waitlist_config
+  waitlist.limit_size = 50
+  @activity_offering.edit :waitlist_config => waitlist
+  @activity_offering.save
+end
+
+Then /^I enable the allow holds list option$/ do
+  waitlist = @activity_offering.waitlist_config
+  waitlist.allow_hold_list = true
+  @activity_offering.edit :waitlist_config => waitlist
+  @activity_offering.save
+end
+
+Then /^I disable the allow holds list option$/ do
+  waitlist = @activity_offering.waitlist_config
+  waitlist.allow_hold_list = false
   @activity_offering.edit :waitlist_config => waitlist
   @activity_offering.save
 end
@@ -96,6 +166,26 @@ Given /^the waitlist option cannot be enabled for the activity offering$/ do
   end
 end
 
+Given /^the limit waitlist size is successfully updated$/ do
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_active?.should be_true
+    page.waitlists_max_size.should == "Limit to #{@activity_offering.waitlist_config.limit_size}"
+    page.close
+  end
+end
+
+Given /^the allow holds list option is successfully updated$/ do
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_active?.should be_true
+    page.waitlists_allow_holds?.should == @activity_offering.waitlist_config.allow_hold_list
+    page.close
+  end
+end
+
 Given /^I re-enable the waitlists option for the activity offering the modified waitlist configuration is restored$/ do
   @activity_offering.edit
 
@@ -123,3 +213,25 @@ Given /^I (?:can )?disable the waitlists option for the activity offering$/ do
   end
 end
 
+Given /^the limit waitlist size is successfully updated to unlimited$/ do
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_max_size.should == "Unlimited"
+    page.close
+  end
+end
+
+Given /^I manage an activity offering with waitlists the allow holds list option is enabled$/ do
+  @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => true
+  waitlist_config = make Waitlist, :allow_hold_list => true
+  @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering, :waitlist_config => waitlist_config
+  @activity_offering.save
+
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_allow_holds?.should == true
+    page.close
+  end
+end

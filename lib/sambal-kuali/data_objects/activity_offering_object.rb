@@ -1309,7 +1309,7 @@ class Waitlist
 
     defaults = {
         :enabled => true,
-        :type => "Automatic",  #Automatic, Confirmation, Manual
+        :type => "Confirmation",  #Automatic, Confirmation, Manual
         :limit_size => 0,
         :allow_hold_list => false
     }
@@ -1340,7 +1340,6 @@ class Waitlist
           raise "error: '#{opts[:type]}' waitlist type not found"
       end
     end
-
 
     on ActivityOfferingMaintenance do |page|
       if @limit_size > 0
