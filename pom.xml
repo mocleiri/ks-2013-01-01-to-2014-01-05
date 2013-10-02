@@ -127,10 +127,10 @@
                                 <id>validate-dba-config</id>
                                 <phase>validate</phase>
                             </execution>
-                            <!--execution>
+                            <execution>
                                 <id>rice-reset-tables</id>
                                 <phase>initialize</phase>
-                            </execution-->
+                            </execution>
                             <execution>
                                 <id>ks-hold-reset-tables</id>
                                 <phase>initialize</phase>
