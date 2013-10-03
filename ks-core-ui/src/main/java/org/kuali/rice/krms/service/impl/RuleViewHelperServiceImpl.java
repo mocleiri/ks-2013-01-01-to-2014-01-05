@@ -276,14 +276,6 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
         //Rebuild the trees
         rule.setEditTree(this.getEditTreeBuilder().buildTree(rule));
         rule.setPreviewTree(this.getPreviewTreeBuilder().buildTree(rule));
-
-        //Also reset the logic expression. Should only be done after editTree is already built.
-        if (rule.getProposition() != null) {
-            rule.setLogicArea(PropositionTreeUtil.configureLogicExpression(rule.getPropositionEditor()));
-        } else {
-            rule.setLogicArea(StringUtils.EMPTY);
-        }
-
     }
 
     /**
@@ -304,7 +296,7 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
     }
 
     @Override
-    public Tree<CompareTreeNode, String> buildCompareTree(RuleEditor original, RuleEditor compare) throws Exception {
+    public Tree<CompareTreeNode, String> buildCompareTree(RuleEditor original, RuleEditor compare) {
 
         //Build the Tree
         return this.getCompareTreeBuilder().buildTree(original, compare);
@@ -312,7 +304,7 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
     }
 
     @Override
-    public Tree<CompareTreeNode, String> buildMultiViewTree(RuleEditor coRuleEditor, RuleEditor cluRuleEditor) throws Exception {
+    public Tree<CompareTreeNode, String> buildMultiViewTree(RuleEditor coRuleEditor, RuleEditor cluRuleEditor) {
 
         //Build the Tree
         return this.getCompareTreeBuilder().buildTree(coRuleEditor, cluRuleEditor);
@@ -398,7 +390,7 @@ public class RuleViewHelperServiceImpl extends KSViewHelperServiceImpl implement
         } else if (originalSize > 0) {
 
             //Compare the compound propositions.
-            BeanPropertyComparator termComparator = new BeanPropertyComparator(Arrays.asList("name"));
+            BeanPropertyComparator termComparator = new BeanPropertyComparator(Arrays.asList("name","value"));
             for (int index = 0; index < originalSize; index++) {
                 if (termComparator.compare(original.get(index), compare.get(index)) != 0) {
                     return false;

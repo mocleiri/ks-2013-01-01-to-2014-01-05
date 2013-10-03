@@ -411,7 +411,7 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="ks.krad.widget.js"
-                                               value="https://svn.kuali.org/repos/student/enrollment/ks-enroll/trunk/ks-enroll-web/src/main/webapp/krad/scripts/ks.krad.widget.js"/>
+                                               value="https://svn.kuali.org/repos/student/enrollment/ks-core/trunk/ks-common/ks-common-web/src/main/webapp/krad/scripts/ks.krad.widget.js"/>
                                     </map>
                                 </property>
                             </bean>
@@ -419,7 +419,7 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="ks.jquery.bubblepopup.css"
-                                               value="https://svn.kuali.org/repos/student/enrollment/ks-enroll/trunk/ks-enroll-web/src/main/webapp/krad/plugins/tooltip/ks.jquery.bubblepopup.css"/>
+                                               value="https://svn.kuali.org/repos/student/enrollment/ks-core/trunk/ks-common/ks-common-web/src/main/webapp/plugins/tooltip/ks.jquery.bubblepopup.css"/>
                                     </map>
                                 </property>
                             </bean>
@@ -436,7 +436,7 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="UifFieldDefinitions.xml (Uif-InputField)"
-                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.2.0/krad/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifFieldDefinitions.xml"/>
+                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.3.0/rice-framework/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifFieldDefinitions.xml"/>
                                     </map>
                                 </property>
                             </bean>
@@ -444,7 +444,7 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="InputField.java"
-                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.2.0/krad/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/field/InputField.java"/>
+                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.3.0/rice-framework/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/field/InputField.java"/>
                                     </map>
                                 </property>
                             </bean>
@@ -452,7 +452,7 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="InputField.html"
-                                               value="http://site.origin.kuali.org/rice/2.2.0/apidocs/org/kuali/rice/krad/uif/field/InputField.html"/>
+                                               value="http://site.origin.kuali.org/rice/2.3.0/apidocs/org/kuali/rice/krad/uif/field/InputField.html"/>
                                     </map>
                                 </property>
                             </bean>
@@ -460,7 +460,7 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="Input Field TextArea Control"
-                                               value="http://site.kuali.org/rice/2.2.0/reference/html/KRAD_Guide.html#d6766e5054"/>
+                                               value="http://site.kuali.org/rice/2.3.0/reference/html/KRAD_Guide.html#d9198e5777"/>
                                     </map>
                                 </property>
                             </bean>

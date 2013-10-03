@@ -15,6 +15,7 @@
 
 package org.kuali.student.r2.core.scheduling.service.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.criteria.GenericQueryResults;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
@@ -61,6 +62,7 @@ import org.kuali.student.r2.core.scheduling.model.TimeSlotEntity;
 import org.kuali.student.r2.core.scheduling.service.SchedulingService;
 import org.kuali.student.r2.core.scheduling.service.transformer.ScheduleDisplayTransformer;
 import org.kuali.student.r2.core.scheduling.util.SchedulingServiceUtil;
+import org.kuali.student.r2.core.scheduling.util.TimeSlotCodeGenerator;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebParam;
@@ -88,6 +90,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     private ScheduleDao scheduleDao;
     private TimeSlotDao timeSlotDao;
     private CriteriaLookupService criteriaLookupService;
+    private TimeSlotCodeGenerator timeSlotCodeGenerator;
 
     public AtpService getAtpService() {
         if(atpService == null){
@@ -584,6 +587,9 @@ public class SchedulingServiceImpl implements SchedulingService {
     public TimeSlotInfo createTimeSlot(String timeSlotTypeKey,  TimeSlotInfo timeSlotInfo,  ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
         TimeSlotEntity entity = new TimeSlotEntity(timeSlotInfo);
 
+        String tsCode = timeSlotCodeGenerator.generateTimeSlotCode(entity.getTimeSlotType());
+        entity.setName(tsCode);
+
         entity.setTimeSlotType(timeSlotTypeKey);
         entity.setEntityCreated(contextInfo);
 
@@ -628,6 +634,17 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
+    public Boolean canUpdateTimeSlot(@WebParam(name = "timeSlotId") String timeSlotId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+
+        if(scheduleRequestDao.isExistsTimeSlot(timeSlotId) || scheduleDao.isExistsTimeSlot(timeSlotId)) {
+            return Boolean.FALSE;
+        }
+        else {
+            return Boolean.TRUE;
+        }
+    }
+
+    @Override
     public List<Integer> getValidDaysOfWeekByTimeSlotType(String timeSlotTypeKey,  ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         if(timeSlotTypeKey.equals(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD)) {
             return SchedulingServiceConstants.TIME_SLOT_DAYS_OF_WEEK_ACTIVITY_OFFERING_TYPE;
@@ -638,11 +655,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         else {
             throw new InvalidParameterException("No defined valid days of week for type: " + timeSlotTypeKey);
         }
-    }
-
-    @Override
-    public List<ScheduleBatchInfo> getScheduleBatchesForScheduleTransaction(String scheduleTransactionId,  ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -970,6 +982,14 @@ public class SchedulingServiceImpl implements SchedulingService {
         }
 
         return infoList;
+    }
+
+    public TimeSlotCodeGenerator getTimeSlotCodeGenerator() {
+        return timeSlotCodeGenerator;
+    }
+
+    public void setTimeSlotCodeGenerator(TimeSlotCodeGenerator timeSlotCodeGenerator) {
+        this.timeSlotCodeGenerator = timeSlotCodeGenerator;
     }
 
 }

@@ -21,25 +21,22 @@
     -->
 
     <bean id="KSTheme" abstract="true" parent="KSTheme-parentBean"/>
-    <bean id="KSTheme-parentBean" parent="Uif-KradTheme">
+    <bean id="KSTheme-parentBean" parent="Uif-BaseTheme">
         <property name="cssFiles">
             <list merge="true">
-                <value>ks-enroll/bootstrap/css/bootstrap.css</value>
-                <value>krad/min/css/krad_@{#ConfigProperties['rice.version']}.min.css</value>
-                <value>krad/css/ks/theme-krad.css</value>
-                <value>krad/css/ks/fss-theme-krad.css</value>
-                <value>ks-enroll/css/enroll.css</value>
-                <value>ks-enroll/css/ks-jquery.css</value>
-                <value>ks-enroll/css/link-tabs.css</value>
-                <!--
-                <value>ks-enroll/css/new_kualistudent.css</value>
-                -->
+                <value>plugins/tooltip/ks.jquery.bubblepopup.css</value>
+                <value>themes/ksboot/stylesheets/enroll.css</value>
+                <value>themes/ksboot/stylesheets/link-tabs.css</value>
             </list>
         </property>
+        <!--TODO: KSENROLL-9721: Need to create a confirmation dialog in browser as opposed to make a server side round trip-->
+        <!--We need to remove <value>themes/ksboot/scripts/krad.request.js</value> from the cript files after the rice fix-->
         <property name="scriptFiles">
             <list merge="true">
-                <value>ks-enroll/bootstrap/js/bootstrap.js</value>
-                <value>ks-enroll/scripts/enroll.js</value>
+                <value>themes/bootstrap/scripts/bootstrap.js</value>
+                <value>themes/ksboot/scripts/enroll.js</value>
+                <value>krad/scripts/ks.krad.override.js</value>
+                <value>themes/ksboot/scripts/krad.request.js</value>
                 <value>krad/scripts/ks.krad.widget.js</value>
             </list>
         </property>
@@ -51,6 +48,13 @@
         <property name="items">
             <list>
             </list>
+        </property>
+    </bean>
+
+    <!--TODO: KSENROLL-9721: Need to create a confirmation dialog in browser as opposed to make a server side round trip-->
+    <bean id="KS-Uif-Confirmation-Dialog" parent="Uif-Yes-No-DialogGroup">
+        <property name="onDialogResponseScript">
+            <null/>
         </property>
     </bean>
 
@@ -66,6 +70,11 @@
             <bean parent="Uif-GlobalApplicationHeader-parentBean"
                   p:template="/ks-common/WEB-INF/ftl/ksApplicationHeader.ftl" p:render="true"
                   p:templateName="ks_applicationHeader"/>
+        </property>
+        <property name="dialogs">
+            <list>
+                <ref bean="KS-Uif-Confirmation-Dialog"/>
+            </list>
         </property>
         <property name="header.cssClasses">
             <list merge="true">
@@ -132,6 +141,7 @@
         <property name="theme">
             <bean parent="KSTheme"/>
         </property>
+        <property name="stickyFooter" value="true"/> <!-- UX wants all Inquiries to have Sticky Footers -->
         <!--TODO: check with UX, do we need to set page.header as KS-Uif-HeaderOne-Empty by default? -->
         <!--<property name="page.header">-->
             <!--<ref bean="KS-Uif-HeaderOne-Empty" />-->
@@ -378,12 +388,6 @@
         </property>
     </bean>
 
-    <!--<bean id="KS-Uif-HorizontalBoxGroup-NavigationActionLinkSection" parent="KS-Uif-HorizontalBoxGroup-NavigationActionLinkSection-parent"/>-->
-    <!--<bean id="KS-Uif-HorizontalBoxGroup-NavigationActionLinkSection-parent" parent="Uif-NavigationActionLink" class="org.kuali.student.common.uif.container.KSNavigationLineActionLinkSeperatorerator" abstract="true" scope="prototype">-->
-        <!--<property name="template" value="/ks-enroll/WEB-INF/ftl/ksNavigationActionLinkSection.ftl"/>-->
-        <!--<property name="templateName" value="ks_NavigationActionLinkSection"/>-->
-    <!--</bean>-->
-
     <bean id="KS-Uif-TableCollectionSubSection-WithActionSeperator" parent="KS-Uif-TableCollectionSubSection-WithActionSeperator-parent"/>
     <bean id="KS-Uif-TableCollectionSubSection-WithActionSeperator-parent" parent="Uif-TableCollectionSubSection" class="org.kuali.student.common.uif.container.KSTableCollectionWithLineActionLinkSeperator" abstract="true" scope="prototype">
         <property name="lineActionSeparator" value="&#160;&#160;|&#160;&#160;"/>
@@ -401,15 +405,6 @@
         <!--<property name="template" value="/krad/WEB-INF/jsp/templates/field/actionField.jsp"/>-->
         <!--<property name="cssClasses" value="ui-priority-secondary-sm"/>-->
     <!--</bean>-->
-
-    <!--<bean id="KS-TableCollectionSection" parent="KS-TableCollectionSection-parentBean"/>
-      <bean id="KS-TableCollectionSection-parentBean" parent="Uif-TableCollectionSection" class="org.kuali.student.common.uif.container.KSCollectionGroup">
-          <property name="template" value="/ks-enroll/WEB-INF/ftl/ksCollectionGroup.ftl"/>
-          <property name="templateName" value="ks_collectionGroup"/>
-          &lt;!&ndash;<property name="collectionLookup">
-            <null/>
-          </property>&ndash;&gt;
-      </bean>-->
 
     <!-- Added by David Yin -->
     <!-- For breadcrumb customization -->
@@ -571,14 +566,7 @@
           p:id="@{#collectionGroup.id}_add"/>
 
     <bean id="KS-Uif-PrimaryActionButton" abstract="true" parent="KS-Uif-PrimaryActionButton-parentBean"/>
-    <bean id="KS-Uif-PrimaryActionButton-parentBean" parent="Uif-PrimaryActionButton" p:id="ks-uif-primaryActionButton" p:buttonSize="default" class="org.kuali.student.common.uif.element.KSUifActionButton">
-        <property name="cssClasses">
-            <list merge="false">
-                <value>btn</value>
-                <value>btn-primary</value>
-            </list>
-        </property>
-    </bean>
+    <bean id="KS-Uif-PrimaryActionButton-parentBean" parent="Uif-PrimaryActionButton" />
 
     <bean id="KS-Uif-ActionLink" parent="KS-Uif-ActionLink-parentBean" abstract="true"/>
     <bean id="KS-Uif-ActionLink-parentBean" parent="Uif-ActionLink" class="org.kuali.student.common.uif.element.KSUifActionButton">
@@ -591,13 +579,7 @@
     </bean>
 
     <bean id="KS-Uif-SecondaryActionButton" abstract="true" parent="KS-Uif-SecondaryActionButton-parentBean"/>
-    <bean id="KS-Uif-SecondaryActionButton-parentBean" parent="Uif-SecondaryActionButton" p:id="ks-uif-secondaryActionButton" p:buttonSize="default" class="org.kuali.student.common.uif.element.KSUifActionButton">
-        <property name="cssClasses">
-            <list merge="false">
-                <value>btn</value>
-            </list>
-        </property>
-    </bean>
+    <bean id="KS-Uif-SecondaryActionButton-parentBean" parent="Uif-SecondaryActionButton" />
 
     <!-- This is used to display the view and page files names in the HTML so devs can find them -->
     <bean id="KS-SourceFile-Comment-Group" parent="Uif-HorizontalBoxGroup">
@@ -608,6 +590,34 @@
             </list>
         </property>
     </bean>
+
+    <bean id="KS-Uif-Disclosure-TableSubCollection-WithinSubSection-BottomAddLine-ExamPeriod" parent="KS-Uif-Disclosure-TableSubCollection-WithinSubSection-BottomAddLine-ExamPeriod-parent"/>
+    <bean id="KS-Uif-Disclosure-TableSubCollection-WithinSubSection-BottomAddLine-ExamPeriod-parent" parent="Uif-Disclosure-TableSubCollection-WithinSubSection" abstract="true" scope="prototype">
+        <property name="collectionLookup">
+            <null/>
+        </property>
+        <property name="headerText" value="" />
+        <property name="layoutManager.renderSequenceField" value="false" />
+        <property name="layoutManager.separateAddLine" value="false" />
+        <property name="layoutManager.applyDefaultCellWidths" value="false" />
+        <property name="layoutManager.applyAlternatingRowStyles" value="false" />
+        <property name="renderAddBlankLineButton" value="true" />
+        <property name="addLinePlacement" value="BOTTOM" />
+        <property name="layoutManager.style" value="width: 100%; display:block;"/>
+        <property name="layoutManager.richTable.render" value="false"/>
+        <property name="addBlankLineAction">
+            <bean parent="KS-BottomAddLine">
+                <property name="style" value="margin-top:20px;"/>
+            </bean>
+        </property>
+        <property name="lineActions">
+            <list>
+                <bean parent="Uif-DeleteLineAction"/>
+            </list>
+        </property>
+    </bean>
+
+
 
     <bean id="KS-TableCollectionSubSection-BottomAddLine" parent="KS-TableCollectionSubSection-BottomAddLine-parent"/>
 
@@ -623,7 +633,6 @@
         <property name="renderAddBlankLineButton" value="true" />
         <property name="addLinePlacement" value="BOTTOM" />
         <property name="layoutManager.style" value="width: 100%; display:block;"/>
-        <property name="addBlankLineAction.style" value="margin-top:20px;"/>
         <property name="layoutManager.richTable.render" value="false"/>
         <!--<property name="addLineActions">
             <list>
@@ -632,7 +641,9 @@
             </list>
         </property>-->
         <property name="addBlankLineAction">
-            <ref bean="KS-BottomAddLine"/>
+            <bean parent="KS-BottomAddLine">
+                <property name="style" value="margin-top:20px;"/>
+            </bean>
         </property>
         <property name="lineActions">
             <list>
@@ -654,4 +665,52 @@
         </property>
         <property name="style" value="margin-top:30px; margin-left:-150px; margin-bottom:15px"/>
     </bean>
+
+    <!-- TODO: KSENROLL-8478 temporarily overriding KRAD's Inquiry as it was messing up the hover over. should be resolved in Rice 2.3.1 -->
+    <bean id="KS-Uif-Inquiry" parent="KS-Uif-Inquiry-parent"/>
+    <bean id="KS-Uif-Inquiry-parent" parent="Uif-Inquiry" abstract="true" scope="prototype" class="org.kuali.student.common.uif.element.KSUifInquiry"/>
+
+
+    <bean id="KS-Uif-RichTable" parent="KS-Uif-RichTable-parent"/>
+    <bean id="KS-Uif-RichTable-parent" parent="Uif-RichTable-parentBean" abstract="true"
+            class="org.kuali.student.common.uif.widget.KSRichTable" scope="prototype">
+        <property name="templateOptions">
+            <map merge="true">
+                <entry key="bPaginate" value="false"/>
+            </map>
+        </property>
+         <property name="showExportOption" value="false"/>
+    </bean>
+
+    <bean id="KS-Uif-PagedRichTable" parent="KS-Uif-PagedRichTable-parent"/>
+    <bean id="KS-Uif-PagedRichTable-parent" parent="Uif-PagedRichTable-parentBean" abstract="true" scope="prototype">
+        <property name="templateOptions">
+            <map merge="true">
+                <!--<entry key="aaSorting" value="[[1,'asc']]"/>-->
+                <entry key="bPaginate" value="true"/>
+                <entry key="sPaginationType" value="full_numbers"/>
+                <!-- bFilter removes "Search" field: -->
+                <entry key="bFilter" value="false"/>
+                <!-- bInfo removes "Page x of y" text: -->
+                <entry key="bInfo" value="false"/>
+                <!-- bLengthChange removes "Show [10 v] entries" drop-down: -->
+                <entry key="bLengthChange" value="false"/>
+                <entry key="oLanguage" value="
+                            {
+                                'oPaginate':
+                                {
+                                    'sFirst' : '&amp;#8249; &lt;i class=&#34;visually-hidden&#34;&gt;First&lt;/i&gt;',
+                                    'sPrevious' : '&amp;#8249; &lt;i class=&#34;visually-hidden&#34;&gt;Previous&lt;/i&gt;',
+                                    'sNext' : '&amp;#8250; &lt;i class=&#34;visually-hidden&#34;&gt;Next&lt;/i&gt;',
+                                    'sLast' : '&amp;#8250; &lt;i class=&#34;visually-hidden&#34;&gt;Last&lt;/i&gt;'
+                                }
+                            }"
+                        />
+            </map>
+        </property>
+        <property name="showExportOption" value="false"/>
+    </bean>
+
+
+
 </beans>

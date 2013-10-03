@@ -61,20 +61,24 @@
         <property name="propertyName" value="stringField2"/>
         <property name="label" value="Basic Lookup"/>
         <property name="instructionalText" value="Use the &quot;Advanced Select&quot; link to perform a Term lookup"/>
-        <property name="quickfinder.dataObjectClassName" value="org.kuali.student.r2.core.acal.dto.TermInfo"/>
-        <property name="quickfinder.viewName" value="KS-KitchenSink-Lookup-TermInfo"/>
-        <property name="quickfinder.fieldConversions">
-            <map>
-                <entry key="name" value="stringField2"/>
-            </map>
-        </property>
-        <!-- quickfinderAction overrides default magnifying glass button -->
-        <property name="quickfinder.quickfinderAction">
-            <bean parent="Uif-ActionLink">
-                <property name="methodToCall" value="performLookup"/>
-                <property name="actionLabel" value="Advanced Select"/>
-                <property name="style" value="display:block"/>
-            </bean>
+        <property name="quickfinder">
+	       	<bean parent="Uif-QuickFinder">
+        		<property name="dataObjectClassName" value="org.kuali.student.r2.core.acal.dto.TermInfo"/>
+	    	    <property name="viewName" value="KS-KitchenSink-Lookup-TermInfo"/>
+    	    		<property name="fieldConversions">
+            		<map>
+                		<entry key="name" value="stringField2"/>
+		            </map>
+        		</property>
+		        <!-- quickfinderAction overrides default magnifying glass button -->
+        		<property name="quickfinderAction">
+		            <bean parent="Uif-ActionLink">
+        		        <property name="methodToCall" value="performLookup"/>
+                		<property name="actionLabel" value="Advanced Select"/>
+		                <property name="style" value="display:block"/>
+        		    </bean>
+        		</property>
+        	</bean>
         </property>
     </bean>
 
@@ -226,9 +230,9 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="UifFieldDefinitions.xml (Uif-InputField)"
-                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.2.0/krad/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifFieldDefinitions.xml"/>
+                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.3.0/rice-framework/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifFieldDefinitions.xml"/>
                                         <entry key="UifLookupDefinitions.xml (Uif-LookupView)"
-                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.2.0/krad/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifLookupDefinitions.xml"/>
+                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.3.0/rice-framework/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifLookupDefinitions.xml"/>
                                     </map>
                                 </property>
                             </bean>
@@ -236,9 +240,9 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="InputField.java"
-                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.2.0/krad/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/field/InputField.java"/>
+                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.3.0/rice-framework/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/field/InputField.java"/>
                                         <entry key="LookupView.java"
-                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.2.0/krad/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/view/LookupView.java"/>
+                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.3.0/rice-framework/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/view/LookupView.java"/>
                                     </map>
                                 </property>
                             </bean>
@@ -246,9 +250,9 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="InputField.html"
-                                               value="http://site.origin.kuali.org/rice/2.2.0/apidocs/org/kuali/rice/krad/uif/field/InputField.html"/>
+                                               value="http://site.origin.kuali.org/rice/2.3.0/apidocs/org/kuali/rice/krad/uif/field/InputField.html"/>
                                         <entry key="LookupView.html"
-                                               value="http://site.origin.kuali.org/rice/2.2.0/apidocs/org/kuali/rice/krad/uif/view/LookupView.html"/>
+                                               value="http://site.origin.kuali.org/rice/2.3.0/apidocs/org/kuali/rice/krad/uif/view/LookupView.html"/>
                                     </map>
                                 </property>
                             </bean>
@@ -256,7 +260,7 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="Hooking Up Lookups and Inquiries"
-                                               value="http://site.kuali.org/rice/2.2.0/reference/html/KRAD_Guide.html#d6766e5559 "/>
+                                               value="http://site.kuali.org/rice/2.3.0/reference/html/KRAD_Guide.html#d9198e6282"/>
                                     </map>
                                 </property>
                             </bean>

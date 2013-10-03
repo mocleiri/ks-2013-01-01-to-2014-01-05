@@ -18,6 +18,7 @@ package org.kuali.rice.krms.tree;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.util.tree.Node;
 import org.kuali.rice.core.api.util.tree.Tree;
+import org.kuali.rice.krms.api.repository.proposition.PropositionType;
 import org.kuali.rice.krms.dto.PropositionEditor;
 import org.kuali.rice.krms.dto.RuleEditor;
 import org.kuali.rice.krms.tree.node.CompareTreeNode;
@@ -37,6 +38,8 @@ public class RuleCompareTreeBuilder extends AbstractTreeBuilder{
 
     private static final long serialVersionUID = 1L;
 
+    private static final int margin = 18;
+
     public Tree<CompareTreeNode, String> buildTree(RuleEditor firstElement, RuleEditor secondElement) {
         Tree<CompareTreeNode, String> myTree = initCompareTree();
         Node<CompareTreeNode, String> firstNode = myTree.getRootElement().getChildren().get(0);
@@ -50,17 +53,30 @@ public class RuleCompareTreeBuilder extends AbstractTreeBuilder{
             if(childNode.getData() != null){
                 CompareTreeNode compareTreeNode = childNode.getData();
 
-                if(!compareTreeNode.getFirstElement().trim().isEmpty()){
-                    compareTreeNode.setFirstElement(compareTreeNode.getFirstElement() + ":");
+                if(colonRequired(firstElement)) {
+                    if(!compareTreeNode.getFirstElement().trim().isEmpty()){
+                        compareTreeNode.setFirstElement(compareTreeNode.getFirstElement() + ":");
+                    }
                 }
 
-                if(!compareTreeNode.getSecondElement().trim().isEmpty()){
-                    compareTreeNode.setSecondElement(compareTreeNode.getSecondElement() + ":");
+                if(colonRequired(secondElement)) {
+                    if(!compareTreeNode.getSecondElement().trim().isEmpty()){
+                        compareTreeNode.setSecondElement(compareTreeNode.getSecondElement() + ":");
+                    }
                 }
             }
         }
 
         return myTree;
+    }
+
+    protected boolean colonRequired(RuleEditor element) {
+        if(element != null && element.getProposition() != null) {
+            if(element.getProposition().getPropositionTypeCode().equals(PropositionType.COMPOUND.getCode())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected PropositionEditor getRootProposition(RuleEditor rule){
@@ -84,7 +100,7 @@ public class RuleCompareTreeBuilder extends AbstractTreeBuilder{
     private static Node<CompareTreeNode, String> createCompareNode() {
         Node<CompareTreeNode, String> rootNode = new Node<CompareTreeNode, String>();
         rootNode.setNodeType(KRMSConstants.NODE_TYPE_SUBRULEELEMENT);
-        rootNode.setData(new CompareTreeNode());
+        rootNode.setData(new CompareTreeNode(350));
         return rootNode;
     }
 
@@ -94,7 +110,7 @@ public class RuleCompareTreeBuilder extends AbstractTreeBuilder{
         }
 
         Node<CompareTreeNode, String> newNode = new Node<CompareTreeNode, String>();
-        CompareTreeNode tNode = new CompareTreeNode(this.getDescription(firstElement), this.getDescription(secondElement));
+        CompareTreeNode tNode = new CompareTreeNode(this.getNodeWidth(currentNode), this.getDescription(firstElement), this.getDescription(secondElement));
         tNode.setFirstElementItems(this.getListItems(firstElement));
         tNode.setSecondElementItems(this.getListItems(secondElement));
         newNode.setNodeType(KRMSConstants.NODE_TYPE_SUBRULEELEMENT);
@@ -163,12 +179,16 @@ public class RuleCompareTreeBuilder extends AbstractTreeBuilder{
         return null;
     }
 
+    protected int getNodeWidth(Node<CompareTreeNode, String> parent){
+        return parent.getData().getWidth() - margin;
+    }
+
     protected void addOperatorTreeNode(Node<CompareTreeNode, String> newNode, String firstElement, String secondElement) {
         Node<CompareTreeNode, String> opNode = new Node<CompareTreeNode, String>();
         if (!firstElement.equals(secondElement)){
             opNode.setNodeType(KRMSConstants.NODE_TYPE_COMPAREELEMENT);
         }
-        opNode.setData(new CompareTreeNode(firstElement, secondElement));
+        opNode.setData(new CompareTreeNode(this.getNodeWidth(newNode), firstElement, secondElement));
         newNode.getChildren().add(opNode);
     }
 

@@ -3,7 +3,7 @@ var BUBBLEPOPUP_DEFAULT_OPTIONS = {
     align: 'left',
     tail: { align:'left', hidden:false },
     manageMouseEvents: false,
-    themePath: '../krad/plugins/tooltip/jquerybubblepopup-theme/',
+    themePath: '../plugins/tooltip/jquerybubblepopup-theme/',
     themeName: 'ks-form',
     closingSpeed: 125
 };
@@ -257,25 +257,6 @@ function openPopupContentsWithErrors() {
         }
     });
 }
-
-
-/*******************************************************************************
- *  Attempt to prevent event from bubbling up
- ******************************************************************************/
-function stopEvent(e) {
-    if (!e) {
-        var e = window.event
-    };
-    if (e.stopPropagation) {
-        e.preventDefault();
-        e.stopPropagation();
-    } else {
-        e.returnValue = false;
-        e.cancelBubble = true;
-    }
-    return false;
-}
-
 
 
 /*** PRIVATE METHODS **********************************************************/

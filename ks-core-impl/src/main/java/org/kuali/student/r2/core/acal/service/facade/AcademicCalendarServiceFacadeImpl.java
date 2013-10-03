@@ -19,15 +19,19 @@ package org.kuali.student.r2.core.acal.service.facade;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
+import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.common.exceptions.ReadOnlyException;
 import org.kuali.student.r2.core.acal.dto.AcademicCalendarInfo;
+import org.kuali.student.r2.core.acal.dto.ExamPeriodInfo;
 import org.kuali.student.r2.core.acal.dto.TermInfo;
 import org.kuali.student.r2.core.acal.service.AcademicCalendarService;
 import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.kuali.student.r2.core.class1.type.dto.TypeTypeRelationInfo;
 import org.kuali.student.r2.core.class1.type.service.TypeService;
 import org.kuali.student.r2.core.constants.AtpServiceConstants;
@@ -77,7 +81,7 @@ public class AcademicCalendarServiceFacadeImpl implements AcademicCalendarServic
     @Override
     public StatusInfo makeTermOfficialCascaded(String termId, ContextInfo contextInfo)
             throws PermissionDeniedException, MissingParameterException, InvalidParameterException,
-                   OperationFailedException, DoesNotExistException {
+            OperationFailedException, DoesNotExistException {
         StatusInfo statusInfo = new StatusInfo();
 
         // KSENROLL-7251 Implement a new servies process ot change the state of the Academic Calendar
@@ -102,6 +106,8 @@ public class AcademicCalendarServiceFacadeImpl implements AcademicCalendarServic
             }
             // Change the state
             acalService.changeTermState(nextTermId, AtpServiceConstants.ATP_OFFICIAL_STATE_KEY, contextInfo);
+            // Change the state of the associated exam period
+            changeExamPeriodStateByTermId(nextTermId, AtpServiceConstants.ATP_OFFICIAL_STATE_KEY, contextInfo);
             termIdToTermInfoProcessed.put(nextTermId, nextTerm); // Add to processed
             termIdToTermInfoToBeProcessed.remove(nextTermId); // No longer needs processing, so remove
             // Now visit all parents
@@ -171,7 +177,8 @@ public class AcademicCalendarServiceFacadeImpl implements AcademicCalendarServic
             OperationFailedException, PermissionDeniedException {
         StatusInfo statusInfo = new StatusInfo();
 
-        List<String> subTermIds = getIncludedTermidsInTerm(termId, context);
+        //retrieve all the sub term ids of the give term
+        List<String> subTermIds = getRelatedAtpIdsForParentAtpIdAndRelationType(termId, AtpServiceConstants.ATP_ATP_RELATION_INCLUDES_TYPE_KEY, context);
         if (subTermIds!=null && !subTermIds.isEmpty()) {
             for (String subTermId : subTermIds) {
                 deleteTermCascaded(subTermId, context);
@@ -180,9 +187,10 @@ public class AcademicCalendarServiceFacadeImpl implements AcademicCalendarServic
 
         //delete the associated keydates
         deleteKeyDatesbyTermId(termId, context);
+        //delete the associated exam period
+        deleteExamPeriodByTermId(termId, context);
         //delete term/subterm
         acalService.deleteTerm(termId, context);
-
         statusInfo.setSuccess(Boolean.TRUE);
         return statusInfo;
     }
@@ -201,10 +209,40 @@ public class AcademicCalendarServiceFacadeImpl implements AcademicCalendarServic
 
     }
 
+    private void deleteExamPeriodByTermId (String termId, ContextInfo context) {
+        try {
+            //retrieve all the exam period ids of the give term
+            List<String> examPeriodIds = getRelatedAtpIdsForParentAtpIdAndRelationType(termId, AtpServiceConstants.ATP_ATP_RELATION_ASSOCIATED_TERM2EXAMPERIOD_TYPE_KEY, context);
+            if (examPeriodIds!=null && !examPeriodIds.isEmpty()) {
+                for (String examPeriodId : examPeriodIds) {
+                    acalService.deleteExamPeriod(examPeriodId, context);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private void changeExamPeriodStateByTermId (String termId, String nextStateKey, ContextInfo context) {
+        try {
+            //retrieve all the exam period ids of the give term
+            List<String> examPeriodIds = getRelatedAtpIdsForParentAtpIdAndRelationType(termId, AtpServiceConstants.ATP_ATP_RELATION_ASSOCIATED_TERM2EXAMPERIOD_TYPE_KEY, context);
+            if (examPeriodIds!=null && !examPeriodIds.isEmpty()) {
+                for (String examPeriodId : examPeriodIds) {
+                    acalService.changeExamPeriodState(examPeriodId, nextStateKey, context);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     @Override
     public boolean validateTerm(String termId, ContextInfo context)
             throws PermissionDeniedException, MissingParameterException, InvalidParameterException,
-                   OperationFailedException, DoesNotExistException {
+            OperationFailedException, DoesNotExistException {
         Set<String> processedTermIds = new HashSet<String>();
         processedTermIds.add(termId);
         return _validateTermRecursive(termId, processedTermIds, context);
@@ -259,18 +297,21 @@ public class AcademicCalendarServiceFacadeImpl implements AcademicCalendarServic
     }
 
     @Override
-    public List<String> getIncludedTermidsInTerm(String atpId, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+    public List<String> getRelatedAtpIdsForParentAtpIdAndRelationType(String atpId, String relationTypeKey, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
         //Perform an atp search to get the search results
         List<String> includedTermIds = new ArrayList<String>();
 
         SearchRequestInfo searchRequestInfo = new SearchRequestInfo("atp.search.relatedAtpIdsByAtpId");
         searchRequestInfo.addParam("atp.queryParam.parentAtpId", atpId);
+        searchRequestInfo.addParam("atp.queryParam.relationType", relationTypeKey);
         SearchResultInfo results = atpService.search(searchRequestInfo, context);
 
-        for(SearchResultRowInfo row : results.getRows()){
-            for(SearchResultCellInfo cell: row.getCells()){
-                if("atp.resultColumn.relatedAtpId".equals(cell.getKey())){
-                    includedTermIds.add(cell.getValue());
+        if (results!=null && !results.getRows().isEmpty()) {
+            for(SearchResultRowInfo row : results.getRows()){
+                for(SearchResultCellInfo cell: row.getCells()){
+                    if("atp.resultColumn.relatedAtpId".equals(cell.getKey())){
+                        includedTermIds.add(cell.getValue());
+                    }
                 }
             }
         }
@@ -304,5 +345,51 @@ public class AcademicCalendarServiceFacadeImpl implements AcademicCalendarServic
         }
 
         return includedTermIds;
+    }
+
+    @Override
+    public ExamPeriodInfo addExamPeriod (String examPeriodTypeKey, List<String> termTypeKeyList, ExamPeriodInfo examPeriodInfo, ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
+        for (String termTypeKey : termTypeKeyList) {
+            if (!_validateExamPeriodType(examPeriodTypeKey, termTypeKey, context)){
+                throw new OperationFailedException("Exam Period type validation failed. Exam Period can't be created with the type:" + examPeriodTypeKey + ". Final Exam Period is not allowed for the selected term. (" + termTypeKey +")");
+            }
+        }
+
+        return acalService.createExamPeriod(examPeriodTypeKey, examPeriodInfo, context);
+    }
+
+    // validate if the given examPeriod type is kuali.atp.type.ExamPeriod
+    // also validate if the given examPeriod type is allowed by the given term type
+    private boolean _validateExamPeriodType (String examPeriodTypeKey, String termTypeKey, ContextInfo context) {
+        if (!StringUtils.equals(examPeriodTypeKey, AtpServiceConstants.ATP_EXAM_PERIOD_TYPE_KEY)){
+            return false;
+        }
+
+        // check allowed type type relationship
+        List<TypeInfo> examPeriodTypes = new ArrayList<TypeInfo>();
+
+        try {
+            examPeriodTypes = acalService.getExamPeriodTypesForTermType(termTypeKey, context);
+            if (examPeriodTypes != null && examPeriodTypes.size() > 0) {
+                return checkTypeInTypes(examPeriodTypeKey, examPeriodTypes);
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private boolean checkTypeInTypes(String typeKey, List<TypeInfo> types) {
+        if (types != null && !types.isEmpty()) {
+            for (TypeInfo type : types) {
+                if (type.getKey().equals(typeKey)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

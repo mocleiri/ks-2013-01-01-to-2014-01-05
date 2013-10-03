@@ -30,15 +30,11 @@
                   value="Please enter a term to begin"/>
         <property name="propertyName" value="stringField5"/>
         <property name="defaultValue" value="199708"/>
-        <property name="inquiry.dataObjectClassName" value="org.kuali.student.r2.core.acal.dto.TermInfo" />
-        <!-- inquiry view doesn't use "viewName" to find the correct inquiry view: -->
-        <property name="inquiry.viewName" value="KS-KitchenSink-TermInfo-InquiryView"/>
-        <property name="inquiry.inquiryParameters" value="stringField5:code"/>
-        <!-- the wordier way to define inquiry.inquiryParameters:
-        <property name="inquiry.inquiryParameters">
-            <map> <entry key="stringField5" value="id"/> </map>
+        <property name="inquiry">
+            <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.acal.dto.TermInfo"
+                  p:viewName="KS-KitchenSink-TermInfo-InquiryView"
+                  p:inquiryParameters="stringField5:code" />
         </property>
-        -->
     </bean>
 
     <!--
@@ -157,9 +153,9 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="UifFieldDefinitions.xml (Uif-InputField)"
-                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.2.0/krad/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifFieldDefinitions.xml"/>
+                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.3.0/rice-framework/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifFieldDefinitions.xml"/>
                                         <entry key="UifLookupDefinitions.xml (Uif-LookupView)"
-                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.2.0/krad/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifLookupDefinitions.xml"/>
+                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.3.0/rice-framework/krad-web-framework/src/main/resources/org/kuali/rice/krad/uif/UifLookupDefinitions.xml"/>
                                     </map>
                                 </property>
                             </bean>
@@ -167,9 +163,9 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="InputField.java"
-                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.2.0/krad/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/field/InputField.java"/>
+                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.3.0/rice-framework/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/field/InputField.java"/>
                                         <entry key="LookupView.java"
-                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.2.0/krad/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/view/LookupView.java"/>
+                                               value="http://svn.kuali.org/repos/rice/tags/rice-2.3.0/rice-framework/krad-web-framework/src/main/java/org/kuali/rice/krad/uif/view/LookupView.java"/>
                                     </map>
                                 </property>
                             </bean>
@@ -177,9 +173,9 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="InputField.html"
-                                               value="http://site.origin.kuali.org/rice/2.2.0/apidocs/org/kuali/rice/krad/uif/field/InputField.html"/>
+                                               value="http://site.origin.kuali.org/rice/2.3.0/apidocs/org/kuali/rice/krad/uif/field/InputField.html"/>
                                         <entry key="LookupView.html"
-                                               value="http://site.origin.kuali.org/rice/2.2.0/apidocs/org/kuali/rice/krad/uif/view/LookupView.html"/>
+                                               value="http://site.origin.kuali.org/rice/2.3.0/apidocs/org/kuali/rice/krad/uif/view/LookupView.html"/>
                                     </map>
                                 </property>
                             </bean>
@@ -187,7 +183,7 @@
                                 <property name="footerLinks">
                                     <map>
                                         <entry key="Hooking Up Lookups and Inquiries"
-                                               value="http://site.kuali.org/rice/2.2.0/reference/html/KRAD_Guide.html#d6766e5559 "/>
+                                               value="http://site.kuali.org/rice/2.3.0/reference/html/KRAD_Guide.html#d9198e6282"/>
                                     </map>
                                 </property>
                             </bean>
