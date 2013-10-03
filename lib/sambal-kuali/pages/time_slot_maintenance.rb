@@ -18,7 +18,7 @@ class TimeSlotMaintenance < BasePage
   element(:add_time_slot_popup_field_startTime_am_pm) { |b| b.frm.div(id: "addOrEditStartTimeAmPm").select_list }
   element(:add_time_slot_popup_field_endTime) { |b| b.frm.div(id: "addOrEditEndTime").text_field }
   element(:add_time_slot_popup_field_endTime_am_pm) { |b| b.frm.div(id: "addOrEditEndTimeAmPm").select_list }
-  action(:save_add_time_slot) { |b| b.frm.button(id: "addOrEdit_action").click }
+  action(:save_add_time_slot) { |b| b.frm.button(id: "addOrEdit_action").click; b.loading.wait_while_present }
 
   element(:time_slot_search_results_table) { |b| b.frm.div(id: "TimeSlotSearchResultsDisplayTable").table() }
 
@@ -34,6 +34,14 @@ class TimeSlotMaintenance < BasePage
     array_of_time_slot_types_to_select.each do |time_slot_type_to_select|
       time_slot_type_selector_list.select time_slot_type_to_select
     end
+  end
+
+  def get_time_slot_code_list
+    time_slot_code_list = []
+    time_slot_search_results_table.rows.each_with_index do |row, index|
+      time_slot_code_list << row[TIME_SLOT_RESULTS_CODE].text unless index == 0 || index == time_slot_search_results_table.rows.length-1
+    end
+    time_slot_code_list
   end
 
   def target_results_row(code)

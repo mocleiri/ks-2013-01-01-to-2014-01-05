@@ -1,35 +1,18 @@
-When /^I specify a Term Type (Fall - Full)$/ do |term_type|
-
-  go_to_manage_time_slots
-
-  on TimeSlotMaintenance do |page|
-    test = ["Fall - Full", "Spring - Full"]
-    page.select_time_slot_types(test)
-    page.show_time_slots
-  end
-
+When /^I specify a Term Type (Fall - Full|Spring - Full|Fall - Full and Spring - Full)$/ do |term_type|
+  term_type = term_type.split( ' and ')                       # convert natural-language to an array
+  @time_slots = make TimeSlots, :term_types => term_type
+  @time_slots.show_time_slots
 end
 
 When /^I specify to Add Time Slot with Term Type (Fall - Full), Days ([MTWUFSU]+), Start time (\d{2}:\d{2}) (am|pm), End time (\d{2}:\d{2}) (am|pm)$/ do |term_type, days, start_time, start_time_am_pm, end_time, end_time_am_pm|
+  @time_slots.add_time_slot( make TimeSlots::TimeSlot, :term_type => term_type, :days => days, :start_time => start_time, :start_time_am_pm => start_time_am_pm, :end_time => end_time, :end_time_am_pm => end_time_am_pm )
+end
 
-  puts term_type
-  puts days
-  puts start_time
-  puts start_time_am_pm
-  puts end_time
-  puts end_time_am_pm
-
+Then /^changes are saved$/ do
+  go_to_manage_time_slots
   on TimeSlotMaintenance do |page|
-    page.initiate_add_time_slot
-    page.add_time_slot_popup_field_termType.select term_type
-    page.add_time_slot_popup_field_days.set days
-    page.add_time_slot_popup_field_startTime.set start_time
-    page.add_time_slot_popup_field_startTime_am_pm.select start_time_am_pm
-    page.add_time_slot_popup_field_endTime.set end_time
-    page.add_time_slot_popup_field_endTime_am_pm.select end_time_am_pm
-    page.save_add_time_slot
-  end
 
+  end
 end
 
 
@@ -42,12 +25,15 @@ When /^I do some timeslot stuff$/ do
   go_to_manage_time_slots
 
   on TimeSlotMaintenance do |page|
-    test = ["Fall - Full", "Spring - Full"]
+    test = ["Fall - Full"]
     page.select_time_slot_types(test)
     page.show_time_slots
 
     row = page.time_slot_search_results_table[1]
     row[2].text == "Fall - Full"
+    row[3].text == "F"
+    row[4].text == "10:00 PM"
+    row[5].text == "10:50 PM"
   end
 
 
