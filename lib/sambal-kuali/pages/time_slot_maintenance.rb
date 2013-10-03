@@ -3,8 +3,6 @@ class TimeSlotMaintenance < BasePage
   wrapper_elements
   frame_element
 
-  expected_title /Kuali :: Time Slots/
-
   element(:time_slot_type_selector_div) { |b| b.frm.div(id: "TimeSlotTypeSelect-Section") }
   element(:time_slot_type_selector_list) { |b| b.time_slot_type_selector_div.select_list }
   action(:show_time_slots) { |b| b.time_slot_type_selector_div.button(text: "Show Time Slots").click; b.loading.wait_while_present }

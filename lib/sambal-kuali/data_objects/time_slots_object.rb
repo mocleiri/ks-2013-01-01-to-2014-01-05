@@ -20,7 +20,7 @@ class TimeSlots
   #
   #  defaults = {
   #     :term_types => [ "Fall - Full" ]
-  #     :time_slots => []
+  #     :existing_time_slots => []
   #  }
 
   # initialize is generally called using TestFactory Foundry .make or .create methods
@@ -35,17 +35,19 @@ class TimeSlots
     options = defaults.merge(opts)
 
     set_options(options)
+
+    @new_time_slots = []  # instance-variable to prevent direct populating; should only be manipulated by internal methods
   end
 
-  def show_time_slots
-    go_to_manage_time_slots
+  def create
+    show_time_slots
 
+    # capture existing time-slots (prior to adding any new ones)
     on TimeSlotMaintenance do |page|
-      page.select_time_slot_types(term_types)
-      page.show_time_slots
 
       time_slot_search_results_array = page.time_slot_search_results_table.to_a
       time_slot_search_results_array.each_with_index do |row, index|
+
         unless index == 0 || index == time_slot_search_results_array.length-1
           time_slots << ( make TimeSlot, :code => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_CODE],
                                          :term_type => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE],
@@ -54,13 +56,15 @@ class TimeSlots
                                          :start_time_am_pm => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].split(' ')[1],
                                          :end_time => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].split(' ')[0],
                                          :end_time_am_pm => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].split(' ')[1] )
-        end
-      end
-    end
+        end #END-unless
 
-  end
+      end #END-each_with_index
 
-  # navigates to manage time slots page and creates timeslot(s) based on class attributes
+    end #END-on_page_do
+
+  end #END-create
+
+
   def add_time_slot( time_slot )
     on TimeSlotMaintenance do |page|
       page.initiate_add_time_slot
@@ -71,9 +75,28 @@ class TimeSlots
       page.add_time_slot_popup_field_endTime.set time_slot.end_time
       page.add_time_slot_popup_field_endTime_am_pm.select time_slot.end_time_am_pm.downcase
       page.save_add_time_slot
+
+      # capture the code assigned by the server
+      updated_table = page.time_slot_search_results_table.to_a
+      time_slot.code = updated_table[updated_table.length-2][TimeSlotMaintenance::TIME_SLOT_RESULTS_CODE]
     end
 
-    time_slots << time_slot
+    @new_time_slots << time_slot
+  end
+
+
+  def show_time_slots
+    go_to_manage_time_slots
+
+    on TimeSlotMaintenance do |page|
+      page.select_time_slot_types(term_types)
+      page.show_time_slots
+    end
+  end
+
+
+  def get_new_time_slots
+    @new_time_slots
   end
 
 
