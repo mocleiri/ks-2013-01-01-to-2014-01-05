@@ -7,10 +7,6 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.student.common.exceptions.OperationFailedException;
-import org.kuali.student.core.atp.dto.AtpInfo;
-import org.kuali.student.core.atp.dto.AtpTypeInfo;
-import org.kuali.student.core.atp.service.AtpService;
 import org.kuali.student.enrollment.academicrecord.dto.StudentCourseRecordInfo;
 import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
@@ -26,13 +22,19 @@ import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
 import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.atp.service.AtpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -438,7 +440,7 @@ public class AtpHelper {
     public static boolean doesAtpExist(String atpId) {
         boolean doesAtpExist = false;
         try {
-            AtpInfo atpInfo = getAtpService().getAtp(atpId);
+            AtpInfo atpInfo = getAtpService().getAtp(atpId, PlanConstants.CONTEXT_INFO);
             if (atpInfo != null) {
                 doesAtpExist = true;
             }
@@ -702,16 +704,16 @@ public class AtpHelper {
      * @param atpTypeKey Atp Type Key
      */
     public static String getAtpTypeName(String atpTypeKey) {
-        try {
-            List<AtpTypeInfo> atpTypeInfos = getAtpService().getAtpTypes();
-            for (AtpTypeInfo ti : atpTypeInfos) {
+        /*try {
+            List<AtpInfo> atpTypeInfos = getAtpService().getAtpTypes();
+            for (AtpInfo ti : atpTypeInfos) {
                 if (ti.getId().equals(atpTypeKey)) {
                     return WordUtils.capitalizeFully(ti.getName());
                 }
             }
         } catch (OperationFailedException e) {
             logger.error("ATP types lookup failed.", e);
-        }
+        }*/
 
         return null;
     }

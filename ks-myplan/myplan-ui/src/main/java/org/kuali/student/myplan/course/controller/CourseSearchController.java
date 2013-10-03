@@ -26,19 +26,9 @@ import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
 import org.kuali.rice.krad.web.form.UifFormBase;
-import org.kuali.student.common.exceptions.MissingParameterException;
-import org.kuali.student.common.search.dto.SearchParam;
-import org.kuali.student.common.search.dto.SearchRequest;
-import org.kuali.student.common.search.dto.SearchResult;
-import org.kuali.student.common.search.dto.SearchResultRow;
-import org.kuali.student.core.atp.dto.AtpTypeInfo;
-import org.kuali.student.core.atp.service.AtpService;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
-import org.kuali.student.lum.course.service.assembler.CourseAssemblerConstants;
-import org.kuali.student.lum.lu.service.LuService;
-import org.kuali.student.lum.lu.service.LuServiceConstants;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.infc.PlanItem;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanService;
@@ -54,9 +44,21 @@ import org.kuali.student.myplan.plan.util.EnumerationHelper;
 import org.kuali.student.myplan.plan.util.PlanHelper;
 import org.kuali.student.myplan.plan.util.SearchHelper;
 import org.kuali.student.myplan.utils.UserSessionHelper;
-import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.exceptions.InvalidParameterException;
+import org.kuali.student.r2.common.exceptions.MissingParameterException;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
+import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.r2.common.util.constants.CourseOfferingServiceConstants;
+import org.kuali.student.r2.common.util.constants.LuServiceConstants;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.search.dto.SearchParamInfo;
+import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
+import org.kuali.student.r2.core.search.dto.SearchResultInfo;
+import org.kuali.student.r2.core.search.infc.SearchResultRow;
+import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.course.service.assembler.CourseAssemblerConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -91,7 +93,7 @@ public class CourseSearchController extends UifControllerBase {
 
     private static final int MAX_HITS = 1000;
 
-    private transient LuService luService;
+    private transient CluService luService;
 
     private transient AtpService atpService;
 
@@ -233,10 +235,10 @@ public class CourseSearchController extends UifControllerBase {
         HashMap<String, Credit> creditMap = new HashMap<String, Credit>();
 
         try {
-            SearchRequest searchRequest = new SearchRequest(CourseSearchConstants.SEARCH_REQUEST_CREDITS_DETAILS);
-            List<SearchParam> params = new ArrayList<SearchParam>();
+            SearchRequestInfo searchRequest = new SearchRequestInfo(CourseSearchConstants.SEARCH_REQUEST_CREDITS_DETAILS);
+            List<SearchParamInfo> params = new ArrayList<SearchParamInfo>();
             searchRequest.setParams(params);
-            SearchResult searchResult = getLuService().search(searchRequest);
+            SearchResultInfo searchResult = getLuService().search(searchRequest, CourseSearchConstants.CONTEXT_INFO);
             for (SearchResultRow row : searchResult.getRows()) {
                 String id = SearchHelper.getCellValue(row, "credit.id");
                 String type = SearchHelper.getCellValue(row, "credit.type");
@@ -281,7 +283,7 @@ public class CourseSearchController extends UifControllerBase {
         String maxCountProp = ConfigContext.getCurrentContextConfig().getProperty(CourseSearchConstants.MYPLAN_SEARCH_RESULTS_MAX);
         int maxCount = (StringUtils.hasText(maxCountProp)) ? Integer.valueOf(maxCountProp) : MAX_HITS;
         try {
-            List<SearchRequest> requests = searcher.queryToRequests(form);
+            List<SearchRequestInfo> requests = searcher.queryToRequests(form);
             List<Hit> hits = processSearchRequests(requests);
             List<CourseSearchItem> courseList = new ArrayList<CourseSearchItem>();
             Map<String, CourseSearchItem.PlanState> courseStatusMap = getCourseStatusMap(studentId);
@@ -408,7 +410,7 @@ public class CourseSearchController extends UifControllerBase {
         return getUIFModelAndView(form, CourseSearchConstants.COURSE_SEARCH_RESULT_PAGE);
     }
 
-    public List<String> getResults(SearchRequest request, String division, String code) {
+    public List<String> getResults(SearchRequestInfo request, String division, String code) {
         try {
             List<String> results = new ArrayList<String>();
             if (division == null && code == null) {
@@ -424,7 +426,7 @@ public class CourseSearchController extends UifControllerBase {
 
             request.addParam("lastScheduledTerm", AtpHelper.getLastScheduledAtpId());
 
-            SearchResult searchResult = getLuService().search(request);
+            SearchResultInfo searchResult = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
             if (searchResult != null) {
                 for (SearchResultRow row : searchResult.getRows()) {
                     results.add(SearchHelper.getCellValue(row, "courseCode"));
@@ -450,13 +452,22 @@ public class CourseSearchController extends UifControllerBase {
         }
     }
 
-    public ArrayList<Hit> processSearchRequests(List<SearchRequest> requests) throws MissingParameterException {
+    public ArrayList<Hit> processSearchRequests(List<SearchRequestInfo> requests) throws MissingParameterException {
         logger.info("Start of processSearchRequests of CourseSearchController:" + System.currentTimeMillis());
 
         ArrayList<Hit> hits = new ArrayList<Hit>();
         ArrayList<Hit> tempHits = new ArrayList<Hit>();
-        for (SearchRequest request : requests) {
-            SearchResult searchResult = getLuService().search(request);
+        for (SearchRequestInfo request : requests) {
+            SearchResultInfo searchResult = null;
+            try {
+                searchResult = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
+            } catch (InvalidParameterException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (OperationFailedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (PermissionDeniedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
             for (SearchResultRow row : searchResult.getRows()) {
                 String id = SearchHelper.getCellValue(row, "lu.resultColumn.cluId");
                 /* hitCourseID(courseMap, id);*/
@@ -524,16 +535,25 @@ public class CourseSearchController extends UifControllerBase {
     private void loadTermsOffered(CourseSearchItem course) throws MissingParameterException {
         logger.info("Start of method loadTermsOffered of CourseSearchController:" + System.currentTimeMillis());
         String courseId = course.getCourseId();
-        SearchRequest request = new SearchRequest("myplan.course.info.atp");
+        SearchRequestInfo request = new SearchRequestInfo("myplan.course.info.atp");
         request.addParam("courseID", courseId);
 
-        List<AtpTypeInfo> termsOffered = new ArrayList<AtpTypeInfo>();
-        SearchResult result = getLuService().search(request);
+        List<AtpInfo> termsOffered = new ArrayList<AtpInfo>();
+        SearchResultInfo result = null;
+        try {
+            result = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
+        } catch (InvalidParameterException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (OperationFailedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (PermissionDeniedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
         for (SearchResultRow row : result.getRows()) {
             String id = SearchHelper.getCellValue(row, "atp.id");
 
             // Don't add the terms that are not found
-            AtpTypeInfo atpType = getATPType(id);
+            AtpInfo atpType = getATPType(id);
             if (null != atpType) {
                 termsOffered.add(atpType);
             }
@@ -547,10 +567,19 @@ public class CourseSearchController extends UifControllerBase {
     private void loadGenEduReqs(CourseSearchItem course) throws MissingParameterException {
         logger.info("Start of method loadGenEduReqs of CourseSearchController:" + System.currentTimeMillis());
         String courseId = course.getCourseId();
-        SearchRequest request = new SearchRequest("myplan.course.info.gened");
+        SearchRequestInfo request = new SearchRequestInfo("myplan.course.info.gened");
         request.addParam("courseID", courseId);
         List<String> reqs = new ArrayList<String>();
-        SearchResult result = getLuService().search(request);
+        SearchResultInfo result = null;
+        try {
+            result = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
+        } catch (InvalidParameterException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (OperationFailedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (PermissionDeniedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
         for (SearchResultRow row : result.getRows()) {
             String genEd = SearchHelper.getCellValue(row, "gened.name");
             reqs.add(genEd);
@@ -582,7 +611,7 @@ public class CourseSearchController extends UifControllerBase {
          *  For each plan item in each plan set the state based on the type.
          */
         List<String> planItemTypes = Arrays.asList(PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED, PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST, PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP);
-            List<PlanItemInfo> planItemList = getPlanHelper().getPlanItemsByTypes(getUserSessionHelper().getStudentId(), planItemTypes);
+        List<PlanItemInfo> planItemList = getPlanHelper().getPlanItemsByTypes(getUserSessionHelper().getStudentId(), planItemTypes);
         for (PlanItem planItem : planItemList) {
             String courseID = planItem.getRefObjectId();
             CourseSearchItem.PlanState state;
@@ -604,9 +633,18 @@ public class CourseSearchController extends UifControllerBase {
         logger.info("Start of method getCourseInfo of CourseSearchController:" + System.currentTimeMillis());
         CourseSearchItem course = new CourseSearchItem();
 
-        SearchRequest request = new SearchRequest("myplan.course.info");
+        SearchRequestInfo request = new SearchRequestInfo("myplan.course.info");
         request.addParam("courseID", courseId);
-        SearchResult result = getLuService().search(request);
+        SearchResultInfo result = null;
+        try {
+            result = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
+        } catch (InvalidParameterException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (OperationFailedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (PermissionDeniedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
         for (SearchResultRow row : result.getRows()) {
             String name = SearchHelper.getCellValue(row, "course.name");
             String number = SearchHelper.getCellValue(row, "course.number");
@@ -706,18 +744,19 @@ public class CourseSearchController extends UifControllerBase {
         return genEdsOut.toString();
     }
 
-    private AtpTypeInfo getATPType(String key) {
+    private AtpInfo getATPType(String key) {
         try {
-            return getAtpService().getAtpType(key);
+            //return getAtpService().getAtpType(key);
+            return null;
         } catch (Exception e) {
             logger.error("Could not find ATP Type: " + key);
             return null;
         }
     }
 
-    protected LuService getLuService() {
+    protected CluService getLuService() {
         if (this.luService == null) {
-            this.luService = (LuService) GlobalResourceLoader.getService(new QName(LuServiceConstants.LU_NAMESPACE, "LuService"));
+            this.luService = (CluService) GlobalResourceLoader.getService(new QName(LuServiceConstants.LU_NAMESPACE, "LuService"));
         }
         return this.luService;
     }
@@ -747,7 +786,7 @@ public class CourseSearchController extends UifControllerBase {
         return this.academicCalendarService;
     }
 
-    public void setLuService(LuService luService) {
+    public void setLuService(CluService luService) {
         this.luService = luService;
     }
 

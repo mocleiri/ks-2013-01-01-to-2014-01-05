@@ -1,7 +1,6 @@
 package org.kuali.student.myplan.plan;
 
 import org.kuali.rice.core.api.config.property.ConfigContext;
-import org.kuali.student.lum.lu.LUConstants;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanServiceConstants;
 import org.kuali.student.r2.common.dto.ContextInfo;
 

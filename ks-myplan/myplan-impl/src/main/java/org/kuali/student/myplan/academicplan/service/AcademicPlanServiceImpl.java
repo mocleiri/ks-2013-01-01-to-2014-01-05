@@ -8,11 +8,6 @@ import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.student.common.util.UUIDHelper;
-import org.kuali.student.core.atp.service.AtpService;
-import org.kuali.student.lum.course.service.CourseService;
-import org.kuali.student.lum.course.service.CourseServiceConstants;
-import org.kuali.student.lum.lu.service.LuService;
-import org.kuali.student.lum.lu.service.LuServiceConstants;
 import org.kuali.student.myplan.academicplan.dao.LearningPlanDao;
 import org.kuali.student.myplan.academicplan.dao.LearningPlanTypeDao;
 import org.kuali.student.myplan.academicplan.dao.PlanItemDao;
@@ -28,6 +23,11 @@ import org.kuali.student.r2.common.dto.ValidationResultInfo;
 import org.kuali.student.r2.common.exceptions.*;
 import org.kuali.student.r2.common.infc.Attribute;
 import org.kuali.student.r2.common.infc.ValidationResult;
+import org.kuali.student.r2.common.util.constants.LuServiceConstants;
+import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.course.service.CourseService;
+import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -48,8 +48,8 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
     private PlanItemTypeDao planItemTypeDao;
     private CourseService courseService;
     private AtpService atpService;
-    private LuService luService;
-    private PersonService personService;    
+    private CluService luService;
+    private PersonService personService;
 
     /**
      * This method provides a way to manually provide a CourseService implementation during testing.
@@ -68,9 +68,9 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
         return this.courseService;
     }
 
-    protected synchronized LuService getLuService() {
+    protected synchronized CluService getLuService() {
         if (this.luService == null) {
-            this.luService = (LuService) GlobalResourceLoader.getService(new QName(LuServiceConstants.LU_NAMESPACE, "LuService"));
+            this.luService = (CluService) GlobalResourceLoader.getService(new QName(LuServiceConstants.LU_NAMESPACE, "LuService"));
         }
         return this.luService;
     }
@@ -634,7 +634,7 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
                 for (String atpId : planItemInfo.getPlanPeriods()) {
                     boolean valid = false;
                     try {
-                        valid = isValidAtp(atpId);
+                        valid = isValidAtp(atpId, context);
                         if (!valid) {
                             validationResultInfos.add(makeValidationResultInfo(
                                     String.format("ATP ID [%s] was not valid.", atpId), "atpId", ValidationResult.ErrorLevel.ERROR));
@@ -813,10 +813,10 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
         return vri;
     }
 
-    private boolean isValidAtp(String atpId) {
+    private boolean isValidAtp(String atpId, ContextInfo contextInfo) {
         try {
-            getAtpService().getAtp(atpId);
-        } catch (org.kuali.student.common.exceptions.DoesNotExistException e) {
+            getAtpService().getAtp(atpId, contextInfo);
+        } catch (DoesNotExistException e) {
             return false;
         } catch (Exception e) {
             throw new RuntimeException("Query to ATP service failed.", e);

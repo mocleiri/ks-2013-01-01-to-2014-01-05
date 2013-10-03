@@ -13,6 +13,7 @@ import org.kuali.student.core.organization.service.OrganizationService;
 import org.kuali.student.myplan.course.util.CampusSearch;
 import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.course.util.CourseSearchConstants;
+import org.kuali.student.r2.core.organization.dto.OrgInfo;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

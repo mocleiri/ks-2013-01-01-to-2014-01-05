@@ -1,9 +1,8 @@
 package edu.uw.kuali.student.myplan.util;
 
-import org.kuali.student.core.atp.dto.AtpTypeInfo;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
 
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Sorts the AtpTypesInfo in order of terms in a academic calendar
@@ -12,10 +11,10 @@ import java.util.List;
  * Time: 10:30 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TermInfoComparator implements Comparator<AtpTypeInfo> {
+public class TermInfoComparator implements Comparator<AtpInfo> {
 
     @Override
-    public int compare(AtpTypeInfo o1, AtpTypeInfo o2) {
+    public int compare(AtpInfo o1, AtpInfo o2) {
         String atpKey1 = o1.getId().replaceAll("\\.", "_").toUpperCase();
         String atpKey2 = o2.getId().replaceAll("\\.", "_").toUpperCase();
         return TermOrder.valueOf(atpKey1).compareTo(TermOrder.valueOf(atpKey2));

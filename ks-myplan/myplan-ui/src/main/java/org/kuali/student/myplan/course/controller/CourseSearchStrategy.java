@@ -12,6 +12,9 @@ import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.OrgHelper;
+import org.kuali.student.r2.core.organization.dto.OrgInfo;
+import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
+import org.kuali.student.r2.lum.clu.service.CluService;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -24,7 +27,7 @@ import java.util.regex.Pattern;
 public class CourseSearchStrategy {
     private final Logger logger = Logger.getLogger(CourseSearchStrategy.class);
 
-    private transient LuService luService;
+    private transient CluService luService;
     /*Remove the HashMap after enumeration service is in the ehcache and remove the hashmap occurance in this*/
     private HashMap<String, List<OrgInfo>> orgTypeCache;
     private HashMap<String, Map<String, String>> hashMap;
@@ -167,7 +170,7 @@ public class CourseSearchStrategy {
         }
     }
 
-    public void addFullTextSearches(String query, List<SearchRequest> requests) {
+    public void addFullTextSearches(String query, List<SearchRequestInfo> requests) {
         List<QueryTokenizer.Token> tokens = QueryTokenizer.tokenize(query);
 
         for (QueryTokenizer.Token token : tokens) {
@@ -183,13 +186,13 @@ public class CourseSearchStrategy {
                 default:
                     break;
             }
-            SearchRequest request = new SearchRequest("myplan.lu.search.fulltext");
+            SearchRequestInfo request = new SearchRequestInfo("myplan.lu.search.fulltext");
             request.addParam("queryText", queryText);
             requests.add(request);
         }
     }
 
-    public List<SearchRequest> queryToRequests(CourseSearchForm form)
+    public List<SearchRequestInfo> queryToRequests(CourseSearchForm form)
             throws Exception {
         logger.info("Start Of Method queryToRequests in CourseSearchStrategy:" + System.currentTimeMillis());
         String query = form.getSearchQuery().toUpperCase();
