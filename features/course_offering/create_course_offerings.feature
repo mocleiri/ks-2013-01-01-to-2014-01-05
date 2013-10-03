@@ -17,10 +17,9 @@ Background:
 
   Scenario: Copy existing Course Offering
     When I copy a course offering from an existing offering
-    Then the new Course Offering should be displayed in the list of available offerings.
+    Then the new Course Offering should be displayed in the list of available offerings
 
-  @pending
-  Scenario: Copy existing Course Offering, excluding instructor information
+  Scenario: Copy existing Course Offering excluding instructor information
     When I copy a course offering from an existing offering and choose to exclude instructor information
-    Then the new Course Offering should be displayed in the list of available offerings.
+    Then the new Course Offering should be displayed in the list of available offerings
     And the new Course Offering should not contain any instructor information in its activity offerings
