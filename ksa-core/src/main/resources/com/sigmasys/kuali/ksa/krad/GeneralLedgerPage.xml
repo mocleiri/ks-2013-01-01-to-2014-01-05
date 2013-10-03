@@ -39,7 +39,7 @@
 			<list>
 				<!-- Make All Transactions Effective action -->
 				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Make Transactions Effective" p:ajaxSubmit="true" p:methodToCall="makeTransactionsEffective"
-						p:successCallback="alert('Transactions were made effective successfully.');"
+						p:successCallback="alert('Transactions were made effective successfully.'); window.location.href='generalLedger?methodToCall=displayGeneralLedger&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage';"
 						p:errorCallback="alert('There were errors making transactions effective. See log for details.');"/>
 			
 				<!-- Export Pending Transaction action -->

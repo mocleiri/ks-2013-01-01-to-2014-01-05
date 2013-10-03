@@ -105,7 +105,7 @@ public class ReportReconciliationController extends DownloadController {
 
             boolean result = transactionService.makeAllTransactionsEffective(false);
 
-            String msg = result ? "Transactions have been made effective" : "None of transactions has been made effective";
+            String msg = result ? "Transactions have been made effective" : "No transactions have been made effective";
 
             GlobalVariables.getMessageMap().putInfo(getUIFModelAndView(form).getViewName(), RiceKeyConstants.ERROR_CUSTOM, msg);
 

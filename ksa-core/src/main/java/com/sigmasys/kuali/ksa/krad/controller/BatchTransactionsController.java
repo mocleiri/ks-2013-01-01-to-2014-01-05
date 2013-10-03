@@ -12,8 +12,6 @@ import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -153,9 +151,9 @@ public class BatchTransactionsController extends GenericSearchController {
 
             boolean result = transactionService.makeAllTransactionsEffective(false);
 
-            String msg = result ? "Transactions have been made effective" : "None of transactions has been made effective";
+            String msg = result ? "Transactions have been made effective" : "No transactions has been made effective";
 
-            GlobalVariables.getMessageMap().putInfo(getUIFModelAndView(form).getViewName(), RiceKeyConstants.ERROR_CUSTOM, msg);
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, msg);
 
         } catch (Exception e) {
             return handleError(form, e);
