@@ -373,55 +373,6 @@ a.inlineBlock {
     margin: 0;
 }
 
-.ksap-timestampBadge {
-    text-align: center;
-    background-color: #efefef;
-    border-radius: 5px;
-    padding: 5px;
-    margin: 0 5px 0 0;
-}
-
-.uif-collectionItem.viewing .ksap-timestampBadge {
-    background-color: #fbf1cd;
-}
-
-.ksap-timestampBadge .month,
-.ksap-timestampBadge .time,
-.ksap-auditData .ksap-bottomLabel,
-.ksap-auditDataGroup .uif-instructionalMessage {
-    font-size: 0.7em;
-}
-
-.ksap-timestampBadge .month {
-    text-transform: uppercase;
-}
-
-.ksap-timestampBadge .date {
-    font-size: 1.8em;
-}
-
-.ksap-auditData {
-    text-align: center;
-}
-
-.ksap-auditData .uif-readOnlyContent,
-.ksap-auditData .ksap-bottomLabel {
-    display: block;
-    clear: both;
-}
-
-.ksap-auditData .uif-readOnlyContent {
-    font-size: 1.3em;
-}
-
-.ksap-auditDataGroup .uif-instructionalMessage {
-    text-transform: uppercase;
-}
-
-.ksap-auditData .ksap-bottomLabel {
-    text-transform: uppercase;
-}
-
 /* KSAP AUDIT HAND OFF VIEW */
 .ksap-auditHandOff {
     overflow: hidden;
