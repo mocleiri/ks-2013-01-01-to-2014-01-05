@@ -87,11 +87,8 @@ Feature: EC.Waitlists
     When I copy the course offering
     Then the waitlist configuration is copied to the course and activity offerings
 
-  Scenario: WL 1.13.3 - Verify a new course offering from catalog has the default system waitlist setting
-    Given I create a Course Offering from catalog using the default waitlists option \(enabled\)
-    And I add an activity offering
-    When I copy the course offering
-    Then the waitlist configuration is copied to the course and activity offerings
+  #Scenario: WL 1.13.3 - Verify a new course offering from catalog has the default system waitlist setting - see WL 1.3.1
+
 
 
 

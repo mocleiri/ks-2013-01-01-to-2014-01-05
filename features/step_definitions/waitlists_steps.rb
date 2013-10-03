@@ -1,7 +1,11 @@
 Given /^I create a Course Offering from catalog using the default waitlists option \(enabled\)$/ do
   @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => true
 
-
+  @course_offering.view_course_details
+  on CourseOfferingInquiry do |page|
+    page.waitlist_state.should be_true
+    page.close
+  end
 end
 
 Given /^I create a Course Offering from catalog using the waitlists option disabled$/ do

@@ -42,9 +42,7 @@ Background:
     Then the activity offering copy is added to the colocated set
 
   Scenario: CCO 2.13 Successfully rollover a course offering with colocated Activity Offerings
-    Given I create an Academic Calendar
-    And I add a new term to the Academic Calendar
-    And I edit the term and make it official
+    Given I create an Academic Calender and add an official term
     And I create three Course Offerings with colocated AOs in the new term
     And I rollover the term to a new academic term
     Then the Activity Offerings are colocated in the rollover target

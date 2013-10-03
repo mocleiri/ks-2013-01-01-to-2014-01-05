@@ -34,8 +34,7 @@ class CourseOffering
                 :affiliated_person_list,
                 :affiliated_org_list
   #string - generally set using options hash
-  attr_accessor :waitlist,
-                :grade_format,
+  attr_accessor :grade_format,
                 :delivery_format_list,
                 :final_exam_activity,
                 :honors_flag,
@@ -52,7 +51,8 @@ class CourseOffering
   #object - generally set using options hash - course offering object to copy
   attr_accessor  :create_by_copy
   #boolean - - generally set using options hash true/false
-  attr_accessor :cross_listed
+  attr_accessor :cross_listed,
+                :waitlist #nil means use default setting
 
   DRAFT_STATUS = "Draft"
   PLANNED_STATUS = "Planned"
@@ -96,7 +96,7 @@ class CourseOffering
         :suffix=>"",
         :activity_offering_cluster_list=> [ (make ActivityOfferingCluster, :private_name=> :default_cluster ) ],
         :final_exam_type => "STANDARD",
-        :waitlist => true,
+        :waitlist => nil,
         :grade_format => "",
         :delivery_format_list => [ (make DeliveryFormat ) ],
         :final_exam_activity => "",
@@ -173,7 +173,7 @@ class CourseOffering
         @delivery_format_list.each_with_index do |dfl, index|
           dfl.create(index + 1)
         end
-        if ! @waitlists
+        if !@waitlist.nil? and !@waitlist #if waitlist is nil, means use default
           page.waitlist_off
           page.waitlist_continue_action
         end
