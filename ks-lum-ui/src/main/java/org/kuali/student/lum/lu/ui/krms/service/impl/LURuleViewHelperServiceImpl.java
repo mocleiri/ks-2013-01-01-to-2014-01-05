@@ -73,6 +73,7 @@ import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultCellInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultRowInfo;
+import org.kuali.student.r2.lum.clu.dto.CluSetInfo;
 import org.kuali.student.r2.lum.clu.dto.MembershipQueryInfo;
 import org.kuali.student.r2.lum.clu.service.CluService;
 import org.kuali.student.r2.lum.lrc.service.LRCService;
@@ -204,20 +205,25 @@ public class LURuleViewHelperServiceImpl extends RuleViewHelperServiceImpl {
      */
     @Override
     public Boolean compareProposition(PropositionEditor original, PropositionEditor compare) {
-
-        if(!super.compareProposition(original, compare)) {
+        //If proposition contains cluset or programCluset, skip super compare method else use super compare method for all simple propositions
+        if(((LUPropositionEditor) original).getCluSet() == null && ((LUPropositionEditor) original).getProgCluSet() == null) {
+            if(!super.compareProposition(original, compare)) {
+                return false;
+            }
+        } //If proposition contains cluset or programCluset, compare typeId's
+        else if(!original.getTypeId().equals(compare.getTypeId())) {
             return false;
-        } else if(!original.getPropositionTypeCode().equals("C")) {
+        } //If proposition contains cluset or programCluset and is not a compound proposition, compare multicourse proposition properties
+        else if(!original.getPropositionTypeCode().equals("C")) {
             LUPropositionEditor enrolOriginal = (LUPropositionEditor) original;
 
             //Populate compare proposition cluSetInformation for comparison
             if(enrolOriginal.getCluSet() != null) {
                 if(enrolOriginal.getCluSet().getParent() == null) {
-                    MultiCourseComponentBuilder builder = new MultiCourseComponentBuilder();
                     TermEditor term = new TermEditor(PropositionTreeUtil.getTermParameter(compare.getParameters()).getTermValue());
                     for(TermParameterEditor termParameterEditor : term.getEditorParameters()) {
                         if(termParameterEditor.getName().equals(KSKRMSServiceConstants.TERM_PARAMETER_TYPE_CLUSET_KEY)) {
-                            enrolOriginal.getCluSet().setParent(builder.getCluSetInformation(termParameterEditor.getValue()));
+                            enrolOriginal.getCluSet().setParent(this.getCluInfoHelper().getCluSetInformation(termParameterEditor.getValue()));
                             break;
                         }
                     }
@@ -235,14 +241,13 @@ public class LURuleViewHelperServiceImpl extends RuleViewHelperServiceImpl {
                 }
             }
 
-            //Populate compare proposition ProgramCluSetInformation for comparison
+            //Populate compare proposition Program CluSetInformation for comparison
             if(enrolOriginal.getProgCluSet() != null) {
                 if(enrolOriginal.getProgCluSet().getParent() == null) {
-                    ProgramComponentBuilder builder = new ProgramComponentBuilder();
                     TermEditor term = new TermEditor(PropositionTreeUtil.getTermParameter(compare.getParameters()).getTermValue());
                     for(TermParameterEditor termParameterEditor : term.getEditorParameters()) {
                         if(termParameterEditor.getName().equals(KSKRMSServiceConstants.TERM_PARAMETER_TYPE_CLUSET_KEY)) {
-                            enrolOriginal.getProgCluSet().setParent(builder.getProgramCluSetInformation(termParameterEditor.getValue()));
+                            enrolOriginal.getProgCluSet().setParent(this.getCluInfoHelper().getCluSetInformation(termParameterEditor.getValue()));
                             break;
                         }
                     }
@@ -342,23 +347,18 @@ public class LURuleViewHelperServiceImpl extends RuleViewHelperServiceImpl {
             //Set the clus on the wrapper object.
             CluSetInformation cluSet = (CluSetInformation) addLine;
             if(cluSet.getCluSetInfo().getId() != null) {
-            try {
-                cluSet.getCluSetInfo().setCluIds(this.getCluService().getCluIdsFromCluSet(cluSet.getCluSetInfo().getId(), ContextUtils.getContextInfo()));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            cluSet.setClus(this.getCluInfoHelper().getCourseInfos(cluSet.getCluSetInfo().getCluIds()));
+                completeCluSetInformation(cluSet);
 
-            //Sort the clus.
-            RuleEditor ruleEditor = this.getRuleEditor(model);
-                LUPropositionEditor propEditor = (LUPropositionEditor)PropositionTreeUtil.getProposition(ruleEditor);
-            Collections.sort(propEditor.getCluSet().getCluSets(), new Comparator<CluSetInformation>(){
+                //Sort the clus.
+                RuleEditor ruleEditor = this.getRuleEditor(model);
+                    LUPropositionEditor propEditor = (LUPropositionEditor)PropositionTreeUtil.getProposition(ruleEditor);
+                Collections.sort(propEditor.getCluSet().getCluSets(), new Comparator<CluSetInformation>(){
 
                 @Override
                 public int compare(CluSetInformation o1, CluSetInformation o2) {
-                    return o1.getCluSetInfo().getName().compareTo(o2.getCluSetInfo().getName());
-                }
-            });
+                        return o1.getCluSetInfo().getName().compareTo(o2.getCluSetInfo().getName());
+                    }
+                });
             }
         }
         else if(LUKRMSConstants.KSKRMS_PROPERTY_NAME_PROG_CLUS.equals(collectionGroup.getPropertyName())){
@@ -372,6 +372,19 @@ public class LURuleViewHelperServiceImpl extends RuleViewHelperServiceImpl {
                 Collections.sort(propEditor.getProgCluSet().getClus());
             }
         }
+    }
+
+    private void completeCluSetInformation(CluSetInformation cluSet) {
+        try {
+            CluSetInfo cluSetInfo = this.getCluService().getCluSet(cluSet.getCluSetInfo().getId(), ContextUtils.getContextInfo());
+            for(String subCluSetId : cluSetInfo.getCluSetIds()){
+                cluSet.getCluSets().add(this.getCluInfoHelper().getCluSetInformation(subCluSetId));
+            }
+            cluSet.setCluSetInfo(cluSetInfo);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        cluSet.setClus(this.getCluInfoHelper().getCluInfos(cluSet.getCluSetInfo().getCluIds()));
     }
 
     public List<CluInformation> getCoursesInRange(MembershipQueryInfo membershipQuery) {
