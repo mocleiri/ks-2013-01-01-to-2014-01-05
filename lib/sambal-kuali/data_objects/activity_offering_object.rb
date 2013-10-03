@@ -1247,7 +1247,7 @@ class DeliveryLogistics
   def target_row_by_dl_key
     on ActivityOfferingMaintenance do |page|
       page.requested_logistics_table.rows.each do |row|
-        row_key = "#{row.cells[ActivityOfferingMaintenanceBase::DAYS_COLUMN].text}#{row.cells[ActivityOfferingMaintenanceBase::ST_TIME_COLUMN].text}".delete(' ')
+        row_key = "#{row.cells[ActivityOfferingMaintenance::DAYS_COLUMN].text}#{row.cells[ActivityOfferingMaintenance::ST_TIME_COLUMN].text}".delete(' ')
         return row unless row_key != dl_key
       end
     end
