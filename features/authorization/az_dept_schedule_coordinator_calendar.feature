@@ -1,5 +1,5 @@
 @nightly
-Feature: EC.Calendar Authorization
+Feature: EC.AZ Dept Schedule Coordinator Calendar
 
   Background:
     Given I am logged in as a Department Schedule Coordinator

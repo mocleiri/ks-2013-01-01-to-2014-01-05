@@ -196,8 +196,7 @@ Then /^I should be able to view the calendars$/ do
   on CalendarSearch do |page|
     begin
       # only check the visible rows of the table, and skip the header
-      last_row = page.showing_up_to.to_i - 1
-      page.results_table.rows[1..last_row].each do |row|
+      page.results_table.rows[2..-2].each do |row|
         row.link(text: "View").present?.should be_true
       end
     rescue Watir::Exception::UnknownObjectException
@@ -392,7 +391,7 @@ When /^I add a Holiday Calendar to the Academic Calendar$/ do
   @holiday_calendar = create HolidayCalendar, :year => @calendar.year,
                              :start_date => hol_cal_start_date.strftime(format='%m/%d/%Y'),
                              :end_date => hol_cal_end_date.strftime(format='%m/%d/%Y')
-                             #:holiday_types=>[:start_date => hol_cal_start_date.strftime(format='%m/%d/%Y'),
+  #:holiday_types=>[:start_date => hol_cal_start_date.strftime(format='%m/%d/%Y'),
   @holiday_calendar.make_official
   @calendar.search
   on CalendarSearch do |page|
@@ -729,22 +728,22 @@ Then /^the subterms are successfully copied$/ do
 end
 
 Then /^I can search and view the subterm in read only mode$/ do
-   @subterm_list[0].search
+  @subterm_list[0].search
 
-   on CalendarSearch do |page|
-     page.view @subterm_list[0].term_name
-   end
+  on CalendarSearch do |page|
+    page.view @subterm_list[0].term_name
+  end
 
-   on ViewAcademicTerms do |page|
-     page.go_to_terms_tab
-     page.open_term_section(@subterm_list[0].term_type)
-     page.term_name(@subterm_list[0].term_type).should == @subterm_list[0].term_name
-     #page.term_code(@term.term_type)
-     page.term_start_date(@subterm_list[0].term_type).should == @subterm_list[0].start_date
-     page.term_end_date(@subterm_list[0].term_type).should == @subterm_list[0].end_date
-     page.term_status(@subterm_list[0].term_type).should == "DRAFT"
+  on ViewAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section(@subterm_list[0].term_type)
+    page.term_name(@subterm_list[0].term_type).should == @subterm_list[0].term_name
+    #page.term_code(@term.term_type)
+    page.term_start_date(@subterm_list[0].term_type).should == @subterm_list[0].start_date
+    page.term_end_date(@subterm_list[0].term_type).should == @subterm_list[0].end_date
+    page.term_status(@subterm_list[0].term_type).should == "DRAFT"
 
-   end
+  end
 end
 
 When /^I edit the subterm information$/ do
@@ -802,10 +801,10 @@ end
 When /^I add a new subterm with start date earlier than the Academic Calendar start date$/ do
   @subterm_list = Array.new(2)
   @subterm_list[0] = make AcademicTerm, :term_year => @calendar.year,
-               :start_date => (Date.strptime( @calendar.start_date , '%m/%d/%Y') - 2).strftime("%m/%d/%Y"), #minus 2 days
-               :subterm => true,
-               :term_type=> "Half Fall 1",
-               :parent_term=> "Fall Term"
+                          :start_date => (Date.strptime( @calendar.start_date , '%m/%d/%Y') - 2).strftime("%m/%d/%Y"), #minus 2 days
+                          :subterm => true,
+                          :term_type=> "Half Fall 1",
+                          :parent_term=> "Fall Term"
   @calendar.add_term(@subterm_list[0])
 end
 
