@@ -57,3 +57,51 @@ When /^I target a row in the timeslots result table then I can get it's code$/ d
   end
 
 end
+
+When /^I? ?specify Term Type (.*)$/  do  |termType|
+  pending
+end
+
+When /^I? ?specify Term Types (.*) and (.*)$/ do |termType1, termType2|
+  pending
+end
+
+Then /^only time slots of Term Type (.*) appear.?$/ do |termType|
+  pending
+end
+
+When /^I? ?add Time Slot with Term Type (.*), Days (M|T|W|H|F|S|U), Start time (\d+:\d+ ?.*), End time (\d+:\d+ ?.*)$/ do |termType, days, startTime, endTime|
+  pending
+end
+
+When /^I? ?(.*) ?edit the (.*) ?Time Slot added above to be (.*), Days (M|T|W|H|F|S|U|blank), Start time (\d+:\d+ ?.*|blank), End time (\d+:\d+ ?.*|blank)$/ do |attempt, tsOrdinality, termType, days, startTime, endTime|
+  pending
+end
+
+Then /^the changes are saved.?$/ do
+  pending
+end
+
+When /^I? ?attempt to (.*) the Time Slot added above$/ do |action|
+  pending
+end
+
+Then /^the (.*) ?Time Slot (is|is not) deleted.?$/  do |tsOrdinality, isIsNot|
+  pending
+end
+
+When /^I? ?add an RDL using the (.*) ?Time Slot added above$/ do |tsOrdinality|
+  pending
+end
+
+When /^I? ?attempt to delete both the Time Slots added above in the same action$/ do
+  pending
+end
+
+Then /^(a|an error) message is displayed on the time slot page.?$/ do |msgType|
+  pending
+end
+
+Then /^the Time Slot edits (are|are not) saved.$/ do |areAreNot|
+  pending
+end
