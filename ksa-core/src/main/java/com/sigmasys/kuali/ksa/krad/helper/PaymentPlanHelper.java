@@ -2,9 +2,11 @@ package com.sigmasys.kuali.ksa.krad.helper;
 
 import com.sigmasys.kuali.ksa.model.Tag;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
+import com.sigmasys.kuali.ksa.model.TransactionType;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
 import org.kuali.rice.krad.uif.service.impl.ViewHelperServiceImpl;
@@ -17,6 +19,7 @@ public class PaymentPlanHelper extends ViewHelperServiceImpl {
     private AccountService accountService;
     private AuditableEntityService auditableEntityService;
     private ThirdPartyTransferService thirdPartyTransferService;
+    private TransactionService transactionService;
 
     public List<ThirdPartyAccount> getAccountsForSuggest(String suggest) {
         return getAccountService().getAccountsByNamePattern(suggest, ThirdPartyAccount.class);
@@ -50,5 +53,18 @@ public class PaymentPlanHelper extends ViewHelperServiceImpl {
         }
         return thirdPartyTransferService;
     }
+
+    public List<TransactionType> getTransactionTypesForSuggest(String suggest) {
+        return getTransactionService().getTransactionTypeByNamePattern(suggest, TransactionType.class);
+    }
+
+    private TransactionService getTransactionService() {
+        if (transactionService == null) {
+            transactionService = ContextUtils.getBean(TransactionService.class);
+        }
+        return transactionService;
+    }
+
+
 
 }

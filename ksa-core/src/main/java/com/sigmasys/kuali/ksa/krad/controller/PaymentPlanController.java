@@ -4,10 +4,7 @@ import com.sigmasys.kuali.ksa.krad.form.PaymentPlanForm;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionTransferModel;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
-import com.sigmasys.kuali.ksa.model.Account;
-import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
-import com.sigmasys.kuali.ksa.model.TransactionTransfer;
-import com.sigmasys.kuali.ksa.model.TransferType;
+import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
@@ -95,6 +92,7 @@ public class PaymentPlanController extends GenericSearchController {
     public ModelAndView get(@ModelAttribute("KualiForm") PaymentPlanForm form, BindingResult result,
                                  HttpServletRequest request, HttpServletResponse response) {
         String pageId = request.getParameter("pageId");
+        form.setRollupOptionsFinder(this.getRollupOptionsFinder());
 
         if ("ManageThirdPartyPage".equals(pageId)) {
             populateForm(form);
@@ -406,5 +404,11 @@ public class PaymentPlanController extends GenericSearchController {
 
         return getUIFModelAndView(form);
     }
+
+    public KeyValuesFinder getRollupOptionsFinder() {
+        // Don't cache the values finder or else new entries will not show when added
+        return new AuditableEntityKeyValuesFinder<Rollup>(Rollup.class);
+    }
+
 
 }

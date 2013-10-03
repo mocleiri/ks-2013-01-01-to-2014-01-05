@@ -20,10 +20,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <bean id="PaymentPlanView" parent="Uif-KsaFormView" p:footer.render="false">
+<bean id="PaymentPlanView" parent="Uif-KsaFormView" p:footer.render="false">
         <property name="title" value=""/>
         <property name="headerText" value="Payment Plans"/>
         <property name="entryPageId" value="ManageThirdPartyPage"/>
@@ -86,6 +89,13 @@
                 <ref bean="paymentPlanDescription"/>
                 <ref bean="thirdPartyOpenPeriod"/>
                 <ref bean="thirdPartyChargePeriod"/>
+                <ref bean="paymentBillingCharges"/>
+                <ref bean="paymentBillingDates"/>
+                <ref bean="paymentBillingFlatFees"/>
+                <ref bean="paymentBillingVariableFees"/>
+                <ref bean="paymentBillingRounding"/>
+                <ref bean="paymentBillingAdditionalSettings"/>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insertPaymentBilling" p:actionLabel="Submit"/>
             </list>
         </property>
 
@@ -319,6 +329,93 @@
                                 <property name="optionsFinder">
                                     <bean class="com.sigmasys.kuali.ksa.krad.util.DistributionPlanKeyValuesFinder"/>
                                 </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="paymentBillingCharges" parent="Uif-VerticalBoxSection">
+        <property name="headerText" value="Charges"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="maxAmount" p:label="Maximum Amount" p:labelPlacement="TOP"/>
+
+                <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="6" p:width="85%">
+                    <property name="headerText" value="Allowable Charges"/>
+                    <property name="readOnly" value="false"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.pb.PaymentBillingAllowableCharge"/>
+                    <property name="propertyName" value="paymentBillingAllowableCharges"/>
+                    <property name="layoutManager.sequencePropertyName" value="name"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                    <property name="layoutManager.richTable.disableTableSort" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="false"/>
+                            <entry key="bInfo" value="false"/>
+                            <entry key="bFilter" value="false"/>
+                            <entry key="bSort" value="false" />
+                        </map>
+                    </property>
+
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:label="Transaction Type Mask" p:propertyName="transactionTypeMask"/>
+                            <bean parent="Uif-InputField" p:label="Priority" p:propertyName="priority"/>
+                            <bean parent="Uif-InputField" p:label="Percentage Allowed" p:propertyName="maxPercentage"/>
+                            <bean parent="Uif-InputField" p:label="Maximum Amount" p:propertyName="maxAmount"/>
+                        </list>
+                    </property>
+                </bean>
+
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="paymentBillingDates" parent="Uif-VerticalBoxSection">
+        <property name="headerText" value="Payback Schedule"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="4" p:width="85%">
+                    <property name="headerText" value="Payment Billing Dates"/>
+                    <property name="readOnly" value="false"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel"/>
+                    <property name="propertyName" value="paymentBillingDates"/>
+                    <property name="layoutManager.sequencePropertyName" value="id"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                    <property name="layoutManager.richTable.disableTableSort" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="false"/>
+                            <entry key="bInfo" value="false"/>
+                            <entry key="bFilter" value="false"/>
+                            <entry key="bSort" value="false" />
+                        </map>
+                    </property>
+
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:label="Payment Date" p:propertyName="effectiveDate">
+                                <property name="control">
+                                    <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:label="Percentage of Total" p:propertyName="percentage"/>
+                            <bean parent="Uif-InputField" p:propertyName="rollupId" p:labelPlacement="TOP" p:label="Roll-Up"
+                                  p:fieldLabel.renderColon="false">
+                                <property name="control">
+                                    <bean parent="Uif-DropdownControl" p:width="100%"/>
+                                </property>
+                                <property name="optionsFinder" value="@{getRollupOptionsFinder()}"/>
                             </bean>
                         </list>
                     </property>
@@ -672,6 +769,111 @@
             </list>
         </property>
     </bean>
+
+    <bean id="paymentBillingFlatFees" parent="Uif-HorizontalBoxSection">
+        <property name="headerText" value="Flat Fees"/>
+        <property name="readOnly" value="false"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="flatFeeAmount" p:label="Amount" p:labelPlacement="TOP"/>
+                <bean parent="Uif-InputField" p:propertyName="flatFeeTransactionType" p:label="Transaction Type" p:labelPlacement="TOP">
+                    <property name="suggest">
+                        <bean parent="Uif-Suggest">
+                            <property name="valuePropertyName" value="id.id"/>
+                            <property name="templateOptions" value="minLength:2,delay:0"/>
+                            <property name="suggestQuery">
+                                <bean parent="Uif-AttributeQueryConfig">
+                                    <property name="queryMethodToCall" value="getTransactionTypesForSuggest"/>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="paymentBillingVariableFees" parent="Uif-VerticalBoxSection">
+        <property name="headerText" value="Variable Fees"/>
+        <property name="readOnly" value="false"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
+                    <bean parent="Uif-InputField" p:propertyName="variableFeePercentage" p:label="Percentage" p:labelPlacement="TOP"/>
+                    <bean parent="Uif-InputField" p:propertyName="variableFeeTransactionType" p:label="Transaction Type" p:labelPlacement="TOP">
+                        <property name="suggest">
+                            <bean parent="Uif-Suggest">
+                                <property name="valuePropertyName" value="id.id"/>
+                                <property name="templateOptions" value="minLength:2,delay:0"/>
+                                <property name="suggestQuery">
+                                    <bean parent="Uif-AttributeQueryConfig">
+                                        <property name="queryMethodToCall" value="getTransactionTypesForSuggest"/>
+                                    </bean>
+                                </property>
+                            </bean>
+                        </property>
+                    </bean>
+                </list></property></bean>
+                <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
+                    <bean parent="Uif-InputField" p:propertyName="minimumAmount" p:label="Minimum Amount" p:labelPlacement="TOP"/>
+                    <bean parent="Uif-InputField" p:propertyName="maximumAmount" p:label="Maximum Amount" p:labelPlacement="TOP"/>
+                </list></property></bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="paymentBillingRounding" parent="Uif-HorizontalBoxSection">
+        <property name="headerText" value="Rounding"/>
+        <property name="readOnly" value="false"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="roundingFactor" p:label="Rounding" p:labelPlacement="TOP"/>
+                <bean parent="Uif-InputField" p:propertyName="nonRoundedPaymentType" p:label="Non-rounded Payment" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-DropdownControl" p:options-ref="PaymentRoundingTypeList"/>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <util:list id="PaymentRoundingTypeList">
+        <bean parent="Uif-KeyLabelPair" p:key="F" p:value="First Code"/>
+        <bean parent="Uif-KeyLabelPair" p:key="L" p:value="Last Code"/>
+    </util:list>
+
+    <bean id="paymentBillingAdditionalSettings" parent="Uif-VerticalBoxSection">
+        <property name="headerText" value="Additional Settings"/>
+        <property name="readOnly" value="false"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="postToGeneralLedger" p:label="Post to the General Ledger" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-DropdownControl" p:options-ref="PostToGeneralLedgerList"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="lateMembership" p:label="Late Membership" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-VerticalRadioControl" p:options-ref="LateMembershipList"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="prefixStatement" p:label="Prefix the statement entry with the following" p:labelPlacement="TOP"/>
+            </list>
+        </property>
+    </bean>
+
+    <util:list id="PostToGeneralLedgerList">
+        <bean parent="Uif-KeyLabelPair" p:key="T" p:value="All transactions immediately upon membership within the plan"/>
+        <bean parent="Uif-KeyLabelPair" p:key="F" p:value="On the Effective Date of each transaction"/>
+    </util:list>
+
+    <util:list id="LateMembershipList">
+        <bean parent="Uif-KeyLabelPair" p:key="NOTALLOWED" p:value="Is not allowed. Users will not be allowed to enroll in the plan after the first payment date has passed."/>
+        <bean parent="Uif-KeyLabelPair" p:key="BACKBILL" p:value="All plan transactions will have Effective Dates according to the schedule of the plan.  Late transactions will be considered past-due immedately upon membership according to the effective dates of the transactions."/>
+        <bean parent="Uif-KeyLabelPair" p:key="SKIPEARLIER" p:value="Financable transactions will be evenly allocated over the remaining payment dates according to the original plan schedule."/>
+        <bean parent="Uif-KeyLabelPair" p:key="BALANCETODAY" p:value="Charges with payment dates prir to the payment plan membership date will be due immediately.  Future transactions will be created according to the schedule and amounts set in the plan."/>
+    </util:list>
+
 
 
 

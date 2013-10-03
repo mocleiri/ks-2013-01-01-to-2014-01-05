@@ -1,8 +1,10 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingAllowableCharge;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
@@ -24,9 +26,12 @@ public class PaymentPlanForm extends AbstractViewModel {
     private PaymentBillingPlan newPaymentBillingPlan;
 
     private List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges;
+    private List<PaymentBillingAllowableCharge> paymentBillingAllowableCharges;
 
     private String filterPlanName;
     private List<ThirdPartyPlan> filterThirdPartyPlans;
+
+    private List<PaymentBillingDateModel> paymentBillingDates;
 
     private String filterThirdPartyAccount;
     private List<ThirdPartyAccount> filterThirdPartyAccounts;
@@ -40,6 +45,7 @@ public class PaymentPlanForm extends AbstractViewModel {
     private String transferType;
 
     private KeyValuesFinder transferTypeOptionsFinder;
+    private KeyValuesFinder rollupOptionsFinder;
 
 
 
@@ -57,7 +63,18 @@ public class PaymentPlanForm extends AbstractViewModel {
     private Date effectiveDate;
     private Date recognitionDate;
 
-
+    // Fields for a new Payment Billing Plan
+    private BigDecimal flatFeeAmount;
+    private String flatFeeTransactionType;
+    private BigDecimal variableFeePercentage;
+    private String variableFeeTransactionType;
+    private BigDecimal minimumAmount;
+    private BigDecimal maximumAmount;
+    private String roundingFactor;
+    private String nonRoundedPaymentType;
+    private String postToGeneralLedger;
+    private String lateMembership;
+    private String prefixStatement;
 
     public Account getAccount() {
         return account;
@@ -281,5 +298,117 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     public void setThirdPartyPlan(ThirdPartyPlanModel thirdPartyPlan) {
         this.thirdPartyPlan = thirdPartyPlan;
+    }
+
+    public List<PaymentBillingAllowableCharge> getPaymentBillingAllowableCharges() {
+        return paymentBillingAllowableCharges;
+    }
+
+    public void setPaymentBillingAllowableCharges(List<PaymentBillingAllowableCharge> paymentBillingAllowableCharges) {
+        this.paymentBillingAllowableCharges = paymentBillingAllowableCharges;
+    }
+
+    public List<PaymentBillingDateModel> getPaymentBillingDates() {
+        return paymentBillingDates;
+    }
+
+    public void setPaymentBillingDates(List<PaymentBillingDateModel> paymentBillingDates) {
+        this.paymentBillingDates = paymentBillingDates;
+    }
+
+    public KeyValuesFinder getRollupOptionsFinder() {
+        return rollupOptionsFinder;
+    }
+
+    public void setRollupOptionsFinder(KeyValuesFinder rollupOptionsFinder) {
+        this.rollupOptionsFinder = rollupOptionsFinder;
+    }
+
+    public BigDecimal getFlatFeeAmount() {
+        return flatFeeAmount;
+    }
+
+    public void setFlatFeeAmount(BigDecimal flatFeeAmount) {
+        this.flatFeeAmount = flatFeeAmount;
+    }
+
+    public String getFlatFeeTransactionType() {
+        return flatFeeTransactionType;
+    }
+
+    public void setFlatFeeTransactionType(String flatFeeTransactionType) {
+        this.flatFeeTransactionType = flatFeeTransactionType;
+    }
+
+    public BigDecimal getVariableFeePercentage() {
+        return variableFeePercentage;
+    }
+
+    public void setVariableFeePercentage(BigDecimal variableFeePercentage) {
+        this.variableFeePercentage = variableFeePercentage;
+    }
+
+    public String getVariableFeeTransactionType() {
+        return variableFeeTransactionType;
+    }
+
+    public void setVariableFeeTransactionType(String variableFeeTransactionType) {
+        this.variableFeeTransactionType = variableFeeTransactionType;
+    }
+
+    public BigDecimal getMinimumAmount() {
+        return minimumAmount;
+    }
+
+    public void setMinimumAmount(BigDecimal minimumAmount) {
+        this.minimumAmount = minimumAmount;
+    }
+
+    public BigDecimal getMaximumAmount() {
+        return maximumAmount;
+    }
+
+    public void setMaximumAmount(BigDecimal maximumAmount) {
+        this.maximumAmount = maximumAmount;
+    }
+
+    public String getRoundingFactor() {
+        return roundingFactor;
+    }
+
+    public void setRoundingFactor(String roundingFactor) {
+        this.roundingFactor = roundingFactor;
+    }
+
+    public String getNonRoundedPaymentType() {
+        return nonRoundedPaymentType;
+    }
+
+    public void setNonRoundedPaymentType(String nonRoundedPaymentType) {
+        this.nonRoundedPaymentType = nonRoundedPaymentType;
+    }
+
+    public String getPostToGeneralLedger() {
+        return postToGeneralLedger;
+    }
+
+    public void setPostToGeneralLedger(String postToGeneralLedger) {
+        this.postToGeneralLedger = postToGeneralLedger;
+    }
+
+    public String getLateMembership() {
+        return lateMembership;
+    }
+
+    public void setLateMembership(String lateMembership) {
+        this.lateMembership = lateMembership;
+    }
+
+    public String getPrefixStatement() {
+        return prefixStatement;
+    }
+
+    public void setPrefixStatement(String prefixStatement) {
+        this.prefixStatement = prefixStatement;
     }
 }
