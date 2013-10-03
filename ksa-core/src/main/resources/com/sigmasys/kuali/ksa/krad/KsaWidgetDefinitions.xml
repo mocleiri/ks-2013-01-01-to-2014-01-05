@@ -57,6 +57,9 @@
                 <bean id="thirdPartyTab" parent="Uif-Link" p:linkText="Third Party &amp; Payment Plans" p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=CreatePaymentPlanPage">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
+                <bean id="feeManagementTab" parent="Uif-Link" p:linkText="Fee Management" p:href="feeManagementView?methodToCall=get&amp;viewId=FeeManagementView&amp;pageId=RateTypesPage">
+                    <property name="componentSecurity.viewAuthz" value="true"/>
+                </bean>
                 <bean id="settingsTab" parent="Uif-Link" p:linkText="Settings" p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
@@ -166,6 +169,24 @@
                 <bean parent="Uif-Link" p:linkText="Aged Trial Balance"
                       p:href="reportReconciliationView?methodToCall=get&amp;viewId=ReportReconciliationView&amp;pageId=AgedBalanceView"/>
                 <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerMainPage" p:actionLabel="General Ledger"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean name="KsaFeeManagementNavigation" parent="Uif-KsaPageNavigation">
+        <property name="items">
+            <list>
+                <bean parent="Uif-HeaderTwo" p:headerText="Fee Management"/>
+                <bean parent="Uif-Link" p:linkText="Rate Types"
+                      p:href="feeManagementView?methodToCall=get&amp;viewId=FeeManagementView&amp;pageId=RateTypesPage"/>
+                <bean parent="Uif-Link" p:linkText="Rate Catalog"
+                      p:href="feeManagementView?methodToCall=get&amp;viewId=FeeManagementView&amp;pageId=RateCatalogPage"/>
+                <bean parent="Uif-Link" p:linkText="Rates"
+                      p:href="feeManagementView?methodToCall=get&amp;viewId=FeeManagementView&amp;pageId=RatesPage"/>
+                <bean parent="Uif-Link" p:linkText="Rate Rollover"
+                      p:href="feeManagementView?methodToCall=get&amp;viewId=FeeManagementView&amp;pageId=RateRolloverPage"/>
+                <bean parent="Uif-Link" p:linkText="Fee Management Rules"
+                      p:href="feeManagementView?methodToCall=get&amp;viewId=FeeManagementView&amp;pageId=FeeManagementRulesPage"/>
             </list>
         </property>
     </bean>
