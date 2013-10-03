@@ -1,5 +1,7 @@
 Given /^I create a Course Offering from catalog using the default waitlists option \(enabled\)$/ do
   @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => true
+
+
 end
 
 Given /^I create a Course Offering from catalog using the waitlists option disabled$/ do
@@ -7,7 +9,9 @@ Given /^I create a Course Offering from catalog using the waitlists option disab
 end
 
 Given /^I manage an activity offering with waitlists enabled$/ do
-  @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => true
+  @term = make AcademicTerm, :term_code => Rollover::MAIN_TEST_TERM_TARGET if @term.nil?
+
+  @course_offering = create CourseOffering, :term => @term.term_code, :course => "ENGL300", :waitlists => true
   @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering
   @activity_offering.save
 end

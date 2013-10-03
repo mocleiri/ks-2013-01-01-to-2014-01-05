@@ -15,6 +15,8 @@ Feature: EC.Waitlists
     Given I create a Course Offering from catalog using the waitlists option disabled
     When I add an activity offering
     Then the waitlist option cannot be enabled for the activity offering
+    #what if I enable WL for the course offering now?
+  #what if I disable WL for a course offering that has AOs with WL enabled?
 
   Scenario: WL 1.4.1 Verify that waitlists can be disabled for a particular activity offering
     Given I manage an activity offering with waitlists enabled
@@ -59,7 +61,37 @@ Feature: EC.Waitlists
     Then the allow holds list option is successfully updated
 
   Scenario: WL 1.11.2 Successfully disable the waitlist holds option
-    Given I manage an activity offering with waitlists the allow holds list option is enabled
+    Given I manage an activity offering with waitlist allow holds option enabled
     When I disable the allow holds list option
     Then the allow holds list option is successfully updated
+
+  Scenario: WL 1.12 - Verify waitlist configuration copied during rollover
+    Given I create an Academic Calender and add an official term
+    And I create a course and activity offering with waitlists enabled
+    And I make changes to the activity offering's default waitlist configuration
+    And I create a course and activity offering with a waitlists disabled
+    When I rollover the term to a new academic term
+    Then the waitlist enabled configuration is copied to the course activity offering in the target term
+    And the waitlist disabled configuration is copied to the course activity offering in the target term
+
+  Scenario: WL 1.13.1 - Verify waitlist information (enabled) is copied for copy course offering within the same tern
+    Given I create a course offering with waitlists enabled
+    And I add an activity offering with waitlists enabled
+    And I make changes to the default waitlist configuration
+    When I copy the course offering
+    Then the waitlist configuration is copied to the course and activity offerings
+
+  Scenario: WL 1.13.2 - Verify waitlist information (disabled) is copied for copy course offering within the same tern
+    Given I create a course offering with waitlists disabled
+    And I add an activity offering
+    When I copy the course offering
+    Then the waitlist configuration is copied to the course and activity offerings
+
+  Scenario: WL 1.13.3 - Verify a new course offering from catalog has the default system waitlist setting
+    Given I create a Course Offering from catalog using the default waitlists option \(enabled\)
+    And I add an activity offering
+    When I copy the course offering
+    Then the waitlist configuration is copied to the course and activity offerings
+
+
 

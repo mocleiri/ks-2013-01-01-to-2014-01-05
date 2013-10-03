@@ -5,7 +5,7 @@ end
 
 Then /^I view the course offering details$/ do
   @course_offering.view_course_details
-  on ManageCourseDetails do |page|
+  on CourseOfferingInquiry do |page|
     page.close
   end
 end
@@ -82,7 +82,7 @@ Then /^I can submit and the credit options are changed$/ do
 
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
-  on ManageCourseDetails do  |page|
+  on CourseOfferingInquiry do  |page|
     page.course_credit_count.should == @course_offering.fixed_credit_count
   end
 end
@@ -95,7 +95,7 @@ Then /^I can submit and the credit values are changed$/ do
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
 
-  on ManageCourseDetails do  |page|
+  on CourseOfferingInquiry do  |page|
     page.course_credit_count.should == @course_offering.formatted_multiple_credits_list
   end
 end
@@ -163,7 +163,7 @@ Then /^I can submit and the course offering is updated$/ do
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
 
-  on ManageCourseDetails do  |page|
+  on CourseOfferingInquiry do  |page|
     page.registration_options.should == @course_offering.reg_options
     page.final_exam_type.should == @course_offering.final_exam_type
     page.waitlist_state.should == @course_offering.waitlist
@@ -178,7 +178,7 @@ Then /^I can submit and the registration options are changed$/ do
   end
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
-  on ManageCourseDetails do  |page|
+  on CourseOfferingInquiry do  |page|
     page.registration_options.should == @course_offering.reg_options
   end
 end
@@ -190,7 +190,7 @@ Then /^I can submit and the delivery formats are updated$/ do
 
   @course_offering.search_by_subjectcode
        @course_offering.view_course_details
-       on ManageCourseDetails do  |page|
+       on CourseOfferingInquiry do  |page|
          page.get_delivery_format("Lecture Only").should == "Lecture Only"
          page.get_grade_roster_level("Lecture Only").should == "Lecture"
          page.get_final_exam_activity("Lecture Only").should == "Lecture"
@@ -204,7 +204,7 @@ Then /^I can submit and the modified delivery formats are updated$/ do
 
   @course_offering.search_by_subjectcode
        @course_offering.view_course_details
-       on ManageCourseDetails do  |page|
+       on CourseOfferingInquiry do  |page|
          page.get_delivery_format("Lecture/Discussion").should == "Lecture/Discussion"
          page.get_grade_roster_level("Lecture/Discussion").should == "Lecture"
          #page.get_final_exam_activity("Lecture/Discussion").should == "Lecture"
@@ -218,7 +218,7 @@ Then /^I can submit and the added delivery format is not present$/ do
 
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
-  on ManageCourseDetails do  |page|
+  on CourseOfferingInquiry do  |page|
     page.delivery_format_row("Lecture Only").should == nil
   end
 
@@ -345,7 +345,7 @@ Then /^I can verify that the Honors Course setting is "(set|not set)"$/ do |shou
   end
 
   @course_offering.view_course_details
-  on ManageCourseDetails do |page|
+  on CourseOfferingInquiry do |page|
     page.honors_flag.should == honors_flag
   end
 end
