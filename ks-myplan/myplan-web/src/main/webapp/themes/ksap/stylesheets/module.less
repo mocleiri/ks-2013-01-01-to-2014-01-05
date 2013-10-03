@@ -1,33 +1,13 @@
 .moduleContainer {
     border: @baseBorderStyle;
-
-.
-
-border-radius
-
-(
-@baseBorderRadius);
-    }
+    .border-radius(@baseBorderRadius);
+}
 
 .moduleContainer__header {
     padding: 8px 10px;
-
-.
-
-border-radius
-
-(
-@baseBorderRadius @baseBorderRadius 0 0);
-#gradient > .
-
-vertical
-
-(
-#efefef, #d5d5d5
-
-)
-;
-    }
+    .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
+    #gradient > .vertical(#efefef, #d5d5d5);
+}
 
 .moduleContainer__headerText {
     text-transform: uppercase;
@@ -46,7 +26,7 @@ vertical
     border-top: @baseBorderStyle;
     border-bottom: @baseBorderStyle;
     padding: @paddingMini @paddingDefault;
-    #gradient > . vertical(#f7f7f7, #efefef);
+    #gradient > .vertical(#f7f7f7, #efefef);
 }
 
 .module__headerText {
@@ -132,21 +112,10 @@ vertical
 .module__timestampBadge {
     text-align: center;
     background-color: @grayLighter;
-
-.
-
-border-radius
-
-(
-@baseBorderRadius);
-padding:
-
-@paddingSmall;
-margin:
-
-0
-@marginSmall 0 0;
-    }
+    padding: @paddingSmall;
+    margin: 0 @marginSmall 0 0;
+    .border-radius(@baseBorderRadius);
+}
 
 .viewing .module__timestampBadge {
     background-color: #fbf1cd;
@@ -189,6 +158,11 @@ margin:
     text-transform: uppercase;
 }
 
+
+
+
+
+
 .ksap-module .uif-stackedCollectionLayout .uif-collectionItem.pending:hover {
     background-color: transparent;
     cursor: default;
@@ -214,6 +188,7 @@ margin:
 .ksap-module .uif-stackedCollectionLayout .uif-collectionItem.pending .program {
     color: #333;
 }
+
 
 .ksap-moduleContainer .blockElement {
     left: auto !important;
