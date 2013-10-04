@@ -1,16 +1,21 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.PaymentPlanForm;
+import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionTransferModel;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.pb.*;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
+import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
+import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
+import com.sigmasys.kuali.ksa.util.EnumUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
@@ -44,10 +49,16 @@ public class PaymentPlanController extends GenericSearchController {
     private static final Log logger = LogFactory.getLog(PaymentPlanController.class);
 
     @Autowired
+    private PaymentBillingService paymentBillingService;
+
+    @Autowired
     private ThirdPartyTransferService thirdPartyTransferService;
 
     @Autowired
     private TransactionTransferService transactionTransferService;
+
+    @Autowired
+    private AuditableEntityService auditableEntityService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -93,6 +104,10 @@ public class PaymentPlanController extends GenericSearchController {
                                  HttpServletRequest request, HttpServletResponse response) {
         String pageId = request.getParameter("pageId");
         form.setRollupOptionsFinder(this.getRollupOptionsFinder());
+
+        // Clean up the "new" objects to clear out any old data
+        form.setNewPaymentBillingPlan(new PaymentBillingPlan());
+        form.setNewThirdPartyPlan(new ThirdPartyPlan());
 
         if ("ManageThirdPartyPage".equals(pageId)) {
             populateForm(form);
@@ -317,6 +332,101 @@ public class PaymentPlanController extends GenericSearchController {
 
         form.setThirdPartyPlans(models);
 
+    }
+
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insertPaymentBilling")
+    public ModelAndView insertPaymentBilling(@ModelAttribute("KualiForm") PaymentPlanForm form) {
+
+        boolean errors = false;
+
+        PaymentBillingPlan plan = form.getNewPaymentBillingPlan();
+
+        TransferType transferType = auditableEntityService.getAuditableEntity("PB", TransferType.class);
+
+        if(plan == null) {
+            plan = new PaymentBillingPlan();
+        }
+        if (plan.getCode() == null) {
+            plan.setCode(form.getCode());
+        }
+
+        if (plan.getName() == null) {
+            plan.setName(form.getName());
+        }
+
+        if (plan.getDescription() == null) {
+            plan.setDescription(form.getDescription());
+        }
+        if (plan.getOpenPeriodStartDate() == null) {
+            plan.setOpenPeriodStartDate(form.getOpenPeriodStartDate());
+        }
+
+        if (plan.getOpenPeriodEndDate() == null) {
+            plan.setOpenPeriodEndDate(form.getOpenPeriodEndDate());
+        }
+
+        if (plan.getChargePeriodStartDate() == null) {
+            plan.setChargePeriodStartDate(form.getChargePeriodStartDate());
+        }
+
+        if (plan.getChargePeriodEndDate() == null) {
+            plan.setChargePeriodEndDate(form.getChargePeriodEndDate());
+        }
+
+        if (plan.getMaxAmount() == null) {
+            plan.setMaxAmount(form.getMaxAmount());
+        }
+
+        plan.setGlCreationImmediate("Y".equals(form.getPostToGeneralLedger()));
+
+        PaymentRoundingType roundingType = EnumUtils.findById(PaymentRoundingType.class, form.getNonRoundedPaymentType());
+        plan.setPaymentRoundingType(roundingType);
+
+        ScheduleType scheduleType = EnumUtils.findById(ScheduleType.class, form.getLateMembership());
+        if(scheduleType == null){
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Late Membership is a required field");
+            errors = true;
+        }
+        plan.setScheduleType(scheduleType);
+
+        plan.setTransferType(transferType);
+
+        plan.setFlatFeeDebitTypeId(form.getFlatFeeTransactionType());
+        plan.setVariableFeeDebitTypeId(form.getVariableFeeTransactionType());
+
+        if(errors) {
+            return getUIFModelAndView(form);
+        }
+
+        Long planId = paymentBillingService.persistPaymentBillingPlan(plan);
+        plan.setId(planId);
+
+
+        List<PaymentBillingAllowableCharge> allowableCharges = form.getPaymentBillingAllowableCharges();
+        for(PaymentBillingAllowableCharge charge : allowableCharges) {
+            PaymentBillingAllowableCharge newCharge = paymentBillingService.createPaymentBillingAllowableCharge(planId, charge.getTransactionTypeMask(), charge.getMaxAmount(), charge.getMaxPercentage(), charge.getPriority());
+        }
+
+
+        List<PaymentBillingDateModel> billingModels = form.getPaymentBillingDates();
+        for(PaymentBillingDateModel model : billingModels) {
+            String rollupIdString = model.getRollupId();
+            Long rollupId = null;
+            try {
+               rollupId = Long.parseLong(rollupIdString);
+            } catch(NumberFormatException e) {
+               GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Rollup is required.  '" + rollupIdString + "' is not a valid rollup");
+               errors = true;
+            }
+            if(! errors ) {
+                PaymentBillingDate newBillingDate = paymentBillingService.createPaymentBillingDate(planId, rollupId, model.getPercentage(), model.getEffectiveDate());
+            }
+        }
+
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Payment Billing Plan saved.");
+
+        return getUIFModelAndView(form);
     }
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insertThirdParty")

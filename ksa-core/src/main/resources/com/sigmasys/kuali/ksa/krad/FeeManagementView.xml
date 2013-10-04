@@ -144,32 +144,6 @@
                                 </property>
                             </bean>
 
-                            <!--
-                            <bean parent="Uif-VerticalFieldGroup" p:label="Plan Settings">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-ImageField" p:source="../images/settings.png" p:style="cursor:pointer;" p:altText="View Plan Settings" p:title=""
-                                              p:onClickScript="showLightboxComponent('planSettingsLightbox@{#lineSuffix}');"/>
-                                        <bean id="planSettingsLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
-                                            <property name="headerText" value="Third Party Payment Plan Settings"/>
-                                            <property name="hidden" value="true"/>
-                                            <property name="readOnly" value="false"/>
-                                            <property name="items">
-                                                <list>
-                                                    <ref bean="thirdPartyDescription"/>
-                                                    <ref bean="thirdPartyAdministrative"/>
-                                                    <ref bean="thirdPartyOpenPeriod"/>
-                                                    <ref bean="thirdPartyChargePeriod"/>
-                                                    <ref bean="thirdPartyCharges"/>
-                                                    <ref bean="thirdPartyTransferredTransactions"/>
-                                                    <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="updateThirdParty" p:actionLabel="Submit" p:actionParameters="planId:@{#line.parent.id}"/>
-                                                </list>
-                                            </property>
-                                        </bean>
-                                    </list>
-                                </property>
-                            </bean>
-                            -->
                         </list>
                     </property>
                 </bean>

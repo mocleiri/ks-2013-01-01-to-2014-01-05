@@ -1,6 +1,8 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 //import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
+
+import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
@@ -23,15 +25,13 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     private Account account;
 
-    private PaymentBillingPlan newPaymentBillingPlan;
-
     private List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges;
     private List<PaymentBillingAllowableCharge> paymentBillingAllowableCharges;
 
     private String filterPlanName;
     private List<ThirdPartyPlan> filterThirdPartyPlans;
 
-    //private List<PaymentBillingDateModel> paymentBillingDates;
+    private List<PaymentBillingDateModel> paymentBillingDates;
 
     private String filterThirdPartyAccount;
     private List<ThirdPartyAccount> filterThirdPartyAccounts;
@@ -48,12 +48,14 @@ public class PaymentPlanForm extends AbstractViewModel {
     private KeyValuesFinder rollupOptionsFinder;
 
 
-
-    // Fields for a new Third Party plan
-    private ThirdPartyPlan     newThirdPartyPlan;
+    // Fields shared with both new Third Party Plan and new Payment Billing Plan
     private String code;
     private String name;
     private String description;
+
+
+    // Fields for a new Third Party plan
+    private ThirdPartyPlan     newThirdPartyPlan;
     private ThirdPartyAccount thirdPartyAccount;
     private Date openPeriodStartDate;
     private Date openPeriodEndDate;
@@ -64,13 +66,10 @@ public class PaymentPlanForm extends AbstractViewModel {
     private Date recognitionDate;
 
     // Fields for a new Payment Billing Plan
-    private BigDecimal flatFeeAmount;
+    private PaymentBillingPlan newPaymentBillingPlan;
+
     private String flatFeeTransactionType;
-    private BigDecimal variableFeePercentage;
     private String variableFeeTransactionType;
-    private BigDecimal minimumAmount;
-    private BigDecimal maximumAmount;
-    private String roundingFactor;
     private String nonRoundedPaymentType;
     private String postToGeneralLedger;
     private String lateMembership;
@@ -301,6 +300,9 @@ public class PaymentPlanForm extends AbstractViewModel {
     }
 
     public List<PaymentBillingAllowableCharge> getPaymentBillingAllowableCharges() {
+        if(paymentBillingAllowableCharges == null) {
+            paymentBillingAllowableCharges = new ArrayList<PaymentBillingAllowableCharge>();
+        }
         return paymentBillingAllowableCharges;
     }
 
@@ -308,13 +310,16 @@ public class PaymentPlanForm extends AbstractViewModel {
         this.paymentBillingAllowableCharges = paymentBillingAllowableCharges;
     }
 
-    /*public List<PaymentBillingDateModel> getPaymentBillingDates() {
+    public List<PaymentBillingDateModel> getPaymentBillingDates() {
+        if(paymentBillingDates == null) {
+            paymentBillingDates = new ArrayList<PaymentBillingDateModel>();
+        }
         return paymentBillingDates;
     }
 
     public void setPaymentBillingDates(List<PaymentBillingDateModel> paymentBillingDates) {
         this.paymentBillingDates = paymentBillingDates;
-    }*/
+    }
 
     public KeyValuesFinder getRollupOptionsFinder() {
         return rollupOptionsFinder;
@@ -325,11 +330,11 @@ public class PaymentPlanForm extends AbstractViewModel {
     }
 
     public BigDecimal getFlatFeeAmount() {
-        return flatFeeAmount;
+        return newPaymentBillingPlan.getFlatFeeAmount();
     }
 
     public void setFlatFeeAmount(BigDecimal flatFeeAmount) {
-        this.flatFeeAmount = flatFeeAmount;
+        getNewPaymentBillingPlan().setFlatFeeAmount(flatFeeAmount);
     }
 
     public String getFlatFeeTransactionType() {
@@ -341,11 +346,11 @@ public class PaymentPlanForm extends AbstractViewModel {
     }
 
     public BigDecimal getVariableFeePercentage() {
-        return variableFeePercentage;
+        return getNewPaymentBillingPlan().getVariableFeeAmount();
     }
 
     public void setVariableFeePercentage(BigDecimal variableFeePercentage) {
-        this.variableFeePercentage = variableFeePercentage;
+        getNewPaymentBillingPlan().setVariableFeeAmount(variableFeePercentage);
     }
 
     public String getVariableFeeTransactionType() {
@@ -356,28 +361,28 @@ public class PaymentPlanForm extends AbstractViewModel {
         this.variableFeeTransactionType = variableFeeTransactionType;
     }
 
-    public BigDecimal getMinimumAmount() {
-        return minimumAmount;
+    public BigDecimal getMinFeeAmount() {
+        return getNewPaymentBillingPlan().getMinFeeAmount();
     }
 
-    public void setMinimumAmount(BigDecimal minimumAmount) {
-        this.minimumAmount = minimumAmount;
+    public void setMinFeeAmount(BigDecimal minimumAmount) {
+        getNewPaymentBillingPlan().setMinFeeAmount(minimumAmount);
     }
 
-    public BigDecimal getMaximumAmount() {
-        return maximumAmount;
+    public BigDecimal getMaxFeeAmount() {
+        return getNewPaymentBillingPlan().getMaxFeeAmount();
     }
 
-    public void setMaximumAmount(BigDecimal maximumAmount) {
-        this.maximumAmount = maximumAmount;
+    public void setMaxFeeAmount(BigDecimal maximumAmount) {
+        getNewPaymentBillingPlan().setMaxFeeAmount(maximumAmount);
     }
 
-    public String getRoundingFactor() {
-        return roundingFactor;
+    public Integer getRoundingFactor() {
+        return getNewPaymentBillingPlan().getRoundingFactor();
     }
 
-    public void setRoundingFactor(String roundingFactor) {
-        this.roundingFactor = roundingFactor;
+    public void setRoundingFactor(Integer roundingFactor) {
+        getNewPaymentBillingPlan().setRoundingFactor(roundingFactor);
     }
 
     public String getNonRoundedPaymentType() {
@@ -405,10 +410,10 @@ public class PaymentPlanForm extends AbstractViewModel {
     }
 
     public String getPrefixStatement() {
-        return prefixStatement;
+        return getNewPaymentBillingPlan().getStatementPrefix();
     }
 
     public void setPrefixStatement(String prefixStatement) {
-        this.prefixStatement = prefixStatement;
+        getNewPaymentBillingPlan().setStatementPrefix(prefixStatement);
     }
 }
