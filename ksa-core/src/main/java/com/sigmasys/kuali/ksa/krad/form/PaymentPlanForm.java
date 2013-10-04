@@ -1,6 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
-import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
+//import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
@@ -31,7 +31,7 @@ public class PaymentPlanForm extends AbstractViewModel {
     private String filterPlanName;
     private List<ThirdPartyPlan> filterThirdPartyPlans;
 
-    private List<PaymentBillingDateModel> paymentBillingDates;
+    //private List<PaymentBillingDateModel> paymentBillingDates;
 
     private String filterThirdPartyAccount;
     private List<ThirdPartyAccount> filterThirdPartyAccounts;
@@ -308,13 +308,13 @@ public class PaymentPlanForm extends AbstractViewModel {
         this.paymentBillingAllowableCharges = paymentBillingAllowableCharges;
     }
 
-    public List<PaymentBillingDateModel> getPaymentBillingDates() {
+    /*public List<PaymentBillingDateModel> getPaymentBillingDates() {
         return paymentBillingDates;
     }
 
     public void setPaymentBillingDates(List<PaymentBillingDateModel> paymentBillingDates) {
         this.paymentBillingDates = paymentBillingDates;
-    }
+    }*/
 
     public KeyValuesFinder getRollupOptionsFinder() {
         return rollupOptionsFinder;
