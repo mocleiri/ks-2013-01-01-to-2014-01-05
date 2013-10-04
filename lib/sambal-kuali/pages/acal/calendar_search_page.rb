@@ -26,7 +26,7 @@ class CalendarSearch < BasePage
   element(:search_for_select)  { |b| b.frm.select(name: "calendarType") }
   element(:name) { |b| b.frm.text_field(name: "name") }
   element(:year) { |b| b.frm.text_field(name: "year") }
-  element(:results_table) { |b| b.frm.div(id: "KS-CalendarSearch-HcResultSection").table }
+  element(:results_table) { |b| b.frm.div(id: /KS-CalendarSearch-.*ResultSection/).table }
 
   value(:table_info) { |b| b.frm.div(class: "dataTables_paginate paging_full_numbers").text }
 
