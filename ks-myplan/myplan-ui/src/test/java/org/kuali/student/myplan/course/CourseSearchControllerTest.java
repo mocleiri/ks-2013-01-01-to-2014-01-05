@@ -2,14 +2,14 @@ package org.kuali.student.myplan.course;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kuali.student.common.exceptions.MissingParameterException;
-import org.kuali.student.common.search.dto.SearchRequest;
-import org.kuali.student.core.atp.dto.AtpTypeInfo;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanService;
 import org.kuali.student.myplan.course.controller.CourseSearchController;
 import org.kuali.student.myplan.course.controller.CourseSearchStrategy;
 import org.kuali.student.myplan.course.dataobject.CourseSearchItem;
 import org.kuali.student.myplan.course.form.CourseSearchForm;
+import org.kuali.student.r2.common.dto.RichTextInfo;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -183,7 +183,7 @@ public class CourseSearchControllerTest {
         form.setCampusSelect(campusParams);
         form.setSearchTerm("any");
         CourseSearchStrategy strategy = getCourseSearchStrategy();
-        List<SearchRequest> requests = null;
+        List<SearchRequestInfo> requests = null;
         ArrayList<CourseSearchController.Hit> hits = null;
         try {
             requests = strategy.queryToRequests(form);
@@ -192,7 +192,7 @@ public class CourseSearchControllerTest {
         }
         try {
             hits = controller.processSearchRequests(requests);
-        } catch (MissingParameterException e) {
+        } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         assertEquals(1, hits.size());
@@ -211,7 +211,7 @@ public class CourseSearchControllerTest {
         form.setCampusSelect(campusParams);
         form.setSearchTerm("any");
         CourseSearchStrategy strategy = getCourseSearchStrategy();
-        List<SearchRequest> requests = null;
+        List<SearchRequestInfo> requests = null;
         ArrayList<CourseSearchController.Hit> hits = null;
         try {
             requests = strategy.queryToRequests(form);
@@ -220,7 +220,7 @@ public class CourseSearchControllerTest {
         }
         try {
             hits = controller.processSearchRequests(requests);
-        } catch (MissingParameterException e) {
+        } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         assertTrue(hits.size() > 0);
@@ -230,11 +230,11 @@ public class CourseSearchControllerTest {
     public void testProcessSearchRequests3() {
 
         CourseSearchController controller = getSearchController();
-        List<SearchRequest> requests = new ArrayList<SearchRequest>();
+        List<SearchRequestInfo> requests = new ArrayList<SearchRequestInfo>();
         ArrayList<CourseSearchController.Hit> hits = null;
         try {
             hits = controller.processSearchRequests(requests);
-        } catch (MissingParameterException e) {
+        } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         assertEquals(0, hits.size());
@@ -252,15 +252,15 @@ public class CourseSearchControllerTest {
         form.setSearchTerm("any");
         form.setViewId("CourseSearch-FormView");
         List<CourseSearchItem> courses = new ArrayList<CourseSearchItem>();
-        List<AtpTypeInfo> termInfos = new ArrayList<AtpTypeInfo>();
-        AtpTypeInfo termInfo = new AtpTypeInfo();
-        termInfo.setDurationType("kuali.uw.atp.duration.quarter");
-        termInfo.setSeasonalType("kuali.uw.atp.season.Fall");
+        List<AtpInfo> termInfos = new ArrayList<AtpInfo>();
+        AtpInfo termInfo = new AtpInfo();
+        //termInfo.setDurationType("kuali.uw.atp.duration.quarter");
+        //termInfo.setSeasonalType("kuali.uw.atp.season.Fall");
         termInfo.setId("kuali.atp.type.Fall");
         termInfo.setName("autumn");
-        termInfo.setDescr("autumn quarter");
-        termInfo.setEffectiveDate(null);
-        termInfo.setExpirationDate(null);
+        termInfo.setDescr(new RichTextInfo("autumn quarter", "autumn quarter"));
+        termInfo.setStartDate(null);
+        termInfo.setEndDate(null);
         termInfos.add(termInfo);
 
         CourseSearchItem courseSearchItem = new CourseSearchItem();

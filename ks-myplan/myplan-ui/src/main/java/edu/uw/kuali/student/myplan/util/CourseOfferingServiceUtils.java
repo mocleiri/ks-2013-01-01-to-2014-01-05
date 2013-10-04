@@ -8,9 +8,6 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.xpath.DefaultXPath;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingDisplayInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
-import org.kuali.student.enrollment.courseoffering.dto.ScheduleComponentDisplayInfo;
-import org.kuali.student.enrollment.courseoffering.dto.ScheduleDisplayInfo;
-import org.kuali.student.lum.course.dto.CourseInfo;
 import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.utils.TimeStringMillisConverter;
@@ -18,7 +15,12 @@ import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.TimeOfDayInfo;
 import org.kuali.student.r2.core.room.dto.BuildingInfo;
 import org.kuali.student.r2.core.room.dto.RoomInfo;
+import org.kuali.student.r2.core.scheduling.dto.ScheduleComponentDisplayInfo;
+import org.kuali.student.r2.core.scheduling.dto.ScheduleDisplayInfo;
 import org.kuali.student.r2.core.scheduling.dto.TimeSlotInfo;
+import org.kuali.student.r2.core.scheduling.infc.ScheduleComponentDisplay;
+import org.kuali.student.r2.core.scheduling.infc.TimeSlot;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
 
 import java.io.StringReader;
 import java.util.*;
@@ -129,11 +131,22 @@ public class CourseOfferingServiceUtils {
 
                 ScheduleComponentDisplayInfo scdi = new ScheduleComponentDisplayInfo();
                 scdi.setTimeSlots(new ArrayList<TimeSlotInfo>());
-                scheduleDisplay.getScheduleComponentDisplays().add(scdi);
-
+                List<? extends ScheduleComponentDisplay> scheduleComponentDisplays = scheduleDisplay.getScheduleComponentDisplays();
+                List<ScheduleComponentDisplayInfo> scheduleComponentDisplayInfos = new ArrayList<ScheduleComponentDisplayInfo>();
+                for (ScheduleComponentDisplay scheduleComponentDisplay : scheduleComponentDisplays) {
+                    scheduleComponentDisplayInfos.add(new ScheduleComponentDisplayInfo(scheduleComponentDisplay));
+                }
+                scheduleComponentDisplayInfos.add(scdi);
+                scheduleDisplay.setScheduleComponentDisplays(scheduleComponentDisplayInfos);
 
                 TimeSlotInfo timeSlot = new TimeSlotInfo();
-                scdi.getTimeSlots().add(timeSlot);
+                List<? extends TimeSlot> timeSlots = scdi.getTimeSlots();
+                List<TimeSlotInfo> timeSlotInfos = new ArrayList<TimeSlotInfo>();
+                for (TimeSlot timeSlot1 : timeSlots) {
+                    timeSlotInfos.add(new TimeSlotInfo(timeSlot1));
+                }
+                timeSlotInfos.add(timeSlot);
+                scdi.setTimeSlots(timeSlotInfos);
                 timeSlot.setWeekdays(new ArrayList<Integer>());
 
                 String tba = meetingNode.elementText("DaysOfWeekToBeArranged");
@@ -363,10 +376,10 @@ public class CourseOfferingServiceUtils {
             String gradingSystem = secondarySection.elementText("GradingSystem");
             if ("standard".equals(gradingSystem)) {
                 info.setGradingOptionId("uw.result.group.grading.option.standard");
-                info.setGradingOptionName(null);
+                info.setGradingOption(null);
             } else if ("credit/no credit".equals(gradingSystem)) {
                 info.setGradingOptionId("uw.result.group.grading.option.crnc");
-                info.setGradingOptionName("Credit/No-Credit grading");
+                info.setGradingOption("Credit/No-Credit grading");
             }
         }
 

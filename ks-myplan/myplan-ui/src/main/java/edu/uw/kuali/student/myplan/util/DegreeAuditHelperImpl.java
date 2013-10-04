@@ -5,9 +5,6 @@ import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingDisplayInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
-import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.service.CourseService;
-import org.kuali.student.lum.course.service.CourseServiceConstants;
 import org.kuali.student.myplan.academicplan.dto.LearningPlanInfo;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanService;
@@ -24,14 +21,15 @@ import org.kuali.student.myplan.course.util.CreditsFormatter;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.service.CourseService;
+import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
 import org.springframework.util.StringUtils;
 
 import javax.xml.namespace.QName;
 import java.util.*;
 
-import static org.kuali.student.myplan.academicplan.service.AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED;
-import static org.kuali.student.myplan.academicplan.service.AcademicPlanServiceConstants.LEARNING_PLAN_TYPE_PLAN;
-import static org.kuali.student.myplan.academicplan.service.AcademicPlanServiceConstants.LEARNING_PLAN_TYPE_PLAN_AUDIT;
+import static org.kuali.student.myplan.academicplan.service.AcademicPlanServiceConstants.*;
 import static org.kuali.student.myplan.audit.service.DegreeAuditConstants.*;
 import static org.kuali.student.myplan.course.util.CourseSearchConstants.CONTEXT_INFO;
 
@@ -216,7 +214,7 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                         boolean ignore = false;
                         if (courseId != null) {
                             CourseInfo courseInfo = null;
-                            courseInfo = getCourseService().getCourse(courseId);
+                            courseInfo = getCourseService().getCourse(courseId,DegreeAuditConstants.CONTEXT_INFO);
                             Set<Choice> choices = new HashSet<Choice>();
                             if (isTermPublished) {
                                 List<ActivityOfferingItem> activities = new ArrayList<ActivityOfferingItem>();
@@ -387,7 +385,7 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                                         CourseItem item = new CourseItem();
                                         item.setAtpId(atpId);
                                         item.setCourseCode(courseInfo.getCode());
-                                        item.setCourseId(courseInfo.getVersionInfo().getVersionIndId());
+                                        item.setCourseId(courseInfo.getVersion().getVersionIndId());
                                         item.setCredit(credits);
                                         item.setSectionCode(StringUtils.hasText(section) ? section : "");
                                         item.setSecondaryActivityCode(StringUtils.hasText(secondaryActivity) ? secondaryActivity : "");
@@ -400,7 +398,7 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                                         credits.add(formatted);
                                     }
 
-                                    String versionIndependentId = courseInfo.getVersionInfo().getVersionIndId();
+                                    String versionIndependentId = courseInfo.getVersion().getVersionIndId();
 
                                     MessyItem item = new MessyItem();
                                     item.setCourseCode(courseInfo.getCode());
@@ -420,13 +418,13 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                         if (ignore) {
                             String course = getCourseHelper().getVerifiedCourseId(planItem.getRefObjectId());
                             if (course != null) {
-                                CourseInfo courseInfo = getCourseService().getCourse(course);
+                                CourseInfo courseInfo = getCourseService().getCourse(course, CourseSearchConstants.CONTEXT_INFO);
                                 //Adding course to ignore list if courseId not found
                                 CourseItem item = new CourseItem();
                                 item.setAtpId(atpId);
                                 item.setCourseCode(courseInfo.getCode());
                                 item.setTitle(courseInfo.getCourseTitle());
-                                item.setCourseId(courseInfo.getVersionInfo().getVersionIndId());
+                                item.setCourseId(courseInfo.getVersion().getVersionIndId());
                                 item.setCredit(CreditsFormatter.formatCredits(courseInfo));
                                 item.setSectionCode("");
                                 ignoreTerm.getCourseItemList().add(item);

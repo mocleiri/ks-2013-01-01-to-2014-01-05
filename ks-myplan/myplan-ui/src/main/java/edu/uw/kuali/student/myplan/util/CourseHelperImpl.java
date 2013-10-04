@@ -10,19 +10,9 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.dom4j.xpath.DefaultXPath;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.student.common.exceptions.DoesNotExistException;
-import org.kuali.student.common.search.dto.SearchRequest;
-import org.kuali.student.common.search.dto.SearchResult;
-import org.kuali.student.common.search.dto.SearchResultCell;
-import org.kuali.student.common.search.dto.SearchResultRow;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingDisplayInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
-import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.service.CourseService;
-import org.kuali.student.lum.course.service.CourseServiceConstants;
-import org.kuali.student.lum.lu.service.LuService;
-import org.kuali.student.lum.lu.service.LuServiceConstants;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanService;
 import org.kuali.student.myplan.course.controller.QueryTokenizer;
 import org.kuali.student.myplan.course.controller.TokenPairs;
@@ -32,6 +22,16 @@ import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
+import org.kuali.student.r2.core.search.dto.SearchResultInfo;
+import org.kuali.student.r2.core.search.infc.SearchResultCell;
+import org.kuali.student.r2.core.search.infc.SearchResultRow;
+import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.service.CourseService;
+import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
+import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
 import org.springframework.util.CollectionUtils;
 
 import javax.xml.namespace.QName;
@@ -50,7 +50,7 @@ public class CourseHelperImpl implements CourseHelper {
 
     private AcademicPlanService academicPlanService;
 
-    private LuService luService;
+    private CluService luService;
 
 
     private static Document newDocument(String xml) throws DocumentException {
@@ -178,17 +178,17 @@ public class CourseHelperImpl implements CourseHelper {
      */
     @Override
     public String getCourseIdForTerm(String subjectArea, String number, String termId) {
-        List<SearchRequest> requests = new ArrayList<SearchRequest>();
-        SearchRequest request = new SearchRequest(CourseSearchConstants.COURSE_SEARCH_FOR_COURSE_ID);
+        List<SearchRequestInfo> requests = new ArrayList<SearchRequestInfo>();
+        SearchRequestInfo request = new SearchRequestInfo(CourseSearchConstants.COURSE_SEARCH_FOR_COURSE_ID);
         request.addParam(CourseSearchConstants.SEARCH_REQUEST_SUBJECT_PARAM, subjectArea.trim());
         request.addParam(CourseSearchConstants.SEARCH_REQUEST_NUMBER_PARAM, number.trim());
         request.addParam(CourseSearchConstants.SEARCH_REQUEST_LAST_SCHEDULED_PARAM, termId);
         requests.add(request);
-        SearchResult searchResult = new SearchResult();
+        SearchResultInfo searchResult = new SearchResultInfo();
         try {
-            searchResult = getLuService().search(request);
-        } catch (org.kuali.student.common.exceptions.MissingParameterException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            searchResult = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
+        } catch (Exception e) {
+            logger.error("Failed to get courseId for given subject and number", e);
         }
         String courseId = null;
         if (searchResult.getRows().size() > 0) {
@@ -208,7 +208,7 @@ public class CourseHelperImpl implements CourseHelper {
 
         CourseInfo courseInfo = null;
         try {
-            courseInfo = getCourseService().getCourse(getVerifiedCourseId(courseId));
+            courseInfo = getCourseService().getCourse(getVerifiedCourseId(courseId), CourseSearchConstants.CONTEXT_INFO);
         } catch (DoesNotExistException e) {
             throw new RuntimeException(String.format("Course [%s] not found.", courseId), e);
         } catch (Exception e) {
@@ -281,11 +281,11 @@ public class CourseHelperImpl implements CourseHelper {
     public String getCourseVersionIdByTerm(String courseId, String termId) {
         String courseVersionId = null;
         try {
-            SearchRequest req = new SearchRequest("myplan.course.version.id");
+            SearchRequestInfo req = new SearchRequestInfo("myplan.course.version.id");
             req.addParam("courseId", courseId);
             req.addParam("courseId", courseId);
             req.addParam("lastScheduledTerm", termId);
-            SearchResult result = getLuService().search(req);
+            SearchResultInfo result = getLuService().search(req, CourseSearchConstants.CONTEXT_INFO);
             for (SearchResultRow row : result.getRows()) {
                 for (SearchResultCell cell : row.getCells()) {
                     if ("lu.resultColumn.cluId".equals(cell.getKey())) {
@@ -440,9 +440,9 @@ public class CourseHelperImpl implements CourseHelper {
     public HashMap<String, String> fetchCourseDivisions() {
         HashMap<String, String> map = new HashMap<String, String>();
         try {
-            SearchRequest request = new SearchRequest("myplan.distinct.clu.divisions");
+            SearchRequestInfo request = new SearchRequestInfo("myplan.distinct.clu.divisions");
 
-            SearchResult result = getLuService().search(request);
+            SearchResultInfo result = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
 
             for (SearchResultRow row : result.getRows()) {
                 for (SearchResultCell cell : row.getCells()) {
@@ -503,20 +503,21 @@ public class CourseHelperImpl implements CourseHelper {
 
     /**
      * Checks to see if the division and level exists
+     *
      * @param division
      * @param level
      * @return true if for the given division and level courses exists else false
      */
     public boolean isValidCourseLevel(String division, String level) {
-        List<SearchRequest> requests = new ArrayList<SearchRequest>();
-        SearchRequest request = new SearchRequest(CourseSearchConstants.COURSE_SEARCH_FOR_DIVISION_LEVELS);
+        List<SearchRequestInfo> requests = new ArrayList<SearchRequestInfo>();
+        SearchRequestInfo request = new SearchRequestInfo(CourseSearchConstants.COURSE_SEARCH_FOR_DIVISION_LEVELS);
         request.addParam(CourseSearchConstants.SEARCH_REQUEST_SUBJECT_PARAM, division.trim());
         request.addParam(CourseSearchConstants.SEARCH_REQUEST_NUMBER_PARAM, level.trim());
         requests.add(request);
-        SearchResult searchResult = new SearchResult();
+        SearchResultInfo searchResult = new SearchResultInfo();
         try {
-            searchResult = getLuService().search(request);
-        } catch (org.kuali.student.common.exceptions.MissingParameterException e) {
+            searchResult = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
+        } catch (Exception e) {
             logger.error("Could not get courses by division and level", e);
         }
         if (!CollectionUtils.isEmpty(searchResult.getRows())) {
@@ -526,14 +527,14 @@ public class CourseHelperImpl implements CourseHelper {
     }
 
 
-    protected LuService getLuService() {
+    protected CluService getLuService() {
         if (luService == null) {
-            luService = (LuService) GlobalResourceLoader.getService(new QName(LuServiceConstants.LU_NAMESPACE, "LuService"));
+            luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.NAMESPACE, "LuService"));
         }
         return luService;
     }
 
-    public void setLuService(LuService luService) {
+    public void setLuService(CluService luService) {
         this.luService = luService;
     }
 

@@ -14,6 +14,7 @@ import org.kuali.student.r2.common.dto.MetaInfo;
 import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
 import org.kuali.student.r2.common.exceptions.*;
+import org.kuali.student.r2.lum.clu.CLUConstants;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -207,7 +208,7 @@ public class AcademicPlanServiceImplTest {
 
         String planId = "lp1";
         String refObjectId = "006476b5-18d8-4830-bbb6-2bb9e79600fb";
-        String refObjectType = "kuali.lu.type.CreditCourse";
+        String refObjectType = CLUConstants.CLU_TYPE_CREDIT_COURSE;
 
         List<PlanItemInfo> planItems = academicPlanService.getPlanItemsInPlanByRefObjectIdByRefObjectType(planId, refObjectId, refObjectType, context);
         assertEquals(1, planItems.size());
@@ -233,7 +234,7 @@ public class AcademicPlanServiceImplTest {
         planItem.setLearningPlanId(planId);
         planItem.setTypeKey(AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST);
         String courseId = "02711400-c66d-4ecb-aca5-565118f167cf";
-        String courseType = "kuali.lu.type.CreditCourse";
+        String courseType = CLUConstants.CLU_TYPE_CREDIT_COURSE;
 
         planItem.setRefObjectId(courseId);
         planItem.setRefObjectType(courseType);
@@ -292,7 +293,7 @@ public class AcademicPlanServiceImplTest {
         planItem.setPlanPeriods(planPeriods);
 
         String courseId = "02711400-c66d-4ecb-aca5-565118f167cf";
-        String courseType = "kuali.lu.type.CreditCourse";
+        String courseType = CLUConstants.CLU_TYPE_CREDIT_COURSE;
 
         planItem.setRefObjectId(courseId);
         planItem.setRefObjectType(courseType);
@@ -356,7 +357,7 @@ public class AcademicPlanServiceImplTest {
         planItemInfo.setPlanPeriods(planPeriods);
 
         String courseId = "02711400-c66d-4ecb-aca5-565118f167cf";
-        String courseType = "kuali.lu.type.CreditCourse";
+        String courseType = CLUConstants.CLU_TYPE_CREDIT_COURSE;
 
         planItemInfo.setRefObjectId(courseId);
         planItemInfo.setRefObjectType(courseType);
@@ -437,7 +438,7 @@ public class AcademicPlanServiceImplTest {
         planItem.setPlanPeriods(planPeriods);
 
         String courseId = "02711400-c66d-4ecb-aca5-565118f167cf";
-        String courseType = "kuali.lu.type.CreditCourse";
+        String courseType = CLUConstants.CLU_TYPE_CREDIT_COURSE;
 
         planItem.setRefObjectId(courseId);
         planItem.setRefObjectType(courseType);
@@ -476,7 +477,7 @@ public class AcademicPlanServiceImplTest {
         //  Don't set any plan periods. This should cause a validation error.
 
         String courseId = "02711400-c66d-4ecb-aca5-565118f167cf";
-        String courseType = "kuali.lu.type.CreditCourse";
+        String courseType = CLUConstants.CLU_TYPE_CREDIT_COURSE;
 
         planItemInfo.setRefObjectId(courseId);
         planItemInfo.setRefObjectType(courseType);
@@ -547,7 +548,7 @@ public class AcademicPlanServiceImplTest {
         planItem.setTypeKey(AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST);
 
         String courseId = "02711400-c66d-4ecb-aca5-565118f167cf";
-        String courseType = "kuali.lu.type.CreditCourse";
+        String courseType = CLUConstants.CLU_TYPE_CREDIT_COURSE;
 
         planItem.setRefObjectId(courseId);
         planItem.setRefObjectType(courseType);
@@ -581,7 +582,7 @@ public class AcademicPlanServiceImplTest {
         planItem.setLearningPlanId(planId);
         planItem.setTypeKey(AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST);
         String courseId = null;
-        String courseType = "kuali.lu.type.CreditCourse";
+        String courseType = CLUConstants.CLU_TYPE_CREDIT_COURSE;
 
         planItem.setRefObjectId(courseId);
         planItem.setRefObjectType(courseType);
@@ -617,7 +618,7 @@ public class AcademicPlanServiceImplTest {
         planItem.setLearningPlanId(planId);
         planItem.setTypeKey(AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST);
         String courseId = "02711400-c66d-4ecb-aca5-565118f167cf";
-        String courseType = "kuali.lu.type.CreditCourse";
+        String courseType = CLUConstants.CLU_TYPE_CREDIT_COURSE;
 
         planItem.setRefObjectId(courseId);
         planItem.setRefObjectType(courseType);

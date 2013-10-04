@@ -1,8 +1,9 @@
 package edu.uw.kuali.student.service.impl;
 
-import edu.uw.kuali.student.myplan.util.CircularTermList;
 import edu.uw.kuali.student.lib.client.studentservice.ServiceException;
 import edu.uw.kuali.student.lib.client.studentservice.StudentServiceClient;
+import edu.uw.kuali.student.myplan.util.CircularTermList;
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -13,12 +14,13 @@ import org.kuali.student.enrollment.acal.dto.*;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.util.AtpHelper;
-import org.kuali.student.r2.common.dto.*;
+import org.kuali.student.r2.common.dto.AttributeInfo;
+import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.dto.StatusInfo;
+import org.kuali.student.r2.common.dto.ValidationResultInfo;
 import org.kuali.student.r2.common.exceptions.*;
-
-import org.apache.log4j.Logger;
-import org.kuali.student.r2.core.state.dto.StateInfo;
-import org.kuali.student.r2.core.type.dto.TypeInfo;
+import org.kuali.student.r2.core.class1.state.dto.StateInfo;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 
 import javax.jws.WebParam;
 import java.io.StringReader;

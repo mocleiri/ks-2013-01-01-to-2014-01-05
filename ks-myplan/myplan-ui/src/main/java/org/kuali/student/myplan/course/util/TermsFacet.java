@@ -1,13 +1,12 @@
 package org.kuali.student.myplan.course.util;
 
-import org.kuali.student.core.atp.dto.AtpTypeInfo;
 import org.kuali.student.myplan.course.dataobject.CourseSearchItem;
 import org.kuali.student.myplan.course.dataobject.FacetItem;
 import org.kuali.student.myplan.plan.util.AtpHelper;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.regex.Matcher;
 
 /**
  * Logic for building list of FacetItems and coding CourseSearchItems.
@@ -44,7 +43,7 @@ public class TermsFacet extends AbstractFacet {
 
         //  Terms
         if (!CollectionUtils.isEmpty(course.getTermInfoList())) {
-            for (AtpTypeInfo term : course.getTermInfoList()) {
+            for (AtpInfo term : course.getTermInfoList()) {
                 //  Title-case the term name.
                 String termName = PROJECTED_TERM_PREFIX + term.getName().substring(0, 2).toUpperCase();
                 String key = FACET_KEY_DELIMITER + termName + FACET_KEY_DELIMITER;
