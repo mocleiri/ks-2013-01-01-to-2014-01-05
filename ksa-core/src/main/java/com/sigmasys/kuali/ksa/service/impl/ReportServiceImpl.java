@@ -15,6 +15,10 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
+import com.sigmasys.kuali.ksa.jaxb.ElectronicContact;
+import com.sigmasys.kuali.ksa.jaxb.Irs1098T;
+import com.sigmasys.kuali.ksa.jaxb.PersonName;
+import com.sigmasys.kuali.ksa.jaxb.PostalAddress;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -36,10 +40,6 @@ import com.sigmasys.kuali.ksa.jaxb.*;
 import com.sigmasys.kuali.ksa.jaxb.AgedBalanceReport.AgedAccountDetail;
 import com.sigmasys.kuali.ksa.jaxb.FailedTransactionsReport.FailureGroup;
 import com.sigmasys.kuali.ksa.jaxb.GeneralLedgerReport.GeneralLedgerReportEntry;
-import com.sigmasys.kuali.ksa.jaxb.Irs1098T;
-import com.sigmasys.kuali.ksa.jaxb.PersonName;
-import com.sigmasys.kuali.ksa.jaxb.PostalAddress;
-import com.sigmasys.kuali.ksa.jaxb.ElectronicContact;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.service.*;
@@ -62,6 +62,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
     private static final String REPORT_SCHEMA_LOCATION = "classpath*:/xsd/transaction-report.xsd";
     private static final String XML_SCHEMA_LOCATION = "classpath*:/xsd/xml.xsd";
 
+
     private XmlSchemaValidator schemaValidator;
 
     @Autowired
@@ -78,6 +79,9 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
     @Autowired
     private CashLimitService cashLimitService;
+
+    @Autowired
+    private BillRecordService billRecordService;
 
 
     @PostConstruct
@@ -1586,16 +1590,124 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
             List<Transaction> transactionsToExclude = query.getResultList();
 
-            // TODO
+            if (CollectionUtils.isNotEmpty(transactionsToExclude)) {
+
+                Set<Long> transactionIds = new HashSet<Long>(transactionsToExclude.size());
+                for (Transaction transaction : transactionsToExclude) {
+                    transactionIds.add(transaction.getId());
+                }
+
+                ListIterator<Transaction> iterator = tempTransactions.listIterator();
+                while (iterator.hasNext()) {
+                    Long transactionId = iterator.next().getId();
+                    if (transactionIds.contains(transactionId)) {
+                        iterator.remove();
+                    }
+                }
+            }
+
         }
 
+        ListIterator<Transaction> iterator = tempTransactions.listIterator();
+        while (iterator.hasNext()) {
+            Transaction transaction = iterator.next();
+            if ((!showDeferments && transaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT) ||
+                    (!showInternalTransactions && transaction.isInternal())) {
+                iterator.remove();
+            }
+        }
 
-        // TODO
+        TransactionList transactionList = objectFactory.createTransactionList();
+
+        Set<Long> processedTransactionIds = new HashSet<Long>();
+
+        for (iterator = tempTransactions.listIterator(); iterator.hasNext(); ) {
+
+            Transaction transaction = iterator.next();
+
+            Rollup rollup = transaction.getRollup();
+
+            if (rollup != null && !processedTransactionIds.contains(transaction.getId())) {
+
+                boolean rollupOnSameDate = rollupIdsOnSameDate.contains(rollup.getId());
+                boolean rollupOnSameStatement = rollupIdsOnSameStatement.contains(rollup.getId());
+
+                if (rollupOnSameDate || rollupOnSameStatement) {
+
+                    TransactionList.Rollup listRollup = objectFactory.createTransactionListRollup();
+
+                    listRollup.setRollupName(rollup.getName());
+                    listRollup.setDate(CalendarUtils.toXmlGregorianCalendar(transaction.getEffectiveDate(), true));
+                    listRollup.setChargeOrPayment(transaction.getTransactionTypeValue().toString());
+
+                    BigDecimal rollupAmount = BigDecimal.ZERO;
+
+                    for (Transaction t : tempTransactions) {
+
+                        boolean processTransaction =
+                                !processedTransactionIds.contains(t.getId()) &&
+                                        t.getRollup() != null &&
+                                        t.getRollup().getId().equals(rollup.getId()) &&
+                                        (rollupOnSameDate && t.getEffectiveDate().equals(transaction.getEffectiveDate()) || rollupOnSameStatement);
+
+                        if (processTransaction) {
+
+                            if (t.getTransactionTypeValue() == transaction.getTransactionTypeValue()) {
+                                rollupAmount = rollupAmount.add(t.getAmount());
+                            } else {
+                                rollupAmount = rollupAmount.subtract(t.getAmount());
+                            }
+
+                            processedTransactionIds.add(t.getId());
+                        }
+                    }
+
+                    listRollup.setAmount(rollupAmount);
+
+                    // TODO: Ask Paul what the following statement means:
+                    /*
+                     * Per the non-rolled up branch,
+                     create a list-transaction node
+                     for each transaction on this sub list
+                     and store under <roll-up><list-transaction>
+                     */
 
 
-        // TODO:
+                    transactionList.getRollup().add(listRollup);
 
-        return null;
+                } else {
+
+                    ListTransaction listTransaction = objectFactory.createListTransaction();
+
+                    listTransaction.setChargeOrPayment(transaction.getTransactionTypeValue().toString().toLowerCase());
+                    listTransaction.setTransactionType(transaction.getTransactionType().getId().getId());
+                    listTransaction.setEffectiveDate(CalendarUtils.toXmlGregorianCalendar(transaction.getEffectiveDate(), true));
+                    listTransaction.setCurrency(transaction.getCurrency().getCode());
+                    listTransaction.setAmount(transaction.getAmount());
+                    listTransaction.setNativeAmount(transaction.getNativeAmount());
+                    listTransaction.setStatementText(transaction.getStatementText());
+
+                    transactionList.getListTransaction().add(listTransaction);
+
+                }
+            }
+        }
+
+        ksaBill.setTransactionList(transactionList);
+        ksaBill.setPreferredDeliveryMode(configService.getParameter(Constants.BILL_DELIVERY_METHOD));
+
+        Set<Long> transactionIds = new HashSet<Long>(transactions.size());
+        for ( Transaction transaction : transactions ) {
+            transactionIds.add(transaction.getId());
+        }
+
+        BillRecord billRecord = billRecordService.createBillRecord(accountId, message, billDate, startDate, endDate,
+                showOnlyUnbilledTransactions, showInternalTransactions, showDeferments, false, transactionIds);
+
+        ksaBill.setBillId(billRecord.getId().toString());
+        ksaBill.setMessage(message);
+
+        return JaxbUtils.toXml(ksaBill);
     }
 
 

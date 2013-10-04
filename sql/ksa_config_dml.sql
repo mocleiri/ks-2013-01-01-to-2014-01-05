@@ -102,6 +102,9 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.general.ledger.payment.applic
 -- Payment Billing parameters
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.payment.billing.rounding.problem.memo', 'PB rounding problem occurred');
 
+-- Bill Record parameters
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.bill.delivery.method', 'mail');
+
 
 -- Combined Cash Limit Tracking Settings
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.cash.tracking.system', 'ON');

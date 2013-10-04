@@ -173,7 +173,15 @@
                     <xs:element name="currency" type="xs:string"/>
                 </xs:sequence>
                 <xs:element name="statement-text" type="xs:string" form="qualified"/>
-                <xs:element name="transaction-type" minOccurs="0"/>
+                <xs:element name="transaction-type" type="xs:string" minOccurs="0"/>
+                <xs:element name="charge-or-payment">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="charge"/>
+                            <xs:enumeration value="payment"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -250,8 +258,8 @@
                         <xs:sequence>
                             <xs:element name="bill-date" type="xs:date"/>
                             <xs:element name="bill-generated" type="xs:date"/>
-                            <xs:element name="bill-start" type="xs:date" minOccurs="0"/>
-                            <xs:element name="bill-end" type="xs:date" minOccurs="0"/>
+                            <xs:element name="bill-start" type="xs:date"/>
+                            <xs:element name="bill-end" type="xs:date"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
@@ -267,6 +275,7 @@
                                         <xs:element name="due-balance" type="xs:decimal"/>
                                         <xs:element name="overdue-balance" type="xs:decimal"/>
                                         <xs:element name="total-deferred" type="xs:decimal"/>
+                                        <xs:element name="has-expired-deferment" type="xs:boolean"/>
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
@@ -335,7 +344,17 @@
                 <xs:element name="rollup" minOccurs="0" maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="rollup-name"/>
+                            <xs:element name="date" type="xs:date" minOccurs="0"/>
+                            <xs:element name="rollup-name" type="xs:string"/>
+                            <xs:element name="amount" type="xs:decimal"/>
+                            <xs:element name="charge-or-payment">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="charge"/>
+                                        <xs:enumeration value="payment"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
                             <xs:element ref="list-transaction"/>
                         </xs:sequence>
                     </xs:complexType>

@@ -50,6 +50,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TransactionList }
+     */
+    public TransactionList createTransactionList() {
+        return new TransactionList();
+    }
+
+    /**
+     * Create an instance of {@link TransactionList.Rollup }
+     */
+    public TransactionList.Rollup createTransactionListRollup() {
+        return new TransactionList.Rollup();
+    }
+
+    /**
      * Create an instance of {@link AccountReport.Balances }
      */
     public AccountReport.Balances createAccountReportBalances() {
@@ -57,7 +71,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AccountReport.Balances.AgedBalance }
+     * Create an instance of {@link AgedBalance }
      */
     public AgedBalance createAgedBalance() {
         return new AgedBalance();
