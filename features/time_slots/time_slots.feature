@@ -10,9 +10,19 @@ Feature: WC.Create standard Time Slots
   @draft
   @bjg
   Scenario: Adding a standard time slot for a single time slot type
-    When I show time slots for a single term type
-    And I add 2 different time slots for the same time slot type
+    When I add 2 different time slots to a single term type
     Then the timeslots are saved
+
+  @draft
+  @bjg
+  Scenario: Adding a standard time slot for multiple time slot types
+    When I add a single time slot per 2 different term types
+    Then the timeslots are saved
+
+  @draft
+  @bjg
+  Scenario: test some stuff
+    When I test some timeslot stuff
 
 
 

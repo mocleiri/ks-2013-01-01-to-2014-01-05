@@ -1,10 +1,16 @@
-When /^I show time slots for a single term type$/ do
+When /^I add 2 different time slots to a single term type$/ do
   @time_slots = create TimeSlots
-end
-
-When /^I add 2 different time slots for the same time slot type$/ do
   @time_slots.add_new_time_slot( make TimeSlots::TimeSlot )
   @time_slots.add_new_time_slot( make TimeSlots::TimeSlot, :start_time => "11:00", :start_time_am_pm => "PM", :end_time => "11:50", :end_time_am_pm => "PM" )
+end
+
+When /^I show time slots for two different term types$/ do
+  @time_slots = create TimeSlots, :term_types => [ "Fall - Full", "Spring - Full" ]
+end
+
+
+When /^I add a single time slot per 2 different term types$/ do
+  @time_slots = create TimeSlots, :term_types => [ "Fall - Full", "Spring - Full" ]
 end
 
 Then /^the timeslots are saved$/ do
@@ -30,6 +36,35 @@ end
 ### DRAFT REMNANTS -- DELETE ONCE DEV IS COMPLETE!
 ###
 ###############################################################
+
+When /^I test some timeslot stuff$/ do
+
+
+#  time = Time.now
+#  puts time
+#  puts time.hour
+#  puts time.min
+#
+#  time = time + 60
+#  puts time
+#
+#  time = Time.gm(2000,1,1,23,59,59)
+#  puts time
+#
+#  time = time + 60
+#  puts time
+
+
+  @time_slots = create TimeSlots
+  on TimeSlotMaintenance do |page|
+    result = page.generate_unused_start_and_end_times
+    puts "RESULT -> #{result}"
+  end
+
+
+end
+
+
 
 When /^I target a row in the timeslots result table then I can get it's code$/ do
 
