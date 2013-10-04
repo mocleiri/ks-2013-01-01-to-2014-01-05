@@ -89,7 +89,6 @@ class TimeSlotMaintenance < BasePage
     last_row_hour = last_row_start_time.split(" ")[0].split(":")[0]
     last_row_minute = last_row_start_time.split(" ")[0].split(":")[1]
     last_row_am_pm = last_row_start_time.split(" ")[1]
-last_row_am_pm = "PM" #TESTING ONLY
 
     # convert the hour to mil-time
     if last_row_am_pm == "PM"
@@ -108,21 +107,41 @@ last_row_am_pm = "PM" #TESTING ONLY
     return_start_time_hr = start_time.hour
     return_start_time_mn = start_time.min
     return_start_time_am_pm = "AM"
-    if return_start_time_hr > 12
+    if return_start_time_hr == 0
+      return_start_time_hr = 12
+    elsif return_start_time_hr > 12
       return_start_time_hr = return_start_time_hr - 12
       return_start_time_am_pm = "PM"
     end
-    return_start_time = return_start_time_hr.to_s << ":" << return_start_time_mn.to_s << " " << return_start_time_am_pm
+    return_start_time_hr = return_start_time_hr.to_s
+    if return_start_time_hr.length < 2
+      return_start_time_hr = "0" << return_start_time_hr
+    end
+    return_start_time_mn = return_start_time_mn.to_s
+    if return_start_time_mn.length < 2
+      return_start_time_mn = "0" << return_start_time_mn
+    end
+    return_start_time = return_start_time_hr << ":" << return_start_time_mn << " " << return_start_time_am_pm
 
     # END_TIME: convert back to strings
     return_end_time_hr = end_time.hour
     return_end_time_mn = end_time.min
     return_end_time_am_pm = "AM"
-    if return_end_time_hr > 12
+    if return_end_time_hr == 0
+      return_end_time_hr = 12
+    elsif return_end_time_hr > 12
       return_end_time_hr = return_end_time_hr - 12
       return_end_time_am_pm = "PM"
     end
-    return_end_time = return_end_time_hr.to_s << ":" << return_end_time_mn.to_s << " " << return_end_time_am_pm
+    return_end_time_hr = return_end_time_hr.to_s
+    if return_end_time_hr.length < 2
+      return_end_time_hr = "0" << return_end_time_hr
+    end
+    return_end_time_mn = return_end_time_mn.to_s
+    if return_end_time_mn.length < 2
+      return_end_time_mn = "0" << return_end_time_mn
+    end
+    return_end_time = return_end_time_hr << ":" << return_end_time_mn << " " << return_end_time_am_pm
 
     return [return_start_time, return_end_time]
   end
