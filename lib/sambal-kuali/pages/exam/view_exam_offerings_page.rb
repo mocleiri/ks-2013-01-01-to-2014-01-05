@@ -60,7 +60,7 @@ class ViewExamOfferings < BasePage
   end
 
   ############## Activity Offering page for View Exam Offerings ####################
-  element(:eo_by_ao_table_section) { |b| b.frm.div(id: "KS-CourseOfferingManagement-ExamOfferingByAOTableSection")}
+  element(:eo_by_ao_table_section) { |b| b.frm.div(id: "KS-CourseOfferingManagement-ExamOfferingByAOClustersSection")}
   value(:ao_table_header_text) { |b| b.eo_by_ao_table_section.span(class: "uif-headerText-span").text}
 
   AO_STATUS = 0
@@ -72,9 +72,10 @@ class ViewExamOfferings < BasePage
   AO_BLDG = 6
   AO_ROOM = 7
 
-  def eo_by_ao_results_table
-    return eo_by_ao_table_section.table unless !eo_by_ao_table_section.table.exists?
-    end
+  def eo_by_ao_results_table(cluster_no)
+    ao_table = eo_by_ao_table_section.div( :id => /ExamOfferingByAOTableSection_line#{cluster_no}/).table
+    return ao_table unless !ao_table.exists?
+  end
 
   def view_eo_by_ao(code)
     view_eo_by_ao_link(code).click
@@ -85,53 +86,53 @@ class ViewExamOfferings < BasePage
     eo_by_ao_results_table.link(text: code)
   end
 
-  def eo_by_ao_target_row(code)
-    row = eo_by_ao_results_table.row(text: /\b#{Regexp.escape(code)}\b/)
+  def eo_by_ao_target_row(code, cluster_no)
+    row = eo_by_ao_results_table(cluster_no).row(text: /\b#{Regexp.escape(code)}\b/)
     return row unless row.nil?
     raise "error in target_row: #{code} not found"
   end
 
-  def eo_by_ao_status(code)
-    eo_by_ao_target_row(code).cells[AO_STATUS].text
+  def eo_by_ao_status(code, cluster_no)
+    eo_by_ao_target_row(code, cluster_no).cells[AO_STATUS].text
   end
 
-  def eo_by_ao_type(code)
-    eo_by_ao_target_row(code).cells[AO_TYPE].text
+  def eo_by_ao_type(code, cluster_no)
+    eo_by_ao_target_row(code, cluster_no).cells[AO_TYPE].text
   end
 
-  def eo_by_ao_days(code)
-    eo_by_ao_target_row(code).cells[AO_DAYS].text
+  def eo_by_ao_days(code, cluster_no)
+    eo_by_ao_target_row(code, cluster_no).cells[AO_DAYS].text
   end
 
-  def eo_by_ao_st_time(code)
-    eo_by_ao_target_row(code).cells[AO_ST_TIME].text
+  def eo_by_ao_st_time(code, cluster_no)
+    eo_by_ao_target_row(code, cluster_no).cells[AO_ST_TIME].text
   end
 
-  def eo_by_ao_end_time(code)
-    eo_by_ao_target_row(code).cells[AO_END_TIME].text
+  def eo_by_ao_end_time(code, cluster_no)
+    eo_by_ao_target_row(code, cluster_no).cells[AO_END_TIME].text
   end
 
-  def eo_by_ao_bldg(code)
-    eo_by_ao_target_row(code).cells[AO_BLDG].text
+  def eo_by_ao_bldg(code, cluster_no)
+    eo_by_ao_target_row(code, cluster_no).cells[AO_BLDG].text
   end
 
-  def eo_by_ao_room(code)
-    eo_by_ao_target_row(code).cells[AO_ROOM].text
+  def eo_by_ao_room(code, cluster_no)
+    eo_by_ao_target_row(code, cluster_no).cells[AO_ROOM].text
   end
 
-  def count_no_of_eos_by_ao
-    row_count = 0
-    eo_by_ao_results_table.rows.each do |row|
-      if row.cells[AO_CODE].text =~ /^[A-Z]$/
-        row_count += 1
-      end
-    end
-    return "#{row_count}"
-  end
+  #def count_no_of_eos_by_ao
+  #  row_count = 0
+  #  eo_by_ao_results_table.rows.each do |row|
+  #    if row.cells[AO_CODE].text =~ /^[A-Z]$/
+  #      row_count += 1
+  #    end
+  #  end
+  #  return "#{row_count}"
+  #end
 
-  def return_array_of_ao_codes
+  def return_array_of_ao_codes(cluster_no)
     array = []
-    eo_by_ao_results_table.rows.each do |row|
+    eo_by_ao_results_table(cluster_no).rows.each do |row|
       if row.cells[AO_CODE].text =~ /^[A-Z]$/
         array << row.cells[AO_CODE].text
       end

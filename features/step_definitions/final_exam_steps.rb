@@ -86,9 +86,9 @@ end
 
 When /^I create an Academic Calender and add an official term$/ do
   @calendar = create AcademicCalendar
-  #@calendar.create
 
   @term = make AcademicTerm, :term_year => @calendar.year
+  puts "#{@term.term_code}"
   @calendar.add_term(@term)
   @manage_soc = make ManageSoc, :term_code => @term.term_code
   @manage_soc.set_up_soc
@@ -120,8 +120,8 @@ When /^I create multiple Course Offerings each with a different Exam Offering in
 end
 
 When /^I have ensured that the Fall Term of the Calender is setup with a Final Exam Period$/ do
-  @source_calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar"
-  @term = make AcademicTerm, :term_year => @source_calendar.year, :start_date=>"08/20/#{@source_calendar.year}",
+  @source_calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar", :year => "2012"
+  @term = make AcademicTerm, :term_year => @source_calendar.year, :start_date=>"20/08/#{@source_calendar.year}",
                :end_date=>"12/10/#{@source_calendar.year}"
 
   @source_calendar.search
@@ -135,137 +135,140 @@ When /^I have ensured that the Fall Term of the Calender is setup with a Final E
   end
 end
 
-When /^I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Course Offering$/ do
-  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL304"
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Course Offering"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+When /^I have ensured that the Spring Term of the Calender is setup with a Final Exam Period$/ do
+  @source_calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar", :year => "2012"
+  @term = make AcademicTerm, :term_year => "#{@source_calendar.year.to_i + 1}",  :term_type => "Spring Term",
+                             :start_date=>"05/10/#{@source_calendar.year.to_i + 1}",
+                             :end_date=>"05/16/#{@source_calendar.year.to_i + 1}"
 
-  @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
+  @source_calendar.search
+  on CalendarSearch do |page|
+    page.edit @source_calendar.name
+  end
+  on EditAcademicTerms do |page|
+    page.go_to_terms_tab
+    page.open_term_section @term.term_type
+    @term.create_final_exam_period
+  end
+end
+
+When /^I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Course Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                       :final_exam_driver => "Final Exam Per Course Offering"
+  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
+
+  @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
+
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
 end
 
 When /^I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Activity Offering$/ do
-  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL305"
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL305")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
 
-  @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
+  @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
+
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
 end
 
 When /^I view the Exam Offerings for a CO created from an existing CO with multiple AOs and a standard final exam driven by Activity Offering$/ do
-  @course_offering = make CourseOffering, :term => "201208", :course => "HIST110"
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering",
-                                 :final_exam_activity => "Lecture"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "HIST110")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
 
-  @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
+  @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
+
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
 end
 
-When /^I view the Exam Offerings for a CO with multiple AOs and a standard final exam driven by Activity Offering$/ do
-  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL201"
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering",
-                                 :final_exam_activity => "Lecture"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+When /^I view the Exam Offerings for a CO with two AOs and a standard final exam driven by Activity Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
 end
 
 When /^I view the Exam Offerings for a CO with two new AOs and a standard final exam driven by Activity Offering$/ do
-  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL201"
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering",
-                                 :final_exam_activity => "Lecture"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
-  @new_ao_one = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
-  @new_ao_two = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
+
+  @add_ao_one = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+  @add_ao_two = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+
+  @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
 end
 
 When /^I create a CO with two new AOs and then view the Exam Offerings where the CO has a standard final exam driven by Activity Offering$/ do
-  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL202"
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering",
-                                 :final_exam_activity => "Lecture"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
-  @new_ao_one = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
-  @new_ao_two = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
 
-  @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
+  @add_ao_one = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+  @add_ao_two = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+
+  @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
+
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
 end
 
 When /^I view the Exam Offerings for a CO with a standard final exam driven by Course Offering$/ do
-  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL304"
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Course Offering"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Course Offering"
+
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
 end
 
 When /^I view the Exam Offerings for a CO with a standard final exam driven by Activity Offering$/ do
-  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL304"
-  @course_offering.manage
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+
   on ManageCourseOfferings do |page|
-    page.edit_course_offering
+    page.view_exam_offerings
   end
-  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+end
+
+When /^I view the Exam Offerings for an open CO with a standard final exam driven by Activity Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201301", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
@@ -273,13 +276,9 @@ end
 
 When /^I view the Exam Offerings after changing the Final Exam Driver to Course Offering$/ do
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Course Offering"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Course Offering"
+
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
@@ -287,13 +286,19 @@ end
 
 When /^I view the Exam Offerings after changing the Final Exam Driver to Activity Offering$/ do
   @course_offering.manage
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+
   on ManageCourseOfferings do |page|
-    page.edit_course_offering
+    page.view_exam_offerings
   end
-  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Activity Offering"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+end
+
+When /^I view the Exam Offerings after updating the Final Exam to none$/ do
+  @course_offering.manage
+  @course_offering.exam_offerings_setup :final_exam_type => "No final exam or assessment"
+
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
@@ -504,19 +509,35 @@ Then /^there should be an Activity Offering table that is in the ([^"]*) state$/
   end
 end
 
-Then /^the Activity Offering table should for all ([^"]*) Exam Offerings only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
+Then /^the first cluster's Activity Offering table should for all ([^"]*) Exam Offerings only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
   on ViewExamOfferings do |page|
     page.ao_table_header_text.should match /by Activity Offering/
-    page.return_array_of_ao_codes.each do |code|
-      page.eo_by_ao_status(code).should match /#{exp_state}/
-      page.eo_by_ao_type(code).should == "Lecture"
-      page.eo_by_ao_days(code).should == ""
-      page.eo_by_ao_st_time(code).should == ""
-      page.eo_by_ao_end_time(code).should == ""
-      page.eo_by_ao_bldg(code).should == ""
-      page.eo_by_ao_room(code).should == ""
+    array = page.return_array_of_ao_codes(0)
+    array.each do |code|
+      page.eo_by_ao_status(code, 0).should match /#{exp_state}/
+      page.eo_by_ao_days(code, 0).should == ""
+      page.eo_by_ao_st_time(code, 0).should == ""
+      page.eo_by_ao_end_time(code, 0).should == ""
+      page.eo_by_ao_bldg(code, 0).should == ""
+      page.eo_by_ao_room(code, 0).should == ""
     end
-    page.count_no_of_eos_by_ao.should == no_of_aos
+    array.length.should == no_of_aos.to_i
+  end
+end
+
+Then /^the second cluster's Activity Offering table should for all ([^"]*) Exam Offerings only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
+  on ViewExamOfferings do |page|
+    page.ao_table_header_text.should match /by Activity Offering/
+    array = page.return_array_of_ao_codes(1)
+    array.each do |code|
+      page.eo_by_ao_status(code, 1).should match /#{exp_state}/
+      page.eo_by_ao_days(code, 1).should == ""
+      page.eo_by_ao_st_time(code, 1).should == ""
+      page.eo_by_ao_end_time(code, 1).should == ""
+      page.eo_by_ao_bldg(code, 1).should == ""
+      page.eo_by_ao_room(code, 1).should == ""
+    end
+    array.length.should == no_of_aos.to_i
   end
 end
 
@@ -529,7 +550,7 @@ Then /^there should be an Activity Offering table where all Exam Offerings is in
   end
 end
 
-Then /^there should be ([^"]*) Exam (?:Offerings|Offering) by Activity Offering for the course$/ do |no_of_aos|
+Then /^there should be ([^"]*) Exam Offerings? by Activity Offering for the course$/ do |no_of_aos|
   on ViewExamOfferings do |page|
     page.count_no_of_eos_by_ao.should == no_of_aos
   end
@@ -538,5 +559,12 @@ end
 Then /^there should be 1 Exam Offering by Course Offering for the course$/ do
   on ViewExamOfferings do |page|
     page.count_no_of_eos_by_co.should == "1"
+  end
+end
+
+Then /^there should be no Standard Exam tables present$/ do
+  on ViewExamOfferings do |page|
+    page.exam_offerings_page_section.text.should_not match /by Course Offering/
+    page.exam_offerings_page_section.text.should_not match /by Activity Offering/
   end
 end
