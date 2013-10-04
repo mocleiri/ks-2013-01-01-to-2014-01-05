@@ -106,7 +106,7 @@ public interface Constants {
     String PAYMENT_BILLING_ROUNDING_PROBLEM_MEMO = "ksa.payment.billing.rounding.problem.memo";
 
     // Bill Records constants
-    String BILL_DELIVERY_METHOD = "bill.delivery.method";
+    String BILL_DELIVERY_METHOD = "ksa.bill.delivery.method";
 
     // Memo constants
     String MEMO_DEFAULT_ACCESS_LEVEL = "ksa.memo.level";

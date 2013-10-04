@@ -189,6 +189,28 @@ public class BillRecordServiceImpl extends GenericPersistenceService implements 
     }
 
     /**
+     * Return the latest by endDate BillRecord objects for the account or null if it does not exist.
+     *
+     * @param accountId Account ID
+     * @return BillRecord instance
+     */
+    @Override
+    public BillRecord getLatestBillRecord(String accountId) {
+
+        PermissionUtils.checkPermission(Permission.READ_BILL);
+
+        Query query = em.createQuery(GET_BILL_RECORD_SELECT + " where a.id = :accountId order by b.endDate desc");
+
+        query.setParameter("accountId", accountId);
+
+        query.setMaxResults(1);
+
+        List<BillRecord> billRecords = query.getResultList();
+
+        return CollectionUtils.isNotEmpty(billRecords) ? billRecords.get(0) : null;
+    }
+
+    /**
      * Persists BillRecord instance in the database.
      *
      * @param billRecord BillRecord instance

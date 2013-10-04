@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import static com.sigmasys.kuali.ksa.util.TransactionUtils.formatAmount;
 import static com.sigmasys.kuali.ksa.util.TransactionUtils.getFormattedAmount;
 
 import java.lang.reflect.Method;
@@ -1390,6 +1391,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      * @param rollupIdsOnSameStatement     Rollup IDs on the same statement
      * @param showOnlyUnbilledTransactions true if only unbilled transactions have to be shown
      * @param showDeferments               true if deferments have to be shown
+     * @param showDependents               true if dependents have to be shown
      * @param showInternalTransactions     true if internal transactions have to be shown
      * @param runPaymentApplication        if true then Payment Application will be run
      * @return String representation of BillRecord XML
@@ -1405,6 +1407,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                                Set<Long> rollupIdsOnSameStatement,
                                boolean showOnlyUnbilledTransactions,
                                boolean showDeferments,
+                               boolean showDependents,
                                boolean showInternalTransactions,
                                boolean runPaymentApplication) {
 
@@ -1417,14 +1420,16 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
             throw new UserNotFoundException(errMsg);
         }
 
-        if (startDate != null && endDate != null && startDate.after(endDate)) {
-            String errMsg = "Start date cannot be greater than End date";
+        if (billDate == null) {
+            String errMsg = "Bill date cannot be null";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
 
-        if (billDate == null) {
-            String errMsg = "Bill date cannot be null";
+        billDate = CalendarUtils.removeTime(billDate);
+
+        if (billDate.after(new Date())) {
+            String errMsg = "Bill date cannot be the future date";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
@@ -1439,12 +1444,47 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
             TransactionUtils.orderByEffectiveDate(transactions, false);
 
-            if (startDate == null) {
+            if (showOnlyUnbilledTransactions && startDate == null) {
                 startDate = transactions.get(transactions.size() - 1).getEffectiveDate();
             }
 
             if (endDate == null) {
-                startDate = transactions.get(0).getEffectiveDate();
+                endDate = transactions.get(0).getEffectiveDate();
+            }
+        }
+
+        if (startDate == null) {
+            BillRecord billRecord = billRecordService.getLatestBillRecord(accountId);
+            if (billRecord != null) {
+                startDate = billRecord.getEndDate();
+            }
+        }
+
+        if (startDate == null) {
+            String errMsg = "Start date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (endDate == null) {
+            String errMsg = "End date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (startDate != null && endDate != null && startDate.after(endDate)) {
+            String errMsg = "Start date cannot be greater than End date";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        // Removing transactions that are outside the date range
+        List<Transaction> tempTransactions = new ArrayList<Transaction>(transactions);
+        for (ListIterator<Transaction> iterator = tempTransactions.listIterator(); iterator.hasNext(); ) {
+            Transaction transaction = iterator.next();
+            Date effectiveDate = transaction.getEffectiveDate();
+            if (effectiveDate.before(startDate) || effectiveDate.after(endDate)) {
+                iterator.remove();
             }
         }
 
@@ -1526,24 +1566,35 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         if (latePeriod != null) {
 
             agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate1());
-            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate1());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(getFormattedAmount(chargeableAccount.getAmountLate1()));
 
             agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate2());
-            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate2());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(getFormattedAmount(chargeableAccount.getAmountLate2()));
 
             agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate3());
-            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate3());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(getFormattedAmount(chargeableAccount.getAmountLate3()));
         }
 
         withDeferments.setAgedBalance(agedBalance);
 
-        withDeferments.setOverdueBalance(chargeableAccount.getAmountLate1().add(
-                chargeableAccount.getAmountLate2()).add(chargeableAccount.getAmountLate3()));
+        withDeferments.setOverdueBalance(getFormattedAmount(chargeableAccount.getAmountLate1().add(
+                chargeableAccount.getAmountLate2()).add(chargeableAccount.getAmountLate3())));
 
-        withDeferments.setDueBalance(accountService.getDueBalance(accountId, billDate, false));
-        withDeferments.setFutureBalance(accountService.getFutureBalance(accountId, billDate, false));
-        withDeferments.setTotalBalance(accountService.getOutstandingBalance(accountId, billDate, false));
-        withDeferments.setTotalDeferred(accountService.getDeferredBalance(accountId, billDate));
+        withDeferments.setDueBalance(getFormattedAmount(accountService.getDueBalance(accountId, billDate, false)));
+        withDeferments.setFutureBalance(getFormattedAmount(accountService.getFutureBalance(accountId, billDate, false)));
+        withDeferments.setTotalBalance(getFormattedAmount(accountService.getOutstandingBalance(accountId, billDate, false)));
+        withDeferments.setTotalDeferred(getFormattedAmount(accountService.getDeferredBalance(accountId, billDate)));
+
+        // Checking if deferments exist
+        Query query = em.createQuery("select 1 from Deferment " +
+                " where expirationDate != null and expirationDate between :billDate and CURRENT_DATE");
+
+        query.setParameter("billDate", billDate);
+        query.setMaxResults(1);
+
+        if (CollectionUtils.isNotEmpty(query.getResultList())) {
+            withDeferments.setHasExpiredDeferment(true);
+        }
 
         balances.setWithDeferments(withDeferments);
 
@@ -1559,33 +1610,31 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         if (latePeriod != null) {
 
             agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate1());
-            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate1());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(getFormattedAmount(chargeableAccount.getAmountLate1()));
 
             agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate2());
-            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate2());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(getFormattedAmount(chargeableAccount.getAmountLate2()));
 
             agedBalance.getPeriodLengthAndPeriodBalance().add(latePeriod.getDaysLate3());
-            agedBalance.getPeriodLengthAndPeriodBalance().add(chargeableAccount.getAmountLate3());
+            agedBalance.getPeriodLengthAndPeriodBalance().add(getFormattedAmount(chargeableAccount.getAmountLate3()));
         }
 
         withoutDeferments.setAgedBalance(agedBalance);
 
-        withoutDeferments.setOverdueBalance(chargeableAccount.getAmountLate1().add(
-                chargeableAccount.getAmountLate2()).add(chargeableAccount.getAmountLate3()));
+        withoutDeferments.setOverdueBalance(getFormattedAmount(chargeableAccount.getAmountLate1().add(
+                chargeableAccount.getAmountLate2()).add(chargeableAccount.getAmountLate3())));
 
-        withoutDeferments.setDueBalance(accountService.getDueBalance(accountId, billDate, true));
-        withoutDeferments.setFutureBalance(accountService.getFutureBalance(accountId, billDate, true));
-        withoutDeferments.setTotalBalance(accountService.getOutstandingBalance(accountId, billDate, true));
+        withoutDeferments.setDueBalance(getFormattedAmount(accountService.getDueBalance(accountId, billDate, true)));
+        withoutDeferments.setFutureBalance(getFormattedAmount(accountService.getFutureBalance(accountId, billDate, true)));
+        withoutDeferments.setTotalBalance(getFormattedAmount(accountService.getOutstandingBalance(accountId, billDate, true)));
 
         balances.setWithoutDeferments(withoutDeferments);
 
         ksaBill.setBalances(balances);
 
-        List<Transaction> tempTransactions = new ArrayList<Transaction>(transactions);
-
         if (showOnlyUnbilledTransactions) {
 
-            Query query = em.createQuery("select b.transactions from BillRecord b where b.account.id = :accountId");
+            query = em.createQuery("select b.transactions from BillRecord b where b.account.id = :accountId");
             query.setParameter("accountId", accountId);
 
             List<Transaction> transactionsToExclude = query.getResultList();
@@ -1625,6 +1674,18 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
             Transaction transaction = iterator.next();
 
+            String transactionTypeValue = transaction.getTransactionTypeValue().toString().toLowerCase();
+
+            ListTransaction listTransaction = objectFactory.createListTransaction();
+
+            listTransaction.setChargeOrPayment(transactionTypeValue);
+            listTransaction.setTransactionType(transaction.getTransactionType().getId().getId());
+            listTransaction.setEffectiveDate(CalendarUtils.toXmlGregorianCalendar(transaction.getEffectiveDate(), true));
+            listTransaction.setCurrency(transaction.getCurrency().getCode());
+            listTransaction.setAmount(transaction.getAmount());
+            listTransaction.setNativeAmount(transaction.getNativeAmount());
+            listTransaction.setStatementText(transaction.getStatementText());
+
             Rollup rollup = transaction.getRollup();
 
             if (rollup != null && !processedTransactionIds.contains(transaction.getId())) {
@@ -1638,7 +1699,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
                     listRollup.setRollupName(rollup.getName());
                     listRollup.setDate(CalendarUtils.toXmlGregorianCalendar(transaction.getEffectiveDate(), true));
-                    listRollup.setChargeOrPayment(transaction.getTransactionTypeValue().toString());
+                    listRollup.setChargeOrPayment(transactionTypeValue);
 
                     BigDecimal rollupAmount = BigDecimal.ZERO;
 
@@ -1662,33 +1723,15 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                         }
                     }
 
-                    listRollup.setAmount(rollupAmount);
+                    listRollup.setAmount(getFormattedAmount(rollupAmount));
 
-                    // TODO: Ask Paul what the following statement means:
-                    /*
-                     * Per the non-rolled up branch,
-                     create a list-transaction node
-                     for each transaction on this sub list
-                     and store under <roll-up><list-transaction>
-                     */
-
+                    listRollup.setListTransaction(listTransaction);
 
                     transactionList.getRollup().add(listRollup);
 
                 } else {
 
-                    ListTransaction listTransaction = objectFactory.createListTransaction();
-
-                    listTransaction.setChargeOrPayment(transaction.getTransactionTypeValue().toString().toLowerCase());
-                    listTransaction.setTransactionType(transaction.getTransactionType().getId().getId());
-                    listTransaction.setEffectiveDate(CalendarUtils.toXmlGregorianCalendar(transaction.getEffectiveDate(), true));
-                    listTransaction.setCurrency(transaction.getCurrency().getCode());
-                    listTransaction.setAmount(transaction.getAmount());
-                    listTransaction.setNativeAmount(transaction.getNativeAmount());
-                    listTransaction.setStatementText(transaction.getStatementText());
-
                     transactionList.getListTransaction().add(listTransaction);
-
                 }
             }
         }
@@ -1697,7 +1740,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         ksaBill.setPreferredDeliveryMode(configService.getParameter(Constants.BILL_DELIVERY_METHOD));
 
         Set<Long> transactionIds = new HashSet<Long>(transactions.size());
-        for ( Transaction transaction : transactions ) {
+        for (Transaction transaction : tempTransactions) {
             transactionIds.add(transaction.getId());
         }
 

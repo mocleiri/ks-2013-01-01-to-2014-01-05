@@ -14,10 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static com.sigmasys.kuali.ksa.model.CashLimitEventStatus.QUEUED;
 
@@ -335,7 +332,237 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
 
     }
 
+    @Test
+    public void generateBill() throws Exception {
 
+        String accountId = "admin";
+
+        Date billDate = dateFormat.parse("01/01/2012");
+        Date startDate = dateFormat.parse("01/01/1970");
+        Date endDate = dateFormat.parse("01/01/2020");
+
+        Transaction transaction1 = transactionService.createTransaction("cash", accountId, new Date(), new BigDecimal(5500));
+        Transaction transaction2 = transactionService.createTransaction("1020", accountId, new Date(), new BigDecimal(12000));
+
+        Assert.notNull(transaction1);
+        Assert.notNull(transaction1.getId());
+
+        Assert.notNull(transaction2);
+        Assert.notNull(transaction2.getId());
+
+        Rollup rollup1 = entityService.createAuditableEntity("_1", "Rollup _1", "Description 111", Rollup.class);
+        Rollup rollup2 = entityService.createAuditableEntity("_2", "Rollup _2", "Description 222", Rollup.class);
+        Rollup rollup3 = entityService.createAuditableEntity("_3", "Rollup _3", "Description 333", Rollup.class);
+
+        Assert.notNull(rollup1);
+        Assert.notNull(rollup1.getId());
+
+        Assert.notNull(rollup2);
+        Assert.notNull(rollup2.getId());
+
+        Assert.notNull(rollup3);
+        Assert.notNull(rollup3.getId());
+
+        Set<Long> rollupIds = new HashSet<Long>(Arrays.asList(rollup1.getId(), rollup2.getId(), rollup3.getId()));
+
+        transaction1.setRollup(rollup1);
+        transactionService.persistTransaction(transaction1);
+
+        transaction2.setRollup(rollup1);
+        transactionService.persistTransaction(transaction2);
+
+        transaction3.setRollup(rollup1);
+        transactionService.persistTransaction(transaction3);
+
+        String bill = reportService.generateBill(
+                accountId,
+                "Bill message",
+                billDate,
+                startDate,
+                endDate,
+                rollupIds,
+                rollupIds,
+                true, true, true, true, true);
+
+        logger.debug("Bill XML:\n" + bill);
+
+        Assert.notNull(bill);
+        Assert.hasLength(bill);
+
+        bill = reportService.generateBill(
+                accountId,
+                "Bill message",
+                billDate,
+                startDate,
+                endDate,
+                rollupIds,
+                rollupIds,
+                false, true, true, true, true);
+
+        logger.debug("Bill XML:\n" + bill);
+
+        Assert.notNull(bill);
+        Assert.hasLength(bill);
+
+        bill = reportService.generateBill(
+                accountId,
+                "Bill message",
+                billDate,
+                startDate,
+                endDate,
+                rollupIds,
+                rollupIds,
+                false, false, true, true, true);
+
+        logger.debug("Bill 1 XML:\n" + bill);
+
+        Assert.notNull(bill);
+        Assert.hasLength(bill);
+
+        bill = reportService.generateBill(
+                accountId,
+                "Bill 2 message",
+                billDate,
+                startDate,
+                endDate,
+                rollupIds,
+                rollupIds,
+                false, false, false, true, true);
+
+        logger.debug("Bill 3 XML:\n" + bill);
+
+        Assert.notNull(bill);
+        Assert.hasLength(bill);
+
+        bill = reportService.generateBill(
+                accountId,
+                "Bill 4 message",
+                billDate,
+                startDate,
+                endDate,
+                rollupIds,
+                rollupIds,
+                false, false, false, false, true);
+
+        logger.debug("Bill 5 XML:\n" + bill);
+
+        Assert.notNull(bill);
+        Assert.hasLength(bill);
+
+        bill = reportService.generateBill(
+                accountId,
+                "Bill 6 message",
+                billDate,
+                startDate,
+                endDate,
+                rollupIds,
+                rollupIds,
+                false, false, false, false, false);
+
+        logger.debug("Bill 7 XML:\n" + bill);
+
+        Assert.notNull(bill);
+        Assert.hasLength(bill);
+
+        transaction1.setRollup(rollup1);
+        transactionService.persistTransaction(transaction1);
+
+        transaction2.setRollup(rollup1);
+        transactionService.persistTransaction(transaction2);
+
+        transaction3.setRollup(rollup2);
+        transactionService.persistTransaction(transaction3);
+
+        bill = reportService.generateBill(
+                accountId,
+                "Bill message",
+                billDate,
+                startDate,
+                endDate,
+                rollupIds,
+                rollupIds,
+                false, true, true, true, true);
+
+        logger.debug("Bill 8 XML:\n" + bill);
+
+        Assert.notNull(bill);
+        Assert.hasLength(bill);
+
+        transaction1.setRollup(rollup1);
+        transactionService.persistTransaction(transaction1);
+
+        transaction2.setRollup(rollup1);
+        transactionService.persistTransaction(transaction2);
+
+        transaction3.setRollup(null);
+        transactionService.persistTransaction(transaction3);
+
+        bill = reportService.generateBill(
+                accountId,
+                "Bill message",
+                billDate,
+                startDate,
+                endDate,
+                rollupIds,
+                rollupIds,
+                false, true, true, true, true);
+
+        logger.debug("Bill 9 XML:\n" + bill);
+
+        Assert.notNull(bill);
+        Assert.hasLength(bill);
+
+        transaction1.setRollup(null);
+        transactionService.persistTransaction(transaction1);
+
+        transaction2.setRollup(null);
+        transactionService.persistTransaction(transaction2);
+
+        transaction3.setRollup(null);
+        transactionService.persistTransaction(transaction3);
+
+        bill = reportService.generateBill(
+                accountId,
+                "Bill message",
+                billDate,
+                startDate,
+                endDate,
+                rollupIds,
+                rollupIds,
+                false, true, true, true, true);
+
+        logger.debug("Bill 10 XML:\n" + bill);
+
+        Assert.notNull(bill);
+        Assert.hasLength(bill);
+
+        List<BillRecord> billRecords = billRecordService.getBillRecords(accountId);
+
+        Assert.notNull(billRecords);
+        Assert.notEmpty(billRecords);
+        Assert.isTrue(billRecords.size() >= 10);
+
+        BillRecord latestBillRecord = billRecordService.getLatestBillRecord(accountId);
+
+        Assert.notNull(latestBillRecord);
+        Assert.notNull(latestBillRecord.getId());
+
+        boolean latestBillRecordIsPresent = false;
+
+        for ( BillRecord billRecord : billRecords) {
+
+            Assert.notNull(billRecord);
+            Assert.notNull(billRecord.getId());
+
+            if ( latestBillRecord.getId().equals(billRecord.getId())) {
+                latestBillRecordIsPresent = true;
+            }
+
+        }
+
+        Assert.isTrue(latestBillRecordIsPresent);
+
+    }
 
 
 }

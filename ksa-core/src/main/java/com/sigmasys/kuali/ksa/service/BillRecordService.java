@@ -44,7 +44,7 @@ public interface BillRecordService {
      * Returns BillRecord by ID
      *
      * @param id BillRecord ID
-     * @return Information instance
+     * @return BillRecord instance
      */
     BillRecord getBillRecord(Long id);
 
@@ -55,6 +55,14 @@ public interface BillRecordService {
      * @return List of Information instances
      */
     List<BillRecord> getBillRecords(String accountId);
+
+    /**
+     * Return the latest by endDate BillRecord objects for the account or null if it does not exist.
+     *
+     * @param accountId Account ID
+     * @return BillRecord instance
+     */
+    BillRecord getLatestBillRecord(String accountId);
 
     /**
      * Persists BillRecord instance in the database.

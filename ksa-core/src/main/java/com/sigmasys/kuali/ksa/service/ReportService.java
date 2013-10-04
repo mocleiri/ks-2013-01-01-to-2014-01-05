@@ -226,6 +226,7 @@ public interface ReportService {
      * @param rollupIdsOnSameStatement     Rollup IDs on the same statement
      * @param showOnlyUnbilledTransactions true if only unbilled transactions have to be shown
      * @param showDeferments               true if deferments have to be shown
+     * @param showDependents               true if dependents have to be shown
      * @param showInternalTransactions     true if internal transactions have to be shown
      * @param runPaymentApplication        if true then Payment Application will be run
      * @return String representation of BillRecord XML
@@ -239,6 +240,7 @@ public interface ReportService {
                         Set<Long> rollupIdsOnSameStatement,
                         boolean showOnlyUnbilledTransactions,
                         boolean showDeferments,
+                        boolean showDependents,
                         boolean showInternalTransactions,
                         boolean runPaymentApplication);
 
