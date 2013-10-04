@@ -13,14 +13,14 @@ class TimeSlots
   include DataFactory
   include Workflows
 
-  attr_accessor :term_types,
-                :time_slots
+  attr_accessor :term_types
+
+  attr_reader   :new_time_slots
 
   # provides default data:
   #
   #  defaults = {
   #     :term_types => [ "Fall - Full" ]
-  #     :existing_time_slots => []
   #  }
 
   # initialize is generally called using TestFactory Foundry .make or .create methods
@@ -29,59 +29,22 @@ class TimeSlots
 
     defaults = {
         :term_types => [ "Fall - Full" ],
-        :time_slots => []
+        :new_time_slots => []
     }
 
     options = defaults.merge(opts)
 
     set_options(options)
-
-    @new_time_slots = []  # instance-variable to prevent direct populating; should only be manipulated by internal methods
   end
 
   def create
     show_time_slots
-
-    # capture existing time-slots (prior to adding any new ones)
-    on TimeSlotMaintenance do |page|
-
-      time_slot_search_results_array = page.time_slot_search_results_table.to_a
-      time_slot_search_results_array.each_with_index do |row, index|
-
-        unless index == 0 || index == time_slot_search_results_array.length-1
-          time_slots << ( make TimeSlot, :code => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_CODE],
-                                         :term_type => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE],
-                                         :days => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_DAYS],
-                                         :start_time => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].split(' ')[0],
-                                         :start_time_am_pm => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].split(' ')[1],
-                                         :end_time => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].split(' ')[0],
-                                         :end_time_am_pm => row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].split(' ')[1] )
-        end #END-unless
-
-      end #END-each_with_index
-
-    end #END-on_page_do
-
   end #END-create
 
 
-  def add_time_slot( time_slot )
-    on TimeSlotMaintenance do |page|
-      page.initiate_add_time_slot
-      page.add_time_slot_popup_field_termType.select time_slot.term_type
-      page.add_time_slot_popup_field_days.set time_slot.days
-      page.add_time_slot_popup_field_startTime.set time_slot.start_time
-      page.add_time_slot_popup_field_startTime_am_pm.select time_slot.start_time_am_pm.downcase
-      page.add_time_slot_popup_field_endTime.set time_slot.end_time
-      page.add_time_slot_popup_field_endTime_am_pm.select time_slot.end_time_am_pm.downcase
-      page.save_add_time_slot
-
-      # capture the code assigned by the server
-      updated_table = page.time_slot_search_results_table.to_a
-      time_slot.code = updated_table[updated_table.length-2][TimeSlotMaintenance::TIME_SLOT_RESULTS_CODE]
-    end
-
-    @new_time_slots << time_slot
+  def add_new_time_slot( time_slot )
+    time_slot.code = on(TimeSlotMaintenance).add_new_time_slot time_slot
+    new_time_slots << time_slot
   end
 
 
@@ -92,11 +55,6 @@ class TimeSlots
       page.select_time_slot_types(term_types)
       page.show_time_slots
     end
-  end
-
-
-  def get_new_time_slots
-    @new_time_slots
   end
 
 
@@ -129,11 +87,11 @@ class TimeSlots
     #  defaults = {
     #    :code => ""
     #    :term_type => "Fall - Full"
-    #    :days => "MWF"
-    #    :start_time => "9:00"
-    #    :start_time_am_pm => "AM"
-    #    :end_time => "9:40"
-    #    :end_time_am_pm => "AM"
+    #    :days => "M"
+    #    :start_time => "10:00"
+    #    :start_time_am_pm => "PM"
+    #    :end_time => "10:50"
+    #    :end_time_am_pm => "PM"
     #  }
 
     # initialize is generally called using TestFactory Foundry .make or .create methods
@@ -143,11 +101,11 @@ class TimeSlots
       defaults = {
           :code => "",
           :term_type => "Fall - Full",
-          :days => "MWF",
-          :start_time => "9:00",
-          :start_time_am_pm => "AM",
-          :end_time => "9:40",
-          :end_time_am_pm => "AM"
+          :days => "M",
+          :start_time => "10:00",
+          :start_time_am_pm => "PM",
+          :end_time => "10:50",
+          :end_time_am_pm => "PM"
       }
 
       options = defaults.merge(opts)

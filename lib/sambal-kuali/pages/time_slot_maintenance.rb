@@ -3,6 +3,9 @@ class TimeSlotMaintenance < BasePage
   wrapper_elements
   frame_element
 
+
+  element(:time_slot_error_message) { |b| b.frm.div(id: "timeSlotPage").li(class: "uif-errorMessageItem") }
+
   element(:time_slot_type_selector_div) { |b| b.frm.div(id: "TimeSlotTypeSelect-Section") }
   element(:time_slot_type_selector_list) { |b| b.time_slot_type_selector_div.select_list }
   action(:show_time_slots) { |b| b.time_slot_type_selector_div.button(text: "Show Time Slots").click; b.loading.wait_while_present }
@@ -46,6 +49,32 @@ class TimeSlotMaintenance < BasePage
     row = time_slot_search_results_table.row(text: /\b#{Regexp.escape(code)}\b/)
     return row unless row.nil?
     raise "error in target_time_slot_results_row: #{code} not found"
+  end
+
+  def add_new_time_slot(new_time_slot)
+    original_time_slots = time_slot_search_results_table.to_a
+
+    initiate_add_time_slot
+    add_time_slot_popup_field_termType.select new_time_slot.term_type
+    add_time_slot_popup_field_days.set new_time_slot.days
+    add_time_slot_popup_field_startTime.set new_time_slot.start_time
+    add_time_slot_popup_field_startTime_am_pm.select new_time_slot.start_time_am_pm.downcase
+    add_time_slot_popup_field_endTime.set new_time_slot.end_time
+    add_time_slot_popup_field_endTime_am_pm.select new_time_slot.end_time_am_pm.downcase
+    save_add_time_slot
+
+    if time_slot_error_message.exists?
+      raise "Error adding new time-slot -> " << time_slot_error_message.text
+    end
+
+    # return the newly-added timeslot-code
+    newly_added_time_slot = time_slot_search_results_table.to_a - original_time_slots
+    if newly_added_time_slot.length < 1
+      raise "Unable to find newly-added time-slot in results table"
+    elsif newly_added_time_slot.length > 1
+      raise "Unexpectedly found more than 1 newly-added time-slot in results-table; found -> " << newly_added_time_slot.join(",")
+    end
+    newly_added_time_slot[0][TIME_SLOT_RESULTS_CODE]
   end
 
 end

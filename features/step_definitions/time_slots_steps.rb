@@ -1,20 +1,24 @@
-When /^I specify a Term Type (Fall - Full|Spring - Full|Fall - Full and Spring - Full)$/ do |term_type|
-  term_type = term_type.split( ' and ')                       # convert natural-language to an array
-  @time_slots = create TimeSlots, :term_types => term_type
+When /^I show time slots for a single term type$/ do
+  @time_slots = create TimeSlots
 end
 
-When /^I specify to Add Time Slot with Term Type (Fall - Full), Days ([MTWUFSU]+), Start time (\d{2}:\d{2}) (am|pm), End time (\d{2}:\d{2}) (am|pm)$/ do |term_type, days, start_time, start_time_am_pm, end_time, end_time_am_pm|
-  @time_slots.add_time_slot( make TimeSlots::TimeSlot, :term_type => term_type, :days => days, :start_time => start_time, :start_time_am_pm => start_time_am_pm, :end_time => end_time, :end_time_am_pm => end_time_am_pm )
+When /^I add 2 different time slots for the same time slot type$/ do
+  @time_slots.add_new_time_slot( make TimeSlots::TimeSlot )
+  @time_slots.add_new_time_slot( make TimeSlots::TimeSlot, :start_time => "11:00", :start_time_am_pm => "PM", :end_time => "11:50", :end_time_am_pm => "PM" )
 end
 
-Then /^timeslot changes are saved$/ do
+Then /^the timeslots are saved$/ do
   @time_slots.show_time_slots
-
-  new_time_slots = @time_slots.get_new_time_slots
-  new_time_slots.each do |time_slot|
+  @time_slots.new_time_slots.each do |time_slot|
     on TimeSlotMaintenance do |page|
       row = page.target_results_row time_slot.code
       row[TimeSlotMaintenance::TIME_SLOT_RESULTS_CODE].text == time_slot.code
+      row[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE].text == time_slot.term_type
+      row[TimeSlotMaintenance::TIME_SLOT_RESULTS_DAYS].text == time_slot.days
+      row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].text.split(' ')[0] == time_slot.start_time
+      row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].text.split(' ')[1] == time_slot.start_time_am_pm
+      row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].text.split(' ')[0] == time_slot.end_time
+      row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].text.split(' ')[1] == time_slot.end_time_am_pm
     end
   end
 end

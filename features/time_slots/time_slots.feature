@@ -9,11 +9,10 @@ Feature: WC.Create standard Time Slots
 
   @draft
   @bjg
-  Scenario: TEST STUFF OUT
-    When I specify a Term Type Fall - Full
-    And I specify to Add Time Slot with Term Type Fall - Full, Days F, Start time 10:00 pm, End time 10:50 pm
-    And I specify to Add Time Slot with Term Type Fall - Full, Days F, Start time 11:00 pm, End time 11:50 pm
-    Then timeslot changes are saved
+  Scenario: Adding a standard time slot for a single time slot type
+    When I show time slots for a single term type
+    And I add 2 different time slots for the same time slot type
+    Then the timeslots are saved
 
 
 
