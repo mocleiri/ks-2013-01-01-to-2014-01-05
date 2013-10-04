@@ -17,6 +17,7 @@ package org.kuali.student.core.ui.admin.organization;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
@@ -25,14 +26,15 @@ import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
+import org.kuali.rice.core.api.search.SearchOperator;
 import org.kuali.rice.krad.lookup.LookupableImpl;
+import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.web.form.LookupForm;
 import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.core.constants.OrganizationServiceConstants;
 import org.kuali.student.r2.core.organization.dto.OrgInfo;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
-
 
 public class OrgInfoAdminLookupableImpl extends LookupableImpl
 {
@@ -90,5 +92,18 @@ public class OrgInfoAdminLookupableImpl extends LookupableImpl
 	private ContextInfo getContextInfo() {
 	    return ContextBuilder.loadContextInfo();
 	}
+	
+	public List<OrgInfo> suggestOrganizationsByName(String orgPartialName) {
+        List<OrgInfo> matchingOrgs = new ArrayList<OrgInfo>();
+        QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
+        try
+		{
+        	qBuilder.setPredicates(PredicateFactory.like("longName", orgPartialName));
+        	matchingOrgs = this.getOrganizationService().searchForOrgs(qBuilder.build(), getContextInfo()); 
+		}
+		catch (Exception ex) {
+		    throw new RuntimeException(ex);
+		}
+        return matchingOrgs;
+    }
 }
-

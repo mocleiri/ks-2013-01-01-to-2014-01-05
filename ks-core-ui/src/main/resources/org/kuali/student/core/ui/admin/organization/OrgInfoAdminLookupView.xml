@@ -38,9 +38,18 @@
 		
 		<property name="criteriaFields">
 			<list>
-				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="keywordSearch"
+				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="longName"
 				      p:label="Keyword(s)"
-				      p:helpSummary="Searches fields like name and description to see if they contain the keyword" />
+				      p:helpSummary="Searches fields like name and description to see if they contain the keyword" >
+				      <property name="suggest">
+				       <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="longName"
+				           p:suggestQuery.dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo" >
+			              <property name="suggestQuery">
+			                <bean parent="Uif-AttributeQueryConfig" p:queryMethodToCall="suggestOrganizationsByName"/>
+			              </property>
+			           </bean>
+			          </property>
+				</bean>
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="id" />
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="typeKey">
 					<property name="quickfinder">
