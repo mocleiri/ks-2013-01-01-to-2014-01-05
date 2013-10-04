@@ -3,7 +3,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://student.kuali.org/xsd/dictionary-extension http://student.kuali.org/xsd/dictionary-extension/dictionary-extension.xsd">
 
-    <bean id="org.kuali.student.lum.course.dto.CourseInfo" parent="org.kuali.student.lum.course.dto.CourseInfo-parent">
+    <bean id="org.kuali.student.lum.course.dto.CourseInfo" parent="org.kuali.student.r2.lum.course.dto.CourseInfo-parent">
         <property name="attributes">
             <list merge="true">
                 <ref bean="courseInfo.genEduRequirementVLPA"/>
@@ -209,7 +209,7 @@
     </bean>
 
 
-    <bean id="uw.cluInfo.descr.RichTextInfo" parent="org.kuali.student.common.dto.RichTextInfo-parent">
+    <bean id="uw.cluInfo.descr.RichTextInfo" parent="org.kuali.student.r2.common.dto.RichTextInfo">
         <property name="attributes">
             <list>
                 <ref bean="uw.cluInfo.richTextInfo.formatted"/>
@@ -221,17 +221,17 @@
 
     <bean id="uw.cluInfo.richTextInfo.formatted" parent="richTextInfo.formatted-parent">
         <property name="validChars" ref="uw.cluInfo.multiLineText"/>
-        <property name="messageKey" value="uw.formatted"/>
+        <!--<property name="messageKey" value="uw.formatted"/>-->
     </bean>
 
     <bean id="uw.cluInfo.richTextInfo.plain" parent="richTextInfo.plain-parent">
         <property name="validChars" ref="uw.cluInfo.multiLineText"/>
-        <property name="messageKey" value="uw.plain"/>
+        <!--<property name="messageKey" value="uw.plain"/>-->
     </bean>
 
     <bean id="uw.cluInfo.multiLineText" parent="ValidCharDefinition">
         <property name="value" value="regex:[a-zA-Z0-9.,&gt;&lt;_\\/\-\?\+=()\[\];:'&quot;&amp;%$\^~\*#@!\t\n\r ]*"/>
-        <property name="messageKey" value="uw.regex"/>
+        <!--<property name="messageKey" value="uw.regex"/>-->
     </bean>
 
     <bean id="courseInfo.courseTitle" parent="courseInfo.courseTitle-parent">
@@ -277,7 +277,7 @@
     </bean>
 
     <bean id="uw.cluIdentifierInfo"
-          parent="org.kuali.student.lum.lu.dto.CluIdentifierInfo-parent">
+          parent="org.kuali.student.r2.lum.clu.dto.CluIdentifierInfo-parent">
         <property name="attributes">
             <list>
                 <ref bean="uw.cluIdentifierInfo.longName"/>

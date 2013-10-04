@@ -13,10 +13,6 @@ import org.dom4j.xpath.DefaultXPath;
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.student.core.organization.dto.OrgInfo;
-import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.service.CourseService;
-import org.kuali.student.lum.course.service.CourseServiceConstants;
 import org.kuali.student.myplan.academicplan.dto.LearningPlanInfo;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanService;
@@ -42,6 +38,10 @@ import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
+import org.kuali.student.r2.core.organization.dto.OrgInfo;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.service.CourseService;
+import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Method;
@@ -317,7 +317,7 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
 
                     try {
                         String latestCourseId = getCourseHelper().getVerifiedCourseId(versionIndependentId);
-                        CourseInfo courseInfo = getCourseService().getCourse(latestCourseId);
+                        CourseInfo courseInfo = getCourseService().getCourse(latestCourseId, DegreeAuditConstants.CONTEXT_INFO);
 
                         DegreeAuditCourseRequest course = new DegreeAuditCourseRequest();
                         course.curric = courseInfo.getSubjectArea().trim();
@@ -328,9 +328,14 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
                             course.campus = "Seattle";
                             List<OrgInfo> campusList = OrgHelper.getOrgInfo(CourseSearchConstants.CAMPUS_LOCATION_ORG_TYPE, CourseSearchConstants.ORG_QUERY_SEARCH_BY_TYPE_REQUEST, CourseSearchConstants.ORG_TYPE_PARAM);
 
-                            Map<String, String> map = courseInfo.getAttributes();
-                            if (map.containsKey(CourseSearchConstants.CAMPUS_LOCATION_COURSE_ATTRIBUTE)) {
-                                String campusId = map.get(CourseSearchConstants.CAMPUS_LOCATION_COURSE_ATTRIBUTE);
+                            List<AttributeInfo> attributes = courseInfo.getAttributes();
+                            String campusId = null;
+                            for (AttributeInfo attributeInfo : attributes) {
+                                if (CourseSearchConstants.CAMPUS_LOCATION_COURSE_ATTRIBUTE.equals(attributeInfo.getKey())) {
+                                    campusId = attributeInfo.getValue();
+                                }
+                            }
+                            if (StringUtils.hasText(campusId)) {
                                 for (OrgInfo campusOrg : campusList) {
                                     if (campusOrg.getId().equals(campusId)) {
                                         course.campus = campusOrg.getLongName();
@@ -942,7 +947,7 @@ public class DegreeAuditServiceImpl implements DegreeAuditService {
     }
 
     public UserSessionHelper getUserSessionHelper() {
-        if(userSessionHelper == null){
+        if (userSessionHelper == null) {
             userSessionHelper = new UserSessionHelperImpl();
         }
         return userSessionHelper;

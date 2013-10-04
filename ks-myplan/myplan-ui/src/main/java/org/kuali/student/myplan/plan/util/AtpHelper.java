@@ -2,14 +2,11 @@ package org.kuali.student.myplan.plan.util;
 
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
 import edu.uw.kuali.student.myplan.util.UserSessionHelperImpl;
+import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.student.common.exceptions.OperationFailedException;
-import org.kuali.student.core.atp.dto.AtpInfo;
-import org.kuali.student.core.atp.dto.AtpTypeInfo;
-import org.kuali.student.core.atp.service.AtpService;
 import org.kuali.student.enrollment.academicrecord.dto.StudentCourseRecordInfo;
 import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
@@ -25,12 +22,19 @@ import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
 import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.atp.service.AtpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,8 +70,6 @@ public class AtpHelper {
     @Autowired
     private static UserSessionHelper userSessionHelper;
 
-    private static Map<String, String> atpCache;
-
 
     /**
      * Query the Academic Calendar Service, determine the current ATP, and the return the ID.
@@ -76,7 +78,7 @@ public class AtpHelper {
      * @throws RuntimeException if the query fails or if the return data set doesn't make sense.
      */
     public static String getCurrentAtpId() {
-        //   The first arg here is "usageKey" which isn't used.
+        // The first arg here is "usageKey" which isn't used.
         String currentAtpId = null;
         try {
             QueryByCriteria query = QueryByCriteria.Builder.fromPredicates(equalIgnoreCase("query", PlanConstants.INPROGRESS));
@@ -88,12 +90,18 @@ public class AtpHelper {
             // If SWS Fails to load up scheduled Terms then current atp Id in TermInfo is populated from the calender month and year and set to the scheduledTerms list
             currentAtpId = getCurrentAtpIdFromCalender();
         }
-        //  The UW implementation of the AcademicCalendarService.getCurrentTerms() contains the "current term" logic so we can simply
-        //  use the first item in the list. Although, TODO: Not sure if the order of the list is guaranteed, so maybe putting a sort here
-        //  is the Right thing to do.
+        /*  The UW implementation of the AcademicCalendarService.getCurrentTerms() contains the "current term" logic so we can simply
+            use the first item in the list. Although, TODO: Not sure if the order of the list is guaranteed, so maybe putting a sort here
+            is the Right thing to do.*/
         return currentAtpId;
     }
 
+
+    /**
+     * Determines the current YearTerm
+     *
+     * @return YearTerm
+     */
     public static YearTerm getCurrentYearTerm() {
         String atp = getCurrentAtpId();
         YearTerm yearTerm = atpToYearTerm(atp);
@@ -122,7 +130,7 @@ public class AtpHelper {
             lastAtpId = lastTerm.getId();
 
             // SUMMER EXCEPTION
-            if (lastAtpId.endsWith(".3")) {
+            if (lastAtpId.endsWith(PlanConstants.ATP_TERM_3)) {
                 List<AttributeInfo> attrs = lastTerm.getAttributes();
                 for (AttributeInfo attr : attrs) {
                     if (PRIORITY_ONE_REGISTRATION_START.equals(attr.getKey())) {
@@ -145,6 +153,11 @@ public class AtpHelper {
         return lastAtpId;
     }
 
+    /**
+     * Gets current calender yearTerm, Used when webservice is unavailable
+     *
+     * @return
+     */
     public static YearTerm getCurrentYearTermFromCalender() {
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
@@ -154,6 +167,11 @@ public class AtpHelper {
         return yt;
     }
 
+    /**
+     * Gets current calender atpId, Used when webservice is unavailable
+     *
+     * @return
+     */
     public static String getCurrentAtpIdFromCalender() {
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
@@ -163,102 +181,63 @@ public class AtpHelper {
         return atpId;
     }
 
-    // Java months are zero-based, January = 0 thru December = 11
-    public static int monthToTerm(int month) {
+    /**
+     * Java months are zero-based, January = 0 thru December = 11
+     *
+     * @param month
+     * @return
+     */
+    private static int monthToTerm(int month) {
         int term = (month / 3) + 1;
         return term;
     }
 
     /**
      * Gets the ATP ID of the first ATP in the current academic year.
+     *
+     * @param atpId
+     * @return
      */
-
     public static String getFirstAtpIdOfAcademicYear(String atpId) {
         String firstAtpId = null;
-        String atpSuffix = atpId.replace(PlanConstants.TERM_ID_PREFIX, "");
-        String[] termYear = atpSuffix.split("\\.");
-        String year = termYear[0];
-        String term = termYear[1];
+        YearTerm yearTerm = atpToYearTerm(atpId);
 
         //   If the term is not Autumn/4 then the beginning of the academic year is (year - 1) . 4
-        if (term.equals("4")) {
+        if (yearTerm.getTermAsString().equals(PlanConstants.ATP_TERM_4)) {
             firstAtpId = atpId;
         } else {
-            String y = String.valueOf(Integer.valueOf(year) - 1);
-            firstAtpId = AtpHelper.getAtpFromNumTermAndYear("4", y);
+            YearTerm yt = new YearTerm(yearTerm.getYear() - 1, Integer.valueOf(PlanConstants.ATP_TERM_4));
+            firstAtpId = yt.toATP();
         }
         return firstAtpId;
     }
 
     /**
      * Returns an String[] {term, year} given an ATP ID.
+     *
+     * @param atpId
+     * @return
      */
     public static String[] atpIdToTermAndYear(String atpId) {
-        String atpSuffix = atpId.replace(PlanConstants.TERM_ID_PREFIX, "");
-
-        //  See if the ATP ID is nearly sane.
-        if (!atpSuffix.matches("[0-9]{4}\\.[1-4]{1}")) {
-            throw new RuntimeException(String.format("ATP ID [%s] isn't formatted correctly.", atpId));
-        }
-
-        String[] termYear = atpSuffix.split("\\.");
-        String year = termYear[0];
-        String term = termYear[1];
-        return new String[]{term, year};
+        YearTerm yearTerm = atpToYearTerm(atpId);
+        return new String[]{yearTerm.getTermAsString(), yearTerm.getYearAsString()};
     }
+
 
     /**
-     * Converts an ATP ID to a Term and Year ...
-     * "kuali.uw.atp.1991.1" -> {"Autumn", "1991"}
+     * Returns ATP ID in format 19911 for term="Winter" and year = 1991
      *
-     * @return A String array containing a term and year.
+     * @param termName
+     * @param year
+     * @return
      */
-    public static String[] atpIdToTermNameAndYear(String atpId) {
-        String[] termYear = atpIdToTermAndYear(atpId);
-        String term = termYear[0];
-        String year = termYear[1];
-
-        if (term.equals(PlanConstants.ATP_TERM_4)) {
-            term = PlanConstants.TERM_4;
-        } else if (term.equals(PlanConstants.ATP_TERM_1)) {
-            term = PlanConstants.TERM_1;
-        } else if (term.equals(PlanConstants.ATP_TERM_2)) {
-            term = PlanConstants.TERM_2;
-        } else if (term.equals(PlanConstants.ATP_TERM_3)) {
-            term = PlanConstants.TERM_3;
-        }
-        return new String[]{term, year};
+    public static String getAtpIdFromTermAndYear(String termName, String year) {
+        return getAtpIdFromTermYear(String.format("%s %s", termName, year));
     }
 
-    /*  Returns ATP ID in format kuali.uw.atp.1991.1 for term="Winter" and year = 1991*/
-    public static String getAtpIdFromTermAndYear(String term, String year) {
-        int termVal = 0;
-        if (term.equalsIgnoreCase(PlanConstants.TERM_1)) {
-            termVal = 1;
-        }
-        if (term.equalsIgnoreCase(PlanConstants.TERM_2)) {
-            termVal = 2;
-        }
-        if (term.equalsIgnoreCase(PlanConstants.TERM_3)) {
-            termVal = 3;
-        }
-        if (term.equalsIgnoreCase(PlanConstants.TERM_4)) {
-            termVal = 4;
-        }
-        StringBuffer newAtpId = new StringBuffer();
-        newAtpId = newAtpId.append(PlanConstants.TERM_ID_PREFIX).append(year).append(".").append(termVal);
-        return newAtpId.toString();
-    }
-
-    /*  Returns ATP ID in format kuali.uw.atp.1991.1 for term="Winter 1991"*/
+    /*  Returns ATP ID in format 19911 for term="Winter 1991"*/
     public static String getAtpIdFromTermYear(String termYear) {
         YearTerm yearTerm = termToYearTerm(termYear);
-        return yearTerm.toATP();
-    }
-
-    /* Returns ATP ID as kuali.uw.atp.1991.1 for term=1 and year = 1991 */
-    public static String getAtpFromNumTermAndYear(String term, String year) {
-        YearTerm yearTerm = new YearTerm(Integer.parseInt(year), Integer.parseInt(term));
         return yearTerm.toATP();
     }
 
@@ -273,14 +252,13 @@ public class AtpHelper {
 
     /**
      * Gives the short form of Term name
-     * for given atp kuali.uw.atp.2013.1 the short form is WI 13
+     * for given atp 20131 the short form is WI 13
      *
      * @param atpId
      * @return
      */
     public static String atpIdToShortTermName(String atpId) {
-        String[] termYear = atpIdToTermNameAndYear(atpId);
-        return (termYear[0].substring(0, 2).toUpperCase() + " " + termYear[1].substring(2, 4));
+        return atpToYearTerm(atpId).toShortTermName();
     }
 
     /**
@@ -304,7 +282,6 @@ public class AtpHelper {
 
         boolean isSetToPlanning = comparingYT.getValue() >= planningYT.getValue();
 
-
         return isSetToPlanning;
     }
 
@@ -315,14 +292,16 @@ public class AtpHelper {
      * @return
      */
     public static boolean isAtpCompletedTerm(String atpId) {
-        YearTerm currentYT = atpToYearTerm(getCurrentAtpId());
-        YearTerm yt = atpToYearTerm(atpId);
-
-        boolean isAtpCompletedTerm = yt.getValue() < currentYT.getValue();
-
-        return isAtpCompletedTerm;
+        return hasYearTermCompleted(atpToYearTerm(atpId));
     }
 
+
+    /**
+     * Returns true if an YearTerm is considered a completed term Otherwise, false.
+     *
+     * @param atp
+     * @return
+     */
     public static boolean hasYearTermCompleted(YearTerm atp) {
         YearTerm currentYT = getCurrentYearTerm();
         boolean completed = atp.getValue() < currentYT.getValue();
@@ -355,9 +334,9 @@ public class AtpHelper {
     }
 
     /**
-     * returns all published terms
+     * Gets published terms from Web service
      *
-     * @return
+     * @return List of Published Terms as AtpId's
      */
     public static List<String> getPublishedTerms() {
         List<String> publishedTerms = new ArrayList<String>();
@@ -373,16 +352,16 @@ public class AtpHelper {
         return publishedTerms;
     }
 
+
+    /**
+     * Gets published terms from Web service
+     *
+     * @return List of Published Terms as YearTerms
+     */
     public static List<YearTerm> getPublishedYearTermList() {
         List<YearTerm> publishedTerms = new ArrayList<YearTerm>();
-        try {
-            List<TermInfo> termInfos = getAcademicCalendarService().searchForTerms(QueryByCriteria.Builder.fromPredicates(equalIgnoreCase("query", PlanConstants.PUBLISHED)), CourseSearchConstants.CONTEXT_INFO);
-            for (TermInfo term : termInfos) {
-                YearTerm yt = atpToYearTerm(term.getId());
-                publishedTerms.add(yt);
-            }
-        } catch (Exception e) {
-            logger.error("Web service call failed.", e);
+        for (String publishedTerm : getPublishedTerms()) {
+            publishedTerms.add(atpToYearTerm(publishedTerm));
         }
         return publishedTerms;
     }
@@ -461,7 +440,7 @@ public class AtpHelper {
     public static boolean doesAtpExist(String atpId) {
         boolean doesAtpExist = false;
         try {
-            AtpInfo atpInfo = getAtpService().getAtp(atpId);
+            AtpInfo atpInfo = getAtpService().getAtp(atpId, PlanConstants.CONTEXT_INFO);
             if (atpInfo != null) {
                 doesAtpExist = true;
             }
@@ -519,19 +498,20 @@ public class AtpHelper {
     }
 
     /**
-     * Chedks if the atpIf format is in valid form
+     * Checks if the atpIf format is in valid form
      *
      * @param atpId
      * @return
      */
 
     public static boolean isAtpIdFormatValid(String atpId) {
-        return atpId.matches(PlanConstants.TERM_ID_PREFIX + "[0-9]{4}\\.[1-4]{1}");
+        return atpId.matches(ATP_VALID_FORMAT);
     }
 
 
-    public static final Pattern ATP_REGEX = Pattern.compile("kuali\\.uw\\.atp\\.([0-9]{4})\\.([1-4])");
-    public static final String ATP_FORMAT = "kuali.uw.atp.%d.%d";
+    public static final Pattern ATP_REGEX = Pattern.compile("([0-9]{4})([1-4]{1})");
+    public static final String ATP_VALID_FORMAT = "[0-9]{4}[1-4]{1}";
+    public static final String ATP_FORMAT = "%d%d";
 
     public static List<String> TERM_ID_LIST = Arrays.asList("winter", "spring", "summer", "autumn");
     public static List<String> TERM_LABELS_LIST = Arrays.asList("Winter", "Spring", "Summer", "Autumn");
@@ -565,7 +545,7 @@ public class AtpHelper {
             return TERM_ID_LIST.get(getTerm() - 1);
         }
 
-        // "kuali.uw.atp.1999.1"
+        // "19991"
         public String toATP() {
             return toATP(year, term);
         }
@@ -645,13 +625,13 @@ public class AtpHelper {
     /**
      * Converts Kuali UW ATP ids into a YearTerm object.
      * <p/>
-     * eg "kuali.uw.atp.2012.1" becomes year = 2012, term = 1
+     * eg "20121" becomes year = 2012, term = 1
      *
      * @param atp
      * @return
      */
     public static YearTerm atpToYearTerm(String atp) {
-        if (atp == null) {
+        if (!StringUtils.hasText(atp)) {
             throw new NullPointerException("atp");
         }
 
@@ -719,24 +699,25 @@ public class AtpHelper {
 
     /**
      * Return ATP Type Name in display format
+     * Takes TypeKey: 'kuali.uw.atp.type.winter' and returns TypeName: 'Winter'
      *
      * @param atpTypeKey Atp Type Key
      */
     public static String getAtpTypeName(String atpTypeKey) {
-        try {
-            List<AtpTypeInfo> atpTypeInfos = getAtpService().getAtpTypes();
-            atpCache = new HashMap<String, String>();
-            for (AtpTypeInfo ti : atpTypeInfos) {
+        /*try {
+            List<AtpInfo> atpTypeInfos = getAtpService().getAtpTypes();
+            for (AtpInfo ti : atpTypeInfos) {
                 if (ti.getId().equals(atpTypeKey)) {
-                    return ti.getName().substring(0, 1).toUpperCase() + ti.getName().substring(1);
+                    return WordUtils.capitalizeFully(ti.getName());
                 }
             }
         } catch (OperationFailedException e) {
             logger.error("ATP types lookup failed.", e);
-        }
+        }*/
 
         return null;
     }
+
 
     /**
      * returns the previous AtpId. If not present returns null.
@@ -774,7 +755,7 @@ public class AtpHelper {
         } catch (Exception e) {
             logger.error("Could not retrieve StudentCourseRecordInfo from the SWS");
         }
-        return studentCourseRecordInfos != null && studentCourseRecordInfos.size() > 0 ? atpToYearTerm(studentCourseRecordInfos.get(0).getTermName()) : atpToYearTerm(getCurrentAtpId());
+        return !CollectionUtils.isEmpty(studentCourseRecordInfos) ? atpToYearTerm(studentCourseRecordInfos.get(0).getTermName()) : atpToYearTerm(getCurrentAtpId());
     }
 
 
@@ -927,7 +908,7 @@ public class AtpHelper {
     }
 
     public static UserSessionHelper getUserSessionHelper() {
-        if(userSessionHelper == null){
+        if (userSessionHelper == null) {
             userSessionHelper = new UserSessionHelperImpl();
         }
         return userSessionHelper;

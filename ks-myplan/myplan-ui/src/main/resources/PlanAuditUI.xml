@@ -51,7 +51,7 @@
             <bean parent="KSAP-VerticalBoxGroup">
                 <property name="footer">
                     <bean parent="KSAP-EmptyLookupCriteriaFooter"/>
-                </property>
+        </property>
             </bean>
 
         </property>

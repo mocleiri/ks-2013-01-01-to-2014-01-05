@@ -1,7 +1,6 @@
 package org.kuali.student.myplan.plan;
 
 import org.kuali.rice.core.api.config.property.ConfigContext;
-import org.kuali.student.lum.lu.LUConstants;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanServiceConstants;
 import org.kuali.student.r2.common.dto.ContextInfo;
 
@@ -18,7 +17,7 @@ public class PlanConstants extends AcademicPlanServiceConstants {
     public static final String PLAN_PAGE_ID = "planned_courses_detail_page";
     public static final String ACTION_MENU_PAGE_ID = "add_planned_course";
 
-    public static final String GEN_EDU_ENUM_KEY = "kuali.uw.lu.genedreq";
+    public static final String GEN_EDU_ENUM_KEY = "uw.course.genedrequirement";
     public static final String PLACE_HOLDER_ENUM_KEY = "uw.academicplan.placeholder";
     public static final String PLACE_HOLDER_OTHER_CODE = "uw.academicplan.placeholder.other";
 

@@ -3,27 +3,18 @@ package org.kuali.student.myplan.course.service;
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
 import edu.uw.kuali.student.myplan.util.PlanHelperImpl;
 import edu.uw.kuali.student.myplan.util.UserSessionHelperImpl;
+import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.kns.inquiry.KualiInquirableImpl;
-import org.kuali.student.core.atp.service.AtpService;
-import org.kuali.student.core.enumerationmanagement.dto.EnumeratedValueInfo;
-import org.kuali.student.core.organization.dto.OrgInfo;
 import org.kuali.student.enrollment.academicrecord.dto.StudentCourseRecordInfo;
 import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingDisplayInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
-import org.kuali.student.enrollment.courseoffering.dto.ScheduleComponentDisplayInfo;
-import org.kuali.student.enrollment.courseoffering.dto.ScheduleDisplayInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
-import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.service.CourseService;
-import org.kuali.student.lum.course.service.CourseServiceConstants;
-import org.kuali.student.lum.lu.service.LuService;
-import org.kuali.student.lum.lu.service.LuServiceConstants;
 import org.kuali.student.myplan.academicplan.dto.LearningPlanInfo;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.infc.LearningPlan;
@@ -35,7 +26,10 @@ import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.course.util.CreditsFormatter;
 import org.kuali.student.myplan.plan.PlanConstants;
-import org.kuali.student.myplan.plan.dataobject.*;
+import org.kuali.student.myplan.plan.dataobject.AcademicRecordDataObject;
+import org.kuali.student.myplan.plan.dataobject.PlanItemDataObject;
+import org.kuali.student.myplan.plan.dataobject.PlannedCourseSummary;
+import org.kuali.student.myplan.plan.dataobject.RecommendedItemDataObject;
 import org.kuali.student.myplan.plan.util.*;
 import org.kuali.student.myplan.plan.util.AtpHelper.YearTerm;
 import org.kuali.student.myplan.util.CourseLinkBuilder;
@@ -44,9 +38,19 @@ import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.TimeOfDayInfo;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
-import org.kuali.student.r2.core.room.dto.BuildingInfo;
-import org.kuali.student.r2.core.room.dto.RoomInfo;
-import org.kuali.student.r2.core.scheduling.dto.TimeSlotInfo;
+import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.enumerationmanagement.dto.EnumeratedValueInfo;
+import org.kuali.student.r2.core.organization.dto.OrgInfo;
+import org.kuali.student.r2.core.room.infc.Building;
+import org.kuali.student.r2.core.room.infc.Room;
+import org.kuali.student.r2.core.scheduling.dto.ScheduleDisplayInfo;
+import org.kuali.student.r2.core.scheduling.infc.ScheduleComponentDisplay;
+import org.kuali.student.r2.core.scheduling.infc.TimeSlot;
+import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.service.CourseService;
+import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
+import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -70,8 +74,6 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
     public static final String NOT_OFFERED_IN_LAST_TEN_YEARS = "Not offered for more than 10 years.";
 
-    public static final String YES = "Y";
-
     public static final String SECTION_TERM = "section_term";
 
     public static final String VIEW_MORE_DETAILS = "View more details";
@@ -85,7 +87,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
     private transient AtpService atpService;
 
-    private transient LuService luService;
+    private transient CluService luService;
 
 
     private transient AcademicPlanService academicPlanService;
@@ -126,7 +128,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      */
     public CourseSummaryDetails retrieveCourseSummaryById(String courseId) {
         /**
-         * If version identpendent Id provided, retrieve the right course version Id based on current term/date
+         * If version independent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
         CourseInfo course = getCourseHelper().getCourseInfo(courseId);
@@ -150,7 +152,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         String subject = course.getSubjectArea().trim();
 
         CourseSummaryDetails courseDetails = new CourseSummaryDetails();
-        courseDetails.setVersionIndependentId(course.getVersionInfo().getVersionIndId());
+        courseDetails.setVersionIndependentId(course.getVersion().getVersionIndId());
         courseDetails.setCourseId(course.getId());
         courseDetails.setCode(course.getCode());
         courseDetails.setCredit(CreditsFormatter.formatCredits(course));
@@ -208,15 +210,15 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         // Load campus location map
         List<OrgInfo> campusList = OrgHelper.getOrgInfo(CourseSearchConstants.CAMPUS_LOCATION_ORG_TYPE, CourseSearchConstants.ORG_QUERY_SEARCH_BY_TYPE_REQUEST, CourseSearchConstants.ORG_TYPE_PARAM);
 
-        Map<String, String> abbrAttributes = course.getAttributes();
+        List<AttributeInfo> abbrAttributes = course.getAttributes();
 
-        for (Map.Entry<String, String> entry : abbrAttributes.entrySet()) {
+        for (AttributeInfo entry : abbrAttributes) {
             String key = entry.getKey();
             String value = entry.getValue();
 
 
             // -- Gen Ed requirements
-            if (YES.equals(value) && key.startsWith(CourseSearchConstants.GEN_EDU_REQUIREMENTS_PREFIX)) {
+            if (Boolean.valueOf(value) && key.startsWith(CourseSearchConstants.GEN_EDU_REQUIREMENTS_PREFIX)) {
 
                 // Get only the abbre_val of gen ed requirements
                 String abbrev = EnumerationHelper.getEnumAbbrValForCodeByType(key, PlanConstants.GEN_EDU_ENUM_KEY);
@@ -278,9 +280,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                 List<CourseOfferingInfo> courseOfferingInfo = cos.searchForCourseOfferings(criteria, CourseSearchConstants.CONTEXT_INFO);
 
                 if (courseOfferingInfo != null && courseOfferingInfo.size() > 0) {
-                    String lastOffered = courseOfferingInfo.get(0).getTermId();
-                    // TODO: this needs to be moved into ATP helper
-                    lastOffered = lastOffered.substring(0, 1).toUpperCase().concat(lastOffered.substring(1, lastOffered.length()));
+                    String lastOffered = WordUtils.capitalizeFully(courseOfferingInfo.get(0).getTermId());
                     String atpId = AtpHelper.getAtpIdFromTermYear(lastOffered);
                     if (!AtpHelper.isAtpSetToPlanning(atpId)) {
                         courseDetails.setLastOffered(lastOffered);
@@ -289,7 +289,6 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                     courseDetails.setLastOffered(NOT_OFFERED_IN_LAST_TEN_YEARS);
                 }
             } catch (Exception e) {
-                String[] params = {};
                 logger.error("Could not load courseOfferingInfo list.", e);
             }
         }
@@ -348,7 +347,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
     public PlannedCourseSummary getPlannedCourseSummaryById(String courseId, String studentId) {
 
         /**
-         * If version identpendent Id provided, retrieve the right course version Id based on current term/date
+         * If version independent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
         CourseInfo course = getCourseHelper().getCourseInfo(courseId);
@@ -376,7 +375,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         String planTypeKey = AcademicPlanServiceConstants.LEARNING_PLAN_TYPE_PLAN;
         try {
             List<LearningPlanInfo> plans = academicPlanService.getLearningPlansForStudentByType(studentId, planTypeKey, PlanConstants.CONTEXT_INFO);
-            if (plans.size() > 0) {
+            if (!CollectionUtils.isEmpty(plans)) {
                 LearningPlan plan = plans.get(0);
 
                 //  Fetch the plan items which are associated with the plan.
@@ -384,8 +383,8 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
                 //  Iterate through the plan items and set flags to indicate whether the item is a planned/backup or saved course.
                 for (PlanItem planItemInPlanTemp : planItemsInPlan) {
-                    if (planItemInPlanTemp.getRefObjectId().equals(course.getVersionInfo().getVersionIndId())) {
-                        //  Assuming type is planned or backup if not wishlist.
+                    if (planItemInPlanTemp.getRefObjectId().equals(course.getVersion().getVersionIndId())) {
+                        //  Assuming type is planned or backup if not wishList.
                         String typeKey = planItemInPlanTemp.getTypeKey();
                         if (typeKey.equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST)) {
                             plannedCourseSummary.setSavedItemId(planItemInPlanTemp.getId());
@@ -426,15 +425,13 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
                 if (course.getId().equalsIgnoreCase(studentInfo.getId())) {
                     plannedCourseSummary.getAcadRecList().add(acadrec);
-
-                    String[] str = AtpHelper.atpIdToTermNameAndYear(studentInfo.getTermName());
-                    plannedCourseSummary.getAcademicTerms().add(str[0] + " " + str[1]);
+                    plannedCourseSummary.getAcademicTerms().add(AtpHelper.atpIdToTermName(studentInfo.getTermName()));
                 }
             }
 
 
             /*Getting the recommended items for all quarters*/
-            List<RecommendedItemDataObject> recommendedItemDataObjects = getPlanHelper().getRecommendedItems(course.getVersionInfo().getVersionIndId());
+            List<RecommendedItemDataObject> recommendedItemDataObjects = getPlanHelper().getRecommendedItems(course.getVersion().getVersionIndId());
 
             if (!CollectionUtils.isEmpty(recommendedItemDataObjects)) {
 
@@ -472,7 +469,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
     public List<CourseOfferingInstitution> getCourseOfferingInstitutionsById(String courseId, List<String> terms) {
 
         /**
-         * If version identpendent Id provided, retrieve the right course version Id based on current term/date
+         * If version independent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
         CourseInfo course = getCourseHelper().getCourseInfo(courseId);
@@ -564,7 +561,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                         courseOfferingTerm.setCourseComments(courseComments);
                         courseOfferingTerm.setCurriculumComments(curriculumComments);
                         courseOfferingTerm.setInstituteCode(courseOfferingInstitution.getCode());
-                        courseOfferingTerm.setCoursePlanType(getPlanType(getPlanItem(course.getVersionInfo().getVersionIndId(), yt.toATP())));
+                        courseOfferingTerm.setCoursePlanType(getPlanType(getPlanItem(course.getVersion().getVersionIndId(), yt.toATP())));
                         courseOfferingTermList.add(courseOfferingTerm);
                     }
 
@@ -615,13 +612,13 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
     protected List<ActivityOfferingItem> getActivityOfferingItems(CourseInfo course, List<CourseOfferingInfo> courseOfferingInfoList, String termId, Map<String, PlanItem> planItemMap) {
 
-        List<String> plannedSections = new ArrayList<String>();
+        List<String> plannedActivities = new ArrayList<String>();
         if (planItemMap != null) {
             for (PlanItem planItem : planItemMap.values()) {
                 if (PlanConstants.SECTION_TYPE.equals(planItem.getRefObjectType())) {
                     String courseCode = getCourseHelper().getCourseCdFromActivityId(planItem.getRefObjectId());
                     if (course.getCode().equalsIgnoreCase(courseCode)) {
-                        plannedSections.add(planItem.getRefObjectId());
+                        plannedActivities.add(planItem.getRefObjectId());
                     }
                 }
             }
@@ -654,13 +651,13 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                     }
                     ActivityOfferingItem activityOfferingItem = getActivityItem(aodi, courseInfo, openForPlanning, termId, planItemId);
                     activityOfferingItemList.add(activityOfferingItem);
-                    if (plannedSections.contains(planRefObjId)) {
-                        plannedSections.remove(planRefObjId);
+                    if (plannedActivities.contains(planRefObjId)) {
+                        plannedActivities.remove(planRefObjId);
                     }
                 }
             }
             //Sections withdrawn and planned are included in activities
-            for (String activityId : plannedSections) {
+            for (String activityId : plannedActivities) {
                 ActivityOfferingDisplayInfo activityDisplayInfo = null;
                 try {
                     activityDisplayInfo = getCourseOfferingService().getActivityOfferingDisplay(activityId, PlanConstants.CONTEXT_INFO);
@@ -719,11 +716,11 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         List<MeetingDetails> meetingDetailsList = activity.getMeetingDetailsList();
         {
             ScheduleDisplayInfo sdi = displayInfo.getScheduleDisplay();
-            for (ScheduleComponentDisplayInfo scdi : sdi.getScheduleComponentDisplays()) {
+            for (ScheduleComponentDisplay scdi : sdi.getScheduleComponentDisplays()) {
                 MeetingDetails meeting = new MeetingDetails();
 
                 if (!PlanConstants.WITHDRAWN_STATE.equalsIgnoreCase(activity.getStateKey())) {
-                    BuildingInfo building = scdi.getBuilding();
+                    Building building = scdi.getBuilding();
                     if (building != null) {
                         meeting.setCampus(building.getCampusKey());
                         meeting.setBuilding(building.getBuildingCode());
@@ -731,13 +728,13 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                 }
 
                 if (!PlanConstants.WITHDRAWN_STATE.equalsIgnoreCase(activity.getStateKey())) {
-                    RoomInfo roomInfo = scdi.getRoom();
+                    Room roomInfo = scdi.getRoom();
                     if (roomInfo != null) {
                         meeting.setRoom(roomInfo.getRoomCode());
                     }
                 }
 
-                for (TimeSlotInfo timeSlot : scdi.getTimeSlots()) {
+                for (TimeSlot timeSlot : scdi.getTimeSlots()) {
 
                     String days = "";
                     for (int weekday : timeSlot.getWeekdays()) {
@@ -922,7 +919,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
 
     /**
-     * used to know if the given planItemInfo is a back up or a plantype.
+     * used to know if the given planItemInfo is a back up or a planType.
      *
      * @param planItemInfo
      * @return
@@ -1016,7 +1013,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
     /**
      * Checks if the Given refObjId for a section (eg: com 453 A or com 453 AA or can use a versionIndependentId) for the given atpId exists in Plan/backup
-     * returns planItemInfo if exists otherwise returns empty PlanitemInfo.
+     * returns planItemInfo if exists otherwise returns empty PlanItemInfo.
      *
      * @param refObjId
      * @param atpId
@@ -1045,9 +1042,9 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         this.courseComments = courseComments;
     }
 
-    protected LuService getLuService() {
+    protected CluService getLuService() {
         if (this.luService == null) {
-            this.luService = (LuService) GlobalResourceLoader.getService(new QName(LuServiceConstants.LU_NAMESPACE, "LuService"));
+            this.luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.NAMESPACE, "LuService"));
         }
         return this.luService;
     }

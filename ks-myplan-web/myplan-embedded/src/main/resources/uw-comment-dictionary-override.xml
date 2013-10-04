@@ -6,7 +6,7 @@
     <bean id="commentInfo.commentText" parent="commentInfo.commentText-parent">
         <property name="dataObjectStructure" ref="myplan.richTextInfo"/>
     </bean>
-    <bean id="myplan.richTextInfo" parent="org.kuali.student.common.dto.RichTextInfo-parent">
+    <bean id="myplan.richTextInfo" parent="org.kuali.student.r2.common.dto.RichTextInfo">
         <property name="attributes">
             <list>
                 <ref bean="myplan.richTextInfo.formatted" />

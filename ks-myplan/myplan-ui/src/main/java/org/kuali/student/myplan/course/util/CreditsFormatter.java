@@ -1,16 +1,16 @@
 package org.kuali.student.myplan.course.util;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.service.assembler.CourseAssemblerConstants;
-import org.kuali.student.lum.lrc.dto.ResultComponentInfo;
+import org.apache.log4j.Logger;
+import org.kuali.student.r2.common.dto.AttributeInfo;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.service.assembler.CourseAssemblerConstants;
+import org.kuali.student.r2.lum.lrc.dto.ResultValuesGroupInfo;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import org.apache.log4j.Logger;
 
 /**
  * Turns credits info into Strings.
@@ -28,7 +28,7 @@ public class CreditsFormatter {
     public static String formatCredits(CourseInfo courseInfo) {
         String credits = "";
 
-        List<ResultComponentInfo> options = courseInfo.getCreditOptions();
+        List<ResultValuesGroupInfo> options = courseInfo.getCreditOptions();
         if (options.size() == 0) {
             logger.warn("Credit options list was empty.");
             return credits;
@@ -37,7 +37,7 @@ public class CreditsFormatter {
         if (options.size() > 1) {
             logger.warn("Credit option list contained more than one value.");
         }
-        ResultComponentInfo rci = options.get(0);
+        ResultValuesGroupInfo rci = options.get(0);
 
         /**
          *  Credit values are provided in three formats: FIXED, LIST (Multiple), and RANGE (Variable). Determine the
@@ -45,11 +45,20 @@ public class CreditsFormatter {
          */
         String type = rci.getType();
         if (type.equals(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_FIXED)) {
-            credits = rci.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_FIXED_CREDIT_VALUE);
+            List<AttributeInfo> attributeInfos = rci.getAttributes();
+            if (!CollectionUtils.isEmpty(attributeInfos)) {
+                for (AttributeInfo attributeInfo : attributeInfos) {
+                    if (CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_FIXED_CREDIT_VALUE.equals(attributeInfo.getKey())) {
+                        credits = attributeInfo.getValue();
+                        break;
+                    }
+                }
+
+            }
             credits = trimCredits(credits);
         } else if (type.equals(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE)) {
             StringBuilder cTmp = new StringBuilder();
-            Collections.sort(rci.getResultValues(), new Comparator<String>() {
+            Collections.sort(rci.getResultValueKeys(), new Comparator<String>() {
                 @Override
                 public int compare(String o1, String o2) {
                     if (Double.parseDouble(o1) > Double.parseDouble(o2))
@@ -62,7 +71,7 @@ public class CreditsFormatter {
 
                 }
             });
-            for (String c : rci.getResultValues()) {
+            for (String c : rci.getResultValueKeys()) {
                 if (cTmp.length() != 0) {
                     cTmp.append(", ");
                 }
@@ -70,9 +79,28 @@ public class CreditsFormatter {
             }
             credits = cTmp.toString();
         } else if (type.equals(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE)) {
-            String minCredits = rci.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE);
-            String maxCredits = rci.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MAX_CREDIT_VALUE);
-            credits = trimCredits(minCredits) + "-" + trimCredits(maxCredits);
+            String minCredits = null;
+            String maxCredits = null;
+            List<AttributeInfo> attributeInfos = rci.getAttributes();
+            if (!CollectionUtils.isEmpty(attributeInfos)) {
+                for (AttributeInfo attributeInfo : attributeInfos) {
+                    String key = attributeInfo.getKey();
+                    String value = attributeInfo.getValue();
+                    if (CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE.equals(key)) {
+                        minCredits = value;
+                    } else if (CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MAX_CREDIT_VALUE.equals(key)) {
+                        maxCredits = value;
+                    }
+
+                    if (minCredits != null && maxCredits != null) {
+                        break;
+                    }
+                }
+
+            }
+            if (minCredits != null && maxCredits != null) {
+                credits = trimCredits(minCredits) + "-" + trimCredits(maxCredits);
+            }
         } else {
             logger.error("Unknown Course Credit type [" + type + "].");
         }

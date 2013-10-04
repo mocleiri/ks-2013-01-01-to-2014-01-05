@@ -2,9 +2,9 @@ package org.kuali.student.myplan.course.util;
 
 import edu.uw.kuali.student.lib.client.studentservice.ServiceException;
 import org.dom4j.DocumentException;
-import org.kuali.student.lum.course.dto.CourseInfo;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
 import org.kuali.student.myplan.plan.util.AtpHelper;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

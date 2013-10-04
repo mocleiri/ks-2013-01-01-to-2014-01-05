@@ -31,7 +31,6 @@ import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingDisplayInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
-import org.kuali.student.lum.course.dto.CourseInfo;
 import org.kuali.student.myplan.academicplan.dto.LearningPlanInfo;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.infc.LearningPlan;
@@ -61,6 +60,7 @@ import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.MetaInfo;
 import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.exceptions.*;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -77,7 +77,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.springframework.util.StringUtils.hasText;
@@ -938,7 +937,7 @@ public class PlanController extends UifControllerBase {
                 updateRecommendedItem(planItem, learningPlan, events);
             }
         } catch (DuplicateEntryException e) {
-            return doDuplicatePlanItem(form, formatAtpIdForUI(newAtpId), courseDetails.getCode());
+            return doDuplicatePlanItem(form, newAtpId, courseDetails.getCode());
         } catch (Exception e) {
             return doOperationFailedError(form, "Unable to add plan item.", e);
         }
@@ -1538,7 +1537,7 @@ public class PlanController extends UifControllerBase {
         Map<String, String> params = new HashMap<String, String>();
         params.put("planItemId", planItem.getId());
         params.put("planItemType", formatTypeKey(planItem.getTypeKey()));
-        params.put("atpId", formatAtpIdForUI(planItem.getPlanPeriods().get(0)));
+        params.put("atpId", planItem.getPlanPeriods().get(0));
         events.put(PlanConstants.JS_EVENT_NAME.RECOMMENDED_ITEM_UPDATED, params);
     }
 
@@ -2551,7 +2550,7 @@ public class PlanController extends UifControllerBase {
         if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED.equals(planItem.getTypeKey()) ||
                 PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP.equals(planItem.getTypeKey())
                 || PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED.equals(planItem.getTypeKey())) {
-            params.put("atpId", formatAtpIdForUI(planItem.getPlanPeriods().get(0)));
+            params.put("atpId", planItem.getPlanPeriods().get(0));
 
             if (PlanConstants.SECTION_TYPE.equals(planItem.getRefObjectType())) {
                 String itemsToBeUpdated = null;
@@ -2605,7 +2604,7 @@ public class PlanController extends UifControllerBase {
 
         Map<String, String> params = new HashMap<String, String>();
 
-        params.put("atpId", formatAtpIdForUI(atpId));
+        params.put("atpId", atpId);
         String totalCredits = getPlannedTermsHelper().getTotalCredits(atpId);
         params.put("totalCredits", totalCredits);
 
@@ -2636,7 +2635,7 @@ public class PlanController extends UifControllerBase {
             String atpId = planItem.getPlanPeriods().get(0);
             String termName = AtpHelper.atpIdToTermName(atpId);
 
-            params.put("atpId", formatAtpIdForUI(atpId));
+            params.put("atpId", atpId);
 
             boolean showAlert = false;
             StringBuffer statusAlert = new StringBuffer();
@@ -2765,10 +2764,6 @@ public class PlanController extends UifControllerBase {
         return String.format("%s %s level", subjectTitle, subjectLevel);
     }
 
-
-    private String formatAtpIdForUI(String atpId) {
-        return atpId.replaceAll("\\.", "-");
-    }
 
     private String formatTypeKey(String typeKey) {
         return typeKey.substring(typeKey.lastIndexOf(".") + 1);

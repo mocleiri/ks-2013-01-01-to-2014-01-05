@@ -18,6 +18,11 @@ public class CourseSearchConstants {
 
     //public static final String COURSE_SEARCH_EMPTY_RESULT_PAGE = "course_search_no_results";
 
+    /**
+     * The key of the term drop-down any item.
+     */
+    public static final String SEARCH_TERM_ANY_ITEM = "any";
+
     public static final String GEN_EDU_REQUIREMENTS_PREFIX = "course.genEdRequirement.";
     public static final String CAMPUS_LOCATION_COURSE_ATTRIBUTE = "course.campus";
 
@@ -35,11 +40,11 @@ public class CourseSearchConstants {
 
     public static final String SUBJECT_AREA = "kuali.lu.subjectArea";
 
-    public static final String CAMPUS_LOCATION_ORG_TYPE = "kuali.uw.org.type.campus";
+    public static final String CAMPUS_LOCATION_ORG_TYPE = "kuali.org.type.campus";
 
     public static final String TIME_SCHEDULE_KEY = "TimeScheduleLinkAbbreviation";
 
-    public static final String COURSE_OFFERING_INSTITUTE = "kuali.uw.course.offering.institute";
+    public static final String COURSE_OFFERING_INSTITUTE = "uw.course.offering.institute";
 
     public static final String ORG_QUERY_SEARCH_BY_TYPE_REQUEST = "org.search.orgInfoByType";
 
@@ -59,10 +64,10 @@ public class CourseSearchConstants {
 
     public static final String SEARCH_REQUEST_SUBJECT_PARAM = "subject";
 
-    public static final String SEARCH_REQUEST_NUMBER_PARAM = "number"; 
-    
+    public static final String SEARCH_REQUEST_NUMBER_PARAM = "number";
+
     public static final String COURSE_LEVEL_XX = "XX";
-    
+
     public static final String COURSE_LEVEL_ZERO = "00";
 
     public static final String SEARCH_REQUEST_LAST_SCHEDULED_PARAM = "lastScheduledTerm";
@@ -86,10 +91,10 @@ public class CourseSearchConstants {
 
     /* for Enum service search */
     public static final String ENUM_CONTEXT_KEY_SEARCH_PLACEHOLDER_KEY = "uw.enumcontext.academicplan.placeholder";
-    public static final String ENUM_CONTEXT_KEY_SEARCH_TYPE            = "enum.search.by.context.key";
+    public static final String ENUM_CONTEXT_KEY_SEARCH_TYPE = "enum.search.by.context.key";
     // param_name must be '_' separated, not '.' separated b/c we have code that mutiliates . into _ and that's
     // what it looks for.
-    public static final String ENUM_CONTEXT_KEY_SEARCH_PARAM_NAME      = "enum_query_param_context_key";
+    public static final String ENUM_CONTEXT_KEY_SEARCH_PARAM_NAME = "enum_query_param_context_key";
 
     /*Activity Constants*/
 

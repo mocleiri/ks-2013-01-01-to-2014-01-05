@@ -276,7 +276,7 @@
                 <property name="jaxWsService" value="true"/>
                 <property name="service" ref="orgService"/>
                 <property name="serviceInterface"
-                          value="org.kuali.student.core.organization.service.OrganizationService"/>
+                          value="org.kuali.student.r2.core.organization.service.OrganizationService"/>
                 <property name="localServiceName" value="orgService"/>
                 <property name="serviceNameSpaceURI" value="http://student.kuali.org/wsdl/organization"/>
                 <property name="busSecurity" value="${ks.lum.bus.security}"/>

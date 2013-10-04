@@ -142,7 +142,7 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
             if (!plannedCourse.isPlaceHolder()) {
                 String key = generateKey(plannedCourse.getCourseDetails().getSubjectArea(), plannedCourse.getCourseDetails().getCourseNumber(), plannedCourse.getPlanItemDataObject().getAtp());
                 List<ActivityOfferingItem> activityOfferingItems = plannedSections.get(key);
-                if (activityOfferingItems != null && activityOfferingItems.size() > 0) {
+                if (!CollectionUtils.isEmpty(activityOfferingItems)) {
                     Collections.sort(activityOfferingItems, new Comparator<ActivityOfferingItem>() {
                         @Override
                         public int compare(ActivityOfferingItem item1, ActivityOfferingItem item2) {

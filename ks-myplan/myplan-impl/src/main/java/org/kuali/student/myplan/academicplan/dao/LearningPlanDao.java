@@ -1,7 +1,7 @@
 package org.kuali.student.myplan.academicplan.dao;
 
-import org.kuali.student.enrollment.dao.GenericEntityDao;
 import org.kuali.student.myplan.academicplan.model.LearningPlanEntity;
+import org.kuali.student.r2.common.dao.GenericEntityDao;
 
 import java.util.List;
 
@@ -18,8 +18,8 @@ public class LearningPlanDao extends GenericEntityDao<LearningPlanEntity> {
                 .setParameter("studentId", studentId).setParameter("typeId", typeId).getResultList();
         Long enTime = System.currentTimeMillis();
         Long difTime = enTime - stTime;
-        if(difTime > 50)
-        System.out.println("LP Student END  : " + studentId + ": Time:" + (enTime - stTime) );
+        if (difTime > 50)
+            System.out.println("LP Student END  : " + studentId + ": Time:" + (enTime - stTime));
         return lpList;
     }
 }
