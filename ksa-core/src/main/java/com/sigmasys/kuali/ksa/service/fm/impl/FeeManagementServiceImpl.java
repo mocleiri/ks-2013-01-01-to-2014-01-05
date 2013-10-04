@@ -1064,21 +1064,25 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     private void createPriorManifestCorrection(FeeManagementManifest priorManifest, FeeManagementSession currentFmSession) {
 
-        // Clone the prior manifest and add to the current session. Also, create a Correction Manifest:
+        // Clone the prior manifest and add to the current session.
         FeeManagementManifest priorCopy = copyManifest(priorManifest);
-        FeeManagementManifest correctionManifest = copyManifest(priorManifest);
 
         priorCopy.setSession(currentFmSession);
         priorCopy.setType(FeeManagementManifestType.ORIGINAL);
-        priorCopy.setLinkedManifest(correctionManifest);
+        persistEntity(priorCopy);
+
+        // Also, create a Correction Manifest:
+        FeeManagementManifest correctionManifest = copyManifest(priorManifest);
+
         correctionManifest.setSession(currentFmSession);
         correctionManifest.setType(FeeManagementManifestType.CORRECTION);
         correctionManifest.setTransaction(null);
         correctionManifest.setLinkedManifest(priorCopy);
-
-        // Persist the new manifests:
-        persistEntity(priorCopy);
         persistEntity(correctionManifest);
+
+        // Link the Prior Manifest with the Correction Manifest and persist:
+        priorCopy.setLinkedManifest(correctionManifest);
+        persistEntity(priorCopy);
     }
     
     /**
@@ -1230,9 +1234,29 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     private FeeManagementManifest copyManifest(FeeManagementManifest origManifest) {
     	
     	// Create a new FM Manifest as a shallow copy of the original one:
-    	FeeManagementManifest copyManifest = BeanUtils.getShallowCopy(origManifest);
-    	
-    	// Create copies of KeyPairs:
+    	FeeManagementManifest copyManifest = new FeeManagementManifest();
+
+        copyManifest.setEffectiveDate(origManifest.getEffectiveDate());
+        copyManifest.setRecognitionDate(origManifest.getRecognitionDate());
+        copyManifest.setAmount((origManifest.getAmount() != null) ? new BigDecimal(origManifest.getAmount().doubleValue()) : null);
+        copyManifest.setInternalChargeId(origManifest.getInternalChargeId());
+        copyManifest.setOfferingId(origManifest.getOfferingId());
+        copyManifest.setRegistrationId(origManifest.getRegistrationId());
+        copyManifest.setTransactionTypeId(origManifest.getTransactionTypeId());
+        copyManifest.setSessionCurrent(origManifest.isSessionCurrent());
+        copyManifest.setSession(null);
+        copyManifest.setLinkedManifest(null);
+        copyManifest.setTransaction(origManifest.getTransaction());
+        copyManifest.setRate(origManifest.getRate());
+        copyManifest.setRollup(origManifest.getRollup());
+        copyManifest.setId(null);
+
+        // Set the status:
+        if (origManifest.getStatus() != null) {
+            copyManifest.setStatus(origManifest.getStatus());
+        }
+
+        // Create copies of KeyPairs:
     	if (origManifest.getKeyPairs() != null) {
     		// Create a new Set of KeyPairs if one is not set yet:
     		if (copyManifest.getKeyPairs() == null) {
@@ -1265,17 +1289,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     			copyManifest.getTags().add(copyTag);
     		}
     	}
-    	
-    	
-    	// Set non primitive non-java package types:
-    	copyManifest.setSession(null);
-    	copyManifest.setLinkedManifest(null);
-    	copyManifest.setTransaction(origManifest.getTransaction());
-    	copyManifest.setRate(origManifest.getRate());
-    	copyManifest.setRollup(origManifest.getRollup());
-    	copyManifest.setStatus(origManifest.getStatus());
-    	copyManifest.setId(null);
-    	
+
     	return copyManifest;
     }
 }

@@ -303,8 +303,6 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    @Ignore
-    // TODO: Fix the shallow copy problem by copying properties one-by-one.
     public void testReconcileSessionLastChargedSessionPrev() throws Exception {
         // Create Current and Prior FM Sessions:
         FmSession currentSession = createFmSessionForReconciliation(true, false, false);
@@ -314,6 +312,38 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         fmService.reconcileSession(currentSession.getSession().getId());
 
         // Validate the results:
+        // Validate the updated Current Session's Manifests:
+        List<FeeManagementManifest> currentManifests = fmService.getManifests(currentSession.getSession().getId());
+
+        assertEquals(currentSession.getManifests().get(0), currentManifests.get(0));
+        assertEquals(currentSession.getManifests().get(1), currentManifests.get(1));
+        assertEquals(currentSession.getSession(), currentManifests.get(2).getSession());
+        assertEquals(currentSession.getSession(), currentManifests.get(3).getSession());
+        assertEquals(currentManifests.get(2), currentManifests.get(3).getLinkedManifest());
+        assertEquals(currentManifests.get(3), currentManifests.get(2).getLinkedManifest());
+        assertNotNull(currentManifests.get(2).getTransaction());
+        assertNull(currentManifests.get(3).getTransaction());
+        assertTrue(safeAmountsEqual(currentManifests.get(2), currentManifests.get(3)));
+        assertEquals(currentManifests.get(2).getInternalChargeId(), currentManifests.get(3).getInternalChargeId());
+        assertEquals(currentManifests.get(2).isSessionCurrent(), currentManifests.get(3).isSessionCurrent());
+        assertEquals(FeeManagementManifestType.ORIGINAL, currentManifests.get(2).getType());
+        assertEquals(FeeManagementManifestType.CORRECTION, currentManifests.get(3).getType());
+
+        assertEquals(currentSession.getSession(), currentManifests.get(4).getSession());
+        assertEquals(currentSession.getSession(), currentManifests.get(5).getSession());
+        assertEquals(currentManifests.get(4), currentManifests.get(5).getLinkedManifest());
+        assertEquals(currentManifests.get(5), currentManifests.get(4).getLinkedManifest());
+        assertNotNull(currentManifests.get(4).getTransaction());
+        assertNull(currentManifests.get(5).getTransaction());
+        assertTrue(safeAmountsEqual(currentManifests.get(4), currentManifests.get(5)));
+        assertEquals(currentManifests.get(4).getInternalChargeId(), currentManifests.get(5).getInternalChargeId());
+        assertEquals(currentManifests.get(4).isSessionCurrent(), currentManifests.get(5).isSessionCurrent());
+        assertEquals(FeeManagementManifestType.ORIGINAL, currentManifests.get(4).getType());
+        assertEquals(FeeManagementManifestType.CORRECTION, currentManifests.get(5).getType());
+
+        // Validated the updated Prior Session's Manifests:
+        List<FeeManagementManifest> priorManifests = fmService.getManifests(priorSession.getSession().getId());
+
 
         assertEquals(FeeManagementSessionStatus.RECONCILED, currentSession.getSession().getStatus());
     }
@@ -1076,7 +1106,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         persistenceService.persistEntity(notYetCharged);
         priorSession.getManifests().add(notYetCharged);
 
-        // Create Prior Manifest not matched to Current ones by (Registration or Internal Charge) + Rate:
+        // Create UNMATCHED Prior Manifests not matched to Current ones by (Registration or Internal Charge) + Rate:
         /* DISCOUNT not matching by either (RegistrationID or InternalChargeID) and Rate */
         FeeManagementManifest unmatched = new FeeManagementManifest();
         Transaction transaction3 = transactionService.createTransaction(TRANSACTION_TYPE_ID, ACCOUNT_ID, new Date(), MANIFEST_AMOUNT);
@@ -1090,6 +1120,61 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         unmatched.setTransaction(transaction3);
         persistenceService.persistEntity(unmatched);
         priorSession.getManifests().add(unmatched);
+
+        // Create UNMATCHED Prior Manifest pair - subject to a FULL REVERSAL matched by (OfferingID + Rate):
+        FeeManagementManifest fullReversal1 = new FeeManagementManifest();
+        FeeManagementManifest fullReversal2 = new FeeManagementManifest();
+        BigDecimal fullReversalAmount = new BigDecimal(9999999d);
+        String fullReversalOfferingId = "FullReversalOfferingId";
+        String fullReversalInternalChargeId = "FullReversalInternalChargeId";
+
+        fullReversal1.setSession(priorSession.getSession());
+        fullReversal1.setType(FeeManagementManifestType.CHARGE);
+        fullReversal1.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        fullReversal1.setAmount(fullReversalAmount);
+        fullReversal1.setOfferingId(fullReversalOfferingId);
+        fullReversal1.setRate(rate);
+        persistenceService.persistEntity(fullReversal1);
+
+        fullReversal2.setSession(priorSession.getSession());
+        fullReversal2.setType(FeeManagementManifestType.CANCELLATION);
+        fullReversal2.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        fullReversal2.setAmount(fullReversalAmount);
+        fullReversal2.setOfferingId(fullReversalOfferingId);
+        fullReversal2.setRate(rate);
+        fullReversal2.setLinkedManifest(fullReversal1);
+        persistenceService.persistEntity(fullReversal2);
+
+        fullReversal1.setLinkedManifest(fullReversal2);
+        persistenceService.persistEntity(fullReversal1);
+        priorSession.getManifests().add(fullReversal1);
+        priorSession.getManifests().add(fullReversal2);
+
+        // Create UNMATCHED Prior Manifest pair - subject to a FULL REVERSAL matched by (InternalChargeID + Rate):
+        fullReversal1 = new FeeManagementManifest();
+        fullReversal2 = new FeeManagementManifest();
+
+        fullReversal1.setSession(priorSession.getSession());
+        fullReversal1.setType(FeeManagementManifestType.CHARGE);
+        fullReversal1.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        fullReversal1.setAmount(fullReversalAmount);
+        fullReversal1.setInternalChargeId(fullReversalInternalChargeId);
+        fullReversal1.setRate(rate);
+        persistenceService.persistEntity(fullReversal1);
+
+        fullReversal2.setSession(priorSession.getSession());
+        fullReversal2.setType(FeeManagementManifestType.CANCELLATION);
+        fullReversal2.setTransactionTypeId(TRANSACTION_TYPE_ID);
+        fullReversal2.setAmount(fullReversalAmount);
+        fullReversal2.setInternalChargeId(fullReversalInternalChargeId);
+        fullReversal2.setRate(rate);
+        fullReversal2.setLinkedManifest(fullReversal1);
+        persistenceService.persistEntity(fullReversal2);
+
+        fullReversal1.setLinkedManifest(fullReversal2);
+        persistenceService.persistEntity(fullReversal1);
+        priorSession.getManifests().add(fullReversal1);
+        priorSession.getManifests().add(fullReversal2);
 
         // Create manifests to be ignored, CORRECTION and ORIGINAL:
         FeeManagementManifest original = new FeeManagementManifest();
@@ -1546,6 +1631,19 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         persistenceService.persistEntity(account);
 
         return account;
+    }
+
+    /**
+     * Safely compares "amount" properties of two <code>FeeManagementManifest</code>s.
+     * Calls the "compareTo" method of BigDecimal.
+     * Guaranteed not to cause a NullPointerException.
+     *
+     * @param m1 A <code>FeeManagementManifest</code>.
+     * @param m2 A <code>FeeManagementManifest</code>.
+     * @return true if "amount" attributes are equal.
+     */
+    private static boolean safeAmountsEqual(FeeManagementManifest m1, FeeManagementManifest m2) {
+        return (m1.getAmount() != null) && (m2.getAmount() != null) && (m1.getAmount().compareTo(m2.getAmount()) == 0);
     }
 
     /**

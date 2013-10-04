@@ -36,6 +36,8 @@ public enum FeeManagementManifestType implements Identifiable {
     @Override
     public String toString() {
         switch (this) {
+            case ORIGINAL:
+                return "Original";
             case CHARGE:
                 return "Charge";
             case CANCELLATION:
