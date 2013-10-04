@@ -9,7 +9,16 @@ Given /^I create a Course Offering from catalog using the default waitlists opti
 end
 
 Given /^I create a Course Offering from catalog using the waitlists option disabled$/ do
-  @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => false
+  @course_offering = create CourseOffering, :course => "ENGL300", :waitlist => false
+end
+
+Given /^there is an existing course offering with activity offerings that have waitlists enabled$/ do
+  @course_offering = make CourseOffering, :course => "ENGL293"
+  @activity_offering = make ActivityOffering, :parent_course_offering => @course_offering, :code => "A"
+end
+
+Given /^I create a course and activity offering with waitlists enabled$/ do
+  step "I manage an activity offering with waitlists enabled"
 end
 
 Given /^I manage an activity offering with waitlists enabled$/ do
@@ -20,9 +29,16 @@ Given /^I manage an activity offering with waitlists enabled$/ do
   @activity_offering.save
 end
 
+Given /^I create a course and activity offering with a waitlists disabled$/ do
+  @term = make AcademicTerm, :term_code => Rollover::MAIN_TEST_TERM_TARGET if @term.nil?
+  @course_offering_wl_disabled = create CourseOffering, :term => @term.term_code, :course => "ENGL300", :waitlist => false
+  @activity_offering_wl_disabled = create ActivityOffering, :parent_course_offering => @course_offering_wl_disabled
+  @activity_offering_wl_disabled.save
+end
+
 Given /^I manage an activity offering with the limit waitlist size set$/ do
   @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => true
-  waitlist_config = make Waitlist, :limit_size => 30
+  waitlist_config = make Waitlist, :enabled => true, :limit_size => 30
   @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering, :waitlist_config => waitlist_config
   @activity_offering.save
 
@@ -36,7 +52,7 @@ end
 
 Given /^I manage an activity offering with waitlists processing type set to (.*)$/ do |processing_type|
   @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => true
-  waitlist_config = make Waitlist, :type => processing_type
+  waitlist_config = make Waitlist, :enabled => true, :type => processing_type
   @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering, :waitlist_config => waitlist_config
   @activity_offering.save
 
@@ -62,8 +78,9 @@ Given /^I can update the processing type to (.*)$/ do |processing_type|
   end
 end
 
-Then /^I make changes to the default waitlist configuration$/ do
+Then /^I make changes to the default activity offering waitlist configuration$/ do
   waitlist = @activity_offering.waitlist_config
+  waitlist.enabled = true
   waitlist.type = "Manual"
   waitlist.limit_size = 10
   waitlist.allow_hold_list = true
@@ -92,14 +109,14 @@ Then /^I modify the limit waitlist size$/ do
   @activity_offering.save
 end
 
-Then /^I enable the allow holds list option$/ do
+Then /^I enable the allow hold list option$/ do
   waitlist = @activity_offering.waitlist_config
   waitlist.allow_hold_list = true
   @activity_offering.edit :waitlist_config => waitlist
   @activity_offering.save
 end
 
-Then /^I disable the allow holds list option$/ do
+Then /^I disable the allow hold list option$/ do
   waitlist = @activity_offering.waitlist_config
   waitlist.allow_hold_list = false
   @activity_offering.edit :waitlist_config => waitlist
@@ -179,12 +196,12 @@ Given /^the limit waitlist size is successfully updated$/ do
 
   on ActivityOfferingInquiry do |page|
     page.waitlists_active?.should be_true
-    page.waitlists_max_size.should == "Limit to #{@activity_offering.waitlist_config.limit_size}"
+    page.waitlists_max_size.should == @activity_offering.waitlist_config.waitlist_limit_str
     page.close
   end
 end
 
-Given /^the allow holds list option is successfully updated$/ do
+Given /^the allow hold list option is successfully updated$/ do
   on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
 
   on ActivityOfferingInquiry do |page|
@@ -230,9 +247,9 @@ Given /^the limit waitlist size is successfully updated to unlimited$/ do
   end
 end
 
-Given /^I manage an activity offering with waitlists the allow holds list option is enabled$/ do
+Given /^I manage an activity offering with the waitlist allow hold list option enabled$/ do
   @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => true
-  waitlist_config = make Waitlist, :allow_hold_list => true
+  waitlist_config = make Waitlist, :enabled => true, :allow_hold_list => true
   @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering, :waitlist_config => waitlist_config
   @activity_offering.save
 
@@ -240,6 +257,52 @@ Given /^I manage an activity offering with waitlists the allow holds list option
 
   on ActivityOfferingInquiry do |page|
     page.waitlists_allow_holds?.should == true
+    page.close
+  end
+end
+
+
+Given /^the waitlist enabled configuration is copied to the new course and activity offering in the target term$/ do
+  @course_offering_copy = make CourseOffering, :course => @course_offering.course, :term => @term_target.term_code
+  step "the waitlist configuration is copied to the new course and activity offering"
+end
+Given /^the waitlist configuration is copied to the new course and activity offering.*$/ do
+  @course_offering_copy.view_course_details
+  on CourseOfferingInquiry do |page|
+    page.waitlist_state.should be_true
+    page.close
+  end
+
+  @course_offering_copy.manage
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_active?.should be_true
+    page.waitlists_allow_holds?.should == @activity_offering.waitlist_config.allow_hold_list
+    page.waitlists_processing.should == @activity_offering.waitlist_config.type
+    page.waitlists_max_size.should == @activity_offering.waitlist_config.waitlist_limit_str
+    page.close
+  end
+end
+
+Given /^the waitlist disabled configuration is copied to the course and activity offering in the target term$/ do
+  @course_offering_copy = make CourseOffering, :course => @course_offering_wl_disabled.course, :term => @term_target.term_code
+
+ step "the waitlists are disabled for the new course and activity offering"
+end
+
+Given /^the waitlists are disabled for the new course and activity offering$/ do
+  @course_offering_copy.view_course_details
+  on CourseOfferingInquiry do |page|
+    page.waitlist_state.should be_false
+    page.close
+  end
+
+  @course_offering_copy.manage
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_active?.should be_false
     page.close
   end
 end

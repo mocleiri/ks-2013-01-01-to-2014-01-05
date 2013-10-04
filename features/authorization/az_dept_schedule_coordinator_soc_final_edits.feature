@@ -90,6 +90,7 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Final Edits
     And I have access to add new delivery logistics
     And I have access to view requested delivery logistics
     And I have access to delete requested delivery logistics
+    And I have access to edit waitlist options
     And I have access to edit the evaluation flag
     And I have access to edit the honors flag
     But I do not have access to add or edit seat pools

@@ -216,7 +216,7 @@ class ActivityOfferingMaintenance < BasePage
   element(:waitlist_automatic_radio) { |b| b.waitlist_section.radio(index: 1) }
   element(:waitlist_manual_radio) { |b| b.waitlist_section.radio(index: 2) }
   element(:waitlist_limit_checkbox) { |b| b.waitlist_section.div(data_label: "Limit Waitlist Size").checkbox }
-  element(:waitlist_limit) { |b| b.waitlist_section.text_field(id: "u100716_control") }
+  element(:waitlist_limit) { |b| b.waitlist_section.text_field(id: "u100737_control") }  #limit_waitlist_size_text_control
   element(:waitlist_allow_hold_checkbox) { |b| b.waitlist_section.div(data_label: "Allow Hold List").checkbox }
 
   def waitlist_processing_type
@@ -225,6 +225,12 @@ class ActivityOfferingMaintenance < BasePage
       return radio.parent.label.text if radio.set?
     end
   end
+
+  #for some users/soc states waitlists are read-only
+  value(:waitlists_active?) { |b| b.frm.div(data_label: "Waitlist Active").span(text: "Yes").exists? }
+  value(:waitlists_processing) { |b| b.frm.div(data_label: "Waitlist Processing").span(index: 2).text }
+  value(:waitlists_max_size) { |b| b.frm.div(data_label: "Waitlist Max Size").span(index: 2).text }
+  value(:waitlists_allow_holds?) { |b| b.frm.div(data_label: "Allow Holds in Waitlist").span(text: "Yes").exists? }
 
   PRIORITY_COLUMN = 0
   SEATS_COLUMN = 1

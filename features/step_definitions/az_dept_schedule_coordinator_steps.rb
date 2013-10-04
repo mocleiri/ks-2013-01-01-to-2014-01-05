@@ -626,6 +626,41 @@ Then /^I have access to add or edit affiliated personnel$/ do
   end
 end
 
+Then /^I have access to edit waitlist options$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.waitlist_checkbox.enabled?.should be_true
+    page.waitlist_checkbox.set
+    page.waitlist_confirmation_radio.present?.should be_true
+    page.waitlist_automatic_radio.present?.should be_true
+    page.waitlist_manual_radio.present?.should be_true
+    page.waitlist_limit_checkbox.enabled?.should be_true
+    page.waitlist_limit_checkbox.set
+    page.waitlist_limit.enabled?.should be_true
+    page.waitlist_allow_hold_checkbox.enabled?.should be_true
+  end
+end
+
+Then /^I do not have access to edit waitlist options$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.waitlist_checkbox.present?.should be_false
+    page.waitlist_confirmation_radio.present?.should be_false
+    page.waitlist_automatic_radio.present?.should be_false
+    page.waitlist_manual_radio.present?.should be_false
+    page.waitlist_limit_checkbox.present?.should be_false
+    page.waitlist_limit.present?.should be_false
+    page.waitlist_allow_hold_checkbox.present?.should be_false
+  end
+end
+
+Then /^I have access to view waitlist options$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.waitlists_active?.should be_true
+    page.waitlists_processing.should == "Confirmation"
+    page.waitlists_max_size.should == "Unlimited"
+    page.waitlists_allow_holds?.should be_true
+  end
+end
+
 Then /^I have access to edit the evaluation flag$/ do
   on ActivityOfferingMaintenance do |page|
     page.requires_evaluation.enabled?.should be_true

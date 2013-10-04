@@ -83,7 +83,6 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Open
     When I manage the course offering
     Then I do not have access to delete the course offering
 
-  @bug @KSENROLL-8063
   Scenario: AZ 3.1/AZ 4.1B/Full_open.5 - Verify Department Schedule Coordinator edit activity offering access (within admin org) in SOC state Open
     When I attempt to edit an activity offering for a course offering in my admin org
     Then I have access to edit the activity code
@@ -91,6 +90,7 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Open
     And I have access to add or edit affiliated personnel
     And I have access to add new delivery logistics
     And I have access to delete requested delivery logistics
+    And I have access to edit waitlist options
     And I have access to edit the evaluation flag
     And I have access to edit the honors flag
     But I do not have access to add or edit seat pools

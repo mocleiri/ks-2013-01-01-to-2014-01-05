@@ -1308,10 +1308,10 @@ class Waitlist
     @browser = browser
 
     defaults = {
-        :enabled => true,
+        :enabled => nil,  #true/false/nil (nil means use default config)
         :type => "Confirmation",  #Automatic, Confirmation, Manual
         :limit_size => 0,
-        :allow_hold_list => false
+        :allow_hold_list => true
     }
 
     set_options(defaults.merge(opts))
@@ -1321,6 +1321,7 @@ class Waitlist
   #
   #  @param opts [Hash] key => value for attribute to be updated
   def edit
+    return if @enabled.nil?
 
     on ActivityOfferingMaintenance do |page|
       @enabled ? page.waitlist_checkbox.set : page.waitlist_checkbox.clear
@@ -1352,6 +1353,14 @@ class Waitlist
 
     on ActivityOfferingMaintenance do |page|
       @allow_hold_list ? page.waitlist_allow_hold_checkbox.set : page.waitlist_allow_hold_checkbox.clear
+    end
+  end
+
+  def waitlist_limit_str
+    if @limit_size == 0
+      return "Unlimited"
+    else
+      return "Limit to #{@limit_size}"
     end
   end
 end
