@@ -146,7 +146,7 @@ public class TransactionTypeController extends GenericSearchController {
             TransactionType ttSource = transactionService.getTransactionType(modelToCopy, new Date());
 
             if (ttSource != null) {
-                this.loadFormFromTransactionType(form, ttSource);
+                this.loadFormFromTransactionType(form, ttSource, true);
             }
             form.setNewTransactionType(false);
         } else {
@@ -339,7 +339,7 @@ public class TransactionTypeController extends GenericSearchController {
 
             if (ttSource != null) {
                 form.setSubCode(ttSource.getId().getSubCode());
-                this.loadFormFromTransactionType(form, ttSource);
+                this.loadFormFromTransactionType(form, ttSource, false);
             }
 
             long number = transactionService.getNumberOfTransactions(ttId);
@@ -489,12 +489,16 @@ public class TransactionTypeController extends GenericSearchController {
         return true;
     }
 
-    private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType transactionType) {
+    private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType transactionType, boolean createNew) {
 
         form.setType((transactionType instanceof CreditType ? TransactionType.CREDIT_TYPE : TransactionType.DEBIT_TYPE));
 
         form.setCode(transactionType.getId().getId());
-        form.setStartDate(new Date());
+        if(createNew) {
+            form.setStartDate(new Date());
+        } else {
+            form.setStartDate(transactionType.getStartDate());
+        }
         form.setDescription(transactionType.getDescription());
 
         if (transactionType.getRollup() != null) {
