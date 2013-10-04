@@ -1,6 +1,5 @@
 @wip
 @nelson.leduc
-# KSENROLL-9767
 Feature: WC.Delete and edit standard Time Slots
 
   As a Scheduling Coordinator, I want to edit existing Standard Time Slots for
