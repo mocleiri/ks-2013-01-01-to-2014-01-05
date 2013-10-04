@@ -1,6 +1,5 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
-import static com.sigmasys.kuali.ksa.util.TransactionUtils.formatAmount;
 import static com.sigmasys.kuali.ksa.util.TransactionUtils.getFormattedAmount;
 
 import java.lang.reflect.Method;
@@ -1379,6 +1378,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
     }
 
+
     /**
      * Produces a new bill based on the given parameters.
      *
@@ -1410,6 +1410,96 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                                boolean showDependents,
                                boolean showInternalTransactions,
                                boolean runPaymentApplication) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_BILL);
+
+        KsaBill ksaBill = createBill(accountId,
+                message,
+                billDate,
+                startDate,
+                endDate,
+                rollupIdsOnSameDate,
+                rollupIdsOnSameStatement,
+                showOnlyUnbilledTransactions,
+                showDeferments,
+                showDependents,
+                showInternalTransactions,
+                runPaymentApplication);
+
+        return JaxbUtils.toXml(ksaBill);
+    }
+
+    /**
+     * Produces bills for multiple KSA accounts based on the given parameters.
+     *
+     * @param accountIds                   List of Account IDs
+     * @param message                      Bill message
+     * @param billDate                     Bill date
+     * @param startDate                    Start date
+     * @param endDate                      End date
+     * @param rollupIdsOnSameDate          Rollup IDs on the same date
+     * @param rollupIdsOnSameStatement     Rollup IDs on the same statement
+     * @param showOnlyUnbilledTransactions true if only unbilled transactions have to be shown
+     * @param showDeferments               true if deferments have to be shown
+     * @param showDependents               true if dependents have to be shown
+     * @param showInternalTransactions     true if internal transactions have to be shown
+     * @param runPaymentApplication        if true then Payment Application will be run
+     * @return BatchKsaBill XML
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public String generateBills(List<String> accountIds,
+                                String message,
+                                Date billDate,
+                                Date startDate,
+                                Date endDate,
+                                Set<Long> rollupIdsOnSameDate,
+                                Set<Long> rollupIdsOnSameStatement,
+                                boolean showOnlyUnbilledTransactions,
+                                boolean showDeferments,
+                                boolean showDependents,
+                                boolean showInternalTransactions,
+                                boolean runPaymentApplication) {
+
+        PermissionUtils.checkPermission(Permission.GENERATE_BILL);
+
+        BatchKsaBill batchKsaBill = ObjectFactory.getInstance().createBatchKsaBill();
+
+        for (String accountId : accountIds) {
+
+            KsaBill ksaBill = createBill(accountId,
+                    message,
+                    billDate,
+                    startDate,
+                    endDate,
+                    rollupIdsOnSameDate,
+                    rollupIdsOnSameStatement,
+                    showOnlyUnbilledTransactions,
+                    showDeferments,
+                    showDependents,
+                    showInternalTransactions,
+                    runPaymentApplication);
+
+            batchKsaBill.getKsaBill().add(ksaBill);
+        }
+
+        return JaxbUtils.toXml(batchKsaBill);
+    }
+
+
+    protected KsaBill createBill(String accountId,
+                                 String message,
+                                 Date billDate,
+                                 Date startDate,
+                                 Date endDate,
+                                 Set<Long> rollupIdsOnSameDate,
+                                 Set<Long> rollupIdsOnSameStatement,
+                                 boolean showOnlyUnbilledTransactions,
+                                 boolean showDeferments,
+                                 boolean showDependents,
+                                 boolean showInternalTransactions,
+                                 boolean runPaymentApplication) {
+
 
         PermissionUtils.checkPermission(Permission.GENERATE_BILL);
 
@@ -1750,7 +1840,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         ksaBill.setBillId(billRecord.getId().toString());
         ksaBill.setMessage(message);
 
-        return JaxbUtils.toXml(ksaBill);
+        return ksaBill;
     }
 
 

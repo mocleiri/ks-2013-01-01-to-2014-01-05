@@ -343,12 +343,16 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
 
         Transaction transaction1 = transactionService.createTransaction("cash", accountId, new Date(), new BigDecimal(5500));
         Transaction transaction2 = transactionService.createTransaction("1020", accountId, new Date(), new BigDecimal(12000));
+        Transaction transaction3 = transactionService.createTransaction("finaid", accountId, new Date(), new BigDecimal(-90));
 
         Assert.notNull(transaction1);
         Assert.notNull(transaction1.getId());
 
         Assert.notNull(transaction2);
         Assert.notNull(transaction2.getId());
+
+        Assert.notNull(transaction3);
+        Assert.notNull(transaction3.getId());
 
         Rollup rollup1 = entityService.createAuditableEntity("_1", "Rollup _1", "Description 111", Rollup.class);
         Rollup rollup2 = entityService.createAuditableEntity("_2", "Rollup _2", "Description 222", Rollup.class);
@@ -549,12 +553,12 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
 
         boolean latestBillRecordIsPresent = false;
 
-        for ( BillRecord billRecord : billRecords) {
+        for (BillRecord billRecord : billRecords) {
 
             Assert.notNull(billRecord);
             Assert.notNull(billRecord.getId());
 
-            if ( latestBillRecord.getId().equals(billRecord.getId())) {
+            if (latestBillRecord.getId().equals(billRecord.getId())) {
                 latestBillRecordIsPresent = true;
             }
 
@@ -562,6 +566,54 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
 
         Assert.isTrue(latestBillRecordIsPresent);
 
+    }
+
+    @Test
+    public void generateBills() throws Exception {
+
+        String accountId1 = "admin";
+        String accountId2 = "user1";
+
+        Date billDate = dateFormat.parse("01/01/2012");
+        Date startDate = dateFormat.parse("01/01/1970");
+        Date endDate = dateFormat.parse("01/01/2020");
+
+        Transaction transaction1 = transactionService.createTransaction("cash", accountId1, new Date(), new BigDecimal(5500));
+        Transaction transaction2 = transactionService.createTransaction("1020", accountId2, new Date(), new BigDecimal(12000));
+
+        Assert.notNull(transaction1);
+        Assert.notNull(transaction1.getId());
+
+        Assert.notNull(transaction2);
+        Assert.notNull(transaction2.getId());
+
+        Rollup rollup = entityService.createAuditableEntity("_1", "Rollup _1", "Description 111", Rollup.class);
+
+        Assert.notNull(rollup);
+        Assert.notNull(rollup.getId());
+
+        Set<Long> rollupIds = new HashSet<Long>(Arrays.asList(rollup.getId()));
+
+        transaction1.setRollup(rollup);
+        transactionService.persistTransaction(transaction1);
+
+        transaction2.setRollup(rollup);
+        transactionService.persistTransaction(transaction2);
+
+        String bill = reportService.generateBills(
+                Arrays.asList(accountId1, accountId2),
+                "Bill message",
+                billDate,
+                startDate,
+                endDate,
+                rollupIds,
+                rollupIds,
+                true, true, true, true, true);
+
+        logger.debug("Bill XML:\n" + bill);
+
+        Assert.notNull(bill);
+        Assert.hasLength(bill);
     }
 
 

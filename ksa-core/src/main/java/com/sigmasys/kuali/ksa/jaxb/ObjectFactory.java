@@ -302,6 +302,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link BatchKsaBill }
+     */
+    public BatchKsaBill createBatchKsaBill() {
+        return new BatchKsaBill();
+    }
+
+    /**
      * Create an instance of {@link KsaBatchTransaction }
      */
     public KsaBatchTransaction createKsaBatchTransaction() {

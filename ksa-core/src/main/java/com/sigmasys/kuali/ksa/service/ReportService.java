@@ -244,4 +244,34 @@ public interface ReportService {
                         boolean showInternalTransactions,
                         boolean runPaymentApplication);
 
+    /**
+     * Produces bills for multiple KSA accounts based on the given parameters.
+     *
+     * @param accountIds                   List of Account IDs
+     * @param message                      Bill message
+     * @param billDate                     Bill date
+     * @param startDate                    Start date
+     * @param endDate                      End date
+     * @param rollupIdsOnSameDate          Rollup IDs on the same date
+     * @param rollupIdsOnSameStatement     Rollup IDs on the same statement
+     * @param showOnlyUnbilledTransactions true if only unbilled transactions have to be shown
+     * @param showDeferments               true if deferments have to be shown
+     * @param showDependents               true if dependents have to be shown
+     * @param showInternalTransactions     true if internal transactions have to be shown
+     * @param runPaymentApplication        if true then Payment Application will be run
+     * @return BatchKsaBill XML
+     */
+    String generateBills(List<String> accountIds,
+                         String message,
+                         Date billDate,
+                         Date startDate,
+                         Date endDate,
+                         Set<Long> rollupIdsOnSameDate,
+                         Set<Long> rollupIdsOnSameStatement,
+                         boolean showOnlyUnbilledTransactions,
+                         boolean showDeferments,
+                         boolean showDependents,
+                         boolean showInternalTransactions,
+                         boolean runPaymentApplication);
+
 }
