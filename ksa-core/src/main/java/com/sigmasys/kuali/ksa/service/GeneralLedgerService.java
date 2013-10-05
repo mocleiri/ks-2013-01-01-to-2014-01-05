@@ -166,6 +166,14 @@ public interface GeneralLedgerService {
     boolean isGlAccountValid(String glAccount);
 
     /**
+     * Validates the list of GL overrides.
+     *
+     * @param glOverrides list of GlOverride instances
+     * @return true if the list of GL overrides is valid, false - otherwise
+     */
+    boolean isGlOverrideValid(List<GlOverride> glOverrides);
+
+    /**
      * Retrieves all GL transactions for the given GL transaction date range and GL account ID
      * sorted by dates in ascending order.
      *

@@ -667,6 +667,68 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         return false;
     }
 
+
+    /**
+     * Validates the list of GL overrides.
+     *
+     * @param glOverrides list of GlOverride instances
+     * @return true if the list of GL overrides is valid, false - otherwise
+     */
+    @Override
+    public boolean isGlOverrideValid(List<GlOverride> glOverrides) {
+
+        if (CollectionUtils.isEmpty(glOverrides)) {
+            logger.warn("List of GlOverride objects cannot be empty");
+            return false;
+        }
+
+        int numberOfZeroBreakdowns = 0;
+
+        BigDecimal totalBreakdownAmount = BigDecimal.ZERO;
+
+        for (GlOverride glOverride : glOverrides) {
+
+            if (glOverride == null) {
+                logger.warn("GlOverride cannot be empty");
+                return false;
+            }
+
+            if (!isGlAccountValid(glOverride.getGlAccountId())) {
+                logger.warn("GlOverride's GL Account ID is invalid");
+                return false;
+            }
+
+            if (glOverride.getPercentageBreakdown() == null) {
+                logger.warn("GlOverride's percentage breakdown is required");
+                return false;
+            }
+
+            BigDecimal percentageBreakdown = glOverride.getPercentageBreakdown();
+
+            if (percentageBreakdown.compareTo(BigDecimal.ZERO) == 0) {
+
+                if (numberOfZeroBreakdowns++ > 1) {
+                    logger.warn("There should only be one Zero Breakdown in the list");
+                    return false;
+                }
+            }
+
+            totalBreakdownAmount = totalBreakdownAmount.add(percentageBreakdown);
+        }
+
+        if (numberOfZeroBreakdowns == 0) {
+            logger.warn("One Zero Breakdown is required in the list");
+            return false;
+        }
+
+        if (totalBreakdownAmount.compareTo(BigDecimal.ZERO) < 0 || totalBreakdownAmount.compareTo(new BigDecimal(100)) >= 0) {
+            logger.warn("Total breakdown amount should be greater than or equal to 0 and less than 100");
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Retrieves all GL transactions for the given GL transaction date range and GL account ID
      * sorted by dates in ascending order.
