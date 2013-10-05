@@ -216,7 +216,7 @@ class ActivityOfferingMaintenance < BasePage
   element(:waitlist_automatic_radio) { |b| b.waitlist_section.radio(index: 1) }
   element(:waitlist_manual_radio) { |b| b.waitlist_section.radio(index: 2) }
   element(:waitlist_limit_checkbox) { |b| b.waitlist_section.div(data_label: "Limit Waitlist Size").checkbox }
-  element(:waitlist_limit) { |b| b.waitlist_section.text_field(id: "u100737_control") }  #limit_waitlist_size_text_control
+  element(:waitlist_limit) { |b| b.waitlist_section.text_field(id: "limit_waitlist_size_text_control") }
   element(:waitlist_allow_hold_checkbox) { |b| b.waitlist_section.div(data_label: "Allow Hold List").checkbox }
 
   def waitlist_processing_type
