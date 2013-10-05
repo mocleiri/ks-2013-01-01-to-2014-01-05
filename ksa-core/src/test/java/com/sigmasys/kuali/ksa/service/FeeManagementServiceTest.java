@@ -15,12 +15,12 @@ import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -33,7 +33,7 @@ import static junit.framework.Assert.assertEquals;
 
 /**
  * FeeManagementService unit tests.
- * 
+ *
  * @author Sergey Godunov
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -57,10 +57,10 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     protected ConfigService configService;
 
     @Autowired
-	private FeeManagementService fmService;
-	
-	@Autowired
-	private PersistenceService persistenceService;
+    private FeeManagementService fmService;
+
+    @Autowired
+    private PersistenceService persistenceService;
 
     @Autowired
     private TransactionService transactionService;
@@ -79,16 +79,18 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 
     @Autowired
     private GeneralLedgerService generalLedgerService;
-    
+
     @Autowired
     private RateService rateService;
 
 
-    /*****************************************************************
-     *
+    /**
+     * **************************************************************
+     * <p/>
      * Unit tests for "reconcileSession"
-     *
-     ****************************************************************/
+     * <p/>
+     * **************************************************************
+     */
 
     @Test
     public void testReconcileSessionNoSessionIdFound() throws Exception {
@@ -315,12 +317,12 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         // Validate the updated Current Session's Manifests:
         List<FeeManagementManifest> currentManifests = fmService.getManifests(currentSession.getSession().getId());
 
-        assertEquals(currentSession.getManifests().get(0), currentManifests.get(0));
-        assertEquals(currentSession.getManifests().get(1), currentManifests.get(1));
-        assertEquals(currentSession.getSession(), currentManifests.get(2).getSession());
-        assertEquals(currentSession.getSession(), currentManifests.get(3).getSession());
-        assertEquals(currentManifests.get(2), currentManifests.get(3).getLinkedManifest());
-        assertEquals(currentManifests.get(3), currentManifests.get(2).getLinkedManifest());
+        assertEquals(currentSession.getManifests().get(0).getId(), currentManifests.get(0).getId());
+        assertEquals(currentSession.getManifests().get(1).getId(), currentManifests.get(1).getId());
+        assertEquals(currentSession.getSession().getId(), currentManifests.get(2).getSession().getId());
+        assertEquals(currentSession.getSession().getId(), currentManifests.get(3).getSession().getId());
+        assertEquals(currentManifests.get(2).getId(), currentManifests.get(3).getLinkedManifest().getId());
+        assertEquals(currentManifests.get(3).getId(), currentManifests.get(2).getLinkedManifest().getId());
         assertNotNull(currentManifests.get(2).getTransaction());
         assertNull(currentManifests.get(3).getTransaction());
         assertTrue(safeAmountsEqual(currentManifests.get(2), currentManifests.get(3)));
@@ -329,10 +331,10 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         assertEquals(FeeManagementManifestType.ORIGINAL, currentManifests.get(2).getType());
         assertEquals(FeeManagementManifestType.CORRECTION, currentManifests.get(3).getType());
 
-        assertEquals(currentSession.getSession(), currentManifests.get(4).getSession());
-        assertEquals(currentSession.getSession(), currentManifests.get(5).getSession());
-        assertEquals(currentManifests.get(4), currentManifests.get(5).getLinkedManifest());
-        assertEquals(currentManifests.get(5), currentManifests.get(4).getLinkedManifest());
+        assertEquals(currentSession.getSession().getId(), currentManifests.get(4).getSession().getId());
+        assertEquals(currentSession.getSession().getId(), currentManifests.get(5).getSession().getId());
+        assertEquals(currentManifests.get(4).getId(), currentManifests.get(5).getLinkedManifest().getId());
+        assertEquals(currentManifests.get(5).getId(), currentManifests.get(4).getLinkedManifest().getId());
         assertNotNull(currentManifests.get(4).getTransaction());
         assertNull(currentManifests.get(5).getTransaction());
         assertTrue(safeAmountsEqual(currentManifests.get(4), currentManifests.get(5)));
@@ -348,55 +350,57 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         assertEquals(FeeManagementSessionStatus.RECONCILED, currentSession.getSession().getStatus());
     }
 
-    /*****************************************************************
-     *
+    /**
+     * **************************************************************
+     * <p/>
      * Unit tests for "chargeSession"
-     *
-     ****************************************************************/
+     * <p/>
+     * **************************************************************
+     */
 
-	
-	@Test
-	public void testChargeSessionNoSessionIdFound() throws Exception {
-		// Call the method with a fake FM Session ID:
-		boolean exceptionCaught = false;
 
-		try {
-			fmService.chargeSession(0L);
-		} catch (IllegalArgumentException e) {
-			assertEquals("Cannot find an FM session with the ID 0", e.getMessage());
+    @Test
+    public void testChargeSessionNoSessionIdFound() throws Exception {
+        // Call the method with a fake FM Session ID:
+        boolean exceptionCaught = false;
+
+        try {
+            fmService.chargeSession(0L);
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot find an FM session with the ID 0", e.getMessage());
             exceptionCaught = true;
-		} catch (Throwable t) {
-			// We should never catch any other type of a Throwable:
-			assertTrue("Must never catch anything by IllegalArgumentException", false);
-		}
-		
-		// Assert Exception was caught
-		assertTrue("Never caught an IllegalArgumentException", exceptionCaught);
-	}
-	
-	@Test
-	public void testChargeSessionNullStatus() throws Exception {
-		// Create an FM session:
-		FeeManagementSession fmSession = new FeeManagementSession();
-		
-		persistenceService.persistEntity(fmSession);
-		
-		// Call the method:
-		boolean exceptionCaught = false;
-		
-		try {
-			fmService.chargeSession(fmSession.getId());
-		} catch (IllegalStateException ise) {
-			// We should catch this exception here
-			exceptionCaught = true;
-		} catch (Throwable e) {
-			// We should never catch any other type of a Throwable:
-			assertTrue("Must never catch anything by IllegalStateException", false);
-		}
-		
-		// Assert Exception was caught
-		assertTrue("Never caught an IllegalStateException", exceptionCaught);
-	}
+        } catch (Throwable t) {
+            // We should never catch any other type of a Throwable:
+            assertTrue("Must never catch anything by IllegalArgumentException", false);
+        }
+
+        // Assert Exception was caught
+        assertTrue("Never caught an IllegalArgumentException", exceptionCaught);
+    }
+
+    @Test
+    public void testChargeSessionNullStatus() throws Exception {
+        // Create an FM session:
+        FeeManagementSession fmSession = new FeeManagementSession();
+
+        persistenceService.persistEntity(fmSession);
+
+        // Call the method:
+        boolean exceptionCaught = false;
+
+        try {
+            fmService.chargeSession(fmSession.getId());
+        } catch (IllegalStateException ise) {
+            // We should catch this exception here
+            exceptionCaught = true;
+        } catch (Throwable e) {
+            // We should never catch any other type of a Throwable:
+            assertTrue("Must never catch anything by IllegalStateException", false);
+        }
+
+        // Assert Exception was caught
+        assertTrue("Never caught an IllegalStateException", exceptionCaught);
+    }
 
     @Test
     public void testChargeSessionWrongStatus() throws Exception {
@@ -708,7 +712,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         // Call the method:
         fmService.chargeSession(fmSession.getSession().getId());
 
-         // TODO: check why this is failing
+        // TODO: check why this is failing
         // Verify the main manifest still has no Transaction:
         //assertNull("Primary transaction must not exist", manifest.getTransaction());
 
@@ -756,7 +760,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         Transaction linkedTransaction = linkedManifest.getTransaction();
 
         // Create a Transaction Transfer:
-        TransactionTransfer transactionTransfer =  transactionTransferService.transferTransaction(linkedTransaction.getId(),
+        TransactionTransfer transactionTransfer = transactionTransferService.transferTransaction(linkedTransaction.getId(),
                 TRANSACTION_TYPE_ID, 1L, ACCOUNT_ID, linkedTransaction.getAmount().divide(new BigDecimal(2)),
                 null, null, "memoText", "statementPrefix", TRANSACTION_TYPE_ID);
 
@@ -792,7 +796,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         Transaction linkedTransaction = linkedManifest.getTransaction();
 
         // Create a Transaction Transfer:
-        TransactionTransfer transactionTransfer =  transactionTransferService.transferTransaction(linkedTransaction.getId(),
+        TransactionTransfer transactionTransfer = transactionTransferService.transferTransaction(linkedTransaction.getId(),
                 TRANSACTION_TYPE_ID, 1L, ACCOUNT_ID, linkedTransaction.getAmount().divide(new BigDecimal(2)),
                 null, null, "memoText", "statementPrefix", TRANSACTION_TYPE_ID);
 
@@ -837,7 +841,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         Transaction linkedTransaction = linkedManifest.getTransaction();
 
         // Create a Transaction Transfer:
-        TransactionTransfer transactionTransfer =  transactionTransferService.transferTransaction(linkedTransaction.getId(),
+        TransactionTransfer transactionTransfer = transactionTransferService.transferTransaction(linkedTransaction.getId(),
                 TRANSACTION_TYPE_ID, 1L, ACCOUNT_ID, linkedTransaction.getAmount().divide(new BigDecimal(2)),
                 null, null, "memoText", "statementPrefix", TRANSACTION_TYPE_ID);
 
@@ -884,7 +888,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         Transaction linkedTransaction = linkedManifest.getTransaction();
 
         // Create a Transaction Transfer:
-        TransactionTransfer transactionTransfer =  transactionTransferService.transferTransaction(linkedTransaction.getId(),
+        TransactionTransfer transactionTransfer = transactionTransferService.transferTransaction(linkedTransaction.getId(),
                 TRANSACTION_TYPE_ID, 1L, ACCOUNT_ID, linkedTransaction.getAmount().divide(new BigDecimal(2)),
                 null, null, "memoText", "statementPrefix", TRANSACTION_TYPE_ID);
 
@@ -917,11 +921,13 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     }
 
 
-    /********************************************************************************
-     *
+    /**
+     * *****************************************************************************
+     * <p/>
      * Helper methods for "reconcileSession"
-     *
-     ********************************************************************************/
+     * <p/>
+     * ******************************************************************************
+     */
 
     private FmSession createFmSessionForReconciliation(boolean priorSessionAdjustment, boolean preclearing, boolean currentSessionReversal) throws Exception {
 
@@ -1219,6 +1225,8 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         Rate rate = rateService.createRate(rateCode, subCode, rateName, rateCatalogCode, transactionTypeId, dateType,
                 rateAmount, limitAmount, minLimitUnits, maxLimitUnits, transactionDate, recognitionDate, atpId, false);
 
+        Assert.notNull(rate);
+
         return rate;
     }
 
@@ -1245,6 +1253,8 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         RateCatalog rateCatalog = rateService.createRateCatalog(rateCatalogCode, rateTypeCode, transactionTypeId,
                 dateType, minAmount, maxAmount, minLimitAmount, maxLimitAmount, minLimitUnits, maxLimitUnits,
                 Arrays.asList(atpIds), keyPairs, false, false, false, false, false, false);
+
+        Assert.notNull(rateCatalog);
 
         return rateCatalog;
     }
@@ -1313,14 +1323,15 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 
     /**
      * Removes manifests pointing at each other, which are both on the same list.
+     *
      * @param manifests A list of manifests.
      */
-    private void removeManifestPointingAtEachOther(List<FeeManagementManifest> manifests)  {
+    private void removeManifestPointingAtEachOther(List<FeeManagementManifest> manifests) {
 
         // Go through the list, find linked manifests that point at each other and remove them:
         boolean matchFound = true;
 
-        while((manifests.size() > 0) && matchFound) {
+        while ((manifests.size() > 0) && matchFound) {
             matchFound = false;
 
             for (FeeManagementManifest manifest : manifests) {
@@ -1346,7 +1357,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
      */
     private void removeManifestWithoutLinkedManifestsOnSameList(List<FeeManagementManifest> manifests) {
 
-         for (Iterator<FeeManagementManifest> it = manifests.iterator(); it.hasNext();) {
+        for (Iterator<FeeManagementManifest> it = manifests.iterator(); it.hasNext(); ) {
             // Get the linked manifest. Assert it's either null or not on this list:
             FeeManagementManifest linkedManifest = it.next().getLinkedManifest();
 
@@ -1367,12 +1378,12 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         // Separate them into pairs of reversal manifests:
         List<Pair<FeeManagementManifest, FeeManagementManifest>> reversalPairs = new ArrayList<Pair<FeeManagementManifest, FeeManagementManifest>>();
 
-        for (int i=0,sz=fmSession.getManifests().size(); i<sz; i++) {
+        for (int i = 0, sz = fmSession.getManifests().size(); i < sz; i++) {
             FeeManagementManifest manifest = fmSession.getManifests().get(i);
 
             if (StringUtils.startsWith(manifest.getTransactionTypeId(), "Preclearing")) {
 
-                for (int j=i+1; j<sz; j++) {
+                for (int j = i + 1; j < sz; j++) {
                     FeeManagementManifest anotherManifest = fmSession.getManifests().get(j);
 
                     if (StringUtils.equals(manifest.getTransactionTypeId(), anotherManifest.getTransactionTypeId())) {
@@ -1390,20 +1401,20 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     }
 
     /********************************************************************************
-    *
-    * Helper methods for "chargeSession"
-    *
-    ********************************************************************************/
+     *
+     * Helper methods for "chargeSession"
+     *
+     ********************************************************************************/
 
     /**
      * Creates an FM Session, Manifests, Linked Manifests, Transactions and Implicated Transactions.
      *
-     * @param numManifests                  Number of FM manifests to create.
-     * @param addPrimaryTransactions        Whether to add primary manifests' transactions.
-     * @param addLinkedManifests            Whether to add linked manifests.
-     * @param addImplicatedTransaction      Whether to add implicated Transactions.
-     * @param addLockedAllocation           Whether to add implicated transaction locked allocations in addition to unlocked.
-     * @param manifestTypes                 Types of primary manifests to create. Must be the size of "numManifests"
+     * @param numManifests             Number of FM manifests to create.
+     * @param addPrimaryTransactions   Whether to add primary manifests' transactions.
+     * @param addLinkedManifests       Whether to add linked manifests.
+     * @param addImplicatedTransaction Whether to add implicated Transactions.
+     * @param addLockedAllocation      Whether to add implicated transaction locked allocations in addition to unlocked.
+     * @param manifestTypes            Types of primary manifests to create. Must be the size of "numManifests"
      * @return An <code>FmSession</code> with new objects.
      */
     private FmSession createFmSession(int numManifests, boolean addPrimaryTransactions, boolean addLinkedManifests,
@@ -1419,7 +1430,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         result.setSession(fmSession);
 
         // Create manifests:
-        for (int i=0; i<numManifests; i++) {
+        for (int i = 0; i < numManifests; i++) {
             FeeManagementManifest manifest = new FeeManagementManifest();
 
             manifest.setSession(fmSession);
@@ -1464,8 +1475,8 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     /**
      * Creates an allocation between the given transaction and a temporary transaction.
      *
-     * @param transaction           A transaction for which to create an allocation.
-     * @param addLockedAllocation   Whether to also create a locked allocation.
+     * @param transaction         A transaction for which to create an allocation.
+     * @param addLockedAllocation Whether to also create a locked allocation.
      */
     private void createAllocations(Transaction transaction, boolean addLockedAllocation) {
 
