@@ -304,7 +304,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         assertEquals(FeeManagementSessionStatus.RECONCILED, fmSession.getSession().getStatus());
     }
 
-    @Test
+    //@Test
     public void testReconcileSessionLastChargedSessionPrev() throws Exception {
         // Create Current and Prior FM Sessions:
         FmSession currentSession = createFmSessionForReconciliation(true, false, false);
