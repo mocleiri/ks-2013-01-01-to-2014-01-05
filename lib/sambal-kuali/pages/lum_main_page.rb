@@ -6,13 +6,15 @@ class LUMMainPage < PageFactory
 
   element(:user_info_div)  { |b| b.link(:text=>"Logout").parent.parent }
   value(:logged_in_user) { |b| b.user_info_div.div(:index=>6).text }
-  action(:logout) { |b| b.link(value: "Logout").click }
+
+  element(:logout_button) { |b| b.link(text: "Logout")}
+  action(:logout) { |b| b.logout_button.click }
+
   element(:create_label) { |b| b.h2(:text=>"Create...") }
 
   element(:username_field) { |b| b.text_field(:name=>"j_username") }
   element(:password_field) { |b| b.text_field(:name=>"j_password") }
   element(:login_button) { |b| b.button(:value=>"Login") }
-  action(:logout) { |b| b.link(text: "Logout").click }
 
   def login_with username, password
     username_field.set username

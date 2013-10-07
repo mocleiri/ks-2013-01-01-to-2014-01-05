@@ -1,13 +1,13 @@
 When /^I log in as a Schedule Coordinator$/ do
   @performance_test = make PerformanceTest
 
-  visit PortalMenu do |page|
+  visit LUMMainPage do |page|
     page.logout
     page.username_field.set "martha"
     page.password_field.set "martha"
     @performance_test.start
     page.login_button.click
-    page.enrollment_home_link.wait_until_present
+    page.logout_button.wait_until_present
     @performance_test.end
   end
 
