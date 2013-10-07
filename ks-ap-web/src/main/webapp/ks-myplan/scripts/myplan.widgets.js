@@ -144,7 +144,9 @@ function openPopup(getId, retrieveData, formAction, popupStyle, popupOptions, e)
     var popupId = popupItem.GetPopOverID();
 
     fnPositionPopUp(popupId);
-    clickOutsidePopOver(popupId, popupItem);
+    if (!popupOptions.sticky) {
+        clickOutsidePopOver(popupId, popupItem);
+    }
 
     var retrieveForm = '<form id="retrieveForm" action="' + retrieveData.action + '" method="post" />'
     jQuery("body").append(retrieveForm);
