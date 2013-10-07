@@ -1,7 +1,7 @@
-@wip @mw
+@nightly
 Feature: EC.Waitlists
 
-  As a Central Administrator I want to offer a waitlist for an activity offering so that students can queue for an open seat in a specific activity
+  WL 1.3-14 As a Central Administrator I want to offer a waitlist for an activity offering so that students can queue for an open seat in a specific activity
 
   Background:
     Given I am logged in as a Schedule Coordinator
@@ -15,8 +15,6 @@ Feature: EC.Waitlists
     Given I create a Course Offering from catalog using the waitlists option disabled
     When I add an activity offering
     Then the waitlist option cannot be enabled for the activity offering
-    #what if I enable WL for the course offering now?
-  #what if I disable WL for a course offering that has AOs with WL enabled?
 
   Scenario: WL 1.4.1 Verify that waitlists can be disabled for a particular activity offering
     Given I manage an activity offering with waitlists enabled
@@ -73,13 +71,13 @@ Feature: EC.Waitlists
     When I rollover the term to a new academic term
     Then the waitlist enabled configuration is copied to the new course and activity offering in the target term
     And the waitlist disabled configuration is copied to the course and activity offering in the target term
-@done
+
   Scenario: WL 1.13.1 - Verify waitlist information (enabled) is copied for copy course offering within the same term
     Given I create a course and activity offering with waitlists enabled
     And I make changes to the default activity offering waitlist configuration
     When I copy the course offering
     Then the waitlist configuration is copied to the new course and activity offering
-@done
+
   Scenario: WL 1.13.2 - Verify waitlist information (disabled) is copied for copy course offering within the same term
     Given I create a Course Offering from catalog using the waitlists option disabled
     And I add an activity offering
@@ -87,11 +85,10 @@ Feature: EC.Waitlists
     Then the waitlists are disabled for the new course and activity offering
 
   #Scenario: WL 1.13.3 - Verify a new course offering from catalog has the default system waitlist setting - see WL 1.3.1
-@done
+
   Scenario: WL 1.13.4 - Verify waitlist information (enabled) when a course offering is created by copying an offering existing in a prior term
     Given there is an existing course offering with activity offerings that have waitlists enabled
     When I create a new course offering in a subsequent term by copying the existing course offering
     Then the waitlist configuration is copied to the new course and activity offerings
 
-  #WL 1.14.1 able to see AO waitlist parameters - see
-
+  #WL 1.14.1 able to see AO waitlist parameters - see see WL 1.3.1 etc
