@@ -131,6 +131,7 @@ end
 Then /^a Holiday Dates (?:error|warning) message is displayed stating "([^"]*)"$/ do |exp_msg|
   on CreateEditHolidayCalendar do |page|
     page.holiday_validation_messages[0].text.should match /#{exp_msg}/
+    page.cancel
   end
 end
 
