@@ -28,7 +28,7 @@ class CalendarSearch < BasePage
   element(:year) { |b| b.frm.text_field(name: "year") }
   element(:results_table) { |b| b.frm.div(id: /KS-CalendarSearch-.*ResultSection/).table }
 
-  value(:table_info) { |b| b.frm.div(class: "dataTables_paginate paging_full_numbers").text }
+  value(:table_info) { |b| b.frm.div(class: "dataTables_info").text }
 
   action(:search) { |b| b.frm.button(text: "Search").click; b.loading.wait_while_present }
   action(:next) { |b| b.frm.link(text: "Next").click }
