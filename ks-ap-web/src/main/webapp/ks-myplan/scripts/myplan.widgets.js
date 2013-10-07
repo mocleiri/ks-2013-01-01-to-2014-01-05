@@ -1042,7 +1042,7 @@ function fnClosePopup() {
         jQuery("body").HidePopOver();
         jQuery("body").RemovePopOver();
     }
-    jQuery("div.jquerypopover.jquerypopover-myplan").remove();
+    jQuery("div.jquerypopover").remove();
     jQuery("body").off("click");
 }
 
