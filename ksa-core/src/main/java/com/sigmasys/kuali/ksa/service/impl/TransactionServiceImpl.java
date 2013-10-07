@@ -1854,12 +1854,19 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         // Creating one GL transaction with the whole transaction amount
         glService.createGlTransaction(transactionId, glAccount, transaction.getAmount(), glOperationType, statement, true);
 
+        List<AbstractGlBreakdown> glBreakdowns = getGlBreakdowns(transaction);
+
         BigDecimal initialAmount = transaction.getAmount();
         BigDecimal remainingAmount = initialAmount;
 
-        List<AbstractGlBreakdown> glBreakdowns = getGlBreakdowns(transaction);
-
         if (CollectionUtils.isNotEmpty(glBreakdowns)) {
+
+            if (!glService.isGlBreakdownValid(glBreakdowns)) {
+                String errMsg = "GL Breakdowns are invalid: " + (CollectionUtils.isNotEmpty(glBreakdowns) ?
+                        glBreakdowns.toArray(new AbstractGlBreakdown[glBreakdowns.size()]) : "{ }");
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
 
             for (AbstractGlBreakdown glBreakdown : glBreakdowns) {
 
@@ -1871,8 +1878,15 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 }
 
                 glAccount = glBreakdown.getGlAccount();
-                GlOperationType operationType = (glBreakdown instanceof GlBreakdown) ?
-                        ((GlBreakdown) glBreakdown).getGlOperation() : glType.getGlOperationOnCharge();
+
+                GlOperationType operationType;
+
+                if (glBreakdown instanceof GlBreakdown) {
+                    operationType = ((GlBreakdown) glBreakdown).getGlOperation();
+                } else {
+                    operationType = (transaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE) ?
+                            GlOperationType.CREDIT : GlOperationType.DEBIT;
+                }
 
                 if (percentage.compareTo(BigDecimal.ZERO) > 0) {
                     BigDecimal amount = initialAmount.divide(new BigDecimal(100)).multiply(percentage);

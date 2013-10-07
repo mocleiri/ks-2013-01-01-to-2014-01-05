@@ -55,6 +55,15 @@ public abstract class AbstractGlBreakdown implements Identifiable {
     public void setBreakdown(BigDecimal breakdown) {
         this.breakdown = breakdown;
     }
+
+    @Override
+    public String toString() {
+        return "AbstractGlBreakdown{" +
+                "id=" + id +
+                ", glAccount='" + glAccount + '\'' +
+                ", breakdown=" + breakdown +
+                '}';
+    }
 }
 	
 
