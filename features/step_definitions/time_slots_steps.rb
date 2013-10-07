@@ -1,7 +1,7 @@
-When /^I add 2 different time slots to a single term type$/ do
+When /^I add (\d*) different time slots to a single term type$/ do |nbr|
   @time_slots = create TimeSlots
-  @time_slots.add_new_time_slot( make TimeSlots::TimeSlot )
-  @time_slots.add_new_time_slot( make TimeSlots::TimeSlot, :start_time => "11:00", :start_time_am_pm => "PM", :end_time => "11:50", :end_time_am_pm => "PM" )
+  @time_slots.add_unused_time_slots("Fall - Full", nbr.to_i)
+  @time_slots.display_time_slots
 end
 
 When /^I show time slots for two different term types$/ do
@@ -76,6 +76,10 @@ When /^I target a row in the timeslots result table then I can get it's code$/ d
 
 end
 
+When /^I show time slots for a single term type$/  do
+  @time_slots = create TimeSlots
+end
+
 When /^I? ?specify Term Type (.*)$/  do  |termType|
   pending
 end
@@ -84,21 +88,22 @@ When /^I? ?specify Term Types (.*) and (.*)$/ do |termType1, termType2|
   pending
 end
 
-Then /^only time slots of Term Type (.*) appear.?$/ do |termType|
-  pending
+Then /^only time slots of that term type appear.?$/ do
+  on TimeSlotMaintenance do |page|
+    page.time_slot_search_results_table.rows[1..-2].each do |row|
+      row.cells[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE].text.should == @time_slots.term_types[0].to_s
+    end
+  end
 end
 
-When /^I? ?add Time Slot with Term Type (.*), Days (M|T|W|H|F|S|U), Start time (\d+:\d+ ?.*), End time (\d+:\d+ ?.*)$/ do |termType, days, startTime, endTime|
-  pending
+When /^I? ?add a Time Slot with the chosen Term Type$/ do
+  @time_slots.add_new_time_slot( make TimeSlots::TimeSlot )
 end
 
 When /^I? ?(.*) ?edit the (.*) ?Time Slot added above to be (.*), Days (M|T|W|H|F|S|U|blank), Start time (\d+:\d+ ?.*|blank), End time (\d+:\d+ ?.*|blank)$/ do |attempt, tsOrdinality, termType, days, startTime, endTime|
   pending
 end
 
-Then /^the changes are saved.?$/ do
-  pending
-end
 
 When /^I? ?attempt to (.*) the Time Slot added above$/ do |action|
   pending
