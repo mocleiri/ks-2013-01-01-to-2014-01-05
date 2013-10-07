@@ -54,6 +54,7 @@ class CalendarSearch < BasePage
   end
 
   def edit calendar
+    puts calendar
     results_table.row(text: /\b#{calendar}\b/).link(text: "Edit").click
     loading.wait_while_present
   end

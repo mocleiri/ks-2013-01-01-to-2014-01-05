@@ -121,35 +121,15 @@ end
 
 When /^I have ensured that the Fall Term of the Calender is setup with a Final Exam Period$/ do
   @source_calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar", :year => "2012"
-  @term = make AcademicTerm, :term_year => @source_calendar.year, :start_date=>"20/08/#{@source_calendar.year}",
-               :end_date=>"12/10/#{@source_calendar.year}"
-
-  @source_calendar.search
-  on CalendarSearch do |page|
-    page.edit @source_calendar.name
-  end
-  on EditAcademicTerms do |page|
-    page.go_to_terms_tab
-    page.open_term_section @term.term_type
-    @term.create_final_exam_period
-  end
+  @term = make AcademicTerm, :term_year => @source_calendar.year, :term_type => "Fall Term", :term_name => "Fall"
+  @term.edit :exam_period => true
 end
 
 When /^I have ensured that the Spring Term of the Calender is setup with a Final Exam Period$/ do
   @source_calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar", :year => "2012"
-  @term = make AcademicTerm, :term_year => "#{@source_calendar.year.to_i + 1}",  :term_type => "Spring Term",
-                             :start_date=>"05/10/#{@source_calendar.year.to_i + 1}",
-                             :end_date=>"05/16/#{@source_calendar.year.to_i + 1}"
-
-  @source_calendar.search
-  on CalendarSearch do |page|
-    page.edit @source_calendar.name
-  end
-  on EditAcademicTerms do |page|
-    page.go_to_terms_tab
-    page.open_term_section @term.term_type
-    @term.create_final_exam_period
-  end
+  @term = make AcademicTerm, :term_year => "#{@source_calendar.year.to_i + 1}", :term_type => "Spring Term",
+                             :term_name => "Spring"
+  @term.edit :exam_period => true
 end
 
 When /^I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Course Offering$/ do
@@ -509,7 +489,7 @@ Then /^there should be an Activity Offering table that is in the ([^"]*) state$/
   end
 end
 
-Then /^the first cluster's Activity Offering table should for all ([^"]*) Exam Offerings only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
+Then /^the first cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
   on ViewExamOfferings do |page|
     page.ao_table_header_text.should match /by Activity Offering/
     array = page.return_array_of_ao_codes(0)
@@ -525,7 +505,7 @@ Then /^the first cluster's Activity Offering table should for all ([^"]*) Exam O
   end
 end
 
-Then /^the second cluster's Activity Offering table should for all ([^"]*) Exam Offerings only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
+Then /^the second cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
   on ViewExamOfferings do |page|
     page.ao_table_header_text.should match /by Activity Offering/
     array = page.return_array_of_ao_codes(1)
@@ -552,13 +532,17 @@ end
 
 Then /^there should be ([^"]*) Exam Offerings? by Activity Offering for the course$/ do |no_of_aos|
   on ViewExamOfferings do |page|
-    page.count_no_of_eos_by_ao.should == no_of_aos
+    array = page.return_array_of_ao_codes(0)
+    array.length.should == no_of_aos.to_i
+    #page.count_no_of_eos_by_ao.should == no_of_aos
   end
 end
 
 Then /^there should be 1 Exam Offering by Course Offering for the course$/ do
   on ViewExamOfferings do |page|
-    page.count_no_of_eos_by_co.should == "1"
+    array = page.return_array_of_ao_codes(0)
+    array.length.should == 1
+    #page.count_no_of_eos_by_co.should == "1"
   end
 end
 

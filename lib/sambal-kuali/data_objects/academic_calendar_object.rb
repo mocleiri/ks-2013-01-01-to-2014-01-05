@@ -294,6 +294,8 @@ class AcademicTerm
 
       page.acal_term_add
 
+      create_final_exam_period
+
       begin
         page.adding.wait_while_present
       rescue
@@ -320,7 +322,8 @@ class AcademicTerm
   ##
   def edit(opts = {})
     defaults = {
-        :exp_success=> true
+        :exp_success=> true,
+        :exam_period => false
     }
     options = defaults.merge(opts)
 
@@ -349,6 +352,10 @@ class AcademicTerm
       on EditAcademicTerms  do |page|
         page.term_end_date(term_index).set options[:end_date]
       end
+    end
+
+    if options[:exam_period] == true
+      create_final_exam_period
     end
 
     on(EditAcademicTerms).save :exp_success => options[:exp_success] #unless options.length >= 1 #don't save if only :exp_success element
@@ -441,19 +448,12 @@ class AcademicTerm
     end
   end
 
-  def create_final_exam_period(opts={})
-    defaults = {
-        :term_type => @term_type,
-        :start_date => @start_date,
-        :end_date => @end_date
-    }
-    options = defaults.merge(opts)
-
+  def create_final_exam_period
     on EditAcademicTerms do |page|
-      if page.add_exam_period_btn( options[:term_type], page.term_index_by_term_type( options[:term_type])).present?
-        page.add_exam_period options[:term_type]
-        page.set_exam_start_date options[:term_type], options[:start_date]
-        page.set_exam_end_date options[:term_type], options[:end_date]
+      if page.add_exam_period_btn( @term_type, page.term_index_by_term_type( @term_type)).present?
+        page.add_exam_period @term_type
+        page.set_exam_start_date @term_type, @start_date
+        page.set_exam_end_date @term_type, @end_date
         page.save
       end
     end
