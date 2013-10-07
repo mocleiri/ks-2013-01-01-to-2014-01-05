@@ -17,6 +17,7 @@
 package org.kuali.student.r2.core.organization.service;
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.student.r2.core.constants.OrganizationServiceConstants;
 import org.kuali.student.r2.core.search.service.SearchService;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
@@ -91,7 +92,7 @@ import org.kuali.student.r2.common.exceptions.AlreadyExistsException;
 
 @WebService(name = "OrganizationService", targetNamespace = "http://student.kuali.org/wsdl/organization")
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
-public interface OrganizationService extends SearchService {
+public interface OrganizationService {
 
     //
     // Lookup Methods for Org Hierarchy Id Entity Pattern.
