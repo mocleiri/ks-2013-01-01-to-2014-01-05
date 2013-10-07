@@ -48,9 +48,6 @@ import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.r2.core.organization.dto.OrgTreeViewInfo;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
 
-import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
-import org.kuali.student.r2.core.search.dto.SearchResultInfo;
-import org.kuali.student.r2.core.search.service.SearchService;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebService;
@@ -79,7 +76,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     private CriteriaLookupService orgPersonRelationCriteriaLookupService;
     private CriteriaLookupService orgPositionRestrictionCriteriaLookupService;
 
-    private SearchService searchService;
 
     private final Logger logger = Logger.getLogger(OrganizationServiceImpl.class);
 
@@ -161,14 +157,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     public void setOrgPositionRestrictionCriteriaLookupService(CriteriaLookupService orgPositionRestrictionCriteriaLookupService) {
         this.orgPositionRestrictionCriteriaLookupService = orgPositionRestrictionCriteriaLookupService;
-    }
-
-    public SearchService getSearchService() {
-        return searchService;
-    }
-
-    public void setSearchService(SearchService searchService) {
-        this.searchService = searchService;
     }
 
     public TypeService getTypeService() {
@@ -1155,20 +1143,5 @@ public class OrganizationServiceImpl implements OrganizationService {
             }
         }
         orgTreeList.add(orgTreeViewInfo);
-    }
-
-    @Override
-    public List<TypeInfo> getSearchTypes(ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException {
-        return searchService.getSearchTypes(contextInfo);
-    }
-
-    @Override
-    public TypeInfo getSearchType(String searchTypeKey, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        return searchService.getSearchType(searchTypeKey, contextInfo);
-    }
-
-    @Override
-    public SearchResultInfo search(SearchRequestInfo searchRequestInfo, ContextInfo contextInfo) throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
-        return searchService.search(searchRequestInfo, contextInfo);
     }
 }

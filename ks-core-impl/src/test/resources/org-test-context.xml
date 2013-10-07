@@ -189,7 +189,6 @@
         <property name="orgPersonRelationCriteriaLookupService" ref="criteriaLookupService"/>
         <property name="orgPositionRestrictionCriteriaLookupService" ref="criteriaLookupService"/>
         <property name="typeService"  ref="typeServiceImpl" />
-        <property name="searchService" ref="searchService" />
     </bean>
     
     <bean id="dictionaryServiceDelegate" class="org.kuali.student.r1.common.dictionary.service.impl.old.DictionaryServiceSpringImpl">

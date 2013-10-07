@@ -48,6 +48,7 @@ import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultCellInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultRowInfo;
+import org.kuali.student.r2.core.search.service.SearchService;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -75,6 +76,9 @@ public class TestOrganizationServiceImpl {
     @Resource(name = "orgServiceImpl")
     public OrganizationService orgService;
 
+    @Resource(name = "searchService")
+    private SearchService searchService;
+
     public static String principalId = "123";
 
     public ContextInfo callContext = null;
@@ -89,7 +93,7 @@ public class TestOrganizationServiceImpl {
     public void testOrgTypeSearch() throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
         SearchRequestInfo searchRequest = new SearchRequestInfo(OrganizationServiceConstants.ORGANIZATION_SEARCH_ORG_TYPE_SEARCH_KEY);
 
-        SearchResultInfo searchResult = orgService.search(searchRequest, callContext);
+        SearchResultInfo searchResult = searchService.search(searchRequest, callContext);
         List<SearchResultRowInfo> rows = searchResult.getRows();
         validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.corporate.entity");
         validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.board");
@@ -111,7 +115,7 @@ public class TestOrganizationServiceImpl {
 
         searchRequest.addParam(OrganizationServiceConstants.OrganizationSearchParameters.ORG_OPTIONAL_ID, "kuali.org.type.corporate.entity");
 
-        searchResult = orgService.search(searchRequest, callContext);
+        searchResult = searchService.search(searchRequest, callContext);
 
         rows = searchResult.getRows();
         validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_TYPE_ID, "kuali.org.type.corporate.entity");
@@ -122,7 +126,7 @@ public class TestOrganizationServiceImpl {
     public void testOrgPersonRelationTypeSearch() throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
         SearchRequestInfo searchRequest = new SearchRequestInfo("org.search.orgPersonRelationTypes");
 
-        SearchResultInfo searchResult = orgService.search(searchRequest, callContext);
+        SearchResultInfo searchResult = searchService.search(searchRequest, callContext);
         List<SearchResultRowInfo> rows = searchResult.getRows();
         validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.president");
         validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.evpp");
@@ -136,7 +140,7 @@ public class TestOrganizationServiceImpl {
         validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.administrative.officer");
 
         searchRequest.addParam("org.queryParam.orgOptionalId", "kuali.org.person.relation.type.head");
-        searchResult = orgService.search(searchRequest, callContext);
+        searchResult = searchService.search(searchRequest, callContext);
 
         validateContainsRow(rows, OrganizationServiceConstants.OrganizationSearchResultColumns.ORG_PERSON_RELATION_TYPE_ID, "kuali.org.person.relation.type.head");
     }

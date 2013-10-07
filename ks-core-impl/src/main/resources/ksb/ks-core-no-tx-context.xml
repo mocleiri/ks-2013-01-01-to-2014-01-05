@@ -102,6 +102,12 @@
         <property name="entityManagerFactory" ref="coreDefaultEntityManagerFactory" />
     </bean>
 
+    <!-- Kim identity service atpService -->
+    <bean id="corePermissionServiceClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
+        <property name="serviceEndpointInterface" value="org.kuali.rice.kim.api.permission.PermissionService"/>
+        <property name="serviceQName" value="{http://rice.kuali.org/kim/v2_0}permissionService"/>
+    </bean>
+
     <!--  Organization Service Config -->
     <bean id="orgDao"
           class="org.kuali.student.r2.core.organization.dao.OrgDao">
@@ -140,7 +146,6 @@
         <property name="orgOrgRelationCriteriaLookupService" ref="coreCriteriaLookupService"/>
         <property name="orgPersonRelationCriteriaLookupService" ref="coreCriteriaLookupService"/>
         <property name="orgPositionRestrictionCriteriaLookupService" ref="coreCriteriaLookupService"/>
-        <property name="searchService" ref="coreSearchDispatcher" />
         <property name="typeService" ref="typeService" />
     </bean>
 
@@ -148,13 +153,6 @@
         <property name="nextDecorator" ref="orgServiceImpl" />
         <property name="permissionService"  ref="corePermissionServiceClient" />
     </bean>
-
-    <!-- Kim identity service atpService -->
-    <bean id="corePermissionServiceClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
-        <property name="serviceEndpointInterface" value="org.kuali.rice.kim.api.permission.PermissionService"/>
-        <property name="serviceQName" value="{http://rice.kuali.org/kim/v2_0}permissionService"/>
-    </bean>
-
 
     <bean id="organizationHierarchySearch"
           class="org.kuali.student.r1.core.organizationsearch.service.impl.OrganizationHierarchySearch">
@@ -175,19 +173,6 @@
             <map>
                 <entry key="org.search.orgQuickViewByRelationTypeOrgTypeRelatedOrgIds" value-ref="organizationHierarchySearch"/>
             </map>
-        </property>
-    </bean>
-
-    <bean id="ks.exp.organizationSearchService" class="org.kuali.rice.ksb.api.bus.support.ServiceBusExporter">
-        <property name="serviceDefinition">
-            <bean class="org.kuali.rice.ksb.api.bus.support.SoapServiceDefinition">
-                <property name="jaxWsService" value="true" />
-                <property name="service" ref="orgSearchServiceImpl" />
-                <property name="serviceInterface" value="org.kuali.student.r2.core.search.service.SearchService"/>
-                <property name="localServiceName" value="OrganizationSearchService" />
-                <property name="serviceNameSpaceURI" value="http://student.kuali.org/wsdl/organizationsearch" />
-                <property name="busSecurity" value="${ks.core.bus.security}" />
-            </bean>
         </property>
     </bean>
 
@@ -909,7 +894,6 @@
         <property name="searchServices">
             <list>
                 <ref bean="atpServiceClient"/>
-                <ref bean="orgSearchServiceImpl" />
             </list>
         </property>
     </bean>

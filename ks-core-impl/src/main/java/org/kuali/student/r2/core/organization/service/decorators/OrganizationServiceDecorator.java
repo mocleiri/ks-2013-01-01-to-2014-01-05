@@ -37,8 +37,6 @@ import org.kuali.student.r2.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.r2.core.organization.dto.OrgTreeViewInfo;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
-import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
-import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 
 import java.util.List;
 
@@ -402,21 +400,5 @@ public class OrganizationServiceDecorator
     @Override
     public StatusInfo deleteOrgHierarchy(String orgHierarchyId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         return getNextDecorator().deleteOrgHierarchy(orgHierarchyId, contextInfo);
-    }
-
-    @Override
-    public List<TypeInfo> getSearchTypes(ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException {
-        return getNextDecorator().getSearchTypes(contextInfo);
-    }
-
-    @Override
-    public TypeInfo getSearchType(String searchTypeKey, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        return getNextDecorator().getSearchType(searchTypeKey, contextInfo);
-    }
-
-    @Override
-    public SearchResultInfo search(SearchRequestInfo searchRequestInfo, ContextInfo contextInfo) throws MissingParameterException, 
-            InvalidParameterException,OperationFailedException, PermissionDeniedException {
-        return getNextDecorator().search(searchRequestInfo, contextInfo);
     }
 }

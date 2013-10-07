@@ -39,8 +39,6 @@ import org.kuali.student.r2.core.organization.dto.OrgOrgRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.r2.core.organization.dto.OrgTreeViewInfo;
-import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
-import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 
 import javax.xml.namespace.QName;
 import java.util.Collections;
@@ -658,21 +656,5 @@ public class OrganizationServiceAuthorizationDecorator extends OrganizationServi
     public OrgTreeViewInfo getOrgTree(String rootOrgId, String orgHierarchyId, int maxLevels, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         checkPermission(permissionService, (OrgHierarchyInfo)null, KimPermissionConstants.CAN_INVOKE_SERVICE_METHOD_READ_ORGANIZATION_HIERARCHY_DATA_PERMISSION, contextInfo);
         return getNextDecorator().getOrgTree(rootOrgId, orgHierarchyId, maxLevels, contextInfo);
-    }
-
-    @Override
-    public List<TypeInfo> getSearchTypes(ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException {
-        return getNextDecorator().getSearchTypes(contextInfo);
-    }
-
-    @Override
-    public TypeInfo getSearchType(String searchTypeKey, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        return getNextDecorator().getSearchType(searchTypeKey, contextInfo);
-    }
-
-    @Override
-    public SearchResultInfo search(SearchRequestInfo searchRequestInfo, ContextInfo contextInfo) throws MissingParameterException,
-            InvalidParameterException, OperationFailedException, PermissionDeniedException {
-        return getNextDecorator().search(searchRequestInfo, contextInfo);
     }
 }

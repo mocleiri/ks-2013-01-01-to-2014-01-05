@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@WebService(endpointInterface = "org.kuali.student.r2.core.search.service.SearchService", name = "OrganizationSearchService", serviceName = "OrganizationSearchService", portName = "OrganizationSearchService", targetNamespace = "http://student.kuali.org/wsdl/organizationsearch")
 public class OrganizationSearchServiceImpl implements SearchService {
 
 

@@ -52,10 +52,7 @@ import org.kuali.student.r2.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.r2.core.organization.dto.OrgTreeViewInfo;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
-import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
-import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 
-import javax.jws.WebParam;
 
 
 public class OrganizationServiceMockImpl implements MockService, OrganizationService
@@ -1423,19 +1420,5 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
         return matcher.findMatching(collection);
     }
 
-    @Override
-    public List<TypeInfo> getSearchTypes(@WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException {
-        throw new OperationFailedException("not implemented because search isn't conveniently mockable");
-    }
-
-    @Override
-    public TypeInfo getSearchType(@WebParam(name = "searchTypeKey") String searchTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        throw new OperationFailedException("not implemented because search isn't conveniently mockable");
-    }
-
-    @Override
-    public SearchResultInfo search(SearchRequestInfo searchRequestInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
-        throw new OperationFailedException("not implemented because search isn't conveniently mockable");
-    }
 }
 
