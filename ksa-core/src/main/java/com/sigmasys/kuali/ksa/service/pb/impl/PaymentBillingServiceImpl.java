@@ -61,6 +61,10 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             " left outer join fetch q.plan p " +
             " left outer join fetch q.transferDetail d ";
 
+    private static final String PAYMENT_PLAN_SELECT = "select p from PaymentBillingPlan p " +
+            " left outer join fetch p.transferType t " +
+            " left outer join fetch t.generalLedgerType g ";
+
 
     @Autowired
     private TransactionService transactionService;
@@ -303,18 +307,33 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
     @Override
     public PaymentBillingPlan getPaymentBillingPlan(Long paymentBillingPlanId) {
 
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
+        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_PLAN);
 
-        Query query = em.createQuery("select p from PaymentBillingPlan p " +
-                " left outer join fetch p.transferType t " +
-                " left outer join fetch t.generalLedgerType g " +
-                " where p.id = :id");
+        Query query = em.createQuery(PAYMENT_PLAN_SELECT + " where p.id = :id");
 
         query.setParameter("id", paymentBillingPlanId);
 
         List<PaymentBillingPlan> plans = query.getResultList();
 
         return CollectionUtils.isNotEmpty(plans) ? plans.get(0) : null;
+    }
+
+    /**
+     * Retrieves PaymentBillingPlan instances by the given name pattern.
+     *
+     * @param pattern Name pattern
+     * @return list of PaymentBillingPlan instances.
+     */
+    @Override
+    public List<PaymentBillingPlan> getPaymentBillingPlanByNamePattern(String pattern) {
+
+        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_PLAN);
+
+        Query query = em.createQuery(PAYMENT_PLAN_SELECT + " where upper(p.name) like upper(:pattern)");
+
+        query.setParameter("pattern", "%" + pattern + "%");
+
+        return query.getResultList();
     }
 
     /**

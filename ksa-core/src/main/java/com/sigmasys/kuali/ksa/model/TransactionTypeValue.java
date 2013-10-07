@@ -36,6 +36,6 @@ public enum TransactionTypeValue {
             case DEFERMENT:
                 return "Deferment";
         }
-        throw new IllegalStateException("No transaction type description found for " + name() + " value");
+        throw new IllegalStateException("No transaction type found for " + name() + " value");
     }
 }

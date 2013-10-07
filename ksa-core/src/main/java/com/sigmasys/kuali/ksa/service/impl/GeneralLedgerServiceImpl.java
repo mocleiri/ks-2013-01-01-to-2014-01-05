@@ -669,16 +669,16 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
 
 
     /**
-     * Validates the list of GL overrides.
+     * Validates the list of GL Breakdowns.
      *
-     * @param glOverrides list of GlOverride instances
-     * @return true if the list of GL overrides is valid, false - otherwise
+     * @param glBreakdowns list of AbstractGlBreakdown instances
+     * @return true if the list of GL Breakdowns is valid, false - otherwise
      */
     @Override
-    public boolean isGlOverrideValid(List<GlOverride> glOverrides) {
+    public boolean isGlBreakdownValid(List<AbstractGlBreakdown> glBreakdowns) {
 
-        if (CollectionUtils.isEmpty(glOverrides)) {
-            logger.warn("List of GlOverride objects cannot be empty");
+        if (CollectionUtils.isEmpty(glBreakdowns)) {
+            logger.warn("List of GL breakdowns cannot be empty");
             return false;
         }
 
@@ -686,24 +686,24 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
 
         BigDecimal totalBreakdownAmount = BigDecimal.ZERO;
 
-        for (GlOverride glOverride : glOverrides) {
+        for (AbstractGlBreakdown glBreakdown : glBreakdowns) {
 
-            if (glOverride == null) {
-                logger.warn("GlOverride cannot be empty");
+            if (glBreakdown == null) {
+                logger.warn("GL Breakdown cannot be empty");
                 return false;
             }
 
-            if (!isGlAccountValid(glOverride.getGlAccountId())) {
-                logger.warn("GlOverride's GL Account ID is invalid");
+            if (!isGlAccountValid(glBreakdown.getGlAccount())) {
+                logger.warn("GL Breakdown's Account ID is invalid");
                 return false;
             }
 
-            if (glOverride.getPercentageBreakdown() == null) {
-                logger.warn("GlOverride's percentage breakdown is required");
+            if (glBreakdown.getBreakdown() == null) {
+                logger.warn("Percentage breakdown is required");
                 return false;
             }
 
-            BigDecimal percentageBreakdown = glOverride.getPercentageBreakdown();
+            BigDecimal percentageBreakdown = glBreakdown.getBreakdown();
 
             if (percentageBreakdown.compareTo(BigDecimal.ZERO) == 0) {
 

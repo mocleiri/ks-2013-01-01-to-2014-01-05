@@ -94,6 +94,14 @@ public interface PaymentBillingService {
     PaymentBillingPlan getPaymentBillingPlan(Long paymentBillingPlanId);
 
     /**
+     * Retrieves PaymentBillingPlan instances by the given name pattern.
+     *
+     * @param pattern Name pattern
+     * @return list of PaymentBillingPlan instances.
+     */
+    List<PaymentBillingPlan> getPaymentBillingPlanByNamePattern(String pattern);
+
+    /**
      * Persists PaymentBillingPlan instance in the persistent store
      *
      * @param billingPlan PaymentBillingPlan instance

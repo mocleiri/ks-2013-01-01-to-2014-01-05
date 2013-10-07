@@ -52,11 +52,11 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
             " left outer join fetch p.transferType t " +
             " left outer join fetch t.generalLedgerType g ";
 
-    private static final String TRANSFER_PLAN_JOIN = " inner join fetch p.thirdPartyAccount a " +
+    private static final String THIRD_PARTY_PLAN_JOIN = " inner join fetch p.thirdPartyAccount a " +
             " left outer join fetch p.transferType t " +
             " left outer join fetch t.generalLedgerType g ";
 
-    private static final String TRANSFER_PLAN_SELECT = "select p from ThirdPartyPlan p " + TRANSFER_PLAN_JOIN;
+    private static final String THIRD_PARTY_PLAN_SELECT = "select p from ThirdPartyPlan p " + THIRD_PARTY_PLAN_JOIN;
 
 
     @Autowired
@@ -273,7 +273,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
         PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
 
-        Query query = em.createQuery(TRANSFER_PLAN_SELECT + " where p.id = :id");
+        Query query = em.createQuery(THIRD_PARTY_PLAN_SELECT + " where p.id = :id");
 
         query.setParameter("id", thirdPartyPlanId);
 
@@ -293,7 +293,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
         PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
 
-        Query query = em.createQuery(TRANSFER_PLAN_SELECT + " where upper(p.name) like upper(:pattern)");
+        Query query = em.createQuery(THIRD_PARTY_PLAN_SELECT + " where upper(p.name) like upper(:pattern)");
 
         query.setParameter("pattern", "%" + pattern + "%");
 
@@ -313,7 +313,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
         boolean idsExist = CollectionUtils.isNotEmpty(thirdPartyAccountIds);
 
-        Query query = em.createQuery(TRANSFER_PLAN_SELECT + (idsExist ? " where a.id in (:ids)" : "") + " order by p.id desc");
+        Query query = em.createQuery(THIRD_PARTY_PLAN_SELECT + (idsExist ? " where a.id in (:ids)" : "") + " order by p.id desc");
 
         if (idsExist) {
             query.setParameter("ids", thirdPartyAccountIds);
@@ -334,7 +334,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
 
         Query query = em.createQuery("select p from ThirdPartyPlan p, ThirdPartyPlanMember m " +
-                TRANSFER_PLAN_JOIN + " where p.id = m.plan.id and m.directChargeAccount.id = :accountId order by p.id desc");
+                THIRD_PARTY_PLAN_JOIN + " where p.id = m.plan.id and m.directChargeAccount.id = :accountId order by p.id desc");
 
         query.setParameter("accountId", accountId);
 
