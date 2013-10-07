@@ -90,6 +90,7 @@ end
 
 Then /^I set the limit waitlist size$/ do
   waitlist = @activity_offering.waitlist_config
+  waitlist.enabled = true
   waitlist.limit_size = 25
   @activity_offering.edit :waitlist_config => waitlist
   @activity_offering.save
@@ -111,6 +112,7 @@ end
 
 Then /^I enable the allow hold list option$/ do
   waitlist = @activity_offering.waitlist_config
+  waitlist.enabled = true
   waitlist.allow_hold_list = true
   @activity_offering.edit :waitlist_config => waitlist
   @activity_offering.save

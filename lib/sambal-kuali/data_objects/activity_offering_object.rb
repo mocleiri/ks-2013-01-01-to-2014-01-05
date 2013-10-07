@@ -1327,7 +1327,7 @@ class Waitlist
       @enabled ? page.waitlist_checkbox.set : page.waitlist_checkbox.clear
     end
 
-    return unless @enabled
+    #return unless @enabled
 
     on ActivityOfferingMaintenance do |page|
       case @type
