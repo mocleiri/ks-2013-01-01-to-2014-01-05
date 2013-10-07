@@ -28,6 +28,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -1100,7 +1101,7 @@ public class PlanControllerTest {
         }
 
         if (isPlaceHolderType(refObjType) && hasText(credit)) {
-            pii.setCredit(Float.parseFloat(credit));
+            pii.setCredit(new BigDecimal(credit));
         }
 
         MetaInfo metaInfo = new MetaInfo();

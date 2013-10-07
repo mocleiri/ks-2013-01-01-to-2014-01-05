@@ -29,14 +29,14 @@
     <!-- This context requires that a spring Transaction Manager named 'transactionManager' be defined -->
 
     <bean id="lumDictionaryService"
-          class="org.kuali.student.common.dictionary.service.impl.DictionaryServiceImpl">
+          class="org.kuali.student.r1.common.dictionary.service.impl.DictionaryServiceImpl">
         <constructor-arg index="0"
                          value="${uw.ks.lum.dictionary.serviceContextLocations}"/>
     </bean>
 
     <bean id="coreDictionaryService"
-          class="org.kuali.student.common.dictionary.service.impl.DictionaryServiceImpl">
-        <constructor-arg index="0" value="${uw.ks.core.dictionary.serviceContextLocations}" />
+          class="org.kuali.student.r1.common.dictionary.service.impl.DictionaryServiceImpl">
+        <constructor-arg index="0" value="${uw.ks.core.dictionary.serviceContextLocations}"/>
     </bean>
 
     <bean name="planItemInfoDictionaryLocation" class="java.lang.String">
@@ -128,14 +128,14 @@
     </bean>
 
     <bean id="luSearchManager"
-          class="org.kuali.student.common.search.service.impl.SearchManagerImpl">
+          class="org.kuali.student.r2.common.class1.search.SearchManagerImpl">
         <constructor-arg index="0" value="classpath:myplan-search-config.xml"/>
         <property name="crossSearchManager" ref="lumCrossServiceSearchManager"/>
     </bean>
 
     <!-- override KS enum search with UW implementation -->
-     <bean id="emSearchManager"
-          class="org.kuali.student.common.search.service.impl.SearchManagerImpl">
+    <bean id="emSearchManager"
+          class="org.kuali.student.r2.common.class1.search.SearchManagerImpl">
         <constructor-arg index="0" value="classpath:myplan-enum-search-config.xml"/>
     </bean>
 
@@ -204,12 +204,12 @@
     </bean>
 
     <!-- Override orgService bean with UW implementation -->
-    <bean id="orgService" class="org.kuali.student.core.organization.service.impl.OrganizationServiceImpl">
+    <bean id="orgService" class="org.kuali.student.r2.core.class1.organization.service.impl.OrganizationServiceImpl">
         <property name="searchManager" ref="orSearchManager"/>
         <property name="organizationDao" ref="organizationDao"/>
     </bean>
 
-    <bean id="organizationDao" class="org.kuali.student.core.organization.dao.impl.OrganizationDaoImpl">
+    <bean id="organizationDao" class="org.kuali.student.r1.core.organization.dao.impl.OrganizationDaoImpl">
         <property name="em" ref="organizationEntityManager"/>
     </bean>
 
@@ -225,7 +225,7 @@
     </bean>
 
     <bean id="orSearchManager"
-          class="org.kuali.student.common.search.service.impl.SearchManagerImpl">
+          class="org.kuali.student.r2.common.class1.search.SearchManagerImpl">
         <constructor-arg index="0" value="classpath:myplan-orgsearch-config.xml"/>
         <property name="crossSearchManager" ref="lumCrossServiceSearchManager"/>
     </bean>
