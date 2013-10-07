@@ -71,6 +71,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.kuali.student.myplan.academicplan.service.AcademicPlanServiceConstants.LEARNING_PLAN_TYPE_PLAN;
@@ -434,7 +435,7 @@ public class DegreeAuditController extends UifControllerBase {
                         list.add(new AttributeInfo(SECTION, choice.section));
                         list.add(new AttributeInfo(SECONDARY_ACTIVITY, choice.secondaryActivity));
                         if (StringUtils.hasText(choice.credit)) {
-                            planItem.setCredit(Float.valueOf(choice.credit));
+                            planItem.setCredit(new BigDecimal(choice.credit));
                         }
 
                         getAcademicPlanService().updatePlanItem(planItem.getId(), planItem, CONTEXT_INFO);
@@ -451,7 +452,7 @@ public class DegreeAuditController extends UifControllerBase {
                     list.add(new AttributeInfo(SECTION, item.getSectionCode()));
                     list.add(new AttributeInfo(SECONDARY_ACTIVITY, item.getSecondaryActivityCode()));
                     if (StringUtils.hasText(item.getCredit())) {
-                        planItem.setCredit(Float.valueOf(item.getCredit()));
+                        planItem.setCredit(new BigDecimal(item.getCredit()));
                     }
 
                     getAcademicPlanService().updatePlanItem(planItem.getId(), planItem, CONTEXT_INFO);

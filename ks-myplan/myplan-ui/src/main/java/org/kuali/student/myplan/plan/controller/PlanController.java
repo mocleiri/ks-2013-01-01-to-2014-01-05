@@ -77,6 +77,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.springframework.util.StringUtils.hasText;
@@ -1702,7 +1703,7 @@ public class PlanController extends UifControllerBase {
                         (planItemInfo.getCredit() != null && !planItemInfo.getCredit().toString().equals(form.getCredit()))) {
                     creditUpdated = true;
                     if (form.getCredit() != null && hasText(form.getCredit())) {
-                        planItemInfo.setCredit(Float.valueOf(form.getCredit()));
+                        planItemInfo.setCredit(new BigDecimal(form.getCredit()));
                     } else { // placeholder changed from having credit to unspecified
                         planItemInfo.setCredit(null);
                     }
@@ -2442,7 +2443,7 @@ public class PlanController extends UifControllerBase {
         }
 
         if (isPlaceHolderType(refObjType) && hasText(credit)) {
-            pii.setCredit(Float.parseFloat(credit));
+            pii.setCredit(new BigDecimal(credit));
         }
 
         try {

@@ -9,6 +9,7 @@ import org.kuali.student.r2.core.search.infc.SearchResult;
 import org.kuali.student.r2.core.search.infc.SearchResultCell;
 import org.kuali.student.r2.core.search.infc.SearchResultRow;
 import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
 
 import javax.xml.namespace.QName;
 import java.util.regex.Matcher;
@@ -236,7 +237,7 @@ public class CourseLinkBuilder {
 
     protected synchronized static CluService getLuService() {
         if (luService == null) {
-            luService = (CluService) GlobalResourceLoader.getService(new QName(LuServiceConstants.LU_NAMESPACE, "LuService"));
+            luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.CLU_NAMESPACE, "CluService"));
         }
         return luService;
     }

@@ -3,7 +3,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://student.kuali.org/xsd/dictionary-extension http://student.kuali.org/xsd/dictionary-extension/dictionary-extension.xsd">
 
-    <bean id="org.kuali.student.lum.course.dto.CourseInfo" parent="org.kuali.student.lum.course.dto.CourseInfo-parent">
+    <bean id="org.kuali.student.lum.course.dto.CourseInfo" parent="org.kuali.student.r2.lum.course.dto.CourseInfo-parent">
         <property name="attributes">
             <list merge="true">
                 <ref bean="courseInfo.genEduRequirementVLPA"/>
@@ -204,13 +204,12 @@
         </property>
     </bean>
 
-
     <bean id="cluInfo.descr" parent="cluInfo.descr-parent">
         <property name="dataObjectStructure" ref="uw.cluInfo.descr.RichTextInfo"/>
     </bean>
 
 
-    <bean id="uw.cluInfo.descr.RichTextInfo" parent="org.kuali.student.common.dto.RichTextInfo-parent">
+    <bean id="uw.cluInfo.descr.RichTextInfo" parent="org.kuali.student.r2.common.dto.RichTextInfo">
         <property name="attributes">
             <list>
                 <ref bean="uw.cluInfo.richTextInfo.formatted"/>

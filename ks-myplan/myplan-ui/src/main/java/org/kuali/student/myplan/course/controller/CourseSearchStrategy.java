@@ -400,7 +400,7 @@ public class CourseSearchStrategy {
     //Note: here I am using r1 LuService implementation!!!
     protected CluService getLuService() {
         if (luService == null) {
-            luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.NAMESPACE, "LuService"));
+            luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.CLU_NAMESPACE, "CluService"));
         }
         return this.luService;
     }

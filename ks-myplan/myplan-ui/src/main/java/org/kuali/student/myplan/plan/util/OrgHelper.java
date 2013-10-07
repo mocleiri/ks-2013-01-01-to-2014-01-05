@@ -67,8 +67,6 @@ public class OrgHelper {
             SearchResultInfo searchResult = new SearchResultInfo();
             try {
                 searchResult = getOrganizationService().search(searchRequest, CourseSearchConstants.CONTEXT_INFO);
-            } catch (MissingParameterException e) {
-                logger.error("Search Failed to get the Organization Data ", e);
             } catch (Exception e) {
                 logger.error("Search Failed to get the Organization Data ", e);
             }

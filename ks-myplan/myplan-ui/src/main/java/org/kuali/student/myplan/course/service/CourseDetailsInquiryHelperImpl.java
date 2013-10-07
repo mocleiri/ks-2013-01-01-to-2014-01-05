@@ -1044,7 +1044,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
     protected CluService getLuService() {
         if (this.luService == null) {
-            this.luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.NAMESPACE, "LuService"));
+            this.luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.CLU_NAMESPACE, "CluService"));
         }
         return this.luService;
     }

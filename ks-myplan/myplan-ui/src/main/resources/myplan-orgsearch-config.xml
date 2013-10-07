@@ -107,8 +107,10 @@
         <property name="sourceMap">
             <map merge="true">
                 <entry key="org.search.orgInfoByType">
-                    <value>SELECT org.id, org.shortName, org.longName FROM Org org WHERE
-                        org.type.id = :org_queryParam_orgType
+                    <value>NATIVE:
+                        SELECT ID, SHRT_NAME, LNG_NAME
+                        FROM KSOR_ORG
+                        WHERE TYPE = :org_queryParam_orgType
                     </value>
                 </entry>
                 <entry key="org.search.orgCurriculum">

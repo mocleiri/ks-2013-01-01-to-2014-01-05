@@ -59,6 +59,7 @@ import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 import org.kuali.student.r2.core.search.infc.SearchResultRow;
 import org.kuali.student.r2.lum.clu.service.CluService;
 import org.kuali.student.r2.lum.course.service.assembler.CourseAssemblerConstants;
+import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -756,7 +757,7 @@ public class CourseSearchController extends UifControllerBase {
 
     protected CluService getLuService() {
         if (this.luService == null) {
-            this.luService = (CluService) GlobalResourceLoader.getService(new QName(LuServiceConstants.LU_NAMESPACE, "LuService"));
+            this.luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.CLU_NAMESPACE, "CluService"));
         }
         return this.luService;
     }

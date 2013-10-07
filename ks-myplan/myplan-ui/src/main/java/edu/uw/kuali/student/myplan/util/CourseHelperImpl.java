@@ -529,7 +529,7 @@ public class CourseHelperImpl implements CourseHelper {
 
     protected CluService getLuService() {
         if (luService == null) {
-            luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.NAMESPACE, "LuService"));
+            luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.CLU_NAMESPACE, "CluService"));
         }
         return luService;
     }

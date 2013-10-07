@@ -132,6 +132,7 @@
           class="org.kuali.student.r2.common.class1.search.SearchManagerImpl">
         <constructor-arg index="0" value="classpath:myplan-search-config.xml"/>
         <property name="crossSearchManager" ref="lumCrossServiceSearchManager"/>
+        <property name="dao" ref="luSearchableDao"/>
     </bean>
 
     <!-- override KS enum search with UW implementation -->
@@ -230,6 +231,7 @@
           class="org.kuali.student.r2.common.class1.search.SearchManagerImpl">
         <constructor-arg index="0" value="classpath:myplan-orgsearch-config.xml"/>
         <property name="crossSearchManager" ref="lumCrossServiceSearchManager"/>
+        <property name="dao" ref="orgSearchableDao"/>
     </bean>
 
 
