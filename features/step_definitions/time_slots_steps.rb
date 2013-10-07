@@ -97,7 +97,7 @@ Then /^only time slots of that term type appear.?$/ do
 end
 
 When /^I? ?add a Time Slot with the chosen Term Type$/ do
-  @time_slots.add_new_time_slot( make TimeSlots::TimeSlot )
+  @time_slots.add_unused_time_slots(1)
 end
 
 When /^I? ?(.*) ?edit the (.*) ?Time Slot added above to be (.*), Days (M|T|W|H|F|S|U|blank), Start time (\d+:\d+ ?.*|blank), End time (\d+:\d+ ?.*|blank)$/ do |attempt, tsOrdinality, termType, days, startTime, endTime|
@@ -106,11 +106,20 @@ end
 
 
 When /^I? ?attempt to (.*) the Time Slot added above$/ do |action|
-  pending
+  if action == "delete"
+    code = @time_slots.new_time_slots[0].code
+    @time_slots.delete(code)
+  end
 end
 
 Then /^the (.*) ?Time Slot (is|is not) deleted.?$/  do |tsOrdinality, isIsNot|
-  pending
+  if tsOrdinality.nil? || tsOrdinality==""
+    if isIsNot=="is"
+      on TimeSlotMaintenance do |page|
+        page.get_time_slot_code_list.should_not include @time_slots.new_time_slots[0].code
+      end
+    end
+  end
 end
 
 When /^I? ?add an RDL using the (.*) ?Time Slot added above$/ do |tsOrdinality|

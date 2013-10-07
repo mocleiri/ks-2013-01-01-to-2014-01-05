@@ -57,7 +57,7 @@ class TimeSlots
     end
   end
 
-   def add_unused_time_slots(termType, nbr)
+   def add_unused_time_slots(termType = "Fall - Full", nbr)
      (1..nbr).each do
        on TimeSlotMaintenance do |page|
          startTime, endTime = page.generate_unused_start_and_end_times
@@ -65,8 +65,16 @@ class TimeSlots
          eTime, eAmPm = endTime.split(" ")
          add_new_time_slot(make TimeSlots::TimeSlot, :term_type => termType, :days => "W", :start_time => sTime, :start_time_am_pm => sAmPm, :end_time => eTime, :end_time_am_pm => eAmPm)
        end
-     end
-   end
+          end
+        end
+
+        def delete(code)
+          puts "calling TimeSlots.delete(#{code})"
+          on TimeSlotMaintenance do |page|
+      page.delete_time_slot(code)
+      sleep(9)
+    end
+  end
 
   def display_time_slots
     puts "Newly-added time slots:"

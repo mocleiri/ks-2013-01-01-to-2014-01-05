@@ -21,6 +21,10 @@ class TimeSlotMaintenance < BasePage
   element(:add_time_slot_popup_field_endTime_am_pm) { |b| b.frm.div(id: "addOrEditEndTimeAmPm").select_list }
   action(:save_add_time_slot) { |b| b.frm.button(id: "addOrEdit_action").click; b.loading.wait_while_present }
 
+  action(:initiate_delete) { |b| b.time_slot_toolbar_div.button(text: "Delete").click }
+  element(:delete_confirmation_dialog) { |b| b.frm.div(id: "deleteTimeSlotsConfirmationDialog") }
+  action(:confirm_delete) { |b| b.delete_confirmation_dialog.radio(value: "Y").click; b.loading.wait_while_present }
+
   element(:time_slot_search_results_table) { |b| b.frm.div(id: "TimeSlotSearchResultsDisplayTable").table() }
 
   TIME_SLOT_RESULTS_SELECT = 0
@@ -77,6 +81,13 @@ class TimeSlotMaintenance < BasePage
     newly_added_time_slot[0][TIME_SLOT_RESULTS_CODE]
   end
 
+  def delete_time_slot (code)
+    row = target_results_row(code)
+    row.cells[TIME_SLOT_RESULTS_SELECT].checkbox.set
+    initiate_delete
+    sleep(1)
+    confirm_delete
+  end
   # note: current impl does not actually verify that the times returned are unused; it merely takes the start_time of
   # the last row in the table, and then returns a start_time 1min later and an end_time 5min after that
   #
