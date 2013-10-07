@@ -999,6 +999,23 @@ public interface TransactionService {
     Payment bouncePayment(Long paymentId, String memoText);
 
     /**
+     * Returns all GL Breakdown Overrides associated with the specified transaction.
+     *
+     * @param transactionId Transaction ID
+     * @return list of GlBreakdownOverride instances
+     */
+    List<GlBreakdownOverride> getGlBreakdownOverrides(Long transactionId);
+
+    /**
+     * Associates the transaction specified by ID with the list of GlBreakdownOverride instances.
+     *
+     * @param transactionId        Transaction ID
+     * @param glBreakdownOverrides list of GlBreakdownOverride instances
+     * @return list of GlBreakdownOverride IDs
+     */
+    List<Long> createGlBreakdownOverrides(Long transactionId, List<GlBreakdownOverride> glBreakdownOverrides);
+
+    /**
      * This method persists new GL breakdowns and associates them with the given GL and transaction types.
      * It also provides validation of the breakdowns.
      *

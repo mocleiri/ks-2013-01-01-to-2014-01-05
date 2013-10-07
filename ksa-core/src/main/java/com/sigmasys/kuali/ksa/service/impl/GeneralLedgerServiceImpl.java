@@ -675,7 +675,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return true if the list of GL Breakdowns is valid, false - otherwise
      */
     @Override
-    public boolean isGlBreakdownValid(List<AbstractGlBreakdown> glBreakdowns) {
+    public boolean isGlBreakdownValid(List<? extends AbstractGlBreakdown> glBreakdowns) {
 
         if (CollectionUtils.isEmpty(glBreakdowns)) {
             logger.warn("List of GL breakdowns cannot be empty");

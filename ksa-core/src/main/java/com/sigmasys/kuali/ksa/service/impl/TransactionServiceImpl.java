@@ -1656,6 +1656,64 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
+     * Returns all GL Breakdown Overrides associated with the specified transaction.
+     *
+     * @param transactionId Transaction ID
+     * @return list of GlBreakdownOverride instances
+     */
+    @Override
+    public List<GlBreakdownOverride> getGlBreakdownOverrides(Long transactionId) {
+
+        PermissionUtils.checkPermission(Permission.READ_GL_BREAKDOWN);
+
+        Query query = em.createQuery("select g from GlBreakdownOverride g inner join fetch g.transaction t " +
+                " where t.id = :transactionId");
+
+        query.setParameter("transactionId", transactionId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Associates the transaction specified by ID with the list of GlBreakdownOverride instances.
+     *
+     * @param transactionId        Transaction ID
+     * @param glBreakdownOverrides list of GlBreakdownOverride instances
+     * @return list of GlBreakdownOverride IDs
+     */
+    @Override
+    public List<Long> createGlBreakdownOverrides(Long transactionId, List<GlBreakdownOverride> glBreakdownOverrides) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_GL_BREAKDOWN);
+
+        Transaction transaction = getTransaction(transactionId);
+        if (transaction == null) {
+            String errMsg = "Transaction with ID = " + transactionId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        if (!glService.isGlBreakdownValid(glBreakdownOverrides)) {
+            String errMsg = "GL Breakdown Overrides are invalid: " + glBreakdownOverrides;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        Query query = em.createQuery("delete from GlBreakdownOverride where transaction.id = :transactionId");
+        query.setParameter("transactionId", transactionId);
+        query.executeUpdate();
+
+        List<Long> overrideIds = new ArrayList<Long>(glBreakdownOverrides.size());
+        for (GlBreakdownOverride glBreakdownOverride : glBreakdownOverrides) {
+            glBreakdownOverride.setTransaction(transaction);
+            Long breakdownId = persistEntity(glBreakdownOverride);
+            overrideIds.add(breakdownId);
+        }
+
+        return overrideIds;
+    }
+
+    /**
      * This method persists new GL breakdowns and associates them with the given GL and transaction types.
      * It also provides validation of the breakdowns.
      *
@@ -1686,47 +1744,25 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new InvalidTransactionTypeException(errMsg);
         }
 
+        if (!glService.isGlBreakdownValid(breakdowns)) {
+            String errMsg = "GL Breakdowns are invalid: " + breakdowns;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
         // Removing all existing GL breakdowns for the same transaction type
         Query query = em.createQuery("delete from GlBreakdown where transactionType.id = :transactionTypeId");
         query.setParameter("transactionTypeId", transactionTypeId);
         query.executeUpdate();
 
-        boolean hasZeroPercent = false;
-        BigDecimal totalPercentage = BigDecimal.ZERO;
-
         for (GlBreakdown breakdown : breakdowns) {
-
-            if (!glService.isGlAccountValid(breakdown.getGlAccount())) {
-                String errMsg = "GL account '" + breakdown.getGlAccount() + "' is invalid";
-                logger.error(errMsg);
-                throw new InvalidGeneralLedgerAccountException(errMsg);
-            }
-            if (breakdown.getBreakdown() == null) {
-                String errMsg = "GL breakdown does not have any percentage value";
-                logger.error(errMsg);
-                throw new IllegalStateException(errMsg);
-            } else if (breakdown.getBreakdown().compareTo(BigDecimal.ZERO) == 0) {
-                if (hasZeroPercent) {
-                    String errMsg = "One and only one breakdown must have 0 percentage value for the given GL type";
-                    logger.error(errMsg);
-                    throw new IllegalStateException(errMsg);
-                }
-                hasZeroPercent = true;
-            }
-
-            totalPercentage = totalPercentage.add(breakdown.getBreakdown());
 
             breakdown.setTransactionType(transactionType);
             breakdown.setGeneralLedgerType(glType);
 
             Long breakdownId = persistEntity(breakdown);
-            breakdownIds.add(breakdownId);
-        }
 
-        if (totalPercentage.compareTo(new BigDecimal(100)) >= 0) {
-            String errMsg = "The total percentage value of all breakdowns cannot be equal to and greater than 100";
-            logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
+            breakdownIds.add(breakdownId);
         }
 
         return breakdownIds;
@@ -1862,8 +1898,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         if (CollectionUtils.isNotEmpty(glBreakdowns)) {
 
             if (!glService.isGlBreakdownValid(glBreakdowns)) {
-                String errMsg = "GL Breakdowns are invalid: " + (CollectionUtils.isNotEmpty(glBreakdowns) ?
-                        glBreakdowns.toArray(new AbstractGlBreakdown[glBreakdowns.size()]) : "{ }");
+                String errMsg = "GL Breakdowns are invalid: " + glBreakdowns;
                 logger.error(errMsg);
                 throw new IllegalStateException(errMsg);
             }

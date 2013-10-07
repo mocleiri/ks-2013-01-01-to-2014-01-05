@@ -171,7 +171,7 @@ public interface GeneralLedgerService {
      * @param glBreakdowns list of AbstractGlBreakdown instances
      * @return true if the list of GL Breakdowns is valid, false - otherwise
      */
-    boolean isGlBreakdownValid(List<AbstractGlBreakdown> glBreakdowns);
+    boolean isGlBreakdownValid(List<? extends AbstractGlBreakdown> glBreakdowns);
 
     /**
      * Retrieves all GL transactions for the given GL transaction date range and GL account ID
