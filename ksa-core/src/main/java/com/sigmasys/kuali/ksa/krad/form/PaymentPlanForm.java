@@ -30,6 +30,7 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     private String filterPlanName;
     private List<ThirdPartyPlan> filterThirdPartyPlans;
+    private List<PaymentBillingPlan> filterPaymentBillingPlans;
 
     private List<PaymentBillingDateModel> paymentBillingDates;
 
@@ -37,6 +38,8 @@ public class PaymentPlanForm extends AbstractViewModel {
     private List<ThirdPartyAccount> filterThirdPartyAccounts;
 
     private List<ThirdPartyPlanModel> thirdPartyPlans;
+
+    private List<PaymentBillingPlan> paymentBillingPlans;
 
     private ThirdPartyPlanModel thirdPartyPlan;
 
@@ -415,5 +418,27 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     public void setPrefixStatement(String prefixStatement) {
         getNewPaymentBillingPlan().setStatementPrefix(prefixStatement);
+    }
+
+    public List<PaymentBillingPlan> getFilterPaymentBillingPlans() {
+        if(filterPaymentBillingPlans == null) {
+            filterPaymentBillingPlans = new ArrayList<PaymentBillingPlan>();
+        }
+        return filterPaymentBillingPlans;
+    }
+
+    public void setFilterPaymentBillingPlans(List<PaymentBillingPlan> filterPaymentBillingPlans) {
+        this.filterPaymentBillingPlans = filterPaymentBillingPlans;
+    }
+
+    public List<PaymentBillingPlan> getPaymentBillingPlans() {
+        if(paymentBillingPlans == null) {
+            paymentBillingPlans = new ArrayList<PaymentBillingPlan>();
+        }
+        return paymentBillingPlans;
+    }
+
+    public void setPaymentBillingPlans(List<PaymentBillingPlan> paymentBillingPlans) {
+        this.paymentBillingPlans = paymentBillingPlans;
     }
 }

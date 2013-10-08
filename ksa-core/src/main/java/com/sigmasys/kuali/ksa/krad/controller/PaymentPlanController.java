@@ -20,7 +20,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
-import org.kuali.rice.krad.uif.UifParameters;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -87,18 +86,6 @@ public class PaymentPlanController extends GenericSearchController {
         return form;
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=navigate")
-    public ModelAndView navigate(@ModelAttribute("KualiForm") PaymentPlanForm form, BindingResult result,
-                                 HttpServletRequest request, HttpServletResponse response) {
-        String pageId = form.getActionParamaterValue(UifParameters.NAVIGATE_TO_PAGE_ID);
-
-        if ("ManageThirdPartyPage".equals(pageId)) {
-            populateForm(form);
-        }
-
-        return getUIFModelAndView(form);
-    }
-
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
     public ModelAndView get(@ModelAttribute("KualiForm") PaymentPlanForm form, BindingResult result,
                                  HttpServletRequest request, HttpServletResponse response) {
@@ -110,7 +97,9 @@ public class PaymentPlanController extends GenericSearchController {
         form.setNewThirdPartyPlan(new ThirdPartyPlan());
 
         if ("ManageThirdPartyPage".equals(pageId)) {
-            populateForm(form);
+            populateThirdPartyForm(form);
+        } else if("ManagePaymentPlanPage".equals(pageId)) {
+            populatePaymentBillingForm(form);
         }
 
         return getUIFModelAndView(form);
@@ -148,7 +137,7 @@ public class PaymentPlanController extends GenericSearchController {
             GlobalVariables.getMessageMap().putError(RESPONSIBLE_ACCOUNT_SUGGEST, RiceKeyConstants.ERROR_CUSTOM, errorMessage);
         }
 
-        populateForm(form);
+        populateThirdPartyForm(form);
 
         return getUIFModelAndView(form);
     }
@@ -169,7 +158,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         form.setFilterThirdPartyAccounts(updatedAccounts);
 
-        populateForm(form);
+        populateThirdPartyForm(form);
 
         return getUIFModelAndView(form);
     }
@@ -185,7 +174,23 @@ public class PaymentPlanController extends GenericSearchController {
             form.getFilterThirdPartyPlans().add(plan);
         }
 
-        populateForm(form);
+        populateThirdPartyForm(form);
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterPaymentBillingPlans")
+    public ModelAndView filterPaymentBillingPlans(@ModelAttribute("KualiForm") PaymentPlanForm form) {
+        String planString = form.getFilterPlanName();
+        Long planId = Long.parseLong(planString);
+
+        PaymentBillingPlan plan = paymentBillingService.getPaymentBillingPlan(planId);
+
+        if (plan != null) {
+            form.getFilterPaymentBillingPlans().add(plan);
+        }
+
+        populatePaymentBillingForm(form);
 
         return getUIFModelAndView(form);
     }
@@ -207,7 +212,29 @@ public class PaymentPlanController extends GenericSearchController {
 
         form.setFilterThirdPartyPlans(updatedPlans);
 
-        populateForm(form);
+        populateThirdPartyForm(form);
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removePaymentBillingPlan")
+    public ModelAndView removePaymentBillingPlan(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+
+        String planString = request.getParameter("actionParameters[planId]");
+        Long planId = Long.parseLong(planString);
+
+        List<PaymentBillingPlan> updatedPlans = new ArrayList<PaymentBillingPlan>();
+
+        // Don't remove while iterating through a list.
+        for (PaymentBillingPlan plan : form.getFilterPaymentBillingPlans()) {
+            if (!plan.getId().equals(planId)) {
+                updatedPlans.add(plan);
+            }
+        }
+
+        form.setFilterPaymentBillingPlans(updatedPlans);
+
+        populatePaymentBillingForm(form);
 
         return getUIFModelAndView(form);
     }
@@ -268,7 +295,19 @@ public class PaymentPlanController extends GenericSearchController {
     }
 
 
-    private void populateForm(PaymentPlanForm form) {
+    private void populatePaymentBillingForm(PaymentPlanForm form) {
+        List<PaymentBillingPlan> allPlans = new ArrayList<PaymentBillingPlan>();
+
+        if(form.getFilterPaymentBillingPlans().size() == 0) {
+            //paymentBillingService.getPay
+        } else {
+            allPlans.addAll(form.getFilterPaymentBillingPlans());
+        }
+
+        form.setPaymentBillingPlans(allPlans);
+    }
+
+    private void populateThirdPartyForm(PaymentPlanForm form) {
         List<ThirdPartyAccount> accounts = form.getFilterThirdPartyAccounts();
         List<ThirdPartyPlan> plans = form.getFilterThirdPartyPlans();
 
