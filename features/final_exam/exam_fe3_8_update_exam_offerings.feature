@@ -23,7 +23,7 @@ Scenario: Update Course Offering from Final Exam to Alternate Final Assessment
     When I select a final exam type of "Alternate Final Assessment"
     Then there should be a Course Offering table that is in the Cancelled state
 
-
+@draft
 Scenario: Update Course Offering from Final Exam to Standard Final Exam with Activity Offering
  Given There is a course offering set to Final Exam
     When I select a final exam type of "Standard Final Exam"
