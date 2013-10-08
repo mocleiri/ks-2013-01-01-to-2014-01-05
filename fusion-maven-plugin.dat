@@ -1,9 +1,9 @@
 # module = ks-api branch Path = sandbox/ks-kuali-impex/ks-api/branches/2.0.0-Mx revision = 57337
 ks-api::sandbox_ks-kuali-impex_ks-api_branches_2.0.0-Mx::66b1237767c8791a5cbae650ac1328a4fb352342
 # module = ks-core branch Path = sandbox/ks-kuali-impex/ks-core/trunk revision = 57337
-ks-core::sandbox_ks-kuali-impex_ks-core_trunk::16fe4b908ccc3d77d8f798be328a8d8cfcf20148
+ks-core::sandbox_ks-kuali-impex_ks-core_trunk::cd3ac2321303b7f2729050a2622be5479f936918
 # module = ks-enroll branch Path = sandbox/ks-kuali-impex/ks-enroll/trunk revision = 57337
-ks-enroll::sandbox_ks-kuali-impex_ks-enroll_trunk::c1113ddee362e56692627177ffb28239a58d189d
+ks-enroll::sandbox_ks-kuali-impex_ks-enroll_trunk::ab1ab209a12df79913bab8e745fa5aa85b7e493e
 # module = ks-lum branch Path = sandbox/ks-kuali-impex/ks-lum/trunk revision = 57337
 ks-lum::sandbox_ks-kuali-impex_ks-lum_trunk::5b84baa610c28604bfc2b606728b31af96d9d50d
 # module = ks-deployments branch Path = sandbox/ks-kuali-impex/ks-deployments/trunk revision = 57337
