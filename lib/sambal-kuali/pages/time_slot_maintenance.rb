@@ -16,9 +16,9 @@ class TimeSlotMaintenance < BasePage
   element(:add_time_slot_popup_field_termType) { |b| b.frm.div(id: "addOrEditTermKey").select_list }
   element(:add_time_slot_popup_field_days) { |b| b.frm.div(id: "addOrEditDays").text_field }
   element(:add_time_slot_popup_field_startTime) { |b| b.frm.div(id: "addOrEditStartTime").text_field }
-  element(:add_time_slot_popup_field_startTime_am_pm) { |b| b.frm.div(id: "addOrEditStartTimeAmPm").select_list }
+  element(:add_time_slot_popup_field_startTime_am_pm) { |b| b.frm.div(id: "addOrEditStartTimeAmPm") }
   element(:add_time_slot_popup_field_endTime) { |b| b.frm.div(id: "addOrEditEndTime").text_field }
-  element(:add_time_slot_popup_field_endTime_am_pm) { |b| b.frm.div(id: "addOrEditEndTimeAmPm").select_list }
+  element(:add_time_slot_popup_field_endTime_am_pm) { |b| b.frm.div(id: "addOrEditEndTimeAmPm") }
   action(:save_add_time_slot) { |b| b.frm.button(id: "addOrEdit_action").click; b.loading.wait_while_present }
 
   action(:initiate_delete) { |b| b.time_slot_toolbar_div.button(text: "Delete").click }
@@ -76,12 +76,21 @@ class TimeSlotMaintenance < BasePage
 
   def add_time_slot_without_validation(new_time_slot)
     initiate_add_time_slot
+
     add_time_slot_popup_field_termType.select new_time_slot.term_type
+
     add_time_slot_popup_field_days.set new_time_slot.days
+
     add_time_slot_popup_field_startTime.set new_time_slot.start_time
-    add_time_slot_popup_field_startTime_am_pm.select new_time_slot.start_time_am_pm.downcase
+
+    unless new_time_slot.start_time_am_pm == nil
+      add_time_slot_popup_field_startTime_am_pm.radio(value: "#{new_time_slot.start_time_am_pm.upcase}").set
+    end
+
     add_time_slot_popup_field_endTime.set new_time_slot.end_time
-    add_time_slot_popup_field_endTime_am_pm.select new_time_slot.end_time_am_pm.downcase
+
+    add_time_slot_popup_field_endTime_am_pm.radio(value: "#{new_time_slot.end_time_am_pm.upcase}").set
+
     save_add_time_slot
   end
 

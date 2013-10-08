@@ -1,18 +1,24 @@
 When /^I add (\d*) different time slots to a single term type$/ do |nbr|
   @time_slots = create TimeSlots
-  @time_slots.add_unused_time_slots("Fall - Full", nbr.to_i)
+  @time_slots.add_unused_time_slots(nbr.to_i)
 end
 
 When /^I add a single time slot per 2 different term types$/ do
   term_types = [ "Fall - Full", "Spring - Full" ]
   @time_slots = create TimeSlots, :term_types => term_types
-  @time_slots.add_new_time_slot( make TimeSlots::TimeSlot, :term_type => term_types[0] )
+  @time_slots.add_unused_time_slots( term_types[0], 1 )
   @time_slots.add_unused_time_slots( term_types[1], 1 )
 end
 
 When /^I add a duplicate time slot$/ do
   @time_slots = create TimeSlots
   @time_slots.add_duplicate_time_slot(1000)
+end
+
+When /^I add a new time slot but omit the (start time|end time|days)$/ do |data_to_omit|
+  time_slot = make TimeSlots::TimeSlot, :start_time => nil, :start_time_am_pm => nil
+  @time_slots = create TimeSlots
+  @time_slots.add_new_time_slot(time_slot)
 end
 
 Then /^the timeslots are saved$/ do
@@ -33,6 +39,10 @@ end
 
 Then /^an error message is displayed about the duplicate timeslot$/ do
   on(TimeSlotMaintenance).time_slot_error_message.text.should match /Timeslot already exists for .*/
+end
+
+Then /^an error is displayed about the missing data$/ do
+
 end
 
 

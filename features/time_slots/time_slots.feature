@@ -2,7 +2,8 @@
 @bjg
 Feature: WC.Create standard Time Slots
 
-  TODO: NEED TO PUT THE USER-STORY DESCRIPTION HERE!
+  As a Scheduling Coordinator, I want to create the Standard Time Slots for a particular Time Slot Type so that
+  university scheduling policies will be enforced.
 
   Background:
     Given I am logged in as a Schedule Coordinator
@@ -25,10 +26,25 @@ Feature: WC.Create standard Time Slots
     When I add a duplicate time slot
     Then an error message is displayed about the duplicate timeslot
 
-  #@draft
-  #@bjg
-  #Scenario: test some stuff
-  #  When I test some timeslot stuff
+  @draft
+  @bjg
+  Scenario: Adding a standard time slot using incomplete data - omitting start time
+    When I add a new time slot but omit the start time
+    Then an error is displayed about the missing data
+
+  @draft
+  @bjg
+  Scenario: Adding a standard time slot using incomplete data - omitting end time
+    When I add a new time slot but omit the end time
+    Then an error is displayed about the missing data
+
+  @draft
+  @bjg
+  Scenario: Adding a standard time slot using incomplete data - omitting days
+    When I add a new time slot but omit the days
+    Then an error is displayed about the missing data
+
+
 
 
 

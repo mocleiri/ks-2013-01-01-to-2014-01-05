@@ -63,7 +63,7 @@ class TimeSlots
        startTime, endTime = page.generate_unused_start_and_end_times
        sTime, sAmPm = startTime.split(" ")
        eTime, eAmPm = endTime.split(" ")
-       add_new_time_slot(make TimeSlots::TimeSlot, :term_type => termType, :days => "W", :start_time => sTime, :start_time_am_pm => sAmPm, :end_time => eTime, :end_time_am_pm => eAmPm)
+       add_new_time_slot(make TimeSlots::TimeSlot, :term_type => termType, :start_time => sTime, :start_time_am_pm => sAmPm, :end_time => eTime, :end_time_am_pm => eAmPm)
        end
      end
   end
@@ -137,7 +137,7 @@ class TimeSlots
       defaults = {
           :code => "",
           :term_type => "Fall - Full",
-          :days => "SU",
+          :days => "W",
           :start_time => "2:31",
           :start_time_am_pm => "AM",
           :end_time => "2:36",
