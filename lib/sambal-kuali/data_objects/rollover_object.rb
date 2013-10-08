@@ -70,6 +70,7 @@ class Rollover
       puts "Rollover initiated - source term: #{@source_term}"
       puts "Rollover initiated - target term: #{@target_term}"
       page.rollover_course_offerings
+      page.continue_wo_exams_dialog_confirm if page.continue_wo_exams_dialog_div.present?
     end
 
     if @exp_success then
