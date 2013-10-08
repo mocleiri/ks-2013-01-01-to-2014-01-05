@@ -75,6 +75,86 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     private TransactionTransferService transactionTransferService;
 
 
+    @Override
+    public boolean isProcessingWhatIfScenarios(String atpId) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean isProcessingRealTimeFm(String atpId) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void addFeeManagementPeriodSetting(String atpId, String key, String value) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public String getFeeManagementPeriodSetting(String atpId, String key) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public String removeFeeManagementPeriodSetting(String atpId, String key) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public KeyPair getKeyPair(String accountId, String key) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public KeyPair addKeyPair(String accountId, String key, String value) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public KeyPair removeKeyPair(String accountId, String key) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void addSessionToQueue(Long feeManagementSessionId) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void removeSessionFromQueue(Long feeManagementSessionId) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Long processFeeManagementSession(Long feeManagementSessionId) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Long createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public FeeManagementReportInfo createFeeManagementReport(Long feeManagementSessionId) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /**
      * Reconciles a FeeManagement session.
      * Session reconciliation takes former sessions and ensures that charges that need to be removed are

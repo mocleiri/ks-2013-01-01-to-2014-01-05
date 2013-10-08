@@ -2,8 +2,11 @@ package com.sigmasys.kuali.ksa.service.fm;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.model.Constants;
+import com.sigmasys.kuali.ksa.model.KeyPair;
 import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifest;
 import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifestType;
+import com.sigmasys.kuali.ksa.model.fm.FeeManagementReportInfo;
+import com.sigmasys.kuali.ksa.model.fm.FeeManagementTermRecord;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -59,4 +62,36 @@ public interface FeeManagementService {
      */
     @WebMethod(exclude = true)
     List<FeeManagementManifest> getManifests(Long feeManagementSessionId, FeeManagementManifestType... manifestTypes);
+
+    boolean isProcessingWhatIfScenarios(String atpId);
+
+    boolean isProcessingRealTimeFm(String atpId);
+
+    void addFeeManagementPeriodSetting(String atpId, String key, String value);
+
+    String getFeeManagementPeriodSetting(String atpId, String key);
+
+    String removeFeeManagementPeriodSetting(String atpId, String key);
+
+    KeyPair getKeyPair(String accountId, String key);
+
+    KeyPair addKeyPair(String accountId, String key, String value);
+
+    KeyPair removeKeyPair(String accountId, String key);
+
+    void addSessionToQueue(Long feeManagementSessionId);
+
+    void removeSessionFromQueue(Long feeManagementSessionId);
+
+    Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
+
+    FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
+
+    void queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
+
+    Long processFeeManagementSession(Long feeManagementSessionId);
+
+    Long createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord);
+
+    FeeManagementReportInfo createFeeManagementReport(Long feeManagementSessionId);
 }
