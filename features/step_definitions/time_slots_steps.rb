@@ -16,9 +16,19 @@ When /^I add a duplicate time slot$/ do
 end
 
 When /^I add a new time slot but omit the (start time|end time|days)$/ do |data_to_omit|
-  time_slot = make TimeSlots::TimeSlot, :start_time => nil, :start_time_am_pm => nil
+  time_slot = make TimeSlots::TimeSlot
+
+  case data_to_omit
+    when "start_time"
+      time_slot.start_time = nil
+    when "end time"
+      time_slot.end_time = nil
+    else
+      time_slot.days = nil
+  end
+
   @time_slots = create TimeSlots
-  @time_slots.add_new_time_slot(time_slot)
+  @time_slots.add_new_time_slot_without_validation(time_slot)
 end
 
 Then /^the timeslots are saved$/ do
@@ -42,7 +52,7 @@ Then /^an error message is displayed about the duplicate timeslot$/ do
 end
 
 Then /^an error is displayed about the missing data$/ do
-
+  on(TimeSlotMaintenance).growl_text.should == "The form contains errors. Please correct these errors and try again."
 end
 
 
@@ -53,33 +63,6 @@ end
 ###
 ###############################################################
 
-When /^I test some timeslot stuff$/ do
-
-
-
-#  time = Time.now
-#  puts time
-#  puts time.hour
-#  puts time.min
-#
-#  time = time + 60
-#  puts time
-#
-#  time = Time.gm(2000,1,1,23,59,59)
-#  puts time
-#
-#  time = time + 60
-#  puts time
-
-
-  @time_slots = create TimeSlots
-  on TimeSlotMaintenance do |page|
-    result = page.generate_unused_start_and_end_times
-    puts "RESULT -> #{result}"
-  end
-
-
-end
 
 
 

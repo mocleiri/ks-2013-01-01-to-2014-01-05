@@ -47,6 +47,42 @@ class TimeSlots
     new_time_slots << time_slot
   end
 
+  def add_new_time_slot_without_validation( time_slot )
+    on(TimeSlotMaintenance).add_time_slot_without_validation(time_slot)
+  end
+
+  def add_duplicate_time_slot(code)
+    target_timeslot_row = on(TimeSlotMaintenance).target_results_row(code)
+    time_slot = make TimeSlots::TimeSlot, :term_type => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE].text,
+                     :days => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_DAYS].text.gsub!( /\s+/, ''),
+                     :start_time => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].text.split(" ")[0],
+                     :start_time_am_pm => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].text.split(" ")[1],
+                     :end_time => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].text.split(" ")[0],
+                     :end_time_am_pm => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].text.split(" ")[1]
+    add_new_time_slot_without_validation(time_slot)
+  end
+
+  def add_unused_time_slots(termType = "Fall - Full", nbr)
+    (1..nbr).each do
+      on TimeSlotMaintenance do |page|
+        startTime, endTime = page.generate_unused_start_and_end_times
+        sTime, sAmPm = startTime.split(" ")
+        eTime, eAmPm = endTime.split(" ")
+        add_new_time_slot(make TimeSlots::TimeSlot, :term_type => termType, :start_time => sTime, :start_time_am_pm => sAmPm, :end_time => eTime, :end_time_am_pm => eAmPm)
+      end
+    end
+  end
+
+  def delete(code)
+    puts "calling TimeSlots.delete(#{code})"
+    on TimeSlotMaintenance do |page|
+      page.delete_time_slot(code)
+      sleep(9)
+    end
+
+    print_new_time_slots_to_console
+  end
+
 
   def show_time_slots
     go_to_manage_time_slots
@@ -55,38 +91,6 @@ class TimeSlots
       page.select_time_slot_types(term_types)
       page.show_time_slots
     end
-  end
-
-  def add_unused_time_slots(termType = "Fall - Full", nbr)
-   (1..nbr).each do
-     on TimeSlotMaintenance do |page|
-       startTime, endTime = page.generate_unused_start_and_end_times
-       sTime, sAmPm = startTime.split(" ")
-       eTime, eAmPm = endTime.split(" ")
-       add_new_time_slot(make TimeSlots::TimeSlot, :term_type => termType, :start_time => sTime, :start_time_am_pm => sAmPm, :end_time => eTime, :end_time_am_pm => eAmPm)
-       end
-     end
-  end
-
-   def delete(code)
-     puts "calling TimeSlots.delete(#{code})"
-     on TimeSlotMaintenance do |page|
-       page.delete_time_slot(code)
-       sleep(9)
-     end
-
-     print_new_time_slots_to_console
-   end
-
-  def add_duplicate_time_slot(code)
-    target_timeslot_row = on(TimeSlotMaintenance).target_results_row(code)
-    time_slot = make TimeSlots::TimeSlot, :term_type => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE].text,
-                                          :days => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_DAYS].text.gsub!( /\s+/, ''),
-                                          :start_time => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].text.split(" ")[0],
-                                          :start_time_am_pm => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].text.split(" ")[1],
-                                          :end_time => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].text.split(" ")[0],
-                                          :end_time_am_pm => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].text.split(" ")[1]
-    on(TimeSlotMaintenance).add_time_slot_without_validation(time_slot)
   end
 
   def print_new_time_slots_to_console

@@ -15,7 +15,8 @@ class TimeSlotMaintenance < BasePage
 
   element(:add_time_slot_popup_field_termType) { |b| b.frm.div(id: "addOrEditTermKey").select_list }
   element(:add_time_slot_popup_field_days) { |b| b.frm.div(id: "addOrEditDays").text_field }
-  element(:add_time_slot_popup_field_startTime) { |b| b.frm.div(id: "addOrEditStartTime").text_field }
+  element(:add_time_slot_popup_field_startTime_div) { |b| b.frm.div(id: "addOrEditStartTime") }
+  element(:add_time_slot_popup_field_startTime) { |b| b.add_time_slot_popup_field_startTime_div.text_field }
   element(:add_time_slot_popup_field_startTime_am_pm) { |b| b.frm.div(id: "addOrEditStartTimeAmPm") }
   element(:add_time_slot_popup_field_endTime) { |b| b.frm.div(id: "addOrEditEndTime").text_field }
   element(:add_time_slot_popup_field_endTime_am_pm) { |b| b.frm.div(id: "addOrEditEndTimeAmPm") }
@@ -101,6 +102,7 @@ class TimeSlotMaintenance < BasePage
     sleep(1)
     confirm_delete
   end
+
   # note: current impl does not actually verify that the times returned are unused; it merely takes the start_time of
   # the last row in the table, and then returns a start_time 1min later and an end_time 5min after that
   #
