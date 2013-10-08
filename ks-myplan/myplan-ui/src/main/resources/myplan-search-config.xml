@@ -615,20 +615,17 @@
 
                 <entry key="myplan.course.info.credits.details">
                     <value>NATIVE:
-                        SELECT
-                        max( v.rslt_comp_id ),
-                        max( c.type ),
-                        min( to_number( v.value )),
-                        max( to_number( v.value ))
-                        from
-                        kslr_result_value v,
-                        kslr_rescomp c
-                        where
-                        c.id = v.rslt_comp_id
-                        and
-                        c.type like 'kuali.resultComponentType.credit.degree.%'
-                        group by
-                        v.rslt_comp_id
+                        SELECT Max(a.id),
+                        Max(a.rvg_type),
+                        Min(To_number(b.result_value)),
+                        Max(To_number(b.result_value))
+                        FROM   ksen_lrc_rvg a,
+                        ksen_lrc_result_value b,
+                        ksen_lrc_rvg_result_value c
+                        WHERE  b.id = c.result_value_id
+                        AND c.rvg_id = a.id
+                        AND a.id LIKE 'kuali.creditType.credit.degree.%'
+                        GROUP  BY a.id
                     </value>
                 </entry>
 
