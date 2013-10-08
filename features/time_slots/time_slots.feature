@@ -21,8 +21,14 @@ Feature: WC.Create standard Time Slots
 
   @draft
   @bjg
-  Scenario: test some stuff
-    When I test some timeslot stuff
+  Scenario: Adding a non-unique standard time slot
+    When I add a duplicate time slot
+    Then an error message is displayed about the duplicate timeslot
+
+  #@draft
+  #@bjg
+  #Scenario: test some stuff
+  #  When I test some timeslot stuff
 
 
 

@@ -50,7 +50,7 @@ class TimeSlotMaintenance < BasePage
   end
 
   def target_results_row(code)
-    row = time_slot_search_results_table.row(text: /\b#{Regexp.escape(code)}\b/)
+    row = time_slot_search_results_table.row(text: /\b#{Regexp.escape(code.to_s)}\b/)
     return row unless row.nil?
     raise "error in target_time_slot_results_row: #{code} not found"
   end
@@ -58,14 +58,7 @@ class TimeSlotMaintenance < BasePage
   def add_new_time_slot(new_time_slot)
     original_time_slots = time_slot_search_results_table.to_a
 
-    initiate_add_time_slot
-    add_time_slot_popup_field_termType.select new_time_slot.term_type
-    add_time_slot_popup_field_days.set new_time_slot.days
-    add_time_slot_popup_field_startTime.set new_time_slot.start_time
-    add_time_slot_popup_field_startTime_am_pm.select new_time_slot.start_time_am_pm.downcase
-    add_time_slot_popup_field_endTime.set new_time_slot.end_time
-    add_time_slot_popup_field_endTime_am_pm.select new_time_slot.end_time_am_pm.downcase
-    save_add_time_slot
+    add_time_slot_without_validation(new_time_slot)
 
     if time_slot_error_message.exists?
       raise "Error adding new time-slot -> " << time_slot_error_message.text
@@ -79,6 +72,17 @@ class TimeSlotMaintenance < BasePage
       raise "Unexpectedly found more than 1 newly-added time-slot in results-table; found -> " << newly_added_time_slot.join(",")
     end
     newly_added_time_slot[0][TIME_SLOT_RESULTS_CODE]
+  end
+
+  def add_time_slot_without_validation(new_time_slot)
+    initiate_add_time_slot
+    add_time_slot_popup_field_termType.select new_time_slot.term_type
+    add_time_slot_popup_field_days.set new_time_slot.days
+    add_time_slot_popup_field_startTime.set new_time_slot.start_time
+    add_time_slot_popup_field_startTime_am_pm.select new_time_slot.start_time_am_pm.downcase
+    add_time_slot_popup_field_endTime.set new_time_slot.end_time
+    add_time_slot_popup_field_endTime_am_pm.select new_time_slot.end_time_am_pm.downcase
+    save_add_time_slot
   end
 
   def delete_time_slot (code)
@@ -155,43 +159,6 @@ class TimeSlotMaintenance < BasePage
     return_end_time = return_end_time_hr << ":" << return_end_time_mn << " " << return_end_time_am_pm
 
     return [return_start_time, return_end_time]
-  end
-
-  def RD_generate_unused_start_and_end_times
-
-    puts "here"
-
-    table_array = time_slot_search_results_table.to_a
-    last_row_start_time = table_array[table_array.length-2][TIME_SLOT_RESULTS_START_TIME]
-    puts "Last-row time as full string: #{last_row_start_time}"
-
-
-    last_row_hour = last_row_start_time.split(" ")[0].split(":")[0]
-    last_row_minute = last_row_start_time.split(" ")[0].split(":")[1]
-    last_row_am_pm = last_row_start_time.split(" ")[1]
-    puts "Last-row time as individual strings: #{last_row_hour} #{last_row_minute} #{last_row_am_pm}"
-
-
-    t = Time.gm(2013,1,1,last_row_hour,last_row_minute,nil)
-    puts "Time: #{t}"
-
-
-    last_row_am_pm = "PM"
-    if last_row_am_pm == "PM"
-      last_row_hour = last_row_hour.to_i + 12
-      if last_row_hour > 23
-        last_row_hour = 0
-      end
-    end
-    puts "Last-row time, converted to mil-time, as individual strings: #{last_row_hour} #{last_row_minute}"
-    t = Time.gm(2013,1,1,last_row_hour,last_row_minute,nil)
-    puts "Time as mil-time: #{t}"
-
-
-    t = t + 60
-    puts "Time + 1sec: #{t}"
-
-
   end
 
 end

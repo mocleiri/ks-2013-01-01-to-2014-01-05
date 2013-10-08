@@ -1,16 +1,18 @@
 When /^I add (\d*) different time slots to a single term type$/ do |nbr|
   @time_slots = create TimeSlots
   @time_slots.add_unused_time_slots("Fall - Full", nbr.to_i)
-  @time_slots.display_time_slots
 end
-
-When /^I show time slots for two different term types$/ do
-  @time_slots = create TimeSlots, :term_types => [ "Fall - Full", "Spring - Full" ]
-end
-
 
 When /^I add a single time slot per 2 different term types$/ do
-  @time_slots = create TimeSlots, :term_types => [ "Fall - Full", "Spring - Full" ]
+  term_types = [ "Fall - Full", "Spring - Full" ]
+  @time_slots = create TimeSlots, :term_types => term_types
+  @time_slots.add_new_time_slot( make TimeSlots::TimeSlot, :term_type => term_types[0] )
+  @time_slots.add_unused_time_slots( term_types[1], 1 )
+end
+
+When /^I add a duplicate time slot$/ do
+  @time_slots = create TimeSlots
+  @time_slots.add_duplicate_time_slot(1000)
 end
 
 Then /^the timeslots are saved$/ do
@@ -29,6 +31,10 @@ Then /^the timeslots are saved$/ do
   end
 end
 
+Then /^an error message is displayed about the duplicate timeslot$/ do
+  on(TimeSlotMaintenance).time_slot_error_message.text.should match /Timeslot already exists for .*/
+end
+
 
 
 ###############################################################
@@ -38,6 +44,7 @@ end
 ###############################################################
 
 When /^I test some timeslot stuff$/ do
+
 
 
 #  time = Time.now

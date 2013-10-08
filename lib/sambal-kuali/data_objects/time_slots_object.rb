@@ -57,29 +57,42 @@ class TimeSlots
     end
   end
 
-   def add_unused_time_slots(termType = "Fall - Full", nbr)
-     (1..nbr).each do
-       on TimeSlotMaintenance do |page|
-         startTime, endTime = page.generate_unused_start_and_end_times
-         sTime, sAmPm = startTime.split(" ")
-         eTime, eAmPm = endTime.split(" ")
-         add_new_time_slot(make TimeSlots::TimeSlot, :term_type => termType, :days => "W", :start_time => sTime, :start_time_am_pm => sAmPm, :end_time => eTime, :end_time_am_pm => eAmPm)
+  def add_unused_time_slots(termType = "Fall - Full", nbr)
+   (1..nbr).each do
+     on TimeSlotMaintenance do |page|
+       startTime, endTime = page.generate_unused_start_and_end_times
+       sTime, sAmPm = startTime.split(" ")
+       eTime, eAmPm = endTime.split(" ")
+       add_new_time_slot(make TimeSlots::TimeSlot, :term_type => termType, :days => "W", :start_time => sTime, :start_time_am_pm => sAmPm, :end_time => eTime, :end_time_am_pm => eAmPm)
        end
-          end
-        end
-
-        def delete(code)
-          puts "calling TimeSlots.delete(#{code})"
-          on TimeSlotMaintenance do |page|
-      page.delete_time_slot(code)
-      sleep(9)
-    end
+     end
   end
 
-  def display_time_slots
+   def delete(code)
+     puts "calling TimeSlots.delete(#{code})"
+     on TimeSlotMaintenance do |page|
+       page.delete_time_slot(code)
+       sleep(9)
+     end
+
+     print_new_time_slots_to_console
+   end
+
+  def add_duplicate_time_slot(code)
+    target_timeslot_row = on(TimeSlotMaintenance).target_results_row(code)
+    time_slot = make TimeSlots::TimeSlot, :term_type => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE].text,
+                                          :days => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_DAYS].text.gsub!( /\s+/, ''),
+                                          :start_time => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].text.split(" ")[0],
+                                          :start_time_am_pm => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_START_TIME].text.split(" ")[1],
+                                          :end_time => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].text.split(" ")[0],
+                                          :end_time_am_pm => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_END_TIME].text.split(" ")[1]
+    on(TimeSlotMaintenance).add_time_slot_without_validation(time_slot)
+  end
+
+  def print_new_time_slots_to_console
     puts "Newly-added time slots:"
     new_time_slots.each do |slot|
-      slot.display_time_slot
+      slot.print_time_slot_to_console
     end
   end
 
@@ -124,11 +137,11 @@ class TimeSlots
       defaults = {
           :code => "",
           :term_type => "Fall - Full",
-          :days => "M",
-          :start_time => "10:00",
-          :start_time_am_pm => "PM",
-          :end_time => "10:50",
-          :end_time_am_pm => "PM"
+          :days => "SU",
+          :start_time => "2:31",
+          :start_time_am_pm => "AM",
+          :end_time => "2:36",
+          :end_time_am_pm => "AM"
       }
 
       options = defaults.merge(opts)
@@ -136,7 +149,7 @@ class TimeSlots
       set_options(options)
     end
 
-    def display_time_slot
+    def print_time_slot_to_console
       puts "Code #{code}, Term type #{term_type}, Days #{days}, Start #{start_time} #{start_time_am_pm}, End #{end_time} #{end_time_am_pm}"
     end
   end
