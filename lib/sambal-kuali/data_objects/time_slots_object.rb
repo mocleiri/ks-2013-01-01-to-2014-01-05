@@ -4,7 +4,16 @@
 #
 # Typical usage: (with optional setting of explicit data value in [] )
 #
-# TO DO TO DO TO DO #####################################################################
+#   To create 3 time-slots that shouldn't conflict with any existing ones: (see comment in add_unused_time_slots method for more detail)
+#
+#       @time_slots = create TimeSlots
+#       @time_slots.add_unused_time_slots(3)
+#
+#   To add a specific time-slot (accepting defaults for start-time and end-time):
+#
+#       @time_slots = create TimeSlots, :term_types => ["Spring - Full", "Fall - Full"]           <- this will show all time-slots for both term-types
+#       time_slot_to_add = make TimeSlots::TimeSlot, :term_type => "Spring - Full", :days => "T"  <- this will then add a time-slot for a specific term-type
+#       @time_slots.add_new_time_slot( time_slot_to_add )
 #
 # Note the use of the ruby options hash pattern re: setting attribute values
 class TimeSlots
@@ -22,7 +31,7 @@ class TimeSlots
   #  defaults = {
   #     :term_types => [ "Fall - Full" ]
   #  }
-
+  #
   # initialize is generally called using TestFactory Foundry .make or .create methods
   def initialize(browser, opts={})
     @browser = browser
@@ -37,20 +46,23 @@ class TimeSlots
     set_options(options)
   end
 
+  # creates the TimeSlots-object and shows all time-slots for the specific term-types
   def create
     show_time_slots
   end #END-create
 
-
+  # adds a new time-slot, validating that it was added successfully and adding it to it's internal list of added time-slots (for validation later)
   def add_new_time_slot( time_slot )
     time_slot.code = on(TimeSlotMaintenance).add_new_time_slot time_slot
     new_time_slots << time_slot
   end
 
+  # adds a new time-slot but performs no validation and does not store in the internal list
   def add_new_time_slot_without_validation( time_slot )
     on(TimeSlotMaintenance).add_time_slot_without_validation(time_slot)
   end
 
+  # duplicates a time-slot that already exists in the table (by it's code) -- note, does not validate nor store the result
   def add_duplicate_time_slot(code)
     target_timeslot_row = on(TimeSlotMaintenance).target_results_row(code)
     time_slot = make TimeSlots::TimeSlot, :term_type => target_timeslot_row[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE].text,
@@ -62,6 +74,10 @@ class TimeSlots
     add_new_time_slot_without_validation(time_slot)
   end
 
+  # adds a specified number of time-slots, generating a pseudo-unique set of start/end-times
+  # (note: this will use a day that isn't used widely by ref-data and then will auto-generate start/end-times based
+  #  on the last time-slot in the table... it *might* collide if existing time-slots higher in the table just happen
+  #  to use these values, but it's not likely unless ref-data changes)
   def add_unused_time_slots(termType = "Fall - Full", nbr)
     (1..nbr).each do
       on TimeSlotMaintenance do |page|
@@ -104,9 +120,9 @@ class TimeSlots
   #
   # Class attributes are initialized with default data unless values are explicitly provided
   #
-  # Typical usage: (with optional setting of explicit data value in [] )
+  # Note that typical usage of this should be via 'make' not 'create' and then pass to an add-method in the TimeSlots object
   #
-  # TO DO TO DO TO DO #####################################################################
+  # For examples, see comment at the top of the file
   #
   # Note the use of the ruby options hash pattern re: setting attribute values
   class TimeSlot
