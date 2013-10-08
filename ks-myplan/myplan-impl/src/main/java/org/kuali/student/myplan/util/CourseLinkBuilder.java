@@ -242,6 +242,10 @@ public class CourseLinkBuilder {
         return luService;
     }
 
+    public static void setLuService(CluService luService) {
+        CourseLinkBuilder.luService = luService;
+    }
+
     public synchronized void setCourseService(CluService luService) {
         this.luService = luService;
     }

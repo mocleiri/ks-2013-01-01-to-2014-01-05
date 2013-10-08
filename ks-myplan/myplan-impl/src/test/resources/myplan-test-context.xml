@@ -27,15 +27,19 @@
     </bean>
 
 
-    <!--<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="staticMethod"
                   value="org.kuali.student.myplan.util.DegreeAuditAtpHelper.setAcademicCalendarService"/>
         <property name="arguments">
             <list>
-                <ref bean="acalService"/>
+                <ref bean="academicCalenderService"/>
             </list>
         </property>
-    </bean>-->
+    </bean>
+
+    <bean id="academicCalenderService" class="org.kuali.student.myplan.service.mock.AcademicCalenderServiceMockImpl"/>
+
+
 
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="staticMethod"
