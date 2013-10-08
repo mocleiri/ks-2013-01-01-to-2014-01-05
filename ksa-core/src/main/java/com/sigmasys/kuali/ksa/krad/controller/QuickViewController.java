@@ -194,8 +194,6 @@ public class QuickViewController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=insertMemo")
     public ModelAndView insertMemo(@ModelAttribute("KualiForm") QuickViewForm form, BindingResult result,
                                    HttpServletRequest request, HttpServletResponse response) {
-        String userId = request.getParameter("userId");
-
         MemoModel memoModel = form.getNewMemoModel();
 
         String accountId = form.getAccount().getId();
@@ -216,7 +214,7 @@ public class QuickViewController extends GenericSearchController {
                 String statusMsg = "Memo saved";
                 GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, statusMsg);
 
-                List<Memo> memos = informationService.getMemos(userId);
+                List<Memo> memos = informationService.getMemos(accountId);
 
                 form.setMemoModels(memos);
 
