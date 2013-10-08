@@ -3,7 +3,7 @@ package org.kuali.student.myplan.course.util;
 import org.kuali.student.myplan.course.dataobject.CourseSearchItem;
 import org.kuali.student.myplan.course.dataobject.FacetItem;
 import org.kuali.student.myplan.plan.util.AtpHelper;
-import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -43,7 +43,7 @@ public class TermsFacet extends AbstractFacet {
 
         //  Terms
         if (!CollectionUtils.isEmpty(course.getTermInfoList())) {
-            for (AtpInfo term : course.getTermInfoList()) {
+            for (TypeInfo term : course.getTermInfoList()) {
                 //  Title-case the term name.
                 String termName = PROJECTED_TERM_PREFIX + term.getName().substring(0, 2).toUpperCase();
                 String key = FACET_KEY_DELIMITER + termName + FACET_KEY_DELIMITER;

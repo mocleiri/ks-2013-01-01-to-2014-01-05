@@ -50,9 +50,10 @@ import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.r2.common.util.constants.CourseOfferingServiceConstants;
-import org.kuali.student.r2.common.util.constants.LuServiceConstants;
-import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
+import org.kuali.student.r2.core.class1.type.service.TypeService;
+import org.kuali.student.r2.core.constants.TypeServiceConstants;
 import org.kuali.student.r2.core.search.dto.SearchParamInfo;
 import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultInfo;
@@ -103,6 +104,8 @@ public class CourseSearchController extends UifControllerBase {
     private transient AcademicCalendarService academicCalendarService;
 
     private transient AcademicPlanService academicPlanService;
+
+    private transient TypeService typeService;
 
 
     @Autowired
@@ -539,7 +542,7 @@ public class CourseSearchController extends UifControllerBase {
         SearchRequestInfo request = new SearchRequestInfo("myplan.course.info.atp");
         request.addParam("courseID", courseId);
 
-        List<AtpInfo> termsOffered = new ArrayList<AtpInfo>();
+        List<TypeInfo> termsOffered = new ArrayList<TypeInfo>();
         SearchResultInfo result = null;
         try {
             result = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
@@ -554,9 +557,14 @@ public class CourseSearchController extends UifControllerBase {
             String id = SearchHelper.getCellValue(row, "atp.id");
 
             // Don't add the terms that are not found
-            AtpInfo atpType = getATPType(id);
-            if (null != atpType) {
-                termsOffered.add(atpType);
+            TypeInfo atpTypeInfo = null;
+            try {
+                atpTypeInfo = getTypeService().getType(id, PlanConstants.CONTEXT_INFO);
+            } catch (Exception e) {
+
+            }
+            if (atpTypeInfo != null) {
+                termsOffered.add(atpTypeInfo);
             }
         }
 
@@ -745,21 +753,23 @@ public class CourseSearchController extends UifControllerBase {
         return genEdsOut.toString();
     }
 
-    private AtpInfo getATPType(String key) {
-        try {
-            //return getAtpService().getAtpType(key);
-            return null;
-        } catch (Exception e) {
-            logger.error("Could not find ATP Type: " + key);
-            return null;
-        }
-    }
-
     protected CluService getLuService() {
         if (this.luService == null) {
             this.luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.CLU_NAMESPACE, "CluService"));
         }
         return this.luService;
+    }
+
+    public TypeService getTypeService() {
+        if (typeService == null) {
+            typeService = (TypeService)
+                    GlobalResourceLoader.getService(new QName(TypeServiceConstants.NAMESPACE, TypeServiceConstants.SERVICE_NAME_LOCAL_PART));
+        }
+        return typeService;
+    }
+
+    public void setTypeService(TypeService typeService) {
+        this.typeService = typeService;
     }
 
     protected AtpService getAtpService() {
@@ -856,6 +866,8 @@ public class CourseSearchController extends UifControllerBase {
     public void setPlanHelper(PlanHelper planHelper) {
         this.planHelper = planHelper;
     }
+
+
 }
 
 

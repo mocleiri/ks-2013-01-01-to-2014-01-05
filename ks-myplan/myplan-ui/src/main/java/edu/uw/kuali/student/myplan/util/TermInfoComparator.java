@@ -1,6 +1,6 @@
 package edu.uw.kuali.student.myplan.util;
 
-import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 
 import java.util.Comparator;
 
@@ -11,12 +11,12 @@ import java.util.Comparator;
  * Time: 10:30 AM
  * To change this template use File | Settings | File Templates.
  */
-public class TermInfoComparator implements Comparator<AtpInfo> {
+public class TermInfoComparator implements Comparator<TypeInfo> {
 
     @Override
-    public int compare(AtpInfo o1, AtpInfo o2) {
-        String atpKey1 = o1.getId().replaceAll("\\.", "_").toUpperCase();
-        String atpKey2 = o2.getId().replaceAll("\\.", "_").toUpperCase();
+    public int compare(TypeInfo o1, TypeInfo o2) {
+        String atpKey1 = o1.getKey().replaceAll("\\.", "_").toUpperCase();
+        String atpKey2 = o2.getKey().replaceAll("\\.", "_").toUpperCase();
         return TermOrder.valueOf(atpKey1).compareTo(TermOrder.valueOf(atpKey2));
     }
 

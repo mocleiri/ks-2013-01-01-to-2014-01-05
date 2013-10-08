@@ -175,8 +175,9 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             if (formatted == null) formatted = "";
             String[] aaa = formatted.split("Offered:");
             String[] bbb = aaa[0].split("Prerequisite:");
+            String[] ccc = bbb[0].split("Instructors:");
 
-            String descr = bbb[0].trim();
+            String descr = ccc[0].trim();
             descr = getCourseLinkBuilder().makeLinks(descr);
             courseDetails.setCourseDescription(descr);
 

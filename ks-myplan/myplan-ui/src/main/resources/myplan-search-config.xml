@@ -609,7 +609,7 @@
                         AND
                         ATTR_VALUE = 'true'
                         AND
-                        ATTR_NAME like 'course.genEdRequirement.%'
+                        ATTR_NAME like 'course.genedrequirement.%'
                     </value>
                 </entry>
 

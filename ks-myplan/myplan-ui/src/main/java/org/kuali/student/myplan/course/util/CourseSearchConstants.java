@@ -23,7 +23,7 @@ public class CourseSearchConstants {
      */
     public static final String SEARCH_TERM_ANY_ITEM = "any";
 
-    public static final String GEN_EDU_REQUIREMENTS_PREFIX = "course.genEdRequirement.";
+    public static final String GEN_EDU_REQUIREMENTS_PREFIX = "course.genedrequirement.";
     public static final String CAMPUS_LOCATION_COURSE_ATTRIBUTE = "course.campus";
 
     // Service Constants

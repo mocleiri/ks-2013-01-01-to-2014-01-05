@@ -2,6 +2,7 @@ package org.kuali.student.myplan.plan.util;
 
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
 import edu.uw.kuali.student.myplan.util.UserSessionHelperImpl;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -21,11 +22,14 @@ import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
 import org.kuali.student.myplan.utils.UserSessionHelper;
+import org.kuali.student.r2.common.constants.CommonServiceConstants;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.class1.type.service.TypeService;
+import org.kuali.student.r2.core.constants.TypeServiceConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -64,6 +68,8 @@ public class AtpHelper {
     private static transient AtpService atpService;
 
     private static transient AcademicRecordService academicRecordService;
+
+    private static transient TypeService typeService;
 
     private static transient CourseHelper courseHelper;
 
@@ -704,18 +710,16 @@ public class AtpHelper {
      * @param atpTypeKey Atp Type Key
      */
     public static String getAtpTypeName(String atpTypeKey) {
-        /*try {
-            List<AtpInfo> atpTypeInfos = getAtpService().getAtpTypes();
-            for (AtpInfo ti : atpTypeInfos) {
-                if (ti.getId().equals(atpTypeKey)) {
-                    return WordUtils.capitalizeFully(ti.getName());
-                }
+        String typeName = null;
+        try {
+            TypeInfo atpType = getTypeService().getType(atpTypeKey, PlanConstants.CONTEXT_INFO);
+            if (atpType != null && !StringUtils.isEmpty(atpType.getName())) {
+                typeName = WordUtils.capitalizeFully(atpType.getName().replace("quarter", "")).trim();
             }
-        } catch (OperationFailedException e) {
+        } catch (Exception e) {
             logger.error("ATP types lookup failed.", e);
-        }*/
-
-        return null;
+        }
+        return typeName;
     }
 
 
@@ -905,6 +909,18 @@ public class AtpHelper {
 
     public static void setAcademicCalendarService(AcademicCalendarService academicCalendarService) {
         AtpHelper.academicCalendarService = academicCalendarService;
+    }
+
+    public static TypeService getTypeService() {
+        if (typeService == null) {
+            typeService = (TypeService)
+                    GlobalResourceLoader.getService(new QName(TypeServiceConstants.NAMESPACE, TypeServiceConstants.SERVICE_NAME_LOCAL_PART));
+        }
+        return typeService;
+    }
+
+    public static void setTypeService(TypeService typeService) {
+        AtpHelper.typeService = typeService;
     }
 
     public static UserSessionHelper getUserSessionHelper() {

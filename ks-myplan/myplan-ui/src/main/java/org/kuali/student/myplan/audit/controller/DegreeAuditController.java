@@ -599,7 +599,7 @@ public class DegreeAuditController extends UifControllerBase {
      * @param studentId
      * @return
      */
-    private String getRecentPlanAudit(String studentId) {
+    private String  getRecentPlanAudit(String studentId) {
         String recentPlanAuditId = null;
         try {
             List<LearningPlanInfo> learningPlanList =
