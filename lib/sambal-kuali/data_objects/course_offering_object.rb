@@ -496,6 +496,7 @@ class CourseOffering
       #page.target_term.fire_event "onchange"
       #page.catalogue_course_code.click
       page.catalogue_course_code.set @course[0,7]   #always use canonical code
+      page.choose_from_catalog
     end
   end
 
