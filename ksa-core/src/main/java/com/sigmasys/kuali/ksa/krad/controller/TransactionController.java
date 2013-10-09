@@ -90,7 +90,7 @@ public class TransactionController extends GenericSearchController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView get(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
-        logger.info("TJB: Transaction Page Start: " + new Timestamp((new Date()).getTime()));
+        Timestamp start = new Timestamp((new Date()).getTime());
 
         // just for the transactions by person page
         String pageId = request.getParameter("pageId");
@@ -123,7 +123,7 @@ public class TransactionController extends GenericSearchController {
             form.setHolds(AccountUtils.getHolds(userId));
         }
 
-        logger.info("TJB: Transaction Page End: " + new Timestamp((new Date()).getTime()));
+        logger.info("TJB: Transaction Page Start: " + start + " End: " + new Timestamp((new Date()).getTime()));
 
         return getUIFModelAndView(form);
     }
@@ -640,6 +640,90 @@ public class TransactionController extends GenericSearchController {
 
         return getUIFModelAndView(form);
     }
+
+    /**
+     * Load the information needed for the allocation form
+     *
+     * @param form Kuali form instance
+     * @return ModelAndView
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=reverseTransaction")
+    public ModelAndView reverseTransaction(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
+
+        String transactionIdString = request.getParameter("actionParameters[transactionId]");
+        String source = request.getParameter("actionParameters[source]");
+        Long transactionId = null;
+
+        try {
+            transactionId = Long.parseLong(transactionIdString);
+        } catch(NumberFormatException e) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Unable to find transaction '" + transactionIdString + "'");
+            return getUIFModelAndView(form);
+        }
+
+        String userId = form.getAccount().getId();
+
+        Transaction t = transactionService.getTransaction(transactionId);
+
+        if (!t.getAccount().getId().equals(form.getAccount().getId())) {
+            // This should never happen unless someone is messing with the URL and trying to see things
+            throw new IllegalStateException("Transaction ID and User ID do not match: " + t.getAccount().getId() + " " + userId);
+        }
+
+        // Need to find the actual transaction object they were working on to get the reason code.
+        TransactionModel modelToReverse = null;
+        if("rollup".equals(source)) {
+            for(TransactionModel model : form.getRollupTransactions()) {
+                for(TransactionModel subModel : model.getSubTransactions()) {
+                    if(transactionId.equals(subModel.getId())) {
+                        modelToReverse = subModel;
+                        break;
+                    }
+                }
+                if(modelToReverse != null) {
+                    break;
+                }
+            }
+        } else {
+            for(TransactionModel model : form.getAllTransactions()) {
+                if(transactionId.equals(model.getId())) {
+                    modelToReverse = model;
+                    break;
+                }
+            }
+        }
+
+        if(modelToReverse == null) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Unable to find transaction '" + transactionIdString + "' in " + source + " list");
+            return getUIFModelAndView(form);
+        }
+
+        String reason = modelToReverse.getReverseTransactionReason();
+        if(reason == null || "".equals(reason)) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Refund reason is required");
+            return getUIFModelAndView(form);
+        }
+
+        try {
+            Transaction reversedTransaction = transactionService.reverseTransaction(modelToReverse.getId(), modelToReverse.getReverseTransactionReason(), modelToReverse.getUnallocatedAmount());
+            boolean internal = modelToReverse.getReverseTransactionInternalOnly();
+            if(internal) {
+                t.setInternal(true);
+                transactionService.persistTransaction(t);
+
+                reversedTransaction.setInternal(true);
+                transactionService.persistTransaction(reversedTransaction);
+            }
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Transaction reversed");
+        } catch(IllegalArgumentException e) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+            return getUIFModelAndView(form);
+        }
+
+        populateForm(form);
+        return getUIFModelAndView(form);
+    }
+
 
     private boolean saveAllocationMemos(TransactionForm form, Long transactionId, Long allocationId) {
 

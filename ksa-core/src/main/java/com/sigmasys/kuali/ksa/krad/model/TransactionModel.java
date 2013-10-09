@@ -106,6 +106,9 @@ public class TransactionModel extends Transaction {
 
     private String message;
 
+    private String reverseTransactionReason;
+    private boolean reverseTransactionInternalOnly = false;
+
     // Constructor
     public TransactionModel() {
     }
@@ -776,4 +779,19 @@ public class TransactionModel extends Transaction {
         }
     }
 
+    public String getReverseTransactionReason() {
+        return reverseTransactionReason;
+    }
+
+    public void setReverseTransactionReason(String reverseTransactionReason) {
+        this.reverseTransactionReason = reverseTransactionReason;
+    }
+
+    public boolean getReverseTransactionInternalOnly() {
+        return reverseTransactionInternalOnly;
+    }
+
+    public void setReverseTransactionInternalOnly(boolean reverseTransactionInternalOnly) {
+        this.reverseTransactionInternalOnly = reverseTransactionInternalOnly;
+    }
 }

@@ -38,8 +38,10 @@ public class TransactionZeroBalanceKeyValues extends KeyValuesBase {
        }
 
        for(Date zero : zeroBalance) {
-           zeroString = df.format(zero);
-           keyValues.add(new ConcreteKeyValue(zeroString, "Zero Balance on " + zeroString));
+            if(zero != null) {
+                zeroString = df.format(zero);
+                keyValues.add(new ConcreteKeyValue(zeroString, "Zero Balance on " + zeroString));
+            }
        }
 
 

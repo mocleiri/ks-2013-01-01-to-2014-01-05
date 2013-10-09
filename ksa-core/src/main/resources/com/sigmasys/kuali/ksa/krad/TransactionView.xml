@@ -362,6 +362,13 @@
                                     <bean parent="Uif-HorizontalBoxSection" p:style="float: right;">
                                         <property name="items">
                                             <list>
+                                                <bean parent="Uif-ImageField" p:source="../images/reverse.png" p:style="cursor:pointer; float: right;" p:altText="" p:title="" p:render="@{#line.unallocatedAmount > 0}"
+                                                      p:onClickScript="showLightboxComponent('TransactionReverseLightbox@{#lineSuffix}');writeHiddenToForm('actionParameters[source]', 'runningBalance');">
+                                                    <property name="toolTip">
+                                                        <bean parent="Uif-Tooltip" p:tooltipContent="Click to reverse this transaction"/>
+                                                    </property>
+                                                </bean>
+                                                <ref bean="TransactionReverseLightbox"/>
                                                 <bean parent="Uif-ImageField" p:source="../images/refund.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
                                                       p:onClickScript="showLightboxComponent('refundLightbox@{#lineSuffix}');" p:render="@{#line.isPaymentRefundable()}">
                                                     <property name="toolTip">
@@ -662,6 +669,14 @@
                         <bean parent="Uif-HorizontalBoxSection" p:style="float: right;">
                             <property name="items">
                                 <list>
+                                    <bean parent="Uif-ImageField" p:source="../images/reverse.png" p:style="cursor:pointer; float: right;" p:altText="" p:title="" p:render="@{#line.unallocatedAmount > 0}"
+                                          p:onClickScript="showLightboxComponent('TransactionReverseLightbox@{#lineSuffix}');writeHiddenToForm('actionParameters[source]', 'rollup');">
+                                        <property name="toolTip">
+                                            <bean parent="Uif-Tooltip" p:tooltipContent="Click to reverse this transaction"/>
+                                        </property>
+                                    </bean>
+                                    <ref bean="TransactionReverseLightbox"/>
+
                                     <bean parent="Uif-ImageField" p:source="../images/memo.png" p:style="cursor:pointer; float: right;" p:altText="" p:title=""
                                           p:onClickScript="showLightboxComponent('memoLightbox@{#lineSuffix}');" p:render="@{#line.memos.size() > 0}">
                                         <property name="toolTip">
@@ -792,7 +807,35 @@
         </property>
     </bean>
 
-	<bean id="transactionDetailLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+    <bean id="TransactionReverseLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+        <property name="headerText" value="Reverse Transaction"/>
+        <!--<property name="retrieveViaAjax" value="true"/>-->
+        <property name="hidden" value="true"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="effectiveDate"/>
+                <bean parent="Uif-InputField" p:label="Description" p:propertyName="transactionType.description"/>
+                <bean parent="Uif-InputField" p:label="Type" p:propertyName="transactionTypeValue"/>
+                <bean parent="Uif-InputField" p:label="Amount" p:propertyName="unallocatedAmount"/>
+                <bean parent="Uif-InputField" p:label="Mandatory Memo" p:propertyName="reverseTransactionReason" p:readOnly="false"
+                      p:instructionalText="Please describe why this transaction is being reversed.">
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-InputField" p:propertyName="reverseTransactionInternalOnly" p:readOnly="false">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Internal Only"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="reverseTransaction" p:actionLabel="Reverse the Transaction"
+                      p:preSubmitCall="jQuery.fancybox.close();return true;"  p:actionParameters="transactionId:@{#line.id}"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="transactionDetailLightboxRunningTotal" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
         <!--<property name="retrieveViaAjax" value="true"/>-->
 		<property name="hidden" value="true"/>
 		<property name="items">
