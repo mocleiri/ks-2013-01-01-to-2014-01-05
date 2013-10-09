@@ -37,11 +37,11 @@ public class TransactionTypeHelper extends ViewHelperServiceImpl {
     }
 
     public List<CreditType> getPaymentsForSuggest(String suggest) {
-        return getTransactionService().getTransactionTypeByNamePattern(suggest, CreditType.class);
+        return getTransactionService().getTransactionTypesByNamePattern(suggest, CreditType.class);
     }
 
     public List<DebitType> getChargesForSuggest(String suggest) {
-        return getTransactionService().getTransactionTypeByNamePattern(suggest, DebitType.class);
+        return getTransactionService().getTransactionTypesByNamePattern(suggest, DebitType.class);
     }
 
     private TransactionService getTransactionService() {

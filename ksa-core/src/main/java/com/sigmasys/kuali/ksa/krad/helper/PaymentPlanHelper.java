@@ -69,7 +69,7 @@ public class PaymentPlanHelper extends ViewHelperServiceImpl {
     }
 
     public List<TransactionType> getTransactionTypesForSuggest(String suggest) {
-        return getTransactionService().getTransactionTypeByNamePattern(suggest, TransactionType.class);
+        return getTransactionService().getTransactionTypesByNamePattern(suggest, TransactionType.class);
     }
 
     private TransactionService getTransactionService() {

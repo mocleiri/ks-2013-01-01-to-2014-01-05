@@ -262,7 +262,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
-    public <T extends TransactionType> List<T> getTransactionTypeByNamePattern(String pattern, Class<T> entityType) {
+    public <T extends TransactionType> List<T> getTransactionTypesByNamePattern(String pattern, Class<T> entityType) {
 
         PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
 

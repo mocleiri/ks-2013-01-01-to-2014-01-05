@@ -1702,27 +1702,27 @@ public class TransactionServiceTest extends AbstractServiceTest {
         String search = "cc";
         Class type = CreditType.class;
 
-        List<CreditType> cTypes = transactionService.getTransactionTypeByNamePattern(search, type);
+        List<CreditType> cTypes = transactionService.getTransactionTypesByNamePattern(search, type);
 
         Assert.notNull(cTypes);
         Assert.notEmpty(cTypes);
 
         // Search on the description
         search = "Credit Card payment";
-        cTypes = transactionService.getTransactionTypeByNamePattern(search, type);
+        cTypes = transactionService.getTransactionTypesByNamePattern(search, type);
 
         Assert.notNull(cTypes);
         Assert.notEmpty(cTypes);
 
         // Search on the same string but as Debit Type should give 0 results
         type = DebitType.class;
-        List<DebitType> dTypes = transactionService.getTransactionTypeByNamePattern(search, type);
+        List<DebitType> dTypes = transactionService.getTransactionTypesByNamePattern(search, type);
 
         Assert.notNull(dTypes);
         Assert.isTrue(dTypes.isEmpty());
 
         search = "LAB FEE";
-        dTypes = transactionService.getTransactionTypeByNamePattern(search, type);
+        dTypes = transactionService.getTransactionTypesByNamePattern(search, type);
 
         Assert.notNull(dTypes);
         Assert.notEmpty(cTypes);

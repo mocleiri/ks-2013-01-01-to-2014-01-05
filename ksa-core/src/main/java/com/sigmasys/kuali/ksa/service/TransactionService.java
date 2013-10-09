@@ -123,7 +123,7 @@ public interface TransactionService {
      * @return List of TransactionType instances
      */
     @WebMethod(exclude = true)
-    <T extends TransactionType> List<T> getTransactionTypeByNamePattern(String pattern, Class<T> entityType);
+    <T extends TransactionType> List<T> getTransactionTypesByNamePattern(String pattern, Class<T> entityType);
 
 
     /**
