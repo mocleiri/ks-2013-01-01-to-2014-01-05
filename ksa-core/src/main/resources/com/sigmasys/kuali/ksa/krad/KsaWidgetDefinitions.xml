@@ -153,7 +153,7 @@
                 <bean parent="Uif-Link" p:linkText="Create Payment Billing Plan" p:target="_self"
                       p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=CreatePaymentPlanPage"/>
                 <bean parent="Uif-Link" p:linkText="Manage Payment Billing Plans" p:target="_self"
-                      p:href=""/>
+                      p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=ManagePaymentPlanPage"/>
                 <bean parent="Uif-Link" p:linkText="Create Third Party Payment Plan" p:target="_self"
                       p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=CreateThirdPartyPage"/>
                 <bean parent="Uif-Link" p:linkText="Manage Third Party Payment Plans" p:target="_self"
