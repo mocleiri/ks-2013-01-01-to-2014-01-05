@@ -15,52 +15,53 @@ import java.util.*;
  */
 public class TransactionZeroBalanceKeyValues extends KeyValuesBase {
 
-   private boolean blankOption;
+    private boolean blankOption;
 
     private List<Date> zeroBalance;
 
-   @Override
-   public List<KeyValue> getKeyValues() {
-        List<KeyValue> keyValues = new ArrayList<KeyValue>();
-        if(blankOption){
+    @Override
+    public List<KeyValue> getKeyValues() {
+
+        List<KeyValue> keyValues = new LinkedList<KeyValue>();
+
+        if (blankOption) {
             keyValues.add(new ConcreteKeyValue("", ""));
         }
 
-       DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 
-       GregorianCalendar allTransactionsDate = new GregorianCalendar(1900, Calendar.JANUARY, 1);
-       String zeroString = df.format(allTransactionsDate.getTime());
+        GregorianCalendar allTransactionsDate = new GregorianCalendar(1900, Calendar.JANUARY, 1);
+        String zeroString = df.format(allTransactionsDate.getTime());
 
-       keyValues.add(new ConcreteKeyValue(zeroString, "All Transactions"));
-       if(this.zeroBalance == null){
-           return keyValues;
-       }
+        keyValues.add(new ConcreteKeyValue(zeroString, "All Transactions"));
+        if (this.zeroBalance == null) {
+            return keyValues;
+        }
 
-       for(Date zero : zeroBalance) {
-            if(zero != null) {
+        for (Date zero : zeroBalance) {
+            if (zero != null) {
                 zeroString = df.format(zero);
                 keyValues.add(new ConcreteKeyValue(zeroString, "Zero Balance on " + zeroString));
             }
-       }
+        }
 
+        return keyValues;
+    }
 
-      return keyValues;
-   }
+    /**
+     * @return the blankOption
+     */
+    public boolean isBlankOption() {
+        return blankOption;
+    }
 
-   /**
-    * @return the blankOption
-    */
-   public boolean isBlankOption() {
-      return this.blankOption;
-   }
-
-   /**
-    * @param blankOption the blankOption to set
-    */
-   public void setBlankOption(boolean blankOption) {
-      this.blankOption = blankOption;
-   }
+    /**
+     * @param blankOption the blankOption to set
+     */
+    public void setBlankOption(boolean blankOption) {
+        this.blankOption = blankOption;
+    }
 
     public void setValues(List<Date> zeroBalanceDates) {
         this.zeroBalance = zeroBalanceDates;
