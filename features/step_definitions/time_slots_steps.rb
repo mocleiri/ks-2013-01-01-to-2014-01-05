@@ -145,9 +145,18 @@ end
 And /^I? ?attempt to edit the Time Slot omitting the (days|start time|end time)$/ do |omittedField|
   @code_list = [@time_slots.new_time_slots[0].code]
   @time_slots = create TimeSlots
-  new_days = (omittedField=="days")?"":"S"
-  new_start = (omittedField=="start time")?"":"2:42"
-  new_end = (omittedField=="end time")?"":"2:49"
+
+  # initialize days, start & end times, then blank out one depending on the value in the step def
+  new_days, new_start, new_end = "S", "2:42", "2:49"
+  case omittedField
+    when "days"
+      new_days = ""
+    when "start time"
+      new_start = ""
+    when "end time"
+      new_end = ""
+  end
+
   @time_slots.edit_time_slot(:code => @code_list[0], :days => new_days, :start_time => new_start, :end_time => new_end)
 end
 
