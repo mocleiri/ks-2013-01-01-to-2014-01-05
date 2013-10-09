@@ -254,15 +254,31 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Returns the list of transaction type instances for the given string
+     * Returns the list of transaction type instances for the given string pattern.
      *
-     * @param pattern    String containing characters within the name
+     * @param pattern    String containing characters within the code, name or description
      * @param entityType Class instance of TransactionType subclass
      * @return List of TransactionType instances
      */
     @Override
     @WebMethod(exclude = true)
     public <T extends TransactionType> List<T> getTransactionTypesByNamePattern(String pattern, Class<T> entityType) {
+        return getTransactionTypesByNamePattern(pattern, entityType, null);
+    }
+
+    /**
+     * Returns the list of transaction type instances for the given string pattern.
+     *
+     * @param pattern       String containing characters within the code, name or description
+     * @param entityType    Class instance of TransactionType subclass
+     * @param effectiveDate Date for which the transaction types are active
+     * @return List of TransactionType instances
+     */
+    @Override
+    @WebMethod(exclude = true)
+    public <T extends TransactionType> List<T> getTransactionTypesByNamePattern(String pattern,
+                                                                                Class<T> entityType,
+                                                                                Date effectiveDate) {
 
         PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
 
@@ -272,13 +288,23 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new IllegalArgumentException(errMsg);
         }
 
-        Query query = em.createQuery("select tt from " + entityType.getName() +
-                " tt where upper(tt.id.id) like upper(:pattern) or " +
-                " upper(tt.code) like upper(:pattern) or " +
-                " upper(tt.name) like upper(:pattern) or " +
-                " upper(tt.description) like upper(:pattern)");
+        StringBuilder queryBuilder = new StringBuilder("select t from " + entityType.getName() +
+                " t where (upper(t.id.id) like :pattern or " +
+                " upper(t.code) like :pattern or " +
+                " upper(t.name) like :pattern or " +
+                " upper(t.description) like :pattern)");
 
-        query.setParameter("pattern", "%" + pattern + "%");
+        if (effectiveDate != null) {
+            queryBuilder.append(" and :date >= t.startDate and (t.endDate is null or t.endDate >= :date)");
+        }
+
+        Query query = em.createQuery(queryBuilder.toString());
+
+        query.setParameter("pattern", "%" + pattern.toUpperCase() + "%");
+
+        if (effectiveDate != null) {
+            query.setParameter("date", CalendarUtils.removeTime(effectiveDate), TemporalType.DATE);
+        }
 
         return query.getResultList();
     }

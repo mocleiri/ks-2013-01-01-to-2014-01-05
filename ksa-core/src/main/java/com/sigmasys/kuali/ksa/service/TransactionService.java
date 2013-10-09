@@ -116,15 +116,27 @@ public interface TransactionService {
     TransactionType getTransactionType(TransactionTypeId transactionTypeId) throws InvalidTransactionTypeException;
 
     /**
-     * Returns the list of transaction type instances for the given string
+     * Returns the list of transaction type instances for the given string pattern.
      *
-     * @param pattern    String containing characters within the name
+     * @param pattern    String containing characters within the code, name or description
      * @param entityType Class instance of TransactionType subclass
      * @return List of TransactionType instances
      */
     @WebMethod(exclude = true)
     <T extends TransactionType> List<T> getTransactionTypesByNamePattern(String pattern, Class<T> entityType);
 
+    /**
+     * Returns the list of transaction type instances for the given string pattern and effective date.
+     *
+     * @param pattern       String containing characters within the code, name or description
+     * @param entityType    Class instance of TransactionType subclass
+     * @param effectiveDate Date for which the transaction types are active
+     * @return List of TransactionType instances
+     */
+    @WebMethod(exclude = true)
+    <T extends TransactionType> List<T> getTransactionTypesByNamePattern(String pattern,
+                                                                         Class<T> entityType,
+                                                                         Date effectiveDate);
 
     /**
      * Creates a new debit type based on the given parameters.

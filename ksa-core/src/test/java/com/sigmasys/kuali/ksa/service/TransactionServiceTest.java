@@ -1696,7 +1696,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void getTransactionTypesByNamePattern() throws Exception {
+    public void getTransactionTypesByNamePattern1() throws Exception {
 
         // Search on the id
         String search = "cc";
@@ -1723,6 +1723,43 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         search = "LAB FEE";
         dTypes = transactionService.getTransactionTypesByNamePattern(search, type);
+
+        Assert.notNull(dTypes);
+        Assert.notEmpty(cTypes);
+    }
+
+    @Test
+    public void getTransactionTypesByNamePattern2() throws Exception {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
+
+        final Date effectiveDate = dateFormat.parse("05/01/2012");
+
+        // Search on the id
+        String search = "cc";
+        Class type = CreditType.class;
+
+        List<CreditType> cTypes = transactionService.getTransactionTypesByNamePattern(search, type, effectiveDate);
+
+        Assert.notNull(cTypes);
+        Assert.notEmpty(cTypes);
+
+        // Search on the description
+        search = "Credit Card payment";
+        cTypes = transactionService.getTransactionTypesByNamePattern(search, type, effectiveDate);
+
+        Assert.notNull(cTypes);
+        Assert.notEmpty(cTypes);
+
+        // Search on the same string but as Debit Type should give 0 results
+        type = DebitType.class;
+        List<DebitType> dTypes = transactionService.getTransactionTypesByNamePattern(search, type, effectiveDate);
+
+        Assert.notNull(dTypes);
+        Assert.isTrue(dTypes.isEmpty());
+
+        search = "LAB FEE";
+        dTypes = transactionService.getTransactionTypesByNamePattern(search, type, effectiveDate);
 
         Assert.notNull(dTypes);
         Assert.notEmpty(cTypes);
