@@ -343,9 +343,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return createTransactionType(creditTypeId, startDate, CreditType.class);
     }
 
-    private synchronized <T extends TransactionType> T createTransactionType(String transactionTypeId, Date startDate,
+    private synchronized <T extends TransactionType> T createTransactionType(String transactionTypeId,
+                                                                             Date startDate,
                                                                              Class<T> entityType) {
-
         PermissionUtils.checkPermission(Permission.CREATE_TRANSACTION_TYPE);
 
         T transactionType = getActiveTransactionType(transactionTypeId, entityType);
@@ -357,20 +357,58 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         startDate = CalendarUtils.removeTime(startDate);
 
-        transactionType.setEndDate(CalendarUtils.addCalendarDays(startDate, -1));
+        Date endDate = CalendarUtils.addCalendarDays(startDate, -1);
+
+        logger.debug("Previous Transaction Type end date = " + endDate);
+
+        transactionType.setEndDate(endDate);
 
         int nextSubCode = transactionType.getId().getSubCode() + 1;
 
-        return createTransactionType(transactionTypeId, nextSubCode, transactionType.getName(), startDate,
-                transactionType.getPriority(), transactionType.getDescription(), entityType, false);
+        logger.debug("Next Transaction Type start date = " + startDate);
+        logger.debug("Next Transaction Type sub-code = " + nextSubCode);
 
+        logger.debug("Creating new Transaction Type with ID = " + transactionTypeId + " and sub-code = " + nextSubCode);
+
+        Integer priority = transactionType.getPriority();
+        if (priority == null) {
+            priority = 0;
+        }
+
+        return createTransactionType(transactionTypeId,
+                nextSubCode,
+                transactionType.getName(),
+                startDate,
+                priority,
+                transactionType.getDescription(),
+                entityType,
+                false);
     }
 
-    private <T extends TransactionType> T createTransactionType(String transactionTypeId, int subCode, String name,
-                                                                Date startDate, int priority, String description,
-                                                                Class<T> entityType, boolean createNewType) {
+    /**
+     * Creates a new transaction type based on the given parameters
+     *
+     * @param transactionTypeId Transaction Type ID
+     * @param subCode           Transaction Type sub-code
+     * @param name              Transaction Type name
+     * @param startDate         Transaction Type start date
+     * @param priority          Transaction Type priority
+     * @param description       TransactionType description
+     * @param entityType        Transaction Type class (DebitType or CreditType)
+     * @param createNewType     true if the new transaction type is supposed to be created, false - for sub-types only.
+     * @param <T>               TransactionType subclass
+     * @return TransactionType persistent instance
+     */
+    @Override
+    @WebMethod(exclude = true)
+    @Transactional(readOnly = false)
+    public <T extends TransactionType> T createTransactionType(String transactionTypeId, int subCode, String name,
+                                                               Date startDate, int priority, String description,
+                                                               Class<T> entityType, boolean createNewType) {
 
         PermissionUtils.checkPermission(Permission.CREATE_TRANSACTION_TYPE);
+
+        logger.debug("Creating new Transaction Type with ID = " + transactionTypeId + " and sub-code = " + subCode);
 
         if (subCode > 0 && createNewType) {
             String errMsg = "Transaction type with ID = " + transactionTypeId + " already exists";
@@ -391,7 +429,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         transactionType.setCreationDate(new Date());
         transactionType.setCreatorId(userSessionManager.getUserId());
 
-        persistTransactionType(transactionType);
+        persistEntity(transactionType);
 
         return transactionType;
     }

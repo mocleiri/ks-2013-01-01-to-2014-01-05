@@ -181,13 +181,14 @@ public class TransactionTypeController extends GenericSearchController {
         String description = form.getDescription();
 
         List<GlBreakdown> breakdowns = new ArrayList<GlBreakdown>();
+
         // For now, all breakdowns use the default GL Account
         GeneralLedgerType defaultGlType = glService.getDefaultGeneralLedgerType();
 
         /*
             validate as much as we can before we save anything.
          */
-        boolean errors = this.validateBreakdowns(breakdowns, form, defaultGlType);
+        boolean errors = validateBreakdowns(breakdowns, form, defaultGlType);
 
         if (errors) {
             return getUIFModelAndView(form);
@@ -231,6 +232,7 @@ public class TransactionTypeController extends GenericSearchController {
                 return getUIFModelAndView(form);
             }
         } else {
+
             TransactionTypeId ttId = new TransactionTypeId(code, subCode);
             transactionType = transactionService.getTransactionType(ttId);
 
@@ -304,6 +306,7 @@ public class TransactionTypeController extends GenericSearchController {
         }
 
         for (GlBreakdown breakdown : breakdowns) {
+
             breakdown.setTransactionType(transactionType);
 
             // Breakdowns are actually stored at integers (well, greater than 1) so multiply by 100 to get the right number in the database
@@ -494,7 +497,7 @@ public class TransactionTypeController extends GenericSearchController {
         form.setType((transactionType instanceof CreditType ? TransactionType.CREDIT_TYPE : TransactionType.DEBIT_TYPE));
 
         form.setCode(transactionType.getId().getId());
-        if(createNew) {
+        if (createNew) {
             form.setStartDate(new Date());
         } else {
             form.setStartDate(transactionType.getStartDate());
@@ -545,13 +548,6 @@ public class TransactionTypeController extends GenericSearchController {
     public boolean validateBreakdowns(List<GlBreakdown> breakdowns, TransactionTypeForm form, GeneralLedgerType defaultGlType) {
 
         boolean errors = false;
-        String type = form.getType();
-
-        //if (!TransactionType.DEBIT_TYPE.equals(type)) {
-            // Breakdowns only apply to Debit types
-        //    return errors;
-        //}
-
 
         // Handle the GL Breakdown sections.
         BigDecimal total = new BigDecimal(0);

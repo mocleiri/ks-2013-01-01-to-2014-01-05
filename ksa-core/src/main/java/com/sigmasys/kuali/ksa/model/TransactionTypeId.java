@@ -14,7 +14,7 @@ import javax.persistence.Embeddable;
 public class TransactionTypeId implements Serializable {
 
     private String id;
-    private Integer subCode;
+    private int subCode;
 
 
     public TransactionTypeId() {
@@ -35,57 +35,36 @@ public class TransactionTypeId implements Serializable {
     }
 
     @Column(name = "SUB_CODE")
-    public Integer getSubCode() {
+    public int getSubCode() {
         return subCode;
     }
 
-    public void setSubCode(Integer subCode) {
+    public void setSubCode(int subCode) {
         this.subCode = subCode;
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getSubCode() == null) ? 0 : getSubCode().hashCode());
-        return result;
-    }
+    public boolean equals(Object object) {
 
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj) {
+        if (this == object) {
             return true;
         }
 
-        if (obj == null) {
+        if (object == null || getClass() != object.getClass()) {
             return false;
         }
 
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+        TransactionTypeId transactionTypeId = (TransactionTypeId) object;
 
-        TransactionTypeId other = (TransactionTypeId) obj;
+        return (subCode == transactionTypeId.subCode) &&
+                !(id != null ? !id.equals(transactionTypeId.id) : transactionTypeId.id != null);
+    }
 
-        if (getId() == null) {
-            if (other.getId() != null) {
-                return false;
-            }
-        } else if (!getId().equals(other.getId())) {
-            return false;
-        }
-
-        if (getSubCode() == null) {
-            if (other.getSubCode() != null) {
-                return false;
-            }
-        } else if (!getSubCode().equals(other.getSubCode())) {
-            return false;
-        }
-
-        return true;
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + subCode;
+        return result;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.util.ErrorUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.util.CollectionUtils;
 
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.Account;
@@ -27,10 +28,7 @@ import javax.xml.bind.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * TransactionImportService implementation
@@ -207,14 +205,21 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                 } else if (!isWithinCreditLimit(ksaTransaction.getAccountIdentifier())) {
                     errMsg = "Account '" + ksaTransaction.getAccountIdentifier() + "' has insufficient credit";
                 }
+
                 if (!isTransactionTypeValid(ksaTransaction.getTransactionType(), effectiveDate)) {
                     errMsg = "No such Transaction Type = '" + ksaTransaction.getTransactionType() +
                             "' with Effective Date = '" + effectiveDate + "'";
                 }
-                if (ksaTransaction.getOverride() != null &&
-                        !refundService.isRefundRuleValid(ksaTransaction.getOverride().getRefundRule())) {
-                    // applies to Payments
-                    errMsg = "Invalid refund rule '" + ksaTransaction.getOverride().getRefundRule() + "'";
+
+                KsaTransaction.Override override = ksaTransaction.getOverride();
+
+                if (override != null) {
+
+                    if (!refundService.isRefundRuleValid(override.getRefundRule())) {
+                        // applies to Payments
+                        errMsg = "Invalid refund rule '" + override.getRefundRule() + "'";
+                    }
+
                 }
 
                 if (errMsg.length() > 0) {
@@ -295,8 +300,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                         failedValue = failedValue.add(ksaTransaction.getAmount());
 
                         // add the reason to the KsaTransactionAndReason
-                        failed.getKsaTransactionAndReason().add("Unable to create or persist userTransaction id " +
-                                ksaTransaction.getAccountIdentifier());
+                        failed.getKsaTransactionAndReason().add(ErrorUtils.getMessage(e).replaceAll("\\[|\\]", ""));
                     }
                 }
 
@@ -488,6 +492,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                 override.getGeneralLedgerType() :
                 configService.getParameter(Constants.DEFAULT_GL_TYPE);
 
+
         if (glTypeCode != null) {
             transaction.setGeneralLedgerType(glService.getGeneralLedgerType(glTypeCode));
         }
@@ -529,9 +534,34 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
         }
 
-        // TODO What to do persist where and what document and override plus other types
-        // Save additional information concerning the transaction above and beyond the basic transaction created
-        transactionService.persistTransaction(transaction);
+        final Long transactionId = transactionService.persistTransaction(transaction);
+
+        if (override != null) {
+            KsaTransaction.Override.GeneralLedgerOverride glOverride = override.getGeneralLedgerOverride();
+            if (glOverride != null) {
+                List<Serializable> breakdowns = glOverride.getGeneralLedgerAccountAndPercentageAllocation();
+                if (CollectionUtils.isNotEmpty(breakdowns)) {
+                    List<String> glAccounts = new LinkedList<String>();
+                    List<BigDecimal> glBreakdowns = new LinkedList<BigDecimal>();
+                    for (Serializable breakdown : breakdowns) {
+                        if (breakdown instanceof BigDecimal) {
+                            glBreakdowns.add((BigDecimal) breakdown);
+                        } else {
+                            glAccounts.add((String) breakdown);
+                        }
+                    }
+                    List<GlBreakdownOverride> breakdownOverrides = new ArrayList<GlBreakdownOverride>(glAccounts.size());
+                    for (int i = 0; i < glAccounts.size(); i++) {
+                        GlBreakdownOverride breakdownOverride = new GlBreakdownOverride();
+                        breakdownOverride.setGlAccount(glAccounts.get(i));
+                        breakdownOverride.setBreakdown(glBreakdowns.get(i));
+                        breakdownOverrides.add(breakdownOverride);
+                    }
+                    transactionService.createGlBreakdownOverrides(transactionId, breakdownOverrides);
+                }
+            }
+        }
+
         return transaction;
     }
 }
