@@ -99,7 +99,7 @@ public class CheckInfoController extends UifControllerBase {
             throw new RuntimeException("Create new failed. ", e);
         }
 
-       return close(createForm, result, request, response);
+       return back(createForm, result, request, response);
     }
     @RequestMapping(params = "methodToCall=view")
     public ModelAndView view(@ModelAttribute("KualiForm") CheckInfoForm searchForm, BindingResult result,

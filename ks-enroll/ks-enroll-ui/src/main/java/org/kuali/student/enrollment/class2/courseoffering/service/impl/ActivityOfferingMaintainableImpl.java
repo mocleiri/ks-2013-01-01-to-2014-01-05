@@ -302,8 +302,8 @@ public class ActivityOfferingMaintainableImpl extends MaintainableImpl implement
     }
 
     @Override
-    protected void processAfterAddLine(View view, CollectionGroup collectionGroup, Object model, Object addLine) {
-        super.processAfterAddLine(view, collectionGroup, model, addLine);
+    protected void processAfterAddLine(View view, CollectionGroup collectionGroup, Object model, Object addLine, boolean isValidAddLine) {
+        super.processAfterAddLine(view, collectionGroup, model, addLine, true);
 
         if (addLine instanceof ScheduleComponentWrapper) {
             ScheduleComponentWrapper scheduleComponentWrapper = (ScheduleComponentWrapper)addLine;

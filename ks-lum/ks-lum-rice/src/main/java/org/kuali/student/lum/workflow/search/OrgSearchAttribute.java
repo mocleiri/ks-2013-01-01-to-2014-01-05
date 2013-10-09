@@ -21,7 +21,7 @@ import org.kuali.rice.kew.api.document.attribute.DocumentAttribute;
 import org.kuali.rice.kew.api.extension.ExtensionDefinition;
 import org.kuali.rice.kew.docsearch.SearchableAttributeValue;
 import org.kuali.rice.kew.doctype.service.impl.DocumentTypeServiceImpl;
-import org.kuali.rice.krad.workflow.attribute.KualiXmlSearchableAttributeImpl;
+import org.kuali.rice.kns.workflow.attribute.KualiXmlSearchableAttributeImpl;
 import org.kuali.student.common.exceptions.*;
 import org.kuali.student.core.organization.dto.OrgInfo;
 import org.kuali.student.core.organization.service.OrganizationService;

@@ -105,7 +105,7 @@ public class CalendarSearchController  extends UifControllerBase {
             GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, RiceKeyConstants.ERROR_CUSTOM, "ERROR: invalid calendar type.");
         }
 
-       return getUIFModelAndView(searchForm, null);
+       return getUIFModelAndView(searchForm);
     }
 
      /**

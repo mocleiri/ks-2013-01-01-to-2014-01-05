@@ -102,7 +102,7 @@ public class HoldIssueInfoCreateController extends UifControllerBase {
         }
 
 
-        return close(createForm, result, request, response);
+        return back(createForm, result, request, response);
     }
 
   @RequestMapping(params = "methodToCall=modify")

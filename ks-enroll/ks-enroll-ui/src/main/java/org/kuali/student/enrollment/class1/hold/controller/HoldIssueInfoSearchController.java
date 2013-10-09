@@ -110,7 +110,7 @@ public class HoldIssueInfoSearchController extends UifControllerBase {
 
         searchForm.setHoldIssueInfo(results);
 
-        return getUIFModelAndView(searchForm, null);
+        return getUIFModelAndView(searchForm);
     }
 
     @RequestMapping(params = "methodToCall=clear")

@@ -656,7 +656,7 @@ public class CourseOfferingManagementController extends UifControllerBase  {
             urlParameters.put(ActivityOfferingConstants.ACTIVITY_OFFERING_WRAPPER_ID, aoWrapper.getAoInfo().getId());
             urlParameters.put(ActivityOfferingConstants.ACTIVITYOFFERING_COURSE_OFFERING_ID, theForm.getTheCourseOffering().getId());
             urlParameters.put("dataObjectClassName", ActivityOfferingWrapper.class.getName());
-            urlParameters.put(UifConstants.UrlParams.SHOW_HOME, BooleanUtils.toStringTrueFalse(false));
+            //urlParameters.put(UifConstants.UrlParams.SHOW_HOME, BooleanUtils.toStringTrueFalse(false));
         } else {
             throw new RuntimeException("Invalid type. Does not support for now");
         }

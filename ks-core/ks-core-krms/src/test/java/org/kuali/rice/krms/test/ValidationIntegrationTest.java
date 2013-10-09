@@ -121,8 +121,8 @@ public class ValidationIntegrationTest extends AbstractBoTest {
 	public void setup() {
 
         krmsAttributeDefinitionService = KrmsRepositoryServiceLocator.getKrmsAttributeDefinitionService();
-        krmsTypeRepositoryService = new KrmsTypeBoServiceImpl();
-        ((KrmsTypeBoServiceImpl)krmsTypeRepositoryService).setBusinessObjectService(getBoService());
+//        krmsTypeRepositoryService = new KrmsTypeBoServiceImpl();
+//        ((KrmsTypeBoServiceImpl)krmsTypeRepositoryService).setBusinessObjectService(getBoService());
 
         // like RepositoryCreateAndExecuteIntegrationTest
         propositionBoService = new PropositionBoServiceImpl();

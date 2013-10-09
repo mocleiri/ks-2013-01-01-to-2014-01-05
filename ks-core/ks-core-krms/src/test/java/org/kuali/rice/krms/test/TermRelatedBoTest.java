@@ -52,8 +52,8 @@ public class TermRelatedBoTest extends AbstractBoTest {
 		contextRepository = new ContextBoServiceImpl();
 		((ContextBoServiceImpl)contextRepository).setBusinessObjectService(getBoService());
 		
-		krmsTypeRepository = new KrmsTypeBoServiceImpl();
-		((KrmsTypeBoServiceImpl)krmsTypeRepository).setBusinessObjectService(getBoService());
+//		krmsTypeRepository = new KrmsTypeBoServiceImpl();
+//		((KrmsTypeBoServiceImpl)krmsTypeRepository).setBusinessObjectService(getBoService());
 	}
 	
 	@Test
