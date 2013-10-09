@@ -122,10 +122,25 @@ Then /^The AO is successfully deleted$/ do
   end
 end
 
-Then /^the activity offering is colocated for the copied the CO$/ do
+Then /^the activity offering in the course offering copy is added to the colocated set$/ do
   @course_offering_copy.manage
-  on(ManageCourseOfferings).has_colo_icon(@activity_offering.code).should be_true
-end
+
+  on ManageCourseOfferings do |page|
+    page.has_colo_icon(@activity_offering.code).should be_true
+
+    colocated_tooltip_text = page.target_row(@activity_offering.code)[1].image(src: /colocate_icon/).alt.upcase
+
+    # validate tooltip text contains each colo
+    expected = @activity_offering.parent_course_offering.course.upcase + ' ' + @activity_offering.code.upcase
+    colocated_tooltip_text.should include expected
+
+    @activity_offering.colocate_ao_list.each do |colo_ao|
+      expected = @activity_offering.parent_course_offering.course.upcase + ' ' + @activity_offering.code.upcase
+      colocated_tooltip_text.should include expected
+    end
+    end
+
+  end
 
 Then /^the activity offering in the course offering copy is not colocated$/ do
   @course_offering_copy.manage

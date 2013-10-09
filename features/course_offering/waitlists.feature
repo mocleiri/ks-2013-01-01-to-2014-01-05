@@ -22,7 +22,7 @@ Feature: EC.Waitlists
 
   Scenario: WL 1.4.2 Verify that waitlist configuration is stored after the waitlist option is disabled
     Given I manage an activity offering with waitlists enabled
-    And I make changes to the default activity offering waitlist configuration
+    And I make changes to the default waitlist configuration for the activity offering
     And I disable the waitlists option for the activity offering
     When I re-enable the waitlists option for the activity offering the modified waitlist configuration is restored
 
@@ -66,15 +66,15 @@ Feature: EC.Waitlists
   Scenario: WL 1.12 - Verify waitlist configuration copied during rollover
     Given I create an Academic Calender and add an official term
     And I create a course and activity offering with waitlists enabled
-    And I make changes to the default activity offering waitlist configuration
-    And I create a course and activity offering with a waitlists disabled
+    And I make changes to the default waitlist configuration for the activity offering
+    And I create a course and activity offering with waitlists disabled
     When I rollover the term to a new academic term
     Then the waitlist enabled configuration is copied to the new course and activity offering in the target term
     And the waitlist disabled configuration is copied to the course and activity offering in the target term
 
   Scenario: WL 1.13.1 - Verify waitlist information (enabled) is copied for copy course offering within the same term
     Given I create a course and activity offering with waitlists enabled
-    And I make changes to the default activity offering waitlist configuration
+    And I make changes to the default waitlist configuration for the activity offering
     When I copy the course offering
     Then the waitlist configuration is copied to the new course and activity offering
 

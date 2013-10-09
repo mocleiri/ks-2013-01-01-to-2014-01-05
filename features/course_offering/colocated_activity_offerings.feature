@@ -28,7 +28,7 @@ Background:
   Scenario: CCO 2.12A Verify colocation is copied when a Course Offering is copied within the same term
     Given there is a course offering with a colocated activity offering
     When I copy the course offering
-    Then the activity offering is colocated for the copied the CO
+    Then the activity offering in the course offering copy is added to the colocated set
 
   Scenario: CCO 2.12B Verify colocation is NOT copied when a Course Offering is copied from a prior term
     Given there is a course offering with a colocated activity offering
