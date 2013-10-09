@@ -9,3 +9,4 @@ ATTR_DEFN_ID,NM,NMSPC_CD,LBL,ACTV,CMPNT_NM,VER_NBR,DESC_TXT
 "KS-KRMS-ATTR-DEFN-10002","endTime","KS-SYS","End Time","Y","${mpx.null}","1","end.time"
 "KS-KRMS-ATTR-DEFN-10003","facility","KS-SYS","Facility","Y","${mpx.null}","1","facility"
 "KS-KRMS-ATTR-DEFN-10004","room","KS-SYS","Room","Y","${mpx.null}","1","room"
+"KS-KRMS-ATTR-DEFN-10005","kuali.krms.agenda.attribute.owner.term.type","KS-SYS","Master Term Type","Y","${mpx.null}","1","Master Term Type for Agenda"
