@@ -204,13 +204,15 @@ When /^I view the Exam Offerings for a CO with two new AOs and a standard final 
   end
 end
 
-When(/^I view the Exam Offerings for a CO with no final exam$/) {
+When /^I view the Exam Offerings for a CO with no final exam$/ do
   @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201208", :course => "ENGL304")
   @course_offering.exam_offerings_setup :final_exam_type => "No final exam or assessment"
 
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
+end
+
 
 When /^I create a CO with two new AOs and then view the Exam Offerings where the CO has a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
@@ -559,4 +561,4 @@ Then /^there should be no Standard Exam tables present$/ do
     page.exam_offerings_page_section.text.should_not match /by Course Offering/
     page.exam_offerings_page_section.text.should_not match /by Activity Offering/
   end
-end
+ end
