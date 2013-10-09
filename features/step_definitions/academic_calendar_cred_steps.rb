@@ -42,11 +42,11 @@ When /^I search for the Academic Calendar using (.*)$/ do |arg|
   on CalendarSearch do |page|
     page.search_for "Academic Calendar", search_terms[arg.to_sym]
 
-    while page.showing_up_to.to_i < page.total_results.to_i
+    while page.pagination_info.exists?
       if page.results_list.include? @calendar.name
         break
       else
-        page.next
+        page.right_arrow.click
       end
     end
   end
