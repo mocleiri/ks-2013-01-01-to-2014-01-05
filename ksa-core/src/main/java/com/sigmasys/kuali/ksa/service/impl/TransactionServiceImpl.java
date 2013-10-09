@@ -1748,6 +1748,10 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             overrideIds.add(breakdownId);
         }
 
+        if (CollectionUtils.isNotEmpty(glBreakdownOverrides)) {
+            transaction.setGlOverridden(true);
+        }
+
         return overrideIds;
     }
 
