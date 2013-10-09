@@ -121,7 +121,7 @@ When /^I? ?attempt to delete both the Time Slots added above in the same action$
 end
 
 Then /^an error message is displayed stating that the Time Slot may not be (deleted|edited).?$/ do |msgType|
-  on(TimeSlotMaintenance).time_slot_error_message.text.should match /^Time slot #{@code_list[-1]} is already associated with delivery logistics, so cannot be #{msgType}.$/
+  on(TimeSlotMaintenance).growl_text.should match /^Time slot #{@code_list[-1]} is already associated with delivery logistics, so cannot be #{msgType}.$/
 end
 
 Then /^the Time Slot edits (are|are not) saved.$/ do |areAreNot|
