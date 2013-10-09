@@ -126,6 +126,7 @@
                                         </property>
                                         <property name="suggestQuery">
                                             <bean parent="Uif-AttributeQueryConfig">
+                                                <property name="queryMethodArgumentFieldList" value="payment.effectiveDate"/>
                                                 <property name="queryMethodToCall" value="getPaymentsForSuggest"/>
                                             </bean>
                                         </property>

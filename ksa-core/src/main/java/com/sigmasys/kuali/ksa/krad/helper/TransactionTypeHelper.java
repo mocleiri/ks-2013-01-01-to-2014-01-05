@@ -6,10 +6,16 @@ import com.sigmasys.kuali.ksa.model.Tag;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.krad.uif.service.impl.ViewHelperServiceImpl;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * User: tbornholtz
@@ -17,6 +23,8 @@ import java.util.List;
  * Time: 5:25 PM
  */
 public class TransactionTypeHelper extends ViewHelperServiceImpl {
+
+    private Log logger = LogFactory.getLog(TransactionTypeHelper.class);
 
     private AuditableEntityService auditableEntityService;
 
@@ -40,8 +48,28 @@ public class TransactionTypeHelper extends ViewHelperServiceImpl {
         return getTransactionService().getTransactionTypesByNamePattern(suggest, CreditType.class);
     }
 
+    public List<CreditType> getPaymentsForSuggest(String effectiveDate, String suggest) {
+        Date effective = null;
+        try {
+            effective = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()).parse(effectiveDate);
+        } catch(ParseException e) {
+            logger.error("Error parsing date: " + effectiveDate);
+        }
+        return getTransactionService().getTransactionTypesByNamePattern(suggest, CreditType.class, effective);
+    }
+
     public List<DebitType> getChargesForSuggest(String suggest) {
         return getTransactionService().getTransactionTypesByNamePattern(suggest, DebitType.class);
+    }
+
+    public List<DebitType> getChargesForSuggest(String effectiveDate, String suggest) {
+        Date effective = null;
+        try {
+            effective = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()).parse(effectiveDate);
+        } catch(ParseException e) {
+            logger.error("Error parsing date: " + effectiveDate);
+        }
+        return getTransactionService().getTransactionTypesByNamePattern(suggest, DebitType.class, effective);
     }
 
     private TransactionService getTransactionService() {

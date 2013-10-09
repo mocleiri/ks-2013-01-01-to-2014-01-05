@@ -146,10 +146,10 @@ public class PaymentController extends GenericSearchController {
 
         try {
             form.setTransactionTypeMessage("");
-            type = transactionService.getTransactionType(ttId, new Date());
+            type = transactionService.getTransactionType(ttId, form.getPayment().getEffectiveDate());
         } catch (RuntimeException e) {
             logger.error(e.getMessage(), e);
-            form.setTransactionTypeMessage("Invalid Transaction Type");
+            form.setTransactionTypeMessage("Invalid Transaction Type: '" + ttId + " for effective date '" + form.getPayment().getEffectiveDate() + "'");
         }
 
         if (type != null && type instanceof CreditType) {
