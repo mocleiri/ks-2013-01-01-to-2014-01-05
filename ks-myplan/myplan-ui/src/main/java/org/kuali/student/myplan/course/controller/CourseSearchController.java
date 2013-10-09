@@ -745,10 +745,13 @@ public class CourseSearchController extends UifControllerBase {
             }
             req = EnumerationHelper.getEnumAbbrValForCodeByType(req, PlanConstants.GEN_EDU_ENUM_KEY);
             /*Doing this to fix a bug in IE8 which is trimming off the I&S as I*/
-            if (req.contains("&")) {
-                req = req.replace("&", "&amp;");
+            if (StringUtils.hasText(req)) {
+                if (req.contains("&")) {
+                    req = req.replace("&", "&amp;");
+                }
+
+                genEdsOut.append(req);
             }
-            genEdsOut.append(req);
         }
         return genEdsOut.toString();
     }
@@ -782,8 +785,7 @@ public class CourseSearchController extends UifControllerBase {
 
     protected CourseOfferingService getCourseOfferingService() {
         if (this.courseOfferingService == null) {
-            this.courseOfferingService = (CourseOfferingService)
-                    GlobalResourceLoader.getService(new QName(CourseOfferingServiceConstants.NAMESPACE, CourseOfferingServiceConstants.SERVICE_NAME_LOCAL_PART));
+            this.courseOfferingService = (CourseOfferingService) GlobalResourceLoader.getService(new QName("http://student.kuali.org/wsdl/courseOffering", "coService"));
         }
         return this.courseOfferingService;
     }
