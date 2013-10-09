@@ -1917,21 +1917,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new IllegalStateException(errMsg);
         }
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_EXPORT);
-
-        final String statement = dateFormat.format(transaction.getEffectiveDate()) + ":" +
-                transaction.getAccount().getId() + ":" +
-                transaction.getTransactionType().getCode() + ":" +
-                transaction.getTransactionTypeValue() + ":" +
-                transaction.getStatementText();
-
-        // Creating one GL transaction with the whole transaction amount
-        glService.createGlTransaction(transactionId, glAccount, transaction.getAmount(), glOperationType, statement, true);
-
         List<AbstractGlBreakdown> glBreakdowns = getGlBreakdowns(transaction);
-
-        BigDecimal initialAmount = transaction.getAmount();
-        BigDecimal remainingAmount = initialAmount;
 
         if (CollectionUtils.isNotEmpty(glBreakdowns)) {
 
@@ -1940,6 +1926,20 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 logger.error(errMsg);
                 throw new IllegalStateException(errMsg);
             }
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_EXPORT);
+
+            final String statement = dateFormat.format(transaction.getEffectiveDate()) + ":" +
+                    transaction.getAccount().getId() + ":" +
+                    transaction.getTransactionType().getCode() + ":" +
+                    transaction.getTransactionTypeValue() + ":" +
+                    transaction.getStatementText();
+
+            // Creating one GL transaction with the whole transaction amount
+            glService.createGlTransaction(transactionId, glAccount, transaction.getAmount(), glOperationType, statement, true);
+
+            BigDecimal initialAmount = transaction.getAmount();
+            BigDecimal remainingAmount = initialAmount;
 
             for (AbstractGlBreakdown glBreakdown : glBreakdowns) {
 
