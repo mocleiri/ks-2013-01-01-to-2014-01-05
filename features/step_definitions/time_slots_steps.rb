@@ -48,44 +48,19 @@ Then /^the timeslots are saved$/ do
 end
 
 Then /^an error message is displayed about the duplicate timeslot$/ do
-  on(TimeSlotMaintenance).time_slot_error_message.text.should match /Timeslot already exists for .*/
+  on(TimeSlotMaintenance).time_slot_error_message.text.should match /Duplicate time slots are not allowed/
 end
 
 Then /^an error is displayed about the missing data$/ do
   on(TimeSlotMaintenance).growl_text.should == "The form contains errors. Please correct these errors and try again."
 end
 
-
-
-###############################################################
-###
-### DRAFT REMNANTS -- DELETE ONCE DEV IS COMPLETE!
-###
-###############################################################
-
-
-
-
-When /^I target a row in the timeslots result table then I can get it's code$/ do
-
-  on TimeSlotMaintenance do |page|
-    row = page.target_results_row("A")
-    code = row[1].text
-    puts 'found code -> ' + code
-  end
-
-end
-
 When /^I show time slots for a single term type$/  do
   @time_slots = create TimeSlots
 end
 
-When /^I? ?specify Term Type (.*)$/  do  |termType|
-  pending
-end
-
-When /^I? ?specify Term Types (.*) and (.*)$/ do |termType1, termType2|
-  pending
+When /^I show time slots for multiple term types$/ do
+  @time_slots = create TimeSlots, :term_types => ['Fall - Full', 'Spring - Full']
 end
 
 Then /^only time slots of that term type appear.?$/ do
@@ -96,44 +71,96 @@ Then /^only time slots of that term type appear.?$/ do
   end
 end
 
-When /^I? ?add a Time Slot with the chosen Term Type$/ do
+When /^I? ?add a Time Slot with (one of)? ?the chosen Term Types?$/ do |arg1|
   @time_slots.add_unused_time_slots(1)
 end
 
-When /^I? ?(.*) ?edit the (.*) ?Time Slot added above to be (.*), Days (M|T|W|H|F|S|U|blank), Start time (\d+:\d+ ?.*|blank), End time (\d+:\d+ ?.*|blank)$/ do |attempt, tsOrdinality, termType, days, startTime, endTime|
-  pending
+When /^I? ?attempt to (.*) a Time Slot which is used in a delivery logistic$/ do |action|
+  @code_list = ["1003"]
+  @time_slots = create TimeSlots
+  if action == "delete"
+    @time_slots.delete(@code_list)
+  elsif action == "edit"
+    @new_days = "H"
+    @time_slots.edit_time_slot(:code => @code_list[0], :days => @new_days)
+  end
 end
-
 
 When /^I? ?attempt to (.*) the Time Slot added above$/ do |action|
+  @code_list = [@time_slots.new_time_slots[0].code]
+  @time_slots = create TimeSlots
   if action == "delete"
-    code = @time_slots.new_time_slots[0].code
-    @time_slots.delete(code)
+    @time_slots.delete(@code_list)
+  elsif action == "edit"
+    @new_days = "H"
+    @time_slots.edit_time_slot(:code => @code_list[0], :days => @new_days)
   end
 end
 
-Then /^the (.*) ?Time Slot (is|is not) deleted.?$/  do |tsOrdinality, isIsNot|
-  if tsOrdinality.nil? || tsOrdinality==""
-    if isIsNot=="is"
-      on TimeSlotMaintenance do |page|
-        page.get_time_slot_code_list.should_not include @time_slots.new_time_slots[0].code
-      end
-    end
-  end
+And /^I? ?attempt to delete the Time Slot added above and also a Time Slot used in a delivery logistic$/ do
+  @code_list = [@time_slots.new_time_slots[0].code]
+  @code_list << "1003"
+  @time_slots.delete(@code_list)
 end
 
-When /^I? ?add an RDL using the (.*) ?Time Slot added above$/ do |tsOrdinality|
-  pending
+Then /^the (first|second)? ?Time Slot (is|is not) deleted.?$/  do |tsOrdinality, isIsNot|
+  index = (!tsOrdinality.nil? && tsOrdinality=="second")?1:0
+  on TimeSlotMaintenance do |page|
+    page.get_time_slot_code_list.should_not include @code_list[index]if isIsNot=="is"
+    page.get_time_slot_code_list.should include @code_list[index]if isIsNot=="is not"
+  end
 end
 
 When /^I? ?attempt to delete both the Time Slots added above in the same action$/ do
-  pending
+  @code_list = []
+  @time_slots.new_time_slots.each do |ts|
+    @code_list << ts.code
+  end
+  @time_slots = create TimeSlots
+  @time_slots.delete(@code_list)
 end
 
-Then /^(a|an error) message is displayed on the time slot page.?$/ do |msgType|
-  pending
+Then /^an error message is displayed stating that the Time Slot may not be (deleted|edited).?$/ do |msgType|
+  on(TimeSlotMaintenance).time_slot_error_message.text.should match /^Time slot #{@code_list[-1]} is already associated with delivery logistics, so cannot be #{msgType}.$/
 end
 
 Then /^the Time Slot edits (are|are not) saved.$/ do |areAreNot|
-  pending
+  @time_slots.show_time_slots
+  on TimeSlotMaintenance do |page|
+    row = page.target_results_row @code_list[0]
+    row[TimeSlotMaintenance::TIME_SLOT_RESULTS_DAYS].text.should == @new_days if areAreNot=="are"
+    row[TimeSlotMaintenance::TIME_SLOT_RESULTS_DAYS].text.should_not == @new_days if areAreNot=="are not"
+  end
+end
+
+Then /^the Time Slot type edits (are|are not) saved.$/ do |areAreNot|
+  @time_slots.show_time_slots
+  on TimeSlotMaintenance do |page|
+    row = page.target_results_row @code_list[0]
+    row[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE].text.should == @new_type if areAreNot=="are"
+    row[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE].text.should_not == @new_type if areAreNot=="are not"
+  end
+end
+
+And /^I? ?attempt to edit the Time Slot omitting the (days|start time|end time)$/ do |omittedField|
+  @code_list = [@time_slots.new_time_slots[0].code]
+  @time_slots = create TimeSlots
+  new_days = (omittedField=="days")?"":"S"
+  new_start = (omittedField=="start time")?"":"2:42"
+  new_end = (omittedField=="end time")?"":"2:49"
+  @time_slots.edit_time_slot(:code => @code_list[0], :days => new_days, :start_time => new_start, :end_time => new_end)
+end
+
+And /^I? ?edit the second Time Slot to duplicate the first Time Slot$/ do
+  @time_slots.show_time_slots
+  ts0 = @time_slots.new_time_slots[0]
+  ts1 = @time_slots.new_time_slots[1]
+  @time_slots.edit_time_slot(:code => ts1.code, :days => ts0.days, :start_time => ts0.start_time, :start_time_ampm => ts0.start_time_am_pm, :end_time => ts0.end_time, :end_time_ampm => ts0.end_time_am_pm)
+end
+
+And /^I edit the Time Slot added above to use the other chosen Term Type$/ do
+  @code_list = [@time_slots.new_time_slots[0].code]
+  @time_slots = create TimeSlots, :term_types => ['Fall - Full', 'Spring - Full']
+  @new_type = "Spring - Full"
+  @time_slots.edit_time_slot(:code => @code_list[0], :term_type => @new_type)
 end

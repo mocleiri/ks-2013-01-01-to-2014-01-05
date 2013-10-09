@@ -57,6 +57,15 @@ class TimeSlots
     new_time_slots << time_slot
   end
 
+  def edit_time_slot(opts)
+    defaults = {
+    }
+    options = defaults.merge(opts)
+    on TimeSlotMaintenance do |page|
+      page.edit_time_slot(options)
+    end
+  end
+
   # adds a new time-slot but performs no validation and does not store in the internal list
   def add_new_time_slot_without_validation( time_slot )
     on(TimeSlotMaintenance).add_time_slot_without_validation(time_slot)
@@ -90,13 +99,9 @@ class TimeSlots
   end
 
   def delete(code)
-    puts "calling TimeSlots.delete(#{code})"
     on TimeSlotMaintenance do |page|
       page.delete_time_slot(code)
-      sleep(9)
     end
-
-    print_new_time_slots_to_console
   end
 
 
@@ -114,6 +119,15 @@ class TimeSlots
     new_time_slots.each do |slot|
       slot.print_time_slot_to_console
     end
+  end
+
+  def print_all_time_slot_codes_to_console
+    ts_list = []
+    puts "All time slot codes:"
+    on TimeSlotMaintenance do |page|
+      ts_list = page.get_time_slot_code_list
+    end
+    puts ts_list
   end
 
   # Stores test data for creating/editing and validating an individual time slot

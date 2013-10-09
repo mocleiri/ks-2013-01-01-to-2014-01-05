@@ -95,9 +95,40 @@ class TimeSlotMaintenance < BasePage
     save_add_time_slot
   end
 
-  def delete_time_slot (code)
-    row = target_results_row(code)
-    row.cells[TIME_SLOT_RESULTS_SELECT].checkbox.set
+  def edit_time_slot(opts)
+    if opts[:code].nil?
+      raise "edit_time_slot called without supplying time slot code"
+    end
+    row = target_results_row(opts[:code])
+    row.cells[TIME_SLOT_RESULTS_ACTIONS].link.click
+    sleep(1)
+    if !opts[:term_type].nil?
+      add_time_slot_popup_field_termType.select opts[:term_type]
+    end
+    if !opts[:days].nil?
+      add_time_slot_popup_field_days.set opts[:days]
+    end
+    if !opts[:start_time].nil?
+      add_time_slot_popup_field_startTime.set opts[:start_time]
+    end
+    if !opts[:start_time_am_pm].nil?
+      add_time_slot_popup_field_startTime_am_pm.radio(value: "#{opts[:start_time_am_pm].upcase}").set 
+    end
+    if !opts[:end_time].nil?
+      add_time_slot_popup_field_endTime.set opts[:end_time]
+    end
+    if !opts[:end_time_am_pm].nil?
+      add_time_slot_popup_field_endTime_am_pm.radio(value: "#{opts[:end_time_am_pm].upcase}").set
+    end
+    save_add_time_slot
+  end
+
+  def delete_time_slot (codes)
+    codes.each do |code|
+      row = target_results_row(code)
+      row.cells[TIME_SLOT_RESULTS_SELECT].checkbox.set
+    end
+
     initiate_delete
     sleep(1)
     confirm_delete
