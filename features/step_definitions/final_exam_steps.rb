@@ -754,19 +754,18 @@ end
 
 Then /^the non-active days toggles should be selected by default$/ do
   on EditAcademicTerms do |page|
-    term_index = page.term_index_by_term_type( @term.term_type)
-    page.exclude_saturday_toggle( @term.term_type, term_index).attribute_value('checked').should == "true"
-    page.exclude_sunday_toggle( @term.term_type, term_index).attribute_value('checked').should == "true"
+    page.exclude_saturday_toggle( @term.term_type).attribute_value('checked').should == "true"
+    page.exclude_sunday_toggle( @term.term_type).attribute_value('checked').should == "true"
   end
 end
 
 Then /^the non-active days should still be included in the Exam Period when I return to view the term$/ do
   @term.search
-  on(CalendarSearch).view @term_name
+  on(CalendarSearch).view @term.term_name
   on ViewAcademicTerms do |page|
-    page.open_term_section(@term_type)
-    page.get_exclude_saturday_value(@term_type).should == "false"
-    page.get_exclude_sunday_value(@term_type).should == "false"
+    page.open_term_section(@term.term_type)
+    page.get_exclude_saturday_value(@term.term_type).should == "false"
+    page.get_exclude_sunday_value(@term.term_type).should == "false"
   end
 end
 
