@@ -26,12 +26,7 @@ class TimeSlots
 
   attr_reader   :new_time_slots
 
-  # provides default data:
-  #
-  #  defaults = {
-  #     :term_types => [ "Fall - Full" ]
-  #  }
-  #
+  # provides default data
   # initialize is generally called using TestFactory Foundry .make or .create methods
   def initialize(browser, opts={})
     @browser = browser
@@ -152,18 +147,8 @@ class TimeSlots
                   :end_time,
                   :end_time_am_pm
 
-    # provides default data:
+    # provides default data
     #
-    #  defaults = {
-    #    :code => ""
-    #    :term_type => "Fall - Full"
-    #    :days => "M"
-    #    :start_time => "10:00"
-    #    :start_time_am_pm => "PM"
-    #    :end_time => "10:50"
-    #    :end_time_am_pm => "PM"
-    #  }
-
     # initialize is generally called using TestFactory Foundry .make or .create methods
     def initialize(browser, opts={})
       @browser = browser
