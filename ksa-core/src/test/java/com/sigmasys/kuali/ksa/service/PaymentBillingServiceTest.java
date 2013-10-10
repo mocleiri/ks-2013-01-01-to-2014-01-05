@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  * PaymentBillingService tests.
@@ -111,15 +112,18 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
 
         GeneralLedgerType glType = _createGeneralLedgerType();
 
-        TransferType transferType = transferService.createTransferType(glType.getId(), "_TT_1", "TT 1", "Transfer Type 1");
+        int postfix = new Random(System.currentTimeMillis()).nextInt(1000000);
+
+        TransferType transferType = transferService.createTransferType(glType.getId(),
+                "TT " + postfix, "TT name " + postfix, "TT description " + postfix);
 
         Assert.notNull(transferType);
         Assert.notNull(transferType.getId());
 
         PaymentBillingPlan plan = billingService.createPaymentBillingPlan(
-                "PB code1",
-                "PB name 1",
-                "PB description 1",
+                "PB " + postfix,
+                "PB name " + postfix,
+                "PB description " + postfix,
                 transferType.getId(),
                 "1001",
                 "1020",
@@ -382,5 +386,142 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         billingService.processPaymentBillingQueuesByCreator(TEST_USER_ID);
 
     }
+
+    @Test
+    public void getPaymentBillingPlansByAccountId() throws Exception {
+
+        PaymentBillingPlan newPlan1 = _createPaymentBillingPlan();
+        PaymentBillingPlan newPlan2 = _createPaymentBillingPlan();
+
+        PaymentBillingTransferDetail transfer1 =
+                billingService.generatePaymentBillingTransfer(newPlan1.getId(), TEST_USER_ID, new BigDecimal(-100.99), new Date());
+
+        Assert.notNull(transfer1);
+        Assert.notNull(transfer1.getId());
+
+        PaymentBillingTransferDetail transfer2 =
+                billingService.generatePaymentBillingTransfer(newPlan2.getId(), TEST_USER_ID, new BigDecimal(0.45), new Date());
+
+        Assert.notNull(transfer2);
+        Assert.notNull(transfer2.getId());
+
+        List<PaymentBillingPlan> plans = billingService.getPaymentBillingPlansByAccountId(TEST_USER_ID);
+
+        Assert.notNull(plans);
+        Assert.notEmpty(plans);
+        Assert.isTrue(plans.size() >= 2);
+
+        boolean newPlan1Exists = false;
+        boolean newPlan2Exists = false;
+
+        for (PaymentBillingPlan plan : plans) {
+
+            Assert.notNull(plan);
+            Assert.notNull(plan.getId());
+
+            if (plan.getId().equals(newPlan1.getId())) {
+                newPlan1Exists = true;
+            } else if (plan.getId().equals(newPlan2.getId())) {
+                newPlan2Exists = true;
+            }
+
+        }
+
+        Assert.isTrue(newPlan1Exists);
+        Assert.isTrue(newPlan2Exists);
+
+    }
+
+    @Test
+    public void getPaymentBillingPlans() throws Exception {
+
+        PaymentBillingPlan newPlan1 = _createPaymentBillingPlan();
+        PaymentBillingPlan newPlan2 = _createPaymentBillingPlan();
+
+        PaymentBillingTransferDetail transfer1 =
+                billingService.generatePaymentBillingTransfer(newPlan1.getId(), TEST_USER_ID, new BigDecimal(-100.99), new Date());
+
+        Assert.notNull(transfer1);
+        Assert.notNull(transfer1.getId());
+
+        PaymentBillingTransferDetail transfer2 =
+                billingService.generatePaymentBillingTransfer(newPlan2.getId(), TEST_USER_ID, new BigDecimal(0.45), new Date());
+
+        Assert.notNull(transfer2);
+        Assert.notNull(transfer2.getId());
+
+        List<PaymentBillingPlan> plans = billingService.getPaymentBillingPlans();
+
+        Assert.notNull(plans);
+        Assert.notEmpty(plans);
+        Assert.isTrue(plans.size() >= 2);
+
+        boolean newPlan1Exists = false;
+        boolean newPlan2Exists = false;
+
+        for (PaymentBillingPlan plan : plans) {
+
+            Assert.notNull(plan);
+            Assert.notNull(plan.getId());
+
+            if (plan.getId().equals(newPlan1.getId())) {
+                newPlan1Exists = true;
+            } else if (plan.getId().equals(newPlan2.getId())) {
+                newPlan2Exists = true;
+            }
+
+        }
+
+        Assert.isTrue(newPlan1Exists);
+        Assert.isTrue(newPlan2Exists);
+
+    }
+
+    @Test
+    public void getAccountsByPlanId() throws Exception {
+
+        final String userId1 = "admin";
+        final String userId2 = "user1";
+
+        PaymentBillingPlan plan = _createPaymentBillingPlan();
+
+        PaymentBillingTransferDetail transfer1 =
+                billingService.generatePaymentBillingTransfer(plan.getId(), userId1, new BigDecimal(50), new Date());
+
+        Assert.notNull(transfer1);
+        Assert.notNull(transfer1.getId());
+
+        PaymentBillingTransferDetail transfer2 =
+                billingService.generatePaymentBillingTransfer(plan.getId(), userId2, new BigDecimal(10), new Date());
+
+        Assert.notNull(transfer2);
+        Assert.notNull(transfer2.getId());
+
+        List<String> accountIds = billingService.getAccountsByPlanId(plan.getId());
+
+        Assert.notNull(accountIds);
+        Assert.notEmpty(accountIds);
+        Assert.isTrue(accountIds.size() == 2);
+
+        boolean userId1Exists = false;
+        boolean userId2Exists = false;
+
+        for (String accountId : accountIds) {
+
+            Assert.notNull(accountId);
+
+            if (accountId.equals(userId1)) {
+                userId1Exists = true;
+            } else if (accountId.equals(userId2)) {
+                userId2Exists = true;
+            }
+
+        }
+
+        Assert.isTrue(userId1Exists);
+        Assert.isTrue(userId2Exists);
+
+    }
+
 
 }

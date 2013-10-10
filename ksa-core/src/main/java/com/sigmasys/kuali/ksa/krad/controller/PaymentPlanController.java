@@ -198,7 +198,7 @@ public class PaymentPlanController extends GenericSearchController {
     public ModelAndView getPaymentBillingPlan(@ModelAttribute("KualiForm") PaymentPlanForm form) {
         String planString = form.getPlanName();
 
-        List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlanByNamePattern(planString);
+        List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlansByNamePattern(planString);
 
         if(plans != null && plans.size() > 0) {
             form.setPaymentBillingPlan(plans.get(0));
@@ -227,7 +227,7 @@ public class PaymentPlanController extends GenericSearchController {
         if(plan == null) {
             String planString = form.getPlanName();
 
-            List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlanByNamePattern(planString);
+            List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlansByNamePattern(planString);
 
             if(plans != null && plans.size() > 0) {
                 plan = plans.get(0);

@@ -97,9 +97,32 @@ public interface PaymentBillingService {
      * Retrieves PaymentBillingPlan instances by the given name pattern.
      *
      * @param pattern Name pattern
-     * @return list of PaymentBillingPlan instances.
+     * @return list of PaymentBillingPlan instances
      */
-    List<PaymentBillingPlan> getPaymentBillingPlanByNamePattern(String pattern);
+    List<PaymentBillingPlan> getPaymentBillingPlansByNamePattern(String pattern);
+
+    /**
+     * Retrieves all PaymentBillingPlan objects.
+     *
+     * @return list of PaymentBillingPlan instances
+     */
+    List<PaymentBillingPlan> getPaymentBillingPlans();
+
+    /**
+     * Retrieves PaymentBillingPlan objects by the given Account ID.
+     *
+     * @param accountId Account ID
+     * @return list of PaymentBillingPlan instances
+     */
+    List<PaymentBillingPlan> getPaymentBillingPlansByAccountId(String accountId);
+
+    /**
+     * Retrieves a list of Account IDs by PaymentBillingPlan ID.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @return list of Account IDs
+     */
+    List<String> getAccountsByPlanId(Long paymentBillingPlanId);
 
     /**
      * Persists PaymentBillingPlan instance in the persistent store

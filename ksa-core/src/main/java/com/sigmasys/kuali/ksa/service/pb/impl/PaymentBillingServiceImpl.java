@@ -325,13 +325,67 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingPlan instances.
      */
     @Override
-    public List<PaymentBillingPlan> getPaymentBillingPlanByNamePattern(String pattern) {
+    public List<PaymentBillingPlan> getPaymentBillingPlansByNamePattern(String pattern) {
 
         PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_PLAN);
 
-        Query query = em.createQuery(PAYMENT_PLAN_SELECT + " where upper(p.name) like upper(:pattern)");
+        Query query = em.createQuery(PAYMENT_PLAN_SELECT + " where upper(p.name) like upper(:pattern) order by p.id desc");
 
         query.setParameter("pattern", "%" + pattern + "%");
+
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves all PaymentBillingPlan objects.
+     *
+     * @return list of PaymentBillingPlan instances
+     */
+    @Override
+    public List<PaymentBillingPlan> getPaymentBillingPlans() {
+
+        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_PLAN);
+
+        Query query = em.createQuery(PAYMENT_PLAN_SELECT + " order by p.id desc");
+
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves PaymentBillingPlan objects by the given Account ID.
+     *
+     * @param accountId Account ID
+     * @return list of PaymentBillingPlan instances
+     */
+    @Override
+    public List<PaymentBillingPlan> getPaymentBillingPlansByAccountId(String accountId) {
+
+        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_PLAN);
+
+        Query query = em.createQuery(PAYMENT_PLAN_SELECT +
+                " where p.id in ( select distinct plan.id from PaymentBillingTransferDetail " +
+                " where directChargeAccount.id = :accountId ) order by p.id desc");
+
+        query.setParameter("accountId", accountId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves a list of Account IDs by PaymentBillingPlan ID.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @return list of Account IDs
+     */
+    @Override
+    public List<String> getAccountsByPlanId(Long paymentBillingPlanId) {
+
+        PermissionUtils.checkPermissions(Permission.READ_PAYMENT_BILLING_PLAN, Permission.READ_ACCOUNT);
+
+        Query query = em.createQuery("select distinct directChargeAccount.id from PaymentBillingTransferDetail " +
+                " where plan.id = :planId order by directChargeAccount.id asc");
+
+        query.setParameter("planId", paymentBillingPlanId);
 
         return query.getResultList();
     }
