@@ -38,7 +38,7 @@ Background:
   Scenario: CCO 2.12C Verify when a colocated activity offering is copied the copy is added to the colocated set
     Given I create "3" COs with an AO in each
     And I colocate multiple activities, selecting to "separately manage" enrollments
-    When I copy a colocated activity offering
+    When I copy one of the colocated activity offerings
     Then the activity offering copy is added to the colocated set
 
   Scenario: CCO 2.13 Successfully rollover a course offering with colocated Activity Offerings

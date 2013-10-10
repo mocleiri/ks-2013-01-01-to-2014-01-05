@@ -1,4 +1,4 @@
-@wip @mw
+@wip
 Feature: EC.Waitlists Colocation
 
   WL 1.17 - As a Central Administrator I want colocated activities to utilize a single waitlist
@@ -28,23 +28,25 @@ Feature: EC.Waitlists Colocation
   Scenario: WL 1.17.4 Verify waitlist information is copied (within the same term) when copying a course offering with a colocated activity offering
     Given I create three colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
-    When I copy the parent course offering for one of the colocated activity offerings
+    When I copy the colocated AO's parent course offering
     Then the activity offering in the course offering copy is added to the colocated set
     And the waitlist configuration is copied to the colocated activity offering in the course offering copy
 
   Scenario: WL 1.17.5 Verify waitlist information is copied when copying a colocated activity offering
     Given I create three colocated activity offerings (shared enrolment) with waitlists enabled
-    And I make changes to activity offering waitlist configuration
+    And I make changes to the default waitlist configuration for one of the activity offerings
     When I copy one of the colocated activity offerings
     Then the activity offering copy is added to the colocated set
     And the waitlist configuration is copied to the new colocated activity offering
 
+  @draft
   Scenario: WL 1.17.6 Verify waitlist confirguration for a colocated activity offering when using create CO by copy an Existing CO from a prior term
     Given there is an existing course offering with a colocated activity offering (shared enrolment) with waitlists enabled
     When I create a new course offering in a subsequent term by copying the existing course offering
     Then the activity offering in the course offering copy is not colocated
     And the waitlist configuration is copied to the new activity offering
 
+  @draft
   Scenario: WL 1.17.7 Delete activity offering in a colo-shared enrollment set
     Given I create three colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
@@ -52,6 +54,7 @@ Feature: EC.Waitlists Colocation
     Then the remaining two activity offerings are no longer colocated
     But the remaining two activity offerings still have the same waitlist configuration
 
+  @draft
   Scenario: WL 1.17.8a Delete a Course Offering with an activity offering in a colocated-shared enrollment set
     Given I create three colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
@@ -59,6 +62,7 @@ Feature: EC.Waitlists Colocation
     Then the remaining activity offerings are still colocated
     And the remaining two activity offerings still have the same waitlist configuration
 
+  @draft
   Scenario: WL 1.17.8b Delete Course Offerings with an activity offering in a colocated-shared enrollment set
     Given I create three colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
@@ -66,6 +70,7 @@ Feature: EC.Waitlists Colocation
     Then the remaining activity offering is no longer colocated
     But the remaining activity offering still has the same waitlist configuration
 
+  @draft
   Scenario: WL 1.17.9a - Break colocation in a colocated-shared enrollment set (3 activity offerings)
     Given I create three colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
@@ -75,6 +80,7 @@ Feature: EC.Waitlists Colocation
     When I change the waitlist configuration on the first activity offering
     Then the waitlist configuration for the two remaining colocated activity offerings is not changed
 
+  @draft
   Scenario: WL 1.17.9b Break colocation in a colocated-shared enrollment set (2 activity offerings)
     Given I create two colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
@@ -84,6 +90,7 @@ Feature: EC.Waitlists Colocation
     When I change the waitlist configuration on the first activity offering
     Then the waitlists configuration for the second activity offering is not changed
 
+  @draft
   Scenario: WL 1.17.10 - De-activate the waitlist option at the CO level for CO(s) with AOs in coloed-shared enrollment set and ensure that the colo is broken and the WL settings are changed appropriately
     Given I create two colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings

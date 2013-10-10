@@ -84,13 +84,13 @@ end
 #  pending # express the regexp above with the code you wish you had
 #end
 Then /^I make changes to the default waitlist configuration.*activity offering/ do
-  waitlist = @activity_offering.waitlist_config
+  waitlist = @ao_list[0].waitlist_config
   waitlist.enabled = true
   waitlist.type = "Manual"
   waitlist.limit_size = 10
   waitlist.allow_hold_list = true
-  @activity_offering.edit :waitlist_config => waitlist
-  @activity_offering.save
+  @ao_list[0].edit :waitlist_config => waitlist
+  @ao_list[0].save
 end
 
 Then /^I set the limit waitlist size$/ do
@@ -315,40 +315,33 @@ Given /^the waitlists are disabled for the new course and activity offering$/ do
 end
 
 Given /^there are two other activity offering with waitlists enabled and no waitlist limit$/ do
-  @other_aos = []
+  @ao_list = []
   ["ENGL416","ENGL420"].each do |co_code|
     course_offering = create CourseOffering, :course => co_code, :waitlists => true
     activity_offering = create ActivityOffering, :parent_course_offering => @course_offering
     activity_offering.save
-    @other_aos << activity_offering
+    @ao_list << activity_offering
   end
 end
 
 When /^I colocate the activity offering with other two offerings and select shared maximum enrolment$/ do
   @activity_offering.parent_course_offering.manage
-  @activity_offering.edit :colocate_ao_list => @other_aos,
+  @activity_offering.edit :colocate_ao_list => @ao_list,
                     :colocate_shared_enrollment => true,
                     :max_enrollment => 48
   @activity_offering.save
+
+  @ao_list.unshift(@activity_offering)
 end
 
 Then /^all three activity offerings have the same waitlist limit size$/ do
-  @activity_offering.parent_course_offering.manage
-  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
-
-  on ActivityOfferingInquiry do |page|
-    page.waitlists_active?.should be_true
-    page.waitlists_max_size.should == @activity_offering.waitlist_config.waitlist_limit_str
-    page.close
-  end
-
-  @activity_offering.colocate_ao_list.each do |colo_ao|
-    colo_ao.parent_course_offering.manage
-    on(ManageCourseOfferings).view_activity_offering(colo_ao.code)
+  @ao_list.each do |ao|
+    ao.parent_course_offering.manage
+    on(ManageCourseOfferings).view_activity_offering(ao.code)
 
     on ActivityOfferingInquiry do |page|
       page.waitlists_active?.should be_true
-      page.waitlists_max_size.should == colo_ao.waitlist_config.waitlist_limit_str
+      page.waitlists_max_size.should == @ao_list[0].waitlist_config.waitlist_limit_str
       page.close
     end
   end
@@ -357,47 +350,33 @@ end
 Given /^I create three colocated activity offerings \(shared enrolment\) with waitlists enabled$/ do
   @term = make AcademicTerm, :term_code => Rollover::MAIN_TEST_TERM_TARGET if @term.nil?
 
-  @course_offering = create CourseOffering, :course => "ENGL300", :waitlists => true, :term => @term.term_code
-  @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering
-  @activity_offering.save
+  @ao_list = []
 
-  @other_aos = []
-  ["WMST300","WMST400"].each do |co_code|
+  ["ENGL300","WMST300","WMST400"].each do |co_code|
     course_offering = create CourseOffering, :course => co_code, :waitlists => true, :term => @term.term_code
     activity_offering = create ActivityOffering, :parent_course_offering => course_offering
     activity_offering.save
-    @other_aos << activity_offering
+    @ao_list << activity_offering
   end
 
-  @activity_offering.parent_course_offering.manage
-  @activity_offering.edit :colocate_ao_list => @other_aos,
+  @ao_list[0].parent_course_offering.manage
+  @ao_list[0].edit :colocate_ao_list => @ao_list[1..2],
                           :colocate_shared_enrollment => true,
                           :max_enrollment => 120
-  @activity_offering.save
+  @ao_list[0].save
 
 end
 
 Then /^all three colocated activity offerings have the same waitlist configuration$/ do
-  @activity_offering.parent_course_offering.manage
-  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
-
-  on ActivityOfferingInquiry do |page|
-    page.waitlists_active?.should be_true
-    page.waitlists_allow_holds?.should == @activity_offering.waitlist_config.allow_hold_list
-    page.waitlists_processing.should == @activity_offering.waitlist_config.type
-    page.waitlists_max_size.should == @activity_offering.waitlist_config.waitlist_limit_str
-    page.close
-  end
-
-  @activity_offering.colocate_ao_list.each do |colo_ao|
-    colo_ao.parent_course_offering.manage
-    on(ManageCourseOfferings).view_activity_offering(colo_ao.code)
+  @ao_list.each do |ao|
+    ao.parent_course_offering.manage
+    on(ManageCourseOfferings).view_activity_offering(ao.code)
 
     on ActivityOfferingInquiry do |page|
       page.waitlists_active?.should be_true
-      page.waitlists_allow_holds?.should == @activity_offering.waitlist_config.allow_hold_list
-      page.waitlists_processing.should == @activity_offering.waitlist_config.type
-      page.waitlists_max_size.should == @activity_offering.waitlist_config.waitlist_limit_str
+      page.waitlists_allow_holds?.should == @ao_list[0].waitlist_config.allow_hold_list
+      page.waitlists_processing.should == @ao_list[0].waitlist_config.type
+      page.waitlists_max_size.should == @ao_list[0].waitlist_config.waitlist_limit_str
       page.close
     end
   end
@@ -407,60 +386,44 @@ Given /^I make changes the default waitlist configuration for one of the activit
   pending # express the regexp above with the code you wish you had
 end
 
-Then /^the waitlist configuration is copied to the new colocated activity offerings in the target term$/ do
-  @activity_offering_target = @activity_offering
-  @activity_offering_target.parent_course_offering.term = @term_target.term_code
-  @activity_offering_target.parent_course_offering.manage
-  on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
+Then /^the waitlist configuration is copied to the colocated activity offerings in the target term$/ do
+  @ao_list.each do |source_ao|
 
-  on ActivityOfferingInquiry do |page|
-    page.waitlists_active?.should be_true
-    page.waitlists_allow_holds?.should == @activity_offering.waitlist_config.allow_hold_list
-    page.waitlists_processing.should == @activity_offering.waitlist_config.type
-    page.waitlists_max_size.should == @activity_offering.waitlist_config.waitlist_limit_str
-    page.close
-  end
-
-  @activity_offering.colocate_ao_list.each do |colo_ao|
-    colo_ao.parent_course_offering.manage
-    on(ManageCourseOfferings).view_activity_offering(colo_ao.code)
+    course_offering_target = make CourseOffering, :course => source_ao.parent_course_offering.course,
+                                  :term => @term_target.term_code
+    @activity_offering_target = make ActivityOffering, :code => source_ao.code, :parent_course_offering => course_offering_target
+    @activity_offering_target.parent_course_offering.manage
+    on(ManageCourseOfferings).view_activity_offering(@activity_offering_target.code)
 
     on ActivityOfferingInquiry do |page|
       page.waitlists_active?.should be_true
-      page.waitlists_allow_holds?.should == @activity_offering.waitlist_config.allow_hold_list
-      page.waitlists_processing.should == @activity_offering.waitlist_config.type
-      page.waitlists_max_size.should == @activity_offering.waitlist_config.waitlist_limit_str
+      page.waitlists_allow_holds?.should == @ao_list[0].waitlist_config.allow_hold_list
+      page.waitlists_processing.should == @ao_list[0].waitlist_config.type
+      page.waitlists_max_size.should == @ao_list[0].waitlist_config.waitlist_limit_str
       page.close
     end
   end
-
 end
 
-Then /^the waitlist configuration is copied to the colocated activity offering in the course offering copy$/ do
-  @activity_offering_copy = @activity_offering
-  @activity_offering_copy.parent_course_offering = @course_offering_copy
+Then /^the waitlist configuration is copied to the(?: new)? colocated activity offering/ do
+  course_offering_target = make CourseOffering, :course => @ao_list[0].parent_course_offering.course,
+                                :term => @term.term_code
+  @activity_offering_copy = make ActivityOffering, :code => @ao_list[0].code, :parent_course_offering => course_offering_target
+
   @activity_offering_copy.parent_course_offering.manage
   on(ManageCourseOfferings).view_activity_offering(@activity_offering_copy.code)
 
   on ActivityOfferingInquiry do |page|
     page.waitlists_active?.should be_true
-    page.waitlists_allow_holds?.should == @activity_offering_copy.waitlist_config.allow_hold_list
-    page.waitlists_processing.should == @activity_offering_copy.waitlist_config.type
-    page.waitlists_max_size.should == @activity_offering_copy.waitlist_config.waitlist_limit_str
+    page.waitlists_allow_holds?.should == @ao_list[0].waitlist_config.allow_hold_list
+    page.waitlists_processing.should == @ao_list[0].waitlist_config.type
+    page.waitlists_max_size.should == @ao_list[0].waitlist_config.waitlist_limit_str
     page.close
   end
 
 end
 
 Given /^I make changes to activity offering waitlist configuration$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-When /^I copy one of the colocated activity offerings$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^the waitlist configuration is copied to the new colocated activity offering$/ do
   pending # express the regexp above with the code you wish you had
 end
 

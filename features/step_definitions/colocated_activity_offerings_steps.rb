@@ -10,17 +10,17 @@ When /^there is a course offering with a colocated activity offering$/ do
 end
 
 When /^I create "([2-9])" COs with an AO in each$/ do |number_of_cos_to_create|
-  @colo_aos = []
+  @ao_list = []
 
   for i in 1..number_of_cos_to_create.to_i
     co = create CourseOffering, :create_by_copy => (make CourseOffering, :course => "ENGL255", :term => Rollover::MAIN_TEST_TERM_TARGET)
     ao = make ActivityOffering, :code => "A", :parent_course_offering => co
-    @colo_aos << ao
+    @ao_list << ao
   end
 end
 
 When /^I create three Course Offerings with colocated AOs in the new term$/ do
-  @colo_aos = []
+  @ao_list = []
 
   for i in 1..3
     delivery_format_list = []
@@ -29,15 +29,15 @@ When /^I create three Course Offerings with colocated AOs in the new term$/ do
 
     ao = create ActivityOffering, :parent_course_offering => co, :format => "Lecture Only", :activity_type => "Lecture"
     ao.save
-    @colo_aos << ao
+    @ao_list << ao
   end
 
   # colocate the first AO to all the others
-  @colo_aos[0].parent_course_offering.manage
-  @colo_aos[0].edit :colocate_ao_list => @colo_aos[1, @colo_aos.length],
+  @ao_list[0].parent_course_offering.manage
+  @ao_list[0].edit :colocate_ao_list => @ao_list[1, @ao_list.length],
                     :colocate_shared_enrollment => true,
                     :max_enrollment => 48
-  @colo_aos[0].save
+  @ao_list[0].save
 end
 
 When /^I colocate multiple activities, selecting to "(share|separately manage)" enrollments$/ do |max_enrollment_flag|
@@ -48,21 +48,21 @@ When /^I colocate multiple activities, selecting to "(share|separately manage)" 
   end
 
   # colocate the first AO to all the others
-  @colo_aos[0].parent_course_offering.manage
-  @colo_aos[0].edit :colocate_ao_list => @colo_aos[1, @colo_aos.length],
+  @ao_list[0].parent_course_offering.manage
+  @ao_list[0].edit :colocate_ao_list => @ao_list[1, @ao_list.length],
                     :colocate_shared_enrollment => should_enrollment_be_shared_flag,
                     :max_enrollment => 48
-  @colo_aos[0].save
+  @ao_list[0].save
 end
 
 Then /^the activities indicate they are colocated$/ do
 
-  @colo_aos[0].parent_course_offering.manage
+  @ao_list[0].parent_course_offering.manage
   on ManageCourseOfferings do |page|
     colocated_tooltip_text = page.target_row('A')[1].image(src: /colocate_icon/).alt.upcase
 
     # validate tooltip text contains each colo
-    @colo_aos[1, @colo_aos.length].each do |other_ao|
+    @ao_list[1, @ao_list.length].each do |other_ao|
       expected = other_ao.parent_course_offering.course.upcase + ' ' + other_ao.code.upcase
       colocated_tooltip_text.should include expected
     end
@@ -71,15 +71,15 @@ Then /^the activities indicate they are colocated$/ do
 end
 
 When /^I break colocation on the first colocated AO$/ do
-  @colo_aos[0].parent_course_offering.manage
-  @colo_aos[0].edit :break_colocation => true
-  @colo_aos[0].save
+  @ao_list[0].parent_course_offering.manage
+  @ao_list[0].edit :break_colocation => true
+  @ao_list[0].save
 end
 
 Then /^the first colocated AO is not colocated with any remaining AOs$/ do
 
   # first AO should no indicate colocation
-  @colo_aos[0].parent_course_offering.manage
+  @ao_list[0].parent_course_offering.manage
   on ManageCourseOfferings do |page|
     page.target_row('A')[1].image.should_not be_present
 
@@ -87,12 +87,12 @@ Then /^the first colocated AO is not colocated with any remaining AOs$/ do
   end
 
   # second AO should indicate colocation with all the remaining
-  @colo_aos[1].parent_course_offering.manage
+  @ao_list[1].parent_course_offering.manage
   on ManageCourseOfferings do |page|
     colocated_tooltip_text = page.target_row('A')[1].image(src: /colocate_icon/).alt.upcase
 
     # validate tooltip text contains each colo
-    @colo_aos[2, @colo_aos.length].each do |other_ao|
+    @ao_list[2, @ao_list.length].each do |other_ao|
       expected = other_ao.parent_course_offering.course.upcase + ' ' + other_ao.code.upcase
       colocated_tooltip_text.should include expected
 
@@ -126,31 +126,25 @@ Then /^the activity offering in the course offering copy is added to the colocat
   @course_offering_copy.manage
 
   on ManageCourseOfferings do |page|
-    page.has_colo_icon(@activity_offering.code).should be_true
+    page.has_colo_icon(@ao_list[0].code).should be_true
+    colocated_tooltip_text = page.target_row(@ao_list[0].code)[1].image(src: /colocate_icon/).alt.upcase
 
-    colocated_tooltip_text = page.target_row(@activity_offering.code)[1].image(src: /colocate_icon/).alt.upcase
-
-    # validate tooltip text contains each colo
-    expected = @activity_offering.parent_course_offering.course.upcase + ' ' + @activity_offering.code.upcase
-    colocated_tooltip_text.should include expected
-
-    @activity_offering.colocate_ao_list.each do |colo_ao|
-      expected = @activity_offering.parent_course_offering.course.upcase + ' ' + @activity_offering.code.upcase
+    @ao_list.each do |colo_ao|
+      expected = colo_ao.parent_course_offering.course.upcase + ' ' + colo_ao.code.upcase
       colocated_tooltip_text.should include expected
     end
-    end
-
   end
+end
 
 Then /^the activity offering in the course offering copy is not colocated$/ do
   @course_offering_copy.manage
   on(ManageCourseOfferings).has_colo_icon(@activity_offering.code).should be_false
 end
 
-When /^I copy a colocated activity offering$/ do
+When /^I copy one of the colocated activity offerings$/ do
   @activity_offering_copy = create ActivityOffering, :create_by_copy => true,
-                                   :code => @colo_aos[0].code,
-                                   :parent_course_offering => @colo_aos[0].parent_course_offering
+                                   :code => @ao_list[0].code,
+                                   :parent_course_offering => @ao_list[0].parent_course_offering
 end
 
 Then /^the activity offering copy is added to the colocated set$/ do
@@ -161,7 +155,7 @@ Then /^the activity offering copy is added to the colocated set$/ do
     colocated_tooltip_text = page.target_row(@activity_offering_copy.code)[1].image(src: /colocate_icon/).alt.upcase
 
     # validate tooltip text contains each colo
-    @colo_aos.each do |other_ao|
+    @ao_list.each do |other_ao|
       expected = other_ao.parent_course_offering.course.upcase + ' ' + other_ao.code.upcase
       colocated_tooltip_text.should include expected
 
@@ -176,41 +170,41 @@ end
 When /^I create some dummy test data to speed up AFT development$/ do
 
   # populate an array with a bunch of COs that already exist in the DB
-  @colo_aos = []
+  @ao_list = []
 
   # 201301 ENGL211G AO:A
   co = make CourseOffering, :term => '201301', :course => 'ENGL211Q'
   ao = make ActivityOffering, :code => "A", :parent_course_offering => co
-  @colo_aos << ao
+  @ao_list << ao
 
   # 201301 ENGL211H AO:A
   co = make CourseOffering, :term => '201301', :course => 'ENGL211R'
   ao = make ActivityOffering, :code => "A", :parent_course_offering => co
-  @colo_aos << ao
+  @ao_list << ao
 
   # 201301 ENGL211I AO:A
   co = make CourseOffering, :term => '201301', :course => 'ENGL211S'
   ao = make ActivityOffering, :code => "A", :parent_course_offering => co
-  @colo_aos << ao
+  @ao_list << ao
 
 end
 
 Then /^the Activity Offerings are colocated in the rollover target$/ do
-  @colo_aos_rollover = []
+  @ao_list_rollover = []
 
   for i in 0..2
-    co = make CourseOffering, :course =>  @colo_aos[i].parent_course_offering.course,
+    co = make CourseOffering, :course =>  @ao_list[i].parent_course_offering.course,
               :term => @term_target.term_code
     ao = make ActivityOffering, :code => "A", :parent_course_offering => co
-    @colo_aos_rollover << ao
+    @ao_list_rollover << ao
   end
 
-  @colo_aos_rollover[0].parent_course_offering.manage
+  @ao_list_rollover[0].parent_course_offering.manage
   on ManageCourseOfferings do |page|
     colocated_tooltip_text = page.target_row('A')[1].image(src: /colocate_icon/).alt.upcase
 
     # validate tooltip text contains each colo
-    @colo_aos_rollover[1, @colo_aos_rollover.length].each do |other_ao|
+    @ao_list_rollover[1, @ao_list_rollover.length].each do |other_ao|
       expected = other_ao.parent_course_offering.course.upcase + ' ' + other_ao.code.upcase
       colocated_tooltip_text.should include expected
     end
