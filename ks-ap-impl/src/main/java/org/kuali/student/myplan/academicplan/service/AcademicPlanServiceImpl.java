@@ -29,6 +29,7 @@ import org.kuali.student.myplan.academicplan.model.PlanItemAttributeEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemRichTextEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemTypeEntity;
+import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
@@ -223,11 +224,19 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		LearningPlanEntity lpe = new LearningPlanEntity();
 		lpe.setId(UUIDHelper.genStringUUID());
 
+		// FIXME: Is this check necessary?
+		LearningPlanEntity existing = learningPlanDao.find(lpe.getId());
+		if (existing != null) {
+			// When generating a new UUID as the key, this should not be possible.
+			throw new AlreadyExistsException();
+		}
+
 		LearningPlanTypeEntity type = learningPlanTypeDao.find(learningPlan.getTypeKey());
 		if (type == null) {
 			throw new InvalidParameterException(String.format("Unknown type [%s].", learningPlan.getTypeKey()));
 		}
 		lpe.setLearningPlanType(type);
+		lpe.setStateKey(learningPlan.getStateKey());
 
 		lpe.setStudentId(learningPlan.getStudentId());
 		lpe.setDescr(new LearningPlanRichTextEntity(learningPlan.getDescr()));
@@ -239,10 +248,11 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 		lpe.setUpdateTime(new Date());
 		lpe.setShared(learningPlan.getShared());
 
-		LearningPlanEntity existing = learningPlanDao.find(lpe.getId());
-		if (existing != null) {
-			throw new AlreadyExistsException();
-		}
+		// Update attributes.
+		Set<LearningPlanAttributeEntity> attributeEntities = new HashSet<LearningPlanAttributeEntity>();
+		for (Attribute att : learningPlan.getAttributes())
+			attributeEntities.add(new LearningPlanAttributeEntity(att, lpe));
+		lpe.setAttributes(attributeEntities);
 
 		learningPlanDao.persist(lpe);
 
@@ -404,8 +414,28 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 			throw new DoesNotExistException(learningPlanId);
 		}
 
+		LearningPlanTypeEntity type = learningPlanTypeDao.find(learningPlan.getTypeKey());
+		if (type == null) {
+			throw new InvalidParameterException(String.format("Unknown type [%s].", learningPlan.getTypeKey()));
+		}
+		lpe.setLearningPlanType(type);
+		lpe.setStateKey(learningPlan.getStateKey());
+
 		lpe.setStudentId(learningPlan.getStudentId());
-		lpe.setDescr(new LearningPlanRichTextEntity(learningPlan.getDescr()));
+
+		//  Update text entity.
+		RichTextInfo descrInfo = learningPlan.getDescr();
+		if (descrInfo == null) {
+			lpe.setDescr(null);
+		} else {
+			LearningPlanRichTextEntity descr = lpe.getDescr();
+			if (descr == null) {
+				descr = new LearningPlanRichTextEntity(descrInfo);
+			} else {
+				descr.setPlain(descrInfo.getPlain());
+				descr.setFormatted(descrInfo.getFormatted());
+			}
+		}
 
 		//  Update attributes.
 		List<Attribute> createAttrs = mergeAttributes(false, learningPlan, lpe.getAttributes());
@@ -418,18 +448,10 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 				attributeEntities.add(new LearningPlanAttributeEntity(att, lpe));
 		}
 
-		lpe.setAttributes(new HashSet<LearningPlanAttributeEntity>());
-		if (null != learningPlan.getAttributes()) {
-			for (Attribute att : learningPlan.getAttributes()) {
-				LearningPlanAttributeEntity attEntity = new LearningPlanAttributeEntity(att, lpe);
-				lpe.getAttributes().add(attEntity);
-			}
-		}
-
-		lpe.setShared(learningPlan.getShared());
-		//  Update meta data.
+		//  Plan meta
 		lpe.setUpdateId(context.getPrincipalId());
 		lpe.setUpdateTime(new Date());
+		lpe.setShared(learningPlan.getShared());
 
 		learningPlanDao.merge(lpe);
 		return learningPlanDao.find(learningPlanId).toDto();

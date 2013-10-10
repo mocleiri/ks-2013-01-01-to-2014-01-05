@@ -33,6 +33,7 @@
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basenames">
             <list>
+                <value>org/kuali/student/ap/KSAP-ApplicationResources</value>
                 <value>org/kuali/student/myplan/KSMyPlan-ApplicationResources</value>
                 <value>org/kuali/rice/krad/ApplicationResources</value>
                 <value>org/kuali/rice/krad/KRAD-ApplicationResources</value>
