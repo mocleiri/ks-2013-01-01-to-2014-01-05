@@ -586,7 +586,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         if (!billingSchedules.isEmpty()) {
 
             BigDecimal percentageCoeff = (totalPercentage.compareTo(BigDecimal.ZERO) > 0) ?
-                    new BigDecimal(100).divide(totalPercentage, RoundingMode.HALF_UP) : BigDecimal.ZERO;
+                    new BigDecimal(100).divide(totalPercentage, RoundingMode.HALF_DOWN) : BigDecimal.ZERO;
 
             boolean offsetPercentage = (skipEarlier && totalPercentage.compareTo(BigDecimal.ZERO) > 0);
 
@@ -708,7 +708,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         BigDecimal paymentAmount = totalAmount.multiply(percentage).divide(new BigDecimal(100));
 
         if (roundingFactor == 0) {
-            return paymentAmount.setScale(2, RoundingMode.CEILING);
+            return paymentAmount.setScale(2, RoundingMode.HALF_UP);
         }
 
         BigInteger roundedAmount = paymentAmount.divide(new BigDecimal(roundingFactor)).toBigInteger();
@@ -798,7 +798,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
                         }
 
                         BigDecimal amountToFinance =
-                                billingTransaction.getOriginalAmount().multiply(maxPercentage).divide(hundredPercent);
+                                billingTransaction.getOriginalAmount().multiply(maxPercentage).divide(hundredPercent).setScale(2, RoundingMode.HALF_DOWN);
 
                         if (amountToFinance.compareTo(billingTransaction.getRemainingAmount()) > 0) {
                             amountToFinance = billingTransaction.getRemainingAmount();
@@ -926,7 +926,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
                     if (billingTransaction.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0) {
 
-                        BigDecimal tempAmount = billingSchedule.getAmount().multiply(billingTransaction.getRatio());
+                        BigDecimal tempAmount = billingSchedule.getAmount().multiply(billingTransaction.getRatio()).setScale(2, RoundingMode.HALF_DOWN);
+
                         if (tempAmount.compareTo(billingTransaction.getRemainingAmount()) > 0) {
                             tempAmount = billingTransaction.getRemainingAmount();
                         }
@@ -968,7 +969,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         if (billingPlan.getVariableFeeAmount() != null && billingPlan.getVariableFeeAmount().compareTo(BigDecimal.ZERO) > 0) {
 
-            BigDecimal amountToCharge = billingPlan.getVariableFeeAmount().multiply(transferDetail.getPlanAmount());
+            BigDecimal amountToCharge = billingPlan.getVariableFeeAmount().multiply(transferDetail.getPlanAmount()).setScale(2, RoundingMode.HALF_DOWN);
 
             if (billingPlan.getMaxFeeAmount().compareTo(amountToCharge) < 0) {
                 amountToCharge = billingPlan.getMaxFeeAmount();

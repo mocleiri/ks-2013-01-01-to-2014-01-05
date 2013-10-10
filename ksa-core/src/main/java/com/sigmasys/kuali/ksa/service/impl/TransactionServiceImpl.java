@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1992,13 +1993,17 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 }
 
                 if (percentage.compareTo(BigDecimal.ZERO) > 0) {
-                    BigDecimal amount = initialAmount.divide(new BigDecimal(100)).multiply(percentage);
-                    glService.createGlTransaction(transactionId, glBreakdown.getGlAccount(), amount, operationType,
-                            statement, true);
+
+                    BigDecimal amount = initialAmount.divide(new BigDecimal(100)).multiply(percentage).setScale(2, RoundingMode.HALF_DOWN);
+
+                    glService.createGlTransaction(transactionId, glBreakdown.getGlAccount(), amount, operationType, statement, true);
+
                     remainingAmount = remainingAmount.subtract(amount);
+
                 } else {
+
                     // If the remaining amount == 0 then apply it to the new GL transaction and exit
-                    // considering that GL breakdowns are sorted by percentage in descendant order :)
+                    // considering that GL breakdowns are sorted by percentage in descending order :)
                     glService.createGlTransaction(transactionId, glAccount, remainingAmount, operationType,
                             statement, true);
                     break;

@@ -26,6 +26,7 @@ import javax.jws.WebService;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -613,7 +614,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                 maxPercentage = hundredPercent;
             }
 
-            BigDecimal financeChargeAmount = totalUnallocatedAmount.multiply(maxPercentage);
+            BigDecimal financeChargeAmount = totalUnallocatedAmount.multiply(maxPercentage).setScale(2, RoundingMode.HALF_DOWN);
 
             if ((chargeRemainingFund == null || financeChargeAmount.compareTo(chargeRemainingFund) <= 0) &&
                     (remainingFund == null || financeChargeAmount.compareTo(remainingFund) <= 0)) {
@@ -633,7 +634,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                     }
 
                     // Calculating the transfer amount as unallocated amount multiplied by maxPercentage
-                    BigDecimal transferAmount = transaction.getUnallocatedAmount().multiply(maxPercentage);
+                    BigDecimal transferAmount = transaction.getUnallocatedAmount().multiply(maxPercentage).setScale(2, RoundingMode.HALF_DOWN);
 
                     // Creating a new transaction transfer
                     TransactionTransfer transactionTransfer =
@@ -693,7 +694,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                     }
 
                     // Calculating the transfer amount as unallocated amount multiplied by maxPercentage
-                    BigDecimal transferAmount = transaction.getUnallocatedAmount().multiply(divideCoefficient);
+                    BigDecimal transferAmount = transaction.getUnallocatedAmount().multiply(divideCoefficient).setScale(2, RoundingMode.HALF_DOWN);
 
                     // Getting the smallest value out of unallocated amount, maxDividedFund and remainingFund
                     if (transferAmount.compareTo(maxDividedFund) > 0) {
