@@ -19,31 +19,23 @@
      limitations under the License.
     -->
     <bean id="CourseDetails-InquiryView" parent="MyPlanInquiryView">
-        <property name="headerText" value="Course Details"/>
         <property name="dataObjectClassName" value="org.kuali.student.myplan.course.dataobject.CourseDetails"/>
         <property name="viewHelperServiceClass"
                   value="org.kuali.student.myplan.course.service.CourseDetailsInquiryHelperImpl"/>
-        <property name="page.header.render" value="false"/>
-        <property name="header.render" value="false"/>
         <property name="footer.render" value="false"/>
         <property name="singlePageView" value="true"/>
-        <property name="cssClasses">
-            <list merge="true">
-                <value>myplan-view</value>
+        <property name="headerText" value="@{dataObject.courseSummaryDetails.code} @{dataObject.courseSummaryDetails.courseTitle} (@{dataObject.courseSummaryDetails.credit})"/>
+        <property name="header.upperGroup">
+            <bean parent="KSAP-VerticalBoxGroup">
+                <property name="items">
+                    <list>
+                        <bean parent="Uif-Link" p:linkText="Back to Previous Page" p:href="javascript:history.go(-1)"/>
             </list>
         </property>
-        <property name="header">
-            <ref bean="course_details_back_link"/>
+            </bean>
         </property>
         <property name="page">
-            <bean parent="Uif-Page" id="course_details_page"
-                      p:headerText="@{dataObject.courseSummaryDetails.code} @{dataObject.courseSummaryDetails.courseTitle} (@{dataObject.courseSummaryDetails.credit})">
-                    <property name="validationMessages">
-                        <null/>
-                    </property>
-                    <property name="layoutManager">
-                        <bean parent="Uif-HorizontalBoxLayout"/>
-                    </property>
+            <bean parent="KSAP-Page" id="course_details_page">
                     <property name="items">
                         <list>
                             <ref bean="course_details_section"/>
@@ -54,35 +46,14 @@
         </property>
     </bean>
 
-    <bean id="course_details_back_link" parent="Uif-ViewHeader">
-        <property name="upperGroup">
-            <bean parent="Uif-VerticalBoxSubSection" p:style="float:none;">
-                <property name="items">
-                    <list>
-                        <bean parent="Uif-Link" p:linkText="Back to Previous Page" p:href="javascript:history.go(-1)"
-                              p:style="display:block; margin:1em 0;"/>
-                    </list>
-                </property>
-            </bean>
-        </property>
-    </bean>
 
-    <bean id="course_details_section" parent="Uif-VerticalBoxSubSection" p:style="width: 710px; margin-right: 10px;">
+
+    <bean id="course_details_section" parent="KSAP-VerticalBoxGroup" p:width="710px">
         <property name="items">
             <list>
-                <bean parent="Uif-VerticalBoxGroup">
-                    <property name="validationMessages">
-                        <null/>
-                    </property>
-                    <property name="items">
-                        <list>
                             <ref bean="course_details_actions"/>
-
-                            <bean id="course_details_page_messaging" parent="Uif-VerticalBoxGroup"
+                <bean id="course_details_page_messaging" parent="KSAP-VerticalBoxGroup"
                                   p:render="@{(dataObject.plannedCourseSummary.backupList.size() gt 0 or dataObject.plannedCourseSummary.plannedList.size() gt 0 or dataObject.plannedCourseSummary.academicTerms.size() gt 0) ? true : false}">
-                                <property name="validationMessages">
-                                    <null/>
-                                </property>
                                 <property name="cssClasses">
                                     <list merge="true">
                                         <value>myplan-status</value>
@@ -91,11 +62,7 @@
                                 </property>
                                 <property name="items">
                                     <list>
-                                        <bean parent="Uif-HorizontalFieldGroup" p:style="margin:0;">
-                                            <property name="fieldLabel.render" value="false"/>
-                                            <property name="group.validationMessages">
-                                                <null/>
-                                            </property>
+                            <bean parent="KSAP-HorizontalBoxGroup">
                                             <property name="items">
                                                 <list>
                                                     <bean parent="MyPlanMessagingIcon"/>
@@ -119,18 +86,11 @@
                                 </property>
                             </bean>
                             <ref bean="course_details_overview"/>
-                            <!--<ref bean="course_details_links"/>-->
                             <ref bean="course_details_sections"/>
                         </list>
                     </property>
                 </bean>
-            </list>
-        </property>
-    </bean>
-    <bean id="course_details_actions" parent="Uif-HorizontalBoxGroup" p:style="margin-bottom: 25px;">
-        <property name="validationMessages">
-            <null/>
-        </property>
+    <bean id="course_details_actions" parent="KSAP-HorizontalBoxGroup">
         <property name="onDocumentReadyScript" value="
             jQuery('#course_details_actions').on('PLAN_ITEM_ADDED', function(event, data){
                 if (data.planItemType === 'wishlist') {
@@ -144,12 +104,12 @@
         "/>
         <property name="items">
             <list>
-                <bean parent="Uif-PrimaryActionButton" p:actionLabel="Add to Plan"
+                <bean parent="KSAP-PrimaryActionButton" p:actionLabel="Add to Plan"
                       p:id="@{dataObject.courseSummaryDetails.courseId}_addUpdatePlanItem"
                       p:actionImagePlacement="RIGHT">
                     <property name="actionImage">
                         <bean parent="Uif-Image"
-                              p:source="@{#ConfigProperties['ks.myplan.externalizable.images.url']}pixel.gif">
+                              p:source="@{#ConfigProperties['ks.myplan.externalizable.images.url']}/pixel.gif">
                             <property name="cssClasses">
                                 <list merge="true">
                                     <value>rightArrowLarge</value>
@@ -164,7 +124,7 @@
                         openPopup('add_dialog_page', retrieveData, 'plan', popupStyle, popupOptions, e);
                     "/>
                 </bean>
-                <bean parent="Uif-SecondaryActionButton" p:actionLabel="Bookmark Course"
+                <bean parent="KSAP-SecondaryActionButton" p:actionLabel="Bookmark Course"
                       p:id="@{dataObject.courseSummaryDetails.courseId}_addSavedCourse"
                       p:render="@{!dataObject.plannedCourseSummary.inSavedCourseList}">
                     <property name="onDocumentReadyScript" value="
@@ -227,16 +187,13 @@
 
     <bean id="course_details_overview" parent="KSAP-VerticalBoxGroup" p:headerText="Course Overview">
         <property name="header">
-            <bean parent="Uif-HeaderThree">
-                <property name="cssClasses">
-                    <list merge="true">
-                        <value>myplan-underline-header</value>
-                    </list>
-                </property>
+            <bean parent="KSAP-HeaderThree">
+                <property name="cssClasses" value="courseDetails__header"/>
             </bean>
         </property>
         <property name="header.rightGroup">
             <bean parent="KSAP-HorizontalBoxGroup">
+                <property name="cssClasses" value="courseDetails__headerGroup--right"/>
                 <property name="items">
                     <list>
                         <bean parent="Uif-DataField" p:propertyName="courseSummaryDetails.abbrGenEdRequirements"
@@ -406,11 +363,7 @@
                                                                               value="fl-text-gray myplan-text-normal"/>
                                                                     <property name="propertyEditor"
                                                                               ref="scheduled_terms_list_formatter"/>
-                                                                    <property name="cssClasses">
-                                                                        <list merge="true">
-                                                                            <value>myplan-data-list</value>
-                                                                        </list>
-                                                                    </property>
+                                                        <property name="cssClasses" value="termBadge"/>
                                                                 </bean>
                                                     <bean parent="KSAP-Message" p:style="line-height: 20px;"
                                                                       p:messageText="Not Currently Scheduled"
@@ -647,18 +600,11 @@
         </property>
     </bean>-->
 
-    <bean id="course_details_sections" parent="Uif-VerticalBoxGroup">
-        <property name="validationMessages">
-            <null/>
-        </property>
+    <bean id="course_details_sections" parent="KSAP-VerticalBoxGroup" p:headerText="@{dataObject.courseSummaryDetails.code} Course Sections">
         <property name="render" value="@{dataObject.courseSummaryDetails.scheduledTerms.size() gt 0}"/>
         <property name="header">
-            <bean parent="Uif-HeaderThree" p:style="margin:0;">
-                <property name="cssClasses">
-                    <list merge="true">
-                        <value>myplan-underline-header</value>
-                    </list>
-                </property>
+            <bean parent="Uif-HeaderThree">
+                <property name="cssClasses" value="courseDetails__header"/>
             </bean>
         </property>
         <property name="cssClasses">
@@ -666,7 +612,6 @@
                 <value>myplan-course-details-sections</value>
             </list>
         </property>
-        <property name="headerText" value="@{dataObject.courseSummaryDetails.code} Course Sections"/>
         <property name="items">
             <list>
                 <bean id="course_details_sections_list_container" parent="Uif-VerticalBoxGroup"
@@ -1156,7 +1101,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-ImageField" p:style="margin: 0 0 2px 0;"
-                      p:source="@{#ConfigProperties['ks.myplan.externalizable.images.url']}pixel.gif"
+                      p:source="@{#ConfigProperties['ks.myplan.externalizable.images.url']}/pixel.gif"
                       p:altText="Section @{#line.code} is @{#line.stateKey}"
                       p:render="@{#line.stateKey NE 'active'}">
                     <property name="cssClasses">
@@ -1183,7 +1128,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-Image"
-                      p:source="@{#ConfigProperties['ks.myplan.externalizable.images.url']}pixel.gif"
+                      p:source="@{#ConfigProperties['ks.myplan.externalizable.images.url']}/pixel.gif"
                       p:style="margin:0;">
                     <property name="cssClasses">
                         <list merge="true">
@@ -1441,7 +1386,7 @@
 
     <bean id="section_button" parent="Uif-ImageField">
         <property name="id" value="button_@{#line.atpId.replace('.','-')}_@{#line.registrationCode}"/>
-        <property name="source" value="@{#ConfigProperties['ks.myplan.externalizable.images.url']}pixel.gif"/>
+        <property name="source" value="@{#ConfigProperties['ks.myplan.externalizable.images.url']}/pixel.gif"/>
         <property name="onMouseOverScript" value="buildHoverText(jQuery(this));"/>
         <property name="label" value=""/>
         <property name="dataAttributes">
