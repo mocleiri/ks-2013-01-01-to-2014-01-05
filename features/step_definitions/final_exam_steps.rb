@@ -601,45 +601,36 @@ Then /^all the exam settings and messages are retained after the rollover is com
   end
 end
 
-Then /^all the exam offering's tables are retained after the rollover is completed$/ do
+Then /^all the Exam Offering's state and table by Exam Driver should be retained after the rollover is completed$/ do
   #@co_one
   @test_co_one = make CourseOffering, :term => @term_target.term_code, :course => @co_one.course
   @test_co_one.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
-    page.final_exam_driver_value_0.should == "No final exam for this offering"
+  on(ManageCourseOfferings).view_exam_offerings
+  on ViewExamOfferings do |page|
+    page.co_table_header_text.should match /for Course Offering/
+    page.eo_by_co_status.should match /Draft/
   end
   #@co_two
   @test_co_two = make CourseOffering, :term => @term_target.term_code, :course => @co_two.course
   @test_co_two.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
-    page.final_exam_driver_value_0.should == "Alternate exam for this offering"
+  on(ManageCourseOfferings).view_exam_offerings
+  on ViewExamOfferings do |page|
+    page.ao_table_header.exists?.should == false
   end
   #@co_three
   @test_co_three = make CourseOffering, :term => @term_target.term_code, :course => @co_three.course
   @test_co_three.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.final_exam_driver_value_0.should == "Activity Offering"
+  on(ManageCourseOfferings).view_exam_offerings
+  on ViewExamOfferings do |page|
+    page.eo_by_ao_status("A", 0).should match /Draft/
   end
   #@co_four
   @test_co_four = make CourseOffering, :term => @term_target.term_code, :course => @co_four.course
   @test_co_four.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.final_exam_driver_value_0.should == "Course Offering"
-    #TODO: add assertion to check if use final exam matrix is checked or not
+  on(ManageCourseOfferings).view_exam_offerings
+  on ViewExamOfferings do |page|
+    page.co_table_header_text.should match /for Course Offering/
+    page.eo_by_co_status.should match /Draft/
   end
 end
 

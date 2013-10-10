@@ -115,6 +115,12 @@ module Workflows
     end
   end
 
+  def go_to_manage_final_exam_matrix
+    visit Enrollment do |page|
+      page.manage_final_exam_matrix
+    end
+  end
+
   def log_in(user, pwd)
     current_user = ""
     if !$distributed_env then

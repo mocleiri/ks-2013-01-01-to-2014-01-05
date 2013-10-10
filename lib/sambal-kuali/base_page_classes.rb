@@ -177,7 +177,7 @@ module CalendarStickyFooter
     options = defaults.merge(opts)
 
     acal_sticky_footer_div.button(text: "Save").click
-    loading.wait_while_present
+    loading.wait_while_present(60)
     sleep 1
     if options[:exp_success] then
       growl_div.wait_until_present

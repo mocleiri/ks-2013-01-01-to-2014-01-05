@@ -26,5 +26,6 @@ class Enrollment < BasePage
   action(:manage_registration_windows) { |p| p.frm.link(text: "Manage Registration Windows and Appointments").click }
   action(:add_hold) { |b| b.frm.link(text: "Add Hold").click }
   action(:manage_hold) { |b| b.frm.link(text: "Manage Hold").click }
+  action(:manage_final_exam_matrix) { |b| b.frm.link(text: "Manage Final Exam Matrix").click }
 
 end

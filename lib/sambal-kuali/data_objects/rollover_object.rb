@@ -51,7 +51,8 @@ class Rollover
     defaults = {
         :source_term=>"201212",
         :target_term=>"202112",
-        :exp_success=>true
+        :exp_success=>true,
+        :defer_continue_wo_exams => false
     }
     options = defaults.merge(opts)
     set_options(options)
@@ -70,7 +71,9 @@ class Rollover
       puts "Rollover initiated - source term: #{@source_term}"
       puts "Rollover initiated - target term: #{@target_term}"
       page.rollover_course_offerings
-      page.continue_wo_exams_dialog_confirm if page.continue_wo_exams_dialog_div.present?
+      if @defer_continue_wo_exams == false
+        page.continue_wo_exams_dialog_confirm if page.continue_wo_exams_dialog_div.present?
+      end
     end
 
     if @exp_success then

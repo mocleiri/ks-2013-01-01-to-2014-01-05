@@ -117,10 +117,24 @@ class ViewAcademicTerms < BasePage
   end
 
   #Final Exam
-  element(:final_exam_section) { |b| b.frm.div( id: "acal-term-examdates_line0")}
-  #element(:exam_start_date_field) { |b| b.final_exam_section.text_field( name: "termWrapperList[0].examdates[0].startDate")}
-  #element(:exam_end_date_field) { |b| b.final_exam_section.text_field( name: "termWrapperList[0].examdates[0].endDate")}
+  def final_exam_section( term_type)
+    term_index = term_index_by_term_type( term_type)
+    acal_term_list_div.div( id: "acal-term-examdates_line#{term_index}")
+  end
 
-  #action(:get_exam_start_date) { |b| b.exam_start_date_field.text}
-  #action(:get_exam_end_date) { |b| b.exam_end_date_field.text}
+  def exam_target_row( term_type)
+    final_exam_section( term_type).table.rows[1]
+  end
+
+  EXAM_STATUS = 0
+  EXAM_START_DATE = 1
+  EXAM_END_DATE = 2
+  EXCLUDE_SATURDAY = 3
+  EXCLUDE_SUNDAY = 4
+
+  def get_exam_start_date( term_type); exam_target_row( term_type).cells[EXAM_START_DATE].text; end
+  def get_exam_end_date( term_type); exam_target_row( term_type).cells[EXAM_END_DATE].text; end
+  def get_exclude_saturday_value( term_type); exam_target_row( term_type).cells[EXCLUDE_SATURDAY].text; end
+  def get_exclude_sunday_value( term_type); exam_target_row( term_type).cells[EXCLUDE_SUNDAY].text; end
+
 end
