@@ -28,8 +28,8 @@ Feature: EC.Waitlists Colocation
   Scenario: WL 1.17.4 Verify waitlist information is copied (within the same term) when copying a course offering with a colocated activity offering
     Given I create three colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
-    When I copy the course offering
-    Then the activity offering in the course offering copy is colocated
+    When I copy the parent course offering for one of the colocated activity offerings
+    Then the activity offering in the course offering copy is added to the colocated set
     And the waitlist configuration is copied to the colocated activity offering in the course offering copy
 
   Scenario: WL 1.17.5 Verify waitlist information is copied when copying a colocated activity offering

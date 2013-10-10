@@ -17,6 +17,7 @@ class EditAcademicTerms < BasePage
   action(:get_term_index) { |term_name, b| b.acal_term_list_div.text_field(value: "#{term_name}").name[/\d+/]}
 
   def term_index_by_term_type(term_type)
+    acal_term_list_div.link(text: /^#{term_type}$/).wait_until_present
     acal_term_list_div.link(text: /^#{term_type}$/).id[/\d+(?=_toggle)/]
   end
 

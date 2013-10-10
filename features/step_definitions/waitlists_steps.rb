@@ -363,11 +363,18 @@ Given /^I create three colocated activity offerings \(shared enrolment\) with wa
 
   @other_aos = []
   ["WMST300","WMST400"].each do |co_code|
-    course_offering = create CourseOffering, :course => co_code, :waitlists => true
-    activity_offering = create ActivityOffering, :parent_course_offering => @course_offering
+    course_offering = create CourseOffering, :course => co_code, :waitlists => true, :term => @term.term_code
+    activity_offering = create ActivityOffering, :parent_course_offering => course_offering
     activity_offering.save
     @other_aos << activity_offering
   end
+
+  @activity_offering.parent_course_offering.manage
+  @activity_offering.edit :colocate_ao_list => @other_aos,
+                          :colocate_shared_enrollment => true,
+                          :max_enrollment => 120
+  @activity_offering.save
+
 end
 
 Then /^all three colocated activity offerings have the same waitlist configuration$/ do
@@ -402,8 +409,8 @@ end
 
 Then /^the waitlist configuration is copied to the new colocated activity offerings in the target term$/ do
   @activity_offering_target = @activity_offering
-  @activity_offering_target.term = @term_target.term_code
-  @activity_offering_target.parent_course_code.manage
+  @activity_offering_target.parent_course_offering.term = @term_target.term_code
+  @activity_offering_target.parent_course_offering.manage
   on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
 
   on ActivityOfferingInquiry do |page|

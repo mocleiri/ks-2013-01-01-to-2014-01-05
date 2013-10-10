@@ -92,7 +92,7 @@ class ActivityOffering
     defaults = {
         :parent_course_offering => (make CourseOffering),
         :status => "Draft",
-        :format => "Lecture Only",
+        :format => nil, #nil means use default
         :activity_type => "Lecture",
         :max_enrollment => 100,
         :actual_delivery_logistics_list => {},
@@ -151,10 +151,10 @@ class ActivityOffering
       #if page.codes_list.length == 0
       sleep 2
       page.add_activity
-      page.format.select @format
+      page.format.select @format unless @format.nil?
       page.loading.wait_while_present
       sleep 2
-      page.activity_type.select @activity_type
+      page.activity_type.select @activity_type unless @activity_type.nil?
       page.quantity.set options[:number_aos_to_create]
       page.complete_add_activity
       post_add_ao_list = page.codes_list
@@ -189,10 +189,10 @@ class ActivityOffering
       #if page.codes_list.length == 0
       sleep 2
       page.add_activity
-      page.format.select @format
+      page.format.select @format unless @format.nil?
       page.loading.wait_while_present
       sleep 2
-      page.activity_type.select @activity_type
+      page.activity_type.select @activity_type unless @format.nil?
       page.quantity.set "1"
       page.complete_add_activity
       sleep 2

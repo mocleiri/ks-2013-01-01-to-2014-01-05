@@ -82,6 +82,10 @@ Then /^I copy the course offering$/ do
   @course_offering_copy = create CourseOffering, :create_by_copy=>@course_offering
 end
 
+Then /^I copy the parent course offering/ do
+  @course_offering_copy = create CourseOffering, :create_by_copy=>@activity_offering.parent_course_offering
+end
+
 When /^I create a new course offering in a subsequent term by copying the existing course offering$/ do
   @course_offering_copy = create CourseOffering, :term=> Rollover::FINAL_EDITS_SOC_TERM, :create_from_existing=>@course_offering
 end
