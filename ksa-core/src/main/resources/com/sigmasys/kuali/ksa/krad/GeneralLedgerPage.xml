@@ -113,9 +113,10 @@
 							<bean parent="Uif-LinkField" p:label="Batch No." p:linkText="@{#line.batchId}" p:style="width: 20%;"
 									p:href="generalLedger?methodToCall=displayBatchDetails&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerBatchDetailsPage&amp;batchId=@{#line.batchId}"/>
 							<bean parent="Uif-DataField" p:label="Date" p:propertyName="transmissionDate" p:style="width: 35%;"/>
-							<bean parent="Uif-DataField" p:label="Total" p:propertyName="totalAmount" p:style="text-align: right; width: 20%;"/>
-							
-							<!-- Download XML action link -->
+							<bean parent="Uif-DataField" p:label="Credit Total" p:propertyName="totalCreditAmount" p:style="text-align: right; width: 20%;"/>
+                            <bean parent="Uif-DataField" p:label="Debit Total" p:propertyName="totalDebitAmount" p:style="text-align: right; width: 20%;"/>
+
+                            <!-- Download XML action link -->
 							<bean parent="Uif-LinkField" p:linkText="Download XML" p:target="_self"
 								  p:align="center" p:width="20%"
 								  p:href="generalLedger?methodToCall=downloadPriorBatchTransactions&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage&amp;batchId=@{#line.batchId}"/>

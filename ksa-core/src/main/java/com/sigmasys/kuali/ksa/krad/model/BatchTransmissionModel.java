@@ -30,7 +30,9 @@ public class BatchTransmissionModel implements Serializable {
     /**
      * Total Batch transmission amount.
      */
-    private BigDecimal totalAmount;
+    private BigDecimal totalAmount = BigDecimal.ZERO;
+    private BigDecimal totalCreditAmount = BigDecimal.ZERO;
+    private BigDecimal totalDebitAmount = BigDecimal.ZERO;
 
     /**
      * A Batch's sub-list of GL Accounts.
@@ -72,5 +74,21 @@ public class BatchTransmissionModel implements Serializable {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public BigDecimal getTotalCreditAmount() {
+        return totalCreditAmount;
+    }
+
+    public void setTotalCreditAmount(BigDecimal totalCreditAmount) {
+        this.totalCreditAmount = totalCreditAmount;
+    }
+
+    public BigDecimal getTotalDebitAmount() {
+        return totalDebitAmount;
+    }
+
+    public void setTotalDebitAmount(BigDecimal totalDebitAmount) {
+        this.totalDebitAmount = totalDebitAmount;
     }
 }

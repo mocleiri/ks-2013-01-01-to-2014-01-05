@@ -304,10 +304,14 @@ public class GeneralLedgerController extends ReportReconciliationController {
         glAccount.setTotalAmount(glAccount.getTotalAmount().add(glTransmission.getAmount()));
 
         // Adjust the total amount for the GlTransmission and the Grand Total:
-        if (glType != null) {
-            batchTransmission.setTotalAmount(batchTransmission.getTotalAmount().add(adjustmentAmount));
-            grandTotalAmount.add(adjustmentAmount);
+        if(glOperationType == GlOperationType.DEBIT) {
+            batchTransmission.setTotalDebitAmount(batchTransmission.getTotalDebitAmount().add(glTransmission.getAmount()));
+        } else {
+            batchTransmission.setTotalCreditAmount(batchTransmission.getTotalCreditAmount().add(glTransmission.getAmount()));
         }
+
+        batchTransmission.setTotalAmount(batchTransmission.getTotalAmount().add(adjustmentAmount));
+        grandTotalAmount.add(adjustmentAmount);
 
         return glAccount;
     }
