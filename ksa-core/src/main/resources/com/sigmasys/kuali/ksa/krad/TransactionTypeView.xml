@@ -525,7 +525,7 @@
                             </bean>
                             <bean parent="Uif-InputField" p:label="Unallocated GL Operation" p:propertyName="unallocatedGLOperation" p:progressiveRender="@{#dp.type eq 'C'}">
                                 <property name="control">
-                                    <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeList"/>
+                                    <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeListShort"/>
                                 </property>
 
                             </bean>
@@ -545,6 +545,11 @@
     <util:list id="TransactionTypeList">
         <bean parent="Uif-KeyLabelPair" p:key="C" p:value="Credit (Payment)"/>
         <bean parent="Uif-KeyLabelPair" p:key="D" p:value="Debit (Charge)"/>
+    </util:list>
+
+    <util:list id="TransactionTypeListShort">
+        <bean parent="Uif-KeyLabelPair" p:key="C" p:value="Credit"/>
+        <bean parent="Uif-KeyLabelPair" p:key="D" p:value="Debit"/>
     </util:list>
 
 
@@ -578,9 +583,8 @@
 
                             <bean parent="Uif-InputField" p:propertyName="operation" p:labelPlacement="TOP" p:label="Operation" p:readOnly="false">
                                 <property name="control">
-                                  <bean parent="Uif-DropdownControl" p:width="100%"/>
+                                    <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeListShort"/>
                                 </property>
-                                <property name="optionsFinder" value="@{getCreditDebitKeyValuesFinder()}"/>
                             </bean>
                             <bean parent="Uif-InputField" p:propertyName="breakdownString"
                                   p:label="Breakdown"
