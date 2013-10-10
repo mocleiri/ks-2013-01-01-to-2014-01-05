@@ -54,16 +54,8 @@ When /^I create and then edit a Course Offering from catalog with an alternate f
 end
 
 When /^I create a Course Offering from an existing course offering with no final exam period$/ do
-  @course_offering = make CourseOffering, :term => "201301", :course => "CHEM277"
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.loading.wait_while_present
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+  @course_offering = create CourseOffering, :term => "201301", :course => "CHEM277",
+                          :final_exam_type => "NONE"
 
   @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
   on ManageCourseOfferings do |page|
@@ -169,8 +161,6 @@ When /^I create multiple Course Offerings each with a different Exam Driver in t
   for i in 1..5
     @ao_one = @co_one.create_ao(make ActivityOffering, :format => "Lecture Only")
   end
-  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @co_one
-  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
 
   @co_two = create CourseOffering, :term => @term.term_code, :course => "ENGL301",
                      :final_exam_driver => "Final Exam Per Activity Offering"
@@ -178,8 +168,6 @@ When /^I create multiple Course Offerings each with a different Exam Driver in t
   @co_three = create CourseOffering, :term => @term.term_code, :course => "PHYS272",
                      :final_exam_driver => "Final Exam Per Activity Offering"
   @ao_three = @co_three.create_ao(make ActivityOffering, :format => "Lecture Only")
-  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @co_three
-  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
 
   @co_four = create CourseOffering, :term => @term.term_code, :course => "CHEM611"
 end
@@ -195,12 +183,11 @@ When /^I rollover the term to a new academic term that has no exam period$/ do
 
   @rollover = make Rollover, :target_term => @term_target.term_code ,
                    :source_term => @term.term_code,
-                   :exp_success => false
+                   :exp_success => false, :defer_continue_wo_exams => true
   @rollover.perform_rollover
-  @rollover.wait_for_rollover_to_complete
 end
 
-When /^I retry to rollover the term to a new academic term that has an exam period$/ do
+When /^I rollover the term to a new academic term that has an exam period$/ do
   @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1
   @term_target = make AcademicTerm, :term_year => @calendar_target.year
   @calendar_target.add_term(@term_target)
@@ -614,6 +601,48 @@ Then /^all the exam settings and messages are retained after the rollover is com
   end
 end
 
+Then /^all the exam offering's tables are retained after the rollover is completed$/ do
+  #@co_one
+  @test_co_one = make CourseOffering, :term => @term_target.term_code, :course => @co_one.course
+  @test_co_one.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
+    page.final_exam_driver_value_0.should == "No final exam for this offering"
+  end
+  #@co_two
+  @test_co_two = make CourseOffering, :term => @term_target.term_code, :course => @co_two.course
+  @test_co_two.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
+    page.final_exam_driver_value_0.should == "Alternate exam for this offering"
+  end
+  #@co_three
+  @test_co_three = make CourseOffering, :term => @term_target.term_code, :course => @co_three.course
+  @test_co_three.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.final_exam_driver_value_0.should == "Activity Offering"
+  end
+  #@co_four
+  @test_co_four = make CourseOffering, :term => @term_target.term_code, :course => @co_four.course
+  @test_co_four.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.final_exam_driver_value_0.should == "Course Offering"
+    #TODO: add assertion to check if use final exam matrix is checked or not
+  end
+end
+
 Then /^every CO's Exam Offerings should be copied to the new term by the rollover process$/ do
   #@co_one
   @test_co_one = make CourseOffering, :term => @term_target.term_code, :course => @co_one.course
@@ -748,8 +777,12 @@ Then /^there should be no Standard Exam tables present$/ do
   end
 end
 
-Then /^I expect the rollover process to fail with a displayed warning stating "([^"]*)"$/ do |exp_msg|
-  sleep 50
+Then /^I expect a popup to appear with a displayed warning stating "([^"]*)"$/ do |exp_msg|
+  on PerformRollover do |page|
+    page.continue_wo_exams_dialog_div.visible?.should == true
+    page.continue_wo_exams_dialog_div.text.should match /#{exp_msg}/
+    page.continue_wo_exams_dialog_confirm
+  end
 end
 
 Then /^the non-active days toggles should be selected by default$/ do
