@@ -127,88 +127,90 @@
     <!-- AOP intercepts -->
     <aop:config>
         <aop:aspect id="enumCacheAroundSearch" ref="enumMethodCacheAdvisor">
-            <aop:around pointcut="execution(*  org.kuali.student.core.enumerationmanagement.service.impl.*.search*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.enumerationmanagement.service.impl.*.search*(..))"
                         method="getFromCache"/>
             <aop:around
-                    pointcut="execution(*  org.kuali.student.core.enumerationmanagement.service.impl.*.addEnumeratedValue*(..))"
+                    pointcut="execution(*  org.kuali.student.r2.core.class1.enumerationmanagement.service.impl.*.addEnumeratedValue*(..))"
                     method="invalidateCache"/>
             <aop:around
-                    pointcut="execution(*  org.kuali.student.core.enumerationmanagement.service.impl.*.updateEnumeratedValue*(..))"
+                    pointcut="execution(*  org.kuali.student.r2.core.class1.enumerationmanagement.service.impl.*.updateEnumeratedValue*(..))"
                     method="invalidateCache"/>
         </aop:aspect>
         <aop:aspect id="atpCacheAroundSearch" ref="atpMethodCacheAdvisor">
-            <aop:around pointcut="execution(*  org.kuali.student.core.atp.service.impl.*.getAtp*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.atp.service.impl.*.getAtp*(..))"
                         method="getFromCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.atp.service.impl.*.search*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.atp.service.impl.*.search*(..))"
                         method="getFromCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.atp.service.impl.*.add*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.atp.service.impl.*.add*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.atp.service.impl.*.update*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.atp.service.impl.*.update*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.atp.service.impl.*.create*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.atp.service.impl.*.create*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.atp.service.impl.*.delete*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.atp.service.impl.*.delete*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.atp.service.impl.*.remove*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.atp.service.impl.*.remove*(..))"
                         method="invalidateCache"/>
         </aop:aspect>
         <aop:aspect id="orgCacheAroundSearch" ref="orgMethodCacheAdvisor">
-            <aop:around pointcut="execution(*  org.kuali.student.core.organization.service.impl.*.search*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.organization.service.impl.*.search*(..))"
                         method="getFromCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.organization.service.impl.*.add*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.organization.service.impl.*.add*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.organization.service.impl.*.update*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.organization.service.impl.*.update*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.organization.service.impl.*.create*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.organization.service.impl.*.create*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.organization.service.impl.*.delete*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.organization.service.impl.*.delete*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.organization.service.impl.*.remove*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.organization.service.impl.*.remove*(..))"
                         method="invalidateCache"/>
         </aop:aspect>
         <aop:aspect id="lrcCacheAroundSearch" ref="lrcMethodCacheAdvisor">
-            <aop:around pointcut="execution(*  org.kuali.student.lum.lrc.service.impl.*.search*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lrc.service.impl.*.search*(..))"
                         method="getFromCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.lum.lrc.service.impl.*.add*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lrc.service.impl.*.add*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.lum.lrc.service.impl.*.update*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lrc.service.impl.*.update*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.lum.lrc.service.impl.*.create*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lrc.service.impl.*.create*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.lum.lrc.service.impl.*.delete*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lrc.service.impl.*.delete*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.lum.lrc.service.impl.*.remove*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lrc.service.impl.*.remove*(..))"
+                        method="invalidateCache"/>
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lrc.service.impl.*.get*(..))"
                         method="invalidateCache"/>
         </aop:aspect>
         <aop:aspect id="statementCacheAroundSearch" ref="statementMethodCacheAdvisor">
-            <aop:around pointcut="execution(*  org.kuali.student.core.statement.service.impl.*.search*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r1.core.statement.service.impl.*.search*(..))"
                         method="getFromCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.statement.service.impl.*.translate*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r1.core.statement.service.impl.*.translate*(..))"
                         method="getFromCache"/>
             <aop:around
-                    pointcut="execution(*  org.kuali.student.core.statement.service.impl.*.getNaturalLanguageFor*(..))"
+                    pointcut="execution(*  org.kuali.student.r1.core.statement.service.impl.*.getNaturalLanguageFor*(..))"
                     method="getFromCache"/>
             <aop:around
-                    pointcut="execution(*  org.kuali.student.core.statement.service.impl.*.getReqComponentTypesForStatementType*(..))"
+                    pointcut="execution(*  org.kuali.student.r1.core.statement.service.impl.*.getReqComponentTypesForStatementType*(..))"
                     method="getFromCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.statement.service.impl.*.update*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r1.core.statement.service.impl.*.update*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.statement.service.impl.*.create*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r1.core.statement.service.impl.*.create*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.core.statement.service.impl.*.delete*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r1.core.statement.service.impl.*.delete*(..))"
                         method="invalidateCache"/>
         </aop:aspect>
 
         <aop:aspect id="luCacheAroundSearch" ref="luMethodCacheAdvisor">
-            <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.search(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lu.service.impl.*.search(..))"
                         method="getFromCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.get*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lu.service.impl.*.get*(..))"
                         method="getFromCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.update*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lu.service.impl.*.update*(..))"
                         method="invalidateCache"/>
-            <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.create*(..))"
+            <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lu.service.impl.*.create*(..))"
                         method="invalidateCache"/>
-               <aop:around pointcut="execution(*  org.kuali.student.lum.lu.service.impl.*.delete*(..))"
+               <aop:around pointcut="execution(*  org.kuali.student.r2.lum.lu.service.impl.*.delete*(..))"
                         method="invalidateCache"/>
         </aop:aspect>
 

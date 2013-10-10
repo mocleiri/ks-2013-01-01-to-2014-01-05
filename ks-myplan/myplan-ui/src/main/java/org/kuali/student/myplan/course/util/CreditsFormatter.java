@@ -2,12 +2,19 @@ package org.kuali.student.myplan.course.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.student.r2.common.dto.AttributeInfo;
+import org.kuali.student.r2.common.exceptions.*;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.lum.course.service.assembler.CourseAssemblerConstants;
+import org.kuali.student.r2.lum.lrc.dto.ResultValueInfo;
 import org.kuali.student.r2.lum.lrc.dto.ResultValuesGroupInfo;
+import org.kuali.student.r2.lum.lrc.service.LRCService;
+import org.kuali.student.r2.lum.util.constants.LrcServiceConstants;
 import org.springframework.util.CollectionUtils;
 
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,6 +23,8 @@ import java.util.List;
  * Turns credits info into Strings.
  */
 public class CreditsFormatter {
+
+    private static transient LRCService lrcService;
 
     final static Logger logger = Logger.getLogger(CreditsFormatter.class);
 
@@ -45,20 +54,24 @@ public class CreditsFormatter {
          */
         String type = rci.getType();
         if (type.equals(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_FIXED)) {
-            List<AttributeInfo> attributeInfos = rci.getAttributes();
-            if (!CollectionUtils.isEmpty(attributeInfos)) {
-                for (AttributeInfo attributeInfo : attributeInfos) {
-                    if (CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_FIXED_CREDIT_VALUE.equals(attributeInfo.getKey())) {
-                        credits = attributeInfo.getValue();
-                        break;
-                    }
-                }
 
-            }
-            credits = trimCredits(credits);
+            /*Since it is fixed credit both the min and the max value are same*/
+            credits = trimCredits(rci.getResultValueRange().getMaxValue());
         } else if (type.equals(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE)) {
             StringBuilder cTmp = new StringBuilder();
-            Collections.sort(rci.getResultValueKeys(), new Comparator<String>() {
+            List<String> resultValueInfos = new ArrayList<String>();
+            try {
+                for (String resultValueKey : rci.getResultValueKeys()) {
+                    ResultValueInfo resultValueInfo = getLrcService().getResultValue(resultValueKey, CourseSearchConstants.CONTEXT_INFO);
+                    if (resultValueInfo != null && resultValueInfo.getValue() != null) {
+                        resultValueInfos.add(resultValueInfo.getValue());
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("Could not fetch the result values", e);
+            }
+
+            Collections.sort(resultValueInfos, new Comparator<String>() {
                 @Override
                 public int compare(String o1, String o2) {
                     if (Double.parseDouble(o1) > Double.parseDouble(o2))
@@ -67,11 +80,10 @@ public class CreditsFormatter {
                         return -1;
                     else
                         return 0;
-
-
                 }
             });
-            for (String c : rci.getResultValueKeys()) {
+
+            for (String c : resultValueInfos) {
                 if (cTmp.length() != 0) {
                     cTmp.append(", ");
                 }
@@ -79,25 +91,8 @@ public class CreditsFormatter {
             }
             credits = cTmp.toString();
         } else if (type.equals(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE)) {
-            String minCredits = null;
-            String maxCredits = null;
-            List<AttributeInfo> attributeInfos = rci.getAttributes();
-            if (!CollectionUtils.isEmpty(attributeInfos)) {
-                for (AttributeInfo attributeInfo : attributeInfos) {
-                    String key = attributeInfo.getKey();
-                    String value = attributeInfo.getValue();
-                    if (CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE.equals(key)) {
-                        minCredits = value;
-                    } else if (CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MAX_CREDIT_VALUE.equals(key)) {
-                        maxCredits = value;
-                    }
-
-                    if (minCredits != null && maxCredits != null) {
-                        break;
-                    }
-                }
-
-            }
+            String minCredits = StringUtils.isEmpty(rci.getResultValueRange().getMinValue()) ? null : rci.getResultValueRange().getMinValue();
+            String maxCredits = StringUtils.isEmpty(rci.getResultValueRange().getMaxValue()) ? null : rci.getResultValueRange().getMaxValue();
             if (minCredits != null && maxCredits != null) {
                 credits = trimCredits(minCredits) + "-" + trimCredits(maxCredits);
             }
@@ -121,5 +116,16 @@ public class CreditsFormatter {
             credits = credits.substring(0, credits.indexOf("."));
         }
         return credits;
+    }
+
+    public static LRCService getLrcService() {
+        if (lrcService == null) {
+            lrcService = (LRCService) GlobalResourceLoader.getService(new QName(LrcServiceConstants.NAMESPACE, "LearningResultService"));
+        }
+        return lrcService;
+    }
+
+    public static void setLrcService(LRCService lrcService) {
+        CreditsFormatter.lrcService = lrcService;
     }
 }
