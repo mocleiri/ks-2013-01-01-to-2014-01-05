@@ -156,7 +156,6 @@ Then /^I can submit and the course offering is updated$/ do
 
   #validate the success-growl is being shown
   on ManageCourseOfferings do |page|
-    sleep 2 #TODO: required by headless
     page.growl_text.should include "#{@course_offering.course} was successfully updated"
   end
 

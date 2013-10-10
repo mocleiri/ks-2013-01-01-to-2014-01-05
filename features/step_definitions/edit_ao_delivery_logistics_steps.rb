@@ -68,7 +68,6 @@ end
 
 Then /^an error message is displayed about the required RDL fields$/ do
   on ActivityOfferingMaintenance do |page|
-    sleep 2 #TODO: required by headless
     page.growl_text.should == "The form contains errors. Please correct these errors and try again."
     page.cancel
   end

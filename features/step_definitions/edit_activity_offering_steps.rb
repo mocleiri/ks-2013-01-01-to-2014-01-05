@@ -25,7 +25,6 @@ And /^I submit the AO changes$/ do
 
   #validate the success-growl is being shown
   on ManageCourseOfferings do |page|
-    sleep 2 #TODO: required by headless
     page.growl_text.should == "Activity Offering modified."
   end
 end

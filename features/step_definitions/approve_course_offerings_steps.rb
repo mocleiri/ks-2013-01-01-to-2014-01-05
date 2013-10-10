@@ -334,7 +334,6 @@ Then /^I(?: can)? suspend the activity offering$/ do
   @activity_offering.suspend
 
   on ManageCourseOfferings do |page|
-    sleep 2 #TODO: required by headless
     page.growl_text.should == "The selected activity offering was successfully suspended."
     page.ao_status(@activity_offering.code).should == "Suspended"
   end
@@ -345,7 +344,6 @@ Then /^I(?: can)? cancel the activity offering$/ do
   @activity_offering.cancel
 
   on ManageCourseOfferings do |page|
-    sleep 2 #TODO: required by headless
     page.growl_text.should == "The selected activity offering was successfully canceled."
     page.ao_status(@activity_offering.code).should == "Canceled"
   end
@@ -1131,7 +1129,6 @@ end
 And /^a resinstated success message is displayed$/ do
   #validate the success-growl is being shown
   on ManageCourseOfferings do |page|
-    sleep 2 #TODO: required by headless
     page.growl_text.should == "The selected activity offering was successfully resinstated."
   end
 end
