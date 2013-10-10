@@ -2,11 +2,12 @@ When /^there is a course offering with a colocated activity offering$/ do
   @course_offering = make CourseOffering, :term => "201208", :course => "CHEM441"
   @course_offering.manage
 
-  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @ao_list = []
+  @ao_list << (make ActivityOffering, :code => "A", :parent_course_offering => @course_offering)
   colocated_ao_parent = make CourseOffering, :course => "CHEM641", :term => "201208"
-  colocated_ao = make ActivityOffering, :code => "A", :parent_course_offering => colocated_ao_parent
-  @activity_offering.colocate_ao_list << colocated_ao
-  on(ManageCourseOfferings).has_colo_icon(@activity_offering.code).should be_true
+  @ao_list << (make ActivityOffering, :code => "A", :parent_course_offering => colocated_ao_parent)
+  @ao_list[0].colocate_ao_list << @ao_list[1]
+  on(ManageCourseOfferings).has_colo_icon(@ao_list[0].code).should be_true
 end
 
 When /^I create "([2-9])" COs with an AO in each$/ do |number_of_cos_to_create|
@@ -138,7 +139,7 @@ end
 
 Then /^the activity offering in the course offering copy is not colocated$/ do
   @course_offering_copy.manage
-  on(ManageCourseOfferings).has_colo_icon(@activity_offering.code).should be_false
+  on(ManageCourseOfferings).has_colo_icon(@ao_list[0].code).should be_false
 end
 
 When /^I copy one of the colocated activity offerings$/ do

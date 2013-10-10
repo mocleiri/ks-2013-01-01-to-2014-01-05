@@ -273,6 +273,7 @@ Given /^the waitlist enabled configuration is copied to the new course and activ
   @course_offering_copy = make CourseOffering, :course => @course_offering.course, :term => @term_target.term_code
   step "the waitlist configuration is copied to the new course and activity offering"
 end
+
 Given /^the waitlist configuration is copied to the new course and activity offering.*$/ do
   @course_offering_copy.view_course_details
   on CourseOfferingInquiry do |page|
@@ -428,7 +429,28 @@ Given /^I make changes to activity offering waitlist configuration$/ do
 end
 
 Given /^there is an existing course offering with a colocated activity offering \(shared enrolment\) with waitlists enabled$/ do
-  pending # express the regexp above with the code you wish you had
+  @course_offering = make CourseOffering, :term => "201208", :course => "ENGL362"
+  @course_offering.manage
+
+  @ao_list = []
+  @ao_list << (make ActivityOffering, :code => "A", :parent_course_offering => @course_offering)
+  colocated_ao_parent = make CourseOffering, :course => "HIST310", :term => "201208"
+  @ao_list << (make ActivityOffering, :code => "A", :parent_course_offering => colocated_ao_parent)
+  @ao_list[0].colocate_ao_list << @ao_list[1]
+  on(ManageCourseOfferings).has_colo_icon(@ao_list[0].code).should be_true
+end
+
+Given /^the waitlist configuration is copied to the new activity offering.*$/ do
+  @course_offering_copy.manage
+  on(ManageCourseOfferings).view_activity_offering(@ao_list[0].code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_active?.should be_true
+    page.waitlists_allow_holds?.should == @ao_list[0].waitlist_config.allow_hold_list
+    page.waitlists_processing.should == @ao_list[0].waitlist_config.type
+    page.waitlists_max_size.should == @ao_list[0].waitlist_config.waitlist_limit_str
+    page.close
+  end
 end
 
 

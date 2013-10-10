@@ -39,7 +39,6 @@ Feature: EC.Waitlists Colocation
     Then the activity offering copy is added to the colocated set
     And the waitlist configuration is copied to the new colocated activity offering
 
-  @draft
   Scenario: WL 1.17.6 Verify waitlist confirguration for a colocated activity offering when using create CO by copy an Existing CO from a prior term
     Given there is an existing course offering with a colocated activity offering (shared enrolment) with waitlists enabled
     When I create a new course offering in a subsequent term by copying the existing course offering
