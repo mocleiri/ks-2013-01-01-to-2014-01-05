@@ -270,8 +270,11 @@ public class GeneralLedgerController extends ReportReconciliationController {
         GeneralLedgerType glType = findGlType(generalLedgerTypes, glAccountId);
         String glAccountName = (glType != null)
                 ? StringUtils.defaultIfBlank(glType.getDescription(), glType.getName()) : glAccountId;
-        GlOperationType glOperationType = (glType != null)
-                ? glType.getGlOperationOnCharge() : glTransmission.getGlOperation();
+        GlOperationType glOperationType = glTransmission.getGlOperation();
+        if(glOperationType == null && glType != null) {
+                glOperationType = glType.getGlOperationOnCharge();
+        }
+
         GeneralLedgerAccountModel glAccount = null;
 
         // Try to find an existing GeneralLedgerAccountModel in the list:
@@ -298,7 +301,7 @@ public class GeneralLedgerController extends ReportReconciliationController {
         BigDecimal adjustmentAmount = (glOperationType == GlOperationType.CREDIT)
                 ? glTransmission.getAmount() : glTransmission.getAmount().negate();
 
-        glAccount.setTotalAmount(glAccount.getTotalAmount().add(adjustmentAmount));
+        glAccount.setTotalAmount(glAccount.getTotalAmount().add(glTransmission.getAmount()));
 
         // Adjust the total amount for the GlTransmission and the Grand Total:
         if (glType != null) {
