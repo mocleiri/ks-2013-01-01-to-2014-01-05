@@ -436,9 +436,20 @@ Then /^the waitlist configuration is copied to the new colocated activity offeri
 
 end
 
-
 Then /^the waitlist configuration is copied to the colocated activity offering in the course offering copy$/ do
-  pending # express the regexp above with the code you wish you had
+  @activity_offering_copy = @activity_offering
+  @activity_offering_copy.parent_course_offering = @course_offering_copy
+  @activity_offering_copy.parent_course_offering.manage
+  on(ManageCourseOfferings).view_activity_offering(@activity_offering_copy.code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_active?.should be_true
+    page.waitlists_allow_holds?.should == @activity_offering_copy.waitlist_config.allow_hold_list
+    page.waitlists_processing.should == @activity_offering_copy.waitlist_config.type
+    page.waitlists_max_size.should == @activity_offering_copy.waitlist_config.waitlist_limit_str
+    page.close
+  end
+
 end
 
 Given /^I make changes to activity offering waitlist configuration$/ do
