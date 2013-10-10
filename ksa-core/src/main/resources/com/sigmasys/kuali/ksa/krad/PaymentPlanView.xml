@@ -967,11 +967,11 @@
         <property name="headerText" value="Plan Members"/>
         <property name="items">
             <list>
-                <bean parent="Uif-Message" p:messageText="No plan members" p:render="@{#line.planMembers.size() == 0}"/>
+                <bean parent="Uif-Message" p:messageText="No plan members" p:render="@{#line.paymentBillingQueues.size() == 0}"/>
                 <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:width="85%">
                     <property name="readOnly" value="true"/>
-                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember"/>
-                    <property name="propertyName" value="thirdPartyPlanMembers"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.pb.PaymentBillingQueue"/>
+                    <property name="propertyName" value="paymentBillingQueues"/>
                     <property name="layoutManager.sequencePropertyName" value="name"/>
                     <property name="layoutManager.richTable.render" value="true"/>
                     <property name="layoutManager.renderSequenceField" value="false"/>
@@ -988,20 +988,21 @@
                         <list>
                             <bean parent="Uif-InputField" p:label="Account ID" p:propertyName="directChargeAccount.id"/>
                             <bean parent="Uif-InputField" p:label="Name" p:propertyName="directChargeAccount.compositeDefaultPersonName"/>
+                            <bean parent="Uif-InputField" p:label="Initiation Date" p:propertyName="initiationDate"/>
                             <bean parent="Uif-InputField" p:label="Executed" p:propertyName="executed">
                                 <property name="control">
                                     <bean parent="Uif-CheckboxControl" p:disabled="true"/>
                                 </property>
                             </bean>
-                            <bean parent="Uif-InputField" p:label="Priority" p:propertyName="priority"/>
+                            <!--
                             <bean parent="Uif-HorizontalFieldGroup" p:label="Actions">
                                 <property name="items">
                                     <list>
                                         <bean parent="Uif-ImageField" p:source="../images/re_execute.png" p:style="cursor:pointer;" p:altText="Re-execute the Third Party Payment Plan" p:title=""
                                               p:onClickScript="showLightboxComponent('ThirdPartyReExecutePlanLightbox@{#lineSuffix}');">
-                                            <!--<property name="toolTip">
+                                            <property name="toolTip">
                                                 <bean parent="Uif-Tooltip" p:tooltipContent="Re-execute the Third Party Payment Plan"/>
-                                            </property>-->
+                                            </property>
                                         </bean>
                                         <ref bean="ThirdPartyReExecutePlanLightbox"/>
 
@@ -1015,6 +1016,7 @@
                                     </list>
                                 </property>
                             </bean>
+                            -->
                         </list>
                     </property>
                 </bean>

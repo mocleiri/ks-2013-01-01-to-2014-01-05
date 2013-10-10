@@ -107,7 +107,7 @@ public class TransactionModel extends Transaction {
     private String message;
 
     private String reverseTransactionReason;
-    private boolean reverseTransactionInternalOnly = false;
+    private boolean reverseTransactionInternalOnly;
 
     // Constructor
     public TransactionModel() {

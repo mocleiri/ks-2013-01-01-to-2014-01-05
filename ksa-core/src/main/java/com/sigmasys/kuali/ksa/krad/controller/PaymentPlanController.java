@@ -440,8 +440,6 @@ public class PaymentPlanController extends GenericSearchController {
             PaymentBillingPlanModel model = new PaymentBillingPlanModel();
             model.setParent(plan);
 
-
-
             models.add(model);
 
         }

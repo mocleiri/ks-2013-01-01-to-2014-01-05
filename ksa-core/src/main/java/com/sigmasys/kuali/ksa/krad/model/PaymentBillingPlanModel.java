@@ -129,6 +129,9 @@ public class PaymentBillingPlanModel {
     }
 
     public List<PaymentBillingQueue> getPaymentBillingQueues() {
+        if(paymentBillingQueues == null) {
+            paymentBillingQueues = new ArrayList<PaymentBillingQueue>();
+        }
         return paymentBillingQueues;
     }
 
