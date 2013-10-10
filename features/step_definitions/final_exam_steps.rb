@@ -9,10 +9,10 @@ When /^I change the final exam end date to be after the term end date and save$/
 end
 
 When /^I add a final exam period within the dates of the fall term of the new academic calender and save$/ do
-  @calendar = make AcademicCalendar
-  @calendar.create
+  @calendar = create AcademicCalendar
 
-  @term = make AcademicTerm, :term_year => @calendar.year, :start_date=>"08/20/#{@calendar.year}", :end_date=>"12/10/#{@calendar.year}"
+  @term = make AcademicTerm, :term_year => @calendar.year, :start_date=>"08/20/#{@calendar.year}",
+               :end_date=>"12/10/#{@calendar.year}", :term_type => "Fall Term", :term_name => "Fall"
   @calendar.add_term @term
 
   @term.create_final_exam_period
@@ -88,7 +88,6 @@ When /^I create an Academic Calender and add an official term$/ do
   @calendar = create AcademicCalendar
 
   @term = make AcademicTerm, :term_year => @calendar.year
-  puts "#{@term.term_code}"
   @calendar.add_term(@term)
   @manage_soc = make ManageSoc, :term_code => @term.term_code
   @manage_soc.set_up_soc
@@ -104,19 +103,125 @@ When /^I create an Academic Calender and add an official term$/ do
   end
 end
 
+When /^I create an Academic Calender and add an official Winter and Summer term that each has an exam period$/ do
+  @calendar = create AcademicCalendar
+  @calendar.make_official
+  puts "#{@calendar.year}"
+  @term_winter = make AcademicTerm, :term_year => "#{@calendar.year.to_i + 1}", #:term_name => "Winter",
+                      :term_code => "#{@calendar.year.to_i + 1}00", :start_date=>"01/01/#{@calendar.year.to_i + 1}",
+                      :end_date=>"01/21/#{@calendar.year.to_i + 1}", :term_type=>"Winter Term"
+  @term_summer = make AcademicTerm, :term_year => "#{@calendar.year.to_i + 1}", #:term_name => "Summer",
+                      :term_code => "#{@calendar.year.to_i + 1}05", :start_date=>"03/10/#{@calendar.year.to_i + 1}",
+                      :end_date=>"06/20/#{@calendar.year.to_i + 1}", :term_type=>"Summer 1"
+
+  @calendar.add_term(@term_winter)
+  @calendar.add_term(@term_summer)
+
+  @term_winter.make_official
+  @term_summer.make_official
+
+  @manage_soc_winter = make ManageSoc, :term_code => @term_winter.term_code
+  @manage_soc_winter.set_up_soc
+  @manage_soc_winter.perform_manual_soc_state_change("open")
+
+  @manage_soc_summer = make ManageSoc, :term_code => @term_summer.term_code
+  @manage_soc_summer.set_up_soc
+  @manage_soc_summer.perform_manual_soc_state_change("open")
+end
+
+When /^I publish the Winter term$/ do
+  @manage_soc_winter.search
+  @manage_soc_winter.change_action "Lock"
+  on(ManageSocPage).go_action
+  @manage_soc_winter.change_action "Schedule"
+  on(ManageSocPage).go_action
+  @manage_soc_winter.change_action "FinalEdit"
+  on(ManageSocPage).go_action
+  @manage_soc_winter.change_action "Publish"
+end
+
+When /^I publish both terms in the Academic Calendar$/ do
+  @manage_soc_winter.search
+  @manage_soc_winter.change_action "Lock"
+  on(ManageSocPage).go_action
+  @manage_soc_winter.change_action "Schedule"
+  on(ManageSocPage).go_action
+  @manage_soc_winter.change_action "FinalEdit"
+  on(ManageSocPage).go_action
+  @manage_soc_winter.change_action "Publish"
+
+  @manage_soc_summer.search
+  @manage_soc_summer.change_action "Lock"
+  on(ManageSocPage).go_action
+  @manage_soc_summer.change_action "Schedule"
+  on(ManageSocPage).go_action
+  @manage_soc_summer.change_action "FinalEdit"
+  on(ManageSocPage).go_action
+  @manage_soc_summer.change_action "Publish"
+end
+
 When /^I create multiple Course Offerings each with a different Exam Offering in the new term$/ do
   @co_one = create CourseOffering, :term => @term.term_code, :course => "PHYS603",
-                            :final_exam_type => "NONE"
+                   :final_exam_type => "NONE"
   @co_two = create CourseOffering, :term => @term.term_code, :course => "PHYS603",
-                            :final_exam_type => "ALTERNATE"
+                   :final_exam_type => "ALTERNATE"
   @co_three = create CourseOffering, :term => @term.term_code, :course => "PHYS603",
-                            :final_exam_driver => "Final Exam Per Activity Offering"
+                     :final_exam_driver => "Final Exam Per Activity Offering"
 
   delivery_format_list = []
   delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering",
                                 :final_exam_driver => "Course Offering")
   @co_four = create CourseOffering, :term => @term.term_code, :course => "PHYS603", @use_final_exam_matrix => false,
-                           :delivery_format_list => delivery_format_list
+                    :delivery_format_list => delivery_format_list
+end
+
+When /^I create multiple Course Offerings each with a different Exam Driver in the Winter term$/ do
+  @co_one = create CourseOffering, :term => @term_winter.term_code, :course => "BSCI215"
+  for i in 1..5
+    @ao_one = @co_one.create_ao(make ActivityOffering, :format => "Lecture Only")
+  end
+  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @co_one
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
+
+  @co_two = create CourseOffering, :term => @term_winter.term_code, :course => "ENGL301",
+                            :final_exam_driver => "Final Exam Per Activity Offering"
+
+  @co_three = create CourseOffering, :term => @term_winter.term_code, :course => "PHYS272"
+  @ao_three = @co_three.create_ao(make ActivityOffering, :format => "Lecture Only")
+  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @co_three
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
+
+  @co_four = create CourseOffering, :term => @term_winter.term_code, :course => "CHEM611"
+  @ao_four = @co_four.create_ao(make ActivityOffering, :format => "Lecture Only")
+  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @co_four
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
+end
+
+When /^I create two Course Offerings in the Summer term from existing COs and change their Exam Drivers$/ do
+  @copy_co_three = create CourseOffering, :term => @term_summer.term_code,
+                     :create_from_existing => @co_three
+  @copy_co_three.edit :final_exam_type => "Standard final Exam", :final_exam_driver => "Final Exam Per Activity Offering"
+
+  @copy_co_four = create CourseOffering, :term => @term_summer.term_code,
+                    :create_from_existing => @co_four
+  @copy_co_four.edit :final_exam_type => "Standard final Exam", :final_exam_driver => "Final Exam Per Course Offering"
+end
+
+When /^I retry to rollover the term to a new academic term that has an exam period$/ do
+  @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1
+  @term_target = make AcademicTerm, :term_year => @calendar_target.year
+  @term_target.edit :exam_period => true
+  @calendar_target.add_term(@term_target)
+  @term_target.make_official
+
+  @manage_soc = make ManageSoc, :term_code => @term_target.term_code
+  @manage_soc.set_up_soc
+
+  @rollover = make Rollover, :target_term => @term_target.term_code ,
+                   :source_term => @term.term_code,
+                   :exp_success => false
+  @rollover.perform_rollover
+  @rollover.wait_for_rollover_to_complete
 end
 
 When /^I have ensured that the Fall Term of the Calender is setup with a Final Exam Period$/ do
@@ -192,7 +297,7 @@ When /^I view the Exam Offerings for a CO with two new AOs and a standard final 
   @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
                                         :final_exam_driver => "Final Exam Per Activity Offering",
                                         :final_exam_activity => "Lecture"
-  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
   @activity_offering.edit :send_to_scheduler => true, :defer_save => false
 
   @add_ao_one = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
@@ -203,16 +308,6 @@ When /^I view the Exam Offerings for a CO with two new AOs and a standard final 
     page.view_exam_offerings
   end
 end
-
-When /^I view the Exam Offerings for a CO with no final exam$/ do
-  @course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.exam_offerings_setup :final_exam_type => "No final exam or assessment"
-
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
-end
-
 
 When /^I create a CO with two new AOs and then view the Exam Offerings where the CO has a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
@@ -264,6 +359,31 @@ When /^I view the Exam Offerings for an open CO with a standard final exam drive
   end
 end
 
+When /^I view the Exam Offerings for a CO where the Course Offering Standard FE is changed to No Final Exam$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL305")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Course Offering"
+
+  @course_offering.exam_offerings_setup :final_exam_type => "No final exam or assessment"
+
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I view the Exam Offerings for a CO where the Activity Offering Standard FE is changed to Alternate Final Exam$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+
+  @course_offering.exam_offerings_setup :final_exam_type => "Alternate final assessment"
+
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
 When /^I view the Exam Offerings after changing the Final Exam Driver to Course Offering$/ do
   @course_offering.manage
   @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
@@ -292,6 +412,18 @@ When /^I view the Exam Offerings after updating the Final Exam to none$/ do
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
+end
+
+When /^I add an Exam Period to the term$/ do
+  @term.edit :exam_period => true
+end
+
+When /^I choose to include the non-active days in the term's Exam Period$/ do
+  @term.edit :exam_period => true, :include_non_active_days => true
+end
+
+When /^I edit a Thursday morning Standard Final Exam rule on the matrix$/ do
+
 end
 
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
@@ -469,16 +601,58 @@ Then /^all the exam settings and messages are retained after the rollover is com
   end
 end
 
+Then /^every CO's Exam Offerings should be copied to the new term by the rollover process$/ do
+  #@co_one
+  @test_co_one = make CourseOffering, :term => @term_target.term_code, :course => @co_one.course
+  @test_co_one.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
+    page.final_exam_driver_value_0.should == "No final exam for this offering"
+  end
+  #@co_two
+  @test_co_two = make CourseOffering, :term => @term_target.term_code, :course => @co_two.course
+  @test_co_two.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
+    page.final_exam_driver_value_0.should == "Alternate exam for this offering"
+  end
+  #@co_three
+  @test_co_three = make CourseOffering, :term => @term_target.term_code, :course => @co_three.course
+  @test_co_three.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.final_exam_driver_value_0.should == "Activity Offering"
+  end
+  #@co_four
+  @test_co_four = make CourseOffering, :term => @term_target.term_code, :course => @co_four.course
+  @test_co_four.manage
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  on CourseOfferingEdit do |page|
+    page.final_exam_driver_value_0.should == "Course Offering"
+    #TODO: add assertion to check if use final exam matrix is checked or not
+  end
+end
+
 Then /^there should be a Course Offering table that is in the ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
-    page.co_table_header_text.should match /by Course Offering/
+    page.co_table_header_text.should match /for Course Offering/
     page.eo_by_co_status.should match /#{exp_state}/
   end
 end
 
 Then /^the Course Offering table should only show that it is in the ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
-    page.co_table_header_text.should match /by Course Offering/
+    page.co_table_header_text.should match /for Course Offering/
     page.eo_by_co_status.should match /#{exp_state}/
     page.eo_by_co_days.should == ""
     page.eo_by_co_st_time.should == ""
@@ -491,7 +665,7 @@ end
 
 Then /^there should be an Activity Offering table that is in the ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
-    page.ao_table_header_text.should match /by Activity Offering/
+    page.ao_table_header_text.should match /for Activity Offering/
     page.eo_by_ao_status("A").should match /#{exp_state}/
     page.eo_by_ao_status("C").should match /#{exp_state}/
     page.eo_by_ao_status("F").should match /#{exp_state}/
@@ -501,7 +675,7 @@ end
 
 Then /^the first cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
   on ViewExamOfferings do |page|
-    page.ao_table_header_text.should match /by Activity Offering/
+    page.ao_table_header_text.should match /for Activity Offering/
     array = page.return_array_of_ao_codes(0)
     array.each do |code|
       page.eo_by_ao_status(code, 0).should match /#{exp_state}/
@@ -517,7 +691,7 @@ end
 
 Then /^the second cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
   on ViewExamOfferings do |page|
-    page.ao_table_header_text.should match /by Activity Offering/
+    page.ao_table_header_text.should match /for Activity Offering/
     array = page.return_array_of_ao_codes(1)
     array.each do |code|
       page.eo_by_ao_status(code, 1).should match /#{exp_state}/
@@ -533,7 +707,7 @@ end
 
 Then /^there should be an Activity Offering table where all Exam Offerings is in the ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
-    page.ao_table_header_text.should match /by Activity Offering/
+    page.ao_table_header_text.should match /for Activity Offering/
     page.return_array_of_ao_codes.each do |code|
       page.eo_by_ao_status(code).should match /#{exp_state}/
     end
@@ -544,7 +718,6 @@ Then /^there should be ([^"]*) Exam Offerings? by Activity Offering for the cour
   on ViewExamOfferings do |page|
     array = page.return_array_of_ao_codes(0)
     array.length.should == no_of_aos.to_i
-    #page.count_no_of_eos_by_ao.should == no_of_aos
   end
 end
 
@@ -552,7 +725,6 @@ Then /^there should be 1 Exam Offering by Course Offering for the course$/ do
   on ViewExamOfferings do |page|
     array = page.return_array_of_ao_codes(0)
     array.length.should == 1
-    #page.count_no_of_eos_by_co.should == "1"
   end
 end
 
@@ -561,4 +733,39 @@ Then /^there should be no Standard Exam tables present$/ do
     page.exam_offerings_page_section.text.should_not match /by Course Offering/
     page.exam_offerings_page_section.text.should_not match /by Activity Offering/
   end
- end
+end
+
+Then /^I expect the rollover process to fail with a displayed warning stating "([^"]*)"$/ do |exp_msg|
+  sleep 50
+end
+
+Then /^the non-active days toggles should be selected by default$/ do
+  on EditAcademicTerms do |page|
+    term_index = page.term_index_by_term_type( @term.term_type)
+    page.exclude_saturday_toggle( @term.term_type, term_index).attribute_value('checked').should == "true"
+    page.exclude_sunday_toggle( @term.term_type, term_index).attribute_value('checked').should == "true"
+  end
+end
+
+Then /^the non-active days should still be included in the Exam Period when I return to view the term$/ do
+  @term.search
+  on(CalendarSearch).view @term_name
+  on ViewAcademicTerms do |page|
+    page.open_term_section(@term_type)
+    page.get_exclude_saturday_value(@term_type).should == "false"
+    page.get_exclude_sunday_value(@term_type).should == "false"
+  end
+end
+
+Then /^the Canceled Exam Offering table should only show that it is in the ([^"]*) state$/ do |exp_msg|
+  on ViewExamOfferings do |page|
+    #page.canceled_table_header_text.should match /Canceled Exam Offering/
+    page.canceled_eo_table.rows[1].cells[0].text.should == exp_msg
+  end
+end
+
+Then /^there should be a table header explaining that the Exam Offerings have been canceled$/ do
+  on ViewExamOfferings do |page|
+    page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
+  end
+end

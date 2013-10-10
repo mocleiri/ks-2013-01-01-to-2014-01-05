@@ -1,39 +1,22 @@
-@draft
 Feature: FE 3.8 Update Exam Offerings
+  FE 3.8 As a Central Administrator I want exam offerings to be created if the course offering setting changes to
+  "Final Exam" after the bulk creation so that exam offerings are appropriate to exam settings on the course offering
 
   Background:
     Given I am logged in as admin
 
-#---------Old-----------------
-#@draft
-#Scenario: Update Course Offering from Final Exam to No final exam or assessment
-#  Given There is a course offering set to Final Exam
-#    When I select a final exam type of "No Final Exam or assessment"
-#   Then there should be a Course Offering table that is in the Cancelled state
-#---------Old-----------------
+  #FE3.8.EB1 (KSENROLL-9543)
+  @pending
+  Scenario: Update Course Offering to No final exam or assessment and back again to Standard FE with FE Driver as Course Offering
+    When I view the Exam Offerings for a CO where the Course Offering Standard FE is changed to No Final Exam
+    Then the Canceled Exam Offering table should only show that it is in the Canceled state
+    And I view the Exam Offerings after changing the Final Exam Driver to Course Offering
+    And the Course Offering table should only show that it is in the Draft state
 
-  @draft
-  Scenario: Update Course Offering to No final exam or assessment
-    When I view the Exam Offerings for a CO with no final exam
-    Then there should be an Activity Offering table where all Exam Offerings is in the Cancelled state
-
-  @draft
-  Scenario: Update Course Offering from Final Exam to Standard Final Exam with Course Offering
-    Given There is a Course Offering set to Final Exam
-    When I select a final exam type of "Standard Final Exam"
-    And a final exam driver of "Course Offering"
-    Then there should be a Course Offering table that is in the Draft state
-
-  @draft
-  Scenario: Update Course Offering from Final Exam to Alternate Final Assessment
-    Given There is a Course Offering set to Final Exam
-    When I select a final exam type of "Alternate Final Assessment"
-    Then there should be a Course Offering table that is in the Cancelled state
-
-  @draft
-  Scenario: Update Course Offering from Final Exam to Standard Final Exam with Activity Offering
-    Given There is a course offering set to Final Exam
-  #When I select a final exam type of "Standard Final Exam"
-    When I view the Exam Offerings for a CO with a standard final exam driven by Course Offering
-    And a final exam driver of "Activity Offering"
-    Then there should be a Course Offering table that is in the Draft state
+  #FE3.8.EB2 (KSENROLL-9543)
+  @pending
+  Scenario: Update Course Offering to Alternate final exam or assessment and back again to Standard FE with FE Driver as Activity Offering
+    When I view the Exam Offerings for a CO where the Activity Offering Standard FE is changed to Alternate Final Exam
+    Then there should be a table header explaining that the Exam Offerings have been canceled
+    And I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
+    And the first cluster's Activity Offering table should for all 5 Exam Offerings only show that it is in the Draft state

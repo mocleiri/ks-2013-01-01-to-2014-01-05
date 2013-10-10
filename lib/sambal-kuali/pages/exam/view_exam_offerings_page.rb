@@ -5,6 +5,9 @@ class ViewExamOfferings < BasePage
 
   element(:exam_offerings_page_section) { |b| b.frm.div(id: "viewExamOfferingsPage")}
 
+  element(:canceled_table_header_text) { |b| b.exam_offerings_page_section.span( class: "uif-headerText-span").text}
+  element(:canceled_eo_table) { |b| b.exam_offerings_page_section.div( class: "dataTables_wrapper").table}
+
   ############## Course Offering page for View Exam Offerings ####################
   element(:eo_by_co_table_section) { |b| b.frm.div(id: "KS-CourseOfferingManagement-ExamOfferingByCOTableSection")}
   value(:co_table_header_text) { |b| b.eo_by_co_table_section.span(class: "uif-headerText-span").text}
