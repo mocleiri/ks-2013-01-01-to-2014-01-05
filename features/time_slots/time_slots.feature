@@ -31,9 +31,3 @@ Feature: WC.Create standard Time Slots
     When I add a new time slot but omit the days
     Then an error is displayed about the missing data
 
-
-
-
-
-
-

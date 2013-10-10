@@ -173,3 +173,5 @@ And /^I edit the Time Slot added above to use the other chosen Term Type$/ do
   @new_type = "Spring - Full"
   @time_slots.edit_time_slot(:code => @code_list[0], :term_type => @new_type)
 end
+
+

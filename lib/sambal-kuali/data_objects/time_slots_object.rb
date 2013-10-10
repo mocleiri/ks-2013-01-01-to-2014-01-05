@@ -18,6 +18,8 @@
 # Note the use of the ruby options hash pattern re: setting attribute values
 class TimeSlots
 
+  require 'date'
+
   include Foundry
   include DataFactory
   include Workflows
@@ -79,18 +81,24 @@ class TimeSlots
   end
 
   # adds a specified number of time-slots, generating a pseudo-unique set of start/end-times
-  # (note: this will use a day that isn't used widely by ref-data and then will auto-generate start/end-times based
-  #  on the last time-slot in the table... it *might* collide if existing time-slots higher in the table just happen
-  #  to use these values, but it's not likely unless ref-data changes)
+  #
+  # note: current impl does not actually verify that the start/end times used are unique; it merely takes the start
+  # time of the last row in the table and then calculates a new time based off of this.  To facilitate uniqueness, this
+  # will use a day that isn't used widely by ref-data.  Thus, it *might* collide if existing time-slots higher in the
+  # table just happen to use these values, but it's not likely unless ref-data changes.
   def add_unused_time_slots(termType = "Fall - Full", nbr)
     (1..nbr).each do
       on TimeSlotMaintenance do |page|
-        startTime, endTime = page.generate_unused_start_and_end_times
+        startTime = increment_time( page.get_start_time_of_last_row, 1 )
         sTime, sAmPm = startTime.split(" ")
-        eTime, eAmPm = endTime.split(" ")
+        eTime, eAmPm = increment_time( startTime, 5 ).split(" ")
         add_new_time_slot(make TimeSlots::TimeSlot, :term_type => termType, :start_time => sTime, :start_time_am_pm => sAmPm, :end_time => eTime, :end_time_am_pm => eAmPm)
       end
     end
+  end
+
+  def increment_time(full_time_with_am_pm, x_minutes_to_increment_by)
+    ( DateTime.strptime(full_time_with_am_pm, '%I:%M %p') + (x_minutes_to_increment_by.to_f/1440) ).strftime( '%I:%M %p' )
   end
 
   def delete(code)

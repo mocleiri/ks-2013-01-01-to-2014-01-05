@@ -134,73 +134,9 @@ class TimeSlotMaintenance < BasePage
     confirm_delete
   end
 
-  # note: current impl does not actually verify that the times returned are unused; it merely takes the start_time of
-  # the last row in the table, and then returns a start_time 1min later and an end_time 5min after that
-  #
-  # ie: if the start_time in the last row is "02:00 PM" then this method will return -> [ "02:01 AM", "02:06AM"]
-  def generate_unused_start_and_end_times
-
-    # capture the start time from the last row in the table (as strings)
+  def get_start_time_of_last_row
     table_array = time_slot_search_results_table.to_a
-    last_row_start_time = table_array[table_array.length-2][TIME_SLOT_RESULTS_START_TIME]
-    last_row_hour = last_row_start_time.split(" ")[0].split(":")[0]
-    last_row_minute = last_row_start_time.split(" ")[0].split(":")[1]
-    last_row_am_pm = last_row_start_time.split(" ")[1]
-
-    # convert the hour to mil-time
-    if last_row_am_pm == "PM"
-      last_row_hour = last_row_hour.to_i + 12
-      if last_row_hour > 23
-        last_row_hour = 0
-      end
-    end
-
-    # build the new times (year is required but unused) -> YYYY,MM,DD,HR,MIN,SEC)
-    start_time = Time.local(2013, nil, nil, last_row_hour, last_row_minute, nil)
-    start_time = start_time + (60 * 1)  #increments by 1 minute
-    end_time = start_time + (60 * 5)    #increments by 5 minutes
-
-    # START_TIME: convert back to strings
-    return_start_time_hr = start_time.hour
-    return_start_time_mn = start_time.min
-    return_start_time_am_pm = "AM"
-    if return_start_time_hr == 0
-      return_start_time_hr = 12
-    elsif return_start_time_hr > 12
-      return_start_time_hr = return_start_time_hr - 12
-      return_start_time_am_pm = "PM"
-    end
-    return_start_time_hr = return_start_time_hr.to_s
-    if return_start_time_hr.length < 2
-      return_start_time_hr = "0" << return_start_time_hr
-    end
-    return_start_time_mn = return_start_time_mn.to_s
-    if return_start_time_mn.length < 2
-      return_start_time_mn = "0" << return_start_time_mn
-    end
-    return_start_time = return_start_time_hr << ":" << return_start_time_mn << " " << return_start_time_am_pm
-
-    # END_TIME: convert back to strings
-    return_end_time_hr = end_time.hour
-    return_end_time_mn = end_time.min
-    return_end_time_am_pm = "AM"
-    if return_end_time_hr == 0
-      return_end_time_hr = 12
-    elsif return_end_time_hr > 12
-      return_end_time_hr = return_end_time_hr - 12
-      return_end_time_am_pm = "PM"
-    end
-    return_end_time_hr = return_end_time_hr.to_s
-    if return_end_time_hr.length < 2
-      return_end_time_hr = "0" << return_end_time_hr
-    end
-    return_end_time_mn = return_end_time_mn.to_s
-    if return_end_time_mn.length < 2
-      return_end_time_mn = "0" << return_end_time_mn
-    end
-    return_end_time = return_end_time_hr << ":" << return_end_time_mn << " " << return_end_time_am_pm
-
-    return [return_start_time, return_end_time]
+    table_array[table_array.length-2][TIME_SLOT_RESULTS_START_TIME]
   end
 
 end
