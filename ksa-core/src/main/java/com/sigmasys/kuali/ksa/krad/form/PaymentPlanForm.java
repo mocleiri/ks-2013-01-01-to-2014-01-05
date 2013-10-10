@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.krad.form;
 //import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
 
 import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
+import com.sigmasys.kuali.ksa.krad.model.PaymentBillingPlanModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
@@ -39,7 +40,10 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     private List<ThirdPartyPlanModel> thirdPartyPlans;
 
-    private List<PaymentBillingPlan> paymentBillingPlans;
+    private List<PaymentBillingPlanModel> paymentBillingPlans;
+    private PaymentBillingPlan paymentBillingPlan;
+    private String paymentBillingPlanName;
+    private String batchPaymentBillingAccounts;
 
     private ThirdPartyPlanModel thirdPartyPlan;
 
@@ -431,14 +435,42 @@ public class PaymentPlanForm extends AbstractViewModel {
         this.filterPaymentBillingPlans = filterPaymentBillingPlans;
     }
 
-    public List<PaymentBillingPlan> getPaymentBillingPlans() {
+    public List<PaymentBillingPlanModel> getPaymentBillingPlans() {
         if(paymentBillingPlans == null) {
-            paymentBillingPlans = new ArrayList<PaymentBillingPlan>();
+            paymentBillingPlans = new ArrayList<PaymentBillingPlanModel>();
         }
         return paymentBillingPlans;
     }
 
-    public void setPaymentBillingPlans(List<PaymentBillingPlan> paymentBillingPlans) {
+    public void setPaymentBillingPlans(List<PaymentBillingPlanModel> paymentBillingPlans) {
         this.paymentBillingPlans = paymentBillingPlans;
+    }
+
+    public PaymentBillingPlan getPaymentBillingPlan() {
+        return paymentBillingPlan;
+    }
+
+    public boolean isPaymentBillingPlanValid() {
+        return (paymentBillingPlan != null);
+    }
+
+    public void setPaymentBillingPlan(PaymentBillingPlan paymentBillingPlan) {
+        this.paymentBillingPlan = paymentBillingPlan;
+    }
+
+    public String getPaymentBillingPlanName() {
+        return paymentBillingPlanName;
+    }
+
+    public void setPaymentBillingPlanName(String paymentBillingPlanName) {
+        this.paymentBillingPlanName = paymentBillingPlanName;
+    }
+
+    public String getBatchPaymentBillingAccounts() {
+        return batchPaymentBillingAccounts;
+    }
+
+    public void setBatchPaymentBillingAccounts(String batchPaymentBillingAccounts) {
+        this.batchPaymentBillingAccounts = batchPaymentBillingAccounts;
     }
 }

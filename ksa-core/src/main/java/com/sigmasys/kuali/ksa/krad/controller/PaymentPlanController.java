@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.PaymentPlanForm;
 import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
+import com.sigmasys.kuali.ksa.krad.model.PaymentBillingPlanModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
 import com.sigmasys.kuali.ksa.krad.model.TransactionTransferModel;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
@@ -23,6 +24,7 @@ import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,10 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/paymentPlanView")
@@ -195,6 +194,71 @@ public class PaymentPlanController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=getPaymentBillingPlan")
+    public ModelAndView getPaymentBillingPlan(@ModelAttribute("KualiForm") PaymentPlanForm form) {
+        String planString = form.getPaymentBillingPlanName();
+
+        List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlanByNamePattern(planString);
+
+        if(plans != null && plans.size() > 0) {
+            form.setPaymentBillingPlan(plans.get(0));
+        }
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=batchPaymentBilling")
+    public ModelAndView batchPaymentBilling(@ModelAttribute("KualiForm") PaymentPlanForm form) {
+        PaymentBillingPlan plan = form.getPaymentBillingPlan();
+
+        if(plan == null) {
+            String planString = form.getPaymentBillingPlanName();
+
+            List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlanByNamePattern(planString);
+
+            if(plans != null && plans.size() > 0) {
+                plan = plans.get(0);
+            }
+
+        }
+
+        if(plan == null) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "No plan selected");
+            return getUIFModelAndView(form);
+        }
+
+        String accounts = form.getBatchPaymentBillingAccounts();
+
+        List<String> accountList = Arrays.asList(accounts.split("[,\\s]+"));
+
+        // validate them all.  If any are invalid then don't save
+        List<String> invalidAccounts = new ArrayList<String>();
+
+
+        for(String account : accountList) {
+            boolean exists = accountService.accountExists(account);
+            if(! exists) {
+                invalidAccounts.add(account);
+            }
+        }
+
+        if(invalidAccounts.size() > 0) {
+            // one or more are invalid.
+            String invalid = StringUtils.collectionToCommaDelimitedString(invalidAccounts);
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "The following accounts are not valid: " + invalid);
+            return getUIFModelAndView(form);
+        }
+
+        Date today = new Date();
+        for(String account : accountList) {
+            paymentBillingService.createPaymentBillingQueue(plan.getId(), account, plan.getMaxAmount(), today, false);
+        }
+
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, accountList.size() + " accounts added to " + plan.getName() + " plan");
+
+        return getUIFModelAndView(form);
+    }
+
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeThirdPartyPlan")
     public ModelAndView removeThirdPartyPlan(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
 
@@ -304,7 +368,20 @@ public class PaymentPlanController extends GenericSearchController {
             allPlans.addAll(form.getFilterPaymentBillingPlans());
         }
 
-        form.setPaymentBillingPlans(allPlans);
+        List<PaymentBillingPlanModel> models = new ArrayList<PaymentBillingPlanModel>(allPlans.size());
+
+        for (PaymentBillingPlan plan : allPlans) {
+
+            PaymentBillingPlanModel model = new PaymentBillingPlanModel();
+            model.setParent(plan);
+
+
+
+            models.add(model);
+
+        }
+
+        form.setPaymentBillingPlans(models);
     }
 
     private void populateThirdPartyForm(PaymentPlanForm form) {

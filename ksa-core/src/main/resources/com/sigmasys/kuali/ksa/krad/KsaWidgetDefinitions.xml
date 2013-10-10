@@ -154,10 +154,14 @@
                       p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=CreatePaymentPlanPage"/>
                 <bean parent="Uif-Link" p:linkText="Manage Payment Billing Plans" p:target="_self"
                       p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=ManagePaymentPlanPage"/>
+                <bean parent="Uif-Link" p:linkText="Batch Enroll Payment Billing Plans" p:target="_self"
+                      p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=BatchPaymentPlanPage"/>
                 <bean parent="Uif-Link" p:linkText="Create Third Party Payment Plan" p:target="_self"
                       p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=CreateThirdPartyPage"/>
                 <bean parent="Uif-Link" p:linkText="Manage Third Party Payment Plans" p:target="_self"
                       p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=ManageThirdPartyPage"/>
+                <bean parent="Uif-Link" p:linkText="Batch Enroll Third Party Plans" p:target="_self"
+                      p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=BatchThirdPartyPage"/>
             </list>
         </property>
     </bean>
