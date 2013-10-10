@@ -196,7 +196,7 @@ public class PaymentPlanController extends GenericSearchController {
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=getPaymentBillingPlan")
     public ModelAndView getPaymentBillingPlan(@ModelAttribute("KualiForm") PaymentPlanForm form) {
-        String planString = form.getPaymentBillingPlanName();
+        String planString = form.getPlanName();
 
         List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlanByNamePattern(planString);
 
@@ -207,12 +207,25 @@ public class PaymentPlanController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=getThirdPartyPlan")
+    public ModelAndView getThirdPartyPlan(@ModelAttribute("KualiForm") PaymentPlanForm form) {
+        String planString = form.getPlanName();
+
+        List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlanByNamePattern(planString);
+
+        if(plans != null && plans.size() > 0) {
+            form.setBatchThirdPartyPlan(plans.get(0));
+        }
+
+        return getUIFModelAndView(form);
+    }
+
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=batchPaymentBilling")
     public ModelAndView batchPaymentBilling(@ModelAttribute("KualiForm") PaymentPlanForm form) {
         PaymentBillingPlan plan = form.getPaymentBillingPlan();
 
         if(plan == null) {
-            String planString = form.getPaymentBillingPlanName();
+            String planString = form.getPlanName();
 
             List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlanByNamePattern(planString);
 
@@ -227,7 +240,7 @@ public class PaymentPlanController extends GenericSearchController {
             return getUIFModelAndView(form);
         }
 
-        String accounts = form.getBatchPaymentBillingAccounts();
+        String accounts = form.getBatchAccounts();
 
         List<String> accountList = Arrays.asList(accounts.split("[,\\s]+"));
 
@@ -252,6 +265,58 @@ public class PaymentPlanController extends GenericSearchController {
         Date today = new Date();
         for(String account : accountList) {
             paymentBillingService.createPaymentBillingQueue(plan.getId(), account, plan.getMaxAmount(), today, false);
+        }
+
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, accountList.size() + " accounts added to " + plan.getName() + " plan");
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=batchThirdParty")
+    public ModelAndView batchThirdParty(@ModelAttribute("KualiForm") PaymentPlanForm form) {
+        ThirdPartyPlan plan = form.getBatchThirdPartyPlan();
+
+        if(plan == null) {
+            String planString = form.getPlanName();
+
+            List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlanByNamePattern(planString);
+
+            if(plans != null && plans.size() > 0) {
+                plan = plans.get(0);
+            }
+
+        }
+
+        if(plan == null) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "No plan selected");
+            return getUIFModelAndView(form);
+        }
+
+        String accounts = form.getBatchAccounts();
+
+        List<String> accountList = Arrays.asList(accounts.split("[,\\s]+"));
+
+        // validate them all.  If any are invalid then don't save
+        List<String> invalidAccounts = new ArrayList<String>();
+
+
+        for(String account : accountList) {
+            boolean exists = accountService.accountExists(account);
+            if(! exists) {
+                invalidAccounts.add(account);
+            }
+        }
+
+        if(invalidAccounts.size() > 0) {
+            // one or more are invalid.
+            String invalid = StringUtils.collectionToCommaDelimitedString(invalidAccounts);
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "The following accounts are not valid: " + invalid);
+            return getUIFModelAndView(form);
+        }
+
+        Date today = new Date();
+        for(String account : accountList) {
+            thirdPartyTransferService.createThirdPartyPlanMember(account, plan.getId(), 1);
         }
 
         GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, accountList.size() + " accounts added to " + plan.getName() + " plan");

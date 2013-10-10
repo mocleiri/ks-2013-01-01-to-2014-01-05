@@ -36,7 +36,7 @@ public class PaymentPlanHelper extends ViewHelperServiceImpl {
         return getThirdPartyTransferService().getThirdPartyPlanByNamePattern(suggest);
     }
 
-    public List<PaymentBillingPlan> getPaymentBillingPlanForSuggest(String suggest) {
+    public List<PaymentBillingPlan> getPaymentBillingPlansForSuggest(String suggest) {
         return getPaymentBillingService().getPaymentBillingPlanByNamePattern(suggest);
     }
 

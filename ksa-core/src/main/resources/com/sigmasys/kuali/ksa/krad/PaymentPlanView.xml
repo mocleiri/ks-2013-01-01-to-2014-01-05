@@ -78,6 +78,15 @@
                         </list>
                     </property>
                 </bean>
+                <bean parent="Uif-Page" p:id="BatchThirdPartyPage">
+                    <property name="headerText" value="Batch Enroll Third Party Payment Plans"/>
+                    <property name="items">
+                        <list>
+                            <ref bean="batchThirdPartyPlans"/>
+
+                        </list>
+                    </property>
+                </bean>
                 <bean parent="Uif-Page" p:id="ViewTransactionTransferListPage">
                     <property name="headerText" value="Transaction Transfer List"/>
                     <property name="items">
@@ -156,6 +165,7 @@
         </property>
 
     </bean>
+
     <bean id="paymentPlanDescription" parent="Uif-VerticalBoxSection">
         <property name="headerText" value="Descriptive Information"/>
         <property name="items">
@@ -367,6 +377,20 @@
                 </bean>
 
 
+            </list>
+        </property>
+    </bean>
+
+    <bean id="batchThirdPartyPlans" parent="Uif-VerticalBoxSection">
+        <property name="items">
+            <list>
+                <ref bean="suggestThirdPartySection"/>
+                <bean parent="Uif-InputField" p:propertyName="batchAccounts" p:label="Accounts to Enroll" p:labelPlacement="TOP">
+                    <property name="control">
+                        <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="batchThirdParty" p:actionLabel="Submit"/>
             </list>
         </property>
     </bean>
@@ -601,7 +625,7 @@
                                         <property name="templateOptions" value="minLength:2,delay:0,html:true"/>
                                         <property name="suggestQuery">
                                             <bean parent="Uif-AttributeQueryConfig">
-                                                <property name="queryMethodToCall" value="getPaymentBillingPlanForSuggest"/>
+                                                <property name="queryMethodToCall" value="getPaymentBillingPlansForSuggest"/>
                                             </bean>
                                         </property>
                                     </bean>
@@ -644,7 +668,7 @@
         <property name="items">
             <list>
 
-                <bean parent="Uif-HorizontalBoxSection">
+                <bean parent="Uif-VerticalBoxSection">
                     <property name="items">
                         <list>
                             <!-- Plan Name suggest -->
@@ -656,7 +680,7 @@
                                         <property name="templateOptions" value="minLength:2,delay:0,html:true"/>
                                         <property name="suggestQuery">
                                             <bean parent="Uif-AttributeQueryConfig">
-                                                <property name="queryMethodToCall" value="getPaymentBillingPlanForSuggest"/>
+                                                <property name="queryMethodToCall" value="getPaymentBillingPlansForSuggest"/>
                                             </bean>
                                         </property>
                                     </bean>
@@ -664,15 +688,47 @@
                             </bean>
                             <bean parent="Uif-HorizontalBoxSection" p:methodToCallOnRefresh="getPaymentBillingPlan" p:readOnly="true" p:refreshWhenChangedPropertyNames="paymentBillingPlanName">
                                 <property name="items"><list>
-                                    <bean parent="Uif-VerticalBoxSection" p:render="@{isPaymentBillingPlanValid()}">
-                                        <property name="items">
-                                            <list>
-                                                <bean parent="Uif-InputField" p:propertyName="paymentBillingPlan.code" p:label="Code" p:labelPlacement="TOP"/>
-                                                <bean parent="Uif-InputField" p:propertyName="paymentBillingPlan.name" p:label="Name" p:labelPlacement="TOP"/>
-                                                <bean parent="Uif-InputField" p:propertyName="paymentBillingPlan.description" p:label="Description" p:labelPlacement="TOP"/>
-                                            </list>
+                                    <bean parent="Uif-InputField" p:propertyName="paymentBillingPlan.code" p:label="Code" p:labelPlacement="TOP"/>
+                                    <bean parent="Uif-InputField" p:propertyName="paymentBillingPlan.name" p:label="Name" p:labelPlacement="TOP"/>
+                                    <bean parent="Uif-InputField" p:propertyName="paymentBillingPlan.description" p:label="Description" p:labelPlacement="TOP"/>
+                                </list></property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="suggestThirdPartySection" parent="Uif-Disclosure-VerticalBoxSection">
+        <property name="headerText" value="Batch Enroll Third Party Plans"/>
+        <property name="items">
+            <list>
+
+                <bean parent="Uif-VerticalBoxSection">
+                    <property name="items">
+                        <list>
+                            <!-- Plan Name suggest -->
+                            <bean parent="Uif-InputField" p:label="Name of Plan" p:propertyName="planName">
+                                <property name="suggest">
+                                    <bean parent="Uif-Suggest">
+                                        <property name="valuePropertyName" value="name"/>
+                                        <property name="labelPropertyName" value="name"/>
+                                        <property name="templateOptions" value="minLength:2,delay:0,html:true"/>
+                                        <property name="suggestQuery">
+                                            <bean parent="Uif-AttributeQueryConfig">
+                                                <property name="queryMethodToCall" value="getThirdPartyPlansForSuggest"/>
+                                            </bean>
                                         </property>
                                     </bean>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-HorizontalBoxSection" p:methodToCallOnRefresh="getThirdPartyPlan" p:readOnly="true" p:refreshWhenChangedPropertyNames="planName">
+                                <property name="items"><list>
+                                    <bean parent="Uif-InputField" p:propertyName="batchThirdPartyPlan.code" p:label="Code" p:labelPlacement="TOP"/>
+                                    <bean parent="Uif-InputField" p:propertyName="batchThirdPartyPlan.name" p:label="Name" p:labelPlacement="TOP"/>
+                                    <bean parent="Uif-InputField" p:propertyName="batchThirdPartyPlan.description" p:label="Description" p:labelPlacement="TOP"/>
                                 </list></property>
                             </bean>
                         </list>

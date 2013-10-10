@@ -39,11 +39,13 @@ public class PaymentPlanForm extends AbstractViewModel {
     private List<ThirdPartyAccount> filterThirdPartyAccounts;
 
     private List<ThirdPartyPlanModel> thirdPartyPlans;
+    private ThirdPartyPlan batchThirdPartyPlan;
 
     private List<PaymentBillingPlanModel> paymentBillingPlans;
     private PaymentBillingPlan paymentBillingPlan;
-    private String paymentBillingPlanName;
-    private String batchPaymentBillingAccounts;
+
+    private String planName;
+    private String batchAccounts;
 
     private ThirdPartyPlanModel thirdPartyPlan;
 
@@ -458,19 +460,27 @@ public class PaymentPlanForm extends AbstractViewModel {
         this.paymentBillingPlan = paymentBillingPlan;
     }
 
-    public String getPaymentBillingPlanName() {
-        return paymentBillingPlanName;
+    public String getPlanName() {
+        return planName;
     }
 
-    public void setPaymentBillingPlanName(String paymentBillingPlanName) {
-        this.paymentBillingPlanName = paymentBillingPlanName;
+    public void setPlanName(String planName) {
+        this.planName = planName;
     }
 
-    public String getBatchPaymentBillingAccounts() {
-        return batchPaymentBillingAccounts;
+    public String getBatchAccounts() {
+        return batchAccounts;
     }
 
-    public void setBatchPaymentBillingAccounts(String batchPaymentBillingAccounts) {
-        this.batchPaymentBillingAccounts = batchPaymentBillingAccounts;
+    public void setBatchAccounts(String batchAccounts) {
+        this.batchAccounts = batchAccounts;
+    }
+
+    public ThirdPartyPlan getBatchThirdPartyPlan() {
+        return batchThirdPartyPlan;
+    }
+
+    public void setBatchThirdPartyPlan(ThirdPartyPlan batchThirdPartyPlan) {
+        this.batchThirdPartyPlan = batchThirdPartyPlan;
     }
 }
