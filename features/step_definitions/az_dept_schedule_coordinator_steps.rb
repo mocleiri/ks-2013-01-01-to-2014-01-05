@@ -637,6 +637,8 @@ Then /^I have access to edit waitlist options$/ do
     page.waitlist_limit_checkbox.set
     page.waitlist_limit.enabled?.should be_true
     page.waitlist_allow_hold_checkbox.enabled?.should be_true
+    page.waitlist_limit_checkbox.clear
+    page.waitlist_checkbox.clear
   end
 end
 
