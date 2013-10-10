@@ -256,7 +256,8 @@ class AcademicTerm
         :term_code => "#{calendar_year}08" ,
         :term_year=> calendar_year,
         :parent_term=> nil,
-        :subterm=> false
+        :subterm=> false,
+        :add_exam_period => true
     }
 
     #A subterm can't use the same Key date Group as its parent, because when
@@ -294,8 +295,6 @@ class AcademicTerm
 
       page.acal_term_add
 
-      create_final_exam_period
-
       begin
         page.adding.wait_while_present
       rescue
@@ -309,6 +308,8 @@ class AcademicTerm
         date_group.term_type = @term_type
         date_group.create
       end
+
+      create_final_exam_period unless @add_exam_period == false
     end
   end
 
@@ -323,7 +324,8 @@ class AcademicTerm
   def edit(opts = {})
     defaults = {
         :exp_success=> true,
-        :exam_period => false
+        :exam_period => false,
+        :include_non_active_days => false
     }
     options = defaults.merge(opts)
 
@@ -358,6 +360,17 @@ class AcademicTerm
       create_final_exam_period
     end
 
+    if options[:include_non_active_days] == true
+      on EditAcademicTerms  do |page|
+        if page.exclude_saturday_toggle( @term_type, term_index).present?
+          page.set_exclude_saturday_toggle( @term_type, term_index)
+        end
+        if page.exclude_sunday_toggle( @term_type, term_index).present?
+          page.set_exclude_sunday_toggle( @term_type, term_index)
+        end
+      end
+    end
+
     on(EditAcademicTerms).save :exp_success => options[:exp_success] #unless options.length >= 1 #don't save if only :exp_success element
 
     set_options(options)
@@ -378,6 +391,10 @@ class AcademicTerm
     go_to_calendar_search
     term_criteria = "Academic Term"
     term_criteria = "Sub Term" if @subterm
+    if @term_type == "Winter Term" or @term_type == "Summer 1"
+      term_year = @term_year.to_i
+      @term_year = "#{term_year + 1}"
+    end
     on CalendarSearch do |page|
       page.search_for term_criteria, @term_name, @term_year
     end
@@ -450,11 +467,13 @@ class AcademicTerm
 
   def create_final_exam_period
     on EditAcademicTerms do |page|
+      page.open_term_section(@term_type)
+      page.loading.wait_while_present
       if page.add_exam_period_btn( @term_type, page.term_index_by_term_type( @term_type)).present?
         page.add_exam_period @term_type
         page.set_exam_start_date @term_type, @start_date
         page.set_exam_end_date @term_type, @end_date
-        page.save
+        page.save :exp_success => false
       end
     end
   end

@@ -10,7 +10,8 @@ class ViewExamOfferings < BasePage
 
   ############## Course Offering page for View Exam Offerings ####################
   element(:eo_by_co_table_section) { |b| b.frm.div(id: "KS-CourseOfferingManagement-ExamOfferingByCOTableSection")}
-  value(:co_table_header_text) { |b| b.eo_by_co_table_section.span(class: "uif-headerText-span").text}
+  element(:co_table_header) { |b| b.eo_by_co_table_section.span(class: "uif-headerText-span")}
+  value(:co_table_header_text) { |b| b.co_table_header.text}
 
   CO_STATUS = 0
   CO_DAYS = 1
@@ -64,7 +65,8 @@ class ViewExamOfferings < BasePage
 
   ############## Activity Offering page for View Exam Offerings ####################
   element(:eo_by_ao_table_section) { |b| b.frm.div(id: "KS-CourseOfferingManagement-ExamOfferingByAOClustersSection")}
-  value(:ao_table_header_text) { |b| b.eo_by_ao_table_section.span(class: "uif-headerText-span").text}
+  element(:ao_table_header) { |b| b.eo_by_ao_table_section.span(class: "uif-headerText-span")}
+  value(:ao_table_header_text) { |b| b.ao_table_header.text}
 
   AO_STATUS = 0
   AO_CODE = 1
