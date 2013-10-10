@@ -16,11 +16,13 @@ Feature: SA.FE3-2 View Exam Offerings for AO not created when no Activity Offeri
     And the Canceled Exam Offering table should only show that it is in the Canceled state
 
   #FE3.2.EB2 (KSENROLL-9536)
+  @pending
   Scenario: Test whether the Exam Offering is in Draft state when the exam driver is set to Course Offering
     When I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Course Offering
     Then the Course Offering table should only show that it is in the Draft state
 
   #FE3.2.EB3 (KSENROLL-9536)
+  @pending
   Scenario: Test whether each Exam Offering is in Draft state when the exam driver is set to Activity Offering
     When I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Activity Offering
     Then the first cluster's Activity Offering table should for all 1 Exam Offering only show that it is in the Draft state
