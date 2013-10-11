@@ -327,7 +327,7 @@ class ActivityOffering
 
     # else perform normal colo-EDIT
     on ActivityOfferingMaintenance do |page|
-      page.select_colocated_checkbox
+      page.select_colocated_checkbox unless page.colocated_checkbox.set?
 
       # add the colo-COs to this CO
       opts[:colocate_ao_list].each do |ao_to_colo|
@@ -337,13 +337,15 @@ class ActivityOffering
         page.add_colocate_ao_confirmation_add
       end
 
-      if opts[:colocate_shared_enrollment]
-        page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
-        page.select_jointly_share_enrollment_radio
-        page.colocated_shared_max_enrollment_input_field.value = opts[:max_enrollment]
-      else # ie: 'separately manage'
-        page.select_separately_manage_enrollment_radio
-        page.colocated_shared_max_enrollment_table_first_ao_input.value = opts[:max_enrollment]
+      if !opts[:colocate_shared_enrollment].nil? 
+        if opts[:colocate_shared_enrollment]
+          page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
+          page.select_jointly_share_enrollment_radio
+          page.colocated_shared_max_enrollment_input_field.value = opts[:max_enrollment]
+        else # ie: 'separately manage'
+          page.select_separately_manage_enrollment_radio
+          page.colocated_shared_max_enrollment_table_first_ao_input.value = opts[:max_enrollment]
+        end
       end
     end
 

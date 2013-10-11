@@ -97,15 +97,16 @@ Feature: EC.Waitlists Colocation
     Then the activity offerings are no longer colocated
     And waitlists is deactived for both activity offerings
 
-
+  @bug
   Scenario: WL 1.17.11 - Add an activity offering to a colocated-shared enrollment set and ensure that the newly added actiivty offerring has the shared waitlist settings
     Given I create two colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
     When I add another activity offering to the colocated set
-    Then all three colocated activity offerings have the same waitlist configuration
+    Then the activities indicate they are colocated
+    And all three colocated activity offerings have the same waitlist configuration
 
   Scenario: WL 1.17.12 - Unshare a colocated-shared enrollment set and ensure that the waitlists are managed separately
     Given I create two colocated activity offerings (shared enrolment) with waitlists enabled
     When I update the colocation settings to manage enrolments separately
-    And I update the waitlists configuration for one of the colocated activity offerings
-    Then the waitlists configuration for the second activity offering is not changed
+    And I make changes to the default waitlist configuration for one of the activity offerings
+    Then the other activity offering still has the default configuration

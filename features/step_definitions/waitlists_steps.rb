@@ -569,7 +569,7 @@ Given /^I create two colocated activity offerings \(shared enrolment\) with wait
   end
 
   @ao_list[0].parent_course_offering.manage
-  @ao_list[0].edit :colocate_ao_list => @ao_list[1..2],
+  @ao_list[0].edit :colocate_ao_list => @ao_list[1..1],
                    :colocate_shared_enrollment => true,
                    :max_enrollment => 120
   @ao_list[0].save
@@ -600,13 +600,35 @@ Then /^waitlists is deactived for both activity offerings$/ do
 end
 
 When /^I add another activity offering to the colocated set$/ do
-  pending # express the regexp above with the code you wish you had
+    course_offering = create CourseOffering, :course => "WMST400", :waitlists => true, :term => @term.term_code
+    puts "+ co code #{course_offering.course}"
+    activity_offering = create ActivityOffering, :parent_course_offering => course_offering
+    activity_offering.save
+    @ao_list << activity_offering
+
+    @ao_list[0].parent_course_offering.manage
+    @ao_list[0].edit :colocate_ao_list => [activity_offering]
+                     #:colocate_shared_enrollment => true,
+                     #:max_enrollment => 120
+    @ao_list[0].save
+
 end
 
 When /^I update the colocation settings to manage enrolments separately$/ do
-  pending # express the regexp above with the code you wish you had
+  @ao_list[0].parent_course_offering.manage
+  @ao_list[0].edit :colocate_shared_enrollment => false
+  @ao_list[0].save
 end
 
-When /^I update the waitlists configuration for one of the colocated activity offerings$/ do
-  pending # express the regexp above with the code you wish you had
+When /^the other activity offering still has the default configuration$/ do
+  @ao_list[-1].parent_course_offering.manage
+  on(ManageCourseOfferings).view_activity_offering(@ao_list[-1].code)
+
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_active?.should be_true
+    page.waitlists_allow_holds?.should be_false
+    page.waitlists_processing.should == "Confirmation"
+    page.waitlists_max_size.should == "Unlimited"
+    page.close
+  end
 end
