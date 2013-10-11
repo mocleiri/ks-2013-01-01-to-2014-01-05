@@ -525,7 +525,7 @@ end
 Then /^I should be able to edit and update the Final Exam status$/ do
   on CourseOfferingEdit do |page|
     page.final_exam_option_none
-    page.final_exam_driver_value.should == "No final exam for this offering"
+    page.final_exam_driver_value_0.should == "No final exam for this offering"
     page.submit
   end
 end
