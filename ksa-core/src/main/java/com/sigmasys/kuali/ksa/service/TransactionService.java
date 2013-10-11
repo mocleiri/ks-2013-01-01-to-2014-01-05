@@ -914,6 +914,22 @@ public interface TransactionService {
     CreditPermission createCreditPermission(TransactionTypeId creditTypeId, String allowableDebitType, int priority);
 
     /**
+     * Persists CreditPermission instance in the persistent store.
+     *
+     * @param creditPermission CreditPermission instance
+     * @return CreditPermission ID
+     */
+    Long persistCreditPermission(CreditPermission creditPermission);
+
+    /**
+     * Removes CreditPermission instance from the persistent store by ID.
+     *
+     * @param creditPermissionId CreditPermission ID
+     * @return true, if the credit permission has been deleted, false - otherwise
+     */
+    boolean deleteCreditPermission(Long creditPermissionId);
+
+    /**
      * Returns a list of credit permissions for the given transaction type.
      *
      * @param transactionTypeId Transaction Type ID

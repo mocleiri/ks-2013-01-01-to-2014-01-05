@@ -246,6 +246,7 @@ public enum Permission {
     CREATE_CREDIT_PERMISSION,
     UPDATE_CREDIT_PERMISSION,
     READ_CREDIT_PERMISSION,
+    DELETE_CREDIT_PERMISSION,
 
     // Rate permissions
     CREATE_RATE,

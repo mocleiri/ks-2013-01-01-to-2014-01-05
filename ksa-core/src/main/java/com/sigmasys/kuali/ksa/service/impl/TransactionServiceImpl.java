@@ -2664,6 +2664,36 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
+     * Persists CreditPermission instance in the persistent store.
+     *
+     * @param creditPermission CreditPermission instance
+     * @return CreditPermission ID
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Long persistCreditPermission(CreditPermission creditPermission) {
+
+        PermissionUtils.checkPermission(Permission.UPDATE_CREDIT_PERMISSION);
+
+        return persistEntity(creditPermission);
+    }
+
+    /**
+     * Removes CreditPermission instance from the persistent store by ID.
+     *
+     * @param creditPermissionId CreditPermission ID
+     * @return true, if the credit permission has been deleted, false - otherwise
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public boolean deleteCreditPermission(Long creditPermissionId) {
+
+        PermissionUtils.checkPermission(Permission.DELETE_CREDIT_PERMISSION);
+
+        return deleteEntity(creditPermissionId, CreditPermission.class);
+    }
+
+    /**
      * Returns a list of credit permissions for the given transaction type sorted by
      * priority in descending order.
      *
