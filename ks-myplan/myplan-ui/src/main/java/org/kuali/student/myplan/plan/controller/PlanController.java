@@ -327,9 +327,6 @@ public class PlanController extends UifControllerBase {
 
                     planForm.setAdviserName(getUserSessionHelper().getCapitalizedName(planItem.getMeta().getCreateId()));
                     planForm.setDateAdded(planItem.getMeta().getCreateTime());
-                    if (hasText(planItem.getDescr().getPlain())) {
-                        planForm.setNote(planItem.getDescr().getPlain());
-                    }
 
 
                     if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP.equalsIgnoreCase(planItem.getTypeKey()) && !planForm.isBackup()) {
@@ -343,6 +340,12 @@ public class PlanController extends UifControllerBase {
                     if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED.equals(planItem.getTypeKey())) {
                         planForm.setOwner(getUserSessionHelper().getCurrentUserId().equals(planItem.getMeta().getCreateId()));
                         planForm.setRecommended(true);
+                    }
+
+                    if (hasText(planItem.getDescr().getPlain()) && !planForm.isSetToPlanning() && planForm.isRecommended()) {
+                        planForm.setAdviserNote(planItem.getDescr().getPlain());
+                    } else {
+                        planForm.setNote(planItem.getDescr().getPlain());
                     }
 
                     if (PlanConstants.PLACE_HOLDER_TYPE_GEN_ED.equals(planItem.getRefObjectType())
