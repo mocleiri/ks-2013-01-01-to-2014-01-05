@@ -364,13 +364,12 @@ When /^I view the Exam Offerings for a CO where the Activity Offering Standard F
 end
 
 #KSENROLL-9801
-When /^I view the Exam Offerings for a CO where the Activity Offering No Final Exam or Assessment is changed to Standard Final Exam$/ do
+When /^When I view the Exam Offerings for a CO where the Course Offering No FE is changed to Standard Final Exam$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.exam_offerings_setup :final_exam_type => "No final exam or assessment",
-                                        :final_exam_driver => "Final Exam Per Course Offering"
+  @course_offering.exam_offerings_setup :final_exam_type => "No final exam or assessment"
 
-  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam"
-
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver =>"Final Exam Per Course Offering"
   on ManageCourseOfferings do |page|
     page.view_exam_offerings
   end
