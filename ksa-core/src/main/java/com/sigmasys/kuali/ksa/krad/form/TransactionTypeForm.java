@@ -51,6 +51,7 @@ public class TransactionTypeForm extends AbstractViewModel {
     private String unallocatedGLOperation;
     private List<GlBreakdownModel> glBreakdowns;
     private List<Tag> tags;
+    private List<CreditPermission> creditPermissions;
 
     // Debit types only
     private String cancellationRule;
@@ -324,5 +325,16 @@ public class TransactionTypeForm extends AbstractViewModel {
 
     public void setNewTransactionType(Boolean newTransactionType) {
         this.newTransactionType = newTransactionType;
+    }
+
+    public List<CreditPermission> getCreditPermissions() {
+        if(creditPermissions == null) {
+            creditPermissions = new ArrayList<CreditPermission>();
+        }
+        return creditPermissions;
+    }
+
+    public void setCreditPermissions(List<CreditPermission> creditPermissions) {
+        this.creditPermissions = creditPermissions;
     }
 }

@@ -303,6 +303,13 @@ public class TransactionTypeController extends GenericSearchController {
             creditType.setAuthorizationText(form.getAuthorizationText());
 
             transactionService.persistTransactionType(transactionType);
+
+            List<CreditPermission> creditPermissions = form.getCreditPermissions();
+            if(creditPermissions != null && creditPermissions.size() > 0) {
+                for(CreditPermission creditPermission : creditPermissions) {
+                    transactionService.createCreditPermission(transactionType.getId(), creditPermission.getAllowableDebitType(), creditPermission.getPriority());
+                }
+            }
         }
 
         for (GlBreakdown breakdown : breakdowns) {
@@ -494,7 +501,13 @@ public class TransactionTypeController extends GenericSearchController {
 
     private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType transactionType, boolean createNew) {
 
-        form.setType((transactionType instanceof CreditType ? TransactionType.CREDIT_TYPE : TransactionType.DEBIT_TYPE));
+        if(transactionType instanceof CreditType) {
+            form.setType(TransactionType.CREDIT_TYPE);
+            List<CreditPermission> creditPermissions = transactionService.getCreditPermissions(transactionType.getId());
+            form.setCreditPermissions(creditPermissions);
+        } else {
+            form.setType(TransactionType.DEBIT_TYPE);
+        }
 
         form.setCode(transactionType.getId().getId());
         if (createNew) {
