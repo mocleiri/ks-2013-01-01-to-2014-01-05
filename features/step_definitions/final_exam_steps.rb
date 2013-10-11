@@ -719,33 +719,33 @@ Then /^there should be an Activity Offering table that is in the ([^"]*) state$/
   end
 end
 
-Then /^the first cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
+Then /^the default cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
   on ViewExamOfferings do |page|
-    page.ao_table_header_text.should match /for Activity Offering/
-    array = page.return_array_of_ao_codes(0)
+    #page.ao_table_header_text.should match /for Activity Offering/
+    array = page.return_array_of_ao_codes
     array.each do |code|
-      page.eo_by_ao_status(code, 0).should match /#{exp_state}/
-      page.eo_by_ao_days(code, 0).should == ""
-      page.eo_by_ao_st_time(code, 0).should == ""
-      page.eo_by_ao_end_time(code, 0).should == ""
-      page.eo_by_ao_bldg(code, 0).should == ""
-      page.eo_by_ao_room(code, 0).should == ""
+      page.eo_by_ao_status(code).should match /#{exp_state}/
+      page.eo_by_ao_days(code).should == ""
+      page.eo_by_ao_st_time(code).should == ""
+      page.eo_by_ao_end_time(code).should == ""
+      page.eo_by_ao_bldg(code).should == ""
+      page.eo_by_ao_room(code).should == ""
     end
     array.length.should == no_of_aos.to_i
   end
 end
 
-Then /^the second cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
+Then /^the leftover cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
   on ViewExamOfferings do |page|
-    page.ao_table_header_text.should match /for Activity Offering/
-    array = page.return_array_of_ao_codes(1)
+    #page.ao_table_header_text.should match /for Activity Offering/
+    array = page.return_array_of_ao_codes("CL Leftovers")
     array.each do |code|
-      page.eo_by_ao_status(code, 1).should match /#{exp_state}/
-      page.eo_by_ao_days(code, 1).should == ""
-      page.eo_by_ao_st_time(code, 1).should == ""
-      page.eo_by_ao_end_time(code, 1).should == ""
-      page.eo_by_ao_bldg(code, 1).should == ""
-      page.eo_by_ao_room(code, 1).should == ""
+      page.eo_by_ao_status(code, "CL Leftovers").should match /#{exp_state}/
+      page.eo_by_ao_days(code, "CL Leftovers").should == ""
+      page.eo_by_ao_st_time(code, "CL Leftovers").should == ""
+      page.eo_by_ao_end_time(code, "CL Leftovers").should == ""
+      page.eo_by_ao_bldg(code, "CL Leftovers").should == ""
+      page.eo_by_ao_room(code, "CL Leftovers").should == ""
     end
     array.length.should == no_of_aos.to_i
   end
@@ -776,8 +776,8 @@ end
 
 Then /^there should be no Standard Exam tables present$/ do
   on ViewExamOfferings do |page|
-    page.exam_offerings_page_section.text.should_not match /for Course Offering/
-    page.exam_offerings_page_section.text.should_not match /for Activity Offering/
+    page.exam_offerings_page_section.text.should_not match /^Exam Offerings for Course Offering/
+    page.exam_offerings_page_section.text.should_not match /^Exam Offerings for Activity Offering/
   end
 end
 

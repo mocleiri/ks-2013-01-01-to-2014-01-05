@@ -12,6 +12,6 @@ Feature: SA.FE3-6 View Exam Offerings table renedered depending on FE Driver
     When I view the Exam Offerings for a CO with a standard final exam driven by Course Offering
     Then the Course Offering table should only show that it is in the Draft state
     And I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
-    And the first cluster's Activity Offering table should for all 5 Exam Offerings only show that it is in the Draft state
+    And the default cluster's Activity Offering table should for all 5 Exam Offerings only show that it is in the Draft state
     And I view the Exam Offerings after changing the Final Exam Driver to Course Offering
     And the Course Offering table should only show that it is in the Draft state

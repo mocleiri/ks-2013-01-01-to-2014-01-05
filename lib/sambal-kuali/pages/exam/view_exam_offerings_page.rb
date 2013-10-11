@@ -67,6 +67,7 @@ class ViewExamOfferings < BasePage
   element(:eo_by_ao_table_section) { |b| b.frm.div(id: "KS-CourseOfferingManagement-ExamOfferingByAOClustersSection")}
   element(:ao_table_header) { |b| b.eo_by_ao_table_section.span(class: "uif-headerText-span")}
   value(:ao_table_header_text) { |b| b.ao_table_header.text}
+  element(:cluster_list_div)  { |b| b.frm.eo_by_ao_table_section.div(class: "uif-stackedCollectionLayout") }
 
   AO_STATUS = 0
   AO_CODE = 1
@@ -77,52 +78,57 @@ class ViewExamOfferings < BasePage
   AO_BLDG = 6
   AO_ROOM = 7
 
-  def eo_by_ao_results_table(cluster_no)
-    ao_table = eo_by_ao_table_section.div( :id => /ExamOfferingByAOTableSection_line#{cluster_no}/).table
-    return ao_table unless !ao_table.exists?
+  def eo_by_ao_results_table(cluster_private_name = :default_cluster)
+    if cluster_private_name == :default_cluster then
+      return cluster_div_list[0].table unless !cluster_div_list[0].table.exists?
+    else
+      cluster = target_cluster(cluster_private_name)
+      return cluster.table unless !cluster.table.exists?
+    end
+    raise "error in activity_offering_results_table - no AOs for #{cluster_private_name}"
   end
 
-  def view_eo_by_ao(code)
-    view_eo_by_ao_link(code).click
+  def view_eo_by_ao(code, cluster_private_name = :default_cluster)
+    view_eo_by_ao_link(code, cluster_private_name).click
     loading.wait_while_present
   end
 
-  def view_eo_by_ao_link(code)
-    eo_by_ao_results_table.link(text: code)
+  def view_eo_by_ao_link(code, cluster_private_name = :default_cluster)
+    eo_by_ao_results_table(cluster_private_name).link(text: code)
   end
 
-  def eo_by_ao_target_row(code, cluster_no)
-    row = eo_by_ao_results_table(cluster_no).row(text: /\b#{Regexp.escape(code)}\b/)
+  def eo_by_ao_target_row(code, cluster_private_name = :default_cluster)
+    row = eo_by_ao_results_table(cluster_private_name).row(text: /\b#{Regexp.escape(code)}\b/)
     return row unless row.nil?
     raise "error in target_row: #{code} not found"
   end
 
-  def eo_by_ao_status(code, cluster_no)
-    eo_by_ao_target_row(code, cluster_no).cells[AO_STATUS].text
+  def eo_by_ao_status(code, cluster_private_name = :default_cluster)
+    eo_by_ao_target_row(code, cluster_private_name).cells[AO_STATUS].text
   end
 
-  def eo_by_ao_type(code, cluster_no)
-    eo_by_ao_target_row(code, cluster_no).cells[AO_TYPE].text
+  def eo_by_ao_type(code, cluster_private_name = :default_cluster)
+    eo_by_ao_target_row(code, cluster_private_name).cells[AO_TYPE].text
   end
 
-  def eo_by_ao_days(code, cluster_no)
-    eo_by_ao_target_row(code, cluster_no).cells[AO_DAYS].text
+  def eo_by_ao_days(code, cluster_private_name = :default_cluster)
+    eo_by_ao_target_row(code, cluster_private_name).cells[AO_DAYS].text
   end
 
-  def eo_by_ao_st_time(code, cluster_no)
-    eo_by_ao_target_row(code, cluster_no).cells[AO_ST_TIME].text
+  def eo_by_ao_st_time(code, cluster_private_name = :default_cluster)
+    eo_by_ao_target_row(code, cluster_private_name).cells[AO_ST_TIME].text
   end
 
-  def eo_by_ao_end_time(code, cluster_no)
-    eo_by_ao_target_row(code, cluster_no).cells[AO_END_TIME].text
+  def eo_by_ao_end_time(code, cluster_private_name = :default_cluster)
+    eo_by_ao_target_row(code, cluster_private_name).cells[AO_END_TIME].text
   end
 
-  def eo_by_ao_bldg(code, cluster_no)
-    eo_by_ao_target_row(code, cluster_no).cells[AO_BLDG].text
+  def eo_by_ao_bldg(code, cluster_private_name = :default_cluster)
+    eo_by_ao_target_row(code, cluster_private_name).cells[AO_BLDG].text
   end
 
-  def eo_by_ao_room(code, cluster_no)
-    eo_by_ao_target_row(code, cluster_no).cells[AO_ROOM].text
+  def eo_by_ao_room(code, cluster_private_name = :default_cluster)
+    eo_by_ao_target_row(code, cluster_private_name).cells[AO_ROOM].text
   end
 
   #def count_no_of_eos_by_ao
@@ -135,13 +141,40 @@ class ViewExamOfferings < BasePage
   #  return "#{row_count}"
   #end
 
-  def return_array_of_ao_codes(cluster_no)
+  def return_array_of_ao_codes(cluster_private_name = :default_cluster)
     array = []
-    eo_by_ao_results_table(cluster_no).rows.each do |row|
+    eo_by_ao_results_table(cluster_private_name).rows.each do |row|
       if row.cells[AO_CODE].text =~ /^[A-Z]$/
         array << row.cells[AO_CODE].text
       end
     end
     return array
+  end
+
+  #########Clusters #############################
+  def cluster_div_list
+    div_list = []
+    if cluster_list_div.exists?
+      div_list = cluster_list_div.divs(class: "uif-collectionItem uif-boxCollectionItem")
+    end
+    div_list
+  end
+
+  def target_cluster(private_name)
+    div_list = cluster_div_list
+    return div_list[0] if private_name == :default_cluster
+    cluster_div_list.each do |div_element|
+      if cluster_div_private_name(div_element) == private_name then
+        return div_element
+      end
+    end
+    raise "Error: No cluster found: #{private_name}"
+  end
+
+  def cluster_div_private_name(cluster_div_element)
+    tmp_text = cluster_div_element.fieldset.label.text
+    end_of_private_name = -1
+    end_of_private_name = tmp_text.index('(')-2 unless tmp_text.index('(') == nil
+    tmp_text[9..end_of_private_name]
   end
 end

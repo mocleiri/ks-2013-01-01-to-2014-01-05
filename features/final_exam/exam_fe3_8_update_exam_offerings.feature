@@ -19,4 +19,4 @@ Feature: FE 3.8 Update Exam Offerings
     When I view the Exam Offerings for a CO where the Activity Offering Standard FE is changed to Alternate Final Exam
     Then there should be a table header explaining that the Exam Offerings have been canceled
     And I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
-    And the first cluster's Activity Offering table should for all 5 Exam Offerings only show that it is in the Draft state
+    And the default cluster's Activity Offering table should for all 5 Exam Offerings only show that it is in the Draft state
