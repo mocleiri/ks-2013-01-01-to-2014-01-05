@@ -10,6 +10,8 @@ import javax.persistence.Query;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingChargeStatus;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
+import com.sigmasys.kuali.ksa.service.AccountService;
+import com.sigmasys.kuali.ksa.service.fm.RateService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -62,6 +64,16 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             " left outer join fetch m.rollup ru " +
             " left outer join fetch m.linkedManifest lm ";
 
+    // A query to get FM Sessions:
+    private static final String GET_FM_SESSION_JOIN = "select s from FeeManagementSession s " +
+            " left outer join fetch s.prevSession ps " +
+            " left outer join fetch s.nextSession ns " +
+            " left outer join fetch s.keyPairs kp " +
+            " left outer join fetch s.account a ";
+
+    @Autowired
+    private AccountService accountService;
+
     @Autowired
     private TransactionService transactionService;
 
@@ -74,55 +86,83 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     @Autowired
     private TransactionTransferService transactionTransferService;
 
+    @Autowired
+    private RateService rateService;
 
+
+    /**
+     * Checks if the rules engine is processing a "What-If" scenario.
+     *
+     * @return <code>true</code> if the rules engine is processing a "What-If" scenario or <code>false</code> otherwise.
+     */
     @Override
-    public boolean isProcessingWhatIfScenarios(String atpId) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    public boolean isCalculating() {
+        // TODO: Figure out how to find out the fee assessment mode:
+        return false;
     }
 
+    /**
+     * Checks if the rules engine performs Fee Management that will result in real Account charges/credits.
+     *
+     * @return <code>true</code> if the FM is in the real charge mode, <code>false</code> otherwise.
+     */
     @Override
-    public boolean isProcessingRealTimeFm(String atpId) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    public boolean isCharging() {
+        return !isCalculating();
     }
 
+    /**
+     * Queues a FeeManagementSession.
+     *
+     * @param feeManagementSessionId ID of an FM Session to queue.
+     */
     @Override
-    public void addFeeManagementPeriodSetting(String atpId, String key, String value) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public String getFeeManagementPeriodSetting(String atpId, String key) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public String removeFeeManagementPeriodSetting(String atpId, String key) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public KeyPair getKeyPair(String accountId, String key) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public KeyPair addKeyPair(String accountId, String key, String value) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public KeyPair removeKeyPair(String accountId, String key) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
+    @Transactional(readOnly = false)
     public void addSessionToQueue(Long feeManagementSessionId) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // Get the FM Session:
+        FeeManagementSession fmSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
+
+        if (fmSession == null) {
+            logger.error("Cannot find an FM session with the ID " + feeManagementSessionId);
+            throw new IllegalArgumentException("Cannot find an FM session with the ID " + feeManagementSessionId);
+        }
+
+        // Check if the FM Session is current:
+        if (fmSession.getStatus() != FeeManagementSessionStatus.CURRENT) {
+            logger.error("Cannot queue an FM Session that is not CURRENT. FM Session status was " + fmSession.getStatus());
+        }
+
+        // Set the FM session as queued:
+        fmSession.setQueued(true);
+        fmSession.setReviewComplete(false);
+        persistEntity(fmSession);
     }
 
+    /**
+     * Dequeues a FeeManagementSession.
+     *
+     * @param feeManagementSessionId ID of an FM Session to dequeue.
+     */
     @Override
+    @Transactional(readOnly = false)
     public void removeSessionFromQueue(Long feeManagementSessionId) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+        // Check permissions:
+        PermissionUtils.checkPermission(Permission.DELETE_FM_QUEUE);
+
+        // Get the FM Session:
+        FeeManagementSession fmSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
+
+        if (fmSession == null) {
+            logger.error("Cannot find an FM session with the ID " + feeManagementSessionId);
+            throw new IllegalArgumentException("Cannot find an FM session with the ID " + feeManagementSessionId);
+        }
+
+        // If the FM Session is queued, de-queue it:
+        if (fmSession.isQueued()) {
+            fmSession.setQueued(false);
+            persistEntity(fmSession);
+        }
     }
 
     @Override
@@ -135,19 +175,66 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * This method kicks off the workflow for assessing fees by creating a fee management session and then
+     * queuing it up for later execution.
+     *
+     * @param feeManagementTermRecord   FM Term Record for FM Session creation.
+     */
     @Override
+    @Transactional(readOnly = false)
     public void queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+        // Check permissions:
+        PermissionUtils.checkPermission(Permission.RUN_FM);
+
+        // Create an FM Session:
+        Long feeManagementSessionId = null;
+
+        try {
+            feeManagementSessionId = createFeeManagementSession(feeManagementTermRecord);
+        } catch (Exception e) {
+            logger.error("Cannot create a FeeManagementSession using the FM TermRecord " + feeManagementTermRecord);
+            throw new IllegalStateException("Cannot create a FeeManagementSession using the FM TermRecord.", e);
+        }
+
+        if (feeManagementSessionId == null) {
+            // Queue the FM Session for later execution:
+            addSessionToQueue(feeManagementSessionId);
+        }
     }
 
+    /**
+     * Accesses an FM Session and invokes the Rules Engine to create a Manifest.
+     *
+     * @param feeManagementSessionId    ID of an FM session to process.
+     * @return  ID of a created Manifest.
+     */
     @Override
     public Long processFeeManagementSession(Long feeManagementSessionId) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        // TODO: Figure out how to invoke the Rules Engine to perform Fee Management and create manifest:
+        return null;
     }
 
+    /**
+     * Creates a new FM Session using the given FM TermRecord.
+     *
+     * @param feeManagementTermRecord   FM TermRecord.
+     * @return The newly generated FM Session.
+     */
     @Override
     public Long createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+        // Validate the FM TermRecord. This call with either raise an exception or create a valid Account:
+        Account account = validateForFeeManagementSessionCreation(feeManagementTermRecord);
+
+        // Get the last completed Prior FM Session:
+        FeeManagementSession priorSession = getLastCompletedFmSession(feeManagementTermRecord);
+
+        // Create a new FM Session using the Prior session, which may not exist:
+        FeeManagementSession newSession = createNewFmSession(priorSession, feeManagementTermRecord, account);
+
+        return (newSession != null) ? newSession.getId() : null;
     }
 
     @Override
@@ -298,10 +385,271 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /***************************************************************************
      *
      *
-     * Private helper methods for "chargeSession".
+     * Private helper methods for "createFeeManagementSession".
      *
      *
      ***************************************************************************/
+
+    /**
+     * Performs validation of an FM Term Record for FM Session creation.
+     *
+     * @param feeManagementTermRecord An FM TermRecord for FM Session creation.
+     * @return Account Account for which an FM Session is being created.
+     *  Returns null if the account is invalid.
+     * @throws RuntimeException or a subclass thereof if validation fails.
+     */
+    private Account validateForFeeManagementSessionCreation(FeeManagementTermRecord feeManagementTermRecord) {
+
+        // Get the account associated with the new Session:
+        String accountId = feeManagementTermRecord.getAccountId();
+
+        if (StringUtils.isBlank(accountId)) {
+            String errorMsg = String.format("Invalid Account ID [%s] associated with the in FM Session creation.", accountId);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        // Get the Account:
+        Account account = accountService.getOrCreateAccount(accountId);
+
+        if (account == null) {
+            String errorMsg = String.format("Cannot find an Account with ID %s in FM Session creation.", accountId);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        // Check if the Account is a chargeable Account:
+        if (!(account instanceof ChargeableAccount)) {
+            String errorMsg = String.format("Account %s is not a ChargeableAccount in FM Session creation.", accountId);
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        }
+
+        // Check the FM Term Record status. Must be either CURRENT or SIMULATED:
+        FeeManagementSessionStatus status = feeManagementTermRecord.getFmSessionStatus();
+
+        if ((status != FeeManagementSessionStatus.CURRENT) && (status != FeeManagementSessionStatus.SIMULATED)) {
+            String errorMsg = String.format("Invalid FeeManagement Session status [%s]. Session status must be CURRENT or SIMULATED to call \"createFeeManagementSession\".", status);
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        }
+
+        // Check the ATP ID on the FM TermRecord is valid:
+        if (StringUtils.isBlank(feeManagementTermRecord.getAtpId())) {
+            String errorMsg = String.format("Invalid ATP ID [%s] in FM TermRecord in FM Session creation.", feeManagementTermRecord.getAtpId());
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        }
+
+        // Check that the ATP ID on each IncomingSignup is valid too:
+        if (CollectionUtils.isNotEmpty(feeManagementTermRecord.getIncomingSignups())) {
+            for (FeeManagementIncomingSignup incomingSignup : feeManagementTermRecord.getIncomingSignups()) {
+                if (StringUtils.isBlank(incomingSignup.getAtpId())) {
+                    String errorMsg = String.format("Invalid ATP ID [%s] in FM IncomingSignup in FM Session creation.", incomingSignup.getAtpId());
+                    logger.error(errorMsg);
+                    throw new IllegalStateException(errorMsg);
+                }
+            }
+        }
+
+        return account;
+    }
+
+    /**
+     * Returns the last completed FM Session for the Account and ATP ID from the given FM TermRecord.
+     * The last recorded FM Session will have the "nextSession" attribute equal to "null".
+     *
+     * @param feeManagementTermRecord   FM TermRecord.
+     * @return The last completed FM Session with the given parameters from the FM Term Record.
+     */
+    private FeeManagementSession getLastCompletedFmSession(FeeManagementTermRecord feeManagementTermRecord) {
+
+        // Create a query:
+        Query query = em.createQuery(GET_FM_SESSION_JOIN + " where s.account.id = :accountId and s.atpId = :atpId and s.nextSession is null ");
+
+        query.setParameter("accountId", feeManagementTermRecord.getAccountId());
+        query.setParameter("atpId", feeManagementTermRecord.getAtpId());
+
+        // Get the results:
+        List results = query.getResultList();
+        FeeManagementSession priorSession = CollectionUtils.isNotEmpty(results) ? (FeeManagementSession)results.get(0) : null;
+
+        // If a prior FM Session is found, check its status. Keep checking until we either find an FM Session
+        // that is not CURRENT or SIMULATED or get to the point where there is no prior FM Session:
+        while (priorSession != null) {
+            FeeManagementSessionStatus status = priorSession.getStatus();
+
+            if ((status == FeeManagementSessionStatus.SIMULATED) || (status == FeeManagementSessionStatus.CURRENT)) {
+                // De-queue the session and move to the previous FM Session:
+                removeSessionFromQueue(priorSession.getId());
+                priorSession = priorSession.getPrevSession();
+            }
+        }
+
+        return priorSession;
+    }
+
+    /**
+     * Creates a new FM Session using the Prior Session, which may not exist.
+     *
+     * @param priorSession              A Prior FM Session (optional).
+     * @param feeManagementTermRecord   A FM TermRecord.
+     * @param account                   User Account associated with the new FM Session.
+     * @return The newly created FM Session.
+     */
+    private FeeManagementSession createNewFmSession(FeeManagementSession priorSession,
+                        FeeManagementTermRecord feeManagementTermRecord, Account account) {
+
+        // Create a new FM Session:
+        FeeManagementSession newSession = new FeeManagementSession();
+
+        newSession.setAccount(account);
+        newSession.setPrevSession(priorSession);
+        newSession.setAtpId(feeManagementTermRecord.getAtpId());
+        newSession.setReviewRequired(false);
+        newSession.setReviewComplete(false);
+        newSession.setCreationDate(new Date());
+        newSession.setChargeStatus(feeManagementTermRecord.getFmSessionStatus());
+        newSession.setQueued(false);
+
+        // Persist the new FM Session:
+        persistEntity(newSession);
+
+        // Add the KeyPairs:
+        if (CollectionUtils.isNotEmpty(feeManagementTermRecord.getKeyPairs())) {
+            // Create new KeyPairs for the new Session:
+            for (KeyPair keyPair : feeManagementTermRecord.getKeyPairs()) {
+                // If the current KeyPair is a valid one, create a new one from it:
+                if (StringUtils.isNotBlank(keyPair.getKey()) && StringUtils.isNotBlank(keyPair.getValue())) {
+                    newSession.getKeyPairs().add(new KeyPair(keyPair.getKey(), keyPair.getValue()));
+                }
+            }
+
+            // Persis the new KeyPairs:
+            persistEntity(newSession);
+        }
+
+        // Add Signup records to the new FM Session.
+        addSignupToFmSession(newSession, feeManagementTermRecord);
+
+        // If there was a Prior Session, point to the new one and persist:
+        if (priorSession != null) {
+            priorSession.setNextSession(newSession);
+            persistEntity(priorSession);
+        }
+
+        return newSession;
+    }
+
+    /**
+     * Adds <code>Signup</code> from the given FeeManagementTermRecord to the specified FM Session.
+     *
+     * @param currentSession            An FM Session to add Signup to.
+     * @param feeManagementTermRecord   Source of IncomingSignup.
+     */
+    private void addSignupToFmSession(FeeManagementSession currentSession, FeeManagementTermRecord feeManagementTermRecord) {
+
+        // If the FM TermRecord has IncomingSignup, create Signup for the given FM Session:
+        if (CollectionUtils.isNotEmpty(feeManagementTermRecord.getIncomingSignups())) {
+            for (FeeManagementIncomingSignup incomingSignup : feeManagementTermRecord.getIncomingSignups()) {
+                // Create new Signup for the FM Session:
+                FeeManagementSignup newSignup = new FeeManagementSignup();
+
+                org.springframework.beans.BeanUtils.copyProperties(incomingSignup, newSignup);
+                newSignup.setSession(currentSession);
+                newSignup.setComplete(false);
+
+                // Persist the new object:
+                persistEntity(newSignup);
+
+                // Add FM SignupRate (RateInfo) objects.
+                addSignupRateToSignup(newSignup, incomingSignup, feeManagementTermRecord);
+            }
+        }
+    }
+
+    /**
+     * Adds FM SignupRates from the specified FM IncomingSignup to the given FM Signup.
+     *
+     * @param signup                    FM Signup to add SignupRates to.
+     * @param incomingSignup            FM Incoming Signup.
+     * @param feeManagementTermRecord   FM Term Record.
+     */
+    private void addSignupRateToSignup(FeeManagementSignup signup, FeeManagementIncomingSignup incomingSignup,
+                                       FeeManagementTermRecord feeManagementTermRecord) {
+
+        // Go through the list of IncomingRateInfo objects:
+        if (CollectionUtils.isNotEmpty(incomingSignup.getRates())) {
+            for (FeeManagementIncomingRateInfo incomingRateInfo : incomingSignup.getRates()) {
+
+                // Get the Rate:
+                Rate rate = findSignupRate(incomingSignup, incomingRateInfo, feeManagementTermRecord);
+
+                // Create a new SignupRate object:
+                FeeManagementSignupRate signupRate = new FeeManagementSignupRate();
+
+                signupRate.setRate(rate);
+                signupRate.setSignup(signup);
+                persistEntity(signupRate);
+            }
+        }
+    }
+
+    /**
+     * Attempts to find a Rate using the provided objects.
+     *
+     * @param incomingSignup            FM IncomingSignup DTO.
+     * @param incomingRateInfo          FM InfomingRateInfo DTO.
+     * @param feeManagementTermRecord   FM TermRecord DTO.
+     * @return Rate found using the parameters from the provided objects.
+     * @throws IllegalArgumentException If the parameters in the provided objects do not result in a hit.
+     */
+    private Rate findSignupRate(FeeManagementIncomingSignup incomingSignup, FeeManagementIncomingRateInfo incomingRateInfo,
+                                FeeManagementTermRecord feeManagementTermRecord) {
+
+        // Use the RateService to find the Rate:
+        String rateCode = incomingRateInfo.getRateCode();
+        String rateSubCode = incomingRateInfo.getRateSubcode();
+        String atpId = incomingSignup.getAtpId();
+        Rate rate = null;
+
+        try {
+            rate = rateService.getRate(rateCode, rateSubCode, atpId);
+        } catch (Exception e) {
+            logger.error(String.format("Cannot find a Rate code [%s], subCode [%s], ATP ID [%s]", rateCode, rateSubCode, atpId), e);
+        }
+
+        // If a Rate is not found, try the ATP ID from the TermRecord:
+        if (rate == null) {
+            atpId = feeManagementTermRecord.getAtpId();
+
+            try {
+                rate = rateService.getRate(rateCode, rateSubCode, atpId);
+            } catch (Exception e) {
+                logger.error(String.format("Cannot find a Rate code [%s], subCode [%s], ATP ID [%s]", rateCode, rateSubCode, atpId), e);
+            }
+        }
+
+        // If the Rate is still not found, raise an exception:
+        if (rate == null) {
+            String errorMsg = String.format("Cannot find a Rate code [%s], subCode [%s], ATP ID [%s] or [%s]",
+                    rateCode, rateSubCode, atpId, incomingSignup.getAtpId());
+
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        return rate;
+    }
+
+
+    /***************************************************************************
+    *
+    *
+    * Private helper methods for "chargeSession".
+    *
+    *
+    ***************************************************************************/
     
     /**
      * Checks all conditions necessary for FM session charge. 

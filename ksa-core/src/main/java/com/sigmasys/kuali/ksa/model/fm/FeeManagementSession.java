@@ -45,6 +45,8 @@ public class FeeManagementSession implements Identifiable {
 
     private String statusCode;
 
+    private Boolean isQueued;
+
 
     @PostLoad
     protected void populateTransientFields() {
@@ -127,6 +129,16 @@ public class FeeManagementSession implements Identifiable {
 
     public void setReviewComplete(Boolean reviewComplete) {
         isReviewComplete = reviewComplete;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_QUEUED")
+    public Boolean isQueued() {
+        return (isQueued != null) ? isQueued : false;
+    }
+
+    public void setQueued(Boolean queued) {
+        isQueued = queued;
     }
 
     @Column(name = "REVIEWER_ID", length = 45)

@@ -63,34 +63,60 @@ public interface FeeManagementService {
     @WebMethod(exclude = true)
     List<FeeManagementManifest> getManifests(Long feeManagementSessionId, FeeManagementManifestType... manifestTypes);
 
-    boolean isProcessingWhatIfScenarios(String atpId);
+    /**
+     * Checks if the rules engine is processing a quote generation/assessment scenario.
+     *
+     * @return <code>true</code> if the rules engine is processing a "What-If" scenario or <code>false</code> otherwise.
+     */
+    boolean isCalculating();
 
-    boolean isProcessingRealTimeFm(String atpId);
+    /**
+     * Checks if the rules engine performs Fee Management that will result in real Account charges/credits.
+     *
+     * @return <code>true</code> if the FM is in the real charge mode, <code>false</code> otherwise.
+     */
+    boolean isCharging();
 
-    void addFeeManagementPeriodSetting(String atpId, String key, String value);
-
-    String getFeeManagementPeriodSetting(String atpId, String key);
-
-    String removeFeeManagementPeriodSetting(String atpId, String key);
-
-    KeyPair getKeyPair(String accountId, String key);
-
-    KeyPair addKeyPair(String accountId, String key, String value);
-
-    KeyPair removeKeyPair(String accountId, String key);
-
+    /**
+     * Queues a FeeManagementSession.
+     *
+     * @param feeManagementSessionId ID of an FM Session to queue.
+     */
     void addSessionToQueue(Long feeManagementSessionId);
 
+    /**
+     * Dequeues a FeeManagementSession.
+     *
+     * @param feeManagementSessionId ID of an FM Session to dequeue.
+     */
     void removeSessionFromQueue(Long feeManagementSessionId);
 
     Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 
     FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 
+    /**
+     * This method kicks off the workflow for assessing fees by creating a fee management session and then
+     * queuing it up for later execution.
+     *
+     * @param feeManagementTermRecord   FM Term Record for FM Session creation.
+     */
     void queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 
+    /**
+     * Accesses an FM Session and invokes the Rules Engine to create a Manifest.
+     *
+     * @param feeManagementSessionId    ID of an FM session to process.
+     * @return  ID of a created Manifest.
+     */
     Long processFeeManagementSession(Long feeManagementSessionId);
 
+    /**
+     * Creates a new FM Session using the given FM TermRecord.
+     *
+     * @param feeManagementTermRecord   FM TermRecord.
+     * @return The newly generated FM Session.
+     */
     Long createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord);
 
     FeeManagementReportInfo createFeeManagementReport(Long feeManagementSessionId);

@@ -261,6 +261,7 @@ public enum Permission {
     DELETE_RATE_AMOUNT,
 
     // Fee Management permissions:
-    READ_MANIFEST
-
+    READ_MANIFEST,
+    DELETE_FM_QUEUE,
+    RUN_FM
 }

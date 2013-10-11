@@ -63,7 +63,7 @@ public class FeeManagementIncomingSignup {
     /**
      * Number of units associated with the course, if applicable. KSA recognizes units as hundredths.
      */
-    private BigDecimal numberOfUnits;
+    private Integer unit;
 
     /**
      * List of FeeManagementIncomingRateInfo objects.
@@ -127,12 +127,12 @@ public class FeeManagementIncomingSignup {
         this.atpId = atpId;
     }
 
-    public BigDecimal getNumberOfUnits() {
-        return numberOfUnits;
+    public Integer getUnit() {
+        return unit;
     }
 
-    public void setNumberOfUnits(BigDecimal numberOfUnits) {
-        this.numberOfUnits = numberOfUnits;
+    public void setUnit(Integer unit) {
+        this.unit = unit;
     }
 
     public List<FeeManagementIncomingRateInfo> getRates() {
