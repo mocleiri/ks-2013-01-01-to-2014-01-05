@@ -351,8 +351,7 @@ class ActivityOffering
   private :edit_colocation
 
   def edit_break_colocation opts={}
-
-    @browser.confirm( opts[:break_colocation] ) {
+    @browser.confirm( opts[:break_colocation] ) { #TODO - @browser.confirm is deprecated
       on(ActivityOfferingMaintenance).select_colocated_checkbox
     }
 

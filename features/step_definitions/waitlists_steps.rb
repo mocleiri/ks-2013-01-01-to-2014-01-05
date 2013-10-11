@@ -368,7 +368,7 @@ Given /^I create three colocated activity offerings \(shared enrolment\) with wa
 
 end
 
-Then /^all three colocated activity offerings have the same waitlist configuration$/ do
+Then /activity offerings have the same waitlist configuration$/ do
   @ao_list.each do |ao|
     ao.parent_course_offering.manage
     on(ManageCourseOfferings).view_activity_offering(ao.code)
@@ -459,71 +459,144 @@ Then /^the new activity offering has the default waitlist configuration$/ do
 end
 
 When /^I delete one of the colocated activity offerings$/ do
-  pending # express the regexp above with the code you wish you had
+  @ao_list[0].parent_course_offering.manage
+  @ao_list[0].parent_course_offering.delete_ao :ao_code =>'A'
 end
 
 Then /^the remaining two activity offerings are no longer colocated$/ do
-  pending # express the regexp above with the code you wish you had
+  @ao_list[1..2].each do |ao|
+    ao.parent_course_offering.manage
+    on(ManageCourseOfferings).has_colo_icon(ao.code).should be_false
+  end
 end
 
 Then /^the remaining two activity offerings still have the same waitlist configuration$/ do
-  pending # express the regexp above with the code you wish you had
+  @ao_list[1..2].each do |ao|
+    ao.parent_course_offering.manage
+    on(ManageCourseOfferings).view_activity_offering(ao.code)
+
+    on ActivityOfferingInquiry do |page|
+      page.waitlists_active?.should be_true
+      page.waitlists_allow_holds?.should == @ao_list[0].waitlist_config.allow_hold_list
+      page.waitlists_processing.should == @ao_list[0].waitlist_config.type
+      page.waitlists_max_size.should == @ao_list[0].waitlist_config.waitlist_limit_str
+      page.close
+    end
+  end
 end
 
 When /^I delete one of the related course offerings$/ do
-  pending # express the regexp above with the code you wish you had
+  @ao_list[0].parent_course_offering.manage
+  @ao_list[0].parent_course_offering.delete_co_coc_view
 end
 
 Then /^the remaining activity offerings are still colocated$/ do
-  pending # express the regexp above with the code you wish you had
+  @ao_list[1..2].each do |ao|
+    ao.parent_course_offering.manage
+    on(ManageCourseOfferings).has_colo_icon(ao.code).should be_true
+  end
 end
 
 When /^I delete two of the related course offerings$/ do
-  pending # express the regexp above with the code you wish you had
+  @ao_list[0..1].each do |ao|
+    ao.parent_course_offering.manage
+    ao.parent_course_offering.delete_co_coc_view
+  end
 end
 
 Then /^the remaining activity offering is no longer colocated$/ do
-  pending # express the regexp above with the code you wish you had
+  @ao_list[-1].parent_course_offering.manage
+  on(ManageCourseOfferings).has_colo_icon(@ao_list[-1].code).should be_false
+end
+
+Then /^the activity offerings are no longer colocated$/ do
+  @ao_list.each do |ao|
+    ao.parent_course_offering.manage
+    on(ManageCourseOfferings).has_colo_icon(ao.code).should be_false
+  end
 end
 
 Then /^the remaining activity offering still has the same waitlist configuration$/ do
-  pending # express the regexp above with the code you wish you had
-end
+  @ao_list[2].parent_course_offering.manage
+  on(ManageCourseOfferings).view_activity_offering(@ao_list[2].code)
 
-When /^I break colocation on the first colocated activity offering$/ do
-  pending # express the regexp above with the code you wish you had
+  on ActivityOfferingInquiry do |page|
+    page.waitlists_active?.should be_true
+    page.waitlists_allow_holds?.should == @ao_list[0].waitlist_config.allow_hold_list
+    page.waitlists_processing.should == @ao_list[0].waitlist_config.type
+    page.waitlists_max_size.should == @ao_list[0].waitlist_config.waitlist_limit_str
+    page.close
+  end
 end
 
 Then /^the all three activity offerings still have the same waitlist configuration$/ do
   pending # express the regexp above with the code you wish you had
 end
 
-When /^I change the waitlist configuration on the first activity offering$/ do
-  pending # express the regexp above with the code you wish you had
+When /^I deactivate waitlists on the first activity offering$/ do
+  waitlist = @ao_list[0].waitlist_config
+  waitlist.enabled = false
+  @ao_list[0].edit :waitlist_config => waitlist
+  @ao_list[0].save
 end
 
-Then /^the waitlist configuration for the two remaining colocated activity offerings is not changed$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^the waitlist configuration for the.*activity offerings? is not changed$/ do
+  @ao_list[1..-1].each do |ao|
+    ao.parent_course_offering.manage
+    on(ManageCourseOfferings).view_activity_offering(ao.code)
+
+    on ActivityOfferingInquiry do |page|
+      page.waitlists_active?.should be_true
+      #page.waitlists_allow_holds?.should == @ao_list[0].waitlist_config.allow_hold_list
+      #page.waitlists_processing.should == @ao_list[0].waitlist_config.type
+      #page.waitlists_max_size.should == @ao_list[0].waitlist_config.waitlist_limit_str
+      page.close
+    end
+  end
 end
 
 Given /^I create two colocated activity offerings \(shared enrolment\) with waitlists enabled$/ do
-  pending # express the regexp above with the code you wish you had
+  #TODO: # of AOs can be parameterized
+  @term = make AcademicTerm, :term_code => Rollover::MAIN_TEST_TERM_TARGET if @term.nil?
+
+  @ao_list = []
+
+  ["ENGL300","WMST300"].each do |co_code|
+    course_offering = create CourseOffering, :course => co_code, :waitlists => true, :term => @term.term_code
+    activity_offering = create ActivityOffering, :parent_course_offering => course_offering
+    activity_offering.save
+    @ao_list << activity_offering
+  end
+
+  @ao_list[0].parent_course_offering.manage
+  @ao_list[0].edit :colocate_ao_list => @ao_list[1..2],
+                   :colocate_shared_enrollment => true,
+                   :max_enrollment => 120
+  @ao_list[0].save
+
 end
 
-Then /^both activity offering still have the same waitlist configuration$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^the waitlists configuration for the second activity offering is not changed$/ do
+Then /^both activity offerings still have the same waitlist configuration$/ do
   pending # express the regexp above with the code you wish you had
 end
 
 When /^I deactivate waitlists at the course offering level for one of the activity offerings$/ do
-  pending # express the regexp above with the code you wish you had
+  @ao_list[0].parent_course_offering.search_by_subjectcode
+  on(ManageCourseOfferingList).edit @ao_list[0].parent_course_offering.course
+  @ao_list[0].parent_course_offering.edit_offering :waitlist => false
+  on(CourseOfferingEdit).submit
 end
 
 Then /^waitlists is deactived for both activity offerings$/ do
-  pending # express the regexp above with the code you wish you had
+  @ao_list.each do |ao|
+    ao.parent_course_offering.manage
+    on(ManageCourseOfferings).view_activity_offering(ao.code)
+
+    on ActivityOfferingInquiry do |page|
+      page.waitlists_active?.should be_false
+      page.close
+    end
+  end
 end
 
 When /^I add another activity offering to the colocated set$/ do
