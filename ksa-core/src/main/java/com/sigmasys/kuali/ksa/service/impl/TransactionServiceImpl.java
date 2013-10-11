@@ -1629,9 +1629,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         // Creating GL transactions for charge+payment or payment+charge only
         if ((transaction1.getTransactionTypeValue() == TransactionTypeValue.CHARGE &&
-                transaction2.getTransactionTypeValue() != TransactionTypeValue.PAYMENT) ||
+                transaction2.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) ||
                 (transaction1.getTransactionTypeValue() == TransactionTypeValue.PAYMENT &&
-                        transaction2.getTransactionTypeValue() != TransactionTypeValue.CHARGE)) {
+                        transaction2.getTransactionTypeValue() == TransactionTypeValue.CHARGE)) {
             String statement = configService.getParameter(Constants.DEFAULT_GL_PA_STATEMENT);
             Pair<GlTransaction, GlTransaction> pair =
                     createGlTransactions(transaction1, transaction2, allocatedAmount, statement, isQueued);
