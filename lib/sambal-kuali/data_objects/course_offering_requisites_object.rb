@@ -871,9 +871,9 @@ class CorequisiteRule < CORequisitesData
     if groups >= 2
       on ManageCORequisites do |page|
         page.loading.wait_while_present
-        page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
+        page.edit_tree_section.select(:id => /prop_compoundOpCode_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_loading.wait_while_present
-        page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
+        page.edit_tree_section.select(:id => /prop_compoundOpCode_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_loading.wait_while_present
         page.update_rule_btn
       end
@@ -1058,9 +1058,10 @@ class PreparationPrerequisiteRule < CORequisitesData
     if groups >= 2
       on ManageCORequisites do |page|
         page.loading.wait_while_present
-        page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
+        page.edit_tree_section.select(:id => /prop_compoundOpCode_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
+        #id="prop_compoundOpCode_node_1_parent_node_0_parent_node_0_parent_root_control"
         page.edit_loading.wait_while_present
-        page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
+        page.edit_tree_section.select(:id => /prop_compoundOpCode_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
         page.edit_loading.wait_while_present
         page.update_rule_btn
       end
