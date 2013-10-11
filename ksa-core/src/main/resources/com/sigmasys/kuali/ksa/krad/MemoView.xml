@@ -169,10 +169,10 @@
                                     <bean parent="Uif-Tooltip" p:tooltipContent="@{#line.auditTooltip}"/>
                                 </property>
                             </bean>
-                            <bean parent="Uif-ImageField" p:source="../images/delete.png" p:style="cursor:pointer;" p:altText="Expire memo" p:title=""
-                                  p:onClickScript="showLightboxComponent('memoExpireMemo@{#lineSuffix}');">
-                                <property name="toolTip">
-                                    <bean parent="Uif-Tooltip" p:tooltipContent="Click to expire this memo now"/>
+                            <bean parent="Uif-ActionLink" p:methodToCall="expireMemo" p:actionParameters="memoId:@{#line.id}">
+                                <property name="actionImage">
+                                    <bean parent="Uif-Image" p:altText="Expire"
+                                          p:source="../images/delete.png"/>
                                 </property>
                             </bean>
                         </list>
@@ -224,10 +224,10 @@
                                     <bean parent="Uif-Tooltip" p:tooltipContent="@{#line.auditTooltip}"/>
                                 </property>
                             </bean>
-                            <bean parent="Uif-ImageField" p:source="../images/delete.png" p:style="cursor:pointer;" p:altText="Expire memo" p:title=""
-                                  p:onClickScript="showLightboxComponent('memoExpireMemo@{#lineSuffix}');">
-                                <property name="toolTip">
-                                    <bean parent="Uif-Tooltip" p:tooltipContent="Click to expire this memo now"/>
+                            <bean parent="Uif-ActionLink" p:methodToCall="expireMemo" p:actionParameters="memoId:@{#line.id}">
+                                <property name="actionImage">
+                                    <bean parent="Uif-Image" p:altText="Expire"
+                                          p:source="../images/delete.png"/>
                                 </property>
                             </bean>
                         </list>

@@ -337,6 +337,45 @@ public class MemoController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=expireMemo")
+    public ModelAndView expireMemo(@ModelAttribute("KualiForm") MemoForm form, BindingResult result,
+                                     HttpServletRequest request, HttpServletResponse response) {
+
+        String memoIdString = request.getParameter("actionParameters[memoId]");
+        Long memoId;
+        try {
+            memoId = Long.parseLong(memoIdString);
+        } catch(NumberFormatException e) {
+            String failedMsg = "Invalid Memo: " + memoIdString;
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, failedMsg);
+            logger.error(failedMsg);
+            return getUIFModelAndView(form);
+        }
+
+        String userId = form.getAccount().getId();
+
+        Memo memo = informationService.getMemo(memoId);
+
+        if(userId == null || (! userId.equals(memo.getAccount().getId()))) {
+            String failedMsg = "Memo is not for the selected user";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, failedMsg);
+            logger.error(failedMsg);
+            return getUIFModelAndView(form);
+        }
+
+        memo.setExpirationDate(new Date());
+
+        informationService.persistInformation(memo);
+
+        List<Memo> memos = informationService.getMemos();
+        form.setMemos(memos);
+
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Memo expired");
+
+        return getUIFModelAndView(form);
+    }
+
+
     private void updateMemo(MemoForm form, String memoId) {
 
         try {
