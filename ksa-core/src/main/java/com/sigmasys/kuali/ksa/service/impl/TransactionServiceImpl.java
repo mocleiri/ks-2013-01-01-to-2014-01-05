@@ -2621,6 +2621,49 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
+     * Creates and persist a new instance of CreditPermission class.
+     *
+     * @param creditTypeId       Credit type ID
+     * @param allowableDebitType Allowable debit type mask (can be a regular expression)
+     * @param priority           Priority value
+     * @return new persistent CreditPermission instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public CreditPermission createCreditPermission(TransactionTypeId creditTypeId, String allowableDebitType, int priority) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_CREDIT_PERMISSION);
+
+        if (creditTypeId == null) {
+            String errMsg = "Credit Type ID is required";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (StringUtils.isBlank(allowableDebitType)) {
+            String errMsg = "Allowable debit type mask cannot be empty";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        CreditType creditType = getEntity(creditTypeId, CreditType.class);
+        if (creditType == null) {
+            String errMsg = "Credit Type with ID = " + creditTypeId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidTransactionTypeException(errMsg);
+        }
+
+        CreditPermission creditPermission = new CreditPermission();
+        creditPermission.setCreditType(creditType);
+        creditPermission.setAllowableDebitType(allowableDebitType);
+        creditPermission.setPriority(priority);
+
+        persistEntity(creditPermission);
+
+        return creditPermission;
+    }
+
+    /**
      * Returns a list of credit permissions for the given transaction type sorted by
      * priority in descending order.
      *

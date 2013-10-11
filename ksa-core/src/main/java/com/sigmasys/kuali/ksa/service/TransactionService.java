@@ -394,7 +394,6 @@ public interface TransactionService {
      */
     boolean deleteTransaction(Long id);
 
-
     /**
      * Checks if the first transaction can pay the second transaction.
      *
@@ -903,6 +902,16 @@ public interface TransactionService {
      *         with the Effective Dates that fall into the specified range exists.
      */
     boolean transactionExists(String accountId, String transactionTypeId, BigDecimal amountFrom, BigDecimal amountTo, Date effectiveDateFrom, Date effectiveDateTo);
+
+    /**
+     * Creates and persist a new instance of CreditPermission class.
+     *
+     * @param creditTypeId       Credit type ID
+     * @param allowableDebitType Allowable debit type mask (can be a regular expression)
+     * @param priority           Priority value
+     * @return new persistent CreditPermission instance
+     */
+    CreditPermission createCreditPermission(TransactionTypeId creditTypeId, String allowableDebitType, int priority);
 
     /**
      * Returns a list of credit permissions for the given transaction type.

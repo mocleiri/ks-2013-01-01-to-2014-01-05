@@ -243,6 +243,8 @@ public enum Permission {
     READ_PAYMENT_BILLING_DATE,
 
     // CreditPermission permissions
+    CREATE_CREDIT_PERMISSION,
+    UPDATE_CREDIT_PERMISSION,
     READ_CREDIT_PERMISSION,
 
     // Rate permissions
