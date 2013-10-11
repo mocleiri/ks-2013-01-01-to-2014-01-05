@@ -127,13 +127,13 @@
     <!-- AOP intercepts -->
     <aop:config>
         <aop:aspect id="enumCacheAroundSearch" ref="enumMethodCacheAdvisor">
-            <aop:around pointcut="execution(*  org.kuali.student.r2.core.class1.enumerationmanagement.service.impl.*.search*(..))"
+            <aop:around pointcut="execution(*  edu.uw.kuali.student.service.impl.*.search*(..))"
                         method="getFromCache"/>
             <aop:around
-                    pointcut="execution(*  org.kuali.student.r2.core.class1.enumerationmanagement.service.impl.*.addEnumeratedValue*(..))"
+                    pointcut="execution(*  edu.uw.kuali.student.service.impl.*.addEnumeratedValue*(..))"
                     method="invalidateCache"/>
             <aop:around
-                    pointcut="execution(*  org.kuali.student.r2.core.class1.enumerationmanagement.service.impl.*.updateEnumeratedValue*(..))"
+                    pointcut="execution(*  edu.uw.kuali.student.service.impl.*.updateEnumeratedValue*(..))"
                     method="invalidateCache"/>
         </aop:aspect>
         <aop:aspect id="atpCacheAroundSearch" ref="atpMethodCacheAdvisor">
