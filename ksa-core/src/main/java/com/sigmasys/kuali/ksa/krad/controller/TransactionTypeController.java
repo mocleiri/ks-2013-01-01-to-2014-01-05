@@ -98,9 +98,7 @@ public class TransactionTypeController extends GenericSearchController {
 
                 group.addTransactionType(ttModel);
 
-                //if (transactionType instanceof DebitType) {
-                ttModel.setGlBreakdowns(transactionService.getGlBreakdowns(transactionType.getId()));
-                //}
+                ttModel.setGlBreakdowns(glService.getGlBreakdowns(transactionType.getId()));
             }
 
             form.setTransactionTypeGroups(map);
@@ -305,8 +303,8 @@ public class TransactionTypeController extends GenericSearchController {
             transactionService.persistTransactionType(transactionType);
 
             List<CreditPermission> creditPermissions = form.getCreditPermissions();
-            if(creditPermissions != null && creditPermissions.size() > 0) {
-                for(CreditPermission creditPermission : creditPermissions) {
+            if (creditPermissions != null && creditPermissions.size() > 0) {
+                for (CreditPermission creditPermission : creditPermissions) {
                     transactionService.createCreditPermission(transactionType.getId(), creditPermission.getAllowableDebitType(), creditPermission.getPriority());
                 }
             }
@@ -320,8 +318,7 @@ public class TransactionTypeController extends GenericSearchController {
             breakdown.setBreakdown(breakdown.getBreakdown().multiply(BigDecimal.valueOf(100)));
         }
 
-        transactionService.createGlBreakdowns(defaultGlType.getId(), transactionTypeId, breakdowns);
-
+        glService.createGlBreakdowns(defaultGlType.getId(), transactionTypeId, breakdowns);
 
         GlobalVariables.getMessageMap().putInfo("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, "Transaction Type saved");
 
@@ -501,7 +498,7 @@ public class TransactionTypeController extends GenericSearchController {
 
     private void loadFormFromTransactionType(TransactionTypeForm form, TransactionType transactionType, boolean createNew) {
 
-        if(transactionType instanceof CreditType) {
+        if (transactionType instanceof CreditType) {
             form.setType(TransactionType.CREDIT_TYPE);
             List<CreditPermission> creditPermissions = transactionService.getCreditPermissions(transactionType.getId());
             form.setCreditPermissions(creditPermissions);
@@ -523,7 +520,7 @@ public class TransactionTypeController extends GenericSearchController {
 
         form.setTags(new ArrayList<Tag>(transactionType.getTags()));
 
-        List<GlBreakdown> sourceBreakdowns = transactionService.getGlBreakdowns(transactionType.getId());
+        List<GlBreakdown> sourceBreakdowns = glService.getGlBreakdowns(transactionType.getId());
 
         List<GlBreakdownModel> breakdowns = new ArrayList<GlBreakdownModel>(sourceBreakdowns.size());
 

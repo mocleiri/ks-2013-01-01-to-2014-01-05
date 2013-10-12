@@ -238,4 +238,50 @@ public interface GeneralLedgerService {
      * @return list of GlBatchBaseline instances
      */
     List<GlBatchBaseline> getGlBaselineAmounts(String batchId);
+
+    /**
+     * Returns all GL Breakdown Overrides associated with the specified transaction.
+     *
+     * @param transactionId Transaction ID
+     * @return list of GlBreakdownOverride instances
+     */
+    List<GlBreakdownOverride> getGlBreakdownOverrides(Long transactionId);
+
+    /**
+     * Associates the transaction specified by ID with the list of GlBreakdownOverride instances.
+     *
+     * @param transactionId        Transaction ID
+     * @param glBreakdownOverrides list of GlBreakdownOverride instances
+     * @return list of GlBreakdownOverride IDs
+     */
+    List<Long> createGlBreakdownOverrides(Long transactionId, List<GlBreakdownOverride> glBreakdownOverrides);
+
+    /**
+     * This method persists new GL breakdowns and associates them with the given GL and transaction types.
+     * It also provides validation of the breakdowns.
+     *
+     * @param glTypeId          GL type ID
+     * @param transactionTypeId Transaction type ID
+     * @param breakdowns        a list of GL breakdowns
+     * @return a list of GL breakdown IDs
+     */
+    List<Long> createGlBreakdowns(Long glTypeId, TransactionTypeId transactionTypeId, List<GlBreakdown> breakdowns);
+
+    /**
+     * Retrieves a list of GL Breakdowns for the given transaction type ID.
+     *
+     * @param transactionTypeId TransactionType ID
+     * @return list of GlBreakdown instances
+     */
+    List<GlBreakdown> getGlBreakdowns(TransactionTypeId transactionTypeId);
+
+    /**
+     * Retrieves a list of GL Breakdowns or Breakdown Overrides (if Transaction is overridden)
+     * for the given Transaction instance.
+     *
+     * @param transaction Transaction instance
+     * @return list of GlBreakdown or GlBreakdownOverride instances
+     */
+    List<AbstractGlBreakdown> getGlBreakdowns(Transaction transaction);
+
 }

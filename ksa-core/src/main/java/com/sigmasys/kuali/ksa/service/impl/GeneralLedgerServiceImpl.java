@@ -1,9 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
-import com.sigmasys.kuali.ksa.exception.ConfigurationException;
-import com.sigmasys.kuali.ksa.exception.InvalidGeneralLedgerAccountException;
-import com.sigmasys.kuali.ksa.exception.InvalidGeneralLedgerTypeException;
-import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
+import com.sigmasys.kuali.ksa.exception.*;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
@@ -13,6 +10,7 @@ import com.sigmasys.kuali.ksa.util.EnumUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -40,6 +38,10 @@ import static com.sigmasys.kuali.ksa.model.Constants.*;
 public class GeneralLedgerServiceImpl extends GenericPersistenceService implements GeneralLedgerService {
 
     private static final Log logger = LogFactory.getLog(GeneralLedgerServiceImpl.class);
+
+
+    @Autowired
+    private TransactionService transactionService;
 
 
     /**
@@ -972,6 +974,188 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
                 " where b.batchId = :batchId");
         query.setParameter("batchId", batchId);
         return query.getResultList();
+    }
+
+
+    /**
+     * Returns all GL Breakdown Overrides associated with the specified transaction.
+     *
+     * @param transactionId Transaction ID
+     * @return list of GlBreakdownOverride instances
+     */
+    @Override
+    public List<GlBreakdownOverride> getGlBreakdownOverrides(Long transactionId) {
+
+        PermissionUtils.checkPermission(Permission.READ_GL_BREAKDOWN);
+
+        Query query = em.createQuery("select g from GlBreakdownOverride g inner join fetch g.transaction t " +
+                " where t.id = :transactionId");
+
+        query.setParameter("transactionId", transactionId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Associates the transaction specified by ID with the list of GlBreakdownOverride instances.
+     *
+     * @param transactionId        Transaction ID
+     * @param glBreakdownOverrides list of GlBreakdownOverride instances
+     * @return list of GlBreakdownOverride IDs
+     */
+    @Override
+    public List<Long> createGlBreakdownOverrides(Long transactionId, List<GlBreakdownOverride> glBreakdownOverrides) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_GL_BREAKDOWN);
+
+        Transaction transaction = transactionService.getTransaction(transactionId);
+        if (transaction == null) {
+            String errMsg = "Transaction with ID = " + transactionId + " does not exist";
+            logger.error(errMsg);
+            throw new TransactionNotFoundException(errMsg);
+        }
+
+        if (!isGlBreakdownValid(glBreakdownOverrides)) {
+            String errMsg = "GL Breakdown Overrides are invalid: " + glBreakdownOverrides;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        Query query = em.createQuery("delete from GlBreakdownOverride where transaction.id = :transactionId");
+        query.setParameter("transactionId", transactionId);
+        query.executeUpdate();
+
+        List<Long> overrideIds = new ArrayList<Long>(glBreakdownOverrides.size());
+        for (GlBreakdownOverride glBreakdownOverride : glBreakdownOverrides) {
+            glBreakdownOverride.setTransaction(transaction);
+            Long breakdownId = persistEntity(glBreakdownOverride);
+            overrideIds.add(breakdownId);
+        }
+
+        if (org.apache.commons.collections.CollectionUtils.isNotEmpty(glBreakdownOverrides)) {
+            transaction.setGlOverridden(true);
+        }
+
+        return overrideIds;
+    }
+
+    /**
+     * This method persists new GL breakdowns and associates them with the given GL and transaction types.
+     * It also provides validation of the breakdowns.
+     *
+     * @param glTypeId          GL type ID
+     * @param transactionTypeId Transaction type ID
+     * @param breakdowns        a list of GL breakdowns
+     * @return a list of GL breakdown IDs
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public List<Long> createGlBreakdowns(Long glTypeId, TransactionTypeId transactionTypeId, List<GlBreakdown> breakdowns) {
+
+        PermissionUtils.checkPermission(Permission.CREATE_GL_BREAKDOWN);
+
+        List<Long> breakdownIds = new ArrayList<Long>(breakdowns.size());
+
+        GeneralLedgerType glType = getGeneralLedgerType(glTypeId);
+        if (glType == null) {
+            String errMsg = "General Ledger Type with ID = " + glTypeId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidGeneralLedgerTypeException(errMsg);
+        }
+
+        TransactionType transactionType = transactionService.getTransactionType(transactionTypeId);
+        if (transactionType == null) {
+            String errMsg = "Transaction Type with ID = " + glTypeId + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidTransactionTypeException(errMsg);
+        }
+
+        if (!isGlBreakdownValid(breakdowns)) {
+            String errMsg = "GL Breakdowns are invalid: " + breakdowns;
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        // Removing all existing GL breakdowns for the same transaction type
+        Query query = em.createQuery("delete from GlBreakdown where transactionType.id = :transactionTypeId");
+        query.setParameter("transactionTypeId", transactionTypeId);
+        query.executeUpdate();
+
+        for (GlBreakdown breakdown : breakdowns) {
+
+            breakdown.setTransactionType(transactionType);
+            breakdown.setGeneralLedgerType(glType);
+
+            Long breakdownId = persistEntity(breakdown);
+
+            breakdownIds.add(breakdownId);
+        }
+
+        return breakdownIds;
+    }
+
+    /**
+     * Retrieves a list of GL Breakdowns for the given transaction type ID.
+     *
+     * @param transactionTypeId TransactionType ID
+     * @return list of GlBreakdown instances
+     */
+    @Override
+    public List<GlBreakdown> getGlBreakdowns(TransactionTypeId transactionTypeId) {
+
+        PermissionUtils.checkPermission(Permission.READ_GL_BREAKDOWN);
+
+        Query query = em.createQuery("select g from GlBreakdown g " +
+                " left outer join fetch g.transactionType tt " +
+                " left outer join fetch g.generalLedgerType glt " +
+                " where tt.id =  :transactionTypeId " +
+                " order by g.breakdown desc");
+
+        query.setParameter("transactionTypeId", transactionTypeId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves a list of GL Breakdowns or Breakdown Overrides (if Transaction is overridden)
+     * for the given Transaction instance.
+     *
+     * @param transaction Transaction instance
+     * @return list of GlBreakdown or GlBreakdownOverride instances
+     */
+    @Override
+    public List<AbstractGlBreakdown> getGlBreakdowns(Transaction transaction) {
+
+        GeneralLedgerType glType = transaction.getGeneralLedgerType();
+        if (glType == null) {
+            String errMsg = "Transaction (ID = " + transaction.getId() + ") must have GL type";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        Query query = em.createQuery("select g from " +
+                (transaction.isGlOverridden() ? "GlBreakdownOverride" : "GlBreakdown") +
+                " g where " +
+                (transaction.isGlOverridden() ?
+                        "g.transaction.id = :id" :
+                        "g.generalLedgerType.id = :id and g.transactionType.id = :transactionTypeId") +
+                " order by g.breakdown desc");
+
+        query.setParameter("id", transaction.isGlOverridden() ? transaction.getId() : glType.getId());
+
+        if (!transaction.isGlOverridden()) {
+            query.setParameter("transactionTypeId", transaction.getTransactionType().getId());
+        }
+
+        List<AbstractGlBreakdown> breakdowns = query.getResultList();
+
+        if (!transaction.isGlOverridden() && org.apache.commons.collections.CollectionUtils.isEmpty(breakdowns)) {
+            GeneralLedgerType defaultGlType = getDefaultGeneralLedgerType();
+            query.setParameter("id", defaultGlType.getId());
+            breakdowns = query.getResultList();
+        }
+
+        return breakdowns;
     }
 
 

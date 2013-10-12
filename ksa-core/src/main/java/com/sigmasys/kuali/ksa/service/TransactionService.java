@@ -1055,34 +1055,6 @@ public interface TransactionService {
     Payment bouncePayment(Long paymentId, String memoText);
 
     /**
-     * Returns all GL Breakdown Overrides associated with the specified transaction.
-     *
-     * @param transactionId Transaction ID
-     * @return list of GlBreakdownOverride instances
-     */
-    List<GlBreakdownOverride> getGlBreakdownOverrides(Long transactionId);
-
-    /**
-     * Associates the transaction specified by ID with the list of GlBreakdownOverride instances.
-     *
-     * @param transactionId        Transaction ID
-     * @param glBreakdownOverrides list of GlBreakdownOverride instances
-     * @return list of GlBreakdownOverride IDs
-     */
-    List<Long> createGlBreakdownOverrides(Long transactionId, List<GlBreakdownOverride> glBreakdownOverrides);
-
-    /**
-     * This method persists new GL breakdowns and associates them with the given GL and transaction types.
-     * It also provides validation of the breakdowns.
-     *
-     * @param glTypeId          GL type ID
-     * @param transactionTypeId Transaction type ID
-     * @param breakdowns        a list of GL breakdowns
-     * @return a list of GL breakdown IDs
-     */
-    List<Long> createGlBreakdowns(Long glTypeId, TransactionTypeId transactionTypeId, List<GlBreakdown> breakdowns);
-
-    /**
      * Adds the list of tags to the transaction specified by Transaction ID.
      *
      * @param transactionId Transaction ID
@@ -1116,16 +1088,6 @@ public interface TransactionService {
      * @return the updated transaction instance
      */
     Transaction removeTagsFromTransaction(Long transactionId, Long... tagIds);
-
-
-    /**
-     * Retrieve a list of all GL Breakdowns for a given debit type ID
-     *
-     * @param transactionTypeId TransactionType ID
-     * @return list of GlBreakdown instances
-     */
-    List<GlBreakdown> getGlBreakdowns(TransactionTypeId transactionTypeId);
-
 
     /**
      * Returns the number of all transactions associated with the given Transaction Type ID (code and sub-code)

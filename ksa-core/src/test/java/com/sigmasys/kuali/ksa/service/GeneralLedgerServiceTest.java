@@ -15,6 +15,10 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notEmpty;
+import static org.springframework.util.Assert.notNull;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
 @SuppressWarnings("unchecked")
@@ -365,6 +369,68 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
 
         }
 
+    }
+
+    @Test
+    public void createGlBreakdowns() throws Exception {
+
+        TransactionType chargeType = transactionService.getTransactionType("1299", new Date());
+
+        notNull(chargeType);
+
+        GeneralLedgerType glType = glService.getDefaultGeneralLedgerType();
+
+        notNull(glType);
+
+        List<GlBreakdown> breakdowns = new LinkedList<GlBreakdown>();
+
+        GlBreakdown breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.CREDIT);
+        breakdown.setBreakdown(new BigDecimal(20.5));
+        breakdowns.add(breakdown);
+
+        breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.DEBIT);
+        breakdown.setBreakdown(new BigDecimal(50));
+        breakdowns.add(breakdown);
+
+        breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.CREDIT);
+        breakdown.setBreakdown(new BigDecimal(0));
+        breakdowns.add(breakdown);
+
+        List<Long> breakdownIds = glService.createGlBreakdowns(glType.getId(), chargeType.getId(), breakdowns);
+
+        notNull(breakdownIds);
+        notEmpty(breakdownIds);
+        isTrue(breakdownIds.size() == breakdowns.size());
+
+        for (GlBreakdown b : breakdowns) {
+            notNull(b.getId());
+            isTrue(GL_ACCOUNT_ID.equals(b.getGlAccount()));
+        }
+
+    }
+
+    @Test
+    public void getGlBreakdowns() throws Exception {
+
+        String id = "1001";
+        Integer subCode = 1;
+
+        TransactionTypeId debitTypeId = new TransactionTypeId(id, subCode);
+
+        TransactionType transactionType = transactionService.getTransactionType(debitTypeId);
+
+        Assert.isTrue(transactionType instanceof DebitType, "Transaction Type must be a DebitType");
+
+        List<GlBreakdown> breakdowns = glService.getGlBreakdowns(debitTypeId);
+
+        Assert.notNull(breakdowns);
+        Assert.notEmpty(breakdowns);
     }
 
 

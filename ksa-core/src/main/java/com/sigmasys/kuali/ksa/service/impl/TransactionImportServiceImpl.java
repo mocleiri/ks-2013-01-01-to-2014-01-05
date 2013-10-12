@@ -557,7 +557,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                         breakdownOverride.setBreakdown(glBreakdowns.get(i));
                         breakdownOverrides.add(breakdownOverride);
                     }
-                    transactionService.createGlBreakdownOverrides(transactionId, breakdownOverrides);
+                    glService.createGlBreakdownOverrides(transactionId, breakdownOverrides);
                 }
             }
         }
