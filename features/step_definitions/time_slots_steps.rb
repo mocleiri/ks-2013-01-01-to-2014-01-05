@@ -52,7 +52,7 @@ Then /^an error message is displayed about the duplicate timeslot$/ do
 end
 
 Then /^an error is displayed about the missing data$/ do
-  on(TimeSlotMaintenance).growl_text.should == "The form contains errors. Please correct these errors and try again."
+  on(TimeSlotMaintenance).time_slot_error_message.text.should match /should not be empty for standard and ad hoc time slots/
 end
 
 When /^I show time slots for a single term type$/  do
@@ -63,7 +63,7 @@ When /^I show time slots for multiple term types$/ do
   @time_slots = create TimeSlots, :term_types => ['Fall - Full', 'Spring - Full']
 end
 
-Then /^only time slots of that term type appear.?$/ do
+Then /^only time slots of that term type appear$/ do
   on TimeSlotMaintenance do |page|
     page.time_slot_search_results_table.rows[1..-2].each do |row|
       row.cells[TimeSlotMaintenance::TIME_SLOT_RESULTS_TERM_TYPE].text.should == @time_slots.term_types[0].to_s
@@ -103,7 +103,7 @@ And /^I? ?attempt to delete the Time Slot added above and also a Time Slot used 
   @time_slots.delete(@code_list)
 end
 
-Then /^the (first|second)? ?Time Slot (is|is not) deleted.?$/  do |tsOrdinality, isIsNot|
+Then /^the (first|second)? ?Time Slot (is|is not) deleted$/  do |tsOrdinality, isIsNot|
   index = (!tsOrdinality.nil? && tsOrdinality=="second")?1:0
   on TimeSlotMaintenance do |page|
     page.get_time_slot_code_list.should_not include @code_list[index]if isIsNot=="is"
@@ -120,11 +120,11 @@ When /^I? ?attempt to delete both the Time Slots added above in the same action$
   @time_slots.delete(@code_list)
 end
 
-Then /^an error message is displayed stating that the Time Slot may not be (deleted|edited).?$/ do |msgType|
-  on(TimeSlotMaintenance).growl_text.should match /^Time slot #{@code_list[-1]} is already associated with delivery logistics, so cannot be #{msgType}.$/
+Then /^an error message is displayed stating that the Time Slot may not be (deleted|edited)$/ do |msgType|
+  on(TimeSlotMaintenance).growl_text.should match /^Time slot #{@code_list[-1]} is already associated with delivery logistics, so cannot be #{msgType}$/
 end
 
-Then /^the Time Slot edits (are|are not) saved.$/ do |areAreNot|
+Then /^the Time Slot edits (are|are not) saved$/ do |areAreNot|
   @time_slots.show_time_slots
   on TimeSlotMaintenance do |page|
     row = page.target_results_row @code_list[0]
@@ -133,7 +133,7 @@ Then /^the Time Slot edits (are|are not) saved.$/ do |areAreNot|
   end
 end
 
-Then /^the Time Slot type edits (are|are not) saved.$/ do |areAreNot|
+Then /^the Time Slot type edits (are|are not) saved$/ do |areAreNot|
   @time_slots.show_time_slots
   on TimeSlotMaintenance do |page|
     row = page.target_results_row @code_list[0]

@@ -12,19 +12,32 @@ class TimeSlotMaintenance < BasePage
 
   element(:time_slot_toolbar_div) { |b| b.frm.div(id: "TimeSlotToolBar-Section") }
   action(:initiate_add_time_slot) { |b| b.time_slot_toolbar_div.button(text: "Add Time Slot").click }
+  
+  element(:add_time_slot_form) { |b| b.frm.div(id: "KS-TimeSlot-AddTimeSlotPopupForm") }
 
-  element(:add_time_slot_popup_field_termType) { |b| b.frm.div(id: "addOrEditTermKey").select_list }
-  element(:add_time_slot_popup_field_days) { |b| b.frm.div(id: "addOrEditDays").text_field }
-  element(:add_time_slot_popup_field_startTime_div) { |b| b.frm.div(id: "addOrEditStartTime") }
+  element(:add_time_slot_popup_field_termType) { |b| b.add_time_slot_form.div(id: "addOrEditTermKey").select_list }
+  element(:add_time_slot_popup_field_days) { |b| b.add_time_slot_form.div(id: "addOrEditDays").text_field }
+  element(:add_time_slot_popup_field_startTime_div) { |b| b.add_time_slot_form.div(id: "addOrEditStartTime") }
   element(:add_time_slot_popup_field_startTime) { |b| b.add_time_slot_popup_field_startTime_div.text_field }
-  element(:add_time_slot_popup_field_startTime_am_pm) { |b| b.frm.div(id: "addOrEditStartTimeAmPm") }
-  element(:add_time_slot_popup_field_endTime) { |b| b.frm.div(id: "addOrEditEndTime").text_field }
-  element(:add_time_slot_popup_field_endTime_am_pm) { |b| b.frm.div(id: "addOrEditEndTimeAmPm") }
-  action(:save_add_time_slot) { |b| b.frm.button(id: "addOrEdit_action").click; b.loading.wait_while_present }
+  element(:add_time_slot_popup_field_startTime_am_pm) { |b| b.add_time_slot_form.div(id: "addOrEditStartTimeAmPm") }
+  element(:add_time_slot_popup_field_endTime) { |b| b.add_time_slot_form.div(id: "addOrEditEndTime").text_field }
+  element(:add_time_slot_popup_field_endTime_am_pm) { |b| b.add_time_slot_form.div(id: "addOrEditEndTimeAmPm") }
+  action(:save_add_time_slot) { |b| b.add_time_slot_form.button(id: "addOrEdit_action").click; b.loading.wait_while_present }
+
+  element(:edit_time_slot_form) { |b| b.frm.div(id: "KS-TimeSlot-EditTimeSlotPopupForm") }
+
+  element(:edit_time_slot_popup_field_termType) { |b| b.edit_time_slot_form.div(id: "addOrEditTermKey").select_list }
+  element(:edit_time_slot_popup_field_days) { |b| b.edit_time_slot_form.div(id: "addOrEditDays").text_field }
+  element(:edit_time_slot_popup_field_startTime_div) { |b| b.edit_time_slot_form.div(id: "addOrEditStartTime") }
+  element(:edit_time_slot_popup_field_startTime) { |b| b.edit_time_slot_popup_field_startTime_div.text_field }
+  element(:edit_time_slot_popup_field_startTime_am_pm) { |b| b.edit_time_slot_form.div(id: "addOrEditStartTimeAmPm") }
+  element(:edit_time_slot_popup_field_endTime) { |b| b.edit_time_slot_form.div(id: "addOrEditEndTime").text_field }
+  element(:edit_time_slot_popup_field_endTime_am_pm) { |b| b.edit_time_slot_form.div(id: "addOrEditEndTimeAmPm") }
+  action(:save_edit_time_slot) { |b| b.edit_time_slot_form.button(id: "addOrEdit_action").click; b.loading.wait_while_present }
 
   action(:initiate_delete) { |b| b.time_slot_toolbar_div.button(text: "Delete").click }
-  element(:delete_confirmation_dialog) { |b| b.frm.div(id: "deleteTimeSlotsConfirmationDialog") }
-  action(:confirm_delete) { |b| b.delete_confirmation_dialog.radio(value: "Y").click; b.loading.wait_while_present }
+  element(:delete_confirmation_dialog) { |b| b.frm.div(id: "deleteTimeSlotsConfirmationDialog-lightbox") }
+  action(:confirm_delete) { |b| b.delete_confirmation_dialog.button(id: "timeslot_delete_confirm").click; b.loading.wait_while_present }
 
   element(:time_slot_search_results_table) { |b| b.frm.div(id: "TimeSlotSearchResultsDisplayTable").table() }
 
@@ -103,24 +116,24 @@ class TimeSlotMaintenance < BasePage
     row.cells[TIME_SLOT_RESULTS_ACTIONS].link.click
     sleep(1)
     if !opts[:term_type].nil?
-      add_time_slot_popup_field_termType.select opts[:term_type]
+      edit_time_slot_popup_field_termType.select opts[:term_type]
     end
     if !opts[:days].nil?
-      add_time_slot_popup_field_days.set opts[:days]
+      edit_time_slot_popup_field_days.set opts[:days]
     end
     if !opts[:start_time].nil?
-      add_time_slot_popup_field_startTime.set opts[:start_time]
+      edit_time_slot_popup_field_startTime.set opts[:start_time]
     end
     if !opts[:start_time_am_pm].nil?
-      add_time_slot_popup_field_startTime_am_pm.radio(value: "#{opts[:start_time_am_pm].upcase}").set 
+      edit_time_slot_popup_field_startTime_am_pm.radio(value: "#{opts[:start_time_am_pm].upcase}").set 
     end
     if !opts[:end_time].nil?
-      add_time_slot_popup_field_endTime.set opts[:end_time]
+      edit_time_slot_popup_field_endTime.set opts[:end_time]
     end
     if !opts[:end_time_am_pm].nil?
-      add_time_slot_popup_field_endTime_am_pm.radio(value: "#{opts[:end_time_am_pm].upcase}").set
+      edit_time_slot_popup_field_endTime_am_pm.radio(value: "#{opts[:end_time_am_pm].upcase}").set
     end
-    save_add_time_slot
+    save_edit_time_slot
   end
 
   def delete_time_slot (codes)
