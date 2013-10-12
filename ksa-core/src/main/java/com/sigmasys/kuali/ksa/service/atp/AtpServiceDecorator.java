@@ -1,5 +1,8 @@
 package com.sigmasys.kuali.ksa.service.atp;
 
+import com.sigmasys.kuali.ksa.service.UserSessionManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.exceptions.*;
@@ -7,6 +10,7 @@ import org.kuali.student.r2.core.atp.dto.AtpAtpRelationInfo;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.dto.MilestoneInfo;
 import org.kuali.student.r2.core.class1.atp.service.impl.AtpServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -16,6 +20,51 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 public class AtpServiceDecorator extends AtpServiceImpl implements AtpService {
+
+    private static final Log logger = LogFactory.getLog(AtpServiceDecorator.class);
+
+
+    @Autowired
+    private UserSessionManager userSessionManager;
+
+
+    /**
+     * Returns the default ATP ContextInfo object.
+     *
+     * @return ContextInfo instance
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public ContextInfo getAtpContextInfo() {
+        String userId = userSessionManager.getUserId();
+        ContextInfo contextInfo = new ContextInfo();
+        contextInfo.setAuthenticatedPrincipalId(userId);
+        contextInfo.setPrincipalId(userId);
+        return contextInfo;
+    }
+
+    /**
+     * Checks with the ATP service whether the given ATP ID exists in the system.
+     *
+     * @param atpId ATP ID to check
+     * @return true if the ATP ID exists, false - otherwise
+     */
+    @Override
+    @Transactional(readOnly = true, noRollbackFor = DoesNotExistException.class)
+    public boolean atpExists(String atpId) {
+        // Checking if the ATP ID exists using AtpService
+        boolean atpExists;
+        try {
+            atpExists = getAtp(atpId, getAtpContextInfo()) != null;
+        } catch (DoesNotExistException e) {
+            logger.error(e.getMessage(), e);
+            atpExists = false;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return atpExists;
+    }
 
 
     @Override

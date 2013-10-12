@@ -19,8 +19,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -316,7 +314,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             for (String atpId : atpIds) {
 
                 // Checking if the ATP ID exists using AtpService
-                if (!atpExists(atpId)) {
+                if (!atpService.atpExists(atpId)) {
                     String errMsg = "ATP with ID = " + atpId + " does not exist";
                     logger.error(errMsg);
                     throw new IllegalArgumentException(errMsg);
@@ -574,7 +572,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new IllegalArgumentException(errMsg);
         }
 
-        if (!atpExists(atpId)) {
+        if (!atpService.atpExists(atpId)) {
             String errMsg = "ATP ID = " + atpId + " does not exist";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
@@ -734,7 +732,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         PermissionUtils.checkPermission(Permission.READ_RATE);
 
-        if (!atpExists(atpId)) {
+        if (!atpService.atpExists(atpId)) {
             String errMsg = "ATP ID = " + atpId + " does not exist";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
@@ -800,7 +798,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         PermissionUtils.checkPermission(Permission.READ_RATE);
 
-        if (!atpExists(atpId)) {
+        if (!atpService.atpExists(atpId)) {
             String errMsg = "ATP ID = " + atpId + " does not exist";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
@@ -865,29 +863,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         return new HashSet<String>(query.getResultList());
     }
 
-    /**
-     * Checks with the ATP service whether the given ATP ID exists in the system.
-     *
-     * @param atpId ATP ID to check
-     * @return true if the ATP ID exists, false - otherwise
-     */
-    @Override
-    @Transactional(readOnly = true, noRollbackFor = DoesNotExistException.class)
-    public boolean atpExists(String atpId) {
-        // Checking if the ATP ID exists using AtpService
-        boolean atpExists;
-        try {
-            atpExists = atpService.getAtp(atpId, getAtpContextInfo()) != null;
-        } catch (DoesNotExistException e) {
-            logger.error(e.getMessage(), e);
-            atpExists = false;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
-        }
-        return atpExists;
-    }
-
 
     // Additional methods
 
@@ -933,14 +908,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         validateRateWithCatalog(rate, (rateCatalogAtp != null) ? rateCatalogAtp.getRateCatalog() : null);
     }
 
-    private ContextInfo getAtpContextInfo() {
-        String userId = userSessionManager.getUserId();
-        ContextInfo contextInfo = new ContextInfo();
-        contextInfo.setAuthenticatedPrincipalId(userId);
-        contextInfo.setPrincipalId(userId);
-        return contextInfo;
-    }
-
     private boolean isTransactionTypeValid(String transactionTypeId, Date date) {
         boolean isTransactionTypeValid;
         try {
@@ -959,7 +926,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         final List<AtpInfo> atps;
 
         try {
-            atps = atpService.getAtpsByIds(new ArrayList<String>(atpIds), getAtpContextInfo());
+            atps = atpService.getAtpsByIds(new ArrayList<String>(atpIds), atpService.getAtpContextInfo());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
@@ -1437,7 +1404,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         // Creating new RateCatalogAtp entities
         for (String atpId : atpIds) {
 
-            if (!atpExists(atpId)) {
+            if (!atpService.atpExists(atpId)) {
                 String errMsg = "ATP with ID = " + atpId + " does not exist";
                 logger.error(errMsg);
                 throw new IllegalArgumentException(errMsg);
@@ -1503,7 +1470,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
             if (!oldAtpIds.contains(atpId)) {
 
-                if (!atpExists(atpId)) {
+                if (!atpService.atpExists(atpId)) {
                     String errMsg = "ATP with ID = " + atpId + " does not exist";
                     logger.error(errMsg);
                     throw new IllegalArgumentException(errMsg);

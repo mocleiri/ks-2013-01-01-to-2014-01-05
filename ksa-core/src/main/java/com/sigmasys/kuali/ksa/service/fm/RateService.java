@@ -343,14 +343,6 @@ public interface RateService {
      */
     Set<String> getAtpsForRateCatalog(Long rateCatalogId);
 
-    /**
-     * Checks with the ATP service whether the given ATP ID exists in the system.
-     *
-     * @param atpId ATP ID to check
-     * @return true if the ATP ID exists, false - otherwise
-     */
-    boolean atpExists(String atpId);
-
     // Additional methods
 
     /**
