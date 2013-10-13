@@ -26,6 +26,24 @@
                 <module>ks-common-test</module>
                 <module>ks-common-impl</module>
                 <module>ks-common-ui</module>
+                <module>ks-common-ksink</module>
+                <module>ks-common-web</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>skip-all-wars</id>
+            <modules>
+                <module>ks-cxf</module>
+                <module>ks-metro</module>
+                <module>ks-eclipselink</module>
+                <module>ks-hibernate</module>
+                <module>ks-jta</module>
+                <module>ks-rice-lessdep</module>
+                <module>ks-common-util</module>
+                <module>ks-common-test</module>
+                <module>ks-common-impl</module>
+                <module>ks-common-ui</module>
+                <module>ks-common-ksink</module>
             </modules>
         </profile>
         <profile>
