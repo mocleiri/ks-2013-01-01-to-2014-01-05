@@ -64,8 +64,3 @@ Feature: WC.Schedule of Classes
     When I loaded the list of Schedule of Classes for term "Fall 2012" and Course "CHEM131S"
     Then the course offering "CHEM131S" has Audit grading option icon and tooltip popped up
 
-# Scenario: Verify that an appropriate message is displayed if no data is returned by the search
-#  Scenario: Verify that an appropriate message is displayed if no criteria is entered for search by Course
-#  Scenario: Verify that an appropriate message is displayed if no criteria is entered for search by Department
-#  Scenario: Verify that an appropriate message is displayed if no criteria is entered for search by Instructor
-#  Scenario: Verify that an appropriate message is displayed if no criteria is entered for search by Title & Description

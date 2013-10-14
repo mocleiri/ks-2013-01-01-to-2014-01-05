@@ -87,7 +87,7 @@ Then /^a list of course offerings for that department is displayed$/ do
 end
 
 When /^I search for course offerings by title and department by entering a keyword$/ do
-  @schedule_of_classes = make ScheduleOfClasses, :type_of_search => "Title & Description", :keyword => "computer", :exp_course_list => ["PHYS485"]
+  @schedule_of_classes = make ScheduleOfClasses, :type_of_search => "Title or Description", :keyword => "computer", :exp_course_list => ["PHYS485"]
   @schedule_of_classes.display
 end
 

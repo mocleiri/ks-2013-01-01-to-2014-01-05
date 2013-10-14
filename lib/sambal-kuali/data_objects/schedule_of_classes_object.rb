@@ -34,7 +34,7 @@ class ScheduleOfClasses
   #    :department_long_name=>"ENGL",
   #    :instructor_principal_name=>"B.JOHND",
   #    :keyword=>"WRITING FROM SOURCES" ,
-  #    :type_of_search=>"Course",    #Course, Department, Instructor, Title & Description
+  #    :type_of_search=>"Course",    #Course, Department, Instructor, Title or Description
   #    :exp_course_list=>["ENGL103"]
   #    :exp_cluster_list=>["CL 1"]
   #    :exp_cluster_list=>["1001"]
@@ -49,7 +49,7 @@ class ScheduleOfClasses
         :department_long_name=>"ENGL",
         :instructor_principal_name=>"f.carolo",
         :keyword=>"WRITING FROM SOURCES" ,
-        :type_of_search=>"Course Code",    #Course, Department, Instructor, Title & Description
+        :type_of_search=>"Course Code",    #Course, Department, Instructor, Title or Description
         :exp_course_list=>["ENGL101"],
         :exp_cluster_list=>["CL 1"],
         :exp_cluster_list=>["1001"]
@@ -67,7 +67,7 @@ class ScheduleOfClasses
         when "Course Code" then page.course_search_parm.set @course_search_parm
         when "Instructor" then page.instructor_search_parm.set @instructor_principal_name
         when "Department" then department_lookup(@department_long_name)
-        when "Title & Description" then page.title_description_search_parm.set @keyword
+        when "Title or Description" then page.title_description_search_parm.set @keyword
         else raise "ScheduleOfClasses - search type not recognized"
       end
       sleep(1)
