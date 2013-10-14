@@ -112,11 +112,22 @@ Insert into KSSA_TRANSACTION (TYPE,ID,ACNT_ID_FK,ALLOCATED,AMOUNT,CREATION_DATE,
 --   FILTER = none used
 ---------------------------------------------------
 Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (1,'admin','This item will be reported on IRS form 1098T',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'1098T', '1098T');
-Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (2,'admin','This item is considered cash for the combined-cash limit tracking requirement.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Cash or Equivalent', 'Cash');
 Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (3,'admin','This is the IRS1098T Tag for Billed Amounts',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'1098T Billed Amounts', 'Billed1098');
 Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (4,'admin','This is the IRS1098T Tag for Insurance Refunds',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'1098T Insurance', 'InsRef1098');
 Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (5,'admin','This is the IRS1098T Tag for Scholarships and grants',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'1098T Scholarships', 'Scholarship1098');
 Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE) values (6,'admin','This is the Financial Aid Tag',null,to_timestamp('13-DEC-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Financial Aid', 'FinAid');
+
+
+-- Data for Cash Limit tracking tags.
+-- From old data
+Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (2,'admin','This item is considered cash for the combined-cash limit tracking requirement.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Cash or Equivalent', 'Cash', true);
+--new data
+Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (7,'admin','US Currency - Administrative Tag for 8300',null,to_timestamp('13-DEC-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'U.S. Currency', 'cash-us', 'Y');
+Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (8,'admin','Foreign Currency Currency - Administrative Tag for 8300',null,to_timestamp('13-DEC-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Foreign Currency', 'cash-foreign', 'Y');
+Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (9,'admin','Cashier''s Check - Administrative Tag for 8300',null,to_timestamp('13-DEC-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Cashier''s Check', 'check-cashier', 'Y');
+Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (10,'admin','Money Order - Administrative Tag for 8300',null,to_timestamp('13-DEC-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Money Order', 'money-order', 'Y');
+Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (11,'admin','Bank Draft - Administrative Tag for 8300',null,to_timestamp('13-DEC-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Bank Draft', 'bank-draft', 'Y');
+Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (12,'admin','Traveler''s Check - Administrative Tag for 8300',null,to_timestamp('13-DEC-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Traveler''s Check', 'check-travelers', 'Y');
 
 
 ---------------------------------------------------
