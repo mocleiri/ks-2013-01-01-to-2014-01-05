@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.sigmasys.kuali.ksa.exception.GlTransactionFailedException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.junit.Before;
@@ -722,9 +723,18 @@ public class TransactionServiceTest extends AbstractServiceTest {
     @Test
     public void makeEffective() throws Exception {
 
-        String id = "cash";
+        String transactionTypeId = "1299";
 
-        Transaction transaction = transactionService.createTransaction(id, "admin", new Date(), new BigDecimal(10e5));
+        TransactionType transactionType = transactionService.getTransactionType(transactionTypeId, new Date());
+
+        notNull(transactionType);
+
+        GeneralLedgerType glType = glService.getDefaultGeneralLedgerType();
+
+        notNull(glType);
+
+        Transaction transaction = transactionService.createTransaction(transactionTypeId, TEST_USER_ID, new Date(),
+                new BigDecimal(12000.89));
 
         notNull(transaction);
         notNull(transaction.getId());
@@ -739,16 +749,85 @@ public class TransactionServiceTest extends AbstractServiceTest {
         notNull(transaction.getEffectiveDate());
         notNull(transaction.getRecognitionDate());
 
-        transactionService.makeEffective(transaction.getId(), false);
+        List<GlBreakdown> breakdowns = new LinkedList<GlBreakdown>();
 
+        GlBreakdown breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.CREDIT);
+        breakdown.setBreakdown(new BigDecimal(20.5));
+        breakdowns.add(breakdown);
+
+        breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.DEBIT);
+        breakdown.setBreakdown(new BigDecimal(50));
+        breakdowns.add(breakdown);
+
+        breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.CREDIT);
+        breakdown.setBreakdown(new BigDecimal(0));
+        breakdowns.add(breakdown);
+
+        List<Long> breakdownIds = glService.createGlBreakdowns(glType.getId(), transactionType.getId(), breakdowns);
+
+        notNull(breakdownIds);
+        notEmpty(breakdownIds);
+        isTrue(breakdownIds.size() == breakdowns.size());
+
+        boolean result = transactionService.makeEffective(transaction.getId(), false);
+
+        Assert.isTrue(result);
+
+    }
+
+    @Test
+    public void makeEffectiveFailed() throws Exception {
+
+        Transaction transaction = transactionService.createTransaction("chip", TEST_USER_ID, new Date(),
+                new BigDecimal(12000.89));
+
+        notNull(transaction);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getTransactionType().getId());
+
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        notNull(transaction.getEffectiveDate());
+        notNull(transaction.getRecognitionDate());
+
+        boolean success = false;
+
+        try {
+            success = transactionService.makeEffective(transaction.getId(), false);
+        } catch (GlTransactionFailedException e) {
+            logger.error("makeEffective() failed for Transaction ID = " + e.getSourceTransactionId());
+        }
+
+        Assert.isTrue(!success);
+
+        // TODO: Retrieve FailedGlTransaction objects by Transaction ID and check them
     }
 
     @Test
     public void makeEffectiveForced() throws Exception {
 
-        String id = "cash";
+        String transactionTypeId = "cash";
 
-        Transaction transaction = transactionService.createTransaction(id, "admin", new Date(), new BigDecimal(10e5));
+        TransactionType transactionType = transactionService.getTransactionType(transactionTypeId, new Date());
+
+        notNull(transactionType);
+
+        GeneralLedgerType glType = glService.getDefaultGeneralLedgerType();
+
+        notNull(glType);
+
+        Transaction transaction = transactionService.createTransaction(transactionTypeId, TEST_USER_ID, new Date(),
+                new BigDecimal(-10e6));
 
         notNull(transaction);
         notNull(transaction.getId());
@@ -763,16 +842,81 @@ public class TransactionServiceTest extends AbstractServiceTest {
         notNull(transaction.getEffectiveDate());
         notNull(transaction.getRecognitionDate());
 
-        transactionService.makeEffective(transaction.getId(), true);
+        List<GlBreakdown> breakdowns = new LinkedList<GlBreakdown>();
 
+        GlBreakdown breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.CREDIT);
+        breakdown.setBreakdown(new BigDecimal(10.13));
+
+        breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.DEBIT);
+        breakdown.setBreakdown(new BigDecimal(0));
+        breakdowns.add(breakdown);
+
+        List<Long> breakdownIds = glService.createGlBreakdowns(glType.getId(), transactionType.getId(), breakdowns);
+
+        notNull(breakdownIds);
+        notEmpty(breakdownIds);
+        isTrue(breakdownIds.size() == breakdowns.size());
+
+        boolean result = transactionService.makeEffective(transaction.getId(), true);
+
+        Assert.isTrue(result);
     }
 
     @Test
     public void makeAllTransactionsEffective() throws Exception {
 
-        transactionService.createTransaction("cash", "admin", new Date(), new BigDecimal(10e5));
-        transactionService.createTransaction("chip", "admin", new Date(), new BigDecimal(350));
-        transactionService.createTransaction("1020", "admin", new Date(), new BigDecimal(-900));
+        String transactionTypeId = "chip";
+
+        TransactionType transactionType = transactionService.getTransactionType(transactionTypeId, new Date());
+
+        notNull(transactionType);
+
+        GeneralLedgerType glType = glService.getDefaultGeneralLedgerType();
+
+        notNull(glType);
+
+        List<GlBreakdown> breakdowns = new LinkedList<GlBreakdown>();
+
+        GlBreakdown breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.DEBIT);
+        breakdown.setBreakdown(new BigDecimal(88.09));
+
+        breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.CREDIT);
+        breakdown.setBreakdown(new BigDecimal(0));
+        breakdowns.add(breakdown);
+
+        List<Long> breakdownIds = glService.createGlBreakdowns(glType.getId(), transactionType.getId(), breakdowns);
+
+        notNull(breakdownIds);
+        notEmpty(breakdownIds);
+        isTrue(breakdownIds.size() == breakdowns.size());
+
+        transactionService.createTransaction("cash", TEST_USER_ID, new Date(), new BigDecimal(350));
+        transactionService.createTransaction("1020", TEST_USER_ID, new Date(), new BigDecimal(-900));
+
+        Transaction transaction = transactionService.createTransaction(transactionTypeId, TEST_USER_ID, new Date(),
+                new BigDecimal(10e5));
+
+        List<AbstractGlBreakdown> abstractBreakdowns = glService.getGlBreakdowns(transaction);
+
+        Assert.notNull(abstractBreakdowns);
+        Assert.notEmpty(abstractBreakdowns);
+        Assert.isTrue(abstractBreakdowns.size() == breakdowns.size());
+
+        for (AbstractGlBreakdown abstractBreakdown : abstractBreakdowns) {
+
+            Assert.notNull(abstractBreakdown);
+            Assert.notNull(abstractBreakdown.getId());
+
+            Assert.isTrue(abstractBreakdown instanceof GlBreakdown);
+        }
 
         Assert.isTrue(transactionService.makeAllTransactionsEffective(false));
     }
@@ -780,8 +924,32 @@ public class TransactionServiceTest extends AbstractServiceTest {
     @Test
     public void makeAllTransactionsEffectiveForced() throws Exception {
 
-        transactionService.createTransaction("finaid", "admin", new Date(), new BigDecimal(350));
-        transactionService.createTransaction("1020", "admin", new Date(), new BigDecimal(3900));
+        String transactionTypeId = "finaid";
+
+        TransactionType transactionType = transactionService.getTransactionType(transactionTypeId, new Date());
+
+        notNull(transactionType);
+
+        GeneralLedgerType glType = glService.getDefaultGeneralLedgerType();
+
+        notNull(glType);
+
+        List<GlBreakdown> breakdowns = new LinkedList<GlBreakdown>();
+
+        GlBreakdown breakdown = new GlBreakdown();
+        breakdown.setGlAccount(GL_ACCOUNT_ID);
+        breakdown.setGlOperation(GlOperationType.DEBIT);
+        breakdown.setBreakdown(new BigDecimal(0));
+        breakdowns.add(breakdown);
+
+        List<Long> breakdownIds = glService.createGlBreakdowns(glType.getId(), transactionType.getId(), breakdowns);
+
+        notNull(breakdownIds);
+        notEmpty(breakdownIds);
+        isTrue(breakdownIds.size() == breakdowns.size());
+
+        transactionService.createTransaction(transactionTypeId, TEST_USER_ID, new Date(), new BigDecimal(350));
+        transactionService.createTransaction("1020", TEST_USER_ID, new Date(), new BigDecimal(3900));
 
         Assert.isTrue(transactionService.makeAllTransactionsEffective(true));
     }

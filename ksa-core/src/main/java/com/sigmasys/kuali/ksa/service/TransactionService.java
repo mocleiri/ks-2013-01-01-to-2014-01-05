@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
+import com.sigmasys.kuali.ksa.exception.GlTransactionFailedException;
 import com.sigmasys.kuali.ksa.exception.InvalidTransactionTypeException;
 import com.sigmasys.kuali.ksa.model.*;
 
@@ -692,8 +693,9 @@ public interface TransactionService {
      * @param transactionId  transaction ID
      * @param forceEffective indicates whether it has to be forced
      * @return true if the transaction has been made effective, false - otherwise
+     * @throws GlTransactionFailedException
      */
-    boolean makeEffective(Long transactionId, boolean forceEffective);
+    boolean makeEffective(Long transactionId, boolean forceEffective) throws GlTransactionFailedException;
 
 
     /**

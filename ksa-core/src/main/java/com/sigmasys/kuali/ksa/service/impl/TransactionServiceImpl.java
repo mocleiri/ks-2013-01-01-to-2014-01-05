@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -68,6 +69,34 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
     private AccessControlService getAccessControlService() {
         return ContextUtils.getBean(AccessControlService.class);
+    }
+
+    private void logFailedGlTransaction(Long sourceTransactionId, Exception exception) {
+
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+        org.springframework.transaction.TransactionStatus userTransaction = getTransaction(transactionDefinition);
+
+        try {
+
+            Transaction sourceTransaction = getEntity(sourceTransactionId, Transaction.class);
+
+            FailedGlTransaction failedGlTransaction = new FailedGlTransaction();
+            failedGlTransaction.setTransaction(sourceTransaction);
+            failedGlTransaction.setFailureReason(exception.getMessage());
+            failedGlTransaction.setCreationDate(new Date());
+            failedGlTransaction.setCreatorId(userSessionManager.getUserId());
+
+            persistEntity(failedGlTransaction);
+
+            commit(userTransaction);
+
+        } catch (Throwable t) {
+            logger.error(t.getMessage(), t);
+            rollback(userTransaction);
+        }
+
     }
 
 
@@ -1715,23 +1744,29 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             for (Long transactionId : transactionIds) {
 
-                boolean result = makeEffective(transactionId, forceEffective);
+                boolean result = false;
 
-                if (++transactionCommitCount > transactionBatchSize) {
+                try {
+                    result = makeEffective(transactionId, forceEffective);
+                } catch (Exception e) {
+                    logFailedGlTransaction(transactionId, e);
+                }
+
+                if (result) {
+                    if (++transactionCommitCount > transactionBatchSize) {
+                        commit(userTransaction);
+                        userTransaction = getTransaction(transactionDefinition);
+                        transactionCommitCount = 0;
+                    }
+                    if (!isEffective && result) {
+                        isEffective = true;
+                    }
+                }
+
+                if (transactionCommitCount != 0) {
                     commit(userTransaction);
-                    userTransaction = getTransaction(transactionDefinition);
-                    transactionCommitCount = 0;
-                }
-
-                if (!isEffective && result) {
-                    isEffective = true;
                 }
             }
-
-            if (transactionCommitCount != 0) {
-                commit(userTransaction);
-            }
-
         }
 
         return isEffective;
@@ -1745,24 +1780,31 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @param transactionId  transaction ID
      * @param forceEffective indicates whether it has to be forced
      * @return true if the transaction has been made effective, false - otherwise
+     * @throws GlTransactionFailedException
      */
     @Override
-    @Transactional(readOnly = false)
-    public boolean makeEffective(Long transactionId, boolean forceEffective) {
+    @Transactional(readOnly = false, noRollbackFor = GlTransactionFailedException.class)
+    public boolean makeEffective(Long transactionId, boolean forceEffective) throws GlTransactionFailedException {
 
         PermissionUtils.checkPermission(Permission.CREATE_GL_TRANSACTION);
 
         Transaction transaction = getTransaction(transactionId);
         if (transaction == null) {
-            String errMsg = "Debit with ID = " + transactionId + " does not exist";
+            String errMsg = "Transaction with ID = " + transactionId + " does not exist";
             logger.error(errMsg);
             throw new TransactionNotFoundException(errMsg);
         }
 
-        if (transaction.isGlEntryGenerated() ||
-                (new Date().before(transaction.getEffectiveDate()) && !forceEffective)) {
-            logger.warn("Cannot make transaction effective, ID = " + transactionId);
-            return false;
+        if (transaction.isGlEntryGenerated()) {
+            String errMsg = "GL entry has already been generated for Transaction with ID = " + transactionId;
+            logger.error(errMsg);
+            throw new GlTransactionFailedException(transactionId, errMsg);
+        }
+
+        if (!forceEffective && new Date().before(transaction.getEffectiveDate())) {
+            String errMsg = "Effective date is before than the current date, Transaction ID = " + transactionId;
+            logger.error(errMsg);
+            throw new GlTransactionFailedException(transactionId, errMsg);
         }
 
         if (transaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT) {
@@ -1786,15 +1828,15 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         if (glAccount == null) {
-            String errMsg = "No GL Account found for Transaction [ID=" + transactionId + "]";
+            String errMsg = "No GL Account found for Transaction with ID = " + transactionId;
             logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
+            throw new GlTransactionFailedException(transactionId, errMsg);
         }
 
         if (glOperationType == null) {
-            String errMsg = "No GL Operation Type found for Transaction [ID=" + transactionId + "]";
+            String errMsg = "No GL Operation Type found for Transaction with ID = " + transactionId;
             logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
+            throw new GlTransactionFailedException(transactionId, errMsg);
         }
 
         List<AbstractGlBreakdown> glBreakdowns = glService.getGlBreakdowns(transaction);
@@ -1804,7 +1846,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             if (!glService.isGlBreakdownValid(glBreakdowns)) {
                 String errMsg = "GL Breakdowns are invalid: " + glBreakdowns;
                 logger.error(errMsg);
-                throw new IllegalStateException(errMsg);
+                throw new GlTransactionFailedException(transactionId, errMsg);
             }
 
             SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_EXPORT);
@@ -1825,9 +1867,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
                 BigDecimal percentage = glBreakdown.getBreakdown();
                 if (percentage == null) {
-                    String errMsg = "Breakdown percentage cannot be null, transaction ID = " + transactionId;
+                    String errMsg = "Breakdown percentage cannot be null, Transaction ID = " + transactionId;
                     logger.error(errMsg);
-                    throw new IllegalStateException(errMsg);
+                    throw new GlTransactionFailedException(transactionId, errMsg);
                 }
 
                 glAccount = glBreakdown.getGlAccount();
@@ -1853,8 +1895,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
                     // If the remaining amount == 0 then apply it to the new GL transaction and exit
                     // considering that GL breakdowns are sorted by percentage in descending order :)
-                    glService.createGlTransaction(transactionId, glAccount, remainingAmount, operationType,
-                            statement, true);
+                    glService.createGlTransaction(transactionId, glAccount, remainingAmount, operationType, statement, true);
                     break;
                 }
             }
@@ -1864,10 +1905,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             return true;
 
         } else {
-            logger.warn("No GL Breakdowns found for Transaction [ID=" + transactionId + "]");
+            String errMsg = "No GL Breakdowns found for Transaction with ID = " + transactionId;
+            logger.error(errMsg);
+            throw new GlTransactionFailedException(transactionId, errMsg);
         }
 
-        return false;
     }
 
     /**
@@ -1972,6 +2014,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @param transaction  Transaction instance
      * @return Transaction reversal
      */
+
     protected Transaction findReversal(Collection<Transaction> transactions, Transaction transaction) {
         for (Transaction reversal : transactions) {
             if (transaction.getAmount() != null && reversal.getAmount() != null) {

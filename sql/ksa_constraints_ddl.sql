@@ -88,8 +88,9 @@ alter table KSSA_FM_SIGNUP_RATE_AMOUNT add constraint FK_1621keodclft9nqolfjpikc
 alter table KSSA_GL_BATCH_BASELINE add constraint FK_6vfoe8870gcc3g89iru5r3qee foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
 alter table KSSA_GL_BREAKDOWN add constraint FK_igimx73mm08d9q3a0r0xjjv6u foreign key (GL_TYPE_ID_FK) references KSSA_GL_TYPE;
 alter table KSSA_GL_BREAKDOWN add constraint FK_3slcuwlfr4cpin7urgkj6eoox foreign key (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK) references KSSA_TRANSACTION_TYPE;
-alter table KSSA_GL_BREAKDOWN_OVERRIDE add constraint FK_79x0v4eviwyrbuxiohongnkd4 foreign key (FM_MANIFEST_ID_FK) references KSSA_FM_MANIFEST;
 alter table KSSA_GL_BREAKDOWN_OVERRIDE add constraint FK_5b4g2ghwetsdf4agptrhcddh9 foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
+alter table KSSA_GL_BREAKDOWN_OVERRIDE add constraint FK_79x0v4eviwyrbuxiohongnkd4 foreign key (FM_MANIFEST_ID_FK) references KSSA_FM_MANIFEST;
+alter table KSSA_GL_FAILED_TRANSACTION add constraint FK_1ya3ai0teobvg1xhbj3lakoyv foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
 alter table KSSA_GL_TRANSACTION add constraint FK_su2jjuk4e5o6nx4g4q3co3f8r foreign key (GL_RECOGNITION_PERIOD_ID_FK) references KSSA_GL_RECOGNITION_PERIOD;
 alter table KSSA_GL_TRANSACTION add constraint FK_n3woi85vtq6b49o4ef7iyltfm foreign key (GL_TRANSMISSION_ID_FK) references KSSA_GL_TRANSMISSION;
 alter table KSSA_GL_TRANSMISSION add constraint FK_8mko5up4hnngxb6v952fwlqva foreign key (GL_RECOGNITION_PERIOD_ID_FK) references KSSA_GL_RECOGNITION_PERIOD;

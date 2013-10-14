@@ -50,6 +50,7 @@ drop table KSSA_FM_SIGNUP_RATE_AMOUNT cascade constraints;
 drop table KSSA_GL_BATCH_BASELINE cascade constraints;
 drop table KSSA_GL_BREAKDOWN cascade constraints;
 drop table KSSA_GL_BREAKDOWN_OVERRIDE cascade constraints;
+drop table KSSA_GL_FAILED_TRANSACTION cascade constraints;
 drop table KSSA_GL_RECOGNITION_PERIOD cascade constraints;
 drop table KSSA_GL_TRANSACTION cascade constraints;
 drop table KSSA_GL_TRANSMISSION cascade constraints;

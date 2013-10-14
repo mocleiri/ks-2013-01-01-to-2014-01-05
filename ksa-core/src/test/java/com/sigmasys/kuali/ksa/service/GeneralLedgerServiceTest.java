@@ -278,6 +278,49 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
 
     private Set<String> _createGlBaselineAmounts() {
 
+        GeneralLedgerType glType = glService.getDefaultGeneralLedgerType();
+
+        notNull(glType);
+
+        Transaction transaction1 = transactionService.createTransaction("cash", TEST_USER_ID, new Date(), new BigDecimal(120.01));
+        Transaction transaction2 = transactionService.createTransaction("chip", TEST_USER_ID, new Date(), new BigDecimal(-10));
+        Transaction transaction3 = transactionService.createTransaction("finaid", TEST_USER_ID, new Date(), new BigDecimal(10e5));
+
+        TransactionTypeId[] typeIds = {
+                transaction1.getTransactionType().getId(),
+                transaction2.getTransactionType().getId(),
+                transaction3.getTransactionType().getId()
+        };
+
+        for (TransactionTypeId typeId : typeIds) {
+
+            List<GlBreakdown> breakdowns = new LinkedList<GlBreakdown>();
+
+            GlBreakdown breakdown = new GlBreakdown();
+            breakdown.setGlAccount(GL_ACCOUNT_ID);
+            breakdown.setGlOperation(GlOperationType.DEBIT);
+            breakdown.setBreakdown(new BigDecimal(10.5));
+            breakdowns.add(breakdown);
+
+            breakdown = new GlBreakdown();
+            breakdown.setGlAccount(GL_ACCOUNT_ID);
+            breakdown.setGlOperation(GlOperationType.DEBIT);
+            breakdown.setBreakdown(new BigDecimal(51.99));
+            breakdowns.add(breakdown);
+
+            breakdown = new GlBreakdown();
+            breakdown.setGlAccount(GL_ACCOUNT_ID);
+            breakdown.setGlOperation(GlOperationType.CREDIT);
+            breakdown.setBreakdown(new BigDecimal(0));
+            breakdowns.add(breakdown);
+
+            List<Long> breakdownIds = glService.createGlBreakdowns(glType.getId(), typeId, breakdowns);
+
+            notNull(breakdownIds);
+            notEmpty(breakdownIds);
+            isTrue(breakdownIds.size() == breakdowns.size());
+        }
+
         transactionService.makeEffective(transaction1.getId(), true);
         transactionService.makeEffective(transaction2.getId(), true);
         transactionService.makeEffective(transaction3.getId(), true);
@@ -328,7 +371,6 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
         }
 
         return batchIds;
-
     }
 
     @Test
