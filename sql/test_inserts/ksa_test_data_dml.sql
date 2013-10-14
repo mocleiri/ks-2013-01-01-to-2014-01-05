@@ -120,7 +120,7 @@ Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,COD
 
 -- Data for Cash Limit tracking tags.
 -- From old data
-Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (2,'admin','This item is considered cash for the combined-cash limit tracking requirement.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Cash or Equivalent', 'Cash', true);
+Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (2,'admin','This item is considered cash for the combined-cash limit tracking requirement.',null,to_timestamp('03-APR-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Cash or Equivalent', 'Cash', 'Y');
 --new data
 Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (7,'admin','US Currency - Administrative Tag for 8300',null,to_timestamp('13-DEC-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'U.S. Currency', 'cash-us', 'Y');
 Insert into KSSA_TAG (ID,CREATOR_ID,DESCRIPTION,EDITOR_ID,CREATION_DATE,NAME,CODE, IS_ADMINISTRATIVE) values (8,'admin','Foreign Currency Currency - Administrative Tag for 8300',null,to_timestamp('13-DEC-12 12.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'Foreign Currency', 'cash-foreign', 'Y');
