@@ -439,6 +439,12 @@ When /^I edit a Thursday morning at eleven Standard Final Exam rule on the matri
   @matrix.edit :defer_save => true
 end
 
+When /^I edit the Fall Term Exam Period to have less days than the Final Exam Matrix days$/ do
+  @new_term = make AcademicTerm, :term_year => @calendar.year, :start_date=>"08/20/#{@calendar.year}",
+                   :end_date=>"12/10/#{@calendar.year}"
+  @new_term.change_exam_start_date( "12/05/#{@calendar.year}")
+end
+
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
@@ -459,9 +465,8 @@ Then /^the final exam for the Fall Term is listed when I view the Academic Calen
   on ViewAcademicTerms do |page|
     page.go_to_terms_tab
     page.open_term_section(@term.term_type)
-    #TODO: Need to add IDs to html elements to be sure correct element is matched with the assertion below
-    page.final_exam_section.text.should match /#{@term.start_date}/
-    page.final_exam_section.text.should match /#{@term.end_date}/
+    page.get_exam_start_date( @term.term_type).should match /#{@term.start_date}/
+    page.get_exam_end_date( @term.term_type).should match /#{@term.end_date}/
   end
 end
 
