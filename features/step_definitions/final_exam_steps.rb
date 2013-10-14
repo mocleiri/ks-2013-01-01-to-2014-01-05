@@ -767,14 +767,14 @@ end
 
 Then /^there should be ([^"]*) Exam Offerings? by Activity Offering for the course$/ do |no_of_aos|
   on ViewExamOfferings do |page|
-    array = page.return_array_of_ao_codes(0)
+    array = page.return_array_of_ao_codes
     array.length.should == no_of_aos.to_i
   end
 end
 
 Then /^there should be 1 Exam Offering by Course Offering for the course$/ do
   on ViewExamOfferings do |page|
-    array = page.return_array_of_ao_codes(0)
+    array = page.return_array_of_ao_codes
     array.length.should == 1
   end
 end
@@ -833,11 +833,6 @@ end
 Then /^there should be no Activity Offering table present$/ do
   on ViewExamOfferings do |page|
     page.ao_table_header.exists?.should == false
-    #if page.ao_table_header.exists?
-    #  false
-    #else
-    #  true
-    #end
   end
 end
 
