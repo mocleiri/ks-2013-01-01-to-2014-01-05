@@ -16,20 +16,26 @@ class FinalExamMatrix
 
     defaults = {
       :term_type => "Fall Term",
-      :rule_requirements => ""
+      :exam_type => "Standard",
+      :rule_requirements => "TH at 11:00 AM - 12:15 PM."
     }
 
     options = defaults.merge(opts)
     set_options(options)
   end
 
-  def edit
+  def edit opts = {}
+    defaults = {
+        :exam_type => @exam_type,
+        :rule_requirements => @rule_requirements,
+        :defer_save => false
+    }
+    options = defaults.merge(opts)
+
     manage
-    on(FEMatrixView).edit @rule_requirements
+    on(FEMatrixView).edit options[:rule_requirements], options[:exam_type]
 
-
-
-    on(EditAcademicTerms).save :exp_success => options[:exp_success] #unless options.length >= 1 #don't save if only :exp_success element
+    on(FEMatrixEdit).update_rule unless options[:defer_save] == true
 
     set_options(options)
   end
@@ -41,7 +47,7 @@ class FinalExamMatrix
   def manage
     search
     on ManageFEMatrix do |page|
-      page.select_term_type.select @term_type
+      page.term_type_select.select @term_type
       page.show
     end
   end
