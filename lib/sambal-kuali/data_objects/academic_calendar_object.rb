@@ -325,6 +325,9 @@ class AcademicTerm
     defaults = {
         :exp_success=> true,
         :exam_period => false,
+        :change_exam_dates => false,
+        :exam_start_date => nil,
+        :exam_end_date => nil,
         :include_non_active_days => false
     }
     options = defaults.merge(opts)
@@ -360,13 +363,29 @@ class AcademicTerm
       create_final_exam_period
     end
 
+    if options[:change_exam_dates] == true and options[:exam_start_date] != nil
+      on EditAcademicTerms do |page|
+        create_final_exam_period if page.add_exam_period_btn( @term_type).present?
+        page.set_exam_start_date @term_type, options[:exam_start_date]
+        page.save
+      end
+    end
+
+    if options[:change_exam_dates] == true and options[:exam_end_date] != nil
+      on EditAcademicTerms do |page|
+        create_final_exam_period if page.add_exam_period_btn( @term_type).present?
+        page.set_exam_end_date @term_type, options[:exam_end_date]
+        page.save
+      end
+    end
+
     if options[:include_non_active_days] == true
       on EditAcademicTerms  do |page|
-        if page.exclude_saturday_toggle( @term_type, term_index).present?
-          page.set_exclude_saturday_toggle( @term_type, term_index)
+        if page.exclude_saturday_toggle( @term_type).present?
+          page.set_exclude_saturday_toggle( @term_type)
         end
-        if page.exclude_sunday_toggle( @term_type, term_index).present?
-          page.set_exclude_sunday_toggle( @term_type, term_index)
+        if page.exclude_sunday_toggle( @term_type).present?
+          page.set_exclude_sunday_toggle( @term_type)
         end
       end
     end
@@ -429,47 +448,45 @@ class AcademicTerm
     weekdays
   end
 
-  def change_exam_start_date( start_date)
-    search
-    on(CalendarSearch).edit @term_name
-
-    on EditAcademicTerms do |page|
-      page.open_term_section @term_type
-      term_index = page.term_index_by_term_type( @term_type)
-      if page.add_exam_period_btn( @term_type, term_index).present?
-        page.add_exam_period @term_type
-        page.set_exam_start_date @term_type, @start_date
-        page.set_exam_end_date @term_type, @end_date
-        page.save
-      end
-      page.set_exam_start_date @term_type, start_date
-      page.save
-    end
-  end
-
-  def change_exam_end_date( end_date)
-    search
-    on(CalendarSearch).edit @term_name
-
-    on EditAcademicTerms do |page|
-      page.open_term_section @term_type
-      term_index = page.term_index_by_term_type( @term_type)
-      if page.add_exam_period_btn( @term_type, term_index).present?
-        page.add_exam_period @term_type
-        page.set_exam_start_date @term_type, @start_date
-        page.set_exam_end_date @term_type, @end_date
-        page.save
-      end
-      page.set_exam_end_date @term_type, end_date
-      page.save
-    end
-  end
+  #def change_exam_start_date( start_date)
+  #  search
+  #  on(CalendarSearch).edit @term_name
+  #
+  #  on EditAcademicTerms do |page|
+  #    page.open_term_section @term_type
+  #    if page.add_exam_period_btn( @term_type).present?
+  #      page.add_exam_period @term_type
+  #      page.set_exam_start_date @term_type, @start_date
+  #      page.set_exam_end_date @term_type, @end_date
+  #      page.save
+  #    end
+  #    page.set_exam_start_date @term_type, start_date
+  #    page.save
+  #  end
+  #end
+  #
+  #def change_exam_end_date( end_date)
+  #  search
+  #  on(CalendarSearch).edit @term_name
+  #
+  #  on EditAcademicTerms do |page|
+  #    page.open_term_section @term_type
+  #    if page.add_exam_period_btn( @term_type).present?
+  #      page.add_exam_period @term_type
+  #      page.set_exam_start_date @term_type, @start_date
+  #      page.set_exam_end_date @term_type, @end_date
+  #      page.save
+  #    end
+  #    page.set_exam_end_date @term_type, end_date
+  #    page.save
+  #  end
+  #end
 
   def create_final_exam_period
     on EditAcademicTerms do |page|
       page.open_term_section(@term_type)
       page.loading.wait_while_present
-      if page.add_exam_period_btn( @term_type, page.term_index_by_term_type( @term_type)).present?
+      if page.add_exam_period_btn( @term_type).present?
         page.add_exam_period @term_type
         page.set_exam_start_date @term_type, @start_date
         page.set_exam_end_date @term_type, @end_date
