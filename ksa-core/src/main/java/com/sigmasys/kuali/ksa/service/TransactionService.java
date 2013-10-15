@@ -1117,4 +1117,12 @@ public interface TransactionService {
      */
     List<Transaction> getTransactionsByGlTransactionId(Long glTransactionId);
 
+    /**
+     * Returns a list of potential refunds (payments) for the given Account ID.
+     *
+     * @param accountId Account ID
+     * @return list of Payment instances
+     */
+    List<Payment> getPotentialRefunds(String accountId);
+
 }

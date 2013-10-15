@@ -2021,5 +2021,71 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void getPotentialRefunds() {
+
+        String typeId = "cash";
+
+        Transaction transaction1 = transactionService.createTransaction(typeId, TEST_USER_ID, new Date(), new BigDecimal(10e5));
+
+        notNull(transaction1);
+        notNull(transaction1.getId());
+
+        isTrue(transaction1 instanceof Payment);
+
+        if (transaction1 instanceof Payment) {
+            ((Payment) transaction1).setRefundable(true);
+            ((Payment) transaction1).setClearDate(CalendarUtils.addCalendarDays(new Date(), -1));
+        }
+
+        transactionService.persistTransaction(transaction1);
+
+        Transaction transaction2 = transactionService.createTransaction(typeId, TEST_USER_ID, new Date(), new BigDecimal(-100.3));
+
+        notNull(transaction2);
+        notNull(transaction2.getId());
+
+        isTrue(transaction2 instanceof Payment);
+
+        if (transaction2 instanceof Payment) {
+            ((Payment) transaction2).setRefundable(true);
+            ((Payment) transaction2).setClearDate(CalendarUtils.addCalendarDays(new Date(), -2));
+        }
+
+        transactionService.persistTransaction(transaction2);
+
+        List<Payment> payments = transactionService.getPotentialRefunds(TEST_USER_ID);
+
+        notNull(payments);
+        notEmpty(payments);
+
+        isTrue(payments.size() >= 2);
+
+        boolean payment1Exists = false;
+        boolean payment2Exists = false;
+
+        for (Payment payment : payments) {
+
+            notNull(payment);
+            notNull(payment.getId());
+
+            isTrue(payment.isRefundable());
+
+            isTrue(payment.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0);
+
+            isTrue(payment.getClearDate().before(new Date()));
+
+            if (payment.getId().equals(transaction1.getId())) {
+                payment1Exists = true;
+            } else if (payment.getId().equals(transaction2.getId())) {
+                payment2Exists = true;
+            }
+        }
+
+        isTrue(payment1Exists);
+        isTrue(payment2Exists);
+
+    }
+
 
 }

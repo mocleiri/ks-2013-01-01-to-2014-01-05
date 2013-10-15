@@ -3837,6 +3837,37 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return query.getResultList();
     }
 
+    /**
+     * Returns a list of potential refunds (payments) for the given Account ID.
+     *
+     * @param accountId Account ID
+     * @return list of Payment instances
+     */
+    @Override
+    public List<Payment> getPotentialRefunds(String accountId) {
+
+        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
+
+        Query query = em.createQuery("select t from Payment t " + GET_TRANSACTION_JOIN +
+                " where t.refundable = true and a.id = :accountId and t.clearDate < CURRENT_DATE order by t.id desc");
+
+        query.setParameter("accountId", accountId);
+
+        List<Payment> results = query.getResultList();
+
+        List<Payment> payments = new LinkedList<Payment>();
+
+        if (CollectionUtils.isNotEmpty(results)) {
+            for (Payment payment : results) {
+                if (payment.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0) {
+                    payments.add(payment);
+                }
+            }
+        }
+
+        return payments;
+    }
+
 
     private List<Tag> removeTags(Long[] tagIdsToRemove, List<Tag> tags) {
 
