@@ -434,11 +434,6 @@ When /^I choose to include the non-active days in the term's Exam Period$/ do
   @term.edit :exam_period => true, :include_non_active_days => true
 end
 
-When /^I edit a Thursday morning at eleven Standard Final Exam rule on the matrix$/ do
-  @matrix = make FinalExamMatrix
-  @matrix.edit :defer_save => true
-end
-
 When /^I edit the Fall Term Exam Period to have less days than the Final Exam Matrix days$/ do
   @term = make AcademicTerm, :term_year => @calendar.year, :start_date=>"08/29/#{@calendar.year}",
                :end_date=>"12/10/#{@calendar.year}"
@@ -841,15 +836,4 @@ Then /^there should be no Activity Offering table present$/ do
   on ViewExamOfferings do |page|
     page.ao_table_header.exists?.should == false
   end
-end
-
-Then /^I should be able to choose any one of Day 1 to 6 for the rule$/ do
- on FEMatrixEdit do |page|
-   page.fe_days_select.option( value: "1").text.should == "Day 1"
-   page.fe_days_select.option( value: "2").text.should == "Day 2"
-   page.fe_days_select.option( value: "3").text.should == "Day 3"
-   page.fe_days_select.option( value: "4").text.should == "Day 4"
-   page.fe_days_select.option( value: "5").text.should == "Day 5"
-   page.fe_days_select.option( value: "6").text.should == "Day 6"
- end
 end
