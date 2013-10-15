@@ -37,8 +37,7 @@
                 <property name="items">
                     <list merge="true">
                         <!-- TODO Advanced Search -->
-                        <bean parent="Uif-NavigationActionLink" p:navigateToPageId="AdvancedSearch"
-                              p:actionLabel="Advanced Search"/>
+                        <bean parent="Uif-Link" p:linkText="Advanced Search" p:href="searchView?methodToCall=get&amp;viewId=SearchView"/>
                     </list>
                 </property>
             </bean>
