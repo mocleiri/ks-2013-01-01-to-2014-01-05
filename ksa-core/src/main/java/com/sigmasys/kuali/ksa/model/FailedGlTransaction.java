@@ -10,7 +10,7 @@ import java.util.Date;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_GL_FAILED_TRANSACTION")
+@Table(name = "KSSA_FAILED_GL_TRANSACTION")
 public class FailedGlTransaction implements Identifiable {
 
     /**
@@ -27,6 +27,11 @@ public class FailedGlTransaction implements Identifiable {
      * Failure reason
      */
     private String failureReason;
+
+    /**
+     * Indicates whether this failed transaction has been fixed or not
+     */
+    private Boolean isFixed;
 
     /**
      * Creation date
@@ -73,6 +78,16 @@ public class FailedGlTransaction implements Identifiable {
 
     public void setFailureReason(String failureReason) {
         this.failureReason = failureReason;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_FIXED")
+    public Boolean isFixed() {
+        return isFixed != null ? isFixed : false;
+    }
+
+    public void setFixed(Boolean fixed) {
+        isFixed = fixed;
     }
 
     @Column(name = "CREATION_DATE")

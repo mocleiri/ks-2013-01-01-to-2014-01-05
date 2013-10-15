@@ -143,23 +143,4 @@ public class BatchTransactionsController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
-
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=makeEffective")
-    public ModelAndView makeEffective(@ModelAttribute("KualiForm") FileUploadForm form) {
-
-        try {
-
-            boolean result = transactionService.makeAllTransactionsEffective(false);
-
-            String msg = result ? "Transactions have been made effective" : "No transactions has been made effective";
-
-            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, msg);
-
-        } catch (Exception e) {
-            return handleError(form, e);
-        }
-
-        return getUIFModelAndView(form);
-    }
-
 }

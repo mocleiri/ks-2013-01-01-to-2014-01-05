@@ -918,7 +918,9 @@ public class TransactionServiceTest extends AbstractServiceTest {
             Assert.isTrue(abstractBreakdown instanceof GlBreakdown);
         }
 
-        Assert.isTrue(transactionService.makeAllTransactionsEffective(false));
+        Assert.isTrue(transactionService.makeAllTransactionsEffective(false) > 0);
+
+        Assert.isTrue(transactionService.makeFailedTransactionsEffective() == 0);
     }
 
     @Test
@@ -951,7 +953,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         transactionService.createTransaction(transactionTypeId, TEST_USER_ID, new Date(), new BigDecimal(350));
         transactionService.createTransaction("1020", TEST_USER_ID, new Date(), new BigDecimal(3900));
 
-        Assert.isTrue(transactionService.makeAllTransactionsEffective(true));
+        Assert.isTrue(transactionService.makeAllTransactionsEffective(true) > 0);
     }
 
     @Test

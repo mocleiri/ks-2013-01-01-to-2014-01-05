@@ -103,9 +103,9 @@ public class ReportReconciliationController extends DownloadController {
 
         try {
 
-            boolean result = transactionService.makeAllTransactionsEffective(false);
+            int size = transactionService.makeAllTransactionsEffective(false);
 
-            String msg = result ? "Transactions have been made effective" : "No transactions have been made effective";
+            String msg = (size > 0) ? size + " transactions have been made effective" : "No transactions have been made effective";
 
             GlobalVariables.getMessageMap().putInfo(getUIFModelAndView(form).getViewName(), RiceKeyConstants.ERROR_CUSTOM, msg);
 

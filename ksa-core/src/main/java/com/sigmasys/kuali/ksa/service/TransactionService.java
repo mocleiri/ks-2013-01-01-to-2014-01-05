@@ -678,12 +678,19 @@ public interface TransactionService {
     List<GlTransaction> allocateReversals(List<Transaction> transactions);
 
     /**
+     * Makes effective all failed transactions for which GL entries have not been generated yet.
+     *
+     * @return the number of effective transactions
+     */
+    int makeFailedTransactionsEffective();
+
+    /**
      * Makes effective all transactions for which GL entries have not been generated yet.
      *
      * @param forceEffective indicates whether it has to be forced
-     * @return true if any transaction has been made effective, false - otherwise
+     * @return the number of effective transactions
      */
-    boolean makeAllTransactionsEffective(boolean forceEffective);
+    int makeAllTransactionsEffective(boolean forceEffective);
 
     /**
      * Moves a transaction from a pre-effective state to an effective state. Once a transaction is effective, its
@@ -696,7 +703,6 @@ public interface TransactionService {
      * @throws GlTransactionFailedException
      */
     boolean makeEffective(Long transactionId, boolean forceEffective) throws GlTransactionFailedException;
-
 
     /**
      * If the reverse method is called, the system will generate a negative

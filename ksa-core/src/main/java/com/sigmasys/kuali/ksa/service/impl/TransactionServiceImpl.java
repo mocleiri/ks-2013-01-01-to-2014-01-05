@@ -85,6 +85,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             FailedGlTransaction failedGlTransaction = new FailedGlTransaction();
             failedGlTransaction.setTransaction(sourceTransaction);
             failedGlTransaction.setFailureReason(exception.getMessage());
+            failedGlTransaction.setFixed(false);
             failedGlTransaction.setCreationDate(new Date());
             failedGlTransaction.setCreatorId(userSessionManager.getUserId());
 
@@ -1715,20 +1716,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
     }
 
-    /**
-     * Makes effective all transactions for which GL entries have not been generated yet.
-     *
-     * @param forceEffective indicates whether it has to be forced
-     * @return true if any the transaction has been made effective, false - otherwise
-     */
-    @Override
-    public synchronized boolean makeAllTransactionsEffective(boolean forceEffective) {
-
-        Query query = em.createQuery("select id from Transaction where glEntryGenerated != true");
-
-        List<Long> transactionIds = query.getResultList();
+    private List<Long> makeTransactionsEffective(List<Long> transactionIds, boolean forceEffective) {
 
         boolean isEffective = false;
+
+        List<Long> effectiveTransactionIds = new LinkedList<Long>();
 
         if (CollectionUtils.isNotEmpty(transactionIds)) {
 
@@ -1761,6 +1753,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                     if (!isEffective && result) {
                         isEffective = true;
                     }
+                    effectiveTransactionIds.add(transactionId);
                 }
 
                 if (transactionCommitCount != 0) {
@@ -1769,7 +1762,63 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             }
         }
 
-        return isEffective;
+        return effectiveTransactionIds;
+    }
+
+    /**
+     * Makes effective all failed transactions for which GL entries have not been generated yet.
+     *
+     * @return the number of effective transactions
+     */
+    @Override
+    @Transactional(readOnly = false, timeout = 3600)
+    public synchronized int makeFailedTransactionsEffective() {
+
+        Query query = em.createQuery("select distinct f.transaction.id from FailedGlTransaction f " +
+                " where fixed <> true ");
+
+        List<Long> transactionIds = query.getResultList();
+
+        if (CollectionUtils.isNotEmpty(transactionIds)) {
+
+            List<Long> effectiveTransactionIds = makeTransactionsEffective(transactionIds, true);
+
+            if (CollectionUtils.isNotEmpty(effectiveTransactionIds)) {
+                query = em.createQuery("update FailedGlTransaction set fixed = true where transaction.id in (:ids)");
+                query.setParameter("ids", effectiveTransactionIds);
+                query.executeUpdate();
+                return effectiveTransactionIds.size();
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Makes effective all transactions for which GL entries have not been generated yet.
+     *
+     * @param forceEffective indicates whether it has to be forced
+     * @return the number of effective transactions
+     */
+    @Override
+    public synchronized int makeAllTransactionsEffective(boolean forceEffective) {
+
+        StringBuilder queryBuilder = new StringBuilder("select id from Transaction where glEntryGenerated <> true");
+
+        if ( !forceEffective ) {
+              queryBuilder.append(" and effectiveDate <= CURRENT_DATE");
+        }
+
+        Query query = em.createQuery(queryBuilder.toString());
+
+        List<Long> transactionIds = query.getResultList();
+
+        if (CollectionUtils.isNotEmpty(transactionIds)) {
+            List<Long> effectiveTransactionIds = makeTransactionsEffective(transactionIds, forceEffective);
+            return effectiveTransactionIds.size();
+        }
+
+        return 0;
     }
 
     /**
@@ -1801,8 +1850,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new GlTransactionFailedException(transactionId, errMsg);
         }
 
-        if (!forceEffective && new Date().before(transaction.getEffectiveDate())) {
-            String errMsg = "Effective date is before than the current date, Transaction ID = " + transactionId;
+        if (!forceEffective && transaction.getEffectiveDate().after(new Date())) {
+            String errMsg = "Effective date should be before or equal to the current date, Transaction ID = " + transactionId;
             logger.error(errMsg);
             throw new GlTransactionFailedException(transactionId, errMsg);
         }
