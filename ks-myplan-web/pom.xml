@@ -19,6 +19,7 @@
             </activation>
             <modules>
                 <module>myplan-embedded</module>
+                <module>myplan-standalone</module>
             </modules>
         </profile>
         <profile>
