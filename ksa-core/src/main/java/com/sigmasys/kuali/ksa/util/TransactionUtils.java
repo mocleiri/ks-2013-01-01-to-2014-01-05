@@ -465,7 +465,12 @@ public class TransactionUtils {
     public static class EffectiveDateComparator implements Comparator<Transaction> {
         @Override
         public int compare(Transaction t1, Transaction t2) {
-            return t1.getEffectiveDate().compareTo(t2.getEffectiveDate());
+            int compare = t1.getEffectiveDate().compareTo(t2.getEffectiveDate());
+            if(compare == 0) {
+                return t1.getCreationDate().compareTo(t2.getCreationDate());
+            } else {
+                return compare;
+            }
         }
     }
 
