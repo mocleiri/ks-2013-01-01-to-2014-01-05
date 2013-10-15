@@ -10,13 +10,13 @@ Feature: FE 3.8 Update Exam Offerings
   Scenario: Update Course Offering to No final exam or assessment and back again to Standard FE with FE Driver as Course Offering
     When I view the Exam Offerings for a CO where the Course Offering Standard FE is changed to No Final Exam
     Then the Canceled Exam Offering table should only show that it is in the Canceled state
-    And I view the Exam Offerings after changing the Final Exam Driver to Course Offering
-    And the Course Offering table should only show that it is in the Draft state
+    When I view the Exam Offerings after changing the Final Exam Driver to Course Offering
+    Then the Course Offering table should only show that it is in the Draft state
 
   #FE3.8.EB2 (KSENROLL-9543)
   @pending
   Scenario: Update Course Offering to Alternate final exam or assessment and back again to Standard FE with FE Driver as Activity Offering
     When I view the Exam Offerings for a CO where the Activity Offering Standard FE is changed to Alternate Final Exam
-    Then there should be a table header explaining that the Exam Offerings have been canceled
-    And I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
-    And the default cluster's Activity Offering table should for all 5 Exam Offerings only show that it is in the Draft state
+    Then there should be an Activity Offering table header explaining that the Exam Offerings have been canceled
+    When I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
+    Then the default cluster's Activity Offering table should for all 1 Exam Offerings only show that it is in the Draft state
