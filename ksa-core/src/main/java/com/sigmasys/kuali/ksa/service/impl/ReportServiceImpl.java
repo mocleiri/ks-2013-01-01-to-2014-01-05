@@ -1053,6 +1053,9 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                 }
 
                 ListTransaction listTransaction = new ListTransaction();
+
+                listTransaction.setTransactionType(transaction.getTransactionType().getId().getId());
+                listTransaction.setChargeOrPayment(transaction.getTransactionTypeValue().toString().toLowerCase());
                 listTransaction.setAmount(getFormattedAmount(transaction.getAmount()));
                 listTransaction.setNativeAmount(getFormattedAmount(transaction.getNativeAmount()));
 
@@ -1060,7 +1063,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                     listTransaction.setCurrency(transaction.getCurrency().getCode());
                 }
 
-                listTransaction.setEffectiveDate(CalendarUtils.toXmlGregorianCalendar(transaction.getEffectiveDate()));
+                listTransaction.setEffectiveDate(CalendarUtils.toXmlGregorianCalendar(transaction.getEffectiveDate(), true));
                 listTransaction.setStatementText(transaction.getStatementText());
 
                 transactionDetail.getListTransaction().add(listTransaction);
@@ -1447,7 +1450,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      * @return BatchKsaBill XML
      */
     @Override
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, timeout = 3600)
     public String generateBills(List<String> accountIds,
                                 String message,
                                 Date billDate,

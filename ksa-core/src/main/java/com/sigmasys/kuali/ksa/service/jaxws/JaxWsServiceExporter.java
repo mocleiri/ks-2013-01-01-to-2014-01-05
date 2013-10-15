@@ -25,6 +25,8 @@ import java.net.URL;
  */
 public class JaxWsServiceExporter extends SimpleHttpServerJaxWsServiceExporter {
 
+    private static int PORT_INCREMENT;
+
     private String baseServiceUrl;
     private String contextPath;
     private HttpServer server;
@@ -44,7 +46,7 @@ public class JaxWsServiceExporter extends SimpleHttpServerJaxWsServiceExporter {
     public void afterPropertiesSet() throws Exception {
         if (baseServiceUrl != null) {
             URL url = new URL(baseServiceUrl);
-            InetSocketAddress address = new InetSocketAddress(url.getHost(), url.getPort());
+            InetSocketAddress address = new InetSocketAddress(url.getHost(), PORT_INCREMENT + url.getPort());
             // Calculating the context path
             contextPath = getContextPath(url);
             try {
@@ -54,6 +56,7 @@ public class JaxWsServiceExporter extends SimpleHttpServerJaxWsServiceExporter {
                 }
                 server.start();
                 setServer(server);
+                PORT_INCREMENT++;
             } catch (BindException be) {
                 String msg = be.getMessage() + ", host = " + url.getHost() + ", port = " + url.getPort();
                 logger.error(msg, be);

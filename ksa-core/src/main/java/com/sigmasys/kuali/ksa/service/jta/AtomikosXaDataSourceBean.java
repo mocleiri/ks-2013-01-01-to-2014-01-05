@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.service.jta;
 
 import com.atomikos.jdbc.AtomikosDataSourceBean;
+import com.sigmasys.kuali.ksa.util.CommonUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -64,5 +65,10 @@ public class AtomikosXaDataSourceBean extends AtomikosDataSourceBean implements 
         }
 
         logger.debug("Final XA properties: " + xaProperties);
+    }
+
+    @Override
+    public void setUniqueResourceName(String resourceName) {
+        super.setUniqueResourceName(CommonUtils.nvl(resourceName) + new Random(System.currentTimeMillis()).nextInt());
     }
 }

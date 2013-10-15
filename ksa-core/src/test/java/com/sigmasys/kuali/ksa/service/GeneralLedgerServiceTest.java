@@ -19,12 +19,13 @@ import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
 @SuppressWarnings("unchecked")
 public class GeneralLedgerServiceTest extends AbstractServiceTest {
 
-    protected static final String GL_ACCOUNT_ID = "01-0-131120 1326";
+    private static final String GL_ACCOUNT_ID = "01-0-131120 1326";
 
     @Autowired
     protected ConfigService configService;
@@ -41,11 +42,10 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
     @Autowired
     private TransactionExportService transactionExportService;
 
-    protected Transaction transaction1;
-    protected Transaction transaction2;
-    protected Transaction transaction3;
+    private Transaction transaction1;
+    private Transaction transaction2;
+    private Transaction transaction3;
 
-    protected SimpleDateFormat dateFormat;
 
     @Before
     public void setUpWithinTransaction() throws Exception {
@@ -53,7 +53,7 @@ public class GeneralLedgerServiceTest extends AbstractServiceTest {
         // set up test data within the transaction
         String userId = "admin";
 
-        dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
 
         Date transactionDate = dateFormat.parse("10/12/2012");
 

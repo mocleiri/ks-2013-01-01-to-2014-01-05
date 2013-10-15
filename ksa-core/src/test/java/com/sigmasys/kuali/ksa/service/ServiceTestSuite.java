@@ -17,6 +17,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses(value = {
         KradViewIntegrityTest.class,
         DatabaseUtilsTest.class,
+        ReportServiceTest.class,
         TransactionServiceTest.class,
         AuditableEntityServiceTest.class,
         AccountServiceTest.class,

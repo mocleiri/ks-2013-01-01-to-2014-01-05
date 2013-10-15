@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.sigmasys.kuali.ksa.model.CashLimitEventStatus.QUEUED;
@@ -22,10 +23,18 @@ import static com.sigmasys.kuali.ksa.model.CashLimitEventStatus.QUEUED;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
 @SuppressWarnings("unchecked")
-public class ReportServiceTest extends GeneralLedgerServiceTest {
+public class ReportServiceTest extends AbstractServiceTest {
+
+    private static final String GL_ACCOUNT_ID = "01-0-131121 1327";
+
+    @Autowired
+    protected AccountService accountService;
 
     @Autowired
     private ReportService reportService;
+
+    @Autowired
+    protected GeneralLedgerService glService;
 
     @Autowired
     private TransactionExportService transactionExportService;
@@ -42,18 +51,46 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
     @Autowired
     private TransactionService transactionService;
 
-
     @PersistenceContext(unitName = Constants.KSA_PERSISTENCE_UNIT)
     private EntityManager em;
+
+    private Transaction transaction1;
+    private Transaction transaction2;
+    private Transaction transaction3;
+
+    private SimpleDateFormat dateFormat;
 
 
     @Before
     public void setUpWithinTransaction() throws Exception {
 
-        super.setUpWithinTransaction();
+        // set up test data within the transaction
 
+        String userId = "admin";
+
+        accountService.getOrCreateAccount(userId);
         accountService.getOrCreateAccount("user1");
         accountService.getOrCreateAccount("user2");
+
+        dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
+
+        Date transactionDate = dateFormat.parse("10/12/2012");
+
+
+        // Creating transactions with the test user ID
+        transaction1 = transactionService.createTransaction("1020", userId, transactionDate, new BigDecimal(10e7));
+        transaction2 = transactionService.createTransaction("cash", userId, transactionDate, new BigDecimal(300.99));
+        transaction3 = transactionService.createTransaction("chip", userId, transactionDate, new BigDecimal(77777.980));
+
+        // Creating GL transactions with the status Q and the test user ID
+        createGlTransaction(transaction1);
+        createGlTransaction(transaction2);
+        createGlTransaction(transaction3);
+    }
+
+    protected GlTransaction createGlTransaction(Transaction transaction) {
+        return glService.createGlTransaction(transaction.getId(), GL_ACCOUNT_ID, new BigDecimal(370.51),
+                GlOperationType.CREDIT, "GL transaction statement");
     }
 
     @Test
@@ -104,8 +141,43 @@ public class ReportServiceTest extends GeneralLedgerServiceTest {
         Assert.notNull(glTransaction2.getStatus());
         Assert.notNull(glTransaction2.getRecognitionPeriod());
 
-        transactionService.makeEffective(transaction1.getId(), true);
-        transactionService.makeEffective(transaction2.getId(), true);
+        GeneralLedgerType glType = glService.getDefaultGeneralLedgerType();
+        Assert.notNull(glType);
+
+        Transaction[] transactions = {transaction1, transaction2};
+
+        for (Transaction transaction : transactions) {
+
+            TransactionTypeId typeId = transaction.getTransactionType().getId();
+
+            List<GlBreakdown> breakdowns = new LinkedList<GlBreakdown>();
+
+            GlBreakdown breakdown = new GlBreakdown();
+            breakdown.setGlAccount(GL_ACCOUNT_ID);
+            breakdown.setGlOperation(GlOperationType.CREDIT);
+            breakdown.setBreakdown(new BigDecimal(0.5));
+            breakdowns.add(breakdown);
+
+            breakdown = new GlBreakdown();
+            breakdown.setGlAccount(GL_ACCOUNT_ID);
+            breakdown.setGlOperation(GlOperationType.DEBIT);
+            breakdown.setBreakdown(new BigDecimal(99.4));
+            breakdowns.add(breakdown);
+
+            breakdown = new GlBreakdown();
+            breakdown.setGlAccount(GL_ACCOUNT_ID);
+            breakdown.setGlOperation(GlOperationType.CREDIT);
+            breakdown.setBreakdown(new BigDecimal(0));
+            breakdowns.add(breakdown);
+
+            List<Long> breakdownIds = glService.createGlBreakdowns(glType.getId(), typeId, breakdowns);
+
+            Assert.notNull(breakdownIds);
+            Assert.notEmpty(breakdownIds);
+            Assert.isTrue(breakdownIds.size() == breakdowns.size());
+
+            transactionService.makeEffective(transaction.getId(), true);
+        }
 
         String xml = transactionExportService.exportTransactions();
 

@@ -20,8 +20,8 @@
     <!-- XA data source definitions -->
     <bean id="xaDataSource" class="com.sigmasys.kuali.ksa.service.jta.AtomikosXaDataSourceBean" abstract="true">
         <property name="xaDataSourceClassName" value="oracle.jdbc.xa.client.OracleXADataSource"/>
-        <property name="minPoolSize" value="3"/>
-        <property name="maxPoolSize" value="10"/>
+        <property name="minPoolSize" value="5"/>
+        <property name="maxPoolSize" value="20"/>
         <property name="testQuery" value="select 1 from dual"/>
         <property name="defaultXaProperties">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

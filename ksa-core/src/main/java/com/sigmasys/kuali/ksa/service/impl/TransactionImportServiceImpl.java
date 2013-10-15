@@ -134,11 +134,13 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
         XMLGregorianCalendar creationDate;
 
         ObjectFactory objectFactory = ObjectFactory.getInstance();
+
         KsaBatchTransactionResponse.Accepted accepted = objectFactory.createKsaBatchTransactionResponseAccepted();
         KsaBatchTransactionResponse.Failed failed = objectFactory.createKsaBatchTransactionResponseFailed();
         KsaBatchTransactionResponse.BatchSummary batchSummary = objectFactory.createKsaBatchTransactionResponseBatchSummary();
         KsaBatchTransactionResponse ksaBatchTransactionResponse = objectFactory.createKsaBatchTransactionResponse();
-        List<KsaTransaction> acceptedKsaTransactionList = new ArrayList<KsaTransaction>();
+
+        List<KsaTransaction> acceptedKsaTransactionList = new LinkedList<KsaTransaction>();
 
         ksaBatchTransactionResponse.setBatchSummary(batchSummary);
         ksaBatchTransactionResponse.setAccepted(accepted);
@@ -475,7 +477,9 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
      */
     private Transaction persistTransaction(KsaTransaction ksaTransaction) {
 
-        Date effectiveDate = CalendarUtils.toDate(ksaTransaction.getEffectiveDate());
+        XMLGregorianCalendar calendar = ksaTransaction.getEffectiveDate();
+
+        Date effectiveDate = CalendarUtils.removeTime(calendar != null ? CalendarUtils.toDate(calendar) : new Date());
 
         Transaction transaction = transactionService.createTransaction(ksaTransaction.getTransactionType(),
                 ksaTransaction.getAccountIdentifier(), effectiveDate, ksaTransaction.getAmount());
