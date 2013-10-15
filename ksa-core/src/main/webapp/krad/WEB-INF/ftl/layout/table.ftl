@@ -66,7 +66,7 @@
                 <#local colIndex=0/>
                 <#local rowIndex=0/>
 
-                <!--#compress-->
+                <#compress>
                     <#list manager.allRowFields as item>
                         <#-- build custom json data structure using quote placeholders (to be parsed later) -->
                         <#local row>
@@ -93,7 +93,7 @@
                             <#local rowIndex=rowIndex+1/>
                         </#if>
                     </#list>
-                <!--/#compress-->
+                </#compress>
             <#else>
                 <tbody>
                     <@krad.grid items=manager.allRowFields numberOfColumns=manager.numberOfColumns

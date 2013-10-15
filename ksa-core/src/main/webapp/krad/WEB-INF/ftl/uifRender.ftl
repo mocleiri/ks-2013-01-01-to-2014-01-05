@@ -17,7 +17,7 @@
 -->
 <#include "libInclude.ftl" parse=true/>
 
-<!--#compress-->
+<#compress>
 
     <#if !KualiForm.ajaxRequest || (KualiForm.ajaxReturnType == "update-view")
         || (KualiForm.ajaxReturnType == "update-page")>
@@ -71,4 +71,4 @@
         <#include "fullView.ftl" parse=true/>
     </#if>
 
-<!--/#compress-->
+</#compress>
