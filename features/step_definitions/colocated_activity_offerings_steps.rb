@@ -35,9 +35,10 @@ When /^I create three Course Offerings with colocated AOs in the new term$/ do
 
   # colocate the first AO to all the others
   @ao_list[0].parent_course_offering.manage
-  @ao_list[0].edit :colocate_ao_list => @ao_list[1, @ao_list.length],
-                    :colocate_shared_enrollment => true,
-                    :max_enrollment => 48
+  @ao_list[0].edit :colocated => true,
+                  :colocate_ao_list => @ao_list[1, @ao_list.length],
+                  :colocate_shared_enrollment => true,
+                  :max_enrollment => 48
   @ao_list[0].save
 end
 
@@ -50,9 +51,10 @@ When /^I colocate multiple activities, selecting to "(share|separately manage)" 
 
   # colocate the first AO to all the others
   @ao_list[0].parent_course_offering.manage
-  @ao_list[0].edit :colocate_ao_list => @ao_list[1, @ao_list.length],
-                    :colocate_shared_enrollment => should_enrollment_be_shared_flag,
-                    :max_enrollment => 48
+  @ao_list[0].edit :colocated => true,
+                   :colocate_ao_list => @ao_list[1, @ao_list.length],
+                   :colocate_shared_enrollment => should_enrollment_be_shared_flag,
+                   :max_enrollment => 48
   @ao_list[0].save
 end
 
@@ -73,7 +75,7 @@ end
 
 When /^I break colocation on the first colocated AO$/ do
   @ao_list[0].parent_course_offering.manage
-  @ao_list[0].edit :break_colocation => true
+  @ao_list[0].edit :colocated => false
   @ao_list[0].save
 end
 

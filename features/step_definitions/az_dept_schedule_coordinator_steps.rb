@@ -795,9 +795,11 @@ When /^there is a course with a co-located DL in my admin org/ do
   step "I am logged in as a Schedule Coordinator"
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL462", :term=>@term_for_test)
   @course_offering.manage_and_init
-  @course_offering.activity_offering_cluster_list[0].ao_list[0].edit :colocate_ao_list => Array.new(1){make ActivityOffering, :code=> "A", :parent_course_offering => (make CourseOffering, :course => "ENGL295", :term => @term_for_test)},
-                                                                     :max_enrollment=>25,
-                                                                     :colocate_shared_enrollment=> true
+  @course_offering.activity_offering_cluster_list[0].ao_list[0].edit :colocated => true,
+                                                                    :colocate_ao_list => Array.new(1){make ActivityOffering, :code=> "A",
+                                                                    :parent_course_offering => (make CourseOffering, :course => "ENGL295", :term => @term_for_test)},
+                                                                    :max_enrollment=>25,
+                                                                    :colocate_shared_enrollment=> true
   @course_offering.activity_offering_cluster_list[0].ao_list[0].save
   step "I am logged in as a Department Schedule Coordinator"
 end

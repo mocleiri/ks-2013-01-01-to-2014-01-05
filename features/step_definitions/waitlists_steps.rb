@@ -327,9 +327,10 @@ end
 
 When /^I colocate the activity offering with other two offerings and select shared maximum enrolment$/ do
   @activity_offering.parent_course_offering.manage
-  @activity_offering.edit :colocate_ao_list => @ao_list,
-                    :colocate_shared_enrollment => true,
-                    :max_enrollment => 48
+  @activity_offering.edit :colocated => true,
+                          :colocate_ao_list => @ao_list,
+                          :colocate_shared_enrollment => true,
+                          :max_enrollment => 48
   @activity_offering.save
 
   @ao_list.unshift(@activity_offering)
@@ -361,9 +362,10 @@ Given /^I create three colocated activity offerings \(shared enrolment\) with wa
   end
 
   @ao_list[0].parent_course_offering.manage
-  @ao_list[0].edit :colocate_ao_list => @ao_list[1..2],
-                          :colocate_shared_enrollment => true,
-                          :max_enrollment => 120
+  @ao_list[0].edit :colocated => true,
+                   :colocate_ao_list => @ao_list[1..2],
+                   :colocate_shared_enrollment => true,
+                   :max_enrollment => 120
   @ao_list[0].save
 
 end
@@ -435,7 +437,7 @@ Given /^there is an existing course offering with a colocated activity offering 
   @ao_list = []
   @ao_list << (make ActivityOffering, :code => "A", :parent_course_offering => @course_offering)
   colocated_ao_parent = make CourseOffering, :course => "HIST310", :term => "201208"
-  @ao_list << (make ActivityOffering, :code => "A", :parent_course_offering => colocated_ao_parent)
+  @ao_list << (make ActivityOffering, :code => "A", :parent_course_offering => colocated_ao_parent, :colocated => true)
   @ao_list[0].colocate_ao_list << @ao_list[1]
   on(ManageCourseOfferings).has_colo_icon(@ao_list[0].code).should be_true
 end
@@ -569,7 +571,8 @@ Given /^I create two colocated activity offerings \(shared enrolment\) with wait
   end
 
   @ao_list[0].parent_course_offering.manage
-  @ao_list[0].edit :colocate_ao_list => @ao_list[1..1],
+  @ao_list[0].edit :colocated => true,
+                   :colocate_ao_list => @ao_list[1..1],
                    :colocate_shared_enrollment => true,
                    :max_enrollment => 120
   @ao_list[0].save
@@ -607,7 +610,8 @@ When /^I add another activity offering to the colocated set$/ do
     @ao_list << activity_offering
 
     @ao_list[0].parent_course_offering.manage
-    @ao_list[0].edit :colocate_ao_list => [activity_offering]
+    @ao_list[0].edit :colocated => true,
+                     :colocate_ao_list => [activity_offering]
                      #:colocate_shared_enrollment => true,
                      #:max_enrollment => 120
     @ao_list[0].save

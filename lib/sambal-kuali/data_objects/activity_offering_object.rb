@@ -41,6 +41,7 @@ class ActivityOffering
   attr_accessor :requires_evaluation,
                 :honors_course,
                 :create_by_copy,
+                :colocated,
                 :colocate_shared_enrollment
   #type ActivityOffering object - generally set using options hash
   attr_accessor :parent_course_offering
@@ -70,6 +71,7 @@ class ActivityOffering
   #    :course_url => "www.test_course.com",
   #    :evaluation => true,
   #    :honors_course => true,
+  #    :colocated => false,
   #    :colocate_ao_list => [],
   #    :colocate_shared_enrollment => false,
   #    :subterm => "None"
@@ -104,6 +106,7 @@ class ActivityOffering
         :honors_course => true,
         :aoc_private_name => :default_cluster,
         :create_by_copy => nil, #if true create copy using :ao_code
+        :colocated => false,
         :colocate_ao_list => [],
         :colocate_shared_enrollment => false,
         :subterm => nil,
@@ -212,6 +215,7 @@ class ActivityOffering
         :course_url => @course_url,
         :requires_evaluation => @requires_evaluation,
         :honors_course => @honors_course,
+        :colocated => @colocated,
         :colocate_ao_list => @colocate_ao_list,
         :colocate_shared_enrollment => @colocate_shared_enrollment,
         :subterm => @subterm,
@@ -300,71 +304,61 @@ class ActivityOffering
   end
 
   def edit_colocation opts={}
+    is_colo_set = on(ActivityOfferingMaintenance).colocated_checkbox.set?
 
-    is_breaking_colocation = false
-    if !opts[:break_colocation].nil? # only test for nil; true/false map to 'confirm/cancel'
-      is_breaking_colocation = true
+    if !opts[:colocated].nil?
+      if opts[:colocated] == false
+        edit_break_colocation if is_colo_set
+        return
+      else
+        on(ActivityOfferingMaintenance).select_colocated_checkbox unless is_colo_set
+        @colocated = true
+        is_colo_set = true
+      end
     end
-
-    is_editing_colocation = false
-    if !opts[:colocate_ao_list].nil? && !opts[:colocate_ao_list].empty?
-      is_editing_colocation = true
-    end
-
-    # cannot both EDIT and BREAK the colo simultaneously
-    if is_breaking_colocation && is_editing_colocation
-      raise "Cannot both EDIT and BREAK a colocation simultaneously"
-    end
-
-    if is_breaking_colocation
-      edit_break_colocation opts
-      return nil # when breaking colo, cannot do other colo-editing
-    end
-
-    if !is_editing_colocation
-      return nil # nothing to do if not breaking colo nor supplying any AOs to colo-edit with
-    end
+    return unless is_colo_set
 
     # else perform normal colo-EDIT
     on ActivityOfferingMaintenance do |page|
-      page.select_colocated_checkbox unless page.colocated_checkbox.set?
-
       # add the colo-COs to this CO
-      opts[:colocate_ao_list].each do |ao_to_colo|
-        page.colocated_co_input_field.value = ao_to_colo.parent_course_offering.course
-        page.colocated_ao_input_field.value = ao_to_colo.code
-        page.add_colocated
-        page.add_colocate_ao_confirmation_add
+      if !opts[:colocate_ao_list].nil?
+        opts[:colocate_ao_list].each do |ao_to_colo|
+          page.colocated_co_input_field.value = ao_to_colo.parent_course_offering.course
+          page.colocated_ao_input_field.value = ao_to_colo.code
+          page.add_colocated
+          page.add_colocate_ao_confirmation_add
+          @colocate_ao_list << ao_to_colo
+        end
       end
 
-      if !opts[:colocate_shared_enrollment].nil? 
+      if !opts[:colocate_shared_enrollment].nil?
         if opts[:colocate_shared_enrollment]
           page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
           page.select_jointly_share_enrollment_radio
-          page.colocated_shared_max_enrollment_input_field.value = opts[:max_enrollment]
+          page.colocated_shared_max_enrollment_input_field.set opts[:max_enrollment]
         else # ie: 'separately manage'
           page.select_separately_manage_enrollment_radio
-          page.colocated_shared_max_enrollment_table_first_ao_input.value = opts[:max_enrollment]
+          page.colocated_shared_max_enrollment_table_first_ao_input.set opts[:max_enrollment]
         end
+        @max_enrollment = opts[:max_enrollment]
       end
     end
 
   end #END: edit_colocation
   private :edit_colocation
 
-  def edit_break_colocation opts={}
-    @browser.confirm( opts[:break_colocation] ) { #TODO - @browser.confirm is deprecated
-      on(ActivityOfferingMaintenance).select_colocated_checkbox
+  def edit_break_colocation
+    @browser.confirm( true ) { #TODO - @browser.confirm is deprecated
+      on ActivityOfferingMaintenance do |page|
+        page.select_colocated_checkbox if page.colocated_checkbox.set?
+      end
     }
-
+    @colocated = false
   end #END: edit_break_colocation
   private :edit_break_colocation
 
   def edit_max_enrollment_no_colocation opts={}
-
-    if opts[:colocate_ao_list] && !opts[:colocate_ao_list].empty?
-      return nil
-    end
+    return if on(ActivityOfferingMaintenance).colocated_checkbox.set?
 
     if opts[:max_enrollment] != nil
       on ActivityOfferingMaintenance do |page|
@@ -373,7 +367,6 @@ class ActivityOffering
         @max_enrollment = opts[:max_enrollment]
       end
     end
-
   end #END: edit_max_enrollment_no_colocation
   private :edit_max_enrollment_no_colocation
 
@@ -1061,7 +1054,7 @@ class DeliveryLogistics
     @facility_long_name = ao_table_row.cells[ManageCourseOfferings::AO_BLDG].text
     @facility = ""
     @room = ao_table_row.cells[ManageCourseOfferings::AO_ROOM].text
-   end
+  end
 
   # compares 2 instances of DeliveryLogistics for field-equality
   # note: by default, the comparison ignores the isRDL-field
@@ -1138,10 +1131,10 @@ class DeliveryLogistics
 
     # bug in app prevents testing of this field
     # KSENROLL-6931
-#    if instance1.facility_long_name != instance2.facility_long_name
-#      puts 'NOT EQUAL: facility_long_name is different (' + instance1.facility_long_name + ":" + instance2.facility_long_name + ")"
-#      return false
-#    end
+    #    if instance1.facility_long_name != instance2.facility_long_name
+    #      puts 'NOT EQUAL: facility_long_name is different (' + instance1.facility_long_name + ":" + instance2.facility_long_name + ")"
+    #      return false
+    #    end
 
     if instance1.room != instance2.room
       puts 'NOT EQUAL: room is different (' + instance1.room + ":" + instance2.room + ")"

@@ -105,6 +105,7 @@ Feature: EC.Waitlists Colocation
     Then the activities indicate they are colocated
     And all three colocated activity offerings have the same waitlist configuration
 
+  @bug @stacktrace
   Scenario: WL 1.17.12 - Unshare a colocated-shared enrollment set and ensure that the waitlists are managed separately
     Given I create two colocated activity offerings (shared enrolment) with waitlists enabled
     When I update the colocation settings to manage enrolments separately
