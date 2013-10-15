@@ -1,4 +1,4 @@
-When /^I edit an early Thursday morning Standard Final Exam rule on the matrix$/ do
+When /^I edit the TH at 06:00 AM Standard Final Exam rule on the matrix$/ do
   @matrix = make FinalExamMatrix, :rule_requirements => "TH at 06:00 AM"
   @matrix.edit :defer_save => true
 end
