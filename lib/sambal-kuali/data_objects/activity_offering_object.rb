@@ -115,8 +115,8 @@ class ActivityOffering
 
     options = defaults.merge(opts)
 
-    @format = options[:format]
-    @activity_type = options[:activity_type]
+    #@format = options[:format]
+    #@activity_type = options[:activity_type]
 
     set_options(options)
 
@@ -157,7 +157,7 @@ class ActivityOffering
       page.format.select @format unless @format.nil?
       page.loading.wait_while_present
       sleep 2
-      page.activity_type.select @activity_type unless @activity_type.nil?
+      page.activity_type.select @activity_type #unless @activity_type.nil?
       page.quantity.set options[:number_aos_to_create]
       page.complete_add_activity
       post_add_ao_list = page.codes_list

@@ -349,7 +349,7 @@ Then /^all three activity offerings have the same waitlist limit size$/ do
   end
 end
 
-Given /^I create three colocated activity offerings \(shared enrolment\) with waitlists enabled$/ do
+Given /^I create three course offerings with one activity offering in each with waitlists enabled$/ do
   @term = make AcademicTerm, :term_code => Rollover::MAIN_TEST_TERM_TARGET if @term.nil?
 
   @ao_list = []
@@ -360,14 +360,15 @@ Given /^I create three colocated activity offerings \(shared enrolment\) with wa
     activity_offering.save
     @ao_list << activity_offering
   end
+end
 
+Given /^I colocate the three activity offerings \(shared enrolment\)$/ do
   @ao_list[0].parent_course_offering.manage
   @ao_list[0].edit :colocated => true,
                    :colocate_ao_list => @ao_list[1..2],
                    :colocate_shared_enrollment => true,
                    :max_enrollment => 120
   @ao_list[0].save
-
 end
 
 Then /activity offerings have the same waitlist configuration$/ do
@@ -492,7 +493,7 @@ When /^I delete one of the related course offerings$/ do
   @ao_list[0].parent_course_offering.delete_co_coc_view
 end
 
-Then /^the remaining activity offerings are still colocated$/ do
+Then /^the remaining activity offerings.*are still colocated$/ do
   @ao_list[1..2].each do |ao|
     ao.parent_course_offering.manage
     on(ManageCourseOfferings).has_colo_icon(ao.code).should be_true
