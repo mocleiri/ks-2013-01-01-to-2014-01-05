@@ -10,10 +10,10 @@ Feature: SA.FE3-13 Update Exam Offerings
   @pending
   Scenario: Update Course Offering with Exam Driver to CO and confirm Exam Offering created is in a Cancelled state.
     When I view the Exam Offerings for a CO where the Course Offering Standard FE is changed to No Final Exam
-    Then the Canceled Exam Offering table should only show that it is in the Canceled state
+    Then the Exam Offering table should should be in a Canceled state
 
 #FE3.13.EB2(KSENROLL-9801)
   @pending
   Scenario: Update Course Offering with Exam Driver to CO and confirm Exam Offering created in a Draft state
-    When When I view the Exam Offerings for a CO where the Course Offering No FE is changed to Standard Final Exam
+    When I view the Exam Offerings for a CO where the Course Offering No FE is changed to Standard Final Exam
     Then the Course Offering table should only show that it is in the Draft state

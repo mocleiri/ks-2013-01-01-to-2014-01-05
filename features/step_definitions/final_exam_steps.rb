@@ -364,7 +364,7 @@ When /^I view the Exam Offerings for a CO where the Activity Offering Standard F
 end
 
 #KSENROLL-9801
-When /^When I view the Exam Offerings for a CO where the Course Offering No FE is changed to Standard Final Exam$/ do
+When /^I view the Exam Offerings for a CO where the Course Offering No FE is changed to Standard Final Exam$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
   @course_offering.exam_offerings_setup :final_exam_type => "No final exam or assessment"
 
@@ -818,7 +818,7 @@ Then /^the non-active days should still be included in the Exam Period when I re
   end
 end
 
-Then /^the Canceled Exam Offering table should only show that it is in the ([^"]*) state$/ do |exp_msg|
+Then /^the Exam Offering table should should be in a ([^"]*) state$/ do |exp_msg|
   on ViewExamOfferings do |page|
     #page.canceled_table_header_text.should match /Canceled Exam Offering/
     page.canceled_eo_table.rows[1].cells[0].text.should == exp_msg
