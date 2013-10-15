@@ -84,6 +84,7 @@
                             <ref bean="editTransactionTypeSection"/>
                             <ref bean="tagGroup"/>
                             <ref bean="glBreakdownList"/>
+                            <ref bean="creditPermissionList"/>
                             <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insert" p:actionLabel="Submit" p:render="@{transactionsAffectedCount == 0}"/>
                             <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Submit"  p:render="@{transactionsAffectedCount > 0}"
                                     p:preSubmitCall="return showLightboxComponent('affectedCountLightbox');"/>
@@ -571,6 +572,14 @@
                     <property name="layoutManager.sequencePropertyName" value="id"/>
                     <property name="layoutManager.richTable.render" value="true"/>
                     <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="false"/>
+                            <entry key="bInfo" value="false"/>
+                            <entry key="bFilter" value="false"/>
+                            <entry key="bSort" value="false" />
+                        </map>
+                    </property>
                     <property name="items">
                         <list>
                             <bean parent="Uif-InputField" p:label="GL Account" p:propertyName="glAccount">
@@ -598,6 +607,43 @@
                                 </property>
                             </bean>
 
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="creditPermissionList" parent="Uif-Disclosure-VerticalBoxSection" p:style="text-decoration:underline" p:progressiveRender="@{#dp.type eq 'C'}">
+        <property name="headerText" value="Credit Permission and Priority"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-Disclosure-TableCollectionSection"
+                      p:layoutManager.numberOfColumns="2"
+                      p:title=""
+                      p:instructionalText=""
+                      p:disclosure.render="false"
+                      p:progressiveRenderViaAJAX="true"
+                      p:renderAddLine="true"
+                      p:width="85%">
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.CreditPermission"/>
+                    <property name="propertyName" value="creditPermissions"/>
+                    <property name="readOnly" value="false"/>
+                    <property name="layoutManager.sequencePropertyName" value="id"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="false"/>
+                            <entry key="bInfo" value="false"/>
+                            <entry key="bFilter" value="false"/>
+                            <entry key="bSort" value="false" />
+                        </map>
+                    </property>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:label="Debit Type Code Mask" p:propertyName="allowableDebitType"/>
+                            <bean parent="Uif-InputField" p:label="Processing Priority" p:propertyName="priority"/>
                         </list>
                     </property>
                 </bean>
