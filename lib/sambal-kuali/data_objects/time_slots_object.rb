@@ -164,11 +164,11 @@ class TimeSlots
       defaults = {
           :code => "",
           :term_type => "Fall - Full",
-          :days => "W",
-          :start_time => "2:31",
-          :start_time_am_pm => "AM",
-          :end_time => "2:36",
-          :end_time_am_pm => "AM"
+          :days => "MTWHFSU",
+          :start_time => "12:01",
+          :start_time_am_pm => "PM",
+          :end_time => "12:06",
+          :end_time_am_pm => "PM"
       }
 
       options = defaults.merge(opts)

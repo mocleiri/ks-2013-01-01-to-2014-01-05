@@ -2,6 +2,7 @@ class TimeSlotMaintenance < BasePage
 
   wrapper_elements
   frame_element
+  validation_elements
 
 
   element(:time_slot_error_message) { |b| b.frm.div(id: "timeSlotPage").li(class: "uif-errorMessageItem") }

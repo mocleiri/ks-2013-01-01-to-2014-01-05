@@ -52,7 +52,7 @@ Then /^an error message is displayed about the duplicate timeslot$/ do
 end
 
 Then /^an error is displayed about the missing data$/ do
-  on(TimeSlotMaintenance).time_slot_error_message.text.should match /should not be empty for standard and ad hoc time slots/
+  on(TimeSlotMaintenance).first_msg.should match /Invalid \bdays|Start time|End time\b/
 end
 
 When /^I show time slots for a single term type$/  do
