@@ -21,10 +21,9 @@ Feature: WC.Delete and edit standard Time Slots
     Scenario: Deleting a time slot that has been used
     When I show time slots for a single term type
     And I attempt to delete a Time Slot which is used in a delivery logistic
-#    Then an error message is displayed stating that the Time Slot may not be deleted
     And the Time Slot is not deleted
 
-    Scenario: Deleting multiple time slots, some of which have been used
+    Scenario: Deleting multiple time slots - some of which have been used
     When I show time slots for a single term type
     And I add a Time Slot with the chosen Term Type
     Then the timeslots are saved
@@ -73,8 +72,7 @@ Feature: WC.Delete and edit standard Time Slots
     Then an error is displayed about the missing data
 
     Scenario: Editing an existing time slot that results in duplication
-    When I show time slots for a single term type
-    And I add 2 different time slots to a single term type
+    When I add 2 different time slots to a single term type
     Then the timeslots are saved
     And I edit the second Time Slot to duplicate the first Time Slot
     Then an error message is displayed about the duplicate timeslot
