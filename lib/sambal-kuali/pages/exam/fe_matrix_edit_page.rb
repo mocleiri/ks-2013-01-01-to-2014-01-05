@@ -1,17 +1,10 @@
 class FEMatrixEdit < BasePage
 
   wrapper_elements
-  frame_element
+  krms_frame_elements
 
   element(:fe_agenda_view_page) { |b| b.frm.div( id: "KSFE-AgendaManagement-View")}
   element(:fe_rule_maintenance_page) { |b| b.fe_agenda_view_page.div( id: "KSFE-RuleMaintenance-Page")}
-
-  #element(:fe_rules_manage_section) { |b| b.fe_rule_maintenance_page.div( id: "KSFE-Rules-ManageSection")}
-  #element(:toolbar_section) { |b| b.fe_rules_manage_section.div( id: "KSFE-EditRule-ToolbarSection")}
-  #element(:expand_collapse_section) { |b| b.fe_rules_manage_section.div( id: "KRMS-RuleEditor-TreeExpandCollapse")}
-  #element(:rule_tree_section) { |b| b.fe_rules_manage_section.div( id: "KRMS-RuleEditor-TreeGroup")}
-  #element(:delivery_logistics_section) { |b| b.fe_rules_manage_section.div( id: "FinalExam-DeliveryLogistic-New-Section")}
-  #element(:proposition_section) { |b| b.rule_tree_section.div( id: "KRMS-PropositionEdit-BoxSection")}
 
   element(:fe_rules_manage_section) { |b| b.frm.div( id: "KSFE-Rules-ManageSection")}
   element(:toolbar_section) { |b| b.frm.div( id: "KSFE-EditRule-ToolbarSection")}
@@ -38,23 +31,39 @@ class FEMatrixEdit < BasePage
   element(:rule_endtime) { |b| b.proposition_section.text_field( id: "KSFE_endtime_control")}
   element(:rule_endtime_ampm) { |b| b.proposition_section.select( id: "KSFE_endtime_ampm_control")}
   element(:rule_freeformtext) { |b| b.proposition_section.text_field( name: /editTree.*proposition\.termParameter/)}
+  element(:courses_type_dropdown) { |b| b.proposition_section.select( id: "KRMS-MultiCourse-Type-Field_control")}
 
+  element(:add_line_btn) { |b| b.proposition_section.button( id: "KRMS-ApprovedCourseStackedCollectionGroup_add")}
+  action(:add_line) { |b| b.add_line_btn.click}
   element(:preview_change_btn) { |b| b.proposition_section.button( text: /Preview Change/)}
   action(:preview_change) { |b| b.preview_change_btn.click; b.loading.wait_while_present}
   element(:cancel_proposition_link) { |b| b.proposition_section.a( text: /Cancel/)}
   action(:cancel_proposition) { |b| b.cancel_proposition_link.click; b.loading.wait_while_present}
 
-  element(:fe_tba_checkbox) { |b| b.delivery_logistics_section.checkbox( id: "FinalExam_tba_control")}
-  action(:fe_tba) { |b| b.fe_tba_checkbox.click}
-  element(:fe_days_select) { |b| b.delivery_logistics_section.select( id: "FinalExam_days_control")}
-  element(:fe_starttime_input) { |b| b.delivery_logistics_section.text_field( id: "FinalExam_starttime_control")}
-  element(:fe_starttime_ampm_select) { |b| b.delivery_logistics_section.select( id: "FinalExam_starttime_ampm_control")}
-  element(:fe_endtime_input) { |b| b.delivery_logistics_section.text_field( id: "FinalExam_endtime_control")}
-  element(:fe_endtime_ampm_select) { |b| b.delivery_logistics_section.select( id: "FinalExam_endtime_ampm_control")}
+  element(:rdl_tba_checkbox) { |b| b.delivery_logistics_section.checkbox( id: "FinalExam_tba_control")}
+  action(:rdl_tba) { |b| b.rdl_tba_checkbox.click}
+  element(:rdl_days) { |b| b.delivery_logistics_section.select( id: "FinalExam_days_control")}
+  element(:rdl_starttime) { |b| b.delivery_logistics_section.text_field( id: "FinalExam_starttime_control")}
+  element(:rdl_starttime_ampm) { |b| b.delivery_logistics_section.select( id: "FinalExam_starttime_ampm_control")}
+  element(:rdl_endtime) { |b| b.delivery_logistics_section.text_field( id: "FinalExam_endtime_control")}
+  element(:rdl_endtime_ampm) { |b| b.delivery_logistics_section.select( id: "FinalExam_endtime_ampm_control")}
+  element(:rdl_facility) { |b| b.delivery_logistics_section.text_field( id: "FinalExam_building_control")}
+  element(:rdl_room) { |b| b.delivery_logistics_section.text_field( id: "FinalExam_room_control")}
 
   element(:update_rule_btn) { |b| b.fe_rule_maintenance_page.button( id: "KSFE-UpdateRule-Button")}
   action(:update_rule) { |b| b.update_rule_btn.click}
   element(:cancel_rule_btn) { |b| b.fe_rule_maintenance_page.button( id: "KSFE-CancelRule-Button")}
   action(:cancel_rule) { |b| b.cancel_rule_btn.click}
+
+  element(:lookup_results_section) { |b| b.frm_popup.div( id: "uLookupResults")}
+  element(:lookup_course_code) { |b| b.frm_popup.text_field( name: "lookupCriteria[code]")}
+  element(:lookup_results_table) { |b| b.lookup_results_section.table}
+
+  def return_course_code course
+    lookup_results_table.row(text: /#{course}/)
+  end
+
+  element(:lookup_search_btn) { |b| b.frm_popup.button( id: "button_search")}
+  action(:lookup_search) { |b| b.lookup_search_btn.click}
 
 end

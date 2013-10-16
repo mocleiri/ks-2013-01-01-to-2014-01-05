@@ -19,6 +19,17 @@ When /^I open the Final Exam Matrix for the Fall Term$/ do
   @matrix.manage
 end
 
+When /^I add a Common Final Exam course rule to the Final Exam Matrix of the Fall Term$/ do
+  @matrix = create FinalExamMatrix, :exam_type => "Common", :rule => "Course must be <Course>"
+end
+
+When /^I submit and return to see my changes$/ do
+  on FEMatrixView do |page|
+    page.submit
+  end
+  @matrix.manage
+end
+
 Then /^I should be able to choose any one of Day 1 to 6 for the rule$/ do
   on FEMatrixEdit do |page|
     page.fe_days_select.option( value: "1").text.should == "Day 1"
@@ -59,5 +70,11 @@ Then /^I have the option to add a new rule to the Final Exam Matrix$/ do
   on FEMatrixView do |page|
     page.standard_final_exam_section.text.should match /Add/
     page.common_final_exam_section.text.should match /Add/
+  end
+end
+
+Then /^I should be able to see the newly created course rule in the Common Final Exam table$/ do
+  on FEMatrixView do |page|
+    page.get_common_fe_requirements( @matrix.courses).should match /#{@matrix.courses}\./
   end
 end
