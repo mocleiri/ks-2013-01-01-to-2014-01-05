@@ -12,6 +12,7 @@ class FEMatrixView < BasePage
   COURSE_REQUIREMENTS = 0
   EXAM_DAY = 1
   EXAM_TIME = 2
+  EXAM_ACTIONS = 3
 
   element(:standard_final_exam_section) { |b| b.fe_agenda_maintenance_page.div( id: "ruledefinitions_agenda0")}
   element(:standard_final_exam_table) { |b| b.standard_final_exam_section.table}
@@ -47,12 +48,20 @@ class FEMatrixView < BasePage
     standard_fe_target_row( requirements).cells[EXAM_TIME].text
   end
 
+  def get_standard_fe_actions( requirements)
+    standard_fe_target_row( requirements).cells[EXAM_ACTIONS].text
+  end
+
   def get_common_fe_day( requirements)
     common_fe_target_row( requirements).cells[EXAM_DAY].text
   end
 
   def get_common_fe_time( requirements)
     common_fe_target_row( requirements).cells[EXAM_TIME].text
+  end
+
+  def get_common_fe_actions( requirements)
+    common_fe_target_row( requirements).cells[EXAM_ACTIONS].text
   end
 
   def edit( requirements, exam_type)
