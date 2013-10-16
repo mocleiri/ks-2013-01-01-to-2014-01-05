@@ -159,6 +159,14 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         courseDetails.setCourseTitle(course.getCourseTitle());
         courseDetails.setSubjectArea(subject);
         courseDetails.setCourseNumber(course.getCourseNumberSuffix());
+        String campusCd = null;
+        for (AttributeInfo attributeInfo : course.getAttributes()) {
+            if (CourseSearchConstants.CAMPUS_LOCATION_COURSE_ATTRIBUTE.equals(attributeInfo.getKey())) {
+                campusCd = attributeInfo.getValue();
+                break;
+            }
+        }
+        courseDetails.setCampusCd(campusCd);
 
         // -- Curriculum  Title
         Map<String, String> subjectAreaMap = OrgHelper.getTrimmedSubjectAreas();
@@ -175,7 +183,6 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             if (formatted == null) formatted = "";
             String[] aaa = formatted.split("Offered:");
             String[] bbb = aaa[0].split("Prerequisite:");
-
 
             String descr = bbb[0].trim();
             descr = getCourseLinkBuilder().makeLinks(descr);

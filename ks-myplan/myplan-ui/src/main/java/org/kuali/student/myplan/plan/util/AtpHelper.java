@@ -360,6 +360,25 @@ public class AtpHelper {
 
 
     /**
+     * returns published terms for a campus
+     *
+     * @return
+     */
+    public static List<String> getPublishedTermsForCampus(String campusCd) {
+        List<String> publishedTerms = new ArrayList<String>();
+        try {
+            List<TermInfo> termInfos = getAcademicCalendarService().searchForTerms(QueryByCriteria.Builder.fromPredicates(equalIgnoreCase("query", String.format("%s|%s", PlanConstants.PUBLISHED, campusCd))), CourseSearchConstants.CONTEXT_INFO);
+            for (TermInfo term : termInfos) {
+                publishedTerms.add(term.getId());
+            }
+        } catch (Exception e) {
+            logger.error("Web service call failed.", e);
+            publishedTerms.add(getCurrentAtpIdFromCalender());
+        }
+        return publishedTerms;
+    }
+
+    /**
      * Gets published terms from Web service
      *
      * @return List of Published Terms as YearTerms
@@ -418,23 +437,6 @@ public class AtpHelper {
         }
 
         return publishedTerms;
-    }
-
-
-    /**
-     * returns the  starting atpId which is open for planning and a published term
-     *
-     * @return
-     */
-    public static String getFirstOpenForPlanTerm() {
-        String startAtp = null;
-        for (String term : getPublishedTerms()) {
-            if (isAtpSetToPlanning(term)) {
-                startAtp = term;
-                break;
-            }
-        }
-        return startAtp;
     }
 
     /**

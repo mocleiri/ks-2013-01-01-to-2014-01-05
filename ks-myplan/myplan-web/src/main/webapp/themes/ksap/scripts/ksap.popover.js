@@ -262,6 +262,7 @@ function editNote(obj, e) {
     var planItemId = obj.data("planitemid");
     var atpId = obj.data("atpid");
     var planItemType = obj.data("planitemtype");
+    var backupFlag = planItemType=='backup';
     jQuery("#" + planItemType + "_" + atpId.replace(/\./g, "-") + "_" + planItemId + "_note").HideBubblePopup();
     var retrieveData = {
         action: 'plan',
@@ -269,6 +270,7 @@ function editNote(obj, e) {
         methodToCall: 'startAddPlannedCourseForm',
         planItemId: planItemId,
         atpId: atpId,
+        backup: backupFlag,
         pageId: 'edit_note_page'
     };
     var popupOptions = {

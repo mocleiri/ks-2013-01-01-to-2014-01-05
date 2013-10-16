@@ -282,6 +282,7 @@ public class StudentServiceClientImpl
      /**
      * Get enrollment info for all sections of a course
      * hits SWS with url of .../student/v4/course/2013,winter,ASTR,101/status.xml
+     *
      * @param year      year for term to get info for
      * @param quarter   quarter for term to get info for
      * @param abbrev    curriculum for course to get info for
@@ -295,6 +296,13 @@ public class StudentServiceClientImpl
         String ver = getServiceVersion();
         abbrev = urlEscape(abbrev);
         String url = String.format("%s/%s/course/%s,%s,%s,%s/status.xml", base, ver, year, quarter, abbrev, num);
+        return sendQuery(url);
+    }
+
+    @Override
+    public String getCurriculumForSubject(String year, String quarter, String abbrev) throws ServiceException {
+        abbrev = urlEscape(abbrev);
+        String url = String.format("%s/%s/public/curriculum.xml?year=%s&quarter=%s&department_abbreviation=%s",getBaseUrl(),getServiceVersion(), year, quarter, abbrev);
         return sendQuery(url);
     }
 

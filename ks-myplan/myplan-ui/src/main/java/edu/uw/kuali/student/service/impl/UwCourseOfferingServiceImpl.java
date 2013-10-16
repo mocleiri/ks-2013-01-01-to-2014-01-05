@@ -109,6 +109,10 @@ public class UwCourseOfferingServiceImpl implements CourseOfferingService {
             YearTerm yt = AtpHelper.atpToYearTerm(termId);
             String year = yt.getYearAsString();
             String term = yt.getTermAsID();
+
+            String response = studentServiceClient.getCurriculumForSubject(year, term, subjectArea);
+            int count = Integer.parseInt(offeringServiceUtils.newXPath("//s:SearchResults/s:TotalCount").selectSingleNode(offeringServiceUtils.newDocument(response)).getText());
+            if (count > 0) {
             String responseText = studentServiceClient.getSectionInfo(year, term, subjectArea);
 
             Document document = offeringServiceUtils.newDocument(responseText);
@@ -127,6 +131,9 @@ public class UwCourseOfferingServiceImpl implements CourseOfferingService {
             }
 
             return new ArrayList<String>(offeringIds);
+            } else {
+                return new ArrayList<String>();
+            }
 
         } catch (Exception e) {
             throw new OperationFailedException("Call to the student service failed.", e);
@@ -812,6 +819,9 @@ public class UwCourseOfferingServiceImpl implements CourseOfferingService {
             String curric = courseInfo.getSubjectArea().trim();
             String num = courseInfo.getCourseNumberSuffix();
 
+            String response = studentServiceClient.getCurriculumForSubject(year, quarter, curric);
+            int count = Integer.parseInt(offeringServiceUtils.newXPath("//s:SearchResults/s:TotalCount").selectSingleNode(offeringServiceUtils.newDocument(response)).getText());
+            if (count > 0) {
             String xml = studentServiceClient.getSections(year, quarter, curric, num);
 
             DefaultXPath sectionPath = offeringServiceUtils.newXPath("/s:SearchResults/s:Sections/s:Section");
@@ -841,7 +851,9 @@ public class UwCourseOfferingServiceImpl implements CourseOfferingService {
                     }
                 }
             }
+            }
             return list;
+
 
         } catch (Exception e) {
             logger.error(e);
