@@ -1,4 +1,4 @@
-Feature: SA.AZ FE2-7 Specific users should not be allowed to change the final exam matrix
+Feature: SA.AZ FE1-7 Specific users should not be allowed to change the final exam matrix
   FE 1.7: As a Departmental or Central Administrator I want appropriate permissions in order to view or manage
   existing Final Exam matrices so that I can know how examinations will be scheduled
 
