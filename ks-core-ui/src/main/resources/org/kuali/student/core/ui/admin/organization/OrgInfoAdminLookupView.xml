@@ -37,19 +37,7 @@
 		p:viewHelperServiceClass="org.kuali.student.core.ui.admin.organization.OrgInfoAdminLookupableImpl">
 		
 		<property name="criteriaFields">
-			<list>
-				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="longName"
-				      p:label="Keyword(s)"
-				      p:helpSummary="Searches fields like name and description to see if they contain the keyword" >
-				      <property name="suggest">
-				       <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="longName"
-				           p:suggestQuery.dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo" >
-			              <property name="suggestQuery">
-			                <bean parent="Uif-AttributeQueryConfig" p:queryMethodToCall="suggestOrganizationsByName"/>
-			              </property>
-			           </bean>
-			          </property>
-				</bean>
+			<list>				
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="id" />
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="typeKey">
 					<property name="quickfinder">
@@ -65,11 +53,11 @@
 				</bean>
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="longName" />
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="longDescr.plain" />
-				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="longDescr.formatted" />
+				<!-- <bean parent="Uif-LookupCriteriaInputField" p:propertyName="longDescr.formatted" />  -->
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="shortName" />
-				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="sortName" />
+				<!-- <bean parent="Uif-LookupCriteriaInputField" p:propertyName="sortName" />  -->
 				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="shortDescr.plain" />
-				<bean parent="Uif-LookupCriteriaInputField" p:propertyName="shortDescr.formatted" />
+				<!-- <bean parent="Uif-LookupCriteriaInputField" p:propertyName="shortDescr.formatted" />  -->
 				<!-- TODO: deal with  orgCodes which is a List -->
 				<!-- TODO: deal with  effectiveDate which is a Date -->
 				<!-- TODO: deal with  expirationDate which is a Date -->
@@ -104,7 +92,7 @@
 		        </bean>
 		        <bean parent="Uif-DataField" p:propertyName="longName" />
 		        <bean parent="Uif-DataField" p:propertyName="shortName" />
-		        <bean parent="Uif-DataField" p:propertyName="sortName" />
+		        <!-- <bean parent="Uif-DataField" p:propertyName="sortName" />  -->
 		        <bean parent="Uif-DataField" p:propertyName="effectiveDate" />
 		        <bean parent="Uif-DataField" p:propertyName="expirationDate" />
 		    </list>

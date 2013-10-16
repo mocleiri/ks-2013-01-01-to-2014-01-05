@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<import resource="classpath:UifKSDefinitions.xml"/>
+	
+	<bean id="KS-OrgPersonRelationInfoSearch-View" parent="KS-Uif-FormView">
+		<property name="id" value="orgPersonRelationInfoSearchView" />
+		<property name="headerText" value="PersonOrgRelationInfo Lookup" />
+		<property name="formClass"	value="org.kuali.student.core.organization.ui.form.OrgPersonRelationInfoAdminSearchForm" />
+		<property name="viewHelperServiceClass" value="org.kuali.student.core.organization.ui.utils.OrganizationServiceHelper" />
+		<property name="singlePageView" value="true" />
+		<property name="page">
+			<bean parent="Uif-Page" />
+		</property>
+		<property name="header">
+			<bean parent="Uif-HeaderTwo" />
+		</property>
+		<property name="footer">
+			<bean parent="Uif-FooterBase" />
+		</property>
+		<property name="items">
+			<list>
+				<ref bean="KS-OrgPersonRelationSearch-CriteriaSection" />
+				<ref bean="KS-OrgPersonRelationSearch-ResultSection" />
+			</list>
+		</property>
+	</bean>
+	<bean id="KS-OrgPersonRelationSearch-CriteriaSection" parent="Uif-HorizontalBoxSection">
+        <property name="disclosure.render" value="false"/>
+        <property name="style" value="margin-bottom:0;"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-GridSubSection">
+                <property name="headerText" value="Enter one or more fields"/>
+                <property name="layoutManager.numberOfColumns" value="2"/>
+                <property name="layoutManager.applyDefaultCellWidths" value="false" />
+                <property name="style" value="margin-bottom:0;"/>
+                <property name="items">
+                        <list>
+                            <bean parent="Uif-HorizontalFieldGroup">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-InputField" p:propertyName="keywordSearch" p:additionalHiddenPropertyNames="orgId"
+										      p:label="Keyword(s)"
+										      p:helpSummary="Searches fields like name and description to see if they contain the keyword" >
+										      <!-- 
+										      <property name="suggest">
+										       <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="longName"
+										           p:suggestQuery.dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo" >
+									              <property name="suggestQuery">
+									                <bean parent="Uif-AttributeQueryConfig" p:queryMethodToCall="suggestOrganizationsByName"/>
+									              </property>
+									           </bean>
+									          </property>
+									           -->
+									          <property name="quickfinder">
+												<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo"
+												p:fieldConversions="longName:keywordSearch,id:orgId" />
+											</property>	
+										</bean>                                        
+                                    </list>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-HorizontalFieldGroup">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-SecondaryActionButton" p:actionLabel="Search" p:methodToCall="search"/>
+                                        <bean parent="Uif-ActionLink" p:actionLabel="Cancel" p:methodToCall="close"/>
+                                    </list>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <bean id="KS-OrgPersonRelationSearch-ResultSection" parent="Uif-VerticalBoxSection">
+        <property name="headerText" value="Search Results" />
+        <property name="disclosure.render" value="false"/>
+        <property name="items">
+            <list>
+                <ref bean="KS-OrgPersonRelationLookup-Result"/>
+            </list>
+        </property>
+    </bean>
+ 
+    <bean id="KS-OrgPersonRelationLookup-Result" parent="Uif-TableCollectionSection"
+          p:layoutManager.numberOfColumns="6" p:renderAddLine="false">
+        <property name="collectionObjectClass" value="org.kuali.student.r2.core.organization.dto.OrgPersonRelationInfo" />
+        <property name="propertyName" value="orgPersonRelationInfo" />
+        <property name="collectionLookup.quickfinderAction.render" value="false" />
+        <property name="layoutManager.renderSequenceField" value="false" />
+        <property name="layoutManager.applyDefaultCellWidths" value="true" />
+        <property name="layoutManager.applyAlternatingRowStyles" value="false" />
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="sDom" value="rtip"/>
+                <entry key="aaSorting" value="[[ 1, 'desc' ]]"/>
+            </map>
+        </property>
+        <property name="items">
+            <list>
+                <bean parent="Uif-DataField" p:propertyName="id">
+					<property name="inquiry">
+						<bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo" p:inquiryParameters="orgId:id" />
+					</property>
+				</bean>
+                <bean parent="Uif-DataField" p:propertyName="personId" >
+		       	   <property name="inquiry">
+		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.rice.kim.api.identity.Person" p:inquiryParameters="personId:principalId" />
+		            </property>
+		        </bean>
+		        <bean parent="Uif-DataField" p:propertyName="typeKey">
+		            <property name="inquiry">
+		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.class1.type.dto.TypeInfo" p:inquiryParameters="typeKey:key" />
+		            </property>
+		        </bean>
+		        <bean parent="Uif-DataField" p:propertyName="stateKey">
+		            <property name="inquiry">
+		                <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.r2.core.class1.state.dto.StateInfo" p:inquiryParameters="stateKey:key" />
+		            </property>
+		        </bean>		        
+		        <bean parent="Uif-DataField" p:propertyName="effectiveDate" />
+		        <bean parent="Uif-DataField" p:propertyName="expirationDate" />
+            </list>
+        </property>
+        <property name="layoutManager.actionFieldPrototype">
+            <bean parent="Uif-HorizontalFieldGroup" p:align="left" p:required="false" p:label="Actions" p:style="display:inline;"/>
+        </property>
+        <property name="lineActions">
+            <list>
+                <bean parent="Uif-ActionLink" p:methodToCall="" p:actionLabel="View" />
+                <bean parent="Uif-ActionLink" p:methodToCall="" p:actionLabel="Edit" />
+                <bean parent="Uif-ActionLink" p:methodToCall="" p:actionLabel="Delete" />
+            </list>
+        </property>
+    </bean>
+</beans>

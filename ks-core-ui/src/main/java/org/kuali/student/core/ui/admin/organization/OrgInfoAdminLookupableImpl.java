@@ -17,18 +17,17 @@ package org.kuali.student.core.ui.admin.organization;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.namespace.QName;
+
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.rice.core.api.search.SearchOperator;
 import org.kuali.rice.krad.lookup.LookupableImpl;
-import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.web.form.LookupForm;
 import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.r2.common.dto.ContextInfo;
@@ -57,7 +56,21 @@ public class OrgInfoAdminLookupableImpl extends LookupableImpl
 					qBuilder.setMaxResults (Integer.parseInt(value));
 					continue;
 				}
-				pList.add(PredicateFactory.equal(fieldName, value));
+				if(fieldName.equals("typeKey")){
+					pList.add(PredicateFactory.equal("orgType", value));
+				}else if(fieldName.equals("stateKey")){
+					pList.add(PredicateFactory.equal("orgState", value));
+				}else if(fieldName.equals("longDescr.plain")){
+					pList.add(PredicateFactory.equal("longDescrPlain", value));
+				}else if(fieldName.equals("shortDescr.plain")){
+					pList.add(PredicateFactory.equal("shortDescrPlain", value));
+				}else if(fieldName.equals("meta.createId")){
+					pList.add(PredicateFactory.equal("createId", value));
+				}else if(fieldName.equals("meta.updateId")){
+					pList.add(PredicateFactory.equal("updateId", value));
+				}else {
+					pList.add(PredicateFactory.equal(fieldName, value));
+				}
 			}
 		}
 		if (!pList.isEmpty())
