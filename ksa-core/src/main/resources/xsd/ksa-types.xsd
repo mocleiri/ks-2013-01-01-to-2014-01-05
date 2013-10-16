@@ -11,7 +11,8 @@
                 <xs:element name="incoming-identifier" type="xs:string" minOccurs="0"/>
                 <xs:element name="effective-date" type="xs:date"/>
                 <xs:element name="origination-date" type="xs:date" minOccurs="0"/>
-                <xs:element name="recognition-date" minOccurs="0"/>
+                <xs:element name="recognition-date" type="xs:date" minOccurs="0"/>
+                <xs:element name="expiration-date" type="xs:date" minOccurs="0"/>
                 <xs:element name="amount" type="xs:decimal"/>
                 <xs:sequence minOccurs="0">
                     <xs:element name="native-amount" type="xs:decimal"/>
@@ -33,7 +34,7 @@
                             <xs:sequence>
                                 <xs:element name="override-rollup" type="xs:string" minOccurs="0"/>
                                 <xs:element name="override-statement-text" type="xs:string" minOccurs="0"/>
-                                <xs:element name="general-ledger-type" minOccurs="0"/>
+                                <xs:element name="general-ledger-type" type="xs:string" minOccurs="0"/>
                                 <xs:sequence minOccurs="0">
                                     <xs:element name="general-ledger-override">
                                         <xs:complexType>
@@ -48,7 +49,7 @@
                                 <xs:element name="is-refundable" type="xs:boolean" minOccurs="0"/>
                                 <xs:choice minOccurs="0">
                                     <xs:element name="override-clear-date" type="xs:int"/>
-                                    <xs:element name="override-clear-period"/>
+                                    <xs:element name="override-clear-period" type="xs:int"/>
                                 </xs:choice>
                             </xs:sequence>
                         </xs:complexType>

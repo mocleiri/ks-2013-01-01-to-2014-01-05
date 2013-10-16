@@ -36,6 +36,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="incoming-identifier" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="effective-date" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *         &lt;element name="origination-date" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
+ *         &lt;element name="recognition-date" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
+ *         &lt;element name="expiration-date" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
  *         &lt;element name="amount" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
  *         &lt;sequence minOccurs="0">
  *           &lt;element name="native-amount" type="{http://www.w3.org/2001/XMLSchema}decimal"/>
@@ -63,6 +65,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                   &lt;sequence>
  *                     &lt;element name="override-rollup" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *                     &lt;element name="override-statement-text" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *                     &lt;element name="general-ledger-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *                     &lt;sequence minOccurs="0">
  *                       &lt;element name="general-ledger-override">
  *                         &lt;complexType>
@@ -78,7 +81,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *                       &lt;/element>
  *                     &lt;/sequence>
  *                     &lt;element name="override-refund-rule" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                     &lt;element name="override-clear-date" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *                     &lt;element name="is-refundable" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *                     &lt;choice minOccurs="0">
+ *                       &lt;element name="override-clear-date" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *                       &lt;element name="override-clear-period" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *                     &lt;/choice>
  *                   &lt;/sequence>
  *                 &lt;/restriction>
  *               &lt;/complexContent>
@@ -86,8 +93,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *           &lt;/element>
  *         &lt;/sequence>
  *         &lt;element name="transaction-type" type="{http://www.w3.org/2001/XMLSchema}string" form="qualified"/>
- *         &lt;element name="is-refundable" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="refund-rule" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -100,6 +105,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
         "incomingIdentifier",
         "effectiveDate",
         "originationDate",
+        "recognitionDate",
+        "expirationDate",
         "amount",
         "nativeAmount",
         "currency",
@@ -120,6 +127,12 @@ public class KsaTransaction {
     @XmlElement(name = "origination-date")
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar originationDate;
+    @XmlElement(name = "recognition-date")
+    @XmlSchemaType(name = "date")
+    protected XMLGregorianCalendar recognitionDate;
+    @XmlElement(name = "expiration-date")
+    @XmlSchemaType(name = "date")
+    protected XMLGregorianCalendar expirationDate;
     @XmlElement(required = true)
     protected BigDecimal amount;
     @XmlElement(name = "native-amount")
@@ -208,6 +221,46 @@ public class KsaTransaction {
      */
     public void setOriginationDate(XMLGregorianCalendar value) {
         this.originationDate = value;
+    }
+
+    /**
+     * Gets the value of the recognitionDate property.
+     *
+     * @return possible object is
+     *         {@link XMLGregorianCalendar }
+     */
+    public XMLGregorianCalendar getRecognitionDate() {
+        return recognitionDate;
+    }
+
+    /**
+     * Sets the value of the recognitionDate property.
+     *
+     * @param value allowed object is
+     *              {@link XMLGregorianCalendar }
+     */
+    public void setRecognitionDate(XMLGregorianCalendar value) {
+        this.recognitionDate = value;
+    }
+
+    /**
+     * Gets the value of the expirationDate property.
+     *
+     * @return possible object is
+     *         {@link XMLGregorianCalendar }
+     */
+    public XMLGregorianCalendar getExpirationDate() {
+        return expirationDate;
+    }
+
+    /**
+     * Sets the value of the expirationDate property.
+     *
+     * @param value allowed object is
+     *              {@link XMLGregorianCalendar }
+     */
+    public void setExpirationDate(XMLGregorianCalendar value) {
+        this.expirationDate = value;
     }
 
     /**
@@ -329,6 +382,7 @@ public class KsaTransaction {
     public void setTransactionType(String value) {
         this.transactionType = value;
     }
+
 
     /**
      * <p>Java class for anonymous complex type.
@@ -463,6 +517,7 @@ public class KsaTransaction {
      *       &lt;sequence>
      *         &lt;element name="override-rollup" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
      *         &lt;element name="override-statement-text" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+     *         &lt;element name="general-ledger-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
      *         &lt;sequence minOccurs="0">
      *           &lt;element name="general-ledger-override">
      *             &lt;complexType>
@@ -478,7 +533,11 @@ public class KsaTransaction {
      *           &lt;/element>
      *         &lt;/sequence>
      *         &lt;element name="override-refund-rule" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *         &lt;element name="override-clear-date" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+     *         &lt;element name="is-refundable" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+     *         &lt;choice minOccurs="0">
+     *           &lt;element name="override-clear-date" type="{http://www.w3.org/2001/XMLSchema}int"/>
+     *           &lt;element name="override-clear-period" type="{http://www.w3.org/2001/XMLSchema}int"/>
+     *         &lt;/choice>
      *       &lt;/sequence>
      *     &lt;/restriction>
      *   &lt;/complexContent>
@@ -489,13 +548,12 @@ public class KsaTransaction {
     @XmlType(name = "", propOrder = {
             "overrideRollup",
             "overrideStatementText",
+            "generalLedgerType",
             "generalLedgerOverride",
             "overrideRefundRule",
-            "overrideClearDate",
-            "overrideClearPeriod",
-            "generalLedgerType",
             "isRefundable",
-            "refundRule"
+            "overrideClearDate",
+            "overrideClearPeriod"
     })
     public static class Override {
 
@@ -503,20 +561,18 @@ public class KsaTransaction {
         protected String overrideRollup;
         @XmlElement(name = "override-statement-text")
         protected String overrideStatementText;
+        @XmlElement(name = "general-ledger-type")
+        protected String generalLedgerType;
         @XmlElement(name = "general-ledger-override")
         protected KsaTransaction.Override.GeneralLedgerOverride generalLedgerOverride;
         @XmlElement(name = "override-refund-rule")
         protected String overrideRefundRule;
+        @XmlElement(name = "is-refundable")
+        protected Boolean isRefundable;
         @XmlElement(name = "override-clear-date")
         protected Integer overrideClearDate;
         @XmlElement(name = "override-clear-period")
         protected Integer overrideClearPeriod;
-        @XmlElement(name = "general-ledger-type")
-        protected String generalLedgerType;
-        @XmlElement(name = "is-refundable")
-        protected Boolean isRefundable;
-        @XmlElement(name = "refund-rule")
-        protected String refundRule;
 
         /**
          * Gets the value of the overrideRollup property.
@@ -556,6 +612,26 @@ public class KsaTransaction {
          */
         public void setOverrideStatementText(String value) {
             this.overrideStatementText = value;
+        }
+
+        /**
+         * Gets the value of the generalLedgerType property.
+         *
+         * @return possible object is
+         *         {@link String }
+         */
+        public String getGeneralLedgerType() {
+            return generalLedgerType;
+        }
+
+        /**
+         * Sets the value of the generalLedgerType property.
+         *
+         * @param value allowed object is
+         *              {@link String }
+         */
+        public void setGeneralLedgerType(String value) {
+            this.generalLedgerType = value;
         }
 
         /**
@@ -599,42 +675,6 @@ public class KsaTransaction {
         }
 
         /**
-         * Gets the value of the overrideClearDate property.
-         *
-         * @return possible object is
-         *         {@link Integer }
-         */
-        public Integer getOverrideClearDate() {
-            return overrideClearDate;
-        }
-
-        /**
-         * Sets the value of the overrideClearDate property.
-         *
-         * @param value allowed object is
-         *              {@link Integer }
-         */
-        public void setOverrideClearDate(Integer value) {
-            this.overrideClearDate = value;
-        }
-
-        public Integer getOverrideClearPeriod() {
-            return overrideClearPeriod;
-        }
-
-        public void setOverrideClearPeriod(Integer overrideClearPeriod) {
-            this.overrideClearPeriod = overrideClearPeriod;
-        }
-
-        public String getGeneralLedgerType() {
-            return generalLedgerType;
-        }
-
-        public void setGeneralLedgerType(String generalLedgerType) {
-            this.generalLedgerType = generalLedgerType;
-        }
-
-        /**
          * Gets the value of the isRefundable property.
          *
          * @return possible object is
@@ -655,24 +695,45 @@ public class KsaTransaction {
         }
 
         /**
-         * Gets the value of the refundRule property.
+         * Gets the value of the overrideClearDate property.
          *
          * @return possible object is
-         *         {@link String }
+         *         {@link Integer }
          */
-        public String getRefundRule() {
-            return refundRule;
+        public Integer getOverrideClearDate() {
+            return overrideClearDate;
         }
 
         /**
-         * Sets the value of the refundRule property.
+         * Sets the value of the overrideClearDate property.
          *
          * @param value allowed object is
-         *              {@link String }
+         *              {@link Integer }
          */
-        public void setRefundRule(String value) {
-            this.refundRule = value;
+        public void setOverrideClearDate(Integer value) {
+            this.overrideClearDate = value;
         }
+
+        /**
+         * Gets the value of the overrideClearPeriod property.
+         *
+         * @return possible object is
+         *         {@link Integer }
+         */
+        public Integer getOverrideClearPeriod() {
+            return overrideClearPeriod;
+        }
+
+        /**
+         * Sets the value of the overrideClearPeriod property.
+         *
+         * @param value allowed object is
+         *              {@link Integer }
+         */
+        public void setOverrideClearPeriod(Integer value) {
+            this.overrideClearPeriod = value;
+        }
+
 
         /**
          * <p>Java class for anonymous complex type.

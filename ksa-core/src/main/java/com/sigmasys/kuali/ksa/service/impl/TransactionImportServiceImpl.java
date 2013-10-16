@@ -217,9 +217,9 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
                 if (override != null) {
 
-                    if (!refundService.isRefundRuleValid(override.getRefundRule())) {
+                    if (!refundService.isRefundRuleValid(override.getOverrideRefundRule())) {
                         // applies to Payments
-                        errMsg = "Invalid refund rule '" + override.getRefundRule() + "'";
+                        errMsg = "Invalid refund rule '" + override.getOverrideRefundRule() + "'";
                     }
 
                 }
@@ -477,17 +477,21 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
      */
     private Transaction persistTransaction(KsaTransaction ksaTransaction) {
 
-        XMLGregorianCalendar calendar = ksaTransaction.getEffectiveDate();
+        Date effectiveDate = CalendarUtils.toDate(ksaTransaction.getEffectiveDate(), true);
 
-        Date effectiveDate = CalendarUtils.removeTime(calendar != null ? CalendarUtils.toDate(calendar) : new Date());
-
-        Transaction transaction = transactionService.createTransaction(ksaTransaction.getTransactionType(),
-                ksaTransaction.getAccountIdentifier(), effectiveDate, ksaTransaction.getAmount());
+        Transaction transaction = transactionService.createTransaction(
+                ksaTransaction.getTransactionType(),
+                ksaTransaction.getIncomingIdentifier(),
+                ksaTransaction.getAccountIdentifier(),
+                effectiveDate,
+                CalendarUtils.toDate(ksaTransaction.getRecognitionDate(), true),
+                CalendarUtils.toDate(ksaTransaction.getExpirationDate(), true),
+                ksaTransaction.getAmount(),
+                false);
 
         transaction.setNativeAmount(ksaTransaction.getNativeAmount());
-        transaction.setOriginationDate(CalendarUtils.toDate(ksaTransaction.getOriginationDate()));
+        transaction.setOriginationDate(CalendarUtils.toDate(ksaTransaction.getOriginationDate(), true));
         transaction.setCurrency(auditableEntityService.getCurrency(ksaTransaction.getCurrency()));
-        transaction.setExternalId(ksaTransaction.getIncomingIdentifier());
 
         KsaTransaction.Override override = ksaTransaction.getOverride();
 
@@ -525,7 +529,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                 payment.setRefundable(override.isRefundable());
                 String refundRule = override.getOverrideRefundRule();
                 if (StringUtils.isBlank(refundRule)) {
-                    refundRule = override.getRefundRule();
+                    refundRule = override.getOverrideRefundRule();
                 }
                 payment.setRefundRule(refundRule);
             }

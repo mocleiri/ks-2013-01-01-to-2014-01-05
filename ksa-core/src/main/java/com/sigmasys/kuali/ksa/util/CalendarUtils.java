@@ -50,7 +50,18 @@ public class CalendarUtils {
 
     // Converts an XMLGregorianCalendar to an instance of java.util.Date
     public static Date toDate(XMLGregorianCalendar calendar) {
-        return (calendar != null) ? calendar.toGregorianCalendar().getTime() : null;
+        return toDate(calendar, false);
+    }
+
+    public static Date toDate(XMLGregorianCalendar calendar, boolean removeTime) {
+        Date date = null;
+        if (calendar != null) {
+            date = calendar.toGregorianCalendar().getTime();
+            if (removeTime) {
+                date = removeTime(date);
+            }
+        }
+        return date;
     }
 
     public static GregorianCalendar removeTime(GregorianCalendar calendar) {
