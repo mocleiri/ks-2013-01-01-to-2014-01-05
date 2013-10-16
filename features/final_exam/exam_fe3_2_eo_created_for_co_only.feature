@@ -11,9 +11,9 @@ Feature: SA.FE3-2 View Exam Offerings for AO not created when no Activity Offeri
   Scenario: Test whether the EO table only shows Eos by AO when Activity Offerings are configured
     When I view the Exam Offerings for a CO created from catalog with a standard final exam driven by Course Offering
     Then the Course Offering table should only show that it is in the Draft state
-    And I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
-    And there should be no Activity Offering table present
-    And the Canceled Exam Offering table should only show that it is in the Canceled state
+    When I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
+    Then there should be no Activity Offering table present
+    And the Exam Offering table should be in a Canceled state
 
   #FE3.2.EB2 (KSENROLL-9536)
   @pending
