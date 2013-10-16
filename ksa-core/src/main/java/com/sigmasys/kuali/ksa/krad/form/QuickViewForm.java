@@ -1,10 +1,8 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
-import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.krad.model.MemoModel;
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.util.ContextUtils;
 import com.sigmasys.kuali.ksa.util.InformationUtils;
 
 import java.math.BigDecimal;
@@ -17,8 +15,6 @@ import java.util.List;
  */
 public class QuickViewForm extends AbstractViewModel {
 
-
-    private Account account;
 
     private Currency currency;
 
@@ -40,11 +36,6 @@ public class QuickViewForm extends AbstractViewModel {
 
     private String compositeDefaultPostalAddress;
 
-    // Alert
-
-    private List<InformationModel> alerts;
-    private List<InformationModel> flags;
-    private List<InformationModel> holds;
 
     private MemoModel newMemoModel;
 
@@ -84,14 +75,6 @@ public class QuickViewForm extends AbstractViewModel {
     /*
       Get / Set methods
     */
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
 
     public BigDecimal getPastDueAmount() {
         return pastDueAmount;
@@ -281,67 +264,6 @@ public class QuickViewForm extends AbstractViewModel {
             type = "hold";
         }
         return type;
-    }
-
-    public List<InformationModel> getAlerts() {
-        if (alerts == null) {
-            alerts = new ArrayList<InformationModel>();
-        }
-        return alerts;
-    }
-
-    public String getAlertTooltip() {
-        return TransactionForm.getInformationTooltip("Alerts", alerts);
-    }
-
-    public void setAlertObjects(List<Alert> alerts) {
-        List<InformationModel> models = new ArrayList<InformationModel>(alerts.size());
-        for (Alert alert : alerts) {
-            models.add(new InformationModel(alert));
-        }
-        setAlerts(models);
-    }
-
-    public void setAlerts(List<InformationModel> alerts) {
-        this.alerts = alerts;
-    }
-
-    public List<InformationModel> getFlags() {
-        if (flags == null) {
-            flags = new ArrayList<InformationModel>();
-        }
-        return flags;
-    }
-
-    public String getFlagTooltip() {
-        return TransactionForm.getInformationTooltip("Flags", flags);
-    }
-
-    public void setFlagObjects(List<Flag> flags) {
-        List<InformationModel> models = new ArrayList<InformationModel>(flags.size());
-        for (Flag flag : flags) {
-            models.add(new InformationModel(flag));
-        }
-        setFlags(models);
-    }
-
-    public void setFlags(List<InformationModel> flags) {
-        this.flags = flags;
-    }
-
-    public List<InformationModel> getHolds() {
-        if (holds == null) {
-            holds = new ArrayList<InformationModel>();
-        }
-        return holds;
-    }
-
-    public void setHolds(List<InformationModel> holds) {
-        this.holds = holds;
-    }
-
-    public String getHoldTooltip() {
-        return TransactionForm.getInformationTooltip("Holds", holds);
     }
 
     public BigDecimal getOutstandingAmount() {

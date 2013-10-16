@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.config.ConfigService;
+import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.UserPreferenceService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
@@ -41,6 +42,14 @@ public abstract class AbstractViewModel extends UifFormBase {
     private List<Activity> activity;
 
     private String message;
+
+    // Several screens use a unified header to show account info including alerts/flags/holds
+    private Account account;
+    private List<InformationModel> alerts;
+    private List<InformationModel> flags;
+    private List<InformationModel> holds;
+    private List<Memo> memos;
+
 
     private static final KeyValuesBase searchTypeValuesFinder = new KeyValuesBase() {
         /**
@@ -204,5 +213,124 @@ public abstract class AbstractViewModel extends UifFormBase {
     public String getFormattedDate(Date date) {
         return (date != null) ? DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()).format(date) : "";
     }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public List<InformationModel> getAlerts() {
+        if (alerts == null) {
+            alerts = new ArrayList<InformationModel>();
+        }
+        return alerts;
+    }
+
+    public String getAlertTooltip() {
+        return this.getInformationTooltip("Alerts", alerts);
+    }
+
+    public void setAlertObjects(List<Alert> alerts) {
+        List<InformationModel> models = new ArrayList<InformationModel>(alerts.size());
+        for(Alert alert : alerts){
+            models.add(new InformationModel(alert));
+        }
+        setAlerts(models);
+    }
+
+    public void setAlerts(List<InformationModel> alerts) {
+        this.alerts = alerts;
+    }
+
+    public List<InformationModel> getFlags() {
+        if (flags == null) {
+            flags = new ArrayList<InformationModel>();
+        }
+        return flags;
+    }
+
+    public String getFlagTooltip() {
+        return this.getInformationTooltip("Flags", flags);
+    }
+
+    public void setFlagObjects(List<Flag> flags) {
+        List<InformationModel> models = new ArrayList<InformationModel>(flags.size());
+        for(Flag flag : flags){
+            models.add(new InformationModel(flag));
+        }
+        setFlags(models);
+    }
+
+    public void setFlags(List<InformationModel> flags) {
+        this.flags = flags;
+    }
+
+    public List<Memo> getMemos() {
+        if(memos == null) {
+            memos = new ArrayList<Memo>();
+        }
+        return memos;
+    }
+
+    public String getMemoTooltip() {
+        return this.getInformationTooltip("Memos", alerts);
+    }
+
+    public void setMemos(List<Memo> memos) {
+        this.memos = memos;
+    }
+
+    public List<InformationModel> getHolds() {
+        if(holds == null) {
+            holds = new ArrayList<InformationModel>();
+        }
+        return holds;
+    }
+
+    public void setHolds(List<InformationModel> holds) {
+        this.holds = holds;
+    }
+
+    public String getHoldTooltip() {
+        return this.getInformationTooltip("Holds", holds);
+    }
+
+    private static int getItemsPerPage() {
+        return Integer.valueOf(ContextUtils.getBean(ConfigService.class).getParameter(Constants.QUICKVIEW_INFORMATION_COUNT));
+    }
+
+    public static String getInformationTooltip(String name, List<InformationModel> items) {
+
+        int itemsPerPage = getItemsPerPage();
+
+        String html = "<b>" + name + " (";
+
+        if (items == null || items.size() == 0) {
+            html += "0/0)</b><br/><p>No " + name + "</p>";
+            return html;
+        }
+
+        int size = items.size();
+
+        if (size > itemsPerPage) {
+            html += itemsPerPage + "/" + size + ")</b><br/>";
+        } else {
+            html += size + "/" + size + ")</b><br/>";
+        }
+
+        html += "<p>";
+        for (int i = 0; i < items.size() && i < itemsPerPage; i++) {
+            html += items.get(i).getDisplayValue() + "<br/>";
+        }
+        html += "</p>";
+
+        return html;
+    }
+
+
+
 
 }

@@ -21,18 +21,8 @@
 					<property name="items">
                         <list>
 							<!-- Header -->
-                            <bean id="viewAccountRefundInfo" parent="Uif-HorizontalBoxSection">
-                                <property name="items">
-                                <list>
-                                    <bean parent="Uif-HeaderTwo" p:headerText="@{account.compositeDefaultPersonName}"/>
-                                    <bean parent="Uif-Message" p:messageText="(@{account.id})" p:style="margin-top: 10px;"/>
-                                    <ref bean="Ksa-TransactionAlerts"/>
-                                    <ref bean="Ksa-TransactionFlags"/>
+                            <ref bean="viewTransactionAccountInfo"/>
 
-                                </list>
-                                </property>
-                            </bean>
-							
 							<!-- Search Refunds section -->
 							<ref bean="accountRefundSearchSection"/>
 									

@@ -4,7 +4,6 @@ import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Alert;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by: dmulderink on 10/6/12 at 2:27 PM
@@ -16,8 +15,6 @@ public class AlertForm extends AbstractViewModel {
    private Date fromDate;
 
    private Date toDate;
-
-   private List<Alert> alerts;
 
    private Alert alert;
 
@@ -52,14 +49,6 @@ public class AlertForm extends AbstractViewModel {
 
    public void setToDate(Date toDate) {
       this.toDate = toDate;
-   }
-
-   public List<Alert> getAlerts() {
-      return alerts;
-   }
-
-   public void setAlerts(List<Alert> alerts) {
-      this.alerts = alerts;
    }
 
    public Alert getAlert() {

@@ -16,16 +16,10 @@ import java.util.*;
 
 public class TransactionForm extends AbstractViewModel {
 
-    private Account account;
 
     private String statusMessage;
 
 
-    private List<InformationModel> alerts;
-    private List<InformationModel> flags;
-    private List<InformationModel> holds;
-
-    private List<Memo> memos;
     private Tree<Memo, String> memoTree = new Tree<Memo, String>();
 
     private List<TransactionModel> rollupTransactions;
@@ -334,60 +328,6 @@ public class TransactionForm extends AbstractViewModel {
         this.activities = activities;
     }
 
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
-    public List<InformationModel> getAlerts() {
-        if (alerts == null) {
-            alerts = new ArrayList<InformationModel>();
-        }
-        return alerts;
-    }
-
-    public String getAlertTooltip() {
-        return this.getInformationTooltip("Alerts", alerts);
-    }
-
-    public void setAlertObjects(List<Alert> alerts) {
-        List<InformationModel> models = new ArrayList<InformationModel>(alerts.size());
-        for(Alert alert : alerts){
-            models.add(new InformationModel(alert));
-        }
-        setAlerts(models);
-    }
-
-    public void setAlerts(List<InformationModel> alerts) {
-        this.alerts = alerts;
-    }
-
-    public List<InformationModel> getFlags() {
-        if (flags == null) {
-            flags = new ArrayList<InformationModel>();
-        }
-        return flags;
-    }
-
-    public String getFlagTooltip() {
-        return this.getInformationTooltip("Flags", flags);
-    }
-
-    public void setFlagObjects(List<Flag> flags) {
-        List<InformationModel> models = new ArrayList<InformationModel>(flags.size());
-        for(Flag flag : flags){
-            models.add(new InformationModel(flag));
-        }
-        setFlags(models);
-    }
-
-    public void setFlags(List<InformationModel> flags) {
-        this.flags = flags;
-    }
-
     public List<TransactionModel> getRollupTransactions() {
         return rollupTransactions;
     }
@@ -402,18 +342,6 @@ public class TransactionForm extends AbstractViewModel {
 
     public void setAllTransactions(List<TransactionModel> allTransactions) {
         this.allTransactions = allTransactions;
-    }
-
-    public List<Memo> getMemos() {
-        return memos;
-    }
-
-    public String getMemoTooltip() {
-        return this.getInformationTooltip("Memos", alerts);
-    }
-
-    public void setMemos(List<Memo> memos) {
-        this.memos = memos;
     }
 
     public BigDecimal getStartingBalance() {
@@ -441,10 +369,6 @@ public class TransactionForm extends AbstractViewModel {
 
     public void setEndingBalance(BigDecimal endingBalance) {
         this.endingBalance = endingBalance;
-    }
-
-    private static int getItemsPerPage() {
-        return Integer.valueOf(ContextUtils.getBean(ConfigService.class).getParameter(Constants.QUICKVIEW_INFORMATION_COUNT));
     }
 
     public Date getStartingDate() {
@@ -604,48 +528,6 @@ public class TransactionForm extends AbstractViewModel {
     public void setShowInternal(Boolean showInternal) {
         this.showInternal = showInternal;
     }
-
-    public List<InformationModel> getHolds() {
-        return holds;
-    }
-
-    public void setHolds(List<InformationModel> holds) {
-        this.holds = holds;
-    }
-
-    public String getHoldTooltip() {
-        return this.getInformationTooltip("Holds", holds);
-    }
-
-
-    public static String getInformationTooltip(String name, List<InformationModel> items) {
-
-        int itemsPerPage = getItemsPerPage();
-
-        String html = "<b>" + name + " (";
-
-        if (items == null || items.size() == 0) {
-            html += "0/0)</b><br/><p>No " + name + "</p>";
-            return html;
-        }
-
-        int size = items.size();
-
-        if (size > itemsPerPage) {
-            html += itemsPerPage + "/" + size + ")</b><br/>";
-        } else {
-            html += size + "/" + size + ")</b><br/>";
-        }
-
-        html += "<p>";
-        for (int i = 0; i < items.size() && i < itemsPerPage; i++) {
-            html += items.get(i).getDisplayValue() + "<br/>";
-        }
-        html += "</p>";
-
-        return html;
-    }
-
 
     public Set<Date> getZeroBalanceDates() {
         if(zeroBalanceDates == null) {

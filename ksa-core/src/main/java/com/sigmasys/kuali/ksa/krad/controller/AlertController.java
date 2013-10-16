@@ -77,7 +77,7 @@ public class AlertController extends GenericSearchController {
             throw new IllegalArgumentException("'userId' request parameter must be specified");
          }
 
-         form.setAlerts(informationService.getAlerts(userId));
+         form.setAlertObjects(informationService.getAlerts(userId));
 
       } else if (pageId != null && pageId.equals("ViewAlertPage")) {
          if (userId == null || userId.isEmpty()) {
