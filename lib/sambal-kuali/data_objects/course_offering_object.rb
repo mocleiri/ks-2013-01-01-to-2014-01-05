@@ -173,9 +173,13 @@ class CourseOffering
         @delivery_format_list.each_with_index do |dfl, index|
           dfl.create(index + 1)
         end
-        if !@waitlist.nil? and !@waitlist #if waitlist is nil, means use default
+        if !@waitlist.nil?  #if waitlist is nil, means use default
+          @waitlist = page.has_waitlist?
+        elsif  !@waitlist
           page.waitlist_off
           page.waitlist_continue_action
+        else
+          page.waitlist_on
         end
 
         page.create_offering unless @defer_save
