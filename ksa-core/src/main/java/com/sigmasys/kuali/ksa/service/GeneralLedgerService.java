@@ -284,4 +284,28 @@ public interface GeneralLedgerService {
      */
     List<AbstractGlBreakdown> getGlBreakdowns(Transaction transaction);
 
+    /**
+     * Retrieves a list of all failed GL transactions.
+     *
+     * @return list of FailedGlTransaction instances
+     */
+    List<FailedGlTransaction> getFailedGlTransactions();
+
+    /**
+     * Retrieves a list of failed GL transactions for the given Account ID.
+     *
+     * @param accountId Account ID
+     * @return list of FailedGlTransaction instances
+     */
+    List<FailedGlTransaction> getFailedGlTransactionsForAccount(String accountId);
+
+    /**
+     * Retrieves a list of failed GL transactions for the given date range.
+     *
+     * @param startDate Start date
+     * @param endDate   End date
+     * @return list of FailedGlTransaction instances
+     */
+    List<FailedGlTransaction> getFailedGlTransactionsForDates(Date startDate, Date endDate);
+
 }

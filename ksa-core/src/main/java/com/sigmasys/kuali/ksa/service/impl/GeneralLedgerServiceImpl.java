@@ -18,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -38,6 +39,10 @@ import static com.sigmasys.kuali.ksa.model.Constants.*;
 public class GeneralLedgerServiceImpl extends GenericPersistenceService implements GeneralLedgerService {
 
     private static final Log logger = LogFactory.getLog(GeneralLedgerServiceImpl.class);
+
+    private static final String SELECT_FAILED_GL_TRANSACTION =
+            "select f from FailedGlTransaction f " +
+                    "inner join fetch f.transaction t ";
 
 
     @Autowired
@@ -1156,6 +1161,70 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         }
 
         return breakdowns;
+    }
+
+    /**
+     * Retrieves a list of all failed GL transactions.
+     *
+     * @return list of FailedGlTransaction instances
+     */
+    @Override
+    public List<FailedGlTransaction> getFailedGlTransactions() {
+
+        PermissionUtils.checkPermission(Permission.READ_FAILED_GL_TRANSACTION);
+
+        Query query = em.createQuery(SELECT_FAILED_GL_TRANSACTION + " order by f.id desc");
+
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves a list of failed GL transactions for the given Account ID.
+     *
+     * @param accountId Account ID
+     * @return list of FailedGlTransaction instances
+     */
+    @Override
+    public List<FailedGlTransaction> getFailedGlTransactionsForAccount(String accountId) {
+
+        PermissionUtils.checkPermission(Permission.READ_FAILED_GL_TRANSACTION);
+
+        Query query = em.createQuery(SELECT_FAILED_GL_TRANSACTION + " where t.account.id = :accountId order by f.id desc");
+
+        query.setParameter("accountId", accountId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Retrieves a list of failed GL transactions for the given date range.
+     *
+     * @param startDate Start date
+     * @param endDate   End date
+     * @return list of FailedGlTransaction instances
+     */
+    @Override
+    public List<FailedGlTransaction> getFailedGlTransactionsForDates(Date startDate, Date endDate) {
+
+        if (startDate == null || endDate == null) {
+            String errMsg = "Start and End dates are required";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (startDate.after(endDate)) {
+            String errMsg = "Start date cannot be greater than End date";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Query query = em.createQuery(SELECT_FAILED_GL_TRANSACTION +
+                " where f.creationDate between :startDate and :endDate order by f.id desc");
+
+        query.setParameter("startDate", CalendarUtils.removeTime(startDate), TemporalType.DATE);
+        query.setParameter("endDate", CalendarUtils.removeTime(endDate), TemporalType.DATE);
+
+        return query.getResultList();
     }
 
 

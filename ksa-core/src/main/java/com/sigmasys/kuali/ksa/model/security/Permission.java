@@ -78,6 +78,9 @@ public enum Permission {
     CREATE_GL_BREAKDOWN,
     READ_GL_BREAKDOWN,
 
+    // Failed GL transaction permissions
+    READ_FAILED_GL_TRANSACTION,
+
     // Memo permissions
     READ_MEMO,
     CREATE_MEMO,
