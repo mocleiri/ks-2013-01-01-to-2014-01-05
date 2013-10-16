@@ -208,7 +208,8 @@ insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (3, 'DSLR', 'Drools DS
 insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (4, 'XDRL', 'Drools XML Rule Language');
 
 -- Allowable GL account values --
-insert into KSSA_ALLOWABLE_GL_ACCOUNT (ID, PATTERN) values (1, '.*');
+insert into KSSA_ALLOWABLE_GL_ACCOUNT (ID, PATTERN) values (1,'\d{2}-\d-\d{6}\s\d{4}');
+insert into KSSA_ALLOWABLE_GL_ACCOUNT (ID, PATTERN) values (2, '.*');
 
 
 
