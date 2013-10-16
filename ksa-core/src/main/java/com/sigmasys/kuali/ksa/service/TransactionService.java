@@ -1129,6 +1129,17 @@ public interface TransactionService {
      * @param accountId Account ID
      * @return list of Payment instances
      */
+    @WebMethod(exclude = true)
     List<Payment> getPotentialRefunds(String accountId);
+
+    /**
+     * Returns a list of potential refunds (payments) for the given Account ID and date range.
+     *
+     * @param accountId Account ID
+     * @param startDate Start date
+     * @param endDate   End date
+     * @return list of Payment instances
+     */
+    List<Payment> getPotentialRefunds(String accountId, Date startDate, Date endDate);
 
 }

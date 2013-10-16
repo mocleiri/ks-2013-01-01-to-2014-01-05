@@ -1805,8 +1805,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         StringBuilder queryBuilder = new StringBuilder("select id from Transaction where glEntryGenerated <> true");
 
-        if ( !forceEffective ) {
-              queryBuilder.append(" and effectiveDate <= CURRENT_DATE");
+        if (!forceEffective) {
+            queryBuilder.append(" and effectiveDate <= CURRENT_DATE");
         }
 
         Query query = em.createQuery(queryBuilder.toString());
@@ -3893,14 +3893,52 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return list of Payment instances
      */
     @Override
+    @WebMethod(exclude = true)
     public List<Payment> getPotentialRefunds(String accountId) {
+        return getPotentialRefunds(accountId, null, null);
+    }
+
+    /**
+     * Returns a list of potential refunds (payments) for the given Account ID and date range.
+     *
+     * @param accountId Account ID
+     * @param startDate Start date
+     * @param endDate   End date
+     * @return list of Payment instances
+     */
+    @Override
+    public List<Payment> getPotentialRefunds(String accountId, Date startDate, Date endDate) {
 
         PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
 
-        Query query = em.createQuery("select t from Payment t " + GET_TRANSACTION_JOIN +
-                " where t.refundable = true and a.id = :accountId and t.clearDate < CURRENT_DATE order by t.id desc");
+        StringBuilder queryBuilder = new StringBuilder("select t from Payment t ");
+
+        queryBuilder.append(GET_TRANSACTION_JOIN);
+
+        queryBuilder.append(" where t.refundable = true and a.id = :accountId and t.clearDate < CURRENT_DATE ");
+
+        if (startDate != null) {
+            queryBuilder.append(" and t.effectiveDate >= :startDate ");
+        }
+
+        if (endDate != null) {
+            queryBuilder.append(" and t.effectiveDate <= :endDate ");
+        }
+
+        queryBuilder.append(" order by t.id desc");
+
+        Query query = em.createQuery(queryBuilder.toString());
 
         query.setParameter("accountId", accountId);
+
+        if (startDate != null) {
+            query.setParameter("startDate", CalendarUtils.removeTime(startDate), TemporalType.DATE);
+        }
+
+
+        if (endDate != null) {
+            query.setParameter("endDate", CalendarUtils.removeTime(endDate), TemporalType.DATE);
+        }
 
         List<Payment> results = query.getResultList();
 

@@ -259,14 +259,14 @@ public class AccountRefundController extends DownloadController {
      */
     private List<PotentialRefundModel> createPotentialRefundList(String userId, Date dateFrom, Date dateTo) {
 
-        // Get Transactions for the current account within the specified date range.
-        List<PotentialRefundModel> potentialRefundModels = new ArrayList<PotentialRefundModel>();
-        List<Transaction> transactions = transactionService.getTransactions(userId, dateFrom, dateTo);
+        // Get Payments for the current account within the specified date range.
 
-        for (Transaction t : transactions) {
-            if (t.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
-                potentialRefundModels.add(new PotentialRefundModel(t));
-            }
+        List<Payment> payments = transactionService.getPotentialRefunds(userId, dateFrom, dateTo);
+
+        List<PotentialRefundModel> potentialRefundModels = new ArrayList<PotentialRefundModel>(payments.size());
+
+        for (Payment payment : payments) {
+            potentialRefundModels.add(new PotentialRefundModel(payment));
         }
 
         return potentialRefundModels;
