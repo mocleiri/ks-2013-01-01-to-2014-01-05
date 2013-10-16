@@ -121,7 +121,7 @@
             <list>
                 <bean parent="Uif-InputField" p:propertyName="default">
                     <property name="control">
-                        <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Default Name"/>
+                        <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Default Address"/>
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="kimAddressType" p:label="Address Type" />
@@ -151,7 +151,7 @@
             <list>
                 <bean parent="Uif-InputField" p:propertyName="default">
                     <property name="control">
-                        <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Default Name"/>
+                        <bean parent="Uif-CheckboxControl"  p:checkboxLabel="Default Electronic Contact"/>
                     </property>
                 </bean>
                 <bean parent="Uif-InputField" p:propertyName="kimEmailAddressType" p:label="Email Address Type" />
