@@ -142,34 +142,34 @@ When /^I publish both terms in the Academic Calendar$/ do
 end
 
 When /^I create multiple Course Offerings each with a different Exam Offering in the new term$/ do
-  @co_one = create CourseOffering, :term => @term.term_code, :course => "PHYS603",
-                   :final_exam_type => "NONE"
-  @co_two = create CourseOffering, :term => @term.term_code, :course => "PHYS603",
-                   :final_exam_type => "ALTERNATE"
-  @co_three = create CourseOffering, :term => @term.term_code, :course => "PHYS603",
-                     :final_exam_driver => "Final Exam Per Activity Offering"
+  co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS603",
+                   :final_exam_type => "NONE")
+  co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS603",
+                   :final_exam_type => "ALTERNATE")
+  co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS603",
+                     :final_exam_driver => "Final Exam Per Activity Offering")
 
   delivery_format_list = []
   delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering",
                                 :final_exam_driver => "Course Offering")
-  @co_four = create CourseOffering, :term => @term.term_code, :course => "PHYS603", @use_final_exam_matrix => false,
-                    :delivery_format_list => delivery_format_list
+  co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS603", @use_final_exam_matrix => false,
+                    :delivery_format_list => delivery_format_list)
 end
 
 When /^I create multiple Course Offerings each with a different Exam Driver in the new term$/ do
-  @co_one = create CourseOffering, :term => @term.term_code, :course => "BSCI215"
+  co_list << (create CourseOffering, :term => @term.term_code, :course => "BSCI215")
   for i in 1..5
-    @ao_one = @co_one.create_ao(make ActivityOffering, :format => "Lecture Only")
+    ao_list << co_list[0].create_ao(make ActivityOffering, :format => "Lecture Only")
   end
 
-  @co_two = create CourseOffering, :term => @term.term_code, :course => "ENGL301",
-                     :final_exam_driver => "Final Exam Per Activity Offering"
+  co_list << (create CourseOffering, :term => @term.term_code, :course => "ENGL301",
+                     :final_exam_driver => "Final Exam Per Activity Offering")
 
-  @co_three = create CourseOffering, :term => @term.term_code, :course => "PHYS272",
-                     :final_exam_driver => "Final Exam Per Activity Offering"
+  co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS272",
+                     :final_exam_driver => "Final Exam Per Activity Offering")
   @ao_three = @co_three.create_ao(make ActivityOffering, :format => "Lecture Only")
 
-  @co_four = create CourseOffering, :term => @term.term_code, :course => "CHEM611"
+  co_list << (create CourseOffering, :term => @term.term_code, :course => "CHEM611")
 end
 
 When /^I rollover the term to a new academic term that has no exam period$/ do
