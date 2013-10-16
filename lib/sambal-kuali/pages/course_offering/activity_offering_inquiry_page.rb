@@ -20,8 +20,8 @@ class ActivityOfferingInquiry < BasePage
   value(:type) { |b| b.frm.span(id: "type_name_control").text }
   value(:format_offering) { |b| b.frm.span(id: "u59").text } # Persistent ID needed!
   value(:total_maximum_enrollment) { |b| b.frm.span(id: "maximumEnrollment_label").text }
-  element(:actual_delivery_logistics) { |b| b.frm.table(id: "u130") } # Persistent ID needed!
-  element(:requested_delivery_logistics) { |b| b.frm.table(id: "u235") } # Persistent ID needed!
+  element(:actual_delivery_logistics) { |b| b.frm.div(id: "ActivityOffering-Inquiry-DeliveryLogistic-Actuals") }
+  element(:requested_delivery_logistics) { |b| b.frm.div(id: "ActivityOffering-Inquiry-DeliveryLogistic-Requested") }
   value(:waitlists_active?) { |b| b.frm.div(data_label: "Waitlist Active").span(text: "Yes").exists? }
   value(:waitlists_processing) { |b| b.frm.div(data_label: "Waitlist Processing").span(index: 2).text }
   value(:waitlists_max_size) { |b| b.frm.div(data_label: "Waitlist Max Size").span(index: 2).text }
